@@ -25,13 +25,13 @@
 ### Total Agents to Train: 105
 
 **Agent Categories:**
-- Meta-Agents (5): CEO, coordinators, oversight
-- Division Chiefs (6): Department heads
-- Layer Agents (61): Specialized technical agents
+- Board of Directors (1): Agent #0 - ESA CEO
+- Division Chiefs (6): Department heads (Foundation, Core, Business, Intelligence, Platform, Extended)
+- Layer Agents (61): Specialized technical agents organized in 6 divisions
 - Expert Agents (7): Cross-domain specialists
-- Operational Agents (5): Project/process management
+- Operational Agents (5): Project/process management  
 - Life CEO Agents (16): AI life management
-- Custom Agents (5): Platform-specific
+- Custom Agents (9): Platform-specific (Pattern Learning #68 + Mr Blue #73-80)
 
 ### Training Status: 7/105 Certified (7%)
 

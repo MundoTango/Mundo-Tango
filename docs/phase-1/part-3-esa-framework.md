@@ -14,6 +14,8 @@
 3. [19-Phase Audit System](#19-phase-audit-system)
 4. [Agent Training Methodology](#agent-training-methodology)
 5. [Quality Gates Before Work](#quality-gates-before-work)
+6. [Communication Protocols](#communication-protocols)
+7. [MB.MD Integration](#mbmd-integration)
 
 ---
 
@@ -135,10 +137,9 @@ ESA Framework (Executive System Architecture) - 105 Total Agents
 ├── Life CEO Agents (16 agents)
 │   └── Personal AI assistance specialties
 │
-├── Custom Agents (5 agents)
+├── Custom Agents (9 agents)
 │   ├── Agent #68: Pattern Learning
-│   ├── Agent #73-80: Mr Blue (8 agents)
-│   └── Platform-specific agents
+│   └── Agent #73-80: Mr Blue Universal AI Companion (8 agents)
 │
 └── 19-Phase Audit System
     ├── Tier 1: Foundation (Phases 1-4)
