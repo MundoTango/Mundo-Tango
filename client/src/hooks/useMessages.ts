@@ -1,45 +1,67 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { queryClient, apiRequest } from "@/lib/queryClient";
-import type { SelectChatRoom, SelectChatMessage } from "@shared/schema";
+import { queryClient } from "@/lib/queryClient";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  getUserConversations,
+  getConversationMessages,
+  sendMessage,
+  createConversation,
+} from "@/lib/supabaseQueries";
+import type { MessageWithProfile, InsertMessage, InsertConversation } from "@shared/supabase-types";
 
 export function useConversations() {
-  return useQuery<SelectChatRoom[]>({
-    queryKey: ["/api/messages/conversations"],
-  });
-}
+  const { user } = useAuth();
 
-export function useConversation(id: number) {
-  return useQuery<SelectChatMessage[]>({
-    queryKey: ["/api/messages/conversations", id],
-    queryFn: async () => {
-      const res = await fetch(`/api/messages/conversations/${id}`, { credentials: "include" });
-      if (!res.ok) throw new Error("Failed to fetch messages");
-      return res.json();
+  return useQuery({
+    queryKey: ["conversations"],
+    queryFn: () => {
+      if (!user) throw new Error("Must be logged in");
+      return getUserConversations(user.id);
     },
+    enabled: !!user,
   });
 }
 
-export function useSendMessage(conversationId: number) {
+export function useConversation(id: string) {
+  return useQuery<MessageWithProfile[]>({
+    queryKey: ["conversations", id, "messages"],
+    queryFn: () => getConversationMessages(id),
+    enabled: !!id,
+  });
+}
+
+export function useSendMessage() {
+  const { user } = useAuth();
+
   return useMutation({
-    mutationFn: async (data: { message: string; mediaUrl?: string; mediaType?: string }) => {
-      const res = await apiRequest("POST", `/api/messages/conversations/${conversationId}/messages`, data);
-      return res.json();
+    mutationFn: async (data: { conversationId: string; content: string }) => {
+      if (!user) throw new Error("Must be logged in");
+      return sendMessage({
+        conversation_id: data.conversationId,
+        sender_id: user.id,
+        content: data.content,
+      });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/messages/conversations", conversationId] });
-      queryClient.invalidateQueries({ queryKey: ["/api/messages/conversations"] });
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["conversations", variables.conversationId, "messages"] });
+      queryClient.invalidateQueries({ queryKey: ["conversations"] });
     },
   });
 }
 
 export function useCreateConversation() {
   return useMutation({
-    mutationFn: async (userId: number) => {
-      const res = await apiRequest("POST", "/api/messages/conversations", { userId });
-      return res.json();
+    mutationFn: async (data: { participantIds: string[]; isGroup?: boolean; name?: string }) => {
+      return createConversation(
+        {
+          is_group: data.isGroup || false,
+          name: data.name || null,
+        },
+        data.participantIds
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/messages/conversations"] });
+      queryClient.invalidateQueries({ queryKey: ["conversations"] });
     },
   });
 }

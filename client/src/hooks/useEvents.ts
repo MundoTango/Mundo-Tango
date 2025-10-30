@@ -1,66 +1,77 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { queryClient, apiRequest } from "@/lib/queryClient";
-import type { SelectEvent, InsertEvent } from "@shared/schema";
+import { queryClient } from "@/lib/queryClient";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  getEvents,
+  getEventById,
+  createEvent,
+  deleteEvent,
+  getRSVPsByEventId,
+  createOrUpdateRSVP,
+} from "@/lib/supabaseQueries";
+import type { EventWithProfile, InsertEvent, InsertRSVP } from "@shared/supabase-types";
 
-interface EventFilters {
-  city?: string;
-  eventType?: string;
-  startDate?: string;
-  endDate?: string;
-}
-
-export function useEvents(filters?: EventFilters) {
-  const params = new URLSearchParams();
-  if (filters?.city) params.append("city", filters.city);
-  if (filters?.eventType) params.append("eventType", filters.eventType);
-  if (filters?.startDate) params.append("startDate", filters.startDate);
-  if (filters?.endDate) params.append("endDate", filters.endDate);
-
-  const queryString = params.toString();
-  const url = queryString ? `/api/events?${queryString}` : "/api/events";
-
-  return useQuery<SelectEvent[]>({
-    queryKey: ["/api/events", filters],
-    queryFn: async () => {
-      const res = await fetch(url, { credentials: "include" });
-      if (!res.ok) throw new Error("Failed to fetch events");
-      const data = await res.json();
-      return data.events || [];
-    },
+export function useEvents() {
+  return useQuery<EventWithProfile[]>({
+    queryKey: ["events"],
+    queryFn: () => getEvents(),
   });
 }
 
-export function useEvent(id: number) {
-  return useQuery<SelectEvent>({
-    queryKey: ["/api/events", id],
-    queryFn: async () => {
-      const res = await fetch(`/api/events/${id}`, { credentials: "include" });
-      if (!res.ok) throw new Error("Failed to fetch event");
-      return res.json();
-    },
+export function useEvent(id: string) {
+  return useQuery<EventWithProfile>({
+    queryKey: ["events", id],
+    queryFn: () => getEventById(id),
+    enabled: !!id,
   });
 }
 
 export function useCreateEvent() {
+  const { user } = useAuth();
+
   return useMutation({
-    mutationFn: async (data: Omit<InsertEvent, "userId">) => {
-      const res = await apiRequest("POST", "/api/events", data);
-      return res.json();
+    mutationFn: async (data: Omit<InsertEvent, "user_id">) => {
+      if (!user) throw new Error("Must be logged in");
+      return createEvent({ ...data, user_id: user.id });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/events"] });
+      queryClient.invalidateQueries({ queryKey: ["events"] });
     },
   });
 }
 
-export function useRsvpEvent(eventId: number) {
+export function useDeleteEvent() {
   return useMutation({
-    mutationFn: async (status: "going" | "interested" | "maybe") => {
-      const res = await apiRequest("POST", `/api/events/${eventId}/rsvp`, { status });
-      return res.json();
-    },
+    mutationFn: (id: string) => deleteEvent(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/events", eventId] });
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+    },
+  });
+}
+
+export function useEventRSVPs(eventId: string) {
+  return useQuery({
+    queryKey: ["rsvps", eventId],
+    queryFn: () => getRSVPsByEventId(eventId),
+    enabled: !!eventId,
+  });
+}
+
+export function useRSVPEvent() {
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async (data: { eventId: string; status: "going" | "maybe" | "not_going" }) => {
+      if (!user) throw new Error("Must be logged in");
+      return createOrUpdateRSVP({
+        user_id: user.id,
+        event_id: data.eventId,
+        status: data.status,
+      });
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["rsvps", variables.eventId] });
+      queryClient.invalidateQueries({ queryKey: ["events", variables.eventId] });
     },
   });
 }

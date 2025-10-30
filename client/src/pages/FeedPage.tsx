@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { usePosts, useCreatePost, useLikePost } from "@/hooks/usePosts";
+import { usePosts, useCreatePost, useToggleLike } from "@/hooks/usePosts";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ export default function FeedPage() {
     try {
       await createPost.mutateAsync({
         content: content.trim(),
-        userId: user!.id,
+        visibility: 'public',
       });
       setContent("");
       toast({
@@ -102,11 +102,11 @@ export default function FeedPage() {
 }
 
 function PostCard({ post }: { post: any }) {
-  const likePost = useLikePost(post.id);
+  const toggleLike = useToggleLike();
 
   const handleLike = async () => {
     try {
-      await likePost.mutateAsync();
+      await toggleLike.mutateAsync(post.id);
     } catch (error) {
       console.error("Failed to like post:", error);
     }
@@ -117,29 +117,29 @@ function PostCard({ post }: { post: any }) {
       <CardContent className="pt-6">
         <div className="flex items-start gap-4">
           <Avatar>
-            <AvatarImage src={post.user?.profileImage || undefined} />
-            <AvatarFallback>{post.user?.name?.charAt(0) || "U"}</AvatarFallback>
+            <AvatarImage src={post.profiles?.avatar_url || undefined} />
+            <AvatarFallback>{post.profiles?.full_name?.charAt(0) || post.profiles?.username?.charAt(0) || "U"}</AvatarFallback>
           </Avatar>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <span className="font-semibold" data-testid="text-post-author">
-                {post.user?.name || "Unknown User"}
+                {post.profiles?.full_name || post.profiles?.username || "Unknown User"}
               </span>
               <span className="text-sm text-muted-foreground">
-                @{post.user?.username}
+                @{post.profiles?.username}
               </span>
-              {post.createdAt && (
+              {post.created_at && (
                 <span className="text-sm text-muted-foreground">
-                  · {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+                  · {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                 </span>
               )}
             </div>
             <p className="text-foreground whitespace-pre-wrap" data-testid="text-post-content">
               {post.content}
             </p>
-            {post.imageUrl && (
+            {post.image_url && (
               <img
-                src={post.imageUrl}
+                src={post.image_url}
                 alt=""
                 className="mt-3 rounded-lg w-full object-cover max-h-96"
               />
@@ -152,7 +152,7 @@ function PostCard({ post }: { post: any }) {
           variant="ghost"
           size="sm"
           onClick={handleLike}
-          disabled={likePost.isPending}
+          disabled={toggleLike.isPending}
           data-testid={`button-like-${post.id}`}
         >
           <Heart className="h-4 w-4 mr-2" />

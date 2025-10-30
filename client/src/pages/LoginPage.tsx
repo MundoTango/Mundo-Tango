@@ -10,8 +10,6 @@ import { useToast } from "@/hooks/use-toast";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [twoFactorCode, setTwoFactorCode] = useState("");
-  const [requires2FA, setRequires2FA] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const { toast } = useToast();
@@ -21,25 +19,17 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      await login(email, password, twoFactorCode || undefined);
+      await login(email, password);
       toast({
         title: "Welcome back!",
         description: "You've successfully logged in.",
       });
     } catch (error: any) {
-      if (error.message === "2FA_REQUIRED") {
-        setRequires2FA(true);
-        toast({
-          title: "Two-factor authentication required",
-          description: "Please enter your 2FA code.",
-        });
-      } else {
-        toast({
-          title: "Login failed",
-          description: error.message || "Invalid credentials",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "Login failed",
+        description: error.message || "Invalid credentials",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -80,21 +70,6 @@ export default function LoginPage() {
                 data-testid="input-password"
               />
             </div>
-            {requires2FA && (
-              <div className="space-y-2">
-                <Label htmlFor="twoFactorCode">Two-Factor Code</Label>
-                <Input
-                  id="twoFactorCode"
-                  type="text"
-                  placeholder="123456"
-                  value={twoFactorCode}
-                  onChange={(e) => setTwoFactorCode(e.target.value)}
-                  maxLength={6}
-                  disabled={isLoading}
-                  data-testid="input-2fa"
-                />
-              </div>
-            )}
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
             <Button

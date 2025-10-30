@@ -1,149 +1,131 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useLocation } from "wouter";
-import type { SelectUser } from "@shared/schema";
+import { User, Session, AuthError } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
+import type { Profile } from "@shared/supabase-types";
 
 interface AuthContextType {
-  user: SelectUser | null;
+  user: User | null;
+  profile: Profile | null;
+  session: Session | null;
   isLoading: boolean;
-  login: (email: string, password: string, twoFactorCode?: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   register: (data: { name: string; username: string; email: string; password: string }) => Promise<void>;
   logout: () => Promise<void>;
-  refreshAuth: () => Promise<void>;
+  updateProfile: (updates: Partial<Profile>) => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<SelectUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [, navigate] = useLocation();
 
-  const refreshAuth = async () => {
+  const loadProfile = async (userId: string) => {
     try {
-      const refreshToken = localStorage.getItem("refreshToken");
-      if (!refreshToken) {
-        setIsLoading(false);
-        return;
-      }
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
 
-      const response = await fetch("/api/auth/refresh", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken }),
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        setUser(null);
-        setIsLoading(false);
-        return;
-      }
-
-      const data = await response.json();
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("refreshToken", data.refreshToken);
-
-      const userResponse = await fetch("/api/auth/me", {
-        headers: {
-          Authorization: `Bearer ${data.accessToken}`,
-        },
-        credentials: "include",
-      });
-
-      if (userResponse.ok) {
-        const userData = await userResponse.json();
-        setUser(userData.user);
-      }
+      if (error) throw error;
+      setProfile(data);
     } catch (error) {
-      console.error("Auth refresh error:", error);
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      setUser(null);
-    } finally {
-      setIsLoading(false);
+      console.error("Error loading profile:", error);
+      setProfile(null);
     }
   };
 
   useEffect(() => {
-    refreshAuth();
-
-    const interval = setInterval(() => {
-      const token = localStorage.getItem("accessToken");
-      if (token) {
-        refreshAuth();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        loadProfile(session.user.id).finally(() => setIsLoading(false));
+      } else {
+        setIsLoading(false);
       }
-    }, 14 * 60 * 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const login = async (email: string, password: string, twoFactorCode?: string) => {
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, twoFactorCode }),
-      credentials: "include",
     });
 
-    const data = await response.json();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        loadProfile(session.user.id);
+      } else {
+        setProfile(null);
+      }
+    });
 
-    if (!response.ok) {
-      throw new Error(data.message || "Login failed");
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const login = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      throw new Error(error.message || "Login failed");
     }
 
-    if (data.requires2FA) {
-      throw new Error("2FA_REQUIRED");
-    }
-
-    localStorage.setItem("accessToken", data.accessToken);
-    localStorage.setItem("refreshToken", data.refreshToken);
-    setUser(data.user);
     navigate("/");
   };
 
   const register = async (registerData: { name: string; username: string; email: string; password: string }) => {
-    const response = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(registerData),
-      credentials: "include",
+    const { error } = await supabase.auth.signUp({
+      email: registerData.email,
+      password: registerData.password,
+      options: {
+        data: {
+          username: registerData.username,
+          full_name: registerData.name,
+        },
+      },
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Registration failed");
+    if (error) {
+      throw new Error(error.message || "Registration failed");
     }
 
     navigate("/login");
   };
 
   const logout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setProfile(null);
+    setSession(null);
+    navigate("/login");
+  };
+
+  const updateProfile = async (updates: Partial<Profile>) => {
+    if (!user) return { error: new Error("No user logged in") };
+
     try {
-      const refreshToken = localStorage.getItem("refreshToken");
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-        body: JSON.stringify({ refreshToken }),
-        credentials: "include",
-      });
+      const { error } = await supabase
+        .from("profiles")
+        .update(updates)
+        .eq("id", user.id);
+
+      if (error) throw error;
+
+      setProfile((prev) => (prev ? { ...prev, ...updates } : null));
+      return { error: null };
     } catch (error) {
-      console.error("Logout error:", error);
-    } finally {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      setUser(null);
-      navigate("/login");
+      return { error: error as Error };
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout, refreshAuth }}>
+    <AuthContext.Provider value={{ user, profile, session, isLoading, login, register, logout, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );
