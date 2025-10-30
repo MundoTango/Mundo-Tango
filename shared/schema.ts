@@ -297,6 +297,53 @@ export const notifications = pgTable("notifications", {
 }));
 
 // ============================================================================
+// AUTHENTICATION & SECURITY
+// ============================================================================
+
+export const refreshTokens = pgTable("refresh_tokens", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  token: text("token").notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("refresh_tokens_user_idx").on(table.userId),
+  tokenIdx: index("refresh_tokens_token_idx").on(table.token),
+}));
+
+export const emailVerificationTokens = pgTable("email_verification_tokens", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  token: text("token").notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("email_verification_tokens_user_idx").on(table.userId),
+  tokenIdx: index("email_verification_tokens_token_idx").on(table.token),
+}));
+
+export const passwordResetTokens = pgTable("password_reset_tokens", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  token: text("token").notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("password_reset_tokens_user_idx").on(table.userId),
+  tokenIdx: index("password_reset_tokens_token_idx").on(table.token),
+}));
+
+export const twoFactorSecrets = pgTable("two_factor_secrets", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  secret: text("secret").notNull(),
+  backupCodes: text("backup_codes").array(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("two_factor_secrets_user_idx").on(table.userId),
+}));
+
+// ============================================================================
 // AI INTERACTIONS
 // ============================================================================
 
@@ -501,3 +548,60 @@ export const insertLifeCeoChatMessageSchema = createInsertSchema(lifeCeoChatMess
 });
 export type InsertLifeCeoChatMessage = z.infer<typeof insertLifeCeoChatMessageSchema>;
 export type SelectLifeCeoChatMessage = typeof lifeCeoChatMessages.$inferSelect;
+
+// Refresh Tokens
+export const insertRefreshTokenSchema = createInsertSchema(refreshTokens).omit({ 
+  id: true, 
+  createdAt: true 
+});
+export type InsertRefreshToken = z.infer<typeof insertRefreshTokenSchema>;
+export type SelectRefreshToken = typeof refreshTokens.$inferSelect;
+
+// Email Verification Tokens
+export const insertEmailVerificationTokenSchema = createInsertSchema(emailVerificationTokens).omit({ 
+  id: true, 
+  createdAt: true 
+});
+export type InsertEmailVerificationToken = z.infer<typeof insertEmailVerificationTokenSchema>;
+export type SelectEmailVerificationToken = typeof emailVerificationTokens.$inferSelect;
+
+// Password Reset Tokens
+export const insertPasswordResetTokenSchema = createInsertSchema(passwordResetTokens).omit({ 
+  id: true, 
+  createdAt: true 
+});
+export type InsertPasswordResetToken = z.infer<typeof insertPasswordResetTokenSchema>;
+export type SelectPasswordResetToken = typeof passwordResetTokens.$inferSelect;
+
+// Two Factor Secrets
+export const insertTwoFactorSecretSchema = createInsertSchema(twoFactorSecrets).omit({ 
+  id: true, 
+  createdAt: true 
+});
+export type InsertTwoFactorSecret = z.infer<typeof insertTwoFactorSecretSchema>;
+export type SelectTwoFactorSecret = typeof twoFactorSecrets.$inferSelect;
+
+// Follows
+export const insertFollowSchema = createInsertSchema(follows).omit({ 
+  id: true, 
+  createdAt: true 
+});
+export type InsertFollow = z.infer<typeof insertFollowSchema>;
+export type SelectFollow = typeof follows.$inferSelect;
+
+// Post Likes
+export const insertPostLikeSchema = createInsertSchema(postLikes).omit({ 
+  id: true, 
+  createdAt: true 
+});
+export type InsertPostLike = z.infer<typeof insertPostLikeSchema>;
+export type SelectPostLike = typeof postLikes.$inferSelect;
+
+// Chat Room Users
+export const insertChatRoomUserSchema = createInsertSchema(chatRoomUsers).omit({ 
+  id: true, 
+  joinedAt: true,
+  lastReadAt: true,
+});
+export type InsertChatRoomUser = z.infer<typeof insertChatRoomUserSchema>;
+export type SelectChatRoomUser = typeof chatRoomUsers.$inferSelect;

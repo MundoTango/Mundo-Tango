@@ -32,15 +32,15 @@
 
   --sidebar-border: 240 5% 87%;
 
-  --sidebar-primary: 195 85% 45%;
+  --sidebar-primary: 350 70% 45%;
 
-  --sidebar-primary-foreground: 195 85% 98%;
+  --sidebar-primary-foreground: 350 70% 98%;
 
   --sidebar-accent: 240 5% 88%;
 
   --sidebar-accent-foreground: 240 8% 20%;
 
-  --sidebar-ring: 195 85% 45%;
+  --sidebar-ring: 350 70% 45%;
 
   --popover: 0 0% 92%;
 
@@ -48,33 +48,33 @@
 
   --popover-border: 240 5% 85%;
 
-  --primary: 195 85% 45%;
+  --primary: 350 70% 45%;
 
-  --primary-foreground: 195 85% 98%;
+  --primary-foreground: 350 70% 98%;
 
-  --secondary: 240 6% 86%;
+  --secondary: 275 55% 50%;
 
-  --secondary-foreground: 240 8% 20%;
+  --secondary-foreground: 275 55% 98%;
 
   --muted: 240 8% 90%;
 
   --muted-foreground: 240 6% 35%;
 
-  --accent: 195 18% 88%;
+  --accent: 40 85% 55%;
 
-  --accent-foreground: 240 8% 22%;
+  --accent-foreground: 40 85% 10%;
 
   --destructive: 0 72% 42%;
 
   --destructive-foreground: 0 72% 98%;
 
   --input: 240 8% 75%;
-  --ring: 195 85% 45%;
-  --chart-1: 195 85% 35%;
-  --chart-2: 165 75% 38%;
-  --chart-3: 225 70% 42%;
-  --chart-4: 285 65% 45%;
-  --chart-5: 15 80% 48%;
+  --ring: 350 70% 45%;
+  --chart-1: 350 70% 40%;
+  --chart-2: 275 60% 50%;
+  --chart-3: 40 80% 55%;
+  --chart-4: 320 65% 48%;
+  --chart-5: 15 75% 50%;
 
   --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-serif: "Playfair Display", Georgia, serif;
@@ -151,15 +151,15 @@
 
   --sidebar-border: 240 4% 16%;
 
-  --sidebar-primary: 195 85% 45%;
+  --sidebar-primary: 350 65% 50%;
 
-  --sidebar-primary-foreground: 195 85% 98%;
+  --sidebar-primary-foreground: 350 65% 98%;
 
   --sidebar-accent: 240 5% 16%;
 
   --sidebar-accent-foreground: 240 4% 85%;
 
-  --sidebar-ring: 195 85% 55%;
+  --sidebar-ring: 350 65% 55%;
 
   --popover: 240 5% 14%;
 
@@ -167,33 +167,33 @@
 
   --popover-border: 240 4% 18%;
 
-  --primary: 195 85% 45%;
+  --primary: 350 65% 50%;
 
-  --primary-foreground: 195 85% 98%;
+  --primary-foreground: 350 65% 98%;
 
-  --secondary: 240 5% 18%;
+  --secondary: 275 50% 55%;
 
-  --secondary-foreground: 240 4% 85%;
+  --secondary-foreground: 275 50% 98%;
 
   --muted: 240 5% 16%;
 
   --muted-foreground: 240 4% 65%;
 
-  --accent: 195 15% 18%;
+  --accent: 40 80% 60%;
 
-  --accent-foreground: 240 4% 82%;
+  --accent-foreground: 40 80% 12%;
 
   --destructive: 0 72% 42%;
 
   --destructive-foreground: 0 72% 98%;
 
   --input: 240 5% 28%;
-  --ring: 195 85% 55%;
-  --chart-1: 195 85% 65%;
-  --chart-2: 165 75% 62%;
-  --chart-3: 225 70% 68%;
-  --chart-4: 285 65% 70%;
-  --chart-5: 15 80% 65%;
+  --ring: 350 65% 55%;
+  --chart-1: 350 65% 60%;
+  --chart-2: 275 55% 65%;
+  --chart-3: 40 75% 65%;
+  --chart-4: 320 60% 60%;
+  --chart-5: 15 70% 65%;
 
   --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.15);
   --shadow-xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.20);
