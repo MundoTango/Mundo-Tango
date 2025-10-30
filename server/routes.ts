@@ -239,16 +239,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/events", async (req: Request, res: Response) => {
     try {
       const { city, eventType, startDate, endDate, limit = "20", offset = "0" } = req.query;
-      const events = await storage.getEvents({
-        city: city as string,
-        eventType: eventType as string,
-        startDate: startDate ? new Date(startDate as string) : undefined,
-        endDate: endDate ? new Date(endDate as string) : undefined,
+      
+      const params: any = {
         limit: parseInt(limit as string),
         offset: parseInt(offset as string)
-      });
-      res.json(events);
+      };
+      
+      if (city) params.city = city as string;
+      if (eventType) params.eventType = eventType as string;
+      if (startDate) params.startDate = new Date(startDate as string);
+      if (endDate) params.endDate = new Date(endDate as string);
+      
+      const events = await storage.getEvents(params);
+      res.json({ events, total: events.length });
     } catch (error) {
+      console.error("Error fetching events:", error);
       res.status(500).json({ message: "Failed to fetch events" });
     }
   });
@@ -430,6 +435,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const conversations = await storage.getUserConversations(req.userId!);
       res.json(conversations);
     } catch (error) {
+      console.error("Error fetching conversations:", error);
       res.status(500).json({ message: "Failed to fetch conversations" });
     }
   });

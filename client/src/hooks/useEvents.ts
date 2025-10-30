@@ -24,7 +24,8 @@ export function useEvents(filters?: EventFilters) {
     queryFn: async () => {
       const res = await fetch(url, { credentials: "include" });
       if (!res.ok) throw new Error("Failed to fetch events");
-      return res.json();
+      const data = await res.json();
+      return data.events || [];
     },
   });
 }

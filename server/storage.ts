@@ -1,4 +1,4 @@
-import { drizzle } from "drizzle-orm/neon-serverless";
+import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
 import { eq, and, gt, desc, asc, or, ilike, inArray, sql as sqlOp, lt, gte, lte } from "drizzle-orm";
 import {
@@ -60,7 +60,7 @@ if (!process.env.DATABASE_URL) {
 }
 
 const sql = neon(process.env.DATABASE_URL);
-const db = drizzle(sql as any);
+const db = drizzle(sql);
 
 export interface IStorage {
   getUserById(id: number): Promise<SelectUser | undefined>;
