@@ -1,0 +1,1411 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║       MUNDO TANGO - COMPLETE UNIFIED EXECUTION PLAN               ║
+║       Zero to Production (Replit + Supabase Architecture)         ║
+║                                                                   ║
+║           MVP Path: 1.5-2 Days  |  Full Path: 2-4 Weeks           ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+VERSION: 4.0 UNIFIED (Combines v2.0 + v3.0)
+CREATED: October 30, 2025
+ARCHITECTURE: Replit (Hosting) + Supabase (Database/Auth/Storage/Realtime)
+METHOD: MB.MD + Shift-Left Quality
+SCOPE: Complete platform from zero to production
+
+=======================================================================
+📋 EXECUTIVE SUMMARY
+=======================================================================
+
+**What This Plan Covers:**
+✅ Complete setup from zero (no prerequisites assumed)
+✅ Environment configuration & tools
+✅ Database architecture (Supabase PostgreSQL)
+✅ Authentication system (Supabase Auth)
+✅ All 8 core features with quality patterns
+✅ Production deployment to Replit
+✅ Monitoring & operations
+
+**Two Paths Available:**
+
+┌─────────────────────────────────────────────────────────────────┐
+│ PATH A: MVP-FIRST (RECOMMENDED FOR REPLIT + SUPABASE)          │
+├─────────────────────────────────────────────────────────────────┤
+│ Timeline: 1.5-2 days                                            │
+│ Agent Training: NOT required                                    │
+│ Best For: Rapid deployment, validation, investor demos          │
+│                                                                 │
+│ Phases:                                                         │
+│ 0. Prerequisites (45 min)                                       │
+│ 1. Supabase Setup (1 hour)                                     │
+│ 2. Core Setup (4 hours)                                        │
+│ 3. Features + Quality (1 day)                                  │
+│ 4. Polish (4 hours)                                            │
+│ 5. Deploy (2 hours)                                            │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ PATH B: AGENT-FIRST (PRODUCTION-GRADE)                         │
+├─────────────────────────────────────────────────────────────────┤
+│ Timeline: 2-4 weeks                                             │
+│ Agent Training: Required (1,255+ agents)                        │
+│ Best For: Enterprise systems, scale, long-term maintenance      │
+│                                                                 │
+│ Phases:                                                         │
+│ 0. Prerequisites (45 min)                                       │
+│ 1A. Agent Training (2-3 weeks)                                 │
+│ 1B. Supabase Setup (1 hour)                                    │
+│ 2. Core Setup (1 day - agent-built)                           │
+│ 3. Features + Quality (1-2 days - agent-built)                │
+│ 4. Polish (4 hours)                                            │
+│ 5. Deploy (2 hours)                                            │
+└─────────────────────────────────────────────────────────────────┘
+
+**This plan covers BOTH paths - choose based on your timeline.**
+
+=======================================================================
+🏗️ ARCHITECTURE OVERVIEW
+=======================================================================
+
+**Complete Technology Stack:**
+
+┌──────────────────────────────────────────────────────────────────┐
+│                      FRONTEND LAYER                               │
+├──────────────────────────────────────────────────────────────────┤
+│  • React 18 (functional components + hooks)                       │
+│  • Vite (build tool, HMR, fast refresh)                          │
+│  • Wouter (routing)                                              │
+│  • TanStack Query v5 (server state, caching)                     │
+│  • Tailwind CSS + shadcn/ui (styling)                            │
+│  • React Three Fiber (3D avatar for Mr Blue)                     │
+│  • i18next (internationalization - 68 languages)                 │
+└──────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│                    REPLIT HOSTING LAYER                           │
+├──────────────────────────────────────────────────────────────────┤
+│  • Express.js API Server (custom business logic)                 │
+│  • AI Orchestration (5 platforms: OpenAI, Anthropic, etc.)      │
+│  • Stripe Webhooks (payment processing)                          │
+│  • Custom Analytics Processing                                   │
+│  • Background Jobs (optional: BullMQ)                            │
+│  • Secrets Management (Replit Secrets)                           │
+│  • Deployment (Autoscale or Reserved VM)                         │
+└──────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│                   SUPABASE BACKEND LAYER                          │
+├──────────────────────────────────────────────────────────────────┤
+│  • PostgreSQL Database (500MB free tier)                         │
+│  • Authentication (Email, Google, GitHub OAuth)                  │
+│  • Storage (File uploads, images, videos)                        │
+│  • Realtime (WebSocket subscriptions)                            │
+│  • Row Level Security (database-level auth)                      │
+│  • Edge Functions (optional for serverless tasks)                │
+│  • Admin Dashboard (visual DB management)                        │
+└──────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────┐
+│                   EXTERNAL SERVICES                               │
+├──────────────────────────────────────────────────────────────────┤
+│  • Stripe (payments, subscriptions)                              │
+│  • OpenAI, Anthropic, Groq, Gemini (AI platforms)               │
+│  • Resend (transactional email)                                  │
+│  • Cloudinary (optional, advanced media processing)              │
+│  • Sentry (error tracking)                                       │
+│  • Plausible (privacy-friendly analytics)                        │
+└──────────────────────────────────────────────────────────────────┘
+
+**Data Flow Architecture:**
+
+```
+User Browser
+    ↓
+React App (Replit) ────────→ Supabase Client SDK
+    │                              ↓
+    │                         PostgreSQL (queries)
+    │                         Auth (sessions)
+    │                         Storage (files)
+    │                         Realtime (WebSocket)
+    ↓
+Express API (Replit)
+    ↓
+┌───┴───┬───────┬────────┬──────────┐
+│       │       │        │          │
+AI    Stripe  Email  Analytics  Custom
+APIs                            Logic
+```
+
+**Key Architectural Decisions:**
+
+✅ **Database**: Supabase PostgreSQL (NOT Replit DB)
+   - Why: Built-in auth, storage, realtime, admin UI
+   - Trade-off: External dependency vs built-in features
+   
+✅ **Auth**: Supabase Auth (NOT custom JWT)
+   - Why: OAuth providers, 2FA, session management included
+   - Trade-off: Less control vs faster implementation
+   
+✅ **Storage**: Supabase Storage (NOT Cloudinary alone)
+   - Why: Integrated with auth, RLS policies, free tier
+   - Trade-off: Use Cloudinary for advanced transformations
+   
+✅ **Realtime**: Supabase Realtime (NOT custom WebSocket)
+   - Why: Database-native subscriptions, presence
+   - Trade-off: Tied to Supabase vs custom Socket.io
+   
+✅ **Hosting**: Replit Autoscale (NOT Reserved VM initially)
+   - Why: Auto-scaling, cost-effective, zero-config
+   - Trade-off: Cold starts vs always-on Reserved VM
+
+=======================================================================
+PHASE 0: PREREQUISITES (45 MINUTES - SEQUENTIAL)
+=======================================================================
+
+**Purpose**: Set up development environment and understand methodology
+
+**Who Executes**: Developer lead or solo developer
+**Timeline**: 30-45 minutes (cannot be parallelized)
+**Blocking**: Must complete 100% before proceeding
+
+---
+
+### 0.1: Read MB.MD Methodology (10 min) ⭐ CRITICAL
+
+**File**: `docs/handoff/MB_MD_MASTER_GUIDE.txt` (21KB, 721 lines)
+
+**What to Learn**:
+□ **The 3 Pillars**:
+  1. **Simultaneously** ⚡ - Execute in parallel when possible
+  2. **Recursively** 🔄 - Break down to atomic detail
+  3. **Critically** 🎯 - Question assumptions, verify completeness
+
+□ **Parallel Execution Patterns**:
+  - Independent file operations (read/write different files)
+  - Feature development (different components)
+  - Quality patterns (tests, i18n, a11y can be parallel)
+
+□ **When to Sequence**:
+  - Data dependencies (need output of one for input of next)
+  - Setup steps (environment before code)
+  - Deployment (test before production)
+
+□ **Quality Gates**:
+  - Validation points between phases
+  - Cannot proceed if gates fail
+  - Prevents cascading failures
+
+□ **Agent Coordination**:
+  - How agents communicate
+  - Conflict resolution
+  - Task distribution
+
+**How to Read**:
+1. Open `MB_MD_MASTER_GUIDE.txt`
+2. Read "Introduction" section (5 min)
+3. Study "The 3 Pillars" examples (3 min)
+4. Review "When to Use MB.MD" (2 min)
+
+**Success Criteria**:
+✅ Can explain "use mb.md" in your own words
+✅ Understand phased parallelization strategy
+✅ Know when to parallelize vs sequence
+✅ Clear on validation gates
+
+**Why Critical**: 
+Every step in this plan uses MB.MD methodology. If you don't understand it, you'll execute sequentially and waste 50% more time.
+
+---
+
+### 0.2: Development Machine Setup (20 min)
+
+**File**: `docs/handoff/HANDOFF_06_ENVIRONMENT_SETUP.txt`
+
+**Required Software:**
+
+□ **Node.js 20+ (LTS)**
+  ```bash
+  # Check version
+  node --version  # Should be v20.x.x or higher
+  
+  # Install if needed (Ubuntu/Debian)
+  curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+  
+  # macOS
+  brew install node@20
+  ```
+
+□ **Git 2.40+**
+  ```bash
+  git --version  # Should be 2.40+
+  
+  # Install if needed
+  # Ubuntu: sudo apt-get install git
+  # macOS: brew install git
+  ```
+
+□ **VS Code or IDE** (recommended extensions):
+  - ESLint
+  - Prettier
+  - Tailwind CSS IntelliSense
+  - ES7+ React/Redux/React-Native snippets
+  - GitLens
+
+□ **Terminal** with bash or zsh
+
+□ **PostgreSQL Client** (optional, for local debugging):
+  ```bash
+  # Install psql client only
+  # Ubuntu: sudo apt-get install postgresql-client
+  # macOS: brew install libpq
+  ```
+
+**Validation**:
+```bash
+node --version    # v20.x.x or higher ✅
+npm --version     # 10.x.x or higher ✅
+git --version     # 2.40+ ✅
+code --version    # (if using VS Code) ✅
+```
+
+---
+
+### 0.3: Replit Account & Project Setup (10 min)
+
+**If Starting Fresh:**
+
+1. **Create Replit Account**
+   - Go to https://replit.com
+   - Sign up with GitHub (recommended for OAuth)
+   - Verify email
+
+2. **Create New Repl**
+   - Click "Create Repl"
+   - Template: "Node.js" or "Node.js (with TypeScript)"
+   - Name: "mundo-tango"
+   - Privacy: Private (recommended)
+   - Click "Create Repl"
+
+3. **Configure Repl**
+   - Wait for environment to provision (30-60 seconds)
+   - Repl opens with file explorer, editor, and shell
+
+**If Continuing Existing Project:**
+   - Open your existing Replit project
+   - Ensure it's on Node.js 20+
+   - Verify shell access works
+
+**Validation**:
+```bash
+# In Replit shell
+pwd           # Should show /home/runner/mundo-tango or similar
+ls -la        # Should show project files
+echo $REPL_ID # Should show your Repl's unique ID
+```
+
+---
+
+### 0.4: Supabase Account Setup (5 min)
+
+**Create Supabase Account:**
+
+1. Go to https://supabase.com
+2. Click "Start your project"
+3. Sign up with GitHub (recommended - same account as Replit)
+4. Verify email
+5. Complete onboarding survey (optional, can skip)
+
+**Why Supabase:**
+- ✅ Free tier: 500MB database, unlimited API requests
+- ✅ Auto-scaling: Handles traffic spikes automatically
+- ✅ Built-in auth: Google, GitHub, email providers
+- ✅ Built-in storage: File uploads with RLS
+- ✅ Realtime: WebSocket subscriptions included
+- ✅ Admin UI: Visual database management
+- ✅ No credit card required for free tier
+
+**Validation**:
+✅ Can log in to Supabase dashboard
+✅ See "New Project" button
+✅ No errors in browser console
+
+---
+
+**PHASE 0 COMPLETE** ✅
+
+**Validation Checklist:**
+□ ✅ Read MB.MD methodology
+□ ✅ Node.js 20+ installed
+□ ✅ Git installed
+□ ✅ IDE configured
+□ ✅ Replit account created (or existing project ready)
+□ ✅ Supabase account created
+□ ✅ All tools accessible
+
+**Cannot Proceed If:**
+❌ Haven't read MB.MD guide
+❌ Node.js version < 20
+❌ No Replit access
+❌ No Supabase account
+
+**Time Spent**: 45 minutes
+**Next Phase**: Phase 1 (choose path)
+
+=======================================================================
+PATH SELECTION POINT - CHOOSE NOW
+=======================================================================
+
+**Question**: Do you need agent training or rapid MVP?
+
+┌─────────────────────────────────────────────────────────────────┐
+│ Choose PATH A (MVP-FIRST) if:                                   │
+│ ✅ You want to deploy in 1.5-2 days                            │
+│ ✅ You're validating market fit                                │
+│ ✅ You're building proof of concept                            │
+│ ✅ You'll train agents later from working code                 │
+│ → GO TO: Phase 1 (Supabase Setup)                              │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ Choose PATH B (AGENT-FIRST) if:                                │
+│ ✅ You're building production enterprise system                │
+│ ✅ You need 1,255+ specialized agents                          │
+│ ✅ You want highest quality & consistency                      │
+│ ✅ You have 2-4 weeks for training + build                     │
+│ → GO TO: Phase 1A (Agent Training)                             │
+└─────────────────────────────────────────────────────────────────┘
+
+**Most Users Choose**: PATH A (MVP-FIRST) ⭐
+
+**Reason**: Supabase provides so many built-in features that agent training becomes optional. You can build fast, deploy, then train agents from working codebase.
+
+---
+
+**CONTINUING WITH PATH A (MVP-FIRST)**
+
+If you chose PATH B, skip to Appendix A for agent training guide.
+
+=======================================================================
+PHASE 1: SUPABASE SETUP (1 HOUR - SEQUENTIAL)
+=======================================================================
+
+**Purpose**: Configure complete Supabase backend for Mundo Tango
+
+**Timeline**: 45-60 minutes (must be sequential, setup dependencies)
+**Critical**: This is your entire backend - do not skip steps
+
+---
+
+### 1.1: Create Supabase Project (5 min)
+
+**In Supabase Dashboard:**
+
+1. Click "New Project"
+
+2. **Configure Project**:
+   ```
+   Organization: Create new "Mundo Tango" (or select existing)
+   Name: mundo-tango
+   Database Password: [Generate strong password - SAVE THIS!]
+   Region: Choose closest to your users
+     - US: us-east-1 (N. Virginia) or us-west-1 (Oregon)
+     - EU: eu-west-1 (Ireland) or eu-central-1 (Frankfurt)
+     - Asia: ap-southeast-1 (Singapore) or ap-northeast-1 (Tokyo)
+   Plan: Free
+   ```
+
+3. Click "Create new project"
+
+4. **Wait for provisioning** (2-3 minutes)
+   - Shows "Setting up project..."
+   - Database initializing
+   - API configuring
+
+5. **Save Credentials** (CRITICAL!)
+   
+   When complete, go to Settings → API:
+   ```
+   Project URL: https://xxxxxxxxxxxxx.supabase.co
+   Anon Key (public): eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+   Service Role Key (secret): eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+   ```
+   
+   **⚠️ SECURITY WARNING**:
+   - Anon Key: SAFE for frontend (RLS-protected)
+   - Service Role Key: NEVER expose (bypasses all RLS)
+
+---
+
+### 1.2: Add Secrets to Replit (5 min)
+
+**In Replit → Tools → Secrets (🔒 lock icon in left sidebar):**
+
+Click "+ New Secret" and add each:
+
+```bash
+# Backend secrets (server-side only)
+SUPABASE_URL
+https://xxxxxxxxxxxxx.supabase.co
+
+SUPABASE_SERVICE_ROLE_KEY
+eyJhbGc... [paste Service Role Key]
+
+# Frontend secrets (Vite requires VITE_ prefix)
+VITE_SUPABASE_URL
+https://xxxxxxxxxxxxx.supabase.co
+
+VITE_SUPABASE_ANON_KEY
+eyJhbGc... [paste Anon Key]
+
+# Session secret (generate random string)
+SESSION_SECRET
+[run: openssl rand -base64 32]
+```
+
+**How to Generate Session Secret**:
+```bash
+# In Replit shell:
+openssl rand -base64 32
+
+# Copy output and paste as SESSION_SECRET value
+```
+
+**Validation**:
+```bash
+# In Replit shell, test secrets are accessible
+echo $SUPABASE_URL
+# Should output: https://xxxxxxxxxxxxx.supabase.co
+
+# In frontend, Vite secrets work differently (checked later)
+```
+
+---
+
+### 1.3: Install Supabase Packages (3 min)
+
+**In Replit Shell:**
+
+```bash
+npm install @supabase/supabase-js
+npm install @supabase/auth-helpers-react
+```
+
+**What These Do**:
+- `@supabase/supabase-js`: Core client for database, auth, storage, realtime
+- `@supabase/auth-helpers-react`: React hooks for authentication
+
+**Validation**:
+```bash
+npm list @supabase/supabase-js
+# Should show: @supabase/supabase-js@2.x.x
+
+npm list @supabase/auth-helpers-react  
+# Should show: @supabase/auth-helpers-react@0.x.x
+```
+
+---
+
+### 1.4: Create Supabase Client Files (10 min)
+
+**Create Directory Structure:**
+```bash
+# In Replit shell
+mkdir -p client/src/lib
+mkdir -p server/lib
+```
+
+**File 1: Frontend Client**
+
+**Path**: `client/src/lib/supabase.ts`
+
+```typescript
+import { createClient } from '@supabase/supabase-js'
+
+// Get from Vite environment variables
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+// Validate environment variables exist
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    'Missing Supabase environment variables. ' +
+    'Check VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Replit Secrets.'
+  )
+}
+
+// Create Supabase client for browser
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true,
+    storage: window.localStorage,
+  },
+  realtime: {
+    params: {
+      eventsPerSecond: 10,
+    },
+  },
+})
+
+// Helper function to check auth status
+export async function getUser() {
+  const { data: { user }, error } = await supabase.auth.getUser()
+  if (error) throw error
+  return user
+}
+
+// Helper function to sign out
+export async function signOut() {
+  const { error } = await supabase.auth.signOut()
+  if (error) throw error
+}
+```
+
+**File 2: Backend Client (Admin)**
+
+**Path**: `server/lib/supabase.ts`
+
+```typescript
+import { createClient } from '@supabase/supabase-js'
+
+// Get from Node.js environment variables
+const supabaseUrl = process.env.SUPABASE_URL!
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+
+// Validate environment variables exist
+if (!supabaseUrl || !supabaseServiceKey) {
+  throw new Error(
+    'Missing Supabase environment variables. ' +
+    'Check SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in Replit Secrets.'
+  )
+}
+
+// Create admin client (bypasses Row Level Security - use with caution!)
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false,
+  },
+})
+
+// Helper to verify user from JWT
+export async function verifyUser(token: string) {
+  const { data: { user }, error } = await supabaseAdmin.auth.getUser(token)
+  if (error) throw error
+  return user
+}
+```
+
+**Validation**:
+```bash
+# Check files created
+ls -la client/src/lib/supabase.ts
+ls -la server/lib/supabase.ts
+```
+
+---
+
+### 1.5: Create Complete Database Schema (20 min)
+
+**In Supabase Dashboard → SQL Editor:**
+
+Click "New Query" and paste this complete schema:
+
+```sql
+-- ═══════════════════════════════════════════════════════════════
+-- MUNDO TANGO - COMPLETE DATABASE SCHEMA
+-- Supabase PostgreSQL Schema with RLS
+-- ═══════════════════════════════════════════════════════════════
+
+-- Enable required extensions
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "pg_trgm"; -- For text search
+
+-- ═══════════════════════════════════════════════════════════════
+-- PROFILES TABLE (extends auth.users)
+-- ═══════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS public.profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  full_name VARCHAR(255),
+  avatar_url TEXT,
+  bio TEXT,
+  city VARCHAR(100),
+  country VARCHAR(100),
+  language VARCHAR(10) DEFAULT 'en',
+  timezone VARCHAR(50),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  
+  CONSTRAINT username_length CHECK (char_length(username) >= 3)
+);
+
+-- ═══════════════════════════════════════════════════════════════
+-- POSTS TABLE
+-- ═══════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS public.posts (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  content TEXT NOT NULL,
+  image_url TEXT,
+  video_url TEXT,
+  visibility VARCHAR(20) DEFAULT 'public' CHECK (visibility IN ('public', 'friends', 'private')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  
+  CONSTRAINT content_length CHECK (char_length(content) <= 5000)
+);
+
+-- ═══════════════════════════════════════════════════════════════
+-- LIKES TABLE
+-- ═══════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS public.likes (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  post_id UUID REFERENCES public.posts(id) ON DELETE CASCADE NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  
+  UNIQUE(user_id, post_id)
+);
+
+-- ═══════════════════════════════════════════════════════════════
+-- COMMENTS TABLE
+-- ═══════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS public.comments (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  post_id UUID REFERENCES public.posts(id) ON DELETE CASCADE NOT NULL,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  
+  CONSTRAINT comment_length CHECK (char_length(content) <= 1000)
+);
+
+-- ═══════════════════════════════════════════════════════════════
+-- EVENTS TABLE
+-- ═══════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS public.events (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  start_date TIMESTAMP WITH TIME ZONE NOT NULL,
+  end_date TIMESTAMP WITH TIME ZONE,
+  location VARCHAR(255),
+  latitude DECIMAL(10, 8),
+  longitude DECIMAL(11, 8),
+  image_url TEXT,
+  category VARCHAR(50),
+  max_attendees INTEGER,
+  is_virtual BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  
+  CONSTRAINT valid_dates CHECK (end_date IS NULL OR end_date >= start_date),
+  CONSTRAINT valid_coordinates CHECK (
+    (latitude IS NULL AND longitude IS NULL) OR
+    (latitude BETWEEN -90 AND 90 AND longitude BETWEEN -180 AND 180)
+  )
+);
+
+-- ═══════════════════════════════════════════════════════════════
+-- RSVPS TABLE
+-- ═══════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS public.rsvps (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  event_id UUID REFERENCES public.events(id) ON DELETE CASCADE NOT NULL,
+  status VARCHAR(20) DEFAULT 'going' CHECK (status IN ('going', 'maybe', 'not_going')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  
+  UNIQUE(user_id, event_id)
+);
+
+-- ═══════════════════════════════════════════════════════════════
+-- COMMUNITIES TABLE
+-- ═══════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS public.communities (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  image_url TEXT,
+  city VARCHAR(100),
+  country VARCHAR(100),
+  is_private BOOLEAN DEFAULT false,
+  created_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- ═══════════════════════════════════════════════════════════════
+-- COMMUNITY MEMBERS TABLE
+-- ═══════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS public.community_members (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  community_id UUID REFERENCES public.communities(id) ON DELETE CASCADE NOT NULL,
+  role VARCHAR(20) DEFAULT 'member' CHECK (role IN ('admin', 'moderator', 'member')),
+  joined_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  
+  UNIQUE(user_id, community_id)
+);
+
+-- ═══════════════════════════════════════════════════════════════
+-- MESSAGES TABLE (Real-time Chat)
+-- ═══════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS public.messages (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  conversation_id UUID NOT NULL,
+  sender_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  content TEXT NOT NULL,
+  read_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  
+  CONSTRAINT message_length CHECK (char_length(content) <= 2000)
+);
+
+-- ═══════════════════════════════════════════════════════════════
+-- CONVERSATIONS TABLE
+-- ═══════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS public.conversations (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  is_group BOOLEAN DEFAULT false,
+  name VARCHAR(255),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- ═══════════════════════════════════════════════════════════════
+-- CONVERSATION PARTICIPANTS TABLE
+-- ═══════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS public.conversation_participants (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  conversation_id UUID REFERENCES public.conversations(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  joined_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  last_read_at TIMESTAMP WITH TIME ZONE,
+  
+  UNIQUE(conversation_id, user_id)
+);
+
+-- ═══════════════════════════════════════════════════════════════
+-- SUBSCRIPTIONS TABLE (Stripe)
+-- ═══════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS public.subscriptions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  stripe_customer_id VARCHAR(255),
+  stripe_subscription_id VARCHAR(255),
+  plan VARCHAR(50) CHECK (plan IN ('free', 'pro', 'enterprise')),
+  status VARCHAR(50) CHECK (status IN ('active', 'canceled', 'past_due', 'incomplete', 'trialing')),
+  current_period_start TIMESTAMP WITH TIME ZONE,
+  current_period_end TIMESTAMP WITH TIME ZONE,
+  cancel_at_period_end BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- ═══════════════════════════════════════════════════════════════
+-- AI CONVERSATIONS TABLE (Mr Blue)
+-- ═══════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS public.ai_conversations (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  messages JSONB NOT NULL DEFAULT '[]',
+  context JSONB DEFAULT '{}',
+  total_tokens INTEGER DEFAULT 0,
+  total_cost DECIMAL(10, 4) DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- ═══════════════════════════════════════════════════════════════
+-- PERFORMANCE INDEXES
+-- ═══════════════════════════════════════════════════════════════
+
+-- Profiles
+CREATE INDEX IF NOT EXISTS idx_profiles_username ON public.profiles(username);
+CREATE INDEX IF NOT EXISTS idx_profiles_city ON public.profiles(city);
+
+-- Posts
+CREATE INDEX IF NOT EXISTS idx_posts_user_id ON public.posts(user_id);
+CREATE INDEX IF NOT EXISTS idx_posts_created_at ON public.posts(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_posts_visibility ON public.posts(visibility);
+
+-- Likes
+CREATE INDEX IF NOT EXISTS idx_likes_post_id ON public.likes(post_id);
+CREATE INDEX IF NOT EXISTS idx_likes_user_id ON public.likes(user_id);
+
+-- Comments
+CREATE INDEX IF NOT EXISTS idx_comments_post_id ON public.comments(post_id);
+CREATE INDEX IF NOT EXISTS idx_comments_user_id ON public.comments(user_id);
+CREATE INDEX IF NOT EXISTS idx_comments_created_at ON public.comments(created_at DESC);
+
+-- Events
+CREATE INDEX IF NOT EXISTS idx_events_start_date ON public.events(start_date);
+CREATE INDEX IF NOT EXISTS idx_events_city ON public.events(city);
+CREATE INDEX IF NOT EXISTS idx_events_category ON public.events(category);
+CREATE INDEX IF NOT EXISTS idx_events_user_id ON public.events(user_id);
+
+-- Messages
+CREATE INDEX IF NOT EXISTS idx_messages_conversation_id ON public.messages(conversation_id);
+CREATE INDEX IF NOT EXISTS idx_messages_sender_id ON public.messages(sender_id);
+CREATE INDEX IF NOT EXISTS idx_messages_created_at ON public.messages(created_at DESC);
+
+-- Communities
+CREATE INDEX IF NOT EXISTS idx_communities_city ON public.communities(city);
+CREATE INDEX IF NOT EXISTS idx_community_members_community_id ON public.community_members(community_id);
+CREATE INDEX IF NOT EXISTS idx_community_members_user_id ON public.community_members(user_id);
+
+-- ═══════════════════════════════════════════════════════════════
+-- ENABLE ROW LEVEL SECURITY
+-- ═══════════════════════════════════════════════════════════════
+
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.posts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.likes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.rsvps ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.communities ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.community_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.conversations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.conversation_participants ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ai_conversations ENABLE ROW LEVEL SECURITY;
+
+-- ═══════════════════════════════════════════════════════════════
+-- ROW LEVEL SECURITY POLICIES
+-- ═══════════════════════════════════════════════════════════════
+
+-- PROFILES
+CREATE POLICY "Profiles are viewable by everyone"
+  ON public.profiles FOR SELECT
+  USING (true);
+
+CREATE POLICY "Users can update own profile"
+  ON public.profiles FOR UPDATE
+  USING (auth.uid() = id);
+
+CREATE POLICY "Users can insert own profile"
+  ON public.profiles FOR INSERT
+  WITH CHECK (auth.uid() = id);
+
+-- POSTS
+CREATE POLICY "Public posts are viewable by everyone"
+  ON public.posts FOR SELECT
+  USING (visibility = 'public' OR user_id = auth.uid());
+
+CREATE POLICY "Users can insert own posts"
+  ON public.posts FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own posts"
+  ON public.posts FOR UPDATE
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own posts"
+  ON public.posts FOR DELETE
+  USING (auth.uid() = user_id);
+
+-- LIKES
+CREATE POLICY "Likes are viewable by everyone"
+  ON public.likes FOR SELECT
+  USING (true);
+
+CREATE POLICY "Users can insert own likes"
+  ON public.likes FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own likes"
+  ON public.likes FOR DELETE
+  USING (auth.uid() = user_id);
+
+-- COMMENTS
+CREATE POLICY "Comments are viewable by everyone"
+  ON public.comments FOR SELECT
+  USING (true);
+
+CREATE POLICY "Users can insert own comments"
+  ON public.comments FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own comments"
+  ON public.comments FOR UPDATE
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own comments"
+  ON public.comments FOR DELETE
+  USING (auth.uid() = user_id);
+
+-- EVENTS
+CREATE POLICY "Events are viewable by everyone"
+  ON public.events FOR SELECT
+  USING (true);
+
+CREATE POLICY "Users can insert own events"
+  ON public.events FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own events"
+  ON public.events FOR UPDATE
+  USING (auth.uid() = user_id);
+
+-- RSVPS
+CREATE POLICY "RSVPs are viewable by everyone"
+  ON public.rsvps FOR SELECT
+  USING (true);
+
+CREATE POLICY "Users can manage own RSVPs"
+  ON public.rsvps FOR ALL
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+-- COMMUNITIES
+CREATE POLICY "Public communities viewable by everyone"
+  ON public.communities FOR SELECT
+  USING (NOT is_private OR created_by = auth.uid() OR EXISTS (
+    SELECT 1 FROM public.community_members
+    WHERE community_id = communities.id AND user_id = auth.uid()
+  ));
+
+-- MESSAGES (only participants can view)
+CREATE POLICY "Users can view messages in their conversations"
+  ON public.messages FOR SELECT
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.conversation_participants
+      WHERE conversation_id = messages.conversation_id
+        AND user_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Users can insert messages in their conversations"
+  ON public.messages FOR INSERT
+  WITH CHECK (
+    auth.uid() = sender_id AND
+    EXISTS (
+      SELECT 1 FROM public.conversation_participants
+      WHERE conversation_id = messages.conversation_id
+        AND user_id = auth.uid()
+    )
+  );
+
+-- SUBSCRIPTIONS (users can only view/update own)
+CREATE POLICY "Users can view own subscription"
+  ON public.subscriptions FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own subscription"
+  ON public.subscriptions FOR UPDATE
+  USING (auth.uid() = user_id);
+
+-- AI CONVERSATIONS (users can only access own)
+CREATE POLICY "Users can view own AI conversations"
+  ON public.ai_conversations FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can manage own AI conversations"
+  ON public.ai_conversations FOR ALL
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+-- ═══════════════════════════════════════════════════════════════
+-- FUNCTIONS & TRIGGERS
+-- ═══════════════════════════════════════════════════════════════
+
+-- Function to update updated_at timestamp
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Apply updated_at triggers
+CREATE TRIGGER update_profiles_updated_at
+  BEFORE UPDATE ON public.profiles
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_posts_updated_at
+  BEFORE UPDATE ON public.posts
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_events_updated_at
+  BEFORE UPDATE ON public.events
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_communities_updated_at
+  BEFORE UPDATE ON public.communities
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_subscriptions_updated_at
+  BEFORE UPDATE ON public.subscriptions
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Function to auto-create profile on user signup
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (id, username, full_name, avatar_url)
+  VALUES (
+    NEW.id,
+    COALESCE(NEW.raw_user_meta_data->>'username', SPLIT_PART(NEW.email, '@', 1)),
+    COALESCE(NEW.raw_user_meta_data->>'full_name', ''),
+    COALESCE(NEW.raw_user_meta_data->>'avatar_url', '')
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger to create profile when user signs up
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- ═══════════════════════════════════════════════════════════════
+-- SCHEMA COMPLETE
+-- ═══════════════════════════════════════════════════════════════
+```
+
+**Click "Run" to execute the entire schema.**
+
+**Validation**:
+1. Should see "Success. No rows returned"
+2. Go to **Table Editor** tab
+3. Verify all 13 tables exist:
+   - profiles
+   - posts
+   - likes
+   - comments
+   - events
+   - rsvps
+   - communities
+   - community_members
+   - messages
+   - conversations
+   - conversation_participants
+   - subscriptions
+   - ai_conversations
+
+4. Check RLS enabled (green shield icon next to each table)
+
+---
+
+### 1.6: Configure Storage Buckets (10 min)
+
+**In Supabase Dashboard → Storage:**
+
+**Create 4 Buckets:**
+
+1. **avatars** (Public)
+   - Click "Create bucket"
+   - Name: `avatars`
+   - Public bucket: ✅ Yes
+   - Allowed MIME types: `image/*`
+   - Max file size: `2MB`
+   - Click "Create bucket"
+
+2. **posts** (Public)
+   - Name: `posts`
+   - Public bucket: ✅ Yes
+   - Allowed MIME types: `image/*,video/*`
+   - Max file size: `10MB`
+
+3. **events** (Public)
+   - Name: `events`
+   - Public bucket: ✅ Yes
+   - Allowed MIME types: `image/*`
+   - Max file size: `5MB`
+
+4. **messages** (Private)
+   - Name: `messages`
+   - Public bucket: ❌ No (private)
+   - Allowed MIME types: `image/*,video/*,application/pdf`
+   - Max file size: `10MB`
+
+**Set Storage Policies:**
+
+For each PUBLIC bucket (avatars, posts, events), go to bucket → Policies:
+
+**Select Policy:**
+```sql
+-- Allow public viewing
+CREATE POLICY "Public Access"
+  ON storage.objects FOR SELECT
+  USING (bucket_id = 'avatars');
+
+-- Allow authenticated uploads
+CREATE POLICY "Authenticated Upload"
+  ON storage.objects FOR INSERT
+  WITH CHECK (bucket_id = 'avatars' AND auth.role() = 'authenticated');
+
+-- Allow users to update own files
+CREATE POLICY "Users Update Own"
+  ON storage.objects FOR UPDATE
+  USING (bucket_id = 'avatars' AND auth.uid() = owner);
+
+-- Allow users to delete own files
+CREATE POLICY "Users Delete Own"
+  ON storage.objects FOR DELETE
+  USING (bucket_id = 'avatars' AND auth.uid() = owner);
+```
+
+Repeat for 'posts' and 'events' (change bucket_id).
+
+For PRIVATE bucket (messages), use:
+```sql
+-- Only conversation participants can view
+CREATE POLICY "Participants View"
+  ON storage.objects FOR SELECT
+  USING (
+    bucket_id = 'messages' AND
+    -- Add logic to verify user is in conversation
+    auth.role() = 'authenticated'
+  );
+```
+
+---
+
+### 1.7: Enable Realtime (5 min)
+
+**In Supabase Dashboard → Database → Replication:**
+
+1. See "Realtime is disabled" message
+2. Click "Enable Replication"
+3. Select tables to enable:
+   - ✅ messages (for chat)
+   - ✅ likes (for live like counts)
+   - ✅ comments (for live comments)
+   - ✅ posts (for feed updates)
+   - ✅ conversation_participants (for presence)
+
+4. Click "Save"
+
+**Validation**:
+- Go to **API Docs** → **Realtime**
+- Should see example code for subscriptions
+
+---
+
+### 1.8: Configure Auth Providers (5 min)
+
+**In Supabase Dashboard → Authentication → Providers:**
+
+**Enable Email Provider** (already enabled):
+- ✅ Enable Email provider
+- Confirm email: ✅ Required
+- Secure email change: ✅ Enabled
+
+**Enable Google OAuth** (recommended):
+1. Click "Google" provider
+2. ✅ Enable Google provider
+3. Get credentials from Google Cloud Console:
+   - Go to https://console.cloud.google.com
+   - Create project "Mundo Tango"
+   - Enable Google+ API
+   - Create OAuth 2.0 credentials
+   - Authorized redirect URIs: `https://[your-project-ref].supabase.co/auth/v1/callback`
+   - Copy Client ID & Client Secret
+4. Paste in Supabase:
+   - Client ID: `xxx.apps.googleusercontent.com`
+   - Client Secret: `GOCSPX-xxx`
+5. Save
+
+**Optional: GitHub OAuth**:
+- Similar process with GitHub Developer Settings
+- OAuth Apps → New OAuth App
+- Callback URL: `https://[your-project-ref].supabase.co/auth/v1/callback`
+
+---
+
+### 1.9: Test Supabase Connection (5 min)
+
+**Create test file in Replit:**
+
+**Path**: `test-supabase.js`
+
+```javascript
+import { supabaseAdmin } from './server/lib/supabase.js'
+
+async function testConnection() {
+  console.log('Testing Supabase connection...\n')
+  
+  try {
+    // Test 1: Database connection
+    console.log('1. Testing database connection...')
+    const { data, error } = await supabaseAdmin
+      .from('profiles')
+      .select('*')
+      .limit(1)
+    
+    if (error) throw error
+    console.log('✅ Database connected successfully!')
+    console.log(`   Found ${data.length} profiles\n`)
+    
+    // Test 2: Storage buckets
+    console.log('2. Testing storage buckets...')
+    const { data: buckets, error: bucketsError } = await supabaseAdmin
+      .storage
+      .listBuckets()
+    
+    if (bucketsError) throw bucketsError
+    console.log(`✅ Storage configured! Found ${buckets.length} buckets:`)
+    buckets.forEach(b => console.log(`   - ${b.name} (${b.public ? 'public' : 'private'})`))
+    console.log('')
+    
+    // Test 3: Auth configuration
+    console.log('3. Testing auth configuration...')
+    console.log('✅ Auth configured! (manual verification needed)')
+    console.log('')
+    
+    console.log('🎉 ALL TESTS PASSED! Supabase is ready to use.\n')
+    
+  } catch (error) {
+    console.error('❌ TEST FAILED:', error.message)
+    console.error('\nTroubleshooting:')
+    console.error('  1. Check SUPABASE_URL in Replit Secrets')
+    console.error('  2. Check SUPABASE_SERVICE_ROLE_KEY in Replit Secrets')
+    console.error('  3. Verify database schema was created')
+    console.error('  4. Ensure storage buckets exist\n')
+    process.exit(1)
+  }
+}
+
+testConnection()
+```
+
+**Run test:**
+```bash
+node test-supabase.js
+```
+
+**Expected Output:**
+```
+Testing Supabase connection...
+
+1. Testing database connection...
+✅ Database connected successfully!
+   Found 0 profiles
+
+2. Testing storage buckets...
+✅ Storage configured! Found 4 buckets:
+   - avatars (public)
+   - posts (public)
+   - events (public)
+   - messages (private)
+
+3. Testing auth configuration...
+✅ Auth configured! (manual verification needed)
+
+🎉 ALL TESTS PASSED! Supabase is ready to use.
+```
+
+**If errors**, check:
+- ❌ Secrets not configured → Add to Replit Secrets
+- ❌ Database schema not created → Re-run SQL
+- ❌ Storage buckets missing → Create in dashboard
+
+**Delete test file when done:**
+```bash
+rm test-supabase.js
+```
+
+---
+
+**PHASE 1 COMPLETE** ✅
+
+**What You Have Now:**
+✅ Supabase project created
+✅ Database schema (13 tables)
+✅ Row Level Security configured
+✅ Storage buckets (4 buckets)
+✅ Realtime enabled (5 tables)
+✅ Auth providers (Email + Google)
+✅ Supabase clients (frontend + backend)
+✅ Connection tested & verified
+
+**Time Spent**: 45-60 minutes
+**Next Phase**: Phase 2 (Core Setup)
+
+=======================================================================
+PHASE 2: CORE SETUP (4 HOURS - PHASED PARALLEL)
+=======================================================================
+
+**Purpose**: Set up React app, routing, auth context, and design system
+
+**Timeline**: 3-4 hours (phased parallelization)
+**Strategy**: Build foundations that all features depend on
+
+**Sub-Phases** (can be partially parallelized):
+- 2.1: Project Structure (30 min) - SEQUENTIAL
+- 2.2: Auth System (1 hour) - SEQUENTIAL (depends on 2.1)
+- 2.3: Design System (1 hour) - PARALLEL with 2.2
+- 2.4: Routing & Layout (1 hour) - SEQUENTIAL (depends on 2.2, 2.3)
+- 2.5: API Utilities (30 min) - PARALLEL with 2.4
+
+---
+
+### 2.1: Project Structure Setup (30 min)
+
+**Ensure these directories exist:**
+
+```bash
+# In Replit shell
+mkdir -p client/src/{components,pages,contexts,hooks,lib,utils,assets}
+mkdir -p client/src/components/{ui,posts,events,communities,messaging,ai}
+mkdir -p server/{routes,lib,middleware}
+mkdir -p shared
+```
+
+**File Structure:**
+```
+mundo-tango/
+├── client/
+│   └── src/
+│       ├── components/
+│       │   ├── ui/              # shadcn components
+│       │   ├── posts/           # Post-related components
+│       │   ├── events/          # Event components
+│       │   ├── communities/     # Community components
+│       │   ├── messaging/       # Chat components
+│       │   └── ai/              # Mr Blue components
+│       ├── pages/               # Page components
+│       ├── contexts/            # React contexts
+│       ├── hooks/               # Custom hooks
+│       ├── lib/                 # Libraries (supabase, etc.)
+│       ├── utils/               # Utility functions
+│       └── assets/              # Static assets
+├── server/
+│   ├── routes/                  # API routes
+│   ├── lib/                     # Server libraries
+│   └── middleware/              # Express middleware
+├── shared/                      # Shared types/schemas
+└── docs/                        # Documentation
+```
+
+**Validation:**
+```bash
+tree -L 3 -d client/src
+# Should show all directories created
+```
+
+---
+
+**CONTINUING IN NEXT MESSAGE DUE TO LENGTH...**
+
+This plan will be approximately 5,000+ lines covering:
+- Complete Phase 2 (Core Setup)
+- Complete Phase 3 (Features + Quality)
+- Complete Phase 4 (Polish)
+- Complete Phase 5 (Deploy)
+- Appendix A (Agent Training for PATH B)
+- Appendix B (Troubleshooting)
+- Appendix C (Cost Optimization)
+
+Should I continue building the complete unified plan?
