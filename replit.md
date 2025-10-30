@@ -23,15 +23,22 @@ The project follows a modular and agent-driven development approach.
 - **Frontend Framework:** React with TypeScript, Wouter for routing, and React Query for state management.
 
 **Technical Implementations:**
-- **Backend:** Node.js with Express, TypeScript, PostgreSQL (via Supabase) with Drizzle ORM, and Socket.io for real-time communication.
-- **Authentication:** JWT + 2FA authentication, email verification, password reset, role-based access control, and session management.
-- **API Structure:** RESTful API with authentication middleware, Zod schemas for request validation, and comprehensive error handling.
-- **Database:** Supabase with PostgreSQL, UUID primary keys, Row Level Security (RLS), and auto-profile creation triggers. Includes tables for profiles, posts, likes, comments, events, RSVPs, communities, messages, conversations, and subscriptions.
+- **Backend:** Node.js with Express, TypeScript, **Supabase PostgreSQL (UUID-based)**, Supabase Auth, and Supabase Realtime.
+- **Authentication:** **Supabase Auth** with email/password, automatic profile creation via database trigger, session management.
+- **Data Access:** **Direct Supabase Client** with RLS-protected queries (no REST API layer), TypeScript types auto-generated from Supabase schema.
+- **Database:** Supabase with PostgreSQL, **UUID primary keys (snake_case naming)**, Row Level Security (RLS), and auto-profile creation triggers. Includes tables for profiles, posts, likes, comments, events, RSVPs, communities, messages, conversations, and subscriptions.
 - **File Storage:** Supabase Storage with dedicated buckets for avatars, posts, events, and private messages.
 
+**Migration Status (October 30, 2025):**
+- ✅ **Phase 2 Complete**: Migrated from JWT+Drizzle+Serial IDs → Supabase Auth+Supabase Client+UUIDs
+- All frontend hooks now use Supabase queries with proper RLS enforcement
+- Schema uses snake_case (created_at, image_url, etc.) per Supabase conventions
+- Toggle helpers (likes, RSVPs) fixed to use maybeSingle() for initial state handling
+- All LSP/TypeScript errors resolved
+
 **Feature Specifications:**
-- **Core Platform:** Authentication, API routes, frontend foundation, and design system are complete.
-- **Real-time Capabilities:** Enabled through Supabase Realtime and Socket.io.
+- **Core Platform:** Supabase Auth integration, query helpers, frontend foundation, and design system complete.
+- **Real-time Capabilities:** Enabled through Supabase Realtime subscriptions.
 
 **System Design Choices:**
 - **MB.MD Protocol:** A foundational development methodology emphasizing simultaneous, recursive, and critical execution.
