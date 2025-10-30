@@ -80,22 +80,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (registerData: { name: string; username: string; email: string; password: string }) => {
-    const { error } = await supabase.auth.signUp({
-      email: registerData.email,
-      password: registerData.password,
-      options: {
-        data: {
-          username: registerData.username,
-          full_name: registerData.name,
+    try {
+      console.log("Starting registration for:", registerData.email);
+      
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: registerData.email,
+        password: registerData.password,
+        options: {
+          data: {
+            username: registerData.username,
+            full_name: registerData.name,
+          },
         },
-      },
-    });
+      });
 
-    if (error) {
-      throw new Error(error.message || "Registration failed");
+      console.log("Auth signup response:", { authData, authError });
+
+      if (authError) {
+        console.error("Auth error:", authError);
+        throw new Error(authError.message || "Registration failed");
+      }
+
+      if (!authData.user) {
+        throw new Error("Registration failed - no user created");
+      }
+
+      console.log("Creating profile for user:", authData.user.id);
+
+      const { error: profileError } = await supabase.from("profiles").insert({
+        id: authData.user.id,
+        username: registerData.username,
+        full_name: registerData.name,
+        email: registerData.email,
+      });
+
+      if (profileError) {
+        console.error("Profile creation error:", profileError);
+        throw new Error(`Profile creation failed: ${profileError.message}`);
+      }
+
+      console.log("Registration successful, navigating to login");
+      navigate("/login");
+    } catch (error) {
+      console.error("Registration error:", error);
+      throw error;
     }
-
-    navigate("/login");
   };
 
   const logout = async () => {
