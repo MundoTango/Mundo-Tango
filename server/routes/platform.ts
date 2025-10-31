@@ -3,8 +3,8 @@ import { storage } from "../storage";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
-import { esaAgents } from "../../shared/platform-schema";
-import { sql, eq, asc } from "drizzle-orm";
+import { esaAgents, agentTasks, agentCommunications } from "../../shared/platform-schema";
+import { sql, eq, asc, desc } from "drizzle-orm";
 
 const router = Router();
 
@@ -109,6 +109,176 @@ router.post("/esa/agents", async (req: AuthRequest, res: Response) => {
   try {
     // Mock data - implement actual database queries when storage interface is ready
     res.status(201).json({ message: "Not implemented yet" });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ============================================================================
+// AGENT TASKS ROUTES
+// ============================================================================
+
+// GET /api/platform/esa/tasks - Get all agent tasks
+router.get("/esa/tasks", async (req: AuthRequest, res: Response) => {
+  try {
+    const tasks = await db
+      .select({
+        id: agentTasks.id,
+        agentId: agentTasks.agentId,
+        taskType: agentTasks.taskType,
+        title: agentTasks.title,
+        description: agentTasks.description,
+        priority: agentTasks.priority,
+        status: agentTasks.status,
+        estimatedDuration: agentTasks.estimatedDuration,
+        actualDuration: agentTasks.actualDuration,
+        createdAt: agentTasks.createdAt,
+        startedAt: agentTasks.startedAt,
+        completedAt: agentTasks.completedAt,
+        agentCode: esaAgents.agentCode,
+        agentName: esaAgents.agentName,
+      })
+      .from(agentTasks)
+      .leftJoin(esaAgents, eq(agentTasks.agentId, esaAgents.id))
+      .orderBy(desc(agentTasks.createdAt));
+
+    res.json(tasks);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// GET /api/platform/esa/tasks/stats - Get task statistics
+router.get("/esa/tasks/stats", async (req: AuthRequest, res: Response) => {
+  try {
+    const totalTasks = await db.select({ count: sql<number>`count(*)::int` }).from(agentTasks);
+    const pending = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(agentTasks)
+      .where(eq(agentTasks.status, "pending"));
+    const inProgress = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(agentTasks)
+      .where(eq(agentTasks.status, "in_progress"));
+    const completed = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(agentTasks)
+      .where(eq(agentTasks.status, "completed"));
+    const failed = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(agentTasks)
+      .where(eq(agentTasks.status, "failed"));
+
+    res.json({
+      total: totalTasks[0].count,
+      pending: pending[0].count,
+      inProgress: inProgress[0].count,
+      completed: completed[0].count,
+      failed: failed[0].count,
+    });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// ============================================================================
+// AGENT COMMUNICATIONS ROUTES
+// ============================================================================
+
+// GET /api/platform/esa/communications - Get all communications
+router.get("/esa/communications", async (req: AuthRequest, res: Response) => {
+  try {
+    const comms = await db
+      .select({
+        id: agentCommunications.id,
+        communicationType: agentCommunications.communicationType,
+        fromAgentId: agentCommunications.fromAgentId,
+        toAgentId: agentCommunications.toAgentId,
+        fromUserId: agentCommunications.fromUserId,
+        toUserId: agentCommunications.toUserId,
+        messageType: agentCommunications.messageType,
+        subject: agentCommunications.subject,
+        message: agentCommunications.message,
+        priority: agentCommunications.priority,
+        requiresResponse: agentCommunications.requiresResponse,
+        createdAt: agentCommunications.createdAt,
+      })
+      .from(agentCommunications)
+      .orderBy(desc(agentCommunications.createdAt));
+
+    // Enrich with agent names
+    const enrichedComms = await Promise.all(
+      comms.map(async (comm) => {
+        let fromAgentCode, fromAgentName, toAgentCode, toAgentName;
+
+        if (comm.fromAgentId) {
+          const fromAgent = await db
+            .select({ code: esaAgents.agentCode, name: esaAgents.agentName })
+            .from(esaAgents)
+            .where(eq(esaAgents.id, comm.fromAgentId))
+            .limit(1);
+          if (fromAgent[0]) {
+            fromAgentCode = fromAgent[0].code;
+            fromAgentName = fromAgent[0].name;
+          }
+        }
+
+        if (comm.toAgentId) {
+          const toAgent = await db
+            .select({ code: esaAgents.agentCode, name: esaAgents.agentName })
+            .from(esaAgents)
+            .where(eq(esaAgents.id, comm.toAgentId))
+            .limit(1);
+          if (toAgent[0]) {
+            toAgentCode = toAgent[0].code;
+            toAgentName = toAgent[0].name;
+          }
+        }
+
+        return {
+          ...comm,
+          fromAgentCode,
+          fromAgentName,
+          toAgentCode,
+          toAgentName,
+        };
+      })
+    );
+
+    res.json(enrichedComms);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// GET /api/platform/esa/communications/stats - Get communication statistics
+router.get("/esa/communications/stats", async (req: AuthRequest, res: Response) => {
+  try {
+    const totalComms = await db.select({ count: sql<number>`count(*)::int` }).from(agentCommunications);
+    const agentToAgent = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(agentCommunications)
+      .where(eq(agentCommunications.communicationType, "agent_to_agent"));
+    const agentToUser = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(agentCommunications)
+      .where(eq(agentCommunications.communicationType, "agent_to_user"));
+    const userToAgent = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(agentCommunications)
+      .where(eq(agentCommunications.communicationType, "user_to_agent"));
+    const requiresResponse = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(agentCommunications)
+      .where(eq(agentCommunications.requiresResponse, true));
+
+    res.json({
+      total: totalComms[0].count,
+      agentToAgent: agentToAgent[0].count,
+      agentToUser: agentToUser[0].count,
+      userToAgent: userToAgent[0].count,
+      requiresResponse: requiresResponse[0].count,
+    });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }

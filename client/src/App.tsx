@@ -24,6 +24,8 @@ import GitRepositoryPage from "@/pages/GitRepositoryPage";
 import MonitoringPage from "@/pages/MonitoringPage";
 import AnalyticsPage from "@/pages/AnalyticsPage";
 import ESADashboardPage from "@/pages/ESADashboardPage";
+import AgentTasksPage from "@/pages/AgentTasksPage";
+import AgentCommunicationsPage from "@/pages/AgentCommunicationsPage";
 
 function Router() {
   return (
@@ -147,6 +149,22 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <ESADashboardPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/platform/esa/tasks">
+        <ProtectedRoute>
+          <AppLayout>
+            <AgentTasksPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/platform/esa/communications">
+        <ProtectedRoute>
+          <AppLayout>
+            <AgentCommunicationsPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
