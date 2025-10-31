@@ -26,7 +26,12 @@ const menuItems = [
 
 export function AppSidebar() {
   const [location] = useLocation();
-  const { user, logout } = useAuth();
+  const { user, profile, logout } = useAuth();
+
+  // Use profile data (Supabase) for display, fallback to user email
+  const displayName = profile?.full_name || user?.email?.split('@')[0] || "User";
+  const username = profile?.username || user?.email?.split('@')[0] || "user";
+  const avatarUrl = profile?.avatar_url;
 
   return (
     <Sidebar>
@@ -58,15 +63,15 @@ export function AppSidebar() {
       <SidebarFooter className="p-4 border-t">
         <div className="flex items-center gap-3 mb-3">
           <Avatar className="h-10 w-10">
-            <AvatarImage src={user?.profileImage || undefined} />
-            <AvatarFallback>{user?.name?.charAt(0) || "U"}</AvatarFallback>
+            <AvatarImage src={avatarUrl || undefined} />
+            <AvatarFallback>{displayName?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate" data-testid="text-username">
-              {user?.name}
+              {displayName}
             </p>
             <p className="text-xs text-muted-foreground truncate">
-              @{user?.username}
+              @{username}
             </p>
           </div>
         </div>
