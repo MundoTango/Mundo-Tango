@@ -119,67 +119,51 @@
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
 
-  --background: 240 6% 8%;
+  /* MT OCEAN THEME - Dark Mode */
+  --background: 218 30% 8%;
+  --foreground: 0 0% 95%;
 
-  --foreground: 240 5% 92%;
+  --border: 218 20% 18%;
+  --input: 218 20% 25%;
+  --ring: 177 72% 50%;
 
-  --border: 240 5% 18%;
+  --card: 218 25% 12%;
+  --card-foreground: 0 0% 95%;
+  --card-border: 218 20% 18%;
 
-  --card: 240 5% 10%;
+  --sidebar: 218 28% 10%;
+  --sidebar-foreground: 0 0% 92%;
+  --sidebar-border: 218 22% 16%;
+  --sidebar-primary: 177 72% 50%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 218 24% 14%;
+  --sidebar-accent-foreground: 0 0% 90%;
+  --sidebar-ring: 177 72% 50%;
 
-  --card-foreground: 240 4% 90%;
+  --popover: 218 25% 12%;
+  --popover-foreground: 0 0% 95%;
+  --popover-border: 218 20% 18%;
 
-  --card-border: 240 4% 14%;
+  --primary: 177 72% 56%;
+  --primary-foreground: 0 0% 100%;
 
-  --sidebar: 240 5% 12%;
+  --secondary: 210 100% 56%;
+  --secondary-foreground: 0 0% 100%;
 
-  --sidebar-foreground: 240 4% 88%;
+  --muted: 218 22% 15%;
+  --muted-foreground: 0 0% 60%;
 
-  --sidebar-border: 240 4% 16%;
-
-  --sidebar-primary: 350 65% 50%;
-
-  --sidebar-primary-foreground: 350 65% 98%;
-
-  --sidebar-accent: 240 5% 16%;
-
-  --sidebar-accent-foreground: 240 4% 85%;
-
-  --sidebar-ring: 350 65% 55%;
-
-  --popover: 240 5% 14%;
-
-  --popover-foreground: 240 4% 88%;
-
-  --popover-border: 240 4% 18%;
-
-  --primary: 350 65% 50%;
-
-  --primary-foreground: 350 65% 98%;
-
-  --secondary: 275 50% 55%;
-
-  --secondary-foreground: 275 50% 98%;
-
-  --muted: 240 5% 16%;
-
-  --muted-foreground: 240 4% 65%;
-
-  --accent: 40 80% 60%;
-
-  --accent-foreground: 40 80% 12%;
+  --accent: 218 100% 45%;
+  --accent-foreground: 0 0% 100%;
 
   --destructive: 0 72% 42%;
-
   --destructive-foreground: 0 72% 98%;
 
-  --input: 240 5% 28%;
-  --ring: 350 65% 55%;
-  --chart-1: 350 65% 60%;
-  --chart-2: 275 55% 65%;
-  --chart-3: 40 75% 65%;
-  --chart-4: 320 60% 60%;
-  --chart-5: 15 70% 65%;
+  --chart-1: 177 72% 60%;
+  --chart-2: 210 100% 65%;
+  --chart-3: 218 100% 50%;
+  --chart-4: 195 70% 55%;
+  --chart-5: 230 80% 60%;
 
   --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.15);
   --shadow-xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.20);
