@@ -19,6 +19,22 @@ import {
   chatRoomUsers,
   chatMessages,
   notifications,
+  savedPosts,
+  friendRequests,
+  workshops,
+  reviews,
+  liveStreams,
+  media,
+  activityLogs,
+  blockedUsers,
+  blockedContent,
+  teachers,
+  venues,
+  tutorials,
+  blogPosts,
+  newsletterSubscriptions,
+  bookings,
+  payments,
   type SelectUser,
   type InsertUser,
   type SelectRefreshToken,
@@ -133,6 +149,92 @@ export interface IStorage {
   sendFriendRequest(senderId: number, receiverId: number): Promise<any>;
   acceptFriendRequest(requestId: number): Promise<void>;
   declineFriendRequest(requestId: number): Promise<void>;
+  
+  // Workshops
+  createWorkshop(workshop: any): Promise<any>;
+  getWorkshops(params: { limit?: number; offset?: number }): Promise<any[]>;
+  getWorkshopById(id: number): Promise<any | undefined>;
+  updateWorkshop(id: number, data: any): Promise<any | undefined>;
+  deleteWorkshop(id: number): Promise<void>;
+  
+  // Reviews
+  createReview(review: any): Promise<any>;
+  getReviews(params: { targetType?: string; targetId?: number; userId?: number; limit?: number; offset?: number }): Promise<any[]>;
+  updateReview(id: number, data: any): Promise<any | undefined>;
+  deleteReview(id: number): Promise<void>;
+  
+  // Live Streams
+  createLiveStream(stream: any): Promise<any>;
+  getLiveStreams(params: { isLive?: boolean; limit?: number }): Promise<any[]>;
+  getLiveStreamById(id: number): Promise<any | undefined>;
+  updateLiveStream(id: number, data: any): Promise<any | undefined>;
+  deleteLiveStream(id: number): Promise<void>;
+  
+  // Media Gallery
+  createMedia(media: any): Promise<any>;
+  getUserMedia(userId: number, params: { type?: string; limit?: number; offset?: number }): Promise<any[]>;
+  getMediaById(id: number): Promise<any | undefined>;
+  updateMedia(id: number, data: any): Promise<any | undefined>;
+  deleteMedia(id: number): Promise<void>;
+  
+  // Activity Logs
+  createActivityLog(log: any): Promise<any>;
+  getUserActivityLogs(userId: number, params: { limit?: number; offset?: number }): Promise<any[]>;
+  
+  // Blocked Users
+  blockUser(userId: number, blockedUserId: number): Promise<any>;
+  unblockUser(userId: number, blockedUserId: number): Promise<void>;
+  getBlockedUsers(userId: number): Promise<any[]>;
+  isUserBlocked(userId: number, blockedUserId: number): Promise<boolean>;
+  
+  // Blocked Content
+  blockContent(userId: number, contentType: string, contentId: number, reason?: string): Promise<any>;
+  unblockContent(userId: number, contentType: string, contentId: number): Promise<void>;
+  getBlockedContent(userId: number): Promise<any[]>;
+  
+  // Teachers
+  createTeacher(teacher: any): Promise<any>;
+  getTeachers(params: { verified?: boolean; limit?: number; offset?: number }): Promise<any[]>;
+  getTeacherById(id: number): Promise<any | undefined>;
+  getTeacherByUserId(userId: number): Promise<any | undefined>;
+  updateTeacher(id: number, data: any): Promise<any | undefined>;
+  deleteTeacher(id: number): Promise<void>;
+  
+  // Venues
+  createVenue(venue: any): Promise<any>;
+  getVenues(params: { city?: string; verified?: boolean; limit?: number; offset?: number }): Promise<any[]>;
+  getVenueById(id: number): Promise<any | undefined>;
+  updateVenue(id: number, data: any): Promise<any | undefined>;
+  deleteVenue(id: number): Promise<void>;
+  
+  // Tutorials
+  createTutorial(tutorial: any): Promise<any>;
+  getTutorials(params: { level?: string; limit?: number; offset?: number }): Promise<any[]>;
+  getTutorialById(id: number): Promise<any | undefined>;
+  updateTutorial(id: number, data: any): Promise<any | undefined>;
+  deleteTutorial(id: number): Promise<void>;
+  
+  // Blog Posts
+  createBlogPost(post: any): Promise<any>;
+  getBlogPosts(params: { published?: boolean; authorId?: number; limit?: number; offset?: number }): Promise<any[]>;
+  getBlogPostById(id: number): Promise<any | undefined>;
+  getBlogPostBySlug(slug: string): Promise<any | undefined>;
+  updateBlogPost(id: number, data: any): Promise<any | undefined>;
+  deleteBlogPost(id: number): Promise<void>;
+  
+  // Newsletter Subscriptions
+  createNewsletterSubscription(subscription: any): Promise<any>;
+  getNewsletterSubscriptions(params: { subscribed?: boolean }): Promise<any[]>;
+  updateNewsletterSubscription(email: string, data: any): Promise<any | undefined>;
+  deleteNewsletterSubscription(email: string): Promise<void>;
+  
+  // Bookings
+  createBooking(booking: any): Promise<any>;
+  getBookingById(id: number): Promise<any | undefined>;
+  getBookingByConfirmation(confirmationNumber: string): Promise<any | undefined>;
+  getUserBookings(userId: number, params: { status?: string }): Promise<any[]>;
+  updateBooking(id: number, data: any): Promise<any | undefined>;
+  deleteBooking(id: number): Promise<void>;
   
   followUser(followerId: number, followingId: number): Promise<SelectFollow | undefined>;
   unfollowUser(followerId: number, followingId: number): Promise<void>;
