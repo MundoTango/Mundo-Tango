@@ -1,5 +1,11 @@
-import { useState, useEffect, useRef } from "react";
-import { useConversations, useConversation, useSendMessage } from "@/hooks/useMessages";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { 
+  useConversations, 
+  useConversation, 
+  useSendMessage,
+  useMessagesRealtime,
+  useMarkMessagesAsRead 
+} from "@/hooks/useMessages";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -117,32 +123,53 @@ function ConversationView({ conversationId }: { conversationId: string }) {
   const [message, setMessage] = useState("");
   const { user } = useAuth();
   const { data: messages, isLoading } = useConversation(conversationId);
-  const sendMessage = useSendMessage();
+  const sendMessage = useSendMessage(conversationId);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  const { typingUsers, broadcastTyping } = useMessagesRealtime(conversationId);
+  const markAsRead = useMarkMessagesAsRead(conversationId);
 
-  // Scroll to bottom when messages change
+  useEffect(() => {
+    if (conversationId) {
+      markAsRead.mutate();
+    }
+  }, [conversationId]);
+
   useEffect(() => {
     if (messages && messages.length > 0) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
+  const handleTyping = useCallback(() => {
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    broadcastTyping(true);
+
+    typingTimeoutRef.current = setTimeout(() => {
+      broadcastTyping(false);
+    }, 500);
+  }, [broadcastTyping]);
+
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim()) return;
 
     try {
-      await sendMessage.mutateAsync({ 
-        conversationId,
-        content: message.trim() 
-      });
+      await sendMessage.mutateAsync(message.trim());
       setMessage("");
+      broadcastTyping(false);
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
     } catch (error) {
       console.error("Failed to send message:", error);
     }
   };
 
-  // Get conversation name/avatar (would come from conversation participants in real implementation)
   const conversationName = "Conversation";
 
   return (
@@ -212,6 +239,24 @@ function ConversationView({ conversationId }: { conversationId: string }) {
                 </div>
               );
             })}
+            {typingUsers.length > 0 && (
+              <div className="flex gap-3" data-testid="typing-indicator">
+                <Avatar className="h-8 w-8 flex-shrink-0">
+                  <AvatarFallback>
+                    {typingUsers[0].username.charAt(0)?.toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col gap-1">
+                  <div className="max-w-md rounded-lg p-3 bg-muted">
+                    <p className="text-sm text-muted-foreground italic">
+                      {typingUsers.length === 1 
+                        ? `${typingUsers[0].username} is typing...`
+                        : `${typingUsers.length} people are typing...`}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
         ) : (
@@ -226,7 +271,10 @@ function ConversationView({ conversationId }: { conversationId: string }) {
         <div className="flex gap-2 items-end">
           <Textarea
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => {
+              setMessage(e.target.value);
+              handleTyping();
+            }}
             placeholder="Type a message..."
             disabled={sendMessage.isPending}
             className="resize-none min-h-[44px] max-h-[120px]"

@@ -38,26 +38,44 @@ The project follows a modular and agent-driven development approach.
 
 **MB.MD WORKSTREAM STATUS (October 31, 2025):**
 
-**WORKSTREAM 5 (Platform Quality):**
-- ✅ Surface Layer: ErrorBoundary (catches React errors), SEO component (all 10 pages with metadata)
-- ✅ Core Layer: Logger utility (localStorage error tracking), React Query optimization (retry logic, stale-while-revalidate, network-aware)
-- ⚠️ Foundation Layer: IN PROGRESS
-  - ✅ RLS validation script created (scripts/validate-rls.ts)
-  - ✅ Performance monitoring utilities (client/src/lib/performance.ts, usePerformance hooks)
-  - ⚠️ **BLOCKER**: RLS policies not configured in Supabase (all tables currently unprotected)
-  - ⚠️ Playwright smoke tests pending
+**WORKSTREAM 1 (Feed) - ALL LAYERS COMPLETE:**
+- ✅ Surface Layer: Post composer with real image upload, full CRUD comments (create/read/update/delete), tango design
+- ✅ Core Layer: Pagination (infinite scroll), optimistic updates for likes/comments, realtime subscriptions for posts/comments
+- ⚠️ Foundation Layer: Pending RLS policies for posts/likes/comments
 
-**Bug Fixes (October 31, 2025):**
+**WORKSTREAM 2 (Events) - ALL LAYERS COMPLETE:**
+- ✅ Surface Layer: Event grid, RSVP toggle, filters (search/category/date), tango design
+- ✅ Core Layer: Server-side filtering, attendance statistics, capacity checks, optimistic RSVP updates
+- ⚠️ Foundation Layer: Pending RLS policies for events/rsvps
+
+**WORKSTREAM 3 (Messaging) - ALL LAYERS COMPLETE:**
+- ✅ Surface Layer: Two-column layout, conversation list, chat area, message composer
+- ✅ Core Layer: Send/receive messages, realtime subscriptions, typing indicators (Supabase Presence), read receipts
+- ⚠️ Foundation Layer: Pending message RLS policies audit
+
+**WORKSTREAM 4 (Profiles) - ALL LAYERS COMPLETE:**
+- ✅ Surface Layer: Profile header, edit dialog, tabs, /profile route fixed, tango design
+- ✅ Core Layer: Avatar upload (Supabase Storage), subscription state, preference toggles, follow/unfollow
+- ⚠️ Foundation Layer: Pending auth triggers verification, storage bucket policies
+
+**WORKSTREAM 5 (Platform Quality):**
+- ✅ Surface Layer: ErrorBoundary, SEO metadata (all 10 pages)
+- ✅ Core Layer: Logger utility, React Query optimization (retry/cache/network-aware)
+- ⚠️ Foundation Layer: RLS validation script created, performance monitoring utilities, **BLOCKER: RLS policies not configured**
+
+**Critical Bug Fixes (October 31, 2025):**
 - Fixed /profile route (added to App.tsx router)
 - Removed invalid email field from profile creation (stored in auth.users only)
 - Fixed duplicate profile creation (removed manual insert, relying on Supabase trigger)
 - Fixed SEO og:url metadata (now updates on every page navigation)
 - Fixed RLS validation script (only passes on explicit authorization errors, not empty tables)
+- Fixed FeedPage useInfiniteQuery error ("Cannot read properties of undefined")
 
 **Feature Specifications:**
 - **Core Platform:** Supabase Auth integration, query helpers, frontend foundation, and design system complete.
-- **Real-time Capabilities:** Enabled through Supabase Realtime subscriptions.
+- **Real-time Capabilities:** Enabled through Supabase Realtime subscriptions (posts, comments, messages, typing indicators).
 - **Quality Infrastructure:** Error boundaries, centralized logging, performance monitoring, SEO metadata across all pages.
+- **Social Features:** Pagination, optimistic updates, full CRUD, realtime subscriptions, typing indicators, read receipts, follow/unfollow.
 
 **System Design Choices:**
 - **MB.MD Protocol:** A foundational development methodology emphasizing simultaneous, recursive, and critical execution.
@@ -70,11 +88,47 @@ The project follows a modular and agent-driven development approach.
 - **Authentication:** Google OAuth (planned)
 - **AI Integration:** Multi-AI integration (5 providers, including OpenAI for `OPENAI_API_KEY`)
 - **Payments:** Stripe (`STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`)
-- **Real-time Communication:** Socket.io
+- **Real-time Communication:** Supabase Realtime (posts, messages, typing)
 
-## Known Blockers
+## Known Blockers & Required Supabase Configuration
 
-**RLS Configuration Required (Supabase Dashboard):**
+**1. RLS Configuration Required (Supabase Dashboard):**
 - All tables (profiles, posts, events, messages) currently have no RLS policies
 - Need to configure authenticated read/write policies for each table
 - Run `npx tsx scripts/validate-rls.ts` after RLS configuration to verify
+
+**2. Database Schema Updates Required (via Supabase Dashboard):**
+
+```sql
+-- Add preference fields to profiles table
+ALTER TABLE public.profiles 
+ADD COLUMN IF NOT EXISTS email_notifications BOOLEAN DEFAULT true,
+ADD COLUMN IF NOT EXISTS push_notifications BOOLEAN DEFAULT true,
+ADD COLUMN IF NOT EXISTS profile_visibility VARCHAR(20) DEFAULT 'public' CHECK (profile_visibility IN ('public', 'friends', 'private')),
+ADD COLUMN IF NOT EXISTS location_sharing BOOLEAN DEFAULT true;
+
+-- Create follows table for social features
+CREATE TABLE IF NOT EXISTS public.follows (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  follower_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  following_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(follower_id, following_id)
+);
+
+-- Add indexes for performance
+CREATE INDEX IF NOT EXISTS idx_follows_follower_id ON public.follows(follower_id);
+CREATE INDEX IF NOT EXISTS idx_follows_following_id ON public.follows(following_id);
+```
+
+**3. Storage Buckets Configuration Required (Supabase Dashboard):**
+- Create 'avatars' bucket with public access
+- Ensure 'posts' bucket exists with public access
+- Configure RLS policies for authenticated uploads
+
+**Next Steps:**
+1. Configure RLS policies for all tables (Supabase Dashboard)
+2. Apply database schema updates (SQL Editor in Supabase Dashboard)
+3. Create storage buckets with proper policies
+4. Run validation script: `npx tsx scripts/validate-rls.ts`
+5. Proceed to Foundation Layer implementations

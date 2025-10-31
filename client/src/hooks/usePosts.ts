@@ -1,24 +1,82 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useInfiniteQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
 import {
   getPosts,
   getPostById,
   createPost,
   deletePost,
-  toggleLike,
+  toggleLike as toggleLikeApi,
   getCommentsByPostId,
-  createComment,
+  createComment as createCommentApi,
   updateComment,
   deleteComment,
 } from "@/lib/supabaseQueries";
-import type { PostWithProfile, InsertPost, InsertComment } from "@shared/supabase-types";
+import type { PostWithProfile, InsertPost, InsertComment, CommentWithProfile } from "@shared/supabase-types";
+
+// ============================================================================
+// POSTS WITH PAGINATION & REALTIME
+// ============================================================================
 
 export function usePosts() {
-  return useQuery<PostWithProfile[]>({
+  const [newPostsAvailable, setNewPostsAvailable] = useState(false);
+  
+  const query = useInfiniteQuery<PostWithProfile[]>({
     queryKey: ["posts"],
-    queryFn: () => getPosts(),
+    queryFn: async ({ pageParam = 0 }) => {
+      const limit = 10;
+      const offset = pageParam as number;
+      try {
+        const data = await getPosts({ limit, offset });
+        return data || [];
+      } catch (error) {
+        console.error("Failed to fetch posts:", error);
+        return [];
+      }
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage || !Array.isArray(lastPage) || lastPage.length < 10) {
+        return undefined;
+      }
+      return allPages.length * 10;
+    },
+    initialPageParam: 0,
   });
+
+  // Realtime subscription for new posts
+  useEffect(() => {
+    const channel = supabase
+      .channel('posts-channel')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'posts'
+        },
+        (payload) => {
+          setNewPostsAvailable(true);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const loadNewPosts = () => {
+    queryClient.invalidateQueries({ queryKey: ["posts"] });
+    setNewPostsAvailable(false);
+  };
+
+  return {
+    ...query,
+    newPostsAvailable,
+    loadNewPosts,
+  };
 }
 
 export function usePost(id: string) {
@@ -52,26 +110,112 @@ export function useDeletePost() {
   });
 }
 
+// ============================================================================
+// LIKES WITH OPTIMISTIC UPDATES
+// ============================================================================
+
 export function useToggleLike() {
   const { user } = useAuth();
 
   return useMutation({
     mutationFn: async (postId: string) => {
       if (!user) throw new Error("Must be logged in");
-      return toggleLike(user.id, postId);
+      return toggleLikeApi(user.id, postId);
     },
-    onSuccess: () => {
+    onMutate: async (postId: string) => {
+      await queryClient.cancelQueries({ queryKey: ["posts"] });
+      
+      const previousData = queryClient.getQueryData(["posts"]);
+      
+      queryClient.setQueryData<any>(["posts"], (old: any) => {
+        if (!old?.pages) return old;
+        
+        return {
+          ...old,
+          pages: old.pages.map((page: PostWithProfile[]) =>
+            page.map((post: PostWithProfile) =>
+              post.id === postId
+                ? { ...post, likes: (post.likes || 0) + 1 }
+                : post
+            )
+          ),
+        };
+      });
+
+      return { previousData };
+    },
+    onError: (err, postId, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(["posts"], context.previousData);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });
 }
 
+// ============================================================================
+// COMMENTS WITH OPTIMISTIC UPDATES & REALTIME
+// ============================================================================
+
 export function useComments(postId: string) {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["comments", postId],
     queryFn: () => getCommentsByPostId(postId),
     enabled: !!postId,
   });
+
+  // Realtime subscription for comments
+  useEffect(() => {
+    if (!postId) return;
+
+    const channel = supabase
+      .channel(`comments-${postId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'comments',
+          filter: `post_id=eq.${postId}`
+        },
+        (payload) => {
+          queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'comments',
+          filter: `post_id=eq.${postId}`
+        },
+        (payload) => {
+          queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'comments',
+          filter: `post_id=eq.${postId}`
+        },
+        (payload) => {
+          queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [postId]);
+
+  return query;
 }
 
 export function useCreateComment() {
@@ -80,13 +224,54 @@ export function useCreateComment() {
   return useMutation({
     mutationFn: async (data: { postId: string; content: string }) => {
       if (!user) throw new Error("Must be logged in");
-      return createComment({
+      return createCommentApi({
         user_id: user.id,
         post_id: data.postId,
         content: data.content,
       });
     },
-    onSuccess: (_, variables) => {
+    onMutate: async ({ postId, content }) => {
+      if (!user) return;
+
+      await queryClient.cancelQueries({ queryKey: ["comments", postId] });
+      
+      const previousComments = queryClient.getQueryData(["comments", postId]);
+      
+      const optimisticComment: CommentWithProfile = {
+        id: `temp-${Date.now()}`,
+        user_id: user.id,
+        post_id: postId,
+        content,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        profiles: {
+          id: user.id,
+          username: user.user_metadata?.username || user.email || "You",
+          full_name: user.user_metadata?.full_name || null,
+          avatar_url: user.user_metadata?.avatar_url || null,
+          bio: null,
+          city: null,
+          country: null,
+          language: "en",
+          timezone: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      };
+
+      queryClient.setQueryData<CommentWithProfile[]>(["comments", postId], (old = []) => [
+        ...old,
+        optimisticComment,
+      ]);
+
+      return { previousComments };
+    },
+    onError: (err, variables, context) => {
+      if (context?.previousComments) {
+        queryClient.setQueryData(["comments", variables.postId], context.previousComments);
+      }
+    },
+    onSettled: (_, __, variables) => {
       queryClient.invalidateQueries({ queryKey: ["comments", variables.postId] });
     },
   });

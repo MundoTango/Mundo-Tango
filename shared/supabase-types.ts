@@ -20,8 +20,27 @@ export interface Profile {
   country: string | null;
   language: string;
   timezone: string | null;
+  email_notifications: boolean;
+  push_notifications: boolean;
+  profile_visibility: 'public' | 'friends' | 'private';
+  location_sharing: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface ProfilePreferences {
+  email_notifications: boolean;
+  push_notifications: boolean;
+  profile_visibility: 'public' | 'friends' | 'private';
+  location_sharing: boolean;
+  language: string;
+}
+
+export interface Follow {
+  id: string; // UUID
+  follower_id: string; // UUID references profiles(id)
+  following_id: string; // UUID references profiles(id)
+  created_at: string;
 }
 
 export const insertProfileSchema = z.object({
@@ -34,6 +53,18 @@ export const insertProfileSchema = z.object({
   country: z.string().max(100).nullable().optional(),
   language: z.string().max(10).default('en'),
   timezone: z.string().max(50).nullable().optional(),
+  email_notifications: z.boolean().default(true),
+  push_notifications: z.boolean().default(true),
+  profile_visibility: z.enum(['public', 'friends', 'private']).default('public'),
+  location_sharing: z.boolean().default(true),
+});
+
+export const updatePreferencesSchema = z.object({
+  email_notifications: z.boolean().optional(),
+  push_notifications: z.boolean().optional(),
+  profile_visibility: z.enum(['public', 'friends', 'private']).optional(),
+  location_sharing: z.boolean().optional(),
+  language: z.string().max(10).optional(),
 });
 
 export type InsertProfile = z.infer<typeof insertProfileSchema>;

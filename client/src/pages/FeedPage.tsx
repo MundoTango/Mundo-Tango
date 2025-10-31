@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { usePosts, useCreatePost, useToggleLike, useComments, useCreateComment, useUpdateComment, useDeleteComment } from "@/hooks/usePosts";
 import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -9,11 +9,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Heart, MessageCircle, Share2, Image as ImageIcon, Globe, Users, Lock, X, Loader2, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { Heart, MessageCircle, Share2, Image as ImageIcon, Globe, Users, Lock, X, Loader2, MoreVertical, Pencil, Trash2, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { SEO } from "@/components/SEO";
 import { supabase } from "@/lib/supabase";
+import type { PostWithProfile } from "@shared/supabase-types";
 
 export default function FeedPage() {
   const [content, setContent] = useState("");
@@ -23,9 +24,19 @@ export default function FeedPage() {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
-  const { data: posts, isLoading } = usePosts();
+  const { 
+    data, 
+    isLoading, 
+    isFetchingNextPage, 
+    hasNextPage, 
+    fetchNextPage,
+    newPostsAvailable,
+    loadNewPosts 
+  } = usePosts();
   const createPost = useCreatePost();
   const { toast } = useToast();
+
+  const allPosts = data?.pages.flat() || [];
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -124,135 +135,180 @@ export default function FeedPage() {
         description="Connect with the tango community. Share your dance moments, discover events, and engage with fellow tango enthusiasts from around the world."
       />
       <div className="max-w-2xl mx-auto p-6 space-y-6">
-      <Card className="p-6">
-        <form onSubmit={handleCreatePost} className="space-y-4">
-          <Textarea
-            placeholder="What's on your mind?"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="min-h-24 resize-none border-0 text-base focus-visible:ring-0"
-            data-testid="input-post-content"
-          />
-          
-          {imagePreview && (
-            <div className="relative" data-testid="image-preview-container">
-              <img
-                src={imagePreview}
-                alt="Preview"
-                className="rounded-lg w-full object-cover max-h-96"
-                data-testid="image-preview"
-              />
+        {newPostsAvailable && (
+          <Card className="p-4 bg-primary/10 border-primary" data-testid="banner-new-posts">
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-sm font-medium">New posts available</p>
               <Button
-                type="button"
-                size="icon"
-                variant="ghost"
-                onClick={handleRemoveImage}
-                className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm hover-elevate active-elevate-2"
-                data-testid="button-remove-image"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleFileSelect}
-                className="hidden"
-                data-testid="input-file"
-              />
-              <Button
-                type="button"
-                size="icon"
-                variant="ghost"
-                onClick={() => fileInputRef.current?.click()}
+                onClick={loadNewPosts}
+                size="sm"
+                variant="default"
                 className="hover-elevate active-elevate-2"
-                data-testid="button-upload-image"
+                data-testid="button-load-new-posts"
               >
-                <ImageIcon className="h-5 w-5" />
+                <ChevronDown className="h-4 w-4 mr-2" />
+                Load New Posts
               </Button>
-              <Select value={visibility} onValueChange={(value: any) => setVisibility(value)}>
-                <SelectTrigger className="w-36 hover-elevate" data-testid="select-visibility">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="public" data-testid="option-visibility-public">
-                    <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4" />
-                      <span>Public</span>
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="friends" data-testid="option-visibility-friends">
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4" />
-                      <span>Friends</span>
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="private" data-testid="option-visibility-private">
-                    <div className="flex items-center gap-2">
-                      <Lock className="h-4 w-4" />
-                      <span>Private</span>
-                    </div>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Button
-              type="submit"
-              disabled={!content.trim() || isUploading}
-              className="hover-elevate active-elevate-2"
-              data-testid="button-create-post"
-            >
-              {isUploading ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Uploading...
-                </>
-              ) : (
-                "Post"
-              )}
-            </Button>
-          </div>
-        </form>
-      </Card>
-
-      <div className="space-y-4">
-        {isLoading ? (
-          <>
-            {[1, 2, 3].map((i) => (
-              <Card key={i} className="p-6">
-                <div className="flex items-start gap-4">
-                  <Skeleton className="h-12 w-12 rounded-full" />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-20 w-full" />
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </>
-        ) : posts && posts.length > 0 ? (
-          posts.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))
-        ) : (
-          <Card className="p-6">
-            <div className="text-center text-muted-foreground" data-testid="text-empty-state">
-              No posts yet. Share your tango journey!
             </div>
           </Card>
         )}
+
+        <Card className="p-6">
+          <form onSubmit={handleCreatePost} className="space-y-4">
+            <Textarea
+              placeholder="What's on your mind?"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              className="min-h-24 resize-none border-0 text-base focus-visible:ring-0"
+              data-testid="input-post-content"
+            />
+            
+            {imagePreview && (
+              <div className="relative" data-testid="image-preview-container">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="rounded-lg w-full object-cover max-h-96"
+                  data-testid="image-preview"
+                />
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  onClick={handleRemoveImage}
+                  className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm hover-elevate active-elevate-2"
+                  data-testid="button-remove-image"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <div className="flex items-center gap-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  data-testid="input-file"
+                />
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="hover-elevate active-elevate-2"
+                  data-testid="button-upload-image"
+                >
+                  <ImageIcon className="h-5 w-5" />
+                </Button>
+                <Select value={visibility} onValueChange={(value: any) => setVisibility(value)}>
+                  <SelectTrigger className="w-36 hover-elevate" data-testid="select-visibility">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="public" data-testid="option-visibility-public">
+                      <div className="flex items-center gap-2">
+                        <Globe className="h-4 w-4" />
+                        <span>Public</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="friends" data-testid="option-visibility-friends">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4" />
+                        <span>Friends</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="private" data-testid="option-visibility-private">
+                      <div className="flex items-center gap-2">
+                        <Lock className="h-4 w-4" />
+                        <span>Private</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button
+                type="submit"
+                disabled={!content.trim() || isUploading}
+                className="hover-elevate active-elevate-2"
+                data-testid="button-create-post"
+              >
+                {isUploading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  "Post"
+                )}
+              </Button>
+            </div>
+          </form>
+        </Card>
+
+        <div className="space-y-4">
+          {isLoading ? (
+            <>
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="p-6">
+                  <div className="flex items-start gap-4">
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-20 w-full" />
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </>
+          ) : allPosts.length > 0 ? (
+            <>
+              {allPosts.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+              
+              {hasNextPage && (
+                <div className="flex justify-center pt-4" data-testid="section-load-more">
+                  <Button
+                    onClick={() => fetchNextPage()}
+                    disabled={isFetchingNextPage}
+                    variant="outline"
+                    size="lg"
+                    className="hover-elevate active-elevate-2"
+                    data-testid="button-load-more"
+                  >
+                    {isFetchingNextPage ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="h-4 w-4 mr-2" />
+                        Load More
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+            </>
+          ) : (
+            <Card className="p-6">
+              <div className="text-center text-muted-foreground" data-testid="text-empty-state">
+                No posts yet. Share your tango journey!
+              </div>
+            </Card>
+          )}
+        </div>
       </div>
-    </div>
     </>
   );
 }
 
-function PostCard({ post }: { post: any }) {
+function PostCard({ post }: { post: PostWithProfile }) {
   const [showComments, setShowComments] = useState(false);
   const [commentContent, setCommentContent] = useState("");
   const toggleLike = useToggleLike();
@@ -326,7 +382,7 @@ function PostCard({ post }: { post: any }) {
         </div>
       </div>
       
-      <div className="flex gap-6 mt-4 pt-4 border-t">
+      <div className="flex gap-6 mt-4 pt-4 border-t flex-wrap">
         <Button
           variant="ghost"
           size="sm"
@@ -336,7 +392,7 @@ function PostCard({ post }: { post: any }) {
           data-testid={`button-like-${post.id}`}
         >
           <Heart className="h-4 w-4 mr-2" />
-          <span data-testid={`text-like-count-${post.id}`}>{post.likes || 0}</span>
+          <span data-testid={`text-like-count-${post.id}`}>Like</span>
         </Button>
         <Button
           variant="ghost"
@@ -361,12 +417,12 @@ function PostCard({ post }: { post: any }) {
 
       {showComments && (
         <div className="mt-4 pt-4 border-t space-y-4" data-testid={`section-comments-${post.id}`}>
-          <form onSubmit={handleCommentSubmit} className="flex gap-2">
+          <form onSubmit={handleCommentSubmit} className="flex gap-2 flex-wrap">
             <Textarea
               placeholder="Write a comment..."
               value={commentContent}
               onChange={(e) => setCommentContent(e.target.value)}
-              className="min-h-16 resize-none"
+              className="min-h-16 resize-none flex-1"
               data-testid={`input-comment-${post.id}`}
             />
             <Button
@@ -419,6 +475,7 @@ function CommentItem({ comment, postId }: { comment: any; postId: string }) {
   const { toast } = useToast();
 
   const isOwner = user?.id === comment.user_id;
+  const isPending = comment.id.startsWith('temp-');
 
   const handleSaveEdit = async () => {
     if (!editContent.trim()) {
@@ -438,45 +495,36 @@ function CommentItem({ comment, postId }: { comment: any; postId: string }) {
       setIsEditing(false);
       toast({
         title: "Comment updated!",
-        description: "Your comment has been updated.",
       });
     } catch (error) {
       toast({
         title: "Failed to update comment",
-        description: "Please try again",
         variant: "destructive",
       });
     }
-  };
-
-  const handleCancelEdit = () => {
-    setEditContent(comment.content);
-    setIsEditing(false);
   };
 
   const handleDelete = async () => {
     try {
-      await deleteComment.mutateAsync({
-        commentId: comment.id,
-        postId,
-      });
+      await deleteComment.mutateAsync({ commentId: comment.id, postId });
+      setShowDeleteDialog(false);
       toast({
         title: "Comment deleted!",
-        description: "Your comment has been deleted.",
       });
     } catch (error) {
       toast({
         title: "Failed to delete comment",
-        description: "Please try again",
         variant: "destructive",
       });
     }
-    setShowDeleteDialog(false);
   };
 
   return (
     <>
-      <div className="flex gap-3" data-testid={`comment-${comment.id}`}>
+      <div 
+        className={`flex gap-3 ${isPending ? 'opacity-50' : ''}`} 
+        data-testid={`comment-${comment.id}`}
+      >
         <Avatar className="h-8 w-8">
           <AvatarImage src={comment.profiles?.avatar_url || undefined} />
           <AvatarFallback>
@@ -484,93 +532,96 @@ function CommentItem({ comment, postId }: { comment: any; postId: string }) {
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1 justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-foreground" data-testid={`text-comment-author-${comment.id}`}>
+          <div className="bg-muted rounded-lg p-3">
+            <div className="flex items-center justify-between gap-2 mb-1 flex-wrap">
+              <span className="font-semibold text-sm">
                 {comment.profiles?.full_name || comment.profiles?.username || "Unknown User"}
               </span>
-              {comment.created_at && (
-                <span className="text-xs text-muted-foreground">
-                  {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
-                </span>
+              {isOwner && !isPending && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 hover-elevate active-elevate-2"
+                      data-testid={`button-comment-menu-${comment.id}`}
+                    >
+                      <MoreVertical className="h-3 w-3" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() => setIsEditing(true)}
+                      data-testid={`button-edit-comment-${comment.id}`}
+                    >
+                      <Pencil className="h-4 w-4 mr-2" />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setShowDeleteDialog(true)}
+                      className="text-destructive"
+                      data-testid={`button-delete-comment-${comment.id}`}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
             </div>
-            {isOwner && !isEditing && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
+            {isEditing ? (
+              <div className="space-y-2">
+                <Textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  className="min-h-16 text-sm"
+                  data-testid={`input-edit-comment-${comment.id}`}
+                />
+                <div className="flex gap-2">
                   <Button
-                    size="icon"
-                    variant="ghost"
-                    className="h-6 w-6 hover-elevate active-elevate-2"
-                    data-testid={`button-comment-menu-${comment.id}`}
+                    size="sm"
+                    onClick={handleSaveEdit}
+                    disabled={updateComment.isPending}
+                    className="hover-elevate active-elevate-2"
+                    data-testid={`button-save-comment-${comment.id}`}
                   >
-                    <MoreVertical className="h-3 w-3" />
+                    {updateComment.isPending ? "Saving..." : "Save"}
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem
-                    onClick={() => setIsEditing(true)}
-                    data-testid={`button-edit-comment-${comment.id}`}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setIsEditing(false);
+                      setEditContent(comment.content);
+                    }}
+                    className="hover-elevate active-elevate-2"
+                    data-testid={`button-cancel-edit-${comment.id}`}
                   >
-                    <Pencil className="h-4 w-4 mr-2" />
-                    Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => setShowDeleteDialog(true)}
-                    className="text-destructive"
-                    data-testid={`button-delete-comment-${comment.id}`}
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-foreground whitespace-pre-wrap">
+                {comment.content}
+              </p>
             )}
           </div>
-          {isEditing ? (
-            <div className="space-y-2">
-              <Textarea
-                value={editContent}
-                onChange={(e) => setEditContent(e.target.value)}
-                className="min-h-16 text-sm resize-none"
-                data-testid={`input-edit-comment-${comment.id}`}
-              />
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  onClick={handleSaveEdit}
-                  disabled={updateComment.isPending || !editContent.trim()}
-                  className="hover-elevate active-elevate-2"
-                  data-testid={`button-save-comment-${comment.id}`}
-                >
-                  {updateComment.isPending ? "Saving..." : "Save"}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={handleCancelEdit}
-                  disabled={updateComment.isPending}
-                  className="hover-elevate active-elevate-2"
-                  data-testid={`button-cancel-edit-${comment.id}`}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <p className="text-sm text-foreground" data-testid={`text-comment-content-${comment.id}`}>
-              {comment.content}
-            </p>
+          {comment.created_at && (
+            <span className="text-xs text-muted-foreground mt-1 block">
+              {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+              {isPending && " (sending...)"}
+            </span>
           )}
         </div>
       </div>
 
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent data-testid={`dialog-delete-comment-${comment.id}`}>
+        <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this comment?</AlertDialogTitle>
+            <AlertDialogTitle>Delete Comment</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your comment.
+              Are you sure you want to delete this comment? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

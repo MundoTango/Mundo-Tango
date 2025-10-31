@@ -4,20 +4,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Settings, Upload } from "lucide-react";
+import { MapPin, Settings, Upload, UserPlus, UserMinus, Crown } from "lucide-react";
 import { getProfileById } from "@/lib/supabaseQueries";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import type { Profile } from "@shared/supabase-types";
@@ -29,15 +31,26 @@ const editProfileSchema = z.object({
   city: z.string().max(100).nullable().optional(),
   country: z.string().max(100).nullable().optional(),
   language: z.string().max(10).default("en"),
-  avatar_url: z.string().url("Please enter a valid URL").or(z.literal("")).nullable().optional(),
 });
 
 type EditProfileFormData = z.infer<typeof editProfileSchema>;
 
 export default function ProfilePage() {
   const [, params] = useRoute("/profile/:id");
-  const { profile: currentUserProfile, updateProfile } = useAuth();
+  const { 
+    profile: currentUserProfile, 
+    updateProfile,
+    useUpdateAvatar,
+    useSubscription,
+    useFollowUser,
+    useUnfollowUser,
+    useFollowerCount,
+    useFollowingCount,
+    useIsFollowing,
+  } = useAuth();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const profileId = params?.id || currentUserProfile?.id || "";
@@ -47,6 +60,15 @@ export default function ProfilePage() {
     queryFn: () => getProfileById(profileId),
     enabled: !!profileId,
   });
+
+  const { data: subscription } = useSubscription();
+  const { data: followerCount = 0 } = useFollowerCount(profileId);
+  const { data: followingCount = 0 } = useFollowingCount(profileId);
+  const { data: isFollowing = false } = useIsFollowing(profileId);
+
+  const updateAvatarMutation = useUpdateAvatar();
+  const followMutation = useFollowUser();
+  const unfollowMutation = useUnfollowUser();
 
   const isOwnProfile = currentUserProfile?.id === profileId;
 
@@ -59,7 +81,6 @@ export default function ProfilePage() {
       city: "",
       country: "",
       language: "en",
-      avatar_url: "",
     },
   });
 
@@ -72,7 +93,6 @@ export default function ProfilePage() {
         city: profile.city || "",
         country: profile.country || "",
         language: profile.language || "en",
-        avatar_url: profile.avatar_url || "",
       });
     }
   }, [profile, form]);
@@ -101,6 +121,66 @@ export default function ProfilePage() {
 
   const onSubmit = (data: EditProfileFormData) => {
     updateProfileMutation.mutate(data);
+  };
+
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Avatar image must be less than 5MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setUploadProgress(10);
+    
+    try {
+      setUploadProgress(50);
+      await updateAvatarMutation.mutateAsync(file);
+      setUploadProgress(100);
+      
+      toast({
+        title: "Avatar updated",
+        description: "Your profile picture has been updated successfully.",
+      });
+      
+      setTimeout(() => setUploadProgress(0), 1000);
+    } catch (error) {
+      setUploadProgress(0);
+      toast({
+        title: "Upload failed",
+        description: error instanceof Error ? error.message : "Failed to upload avatar",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleFollowToggle = async () => {
+    try {
+      if (isFollowing) {
+        await unfollowMutation.mutateAsync(profileId);
+        toast({
+          title: "Unfollowed",
+          description: `You are no longer following ${profile?.username}`,
+        });
+      } else {
+        await followMutation.mutateAsync(profileId);
+        toast({
+          title: "Following",
+          description: `You are now following ${profile?.username}`,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update follow status",
+        variant: "destructive",
+      });
+    }
   };
 
   if (isLoading) {
@@ -159,16 +239,48 @@ export default function ProfilePage() {
           <CardContent className="pt-6">
             <div className="flex items-start gap-6 flex-wrap justify-between">
               <div className="flex items-start gap-6">
-                <Avatar className="h-24 w-24 border-4 border-background">
-                  <AvatarImage src={profile.avatar_url || undefined} data-testid="img-profile-avatar" />
-                  <AvatarFallback className="text-2xl" data-testid="text-avatar-fallback">
-                    {profile.username?.charAt(0).toUpperCase() || "U"}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="relative">
+                  <Avatar className="h-24 w-24 border-4 border-background">
+                    <AvatarImage src={profile.avatar_url || undefined} data-testid="img-profile-avatar" />
+                    <AvatarFallback className="text-2xl" data-testid="text-avatar-fallback">
+                      {profile.username?.charAt(0).toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  {isOwnProfile && (
+                    <>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleAvatarUpload}
+                        data-testid="input-avatar-upload"
+                      />
+                      <Button
+                        size="icon"
+                        variant="secondary"
+                        className="absolute bottom-0 right-0 h-8 w-8 rounded-full"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={updateAvatarMutation.isPending}
+                        data-testid="button-upload-avatar"
+                      >
+                        <Upload className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold mb-1" data-testid="text-profile-username">
-                    {profile.username}
-                  </h2>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h2 className="text-2xl font-bold" data-testid="text-profile-username">
+                      {profile.username}
+                    </h2>
+                    {subscription && subscription.plan !== 'free' && (
+                      <Badge variant="secondary" className="gap-1" data-testid="badge-subscription">
+                        <Crown className="h-3 w-3" />
+                        {subscription.plan}
+                      </Badge>
+                    )}
+                  </div>
                   {profile.full_name && (
                     <p className="text-muted-foreground mb-3" data-testid="text-profile-fullname">
                       {profile.full_name}
@@ -179,6 +291,16 @@ export default function ProfilePage() {
                       {profile.bio}
                     </p>
                   )}
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="text-sm">
+                      <span className="font-semibold" data-testid="text-follower-count">{followerCount}</span>
+                      <span className="text-muted-foreground"> followers</span>
+                    </div>
+                    <div className="text-sm">
+                      <span className="font-semibold" data-testid="text-following-count">{followingCount}</span>
+                      <span className="text-muted-foreground"> following</span>
+                    </div>
+                  </div>
                   {(profile.city || profile.country) && (
                     <div className="flex items-center gap-1 text-sm text-muted-foreground" data-testid="text-profile-location">
                       <MapPin className="h-4 w-4" />
@@ -189,8 +311,8 @@ export default function ProfilePage() {
                   )}
                 </div>
               </div>
-              <div className="flex gap-2">
-                {isOwnProfile && (
+              <div className="flex gap-2 flex-wrap">
+                {isOwnProfile ? (
                   <>
                     <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                       <DialogTrigger asChild>
@@ -325,34 +447,6 @@ export default function ProfilePage() {
                                 </FormItem>
                               )}
                             />
-                            <FormField
-                              control={form.control}
-                              name="avatar_url"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Avatar URL</FormLabel>
-                                  <FormControl>
-                                    <div className="flex gap-2">
-                                      <Input 
-                                        placeholder="Enter avatar URL" 
-                                        {...field} 
-                                        value={field.value || ""}
-                                        data-testid="input-edit-avatar"
-                                      />
-                                      <Button 
-                                        type="button" 
-                                        variant="outline" 
-                                        size="icon"
-                                        data-testid="button-upload-avatar"
-                                      >
-                                        <Upload className="h-4 w-4" />
-                                      </Button>
-                                    </div>
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
                             <DialogFooter>
                               <Button 
                                 type="submit" 
@@ -367,83 +461,82 @@ export default function ProfilePage() {
                       </DialogContent>
                     </Dialog>
                     <Link href="/settings">
-                      <Button variant="outline" size="icon" data-testid="button-settings">
-                        <Settings className="h-4 w-4" />
+                      <Button variant="outline" data-testid="link-settings">
+                        <Settings className="h-4 w-4 mr-2" />
+                        Settings
                       </Button>
                     </Link>
                   </>
+                ) : (
+                  <Button
+                    variant={isFollowing ? "outline" : "default"}
+                    onClick={handleFollowToggle}
+                    disabled={followMutation.isPending || unfollowMutation.isPending}
+                    data-testid="button-follow-toggle"
+                  >
+                    {isFollowing ? (
+                      <>
+                        <UserMinus className="h-4 w-4 mr-2" />
+                        Unfollow
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="h-4 w-4 mr-2" />
+                        Follow
+                      </>
+                    )}
+                  </Button>
                 )}
               </div>
             </div>
+            {uploadProgress > 0 && uploadProgress < 100 && (
+              <div className="mt-4">
+                <Progress value={uploadProgress} className="h-2" data-testid="progress-avatar-upload" />
+                <p className="text-sm text-muted-foreground mt-1">Uploading avatar...</p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
-        <Tabs defaultValue="posts" data-testid="tabs-profile">
-          <TabsList className="w-full">
-            <TabsTrigger value="posts" className="flex-1" data-testid="tab-posts">
-              Posts
-            </TabsTrigger>
-            <TabsTrigger value="events" className="flex-1" data-testid="tab-events">
-              Events
-            </TabsTrigger>
-            <TabsTrigger value="about" className="flex-1" data-testid="tab-about">
-              About
-            </TabsTrigger>
+        <Tabs defaultValue="posts" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="posts" data-testid="tab-posts">Posts</TabsTrigger>
+            <TabsTrigger value="events" data-testid="tab-events">Events</TabsTrigger>
+            <TabsTrigger value="communities" data-testid="tab-communities">Communities</TabsTrigger>
           </TabsList>
           <TabsContent value="posts" className="mt-6">
             <Card>
-              <CardContent className="pt-6 text-center text-muted-foreground" data-testid="text-no-posts">
-                No posts yet
+              <CardHeader>
+                <CardTitle>Posts</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground text-center py-8">
+                  No posts yet
+                </p>
               </CardContent>
             </Card>
           </TabsContent>
           <TabsContent value="events" className="mt-6">
             <Card>
-              <CardContent className="pt-6 text-center text-muted-foreground" data-testid="text-no-events">
-                No events yet
+              <CardHeader>
+                <CardTitle>Events</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground text-center py-8">
+                  No events yet
+                </p>
               </CardContent>
             </Card>
           </TabsContent>
-          <TabsContent value="about" className="mt-6">
+          <TabsContent value="communities" className="mt-6">
             <Card>
               <CardHeader>
-                <CardTitle>About</CardTitle>
+                <CardTitle>Communities</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {profile.full_name && (
-                  <div>
-                    <h3 className="font-medium mb-1">Full Name</h3>
-                    <p className="text-muted-foreground" data-testid="text-about-fullname">
-                      {profile.full_name}
-                    </p>
-                  </div>
-                )}
-                {profile.username && (
-                  <div>
-                    <h3 className="font-medium mb-1">Username</h3>
-                    <p className="text-muted-foreground" data-testid="text-about-username">
-                      @{profile.username}
-                    </p>
-                  </div>
-                )}
-                {(profile.city || profile.country) && (
-                  <div>
-                    <h3 className="font-medium mb-1">Location</h3>
-                    <p className="text-muted-foreground" data-testid="text-about-location">
-                      {profile.city}
-                      {profile.city && profile.country && ", "}
-                      {profile.country}
-                    </p>
-                  </div>
-                )}
-                {profile.language && (
-                  <div>
-                    <h3 className="font-medium mb-1">Language</h3>
-                    <p className="text-muted-foreground" data-testid="text-about-language">
-                      {profile.language}
-                    </p>
-                  </div>
-                )}
+              <CardContent>
+                <p className="text-muted-foreground text-center py-8">
+                  Not a member of any communities yet
+                </p>
               </CardContent>
             </Card>
           </TabsContent>

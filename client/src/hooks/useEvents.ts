@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import {
   getEvents,
   getEventById,
@@ -8,13 +9,15 @@ import {
   deleteEvent,
   getRSVPsByEventId,
   createOrUpdateRSVP,
+  getEventAttendance,
+  type EventFilters,
 } from "@/lib/supabaseQueries";
 import type { EventWithProfile, InsertEvent, InsertRSVP } from "@shared/supabase-types";
 
-export function useEvents() {
+export function useEvents(filters?: EventFilters) {
   return useQuery<EventWithProfile[]>({
-    queryKey: ["events"],
-    queryFn: () => getEvents(),
+    queryKey: ["events", filters],
+    queryFn: () => getEvents(filters),
   });
 }
 
@@ -23,6 +26,14 @@ export function useEvent(id: string) {
     queryKey: ["events", id],
     queryFn: () => getEventById(id),
     enabled: !!id,
+  });
+}
+
+export function useEventAttendance(eventId: string) {
+  return useQuery<{ attending: number; capacity: number | null; waitlist: number }>({
+    queryKey: ["event-attendance", eventId],
+    queryFn: () => getEventAttendance(eventId),
+    enabled: !!eventId,
   });
 }
 
@@ -59,19 +70,74 @@ export function useEventRSVPs(eventId: string) {
 
 export function useRSVPEvent() {
   const { user } = useAuth();
+  const { toast } = useToast();
 
   return useMutation({
     mutationFn: async (data: { eventId: string; status: "going" | "maybe" | "not_going" }) => {
       if (!user) throw new Error("Must be logged in");
+
+      const attendance = await getEventAttendance(data.eventId);
+      const { attending, capacity } = attendance;
+
+      if (data.status === "going" && capacity && attending >= capacity) {
+        toast({
+          title: "You're on the waitlist",
+          description: "This event is at capacity. You've been added to the waitlist.",
+        });
+      } else if (data.status === "going") {
+        toast({
+          title: "RSVP confirmed",
+          description: "You're attending this event!",
+        });
+      } else if (data.status === "not_going") {
+        toast({
+          title: "RSVP cancelled",
+          description: "Your RSVP has been cancelled.",
+        });
+      }
+
       return createOrUpdateRSVP({
         user_id: user.id,
         event_id: data.eventId,
         status: data.status,
       });
     },
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({ queryKey: ["rsvps", variables.eventId] });
+      await queryClient.cancelQueries({ queryKey: ["event-attendance", variables.eventId] });
+
+      const previousRsvps = queryClient.getQueryData(["rsvps", variables.eventId]);
+      const previousAttendance = queryClient.getQueryData(["event-attendance", variables.eventId]);
+
+      queryClient.setQueryData(["event-attendance", variables.eventId], (old: any) => {
+        if (!old) return old;
+        const delta = variables.status === "going" ? 1 : -1;
+        return {
+          ...old,
+          attending: Math.max(0, old.attending + delta),
+        };
+      });
+
+      return { previousRsvps, previousAttendance };
+    },
+    onError: (err, variables, context) => {
+      if (context?.previousRsvps) {
+        queryClient.setQueryData(["rsvps", variables.eventId], context.previousRsvps);
+      }
+      if (context?.previousAttendance) {
+        queryClient.setQueryData(["event-attendance", variables.eventId], context.previousAttendance);
+      }
+      toast({
+        title: "Error",
+        description: "Failed to update RSVP. Please try again.",
+        variant: "destructive",
+      });
+    },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["rsvps", variables.eventId] });
       queryClient.invalidateQueries({ queryKey: ["events", variables.eventId] });
+      queryClient.invalidateQueries({ queryKey: ["event-attendance", variables.eventId] });
+      queryClient.invalidateQueries({ queryKey: ["events"] });
     },
   });
 }

@@ -29,7 +29,9 @@ import type {
 // POSTS
 // ============================================================================
 
-export async function getPosts(limit = 50) {
+export async function getPosts(options?: { limit?: number; offset?: number }) {
+  const { limit = 10, offset = 0 } = options || {};
+  
   const { data, error } = await supabase
     .from("posts")
     .select(`
@@ -37,7 +39,7 @@ export async function getPosts(limit = 50) {
       profiles (*)
     `)
     .order("created_at", { ascending: false })
-    .limit(limit);
+    .range(offset, offset + limit - 1);
 
   if (error) throw error;
   return data as PostWithProfile[];
@@ -173,16 +175,36 @@ export async function deleteComment(id: string) {
 // EVENTS
 // ============================================================================
 
-export async function getEvents(limit = 50) {
-  const { data, error } = await supabase
+export interface EventFilters {
+  search?: string;
+  category?: string;
+  dateFilter?: 'upcoming' | 'past';
+}
+
+export async function getEvents(filters?: EventFilters) {
+  let query = supabase
     .from("events")
     .select(`
       *,
       profiles (*)
-    `)
-    .gte("start_date", new Date().toISOString())
-    .order("start_date", { ascending: true })
-    .limit(limit);
+    `);
+
+  if (filters?.search) {
+    query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%,location.ilike.%${filters.search}%`);
+  }
+
+  if (filters?.category && filters.category.toLowerCase() !== 'all') {
+    query = query.eq('category', filters.category);
+  }
+
+  const now = new Date().toISOString();
+  if (!filters?.dateFilter || filters.dateFilter === 'upcoming') {
+    query = query.gte('start_date', now);
+  } else if (filters.dateFilter === 'past') {
+    query = query.lt('start_date', now);
+  }
+
+  const { data, error } = await query.order('start_date', { ascending: filters?.dateFilter === 'past' ? false : true });
 
   if (error) throw error;
   return data as EventWithProfile[];
@@ -233,6 +255,30 @@ export async function getRSVPsByEventId(eventId: string) {
 
   if (error) throw error;
   return data as RSVP[];
+}
+
+export async function getEventAttendance(eventId: string) {
+  const { count, error: countError } = await supabase
+    .from("rsvps")
+    .select("*", { count: 'exact', head: true })
+    .eq("event_id", eventId)
+    .eq("status", "going");
+
+  if (countError) throw countError;
+
+  const { data: event, error: eventError } = await supabase
+    .from("events")
+    .select("max_attendees")
+    .eq("id", eventId)
+    .single();
+
+  if (eventError) throw eventError;
+
+  const attending = count || 0;
+  const capacity = event?.max_attendees || null;
+  const waitlist = capacity && attending > capacity ? attending - capacity : 0;
+
+  return { attending, capacity, waitlist };
 }
 
 export async function createOrUpdateRSVP(rsvp: InsertRSVP) {
