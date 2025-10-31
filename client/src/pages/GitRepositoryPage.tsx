@@ -29,49 +29,9 @@ interface GitInfo {
 }
 
 export default function GitRepositoryPage() {
-  // Mock data - in real app, this would fetch from GitHub API via backend
+  // Fetch git repository info from backend API
   const { data: gitInfo, isLoading } = useQuery<GitInfo>({
     queryKey: ["/api/platform/git-info"],
-    // For now, return mock data
-    queryFn: async () => ({
-      owner: process.env.GITHUB_OWNER || "mundo-tango",
-      repo: process.env.GITHUB_REPO || "platform",
-      repoId: process.env.GITHUB_REPO_ID || "R_123456",
-      defaultBranch: "main",
-      branches: [
-        { name: "main", commit: "abc123", protected: true },
-        { name: "develop", commit: "def456", protected: false },
-        { name: "feature/esa-framework", commit: "ghi789", protected: false },
-      ],
-      recentCommits: [
-        {
-          sha: "abc123def",
-          message: "feat: Add ESA Framework schema",
-          author: "Developer",
-          date: new Date().toISOString(),
-          branch: "main",
-        },
-        {
-          sha: "def456ghi",
-          message: "feat: Implement secrets management UI",
-          author: "Developer",
-          date: new Date(Date.now() - 3600000).toISOString(),
-          branch: "main",
-        },
-        {
-          sha: "ghi789jkl",
-          message: "fix: Update deployment webhook handlers",
-          author: "Developer",
-          date: new Date(Date.now() - 7200000).toISOString(),
-          branch: "develop",
-        },
-      ],
-      stats: {
-        totalCommits: 247,
-        totalBranches: 8,
-        contributors: 3,
-      },
-    }),
   });
 
   if (isLoading || !gitInfo) {

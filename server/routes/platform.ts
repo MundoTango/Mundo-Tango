@@ -8,35 +8,67 @@ const router = Router();
 // ESA FRAMEWORK ROUTES
 // ============================================================================
 
-// GET /api/platform/esa/stats - Get ESA agent statistics (mock for now)
+// GET /api/platform/esa/stats - Get ESA agent statistics
 router.get("/esa/stats", async (req: AuthRequest, res: Response) => {
   try {
-    // Mock data - implement actual database queries when storage interface is ready
+    const { db } = await import("../db");
+    const { esaAgents } = await import("../../shared/platform-schema");
+    const { sql, eq } = await import("drizzle-orm");
+
+    const totalAgents = await db.select({ count: sql<number>`count(*)::int` }).from(esaAgents);
+    const activeAgents = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(esaAgents)
+      .where(eq(esaAgents.status, "active"));
+    const certifiedAgents = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(esaAgents)
+      .where(sql`${esaAgents.certificationLevel} > 0`);
+    const trainingAgents = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(esaAgents)
+      .where(eq(esaAgents.status, "training"));
+
+    // Agents by type
+    const byType = await db
+      .select({
+        type: esaAgents.agentType,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(esaAgents)
+      .groupBy(esaAgents.agentType);
+
+    const agentsByType: Record<string, number> = {};
+    byType.forEach((row) => {
+      agentsByType[row.type] = row.count;
+    });
+
+    // Certification levels
+    const byLevel = await db
+      .select({
+        level: esaAgents.certificationLevel,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(esaAgents)
+      .groupBy(esaAgents.certificationLevel);
+
+    const certificationLevels: Record<string, number> = {
+      level0: 0,
+      level1: 0,
+      level2: 0,
+      level3: 0,
+    };
+    byLevel.forEach((row) => {
+      certificationLevels[`level${row.level}`] = row.count;
+    });
+
     res.json({
-      totalAgents: 105,
-      activeAgents: 0,
-      certifiedAgents: 0,
-      trainingAgents: 0,
-      agentsByType: {
-        page: 50,
-        component: 0,
-        algorithm: 50,
-        layer: 61,
-        journey: 20,
-        dataflow: 30,
-        division: 6,
-        board: 1,
-        mr_blue: 8,
-        life_ceo: 16,
-        marketing: 5,
-        hr: 5,
-      },
-      certificationLevels: {
-        level0: 105,
-        level1: 0,
-        level2: 0,
-        level3: 0,
-      },
+      totalAgents: totalAgents[0].count,
+      activeAgents: activeAgents[0].count,
+      certifiedAgents: certifiedAgents[0].count,
+      trainingAgents: trainingAgents[0].count,
+      agentsByType,
+      certificationLevels,
       performanceMetrics: {
         totalTasksCompleted: 0,
         avgSuccessRate: 0,
@@ -51,8 +83,12 @@ router.get("/esa/stats", async (req: AuthRequest, res: Response) => {
 // GET /api/platform/esa/agents - Get all ESA agents
 router.get("/esa/agents", async (req: AuthRequest, res: Response) => {
   try {
-    // Mock data - implement actual database queries when storage interface is ready
-    res.json([]);
+    const { db } = await import("../db");
+    const { esaAgents } = await import("../../shared/platform-schema");
+    const { asc } = await import("drizzle-orm");
+
+    const agents = await db.select().from(esaAgents).orderBy(asc(esaAgents.agentCode));
+    res.json(agents);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
