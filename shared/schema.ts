@@ -605,3 +605,10 @@ export const insertChatRoomUserSchema = createInsertSchema(chatRoomUsers).omit({
 });
 export type InsertChatRoomUser = z.infer<typeof insertChatRoomUserSchema>;
 export type SelectChatRoomUser = typeof chatRoomUsers.$inferSelect;
+
+// ============================================================================
+// PLATFORM INDEPENDENCE SCHEMA (PATH 2)
+// ============================================================================
+
+// Export all platform tables from platform-schema.ts so Drizzle can see them
+export * from "./platform-schema";

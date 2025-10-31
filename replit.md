@@ -114,6 +114,57 @@ The project follows a modular and agent-driven development approach.
 - **Payments:** Stripe (`STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`)
 - **Real-time Communication:** Supabase Realtime (posts, messages, typing)
 
+## PATH 2: Platform Independence (October 31, 2025)
+
+**Goal:** Achieve complete Replit independence through 8 platform features across 4 tiers. Target: $15/month cost savings ($180/year), zero vendor lock-in, full infrastructure control via Vercel + Railway + Supabase architecture.
+
+**Architecture Note:** Despite replit.md claiming "Supabase UUID migration complete," the ACTUAL codebase uses Drizzle ORM with Express backend and JWT authentication (serial IDs, not UUIDs). Platform features built for this real architecture.
+
+**TIER 1 - DEPLOYMENT AUTOMATION (2/3 Complete):**
+
+**1.1 Deployment Automation ✅ (Architect Approved)**
+- Database: `deployments`, `platform_integrations`, `environment_variables` tables (shared/platform-schema.ts)
+- Storage: 14 methods implemented (create/get/list/update/delete for all 3 entities)
+- Backend: Full CRUD API at `/api/deployments` (server/routes/deployments.ts)
+- Frontend: DeployButton component with GitHub integration (client/src/components/platform/DeployButton.tsx)
+- GitHub: Client library for commit info retrieval (server/lib/github-client.ts)
+- Status: ✅ All routes wired to storage, zero LSP errors, architect approved
+- TODO (Future): Vercel/Railway API clients for actual deployment triggering
+
+**1.2 Secrets Management ✅ (Architect Approved)**
+- Database: Uses `environment_variables` table with encrypted values
+- Storage: Full CRUD methods (create/get/update/delete)
+- Encryption: AES-256 with 32-byte hex key (SECRETS_ENCRYPTION_KEY required in production)
+- Backend: Full CRUD API at `/api/secrets` (server/routes/secrets.ts)
+- Security Model: "Show once" pattern (like GitHub/Vercel)
+  - Plaintext value shown ONLY during creation with warning dialog
+  - GET endpoint returns masked values only (e.g., "********abc123")
+  - Values encrypted at rest AND never exposed to frontend after creation
+  - Decryption ONLY for platform sync (server-side)
+- Frontend: SecretsManager component with copy-to-clipboard (client/src/components/platform/SecretsManager.tsx)
+- Status: ✅ Critical security fix applied, architect approved, zero LSP errors
+- TODO (Future): Vercel/Railway API sync for actual secret deployment
+
+**1.3 Preview Deployments ⏳ (Pending)**
+- Auto-deploy on save with shareable URLs
+- 7-day expiration
+- Status: Not started
+
+**TIER 2-4 (Pending):**
+- Domain management
+- Analytics dashboard
+- Team collaboration
+- Cost tracking
+- Database backups
+- CI/CD pipelines
+
+**Documentation:**
+- docs/handoff/MB_MD_MASTER_GUIDE.txt (429 lines)
+- docs/handoff/MB_MD_QUICK_REFERENCE.txt
+- docs/handoff/INDEX.txt
+- docs/handoff/TIER_1_DEPLOYMENT_AUTOMATION.txt
+- docs/handoff/TIER_1_SECRETS_MANAGEMENT.txt
+
 ## Known Blockers & Required Supabase Configuration
 
 **1. RLS Configuration Required (Supabase Dashboard):**
