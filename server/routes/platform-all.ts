@@ -412,4 +412,8 @@ router.put("/cicd/runs/:id", authenticateToken, async (req: AuthRequest, res: Re
   }
 });
 
+// Import and mount platform routes (ESA, monitoring, git, analytics)
+import platformRoutes from "./platform";
+router.use("/", platformRoutes);
+
 export default router;
