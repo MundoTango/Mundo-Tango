@@ -44,10 +44,6 @@ const resetPasswordSchema = z.object({
   newPassword: z.string().min(8).max(100),
 });
 
-const refreshTokenSchema = z.object({
-  refreshToken: z.string().min(1),
-});
-
 const verify2FASchema = z.object({
   code: z.string().length(6),
 });
@@ -194,10 +190,17 @@ router.post("/login", async (req: Request, res: Response) => {
       twoFactorEnabled: user.twoFactorEnabled,
     };
 
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
+    });
+
     res.json({
       message: "Login successful",
       accessToken,
-      refreshToken,
       user: userResponse,
     });
   } catch (error) {
@@ -212,13 +215,20 @@ router.post("/login", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/logout", authenticateToken, async (req: AuthRequest, res: Response) => {
+router.post("/logout", async (req: Request, res: Response) => {
   try {
-    const refreshToken = req.body.refreshToken;
+    const refreshToken = req.cookies.refreshToken;
     
     if (refreshToken) {
       await storage.deleteRefreshToken(refreshToken);
     }
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+    });
 
     res.json({ message: "Logout successful" });
   } catch (error) {
@@ -229,7 +239,11 @@ router.post("/logout", authenticateToken, async (req: AuthRequest, res: Response
 
 router.post("/refresh", async (req: Request, res: Response) => {
   try {
-    const { refreshToken } = refreshTokenSchema.parse(req.body);
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      return res.status(401).json({ message: "No refresh token provided" });
+    }
 
     const storedToken = await storage.getRefreshToken(refreshToken);
     if (!storedToken) {
@@ -257,17 +271,18 @@ router.post("/refresh", async (req: Request, res: Response) => {
       expiresAt: refreshExpiresAt,
     });
 
+    res.cookie("refreshToken", newRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
+    });
+
     res.json({
       accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ 
-        message: "Validation error", 
-        errors: error.errors 
-      });
-    }
     console.error("Refresh token error:", error);
     res.status(401).json({ message: "Invalid refresh token" });
   }
