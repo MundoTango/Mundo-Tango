@@ -178,7 +178,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const comments = await storage.getPostComments(postId);
       res.json(comments);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch comments" });
+      console.error("Error fetching comments:", error);
+      res.status(500).json({ message: "Failed to fetch comments", error: error instanceof Error ? error.message : String(error) });
     }
   });
 
