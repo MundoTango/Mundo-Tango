@@ -21,6 +21,7 @@ import {
   notifications,
   savedPosts,
   friendRequests,
+  moderationQueue,
   communities,
   communityMembers,
   workshops,
@@ -562,6 +563,10 @@ export class DbStorage implements IStorage {
 
   async unsavePost(postId: number, userId: number): Promise<void> {
     await db.delete(savedPosts).where(and(eq(savedPosts.postId, postId), eq(savedPosts.userId, userId)));
+  }
+
+  async reportPost(report: { contentType: string; contentId: number; reporterId: number; reason: string; details: string | null }): Promise<void> {
+    await db.insert(moderationQueue).values(report);
   }
 
   async createPostComment(comment: InsertPostComment): Promise<SelectPostComment> {
