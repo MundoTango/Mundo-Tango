@@ -5,6 +5,7 @@ import authRoutes from "./routes/auth";
 import deploymentsRoutes from "./routes/deployments";
 import secretsRoutes from "./routes/secrets";
 import previewsRoutes from "./routes/previews";
+import platformAllRoutes from "./routes/platform-all";
 import { authenticateToken, AuthRequest } from "./middleware/auth";
 import { 
   insertPostSchema, 
@@ -56,6 +57,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/deployments", deploymentsRoutes);
   app.use("/api/secrets", secretsRoutes);
   app.use("/api/previews", previewsRoutes);
+  app.use("/api/platform", platformAllRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(insertPostSchema), async (req: AuthRequest, res: Response) => {
     try {

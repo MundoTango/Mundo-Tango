@@ -61,6 +61,13 @@ import {
   platformIntegrations,
   environmentVariables,
   previewDeployments,
+  customDomains,
+  analyticsEvents,
+  teamMembers,
+  costRecords,
+  databaseBackups,
+  cicdPipelines,
+  cicdRuns,
   type Deployment,
   type InsertDeployment,
   type PlatformIntegration,
@@ -185,6 +192,43 @@ export interface IStorage {
   deletePreviewDeployment(id: number): Promise<void>;
   expirePreviewDeployment(id: number): Promise<void>;
   getExpiredPreviews(): Promise<PreviewDeployment[]>;
+  
+  // Platform Independence: Custom Domains (TIER 2.1)
+  createCustomDomain(domain: any): Promise<any>;
+  getCustomDomains(userId: number): Promise<any[]>;
+  updateCustomDomain(id: number, userId: number, data: any): Promise<any | null>;
+  deleteCustomDomain(id: number, userId: number): Promise<boolean>;
+  
+  // Platform Independence: Analytics Events (TIER 2.2)
+  createAnalyticsEvent(event: any): Promise<any>;
+  getAnalyticsEvents(params: { userId: number; eventType?: string; limit?: number }): Promise<any[]>;
+  getAnalyticsSummary(userId: number, days?: number): Promise<any>;
+  
+  // Platform Independence: Team Members (TIER 2.3)
+  createTeamMember(member: any): Promise<any>;
+  getTeamMembers(ownerId: number): Promise<any[]>;
+  updateTeamMember(id: number, ownerId: number, data: any): Promise<any | null>;
+  deleteTeamMember(id: number, ownerId: number): Promise<boolean>;
+  
+  // Platform Independence: Cost Tracking (TIER 3.1)
+  createCostRecord(cost: any): Promise<any>;
+  getCostRecords(params: { userId: number; platform?: string; startDate?: Date; endDate?: Date }): Promise<any[]>;
+  getCostSummary(userId: number, days?: number): Promise<any>;
+  
+  // Platform Independence: Database Backups (TIER 3.2)
+  createDatabaseBackup(backup: any): Promise<any>;
+  getDatabaseBackups(userId: number): Promise<any[]>;
+  updateDatabaseBackup(id: number, userId: number, data: any): Promise<any | null>;
+  deleteDatabaseBackup(id: number, userId: number): Promise<boolean>;
+  
+  // Platform Independence: CI/CD Pipelines (TIER 4)
+  createCicdPipeline(pipeline: any): Promise<any>;
+  getCicdPipelines(userId: number): Promise<any[]>;
+  updateCicdPipeline(id: number, userId: number, data: any): Promise<any | null>;
+  deleteCicdPipeline(id: number, userId: number): Promise<boolean>;
+  createCicdRun(run: any): Promise<any>;
+  getCicdRuns(pipelineId: number): Promise<any[]>;
+  updateCicdRun(id: number, userId: number, data: any): Promise<any | null>;
 }
 
 export class DbStorage implements IStorage {
@@ -867,6 +911,174 @@ export class DbStorage implements IStorage {
         eq(previewDeployments.status, 'active'),
         lt(previewDeployments.expiresAt, new Date())
       ));
+  }
+
+  // TIER 2.1: Custom Domains
+  async createCustomDomain(domain: any): Promise<any> {
+    const result = await db.insert(customDomains).values(domain).returning();
+    return result[0];
+  }
+
+  async getCustomDomains(userId: number): Promise<any[]> {
+    return await db.select().from(customDomains).where(eq(customDomains.userId, userId)).orderBy(desc(customDomains.createdAt));
+  }
+
+  async updateCustomDomain(id: number, userId: number, data: any): Promise<any | null> {
+    const result = await db.update(customDomains).set({ ...data, updatedAt: new Date() }).where(and(eq(customDomains.id, id), eq(customDomains.userId, userId))).returning();
+    return result[0] || null;
+  }
+
+  async deleteCustomDomain(id: number, userId: number): Promise<boolean> {
+    const result = await db.delete(customDomains).where(and(eq(customDomains.id, id), eq(customDomains.userId, userId))).returning();
+    return result.length > 0;
+  }
+
+  // TIER 2.2: Analytics Events
+  async createAnalyticsEvent(event: any): Promise<any> {
+    const result = await db.insert(analyticsEvents).values(event).returning();
+    return result[0];
+  }
+
+  async getAnalyticsEvents(params: { userId: number; eventType?: string; limit?: number }): Promise<any[]> {
+    const conditions = [eq(analyticsEvents.userId, params.userId)];
+    if (params.eventType) conditions.push(eq(analyticsEvents.eventType, params.eventType));
+    
+    let query = db.select().from(analyticsEvents).where(and(...conditions)) as any;
+    query = query.orderBy(desc(analyticsEvents.timestamp)) as any;
+    if (params.limit) query = query.limit(params.limit) as any;
+    
+    return await query;
+  }
+
+  async getAnalyticsSummary(userId: number, days: number = 30): Promise<any> {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+    
+    const events = await db
+      .select()
+      .from(analyticsEvents)
+      .where(and(
+        eq(analyticsEvents.userId, userId),
+        gte(analyticsEvents.timestamp, startDate)
+      ));
+    
+    return {
+      totalEvents: events.length,
+      eventsByType: events.reduce((acc: any, e: any) => {
+        acc[e.eventType] = (acc[e.eventType] || 0) + 1;
+        return acc;
+      }, {}),
+    };
+  }
+
+  // TIER 2.3: Team Members
+  async createTeamMember(member: any): Promise<any> {
+    const result = await db.insert(teamMembers).values(member).returning();
+    return result[0];
+  }
+
+  async getTeamMembers(ownerId: number): Promise<any[]> {
+    return await db.select().from(teamMembers).where(eq(teamMembers.ownerId, ownerId)).orderBy(desc(teamMembers.createdAt));
+  }
+
+  async updateTeamMember(id: number, ownerId: number, data: any): Promise<any | null> {
+    const result = await db.update(teamMembers).set({ ...data, updatedAt: new Date() }).where(and(eq(teamMembers.id, id), eq(teamMembers.ownerId, ownerId))).returning();
+    return result[0] || null;
+  }
+
+  async deleteTeamMember(id: number, ownerId: number): Promise<boolean> {
+    const result = await db.delete(teamMembers).where(and(eq(teamMembers.id, id), eq(teamMembers.ownerId, ownerId))).returning();
+    return result.length > 0;
+  }
+
+  // TIER 3.1: Cost Tracking
+  async createCostRecord(cost: any): Promise<any> {
+    const result = await db.insert(costRecords).values(cost).returning();
+    return result[0];
+  }
+
+  async getCostRecords(params: { userId: number; platform?: string; startDate?: Date; endDate?: Date }): Promise<any[]> {
+    const conditions = [eq(costRecords.userId, params.userId)];
+    if (params.platform) conditions.push(eq(costRecords.platform, params.platform));
+    if (params.startDate) conditions.push(gte(costRecords.billingPeriodStart, params.startDate));
+    if (params.endDate) conditions.push(lte(costRecords.billingPeriodEnd, params.endDate));
+    
+    return await db.select().from(costRecords).where(and(...conditions)).orderBy(desc(costRecords.billingPeriodStart));
+  }
+
+  async getCostSummary(userId: number, days: number = 30): Promise<any> {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+    
+    const costs = await db
+      .select()
+      .from(costRecords)
+      .where(and(
+        eq(costRecords.userId, userId),
+        gte(costRecords.billingPeriodStart, startDate)
+      ));
+    
+    const totalCost = costs.reduce((sum: number, c: any) => sum + c.amount, 0);
+    const byPlatform = costs.reduce((acc: any, c: any) => {
+      acc[c.platform] = (acc[c.platform] || 0) + c.amount;
+      return acc;
+    }, {});
+    
+    return { totalCost, byPlatform, costRecords: costs };
+  }
+
+  // TIER 3.2: Database Backups
+  async createDatabaseBackup(backup: any): Promise<any> {
+    const result = await db.insert(databaseBackups).values(backup).returning();
+    return result[0];
+  }
+
+  async getDatabaseBackups(userId: number): Promise<any[]> {
+    return await db.select().from(databaseBackups).where(eq(databaseBackups.userId, userId)).orderBy(desc(databaseBackups.createdAt));
+  }
+
+  async updateDatabaseBackup(id: number, userId: number, data: any): Promise<any | null> {
+    const result = await db.update(databaseBackups).set(data).where(and(eq(databaseBackups.id, id), eq(databaseBackups.userId, userId))).returning();
+    return result[0] || null;
+  }
+
+  async deleteDatabaseBackup(id: number, userId: number): Promise<boolean> {
+    const result = await db.delete(databaseBackups).where(and(eq(databaseBackups.id, id), eq(databaseBackups.userId, userId))).returning();
+    return result.length > 0;
+  }
+
+  // TIER 4: CI/CD Pipelines
+  async createCicdPipeline(pipeline: any): Promise<any> {
+    const result = await db.insert(cicdPipelines).values(pipeline).returning();
+    return result[0];
+  }
+
+  async getCicdPipelines(userId: number): Promise<any[]> {
+    return await db.select().from(cicdPipelines).where(eq(cicdPipelines.userId, userId)).orderBy(desc(cicdPipelines.createdAt));
+  }
+
+  async updateCicdPipeline(id: number, userId: number, data: any): Promise<any | null> {
+    const result = await db.update(cicdPipelines).set({ ...data, updatedAt: new Date() }).where(and(eq(cicdPipelines.id, id), eq(cicdPipelines.userId, userId))).returning();
+    return result[0] || null;
+  }
+
+  async deleteCicdPipeline(id: number, userId: number): Promise<boolean> {
+    const result = await db.delete(cicdPipelines).where(and(eq(cicdPipelines.id, id), eq(cicdPipelines.userId, userId))).returning();
+    return result.length > 0;
+  }
+
+  async createCicdRun(run: any): Promise<any> {
+    const result = await db.insert(cicdRuns).values(run).returning();
+    return result[0];
+  }
+
+  async getCicdRuns(pipelineId: number): Promise<any[]> {
+    return await db.select().from(cicdRuns).where(eq(cicdRuns.pipelineId, pipelineId)).orderBy(desc(cicdRuns.createdAt));
+  }
+
+  async updateCicdRun(id: number, userId: number, data: any): Promise<any | null> {
+    const result = await db.update(cicdRuns).set(data).where(and(eq(cicdRuns.id, id), eq(cicdRuns.userId, userId))).returning();
+    return result[0] || null;
   }
 }
 
