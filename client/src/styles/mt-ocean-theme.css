@@ -1,0 +1,193 @@
+/**
+ * MT OCEAN THEME - Mundo Tango Design System
+ * Turquoise → Dodger Blue → Cobalt Blue Gradient
+ * Glassmorphic effects, 4px spacing system
+ */
+
+/* ============================================================================
+   PRIMARY OCEAN COLORS
+   ============================================================================ */
+:root {
+  /* Ocean Palette - Turquoise to Deep Blue */
+  --ocean-seafoam-300: hsl(177, 72%, 65%);
+  --ocean-seafoam-400: hsl(177, 72%, 56%);   /* #40E0D0 Turquoise - PRIMARY */
+  --ocean-seafoam-500: hsl(177, 72%, 48%);
+  --ocean-seafoam-600: hsl(177, 72%, 40%);
+  
+  --ocean-cyan-300: hsl(210, 100%, 65%);
+  --ocean-cyan-400: hsl(210, 100%, 56%);      /* #1E90FF Dodger Blue */
+  --ocean-cyan-500: hsl(210, 100%, 48%);
+  
+  --ocean-teal-400: hsl(218, 100%, 45%);
+  --ocean-teal-500: hsl(218, 100%, 34%);      /* #0047AB Cobalt Blue */
+  --ocean-teal-600: hsl(218, 100%, 28%);
+  --ocean-teal-700: hsl(218, 100%, 22%);
+  --ocean-teal-800: hsl(218, 100%, 16%);
+  --ocean-teal-900: hsl(218, 100%, 10%);      /* #001333 Navy */
+  
+  /* Glassmorphism */
+  --glass-bg: hsl(195 60% 92% / 0.9);
+  --glass-bg-dark: hsla(215, 52%, 18%, 0.85);
+  --glass-blur: 18px;
+  --glass-border: hsl(186 72% 42% / 0.2);
+  --glass-shadow: 0 18px 45px 0 hsl(214 80% 6% / 0.08);
+  
+  /* Ocean Gradient */
+  --bg-ocean-gradient: linear-gradient(180deg, 
+    var(--ocean-teal-500) 0%, 
+    var(--ocean-teal-700) 50%, 
+    var(--ocean-teal-800) 100%);
+  
+  /* Spacing System (4px base) */
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  
+  /* Typography Scale */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-lg: 1.125rem;   /* 18px */
+  --text-xl: 1.25rem;    /* 20px */
+  --text-2xl: 1.5rem;    /* 24px */
+  --text-3xl: 1.875rem;  /* 30px */
+  --text-4xl: 2.25rem;   /* 36px */
+  --text-5xl: 3rem;      /* 48px */
+}
+
+/* ============================================================================
+   SEMANTIC COLOR TOKENS (MT Ocean Theme)
+   ============================================================================ */
+:root {
+  /* Primary - Ocean Seafoam (Turquoise) */
+  --primary: 177 72% 56%;
+  --primary-foreground: 0 0% 100%;
+  
+  /* Secondary - Ocean Cyan (Dodger Blue) */
+  --secondary: 210 100% 56%;
+  --secondary-foreground: 0 0% 100%;
+  
+  /* Accent - Ocean Teal (Cobalt Blue) */
+  --accent: 218 100% 34%;
+  --accent-foreground: 0 0% 100%;
+  
+  /* Background & Foreground */
+  --background: 0 0% 98%;
+  --foreground: 218 20% 12%;
+  
+  /* Card */
+  --card: 0 0% 96%;
+  --card-foreground: 218 20% 15%;
+  --card-border: 218 15% 90%;
+  
+  /* Sidebar - Ocean themed */
+  --sidebar: 195 40% 94%;
+  --sidebar-foreground: 218 20% 18%;
+  --sidebar-border: 195 25% 87%;
+  --sidebar-primary: 177 72% 45%;
+  --sidebar-primary-foreground: 177 72% 98%;
+  --sidebar-accent: 195 30% 88%;
+  --sidebar-accent-foreground: 218 20% 20%;
+  --sidebar-ring: 177 72% 45%;
+  
+  /* Muted */
+  --muted: 195 20% 90%;
+  --muted-foreground: 218 15% 35%;
+  
+  /* Popover */
+  --popover: 0 0% 92%;
+  --popover-foreground: 218 20% 18%;
+  --popover-border: 195 20% 85%;
+  
+  /* Border & Input */
+  --border: 195 20% 88%;
+  --input: 195 20% 75%;
+  --ring: 177 72% 45%;
+  
+  /* Destructive */
+  --destructive: 0 72% 42%;
+  --destructive-foreground: 0 72% 98%;
+  
+  /* Chart colors - Ocean palette */
+  --chart-1: 177 72% 40%;  /* Turquoise */
+  --chart-2: 210 100% 50%;  /* Dodger Blue */
+  --chart-3: 218 100% 35%;  /* Cobalt */
+  --chart-4: 195 70% 45%;   /* Cyan */
+  --chart-5: 230 80% 50%;   /* Royal Blue */
+}
+
+/* ============================================================================
+   DARK MODE (MT Ocean Theme)
+   ============================================================================ */
+.dark {
+  /* Ocean colors remain vibrant in dark mode */
+  --primary: 177 72% 56%;
+  --primary-foreground: 0 0% 100%;
+  
+  --secondary: 210 100% 56%;
+  --secondary-foreground: 0 0% 100%;
+  
+  --accent: 218 100% 45%;
+  --accent-foreground: 0 0% 100%;
+  
+  /* Dark backgrounds */
+  --background: 218 30% 8%;
+  --foreground: 0 0% 95%;
+  
+  --card: 218 25% 12%;
+  --card-foreground: 0 0% 95%;
+  --card-border: 218 20% 18%;
+  
+  --sidebar: 218 28% 10%;
+  --sidebar-foreground: 0 0% 92%;
+  --sidebar-border: 218 22% 16%;
+  --sidebar-primary: 177 72% 50%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 218 24% 14%;
+  --sidebar-accent-foreground: 0 0% 90%;
+  
+  --muted: 218 22% 15%;
+  --muted-foreground: 0 0% 60%;
+  
+  --popover: 218 25% 12%;
+  --popover-foreground: 0 0% 95%;
+  --popover-border: 218 20% 18%;
+  
+  --border: 218 20% 18%;
+  --input: 218 20% 25%;
+  --ring: 177 72% 50%;
+  
+  /* Glassmorphism in dark mode */
+  --glass-bg: hsla(215, 52%, 18%, 0.85);
+  --glass-border: hsl(186 72% 42% / 0.3);
+  --glass-shadow: 0 18px 45px 0 hsl(214 80% 6% / 0.15);
+}
+
+/* ============================================================================
+   UTILITY CLASSES
+   ============================================================================ */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.bg-ocean-gradient {
+  background: var(--bg-ocean-gradient);
+}
+
+.text-ocean-primary {
+  color: hsl(var(--primary));
+}
+
+.border-ocean {
+  border-color: hsl(177 72% 56% / 0.3);
+}
