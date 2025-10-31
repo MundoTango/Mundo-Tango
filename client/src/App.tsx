@@ -8,6 +8,9 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AppLayout } from "./components/AppLayout";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import NotFound from "@/pages/not-found";
+import HomePage from "@/pages/HomePage";
+import AboutPage from "@/pages/AboutPage";
+import CalendarPage from "@/pages/CalendarPage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import FeedPage from "@/pages/FeedPage";
@@ -30,10 +33,12 @@ import AgentCommunicationsPage from "@/pages/AgentCommunicationsPage";
 function Router() {
   return (
     <Switch>
+      <Route path="/" component={HomePage} />
+      <Route path="/about" component={AboutPage} />
       <Route path="/login" component={LoginPage} />
       <Route path="/register" component={RegisterPage} />
       
-      <Route path="/">
+      <Route path="/feed">
         <ProtectedRoute>
           <AppLayout>
             <FeedPage />
@@ -101,6 +106,14 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <SettingsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/calendar">
+        <ProtectedRoute>
+          <AppLayout>
+            <CalendarPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
