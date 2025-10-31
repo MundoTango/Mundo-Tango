@@ -19,6 +19,11 @@ import GroupDetailsPage from "@/pages/GroupDetailsPage";
 import MessagesPage from "@/pages/MessagesPage";
 import SettingsPage from "@/pages/SettingsPage";
 import PlatformPage from "@/pages/Platform";
+import SecretsPage from "@/pages/SecretsPage";
+import GitRepositoryPage from "@/pages/GitRepositoryPage";
+import MonitoringPage from "@/pages/MonitoringPage";
+import AnalyticsPage from "@/pages/AnalyticsPage";
+import ESADashboardPage from "@/pages/ESADashboardPage";
 
 function Router() {
   return (
@@ -102,6 +107,46 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <PlatformPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/platform/secrets">
+        <ProtectedRoute>
+          <AppLayout>
+            <SecretsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/platform/git">
+        <ProtectedRoute>
+          <AppLayout>
+            <GitRepositoryPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/platform/monitoring">
+        <ProtectedRoute>
+          <AppLayout>
+            <MonitoringPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/platform/analytics">
+        <ProtectedRoute>
+          <AppLayout>
+            <AnalyticsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/platform/esa">
+        <ProtectedRoute>
+          <AppLayout>
+            <ESADashboardPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>

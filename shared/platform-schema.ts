@@ -399,3 +399,246 @@ export type InsertCicdPipeline = typeof cicdPipelines.$inferInsert;
 
 export type CicdRun = typeof cicdRuns.$inferSelect;
 export type InsertCicdRun = typeof cicdRuns.$inferInsert;
+
+// ============================================================================
+// ESA FRAMEWORK (Parts 3-4): 105 Agents, 61 Layers, Agent Training System
+// ============================================================================
+
+// Table: ESA Agents Registry
+// Stores all 105 agents with their metadata, status, and certifications
+export const esaAgents = pgTable("esa_agents", {
+  id: serial("id").primaryKey(),
+  
+  // Agent identification
+  agentCode: varchar("agent_code", { length: 50 }).notNull().unique(), // 'P1', 'E23', 'A12', 'L5', etc.
+  agentName: varchar("agent_name", { length: 255 }).notNull(),
+  agentType: varchar("agent_type", { length: 50 }).notNull(), // 'page' | 'component' | 'algorithm' | 'layer' | 'division' | 'board' | 'journey' | 'dataflow' | 'mr_blue' | 'life_ceo' | 'marketing' | 'hr'
+  
+  // Agent hierarchy
+  parentAgentId: integer("parent_agent_id").references((): any => esaAgents.id),
+  divisionChiefId: integer("division_chief_id").references((): any => esaAgents.id),
+  layerNumber: integer("layer_number"), // For layer agents (1-61)
+  tier: integer("tier"), // For division structure (1-6)
+  
+  // Agent details
+  description: text("description"),
+  responsibilities: text("responsibilities").array(),
+  competencies: text("competencies").array(),
+  
+  // Status and certification
+  status: varchar("status", { length: 20 }).notNull().default('inactive'), // 'inactive' | 'training' | 'certified' | 'active' | 'suspended'
+  certificationLevel: integer("certification_level").default(0), // 0=None, 1=Basic, 2=Production, 3=Master
+  certifiedAt: timestamp("certified_at"),
+  
+  // Training methodology
+  trainingMethodology: varchar("training_methodology", { length: 100 }), // 'MB.MD' | 'Ultra-Micro Parallel' | 'Critical Thinking' | etc.
+  trainingCompletedAt: timestamp("training_completed_at"),
+  
+  // Performance metrics
+  tasksCompleted: integer("tasks_completed").default(0),
+  tasksSuccess: integer("tasks_success").default(0),
+  tasksFailed: integer("tasks_failed").default(0),
+  avgCompletionTime: integer("avg_completion_time"), // in seconds
+  lastActiveAt: timestamp("last_active_at"),
+  
+  // Configuration
+  configuration: jsonb("configuration").$type<{
+    capabilities?: string[];
+    dependencies?: string[];
+    communicationProtocols?: string[];
+    qualityGates?: string[];
+    [key: string]: any;
+  }>(),
+  
+  // Metadata
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  agentCodeIdx: index("esa_agents_agent_code_idx").on(table.agentCode),
+  agentTypeIdx: index("esa_agents_agent_type_idx").on(table.agentType),
+  statusIdx: index("esa_agents_status_idx").on(table.status),
+  certificationLevelIdx: index("esa_agents_certification_level_idx").on(table.certificationLevel),
+  parentAgentIdx: index("esa_agents_parent_agent_idx").on(table.parentAgentId),
+}));
+
+// Table: Agent Tasks
+// Tracks tasks assigned to and completed by agents
+export const agentTasks = pgTable("agent_tasks", {
+  id: serial("id").primaryKey(),
+  agentId: integer("agent_id").references(() => esaAgents.id).notNull(),
+  
+  // Task details
+  taskType: varchar("task_type", { length: 50 }).notNull(), // 'build_page' | 'implement_feature' | 'fix_bug' | 'review_code' | 'train_agent' | 'coordinate'
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  priority: varchar("priority", { length: 20 }).notNull().default('medium'), // 'low' | 'medium' | 'high' | 'critical'
+  
+  // Task execution
+  status: varchar("status", { length: 20 }).notNull().default('pending'), // 'pending' | 'assigned' | 'in_progress' | 'review' | 'completed' | 'failed' | 'cancelled'
+  assignedBy: integer("assigned_by").references(() => esaAgents.id),
+  dependencies: jsonb("dependencies").$type<{
+    requiredAgents?: string[];
+    requiredTasks?: number[];
+    [key: string]: any;
+  }>(),
+  
+  // Results
+  result: text("result"),
+  artifacts: jsonb("artifacts").$type<{
+    filesCreated?: string[];
+    filesModified?: string[];
+    linesOfCode?: number;
+    testsCreated?: number;
+    [key: string]: any;
+  }>(),
+  errorMessage: text("error_message"),
+  
+  // Timing
+  estimatedDuration: integer("estimated_duration"), // in seconds
+  actualDuration: integer("actual_duration"), // in seconds
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
+  
+  // Metadata
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  agentIdIdx: index("agent_tasks_agent_id_idx").on(table.agentId),
+  statusIdx: index("agent_tasks_status_idx").on(table.status),
+  priorityIdx: index("agent_tasks_priority_idx").on(table.priority),
+  createdAtIdx: index("agent_tasks_created_at_idx").on(table.createdAt),
+}));
+
+// Table: Agent Communications (H2AC Framework)
+// Tracks Human-to-Agent and Agent-to-Agent communications
+export const agentCommunications = pgTable("agent_communications", {
+  id: serial("id").primaryKey(),
+  
+  // Communication parties
+  communicationType: varchar("communication_type", { length: 20 }).notNull(), // 'H2A' | 'A2H' | 'A2A'
+  fromAgentId: integer("from_agent_id").references(() => esaAgents.id),
+  toAgentId: integer("to_agent_id").references(() => esaAgents.id),
+  fromUserId: integer("from_user_id").references(() => users.id),
+  toUserId: integer("to_user_id").references(() => users.id),
+  
+  // Message details
+  messageType: varchar("message_type", { length: 50 }).notNull(), // 'command' | 'query' | 'response' | 'notification' | 'escalation' | 'coordination'
+  subject: varchar("subject", { length: 255 }),
+  message: text("message").notNull(),
+  
+  // Context
+  taskId: integer("task_id").references(() => agentTasks.id),
+  priority: varchar("priority", { length: 20 }).default('normal'), // 'low' | 'normal' | 'high' | 'urgent'
+  
+  // Response tracking
+  requiresResponse: boolean("requires_response").default(false),
+  responseId: integer("response_id").references((): any => agentCommunications.id),
+  respondedAt: timestamp("responded_at"),
+  
+  // Metadata
+  metadata: jsonb("metadata").$type<{
+    protocol?: string;
+    version?: string;
+    [key: string]: any;
+  }>(),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  communicationTypeIdx: index("agent_communications_type_idx").on(table.communicationType),
+  fromAgentIdx: index("agent_communications_from_agent_idx").on(table.fromAgentId),
+  toAgentIdx: index("agent_communications_to_agent_idx").on(table.toAgentId),
+  taskIdIdx: index("agent_communications_task_id_idx").on(table.taskId),
+  createdAtIdx: index("agent_communications_created_at_idx").on(table.createdAt),
+}));
+
+// Table: Agent Certifications
+// Tracks individual certification achievements for agents
+export const agentCertifications = pgTable("agent_certifications", {
+  id: serial("id").primaryKey(),
+  agentId: integer("agent_id").references(() => esaAgents.id).notNull(),
+  
+  // Certification details
+  methodology: varchar("methodology", { length: 100 }).notNull(), // 'MB.MD' | 'UMP' | 'Critical Thinking' | 'Quality Gates' | etc.
+  level: integer("level").notNull(), // 1=Basic, 2=Production, 3=Master
+  
+  // Requirements met
+  requirementsMet: jsonb("requirements_met").$type<{
+    completed?: string[];
+    verified?: string[];
+    [key: string]: any;
+  }>(),
+  
+  // Verification
+  verifiedBy: integer("verified_by").references(() => esaAgents.id),
+  certificationDate: timestamp("certification_date").defaultNow().notNull(),
+  expiresAt: timestamp("expires_at"),
+  
+  // Performance at certification
+  performanceScore: integer("performance_score"), // 0-100
+  
+  // Metadata
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  agentIdIdx: index("agent_certifications_agent_id_idx").on(table.agentId),
+  methodologyIdx: index("agent_certifications_methodology_idx").on(table.methodology),
+  levelIdx: index("agent_certifications_level_idx").on(table.level),
+}));
+
+// Table: Agent Training Sessions
+// Tracks training sessions for agents using Ultra-Micro Parallel methodology
+export const agentTrainingSessions = pgTable("agent_training_sessions", {
+  id: serial("id").primaryKey(),
+  
+  // Session details
+  sessionName: varchar("session_name", { length: 255 }).notNull(),
+  methodology: varchar("methodology", { length: 100 }).notNull(), // 'Ultra-Micro Parallel' | '5-Day Bootcamp' | etc.
+  
+  // Agents in session
+  agentIds: jsonb("agent_ids").$type<number[]>().notNull(),
+  batchSize: integer("batch_size").default(1),
+  
+  // Training content
+  trainingModules: jsonb("training_modules").$type<Array<{
+    name: string;
+    duration: number;
+    topics: string[];
+    completionCriteria: string[];
+  }>>(),
+  
+  // Progress tracking
+  status: varchar("status", { length: 20 }).notNull().default('scheduled'), // 'scheduled' | 'in_progress' | 'completed' | 'failed'
+  completionPercentage: integer("completion_percentage").default(0),
+  
+  // Results
+  agentsCertified: integer("agents_certified").default(0),
+  averageScore: integer("average_score"),
+  
+  // Timing
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
+  durationMinutes: integer("duration_minutes"),
+  
+  // Metadata
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  statusIdx: index("agent_training_sessions_status_idx").on(table.status),
+  methodologyIdx: index("agent_training_sessions_methodology_idx").on(table.methodology),
+  createdAtIdx: index("agent_training_sessions_created_at_idx").on(table.createdAt),
+}));
+
+// Types for TypeScript
+export type EsaAgent = typeof esaAgents.$inferSelect;
+export type InsertEsaAgent = typeof esaAgents.$inferInsert;
+
+export type AgentTask = typeof agentTasks.$inferSelect;
+export type InsertAgentTask = typeof agentTasks.$inferInsert;
+
+export type AgentCommunication = typeof agentCommunications.$inferSelect;
+export type InsertAgentCommunication = typeof agentCommunications.$inferInsert;
+
+export type AgentCertification = typeof agentCertifications.$inferSelect;
+export type InsertAgentCertification = typeof agentCertifications.$inferInsert;
+
+export type AgentTrainingSession = typeof agentTrainingSessions.$inferSelect;
+export type InsertAgentTrainingSession = typeof agentTrainingSessions.$inferInsert;
