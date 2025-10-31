@@ -33,6 +33,12 @@ import FriendsPage from "@/pages/FriendsPage";
 import NotificationsPage from "@/pages/NotificationsPage";
 import SearchPage from "@/pages/SearchPage";
 import TeachersPage from "@/pages/TeachersPage";
+import VenuesPage from "@/pages/VenuesPage";
+import TutorialsPage from "@/pages/TutorialsPage";
+import MarketplacePage from "@/pages/MarketplacePage";
+import FAQPage from "@/pages/FAQPage";
+import DanceStylesPage from "@/pages/DanceStylesPage";
+import PartnerFinderPage from "@/pages/PartnerFinderPage";
 
 function Router() {
   return (
@@ -150,6 +156,48 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <TeachersPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/venues">
+        <ProtectedRoute>
+          <AppLayout>
+            <VenuesPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/tutorials">
+        <ProtectedRoute>
+          <AppLayout>
+            <TutorialsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/marketplace">
+        <ProtectedRoute>
+          <AppLayout>
+            <MarketplacePage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/faq" component={FAQPage} />
+
+      <Route path="/dance-styles">
+        <ProtectedRoute>
+          <AppLayout>
+            <DanceStylesPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/partner-finder">
+        <ProtectedRoute>
+          <AppLayout>
+            <PartnerFinderPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
