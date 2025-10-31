@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Users } from "lucide-react";
 import type { SelectGroup } from "@shared/schema";
+import { SEO } from "@/components/SEO";
 
 export default function GroupsPage() {
   const { data: groups, isLoading } = useQuery<SelectGroup[]>({
@@ -12,7 +13,12 @@ export default function GroupsPage() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <>
+      <SEO 
+        title="Tango Groups"
+        description="Discover and join tango communities. Connect with dancers, find practice groups, and engage with the global tango community."
+      />
+      <div className="max-w-7xl mx-auto p-6">
       <div className="mb-8">
         <h1 className="text-3xl font-serif font-bold mb-2">Tango Groups</h1>
         <p className="text-muted-foreground">
@@ -77,6 +83,7 @@ export default function GroupsPage() {
           </CardContent>
         </Card>
       )}
-    </div>
+      </div>
+    </>
   );
 }

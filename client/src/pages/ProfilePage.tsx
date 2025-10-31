@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MapPin, Calendar as CalendarIcon } from "lucide-react";
 import type { SelectUser } from "@shared/schema";
 import { format } from "date-fns";
+import { SEO } from "@/components/SEO";
 
 export default function ProfilePage() {
   const [, params] = useRoute("/profile/:id");
@@ -20,37 +21,54 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto p-6">
-        <Card>
-          <Skeleton className="h-48 w-full rounded-t-xl" />
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-4">
-              <Skeleton className="h-24 w-24 rounded-full" />
-              <div className="flex-1 space-y-2">
-                <Skeleton className="h-8 w-48" />
-                <Skeleton className="h-4 w-32" />
+      <>
+        <SEO 
+          title="My Profile"
+          description="Manage your Mundo Tango profile, update your information, and showcase your tango journey to the global community."
+        />
+        <div className="max-w-4xl mx-auto p-6">
+          <Card>
+            <Skeleton className="h-48 w-full rounded-t-xl" />
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-4">
+                <Skeleton className="h-24 w-24 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-8 w-48" />
+                  <Skeleton className="h-4 w-32" />
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </div>
+      </>
     );
   }
 
   if (!user) {
     return (
-      <div className="max-w-4xl mx-auto p-6">
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <p className="text-muted-foreground">User not found</p>
-          </CardContent>
-        </Card>
-      </div>
+      <>
+        <SEO 
+          title="My Profile"
+          description="Manage your Mundo Tango profile, update your information, and showcase your tango journey to the global community."
+        />
+        <div className="max-w-4xl mx-auto p-6">
+          <Card>
+            <CardContent className="pt-6 text-center">
+              <p className="text-muted-foreground">User not found</p>
+            </CardContent>
+          </Card>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <>
+      <SEO 
+        title="My Profile"
+        description="Manage your Mundo Tango profile, update your information, and showcase your tango journey to the global community."
+      />
+      <div className="max-w-4xl mx-auto p-6 space-y-6">
       <Card className="overflow-hidden">
         {user.backgroundImage && (
           <div className="h-48 w-full overflow-hidden">
@@ -156,6 +174,7 @@ export default function ProfilePage() {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </>
   );
 }

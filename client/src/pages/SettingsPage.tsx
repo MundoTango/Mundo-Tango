@@ -2,10 +2,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import { SEO } from "@/components/SEO";
 
 export default function SettingsPage() {
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <>
+      <SEO 
+        title="Settings"
+        description="Customize your Mundo Tango experience. Manage account settings, privacy preferences, and notification options."
+      />
+      <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-serif font-bold mb-2">Settings</h1>
         <p className="text-muted-foreground">
@@ -102,6 +108,7 @@ export default function SettingsPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </>
   );
 }

@@ -9,6 +9,7 @@ import { Users, MapPin } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { SelectGroup } from "@shared/schema";
+import { SEO } from "@/components/SEO";
 
 export default function GroupDetailsPage() {
   const [, params] = useRoute("/groups/:id");
@@ -40,28 +41,45 @@ export default function GroupDetailsPage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto p-6">
-        <Skeleton className="h-48 w-full rounded-xl mb-6" />
-        <Skeleton className="h-12 w-3/4 mb-4" />
-        <Skeleton className="h-32 w-full" />
-      </div>
+      <>
+        <SEO 
+          title="Group Details"
+          description="Explore this tango group, join discussions, and connect with fellow members."
+        />
+        <div className="max-w-4xl mx-auto p-6">
+          <Skeleton className="h-48 w-full rounded-xl mb-6" />
+          <Skeleton className="h-12 w-3/4 mb-4" />
+          <Skeleton className="h-32 w-full" />
+        </div>
+      </>
     );
   }
 
   if (!group) {
     return (
-      <div className="max-w-4xl mx-auto p-6">
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <p className="text-muted-foreground">Group not found</p>
-          </CardContent>
-        </Card>
-      </div>
+      <>
+        <SEO 
+          title="Group Details"
+          description="Explore this tango group, join discussions, and connect with fellow members."
+        />
+        <div className="max-w-4xl mx-auto p-6">
+          <Card>
+            <CardContent className="pt-6 text-center">
+              <p className="text-muted-foreground">Group not found</p>
+            </CardContent>
+          </Card>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <>
+      <SEO 
+        title="Group Details"
+        description="Explore this tango group, join discussions, and connect with fellow members."
+      />
+      <div className="max-w-4xl mx-auto p-6 space-y-6">
       <Card className="overflow-hidden">
         {group.coverPhoto && (
           <div className="h-48 w-full overflow-hidden">
@@ -167,6 +185,7 @@ export default function GroupDetailsPage() {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </>
   );
 }

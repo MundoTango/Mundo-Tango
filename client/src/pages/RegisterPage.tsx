@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { SEO } from "@/components/SEO";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -38,7 +39,12 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted p-4">
+    <>
+      <SEO
+        title="Join Mundo Tango"
+        description="Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
+      />
+      <div className="flex min-h-screen items-center justify-center bg-muted p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl font-serif">Join Mundo Tango</CardTitle>
@@ -120,5 +126,6 @@ export default function RegisterPage() {
         </form>
       </Card>
     </div>
+    </>
   );
 }

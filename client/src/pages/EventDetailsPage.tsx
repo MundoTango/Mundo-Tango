@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, MapPin, DollarSign, Globe } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { SEO } from "@/components/SEO";
 
 export default function EventDetailsPage() {
   const [, params] = useRoute("/events/:id");
@@ -32,28 +33,45 @@ export default function EventDetailsPage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto p-6">
-        <Skeleton className="h-96 w-full rounded-xl mb-6" />
-        <Skeleton className="h-12 w-3/4 mb-4" />
-        <Skeleton className="h-32 w-full" />
-      </div>
+      <>
+        <SEO 
+          title="Event Details"
+          description="View event details, RSVP, and connect with attendees for this tango event."
+        />
+        <div className="max-w-4xl mx-auto p-6">
+          <Skeleton className="h-96 w-full rounded-xl mb-6" />
+          <Skeleton className="h-12 w-3/4 mb-4" />
+          <Skeleton className="h-32 w-full" />
+        </div>
+      </>
     );
   }
 
   if (!event) {
     return (
-      <div className="max-w-4xl mx-auto p-6">
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <p className="text-muted-foreground">Event not found</p>
-          </CardContent>
-        </Card>
-      </div>
+      <>
+        <SEO 
+          title="Event Details"
+          description="View event details, RSVP, and connect with attendees for this tango event."
+        />
+        <div className="max-w-4xl mx-auto p-6">
+          <Card>
+            <CardContent className="pt-6 text-center">
+              <p className="text-muted-foreground">Event not found</p>
+            </CardContent>
+          </Card>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <>
+      <SEO 
+        title="Event Details"
+        description="View event details, RSVP, and connect with attendees for this tango event."
+      />
+      <div className="max-w-4xl mx-auto p-6 space-y-6">
       {event.image_url && (
         <div className="aspect-video w-full overflow-hidden rounded-xl">
           <img
@@ -134,6 +152,7 @@ export default function EventDetailsPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </>
   );
 }

@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Heart, MessageCircle, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
+import { SEO } from "@/components/SEO";
 
 export default function FeedPage() {
   const [content, setContent] = useState("");
@@ -41,7 +42,12 @@ export default function FeedPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
+    <>
+      <SEO
+        title="Home Feed"
+        description="Connect with the tango community. Share your dance moments, discover events, and engage with fellow tango enthusiasts from around the world."
+      />
+      <div className="max-w-2xl mx-auto p-6 space-y-6">
       <Card>
         <CardHeader>
           <h2 className="text-xl font-semibold">Share your thoughts</h2>
@@ -98,6 +104,7 @@ export default function FeedPage() {
         )}
       </div>
     </div>
+    </>
   );
 }
 

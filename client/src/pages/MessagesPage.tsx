@@ -9,13 +9,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Send } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatDistanceToNow } from "date-fns";
+import { SEO } from "@/components/SEO";
 
 export default function MessagesPage() {
-  const [selectedConversationId, setSelectedConversationId] = useState<number | null>(null);
+  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const { data: conversations, isLoading } = useConversations();
 
   return (
-    <div className="h-[calc(100vh-5rem)] flex">
+    <>
+      <SEO 
+        title="Messages"
+        description="Stay connected with your tango community through private messaging. Chat with dancers, organize events, and build lasting friendships."
+      />
+      <div className="h-[calc(100vh-5rem)] flex">
       <div className="w-80 border-r">
         <div className="p-4 border-b">
           <h2 className="text-xl font-semibold">Messages</h2>
@@ -83,22 +89,26 @@ export default function MessagesPage() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }
 
-function ConversationView({ conversationId }: { conversationId: number }) {
+function ConversationView({ conversationId }: { conversationId: string }) {
   const [message, setMessage] = useState("");
   const { user } = useAuth();
   const { data: messages, isLoading } = useConversation(conversationId);
-  const sendMessage = useSendMessage(conversationId);
+  const sendMessage = useSendMessage();
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim()) return;
 
     try {
-      await sendMessage.mutateAsync({ message: message.trim() });
+      await sendMessage.mutateAsync({ 
+        conversationId,
+        content: message.trim() 
+      });
       setMessage("");
     } catch (error) {
       console.error("Failed to send message:", error);
@@ -120,7 +130,7 @@ function ConversationView({ conversationId }: { conversationId: number }) {
         ) : messages && messages.length > 0 ? (
           <div className="space-y-4">
             {messages.map((msg) => {
-              const isOwn = msg.userId === user?.id;
+              const isOwn = msg.sender_id === user?.id;
               return (
                 <div
                   key={msg.id}
@@ -135,7 +145,7 @@ function ConversationView({ conversationId }: { conversationId: number }) {
                       isOwn ? "bg-primary text-primary-foreground" : "bg-muted"
                     }`}
                   >
-                    <p className="text-sm">{msg.message}</p>
+                    <p className="text-sm">{msg.content}</p>
                   </div>
                 </div>
               );
