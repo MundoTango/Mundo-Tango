@@ -13,8 +13,25 @@ import { Heart, MessageCircle, Share2, Image as ImageIcon, Globe, Users, Lock, X
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { SEO } from "@/components/SEO";
-import { supabase } from "@/lib/supabase";
-import type { PostWithProfile } from "@shared/supabase-types";
+
+type Post = {
+  id: number;
+  userId: number;
+  content: string;
+  richContent?: string | null;
+  imageUrl?: string | null;
+  visibility: string;
+  likes: number;
+  comments: number;
+  createdAt: string;
+  updatedAt: string;
+  user?: {
+    id: number;
+    name: string;
+    username: string;
+    profileImage?: string | null;
+  };
+};
 
 export default function FeedPage() {
   const [content, setContent] = useState("");
@@ -81,32 +98,11 @@ export default function FeedPage() {
     if (!content.trim()) return;
 
     setIsUploading(true);
-    let imageUrl: string | null = null;
 
     try {
-      if (selectedFile) {
-        const fileName = `${Date.now()}-${selectedFile.name}`;
-        const { data, error: uploadError } = await supabase
-          .storage
-          .from('posts')
-          .upload(fileName, selectedFile);
-
-        if (uploadError) {
-          throw uploadError;
-        }
-
-        const { data: { publicUrl } } = supabase
-          .storage
-          .from('posts')
-          .getPublicUrl(fileName);
-
-        imageUrl = publicUrl;
-      }
-
       await createPost.mutateAsync({
         content: content.trim(),
         visibility: visibility,
-        image_url: imageUrl,
       });
 
       setContent("");
@@ -308,7 +304,7 @@ export default function FeedPage() {
   );
 }
 
-function PostCard({ post }: { post: PostWithProfile }) {
+function PostCard({ post }: { post: Post }) {
   const [showComments, setShowComments] = useState(false);
   const [commentContent, setCommentContent] = useState("");
   const toggleLike = useToggleLike(post.id);
@@ -318,8 +314,7 @@ function PostCard({ post }: { post: PostWithProfile }) {
 
   const handleLike = async () => {
     try {
-      // Pass current like state to prevent race conditions
-      await toggleLike.mutateAsync(toggleLike.isLiked);
+      await toggleLike.mutateAsync();
     } catch (error) {
       console.error("Failed to like post:", error);
     }
@@ -352,29 +347,29 @@ function PostCard({ post }: { post: PostWithProfile }) {
     <Card className="p-6 hover-elevate" data-testid={`card-post-${post.id}`}>
       <div className="flex items-start gap-4">
         <Avatar data-testid={`avatar-${post.id}`}>
-          <AvatarImage src={post.profiles?.avatar_url || undefined} />
-          <AvatarFallback>{post.profiles?.full_name?.charAt(0) || post.profiles?.username?.charAt(0) || "U"}</AvatarFallback>
+          <AvatarImage src={post.user?.profileImage || undefined} />
+          <AvatarFallback>{post.user?.name?.charAt(0) || post.user?.username?.charAt(0) || "U"}</AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2 flex-wrap">
             <span className="font-semibold text-foreground" data-testid={`text-post-author-${post.id}`}>
-              {post.profiles?.full_name || post.profiles?.username || "Unknown User"}
+              {post.user?.name || post.user?.username || "Unknown User"}
             </span>
             <span className="text-sm text-muted-foreground" data-testid={`text-post-username-${post.id}`}>
-              @{post.profiles?.username}
+              @{post.user?.username || "user"}
             </span>
-            {post.created_at && (
+            {post.createdAt && (
               <span className="text-sm text-muted-foreground" data-testid={`text-post-timestamp-${post.id}`}>
-                · {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+                · {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
               </span>
             )}
           </div>
           <p className="text-foreground whitespace-pre-wrap" data-testid={`text-post-content-${post.id}`}>
             {post.content}
           </p>
-          {post.image_url && (
+          {post.imageUrl && (
             <img
-              src={post.image_url}
+              src={post.imageUrl}
               alt=""
               className="mt-3 rounded-lg w-full object-cover max-h-96"
               data-testid={`image-post-${post.id}`}
@@ -394,7 +389,7 @@ function PostCard({ post }: { post: PostWithProfile }) {
         >
           <Heart className={`h-4 w-4 mr-2 ${toggleLike.isLiked ? 'fill-current text-red-500' : ''}`} />
           <span data-testid={`text-like-count-${post.id}`}>
-            {post.likes?.[0]?.count || 0}
+            {post.likes || 0}
           </span>
         </Button>
         <Button
@@ -468,7 +463,7 @@ function PostCard({ post }: { post: PostWithProfile }) {
   );
 }
 
-function CommentItem({ comment, postId }: { comment: any; postId: string }) {
+function CommentItem({ comment, postId }: { comment: any; postId: number }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(comment.content);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -477,8 +472,8 @@ function CommentItem({ comment, postId }: { comment: any; postId: string }) {
   const deleteComment = useDeleteComment();
   const { toast } = useToast();
 
-  const isOwner = user?.id === comment.user_id;
-  const isPending = comment.id.startsWith('temp-');
+  const isOwner = user?.id === comment.userId;
+  const isPending = String(comment.id).startsWith('temp-');
 
   const handleSaveEdit = async () => {
     if (!editContent.trim()) {
@@ -529,16 +524,16 @@ function CommentItem({ comment, postId }: { comment: any; postId: string }) {
         data-testid={`comment-${comment.id}`}
       >
         <Avatar className="h-8 w-8">
-          <AvatarImage src={comment.profiles?.avatar_url || undefined} />
+          <AvatarImage src={comment.user?.profileImage || undefined} />
           <AvatarFallback>
-            {comment.profiles?.full_name?.charAt(0) || comment.profiles?.username?.charAt(0) || "U"}
+            {comment.user?.name?.charAt(0) || comment.user?.username?.charAt(0) || "U"}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
           <div className="bg-muted rounded-lg p-3">
             <div className="flex items-center justify-between gap-2 mb-1 flex-wrap">
               <span className="font-semibold text-sm">
-                {comment.profiles?.full_name || comment.profiles?.username || "Unknown User"}
+                {comment.user?.name || comment.user?.username || "Unknown User"}
               </span>
               {isOwner && !isPending && (
                 <DropdownMenu>
