@@ -18,6 +18,7 @@ import GroupsPage from "@/pages/GroupsPage";
 import GroupDetailsPage from "@/pages/GroupDetailsPage";
 import MessagesPage from "@/pages/MessagesPage";
 import SettingsPage from "@/pages/SettingsPage";
+import PlatformPage from "@/pages/Platform";
 
 function Router() {
   return (
@@ -93,6 +94,14 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <SettingsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/platform">
+        <ProtectedRoute>
+          <AppLayout>
+            <PlatformPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
