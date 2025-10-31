@@ -38,46 +38,14 @@ interface Agent {
 }
 
 export default function ESADashboardPage() {
-  // Fetch agent stats
+  // Fetch agent stats from backend API
   const { data: stats, isLoading: statsLoading } = useQuery<AgentStats>({
     queryKey: ["/api/platform/esa/stats"],
-    queryFn: async () => ({
-      totalAgents: 105,
-      activeAgents: 0,
-      certifiedAgents: 0,
-      trainingAgents: 0,
-      agentsByType: {
-        page: 50,
-        component: 0,
-        algorithm: 50,
-        layer: 61,
-        journey: 20,
-        dataflow: 30,
-        division: 6,
-        board: 1,
-        mr_blue: 8,
-        life_ceo: 16,
-        marketing: 5,
-        hr: 5,
-      },
-      certificationLevels: {
-        level0: 105,
-        level1: 0,
-        level2: 0,
-        level3: 0,
-      },
-      performanceMetrics: {
-        totalTasksCompleted: 0,
-        avgSuccessRate: 0,
-        avgCompletionTime: 0,
-      },
-    }),
   });
 
-  // Fetch agents list
+  // Fetch agents list from backend API
   const { data: agents = [], isLoading: agentsLoading } = useQuery<Agent[]>({
     queryKey: ["/api/platform/esa/agents"],
-    queryFn: async () => [],
   });
 
   if (statsLoading) {
@@ -95,7 +63,7 @@ export default function ESADashboardPage() {
       <div>
         <h1 className="text-3xl font-bold" data-testid="text-page-title">ESA Framework Dashboard</h1>
         <p className="text-muted-foreground mt-1">
-          Expert Specialized Agents - 105 Agents, 61 Layers, MB.MD Protocol
+          Expert Specialized Agents - {stats?.totalAgents || 0} Agents, 61 Layers, MB.MD Protocol
         </p>
       </div>
 

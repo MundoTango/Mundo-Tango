@@ -1,8 +1,16 @@
 import { Router, Response } from "express";
 import { storage } from "../storage";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from "@neondatabase/serverless";
+import { esaAgents } from "../../shared/platform-schema";
+import { sql, eq, asc } from "drizzle-orm";
 
 const router = Router();
+
+// Initialize database connection
+const queryClient = neon(process.env.DATABASE_URL!);
+const db = drizzle(queryClient);
 
 // ============================================================================
 // ESA FRAMEWORK ROUTES
@@ -11,10 +19,6 @@ const router = Router();
 // GET /api/platform/esa/stats - Get ESA agent statistics
 router.get("/esa/stats", async (req: AuthRequest, res: Response) => {
   try {
-    const { db } = await import("../db");
-    const { esaAgents } = await import("../../shared/platform-schema");
-    const { sql, eq } = await import("drizzle-orm");
-
     const totalAgents = await db.select({ count: sql<number>`count(*)::int` }).from(esaAgents);
     const activeAgents = await db
       .select({ count: sql<number>`count(*)::int` })
@@ -83,10 +87,6 @@ router.get("/esa/stats", async (req: AuthRequest, res: Response) => {
 // GET /api/platform/esa/agents - Get all ESA agents
 router.get("/esa/agents", async (req: AuthRequest, res: Response) => {
   try {
-    const { db } = await import("../db");
-    const { esaAgents } = await import("../../shared/platform-schema");
-    const { asc } = await import("drizzle-orm");
-
     const agents = await db.select().from(esaAgents).orderBy(asc(esaAgents.agentCode));
     res.json(agents);
   } catch (error: any) {
