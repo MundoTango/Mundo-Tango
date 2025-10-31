@@ -105,21 +105,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error("Registration failed - no user created");
       }
 
-      console.log("Creating profile for user:", authData.user.id);
-
-      const { error: profileError } = await supabase.from("profiles").insert({
-        id: authData.user.id,
-        username: registerData.username,
-        full_name: registerData.name,
-        email: registerData.email,
-      });
-
-      if (profileError) {
-        console.error("Profile creation error:", profileError);
-        throw new Error(`Profile creation failed: ${profileError.message}`);
-      }
-
-      console.log("Registration successful, navigating to login");
+      console.log("Registration successful! Profile auto-created by Supabase trigger.");
+      console.log("User ID:", authData.user.id);
+      
       navigate("/login");
     } catch (error) {
       console.error("Registration error:", error);

@@ -9,6 +9,8 @@ import {
   toggleLike,
   getCommentsByPostId,
   createComment,
+  updateComment,
+  deleteComment,
 } from "@/lib/supabaseQueries";
 import type { PostWithProfile, InsertPost, InsertComment } from "@shared/supabase-types";
 
@@ -83,6 +85,28 @@ export function useCreateComment() {
         post_id: data.postId,
         content: data.content,
       });
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["comments", variables.postId] });
+    },
+  });
+}
+
+export function useUpdateComment() {
+  return useMutation({
+    mutationFn: async ({ commentId, content, postId }: { commentId: string; content: string; postId: string }) => {
+      return updateComment(commentId, content);
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["comments", variables.postId] });
+    },
+  });
+}
+
+export function useDeleteComment() {
+  return useMutation({
+    mutationFn: async ({ commentId, postId }: { commentId: string; postId: string }) => {
+      return deleteComment(commentId);
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["comments", variables.postId] });

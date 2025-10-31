@@ -33,6 +33,14 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/profile">
+        <ProtectedRoute>
+          <AppLayout>
+            <ProfilePage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/profile/:id">
         <ProtectedRoute>
           <AppLayout>

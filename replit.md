@@ -29,16 +29,35 @@ The project follows a modular and agent-driven development approach.
 - **Database:** Supabase with PostgreSQL, **UUID primary keys (snake_case naming)**, Row Level Security (RLS), and auto-profile creation triggers. Includes tables for profiles, posts, likes, comments, events, RSVPs, communities, messages, conversations, and subscriptions.
 - **File Storage:** Supabase Storage with dedicated buckets for avatars, posts, events, and private messages.
 
-**Migration Status (October 30, 2025):**
+**Migration Status (October 31, 2025):**
 - ✅ **Phase 2 Complete**: Migrated from JWT+Drizzle+Serial IDs → Supabase Auth+Supabase Client+UUIDs
 - All frontend hooks now use Supabase queries with proper RLS enforcement
 - Schema uses snake_case (created_at, image_url, etc.) per Supabase conventions
 - Toggle helpers (likes, RSVPs) fixed to use maybeSingle() for initial state handling
 - All LSP/TypeScript errors resolved
 
+**MB.MD WORKSTREAM STATUS (October 31, 2025):**
+
+**WORKSTREAM 5 (Platform Quality):**
+- ✅ Surface Layer: ErrorBoundary (catches React errors), SEO component (all 10 pages with metadata)
+- ✅ Core Layer: Logger utility (localStorage error tracking), React Query optimization (retry logic, stale-while-revalidate, network-aware)
+- ⚠️ Foundation Layer: IN PROGRESS
+  - ✅ RLS validation script created (scripts/validate-rls.ts)
+  - ✅ Performance monitoring utilities (client/src/lib/performance.ts, usePerformance hooks)
+  - ⚠️ **BLOCKER**: RLS policies not configured in Supabase (all tables currently unprotected)
+  - ⚠️ Playwright smoke tests pending
+
+**Bug Fixes (October 31, 2025):**
+- Fixed /profile route (added to App.tsx router)
+- Removed invalid email field from profile creation (stored in auth.users only)
+- Fixed duplicate profile creation (removed manual insert, relying on Supabase trigger)
+- Fixed SEO og:url metadata (now updates on every page navigation)
+- Fixed RLS validation script (only passes on explicit authorization errors, not empty tables)
+
 **Feature Specifications:**
 - **Core Platform:** Supabase Auth integration, query helpers, frontend foundation, and design system complete.
 - **Real-time Capabilities:** Enabled through Supabase Realtime subscriptions.
+- **Quality Infrastructure:** Error boundaries, centralized logging, performance monitoring, SEO metadata across all pages.
 
 **System Design Choices:**
 - **MB.MD Protocol:** A foundational development methodology emphasizing simultaneous, recursive, and critical execution.
@@ -52,3 +71,10 @@ The project follows a modular and agent-driven development approach.
 - **AI Integration:** Multi-AI integration (5 providers, including OpenAI for `OPENAI_API_KEY`)
 - **Payments:** Stripe (`STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`)
 - **Real-time Communication:** Socket.io
+
+## Known Blockers
+
+**RLS Configuration Required (Supabase Dashboard):**
+- All tables (profiles, posts, events, messages) currently have no RLS policies
+- Need to configure authenticated read/write policies for each table
+- Run `npx tsx scripts/validate-rls.ts` after RLS configuration to verify

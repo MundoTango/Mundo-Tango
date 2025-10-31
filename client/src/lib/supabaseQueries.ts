@@ -149,6 +149,21 @@ export async function createComment(comment: InsertComment) {
   return data as CommentWithProfile;
 }
 
+export async function updateComment(id: string, content: string) {
+  const { data, error } = await supabase
+    .from("comments")
+    .update({ content })
+    .eq("id", id)
+    .select(`
+      *,
+      profiles (*)
+    `)
+    .single();
+
+  if (error) throw error;
+  return data as CommentWithProfile;
+}
+
 export async function deleteComment(id: string) {
   const { error } = await supabase.from("comments").delete().eq("id", id);
   if (error) throw error;
