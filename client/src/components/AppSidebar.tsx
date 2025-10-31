@@ -1,4 +1,4 @@
-import { Home, Calendar, Users, MessageSquare, Settings, LogOut } from "lucide-react";
+import { Home, Calendar, Users, MessageSquare, Settings, LogOut, Server } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import {
   Sidebar,
@@ -16,11 +16,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 
 const menuItems = [
-  { title: "Feed", url: "/", icon: Home },
+  { title: "Memories", url: "/", icon: Home },
   { title: "Events", url: "/events", icon: Calendar },
   { title: "Groups", url: "/groups", icon: Users },
   { title: "Messages", url: "/messages", icon: MessageSquare },
   { title: "Settings", url: "/settings", icon: Settings },
+  { title: "Platform", url: "/platform", icon: Server },
 ];
 
 export function AppSidebar() {
