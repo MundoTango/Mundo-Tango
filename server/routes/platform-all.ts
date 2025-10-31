@@ -33,7 +33,7 @@ router.get("/domains", authenticateToken, async (req: AuthRequest, res: Response
   try {
     const userId = req.userId!;
     const domains = await storage.getCustomDomains(userId);
-    res.json({ domains });
+    res.json(domains);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
