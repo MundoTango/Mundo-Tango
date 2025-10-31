@@ -170,6 +170,8 @@ export interface IStorage {
   getDeployments(params: { userId: number; type?: string; status?: string; limit?: number; offset?: number }): Promise<Deployment[]>;
   updateDeployment(id: number, data: Partial<Deployment>): Promise<Deployment | undefined>;
   deleteDeployment(id: number): Promise<void>;
+  getDeploymentByVercelId(vercelDeploymentId: string): Promise<Deployment | undefined>;
+  getDeploymentByRailwayId(railwayDeploymentId: string): Promise<Deployment | undefined>;
   
   // Platform Independence: Platform Integrations
   createPlatformIntegration(integration: InsertPlatformIntegration): Promise<PlatformIntegration>;
@@ -796,6 +798,16 @@ export class DbStorage implements IStorage {
 
   async deleteDeployment(id: number): Promise<void> {
     await db.delete(deployments).where(eq(deployments.id, id));
+  }
+
+  async getDeploymentByVercelId(vercelDeploymentId: string): Promise<Deployment | undefined> {
+    const result = await db.select().from(deployments).where(eq(deployments.vercelDeploymentId, vercelDeploymentId)).limit(1);
+    return result[0];
+  }
+
+  async getDeploymentByRailwayId(railwayDeploymentId: string): Promise<Deployment | undefined> {
+    const result = await db.select().from(deployments).where(eq(deployments.railwayDeploymentId, railwayDeploymentId)).limit(1);
+    return result[0];
   }
 
   // Platform Independence: Platform Integrations

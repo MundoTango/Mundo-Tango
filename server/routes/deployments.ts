@@ -7,8 +7,106 @@ import { z } from "zod";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { storage } from "../storage";
 import * as githubClient from "../lib/github-client";
+import * as vercelClient from "../lib/vercel-client";
+import * as railwayClient from "../lib/railway-client";
 
 const router = Router();
+
+// Background function to trigger Vercel + Railway deployments
+async function triggerDeployment(deploymentId: number, branch: string, commitSha?: string) {
+  try {
+    // Validate all required environment variables
+    const missingVars = [];
+    if (!process.env.GITHUB_REPO_ID) missingVars.push('GITHUB_REPO_ID');
+    if (!process.env.VERCEL_API_TOKEN && !process.env.VERCEL_TOKEN) missingVars.push('VERCEL_API_TOKEN');
+    if (!process.env.VERCEL_PROJECT_ID) missingVars.push('VERCEL_PROJECT_ID');
+    if (!process.env.RAILWAY_API_TOKEN && !process.env.RAILWAY_TOKEN) missingVars.push('RAILWAY_API_TOKEN');
+    if (!process.env.RAILWAY_PROJECT_ID) missingVars.push('RAILWAY_PROJECT_ID');
+
+    if (missingVars.length > 0) {
+      throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
+    }
+
+    // Update status to building
+    await storage.updateDeployment(deploymentId, { status: 'building' });
+
+    // Trigger Vercel deployment (frontend)
+    const vercelDeployment = await vercelClient.createVercelDeployment({
+      name: 'mundo-tango',
+      gitSource: {
+        type: 'github',
+        repoId: process.env.GITHUB_REPO_ID!,
+        ref: commitSha || branch,
+      },
+      target: 'production',
+    });
+
+    // Trigger Railway deployment (backend)
+    const railwayDeployment = await railwayClient.createRailwayDeployment({
+      branch,
+      commitSha,
+    });
+
+    // Update deployment with IDs
+    await storage.updateDeployment(deploymentId, {
+      status: 'deploying',
+      vercelDeploymentId: vercelDeployment.id,
+      vercelUrl: vercelDeployment.url,
+      railwayDeploymentId: railwayDeployment.id,
+    });
+
+    // Poll for completion with retry logic
+    // Primary mechanism: webhooks (see server/routes/webhooks.ts)
+    // Fallback: Poll every 30s for up to 5 minutes
+    let pollCount = 0;
+    const maxPolls = 10; // 10 * 30s = 5 minutes max
+    
+    const pollStatus = async () => {
+      try {
+        pollCount++;
+        const vercelStatus = await vercelClient.getVercelDeployment(vercelDeployment.id);
+        const railwayStatus = await railwayClient.getRailwayDeployment(railwayDeployment.id);
+
+        const vercelDone = ['READY', 'ERROR', 'CANCELED'].includes(vercelStatus.readyState);
+        const railwayDone = ['SUCCESS', 'FAILED', 'CRASHED', 'REMOVING'].includes(railwayStatus.status);
+
+        if (vercelDone && railwayDone) {
+          // Both complete
+          const success = vercelStatus.readyState === 'READY' && railwayStatus.status === 'SUCCESS';
+          await storage.updateDeployment(deploymentId, {
+            status: success ? 'success' : 'failed',
+            completedAt: new Date(),
+            vercelUrl: vercelStatus.url,
+            railwayUrl: railwayStatus.url,
+            errorMessage: success ? undefined : 'Deployment failed on one or more platforms',
+          });
+        } else if (pollCount < maxPolls) {
+          // Continue polling
+          setTimeout(pollStatus, 30000); // Poll again in 30s
+        } else {
+          // Timeout - mark as unknown, webhooks will update later
+          console.log(`Deployment ${deploymentId} polling timeout after ${pollCount * 30}s`);
+        }
+      } catch (error) {
+        console.error('Error polling deployment status:', error);
+        if (pollCount < maxPolls) {
+          setTimeout(pollStatus, 30000); // Retry
+        }
+      }
+    };
+
+    // Start polling after 30s (give webhooks a chance first)
+    setTimeout(pollStatus, 30000);
+
+  } catch (error: any) {
+    console.error('Deployment trigger error:', error);
+    await storage.updateDeployment(deploymentId, {
+      status: 'failed',
+      errorMessage: error.message,
+      completedAt: new Date(),
+    });
+  }
+}
 
 // Validation schemas
 const createDeploymentSchema = z.object({
@@ -35,15 +133,35 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
     const validatedData = createDeploymentSchema.parse(req.body);
     const userId = req.userId!;
 
+    // Validate all required environment variables BEFORE creating deployment
+    const missingVars = [];
+    if (!process.env.GITHUB_OWNER) missingVars.push('GITHUB_OWNER');
+    if (!process.env.GITHUB_REPO) missingVars.push('GITHUB_REPO');
+    if (!process.env.GITHUB_REPO_ID) missingVars.push('GITHUB_REPO_ID');
+    if (!process.env.VERCEL_API_TOKEN && !process.env.VERCEL_TOKEN) missingVars.push('VERCEL_API_TOKEN or VERCEL_TOKEN');
+    if (!process.env.VERCEL_PROJECT_ID) missingVars.push('VERCEL_PROJECT_ID');
+    if (!process.env.RAILWAY_API_TOKEN && !process.env.RAILWAY_TOKEN) missingVars.push('RAILWAY_API_TOKEN or RAILWAY_TOKEN');
+    if (!process.env.RAILWAY_PROJECT_ID) missingVars.push('RAILWAY_PROJECT_ID');
+
+    if (missingVars.length > 0) {
+      return res.status(400).json({ 
+        message: `Deployment configuration incomplete. Missing required environment variables: ${missingVars.join(', ')}. Please configure these secrets before deploying.` 
+      });
+    }
+
+    const githubOwner = process.env.GITHUB_OWNER!;
+    const githubRepo = process.env.GITHUB_REPO!;
+
     // Get latest commit if not provided
     let commitInfo;
     if (!validatedData.gitCommitSha) {
       try {
-        // TODO: Get repo info from user's platform integrations
-        // For now, using placeholder
-        commitInfo = await githubClient.getLatestCommit('user', 'repo', validatedData.gitBranch);
+        commitInfo = await githubClient.getLatestCommit(githubOwner, githubRepo, validatedData.gitBranch);
       } catch (error) {
         console.error('Failed to get latest commit:', error);
+        return res.status(500).json({ 
+          message: "Failed to fetch latest commit from GitHub. Check GitHub integration." 
+        });
       }
     }
 
@@ -57,8 +175,10 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
       gitCommitMessage: commitInfo?.message,
     });
 
-    // TODO: Trigger actual deployment to Vercel + Railway asynchronously
-    // This will be implemented with Vercel/Railway API clients
+    // Trigger actual deployment to Vercel + Railway asynchronously
+    // Don't await - let it run in background
+    triggerDeployment(savedDeployment.id, validatedData.gitBranch, commitInfo?.sha)
+      .catch(error => console.error('Background deployment error:', error));
 
     res.status(201).json({
       message: "Deployment created successfully",
@@ -147,7 +267,13 @@ router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) 
       return res.status(404).json({ message: "Deployment not found" });
     }
 
-    const updated = await storage.updateDeployment(deploymentId, validatedData);
+    // Convert completedAt from string to Date if present
+    const updateData = {
+      ...validatedData,
+      completedAt: validatedData.completedAt ? new Date(validatedData.completedAt) : undefined,
+    };
+
+    const updated = await storage.updateDeployment(deploymentId, updateData as Partial<typeof deployment>);
 
     res.json({
       message: "Deployment updated successfully",

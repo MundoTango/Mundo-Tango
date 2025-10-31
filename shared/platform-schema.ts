@@ -209,7 +209,7 @@ export const teamMembers = pgTable("team_members", {
     canManageDomains?: boolean;
     canViewAnalytics?: boolean;
     canManageTeam?: boolean;
-    [key: string]: boolean;
+    [key: string]: boolean | undefined;
   }>().notNull(),
   
   // Invitation

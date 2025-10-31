@@ -6,6 +6,7 @@ import deploymentsRoutes from "./routes/deployments";
 import secretsRoutes from "./routes/secrets";
 import previewsRoutes from "./routes/previews";
 import platformAllRoutes from "./routes/platform-all";
+import webhooksRoutes from "./routes/webhooks";
 import { authenticateToken, AuthRequest } from "./middleware/auth";
 import { 
   insertPostSchema, 
@@ -58,6 +59,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/secrets", secretsRoutes);
   app.use("/api/previews", previewsRoutes);
   app.use("/api/platform", platformAllRoutes);
+  app.use("/api/webhooks", webhooksRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(insertPostSchema), async (req: AuthRequest, res: Response) => {
     try {
