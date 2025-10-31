@@ -60,12 +60,15 @@ import {
   deployments,
   platformIntegrations,
   environmentVariables,
+  previewDeployments,
   type Deployment,
   type InsertDeployment,
   type PlatformIntegration,
   type InsertPlatformIntegration,
   type EnvironmentVariable,
   type InsertEnvironmentVariable,
+  type PreviewDeployment,
+  type InsertPreviewDeployment,
 } from "@shared/platform-schema";
 
 if (!process.env.DATABASE_URL) {
@@ -173,6 +176,15 @@ export interface IStorage {
   getEnvironmentVariables(params: { userId: number; environment?: string }): Promise<EnvironmentVariable[]>;
   updateEnvironmentVariable(id: number, data: Partial<EnvironmentVariable>): Promise<EnvironmentVariable | undefined>;
   deleteEnvironmentVariable(id: number): Promise<void>;
+  
+  // Platform Independence: Preview Deployments
+  createPreviewDeployment(preview: InsertPreviewDeployment): Promise<PreviewDeployment>;
+  getPreviewDeploymentById(id: number): Promise<PreviewDeployment | undefined>;
+  getPreviewDeployments(params: { userId: number; status?: string }): Promise<PreviewDeployment[]>;
+  updatePreviewDeployment(id: number, data: Partial<PreviewDeployment>): Promise<PreviewDeployment | undefined>;
+  deletePreviewDeployment(id: number): Promise<void>;
+  expirePreviewDeployment(id: number): Promise<void>;
+  getExpiredPreviews(): Promise<PreviewDeployment[]>;
 }
 
 export class DbStorage implements IStorage {
@@ -806,6 +818,55 @@ export class DbStorage implements IStorage {
 
   async deleteEnvironmentVariable(id: number): Promise<void> {
     await db.delete(environmentVariables).where(eq(environmentVariables.id, id));
+  }
+
+  // Platform Independence: Preview Deployments
+  async createPreviewDeployment(preview: InsertPreviewDeployment): Promise<PreviewDeployment> {
+    const result = await db.insert(previewDeployments).values(preview).returning();
+    return result[0];
+  }
+
+  async getPreviewDeploymentById(id: number): Promise<PreviewDeployment | undefined> {
+    const result = await db.select().from(previewDeployments).where(eq(previewDeployments.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getPreviewDeployments(params: { userId: number; status?: string }): Promise<PreviewDeployment[]> {
+    const conditions = [eq(previewDeployments.userId, params.userId)];
+    if (params.status) {
+      conditions.push(eq(previewDeployments.status, params.status));
+    }
+    return await db.select().from(previewDeployments).where(and(...conditions)).orderBy(desc(previewDeployments.createdAt));
+  }
+
+  async updatePreviewDeployment(id: number, data: Partial<PreviewDeployment>): Promise<PreviewDeployment | undefined> {
+    const result = await db
+      .update(previewDeployments)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(previewDeployments.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deletePreviewDeployment(id: number): Promise<void> {
+    await db.delete(previewDeployments).where(eq(previewDeployments.id, id));
+  }
+
+  async expirePreviewDeployment(id: number): Promise<void> {
+    await db
+      .update(previewDeployments)
+      .set({ status: 'expired', expiredAt: new Date(), updatedAt: new Date() })
+      .where(eq(previewDeployments.id, id));
+  }
+
+  async getExpiredPreviews(): Promise<PreviewDeployment[]> {
+    return await db
+      .select()
+      .from(previewDeployments)
+      .where(and(
+        eq(previewDeployments.status, 'active'),
+        lt(previewDeployments.expiresAt, new Date())
+      ));
   }
 }
 

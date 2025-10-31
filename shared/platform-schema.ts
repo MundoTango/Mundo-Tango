@@ -99,6 +99,38 @@ export const environmentVariables = pgTable("environment_variables", {
   keyIdx: index("environment_variables_key_idx").on(table.key),
 }));
 
+// Table 4: Preview Deployments
+// Auto-deployed preview environments with 7-day expiration
+export const previewDeployments = pgTable("preview_deployments", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  
+  // Preview metadata
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  status: varchar("status", { length: 20 }).notNull().default('pending'),
+  
+  // Git info
+  gitCommitSha: varchar("git_commit_sha", { length: 40 }),
+  gitBranch: varchar("git_branch", { length: 255 }).notNull(),
+  
+  // Preview URLs (shareable)
+  previewUrl: text("preview_url"),
+  deploymentId: integer("deployment_id").references(() => deployments.id),
+  
+  // Expiration (7 days)
+  expiresAt: timestamp("expires_at").notNull(),
+  expiredAt: timestamp("expired_at"),
+  
+  // Metadata
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdIdx: index("preview_deployments_user_id_idx").on(table.userId),
+  statusIdx: index("preview_deployments_status_idx").on(table.status),
+  expiresAtIdx: index("preview_deployments_expires_at_idx").on(table.expiresAt),
+}));
+
 // Types for TypeScript
 export type Deployment = typeof deployments.$inferSelect;
 export type InsertDeployment = typeof deployments.$inferInsert;
@@ -108,3 +140,6 @@ export type InsertPlatformIntegration = typeof platformIntegrations.$inferInsert
 
 export type EnvironmentVariable = typeof environmentVariables.$inferSelect;
 export type InsertEnvironmentVariable = typeof environmentVariables.$inferInsert;
+
+export type PreviewDeployment = typeof previewDeployments.$inferSelect;
+export type InsertPreviewDeployment = typeof previewDeployments.$inferInsert;
