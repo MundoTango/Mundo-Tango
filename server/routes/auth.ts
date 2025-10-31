@@ -48,6 +48,17 @@ const verify2FASchema = z.object({
   code: z.string().length(6),
 });
 
+router.get("/check-username/:username", async (req: Request, res: Response) => {
+  try {
+    const { username } = req.params;
+    const existingUser = await storage.getUserByUsername(username);
+    res.json({ available: !existingUser });
+  } catch (error) {
+    console.error("Username check error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 router.post("/register", async (req: Request, res: Response) => {
   try {
     const validatedData = registerSchema.parse(req.body);
@@ -67,6 +78,8 @@ router.post("/register", async (req: Request, res: Response) => {
     const user = await storage.createUser({
       ...validatedData,
       password: hashedPassword,
+      isOnboardingComplete: false,
+      formStatus: 0,
     });
 
     const verificationToken = crypto.randomBytes(32).toString("hex");
@@ -78,6 +91,24 @@ router.post("/register", async (req: Request, res: Response) => {
       expiresAt,
     });
 
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    await storage.createRefreshToken({
+      userId: user.id,
+      token: refreshToken,
+      expiresAt: refreshExpiresAt,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
+    });
+
     const userResponse = {
       id: user.id,
       email: user.email,
@@ -85,11 +116,14 @@ router.post("/register", async (req: Request, res: Response) => {
       name: user.name,
       isVerified: user.isVerified,
       role: user.role,
+      isOnboardingComplete: user.isOnboardingComplete,
+      formStatus: user.formStatus,
     };
 
     res.status(201).json({
-      message: "Registration successful. Please verify your email.",
+      message: "Registration successful",
       user: userResponse,
+      accessToken,
       verificationToken,
     });
   } catch (error) {

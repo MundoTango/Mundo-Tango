@@ -617,6 +617,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/communities/auto-join", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { cityName, country } = req.body;
+      
+      let community = await storage.getCommunityByCity(cityName);
+      
+      if (!community) {
+        community = await storage.createCommunity({
+          name: `${cityName} Tango Community`,
+          cityName,
+          country,
+          description: `Connect with tango dancers in ${cityName}`,
+        });
+      }
+      
+      const existingMembership = await storage.getCommunityMembership(community.id, req.userId!);
+      if (!existingMembership) {
+        await storage.joinCommunity(community.id, req.userId!);
+      }
+      
+      res.json(community);
+    } catch (error) {
+      console.error("Auto-join community error:", error);
+      res.status(500).json({ message: "Failed to join community" });
+    }
+  });
+
+  app.post("/api/users/me/photo", authenticateToken, async (req: any, res: Response) => {
+    try {
+      res.json({ imageUrl: "https://via.placeholder.com/400" });
+    } catch (error) {
+      res.status(500).json({ message: "Photo upload failed" });
+    }
+  });
+
   app.use(errorHandler);
 
   const httpServer = createServer(app);

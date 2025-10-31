@@ -53,6 +53,11 @@ import CheckoutPage from "@/pages/CheckoutPage";
 import BillingPage from "@/pages/BillingPage";
 import OnboardingPage from "@/pages/OnboardingPage";
 import WelcomeTourPage from "@/pages/WelcomeTourPage";
+import WelcomePage from "@/pages/onboarding/WelcomePage";
+import CitySelectionPage from "@/pages/onboarding/CitySelectionPage";
+import PhotoUploadPage from "@/pages/onboarding/PhotoUploadPage";
+import TangoRolesPage from "@/pages/onboarding/TangoRolesPage";
+import GuidedTourPage from "@/pages/onboarding/GuidedTourPage";
 import LiveStreamPage from "@/pages/LiveStreamPage";
 import WorkshopsPage from "@/pages/WorkshopsPage";
 import ReviewsPage from "@/pages/ReviewsPage";
@@ -344,6 +349,11 @@ function Router() {
       </Route>
 
       <Route path="/onboarding" component={OnboardingPage} />
+      <Route path="/onboarding/welcome" component={WelcomePage} />
+      <Route path="/onboarding/step-1" component={CitySelectionPage} />
+      <Route path="/onboarding/step-2" component={PhotoUploadPage} />
+      <Route path="/onboarding/step-3" component={TangoRolesPage} />
+      <Route path="/onboarding/step-4" component={GuidedTourPage} />
       <Route path="/welcome" component={WelcomeTourPage} />
       
       <Route path="/live-streams">

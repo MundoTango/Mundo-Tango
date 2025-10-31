@@ -241,7 +241,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await response.json();
       console.log("Registration successful!", data);
       
-      navigate("/login");
+      localStorage.setItem("accessToken", data.accessToken);
+      setSession({ accessToken: data.accessToken });
+      setUser(data.user);
+      setProfile({
+        id: data.user.id,
+        username: data.user.username,
+        name: data.user.name,
+        email: data.user.email,
+        profileImage: data.user.profileImage,
+        bio: data.user.bio,
+        city: data.user.city,
+        country: data.user.country,
+      });
+
+      if (!data.user.isOnboardingComplete) {
+        navigate("/onboarding/welcome");
+      } else {
+        navigate("/feed");
+      }
     } catch (error) {
       console.error("Registration error:", error);
       throw error;
