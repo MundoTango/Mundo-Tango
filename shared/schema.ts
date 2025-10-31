@@ -549,6 +549,323 @@ export const insertLifeCeoChatMessageSchema = createInsertSchema(lifeCeoChatMess
 export type InsertLifeCeoChatMessage = z.infer<typeof insertLifeCeoChatMessageSchema>;
 export type SelectLifeCeoChatMessage = typeof lifeCeoChatMessages.$inferSelect;
 
+// ============================================================================
+// EXTENDED FEATURES - NEW TABLES
+// ============================================================================
+
+// Saved Posts
+export const savedPosts = pgTable("saved_posts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  postId: integer("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("saved_posts_user_idx").on(table.userId),
+  postIdx: index("saved_posts_post_idx").on(table.postId),
+  uniqueSave: uniqueIndex("unique_saved_post").on(table.userId, table.postId),
+}));
+
+// Friend Requests
+export const friendRequests = pgTable("friend_requests", {
+  id: serial("id").primaryKey(),
+  senderId: integer("sender_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  receiverId: integer("receiver_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  status: varchar("status").default("pending").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  respondedAt: timestamp("responded_at"),
+}, (table) => ({
+  senderIdx: index("friend_requests_sender_idx").on(table.senderId),
+  receiverIdx: index("friend_requests_receiver_idx").on(table.receiverId),
+  statusIdx: index("friend_requests_status_idx").on(table.status),
+  uniqueRequest: uniqueIndex("unique_friend_request").on(table.senderId, table.receiverId),
+}));
+
+// Workshops
+export const workshops = pgTable("workshops", {
+  id: serial("id").primaryKey(),
+  title: varchar("title").notNull(),
+  description: text("description").notNull(),
+  instructor: varchar("instructor").notNull(),
+  image: text("image"),
+  date: varchar("date").notNull(),
+  location: text("location").notNull(),
+  duration: varchar("duration"),
+  price: integer("price").notNull(),
+  capacity: integer("capacity").notNull(),
+  registered: integer("registered").default(0).notNull(),
+  spotsLeft: integer("spots_left"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  dateIdx: index("workshops_date_idx").on(table.date),
+}));
+
+// Reviews
+export const reviews = pgTable("reviews", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  targetType: varchar("target_type").notNull(),
+  targetId: integer("target_id").notNull(),
+  rating: integer("rating").notNull(),
+  title: text("title"),
+  content: text("content").notNull(),
+  verified: boolean("verified").default(false),
+  helpfulCount: integer("helpful_count").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("reviews_user_idx").on(table.userId),
+  targetIdx: index("reviews_target_idx").on(table.targetType, table.targetId),
+}));
+
+// Live Streams
+export const liveStreams = pgTable("live_streams", {
+  id: serial("id").primaryKey(),
+  title: varchar("title").notNull(),
+  host: varchar("host").notNull(),
+  thumbnail: text("thumbnail"),
+  isLive: boolean("is_live").default(false),
+  viewers: integer("viewers").default(0),
+  scheduledDate: varchar("scheduled_date"),
+  registrations: integer("registrations").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  liveIdx: index("live_streams_live_idx").on(table.isLive),
+}));
+
+// Media Gallery
+export const media = pgTable("media", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  type: varchar("type").notNull(),
+  url: text("url").notNull(),
+  thumbnail: text("thumbnail"),
+  caption: text("caption"),
+  likes: integer("likes").default(0),
+  comments: integer("comments").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("media_user_idx").on(table.userId),
+  typeIdx: index("media_type_idx").on(table.type),
+}));
+
+// Activity Logs
+export const activityLogs = pgTable("activity_logs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  type: varchar("type").notNull(),
+  text: text("text").notNull(),
+  time: varchar("time").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("activity_logs_user_idx").on(table.userId),
+  createdAtIdx: index("activity_logs_created_at_idx").on(table.createdAt),
+}));
+
+// Blocked Users
+export const blockedUsers = pgTable("blocked_users", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  blockedUserId: integer("blocked_user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("blocked_users_user_idx").on(table.userId),
+  blockedIdx: index("blocked_users_blocked_idx").on(table.blockedUserId),
+  uniqueBlock: uniqueIndex("unique_blocked_user").on(table.userId, table.blockedUserId),
+}));
+
+// Blocked Content
+export const blockedContent = pgTable("blocked_content", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  contentType: varchar("content_type").notNull(),
+  contentId: integer("content_id").notNull(),
+  reason: text("reason"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("blocked_content_user_idx").on(table.userId),
+  contentIdx: index("blocked_content_content_idx").on(table.contentType, table.contentId),
+}));
+
+// Teachers (extended user profiles)
+export const teachers = pgTable("teachers", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  bio: text("bio"),
+  experience: varchar("experience"),
+  specialties: text("specialties").array(),
+  rating: integer("rating").default(0),
+  reviewCount: integer("review_count").default(0),
+  verified: boolean("verified").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("teachers_user_idx").on(table.userId),
+}));
+
+// Venues
+export const venues = pgTable("venues", {
+  id: serial("id").primaryKey(),
+  name: varchar("name").notNull(),
+  description: text("description"),
+  address: text("address").notNull(),
+  city: varchar("city").notNull(),
+  country: varchar("country").notNull(),
+  phone: varchar("phone"),
+  email: varchar("email"),
+  hours: text("hours"),
+  image: text("image"),
+  rating: integer("rating").default(0),
+  reviewCount: integer("review_count").default(0),
+  verified: boolean("verified").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  cityIdx: index("venues_city_idx").on(table.city),
+}));
+
+// Tutorials
+export const tutorials = pgTable("tutorials", {
+  id: serial("id").primaryKey(),
+  title: varchar("title").notNull(),
+  description: text("description").notNull(),
+  instructor: varchar("instructor").notNull(),
+  level: varchar("level").notNull(),
+  duration: varchar("duration").notNull(),
+  price: integer("price").notNull(),
+  thumbnail: text("thumbnail"),
+  students: integer("students").default(0),
+  rating: integer("rating").default(0),
+  reviewCount: integer("review_count").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  instructorIdx: index("tutorials_instructor_idx").on(table.instructor),
+}));
+
+// Blog Posts
+export const blogPosts = pgTable("blog_posts", {
+  id: serial("id").primaryKey(),
+  authorId: integer("author_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: varchar("title").notNull(),
+  slug: varchar("slug").notNull().unique(),
+  content: text("content").notNull(),
+  excerpt: text("excerpt"),
+  image: text("image"),
+  published: boolean("published").default(false),
+  views: integer("views").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  authorIdx: index("blog_posts_author_idx").on(table.authorId),
+  slugIdx: index("blog_posts_slug_idx").on(table.slug),
+}));
+
+// Newsletter Subscriptions
+export const newsletterSubscriptions = pgTable("newsletter_subscriptions", {
+  id: serial("id").primaryKey(),
+  email: varchar("email").notNull().unique(),
+  name: varchar("name"),
+  subscribed: boolean("subscribed").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  emailIdx: index("newsletter_subscriptions_email_idx").on(table.email),
+}));
+
+// Bookings
+export const bookings = pgTable("bookings", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  eventId: integer("event_id").references(() => events.id, { onDelete: "cascade" }),
+  workshopId: integer("workshop_id").references(() => workshops.id, { onDelete: "cascade" }),
+  confirmationNumber: varchar("confirmation_number").notNull().unique(),
+  guests: integer("guests").default(1),
+  totalAmount: integer("total_amount").notNull(),
+  status: varchar("status").default("confirmed"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("bookings_user_idx").on(table.userId),
+  confirmationIdx: index("bookings_confirmation_idx").on(table.confirmationNumber),
+}));
+
+// Payments
+export const payments = pgTable("payments", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  bookingId: integer("booking_id").references(() => bookings.id, { onDelete: "cascade" }),
+  amount: integer("amount").notNull(),
+  currency: varchar("currency").default("USD"),
+  status: varchar("status").default("pending"),
+  transactionId: varchar("transaction_id").unique(),
+  paymentMethod: varchar("payment_method"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("payments_user_idx").on(table.userId),
+  transactionIdx: index("payments_transaction_idx").on(table.transactionId),
+}));
+
+// Zod Schemas for new tables
+export const insertSavedPostSchema = createInsertSchema(savedPosts).omit({ id: true, createdAt: true });
+export type InsertSavedPost = z.infer<typeof insertSavedPostSchema>;
+export type SelectSavedPost = typeof savedPosts.$inferSelect;
+
+export const insertFriendRequestSchema = createInsertSchema(friendRequests).omit({ id: true, createdAt: true, respondedAt: true });
+export type InsertFriendRequest = z.infer<typeof insertFriendRequestSchema>;
+export type SelectFriendRequest = typeof friendRequests.$inferSelect;
+
+export const insertWorkshopSchema = createInsertSchema(workshops).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertWorkshop = z.infer<typeof insertWorkshopSchema>;
+export type SelectWorkshop = typeof workshops.$inferSelect;
+
+export const insertReviewSchema = createInsertSchema(reviews).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertReview = z.infer<typeof insertReviewSchema>;
+export type SelectReview = typeof reviews.$inferSelect;
+
+export const insertLiveStreamSchema = createInsertSchema(liveStreams).omit({ id: true, createdAt: true });
+export type InsertLiveStream = z.infer<typeof insertLiveStreamSchema>;
+export type SelectLiveStream = typeof liveStreams.$inferSelect;
+
+export const insertMediaSchema = createInsertSchema(media).omit({ id: true, createdAt: true });
+export type InsertMedia = z.infer<typeof insertMediaSchema>;
+export type SelectMedia = typeof media.$inferSelect;
+
+export const insertActivityLogSchema = createInsertSchema(activityLogs).omit({ id: true, createdAt: true });
+export type InsertActivityLog = z.infer<typeof insertActivityLogSchema>;
+export type SelectActivityLog = typeof activityLogs.$inferSelect;
+
+export const insertBlockedUserSchema = createInsertSchema(blockedUsers).omit({ id: true, createdAt: true });
+export type InsertBlockedUser = z.infer<typeof insertBlockedUserSchema>;
+export type SelectBlockedUser = typeof blockedUsers.$inferSelect;
+
+export const insertBlockedContentSchema = createInsertSchema(blockedContent).omit({ id: true, createdAt: true });
+export type InsertBlockedContent = z.infer<typeof insertBlockedContentSchema>;
+export type SelectBlockedContent = typeof blockedContent.$inferSelect;
+
+export const insertTeacherSchema = createInsertSchema(teachers).omit({ id: true, createdAt: true });
+export type InsertTeacher = z.infer<typeof insertTeacherSchema>;
+export type SelectTeacher = typeof teachers.$inferSelect;
+
+export const insertVenueSchema = createInsertSchema(venues).omit({ id: true, createdAt: true });
+export type InsertVenue = z.infer<typeof insertVenueSchema>;
+export type SelectVenue = typeof venues.$inferSelect;
+
+export const insertTutorialSchema = createInsertSchema(tutorials).omit({ id: true, createdAt: true });
+export type InsertTutorial = z.infer<typeof insertTutorialSchema>;
+export type SelectTutorial = typeof tutorials.$inferSelect;
+
+export const insertBlogPostSchema = createInsertSchema(blogPosts).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
+export type SelectBlogPost = typeof blogPosts.$inferSelect;
+
+export const insertNewsletterSubscriptionSchema = createInsertSchema(newsletterSubscriptions).omit({ id: true, createdAt: true });
+export type InsertNewsletterSubscription = z.infer<typeof insertNewsletterSubscriptionSchema>;
+export type SelectNewsletterSubscription = typeof newsletterSubscriptions.$inferSelect;
+
+export const insertBookingSchema = createInsertSchema(bookings).omit({ id: true, createdAt: true });
+export type InsertBooking = z.infer<typeof insertBookingSchema>;
+export type SelectBooking = typeof bookings.$inferSelect;
+
+export const insertPaymentSchema = createInsertSchema(payments).omit({ id: true, createdAt: true });
+export type InsertPayment = z.infer<typeof insertPaymentSchema>;
+export type SelectPayment = typeof payments.$inferSelect;
+
 // Refresh Tokens
 export const insertRefreshTokenSchema = createInsertSchema(refreshTokens).omit({ 
   id: true, 
