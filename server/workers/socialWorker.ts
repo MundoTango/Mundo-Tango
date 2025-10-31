@@ -27,7 +27,6 @@ async function handleFollowNotification(job: Job) {
     title: "New follower",
     message: `${follower.name} started following you`,
     actionUrl: `/profile/${follower.username}`,
-    actorId: followerId,
   });
   
   console.log(`[A-SOCIAL-01] ✅ Follow notification sent`);
@@ -50,7 +49,6 @@ async function handleLikeNotification(job: Job) {
     title: "Someone liked your post",
     message: `${user.name} liked your post`,
     actionUrl: `/posts/${postId}`,
-    actorId: userId,
   });
   
   console.log(`[A-SOCIAL-02] ✅ Like notification sent`);
@@ -73,7 +71,6 @@ async function handleCommentNotification(job: Job) {
     title: "New comment on your post",
     message: `${user.name} commented on your post`,
     actionUrl: `/posts/${postId}#comment-${commentId}`,
-    actorId: userId,
   });
   
   console.log(`[A-SOCIAL-03] ✅ Comment notification sent`);
@@ -94,7 +91,6 @@ async function handleFriendRequestNotification(job: Job) {
     title: "New friend request",
     message: `${sender.name} sent you a friend request`,
     actionUrl: "/friends/requests",
-    actorId: senderId,
   });
   
   console.log(`[A-SOCIAL-04] ✅ Friend request notification sent`);
@@ -117,7 +113,6 @@ async function handleShareNotification(job: Job) {
     title: "Someone shared your post",
     message: `${user.name} shared your post`,
     actionUrl: `/posts/${postId}`,
-    actorId: userId,
   });
   
   console.log(`[A-SOCIAL-05] ✅ Share notification sent`);

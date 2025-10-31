@@ -29,6 +29,10 @@ import AnalyticsPage from "@/pages/AnalyticsPage";
 import ESADashboardPage from "@/pages/ESADashboardPage";
 import AgentTasksPage from "@/pages/AgentTasksPage";
 import AgentCommunicationsPage from "@/pages/AgentCommunicationsPage";
+import FriendsPage from "@/pages/FriendsPage";
+import NotificationsPage from "@/pages/NotificationsPage";
+import SearchPage from "@/pages/SearchPage";
+import TeachersPage from "@/pages/TeachersPage";
 
 function Router() {
   return (
@@ -114,6 +118,38 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <CalendarPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/friends">
+        <ProtectedRoute>
+          <AppLayout>
+            <FriendsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/notifications">
+        <ProtectedRoute>
+          <AppLayout>
+            <NotificationsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/search">
+        <ProtectedRoute>
+          <AppLayout>
+            <SearchPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/teachers">
+        <ProtectedRoute>
+          <AppLayout>
+            <TeachersPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>

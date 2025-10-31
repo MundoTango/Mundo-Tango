@@ -19,7 +19,7 @@ export default function CalendarPage() {
   });
 
   const getEventsForDay = (day: Date) => {
-    if (!events) return [];
+    if (!events || !Array.isArray(events)) return [];
     return events.filter((event: any) => 
       isSameDay(new Date(event.startDate), day)
     );
@@ -120,7 +120,7 @@ export default function CalendarPage() {
           <h2 className="text-2xl font-bold mb-4">Upcoming Events</h2>
           {isLoading ? (
             <div className="text-center py-8">Loading events...</div>
-          ) : events && events.length > 0 ? (
+          ) : events && Array.isArray(events) && events.length > 0 ? (
             <div className="space-y-4">
               {events.slice(0, 10).map((event: any) => (
                 <Card key={event.id} className="hover-elevate" data-testid={`event-card-${event.id}`}>
