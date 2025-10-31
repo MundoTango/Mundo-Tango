@@ -123,6 +123,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/posts/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const post = await storage.getPostById(id);
+      
+      if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+      
+      if (post.userId !== req.userId) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      
+      const updated = await storage.updatePost(id, req.body);
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update post" });
+    }
+  });
+
   app.delete("/api/posts/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const id = parseInt(req.params.id);
@@ -180,6 +200,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ saved: false });
     } catch (error) {
       res.status(500).json({ message: "Failed to unsave post" });
+    }
+  });
+
+  app.post("/api/posts/:id/report", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const postId = parseInt(req.params.id);
+      const { reason, details } = req.body;
+      
+      if (!reason) {
+        return res.status(400).json({ message: "Reason is required" });
+      }
+      
+      await storage.reportPost({
+        contentType: "post",
+        contentId: postId,
+        reporterId: req.userId!,
+        reason,
+        details: details || null,
+      });
+      
+      res.status(201).json({ message: "Report submitted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to submit report" });
     }
   });
 

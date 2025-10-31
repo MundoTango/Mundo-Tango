@@ -8,8 +8,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { ReportPostDialog } from "./ReportPostDialog";
+import { EditPostDialog } from "./EditPostDialog";
 
 interface PostActionsProps {
   postId: number;
@@ -19,6 +31,7 @@ interface PostActionsProps {
   initialSaved?: boolean;
   likeCount?: number;
   commentCount?: number;
+  content?: string;
 }
 
 export function PostActions({
@@ -29,10 +42,14 @@ export function PostActions({
   initialSaved = false,
   likeCount = 0,
   commentCount = 0,
+  content = "",
 }: PostActionsProps) {
   const [liked, setLiked] = useState(initialLiked);
   const [saved, setSaved] = useState(initialSaved);
   const [likes, setLikes] = useState(likeCount);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -114,6 +131,25 @@ export function PostActions({
     toast({ title: "Link copied to clipboard" });
   };
 
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: () => apiRequest(`/api/posts/${postId}`, "DELETE"),
+    onSuccess: () => {
+      toast({
+        title: "Post deleted",
+        description: "Your post has been deleted successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+      setDeleteOpen(false);
+    },
+    onError: () => {
+      toast({
+        title: "Failed to delete post",
+        variant: "destructive",
+      });
+    },
+  });
+
   const isOwnPost = currentUserId === authorId;
 
   return (
@@ -162,20 +198,71 @@ export function PostActions({
           <DropdownMenuContent align="end">
             {isOwnPost ? (
               <>
-                <DropdownMenuItem data-testid="menu-edit">Edit post</DropdownMenuItem>
-                <DropdownMenuItem data-testid="menu-delete" className="text-destructive">
+                <DropdownMenuItem
+                  onClick={() => setEditOpen(true)}
+                  data-testid="menu-edit"
+                >
+                  Edit post
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setDeleteOpen(true)}
+                  data-testid="menu-delete"
+                  className="text-destructive"
+                >
                   Delete post
                 </DropdownMenuItem>
               </>
             ) : (
               <>
-                <DropdownMenuItem data-testid="menu-report">Report post</DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setReportOpen(true)}
+                  data-testid="menu-report"
+                >
+                  Report post
+                </DropdownMenuItem>
                 <DropdownMenuItem data-testid="menu-hide">Hide post</DropdownMenuItem>
               </>
             )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {/* Report Dialog */}
+      <ReportPostDialog
+        open={reportOpen}
+        onOpenChange={setReportOpen}
+        postId={postId}
+      />
+
+      {/* Edit Dialog */}
+      <EditPostDialog
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        postId={postId}
+        initialContent={content}
+      />
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent data-testid="dialog-delete-post">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Post</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this post? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel data-testid="button-cancel-delete">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteMutation.mutate()}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              data-testid="button-confirm-delete"
+            >
+              {deleteMutation.isPending ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
