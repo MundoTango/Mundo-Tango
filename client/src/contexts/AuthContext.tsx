@@ -17,6 +17,10 @@ interface ExpressUser {
   bio?: string | null;
   city?: string | null;
   country?: string | null;
+  isOnboardingComplete?: boolean;
+  formStatus?: number;
+  tangoRoles?: string[];
+  termsAccepted?: boolean;
 }
 
 interface Profile {

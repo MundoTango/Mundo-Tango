@@ -21,6 +21,8 @@ import {
   notifications,
   savedPosts,
   friendRequests,
+  communities,
+  communityMembers,
   workshops,
   reviews,
   liveStreams,
@@ -150,6 +152,12 @@ export interface IStorage {
   acceptFriendRequest(requestId: number): Promise<void>;
   declineFriendRequest(requestId: number): Promise<void>;
   
+  // Communities
+  getCommunityByCity(cityName: string): Promise<any | undefined>;
+  createCommunity(data: { name: string; cityName: string; country: string; description?: string }): Promise<any>;
+  getCommunityMembership(communityId: number, userId: number): Promise<any | undefined>;
+  joinCommunity(communityId: number, userId: number): Promise<any>;
+
   // Workshops
   createWorkshop(workshop: any): Promise<any>;
   getWorkshops(params: { limit?: number; offset?: number }): Promise<any[]>;
@@ -648,6 +656,29 @@ export class DbStorage implements IStorage {
       .update(friendRequests)
       .set({ status: 'declined', respondedAt: new Date() })
       .where(eq(friendRequests.id, requestId));
+  }
+
+  // Communities
+  async getCommunityByCity(cityName: string): Promise<any | undefined> {
+    const result = await db.select().from(communities).where(eq(communities.cityName, cityName)).limit(1);
+    return result[0];
+  }
+
+  async createCommunity(data: { name: string; cityName: string; country: string; description?: string }): Promise<any> {
+    const result = await db.insert(communities).values(data).returning();
+    return result[0];
+  }
+
+  async getCommunityMembership(communityId: number, userId: number): Promise<any | undefined> {
+    const result = await db.select().from(communityMembers)
+      .where(and(eq(communityMembers.communityId, communityId), eq(communityMembers.userId, userId)))
+      .limit(1);
+    return result[0];
+  }
+
+  async joinCommunity(communityId: number, userId: number): Promise<any> {
+    const result = await db.insert(communityMembers).values({ communityId, userId }).returning();
+    return result[0];
   }
 
   // Workshops
