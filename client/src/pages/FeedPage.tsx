@@ -311,14 +311,15 @@ export default function FeedPage() {
 function PostCard({ post }: { post: PostWithProfile }) {
   const [showComments, setShowComments] = useState(false);
   const [commentContent, setCommentContent] = useState("");
-  const toggleLike = useToggleLike();
+  const toggleLike = useToggleLike(post.id);
   const { data: comments, isLoading: commentsLoading } = useComments(post.id);
   const createComment = useCreateComment();
   const { toast } = useToast();
 
   const handleLike = async () => {
     try {
-      await toggleLike.mutateAsync(post.id);
+      // Pass current like state to prevent race conditions
+      await toggleLike.mutateAsync(toggleLike.isLiked);
     } catch (error) {
       console.error("Failed to like post:", error);
     }
@@ -387,12 +388,14 @@ function PostCard({ post }: { post: PostWithProfile }) {
           variant="ghost"
           size="sm"
           onClick={handleLike}
-          disabled={toggleLike.isPending}
+          disabled={toggleLike.isPending || toggleLike.isLikeLoading}
           className="hover-elevate active-elevate-2"
           data-testid={`button-like-${post.id}`}
         >
-          <Heart className="h-4 w-4 mr-2" />
-          <span data-testid={`text-like-count-${post.id}`}>Like</span>
+          <Heart className={`h-4 w-4 mr-2 ${toggleLike.isLiked ? 'fill-current text-red-500' : ''}`} />
+          <span data-testid={`text-like-count-${post.id}`}>
+            {post.likes?.[0]?.count || 0}
+          </span>
         </Button>
         <Button
           variant="ghost"

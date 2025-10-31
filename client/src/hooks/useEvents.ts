@@ -2,6 +2,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabase";
 import {
   getEvents,
   getEventById,
@@ -12,7 +13,7 @@ import {
   getEventAttendance,
   type EventFilters,
 } from "@/lib/supabaseQueries";
-import type { EventWithProfile, InsertEvent, InsertRSVP } from "@shared/supabase-types";
+import type { EventWithProfile, InsertEvent, InsertRSVP, RSVP } from "@shared/supabase-types";
 
 export function useEvents(filters?: EventFilters) {
   return useQuery<EventWithProfile[]>({
@@ -68,9 +69,24 @@ export function useEventRSVPs(eventId: string) {
   });
 }
 
-export function useRSVPEvent() {
+export function useRSVPEvent(eventId: string) {
   const { user } = useAuth();
   const { toast } = useToast();
+
+  const { data: userRSVP } = useQuery<RSVP | null>({
+    queryKey: ["user-rsvp", eventId, user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      const { data } = await supabase
+        .from("rsvps")
+        .select("*")
+        .eq("event_id", eventId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!user,
+  });
 
   return useMutation({
     mutationFn: async (data: { eventId: string; status: "going" | "maybe" | "not_going" }) => {
@@ -105,20 +121,25 @@ export function useRSVPEvent() {
     onMutate: async (variables) => {
       await queryClient.cancelQueries({ queryKey: ["rsvps", variables.eventId] });
       await queryClient.cancelQueries({ queryKey: ["event-attendance", variables.eventId] });
+      await queryClient.cancelQueries({ queryKey: ["user-rsvp", variables.eventId] });
 
       const previousRsvps = queryClient.getQueryData(["rsvps", variables.eventId]);
       const previousAttendance = queryClient.getQueryData(["event-attendance", variables.eventId]);
+      const previousUserRsvp = queryClient.getQueryData(["user-rsvp", variables.eventId, user?.id]);
+
+      const oldStatus = userRSVP?.status;
+      const newStatus = variables.status;
+      const delta = (newStatus === "going" ? 1 : 0) - (oldStatus === "going" ? 1 : 0);
 
       queryClient.setQueryData(["event-attendance", variables.eventId], (old: any) => {
         if (!old) return old;
-        const delta = variables.status === "going" ? 1 : -1;
         return {
           ...old,
           attending: Math.max(0, old.attending + delta),
         };
       });
 
-      return { previousRsvps, previousAttendance };
+      return { previousRsvps, previousAttendance, previousUserRsvp };
     },
     onError: (err, variables, context) => {
       if (context?.previousRsvps) {
@@ -126,6 +147,9 @@ export function useRSVPEvent() {
       }
       if (context?.previousAttendance) {
         queryClient.setQueryData(["event-attendance", variables.eventId], context.previousAttendance);
+      }
+      if (context?.previousUserRsvp !== undefined) {
+        queryClient.setQueryData(["user-rsvp", variables.eventId, user?.id], context.previousUserRsvp);
       }
       toast({
         title: "Error",
@@ -137,6 +161,7 @@ export function useRSVPEvent() {
       queryClient.invalidateQueries({ queryKey: ["rsvps", variables.eventId] });
       queryClient.invalidateQueries({ queryKey: ["events", variables.eventId] });
       queryClient.invalidateQueries({ queryKey: ["event-attendance", variables.eventId] });
+      queryClient.invalidateQueries({ queryKey: ["user-rsvp", variables.eventId] });
       queryClient.invalidateQueries({ queryKey: ["events"] });
     },
   });

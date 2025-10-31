@@ -114,45 +114,99 @@ export function useDeletePost() {
 // LIKES WITH OPTIMISTIC UPDATES
 // ============================================================================
 
-export function useToggleLike() {
+export function useToggleLike(postId: string) {
   const { user } = useAuth();
 
-  return useMutation({
-    mutationFn: async (postId: string) => {
+  // Get user's like state for this post
+  const { data: userLike, isLoading: isLikeLoading } = useQuery({
+    queryKey: ['user-like', postId, user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      const { data, error } = await supabase
+        .from('likes')
+        .select('id')
+        .eq('post_id', postId)
+        .eq('user_id', user.id)
+        .maybeSingle();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user && !!postId,
+  });
+
+  const mutation = useMutation({
+    mutationFn: async (currentlyLiked?: boolean) => {
       if (!user) throw new Error("Must be logged in");
       return toggleLikeApi(user.id, postId);
     },
-    onMutate: async (postId: string) => {
+    onMutate: async (currentlyLiked?: boolean) => {
+      if (!user) return;
+      
+      // Cancel outgoing refetches for both posts and user-like
       await queryClient.cancelQueries({ queryKey: ["posts"] });
+      await queryClient.cancelQueries({ queryKey: ['user-like', postId, user.id] });
       
-      const previousData = queryClient.getQueryData(["posts"]);
+      const previousPostsData = queryClient.getQueryData(["posts"]);
+      const previousUserLike = queryClient.getQueryData(['user-like', postId, user.id]);
       
+      // Use passed state if available, otherwise fall back to query (should be loaded by now)
+      const isLiked = currentlyLiked !== undefined ? currentlyLiked : !!userLike;
+      const delta = isLiked ? -1 : +1; // Decrement if unlike, increment if like
+      
+      // Optimistically update posts cache (like count)
       queryClient.setQueryData<any>(["posts"], (old: any) => {
-        if (!old?.pages) return old;
+        if (!old) return old;
         
-        return {
-          ...old,
-          pages: old.pages.map((page: PostWithProfile[]) =>
-            page.map((post: PostWithProfile) =>
-              post.id === postId
-                ? { ...post, likes: (post.likes || 0) + 1 }
-                : post
-            )
-          ),
-        };
+        if (old.pages) {
+          // Handle infinite query
+          return {
+            ...old,
+            pages: old.pages.map((page: PostWithProfile[]) =>
+              page.map((post: PostWithProfile) =>
+                post.id === postId
+                  ? { ...post, likes: [{ count: (post.likes?.[0]?.count || 0) + delta }] }
+                  : post
+              )
+            ),
+          };
+        }
+        
+        // Handle regular query
+        return old.map((post: any) => 
+          post.id === postId
+            ? { ...post, likes: [{ count: (post.likes?.[0]?.count || 0) + delta }] }
+            : post
+        );
       });
-
-      return { previousData };
+      
+      // Optimistically update user-like cache (liked state)
+      queryClient.setQueryData(['user-like', postId, user.id], isLiked ? null : { id: 'temp-like' });
+      
+      return { previousPostsData, previousUserLike };
     },
-    onError: (err, postId, context) => {
-      if (context?.previousData) {
-        queryClient.setQueryData(["posts"], context.previousData);
+    onError: (err, variables, context) => {
+      if (!user) return;
+      
+      // Rollback both caches on error
+      if (context?.previousPostsData) {
+        queryClient.setQueryData(["posts"], context.previousPostsData);
+      }
+      if (context?.previousUserLike !== undefined) {
+        queryClient.setQueryData(['user-like', postId, user.id], context.previousUserLike);
       }
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ['user-like', postId] });
     },
   });
+
+  return {
+    ...mutation,
+    isLiked: !!userLike,
+    isLikeLoading,
+  };
 }
 
 // ============================================================================
@@ -254,6 +308,10 @@ export function useCreateComment() {
           country: null,
           language: "en",
           timezone: null,
+          email_notifications: true,
+          push_notifications: true,
+          profile_visibility: 'public' as const,
+          location_sharing: true,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },

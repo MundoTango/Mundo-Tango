@@ -82,6 +82,7 @@ export interface Post {
   visibility: 'public' | 'friends' | 'private';
   created_at: string;
   updated_at: string;
+  likes?: Array<{ count: number }>; // Aggregated like count for optimistic updates
 }
 
 export interface PostWithProfile extends Post {

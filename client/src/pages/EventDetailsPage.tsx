@@ -12,7 +12,7 @@ export default function EventDetailsPage() {
   const [, params] = useRoute("/events/:id");
   const eventId = params?.id || "";
   const { data: event, isLoading } = useEvent(eventId);
-  const rsvpEvent = useRSVPEvent();
+  const rsvpEvent = useRSVPEvent(eventId);
   const { toast } = useToast();
 
   const handleRsvp = async (status: "going" | "maybe" | "not_going") => {

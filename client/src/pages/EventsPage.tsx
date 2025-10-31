@@ -19,7 +19,7 @@ const CATEGORIES = ["All", "Milonga", "Workshop", "Performance", "Festival"];
 
 function EventCard({ event }: { event: EventWithProfile }) {
   const { user } = useAuth();
-  const rsvpMutation = useRSVPEvent();
+  const rsvpMutation = useRSVPEvent(event.id);
   const { data: attendance } = useEventAttendance(event.id);
   
   const { data: eventRsvps } = useQuery<RSVP[]>({

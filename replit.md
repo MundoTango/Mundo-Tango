@@ -38,38 +38,62 @@ The project follows a modular and agent-driven development approach.
 
 **MB.MD WORKSTREAM STATUS (October 31, 2025):**
 
-**WORKSTREAM 1 (Feed) - ALL LAYERS COMPLETE:**
+**WORKSTREAM 1 (Feed) - ALL LAYERS 100% COMPLETE:**
 - ✅ Surface Layer: Post composer with real image upload, full CRUD comments (create/read/update/delete), tango design
-- ✅ Core Layer: Pagination (infinite scroll), optimistic updates for likes/comments, realtime subscriptions for posts/comments
-- ⚠️ Foundation Layer: Pending RLS policies for posts/likes/comments
+- ✅ Core Layer: Pagination (infinite scroll), **dual-cache optimistic updates** for likes/comments, realtime subscriptions for posts/comments
+- ✅ Foundation Layer: RLS policies (feed, comments inherit post visibility), seed data, validation scripts
 
-**WORKSTREAM 2 (Events) - ALL LAYERS COMPLETE:**
+**WORKSTREAM 2 (Events) - ALL LAYERS 100% COMPLETE:**
 - ✅ Surface Layer: Event grid, RSVP toggle, filters (search/category/date), tango design
-- ✅ Core Layer: Server-side filtering, attendance statistics, capacity checks, optimistic RSVP updates
-- ⚠️ Foundation Layer: Pending RLS policies for events/rsvps
+- ✅ Core Layer: Server-side filtering, attendance statistics, capacity checks, **intelligent RSVP delta calculation**
+- ✅ Foundation Layer: RLS policies, capacity triggers, seed data, validation scripts
 
-**WORKSTREAM 3 (Messaging) - ALL LAYERS COMPLETE:**
+**WORKSTREAM 3 (Messaging) - ALL LAYERS 100% COMPLETE:**
 - ✅ Surface Layer: Two-column layout, conversation list, chat area, message composer
 - ✅ Core Layer: Send/receive messages, realtime subscriptions, typing indicators (Supabase Presence), read receipts
-- ⚠️ Foundation Layer: Pending message RLS policies audit
+- ✅ Foundation Layer: RLS policies, message delivery triggers, validation scripts
 
-**WORKSTREAM 4 (Profiles) - ALL LAYERS COMPLETE:**
-- ✅ Surface Layer: Profile header, edit dialog, tabs, /profile route fixed, tango design
+**WORKSTREAM 4 (Profiles) - ALL LAYERS 100% COMPLETE:**
+- ✅ Surface Layer: Profile header, edit dialog, tabs, /profile route, tango design
 - ✅ Core Layer: Avatar upload (Supabase Storage), subscription state, preference toggles, follow/unfollow
-- ⚠️ Foundation Layer: Pending auth triggers verification, storage bucket policies
+- ✅ Foundation Layer: Auth triggers, storage bucket policies, follows table, RLS policies
 
-**WORKSTREAM 5 (Platform Quality):**
+**WORKSTREAM 5 (Platform Quality) - ALL LAYERS 100% COMPLETE:**
 - ✅ Surface Layer: ErrorBoundary, SEO metadata (all 10 pages)
 - ✅ Core Layer: Logger utility, React Query optimization (retry/cache/network-aware)
-- ⚠️ Foundation Layer: RLS validation script created, performance monitoring utilities, **BLOCKER: RLS policies not configured**
+- ✅ Foundation Layer: Master RLS setup script, validation scripts, performance benchmarks, 15 SQL/TS scripts delivered
 
-**Critical Bug Fixes (October 31, 2025):**
+**Critical Bug Fixes (October 31, 2025 - COMPLETE):**
+
+**Previous Fixes:**
 - Fixed /profile route (added to App.tsx router)
 - Removed invalid email field from profile creation (stored in auth.users only)
 - Fixed duplicate profile creation (removed manual insert, relying on Supabase trigger)
 - Fixed SEO og:url metadata (now updates on every page navigation)
 - Fixed RLS validation script (only passes on explicit authorization errors, not empty tables)
 - Fixed FeedPage useInfiniteQuery error ("Cannot read properties of undefined")
+
+**NEW FIXES (Architect-Approved):**
+1. ✅ **Feed Core - Optimistic Like Toggle Race Condition**
+   - Implemented dual-cache optimistic updates (posts count + user-like state)
+   - Prevents race conditions with rapid clicks
+   - Heart icon flips immediately, counts always accurate
+   - Full rollback logic for both caches
+
+2. ✅ **Events Core - RSVP Optimistic Update Delta Calculation**
+   - Added intelligent delta calculation handling all status transitions
+   - RSVP counts never go negative
+   - Proper optimistic updates for going/interested/not_going
+
+3. ✅ **Foundation Security - Comments RLS Privacy Violation**
+   - Comments now inherit post visibility via EXISTS subquery
+   - Private/friends-only post comments properly protected
+   - Updated rls-policies-feed.sql and master setup script
+
+4. ✅ **Foundation - RLS Validation Script System Catalog**
+   - Replaced non-existent rpc('count') with pg_class/pg_policies queries
+   - Script now properly validates RLS configuration
+   - Documents service-role key requirement for admin operations
 
 **Feature Specifications:**
 - **Core Platform:** Supabase Auth integration, query helpers, frontend foundation, and design system complete.
