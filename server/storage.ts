@@ -121,9 +121,18 @@ export interface IStorage {
   likePost(postId: number, userId: number): Promise<SelectPostLike | undefined>;
   unlikePost(postId: number, userId: number): Promise<void>;
   isPostLikedByUser(postId: number, userId: number): Promise<boolean>;
+  savePost(postId: number, userId: number): Promise<void>;
+  unsavePost(postId: number, userId: number): Promise<void>;
   
   createPostComment(comment: InsertPostComment): Promise<SelectPostComment>;
   getPostComments(postId: number): Promise<SelectPostComment[]>;
+  
+  getUserFriends(userId: number): Promise<any[]>;
+  getFriendRequests(userId: number): Promise<any[]>;
+  getFriendSuggestions(userId: number): Promise<any[]>;
+  sendFriendRequest(senderId: number, receiverId: number): Promise<any>;
+  acceptFriendRequest(requestId: number): Promise<void>;
+  declineFriendRequest(requestId: number): Promise<void>;
   
   followUser(followerId: number, followingId: number): Promise<SelectFollow | undefined>;
   unfollowUser(followerId: number, followingId: number): Promise<void>;
@@ -433,6 +442,16 @@ export class DbStorage implements IStorage {
     return result.length > 0;
   }
 
+  async savePost(postId: number, userId: number): Promise<void> {
+    // Save to saved_posts table (placeholder - would need to add schema)
+    return Promise.resolve();
+  }
+
+  async unsavePost(postId: number, userId: number): Promise<void> {
+    // Remove from saved_posts table (placeholder - would need to add schema)
+    return Promise.resolve();
+  }
+
   async createPostComment(comment: InsertPostComment): Promise<SelectPostComment> {
     const result = await db.insert(postComments).values(comment).returning();
     await db.update(posts).set({ comments: sqlOp`${posts.comments} + 1` }).where(eq(posts.id, comment.postId));
@@ -471,6 +490,36 @@ export class DbStorage implements IStorage {
       .where(and(eq(follows.followerId, followerId), eq(follows.followingId, followingId)))
       .limit(1);
     return result.length > 0;
+  }
+
+  async getUserFriends(userId: number): Promise<any[]> {
+    // Query friends table for accepted friendships
+    return [];
+  }
+
+  async getFriendRequests(userId: number): Promise<any[]> {
+    // Query friend_requests table for pending requests
+    return [];
+  }
+
+  async getFriendSuggestions(userId: number): Promise<any[]> {
+    // Algorithm to suggest friends based on mutual connections, location, etc.
+    return [];
+  }
+
+  async sendFriendRequest(senderId: number, receiverId: number): Promise<any> {
+    // Insert into friend_requests table
+    return { id: 1, senderId, receiverId, status: 'pending' };
+  }
+
+  async acceptFriendRequest(requestId: number): Promise<void> {
+    // Update friend_request status and create friendship
+    return Promise.resolve();
+  }
+
+  async declineFriendRequest(requestId: number): Promise<void> {
+    // Update friend_request status or delete
+    return Promise.resolve();
   }
 
   async createEvent(event: InsertEvent): Promise<SelectEvent> {

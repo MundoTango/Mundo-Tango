@@ -146,17 +146,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/posts/:id/like", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const postId = parseInt(req.params.id);
-      const isLiked = await storage.isPostLikedByUser(postId, req.userId!);
-      
-      if (isLiked) {
-        await storage.unlikePost(postId, req.userId!);
-        res.json({ liked: false });
-      } else {
-        await storage.likePost(postId, req.userId!);
-        res.json({ liked: true });
-      }
+      await storage.likePost(postId, req.userId!);
+      res.json({ liked: true });
     } catch (error) {
-      res.status(500).json({ message: "Failed to toggle like" });
+      res.status(500).json({ message: "Failed to like post" });
+    }
+  });
+
+  app.delete("/api/posts/:id/like", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const postId = parseInt(req.params.id);
+      await storage.unlikePost(postId, req.userId!);
+      res.json({ liked: false });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to unlike post" });
+    }
+  });
+
+  app.post("/api/posts/:id/save", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const postId = parseInt(req.params.id);
+      await storage.savePost(postId, req.userId!);
+      res.json({ saved: true });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to save post" });
+    }
+  });
+
+  app.delete("/api/posts/:id/save", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const postId = parseInt(req.params.id);
+      await storage.unsavePost(postId, req.userId!);
+      res.json({ saved: false });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to unsave post" });
     }
   });
 
@@ -527,12 +550,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/notifications/read-all", authenticateToken, async (req: AuthRequest, res: Response) => {
+  app.post("/api/notifications/read-all", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       await storage.markAllNotificationsAsRead(req.userId!);
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Failed to mark all notifications as read" });
+    }
+  });
+
+  // Friends endpoints
+  app.get("/api/friends", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const friends = await storage.getUserFriends(req.userId!);
+      res.json(friends);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch friends" });
+    }
+  });
+
+  app.get("/api/friends/requests", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const requests = await storage.getFriendRequests(req.userId!);
+      res.json(requests);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch friend requests" });
+    }
+  });
+
+  app.get("/api/friends/suggestions", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const suggestions = await storage.getFriendSuggestions(req.userId!);
+      res.json(suggestions);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch friend suggestions" });
+    }
+  });
+
+  app.post("/api/friends/requests", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { userId } = req.body;
+      const result = await storage.sendFriendRequest(req.userId!, userId);
+      res.status(201).json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to send friend request" });
+    }
+  });
+
+  app.post("/api/friends/requests/:id/accept", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const requestId = parseInt(req.params.id);
+      await storage.acceptFriendRequest(requestId);
+      res.json({ accepted: true });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to accept friend request" });
+    }
+  });
+
+  app.delete("/api/friends/requests/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const requestId = parseInt(req.params.id);
+      await storage.declineFriendRequest(requestId);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to decline friend request" });
     }
   });
 
