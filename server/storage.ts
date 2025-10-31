@@ -545,13 +545,15 @@ export class DbStorage implements IStorage {
   }
 
   async savePost(postId: number, userId: number): Promise<void> {
-    // Save to saved_posts table (placeholder - would need to add schema)
-    return Promise.resolve();
+    try {
+      await db.insert(savedPosts).values({ postId, userId });
+    } catch (error) {
+      // Ignore duplicate saves
+    }
   }
 
   async unsavePost(postId: number, userId: number): Promise<void> {
-    // Remove from saved_posts table (placeholder - would need to add schema)
-    return Promise.resolve();
+    await db.delete(savedPosts).where(and(eq(savedPosts.postId, postId), eq(savedPosts.userId, userId)));
   }
 
   async createPostComment(comment: InsertPostComment): Promise<SelectPostComment> {
@@ -595,33 +597,421 @@ export class DbStorage implements IStorage {
   }
 
   async getUserFriends(userId: number): Promise<any[]> {
-    // Query friends table for accepted friendships
-    return [];
+    const accepted = await db
+      .select()
+      .from(friendRequests)
+      .where(
+        and(
+          or(eq(friendRequests.senderId, userId), eq(friendRequests.receiverId, userId)),
+          eq(friendRequests.status, 'accepted')
+        )
+      );
+    return accepted;
   }
 
   async getFriendRequests(userId: number): Promise<any[]> {
-    // Query friend_requests table for pending requests
-    return [];
+    const pending = await db
+      .select()
+      .from(friendRequests)
+      .where(
+        and(
+          eq(friendRequests.receiverId, userId),
+          eq(friendRequests.status, 'pending')
+        )
+      );
+    return pending;
   }
 
   async getFriendSuggestions(userId: number): Promise<any[]> {
-    // Algorithm to suggest friends based on mutual connections, location, etc.
+    // Simple suggestion: users in the same city who aren't already friends
     return [];
   }
 
   async sendFriendRequest(senderId: number, receiverId: number): Promise<any> {
-    // Insert into friend_requests table
-    return { id: 1, senderId, receiverId, status: 'pending' };
+    try {
+      const result = await db.insert(friendRequests).values({ senderId, receiverId, status: 'pending' }).returning();
+      return result[0];
+    } catch (error) {
+      throw new Error('Friend request already exists');
+    }
   }
 
   async acceptFriendRequest(requestId: number): Promise<void> {
-    // Update friend_request status and create friendship
-    return Promise.resolve();
+    await db
+      .update(friendRequests)
+      .set({ status: 'accepted', respondedAt: new Date() })
+      .where(eq(friendRequests.id, requestId));
   }
 
   async declineFriendRequest(requestId: number): Promise<void> {
-    // Update friend_request status or delete
-    return Promise.resolve();
+    await db
+      .update(friendRequests)
+      .set({ status: 'declined', respondedAt: new Date() })
+      .where(eq(friendRequests.id, requestId));
+  }
+
+  // Workshops
+  async createWorkshop(workshop: any): Promise<any> {
+    const result = await db.insert(workshops).values(workshop).returning();
+    return result[0];
+  }
+
+  async getWorkshops(params: { limit?: number; offset?: number }): Promise<any[]> {
+    return await db.select().from(workshops).limit(params.limit || 10).offset(params.offset || 0);
+  }
+
+  async getWorkshopById(id: number): Promise<any | undefined> {
+    const result = await db.select().from(workshops).where(eq(workshops.id, id)).limit(1);
+    return result[0];
+  }
+
+  async updateWorkshop(id: number, data: any): Promise<any | undefined> {
+    const result = await db.update(workshops).set(data).where(eq(workshops.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteWorkshop(id: number): Promise<void> {
+    await db.delete(workshops).where(eq(workshops.id, id));
+  }
+
+  // Reviews
+  async createReview(review: any): Promise<any> {
+    const result = await db.insert(reviews).values(review).returning();
+    return result[0];
+  }
+
+  async getReviews(params: { targetType?: string; targetId?: number; userId?: number; limit?: number; offset?: number }): Promise<any[]> {
+    let conditions = [];
+    if (params.targetType) conditions.push(eq(reviews.targetType, params.targetType));
+    if (params.targetId) conditions.push(eq(reviews.targetId, params.targetId));
+    if (params.userId) conditions.push(eq(reviews.userId, params.userId));
+    
+    return await db
+      .select()
+      .from(reviews)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .limit(params.limit || 10)
+      .offset(params.offset || 0);
+  }
+
+  async updateReview(id: number, data: any): Promise<any | undefined> {
+    const result = await db.update(reviews).set(data).where(eq(reviews.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteReview(id: number): Promise<void> {
+    await db.delete(reviews).where(eq(reviews.id, id));
+  }
+
+  // Live Streams
+  async createLiveStream(stream: any): Promise<any> {
+    const result = await db.insert(liveStreams).values(stream).returning();
+    return result[0];
+  }
+
+  async getLiveStreams(params: { isLive?: boolean; limit?: number }): Promise<any[]> {
+    let query = db.select().from(liveStreams);
+    if (params.isLive !== undefined) {
+      query = query.where(eq(liveStreams.isLive, params.isLive)) as any;
+    }
+    return await query.limit(params.limit || 10);
+  }
+
+  async getLiveStreamById(id: number): Promise<any | undefined> {
+    const result = await db.select().from(liveStreams).where(eq(liveStreams.id, id)).limit(1);
+    return result[0];
+  }
+
+  async updateLiveStream(id: number, data: any): Promise<any | undefined> {
+    const result = await db.update(liveStreams).set(data).where(eq(liveStreams.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteLiveStream(id: number): Promise<void> {
+    await db.delete(liveStreams).where(eq(liveStreams.id, id));
+  }
+
+  // Media Gallery
+  async createMedia(mediaItem: any): Promise<any> {
+    const result = await db.insert(media).values(mediaItem).returning();
+    return result[0];
+  }
+
+  async getUserMedia(userId: number, params: { type?: string; limit?: number; offset?: number }): Promise<any[]> {
+    let conditions = [eq(media.userId, userId)];
+    if (params.type) conditions.push(eq(media.type, params.type));
+    
+    return await db
+      .select()
+      .from(media)
+      .where(and(...conditions))
+      .limit(params.limit || 10)
+      .offset(params.offset || 0);
+  }
+
+  async getMediaById(id: number): Promise<any | undefined> {
+    const result = await db.select().from(media).where(eq(media.id, id)).limit(1);
+    return result[0];
+  }
+
+  async updateMedia(id: number, data: any): Promise<any | undefined> {
+    const result = await db.update(media).set(data).where(eq(media.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteMedia(id: number): Promise<void> {
+    await db.delete(media).where(eq(media.id, id));
+  }
+
+  // Activity Logs
+  async createActivityLog(log: any): Promise<any> {
+    const result = await db.insert(activityLogs).values(log).returning();
+    return result[0];
+  }
+
+  async getUserActivityLogs(userId: number, params: { limit?: number; offset?: number }): Promise<any[]> {
+    return await db
+      .select()
+      .from(activityLogs)
+      .where(eq(activityLogs.userId, userId))
+      .orderBy(desc(activityLogs.createdAt))
+      .limit(params.limit || 20)
+      .offset(params.offset || 0);
+  }
+
+  // Blocked Users
+  async blockUser(userId: number, blockedUserId: number): Promise<any> {
+    try {
+      const result = await db.insert(blockedUsers).values({ userId, blockedUserId }).returning();
+      return result[0];
+    } catch (error) {
+      throw new Error('User already blocked');
+    }
+  }
+
+  async unblockUser(userId: number, blockedUserId: number): Promise<void> {
+    await db.delete(blockedUsers).where(and(eq(blockedUsers.userId, userId), eq(blockedUsers.blockedUserId, blockedUserId)));
+  }
+
+  async getBlockedUsers(userId: number): Promise<any[]> {
+    return await db.select().from(blockedUsers).where(eq(blockedUsers.userId, userId));
+  }
+
+  async isUserBlocked(userId: number, blockedUserId: number): Promise<boolean> {
+    const result = await db
+      .select()
+      .from(blockedUsers)
+      .where(and(eq(blockedUsers.userId, userId), eq(blockedUsers.blockedUserId, blockedUserId)))
+      .limit(1);
+    return result.length > 0;
+  }
+
+  // Blocked Content
+  async blockContent(userId: number, contentType: string, contentId: number, reason?: string): Promise<any> {
+    const result = await db.insert(blockedContent).values({ userId, contentType, contentId, reason }).returning();
+    return result[0];
+  }
+
+  async unblockContent(userId: number, contentType: string, contentId: number): Promise<void> {
+    await db
+      .delete(blockedContent)
+      .where(and(eq(blockedContent.userId, userId), eq(blockedContent.contentType, contentType), eq(blockedContent.contentId, contentId)));
+  }
+
+  async getBlockedContent(userId: number): Promise<any[]> {
+    return await db.select().from(blockedContent).where(eq(blockedContent.userId, userId));
+  }
+
+  // Teachers
+  async createTeacher(teacher: any): Promise<any> {
+    const result = await db.insert(teachers).values(teacher).returning();
+    return result[0];
+  }
+
+  async getTeachers(params: { verified?: boolean; limit?: number; offset?: number }): Promise<any[]> {
+    let query = db.select().from(teachers);
+    if (params.verified !== undefined) {
+      query = query.where(eq(teachers.verified, params.verified)) as any;
+    }
+    return await query.limit(params.limit || 10).offset(params.offset || 0);
+  }
+
+  async getTeacherById(id: number): Promise<any | undefined> {
+    const result = await db.select().from(teachers).where(eq(teachers.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getTeacherByUserId(userId: number): Promise<any | undefined> {
+    const result = await db.select().from(teachers).where(eq(teachers.userId, userId)).limit(1);
+    return result[0];
+  }
+
+  async updateTeacher(id: number, data: any): Promise<any | undefined> {
+    const result = await db.update(teachers).set(data).where(eq(teachers.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteTeacher(id: number): Promise<void> {
+    await db.delete(teachers).where(eq(teachers.id, id));
+  }
+
+  // Venues
+  async createVenue(venue: any): Promise<any> {
+    const result = await db.insert(venues).values(venue).returning();
+    return result[0];
+  }
+
+  async getVenues(params: { city?: string; verified?: boolean; limit?: number; offset?: number }): Promise<any[]> {
+    let conditions = [];
+    if (params.city) conditions.push(eq(venues.city, params.city));
+    if (params.verified !== undefined) conditions.push(eq(venues.verified, params.verified));
+    
+    return await db
+      .select()
+      .from(venues)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .limit(params.limit || 10)
+      .offset(params.offset || 0);
+  }
+
+  async getVenueById(id: number): Promise<any | undefined> {
+    const result = await db.select().from(venues).where(eq(venues.id, id)).limit(1);
+    return result[0];
+  }
+
+  async updateVenue(id: number, data: any): Promise<any | undefined> {
+    const result = await db.update(venues).set(data).where(eq(venues.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteVenue(id: number): Promise<void> {
+    await db.delete(venues).where(eq(venues.id, id));
+  }
+
+  // Tutorials
+  async createTutorial(tutorial: any): Promise<any> {
+    const result = await db.insert(tutorials).values(tutorial).returning();
+    return result[0];
+  }
+
+  async getTutorials(params: { level?: string; limit?: number; offset?: number }): Promise<any[]> {
+    let query = db.select().from(tutorials);
+    if (params.level) {
+      query = query.where(eq(tutorials.level, params.level)) as any;
+    }
+    return await query.limit(params.limit || 10).offset(params.offset || 0);
+  }
+
+  async getTutorialById(id: number): Promise<any | undefined> {
+    const result = await db.select().from(tutorials).where(eq(tutorials.id, id)).limit(1);
+    return result[0];
+  }
+
+  async updateTutorial(id: number, data: any): Promise<any | undefined> {
+    const result = await db.update(tutorials).set(data).where(eq(tutorials.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteTutorial(id: number): Promise<void> {
+    await db.delete(tutorials).where(eq(tutorials.id, id));
+  }
+
+  // Blog Posts
+  async createBlogPost(post: any): Promise<any> {
+    const result = await db.insert(blogPosts).values(post).returning();
+    return result[0];
+  }
+
+  async getBlogPosts(params: { published?: boolean; authorId?: number; limit?: number; offset?: number }): Promise<any[]> {
+    let conditions = [];
+    if (params.published !== undefined) conditions.push(eq(blogPosts.published, params.published));
+    if (params.authorId) conditions.push(eq(blogPosts.authorId, params.authorId));
+    
+    return await db
+      .select()
+      .from(blogPosts)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(desc(blogPosts.createdAt))
+      .limit(params.limit || 10)
+      .offset(params.offset || 0);
+  }
+
+  async getBlogPostById(id: number): Promise<any | undefined> {
+    const result = await db.select().from(blogPosts).where(eq(blogPosts.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getBlogPostBySlug(slug: string): Promise<any | undefined> {
+    const result = await db.select().from(blogPosts).where(eq(blogPosts.slug, slug)).limit(1);
+    return result[0];
+  }
+
+  async updateBlogPost(id: number, data: any): Promise<any | undefined> {
+    const result = await db.update(blogPosts).set(data).where(eq(blogPosts.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteBlogPost(id: number): Promise<void> {
+    await db.delete(blogPosts).where(eq(blogPosts.id, id));
+  }
+
+  // Newsletter Subscriptions
+  async createNewsletterSubscription(subscription: any): Promise<any> {
+    const result = await db.insert(newsletterSubscriptions).values(subscription).returning();
+    return result[0];
+  }
+
+  async getNewsletterSubscriptions(params: { subscribed?: boolean }): Promise<any[]> {
+    let query = db.select().from(newsletterSubscriptions);
+    if (params.subscribed !== undefined) {
+      query = query.where(eq(newsletterSubscriptions.subscribed, params.subscribed)) as any;
+    }
+    return await query;
+  }
+
+  async updateNewsletterSubscription(email: string, data: any): Promise<any | undefined> {
+    const result = await db.update(newsletterSubscriptions).set(data).where(eq(newsletterSubscriptions.email, email)).returning();
+    return result[0];
+  }
+
+  async deleteNewsletterSubscription(email: string): Promise<void> {
+    await db.delete(newsletterSubscriptions).where(eq(newsletterSubscriptions.email, email));
+  }
+
+  // Bookings
+  async createBooking(booking: any): Promise<any> {
+    const result = await db.insert(bookings).values(booking).returning();
+    return result[0];
+  }
+
+  async getBookingById(id: number): Promise<any | undefined> {
+    const result = await db.select().from(bookings).where(eq(bookings.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getBookingByConfirmation(confirmationNumber: string): Promise<any | undefined> {
+    const result = await db.select().from(bookings).where(eq(bookings.confirmationNumber, confirmationNumber)).limit(1);
+    return result[0];
+  }
+
+  async getUserBookings(userId: number, params: { status?: string }): Promise<any[]> {
+    let conditions = [eq(bookings.userId, userId)];
+    if (params.status) conditions.push(eq(bookings.status, params.status));
+    
+    return await db
+      .select()
+      .from(bookings)
+      .where(and(...conditions))
+      .orderBy(desc(bookings.createdAt));
+  }
+
+  async updateBooking(id: number, data: any): Promise<any | undefined> {
+    const result = await db.update(bookings).set(data).where(eq(bookings.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteBooking(id: number): Promise<void> {
+    await db.delete(bookings).where(eq(bookings.id, id));
   }
 
   async createEvent(event: InsertEvent): Promise<SelectEvent> {
