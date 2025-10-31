@@ -55,6 +55,19 @@ import {
   type InsertNotification,
 } from "@shared/schema";
 
+// Platform independence tables
+import {
+  deployments,
+  platformIntegrations,
+  environmentVariables,
+  type Deployment,
+  type InsertDeployment,
+  type PlatformIntegration,
+  type InsertPlatformIntegration,
+  type EnvironmentVariable,
+  type InsertEnvironmentVariable,
+} from "@shared/platform-schema";
+
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL must be set");
 }
@@ -140,6 +153,26 @@ export interface IStorage {
   getUserNotifications(userId: number, limit?: number): Promise<SelectNotification[]>;
   markNotificationAsRead(id: number): Promise<void>;
   markAllNotificationsAsRead(userId: number): Promise<void>;
+  
+  // Platform Independence: Deployments
+  createDeployment(deployment: InsertDeployment): Promise<Deployment>;
+  getDeploymentById(id: number): Promise<Deployment | undefined>;
+  getDeployments(params: { userId: number; type?: string; status?: string; limit?: number; offset?: number }): Promise<Deployment[]>;
+  updateDeployment(id: number, data: Partial<Deployment>): Promise<Deployment | undefined>;
+  deleteDeployment(id: number): Promise<void>;
+  
+  // Platform Independence: Platform Integrations
+  createPlatformIntegration(integration: InsertPlatformIntegration): Promise<PlatformIntegration>;
+  getPlatformIntegration(userId: number, platform: string): Promise<PlatformIntegration | undefined>;
+  updatePlatformIntegration(id: number, data: Partial<PlatformIntegration>): Promise<PlatformIntegration | undefined>;
+  deletePlatformIntegration(id: number): Promise<void>;
+  
+  // Platform Independence: Environment Variables
+  createEnvironmentVariable(envVar: InsertEnvironmentVariable): Promise<EnvironmentVariable>;
+  getEnvironmentVariableById(id: number): Promise<EnvironmentVariable | undefined>;
+  getEnvironmentVariables(params: { userId: number; environment?: string }): Promise<EnvironmentVariable[]>;
+  updateEnvironmentVariable(id: number, data: Partial<EnvironmentVariable>): Promise<EnvironmentVariable | undefined>;
+  deleteEnvironmentVariable(id: number): Promise<void>;
 }
 
 export class DbStorage implements IStorage {
@@ -661,6 +694,118 @@ export class DbStorage implements IStorage {
 
   async markAllNotificationsAsRead(userId: number): Promise<void> {
     await db.update(notifications).set({ read: true }).where(eq(notifications.userId, userId));
+  }
+
+  // Platform Independence: Deployments
+  async createDeployment(deployment: InsertDeployment): Promise<Deployment> {
+    const result = await db.insert(deployments).values(deployment).returning();
+    return result[0];
+  }
+
+  async getDeploymentById(id: number): Promise<Deployment | undefined> {
+    const result = await db.select().from(deployments).where(eq(deployments.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getDeployments(params: { userId: number; type?: string; status?: string; limit?: number; offset?: number }): Promise<Deployment[]> {
+    const conditions = [eq(deployments.userId, params.userId)];
+    
+    if (params.type) {
+      conditions.push(eq(deployments.type, params.type));
+    }
+    if (params.status) {
+      conditions.push(eq(deployments.status, params.status));
+    }
+    
+    let query = db.select().from(deployments).where(and(...conditions)).orderBy(desc(deployments.createdAt));
+    
+    if (params.limit) {
+      query = query.limit(params.limit) as any;
+    }
+    if (params.offset) {
+      query = query.offset(params.offset) as any;
+    }
+    
+    return await query;
+  }
+
+  async updateDeployment(id: number, data: Partial<Deployment>): Promise<Deployment | undefined> {
+    const result = await db
+      .update(deployments)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(deployments.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deleteDeployment(id: number): Promise<void> {
+    await db.delete(deployments).where(eq(deployments.id, id));
+  }
+
+  // Platform Independence: Platform Integrations
+  async createPlatformIntegration(integration: InsertPlatformIntegration): Promise<PlatformIntegration> {
+    const result = await db.insert(platformIntegrations).values(integration).returning();
+    return result[0];
+  }
+
+  async getPlatformIntegration(userId: number, platform: string): Promise<PlatformIntegration | undefined> {
+    const result = await db
+      .select()
+      .from(platformIntegrations)
+      .where(and(eq(platformIntegrations.userId, userId), eq(platformIntegrations.platform, platform)))
+      .limit(1);
+    return result[0];
+  }
+
+  async updatePlatformIntegration(id: number, data: Partial<PlatformIntegration>): Promise<PlatformIntegration | undefined> {
+    const result = await db
+      .update(platformIntegrations)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(platformIntegrations.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deletePlatformIntegration(id: number): Promise<void> {
+    await db.delete(platformIntegrations).where(eq(platformIntegrations.id, id));
+  }
+
+  // Platform Independence: Environment Variables
+  async createEnvironmentVariable(envVar: InsertEnvironmentVariable): Promise<EnvironmentVariable> {
+    const result = await db.insert(environmentVariables).values(envVar).returning();
+    return result[0];
+  }
+
+  async getEnvironmentVariableById(id: number): Promise<EnvironmentVariable | undefined> {
+    const result = await db.select().from(environmentVariables).where(eq(environmentVariables.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getEnvironmentVariables(params: { userId: number; environment?: string }): Promise<EnvironmentVariable[]> {
+    const conditions = [eq(environmentVariables.userId, params.userId)];
+    
+    if (params.environment) {
+      conditions.push(eq(environmentVariables.environment, params.environment));
+    }
+    
+    return await db
+      .select()
+      .from(environmentVariables)
+      .where(and(...conditions))
+      .orderBy(asc(environmentVariables.key));
+  }
+
+  async updateEnvironmentVariable(id: number, data: Partial<EnvironmentVariable>): Promise<EnvironmentVariable | undefined> {
+    const result = await db
+      .update(environmentVariables)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(environmentVariables.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deleteEnvironmentVariable(id: number): Promise<void> {
+    await db.delete(environmentVariables).where(eq(environmentVariables.id, id));
   }
 }
 

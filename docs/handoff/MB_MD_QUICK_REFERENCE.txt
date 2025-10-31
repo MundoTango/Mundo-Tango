@@ -1,0 +1,46 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                 MB.MD QUICK REFERENCE CARD                        ║
+║          One-Page Guide for Rapid Execution                       ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+THE THREE PILLARS:
+┌────────────────────────────────────────────────────────────────┐
+│ 1. SIMULTANEOUSLY  │ Work in parallel, not sequential          │
+│ 2. RECURSIVELY     │ Explore deeply before building            │
+│ 3. CRITICALLY      │ Test everything, zero errors              │
+└────────────────────────────────────────────────────────────────┘
+
+DECISION TREE:
+┌─────────────────────────────────────────────────────────────────┐
+│ Starting a new feature?                                         │
+│ └─► Launch ALL layers at once (DB + API + UI + Tests + Docs)  │
+│                                                                 │
+│ Fixing a bug?                                                   │
+│ └─► Trace RECURSIVELY first, fix ALL layers SIMULTANEOUSLY     │
+│                                                                 │
+│ About to mark complete?                                         │
+│ └─► CRITICALLY verify: Architect ✓ Tests ✓ LSP ✓              │
+└─────────────────────────────────────────────────────────────────┘
+
+COMMUNICATION TEMPLATE:
+"I'm executing with MB.MD:
+ - SIMULTANEOUSLY: [List parallel tasks]
+ - RECURSIVELY: [What I explored/understood]
+ - CRITICALLY: [Quality checks performed]"
+
+SELF-VERIFICATION CHECKLIST:
+□ Working in parallel? (not sequential)
+□ Understood dependencies? (recursive exploration)
+□ Called architect? (critical quality)
+□ Zero LSP errors? (critical quality)
+□ Tests pass? (critical quality)
+□ Ready to ship? (final check)
+
+ANTI-PATTERNS TO AVOID:
+❌ Sequential waterfall (do DB, wait, do API, wait, do UI)
+❌ Shallow implementation (copy-paste without understanding)
+❌ Ship first, fix later (mark complete without testing)
+
+GOLDEN RULE:
+Work like a team of 100 experts simultaneously exploring and critically
+evaluating every decision, not one person doing tasks sequentially.

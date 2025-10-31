@@ -2,6 +2,8 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import authRoutes from "./routes/auth";
+import deploymentsRoutes from "./routes/deployments";
+import secretsRoutes from "./routes/secrets";
 import { authenticateToken, AuthRequest } from "./middleware/auth";
 import { 
   insertPostSchema, 
@@ -50,6 +52,8 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
 
 export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/auth", authRoutes);
+  app.use("/api/deployments", deploymentsRoutes);
+  app.use("/api/secrets", secretsRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(insertPostSchema), async (req: AuthRequest, res: Response) => {
     try {
