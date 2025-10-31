@@ -11,9 +11,7 @@ export default function WelcomePage() {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    } else if (user.isOnboardingComplete) {
+    if (user && user.isOnboardingComplete) {
       navigate("/feed");
     }
   }, [user, navigate]);
