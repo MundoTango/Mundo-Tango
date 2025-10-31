@@ -1053,6 +1053,105 @@ export type InsertAssignment = z.infer<typeof insertAssignmentSchema>;
 export type SelectAssignment = typeof assignments.$inferSelect;
 
 // ============================================================================
+// MISSING TABLES - Wave 1B Database Expansion (MB.MD Protocol)
+// ============================================================================
+
+// Friendships (accepted friend connections)
+export const friendships = pgTable("friendships", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  friendId: integer("friend_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("friendships_user_idx").on(table.userId),
+  friendIdx: index("friendships_friend_idx").on(table.friendId),
+  uniqueFriendship: uniqueIndex("unique_friendship").on(table.userId, table.friendId),
+}));
+
+// Message Reactions (emoji reactions to chat messages)
+export const messageReactions = pgTable("message_reactions", {
+  id: serial("id").primaryKey(),
+  messageId: integer("message_id").notNull().references(() => chatMessages.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  emoji: varchar("emoji").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  messageIdx: index("message_reactions_message_idx").on(table.messageId),
+  userIdx: index("message_reactions_user_idx").on(table.userId),
+  uniqueReaction: uniqueIndex("unique_message_reaction").on(table.messageId, table.userId, table.emoji),
+}));
+
+// User Settings (privacy, notifications, preferences)
+export const userSettings = pgTable("user_settings", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  emailNotifications: boolean("email_notifications").default(true),
+  pushNotifications: boolean("push_notifications").default(true),
+  profileVisibility: varchar("profile_visibility").default("public"),
+  showOnlineStatus: boolean("show_online_status").default(true),
+  allowMessages: varchar("allow_messages").default("everyone"),
+  language: varchar("language").default("en"),
+  theme: varchar("theme").default("system"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("user_settings_user_idx").on(table.userId),
+}));
+
+// Moderation Queue (reported content)
+export const moderationQueue = pgTable("moderation_queue", {
+  id: serial("id").primaryKey(),
+  contentType: varchar("content_type").notNull(),
+  contentId: integer("content_id").notNull(),
+  reporterId: integer("reporter_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  reason: varchar("reason").notNull(),
+  details: text("details"),
+  status: varchar("status").default("pending").notNull(),
+  reviewedBy: integer("reviewed_by").references(() => users.id),
+  reviewedAt: timestamp("reviewed_at"),
+  action: varchar("action"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  contentIdx: index("moderation_queue_content_idx").on(table.contentType, table.contentId),
+  reporterIdx: index("moderation_queue_reporter_idx").on(table.reporterId),
+  statusIdx: index("moderation_queue_status_idx").on(table.status),
+}));
+
+// Post Shares (track who shared what post)
+export const postShares = pgTable("post_shares", {
+  id: serial("id").primaryKey(),
+  postId: integer("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  shareType: varchar("share_type").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  postIdx: index("post_shares_post_idx").on(table.postId),
+  userIdx: index("post_shares_user_idx").on(table.userId),
+  uniqueShare: uniqueIndex("unique_post_share").on(table.postId, table.userId, table.shareType),
+}));
+
+// Zod Schemas for New Tables
+export const insertFriendshipSchema = createInsertSchema(friendships).omit({ id: true, createdAt: true });
+export type InsertFriendship = z.infer<typeof insertFriendshipSchema>;
+export type SelectFriendship = typeof friendships.$inferSelect;
+
+export const insertMessageReactionSchema = createInsertSchema(messageReactions).omit({ id: true, createdAt: true });
+export type InsertMessageReaction = z.infer<typeof insertMessageReactionSchema>;
+export type SelectMessageReaction = typeof messageReactions.$inferSelect;
+
+export const insertUserSettingsSchema = createInsertSchema(userSettings).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertUserSettings = z.infer<typeof insertUserSettingsSchema>;
+export type SelectUserSettings = typeof userSettings.$inferSelect;
+
+export const insertModerationQueueSchema = createInsertSchema(moderationQueue).omit({ id: true, createdAt: true, reviewedAt: true });
+export type InsertModerationQueue = z.infer<typeof insertModerationQueueSchema>;
+export type SelectModerationQueue = typeof moderationQueue.$inferSelect;
+
+export const insertPostShareSchema = createInsertSchema(postShares).omit({ id: true, createdAt: true });
+export type InsertPostShare = z.infer<typeof insertPostShareSchema>;
+export type SelectPostShare = typeof postShares.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
