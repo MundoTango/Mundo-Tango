@@ -924,6 +924,135 @@ export type InsertChatRoomUser = z.infer<typeof insertChatRoomUserSchema>;
 export type SelectChatRoomUser = typeof chatRoomUsers.$inferSelect;
 
 // ============================================================================
+// COMMUNITIES (City-based communities with auto-join)
+// ============================================================================
+
+export const communities = pgTable("communities", {
+  id: serial("id").primaryKey(),
+  name: varchar("name").notNull(),
+  cityName: varchar("city_name").notNull().unique(),
+  country: varchar("country"),
+  coverPhotoUrl: text("cover_photo_url"),
+  coverPhotoSource: varchar("cover_photo_source"),
+  coverPhotoCredit: varchar("cover_photo_credit"),
+  description: text("description"),
+  memberCount: integer("member_count").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  cityIdx: index("communities_city_idx").on(table.cityName),
+}));
+
+export const communityMembers = pgTable("community_members", {
+  id: serial("id").primaryKey(),
+  communityId: integer("community_id").notNull().references(() => communities.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  joinedAt: timestamp("joined_at").defaultNow(),
+}, (table) => ({
+  communityIdx: index("community_members_community_idx").on(table.communityId),
+  userIdx: index("community_members_user_idx").on(table.userId),
+  uniqueMember: uniqueIndex("unique_community_member").on(table.communityId, table.userId),
+}));
+
+export const insertCommunitySchema = createInsertSchema(communities).omit({ id: true, createdAt: true });
+export type InsertCommunity = z.infer<typeof insertCommunitySchema>;
+export type SelectCommunity = typeof communities.$inferSelect;
+
+export const insertCommunityMemberSchema = createInsertSchema(communityMembers).omit({ id: true, joinedAt: true });
+export type InsertCommunityMember = z.infer<typeof insertCommunityMemberSchema>;
+export type SelectCommunityMember = typeof communityMembers.$inferSelect;
+
+// ============================================================================
+// TALENT MATCH (Resume AI / Volunteer System)
+// ============================================================================
+
+export const volunteers = pgTable("volunteers", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }),
+  profile: jsonb("profile"),
+  skills: text("skills").array(),
+  availability: varchar("availability"),
+  hoursPerWeek: integer("hours_per_week"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("volunteers_user_idx").on(table.userId),
+}));
+
+export const resumes = pgTable("resumes", {
+  id: serial("id").primaryKey(),
+  volunteerId: integer("volunteer_id").notNull().references(() => volunteers.id, { onDelete: "cascade" }),
+  filename: text("filename"),
+  fileUrl: text("file_url"),
+  parsedText: text("parsed_text"),
+  links: text("links").array(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  volunteerIdx: index("resumes_volunteer_idx").on(table.volunteerId),
+}));
+
+export const clarifierSessions = pgTable("clarifier_sessions", {
+  id: serial("id").primaryKey(),
+  volunteerId: integer("volunteer_id").notNull().references(() => volunteers.id, { onDelete: "cascade" }),
+  chatLog: jsonb("chat_log"),
+  detectedSignals: text("detected_signals").array(),
+  status: varchar("status").default("active"),
+  createdAt: timestamp("created_at").defaultNow(),
+  completedAt: timestamp("completed_at"),
+}, (table) => ({
+  volunteerIdx: index("clarifier_sessions_volunteer_idx").on(table.volunteerId),
+}));
+
+export const tasks = pgTable("tasks", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  domain: varchar("domain"),
+  phase: varchar("phase"),
+  estimatedHours: integer("estimated_hours"),
+  requiredSkills: text("required_skills").array(),
+  status: varchar("status").default("open"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  statusIdx: index("tasks_status_idx").on(table.status),
+  domainIdx: index("tasks_domain_idx").on(table.domain),
+}));
+
+export const assignments = pgTable("assignments", {
+  id: serial("id").primaryKey(),
+  volunteerId: integer("volunteer_id").notNull().references(() => volunteers.id, { onDelete: "cascade" }),
+  taskId: integer("task_id").notNull().references(() => tasks.id, { onDelete: "cascade" }),
+  matchReason: text("match_reason"),
+  status: varchar("status").default("pending"),
+  adminNotes: text("admin_notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  approvedAt: timestamp("approved_at"),
+  rejectedAt: timestamp("rejected_at"),
+}, (table) => ({
+  volunteerIdx: index("assignments_volunteer_idx").on(table.volunteerId),
+  taskIdx: index("assignments_task_idx").on(table.taskId),
+  statusIdx: index("assignments_status_idx").on(table.status),
+}));
+
+export const insertVolunteerSchema = createInsertSchema(volunteers).omit({ id: true, createdAt: true });
+export type InsertVolunteer = z.infer<typeof insertVolunteerSchema>;
+export type SelectVolunteer = typeof volunteers.$inferSelect;
+
+export const insertResumeSchema = createInsertSchema(resumes).omit({ id: true, createdAt: true });
+export type InsertResume = z.infer<typeof insertResumeSchema>;
+export type SelectResume = typeof resumes.$inferSelect;
+
+export const insertClarifierSessionSchema = createInsertSchema(clarifierSessions).omit({ id: true, createdAt: true, completedAt: true });
+export type InsertClarifierSession = z.infer<typeof insertClarifierSessionSchema>;
+export type SelectClarifierSession = typeof clarifierSessions.$inferSelect;
+
+export const insertTaskSchema = createInsertSchema(tasks).omit({ id: true, createdAt: true });
+export type InsertTask = z.infer<typeof insertTaskSchema>;
+export type SelectTask = typeof tasks.$inferSelect;
+
+export const insertAssignmentSchema = createInsertSchema(assignments).omit({ id: true, createdAt: true, approvedAt: true, rejectedAt: true });
+export type InsertAssignment = z.infer<typeof insertAssignmentSchema>;
+export type SelectAssignment = typeof assignments.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
