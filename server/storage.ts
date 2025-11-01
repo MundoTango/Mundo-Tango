@@ -21,6 +21,7 @@ import {
   notifications,
   savedPosts,
   friendRequests,
+  friendships,
   moderationQueue,
   communities,
   communityMembers,
@@ -661,6 +662,25 @@ export class DbStorage implements IStorage {
       .update(friendRequests)
       .set({ status: 'declined', respondedAt: new Date() })
       .where(eq(friendRequests.id, requestId));
+  }
+
+  async removeFriend(userId: number, friendId: number): Promise<void> {
+    await db.delete(friendships).where(
+      or(
+        and(eq(friendships.userId, userId), eq(friendships.friendId, friendId)),
+        and(eq(friendships.userId, friendId), eq(friendships.friendId, userId))
+      )
+    );
+    await db.delete(friendRequests).where(
+      or(
+        and(eq(friendRequests.senderId, userId), eq(friendRequests.receiverId, friendId)),
+        and(eq(friendRequests.senderId, friendId), eq(friendRequests.receiverId, userId))
+      )
+    );
+  }
+
+  async deleteNotification(notificationId: number): Promise<void> {
+    await db.delete(notifications).where(eq(notifications.id, notificationId));
   }
 
   // Communities

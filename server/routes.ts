@@ -660,6 +660,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/friends/request/:userId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const receiverId = parseInt(req.params.userId);
+      const result = await storage.sendFriendRequest(req.userId!, receiverId);
+      res.status(201).json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to send friend request" });
+    }
+  });
+
+  app.post("/api/friends/requests/:id/reject", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const requestId = parseInt(req.params.id);
+      await storage.declineFriendRequest(requestId);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to reject friend request" });
+    }
+  });
+
+  app.delete("/api/friends/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const friendId = parseInt(req.params.id);
+      await storage.removeFriend(req.userId!, friendId);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to remove friend" });
+    }
+  });
+
+  app.patch("/api/notifications/:id/read", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const notificationId = parseInt(req.params.id);
+      await storage.markNotificationAsRead(notificationId);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to mark notification as read" });
+    }
+  });
+
+  app.post("/api/notifications/mark-all-read", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.markAllNotificationsAsRead(req.userId!);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to mark all notifications as read" });
+    }
+  });
+
+  app.delete("/api/notifications/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const notificationId = parseInt(req.params.id);
+      await storage.deleteNotification(notificationId);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete notification" });
+    }
+  });
+
   app.post("/api/communities/auto-join", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const { cityName, country } = req.body;

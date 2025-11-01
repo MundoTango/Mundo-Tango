@@ -29,7 +29,7 @@ import AnalyticsPage from "@/pages/AnalyticsPage";
 import ESADashboardPage from "@/pages/ESADashboardPage";
 import AgentTasksPage from "@/pages/AgentTasksPage";
 import AgentCommunicationsPage from "@/pages/AgentCommunicationsPage";
-import FriendsPage from "@/pages/FriendsPage";
+import FriendsListPage from "@/pages/FriendsListPage";
 import NotificationsPage from "@/pages/NotificationsPage";
 import SearchPage from "@/pages/SearchPage";
 import TeachersPage from "@/pages/TeachersPage";
@@ -186,7 +186,7 @@ function Router() {
       <Route path="/friends">
         <ProtectedRoute>
           <AppLayout>
-            <FriendsPage />
+            <FriendsListPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
