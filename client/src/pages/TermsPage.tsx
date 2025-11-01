@@ -1,19 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, AlertTriangle, Scale, UserX } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Terms of Service" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-4">Terms of Service</h1>
-          <p className="text-lg text-muted-foreground">
-            Please read these terms carefully before using Mundo Tango
-          </p>
-          <p className="text-sm text-muted-foreground mt-2">
-            Last Updated: October 31, 2025
-          </p>
-        </div>
+        
 
         <div className="space-y-6">
           <Card>
@@ -167,5 +161,5 @@ export default function TermsPage() {
         </Card>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

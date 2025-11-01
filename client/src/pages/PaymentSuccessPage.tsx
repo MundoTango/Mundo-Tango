@@ -2,10 +2,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import { Link } from "wouter";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function PaymentSuccessPage() {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center py-8 px-4">
+    <PageLayout title="Payment Successful!" showBreadcrumbs>
+<div className="min-h-screen bg-background flex items-center justify-center py-8 px-4">
       <Card className="w-full max-w-md">
         <CardContent className="pt-6 text-center space-y-6">
           <div className="mx-auto w-20 h-20 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
@@ -13,7 +15,7 @@ export default function PaymentSuccessPage() {
           </div>
 
           <div>
-            <h1 className="text-2xl font-bold mb-2">Payment Successful!</h1>
+            
             <p className="text-muted-foreground">
               Thank you for your purchase. Your payment has been processed successfully.
             </p>
@@ -45,5 +47,5 @@ export default function PaymentSuccessPage() {
         </CardContent>
       </Card>
     </div>
-  );
+    </PageLayout>);
 }

@@ -3,17 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Shield, Smartphone } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function TwoFactorAuthPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Two-Factor Authentication" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-2xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Two-Factor Authentication</h1>
-          <p className="text-muted-foreground">
-            Add an extra layer of security to your account
-          </p>
-        </div>
+        
 
         <Card className="mb-6">
           <CardHeader>
@@ -53,5 +50,5 @@ export default function TwoFactorAuthPage() {
         </Card>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

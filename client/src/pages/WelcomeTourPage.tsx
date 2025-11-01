@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, Calendar, Music, MessageCircle, ChevronRight, ChevronLeft } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 const tourSteps = [
   {
@@ -34,12 +35,10 @@ export default function WelcomeTourPage() {
   const [currentStep, setCurrentStep] = useState(0);
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center py-8 px-4">
+    <PageLayout title="Welcome to Mundo Tango!" showBreadcrumbs>
+<div className="min-h-screen bg-background flex items-center justify-center py-8 px-4">
       <div className="container max-w-3xl">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">Welcome to Mundo Tango!</h1>
-          <p className="text-muted-foreground">Let's take a quick tour of what you can do</p>
-        </div>
+        
 
         <Card>
           <CardContent className="p-8 md:p-12">
@@ -107,5 +106,5 @@ export default function WelcomeTourPage() {
         </div>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

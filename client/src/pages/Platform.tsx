@@ -10,19 +10,16 @@ import { CostDashboard } from "@/components/platform/CostDashboard";
 import { BackupsManager } from "@/components/platform/BackupsManager";
 import { CICDManager } from "@/components/platform/CICDManager";
 import { Globe, BarChart3, Users, DollarSign, Database, GitBranch, Rocket, Key, Eye } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function Platform() {
   const [activeTab, setActiveTab] = useState("deploy");
 
   return (
-    <div className="min-h-screen bg-background">
+    <PageLayout title="Platform Dashboard" showBreadcrumbs>
+<div className="min-h-screen bg-background">
       <div className="container mx-auto py-8 px-4">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Platform Dashboard</h1>
-          <p className="text-muted-foreground">
-            Complete platform independence - deployment, monitoring, and team management
-          </p>
-        </div>
+        
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-3 lg:grid-cols-9 gap-2">
@@ -102,5 +99,5 @@ export default function Platform() {
         </Tabs>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

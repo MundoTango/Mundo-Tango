@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function DiscoverPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -59,7 +60,8 @@ export default function DiscoverPage() {
   ];
 
   return (
-    <div className="min-h-screen">
+    <PageLayout title="Discover Tango Events" showBreadcrumbs>
+<div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-accent/5 to-background py-20 px-4">
         <div className="container mx-auto max-w-6xl">
@@ -69,9 +71,7 @@ export default function DiscoverPage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h1 className="mb-4 text-4xl font-bold sm:text-5xl lg:text-6xl">
-              Discover Tango Events
-            </h1>
+            
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Find milongas, festivals, and workshops happening near you or anywhere in the world
             </p>
@@ -225,5 +225,5 @@ export default function DiscoverPage() {
         </motion.div>
       </section>
     </div>
-  );
+    </PageLayout>);
 }

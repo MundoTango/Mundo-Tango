@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Heart, TrendingDown, AlertTriangle, Users, Shield, Smile } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function RetentionAgentPage() {
   const metrics = [
@@ -26,7 +27,8 @@ export default function RetentionAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Retention Agent" showBreadcrumbs>
+<>
       <SEO
         title="Retention Agent - HR Dashboard"
         description="Monitor employee retention, satisfaction, and proactive interventions."
@@ -44,7 +46,7 @@ export default function RetentionAgentPage() {
                 <Heart className="h-6 w-6 text-pink-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Retention Agent</h1>
+                
                 <p className="text-muted-foreground">Your AI retention assistant</p>
               </div>
             </div>
@@ -156,5 +158,5 @@ export default function RetentionAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

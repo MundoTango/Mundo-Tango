@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Bell, Heart, MessageCircle, UserPlus, Calendar, CheckCheck } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { formatDistanceToNow } from "date-fns";
+import { PageLayout } from "@/components/PageLayout";
 
 const notificationIcons: Record<string, any> = {
   like: Heart,
@@ -43,16 +44,11 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Notifications" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-3xl">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Notifications</h1>
-            <p className="text-muted-foreground">
-              Stay updated with your community activity
-            </p>
-          </div>
+        
           <Button
             variant="outline"
             size="sm"
@@ -123,5 +119,5 @@ export default function NotificationsPage() {
         )}
       </div>
     </div>
-  );
+    </PageLayout>);
 }

@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Users, FileText, Calendar, AlertTriangle } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function AdminDashboard() {
   const { data: stats } = useQuery({ queryKey: ["/api/admin/stats/overview"] });
@@ -15,8 +16,9 @@ export default function AdminDashboard() {
   const { data: recentActivity } = useQuery({ queryKey: ["/api/admin/activity/recent"] });
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-4xl font-bold mb-8">Admin Dashboard</h1>
+    <PageLayout title="Admin Dashboard" showBreadcrumbs>
+<div className="container mx-auto py-8 px-4">
+      
 
       {/* Overview Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -120,5 +122,5 @@ export default function AdminDashboard() {
         </CardContent>
       </Card>
     </div>
-  );
+    </PageLayout>);
 }

@@ -4,14 +4,16 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import { useState } from "react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function ContentModerationPage() {
   const [activeTab, setActiveTab] = useState("pending");
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Content Moderation" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
-        <h1 className="text-3xl font-bold mb-8">Content Moderation</h1>
+        
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-6">
@@ -58,5 +60,5 @@ export default function ContentModerationPage() {
         </Tabs>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Heart, Users, MessageCircle, TrendingUp, Calendar, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function RelationshipAgentPage() {
   const stats = [
@@ -31,7 +32,8 @@ export default function RelationshipAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Relationship Agent" showBreadcrumbs>
+<>
       <SEO
         title="Relationship Agent - Life CEO"
         description="Strengthen your relationships with AI-powered insights, communication tools, and quality time tracking."
@@ -49,7 +51,7 @@ export default function RelationshipAgentPage() {
                 <Heart className="h-6 w-6 text-pink-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Relationship Agent</h1>
+                
                 <p className="text-muted-foreground">Your AI relationship counselor</p>
               </div>
             </div>
@@ -168,5 +170,5 @@ export default function RelationshipAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

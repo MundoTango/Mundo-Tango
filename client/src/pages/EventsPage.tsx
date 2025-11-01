@@ -14,6 +14,7 @@ import { SEO } from "@/components/SEO";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import type { RSVP, EventWithProfile } from "@shared/supabase-types";
+import { PageLayout } from "@/components/PageLayout";
 
 const CATEGORIES = ["All", "Milonga", "Workshop", "Performance", "Festival"];
 
@@ -54,7 +55,8 @@ function EventCard({ event }: { event: EventWithProfile }) {
   };
 
   return (
-    <Card 
+    <PageLayout title="Discover Events" showBreadcrumbs>
+<Card 
       className="overflow-hidden hover-elevate" 
       data-testid={`card-event-${event.id}`}
     >
@@ -154,7 +156,7 @@ function EventCard({ event }: { event: EventWithProfile }) {
         </Link>
       </CardFooter>
     </Card>
-  );
+    </PageLayout>);
 }
 
 export default function EventsPage() {

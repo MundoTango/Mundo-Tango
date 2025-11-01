@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { MessageSquare, Bot, Users, TrendingUp, AlertCircle, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function H2ACDashboardPage() {
   const metrics = [
@@ -53,7 +54,8 @@ export default function H2ACDashboardPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="H2AC Dashboard" showBreadcrumbs>
+<>
       <SEO
         title="H2AC Dashboard - Agent Communication Hub"
         description="Human-to-Agent Communication central dashboard for monitoring and managing all AI agents."
@@ -71,7 +73,7 @@ export default function H2ACDashboardPage() {
                 <MessageSquare className="h-6 w-6 text-blue-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">H2AC Dashboard</h1>
+                
                 <p className="text-muted-foreground">Human-to-Agent Communication Hub</p>
               </div>
             </div>
@@ -190,5 +192,5 @@ export default function H2ACDashboardPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

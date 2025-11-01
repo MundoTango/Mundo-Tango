@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, MapPin, Star } from "lucide-react";
 import { Link } from "wouter";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function TeachersPage() {
   const { data: teachers, isLoading } = useQuery({
@@ -12,15 +13,11 @@ export default function TeachersPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Tango Teachers" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Tango Teachers</h1>
-          <p className="text-muted-foreground">
-            Find experienced instructors to improve your dance
-          </p>
-        </div>
+        
 
         {/* Teachers Grid */}
         {isLoading ? (
@@ -94,5 +91,5 @@ export default function TeachersPage() {
         )}
       </div>
     </div>
-  );
+    </PageLayout>);
 }

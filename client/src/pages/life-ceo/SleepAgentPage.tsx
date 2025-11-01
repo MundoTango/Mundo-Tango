@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Moon, Sun, TrendingUp, Clock, Battery, Stars } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function SleepAgentPage() {
   const stats = [
@@ -29,7 +30,8 @@ export default function SleepAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Sleep Agent" showBreadcrumbs>
+<>
       <SEO
         title="Sleep Agent - Life CEO"
         description="Track your sleep patterns, quality, and optimize your rest with AI-powered insights."
@@ -47,7 +49,7 @@ export default function SleepAgentPage() {
                 <Moon className="h-6 w-6 text-indigo-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Sleep Agent</h1>
+                
                 <p className="text-muted-foreground">Your AI sleep coach</p>
               </div>
             </div>
@@ -150,5 +152,5 @@ export default function SleepAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

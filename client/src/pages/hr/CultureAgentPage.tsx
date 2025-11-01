@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Heart, Users, TrendingUp, Calendar, MessageCircle, Award } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function CultureAgentPage() {
   const metrics = [
@@ -32,7 +33,8 @@ export default function CultureAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Culture Agent" showBreadcrumbs>
+<>
       <SEO
         title="Culture Agent - HR Dashboard"
         description="Monitor company culture, engagement, and team morale initiatives."
@@ -50,7 +52,7 @@ export default function CultureAgentPage() {
                 <Heart className="h-6 w-6 text-pink-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Culture Agent</h1>
+                
                 <p className="text-muted-foreground">Your AI culture & engagement assistant</p>
               </div>
             </div>
@@ -172,5 +174,5 @@ export default function CultureAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

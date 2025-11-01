@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { FileText, Calendar, TrendingUp, Eye, Heart, Share2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function ContentAgentPage() {
   const metrics = [
@@ -26,7 +27,8 @@ export default function ContentAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Content Agent" showBreadcrumbs>
+<>
       <SEO
         title="Content Agent - Marketing Dashboard"
         description="Manage content strategy, editorial calendar, and performance analytics."
@@ -44,7 +46,7 @@ export default function ContentAgentPage() {
                 <FileText className="h-6 w-6 text-purple-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Content Agent</h1>
+                
                 <p className="text-muted-foreground">Your AI content strategy assistant</p>
               </div>
             </div>
@@ -146,5 +148,5 @@ export default function ContentAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

@@ -7,6 +7,7 @@ import { Loader2, Check } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
+import { PageLayout } from "@/components/PageLayout";
 
 const TANGO_ROLES = [
   { id: "dancer-leader", emoji: "🕺", name: "Dancer (Leader)", description: "I lead in tango dancing" },
@@ -91,7 +92,8 @@ export default function TangoRolesPage() {
   };
 
   return (
-    <>
+    <PageLayout title="TangoRoles" showBreadcrumbs>
+<>
       <SEO title="Your Tango Roles - Mundo Tango" description="Tell us what you do in the tango community" />
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
         <Card className="w-full max-w-3xl">
@@ -180,5 +182,5 @@ export default function TangoRolesPage() {
         </Card>
       </div>
     </>
-  );
+    </PageLayout>);
 }

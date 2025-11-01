@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, Award, Star } from "lucide-react";
 import { useState } from "react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function LeaderboardPage() {
   const [activeTab, setActiveTab] = useState("points");
@@ -14,14 +15,10 @@ export default function LeaderboardPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Community Leaderboard" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold mb-2">Community Leaderboard</h1>
-          <p className="text-muted-foreground">
-            Celebrate the most active and engaged dancers in our community
-          </p>
-        </div>
+        
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-6 w-full">
@@ -94,5 +91,5 @@ export default function LeaderboardPage() {
         </Tabs>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

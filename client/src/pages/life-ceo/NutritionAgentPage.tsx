@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Apple, Utensils, Droplets, TrendingUp, Target, Flame } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function NutritionAgentPage() {
   const stats = [
@@ -26,7 +27,8 @@ export default function NutritionAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Nutrition Agent" showBreadcrumbs>
+<>
       <SEO
         title="Nutrition Agent - Life CEO"
         description="Track your meals, calories, and nutrition goals with AI-powered dietary insights."
@@ -44,7 +46,7 @@ export default function NutritionAgentPage() {
                 <Apple className="h-6 w-6 text-green-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Nutrition Agent</h1>
+                
                 <p className="text-muted-foreground">Your AI nutrition coach</p>
               </div>
             </div>
@@ -158,5 +160,5 @@ export default function NutritionAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

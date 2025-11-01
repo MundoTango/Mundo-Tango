@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Target, TrendingUp, Award, Users, BarChart3, Star } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function PerformanceAgentPage() {
   const metrics = [
@@ -25,7 +26,8 @@ export default function PerformanceAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Performance Agent" showBreadcrumbs>
+<>
       <SEO
         title="Performance Agent - HR Dashboard"
         description="Track employee performance, goals, and review cycles."
@@ -43,7 +45,7 @@ export default function PerformanceAgentPage() {
                 <Target className="h-6 w-6 text-purple-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Performance Agent</h1>
+                
                 <p className="text-muted-foreground">Your AI performance management assistant</p>
               </div>
             </div>
@@ -152,5 +154,5 @@ export default function PerformanceAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Users } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function FollowersPage() {
   const { data: followers, isLoading } = useQuery({
@@ -10,14 +11,10 @@ export default function FollowersPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Followers" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-2xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Followers</h1>
-          <p className="text-muted-foreground">
-            People who follow you
-          </p>
-        </div>
+        
 
         {isLoading ? (
           <div className="text-center py-12">Loading...</div>
@@ -55,5 +52,5 @@ export default function FollowersPage() {
         )}
       </div>
     </div>
-  );
+    </PageLayout>);
 }

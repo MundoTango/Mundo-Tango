@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Star, Clock, Phone, Globe } from "lucide-react";
 import { Link } from "wouter";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function VenuesPage() {
   const { data: venues, isLoading } = useQuery({
@@ -12,15 +13,11 @@ export default function VenuesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Tango Venues" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Tango Venues</h1>
-          <p className="text-muted-foreground">
-            Discover milongas, studios, and dance halls near you
-          </p>
-        </div>
+        
 
         {/* Venues Grid */}
         {isLoading ? (
@@ -126,5 +123,5 @@ export default function VenuesPage() {
         )}
       </div>
     </div>
-  );
+    </PageLayout>);
 }

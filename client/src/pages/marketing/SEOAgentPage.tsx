@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Search, TrendingUp, Link, FileText, BarChart3, Target } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function SEOAgentPage() {
   const metrics = [
@@ -27,7 +28,8 @@ export default function SEOAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="SEO Agent" showBreadcrumbs>
+<>
       <SEO
         title="SEO Agent - Marketing Dashboard"
         description="Track SEO performance, keyword rankings, and organic growth with AI-powered insights."
@@ -45,7 +47,7 @@ export default function SEOAgentPage() {
                 <Search className="h-6 w-6 text-blue-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">SEO Agent</h1>
+                
                 <p className="text-muted-foreground">Your AI SEO optimization assistant</p>
               </div>
             </div>
@@ -153,5 +155,5 @@ export default function SEOAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

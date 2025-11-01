@@ -6,6 +6,7 @@ import {
   CheckCircle2, ArrowRight, Heart
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function VolunteerPage() {
   const fadeInUp = {
@@ -63,7 +64,8 @@ export default function VolunteerPage() {
   ];
 
   return (
-    <div className="min-h-screen">
+    <PageLayout title="Help Build Mundo Tango" showBreadcrumbs>
+<div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-accent/5 to-background py-24 px-4">
         <div className="container mx-auto max-w-4xl text-center">
@@ -76,9 +78,7 @@ export default function VolunteerPage() {
               <Heart className="h-16 w-16 text-primary mx-auto" />
             </div>
             
-            <h1 className="mb-6 text-4xl font-bold sm:text-5xl lg:text-6xl">
-              Help Build Mundo Tango
-            </h1>
+            
             
             <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground">
               Join our volunteer team and help create the future of tango technology. 
@@ -238,5 +238,5 @@ export default function VolunteerPage() {
         </motion.div>
       </section>
     </div>
-  );
+    </PageLayout>);
 }

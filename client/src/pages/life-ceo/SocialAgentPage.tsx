@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { SEO } from "@/components/SEO";
 import { Users, Calendar, MessageCircle, TrendingUp, MapPin, Heart } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function SocialAgentPage() {
   const [upcomingEvents] = useState([
@@ -39,7 +40,8 @@ export default function SocialAgentPage() {
   };
 
   return (
-    <>
+    <PageLayout title="Social Agent" showBreadcrumbs>
+<>
       <SEO
         title="Social Agent - Life CEO"
         description="Manage your tango social connections and discover events with AI recommendations"
@@ -50,7 +52,7 @@ export default function SocialAgentPage() {
           {/* Header */}
           <motion.div {...fadeInUp} className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Social Agent</h1>
+              
               <p className="text-muted-foreground">Your tango community connection manager</p>
             </div>
             <Users className="h-12 w-12 text-primary" />
@@ -227,5 +229,5 @@ export default function SocialAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

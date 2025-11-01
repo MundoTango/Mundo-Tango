@@ -2,29 +2,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Users, Clock, DollarSign } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function WorkshopDetailPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Advanced Tango Technique Workshop" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
-        <div className="aspect-video bg-muted mb-8 overflow-hidden rounded-lg">
-          <div className="flex items-center justify-center h-full bg-gradient-to-br from-primary/20 to-primary/5">
-            <p className="text-muted-foreground">Workshop Cover Image</p>
-          </div>
-        </div>
-
-        <div className="grid gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2 space-y-6">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Badge>3-Day Intensive</Badge>
-                <Badge variant="destructive">Only 5 spots left</Badge>
-              </div>
-              <h1 className="text-4xl font-bold mb-4">Advanced Tango Technique Workshop</h1>
-              <p className="text-lg text-muted-foreground">
-                with Maestro Carlos Rodriguez & Maria Santos
-              </p>
-            </div>
+        
 
             <Card>
               <CardHeader>
@@ -92,5 +77,5 @@ export default function WorkshopDetailPage() {
         </div>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

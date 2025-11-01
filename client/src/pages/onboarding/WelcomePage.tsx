@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Sparkles, Users, Calendar, MapPin } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function WelcomePage() {
   const [, navigate] = useLocation();
@@ -21,7 +22,8 @@ export default function WelcomePage() {
   };
 
   return (
-    <>
+    <PageLayout title="Welcome" showBreadcrumbs>
+<>
       <SEO
         title="Welcome to Mundo Tango"
         description="Complete your profile and join the global tango community"
@@ -101,5 +103,5 @@ export default function WelcomePage() {
         </Card>
       </div>
     </>
-  );
+    </PageLayout>);
 }

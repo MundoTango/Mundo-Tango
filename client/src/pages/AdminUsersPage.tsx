@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function AdminUsersPage() {
   const users = [
@@ -13,14 +14,10 @@ export default function AdminUsersPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="User Management" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-4">User Management</h1>
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input placeholder="Search users..." className="pl-10" data-testid="input-search" />
-          </div>
+        
         </div>
 
         <Card>
@@ -63,5 +60,5 @@ export default function AdminUsersPage() {
         </Card>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

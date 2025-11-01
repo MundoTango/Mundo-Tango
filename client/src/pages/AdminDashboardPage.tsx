@@ -14,6 +14,7 @@ import {
   BarChart3
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { PageLayout } from "@/components/PageLayout";
 
 interface DashboardStats {
   totalUsers: number;
@@ -92,9 +93,10 @@ export default function AdminDashboardPage() {
   );
 
   return (
-    <div className="container mx-auto p-6" data-testid="page-admin-dashboard">
+    <PageLayout title="Admin Dashboard" showBreadcrumbs>
+<div className="container mx-auto p-6" data-testid="page-admin-dashboard">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2" data-testid="text-page-title">Admin Dashboard</h1>
+        
         <p className="text-muted-foreground">Monitor and manage the Mundo Tango platform</p>
       </div>
 
@@ -267,5 +269,5 @@ export default function AdminDashboardPage() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+    </PageLayout>);
 }

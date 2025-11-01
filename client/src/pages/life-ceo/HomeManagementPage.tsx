@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Home, Wrench, ShoppingCart, Calendar, CheckCircle2, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function HomeManagementPage() {
   const maintenance = [
@@ -18,7 +19,8 @@ export default function HomeManagementPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Home Management" showBreadcrumbs>
+<>
       <SEO
         title="Home Management - Life CEO"
         description="Track home maintenance, shopping lists, and household tasks with your AI home agent."
@@ -36,7 +38,7 @@ export default function HomeManagementPage() {
                 <Home className="h-6 w-6 text-orange-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Home Management</h1>
+                
                 <p className="text-muted-foreground">Your smart home assistant</p>
               </div>
             </div>
@@ -133,5 +135,5 @@ export default function HomeManagementPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

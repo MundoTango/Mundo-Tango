@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EyeOff } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function BlockedContentPage() {
   const blockedContent = [
@@ -9,14 +10,10 @@ export default function BlockedContentPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Blocked Content" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-2xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Blocked Content</h1>
-          <p className="text-muted-foreground">
-            Content you've hidden or blocked
-          </p>
-        </div>
+        
 
         {blockedContent.length > 0 ? (
           <div className="space-y-3">
@@ -46,5 +43,5 @@ export default function BlockedContentPage() {
         )}
       </div>
     </div>
-  );
+    </PageLayout>);
 }

@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Bookmark, Heart, MessageCircle } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function SavedPostsPage() {
   const { data: savedPosts, isLoading } = useQuery({
@@ -10,12 +11,10 @@ export default function SavedPostsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Saved Posts" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-2xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Saved Posts</h1>
-          <p className="text-muted-foreground">Posts you've bookmarked for later</p>
-        </div>
+        
 
         {isLoading ? (
           <div className="text-center py-12">Loading saved posts...</div>
@@ -64,5 +63,5 @@ export default function SavedPostsPage() {
         )}
       </div>
     </div>
-  );
+    </PageLayout>);
 }

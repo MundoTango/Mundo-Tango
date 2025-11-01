@@ -1,10 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Mail, CheckCircle } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function EmailVerificationPage() {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center py-8 px-4">
+    <PageLayout title="Verify Your Email" showBreadcrumbs>
+<div className="min-h-screen bg-background flex items-center justify-center py-8 px-4">
       <Card className="w-full max-w-md">
         <CardContent className="pt-6 text-center space-y-6">
           <div className="mx-auto w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
@@ -12,7 +14,7 @@ export default function EmailVerificationPage() {
           </div>
 
           <div>
-            <h1 className="text-2xl font-bold mb-2">Verify Your Email</h1>
+            
             <p className="text-muted-foreground">
               We've sent a verification link to your email address.
               Please check your inbox and click the link to verify your account.
@@ -37,5 +39,5 @@ export default function EmailVerificationPage() {
         </CardContent>
       </Card>
     </div>
-  );
+    </PageLayout>);
 }

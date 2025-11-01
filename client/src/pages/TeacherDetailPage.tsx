@@ -3,10 +3,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Star, Calendar, Award } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function TeacherDetailPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Carlos Rodriguez" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
         <Card className="mb-8">
           <CardContent className="pt-6">
@@ -17,7 +19,7 @@ export default function TeacherDetailPage() {
               </Avatar>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <h1 className="text-3xl font-bold">Carlos Rodriguez</h1>
+                  
                   <Badge>Verified</Badge>
                 </div>
                 <div className="flex items-center gap-4 text-muted-foreground mb-4">
@@ -101,5 +103,5 @@ export default function TeacherDetailPage() {
         </Card>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

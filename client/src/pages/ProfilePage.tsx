@@ -23,6 +23,7 @@ import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import type { Profile } from "@shared/supabase-types";
+import { PageLayout } from "@/components/PageLayout";
 
 const editProfileSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters").max(50),
@@ -185,7 +186,8 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <>
+    <PageLayout title="Profile" showBreadcrumbs>
+<>
         <SEO 
           title="Profile"
           description="View and manage your Mundo Tango profile."
@@ -205,7 +207,7 @@ export default function ProfilePage() {
           </Card>
         </div>
       </>
-    );
+    </PageLayout>);
   }
 
   if (!profile) {

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Dumbbell, Activity, Trophy, Flame, TrendingUp, Target } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function FitnessAgentPage() {
   const stats = [
@@ -25,7 +26,8 @@ export default function FitnessAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Fitness Agent" showBreadcrumbs>
+<>
       <SEO
         title="Fitness Agent - Life CEO"
         description="Track your tango fitness, workouts, and achieve your physical goals with AI coaching."
@@ -43,7 +45,7 @@ export default function FitnessAgentPage() {
                 <Dumbbell className="h-6 w-6 text-orange-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Fitness Agent</h1>
+                
                 <p className="text-muted-foreground">Your AI fitness trainer</p>
               </div>
             </div>
@@ -156,5 +158,5 @@ export default function FitnessAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

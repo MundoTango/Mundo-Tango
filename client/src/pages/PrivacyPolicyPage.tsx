@@ -3,17 +3,10 @@ import { Shield, Lock, Eye, Database, Mail } from "lucide-react";
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Privacy Policy" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-4">Privacy Policy</h1>
-          <p className="text-lg text-muted-foreground">
-            Your privacy is important to us. Here's how we protect your data.
-          </p>
-          <p className="text-sm text-muted-foreground mt-2">
-            Effective Date: October 31, 2025
-          </p>
-        </div>
+        
 
         <div className="space-y-6">
           <Card>
@@ -154,5 +147,5 @@ export default function PrivacyPolicyPage() {
         </Card>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

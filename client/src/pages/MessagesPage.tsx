@@ -16,13 +16,15 @@ import { Send } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatDistanceToNow } from "date-fns";
 import { SEO } from "@/components/SEO";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function MessagesPage() {
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const { data: conversations, isLoading } = useConversations();
 
   return (
-    <>
+    <PageLayout title="Messages" showBreadcrumbs>
+<>
       <SEO 
         title="Messages"
         description="Stay connected with your tango community through private messaging. Chat with dancers, organize events, and build lasting friendships."
@@ -116,7 +118,7 @@ export default function MessagesPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }
 
 function ConversationView({ conversationId }: { conversationId: string }) {

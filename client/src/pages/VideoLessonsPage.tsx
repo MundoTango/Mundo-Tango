@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Play, Clock, Users, Star } from "lucide-react";
 import { Link } from "wouter";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function VideoLessonsPage() {
   const [activeTab, setActiveTab] = useState("all");
@@ -15,14 +16,10 @@ export default function VideoLessonsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Video Lessons" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Video Lessons</h1>
-          <p className="text-lg text-muted-foreground">
-            Master tango with step-by-step video instruction from world-class teachers
-          </p>
-        </div>
+        
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-6">
@@ -105,5 +102,5 @@ export default function VideoLessonsPage() {
         </Tabs>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

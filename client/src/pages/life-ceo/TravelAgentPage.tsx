@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Plane, MapPin, Calendar, DollarSign, Briefcase, Heart } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function TravelAgentPage() {
   const upcomingTrips = [
@@ -17,7 +18,8 @@ export default function TravelAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Travel Agent" showBreadcrumbs>
+<>
       <SEO
         title="Travel Agent - Life CEO"
         description="Plan trips, find tango events worldwide, and manage travel logistics with your AI travel agent."
@@ -35,7 +37,7 @@ export default function TravelAgentPage() {
                 <Plane className="h-6 w-6 text-cyan-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Travel Agent</h1>
+                
                 <p className="text-muted-foreground">Your personal travel planner</p>
               </div>
             </div>
@@ -125,5 +127,5 @@ export default function TravelAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

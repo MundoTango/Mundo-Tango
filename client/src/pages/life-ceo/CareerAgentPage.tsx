@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Briefcase, TrendingUp, Target, FileText, Users, Award, Clock } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function CareerAgentPage() {
   const metrics = [
@@ -21,7 +22,8 @@ export default function CareerAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Career Agent" showBreadcrumbs>
+<>
       <SEO
         title="Career Agent - Life CEO"
         description="Track your professional development, skills, and career goals with your AI career agent."
@@ -39,7 +41,7 @@ export default function CareerAgentPage() {
                 <Briefcase className="h-6 w-6 text-blue-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Career Agent</h1>
+                
                 <p className="text-muted-foreground">Your professional growth companion</p>
               </div>
             </div>
@@ -168,5 +170,5 @@ export default function CareerAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

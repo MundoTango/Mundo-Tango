@@ -7,6 +7,7 @@ import { Calendar, MapPin, DollarSign, Globe } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function EventDetailsPage() {
   const [, params] = useRoute("/events/:id");
@@ -33,7 +34,8 @@ export default function EventDetailsPage() {
 
   if (isLoading) {
     return (
-      <>
+    <PageLayout title="EventDetails" showBreadcrumbs>
+<>
         <SEO 
           title="Event Details"
           description="View event details, RSVP, and connect with attendees for this tango event."
@@ -44,7 +46,7 @@ export default function EventDetailsPage() {
           <Skeleton className="h-32 w-full" />
         </div>
       </>
-    );
+    </PageLayout>);
   }
 
   if (!event) {

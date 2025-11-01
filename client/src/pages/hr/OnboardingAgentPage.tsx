@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { UserCheck, CheckCircle, AlertCircle, Clock, Users, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function OnboardingAgentPage() {
   const metrics = [
@@ -27,7 +28,8 @@ export default function OnboardingAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Onboarding Agent" showBreadcrumbs>
+<>
       <SEO
         title="Onboarding Agent - HR Dashboard"
         description="Manage new hire onboarding, training, and integration tracking."
@@ -45,7 +47,7 @@ export default function OnboardingAgentPage() {
                 <UserCheck className="h-6 w-6 text-green-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Onboarding Agent</h1>
+                
                 <p className="text-muted-foreground">Your AI onboarding assistant</p>
               </div>
             </div>
@@ -144,5 +146,5 @@ export default function OnboardingAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

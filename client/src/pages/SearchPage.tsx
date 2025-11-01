@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Search, Users, Calendar, MapPin } from "lucide-react";
 import { Link } from "wouter";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
@@ -25,22 +26,11 @@ export default function SearchPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Search" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
         {/* Search Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-4">Search</h1>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search for people, events, or groups..."
-              className="pl-10"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              data-testid="input-search"
-            />
-          </div>
+        
         </div>
 
         {/* Results */}
@@ -140,7 +130,7 @@ export default function SearchPage() {
         )}
       </div>
     </div>
-  );
+    </PageLayout>);
 }
 
 // Helper Components

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { BookOpen, Calendar, Clock, Search } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function BlogPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -16,14 +17,10 @@ export default function BlogPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Tango Blog" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Tango Blog</h1>
-          <p className="text-lg text-muted-foreground">
-            Stories, tips, and insights from the tango community
-          </p>
-        </div>
+        
 
         <div className="mb-6">
           <div className="relative max-w-md">
@@ -115,5 +112,5 @@ export default function BlogPage() {
         )}
       </div>
     </div>
-  );
+    </PageLayout>);
 }

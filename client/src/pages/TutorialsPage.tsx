@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Play, BookOpen, Clock, TrendingUp } from "lucide-react";
 import { Link } from "wouter";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function TutorialsPage() {
   const [activeTab, setActiveTab] = useState("all");
@@ -15,15 +16,11 @@ export default function TutorialsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Tango Tutorials" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Tango Tutorials</h1>
-          <p className="text-muted-foreground">
-            Learn new moves and techniques from expert instructors
-          </p>
-        </div>
+        
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -123,5 +120,5 @@ export default function TutorialsPage() {
         </Tabs>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

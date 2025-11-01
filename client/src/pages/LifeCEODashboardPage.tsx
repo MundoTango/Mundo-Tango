@@ -8,6 +8,7 @@ import {
   TrendingUp, CheckCircle2, Clock
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function LifeCEODashboardPage() {
   const agents = [
@@ -36,7 +37,8 @@ export default function LifeCEODashboardPage() {
   };
 
   return (
-    <>
+    <PageLayout title="Life CEO Dashboard" showBreadcrumbs>
+<>
       <SEO
         title="Life CEO Dashboard - Mundo Tango"
         description="Manage all aspects of your life with 16 AI agents working for you 24/7."
@@ -46,7 +48,7 @@ export default function LifeCEODashboardPage() {
         <div className="container mx-auto max-w-7xl">
           {/* Header */}
           <motion.div {...fadeInUp} className="mb-12">
-            <h1 className="text-4xl font-bold mb-2">Life CEO Dashboard</h1>
+            
             <p className="text-lg text-muted-foreground">
               Your 16 AI agents managing health, finance, career, and more
             </p>
@@ -190,5 +192,5 @@ export default function LifeCEODashboardPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

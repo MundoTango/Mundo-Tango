@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import {Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {Bot, Brain, CheckCircle, Clock, Users, Zap, Award, Activity } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 interface AgentStats {
   totalAgents: number;
@@ -50,12 +51,13 @@ export default function ESADashboardPage() {
 
   if (statsLoading) {
     return (
-      <div className="container mx-auto p-6">
+    <PageLayout title="ESA Framework Dashboard" showBreadcrumbs>
+<div className="container mx-auto p-6">
         <div className="text-center py-8" data-testid="loading-esa-stats">
           Loading ESA Framework...
         </div>
       </div>
-    );
+    </PageLayout>);
   }
 
   return (

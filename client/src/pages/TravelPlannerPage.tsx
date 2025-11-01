@@ -5,19 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, MapPin, Plane, Hotel, Music } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function TravelPlannerPage() {
   const [activeTab, setActiveTab] = useState("festivals");
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Tango Travel Planner" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Tango Travel Planner</h1>
-          <p className="text-muted-foreground">
-            Plan your perfect tango journey - festivals, workshops, and unforgettable experiences
-          </p>
-        </div>
+        
 
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
@@ -108,5 +105,5 @@ export default function TravelPlannerPage() {
         </div>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

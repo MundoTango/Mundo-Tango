@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Users, Clock } from "lucide-react";
 import { Link } from "wouter";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function WorkshopsPage() {
   const { data: workshops, isLoading } = useQuery({
@@ -11,14 +12,10 @@ export default function WorkshopsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Tango Workshops" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Tango Workshops</h1>
-          <p className="text-muted-foreground">
-            Intensive learning experiences with world-renowned instructors
-          </p>
-        </div>
+        
 
         {isLoading ? (
           <div className="text-center py-12">Loading workshops...</div>
@@ -98,5 +95,5 @@ export default function WorkshopsPage() {
         )}
       </div>
     </div>
-  );
+    </PageLayout>);
 }

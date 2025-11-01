@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Activity, AlertCircle, CheckCircle, Clock, TrendingUp, Zap } from "lucide-react";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { PageLayout } from "@/components/PageLayout";
 
 interface MonitoringData {
   vercel: {
@@ -72,12 +73,13 @@ export default function MonitoringPage() {
 
   if (isLoading || !monitoring) {
     return (
-      <div className="container mx-auto p-6">
+    <PageLayout title="Monitoring Dashboard" showBreadcrumbs>
+<div className="container mx-auto p-6">
         <div className="text-center py-8" data-testid="loading-monitoring">
           Loading monitoring data...
         </div>
       </div>
-    );
+    </PageLayout>);
   }
 
   const getStatusBadge = (status: string) => {

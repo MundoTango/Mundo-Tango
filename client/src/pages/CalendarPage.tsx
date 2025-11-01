@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar as CalendarIcon, MapPin, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth } from "date-fns";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function CalendarPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -26,15 +27,11 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Event Calendar" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-7xl">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Event Calendar</h1>
-          <p className="text-muted-foreground">
-            View all upcoming tango events by date
-          </p>
-        </div>
+        
 
         {/* Calendar Navigation */}
         <Card className="mb-8">
@@ -169,5 +166,5 @@ export default function CalendarPage() {
         </div>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

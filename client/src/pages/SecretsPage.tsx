@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Plus, Eye, EyeOff, Trash2, RefreshCw, Check, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { PageLayout } from "@/components/PageLayout";
 
 interface Secret {
   id: number;
@@ -126,10 +127,11 @@ export default function SecretsPage() {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <PageLayout title="Secrets Management" showBreadcrumbs>
+<div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold" data-testid="text-page-title">Secrets Management</h1>
+          
           <p className="text-muted-foreground mt-1">
             Manage environment variables for your deployments
           </p>
@@ -330,5 +332,5 @@ export default function SecretsPage() {
         </CardContent>
       </Card>
     </div>
-  );
+    </PageLayout>);
 }

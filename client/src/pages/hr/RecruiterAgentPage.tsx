@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { UserPlus, Briefcase, Users, TrendingUp, CheckCircle2, Clock } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function RecruiterAgentPage() {
   const metrics = [
@@ -26,7 +27,8 @@ export default function RecruiterAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Recruiter Agent" showBreadcrumbs>
+<>
       <SEO
         title="Recruiter Agent - HR Dashboard"
         description="Manage recruitment pipeline, candidates, and hiring analytics."
@@ -44,7 +46,7 @@ export default function RecruiterAgentPage() {
                 <UserPlus className="h-6 w-6 text-blue-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Recruiter Agent</h1>
+                
                 <p className="text-muted-foreground">Your AI recruitment assistant</p>
               </div>
             </div>
@@ -138,5 +140,5 @@ export default function RecruiterAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { SEO } from "@/components/SEO";
 import { Heart, Brain, Smile, Moon, Sun, Activity } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function WellnessAgentPage() {
   const [todayMood] = useState<"great" | "good" | "okay" | "low">("good");
@@ -43,7 +44,8 @@ export default function WellnessAgentPage() {
   };
 
   return (
-    <>
+    <PageLayout title="Wellness Agent" showBreadcrumbs>
+<>
       <SEO
         title="Wellness Agent - Life CEO"
         description="Track your mental and physical wellness with AI-powered insights and mindfulness tools"
@@ -54,7 +56,7 @@ export default function WellnessAgentPage() {
           {/* Header */}
           <motion.div {...fadeInUp} className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Wellness Agent</h1>
+              
               <p className="text-muted-foreground">Your holistic health companion</p>
             </div>
             <Heart className="h-12 w-12 text-primary" />
@@ -243,5 +245,5 @@ export default function WellnessAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

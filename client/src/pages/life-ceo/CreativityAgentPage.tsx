@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Palette, Lightbulb, Pen, Camera, Sparkles, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function CreativityAgentPage() {
   const stats = [
@@ -25,7 +26,8 @@ export default function CreativityAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Creativity Agent" showBreadcrumbs>
+<>
       <SEO
         title="Creativity Agent - Life CEO"
         description="Unleash your creative potential with AI-powered inspiration and project management."
@@ -43,7 +45,7 @@ export default function CreativityAgentPage() {
                 <Palette className="h-6 w-6 text-pink-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Creativity Agent</h1>
+                
                 <p className="text-muted-foreground">Your AI creative companion</p>
               </div>
             </div>
@@ -145,5 +147,5 @@ export default function CreativityAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { SEO } from "@/components/SEO";
 import { ChevronLeft, ChevronRight, MapPin, Camera, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 const tangoRoles = [
   { id: "dancer", label: "Dancer", emoji: "💃" },
@@ -80,7 +81,8 @@ export default function OnboardingPage() {
   };
 
   return (
-    <>
+    <PageLayout title="Welcome to Mundo Tango!" showBreadcrumbs>
+<>
       <SEO
         title="Welcome to Mundo Tango"
         description="Complete your profile to join the global tango community"
@@ -88,37 +90,7 @@ export default function OnboardingPage() {
 
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-primary/10 via-accent/5 to-background p-4">
         {/* Progress Bar */}
-        <div className="w-full max-w-2xl mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-muted-foreground">Step {currentStep} of {totalSteps}</span>
-            <span className="text-sm text-muted-foreground">{Math.round(progress)}% complete</span>
-          </div>
-          <Progress value={progress} className="h-2" />
-        </div>
-
-        {/* Step Content */}
-        <div className="w-full max-w-2xl">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentStep}
-              custom={1}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.3 }}
-            >
-              <Card className="glass-card">
-                <CardContent className="pt-8 pb-6">
-                  {/* Step 1: Welcome */}
-                  {currentStep === 1 && (
-                    <div className="text-center space-y-6">
-                      <div className="text-6xl mb-4">💃🕺</div>
-                      <h1 className="text-3xl font-bold">Welcome to Mundo Tango!</h1>
-                      <p className="text-lg text-muted-foreground max-w-md mx-auto">
-                        Let's get you set up. This will only take a minute.
-                      </p>
-                    </div>
+        
                   )}
 
                   {/* Step 2: Location */}
@@ -276,5 +248,5 @@ export default function OnboardingPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

@@ -2,12 +2,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, User } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function UserReportsPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="User Reports" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
-        <h1 className="text-3xl font-bold mb-8">User Reports</h1>
+        
 
         <div className="space-y-4">
           {[1, 2, 3].map((item) => (
@@ -41,5 +43,5 @@ export default function UserReportsPage() {
         </div>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

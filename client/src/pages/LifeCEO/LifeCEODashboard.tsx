@@ -26,6 +26,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Link } from "wouter";
+import { PageLayout } from "@/components/PageLayout";
 
 const agents = [
   { id: "A1", name: "Goals.Agent", icon: Target, description: "Goal setting & tracking", route: "/life-ceo/goals" },
@@ -51,13 +52,9 @@ export default function LifeCEODashboard() {
   const { data: tasks = [] } = useQuery({ queryKey: ["/api/life-ceo/tasks"] });
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Life CEO</h1>
-        <p className="text-muted-foreground">
-          Your personal AI agents helping you manage every aspect of life
-        </p>
-      </div>
+    <PageLayout title="Life CEO" showBreadcrumbs>
+<div className="container mx-auto py-8 px-4">
+      
 
       {/* Active Goals */}
       <div className="mb-8">
@@ -137,5 +134,5 @@ export default function LifeCEODashboard() {
         </div>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

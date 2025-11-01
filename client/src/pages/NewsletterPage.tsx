@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Check } from "lucide-react";
 import { useState } from "react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function NewsletterPage() {
   const [subscribed, setSubscribed] = useState(false);
@@ -14,14 +15,10 @@ export default function NewsletterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Stay Connected with Tango" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-4">Stay Connected with Tango</h1>
-          <p className="text-lg text-muted-foreground">
-            Get the latest tango news, events, and exclusive content delivered to your inbox
-          </p>
-        </div>
+        
 
         <div className="grid gap-8 md:grid-cols-2">
           <Card>
@@ -98,5 +95,5 @@ export default function NewsletterPage() {
         </div>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

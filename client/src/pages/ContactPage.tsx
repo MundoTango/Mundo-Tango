@@ -7,6 +7,7 @@ import { Mail, MessageCircle, MapPin, Phone } from "lucide-react";
 import { useState } from "react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -22,19 +23,15 @@ export default function ContactPage() {
   };
 
   return (
-    <PublicLayout>
+    <PageLayout title="Contact Us" showBreadcrumbs>
+<PublicLayout>
       <SEO
         title="Contact Us - Mundo Tango"
         description="Get in touch with the Mundo Tango team. We're here to help with questions, feedback, and support for the global tango community."
       />
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-4">Contact Us</h1>
-          <p className="text-lg text-muted-foreground">
-            We'd love to hear from you. Send us a message and we'll respond as soon as possible.
-          </p>
-        </div>
+        
 
         <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
@@ -179,5 +176,5 @@ export default function ContactPage() {
       </div>
     </div>
     </PublicLayout>
-  );
+    </PageLayout>);
 }

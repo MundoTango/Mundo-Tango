@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Users, UserPlus, Clock, Search } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { PageLayout } from "@/components/PageLayout";
 
 interface Friend {
   id: number;
@@ -141,11 +142,10 @@ export default function FriendsListPage() {
   );
 
   return (
-    <div className="container max-w-4xl mx-auto p-6" data-testid="page-friends">
+    <PageLayout title="Friends" showBreadcrumbs>
+<div className="container max-w-4xl mx-auto p-6" data-testid="page-friends">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2" data-testid="text-page-title">
-          Friends
-        </h1>
+        
         <p className="text-muted-foreground">Manage your tango connections</p>
       </div>
 
@@ -273,5 +273,5 @@ export default function FriendsListPage() {
         </TabsContent>
       </Tabs>
     </div>
-  );
+    </PageLayout>);
 }

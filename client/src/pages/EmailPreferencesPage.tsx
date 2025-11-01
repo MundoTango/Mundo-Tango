@@ -3,17 +3,14 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function EmailPreferencesPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Email Preferences" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-2xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Email Preferences</h1>
-          <p className="text-muted-foreground">
-            Manage how you receive notifications and updates from Mundo Tango
-          </p>
-        </div>
+        
 
         <Card className="mb-6">
           <CardHeader>
@@ -80,5 +77,5 @@ export default function EmailPreferencesPage() {
         </Button>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

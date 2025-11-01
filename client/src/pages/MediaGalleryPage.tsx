@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Image, Video, Heart, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function MediaGalleryPage() {
   const [activeTab, setActiveTab] = useState("all");
@@ -13,14 +14,10 @@ export default function MediaGalleryPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Media Gallery" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Media Gallery</h1>
-          <p className="text-muted-foreground">
-            Photos and videos from the global tango community
-          </p>
-        </div>
+        
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-6">
@@ -79,5 +76,5 @@ export default function MediaGalleryPage() {
         </Tabs>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

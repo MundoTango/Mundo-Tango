@@ -2,10 +2,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { XCircle } from "lucide-react";
 import { Link } from "wouter";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function PaymentFailedPage() {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center py-8 px-4">
+    <PageLayout title="Payment Failed" showBreadcrumbs>
+<div className="min-h-screen bg-background flex items-center justify-center py-8 px-4">
       <Card className="w-full max-w-md">
         <CardContent className="pt-6 text-center space-y-6">
           <div className="mx-auto w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center">
@@ -13,7 +15,7 @@ export default function PaymentFailedPage() {
           </div>
 
           <div>
-            <h1 className="text-2xl font-bold mb-2">Payment Failed</h1>
+            
             <p className="text-muted-foreground">
               We couldn't process your payment. Please try again or use a different payment method.
             </p>
@@ -49,5 +51,5 @@ export default function PaymentFailedPage() {
         </CardContent>
       </Card>
     </div>
-  );
+    </PageLayout>);
 }

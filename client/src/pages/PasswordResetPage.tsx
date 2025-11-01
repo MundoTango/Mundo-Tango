@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Key } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function PasswordResetPage() {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center py-8 px-4">
+    <PageLayout title="PasswordReset" showBreadcrumbs>
+<div className="min-h-screen bg-background flex items-center justify-center py-8 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
@@ -34,5 +36,5 @@ export default function PasswordResetPage() {
         </CardContent>
       </Card>
     </div>
-  );
+    </PageLayout>);
 }

@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Search, HelpCircle } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
+import { PageLayout } from "@/components/PageLayout";
 
 const faqs = [
   {
@@ -104,7 +105,8 @@ export default function FAQPage() {
   })).filter(category => category.questions.length > 0);
 
   return (
-    <PublicLayout>
+    <PageLayout title="Frequently Asked Questions" showBreadcrumbs>
+<PublicLayout>
       <SEO
         title="FAQ - Mundo Tango"
         description="Find answers to common questions about Mundo Tango. Learn how to get started, find events, connect with dancers, and make the most of our platform."
@@ -112,24 +114,7 @@ export default function FAQPage() {
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
         {/* Header */}
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-4">Frequently Asked Questions</h1>
-          <p className="text-lg text-muted-foreground mb-6">
-            Find answers to common questions about Mundo Tango
-          </p>
-
-          {/* Search */}
-          <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search FAQs..."
-              className="pl-10"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              data-testid="input-search-faq"
-            />
-          </div>
+        
         </div>
 
         {/* FAQs */}
@@ -184,5 +169,5 @@ export default function FAQPage() {
       </div>
     </div>
     </PublicLayout>
-  );
+    </PageLayout>);
 }

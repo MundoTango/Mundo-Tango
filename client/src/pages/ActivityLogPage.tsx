@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, LogIn, Settings, Heart } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function ActivityLogPage() {
   const activities = [
@@ -12,14 +13,10 @@ export default function ActivityLogPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Activity Log" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-2xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Activity Log</h1>
-          <p className="text-muted-foreground">
-            View your recent activity and account changes
-          </p>
-        </div>
+        
 
         <Card>
           <CardHeader>
@@ -51,5 +48,5 @@ export default function ActivityLogPage() {
         </Card>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

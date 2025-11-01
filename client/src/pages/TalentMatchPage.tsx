@@ -11,6 +11,7 @@ import { Upload, Link as LinkIcon, Sparkles, ArrowRight, CheckCircle, FileText }
 import { motion } from "framer-motion";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function TalentMatchPage() {
   const [, setLocation] = useLocation();
@@ -174,7 +175,8 @@ export default function TalentMatchPage() {
   // Show loading state while auth is being verified
   if (authLoading) {
     return (
-      <>
+    <PageLayout title="AI Talent Match" showBreadcrumbs>
+<>
         <SEO
           title="Talent Match - Mundo Tango"
           description="Apply to volunteer with Mundo Tango. Our AI-powered Talent Match system will find the perfect tasks for your skills."
@@ -186,7 +188,7 @@ export default function TalentMatchPage() {
           </div>
         </div>
       </>
-    );
+    </PageLayout>);
   }
 
   const fadeInUp = {

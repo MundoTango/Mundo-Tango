@@ -10,6 +10,7 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { SelectGroup } from "@shared/schema";
 import { SEO } from "@/components/SEO";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function GroupDetailsPage() {
   const [, params] = useRoute("/groups/:id");
@@ -41,7 +42,8 @@ export default function GroupDetailsPage() {
 
   if (isLoading) {
     return (
-      <>
+    <PageLayout title="GroupDetails" showBreadcrumbs>
+<>
         <SEO 
           title="Group Details"
           description="Explore this tango group, join discussions, and connect with fellow members."
@@ -52,7 +54,7 @@ export default function GroupDetailsPage() {
           <Skeleton className="h-32 w-full" />
         </div>
       </>
-    );
+    </PageLayout>);
   }
 
   if (!group) {

@@ -3,12 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CreditCard, Lock } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function CheckoutPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Checkout" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
-        <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+        
 
         <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-6">
@@ -97,5 +99,5 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

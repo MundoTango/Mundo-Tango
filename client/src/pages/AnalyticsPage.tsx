@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { ArrowDown, ArrowUp, Users, Zap, Server, AlertTriangle } from "lucide-react";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Line, LineChart } from "recharts";
+import { PageLayout } from "@/components/PageLayout";
 
 interface AnalyticsData {
   overview: {
@@ -77,12 +78,13 @@ export default function AnalyticsPage() {
 
   if (isLoading || !analytics) {
     return (
-      <div className="container mx-auto p-6">
+    <PageLayout title="Analytics Dashboard" showBreadcrumbs>
+<div className="container mx-auto p-6">
         <div className="text-center py-8" data-testid="loading-analytics">
           Loading analytics...
         </div>
       </div>
-    );
+    </PageLayout>);
   }
 
   const successRate = ((analytics.overview.successfulDeployments / analytics.overview.totalDeployments) * 100).toFixed(1);

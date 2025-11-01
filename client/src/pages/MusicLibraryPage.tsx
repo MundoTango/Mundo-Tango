@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Music, Play, Heart, Download, Search } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function MusicLibraryPage() {
   const [activeTab, setActiveTab] = useState("tango");
@@ -16,14 +17,10 @@ export default function MusicLibraryPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Music Library" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Music Library</h1>
-          <p className="text-muted-foreground">
-            Explore the rich musical heritage of Argentine tango
-          </p>
-        </div>
+        
 
         <div className="mb-6">
           <div className="relative max-w-md">
@@ -96,5 +93,5 @@ export default function MusicLibraryPage() {
         </Tabs>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

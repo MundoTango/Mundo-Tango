@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { MapPin, Loader2 } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
+import { PageLayout } from "@/components/PageLayout";
 
 interface CitySuggestion {
   display_name: string;
@@ -64,7 +65,10 @@ export default function CitySelectionPage() {
     };
 
     const debounce = setTimeout(searchCities, 300);
-    return () => clearTimeout(debounce);
+    return (
+    <PageLayout title="CitySelection" showBreadcrumbs>
+
+    </PageLayout>) => clearTimeout(debounce);
   }, [citySearch]);
 
   const handleCitySelect = (city: CitySuggestion) => {

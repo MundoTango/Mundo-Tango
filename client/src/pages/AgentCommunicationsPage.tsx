@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MessageSquare, Send, Inbox, Bot, AlertTriangle, Info } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 interface AgentCommunication {
   id: number;
@@ -63,10 +64,11 @@ export default function AgentCommunicationsPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-6">
+    <PageLayout title="Agent Communications" showBreadcrumbs>
+<div className="container mx-auto p-6">
         <div className="text-center py-8">Loading communications...</div>
       </div>
-    );
+    </PageLayout>);
   }
 
   const agentToAgent = communications.filter(c => c.communicationType === "agent_to_agent");

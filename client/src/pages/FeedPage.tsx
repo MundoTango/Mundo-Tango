@@ -17,6 +17,7 @@ import { SEO } from "@/components/SEO";
 import { GlobalTopbar } from "@/components/GlobalTopbar";
 import { FeedLeftSidebar } from "@/components/FeedLeftSidebar";
 import { FeedRightSidebar } from "@/components/FeedRightSidebar";
+import { PageLayout } from "@/components/PageLayout";
 
 type Post = {
   id: number;
@@ -151,7 +152,8 @@ export default function FeedPage() {
   };
 
   return (
-    <>
+    <PageLayout title="Feed" showBreadcrumbs>
+<>
       <SEO
         title="Home Feed"
         description="Connect with the tango community. Share your dance moments, discover events, and engage with fellow tango enthusiasts from around the world."
@@ -357,7 +359,7 @@ export default function FeedPage() {
         <FeedRightSidebar />
       </div>
     </>
-  );
+    </PageLayout>);
 }
 
 function PostCard({ post }: { post: Post }) {

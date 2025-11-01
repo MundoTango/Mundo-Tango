@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Check, Zap, Crown, Users } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
+import { PageLayout } from "@/components/PageLayout";
 
 const plans = [
   {
@@ -66,7 +67,8 @@ const plans = [
 
 export default function PricingPage() {
   return (
-    <PublicLayout>
+    <PageLayout title="Simple, Transparent Pricing" showBreadcrumbs>
+<PublicLayout>
       <SEO
         title="Pricing - Mundo Tango"
         description="Choose the perfect plan for your tango journey. Free for casual dancers, Pro for dedicated enthusiasts, and Teacher plans for instructors."
@@ -74,7 +76,7 @@ export default function PricingPage() {
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold mb-4">Simple, Transparent Pricing</h1>
+          
           <p className="text-lg text-muted-foreground">
             Choose the plan that's right for you. Upgrade, downgrade, or cancel anytime.
           </p>
@@ -188,5 +190,5 @@ export default function PricingPage() {
       </div>
     </div>
     </PublicLayout>
-  );
+    </PageLayout>);
 }

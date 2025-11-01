@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { BarChart3, TrendingUp, Users, Clock, Globe, Smartphone } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function AnalyticsAgentPage() {
   const metrics = [
@@ -27,7 +28,8 @@ export default function AnalyticsAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Analytics Agent" showBreadcrumbs>
+<>
       <SEO
         title="Analytics Agent - Marketing Dashboard"
         description="Track website analytics, user behavior, and conversion metrics."
@@ -45,7 +47,7 @@ export default function AnalyticsAgentPage() {
                 <BarChart3 className="h-6 w-6 text-green-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Analytics Agent</h1>
+                
                 <p className="text-muted-foreground">Your AI analytics assistant</p>
               </div>
             </div>
@@ -146,5 +148,5 @@ export default function AnalyticsAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

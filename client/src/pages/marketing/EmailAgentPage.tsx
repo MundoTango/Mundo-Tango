@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Mail, Send, Users, TrendingUp, MousePointerClick, Eye } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function EmailAgentPage() {
   const metrics = [
@@ -26,7 +27,8 @@ export default function EmailAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Email Agent" showBreadcrumbs>
+<>
       <SEO
         title="Email Agent - Marketing Dashboard"
         description="Manage email campaigns, automation, and subscriber analytics."
@@ -44,7 +46,7 @@ export default function EmailAgentPage() {
                 <Mail className="h-6 w-6 text-orange-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Email Agent</h1>
+                
                 <p className="text-muted-foreground">Your AI email marketing assistant</p>
               </div>
             </div>
@@ -151,5 +153,5 @@ export default function EmailAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

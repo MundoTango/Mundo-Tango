@@ -1,16 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Users, Heart, AlertCircle, CheckCircle } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function CommunityGuidelinesPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Community Guidelines" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-4">Community Guidelines</h1>
-          <p className="text-lg text-muted-foreground">
-            Fostering a respectful, inclusive, and vibrant tango community
-          </p>
-        </div>
+        
 
         <Card className="mb-6 bg-primary/5 border-primary/20">
           <CardHeader>
@@ -100,5 +97,5 @@ export default function CommunityGuidelinesPage() {
         </Card>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

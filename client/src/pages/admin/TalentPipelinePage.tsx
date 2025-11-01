@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Users, FileText, MessageSquare, CheckCircle, XCircle, Clock } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function TalentPipelinePage() {
   const pipeline = [
@@ -21,7 +22,8 @@ export default function TalentPipelinePage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Talent Pipeline" showBreadcrumbs>
+<>
       <SEO
         title="Talent Pipeline - Admin"
         description="Manage volunteer applications and track candidates through the recruitment pipeline."
@@ -34,7 +36,7 @@ export default function TalentPipelinePage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <h1 className="text-3xl font-bold mb-2">Talent Pipeline</h1>
+            
             <p className="text-muted-foreground">
               Track volunteer applications from submission to approval
             </p>
@@ -111,5 +113,5 @@ export default function TalentPipelinePage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

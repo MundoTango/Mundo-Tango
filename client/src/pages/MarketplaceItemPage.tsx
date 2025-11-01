@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Calendar, ShoppingCart, Heart } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function MarketplaceItemPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Professional Tango Shoes - Size 8" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         <div className="grid gap-8 lg:grid-cols-2">
           <div>
@@ -28,7 +30,7 @@ export default function MarketplaceItemPage() {
                 <Badge>Like New</Badge>
                 <Badge variant="outline">Shoes</Badge>
               </div>
-              <h1 className="text-3xl font-bold mb-4">Professional Tango Shoes - Size 8</h1>
+              
               <p className="text-4xl font-bold text-primary mb-4">$150</p>
             </div>
 
@@ -87,5 +89,5 @@ export default function MarketplaceItemPage() {
         </div>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Radio, Users, Eye, Calendar } from "lucide-react";
 import { Link } from "wouter";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function LiveStreamPage() {
   const { data: streams, isLoading } = useQuery({
@@ -11,14 +12,10 @@ export default function LiveStreamPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Live Streams" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Live Streams</h1>
-          <p className="text-muted-foreground">
-            Watch live milongas, classes, and performances from around the world
-          </p>
-        </div>
+        
 
         {isLoading ? (
           <div className="text-center py-12">Loading streams...</div>
@@ -108,5 +105,5 @@ export default function LiveStreamPage() {
         )}
       </div>
     </div>
-  );
+    </PageLayout>);
 }

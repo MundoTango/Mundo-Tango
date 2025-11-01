@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { GitBranch, GitCommit, ExternalLink, RefreshCw } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 interface GitInfo {
   owner: string;
@@ -36,12 +37,13 @@ export default function GitRepositoryPage() {
 
   if (isLoading || !gitInfo) {
     return (
-      <div className="container mx-auto p-6">
+    <PageLayout title="Git Repository" showBreadcrumbs>
+<div className="container mx-auto p-6">
         <div className="text-center py-8" data-testid="loading-git-info">
           Loading repository information...
         </div>
       </div>
-    );
+    </PageLayout>);
   }
 
   const repoUrl = `https://github.com/${gitInfo.owner}/${gitInfo.repo}`;

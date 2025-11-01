@@ -2,20 +2,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Calendar, MapPin, Users, Download } from "lucide-react";
 import { Link } from "wouter";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function BookingConfirmationPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Booking Confirmed!" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-2xl">
-        <div className="text-center mb-8">
-          <div className="mx-auto w-20 h-20 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-4">
-            <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400" />
-          </div>
-          <h1 className="text-3xl font-bold mb-2">Booking Confirmed!</h1>
-          <p className="text-muted-foreground">
-            Your reservation has been successfully confirmed
-          </p>
-        </div>
+        
 
         <Card className="mb-6">
           <CardHeader>
@@ -82,5 +76,5 @@ export default function BookingConfirmationPage() {
         </Card>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

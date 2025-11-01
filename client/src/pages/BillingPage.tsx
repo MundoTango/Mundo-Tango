@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CreditCard, Download, Calendar } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function BillingPage() {
   const invoices = [
@@ -11,9 +12,10 @@ export default function BillingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Billing & Invoices" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
-        <h1 className="text-3xl font-bold mb-8">Billing & Invoices</h1>
+        
 
         <div className="grid gap-6 md:grid-cols-2 mb-8">
           <Card>
@@ -93,5 +95,5 @@ export default function BillingPage() {
         </Card>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

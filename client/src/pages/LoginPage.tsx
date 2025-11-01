@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { PublicLayout } from "@/components/PublicLayout";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -38,7 +39,8 @@ export default function LoginPage() {
   };
 
   return (
-    <PublicLayout>
+    <PageLayout title="Welcome Back" showBreadcrumbs>
+<PublicLayout>
       <SEO
         title="Sign In - Mundo Tango"
         description="Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
@@ -51,10 +53,7 @@ export default function LoginPage() {
         {/* Glassmorphic Login Card */}
         <div className="w-full max-w-[480px]">
           <form onSubmit={handleSubmit} className="glass-card p-8 rounded-2xl">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold mb-2">Welcome Back</h1>
-              <p className="text-muted-foreground">Sign in to your Mundo Tango account</p>
-            </div>
+            
 
             <div className="space-y-4">
               <div className="space-y-2">
@@ -116,5 +115,5 @@ export default function LoginPage() {
         </div>
       </div>
     </PublicLayout>
-  );
+    </PageLayout>);
 }

@@ -16,6 +16,7 @@ import {
   Code
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 interface Component {
   id: string;
@@ -89,10 +90,11 @@ export default function VisualEditorPage() {
     
     return `export default function CustomPage() {
   return (
-    <div>
+    <PageLayout title="Visual Page Editor" showBreadcrumbs>
+<div>
 ${jsxCode.split('\n').map(line => '      ' + line).join('\n')}
     </div>
-  );
+    </PageLayout>);
 }`;
   };
 

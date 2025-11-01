@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle, Clock, AlertCircle, ListTodo, Play } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 interface AgentTask {
   id: number;
@@ -69,10 +70,11 @@ export default function AgentTasksPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-6">
+    <PageLayout title="Agent Tasks" showBreadcrumbs>
+<div className="container mx-auto p-6">
         <div className="text-center py-8">Loading agent tasks...</div>
       </div>
-    );
+    </PageLayout>);
   }
 
   const pendingTasks = tasks.filter(t => t.status === "pending");

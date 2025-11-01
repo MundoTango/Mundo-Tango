@@ -7,6 +7,7 @@ import { Camera, Upload, Loader2, X } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function PhotoUploadPage() {
   const [, navigate] = useLocation();
@@ -143,7 +144,8 @@ export default function PhotoUploadPage() {
   };
 
   return (
-    <>
+    <PageLayout title="PhotoUpload" showBreadcrumbs>
+<>
       <SEO title="Add Profile Photo - Mundo Tango" description="Upload your profile photo" />
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
         <Card className="w-full max-w-md">
@@ -271,5 +273,5 @@ export default function PhotoUploadPage() {
         </Card>
       </div>
     </>
-  );
+    </PageLayout>);
 }

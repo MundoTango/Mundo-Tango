@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { ListTodo, Clock, User, Tag, Plus } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function TaskBoardPage() {
   const columns = [
@@ -34,7 +35,8 @@ export default function TaskBoardPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Task Board" showBreadcrumbs>
+<>
       <SEO
         title="Task Board - Admin"
         description="Manage project tasks and assign them to volunteers using AI-powered talent matching."
@@ -48,7 +50,7 @@ export default function TaskBoardPage() {
             className="mb-8 flex items-center justify-between"
           >
             <div>
-              <h1 className="text-3xl font-bold mb-2">Task Board</h1>
+              
               <p className="text-muted-foreground">
                 Manage project tasks and assign them to volunteers
               </p>
@@ -133,5 +135,5 @@ export default function TaskBoardPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

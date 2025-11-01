@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { Eye, EyeOff, Check, X, Loader2 } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -61,7 +62,10 @@ export default function RegisterPage() {
       };
       
       const debounce = setTimeout(checkUsername, 500);
-      return () => clearTimeout(debounce);
+      return (
+    <PageLayout title="Join Mundo Tango" showBreadcrumbs>
+
+    </PageLayout>) => clearTimeout(debounce);
     } else {
       setUsernameAvailable(null);
     }

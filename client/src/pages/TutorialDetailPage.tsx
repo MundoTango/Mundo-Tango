@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Play, Clock, Users, Star, BookOpen } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function TutorialDetailPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Mastering the Ocho: Forward & Back" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
@@ -19,7 +21,7 @@ export default function TutorialDetailPage() {
                 <Badge>Intermediate</Badge>
                 <Badge variant="outline">Technique</Badge>
               </div>
-              <h1 className="text-3xl font-bold mb-4">Mastering the Ocho: Forward & Back</h1>
+              
               
               <div className="flex items-center gap-4">
                 <Avatar>
@@ -111,5 +113,5 @@ export default function TutorialDetailPage() {
         </div>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

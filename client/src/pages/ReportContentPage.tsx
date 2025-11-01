@@ -4,16 +4,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Flag } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function ReportContentPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Report Content" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-2xl">
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <Flag className="h-6 w-6 text-orange-500" />
-            <h1 className="text-3xl font-bold">Report Content</h1>
-          </div>
+        
           <p className="text-muted-foreground">
             Report content that violates our community guidelines
           </p>
@@ -71,5 +69,5 @@ export default function ReportContentPage() {
         </Card>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

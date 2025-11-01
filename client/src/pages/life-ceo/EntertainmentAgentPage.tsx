@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Film, Music, Gamepad2, Popcorn, Star, TrendingUp, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function EntertainmentAgentPage() {
   const stats = [
@@ -25,7 +26,8 @@ export default function EntertainmentAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Entertainment Agent" showBreadcrumbs>
+<>
       <SEO
         title="Entertainment Agent - Life CEO"
         description="Discover movies, music, games, and tango events with personalized AI recommendations."
@@ -43,7 +45,7 @@ export default function EntertainmentAgentPage() {
                 <Popcorn className="h-6 w-6 text-purple-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Entertainment Agent</h1>
+                
                 <p className="text-muted-foreground">Your personal entertainment curator</p>
               </div>
             </div>
@@ -140,5 +142,5 @@ export default function EntertainmentAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

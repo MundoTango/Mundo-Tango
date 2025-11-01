@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Share2, TrendingUp, Users, MessageCircle, Heart, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function SocialMediaAgentPage() {
   const metrics = [
@@ -25,7 +26,8 @@ export default function SocialMediaAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Social Media Agent" showBreadcrumbs>
+<>
       <SEO
         title="Social Media Agent - Marketing Dashboard"
         description="Manage social media strategy, scheduling, and engagement analytics."
@@ -43,7 +45,7 @@ export default function SocialMediaAgentPage() {
                 <Share2 className="h-6 w-6 text-pink-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Social Media Agent</h1>
+                
                 <p className="text-muted-foreground">Your AI social media manager</p>
               </div>
             </div>
@@ -146,5 +148,5 @@ export default function SocialMediaAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import { Crown, ExternalLink } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function SettingsPage() {
   const { profile, useUpdatePreferences, useSubscription } = useAuth();
@@ -75,14 +76,15 @@ export default function SettingsPage() {
   };
 
   return (
-    <>
+    <PageLayout title="Settings" showBreadcrumbs>
+<>
       <SEO 
         title="Settings"
         description="Customize your Mundo Tango experience. Manage account settings, privacy preferences, and notification options."
       />
       <div className="max-w-4xl mx-auto p-6 space-y-6">
         <div>
-          <h1 className="text-3xl font-serif font-bold mb-2">Settings</h1>
+          
           <p className="text-muted-foreground">
             Manage your account preferences and settings
           </p>
@@ -308,5 +310,5 @@ export default function SettingsPage() {
         </Card>
       </div>
     </>
-  );
+    </PageLayout>);
 }

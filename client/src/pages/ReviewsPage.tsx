@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Star, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function ReviewsPage() {
   const { data: reviews, isLoading } = useQuery({
@@ -11,14 +12,10 @@ export default function ReviewsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Community Reviews" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Community Reviews</h1>
-          <p className="text-muted-foreground">
-            Honest feedback from dancers about teachers, events, and venues
-          </p>
-        </div>
+        
 
         {isLoading ? (
           <div className="text-center py-12">Loading reviews...</div>
@@ -84,5 +81,5 @@ export default function ReviewsPage() {
         )}
       </div>
     </div>
-  );
+    </PageLayout>);
 }

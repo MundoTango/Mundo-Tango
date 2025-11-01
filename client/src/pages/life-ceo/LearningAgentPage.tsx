@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { SEO } from "@/components/SEO";
 import { BookOpen, PlayCircle, CheckCircle2, TrendingUp, Award, Clock } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function LearningAgentPage() {
   const [activeCourses] = useState([
@@ -33,7 +34,8 @@ export default function LearningAgentPage() {
   };
 
   return (
-    <>
+    <PageLayout title="Learning Agent" showBreadcrumbs>
+<>
       <SEO
         title="Learning Agent - Life CEO"
         description="Track your tango learning journey with AI-powered course recommendations and progress tracking"
@@ -44,7 +46,7 @@ export default function LearningAgentPage() {
           {/* Header */}
           <motion.div {...fadeInUp} className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Learning Agent</h1>
+              
               <p className="text-muted-foreground">Your personalized tango education assistant</p>
             </div>
             <BookOpen className="h-12 w-12 text-primary" />
@@ -199,5 +201,5 @@ export default function LearningAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

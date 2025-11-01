@@ -3,17 +3,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Book, MessageCircle, Mail } from "lucide-react";
 import { Link } from "wouter";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function HelpPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="How Can We Help?" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-4">How Can We Help?</h1>
-          <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input placeholder="Search for help..." className="pl-10" data-testid="input-search" />
-          </div>
+        
         </div>
 
         <div className="grid gap-6 md:grid-cols-3 mb-8">
@@ -77,5 +74,5 @@ export default function HelpPage() {
         </Card>
       </div>
     </div>
-  );
+    </PageLayout>);
 }

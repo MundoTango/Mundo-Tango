@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Brain, Heart, Wind, Smile, TrendingDown, Activity } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function StressAgentPage() {
   const stats = [
@@ -26,7 +27,8 @@ export default function StressAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Stress Management Agent" showBreadcrumbs>
+<>
       <SEO
         title="Stress Management Agent - Life CEO"
         description="Monitor stress levels, practice relaxation techniques, and maintain mental wellness with AI guidance."
@@ -44,7 +46,7 @@ export default function StressAgentPage() {
                 <Brain className="h-6 w-6 text-blue-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Stress Management Agent</h1>
+                
                 <p className="text-muted-foreground">Your AI wellness companion</p>
               </div>
             </div>
@@ -162,5 +164,5 @@ export default function StressAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

@@ -8,6 +8,7 @@ import { SEO } from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
 import { Send, Bot, User, Sparkles, Home } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 interface Message {
   id: string;
@@ -119,7 +120,8 @@ export default function MrBlueChatPage() {
   };
 
   return (
-    <>
+    <PageLayout title="Mr Blue AI" showBreadcrumbs>
+<>
       <SEO
         title="Mr Blue AI Chat - Mundo Tango"
         description="Chat with Mr Blue, your AI-powered assistant for code analysis, debugging, and task management."
@@ -134,7 +136,7 @@ export default function MrBlueChatPage() {
                 <Bot className="h-6 w-6 text-primary" />
               </div>
               <div className="flex-1">
-                <h1 className="text-xl font-bold">Mr Blue AI</h1>
+                
                 <p className="text-sm text-muted-foreground">
                   {sessionId ? "Volunteer Interview Session" : "Your intelligent assistant"}
                 </p>
@@ -244,5 +246,5 @@ export default function MrBlueChatPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

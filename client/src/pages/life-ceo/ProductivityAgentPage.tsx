@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { SEO } from "@/components/SEO";
 import { Target, CheckCircle2, Clock, TrendingUp, ListTodo, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function ProductivityAgentPage() {
   const todayTasks = [
@@ -23,7 +24,8 @@ export default function ProductivityAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Productivity Agent" showBreadcrumbs>
+<>
       <SEO
         title="Productivity Agent - Life CEO"
         description="Manage tasks, track time, and boost productivity with your AI productivity agent."
@@ -41,7 +43,7 @@ export default function ProductivityAgentPage() {
                 <Target className="h-6 w-6 text-purple-500" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Productivity Agent</h1>
+                
                 <p className="text-muted-foreground">Your AI-powered task manager</p>
               </div>
             </div>
@@ -150,5 +152,5 @@ export default function ProductivityAgentPage() {
         </div>
       </div>
     </>
-  );
+    </PageLayout>);
 }

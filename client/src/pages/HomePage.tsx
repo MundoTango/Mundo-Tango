@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -78,7 +79,8 @@ export default function HomePage() {
   ];
 
   return (
-    <PublicLayout>
+    <PageLayout title="Where Tango Meets Community" showBreadcrumbs>
+<PublicLayout>
       <SEO
         title="Mundo Tango - Connect with the Global Tango Community"
         description="Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
@@ -101,9 +103,7 @@ export default function HomePage() {
               Welcome to the Global Tango Community
             </div>
             
-            <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl ocean-gradient-text">
-              Where Tango Meets Community
-            </h1>
+            
             
             <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground sm:text-xl">
               Share memories, find events, and help us build the future of tango tech.
@@ -335,5 +335,5 @@ export default function HomePage() {
       </section>
     </div>
     </PublicLayout>
-  );
+    </PageLayout>);
 }

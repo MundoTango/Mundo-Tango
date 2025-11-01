@@ -2,28 +2,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Clock, Phone, Mail, Star, Calendar } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function VenueDetailPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="La Catedral Tango" showBreadcrumbs>
+<div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
-        <div className="aspect-video bg-muted mb-8 overflow-hidden rounded-lg">
-          <div className="flex items-center justify-center h-full bg-gradient-to-br from-primary/20 to-primary/5">
-            <p className="text-muted-foreground">Venue Cover Image</p>
-          </div>
-        </div>
-
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-2">
-            <Badge>Milonga</Badge>
-            <Badge variant="outline">Verified</Badge>
-          </div>
-          <h1 className="text-4xl font-bold mb-4">La Catedral Tango</h1>
-          <div className="flex items-center gap-4 text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <MapPin className="h-4 w-4" />
-              Buenos Aires, Argentina
-            </div>
+        
             <div className="flex items-center gap-1">
               <Star className="h-4 w-4 fill-primary text-primary" />
               4.8 (245 reviews)
@@ -108,5 +94,5 @@ export default function VenueDetailPage() {
         </div>
       </div>
     </div>
-  );
+    </PageLayout>);
 }
