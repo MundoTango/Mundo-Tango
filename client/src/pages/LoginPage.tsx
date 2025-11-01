@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
+import { PublicLayout } from "@/components/PublicLayout";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -37,7 +38,7 @@ export default function LoginPage() {
   };
 
   return (
-    <>
+    <PublicLayout>
       <SEO
         title="Sign In - Mundo Tango"
         description="Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
@@ -114,6 +115,6 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
-    </>
+    </PublicLayout>
   );
 }

@@ -2,6 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Zap, Crown, Users } from "lucide-react";
+import { PublicLayout } from "@/components/PublicLayout";
+import { SEO } from "@/components/SEO";
 
 const plans = [
   {
@@ -64,6 +66,11 @@ const plans = [
 
 export default function PricingPage() {
   return (
+    <PublicLayout>
+      <SEO
+        title="Pricing - Mundo Tango"
+        description="Choose the perfect plan for your tango journey. Free for casual dancers, Pro for dedicated enthusiasts, and Teacher plans for instructors."
+      />
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         <div className="mb-12 text-center">
@@ -180,5 +187,6 @@ export default function PricingPage() {
         </Card>
       </div>
     </div>
+    </PublicLayout>
   );
 }

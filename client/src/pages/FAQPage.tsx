@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import { Search, HelpCircle } from "lucide-react";
+import { PublicLayout } from "@/components/PublicLayout";
+import { SEO } from "@/components/SEO";
 
 const faqs = [
   {
@@ -102,6 +104,11 @@ export default function FAQPage() {
   })).filter(category => category.questions.length > 0);
 
   return (
+    <PublicLayout>
+      <SEO
+        title="FAQ - Mundo Tango"
+        description="Find answers to common questions about Mundo Tango. Learn how to get started, find events, connect with dancers, and make the most of our platform."
+      />
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
         {/* Header */}
@@ -176,5 +183,6 @@ export default function FAQPage() {
         </Card>
       </div>
     </div>
+    </PublicLayout>
   );
 }

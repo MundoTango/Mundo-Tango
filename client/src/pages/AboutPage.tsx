@@ -1,8 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Globe, Heart, Target } from "lucide-react";
+import { PublicLayout } from "@/components/PublicLayout";
+import { SEO } from "@/components/SEO";
 
 export default function AboutPage() {
   return (
+    <PublicLayout>
+      <SEO
+        title="About Us - Mundo Tango"
+        description="Learn about Mundo Tango's mission to connect the global tango community. Discover our values, vision, and commitment to fostering authentic connections through Argentine tango."
+      />
     <div className="min-h-screen bg-background py-12 px-4">
       <div className="container mx-auto max-w-4xl">
         {/* Header */}
@@ -108,5 +115,6 @@ export default function AboutPage() {
         </Card>
       </div>
     </div>
+    </PublicLayout>
   );
 }

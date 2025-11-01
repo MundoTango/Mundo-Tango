@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { PublicLayout } from "@/components/PublicLayout";
+import { SEO } from "@/components/SEO";
 
 export default function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -76,7 +78,12 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen">
+    <PublicLayout>
+      <SEO
+        title="Mundo Tango - Connect with the Global Tango Community"
+        description="Join thousands of tango dancers worldwide. Discover events, find teachers, connect with dancers, and immerse yourself in the passionate world of Argentine tango."
+      />
+      <div className="min-h-screen">
       {/* Hero Section with Video Background */}
       <section className="relative overflow-hidden min-h-screen flex items-center justify-center">
         {/* Video Background Placeholder */}
@@ -327,5 +334,6 @@ export default function HomePage() {
         </motion.div>
       </section>
     </div>
+    </PublicLayout>
   );
 }

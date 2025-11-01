@@ -5,6 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, MessageCircle, MapPin, Phone } from "lucide-react";
 import { useState } from "react";
+import { PublicLayout } from "@/components/PublicLayout";
+import { SEO } from "@/components/SEO";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -20,6 +22,11 @@ export default function ContactPage() {
   };
 
   return (
+    <PublicLayout>
+      <SEO
+        title="Contact Us - Mundo Tango"
+        description="Get in touch with the Mundo Tango team. We're here to help with questions, feedback, and support for the global tango community."
+      />
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         <div className="mb-8 text-center">
@@ -171,5 +178,6 @@ export default function ContactPage() {
         </div>
       </div>
     </div>
+    </PublicLayout>
   );
 }
