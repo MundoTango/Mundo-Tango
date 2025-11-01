@@ -16,6 +16,9 @@ import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import DiscoverPage from "@/pages/DiscoverPage";
 import VolunteerPage from "@/pages/VolunteerPage";
+import TalentMatchPage from "@/pages/TalentMatchPage";
+import MrBlueChatPage from "@/pages/MrBlueChatPage";
+import LifeCEODashboardPage from "@/pages/LifeCEODashboardPage";
 import FeedPage from "@/pages/FeedPage";
 import ProfilePage from "@/pages/ProfilePage";
 import EventsPage from "@/pages/EventsPage";
@@ -106,6 +109,9 @@ function Router() {
       <Route path="/about" component={AboutPage} />
       <Route path="/discover" component={DiscoverPage} />
       <Route path="/volunteer" component={VolunteerPage} />
+      <Route path="/talent-match" component={TalentMatchPage} />
+      <Route path="/mr-blue-chat" component={MrBlueChatPage} />
+      <Route path="/life-ceo" component={LifeCEODashboardPage} />
       <Route path="/login" component={LoginPage} />
       <Route path="/register" component={RegisterPage} />
       

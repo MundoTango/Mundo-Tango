@@ -246,6 +246,27 @@ export interface IStorage {
   updateBooking(id: number, data: any): Promise<any | undefined>;
   deleteBooking(id: number): Promise<void>;
   
+  // Talent Match (Volunteers, Resumes, Clarifier, Tasks, Assignments)
+  createVolunteer(volunteer: any): Promise<any>;
+  getVolunteerById(id: number): Promise<any | undefined>;
+  getVolunteerByUserId(userId: number): Promise<any | undefined>;
+  
+  createResume(resume: any): Promise<any>;
+  getResumeByVolunteerId(volunteerId: number): Promise<any | undefined>;
+  
+  createClarifierSession(session: any): Promise<any>;
+  getClarifierSessionById(id: number): Promise<any | undefined>;
+  updateClarifierSession(id: number, data: any): Promise<any | undefined>;
+  
+  createTask(task: any): Promise<any>;
+  getAllTasks(): Promise<any[]>;
+  getTaskById(id: number): Promise<any | undefined>;
+  
+  createAssignment(assignment: any): Promise<any>;
+  getAssignmentsByVolunteerId(volunteerId: number): Promise<any[]>;
+  getPendingAssignments(): Promise<any[]>;
+  updateAssignment(id: number, data: any): Promise<any | undefined>;
+  
   followUser(followerId: number, followingId: number): Promise<SelectFollow | undefined>;
   unfollowUser(followerId: number, followingId: number): Promise<void>;
   getFollowers(userId: number): Promise<SelectFollow[]>;
@@ -1076,6 +1097,91 @@ export class DbStorage implements IStorage {
 
   async deleteBooking(id: number): Promise<void> {
     await db.delete(bookings).where(eq(bookings.id, id));
+  }
+
+  // Talent Match - Volunteers
+  async createVolunteer(volunteer: any): Promise<any> {
+    const result = await db.insert(volunteers).values(volunteer).returning();
+    return result[0];
+  }
+
+  async getVolunteerById(id: number): Promise<any | undefined> {
+    const result = await db.select().from(volunteers).where(eq(volunteers.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getVolunteerByUserId(userId: number): Promise<any | undefined> {
+    const result = await db.select().from(volunteers).where(eq(volunteers.userId, userId)).limit(1);
+    return result[0];
+  }
+
+  // Talent Match - Resumes
+  async createResume(resume: any): Promise<any> {
+    const result = await db.insert(resumes).values(resume).returning();
+    return result[0];
+  }
+
+  async getResumeByVolunteerId(volunteerId: number): Promise<any | undefined> {
+    const result = await db.select().from(resumes).where(eq(resumes.volunteerId, volunteerId)).limit(1);
+    return result[0];
+  }
+
+  // Talent Match - Clarifier Sessions
+  async createClarifierSession(session: any): Promise<any> {
+    const result = await db.insert(clarifierSessions).values(session).returning();
+    return result[0];
+  }
+
+  async getClarifierSessionById(id: number): Promise<any | undefined> {
+    const result = await db.select().from(clarifierSessions).where(eq(clarifierSessions.id, id)).limit(1);
+    return result[0];
+  }
+
+  async updateClarifierSession(id: number, data: any): Promise<any | undefined> {
+    const result = await db.update(clarifierSessions).set(data).where(eq(clarifierSessions.id, id)).returning();
+    return result[0];
+  }
+
+  // Talent Match - Tasks
+  async createTask(task: any): Promise<any> {
+    const result = await db.insert(tasks).values(task).returning();
+    return result[0];
+  }
+
+  async getAllTasks(): Promise<any[]> {
+    return await db.select().from(tasks).orderBy(desc(tasks.createdAt));
+  }
+
+  async getTaskById(id: number): Promise<any | undefined> {
+    const result = await db.select().from(tasks).where(eq(tasks.id, id)).limit(1);
+    return result[0];
+  }
+
+  // Talent Match - Assignments
+  async createAssignment(assignment: any): Promise<any> {
+    const result = await db.insert(assignments).values(assignment).returning();
+    return result[0];
+  }
+
+  async getAssignmentsByVolunteerId(volunteerId: number): Promise<any[]> {
+    return await db
+      .select()
+      .from(assignments)
+      .where(eq(assignments.volunteerId, volunteerId))
+      .orderBy(desc(assignments.createdAt));
+  }
+
+  async getPendingAssignments(): Promise<any[]> {
+    return await db
+      .select()
+      .from(assignments)
+      .where(eq(assignments.status, 'pending'))
+      .orderBy(desc(assignments.createdAt));
+  }
+
+  async updateAssignment(id: number, data: any): Promise<any | undefined> {
+    const result = await db.update(assignments).set(data).where(eq(assignments.id, id)).returning();
+    return result[0];
   }
 
   async createEvent(event: InsertEvent): Promise<SelectEvent> {
