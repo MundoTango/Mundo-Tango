@@ -32,6 +32,9 @@ export function MrBlueAvatar2D({
   const [isSpeaking, setIsSpeaking] = useState(false);
   const recognitionRef = useRef<any>(null);
   const animationRef = useRef<number>();
+  
+  // Portrait aspect ratio to match video avatar
+  const portraitHeight = Math.floor(size * 1.2);
 
   // Initialize speech recognition
   useEffect(() => {
@@ -80,8 +83,8 @@ export function MrBlueAvatar2D({
     let frame = 0;
 
     const animate = () => {
-      // Clear canvas
-      ctx.clearRect(0, 0, size, size);
+      // Clear canvas with portrait dimensions
+      ctx.clearRect(0, 0, size, portraitHeight);
 
       // Background circle (Mr. Blue signature turquoise)
       const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
@@ -293,7 +296,7 @@ export function MrBlueAvatar2D({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [size, expression]);
+  }, [size, portraitHeight, expression]);
 
   const toggleListening = () => {
     if (!recognitionRef.current) {
@@ -337,15 +340,23 @@ export function MrBlueAvatar2D({
   };
 
   return (
-    <div className="relative" style={{ width: size, height: size }}>
-      {/* 2D Canvas */}
+    <div className="relative group" style={{ width: size, height: portraitHeight }}>
+      {/* Subtle glow effect */}
+      <div className="absolute inset-0 bg-primary/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      
+      {/* 2D Canvas - Portrait aspect with edge fade mask */}
       <canvas
         ref={canvasRef}
         width={size}
-        height={size}
-        className="cursor-pointer rounded-full shadow-2xl hover:shadow-primary/20 transition-shadow"
+        height={portraitHeight}
+        className="cursor-pointer transition-all duration-300 hover:scale-105"
         onClick={onInteraction}
         data-testid="mr-blue-avatar"
+        style={{
+          maskImage: 'radial-gradient(ellipse 90% 85% at 50% 50%, black 60%, transparent 100%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 90% 85% at 50% 50%, black 60%, transparent 100%)',
+          filter: 'drop-shadow(0 10px 30px rgba(139, 92, 246, 0.3))'
+        }}
       />
 
       {/* Voice Controls */}

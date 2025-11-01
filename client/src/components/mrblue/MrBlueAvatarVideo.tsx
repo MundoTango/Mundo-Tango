@@ -177,13 +177,28 @@ export function MrBlueAvatarVideo({
 
   const handleVideoError = (e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
     const video = e.currentTarget;
-    console.error('[MrBlueAvatarVideo] Video failed to load:', {
+    const errorDetails = {
       src: video.src,
       error: video.error,
+      errorCode: video.error?.code,
+      errorMessage: video.error?.message,
       networkState: video.networkState,
       readyState: video.readyState
-    });
-    setVideoError(true);
+    };
+    console.error('[MrBlueAvatarVideo] Video error:', errorDetails);
+    
+    // Only fallback on actual media errors, not autoplay policy errors
+    // Error codes: 1=ABORTED, 2=NETWORK, 3=DECODE, 4=SRC_NOT_SUPPORTED
+    const isRealError = video.error && (video.error.code === 2 || video.error.code === 3 || video.error.code === 4);
+    
+    if (isRealError) {
+      console.error('[MrBlueAvatarVideo] Critical video error - falling back to 2D');
+      setVideoError(true);
+    } else {
+      console.warn('[MrBlueAvatarVideo] Non-critical video error - attempting recovery');
+      // Try to play anyway
+      video.play().catch(err => console.warn('[MrBlueAvatarVideo] Play failed:', err));
+    }
   };
 
   // Fallback to 2D avatar ONLY if:
