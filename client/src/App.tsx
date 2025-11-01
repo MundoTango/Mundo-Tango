@@ -300,13 +300,7 @@ function Router() {
 
       <Route path="/faq" component={FAQPage} />
 
-      <Route path="/dance-styles">
-        <ProtectedRoute>
-          <AppLayout>
-            <DanceStylesPage />
-          </AppLayout>
-        </ProtectedRoute>
-      </Route>
+      <Route path="/dance-styles" component={DanceStylesPage} />
 
       <Route path="/partner-finder">
         <ProtectedRoute>

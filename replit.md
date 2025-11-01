@@ -4,8 +4,12 @@ Mundo Tango is a social platform designed to connect the global tango community,
 
 The project encompasses a wide array of features including comprehensive social networking capabilities, event management, an advanced talent matching system, and AI-powered personal assistants (Life CEO agents). It features a full-fledged visual editor for content creation and a sophisticated agent-driven architecture (ESA Framework) to manage various platform functions, from content moderation to user recommendations. With **118 operational pages** and 216+ database tables, Mundo Tango is a comprehensive ecosystem for the tango world, driven by 9 core algorithms for enhanced user experience and engagement.
 
-### Recent Additions (November 1, 2025 - MB.MD Wave 5)
-- **11 New Agent Dashboard Pages:**
+### Recent Additions (November 1, 2025 - MB.MD Wave 7)
+- **Public Marketing Site Complete:** PublicNavbar on all 8 public pages (Home, About, Pricing, FAQ, Contact, Dance Styles, Login, Register) with prominent LOGIN button, theme toggle, language switcher
+- **PublicLayout Architecture:** Clean separation - PublicLayout for unauthenticated pages (marketing), AppLayout for authenticated pages (social features)
+- **Mr Blue AI Fully Functional:** Connected to /api/v1/chat Groq endpoint (llama-3.3-70b-versatile), streaming responses, conversation history, error handling - AI assistant now works across all 118 pages
+- **Navigation Excellence:** Horizontal tabs navigation (Home/About/Pricing/FAQ/Contact/Dance Styles), prominent LOGIN button (right side), consistent UX across entire marketing site
+- **11 New Agent Dashboard Pages (Wave 5):**
   - **Marketing Division (5 pages):** SEO Agent, Content Agent, Social Media Agent, Email Agent, Analytics Agent
   - **HR Division (5 pages):** Recruiter Agent, Onboarding Agent, Performance Agent, Retention Agent, Culture Agent
   - **H2AC Dashboard (1 page):** Human-to-Agent Communication central hub for monitoring all 134 AI agents

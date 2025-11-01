@@ -30,7 +30,7 @@ Be helpful, concise, and friendly. Keep responses under 3 sentences when possibl
 
       // Call Groq API
       const completion = await groq.chat.completions.create({
-        model: "llama-3.1-70b-versatile",
+        model: "llama-3.3-70b-versatile",
         messages: [
           { role: "system", content: systemPrompt },
           ...messages
