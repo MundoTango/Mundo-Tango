@@ -30,6 +30,7 @@ export interface VideoGenerationResponse {
 export class LumaVideoService {
   private apiKey: string;
   private baseUrl = 'https://api.lumalabs.ai/dream-machine/v1';
+  private activeAvatarGenerationId: string | null = null;
 
   constructor() {
     this.apiKey = process.env.LUMA_API_KEY || '';
@@ -263,14 +264,51 @@ export class LumaVideoService {
     // Check if avatar video already exists
     if (fs.existsSync(avatarPath)) {
       console.log('✅ Using existing Mr. Blue avatar video');
+      this.activeAvatarGenerationId = null; // Clear active generation
       return {
         videoPath: `/videos/${avatarFile}`,
         state: 'completed'
       };
     }
 
-    console.log('🎬 Generating new Mr. Blue avatar video...');
+    // If we have an active generation, check its status
+    if (this.activeAvatarGenerationId) {
+      console.log(`📊 Checking status of active generation: ${this.activeAvatarGenerationId}`);
+      try {
+        const status = await this.getGenerationStatus(this.activeAvatarGenerationId);
+        
+        // If completed, auto-save and return
+        if (status.state === 'completed' && status.video?.url) {
+          console.log('✅ Generation completed! Auto-saving...');
+          await this.saveAvatarVideo(this.activeAvatarGenerationId);
+          this.activeAvatarGenerationId = null;
+          return {
+            videoPath: `/videos/${avatarFile}`,
+            state: 'completed'
+          };
+        }
+        
+        // If failed, clear and allow retry
+        if (status.state === 'failed') {
+          console.log('❌ Generation failed, clearing cache for retry');
+          this.activeAvatarGenerationId = null;
+        } else {
+          // Still in progress
+          return {
+            generationId: this.activeAvatarGenerationId,
+            state: status.state
+          };
+        }
+      } catch (error) {
+        console.error('Error checking generation status:', error);
+        this.activeAvatarGenerationId = null; // Clear on error
+      }
+    }
+
+    // No active generation, start a new one
+    console.log('🎬 Starting new Mr. Blue avatar video generation...');
     const generation = await this.generateMrBlueAvatar();
+    this.activeAvatarGenerationId = generation.id;
 
     return {
       generationId: generation.id,
