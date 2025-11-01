@@ -754,6 +754,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Search endpoint
+  app.get("/api/search", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const query = req.query.q as string || "";
+      if (query.length < 2) {
+        return res.json([]);
+      }
+      const results = await storage.search(query, req.userId!);
+      res.json(results);
+    } catch (error) {
+      res.status(500).json({ message: "Search failed" });
+    }
+  });
+
+  // Admin endpoints
+  app.get("/api/admin/stats", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const stats = await storage.getAdminStats();
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch admin stats" });
+    }
+  });
+
+  app.get("/api/admin/moderation-queue", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const queue = await storage.getModerationQueue();
+      res.json(queue);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch moderation queue" });
+    }
+  });
+
+  app.get("/api/admin/activity", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const activity = await storage.getRecentAdminActivity();
+      res.json(activity);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch activity" });
+    }
+  });
+
   app.use(errorHandler);
 
   const httpServer = createServer(app);
