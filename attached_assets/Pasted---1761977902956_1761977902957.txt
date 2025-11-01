@@ -1,0 +1,1359 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║         MUNDO TANGO - COMPLETE REGISTRATION & ONBOARDING          ║
+║              6-Page Process with Tango Roles & Emojis            ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+VERSION: 1.0
+CREATED: October 31, 2025
+PURPOSE: Complete registration flow from initial signup to platform integration
+SCOPE: 1 Registration Page + 5 Onboarding Steps + Platform Integration
+
+=======================================================================
+📊 REGISTRATION FLOW OVERVIEW
+=======================================================================
+
+## The Complete 6-Page Journey
+
+**PAGE 1**: Registration Form (P2) - Create account with credentials
+**PAGE 2**: Welcome Screen - Introduce onboarding
+**PAGE 3**: Select Your City - Location + Auto-join city community
+**PAGE 4**: Add Profile Photo - Upload or skip
+**PAGE 5**: What Do You Do in Tango? - Select from 19 roles (with emojis)
+**PAGE 6**: Guided Tour - Interactive platform walkthrough
+
+**Total Time**: 3-5 minutes
+**Required Fields**: Email, Username, Password, City, At least 1 Tango Role
+**Optional Fields**: Photo
+**Completion Tracking**: `user.isOnboardingComplete` in database
+
+=======================================================================
+PAGE 1: REGISTRATION FORM (P2)
+=======================================================================
+
+**Route**: `/register`
+**Layout**: Pattern A (Full-Width Single Column)
+**Access**: Public (redirects to /feed if already logged in)
+**Page Agent**: P2 (Register Page Agent)
+
+---
+
+## 1.1 VISUAL LAYOUT
+
+```
+┌─────────────────────────────────────────────────────┐
+│                                                     │
+│              [MT Logo - Turquoise]                  │
+│                                                     │
+│           Join the Global Tango Community           │
+│                                                     │
+│  ┌─────────────────────────────────────────────┐   │
+│  │                                             │   │
+│  │  Email                                      │   │
+│  │  [_________________________________]        │   │
+│  │                                             │   │
+│  │  Username                                   │   │
+│  │  [_________________________________]        │   │
+│  │  ✓ Available                                │   │
+│  │                                             │   │
+│  │  Password                                   │   │
+│  │  [_________________________________] [👁]   │   │
+│  │  ████████░░ Strong                          │   │
+│  │                                             │   │
+│  │  Confirm Password                           │   │
+│  │  [_________________________________] [👁]   │   │
+│  │  ✓ Passwords match                          │   │
+│  │                                             │   │
+│  │  Full Name                                  │   │
+│  │  [_________________________________]        │   │
+│  │                                             │   │
+│  │  ☐ I accept the Terms & Conditions         │   │
+│  │                                             │   │
+│  │          [Create Account]                   │   │
+│  │                                             │   │
+│  │  Already have an account? Log in            │   │
+│  │                                             │   │
+│  └─────────────────────────────────────────────┘   │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+---
+
+## 1.2 FORM FIELDS
+
+### Field 1: Email
+- **Type**: Email input
+- **Validation**: 
+  - Valid email format
+  - Unique (check against database)
+  - Real-time uniqueness check on blur
+- **Error Messages**:
+  - "Invalid email format"
+  - "Email already registered"
+- **Agent**: E7-Register-EmailInput
+
+### Field 2: Username
+- **Type**: Text input
+- **Validation**:
+  - 3-20 characters
+  - Alphanumeric + underscores only
+  - Unique (real-time check)
+  - No spaces
+- **Display**: 
+  - ✓ Green checkmark when available
+  - ✗ Red X when taken
+  - Show suggestion if taken: "Try: username_2025"
+- **Error Messages**:
+  - "Username already taken"
+  - "Username must be 3-20 characters"
+- **Agent**: E8-Register-UsernameInput
+
+### Field 3: Password
+- **Type**: Password input with toggle visibility
+- **Validation**:
+  - Minimum 8 characters
+  - At least 1 uppercase
+  - At least 1 number
+  - At least 1 special character
+- **Strength Indicator**:
+  ```
+  Weak:     ████░░░░░░ (red)
+  Medium:   ██████░░░░ (yellow)
+  Strong:   ████████░░ (green)
+  Very Strong: ██████████ (dark green)
+  ```
+- **Agent**: E9-Register-PasswordInput
+
+### Field 4: Confirm Password
+- **Type**: Password input with toggle visibility
+- **Validation**: Must match Password field
+- **Display**: 
+  - ✓ "Passwords match" (green) when matching
+  - ✗ "Passwords don't match" (red) when different
+- **Agent**: E10-Register-ConfirmPasswordInput
+
+### Field 5: Full Name
+- **Type**: Text input
+- **Validation**: 2-100 characters
+- **Placeholder**: "e.g., Maria Rodriguez"
+- **Agent**: E11-Register-NameInput
+
+### Field 6: Terms & Conditions
+- **Type**: Checkbox (required)
+- **Label**: "I accept the Terms & Conditions"
+- **Link**: Opens `/terms` in new tab
+- **Validation**: Must be checked to submit
+- **Agent**: E14-Register-TermsCheckbox
+
+---
+
+## 1.3 FORM SUBMISSION WORKFLOW
+
+**Frontend Validation** (instant):
+```typescript
+const validateForm = () => {
+  const errors = {};
+  
+  // Email validation
+  if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+    errors.email = "Invalid email format";
+  }
+  
+  // Username validation
+  if (username.length < 3 || username.length > 20) {
+    errors.username = "Username must be 3-20 characters";
+  }
+  if (!username.match(/^[a-zA-Z0-9_]+$/)) {
+    errors.username = "Only letters, numbers, and underscores allowed";
+  }
+  
+  // Password validation
+  if (password.length < 8) {
+    errors.password = "Password must be at least 8 characters";
+  }
+  if (!password.match(/[A-Z]/)) {
+    errors.password = "Password must contain uppercase letter";
+  }
+  if (!password.match(/[0-9]/)) {
+    errors.password = "Password must contain number";
+  }
+  if (!password.match(/[!@#$%^&*]/)) {
+    errors.password = "Password must contain special character";
+  }
+  
+  // Confirm password
+  if (password !== confirmPassword) {
+    errors.confirmPassword = "Passwords don't match";
+  }
+  
+  // Terms acceptance
+  if (!termsAccepted) {
+    errors.terms = "You must accept the Terms & Conditions";
+  }
+  
+  return errors;
+};
+```
+
+**Backend API** (POST /api/auth/register):
+```typescript
+async function registerUser(req, res) {
+  const { email, username, password, name, termsAccepted } = req.body;
+  
+  // 1. Validate input (Zod schema)
+  const validation = insertUserSchema.safeParse(req.body);
+  if (!validation.success) {
+    return res.status(400).json({ error: validation.error });
+  }
+  
+  // 2. Check email uniqueness
+  const existingEmail = await db.query.users.findFirst({
+    where: eq(users.email, email),
+  });
+  if (existingEmail) {
+    return res.status(400).json({ error: "Email already registered" });
+  }
+  
+  // 3. Check username uniqueness
+  const existingUsername = await db.query.users.findFirst({
+    where: eq(users.username, username),
+  });
+  if (existingUsername) {
+    return res.status(400).json({ error: "Username already taken" });
+  }
+  
+  // 4. Hash password
+  const hashedPassword = await bcrypt.hash(password, 10);
+  
+  // 5. Create user in database
+  const [user] = await db.insert(users).values({
+    email,
+    username,
+    password: hashedPassword,
+    name,
+    termsAccepted,
+    isOnboardingComplete: false,
+    formStatus: 0,
+    createdAt: new Date(),
+  }).returning();
+  
+  // 6. Generate JWT token
+  const token = jwt.sign(
+    { userId: user.id, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+  
+  // 7. Send welcome email (async)
+  await sendWelcomeEmail(user.email, user.name);
+  
+  // 8. Return user + token (auto-login)
+  res.json({
+    user: {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      name: user.name,
+    },
+    token,
+  });
+}
+```
+
+**Success Flow**:
+```
+1. Form validated ✓
+2. User created in database ✓
+3. JWT token generated ✓
+4. Auto-login (token stored in localStorage)
+5. Welcome email sent (background)
+6. Redirect to /onboarding/welcome
+```
+
+---
+
+## 1.4 DATABASE SCHEMA (Users Table - Relevant Fields)
+
+```typescript
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  email: varchar("email", { length: 255 }).unique().notNull(),
+  username: varchar("username", { length: 50 }).unique().notNull(),
+  password: text("password").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  
+  // Profile fields (set in onboarding)
+  profileImage: text("profile_image"),
+  city: varchar("city", { length: 100 }),
+  country: varchar("country", { length: 100 }),
+  bio: text("bio"),
+  
+  // Tango-specific fields (set in onboarding)
+  tangoRoles: text("tango_roles").array(),  // Array of role IDs
+  leaderLevel: integer("leader_level").default(0),
+  followerLevel: integer("follower_level").default(0),
+  yearsOfDancing: integer("years_of_dancing").default(0),
+  
+  // Onboarding tracking
+  isOnboardingComplete: boolean("is_onboarding_complete").default(false),
+  formStatus: integer("form_status").default(0),
+  termsAccepted: boolean("terms_accepted").default(false),
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+```
+
+---
+
+=======================================================================
+PAGE 2: WELCOME SCREEN
+=======================================================================
+
+**Route**: `/onboarding/welcome`
+**Layout**: Centered card with ocean gradient background
+**Access**: Authenticated only (requires token from registration)
+
+---
+
+## 2.1 VISUAL LAYOUT
+
+```
+┌─────────────────────────────────────────────────────┐
+│                                                     │
+│           [Ocean Gradient Background]               │
+│                                                     │
+│              ╔═══════════════════╗                  │
+│              ║  Glassmorphic     ║                  │
+│              ║  Card (centered)  ║                  │
+│              ║                   ║                  │
+│              ║       🎉          ║                  │
+│              ║                   ║                  │
+│              ║  Welcome to       ║                  │
+│              ║  Mundo Tango!     ║                  │
+│              ║                   ║                  │
+│              ║  Let's get your   ║                  │
+│              ║  profile set up   ║                  │
+│              ║  so you can       ║                  │
+│              ║  connect with     ║                  │
+│              ║  your community   ║                  │
+│              ║                   ║                  │
+│              ║  [Get Started →]  ║                  │
+│              ║                   ║                  │
+│              ╚═══════════════════╝                  │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+**Action**: Click "Get Started" → Redirect to `/onboarding/step-1`
+
+---
+
+=======================================================================
+PAGE 3: SELECT YOUR CITY (Step 1/4)
+=======================================================================
+
+**Route**: `/onboarding/step-1`
+**Purpose**: Set user's location and auto-join city community
+
+---
+
+## 3.1 VISUAL LAYOUT
+
+```
+┌─────────────────────────────────────────────────────┐
+│  ┌───────────────────────────────────────────────┐  │
+│  │ Step 1 of 4        [●○○○]                     │  │
+│  └───────────────────────────────────────────────┘  │
+│                                                     │
+│               Where are you located?                │
+│                                                     │
+│  ┌─────────────────────────────────────────────┐   │
+│  │ 🔍 Search for your city...                  │   │
+│  └─────────────────────────────────────────────┘   │
+│                                                     │
+│  [Autocomplete Dropdown Opens Below]                │
+│  ┌─────────────────────────────────────────────┐   │
+│  │ 📍 Buenos Aires, Argentina                  │   │
+│  │    Population: 3M                           │   │
+│  ├─────────────────────────────────────────────┤   │
+│  │ 📍 Barcelona, Spain                         │   │
+│  │    Population: 1.6M                         │   │
+│  ├─────────────────────────────────────────────┤   │
+│  │ 📍 Berlin, Germany                          │   │
+│  │    Population: 3.7M                         │   │
+│  └─────────────────────────────────────────────┘   │
+│                                                     │
+│                [Skip →]                             │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+---
+
+## 3.2 CITY SEARCH FUNCTIONALITY
+
+**Autocomplete Features**:
+- Live search as user types
+- Shows city, country, population
+- Powered by Nominatim OpenStreetMap API
+- Fallback to local city database
+
+**API Call**:
+```typescript
+// GET /api/cities/search?q=buenos
+const searchCities = async (query) => {
+  const response = await fetch(
+    `https://nominatim.openstreetmap.org/search?` +
+    `q=${encodeURIComponent(query)}&` +
+    `format=json&` +
+    `addressdetails=1&` +
+    `limit=10`
+  );
+  return response.json();
+};
+```
+
+---
+
+## 3.3 WHAT HAPPENS WHEN CITY SELECTED
+
+**Frontend**:
+```typescript
+const handleCitySelect = async (city) => {
+  // 1. Update user profile
+  await apiRequest('PATCH', '/api/users/me', {
+    city: city.name,
+    country: city.country,
+  });
+  
+  // 2. Trigger city community automation
+  await apiRequest('POST', '/api/automation/city-join', {
+    cityName: city.name,
+  });
+  
+  // 3. Navigate to next step
+  navigate('/onboarding/step-2');
+};
+```
+
+**Backend Automation (A-USER-01: New User in City)**:
+```typescript
+async function handleCityJoin(userId, cityName) {
+  // 1. Check if city community exists
+  let community = await db.query.communities.findFirst({
+    where: eq(communities.cityName, cityName),
+  });
+  
+  // 2. Create city community if doesn't exist
+  if (!community) {
+    // Fetch cityscape photo from Pexels API
+    const cityscapePhoto = await fetchCityscapePhoto(cityName);
+    
+    [community] = await db.insert(communities).values({
+      name: cityName,  // e.g., "Buenos Aires"
+      cityName: cityName,
+      coverPhotoUrl: cityscapePhoto.url,
+      coverPhotoSource: 'pexels',
+      coverPhotoCredit: cityscapePhoto.photographer,
+      description: `Connect with tango enthusiasts in ${cityName}`,
+      createdAt: new Date(),
+    }).returning();
+  }
+  
+  // 3. Auto-join user to community
+  await db.insert(communityMembers).values({
+    communityId: community.id,
+    userId: userId,
+    joinedAt: new Date(),
+  });
+  
+  // 4. Send welcome notification
+  await db.insert(notifications).values({
+    userId: userId,
+    type: 'community_welcome',
+    title: `Welcome to ${cityName}!`,
+    message: `You've joined the ${cityName} tango community`,
+    link: `/communities/${community.id}`,
+  });
+}
+```
+
+**Platform Integration**:
+- ✅ User's city displayed on profile
+- ✅ Auto-joined to city community
+- ✅ City posts appear in feed
+- ✅ Can attend city events
+- ✅ Appears in city member directory
+- ✅ Used for friend suggestions (same city = higher priority)
+
+---
+
+=======================================================================
+PAGE 4: ADD PROFILE PHOTO (Step 2/4)
+=======================================================================
+
+**Route**: `/onboarding/step-2`
+**Purpose**: Upload profile photo (optional)
+
+---
+
+## 4.1 VISUAL LAYOUT
+
+```
+┌─────────────────────────────────────────────────────┐
+│  ┌───────────────────────────────────────────────┐  │
+│  │ Step 2 of 4        [●●○○]                     │  │
+│  └───────────────────────────────────────────────┘  │
+│                                                     │
+│              Add a profile photo                    │
+│                                                     │
+│  ┌─────────────────────────────────────────────┐   │
+│  │                                             │   │
+│  │           ┌───────────────┐                 │   │
+│  │           │               │                 │   │
+│  │           │   [Preview]   │                 │   │
+│  │           │   150x150     │                 │   │
+│  │           │               │                 │   │
+│  │           └───────────────┘                 │   │
+│  │                                             │   │
+│  │    Drag & drop image here                   │   │
+│  │    or click to browse                       │   │
+│  │                                             │   │
+│  │    [Choose File]                            │   │
+│  │                                             │   │
+│  └─────────────────────────────────────────────┘   │
+│                                                     │
+│          [Skip for now]    [Continue →]             │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+---
+
+## 4.2 IMAGE UPLOAD WORKFLOW
+
+**Frontend**:
+```typescript
+const handleImageUpload = async (file) => {
+  // 1. Validate file
+  if (!file.type.startsWith('image/')) {
+    toast.error("Please upload an image file");
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {  // 5MB limit
+    toast.error("Image must be under 5MB");
+    return;
+  }
+  
+  // 2. Create FormData
+  const formData = new FormData();
+  formData.append('image', file);
+  
+  // 3. Upload to Cloudinary
+  const response = await fetch('/api/upload/profile-image', {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  
+  const { imageUrl } = await response.json();
+  
+  // 4. Update user profile
+  await apiRequest('PATCH', '/api/users/me', {
+    profileImage: imageUrl,
+  });
+  
+  // 5. Navigate to next step
+  navigate('/onboarding/step-3');
+};
+```
+
+**Backend** (POST /api/upload/profile-image):
+```typescript
+// Using Cloudinary
+const cloudinary = require('cloudinary').v2;
+
+async function uploadProfileImage(req, res) {
+  const file = req.files.image;
+  
+  // Upload to Cloudinary
+  const result = await cloudinary.uploader.upload(file.tempFilePath, {
+    folder: 'profile_images',
+    width: 400,
+    height: 400,
+    crop: 'fill',
+    quality: 'auto',
+  });
+  
+  res.json({ imageUrl: result.secure_url });
+}
+```
+
+**Platform Integration**:
+- ✅ Photo appears on all posts
+- ✅ Photo appears in comments
+- ✅ Photo appears in friend list
+- ✅ Photo appears in search results
+- ✅ Photo appears in messages
+- ✅ Photo appears in event attendee lists
+- ✅ Default avatar shown if skipped
+
+---
+
+=======================================================================
+PAGE 5: WHAT DO YOU DO IN TANGO? (Step 3/4) ⭐
+=======================================================================
+
+**Route**: `/onboarding/step-3`
+**Purpose**: Select tango roles (multi-select, minimum 1 required)
+**This is the MOST IMPORTANT onboarding step for platform personalization**
+
+---
+
+## 5.1 VISUAL LAYOUT
+
+```
+┌─────────────────────────────────────────────────────┐
+│  ┌───────────────────────────────────────────────┐  │
+│  │ Step 3 of 4        [●●●○]                     │  │
+│  └───────────────────────────────────────────────┘  │
+│                                                     │
+│           What do you do in tango?                  │
+│        (Select all that apply - min 1)              │
+│                                                     │
+│  ┌──────────┬──────────┬──────────┬──────────┐     │
+│  │  💃       │  🕺       │  🎓       │  🎵       │     │
+│  │  Dancer   │  Dancer   │ Teacher  │   DJ      │     │
+│  │ (Leader)  │(Follower) │          │           │     │
+│  └──────────┴──────────┴──────────┴──────────┘     │
+│  ┌──────────┬──────────┬──────────┬──────────┐     │
+│  │  🎭       │  📅       │  🏢       │  🎬       │     │
+│  │Performer │Organizer │  Venue    │  Photo/   │     │
+│  │          │          │  Owner    │  Video    │     │
+│  └──────────┴──────────┴──────────┴──────────┘     │
+│  ┌──────────┬──────────┬──────────┬──────────┐     │
+│  │  🎨       │  💼       │  🎤       │  ✍️       │     │
+│  │Designer/ │ Business │ MC/Host  │ Journalist│     │
+│  │  Artist  │          │          │  /Blogger │     │
+│  └──────────┴──────────┴──────────┴──────────┘     │
+│  ┌──────────┬──────────┬──────────┬──────────┐     │
+│  │  📚       │  🎯       │  👔       │  🌍       │     │
+│  │ Historian│ Coach    │ Clothing │ Community │     │
+│  │          │/Mentor   │ Designer │  Builder  │     │
+│  └──────────┴──────────┴──────────┴──────────┘     │
+│  ┌──────────┬──────────┬──────────┐               │
+│  │  🎼       │  👀       │  ❤️       │               │
+│  │ Musician │   Fan/    │   Other   │               │
+│  │          │Enthusiast │           │               │
+│  └──────────┴──────────┴──────────┘               │
+│                                                     │
+│         Selected: 3 roles                           │
+│         [Continue →]                                │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+---
+
+## 5.2 THE 19 TANGO ROLES (Complete List)
+
+Each role has:
+- **ID**: Unique identifier (stored in database)
+- **Name**: Display name
+- **Emoji**: Icon shown throughout platform
+- **Description**: Tooltip text
+
+### ROLE 1: Dancer (Leader)
+- **ID**: `dancer-leader`
+- **Emoji**: 🕺
+- **Description**: "I lead in tango dancing"
+- **Shows on**: Profile badge, posts, friend list, event attendees
+- **Additional Data**: `leaderLevel` (0-5 scale)
+
+### ROLE 2: Dancer (Follower)
+- **ID**: `dancer-follower`
+- **Emoji**: 💃
+- **Description**: "I follow in tango dancing"
+- **Shows on**: Profile badge, posts, friend list, event attendees
+- **Additional Data**: `followerLevel` (0-5 scale)
+
+### ROLE 3: Teacher
+- **ID**: `teacher`
+- **Emoji**: 🎓
+- **Description**: "I teach tango"
+- **Shows on**: Profile badge, posts, event organizer badge
+- **Special Feature**: Can create "Class" type events
+
+### ROLE 4: DJ (Tanda Creator)
+- **ID**: `dj`
+- **Emoji**: 🎵
+- **Description**: "I DJ tango music"
+- **Shows on**: Profile badge, event organizer badge
+- **Special Feature**: Can upload/share tandas
+
+### ROLE 5: Performer
+- **ID**: `performer`
+- **Emoji**: 🎭
+- **Description**: "I perform tango shows"
+- **Shows on**: Profile badge, event speaker badge
+- **Special Feature**: Can create "Performance" type events
+
+### ROLE 6: Organizer
+- **ID**: `organizer`
+- **Emoji**: 📅
+- **Description**: "I organize tango events"
+- **Shows on**: Profile badge, event host badge
+- **Special Feature**: Enhanced event creation tools
+
+### ROLE 7: Venue Owner
+- **ID**: `venue-owner`
+- **Emoji**: 🏢
+- **Description**: "I own/manage a tango venue"
+- **Shows on**: Profile badge
+- **Special Feature**: Can create venue pages
+
+### ROLE 8: Photographer/Videographer
+- **ID**: `photographer`
+- **Emoji**: 🎬
+- **Description**: "I capture tango moments"
+- **Shows on**: Profile badge
+- **Special Feature**: Media upload priority, portfolio showcase
+
+### ROLE 9: Designer/Artist
+- **ID**: `artist`
+- **Emoji**: 🎨
+- **Description**: "I create tango art/graphics"
+- **Shows on**: Profile badge
+- **Special Feature**: Portfolio showcase, design services listing
+
+### ROLE 10: Business/Vendor
+- **ID**: `business`
+- **Emoji**: 💼
+- **Description**: "I run a tango-related business"
+- **Shows on**: Profile badge
+- **Special Feature**: Business page, product listings
+
+### ROLE 11: MC/Host
+- **ID**: `mc`
+- **Emoji**: 🎤
+- **Description**: "I host/MC tango events"
+- **Shows on**: Profile badge, event host badge
+
+### ROLE 12: Journalist/Blogger
+- **ID**: `journalist`
+- **Emoji**: ✍️
+- **Description**: "I write about tango"
+- **Shows on**: Profile badge
+- **Special Feature**: Blog/article sharing priority
+
+### ROLE 13: Historian
+- **ID**: `historian`
+- **Emoji**: 📚
+- **Description**: "I study tango history"
+- **Shows on**: Profile badge
+- **Special Feature**: Can create history articles
+
+### ROLE 14: Coach/Mentor
+- **ID**: `coach`
+- **Emoji**: 🎯
+- **Description**: "I coach/mentor tango dancers"
+- **Shows on**: Profile badge
+- **Special Feature**: Can offer coaching sessions
+
+### ROLE 15: Clothing/Shoe Designer
+- **ID**: `clothing-designer`
+- **Emoji**: 👔
+- **Description**: "I design tango clothing/shoes"
+- **Shows on**: Profile badge
+- **Special Feature**: Product showcase, shop integration
+
+### ROLE 16: Community Builder
+- **ID**: `community-builder`
+- **Emoji**: 🌍
+- **Description**: "I build tango communities"
+- **Shows on**: Profile badge
+- **Special Feature**: Community management tools
+
+### ROLE 17: Musician
+- **ID**: `musician`
+- **Emoji**: 🎼
+- **Description**: "I play tango music"
+- **Shows on**: Profile badge
+- **Special Feature**: Music sharing, live performance booking
+
+### ROLE 18: Fan/Enthusiast
+- **ID**: `fan`
+- **Emoji**: 👀
+- **Description**: "I'm a tango enthusiast"
+- **Shows on**: Profile badge
+- **Default**: Selected for all users who don't select other roles
+
+### ROLE 19: Other
+- **ID**: `other`
+- **Emoji**: ❤️
+- **Description**: "My tango role is unique"
+- **Shows on**: Profile badge
+- **Special Feature**: Free text field to describe role
+
+---
+
+## 5.3 ROLE SELECTION LOGIC
+
+**Frontend**:
+```typescript
+const [selectedRoles, setSelectedRoles] = useState([]);
+
+const handleRoleToggle = (roleId) => {
+  if (selectedRoles.includes(roleId)) {
+    // Remove role
+    setSelectedRoles(selectedRoles.filter(r => r !== roleId));
+  } else {
+    // Add role
+    setSelectedRoles([...selectedRoles, roleId]);
+  }
+};
+
+const handleContinue = async () => {
+  if (selectedRoles.length === 0) {
+    toast.error("Please select at least one role");
+    return;
+  }
+  
+  // Update user profile
+  await apiRequest('PATCH', '/api/users/me', {
+    tangoRoles: selectedRoles,
+  });
+  
+  // If dancer-leader or dancer-follower selected, ask for level
+  if (selectedRoles.includes('dancer-leader') || selectedRoles.includes('dancer-follower')) {
+    navigate('/onboarding/step-3b');  // Extra step for dancer levels
+  } else {
+    navigate('/onboarding/step-4');
+  }
+};
+```
+
+**Database Storage**:
+```sql
+-- User has selected 3 roles: Dancer (Leader), Teacher, DJ
+UPDATE users 
+SET tango_roles = ARRAY['dancer-leader', 'teacher', 'dj']
+WHERE id = 123;
+```
+
+---
+
+## 5.4 EMOJI DISPLAY THROUGHOUT PLATFORM
+
+### Where Emojis Appear:
+
+**1. User Profile Header**
+```
+┌─────────────────────────────────────┐
+│  [Profile Photo]                    │
+│  Maria Rodriguez                    │
+│  @maria_bt                          │
+│  🕺 🎓 🎵  ← Role emojis here        │
+│  Buenos Aires, Argentina            │
+└─────────────────────────────────────┘
+```
+
+**2. Feed Posts** (next to username)
+```
+┌─────────────────────────────────────┐
+│ [Avatar] Maria Rodriguez 🕺🎓🎵      │
+│          2 hours ago                │
+│                                     │
+│ Just taught an amazing class!       │
+└─────────────────────────────────────┘
+```
+
+**3. Friend List**
+```
+┌─────────────────────────────────────┐
+│ [Avatar] Maria Rodriguez 🕺🎓🎵      │
+│          Buenos Aires               │
+│          12 mutual friends          │
+│          [Message] [Unfriend]       │
+└─────────────────────────────────────┘
+```
+
+**4. Event Attendees**
+```
+Going (25):
+[Avatar] Maria Rodriguez 🕺🎓🎵
+[Avatar] Carlos Martinez 🕺📅
+[Avatar] Sofia Garcia 💃🎭
+```
+
+**5. Comments**
+```
+Maria Rodriguez 🕺🎓🎵
+Great event! Looking forward to next week.
+```
+
+**6. Search Results**
+```
+People:
+• Maria Rodriguez 🕺🎓🎵 - Buenos Aires
+  Teacher, DJ, Dancer
+```
+
+**7. Notifications**
+```
+🕺🎓🎵 Maria Rodriguez sent you a friend request
+📅 Carlos Martinez invited you to an event
+```
+
+---
+
+## 5.5 ROLE-BASED FEATURES UNLOCKED
+
+Different roles unlock different platform features:
+
+**Teacher (🎓)**:
+- Create "Class" type events
+- Offer private lessons
+- Share teaching videos
+- Get featured in "Find a Teacher" directory
+
+**DJ (🎵)**:
+- Upload tanda playlists
+- Share music recommendations
+- Get booked for events
+- Access DJ tools (music library)
+
+**Organizer (📅)**:
+- Enhanced event creation
+- Attendee management tools
+- Email blast to community
+- Event analytics dashboard
+
+**Performer (🎭)**:
+- Create performance showcases
+- Book venues
+- Sell tickets
+- Share performance videos
+
+**Venue Owner (🏢)**:
+- Create venue page
+- List upcoming events
+- Manage bookings
+- Analytics dashboard
+
+**Photographer (🎬)**:
+- High-res image uploads
+- Portfolio showcase
+- Offer photography services
+- Event photographer booking
+
+**Business (💼)**:
+- Business page
+- Product listings
+- Service offerings
+- Payment integration
+
+**Coach (🎯)**:
+- Offer 1-on-1 coaching
+- Create training programs
+- Student management
+- Progress tracking
+
+---
+
+## 5.6 ROLE MATCHING ALGORITHMS
+
+Roles are used in multiple algorithms:
+
+**A3: Content Recommendation**
+- Teachers see more teaching content
+- DJs see music recommendations
+- Organizers see event planning tips
+
+**A5: User Recommendation (Friend Suggestions)**
+- Teachers matched with other teachers
+- DJs matched with organizers
+- Dancers matched by level
+
+**A6: Event Recommendation**
+- Classes shown to teachers and students
+- Milongas shown to dancers
+- Performances shown to fans
+
+**Search Ranking (A12)**
+- Role-specific search results
+- "Find a teacher" → Teachers ranked higher
+- "Find a DJ" → DJs ranked higher
+
+---
+
+=======================================================================
+PAGE 6: GUIDED TOUR (Step 4/4)
+=======================================================================
+
+**Route**: `/feed` (with Joyride overlay)
+**Purpose**: Interactive walkthrough of key platform features
+
+---
+
+## 6.1 TOUR STEPS
+
+Uses **Joyride** library for interactive tooltips
+
+**Step 1: Feed Introduction**
+```tsx
+{
+  target: '[data-tour="feed"]',
+  content: 'This is your home feed where you'll see posts from your community',
+  placement: 'center',
+}
+```
+
+**Step 2: Create Post**
+```tsx
+{
+  target: '[data-tour="create-post"]',
+  content: 'Click here to share your thoughts, photos, or videos with the community',
+  placement: 'bottom',
+}
+```
+
+**Step 3: Events Navigation**
+```tsx
+{
+  target: '[data-tour="events"]',
+  content: 'Find and join local tango events, classes, and milongas',
+  placement: 'bottom',
+}
+```
+
+**Step 4: Mr Blue AI**
+```tsx
+{
+  target: '[data-tour="mr-blue"]',
+  content: 'Meet Mr Blue! Your AI assistant is always here to help you navigate the platform',
+  placement: 'left',
+}
+```
+
+**Step 5: Role Badge**
+```tsx
+{
+  target: '[data-tour="role-badge"]',
+  content: 'Your role emojis 🕺🎓🎵 appear throughout the platform, helping others know what you do in tango!',
+  placement: 'bottom',
+}
+```
+
+**Step 6: City Community**
+```tsx
+{
+  target: '[data-tour="city-community"]',
+  content: `You're now part of the ${userCity} tango community! Connect with local dancers here.`,
+  placement: 'right',
+}
+```
+
+---
+
+## 6.2 TOUR COMPLETION
+
+**Frontend**:
+```typescript
+<Joyride
+  steps={tourSteps}
+  continuous
+  showProgress
+  showSkipButton
+  styles={{
+    options: {
+      primaryColor: '#40E0D0',  // MT Ocean turquoise
+    }
+  }}
+  callback={(data) => {
+    if (data.status === 'finished' || data.status === 'skipped') {
+      markOnboardingComplete();
+    }
+  }}
+/>
+```
+
+**Backend** (PATCH /api/users/me/complete-onboarding):
+```typescript
+async function markOnboardingComplete(userId) {
+  // 1. Update user status
+  await db.update(users)
+    .set({ 
+      isOnboardingComplete: true,
+      formStatus: 100,
+    })
+    .where(eq(users.id, userId));
+  
+  // 2. Send welcome email with tips
+  await sendEmail({
+    to: user.email,
+    template: 'onboarding-complete',
+    data: {
+      name: user.name,
+      city: user.city,
+      roles: user.tangoRoles,
+    },
+  });
+  
+  // 3. Trigger automation (A-USER-03: Onboarding Complete)
+  await automationQueue.add('onboarding-complete', {
+    userId,
+    city: user.city,
+    roles: user.tangoRoles,
+  });
+  
+  // 4. Award "Welcome" badge
+  await db.insert(userBadges).values({
+    userId,
+    badgeId: 'welcome',
+    awardedAt: new Date(),
+  });
+}
+```
+
+---
+
+=======================================================================
+PLATFORM INTEGRATION SUMMARY
+=======================================================================
+
+## After Completing All 6 Pages, User Has:
+
+**✅ Account Created**
+- Email, username, password set
+- JWT token for authentication
+- Terms accepted
+
+**✅ Profile Set Up**
+- City selected (e.g., "Buenos Aires")
+- Profile photo uploaded (or default avatar)
+- Tango roles selected (e.g., 🕺🎓🎵)
+- Role emojis appear throughout platform
+
+**✅ Community Integrated**
+- Auto-joined city community
+- City posts appear in feed
+- Can attend city events
+- Appears in city member directory
+
+**✅ Personalization Active**
+- Feed algorithm knows roles (Algorithm A1)
+- Content recommendations tailored (Algorithm A3)
+- Friend suggestions based on city + roles (Algorithm A5)
+- Event recommendations match roles (Algorithm A6)
+
+**✅ Features Unlocked**
+- Can create posts
+- Can attend events
+- Can send messages
+- Can make friends
+- Role-specific features (e.g., teachers can create classes)
+
+**✅ Platform Knowledge**
+- Knows how to use feed
+- Knows how to create posts
+- Knows where events are
+- Knows Mr Blue AI exists
+- Can replay tour from Settings
+
+---
+
+=======================================================================
+ROUTING FLOW DIAGRAM
+=======================================================================
+
+```
+START: User not logged in
+  ↓
+/register (P2)
+  ↓ [Submit Form]
+  ↓ [Create account + Auto-login]
+  ↓
+/onboarding/welcome
+  ↓ [Get Started]
+  ↓
+/onboarding/step-1 (Select City)
+  ↓ [Choose city: "Buenos Aires"]
+  ↓ [AUTO: Create/join city community]
+  ↓ [AUTO: Fetch cityscape cover photo]
+  ↓
+/onboarding/step-2 (Profile Photo)
+  ↓ [Upload or Skip]
+  ↓
+/onboarding/step-3 (Tango Roles)
+  ↓ [Select roles: 🕺 🎓 🎵]
+  ↓ [Save to database]
+  ↓
+/onboarding/step-3b (Dancer Levels) [IF dancer selected]
+  ↓ [Set leader/follower level 1-5]
+  ↓
+/feed (with Guided Tour overlay)
+  ↓ [Complete tour]
+  ↓ [Mark onboarding complete]
+  ↓
+/feed (fully onboarded! 🎉)
+  ↓
+User can now:
+  • See personalized feed
+  • Create posts with role emojis
+  • Join events
+  • Make friends
+  • Access all features
+```
+
+---
+
+=======================================================================
+DATABASE STATE AFTER ONBOARDING
+=======================================================================
+
+## Users Table (Example Row)
+
+```sql
+id: 123
+email: "maria@example.com"
+username: "maria_bt"
+name: "Maria Rodriguez"
+profileImage: "https://cloudinary.com/profile_images/123.jpg"
+city: "Buenos Aires"
+country: "Argentina"
+tangoRoles: ["dancer-leader", "teacher", "dj"]
+leaderLevel: 4
+followerLevel: 0
+isOnboardingComplete: true
+formStatus: 100
+termsAccepted: true
+createdAt: "2025-10-31T12:00:00Z"
+```
+
+## Community Members Table (Auto-joined)
+
+```sql
+id: 456
+communityId: 789  -- Buenos Aires community
+userId: 123       -- Maria
+joinedAt: "2025-10-31T12:05:00Z"
+```
+
+## User Badges Table (Awarded)
+
+```sql
+id: 101
+userId: 123
+badgeId: "welcome"
+awardedAt: "2025-10-31T12:10:00Z"
+```
+
+---
+
+=======================================================================
+AUTOMATIONS TRIGGERED DURING ONBOARDING
+=======================================================================
+
+### A-USER-01: New User in City
+**Triggers**: When city selected (Step 1)
+**Actions**:
+1. Create city community (if doesn't exist)
+2. Fetch cityscape cover photo from Pexels
+3. Auto-join user to community
+4. Send city welcome notification
+5. Suggest 5 users in same city
+
+### A-USER-02: Profile Completion
+**Triggers**: When photo uploaded (Step 2)
+**Actions**:
+1. Award "Complete Profile" badge
+2. Boost user in search results (+10% ranking)
+3. Increase friend suggestion priority
+
+### A-USER-03: Onboarding Complete
+**Triggers**: When guided tour finished (Step 4)
+**Actions**:
+1. Send welcome email with tips
+2. Award "Welcome" badge
+3. Suggest first event to attend
+4. Enable all notifications
+5. Create sample post suggestion
+6. Add to new user spotlight (first 7 days)
+
+---
+
+=======================================================================
+SETTINGS INTEGRATION
+=======================================================================
+
+## Users Can Modify Onboarding Choices in Settings
+
+**Settings → Account Tab**:
+- Change city (requires confirmation)
+- Change username (once every 30 days)
+
+**Settings → Profile Tab**:
+- Update profile photo
+- Update tango roles
+- Update dancer levels
+- Add/remove role emojis
+
+**Settings → Privacy Tab**:
+- Control who sees roles
+- Hide specific emojis
+- Profile visibility
+
+**Settings → Help Tab**:
+- Replay guided tour
+- View onboarding progress
+
+---
+
+=======================================================================
+EMOJI REFERENCE TABLE
+=======================================================================
+
+| Role ID              | Emoji | Display Name            | Features Unlocked        |
+|----------------------|-------|-------------------------|--------------------------|
+| dancer-leader        | 🕺    | Dancer (Leader)         | Level tracking           |
+| dancer-follower      | 💃    | Dancer (Follower)       | Level tracking           |
+| teacher              | 🎓    | Teacher                 | Create classes           |
+| dj                   | 🎵    | DJ                      | Upload tandas            |
+| performer            | 🎭    | Performer               | Performance events       |
+| organizer            | 📅    | Organizer               | Enhanced event tools     |
+| venue-owner          | 🏢    | Venue Owner             | Venue pages              |
+| photographer         | 🎬    | Photographer            | Portfolio showcase       |
+| artist               | 🎨    | Designer/Artist         | Art showcase             |
+| business             | 💼    | Business                | Business listings        |
+| mc                   | 🎤    | MC/Host                 | Event hosting            |
+| journalist           | ✍️    | Journalist/Blogger      | Blog priority            |
+| historian            | 📚    | Historian               | History articles         |
+| coach                | 🎯    | Coach/Mentor            | Coaching sessions        |
+| clothing-designer    | 👔    | Clothing Designer       | Product showcase         |
+| community-builder    | 🌍    | Community Builder       | Community tools          |
+| musician             | 🎼    | Musician                | Music sharing            |
+| fan                  | 👀    | Fan/Enthusiast          | Default role             |
+| other                | ❤️    | Other                   | Custom description       |
+
+---
+
+=======================================================================
+END OF REGISTRATION COMPLETE GUIDE
+=======================================================================
+
+**Next Steps for User**:
+1. Create first post
+2. Join first event
+3. Make first friend
+4. Explore city community
+5. Customize profile further
+
+**Platform Ready**: User is now fully integrated into Mundo Tango! 🎉
+
