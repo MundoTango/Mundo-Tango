@@ -253,6 +253,55 @@ export class LumaVideoService {
   }
 
   /**
+   * Generate state-specific Mr. Blue avatar videos
+   * Each state has unique expression and body language
+   */
+  async generateMrBlueState(state: string): Promise<VideoGenerationResponse> {
+    const baseCharacter = `Pixar-style AI companion character with bright turquoise mohawk hairstyle, 
+                          wearing teal floral blazer with silver jewelry`;
+
+    const statePrompts: Record<string, string> = {
+      'idle': `${baseCharacter}, relaxed friendly smile, gentle breathing animation, 
+               subtle eye blinks, calm demeanor, soft lighting, seamless loop`,
+      
+      'listening': `${baseCharacter}, attentive focused expression, slight head tilt, 
+                    eyes tracking with interest, engaged body language, subtle nod, seamless loop`,
+      
+      'speaking': `${baseCharacter}, animated expressive face, mouth forming words, 
+                   hand gestures for emphasis, energetic but professional, eyes bright, seamless loop`,
+      
+      'happy': `${baseCharacter}, big genuine smile, joyful eyes, slight bounce in posture, 
+                positive energy radiating, warm welcoming presence, seamless loop`,
+      
+      'thinking': `${baseCharacter}, contemplative expression, hand on chin, 
+                   eyes looking upward in thought, pondering gesture, focused concentration, seamless loop`,
+      
+      'excited': `${baseCharacter}, wide enthusiastic smile, sparkling eyes, 
+                  energetic bounce, hands expressing excitement, vibrant personality, seamless loop`,
+      
+      'surprised': `${baseCharacter}, eyes wide open, eyebrows raised high, 
+                    mouth forming "oh!" expression, slight backward lean, sudden realization, seamless loop`,
+      
+      'nodding': `${baseCharacter}, agreeable head nod motion, supportive smile, 
+                  encouraging expression, affirmative body language, understanding eyes, seamless loop`,
+      
+      'walk-left': `${baseCharacter}, walking left across frame, smooth confident stride, 
+                    natural arm swing, turquoise mohawk flowing with movement, professional walk cycle`,
+      
+      'walk-right': `${baseCharacter}, walking right across frame, smooth confident stride, 
+                     natural arm swing, turquoise mohawk flowing with movement, professional walk cycle`,
+    };
+
+    const prompt = statePrompts[state] || statePrompts['idle'];
+
+    return this.generateFromText({
+      prompt,
+      aspectRatio: '1:1',
+      loop: state !== 'walk-left' && state !== 'walk-right' // Walking videos don't loop
+    });
+  }
+
+  /**
    * Get or generate Mr. Blue avatar video
    * Returns existing video if available, generates new one if not
    */

@@ -36,15 +36,27 @@ export function MrBlueAvatarVideo({
 
   // Fetch Mr. Blue avatar video
   // Note: This may fail if Luma credits are insufficient - that's OK, we'll fallback to 2D
-  const { data: videoData, isLoading, error } = useQuery({
+  const { data: videoData, isLoading, error } = useQuery<{
+    success: boolean;
+    videoPath?: string;
+    generationId?: string;
+    state: string;
+  }>({
     queryKey: ['/api/videos/mr-blue/avatar'],
     refetchOnWindowFocus: false,
     retry: 0, // Don't retry on failure - fail fast to 2D fallback
-    onError: (err) => {
-      console.log('Video fetch failed (expected if Luma credits low), using 2D fallback');
-      setVideoError(true);
-    }
   });
+
+  // Debug logging
+  useEffect(() => {
+    console.log('[MrBlueAvatarVideo] State:', {
+      isLoading,
+      error: error ? String(error) : null,
+      videoError,
+      videoPath: videoData?.videoPath,
+      state: videoData?.state
+    });
+  }, [isLoading, error, videoError, videoData]);
 
   // Initialize speech recognition
   useEffect(() => {
@@ -81,10 +93,29 @@ export function MrBlueAvatarVideo({
 
   // Auto-play video when loaded
   useEffect(() => {
-    if (videoRef.current && videoData?.videoPath) {
-      videoRef.current.play().catch(err => {
-        console.warn('Video autoplay failed:', err);
-      });
+    const video = videoRef.current;
+    if (video && videoData?.videoPath) {
+      // Force browser to load the source element
+      video.load();
+      
+      // Wait for metadata to load, then play
+      const handleCanPlay = () => {
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(err => {
+            // Ignore AbortError - happens when element is removed during unmount
+            if (err.name !== 'AbortError') {
+              console.warn('[MrBlueAvatarVideo] Video autoplay failed (not AbortError):', err);
+            }
+          });
+        }
+      };
+
+      video.addEventListener('canplay', handleCanPlay, { once: true });
+      
+      return () => {
+        video.removeEventListener('canplay', handleCanPlay);
+      };
     }
   }, [videoData]);
 
@@ -109,14 +140,21 @@ export function MrBlueAvatarVideo({
     }
   };
 
-  const handleVideoError = () => {
-    console.error('Video failed to load');
+  const handleVideoError = (e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
+    const video = e.currentTarget;
+    console.error('[MrBlueAvatarVideo] Video failed to load:', {
+      src: video.src,
+      error: video.error,
+      networkState: video.networkState,
+      readyState: video.readyState
+    });
     setVideoError(true);
   };
 
   // Fallback to 2D avatar if video unavailable or failed
   // This includes: loading, error, or Luma credits insufficient
   if (isLoading || error || videoError || !videoData?.videoPath) {
+    console.log('[MrBlueAvatarVideo] Using 2D fallback:', { isLoading, error, videoError, hasVideoPath: !!videoData?.videoPath });
     return (
       <MrBlueAvatar2D
         size={size}
@@ -127,21 +165,25 @@ export function MrBlueAvatarVideo({
     );
   }
 
+  console.log('[MrBlueAvatarVideo] Rendering VIDEO element with src:', videoData.videoPath);
   return (
     <div className="relative" style={{ width: size, height: size }}>
       {/* Luma Video Avatar */}
       <video
         ref={videoRef}
-        src={videoData.videoPath}
         loop
         muted
         playsInline
         autoPlay
         onError={handleVideoError}
+        onLoadedData={() => console.log('[MrBlueAvatarVideo] Video loaded successfully!')}
         onClick={onInteraction}
         className="w-full h-full object-cover rounded-full shadow-2xl hover:shadow-primary/20 transition-shadow cursor-pointer"
         data-testid="mr-blue-video-avatar"
-      />
+      >
+        <source src={videoData.videoPath} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
 
       {/* Voice Controls */}
       <div className="absolute bottom-2 right-2 flex gap-2">

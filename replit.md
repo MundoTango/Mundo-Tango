@@ -44,13 +44,17 @@ The project employs a modular and agent-driven development approach, utilizing a
 - **AI Integration:** Production-ready AI features including:
   - **Talent Match AI:** PDF/DOCX resume parsing, 8-domain signal detection, Groq AI Clarifier interview system, automatic task matching with confidence scoring
   - **MrBlueChat:** Groq SDK integration for streaming AI responses
-  - **Luma Dream Machine Video Avatar (2025-11-01):** AI-generated video avatar for Mr. Blue with seamless 2D canvas fallback
-    - MrBlueAvatarVideo component with Luma AI integration (ray-2 model)
-    - Auto-generation API endpoints: GET /api/videos/mr-blue/avatar, POST /api/videos/mr-blue/avatar/save/:id
-    - Graceful degradation: Falls back to MrBlueAvatar2D when video unavailable/loading/error
-    - GlobalMrBlue component displays across all pages (bottom-right) except /mr-blue-chat
-    - Voice interaction controls ready (speech recognition integration)
-    - Tested: E2E verified with 2D fallback when Luma credits insufficient
+  - **Mr. Blue Dynamic Video Avatar System (2025-11-01):** Comprehensive Pixar-style AI companion with state-based Luma videos
+    - **10 Expression States:** idle, listening, speaking, happy, thinking, excited, surprised, nodding, walk-left, walk-right
+    - **Video State Manager:** useVideoStateManager hook for dynamic state transitions with auto-timeout to idle
+    - **Batch Generation API:** POST /api/mrblue/generate-all-states (generates all 10 videos ~$4 cost)
+    - **Individual Generation:** POST /api/mrblue/generate-state/:state (single state video ~$0.40)
+    - **Auto-Save System:** Videos auto-download to /videos/states/{state}.mp4 when complete
+    - **Component Architecture:** MrBlueAvatarVideo with state-aware video switching, graceful 2D fallback
+    - **User Interaction Flow:** idle → (hover) happy → (click) walks → opens chat → listening → speaking → idle
+    - **GlobalMrBlue Integration:** Context-aware positioning, page-specific behaviors, click-to-chat navigation
+    - **Voice Controls:** Speech recognition ready, text/audio response toggle in chat
+    - **Luma Integration:** ray-2 model, 1:1 aspect ratio, 5sec loops (walking videos non-loop)
 - **Automation Infrastructure:** BullMQ with 39 automation functions across 6 dedicated workers (User Lifecycle, Social Automation, Event Automation, Life CEO, Housing, Administration).
 - **Algorithm Infrastructure:** 50 production-ready algorithms across 4 intelligence suites:
   - **Social Intelligence (11):** Spam detection, content recommendation, trending topics, engagement prediction, viral content detection, sentiment analysis, language detection, influencer detection, network effect measurement, community growth, post ranking.
