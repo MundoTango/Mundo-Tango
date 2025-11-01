@@ -1,0 +1,13 @@
+# robots.txt for Mundo Tango
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /profile/settings
+Disallow: /profile/delete-account
+
+# Sitemap
+Sitemap: https://mundotango.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 10

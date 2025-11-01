@@ -10,6 +10,12 @@ import { healthCheckHandler, readinessCheckHandler, livenessCheckHandler } from 
 const app = express();
 
 // ============================================================================
+// TRUST PROXY CONFIGURATION
+// ============================================================================
+// Required for rate limiting behind reverse proxies (Replit, Vercel, etc.)
+app.set('trust proxy', 1);
+
+// ============================================================================
 // SECURITY & PERFORMANCE MIDDLEWARE
 // ============================================================================
 

@@ -1,0 +1,17 @@
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Mundo Tango",
+  "url": "https://mundotango.com",
+  "description": "Global platform connecting the tango community through events, social networking, and cultural exchange",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://mundotango.com/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  },
+  "sameAs": [
+    "https://facebook.com/mundotango",
+    "https://instagram.com/mundotango",
+    "https://twitter.com/mundotango"
+  ]
+}
