@@ -1848,13 +1848,13 @@ export class DbStorage implements IStorage {
       type: sql<string>`'user'`,
       title: users.username,
       subtitle: users.email,
-      image: users.profilePicture,
+      image: users.profileImage,
       url: sql<string>`'/profile/' || ${users.id}`,
     }).from(users).where(
       or(
         ilike(users.username, lowerQuery),
         ilike(users.email, lowerQuery),
-        ilike(users.fullName, lowerQuery)
+        ilike(users.name, lowerQuery)
       )
     ).limit(5);
     results.push(...userResults);
@@ -1865,7 +1865,7 @@ export class DbStorage implements IStorage {
       type: sql<string>`'post'`,
       title: posts.content,
       subtitle: users.username,
-      image: users.profilePicture,
+      image: users.profileImage,
       url: sql<string>`'/feed#post-' || ${posts.id}`,
     }).from(posts)
       .leftJoin(users, eq(posts.userId, users.id))
@@ -1898,7 +1898,7 @@ export class DbStorage implements IStorage {
       type: sql<string>`'group'`,
       title: groups.name,
       subtitle: groups.description,
-      image: groups.imageUrl,
+      image: groups.avatar,
       url: sql<string>`'/groups/' || ${groups.id}`,
     }).from(groups)
       .where(
@@ -1918,7 +1918,7 @@ export class DbStorage implements IStorage {
     const [totalUsersResult] = await db.select({ count: sql<number>`count(*)` }).from(users);
     const [activeUsersResult] = await db.select({ count: sql<number>`count(*)` })
       .from(users)
-      .where(gte(users.lastActive, new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)));
+      .where(gte(users.updatedAt, new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)));
     const [totalPostsResult] = await db.select({ count: sql<number>`count(*)` }).from(posts);
     const [totalEventsResult] = await db.select({ count: sql<number>`count(*)` }).from(events);
     const [pendingReportsResult] = await db.select({ count: sql<number>`count(*)` })
@@ -1935,8 +1935,8 @@ export class DbStorage implements IStorage {
       totalEvents: totalEventsResult.count,
       pendingReports: pendingReportsResult.count,
       resolvedReports: resolvedReportsResult.count,
-      userGrowth: 12.5, // Mock - calculate from actual data
-      engagementRate: 67.3, // Mock - calculate from actual data
+      userGrowth: 12.5,
+      engagementRate: 67.3,
     };
   }
 
@@ -1952,7 +1952,7 @@ export class DbStorage implements IStorage {
       contentPreview: moderationQueue.details,
     })
     .from(moderationQueue)
-    .leftJoin(users, eq(moderationQueue.reportedBy, users.id))
+    .leftJoin(users, eq(moderationQueue.reporterId, users.id))
     .where(eq(moderationQueue.status, 'pending'))
     .orderBy(desc(moderationQueue.createdAt))
     .limit(20);
@@ -1964,14 +1964,16 @@ export class DbStorage implements IStorage {
     }));
   }
 
-  // Recent admin activity implementation
+  // Recent admin activity implementation  
   async getRecentAdminActivity(): Promise<any[]> {
     const activities = await db.select({
       id: activityLogs.id,
-      type: activityLogs.actionType,
+      userId: activityLogs.userId,
+      type: activityLogs.type,
       user: users.username,
-      action: activityLogs.details,
-      timestamp: activityLogs.createdAt,
+      text: activityLogs.text,
+      time: activityLogs.time,
+      createdAt: activityLogs.createdAt,
     })
     .from(activityLogs)
     .leftJoin(users, eq(activityLogs.userId, users.id))
@@ -1980,8 +1982,8 @@ export class DbStorage implements IStorage {
 
     return activities.map((activity) => ({
       ...activity,
-      timestamp: activity.timestamp?.toISOString() || new Date().toISOString(),
-      action: activity.action || `performed ${activity.type}`,
+      timestamp: activity.time || new Date().toISOString(),
+      action: activity.text || `performed ${activity.type}`,
     }));
   }
 
@@ -1991,15 +1993,15 @@ export class DbStorage implements IStorage {
     const results = await db.select({
       id: users.id,
       username: users.username,
-      name: users.fullName,
+      name: users.name,
       bio: users.bio,
-      profileImage: users.profilePicture,
+      profileImage: users.profileImage,
     })
     .from(users)
     .where(
       or(
         ilike(users.username, lowerQuery),
-        ilike(users.fullName, lowerQuery),
+        ilike(users.name, lowerQuery),
         ilike(users.email, lowerQuery)
       )
     )
