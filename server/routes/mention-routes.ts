@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticate } from "../middleware";
+import { authenticateToken } from "../middleware/auth";
 import { storage } from "../storage";
 import { eq, ilike, or, and } from "drizzle-orm";
 import { users, events, groups, communities } from "@shared/schema";
@@ -10,7 +10,7 @@ const router = Router();
  * MENTION SEARCH API
  * Searches across @people, @events, @professional-groups, @city-groups
  */
-router.get("/search", authenticate, async (req, res) => {
+router.get("/search", authenticateToken, async (req, res) => {
   try {
     const { query = "", type } = req.query;
     const searchQuery = String(query).toLowerCase();
@@ -89,7 +89,7 @@ router.get("/search", authenticate, async (req, res) => {
  * GET MENTIONED ENTITIES
  * Retrieves full data for mentioned entities in a post/comment
  */
-router.post("/resolve", authenticate, async (req, res) => {
+router.post("/resolve", authenticateToken, async (req, res) => {
   try {
     const { mentions } = req.body; // Array of { type, id }
     

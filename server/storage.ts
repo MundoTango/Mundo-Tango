@@ -292,6 +292,13 @@ export interface IStorage {
   createGroup(group: InsertGroup): Promise<SelectGroup>;
   getGroupById(id: number): Promise<SelectGroup | undefined>;
   getGroups(params: { search?: string; limit?: number; offset?: number }): Promise<SelectGroup[]>;
+  
+  // Search methods for @mentions autocomplete
+  searchUsers(query: string, limit: number): Promise<any[]>;
+  searchEvents(query: string, limit: number): Promise<any[]>;
+  searchGroups(query: string, limit: number): Promise<any[]>;
+  searchCommunities(query: string, limit: number): Promise<any[]>;
+  getCommunityById(id: number): Promise<any | undefined>;
   updateGroup(id: number, data: Partial<SelectGroup>): Promise<SelectGroup | undefined>;
   deleteGroup(id: number): Promise<void>;
   
@@ -1955,6 +1962,99 @@ export class DbStorage implements IStorage {
       timestamp: activity.timestamp?.toISOString() || new Date().toISOString(),
       action: activity.action || `performed ${activity.type}`,
     }));
+  }
+
+  // @mentions search implementations
+  async searchUsers(query: string, limit: number): Promise<any[]> {
+    const lowerQuery = `%${query.toLowerCase()}%`;
+    const results = await db.select({
+      id: users.id,
+      username: users.username,
+      name: users.fullName,
+      bio: users.bio,
+      profileImage: users.profilePicture,
+    })
+    .from(users)
+    .where(
+      or(
+        ilike(users.username, lowerQuery),
+        ilike(users.fullName, lowerQuery),
+        ilike(users.email, lowerQuery)
+      )
+    )
+    .limit(limit);
+    
+    return results;
+  }
+
+  async searchEvents(query: string, limit: number): Promise<any[]> {
+    const lowerQuery = `%${query.toLowerCase()}%`;
+    const results = await db.select({
+      id: events.id,
+      title: events.title,
+      city: events.city,
+      startDate: events.startDate,
+    })
+    .from(events)
+    .where(
+      or(
+        ilike(events.title, lowerQuery),
+        ilike(events.description, lowerQuery),
+        ilike(events.city, lowerQuery)
+      )
+    )
+    .limit(limit);
+    
+    return results;
+  }
+
+  async searchGroups(query: string, limit: number): Promise<any[]> {
+    const lowerQuery = `%${query.toLowerCase()}%`;
+    const results = await db.select({
+      id: groups.id,
+      name: groups.name,
+      avatar: groups.avatar,
+      category: groups.category,
+      memberCount: groups.memberCount,
+    })
+    .from(groups)
+    .where(
+      or(
+        ilike(groups.name, lowerQuery),
+        ilike(groups.description, lowerQuery),
+        ilike(groups.category, lowerQuery)
+      )
+    )
+    .limit(limit);
+    
+    return results;
+  }
+
+  async searchCommunities(query: string, limit: number): Promise<any[]> {
+    const lowerQuery = `%${query.toLowerCase()}%`;
+    const results = await db.select({
+      id: communities.id,
+      name: communities.name,
+      cityName: communities.cityName,
+      coverPhotoUrl: communities.coverPhotoUrl,
+      memberCount: communities.memberCount,
+    })
+    .from(communities)
+    .where(
+      or(
+        ilike(communities.name, lowerQuery),
+        ilike(communities.cityName, lowerQuery),
+        ilike(communities.description, lowerQuery)
+      )
+    )
+    .limit(limit);
+    
+    return results;
+  }
+
+  async getCommunityById(id: number): Promise<any | undefined> {
+    const result = await db.select().from(communities).where(eq(communities.id, id)).limit(1);
+    return result[0];
   }
 }
 
