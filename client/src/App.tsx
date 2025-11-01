@@ -8,6 +8,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AppLayout } from "./components/AppLayout";
 import { GlobalTopbar } from "./components/GlobalTopbar";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { MrBlueWidget } from "./components/MrBlueWidget";
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/HomePage";
 import AboutPage from "@/pages/AboutPage";
@@ -644,6 +645,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <Router />
+            <MrBlueWidget />
           </TooltipProvider>
         </AuthProvider>
       </QueryClientProvider>

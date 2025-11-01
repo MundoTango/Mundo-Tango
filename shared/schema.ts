@@ -192,6 +192,7 @@ export const posts = pgTable("posts", {
   mediaEmbeds: jsonb("media_embeds"),
   mentions: text("mentions").array(),
   hashtags: text("hashtags").array(),
+  tags: text("tags").array(),
   location: text("location"),
   coordinates: jsonb("coordinates"),
   placeId: text("place_id"),

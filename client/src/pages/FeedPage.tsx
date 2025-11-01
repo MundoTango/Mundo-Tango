@@ -9,7 +9,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Heart, MessageCircle, Share2, Image as ImageIcon, Globe, Users, Lock, X, Loader2, MoreVertical, Pencil, Trash2, ChevronDown } from "lucide-react";
+import { Heart, MessageCircle, Share2, Image as ImageIcon, Globe, Users, Lock, X, Loader2, MoreVertical, Pencil, Trash2, ChevronDown, Music2, Plane, Sparkles, GraduationCap, PartyPopper } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { SEO } from "@/components/SEO";
@@ -36,9 +37,21 @@ type Post = {
   };
 };
 
+const TANGO_TAGS = [
+  { name: "Milonga", icon: "🪭", color: "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800" },
+  { name: "Práctica", icon: "💃", color: "bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800" },
+  { name: "Performance", icon: "⭐", color: "bg-yellow-50 dark:bg-yellow-950/30 text-yellow-600 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800" },
+  { name: "Workshop", icon: "🎓", color: "bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800" },
+  { name: "Festival", icon: "🎉", color: "bg-pink-50 dark:bg-pink-950/30 text-pink-600 dark:text-pink-400 border-pink-200 dark:border-pink-800" },
+  { name: "Travel", icon: "✈️", color: "bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600 dark:text-cyan-400 border-cyan-200 dark:border-cyan-800" },
+  { name: "Music", icon: "🎵", color: "bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800" },
+  { name: "Fashion", icon: "👗", color: "bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-800" },
+];
+
 export default function FeedPage() {
   const [content, setContent] = useState("");
   const [visibility, setVisibility] = useState<"public" | "friends" | "private">("public");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -96,6 +109,14 @@ export default function FeedPage() {
     }
   };
 
+  const toggleTag = (tagName: string) => {
+    setSelectedTags(prev => 
+      prev.includes(tagName)
+        ? prev.filter(t => t !== tagName)
+        : [...prev, tagName]
+    );
+  };
+
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim()) return;
@@ -106,10 +127,12 @@ export default function FeedPage() {
       await createPost.mutateAsync({
         content: content.trim(),
         visibility: visibility,
+        tags: selectedTags,
       });
 
       setContent("");
       setVisibility("public");
+      setSelectedTags([]);
       handleRemoveImage();
       toast({
         title: "Post created!",
@@ -186,6 +209,29 @@ export default function FeedPage() {
                 </Button>
               </div>
             )}
+
+            {/* Tag Selection */}
+            <div className="space-y-2" data-testid="tag-selection-section">
+              <label className="text-sm font-medium text-muted-foreground">Add tags to your memory</label>
+              <div className="flex flex-wrap gap-2">
+                {TANGO_TAGS.map((tag) => (
+                  <button
+                    key={tag.name}
+                    type="button"
+                    onClick={() => toggleTag(tag.name)}
+                    className={`
+                      inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm font-medium
+                      transition-all hover-elevate active-elevate-2
+                      ${selectedTags.includes(tag.name) ? tag.color : 'bg-muted/50 text-muted-foreground border-border'}
+                    `}
+                    data-testid={`button-tag-${tag.name.toLowerCase()}`}
+                  >
+                    <span>{tag.icon}</span>
+                    <span>{tag.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
 
             <div className="flex items-center justify-between gap-4 flex-wrap">
               <div className="flex items-center gap-2">

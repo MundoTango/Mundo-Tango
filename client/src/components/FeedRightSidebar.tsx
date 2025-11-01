@@ -11,24 +11,48 @@ export function FeedRightSidebar() {
   const upcomingEvents = [
     {
       id: 1,
-      title: "Milonga at Cafe Tortoni",
+      title: "Milan Tango Festival 2025",
+      type: "milonga",
       date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
-      location: "Buenos Aires, AR",
-      attendees: 45,
+      location: "Milan, Italy",
+      attendees: 127,
+      isGoing: false,
     },
     {
       id: 2,
-      title: "Tango Workshop: Sacadas",
-      date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
-      location: "Virtual",
-      attendees: 23,
+      title: "Barcelona Milonga Night",
+      type: "milonga",
+      date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      location: "Barcelona, Spain",
+      attendees: 89,
+      isGoing: true,
     },
     {
       id: 3,
-      title: "Sunday Practica",
+      title: "Toronto Practica",
+      type: "práctica",
+      date: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
+      location: "Toronto, Canada",
+      attendees: 34,
+      isGoing: false,
+    },
+    {
+      id: 4,
+      title: "Beginner Tango Workshop",
+      type: "workshop",
+      date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+      location: "Paris, France",
+      attendees: 56,
+      isGoing: false,
+    },
+    {
+      id: 5,
+      title: "Weekly Milonga at Salon",
+      type: "milonga",
       date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      location: "New York, USA",
-      attendees: 67,
+      location: "Buenos Aires, Argentina",
+      attendees: 203,
+      isGoing: true,
     },
   ];
 
@@ -63,24 +87,44 @@ export function FeedRightSidebar() {
           </Link>
         </div>
         <div className="space-y-3">
-          {upcomingEvents.map((event) => (
+          {upcomingEvents.slice(0, 5).map((event) => (
             <Link key={event.id} href={`/events/${event.id}`}>
               <div
                 className="p-3 rounded-lg hover-elevate cursor-pointer border"
                 data-testid={`event-${event.id}`}
               >
-                <h4 className="font-medium text-sm mb-1">{event.title}</h4>
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <h4 className="font-medium text-sm flex-1">{event.title}</h4>
+                  <Badge 
+                    variant="secondary" 
+                    className="text-xs capitalize"
+                    data-testid={`badge-event-type-${event.id}`}
+                  >
+                    {event.type}
+                  </Badge>
+                </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
                   <Clock className="h-3 w-3" />
                   {formatDistanceToNow(event.date, { addSuffix: true })}
                 </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
                   <MapPin className="h-3 w-3" />
                   {event.location}
                 </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Users className="h-3 w-3" />
-                  {event.attendees} attending
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Users className="h-3 w-3" />
+                    <span data-testid={`text-attendees-${event.id}`}>{event.attendees} attending</span>
+                  </div>
+                  {event.isGoing && (
+                    <Badge 
+                      variant="default" 
+                      className="text-xs bg-primary"
+                      data-testid={`badge-going-${event.id}`}
+                    >
+                      You're going
+                    </Badge>
+                  )}
                 </div>
               </div>
             </Link>
