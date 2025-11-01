@@ -3,17 +3,12 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function NotificationSettingsPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Notification Settings" showBreadcrumbs>
       <div className="container mx-auto max-w-2xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Notification Settings</h1>
-          <p className="text-muted-foreground">
-            Control how you receive notifications on the platform
-          </p>
-        </div>
 
         <Card className="mb-6">
           <CardHeader>
@@ -79,6 +74,6 @@ export default function NotificationSettingsPage() {
           Save Settings
         </Button>
       </div>
-    </div>
+    </PageLayout>
   );
 }

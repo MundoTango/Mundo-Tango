@@ -4,17 +4,12 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Shield } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function PrivacySettingsPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Privacy Settings" showBreadcrumbs>
       <div className="container mx-auto max-w-2xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Privacy Settings</h1>
-          <p className="text-muted-foreground">
-            Control who can see your content and interact with you
-          </p>
-        </div>
 
         <Card className="mb-6">
           <CardHeader>
@@ -88,6 +83,6 @@ export default function PrivacySettingsPage() {
           Save Settings
         </Button>
       </div>
-    </div>
+    </PageLayout>
   );
 }

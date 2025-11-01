@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { Heart, TrendingUp, Activity, Apple, Dumbbell, Moon, Droplets } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function HealthAgentPage() {
   const stats = [
@@ -19,7 +20,7 @@ export default function HealthAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Health Agent" showBreadcrumbs>
       <SEO
         title="Health Agent - Life CEO"
         description="Track your fitness, nutrition, sleep, and overall wellness with your AI health agent."
@@ -133,6 +134,6 @@ export default function HealthAgentPage() {
           </div>
         </div>
       </div>
-    </>
+    </PageLayout>
   );
 }

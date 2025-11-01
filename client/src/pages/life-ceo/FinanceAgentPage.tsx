@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { DollarSign, TrendingUp, TrendingDown, Wallet, CreditCard, PiggyBank, Target } from "lucide-react";
 import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function FinanceAgentPage() {
   const summary = [
@@ -20,7 +21,7 @@ export default function FinanceAgentPage() {
   ];
 
   return (
-    <>
+    <PageLayout title="Finance Agent" showBreadcrumbs>
       <SEO
         title="Finance Agent - Life CEO"
         description="Manage your budget, track expenses, and achieve financial goals with your AI finance agent."
@@ -156,6 +157,6 @@ export default function FinanceAgentPage() {
           </div>
         </div>
       </div>
-    </>
+    </PageLayout>
   );
 }
