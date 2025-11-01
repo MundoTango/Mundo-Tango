@@ -1,0 +1,122 @@
+MB.MD PROTOCOL: FRIENDSHIP SYSTEM CRITICAL ANALYSIS
+🔍 CURRENT STATE vs. HANDOFF REQUIREMENTS
+Component	Current	Required	Gap
+Database Schema	Basic (6 fields)	Enhanced (20+ fields)	🔴 70% missing
+friendRequests	status, timestamps	+ dance story, media, snooze	❌ Missing 14 fields
+friendships	userId, friendId	+ closenessScore, connectionDegree	❌ Missing 5 fields
+friendshipActivities	❌ Not exists	Required for tracking	❌ Missing table
+friendshipMedia	❌ Not exists	Required for photos/videos	❌ Missing table
+Backend Logic	Basic CRUD	+ scores, degrees, activities	🟡 40% complete
+Frontend UI	Plain cards	MT Ocean glassmorphic	🟡 30% complete
+Features	Accept/Decline	+ Dance story, snooze, badges	🔴 Major features missing
+🎯 MB.MD EXECUTION PLAN: SIMULTANEOUS, RECURSIVE, CRITICAL
+
+Planned comprehensive summary document
+📋 DETAILED BREAKDOWN
+TRACK 1: DATABASE FOUNDATION (Simultaneous Execution)
+// TRACK 1A: friendRequests Enhancement
++ didWeDance: boolean
++ danceLocation: text
++ danceEventId: integer (references events)
++ danceStory: text
++ senderMessage: text (required)
++ senderPrivateNote: text
++ receiverResponse: text
++ mediaUrls: text().array()
++ snoozedUntil: timestamp
++ snoozedCount: integer
++ status: 'pending' | 'accepted' | 'declined' | 'cancelled' | 'snoozed'
+// TRACK 1B: friendships Enhancement  
++ closenessScore: integer (0-100, default 75)
++ connectionDegree: integer (always 1 for direct friends)
++ lastInteractionAt: timestamp
++ status: 'accepted' | 'blocked'
+// TRACK 1C: NEW friendshipActivities
+id, friendshipId, activityType, metadata, createdAt
+Types: 'message_sent', 'post_liked', 'event_attended_together', 
+       'group_joined_together', 'memory_shared', 'dance_together'
+// TRACK 1D: NEW friendshipMedia
+id, friendRequestId, friendshipId, uploaderId, mediaUrl, 
+mediaType, caption, phase, createdAt
+
+TRACK 2: BACKEND LOGIC (Recursive Build)
+// Closeness Score Algorithm
+baseScore = 75
++ sharedEvents * 5
++ sharedGroups * 3  
++ recentMessages (max +10/month)
++ postsLiked (max +10/month)
+- noInteraction30days (-5)
+- noInteraction90days (-15)
+// Connection Degree System
+1st degree: Direct friends
+2nd degree: Friends of friends
+3rd degree: Extended network
+-1: Not connected
+// Enhanced Storage Methods
+- sendFriendRequest(data: {senderId, receiverId, message, danceStory?, media?})
+- acceptFriendRequest(requestId, response?) → creates 2 friendship records
+- getMutualFriends(userId1, userId2) → full user objects
+- calculateClosenessScore(friendshipId)
+- getConnectionDegree(userId1, userId2)
+- snoozeFriendRequest(requestId, days)
+- logFriendshipActivity(friendshipId, type, metadata)
+
+TRACK 3: FRONTEND EXPERIENCE (MT Ocean Theme)
+// Glassmorphic Design Elements
+- Animated gradient background (cyan→blue→teal)
+- Floating orbs with blur effects
+- Glass cards: backdrop-blur-xl, bg-white/70
+- Hover glows: gradient-to-r from-cyan via-blue to-teal
+- Connection badges with gradients
+// Friend Request Form
+- "Did we dance together?" checkbox
+  → Shows: dance location, story, event link, media upload
+- Required: Personal message
+- Optional: Private note (sender only)
+- Media upload: Photos/videos from milonga
+// Connection Degree Badges
+1st: Pink→Rose gradient, "Direct Friend"
+2nd: Blue→Cyan gradient, "Friend of Friend"  
+3rd: Purple→Indigo gradient, "Extended Network"
+// Closeness Score Display
+87/100 ⭐ with breakdown:
+- Shared events: 8
+- Shared groups: 3
+- Total dances: 24
+- Days since connection: 289
+
+⚡ SIMULTANEOUS EXECUTION STRATEGY
+Phase 1 (PARALLEL): Database Schema Updates
+
+Task 1A, 1B, 1C, 1D execute together
+One schema file, multiple table edits
+Single npm run db:push --force at end
+Phase 2 (PARALLEL): Backend Logic
+
+Update storage methods while schema migrates
+Add algorithms (closeness, degrees)
+Update routes with new endpoints
+Phase 3 (PARALLEL): Frontend Polish
+
+Apply MT Ocean Theme
+Add new UI components
+Wire up new backend endpoints
+Phase 4 (CRITICAL): Integration & Testing
+
+End-to-end friendship flow test
+Dance story submission test
+Snooze functionality test
+Connection degree calculation test
+🎯 SUCCESS CRITERIA
+✅ Complete when:
+
+✅ All 4 new database tables/enhancements deployed
+✅ Closeness score auto-calculates (0-100)
+✅ Connection degrees display correctly (1st/2nd/3rd badges)
+✅ Dance story form works with media upload
+✅ Snooze functionality postpones requests
+✅ MT Ocean Theme applied throughout
+✅ Mutual friends show with full user data
+✅ E2E test passes: send request → add dance story → accept → view friendship dashboard
+Ready to execute MB.MD Protocol? This will simultaneously upgrade database schema, backend logic, and frontend UI for the complete friendship system with dance stories, closeness scoring, and connection degree badges.
