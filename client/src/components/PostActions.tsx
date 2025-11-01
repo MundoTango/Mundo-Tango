@@ -20,8 +20,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { ReportPostDialog } from "./ReportPostDialog";
-import { EditPostDialog } from "./EditPostDialog";
+import { ShareModal } from "./modals/ShareModal";
+import { ReportModal } from "./modals/ReportModal";
+import { EditPostModal } from "./modals/EditPostModal";
 
 interface PostActionsProps {
   postId: number;
@@ -47,6 +48,7 @@ export function PostActions({
   const [liked, setLiked] = useState(initialLiked);
   const [saved, setSaved] = useState(initialSaved);
   const [likes, setLikes] = useState(likeCount);
+  const [shareOpen, setShareOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -126,9 +128,7 @@ export function PostActions({
   };
 
   const handleShare = () => {
-    // Copy link to clipboard
-    navigator.clipboard.writeText(`${window.location.origin}/posts/${postId}`);
-    toast({ title: "Link copied to clipboard" });
+    setShareOpen(true);
   };
 
   // Delete mutation
@@ -227,19 +227,28 @@ export function PostActions({
         </DropdownMenu>
       </div>
 
-      {/* Report Dialog */}
-      <ReportPostDialog
+      {/* Share Modal */}
+      <ShareModal
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        postId={postId}
+        postTitle={content.slice(0, 50) + (content.length > 50 ? '...' : '')}
+      />
+
+      {/* Report Modal */}
+      <ReportModal
         open={reportOpen}
         onOpenChange={setReportOpen}
         postId={postId}
+        contentType="post"
       />
 
-      {/* Edit Dialog */}
-      <EditPostDialog
+      {/* Edit Modal */}
+      <EditPostModal
         open={editOpen}
         onOpenChange={setEditOpen}
         postId={postId}
-        initialContent={content}
+        currentContent={content}
       />
 
       {/* Delete Confirmation */}
