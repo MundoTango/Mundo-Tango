@@ -5,7 +5,7 @@ import * as THREE from 'three';
 
 interface MrBlueAvatar3DProps {
   size?: number;
-  expression?: 'neutral' | 'happy' | 'excited' | 'thoughtful' | 'friendly' | 'focused' | 'professional' | 'curious';
+  expression?: 'neutral' | 'happy' | 'excited' | 'thoughtful' | 'friendly' | 'focused' | 'professional' | 'curious' | 'confident' | 'playful';
   onSpeak?: (text: string) => void;
   showControls?: boolean;
 }

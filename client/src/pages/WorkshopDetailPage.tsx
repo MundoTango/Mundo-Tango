@@ -76,6 +76,6 @@ export default function WorkshopDetailPage() {
           </div>
         </div>
       </div>
-    </div>
-    </PageLayout>);
+    </PageLayout>
+  );
 }

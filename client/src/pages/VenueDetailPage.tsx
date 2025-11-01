@@ -93,6 +93,6 @@ export default function VenueDetailPage() {
           </div>
         </div>
       </div>
-    </div>
-    </PageLayout>);
+    </PageLayout>
+  );
 }

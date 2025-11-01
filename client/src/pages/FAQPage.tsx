@@ -167,7 +167,6 @@ export default function FAQPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
-    </PublicLayout>
-    </PageLayout>);
+    </PageLayout>
+  );
 }

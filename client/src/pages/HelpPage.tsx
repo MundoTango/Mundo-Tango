@@ -73,6 +73,6 @@ export default function HelpPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
-    </PageLayout>);
+    </PageLayout>
+  );
 }

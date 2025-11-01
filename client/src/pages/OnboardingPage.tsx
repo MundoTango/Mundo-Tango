@@ -82,7 +82,6 @@ export default function OnboardingPage() {
 
   return (
     <PageLayout title="Welcome to Mundo Tango!" showBreadcrumbs>
-<>
       <SEO
         title="Welcome to Mundo Tango"
         description="Complete your profile to join the global tango community"
@@ -247,6 +246,6 @@ export default function OnboardingPage() {
           </AnimatePresence>
         </div>
       </div>
-    </>
-    </PageLayout>);
+    </PageLayout>
+  );
 }

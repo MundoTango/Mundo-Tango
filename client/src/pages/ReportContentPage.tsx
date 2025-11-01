@@ -68,6 +68,6 @@ export default function ReportContentPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
-    </PageLayout>);
+    </PageLayout>
+  );
 }

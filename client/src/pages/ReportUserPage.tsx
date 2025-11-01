@@ -68,6 +68,6 @@ export default function ReportUserPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
-    </PageLayout>);
+    </PageLayout>
+  );
 }

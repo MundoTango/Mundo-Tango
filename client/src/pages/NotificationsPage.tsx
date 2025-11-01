@@ -118,6 +118,6 @@ export default function NotificationsPage() {
           </Card>
         )}
       </div>
-    </div>
-    </PageLayout>);
+    </PageLayout>
+  );
 }

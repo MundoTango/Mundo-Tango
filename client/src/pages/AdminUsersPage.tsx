@@ -59,6 +59,6 @@ export default function AdminUsersPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
-    </PageLayout>);
+    </PageLayout>
+  );
 }

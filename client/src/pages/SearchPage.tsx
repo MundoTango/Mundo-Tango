@@ -129,8 +129,8 @@ export default function SearchPage() {
           </Card>
         )}
       </div>
-    </div>
-    </PageLayout>);
+    </PageLayout>
+  );
 }
 
 // Helper Components

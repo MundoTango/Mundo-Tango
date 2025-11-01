@@ -131,8 +131,10 @@ router.get('/info', async (req, res) => {
 
     res.json({
       success: true,
+      modelExists: avatarExists,
       avatarExists,
       pixarExists,
+      modelUrl: avatarExists ? '/models/mr-blue-avatar.glb' : null,
       paths: {
         avatar: avatarExists ? '/models/mr-blue-avatar.glb' : null,
         pixar: pixarExists ? '/models/mr-blue-pixar.png' : null
