@@ -1,0 +1,157 @@
+version: '3.8'
+
+# Docker MCP Gateway - Production-Ready Configuration
+# Manages 10+ MCP servers for enhanced AI capabilities in Mundo Tango
+
+services:
+  # ============================================================================
+  # MCP GATEWAY - Central orchestration layer
+  # ============================================================================
+  mcp-gateway:
+    image: docker/mcp-gateway:latest
+    container_name: mundo-tango-mcp-gateway
+    command:
+      - gateway
+      - run
+      - --port=8811
+      - --transport=streaming
+      - --verify-signatures
+      - --log-calls
+      - --block-secrets
+      - --servers=github,postgres,fetch,memory,filesystem,slack,drive,puppeteer,clarity,sequential
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./secrets.env:/secrets/.mcp.env:ro
+      - ./logs:/var/log/mcp:rw
+    ports:
+      - "8811:8811"
+    environment:
+      - TRANSPORT=streaming
+      - LOG_LEVEL=info
+      - MAX_CONCURRENT_REQUESTS=50
+    networks:
+      - mcp-network
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8811/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    read_only: false
+    tmpfs:
+      - /tmp
+
+  # ============================================================================
+  # MUNDO TANGO APP - Connects to MCP Gateway
+  # ============================================================================
+  mundo-tango-app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: mundo-tango-app
+    environment:
+      - NODE_ENV=production
+      - MCP_GATEWAY_URL=http://mcp-gateway:8811/mcp
+      - DATABASE_URL=${DATABASE_URL}
+      - PORT=5000
+    depends_on:
+      mcp-gateway:
+        condition: service_healthy
+    networks:
+      - mcp-network
+      - app-network
+    ports:
+      - "5000:5000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # ============================================================================
+  # REDIS - For BullMQ and caching
+  # ============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: mundo-tango-redis
+    command: redis-server --appendonly yes --maxmemory 2gb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+networks:
+  mcp-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
+  app-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+    driver: local
+
+# ============================================================================
+# MCP SERVERS CATALOG
+# ============================================================================
+# Enabled servers and their capabilities:
+#
+# 1. github - Repository management, issues, PRs
+#    Tools: github_search_repositories, github_create_issue, github_get_pr
+#
+# 2. postgres - Database operations
+#    Tools: query, explain, health_check, index_suggestions
+#
+# 3. fetch - Web content retrieval
+#    Tools: fetch_url, convert_to_markdown
+#
+# 4. memory - Knowledge graph-based persistent memory
+#    Tools: create_memory, query_memories, relate_concepts
+#
+# 5. filesystem - Secure file operations
+#    Tools: read_file, write_file, list_directory
+#
+# 6. slack - Team notifications
+#    Tools: send_message, create_channel, invite_users
+#
+# 7. drive - Google Drive integration
+#    Tools: upload_file, list_files, share_document
+#
+# 8. puppeteer - Browser automation
+#    Tools: navigate, screenshot, extract_data
+#
+# 9. clarity - Microsoft Clarity analytics
+#    Tools: get_session_recordings, heatmaps
+#
+# 10. sequential - Advanced AI reasoning
+#     Tools: think_step_by_step, validate_reasoning
+#
+# ============================================================================
+# USAGE
+# ============================================================================
+# Start: docker-compose -f .mcp/docker-compose.mcp.yml up -d
+# Logs: docker-compose -f .mcp/docker-compose.mcp.yml logs -f mcp-gateway
+# Stop: docker-compose -f .mcp/docker-compose.mcp.yml down
+# ============================================================================

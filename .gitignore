@@ -4,3 +4,39 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+
+# MCP Secrets
+.mcp/secrets.env
+.mcp/logs/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Testing
+test-results/
+playwright-report/
+coverage/
+
+# Build artifacts
+*.tsbuildinfo
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+logs/
+*.log
+
+# Backups
+backups/
+
+# Temp
+tmp/
+*.tmp
+
+# Reports
+performance-audit.json
+dependency-report.json

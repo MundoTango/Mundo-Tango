@@ -1,0 +1,13 @@
+# MCP Secrets - NEVER commit these!
+secrets.env
+
+# MCP Logs
+logs/
+*.log
+
+# Docker volumes
+volumes/
+
+# Temporary files
+*.tmp
+tmp/

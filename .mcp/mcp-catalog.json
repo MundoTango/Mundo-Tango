@@ -1,0 +1,156 @@
+{
+  "version": "1.0",
+  "name": "mundo-tango-mcp-catalog",
+  "description": "Custom MCP server catalog for Mundo Tango platform",
+  "servers": [
+    {
+      "name": "github",
+      "image": "mcp/github:latest",
+      "description": "GitHub repository management, issues, PRs",
+      "tools": [
+        "github_search_repositories",
+        "github_create_issue",
+        "github_update_issue",
+        "github_get_pr",
+        "github_create_pr",
+        "github_list_commits"
+      ],
+      "resources": [
+        "github://repos",
+        "github://issues",
+        "github://pulls"
+      ],
+      "secrets": ["GITHUB_TOKEN"]
+    },
+    {
+      "name": "postgres",
+      "image": "mcp/postgres:latest",
+      "description": "PostgreSQL database operations and optimization",
+      "tools": [
+        "query",
+        "explain",
+        "health_check",
+        "index_suggestions",
+        "table_stats",
+        "slow_queries"
+      ],
+      "secrets": ["DATABASE_URL"]
+    },
+    {
+      "name": "fetch",
+      "image": "mcp/fetch:latest",
+      "description": "Web content fetching and conversion",
+      "tools": [
+        "fetch_url",
+        "convert_to_markdown",
+        "extract_metadata"
+      ]
+    },
+    {
+      "name": "memory",
+      "image": "mcp/memory:latest",
+      "description": "Knowledge graph-based persistent memory system",
+      "tools": [
+        "create_memory",
+        "query_memories",
+        "relate_concepts",
+        "delete_memory",
+        "get_memory_graph"
+      ]
+    },
+    {
+      "name": "filesystem",
+      "image": "mcp/filesystem:latest",
+      "description": "Secure file operations with access controls",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory",
+        "delete_file",
+        "move_file",
+        "get_file_info"
+      ]
+    },
+    {
+      "name": "slack",
+      "image": "mcp/slack:latest",
+      "description": "Slack workspace integration for notifications",
+      "tools": [
+        "send_message",
+        "create_channel",
+        "invite_users",
+        "upload_file",
+        "get_channel_history"
+      ],
+      "secrets": ["SLACK_BOT_TOKEN", "SLACK_WEBHOOK_URL"]
+    },
+    {
+      "name": "drive",
+      "image": "mcp/google-drive:latest",
+      "description": "Google Drive document management",
+      "tools": [
+        "upload_file",
+        "list_files",
+        "share_document",
+        "download_file",
+        "create_folder"
+      ],
+      "secrets": ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "GOOGLE_REFRESH_TOKEN"]
+    },
+    {
+      "name": "puppeteer",
+      "image": "mcp/puppeteer:latest",
+      "description": "Browser automation for web scraping and testing",
+      "tools": [
+        "navigate",
+        "screenshot",
+        "extract_data",
+        "fill_form",
+        "click_element"
+      ]
+    },
+    {
+      "name": "clarity",
+      "image": "mcp/microsoft-clarity:latest",
+      "description": "Microsoft Clarity analytics integration",
+      "tools": [
+        "get_session_recordings",
+        "heatmaps",
+        "get_metrics",
+        "user_journeys"
+      ],
+      "secrets": ["CLARITY_API_KEY"]
+    },
+    {
+      "name": "sequential",
+      "image": "mcp/sequential-thinking:latest",
+      "description": "Advanced AI reasoning and problem-solving",
+      "tools": [
+        "think_step_by_step",
+        "validate_reasoning",
+        "break_down_problem",
+        "synthesize_solution"
+      ],
+      "secrets": ["OPENAI_API_KEY"]
+    }
+  ],
+  "custom_servers": [
+    {
+      "name": "tango-events",
+      "description": "Mundo Tango event aggregation and discovery",
+      "tools": [
+        "search_tango_events",
+        "get_event_details",
+        "validate_event_data",
+        "deduplicate_events"
+      ],
+      "build_path": "./.mcp/custom-servers/tango-events"
+    }
+  ],
+  "metadata": {
+    "created": "2025-11-01",
+    "version": "1.0.0",
+    "platform": "Mundo Tango",
+    "maintainer": "DevOps Team"
+  }
+}

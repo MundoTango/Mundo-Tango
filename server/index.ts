@@ -3,8 +3,24 @@ import cookieParser from "cookie-parser";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { startPreviewExpirationChecker } from "./lib/preview-expiration";
+import { applySecurity, apiRateLimiter } from "./middleware/security";
+import { compressionMiddleware, performanceMonitoringMiddleware } from "./config/performance";
+import { healthCheckHandler, readinessCheckHandler, livenessCheckHandler } from "./health-check";
 
 const app = express();
+
+// ============================================================================
+// SECURITY & PERFORMANCE MIDDLEWARE
+// ============================================================================
+
+// Apply security middleware (CSP, CORS, headers, etc.)
+app.use(applySecurity());
+
+// Enable compression
+app.use(compressionMiddleware);
+
+// Performance monitoring
+app.use(performanceMonitoringMiddleware);
 
 declare module 'http' {
   interface IncomingMessage {
@@ -18,6 +34,14 @@ app.use(express.json({
 }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// ============================================================================
+// HEALTH CHECK ENDPOINTS
+// ============================================================================
+
+app.get('/health', healthCheckHandler);
+app.get('/ready', readinessCheckHandler);
+app.get('/live', livenessCheckHandler);
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -50,6 +74,9 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Apply rate limiting to API routes
+  app.use('/api', apiRateLimiter);
+  
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
