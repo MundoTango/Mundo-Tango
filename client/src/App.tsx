@@ -20,6 +20,7 @@ import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/HomePage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
+import MarketingPrototype from "@/pages/MarketingPrototype";
 
 // Lazy-loaded pages for better performance
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
@@ -177,6 +178,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={HomePage} />
+      <Route path="/marketing-prototype" component={MarketingPrototype} />
       <Route path="/about" component={AboutPage} />
       <Route path="/discover" component={DiscoverPage} />
       <Route path="/volunteer" component={VolunteerPage} />
