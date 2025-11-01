@@ -202,30 +202,50 @@ export function MrBlueAvatarVideo({
 
   console.log('[MrBlueAvatarVideo] Rendering VIDEO element with src:', currentVideoPath, 'State:', videoStateManager.currentState);
   return (
-    <div className="relative" style={{ width: size, height: size }}>
-      {/* Luma Video Avatar */}
-      <video
-        ref={videoRef}
-        loop
-        muted
-        playsInline
-        autoPlay
-        onError={handleVideoError}
-        onLoadedData={() => console.log('[MrBlueAvatarVideo] Video loaded successfully!', videoStateManager.currentState)}
-        onClick={onInteraction}
-        className="w-full h-full object-cover rounded-full shadow-2xl hover:shadow-primary/20 transition-shadow cursor-pointer"
-        data-testid="mr-blue-video-avatar"
-      >
-        <source src={currentVideoPath || videoData?.videoPath} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+    <div 
+      className="relative group" 
+      style={{ 
+        width: size, 
+        height: size * 1.2 // Natural portrait aspect ratio
+      }}
+    >
+      {/* Luma Video Avatar - No circular constraint, natural portrait */}
+      <div className="relative w-full h-full">
+        {/* Subtle glow effect (Option B) */}
+        <div className="absolute inset-0 bg-primary/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        
+        {/* Video with edge fade mask (Option C) */}
+        <video
+          ref={videoRef}
+          loop
+          muted
+          playsInline
+          autoPlay
+          onError={handleVideoError}
+          onLoadedData={() => console.log('[MrBlueAvatarVideo] Video loaded successfully!', videoStateManager.currentState)}
+          onClick={onInteraction}
+          className="w-full h-full object-cover cursor-pointer transition-all duration-300 hover:scale-105"
+          style={{
+            maskImage: 'radial-gradient(ellipse 90% 85% at 50% 50%, black 60%, transparent 100%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 90% 85% at 50% 50%, black 60%, transparent 100%)',
+            filter: 'drop-shadow(0 10px 30px rgba(139, 92, 246, 0.3))'
+          }}
+          data-testid="mr-blue-video-avatar"
+        >
+          <source src={currentVideoPath || videoData?.videoPath} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
 
       {/* Voice Controls */}
       <div className="absolute bottom-2 right-2 flex gap-2">
         <Button
           size="icon"
           variant={isListening ? "default" : "outline"}
-          onClick={toggleListening}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleListening();
+          }}
           className="rounded-full w-10 h-10 shadow-lg backdrop-blur-sm bg-background/80"
           data-testid="button-toggle-voice"
         >
@@ -242,9 +262,9 @@ export function MrBlueAvatarVideo({
         </div>
       )}
 
-      {/* Active pulse effect */}
+      {/* Active pulse effect - now subtle glow instead of circular border */}
       {isActive && (
-        <div className="absolute inset-0 rounded-full border-4 border-primary/50 animate-pulse" />
+        <div className="absolute inset-0 bg-primary/20 blur-md animate-pulse pointer-events-none" />
       )}
     </div>
   );

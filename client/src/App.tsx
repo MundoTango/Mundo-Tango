@@ -5,12 +5,14 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "./contexts/AuthContext";
+import { MrBlueProvider } from "./contexts/MrBlueContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AppLayout } from "./components/AppLayout";
 import { GlobalTopbar } from "./components/GlobalTopbar";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { MrBlueWidget } from "./components/MrBlueWidget";
 import { GlobalMrBlue } from "./components/mrblue/GlobalMrBlue";
+import { ChatSidePanel } from "./components/mrblue/ChatSidePanel";
 import { LoadingFallback } from "./components/LoadingFallback";
 
 // Core Pages (loaded immediately for fast initial render)
@@ -676,14 +678,16 @@ function App() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Suspense fallback={<LoadingFallback />}>
-              <Router />
-            </Suspense>
-            <MrBlueWidget />
-            <GlobalMrBlue />
-          </TooltipProvider>
+          <MrBlueProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Suspense fallback={<LoadingFallback />}>
+                <Router />
+              </Suspense>
+              <GlobalMrBlue />
+              <ChatSidePanel />
+            </TooltipProvider>
+          </MrBlueProvider>
         </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>

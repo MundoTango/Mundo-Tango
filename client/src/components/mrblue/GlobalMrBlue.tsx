@@ -6,6 +6,7 @@ import { ErrorBoundary } from './ErrorBoundary';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AVATAR_CONFIG, shouldUse3D } from '@/lib/avatarConfig';
+import { useMrBlue } from '@/contexts/MrBlueContext';
 
 // Lazy load 3D component (only loads if needed)
 const MrBlueAvatar3D = lazy(() => import('./MrBlueAvatar3D'));
@@ -67,6 +68,7 @@ const PAGE_CONTEXTS: Record<string, Omit<PageContext, 'path'>> = {
  */
 export function GlobalMrBlue() {
   const [location] = useLocation();
+  const { openChat, setExpression } = useMrBlue();
   const [isMinimized, setIsMinimized] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const [use3D, setUse3D] = useState(false);
@@ -133,8 +135,9 @@ export function GlobalMrBlue() {
   };
 
   const handleInteraction = () => {
-    // Navigate to MrBlue chat
-    window.location.href = '/mr-blue-chat';
+    // Set expression to happy and open chat side panel
+    setExpression('happy');
+    openChat();
   };
 
   // Hide on mr-blue-chat page (has its own avatar)
