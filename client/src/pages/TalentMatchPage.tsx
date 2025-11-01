@@ -14,13 +14,13 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export default function TalentMatchPage() {
   const [, setLocation] = useLocation();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const [step, setStep] = useState<"upload" | "clarifier" | "results">("upload");
   const [resumeText, setResumeText] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   const validateUrl = (url: string, type: "linkedin" | "github"): boolean => {
@@ -101,6 +101,15 @@ export default function TalentMatchPage() {
       return;
     }
 
+    // Wait for auth to load before checking user
+    if (authLoading) {
+      toast({
+        title: "Please wait",
+        description: "Verifying authentication...",
+      });
+      return;
+    }
+
     if (!user) {
       toast({
         title: "Login required",
@@ -111,43 +120,37 @@ export default function TalentMatchPage() {
       return;
     }
 
-    setIsLoading(true);
+    setIsSubmitting(true);
     
     try {
       // Create volunteer profile
-      const volunteer = await apiRequest("/api/v1/volunteers", {
-        method: "POST",
-        body: {
-          userId: user.id,
-          profile: {
-            resumeText,
-            linkedinUrl,
-            githubUrl,
-            uploadedFileName: uploadedFile?.name
-          },
-          skills: [],
-          availability: "flexible",
-          hoursPerWeek: 10
-        }
+      const volunteerResponse = await apiRequest("POST", "/api/v1/volunteers", {
+        userId: user.id,
+        profile: {
+          resumeText,
+          linkedinUrl,
+          githubUrl,
+          uploadedFileName: uploadedFile?.name
+        },
+        skills: [],
+        availability: "flexible",
+        hoursPerWeek: 10
       });
+      const volunteer = await volunteerResponse.json();
 
       // Create resume record if we have text
       if (resumeText) {
-        await apiRequest(`/api/v1/volunteers/${volunteer.id}/resume`, {
-          method: "POST",
-          body: {
-            filename: uploadedFile?.name || "pasted-resume.txt",
-            fileUrl: linkedinUrl || githubUrl || "",
-            parsedText: resumeText,
-            links: [linkedinUrl, githubUrl].filter(Boolean)
-          }
+        await apiRequest("POST", `/api/v1/volunteers/${volunteer.id}/resume`, {
+          filename: uploadedFile?.name || "pasted-resume.txt",
+          fileUrl: linkedinUrl || githubUrl || "",
+          parsedText: resumeText,
+          links: [linkedinUrl, githubUrl].filter(Boolean)
         });
       }
 
       // Start clarifier session
-      const session = await apiRequest(`/api/v1/volunteers/${volunteer.id}/clarifier`, {
-        method: "POST"
-      });
+      const sessionResponse = await apiRequest("POST", `/api/v1/volunteers/${volunteer.id}/clarifier`);
+      const session = await sessionResponse.json();
 
       toast({
         title: "Profile created!",
@@ -164,9 +167,27 @@ export default function TalentMatchPage() {
         variant: "destructive"
       });
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
+
+  // Show loading state while auth is being verified
+  if (authLoading) {
+    return (
+      <>
+        <SEO
+          title="Talent Match - Mundo Tango"
+          description="Apply to volunteer with Mundo Tango. Our AI-powered Talent Match system will find the perfect tasks for your skills."
+        />
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-accent/5 to-background">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   const fadeInUp = {
     initial: { opacity: 0, y: 40 },
@@ -300,12 +321,12 @@ export default function TalentMatchPage() {
 
                 <Button
                   onClick={handleStartClarifier}
-                  disabled={isLoading || (!resumeText && !linkedinUrl && !githubUrl)}
+                  disabled={isSubmitting || authLoading || (!resumeText && !linkedinUrl && !githubUrl)}
                   size="lg"
                   className="w-full gap-2"
                   data-testid="button-start-clarifier"
                 >
-                  {isLoading ? "Creating Profile..." : "Start AI Interview"}
+                  {isSubmitting ? "Creating Profile..." : authLoading ? "Verifying..." : "Start AI Interview"}
                   <ArrowRight className="h-5 w-5" />
                 </Button>
 
