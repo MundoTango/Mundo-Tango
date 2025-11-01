@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Music, Heart, Zap, Clock } from "lucide-react";
+import { PublicLayout } from "@/components/PublicLayout";
+import { SEO } from "@/components/SEO";
 
 const danceStyles = [
   {
@@ -55,6 +57,11 @@ const danceStyles = [
 
 export default function DanceStylesPage() {
   return (
+    <PublicLayout>
+      <SEO
+        title="Tango Dance Styles - Mundo Tango"
+        description="Explore the different styles of Argentine tango: Salon, Nuevo, Vals, Milonga, and more. Learn about each style's characteristics and music."
+      />
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
@@ -137,5 +144,6 @@ export default function DanceStylesPage() {
         </Card>
       </div>
     </div>
+    </PublicLayout>
   );
 }

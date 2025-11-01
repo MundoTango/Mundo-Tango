@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { Eye, EyeOff, Check, X, Loader2 } from "lucide-react";
+import { PublicLayout } from "@/components/PublicLayout";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -112,7 +113,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <>
+    <PublicLayout>
       <SEO
         title="Join Mundo Tango"
         description="Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
@@ -315,6 +316,6 @@ export default function RegisterPage() {
           </p>
         </div>
       </div>
-    </>
+    </PublicLayout>
   );
 }
