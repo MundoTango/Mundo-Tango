@@ -55,13 +55,20 @@ export function createFriendsRoutes(storage: IStorage) {
       const currentUserId = req.userId!;
       const targetUserId = parseInt(req.params.userId);
       
-      const currentFriends = await storage.getUserFriends(currentUserId);
-      const targetFriends = await storage.getUserFriends(targetUserId);
-      
-      const currentFriendIds = new Set(currentFriends.map((f: any) => f.id));
-      const mutualFriends = targetFriends.filter((f: any) => currentFriendIds.has(f.id));
-      
+      const mutualFriends = await storage.getMutualFriends(currentUserId, targetUserId);
       res.json(mutualFriends);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  router.get("/friends/connection-degree/:userId", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const currentUserId = req.userId!;
+      const targetUserId = parseInt(req.params.userId);
+      
+      const degree = await storage.getConnectionDegree(currentUserId, targetUserId);
+      res.json({ degree });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
@@ -72,27 +79,42 @@ export function createFriendsRoutes(storage: IStorage) {
       const senderId = req.userId!;
       const receiverId = parseInt(req.params.userId);
       
-      const request = await storage.sendFriendRequest(senderId, receiverId);
+      const request = await storage.sendFriendRequest({
+        senderId,
+        receiverId,
+        ...req.body,
+      });
       res.json(request);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   });
 
-  router.post("/friends/accept/:requestId", authenticateToken, async (req: AuthRequest, res) => {
+  router.post("/friends/requests/:requestId/accept", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const requestId = parseInt(req.params.requestId);
-      await storage.acceptFriendRequest(requestId, req.userId!);
+      await storage.acceptFriendRequest(requestId, req.body.response);
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   });
 
-  router.post("/friends/decline/:requestId", authenticateToken, async (req: AuthRequest, res) => {
+  router.post("/friends/requests/:requestId/reject", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const requestId = parseInt(req.params.requestId);
-      await storage.declineFriendRequest(requestId, req.userId!);
+      await storage.declineFriendRequest(requestId);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  router.post("/friends/requests/:requestId/snooze", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const requestId = parseInt(req.params.requestId);
+      const days = req.body.days || 7;
+      await storage.snoozeFriendRequest(requestId, days);
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message });

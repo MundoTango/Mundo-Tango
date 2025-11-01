@@ -22,6 +22,8 @@ import {
   savedPosts,
   friendRequests,
   friendships,
+  friendshipActivities,
+  friendshipMedia,
   moderationQueue,
   communities,
   communityMembers,
@@ -673,50 +675,98 @@ export class DbStorage implements IStorage {
   }
 
   async getUserFriends(userId: number): Promise<any[]> {
-    const accepted = await db
-      .select()
-      .from(friendRequests)
-      .where(
-        and(
-          or(eq(friendRequests.senderId, userId), eq(friendRequests.receiverId, userId)),
-          eq(friendRequests.status, 'accepted')
-        )
-      );
-    return accepted;
+    const friendshipsData = await db
+      .select({
+        friendship: friendships,
+        friend: users,
+      })
+      .from(friendships)
+      .leftJoin(users, eq(friendships.friendId, users.id))
+      .where(eq(friendships.userId, userId));
+    
+    return friendshipsData.map(row => ({
+      ...row.friend,
+      closenessScore: row.friendship.closenessScore,
+      connectionDegree: row.friendship.connectionDegree,
+      lastInteractionAt: row.friendship.lastInteractionAt,
+    }));
   }
 
   async getFriendRequests(userId: number): Promise<any[]> {
     const pending = await db
-      .select()
+      .select({
+        request: friendRequests,
+        sender: users,
+      })
       .from(friendRequests)
+      .leftJoin(users, eq(friendRequests.senderId, users.id))
       .where(
         and(
           eq(friendRequests.receiverId, userId),
           eq(friendRequests.status, 'pending')
         )
       );
-    return pending;
+    return pending.map(row => ({ ...row.request, sender: row.sender }));
   }
 
   async getFriendSuggestions(userId: number): Promise<any[]> {
-    // Simple suggestion: users in the same city who aren't already friends
-    return [];
+    const myFriends = await db.select({ friendId: friendships.friendId })
+      .from(friendships)
+      .where(eq(friendships.userId, userId));
+    const friendIds = myFriends.map(f => f.friendId);
+    
+    const suggestions = await db.select()
+      .from(users)
+      .where(
+        and(
+          sql`${users.id} NOT IN (${friendIds.length ? sql.join(friendIds.map(id => sql`${id}`), sql`, `) : sql`NULL`})`,
+          sql`${users.id} != ${userId}`
+        )
+      )
+      .limit(10);
+    
+    return suggestions;
   }
 
-  async sendFriendRequest(senderId: number, receiverId: number): Promise<any> {
+  async sendFriendRequest(data: any): Promise<any> {
     try {
-      const result = await db.insert(friendRequests).values({ senderId, receiverId, status: 'pending' }).returning();
+      const result = await db.insert(friendRequests).values({
+        senderId: data.senderId,
+        receiverId: data.receiverId,
+        senderMessage: data.senderMessage || 'Hi! Let\'s connect!',
+        senderPrivateNote: data.senderPrivateNote,
+        didWeDance: data.didWeDance || false,
+        danceLocation: data.danceLocation,
+        danceEventId: data.danceEventId,
+        danceStory: data.danceStory,
+        mediaUrls: data.mediaUrls,
+        status: 'pending',
+      }).returning();
       return result[0];
     } catch (error) {
       throw new Error('Friend request already exists');
     }
   }
 
-  async acceptFriendRequest(requestId: number): Promise<void> {
-    await db
-      .update(friendRequests)
-      .set({ status: 'accepted', respondedAt: new Date() })
+  async acceptFriendRequest(requestId: number, response?: string): Promise<void> {
+    const request = await db.select().from(friendRequests).where(eq(friendRequests.id, requestId)).limit(1);
+    if (!request[0]) throw new Error('Request not found');
+    
+    const { senderId, receiverId, didWeDance } = request[0];
+    const initialScore = didWeDance ? 80 : 75;
+    
+    await db.update(friendRequests)
+      .set({ 
+        status: 'accepted', 
+        respondedAt: new Date(),
+        receiverMessage: response 
+      })
       .where(eq(friendRequests.id, requestId));
+    
+    await db.insert(friendships).values([
+      { userId: senderId, friendId: receiverId, closenessScore: initialScore },
+      { userId: receiverId, friendId: senderId, closenessScore: initialScore },
+    ]);
   }
 
   async declineFriendRequest(requestId: number): Promise<void> {
@@ -724,6 +774,126 @@ export class DbStorage implements IStorage {
       .update(friendRequests)
       .set({ status: 'declined', respondedAt: new Date() })
       .where(eq(friendRequests.id, requestId));
+  }
+
+  async snoozeFriendRequest(requestId: number, days: number): Promise<void> {
+    const snoozedUntil = new Date();
+    snoozedUntil.setDate(snoozedUntil.getDate() + days);
+    
+    await db.update(friendRequests)
+      .set({ 
+        status: 'snoozed',
+        snoozedUntil,
+      })
+      .where(eq(friendRequests.id, requestId));
+  }
+
+  async getMutualFriends(userId1: number, userId2: number): Promise<any[]> {
+    const user1Friends = await db.select({ friendId: friendships.friendId })
+      .from(friendships)
+      .where(eq(friendships.userId, userId1));
+    
+    const user2Friends = await db.select({ friendId: friendships.friendId })
+      .from(friendships)
+      .where(eq(friendships.userId, userId2));
+    
+    const user1FriendIds = user1Friends.map(f => f.friendId);
+    const user2FriendIds = user2Friends.map(f => f.friendId);
+    const mutualIds = user1FriendIds.filter(id => user2FriendIds.includes(id));
+    
+    if (mutualIds.length === 0) return [];
+    
+    return await db.select().from(users).where(sql`${users.id} IN (${sql.join(mutualIds.map(id => sql`${id}`), sql`, `)})`);
+  }
+
+  async calculateClosenessScore(friendshipId: number): Promise<number> {
+    const friendship = await db.select().from(friendships).where(eq(friendships.id, friendshipId)).limit(1);
+    if (!friendship[0]) return 0;
+    
+    let score = 75;
+    
+    const activities = await db.select()
+      .from(friendshipActivities)
+      .where(eq(friendshipActivities.friendshipId, friendshipId));
+    
+    const eventCount = activities.filter(a => a.activityType === 'event_attended_together').length;
+    const messageCount = activities.filter(a => a.activityType === 'message_sent').length;
+    const danceCount = activities.filter(a => a.activityType === 'dance_together').length;
+    
+    score += Math.min(eventCount * 5, 25);
+    score += Math.min(messageCount, 10);
+    score += Math.min(danceCount * 10, 20);
+    
+    const daysSinceInteraction = friendship[0].lastInteractionAt 
+      ? Math.floor((Date.now() - new Date(friendship[0].lastInteractionAt).getTime()) / (1000 * 60 * 60 * 24))
+      : 0;
+    
+    if (daysSinceInteraction > 90) score -= 15;
+    else if (daysSinceInteraction > 30) score -= 5;
+    
+    score = Math.max(0, Math.min(100, score));
+    
+    await db.update(friendships)
+      .set({ closenessScore: score })
+      .where(eq(friendships.id, friendshipId));
+    
+    return score;
+  }
+
+  async getConnectionDegree(userId1: number, userId2: number): Promise<number> {
+    if (userId1 === userId2) return 0;
+    
+    const directFriendship = await db.select()
+      .from(friendships)
+      .where(and(eq(friendships.userId, userId1), eq(friendships.friendId, userId2)))
+      .limit(1);
+    if (directFriendship.length > 0) return 1;
+    
+    const user1Friends = await db.select({ friendId: friendships.friendId })
+      .from(friendships)
+      .where(eq(friendships.userId, userId1));
+    const user1FriendIds = user1Friends.map(f => f.friendId);
+    
+    const secondDegree = await db.select()
+      .from(friendships)
+      .where(
+        and(
+          sql`${friendships.userId} IN (${sql.join(user1FriendIds.map(id => sql`${id}`), sql`, `)})`,
+          eq(friendships.friendId, userId2)
+        )
+      )
+      .limit(1);
+    if (secondDegree.length > 0) return 2;
+    
+    const secondDegreeFriends = await db.select({ friendId: friendships.friendId })
+      .from(friendships)
+      .where(sql`${friendships.userId} IN (${sql.join(user1FriendIds.map(id => sql`${id}`), sql`, `)})`);
+    const secondDegreeIds = secondDegreeFriends.map(f => f.friendId);
+    
+    const thirdDegree = await db.select()
+      .from(friendships)
+      .where(
+        and(
+          sql`${friendships.userId} IN (${sql.join(secondDegreeIds.map(id => sql`${id}`), sql`, `)})`,
+          eq(friendships.friendId, userId2)
+        )
+      )
+      .limit(1);
+    if (thirdDegree.length > 0) return 3;
+    
+    return -1;
+  }
+
+  async logFriendshipActivity(friendshipId: number, activityType: string, metadata?: any): Promise<void> {
+    await db.insert(friendshipActivities).values({
+      friendshipId,
+      activityType,
+      metadata: metadata ? JSON.stringify(metadata) : null,
+    });
+    
+    await db.update(friendships)
+      .set({ lastInteractionAt: new Date() })
+      .where(eq(friendships.id, friendshipId));
   }
 
   async removeFriend(userId: number, friendId: number): Promise<void> {

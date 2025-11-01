@@ -6,7 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Users, UserPlus, Clock, Search } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Users, UserPlus, Clock, Search, Heart, Star, TrendingUp } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { PageLayout } from "@/components/PageLayout";
@@ -18,6 +22,9 @@ interface Friend {
   profileImage?: string;
   bio?: string;
   mutualFriends?: number;
+  closenessScore?: number;
+  connectionDegree?: number;
+  lastInteractionAt?: string;
 }
 
 interface FriendRequest {
@@ -26,10 +33,23 @@ interface FriendRequest {
   sender: Friend;
   status: string;
   createdAt: string;
+  senderMessage?: string;
+  danceStory?: string;
+  danceLocation?: string;
+  didWeDance?: boolean;
 }
 
 export default function FriendsListPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [showRequestDialog, setShowRequestDialog] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<Friend | null>(null);
+  const [requestData, setRequestData] = useState({
+    message: "",
+    didWeDance: false,
+    danceLocation: "",
+    danceStory: "",
+  });
+  
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -46,9 +66,11 @@ export default function FriendsListPage() {
   });
 
   const sendRequestMutation = useMutation({
-    mutationFn: (userId: number) => apiRequest(`/api/friends/request/${userId}`, "POST"),
+    mutationFn: (data: any) => apiRequest(`/api/friends/request/${data.receiverId}`, "POST", data),
     onSuccess: () => {
-      toast({ title: "Friend request sent" });
+      toast({ title: "✨ Friend request sent!" });
+      setShowRequestDialog(false);
+      setRequestData({ message: "", didWeDance: false, danceLocation: "", danceStory: "" });
       queryClient.invalidateQueries({ queryKey: ["/api/friends/suggestions"] });
     },
     onError: () => {
@@ -59,7 +81,7 @@ export default function FriendsListPage() {
   const acceptRequestMutation = useMutation({
     mutationFn: (requestId: number) => apiRequest(`/api/friends/requests/${requestId}/accept`, "POST"),
     onSuccess: () => {
-      toast({ title: "Friend request accepted" });
+      toast({ title: "🎉 Friend request accepted!" });
       queryClient.invalidateQueries({ queryKey: ["/api/friends"] });
       queryClient.invalidateQueries({ queryKey: ["/api/friends/requests"] });
     },
@@ -71,11 +93,11 @@ export default function FriendsListPage() {
   const rejectRequestMutation = useMutation({
     mutationFn: (requestId: number) => apiRequest(`/api/friends/requests/${requestId}/reject`, "POST"),
     onSuccess: () => {
-      toast({ title: "Request rejected" });
+      toast({ title: "Request declined" });
       queryClient.invalidateQueries({ queryKey: ["/api/friends/requests"] });
     },
     onError: () => {
-      toast({ title: "Failed to reject request", variant: "destructive" });
+      toast({ title: "Failed to decline request", variant: "destructive" });
     },
   });
 
@@ -90,38 +112,95 @@ export default function FriendsListPage() {
     },
   });
 
+  const handleSendRequest = (friend: Friend) => {
+    setSelectedUser(friend);
+    setShowRequestDialog(true);
+  };
+
+  const submitRequest = () => {
+    if (!selectedUser) return;
+    sendRequestMutation.mutate({
+      receiverId: selectedUser.id,
+      senderMessage: requestData.message,
+      didWeDance: requestData.didWeDance,
+      danceLocation: requestData.didWeDance ? requestData.danceLocation : null,
+      danceStory: requestData.didWeDance ? requestData.danceStory : null,
+    });
+  };
+
   const filteredFriends = friends.filter(
     (friend) =>
       friend.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       friend.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const getConnectionBadge = (degree?: number) => {
+    if (degree === 1) {
+      return (
+        <Badge className="bg-gradient-to-r from-pink-500 to-rose-500 text-white border-0">
+          1st
+        </Badge>
+      );
+    } else if (degree === 2) {
+      return (
+        <Badge className="bg-gradient-to-r from-blue-400 to-cyan-400 text-white border-0">
+          2nd
+        </Badge>
+      );
+    } else if (degree === 3) {
+      return (
+        <Badge className="bg-gradient-to-r from-purple-400 to-indigo-400 text-white border-0">
+          3rd
+        </Badge>
+      );
+    }
+    return null;
+  };
+
   const FriendCard = ({ friend, showAddButton = false }: { friend: Friend; showAddButton?: boolean }) => (
-    <Card className="p-4" data-testid={`card-friend-${friend.id}`}>
+    <Card className="group relative overflow-hidden backdrop-blur-xl bg-white/70 dark:bg-slate-900/70 border-white/50 dark:border-cyan-500/30 p-4 hover-elevate active-elevate-2" data-testid={`card-friend-${friend.id}`}>
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-teal-400 opacity-60" />
+      
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Avatar>
+        <div className="flex items-center gap-3 flex-1">
+          <Avatar className="h-12 w-12 ring-2 ring-cyan-400/50">
             <AvatarImage src={friend.profileImage} />
-            <AvatarFallback>{friend.name.charAt(0)}</AvatarFallback>
+            <AvatarFallback className="bg-gradient-to-br from-cyan-400 to-blue-500 text-white">
+              {friend.name.charAt(0)}
+            </AvatarFallback>
           </Avatar>
-          <div>
-            <h3 className="font-semibold" data-testid={`text-friend-name-${friend.id}`}>
-              {friend.name}
-            </h3>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold text-base" data-testid={`text-friend-name-${friend.id}`}>
+                {friend.name}
+              </h3>
+              {friend.connectionDegree && getConnectionBadge(friend.connectionDegree)}
+            </div>
             <p className="text-sm text-muted-foreground">@{friend.username}</p>
-            {friend.mutualFriends !== undefined && friend.mutualFriends > 0 && (
-              <p className="text-xs text-muted-foreground mt-1">
-                {friend.mutualFriends} mutual friend{friend.mutualFriends !== 1 ? "s" : ""}
-              </p>
-            )}
+            
+            <div className="flex items-center gap-3 mt-2 text-xs">
+              {friend.closenessScore !== undefined && (
+                <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
+                  <Star className="h-3 w-3 fill-current" />
+                  <span className="font-medium">{friend.closenessScore}/100</span>
+                </div>
+              )}
+              {friend.mutualFriends !== undefined && friend.mutualFriends > 0 && (
+                <span className="text-muted-foreground">
+                  {friend.mutualFriends} mutual
+                </span>
+              )}
+            </div>
           </div>
         </div>
+        
         {showAddButton ? (
           <Button
             size="sm"
-            onClick={() => sendRequestMutation.mutate(friend.id)}
+            onClick={() => handleSendRequest(friend)}
             disabled={sendRequestMutation.isPending}
             data-testid={`button-add-friend-${friend.id}`}
+            className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
           >
             <UserPlus className="h-4 w-4 mr-1" />
             Add Friend
@@ -141,137 +220,251 @@ export default function FriendsListPage() {
     </Card>
   );
 
-  return (
-    <PageLayout title="Friends" showBreadcrumbs>
-<div className="container max-w-4xl mx-auto p-6" data-testid="page-friends">
-      <div className="mb-6">
+  const RequestCard = ({ request }: { request: FriendRequest }) => (
+    <Card className="backdrop-blur-xl bg-white/70 dark:bg-slate-900/70 border-white/50 dark:border-cyan-500/30 p-4" data-testid={`card-request-${request.id}`}>
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-purple-400 via-pink-500 to-rose-400 opacity-60" />
+      
+      <div className="flex items-start justify-between">
+        <div className="flex items-start gap-3 flex-1">
+          <Avatar className="h-12 w-12 ring-2 ring-purple-400/50">
+            <AvatarImage src={request.sender?.profileImage} />
+            <AvatarFallback className="bg-gradient-to-br from-purple-400 to-pink-500 text-white">
+              {request.sender?.name.charAt(0)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <h3 className="font-semibold" data-testid={`text-request-name-${request.id}`}>
+              {request.sender?.name}
+            </h3>
+            <p className="text-sm text-muted-foreground">@{request.sender?.username}</p>
+            
+            {request.senderMessage && (
+              <p className="text-sm mt-2 p-2 bg-slate-100 dark:bg-slate-800 rounded-md">
+                "{request.senderMessage}"
+              </p>
+            )}
+            
+            {request.didWeDance && (
+              <div className="mt-3 p-3 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/20 dark:to-blue-950/20 rounded-lg border border-cyan-200 dark:border-cyan-800">
+                <div className="flex items-center gap-2 text-sm font-medium text-cyan-700 dark:text-cyan-300 mb-2">
+                  <Heart className="h-4 w-4 fill-current" />
+                  We danced together!
+                </div>
+                {request.danceLocation && (
+                  <p className="text-xs text-muted-foreground mb-1">
+                    📍 {request.danceLocation}
+                  </p>
+                )}
+                {request.danceStory && (
+                  <p className="text-sm mt-2 italic">
+                    "{request.danceStory}"
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
         
-        <p className="text-muted-foreground">Manage your tango connections</p>
-      </div>
-
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search friends..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-            data-testid="input-search-friends"
-          />
+        <div className="flex gap-2 ml-4">
+          <Button
+            size="sm"
+            onClick={() => acceptRequestMutation.mutate(request.id)}
+            disabled={acceptRequestMutation.isPending}
+            data-testid={`button-accept-${request.id}`}
+            className="bg-gradient-to-r from-green-500 to-emerald-600"
+          >
+            Accept
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => rejectRequestMutation.mutate(request.id)}
+            disabled={rejectRequestMutation.isPending}
+            data-testid={`button-reject-${request.id}`}
+          >
+            Decline
+          </Button>
         </div>
       </div>
+    </Card>
+  );
 
-      <Tabs defaultValue="all" data-testid="tabs-friends">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="all" data-testid="tab-all-friends">
-            <Users className="h-4 w-4 mr-2" />
-            All Friends
-            {friends.length > 0 && (
-              <Badge variant="secondary" className="ml-2">
-                {friends.length}
-              </Badge>
+  return (
+    <PageLayout title="Friends" showBreadcrumbs>
+      {/* MT Ocean Theme Background */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-50 via-blue-100 to-teal-100 dark:from-slate-900 dark:via-blue-950 dark:to-cyan-950" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-1/2 right-1/3 w-96 h-96 bg-teal-400/20 rounded-full blur-3xl animate-pulse delay-2000" />
+      </div>
+
+      <div className="container max-w-4xl mx-auto p-6" data-testid="page-friends">
+        <div className="mb-6">
+          <p className="text-muted-foreground">Manage your tango connections</p>
+        </div>
+
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search friends..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 backdrop-blur-sm bg-white/80 dark:bg-slate-900/80"
+              data-testid="input-search-friends"
+            />
+          </div>
+        </div>
+
+        <Tabs defaultValue="all" data-testid="tabs-friends">
+          <TabsList className="grid w-full grid-cols-3 backdrop-blur-lg bg-white/60 dark:bg-slate-900/60">
+            <TabsTrigger value="all" data-testid="tab-all-friends">
+              <Users className="h-4 w-4 mr-2" />
+              All Friends
+              {friends.length > 0 && (
+                <Badge variant="secondary" className="ml-2">
+                  {friends.length}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="requests" data-testid="tab-requests">
+              <Clock className="h-4 w-4 mr-2" />
+              Requests
+              {requests.length > 0 && (
+                <Badge className="ml-2 bg-gradient-to-r from-purple-500 to-pink-500">
+                  {requests.length}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="suggestions" data-testid="tab-suggestions">
+              <TrendingUp className="h-4 w-4 mr-2" />
+              Suggestions
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="all" className="space-y-3 mt-6">
+            {loadingFriends ? (
+              <div className="text-center py-12 text-muted-foreground">Loading friends...</div>
+            ) : filteredFriends.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                {searchQuery ? "No friends found" : "No friends yet. Send some requests!"}
+              </div>
+            ) : (
+              filteredFriends.map((friend) => <FriendCard key={friend.id} friend={friend} />)
             )}
-          </TabsTrigger>
-          <TabsTrigger value="requests" data-testid="tab-requests">
-            <Clock className="h-4 w-4 mr-2" />
-            Requests
-            {requests.length > 0 && (
-              <Badge variant="secondary" className="ml-2">
-                {requests.length}
-              </Badge>
+          </TabsContent>
+
+          <TabsContent value="requests" className="space-y-3 mt-6">
+            {loadingRequests ? (
+              <div className="text-center py-12 text-muted-foreground">Loading requests...</div>
+            ) : requests.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                No pending friend requests
+              </div>
+            ) : (
+              requests.map((request) => <RequestCard key={request.id} request={request} />)
             )}
-          </TabsTrigger>
-          <TabsTrigger value="suggestions" data-testid="tab-suggestions">
-            <UserPlus className="h-4 w-4 mr-2" />
-            Suggestions
-          </TabsTrigger>
-        </TabsList>
+          </TabsContent>
 
-        <TabsContent value="all" className="space-y-3 mt-6">
-          {loadingFriends ? (
-            <Card className="p-8 text-center">
-              <p className="text-muted-foreground">Loading friends...</p>
-            </Card>
-          ) : filteredFriends.length === 0 ? (
-            <Card className="p-8 text-center">
-              <Users className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground">
-                {searchQuery ? "No friends found matching your search" : "No friends yet"}
-              </p>
-            </Card>
-          ) : (
-            filteredFriends.map((friend) => <FriendCard key={friend.id} friend={friend} />)
-          )}
-        </TabsContent>
+          <TabsContent value="suggestions" className="space-y-3 mt-6">
+            {loadingSuggestions ? (
+              <div className="text-center py-12 text-muted-foreground">Loading suggestions...</div>
+            ) : suggestions.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                No suggestions available
+              </div>
+            ) : (
+              suggestions.map((friend) => (
+                <FriendCard key={friend.id} friend={friend} showAddButton />
+              ))
+            )}
+          </TabsContent>
+        </Tabs>
+      </div>
 
-        <TabsContent value="requests" className="space-y-3 mt-6">
-          {loadingRequests ? (
-            <Card className="p-8 text-center">
-              <p className="text-muted-foreground">Loading requests...</p>
-            </Card>
-          ) : requests.length === 0 ? (
-            <Card className="p-8 text-center">
-              <Clock className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground">No pending friend requests</p>
-            </Card>
-          ) : (
-            requests.map((request) => (
-              <Card key={request.id} className="p-4" data-testid={`card-request-${request.id}`}>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Avatar>
-                      <AvatarImage src={request.sender.profileImage} />
-                      <AvatarFallback>{request.sender.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <h3 className="font-semibold">{request.sender.name}</h3>
-                      <p className="text-sm text-muted-foreground">@{request.sender.username}</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {new Date(request.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      onClick={() => acceptRequestMutation.mutate(request.id)}
-                      disabled={acceptRequestMutation.isPending}
-                      data-testid={`button-accept-${request.id}`}
-                    >
-                      Accept
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => rejectRequestMutation.mutate(request.id)}
-                      disabled={rejectRequestMutation.isPending}
-                      data-testid={`button-reject-${request.id}`}
-                    >
-                      Reject
-                    </Button>
-                  </div>
+      {/* Send Request Dialog with Dance Story */}
+      <Dialog open={showRequestDialog} onOpenChange={setShowRequestDialog}>
+        <DialogContent className="backdrop-blur-xl bg-white/90 dark:bg-slate-900/90">
+          <DialogHeader>
+            <DialogTitle className="text-xl bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+              Send Friend Request to {selectedUser?.name}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="message">Personal Message *</Label>
+              <Textarea
+                id="message"
+                placeholder="Hi! I'd love to connect..."
+                value={requestData.message}
+                onChange={(e) => setRequestData({ ...requestData, message: e.target.value })}
+                className="mt-1"
+                data-testid="input-friend-request-message"
+              />
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="didWeDance"
+                checked={requestData.didWeDance}
+                onCheckedChange={(checked) =>
+                  setRequestData({ ...requestData, didWeDance: checked as boolean })
+                }
+                data-testid="checkbox-did-we-dance"
+              />
+              <Label htmlFor="didWeDance" className="cursor-pointer">
+                We danced together 💃🕺
+              </Label>
+            </div>
+
+            {requestData.didWeDance && (
+              <div className="space-y-3 p-4 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/20 dark:to-blue-950/20 rounded-lg border border-cyan-200 dark:border-cyan-800">
+                <div>
+                  <Label htmlFor="danceLocation">Where did we dance?</Label>
+                  <Input
+                    id="danceLocation"
+                    placeholder="e.g., Salon Canning, Buenos Aires"
+                    value={requestData.danceLocation}
+                    onChange={(e) =>
+                      setRequestData({ ...requestData, danceLocation: e.target.value })
+                    }
+                    className="mt-1"
+                    data-testid="input-dance-location"
+                  />
                 </div>
-              </Card>
-            ))
-          )}
-        </TabsContent>
+                <div>
+                  <Label htmlFor="danceStory">Share the memory</Label>
+                  <Textarea
+                    id="danceStory"
+                    placeholder="Tell them about your dance together..."
+                    value={requestData.danceStory}
+                    onChange={(e) =>
+                      setRequestData({ ...requestData, danceStory: e.target.value })
+                    }
+                    className="mt-1"
+                    data-testid="input-dance-story"
+                  />
+                </div>
+              </div>
+            )}
 
-        <TabsContent value="suggestions" className="space-y-3 mt-6">
-          {loadingSuggestions ? (
-            <Card className="p-8 text-center">
-              <p className="text-muted-foreground">Loading suggestions...</p>
-            </Card>
-          ) : suggestions.length === 0 ? (
-            <Card className="p-8 text-center">
-              <UserPlus className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground">No friend suggestions available</p>
-            </Card>
-          ) : (
-            suggestions.map((friend) => <FriendCard key={friend.id} friend={friend} showAddButton />)
-          )}
-        </TabsContent>
-      </Tabs>
-    </div>
-    </PageLayout>);
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowRequestDialog(false)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={submitRequest}
+                disabled={!requestData.message || sendRequestMutation.isPending}
+                className="bg-gradient-to-r from-cyan-500 to-blue-600"
+                data-testid="button-submit-friend-request"
+              >
+                Send Request
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </PageLayout>
+  );
 }
