@@ -1,4 +1,5 @@
 import { Switch, Route } from "wouter";
+import { lazy, Suspense } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -9,129 +10,163 @@ import { AppLayout } from "./components/AppLayout";
 import { GlobalTopbar } from "./components/GlobalTopbar";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { MrBlueWidget } from "./components/MrBlueWidget";
+import { LoadingFallback } from "./components/LoadingFallback";
+
+// Core Pages (loaded immediately for fast initial render)
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/HomePage";
-import AboutPage from "@/pages/AboutPage";
-import CalendarPage from "@/pages/CalendarPage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
-import DiscoverPage from "@/pages/DiscoverPage";
-import VolunteerPage from "@/pages/VolunteerPage";
-import TalentMatchPage from "@/pages/TalentMatchPage";
-import MrBlueChatPage from "@/pages/MrBlueChatPage";
-import LifeCEODashboardPage from "@/pages/LifeCEODashboardPage";
-import HealthAgentPage from "@/pages/life-ceo/HealthAgentPage";
-import FinanceAgentPage from "@/pages/life-ceo/FinanceAgentPage";
-import CareerAgentPage from "@/pages/life-ceo/CareerAgentPage";
-import ProductivityAgentPage from "@/pages/life-ceo/ProductivityAgentPage";
-import TravelAgentPage from "@/pages/life-ceo/TravelAgentPage";
-import HomeManagementPage from "@/pages/life-ceo/HomeManagementPage";
-import LearningAgentPage from "@/pages/life-ceo/LearningAgentPage";
-import SocialAgentPage from "@/pages/life-ceo/SocialAgentPage";
-import WellnessAgentPage from "@/pages/life-ceo/WellnessAgentPage";
-import EntertainmentAgentPage from "@/pages/life-ceo/EntertainmentAgentPage";
-import CreativityAgentPage from "@/pages/life-ceo/CreativityAgentPage";
-import FitnessAgentPage from "@/pages/life-ceo/FitnessAgentPage";
-import NutritionAgentPage from "@/pages/life-ceo/NutritionAgentPage";
-import SleepAgentPage from "@/pages/life-ceo/SleepAgentPage";
-import StressAgentPage from "@/pages/life-ceo/StressAgentPage";
-import RelationshipAgentPage from "@/pages/life-ceo/RelationshipAgentPage";
-import TalentPipelinePage from "@/pages/admin/TalentPipelinePage";
-import TaskBoardPage from "@/pages/admin/TaskBoardPage";
-import FeedPage from "@/pages/FeedPage";
-import ProfilePage from "@/pages/ProfilePage";
-import EventsPage from "@/pages/EventsPage";
-import EventDetailsPage from "@/pages/EventDetailsPage";
-import GroupsPage from "@/pages/GroupsPage";
-import GroupDetailsPage from "@/pages/GroupDetailsPage";
-import MessagesPage from "@/pages/MessagesPage";
-import SettingsPage from "@/pages/SettingsPage";
-import PlatformPage from "@/pages/Platform";
-import SecretsPage from "@/pages/SecretsPage";
-import GitRepositoryPage from "@/pages/GitRepositoryPage";
-import MonitoringPage from "@/pages/MonitoringPage";
-import AnalyticsPage from "@/pages/AnalyticsPage";
-import ESADashboardPage from "@/pages/ESADashboardPage";
-import AgentTasksPage from "@/pages/AgentTasksPage";
-import AgentCommunicationsPage from "@/pages/AgentCommunicationsPage";
-import FriendsListPage from "@/pages/FriendsListPage";
-import NotificationsPage from "@/pages/NotificationsPage";
-import SearchPage from "@/pages/SearchPage";
-import UserSettingsPage from "@/pages/UserSettingsPage";
-import TeachersPage from "@/pages/TeachersPage";
-import VenuesPage from "@/pages/VenuesPage";
-import TutorialsPage from "@/pages/TutorialsPage";
-import MarketplacePage from "@/pages/MarketplacePage";
-import FAQPage from "@/pages/FAQPage";
-import DanceStylesPage from "@/pages/DanceStylesPage";
-import PartnerFinderPage from "@/pages/PartnerFinderPage";
-import VideoLessonsPage from "@/pages/VideoLessonsPage";
-import HostHomesPage from "@/pages/HostHomesPage";
-import TravelPlannerPage from "@/pages/TravelPlannerPage";
-import BlogPage from "@/pages/BlogPage";
-import MusicLibraryPage from "@/pages/MusicLibraryPage";
-import CommunityGuidelinesPage from "@/pages/CommunityGuidelinesPage";
-import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage";
-import TermsPage from "@/pages/TermsPage";
-import ContactPage from "@/pages/ContactPage";
-import PricingPage from "@/pages/PricingPage";
-import CheckoutPage from "@/pages/CheckoutPage";
-import BillingPage from "@/pages/BillingPage";
-import OnboardingPage from "@/pages/OnboardingPage";
-import WelcomeTourPage from "@/pages/WelcomeTourPage";
-import WelcomePage from "@/pages/onboarding/WelcomePage";
-import CitySelectionPage from "@/pages/onboarding/CitySelectionPage";
-import PhotoUploadPage from "@/pages/onboarding/PhotoUploadPage";
-import TangoRolesPage from "@/pages/onboarding/TangoRolesPage";
-import GuidedTourPage from "@/pages/onboarding/GuidedTourPage";
-import LiveStreamPage from "@/pages/LiveStreamPage";
-import WorkshopsPage from "@/pages/WorkshopsPage";
-import ReviewsPage from "@/pages/ReviewsPage";
-import MediaGalleryPage from "@/pages/MediaGalleryPage";
-import LeaderboardPage from "@/pages/LeaderboardPage";
-import NewsletterPage from "@/pages/NewsletterPage";
-import AdminDashboardPage from "@/pages/AdminDashboardPage";
-import ContentModerationPage from "@/pages/ContentModerationPage";
-import UserReportsPage from "@/pages/UserReportsPage";
-import SavedPostsPage from "@/pages/SavedPostsPage";
-import BlockedUsersPage from "@/pages/BlockedUsersPage";
-import HelpPage from "@/pages/HelpPage";
-import WorkshopDetailPage from "@/pages/WorkshopDetailPage";
-import TeacherDetailPage from "@/pages/TeacherDetailPage";
-import VenueDetailPage from "@/pages/VenueDetailPage";
-import TutorialDetailPage from "@/pages/TutorialDetailPage";
-import MarketplaceItemPage from "@/pages/MarketplaceItemPage";
-import BookingConfirmationPage from "@/pages/BookingConfirmationPage";
-import PaymentSuccessPage from "@/pages/PaymentSuccessPage";
-import PaymentFailedPage from "@/pages/PaymentFailedPage";
-import EmailPreferencesPage from "@/pages/EmailPreferencesPage";
-import NotificationSettingsPage from "@/pages/NotificationSettingsPage";
-import PrivacySettingsPage from "@/pages/PrivacySettingsPage";
-import AccountSettingsPage from "@/pages/AccountSettingsPage";
-import PasswordResetPage from "@/pages/PasswordResetPage";
-import EmailVerificationPage from "@/pages/EmailVerificationPage";
-import TwoFactorAuthPage from "@/pages/TwoFactorAuthPage";
-import ProfileEditPage from "@/pages/ProfileEditPage";
-import ActivityLogPage from "@/pages/ActivityLogPage";
-import FollowingPage from "@/pages/FollowingPage";
-import FollowersPage from "@/pages/FollowersPage";
-import BlockedContentPage from "@/pages/BlockedContentPage";
-import ReportUserPage from "@/pages/ReportUserPage";
-import ReportContentPage from "@/pages/ReportContentPage";
-import AdminUsersPage from "@/pages/AdminUsersPage";
-import DashboardPage from "@/pages/DashboardPage";
-import VisualEditorPage from "@/pages/VisualEditorPage";
-import SEOAgentPage from "@/pages/marketing/SEOAgentPage";
-import ContentAgentPage from "@/pages/marketing/ContentAgentPage";
-import SocialMediaAgentPage from "@/pages/marketing/SocialMediaAgentPage";
-import EmailAgentPage from "@/pages/marketing/EmailAgentPage";
-import AnalyticsAgentPage from "@/pages/marketing/AnalyticsAgentPage";
-import RecruiterAgentPage from "@/pages/hr/RecruiterAgentPage";
-import OnboardingAgentPage from "@/pages/hr/OnboardingAgentPage";
-import PerformanceAgentPage from "@/pages/hr/PerformanceAgentPage";
-import RetentionAgentPage from "@/pages/hr/RetentionAgentPage";
-import CultureAgentPage from "@/pages/hr/CultureAgentPage";
-import H2ACDashboardPage from "@/pages/H2ACDashboardPage";
+
+// Lazy-loaded pages for better performance
+const AboutPage = lazy(() => import("@/pages/AboutPage"));
+const CalendarPage = lazy(() => import("@/pages/CalendarPage"));
+// Social & Community
+const DiscoverPage = lazy(() => import("@/pages/DiscoverPage"));
+const VolunteerPage = lazy(() => import("@/pages/VolunteerPage"));
+const FeedPage = lazy(() => import("@/pages/FeedPage"));
+const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
+const FriendsListPage = lazy(() => import("@/pages/FriendsListPage"));
+const FollowingPage = lazy(() => import("@/pages/FollowingPage"));
+const FollowersPage = lazy(() => import("@/pages/FollowersPage"));
+const MessagesPage = lazy(() => import("@/pages/MessagesPage"));
+const NotificationsPage = lazy(() => import("@/pages/NotificationsPage"));
+const SearchPage = lazy(() => import("@/pages/SearchPage"));
+
+// Events & Groups
+const EventsPage = lazy(() => import("@/pages/EventsPage"));
+const EventDetailsPage = lazy(() => import("@/pages/EventDetailsPage"));
+const GroupsPage = lazy(() => import("@/pages/GroupsPage"));
+const GroupDetailsPage = lazy(() => import("@/pages/GroupDetailsPage"));
+
+// Talent & AI
+const TalentMatchPage = lazy(() => import("@/pages/TalentMatchPage"));
+const MrBlueChatPage = lazy(() => import("@/pages/MrBlueChatPage"));
+
+// Life CEO Suite (16 agents)
+const LifeCEODashboardPage = lazy(() => import("@/pages/LifeCEODashboardPage"));
+const HealthAgentPage = lazy(() => import("@/pages/life-ceo/HealthAgentPage"));
+const FinanceAgentPage = lazy(() => import("@/pages/life-ceo/FinanceAgentPage"));
+const CareerAgentPage = lazy(() => import("@/pages/life-ceo/CareerAgentPage"));
+const ProductivityAgentPage = lazy(() => import("@/pages/life-ceo/ProductivityAgentPage"));
+const TravelAgentPage = lazy(() => import("@/pages/life-ceo/TravelAgentPage"));
+const HomeManagementPage = lazy(() => import("@/pages/life-ceo/HomeManagementPage"));
+const LearningAgentPage = lazy(() => import("@/pages/life-ceo/LearningAgentPage"));
+const SocialAgentPage = lazy(() => import("@/pages/life-ceo/SocialAgentPage"));
+const WellnessAgentPage = lazy(() => import("@/pages/life-ceo/WellnessAgentPage"));
+const EntertainmentAgentPage = lazy(() => import("@/pages/life-ceo/EntertainmentAgentPage"));
+const CreativityAgentPage = lazy(() => import("@/pages/life-ceo/CreativityAgentPage"));
+const FitnessAgentPage = lazy(() => import("@/pages/life-ceo/FitnessAgentPage"));
+const NutritionAgentPage = lazy(() => import("@/pages/life-ceo/NutritionAgentPage"));
+const SleepAgentPage = lazy(() => import("@/pages/life-ceo/SleepAgentPage"));
+const StressAgentPage = lazy(() => import("@/pages/life-ceo/StressAgentPage"));
+const RelationshipAgentPage = lazy(() => import("@/pages/life-ceo/RelationshipAgentPage"));
+
+// Admin & ESA Framework
+const TalentPipelinePage = lazy(() => import("@/pages/admin/TalentPipelinePage"));
+const TaskBoardPage = lazy(() => import("@/pages/admin/TaskBoardPage"));
+const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
+const AdminUsersPage = lazy(() => import("@/pages/AdminUsersPage"));
+const ContentModerationPage = lazy(() => import("@/pages/ContentModerationPage"));
+const UserReportsPage = lazy(() => import("@/pages/UserReportsPage"));
+const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
+const PlatformPage = lazy(() => import("@/pages/Platform"));
+const SecretsPage = lazy(() => import("@/pages/SecretsPage"));
+const GitRepositoryPage = lazy(() => import("@/pages/GitRepositoryPage"));
+const MonitoringPage = lazy(() => import("@/pages/MonitoringPage"));
+const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
+const ESADashboardPage = lazy(() => import("@/pages/ESADashboardPage"));
+const AgentTasksPage = lazy(() => import("@/pages/AgentTasksPage"));
+const AgentCommunicationsPage = lazy(() => import("@/pages/AgentCommunicationsPage"));
+
+// Marketing & HR Agents
+const SEOAgentPage = lazy(() => import("@/pages/marketing/SEOAgentPage"));
+const ContentAgentPage = lazy(() => import("@/pages/marketing/ContentAgentPage"));
+const SocialMediaAgentPage = lazy(() => import("@/pages/marketing/SocialMediaAgentPage"));
+const EmailAgentPage = lazy(() => import("@/pages/marketing/EmailAgentPage"));
+const AnalyticsAgentPage = lazy(() => import("@/pages/marketing/AnalyticsAgentPage"));
+const RecruiterAgentPage = lazy(() => import("@/pages/hr/RecruiterAgentPage"));
+const OnboardingAgentPage = lazy(() => import("@/pages/hr/OnboardingAgentPage"));
+const PerformanceAgentPage = lazy(() => import("@/pages/hr/PerformanceAgentPage"));
+const RetentionAgentPage = lazy(() => import("@/pages/hr/RetentionAgentPage"));
+const CultureAgentPage = lazy(() => import("@/pages/hr/CultureAgentPage"));
+const H2ACDashboardPage = lazy(() => import("@/pages/H2ACDashboardPage"));
+
+// Settings & Account
+const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
+const UserSettingsPage = lazy(() => import("@/pages/UserSettingsPage"));
+const EmailPreferencesPage = lazy(() => import("@/pages/EmailPreferencesPage"));
+const NotificationSettingsPage = lazy(() => import("@/pages/NotificationSettingsPage"));
+const PrivacySettingsPage = lazy(() => import("@/pages/PrivacySettingsPage"));
+const AccountSettingsPage = lazy(() => import("@/pages/AccountSettingsPage"));
+const ProfileEditPage = lazy(() => import("@/pages/ProfileEditPage"));
+const ActivityLogPage = lazy(() => import("@/pages/ActivityLogPage"));
+const SavedPostsPage = lazy(() => import("@/pages/SavedPostsPage"));
+const BlockedUsersPage = lazy(() => import("@/pages/BlockedUsersPage"));
+const BlockedContentPage = lazy(() => import("@/pages/BlockedContentPage"));
+
+// Auth & Security
+const PasswordResetPage = lazy(() => import("@/pages/PasswordResetPage"));
+const EmailVerificationPage = lazy(() => import("@/pages/EmailVerificationPage"));
+const TwoFactorAuthPage = lazy(() => import("@/pages/TwoFactorAuthPage"));
+
+// Tango Resources
+const TeachersPage = lazy(() => import("@/pages/TeachersPage"));
+const TeacherDetailPage = lazy(() => import("@/pages/TeacherDetailPage"));
+const VenuesPage = lazy(() => import("@/pages/VenuesPage"));
+const VenueDetailPage = lazy(() => import("@/pages/VenueDetailPage"));
+const TutorialsPage = lazy(() => import("@/pages/TutorialsPage"));
+const TutorialDetailPage = lazy(() => import("@/pages/TutorialDetailPage"));
+const WorkshopsPage = lazy(() => import("@/pages/WorkshopsPage"));
+const WorkshopDetailPage = lazy(() => import("@/pages/WorkshopDetailPage"));
+const VideoLessonsPage = lazy(() => import("@/pages/VideoLessonsPage"));
+const DanceStylesPage = lazy(() => import("@/pages/DanceStylesPage"));
+const PartnerFinderPage = lazy(() => import("@/pages/PartnerFinderPage"));
+const MusicLibraryPage = lazy(() => import("@/pages/MusicLibraryPage"));
+
+// Travel & Housing
+const TravelPlannerPage = lazy(() => import("@/pages/TravelPlannerPage"));
+const HostHomesPage = lazy(() => import("@/pages/HostHomesPage"));
+
+// Commerce
+const MarketplacePage = lazy(() => import("@/pages/MarketplacePage"));
+const MarketplaceItemPage = lazy(() => import("@/pages/MarketplaceItemPage"));
+const CheckoutPage = lazy(() => import("@/pages/CheckoutPage"));
+const BillingPage = lazy(() => import("@/pages/BillingPage"));
+const PaymentSuccessPage = lazy(() => import("@/pages/PaymentSuccessPage"));
+const PaymentFailedPage = lazy(() => import("@/pages/PaymentFailedPage"));
+const BookingConfirmationPage = lazy(() => import("@/pages/BookingConfirmationPage"));
+const PricingPage = lazy(() => import("@/pages/PricingPage"));
+
+// Content & Info
+const BlogPage = lazy(() => import("@/pages/BlogPage"));
+const NewsletterPage = lazy(() => import("@/pages/NewsletterPage"));
+const LiveStreamPage = lazy(() => import("@/pages/LiveStreamPage"));
+const ReviewsPage = lazy(() => import("@/pages/ReviewsPage"));
+const MediaGalleryPage = lazy(() => import("@/pages/MediaGalleryPage"));
+const LeaderboardPage = lazy(() => import("@/pages/LeaderboardPage"));
+const FAQPage = lazy(() => import("@/pages/FAQPage"));
+const HelpPage = lazy(() => import("@/pages/HelpPage"));
+const ContactPage = lazy(() => import("@/pages/ContactPage"));
+const TermsPage = lazy(() => import("@/pages/TermsPage"));
+const PrivacyPolicyPage = lazy(() => import("@/pages/PrivacyPolicyPage"));
+const CommunityGuidelinesPage = lazy(() => import("@/pages/CommunityGuidelinesPage"));
+
+// Onboarding
+const OnboardingPage = lazy(() => import("@/pages/OnboardingPage"));
+const WelcomeTourPage = lazy(() => import("@/pages/WelcomeTourPage"));
+const WelcomePage = lazy(() => import("@/pages/onboarding/WelcomePage"));
+const CitySelectionPage = lazy(() => import("@/pages/onboarding/CitySelectionPage"));
+const PhotoUploadPage = lazy(() => import("@/pages/onboarding/PhotoUploadPage"));
+const TangoRolesPage = lazy(() => import("@/pages/onboarding/TangoRolesPage"));
+const GuidedTourPage = lazy(() => import("@/pages/onboarding/GuidedTourPage"));
+
+// Moderation & Reports
+const ReportUserPage = lazy(() => import("@/pages/ReportUserPage"));
+const ReportContentPage = lazy(() => import("@/pages/ReportContentPage"));
+
+// Visual Editor
+const VisualEditorPage = lazy(() => import("@/pages/VisualEditorPage"));
 
 function Router() {
   return (
@@ -638,7 +673,9 @@ function App() {
         <AuthProvider>
           <TooltipProvider>
             <Toaster />
-            <Router />
+            <Suspense fallback={<LoadingFallback />}>
+              <Router />
+            </Suspense>
             <MrBlueWidget />
           </TooltipProvider>
         </AuthProvider>
