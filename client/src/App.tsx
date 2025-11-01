@@ -25,6 +25,9 @@ import CareerAgentPage from "@/pages/life-ceo/CareerAgentPage";
 import ProductivityAgentPage from "@/pages/life-ceo/ProductivityAgentPage";
 import TravelAgentPage from "@/pages/life-ceo/TravelAgentPage";
 import HomeManagementPage from "@/pages/life-ceo/HomeManagementPage";
+import LearningAgentPage from "@/pages/life-ceo/LearningAgentPage";
+import SocialAgentPage from "@/pages/life-ceo/SocialAgentPage";
+import WellnessAgentPage from "@/pages/life-ceo/WellnessAgentPage";
 import TalentPipelinePage from "@/pages/admin/TalentPipelinePage";
 import TaskBoardPage from "@/pages/admin/TaskBoardPage";
 import FeedPage from "@/pages/FeedPage";
@@ -126,6 +129,9 @@ function Router() {
       <Route path="/life-ceo/productivity" component={ProductivityAgentPage} />
       <Route path="/life-ceo/travel" component={TravelAgentPage} />
       <Route path="/life-ceo/home" component={HomeManagementPage} />
+      <Route path="/life-ceo/learning" component={LearningAgentPage} />
+      <Route path="/life-ceo/social" component={SocialAgentPage} />
+      <Route path="/life-ceo/wellness" component={WellnessAgentPage} />
       <Route path="/admin/talent-pipeline" component={TalentPipelinePage} />
       <Route path="/admin/task-board" component={TaskBoardPage} />
       <Route path="/login" component={LoginPage} />
