@@ -22,6 +22,16 @@ The project employs a modular and agent-driven development approach, utilizing a
 - **Design System:** Dark mode support, glassmorphic effects, Tailwind CSS + shadcn/ui components, responsive design, and a custom typography system.
 - **Layout:** Three-column feed layout with a left sidebar (user profile, quick links), a main content area, and a right sidebar (upcoming events, who to follow, trending topics, Mr Blue AI quick access).
 - **Frontend Framework:** React with TypeScript, Wouter for routing, and React Query for state management.
+- **Design Research (2025-11-01):** Comprehensive 2024-2025 UI/UX research completed for marketing site redesign. See `docs/design-research-2024-social-platforms.md` for full analysis including:
+  - **2024-2025 Trends:** Minimaximalism, dark mode optimization, bold typography, custom illustrations, video-first design, asymmetrical layouts
+  - **Top Designers:** Simon Pan (Google), Pratibha Joshi (Microsoft/Sprinklr/Google), Kyson Dana, Gloria Lo - portfolios studied for process documentation and storytelling
+  - **Award Winners:** Awwwards 2024 annual winners analyzed (Igloo Inc, Locomotive, Immersive Garden)
+  - **Community Platforms:** Discord, Beehiiv, Presence - best practices for welcoming, mobile-first design
+  - **Global Accessibility:** WCAG 2.1 AA compliance, Microsoft Inclusive Design Framework, multilingual support, cultural sensitivity
+  - **Emotional Design:** Donald Norman's 3-level framework (visceral, behavioral, reflective) with 306% higher lifetime value for emotionally connected customers
+  - **Design Options:** 4 distinct directions presented - Bold Minimaximalist (recommended), Dark Mode Premium, Warm Community Focus, Interactive Storytelling
+  - **Key Insights:** 80% prefer dark mode, video-first is critical, micro-interactions increase retention 30%, storytelling increases engagement 65%
+  - **Tango-Specific:** Auckland Tango, Tango Mercurio, Boston Tango analyzed for community features, event calendars, cultural authenticity
 
 ### Technical Implementations
 - **Backend:** Node.js with Express and TypeScript.
@@ -44,17 +54,13 @@ The project employs a modular and agent-driven development approach, utilizing a
 - **AI Integration:** Production-ready AI features including:
   - **Talent Match AI:** PDF/DOCX resume parsing, 8-domain signal detection, Groq AI Clarifier interview system, automatic task matching with confidence scoring
   - **MrBlueChat:** Groq SDK integration for streaming AI responses
-  - **Mr. Blue Dynamic Video Avatar System (2025-11-01):** Comprehensive Pixar-style AI companion with state-based Luma videos
-    - **10 Expression States:** idle, listening, speaking, happy, thinking, excited, surprised, nodding, walk-left, walk-right
-    - **Video State Manager:** useVideoStateManager hook for dynamic state transitions with auto-timeout to idle
-    - **Batch Generation API:** POST /api/mrblue/generate-all-states (generates all 10 videos ~$4 cost)
-    - **Individual Generation:** POST /api/mrblue/generate-state/:state (single state video ~$0.40)
-    - **Auto-Save System:** Videos auto-download to /videos/states/{state}.mp4 when complete
-    - **Component Architecture:** MrBlueAvatarVideo with state-aware video switching, graceful 2D fallback
-    - **User Interaction Flow:** idle → (hover) happy → (click) walks → opens chat → listening → speaking → idle
-    - **GlobalMrBlue Integration:** Context-aware positioning, page-specific behaviors, click-to-chat navigation
-    - **Voice Controls:** Speech recognition ready, text/audio response toggle in chat
-    - **Luma Integration:** ray-2 model, 1:1 aspect ratio, 5sec loops (walking videos non-loop)
+  - **Mr. Blue Simplified Interface (2025-11-01):** Button-only design per user request
+    - **Avatar visuals hidden:** Video and 2D canvas implementations hidden (designs need refinement)
+    - **Simple button:** "Ask Mr. Blue" button with MessageCircle icon, fixed bottom-right positioning
+    - **Chat integration:** Opens ChatSidePanel on click, full Groq AI functionality preserved
+    - **Previous work completed but hidden:** 10 Luma video states, portrait styling system, edge-fade masks, glow effects, state-based transitions
+    - **Why hidden:** User requested cleaner interface while avatar designs are refined
+    - **Implementation:** GlobalMrBlue.tsx simplified from 200 lines to 50 lines
 - **Automation Infrastructure:** BullMQ with 39 automation functions across 6 dedicated workers (User Lifecycle, Social Automation, Event Automation, Life CEO, Housing, Administration).
 - **Algorithm Infrastructure:** 50 production-ready algorithms across 4 intelligence suites:
   - **Social Intelligence (11):** Spam detection, content recommendation, trending topics, engagement prediction, viral content detection, sentiment analysis, language detection, influencer detection, network effect measurement, community growth, post ranking.
