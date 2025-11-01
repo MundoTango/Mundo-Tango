@@ -706,16 +706,21 @@ export const friendRequests = pgTable("friend_requests", {
   danceStory: text("dance_story"),
   
   // Messages
-  senderMessage: text("sender_message").notNull(), // Required personal message
-  senderPrivateNote: text("sender_private_note"), // Only visible to sender
-  receiverResponse: text("receiver_response"),
+  senderMessage: text("sender_message"),
+  senderPrivateNote: text("sender_private_note"),
+  receiverMessage: text("receiver_message"),
+  receiverPrivateNote: text("receiver_private_note"),
   
   // Media
   mediaUrls: text("media_urls").array(),
   
   // Snooze functionality
   snoozedUntil: timestamp("snoozed_until"),
-  snoozedCount: integer("snoozed_count").default(0).notNull(),
+  snoozeReminderSent: boolean("snooze_reminder_sent").default(false),
+  
+  // Timestamps
+  sentAt: timestamp("sent_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => ({
   senderIdx: index("friend_requests_sender_idx").on(table.senderId),
   receiverIdx: index("friend_requests_receiver_idx").on(table.receiverId),
