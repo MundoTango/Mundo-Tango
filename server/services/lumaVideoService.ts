@@ -44,6 +44,7 @@ export class LumaVideoService {
   async generateFromText(request: VideoGenerationRequest): Promise<VideoGenerationResponse> {
     const body: any = {
       prompt: request.prompt,
+      model: 'ray', // Dream Machine model
     };
 
     if (request.aspectRatio) {
@@ -83,6 +84,7 @@ export class LumaVideoService {
 
     const body: any = {
       prompt: request.prompt,
+      model: 'ray', // Dream Machine model
       keyframes: {
         frame0: {
           type: 'image',
