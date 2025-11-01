@@ -201,6 +201,19 @@ export function MrBlueAvatarVideo({
   }
 
   console.log('[MrBlueAvatarVideo] Rendering VIDEO element with src:', currentVideoPath, 'State:', videoStateManager.currentState);
+  
+  const handleMouseEnter = () => {
+    if (enableStateTransitions) {
+      videoStateManager.transitionTo('happy');
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (enableStateTransitions && videoStateManager.currentState === 'happy') {
+      videoStateManager.returnToIdle();
+    }
+  };
+
   return (
     <div 
       className="relative group" 
@@ -208,6 +221,8 @@ export function MrBlueAvatarVideo({
         width: size, 
         height: size * 1.2 // Natural portrait aspect ratio
       }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {/* Luma Video Avatar - No circular constraint, natural portrait */}
       <div className="relative w-full h-full">
