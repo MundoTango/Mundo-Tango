@@ -41,7 +41,16 @@ The project employs a modular and agent-driven development approach, utilizing a
     - Mutual friends finder: Set intersection algorithm with efficient lookups
   - **Critical Bug Fix:** Eliminated circular JSON serialization error caused by embedding Drizzle schema column objects (PgSerial) in sql templates (e.g., `sql\`${users.id}\``). Neon serverless driver attempted JSON.stringify on these circular objects during query preparation. **Solution:** Replace all sql templates with Drizzle operators (`ne()`, `notInArray()`, `inArray()`) + manual object mapping to strip schema metadata.
 - **Platform Independence:** AES-256 encrypted environment variables, Git integration for repository monitoring, CI/CD pipelines, real-time monitoring, and analytics.
-- **AI Integration:** Production-ready AI features including Talent Match AI (PDF/DOCX resume parsing, 8-domain signal detection, Groq AI Clarifier interview system, automatic task matching with confidence scoring) and MrBlueChat (Groq SDK integration for streaming AI responses).
+- **AI Integration:** Production-ready AI features including:
+  - **Talent Match AI:** PDF/DOCX resume parsing, 8-domain signal detection, Groq AI Clarifier interview system, automatic task matching with confidence scoring
+  - **MrBlueChat:** Groq SDK integration for streaming AI responses
+  - **Luma Dream Machine Video Avatar (2025-11-01):** AI-generated video avatar for Mr. Blue with seamless 2D canvas fallback
+    - MrBlueAvatarVideo component with Luma AI integration (ray-2 model)
+    - Auto-generation API endpoints: GET /api/videos/mr-blue/avatar, POST /api/videos/mr-blue/avatar/save/:id
+    - Graceful degradation: Falls back to MrBlueAvatar2D when video unavailable/loading/error
+    - GlobalMrBlue component displays across all pages (bottom-right) except /mr-blue-chat
+    - Voice interaction controls ready (speech recognition integration)
+    - Tested: E2E verified with 2D fallback when Luma credits insufficient
 - **Automation Infrastructure:** BullMQ with 39 automation functions across 6 dedicated workers (User Lifecycle, Social Automation, Event Automation, Life CEO, Housing, Administration).
 - **Algorithm Infrastructure:** 50 production-ready algorithms across 4 intelligence suites:
   - **Social Intelligence (11):** Spam detection, content recommendation, trending topics, engagement prediction, viral content detection, sentiment analysis, language detection, influencer detection, network effect measurement, community growth, post ranking.
@@ -70,7 +79,7 @@ The project employs a modular and agent-driven development approach, utilizing a
 
 - **Database:** PostgreSQL (with Drizzle ORM)
 - **Authentication:** Google OAuth
-- **AI Integration:** Multi-AI integration (5 providers, including OpenAI, Groq SDK, Anthropic SDK)
+- **AI Integration:** Multi-AI integration (6 providers: OpenAI, Groq SDK, Anthropic SDK, Luma Dream Machine for video generation)
 - **Payments:** Stripe
 - **Real-time Communication:** Supabase Realtime
 - **Deployment & Hosting:** Vercel, Railway, Supabase
