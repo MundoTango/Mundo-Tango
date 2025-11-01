@@ -690,18 +690,37 @@ export const savedPosts = pgTable("saved_posts", {
   uniqueSave: uniqueIndex("unique_saved_post").on(table.userId, table.postId),
 }));
 
-// Friend Requests
+// Friend Requests (Enhanced with dance stories & snooze)
 export const friendRequests = pgTable("friend_requests", {
   id: serial("id").primaryKey(),
   senderId: integer("sender_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   receiverId: integer("receiver_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  status: varchar("status").default("pending").notNull(),
+  status: varchar("status").default("pending").notNull(), // pending, accepted, declined, cancelled, snoozed
   createdAt: timestamp("created_at").defaultNow().notNull(),
   respondedAt: timestamp("responded_at"),
+  
+  // Dance story fields
+  didWeDance: boolean("did_we_dance").default(false),
+  danceLocation: text("dance_location"),
+  danceEventId: integer("dance_event_id").references(() => events.id),
+  danceStory: text("dance_story"),
+  
+  // Messages
+  senderMessage: text("sender_message").notNull(), // Required personal message
+  senderPrivateNote: text("sender_private_note"), // Only visible to sender
+  receiverResponse: text("receiver_response"),
+  
+  // Media
+  mediaUrls: text("media_urls").array(),
+  
+  // Snooze functionality
+  snoozedUntil: timestamp("snoozed_until"),
+  snoozedCount: integer("snoozed_count").default(0).notNull(),
 }, (table) => ({
   senderIdx: index("friend_requests_sender_idx").on(table.senderId),
   receiverIdx: index("friend_requests_receiver_idx").on(table.receiverId),
   statusIdx: index("friend_requests_status_idx").on(table.status),
+  snoozedIdx: index("friend_requests_snoozed_idx").on(table.snoozedUntil),
   uniqueRequest: uniqueIndex("unique_friend_request").on(table.senderId, table.receiverId),
 }));
 
@@ -931,7 +950,7 @@ export const insertSavedPostSchema = createInsertSchema(savedPosts).omit({ id: t
 export type InsertSavedPost = z.infer<typeof insertSavedPostSchema>;
 export type SelectSavedPost = typeof savedPosts.$inferSelect;
 
-export const insertFriendRequestSchema = createInsertSchema(friendRequests).omit({ id: true, createdAt: true, respondedAt: true });
+export const insertFriendRequestSchema = createInsertSchema(friendRequests).omit({ id: true, createdAt: true, respondedAt: true, snoozedCount: true });
 export type InsertFriendRequest = z.infer<typeof insertFriendRequestSchema>;
 export type SelectFriendRequest = typeof friendRequests.$inferSelect;
 
@@ -1181,16 +1200,53 @@ export type SelectAssignment = typeof assignments.$inferSelect;
 // MISSING TABLES - Wave 1B Database Expansion (MB.MD Protocol)
 // ============================================================================
 
-// Friendships (accepted friend connections)
+// Friendships (accepted friend connections with scoring)
 export const friendships = pgTable("friendships", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   friendId: integer("friend_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  
+  // Enhanced fields
+  closenessScore: integer("closeness_score").default(75).notNull(), // 0-100, starts at 75
+  connectionDegree: integer("connection_degree").default(1).notNull(), // Always 1 for direct friends
+  lastInteractionAt: timestamp("last_interaction_at").defaultNow(),
+  status: varchar("status").default("active").notNull(), // active, blocked
 }, (table) => ({
   userIdx: index("friendships_user_idx").on(table.userId),
   friendIdx: index("friendships_friend_idx").on(table.friendId),
+  closenessIdx: index("friendships_closeness_idx").on(table.closenessScore),
   uniqueFriendship: uniqueIndex("unique_friendship").on(table.userId, table.friendId),
+}));
+
+// Friendship Activities (tracks interactions between friends)
+export const friendshipActivities = pgTable("friendship_activities", {
+  id: serial("id").primaryKey(),
+  friendshipId: integer("friendship_id").notNull().references(() => friendships.id, { onDelete: "cascade" }),
+  activityType: varchar("activity_type").notNull(), // message_sent, post_liked, event_attended_together, group_joined_together, memory_shared, dance_together
+  metadata: text("metadata"), // JSON string for additional data
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  friendshipIdx: index("friendship_activities_friendship_idx").on(table.friendshipId),
+  typeIdx: index("friendship_activities_type_idx").on(table.activityType),
+  dateIdx: index("friendship_activities_date_idx").on(table.createdAt),
+}));
+
+// Friendship Media (photos/videos shared in friend requests or friendships)
+export const friendshipMedia = pgTable("friendship_media", {
+  id: serial("id").primaryKey(),
+  friendRequestId: integer("friend_request_id").references(() => friendRequests.id, { onDelete: "cascade" }),
+  friendshipId: integer("friendship_id").references(() => friendships.id, { onDelete: "cascade" }),
+  uploaderId: integer("uploader_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  mediaUrl: text("media_url").notNull(),
+  mediaType: varchar("media_type").notNull(), // image, video
+  caption: text("caption"),
+  phase: varchar("phase").notNull(), // request, acceptance, memory
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  requestIdx: index("friendship_media_request_idx").on(table.friendRequestId),
+  friendshipIdx: index("friendship_media_friendship_idx").on(table.friendshipId),
+  uploaderIdx: index("friendship_media_uploader_idx").on(table.uploaderId),
 }));
 
 // Message Reactions (emoji reactions to chat messages)
@@ -1256,9 +1312,17 @@ export const postShares = pgTable("post_shares", {
 }));
 
 // Zod Schemas for New Tables
-export const insertFriendshipSchema = createInsertSchema(friendships).omit({ id: true, createdAt: true });
+export const insertFriendshipSchema = createInsertSchema(friendships).omit({ id: true, createdAt: true, closenessScore: true, connectionDegree: true, lastInteractionAt: true, status: true });
 export type InsertFriendship = z.infer<typeof insertFriendshipSchema>;
 export type SelectFriendship = typeof friendships.$inferSelect;
+
+export const insertFriendshipActivitySchema = createInsertSchema(friendshipActivities).omit({ id: true, createdAt: true });
+export type InsertFriendshipActivity = z.infer<typeof insertFriendshipActivitySchema>;
+export type SelectFriendshipActivity = typeof friendshipActivities.$inferSelect;
+
+export const insertFriendshipMediaSchema = createInsertSchema(friendshipMedia).omit({ id: true, createdAt: true });
+export type InsertFriendshipMedia = z.infer<typeof insertFriendshipMediaSchema>;
+export type SelectFriendshipMedia = typeof friendshipMedia.$inferSelect;
 
 export const insertMessageReactionSchema = createInsertSchema(messageReactions).omit({ id: true, createdAt: true });
 export type InsertMessageReaction = z.infer<typeof insertMessageReactionSchema>;
