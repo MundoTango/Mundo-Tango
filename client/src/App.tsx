@@ -10,6 +10,7 @@ import { AppLayout } from "./components/AppLayout";
 import { GlobalTopbar } from "./components/GlobalTopbar";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { MrBlueWidget } from "./components/MrBlueWidget";
+import { GlobalMrBlue } from "./components/mrblue/GlobalMrBlue";
 import { LoadingFallback } from "./components/LoadingFallback";
 
 // Core Pages (loaded immediately for fast initial render)
@@ -677,6 +678,7 @@ function App() {
               <Router />
             </Suspense>
             <MrBlueWidget />
+            <GlobalMrBlue />
           </TooltipProvider>
         </AuthProvider>
       </QueryClientProvider>

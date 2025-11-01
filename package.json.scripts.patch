@@ -1,0 +1,10 @@
+{
+  "audit:bundle": "node scripts/analyze-bundle.js",
+  "audit:lighthouse": "node scripts/lighthouse-audit.js",
+  "audit:mobile": "node scripts/mobile-audit.js",
+  "audit:all": "npm run audit:bundle && npm run audit:lighthouse && npm run audit:mobile",
+  "breadcrumbs:dry": "tsx scripts/apply-breadcrumbs.ts --dry-run",
+  "breadcrumbs:apply": "tsx scripts/apply-breadcrumbs.ts",
+  "test:docker": "docker-compose -f docker-compose.test.yml up --build",
+  "test:local": "npx playwright test"
+}

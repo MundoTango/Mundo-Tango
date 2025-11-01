@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
-import { MrBlueAvatar } from './MrBlueAvatar';
+import { MrBlueAvatar2D } from './MrBlueAvatar2D';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -116,7 +116,7 @@ export function GlobalMrBlue() {
     >
       {/* Avatar */}
       <div className="relative">
-        <MrBlueAvatar
+        <MrBlueAvatar2D
           size={isMinimized ? 80 : 160}
           expression={context.expression}
           isActive={!isMinimized}

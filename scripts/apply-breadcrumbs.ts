@@ -8,8 +8,13 @@
 import fs from 'fs';
 import path from 'path';
 import { glob } from 'glob';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-const PAGES_DIR = path.join(process.cwd(), 'client/src/pages');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const PAGES_DIR = path.join(__dirname, '../client/src/pages');
 const DRY_RUN = process.argv.includes('--dry-run');
 
 interface PageInfo {
@@ -95,7 +100,7 @@ function applyPageLayout(filePath: string, content: string): string {
 async function main() {
   console.log('🔍 Scanning for pages without breadcrumbs...\n');
 
-  const pageFiles = await glob('**/*Page.tsx', { cwd: PAGES_DIR });
+  const pageFiles = await glob('**/*.tsx', { cwd: PAGES_DIR });
   const pages: PageInfo[] = [];
 
   for (const file of pageFiles) {
