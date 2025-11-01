@@ -106,6 +106,110 @@ async function handleNewEventNotification(job: Job) {
   console.log(`[A-EVENT-03] ✅ Notified ${topMembers.length} members`);
 }
 
+// A-EVENT-04: Post-Event Follow-Up
+async function handlePostEventFollowUp(job: Job) {
+  const { eventId, attendeeIds } = job.data;
+  
+  console.log(`[A-EVENT-04] Post-event follow-up for event ${eventId}`);
+  
+  const event = await storage.getEventById(eventId);
+  if (!event) return;
+  
+  for (const attendeeId of attendeeIds) {
+    await storage.createNotification({
+      userId: attendeeId,
+      type: "event_followup",
+      title: "Thank You for Attending! 🙏",
+      message: `Hope you enjoyed "${event.title}"! Share your experience`,
+      actionUrl: `/events/${eventId}`,
+    });
+  }
+  
+  console.log(`[A-EVENT-04] ✅ Follow-up sent to ${attendeeIds.length} attendees`);
+}
+
+// A-EVENT-05: Feedback Collection
+async function handleFeedbackCollection(job: Job) {
+  const { eventId, attendeeId } = job.data;
+  
+  console.log(`[A-EVENT-05] Requesting feedback for event ${eventId} from user ${attendeeId}`);
+  
+  const event = await storage.getEventById(eventId);
+  if (!event) return;
+  
+  await storage.createNotification({
+    userId: attendeeId,
+    type: "feedback_request",
+    title: "Rate Your Experience ⭐",
+    message: `How was "${event.title}"? Your feedback helps organizers improve`,
+    actionUrl: `/events/${eventId}/feedback`,
+  });
+  
+  console.log(`[A-EVENT-05] ✅ Feedback request sent`);
+}
+
+// A-EVENT-06: Photo Sharing Automation
+async function handlePhotoSharing(job: Job) {
+  const { eventId, attendeeIds } = job.data;
+  
+  console.log(`[A-EVENT-06] Photo sharing for event ${eventId}`);
+  
+  const event = await storage.getEventById(eventId);
+  if (!event) return;
+  
+  for (const attendeeId of attendeeIds) {
+    await storage.createNotification({
+      userId: attendeeId,
+      type: "photo_album",
+      title: "Event Photos Ready! 📸",
+      message: `View and share photos from "${event.title}"`,
+      actionUrl: `/events/${eventId}/photos`,
+    });
+  }
+  
+  console.log(`[A-EVENT-06] ✅ Photo sharing notifications sent`);
+}
+
+// A-EVENT-07: Attendee Networking
+async function handleAttendeeNetworking(job: Job) {
+  const { eventId, userId, suggestedConnectionId } = job.data;
+  
+  console.log(`[A-EVENT-07] Networking suggestion for event ${eventId}`);
+  
+  const suggestedUser = await storage.getUserById(suggestedConnectionId);
+  if (!suggestedUser) return;
+  
+  await storage.createNotification({
+    userId,
+    type: "networking",
+    title: "Connect with Fellow Attendees! 🤝",
+    message: `${suggestedUser.name} also attended this event. Say hello!`,
+    actionUrl: `/profile/${suggestedUser.username}`,
+  });
+  
+  console.log(`[A-EVENT-07] ✅ Networking suggestion sent`);
+}
+
+// A-EVENT-08: Recurring Event Reminders
+async function handleRecurringEventReminder(job: Job) {
+  const { eventId, userId } = job.data;
+  
+  console.log(`[A-EVENT-08] Recurring event reminder for user ${userId}`);
+  
+  const event = await storage.getEventById(eventId);
+  if (!event) return;
+  
+  await storage.createNotification({
+    userId,
+    type: "recurring_event",
+    title: "Your Regular Milonga is This Week! 🎵",
+    message: `Don't miss "${event.title}" - starts soon`,
+    actionUrl: `/events/${eventId}`,
+  });
+  
+  console.log(`[A-EVENT-08] ✅ Recurring reminder sent`);
+}
+
 // Create Worker
 const eventWorker = new Worker(
   "event-automation",
@@ -120,6 +224,21 @@ const eventWorker = new Worker(
           break;
         case "new-event-notification":
           await handleNewEventNotification(job);
+          break;
+        case "post-event-followup":
+          await handlePostEventFollowUp(job);
+          break;
+        case "feedback-collection":
+          await handleFeedbackCollection(job);
+          break;
+        case "photo-sharing":
+          await handlePhotoSharing(job);
+          break;
+        case "attendee-networking":
+          await handleAttendeeNetworking(job);
+          break;
+        case "recurring-event-reminder":
+          await handleRecurringEventReminder(job);
           break;
         default:
           console.error(`Unknown job type: ${job.name}`);

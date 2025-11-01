@@ -118,6 +118,97 @@ async function handleShareNotification(job: Job) {
   console.log(`[A-SOCIAL-05] ✅ Share notification sent`);
 }
 
+// A-SOCIAL-06: Community Digest
+async function handleCommunityDigest(job: Job) {
+  const { userId, communityId } = job.data;
+  
+  console.log(`[A-SOCIAL-06] Generating community digest for user ${userId}`);
+  
+  await storage.createNotification({
+    userId,
+    type: "digest",
+    title: "This Week in Your Community 📰",
+    message: "Top posts, events, and conversations you missed",
+    actionUrl: `/communities/${communityId}`,
+  });
+  
+  console.log(`[A-SOCIAL-06] ✅ Community digest sent`);
+}
+
+// A-SOCIAL-07: Trending Content Alert
+async function handleTrendingContentAlert(job: Job) {
+  const { userId, postId, engagementCount } = job.data;
+  
+  console.log(`[A-SOCIAL-07] Trending content alert for user ${userId}`);
+  
+  await storage.createNotification({
+    userId,
+    type: "trending",
+    title: "Trending in Your City! 🔥",
+    message: `A post is going viral with ${engagementCount} interactions`,
+    actionUrl: `/posts/${postId}`,
+  });
+  
+  console.log(`[A-SOCIAL-07] ✅ Trending alert sent`);
+}
+
+// A-SOCIAL-08: User Recommendations
+async function handleUserRecommendation(job: Job) {
+  const { userId, recommendedUserId } = job.data;
+  
+  console.log(`[A-SOCIAL-08] Recommending user ${recommendedUserId} to ${userId}`);
+  
+  const recommendedUser = await storage.getUserById(recommendedUserId);
+  if (!recommendedUser) return;
+  
+  await storage.createNotification({
+    userId,
+    type: "recommendation",
+    title: "People You May Know 👥",
+    message: `Connect with ${recommendedUser.name} - you have mutual friends!`,
+    actionUrl: `/profile/${recommendedUser.username}`,
+  });
+  
+  console.log(`[A-SOCIAL-08] ✅ User recommendation sent`);
+}
+
+// A-SOCIAL-09: Engagement Boost Suggestions
+async function handleEngagementBoost(job: Job) {
+  const { userId, optimalTime } = job.data;
+  
+  console.log(`[A-SOCIAL-09] Engagement boost for user ${userId}`);
+  
+  await storage.createNotification({
+    userId,
+    type: "tip",
+    title: "Boost Your Reach! 📈",
+    message: `Post between ${optimalTime} for maximum engagement`,
+    actionUrl: "/feed",
+  });
+  
+  console.log(`[A-SOCIAL-09] ✅ Engagement boost sent`);
+}
+
+// A-SOCIAL-10: Connection Milestones
+async function handleConnectionMilestone(job: Job) {
+  const { userId, friendId, yearsAsFriends } = job.data;
+  
+  console.log(`[A-SOCIAL-10] Connection milestone for user ${userId}`);
+  
+  const friend = await storage.getUserById(friendId);
+  if (!friend) return;
+  
+  await storage.createNotification({
+    userId,
+    type: "friendship_anniversary",
+    title: `${yearsAsFriends}-Year Friendship! 🎉`,
+    message: `You and ${friend.name} have been friends for ${yearsAsFriends} ${yearsAsFriends === 1 ? "year" : "years"}`,
+    actionUrl: `/profile/${friend.username}`,
+  });
+  
+  console.log(`[A-SOCIAL-10] ✅ Connection milestone sent`);
+}
+
 // Create Worker
 const socialWorker = new Worker(
   "social-automation",
@@ -138,6 +229,21 @@ const socialWorker = new Worker(
           break;
         case "share-notification":
           await handleShareNotification(job);
+          break;
+        case "community-digest":
+          await handleCommunityDigest(job);
+          break;
+        case "trending-content-alert":
+          await handleTrendingContentAlert(job);
+          break;
+        case "user-recommendation":
+          await handleUserRecommendation(job);
+          break;
+        case "engagement-boost":
+          await handleEngagementBoost(job);
+          break;
+        case "connection-milestone":
+          await handleConnectionMilestone(job);
           break;
         default:
           console.error(`Unknown job type: ${job.name}`);

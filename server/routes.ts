@@ -24,6 +24,7 @@ import {
 } from "@shared/schema";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
+import { cityscapeService } from "./services/cityscape-service";
 
 const validateRequest = (schema: z.ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -79,8 +80,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...req.body,
         userId: req.userId!
       });
+
+      if (post.location) {
+        const cityName = cityscapeService.parseCityFromLocation(post.location);
+        
+        if (cityName) {
+          const existingCommunities = await storage.getGroups({ search: cityName, limit: 10, offset: 0 });
+          const cityExists = existingCommunities.some(
+            c => c.name.toLowerCase() === cityName.toLowerCase()
+          );
+
+          if (!cityExists) {
+            console.log(`[City Auto-Creation] Creating new city: ${cityName}`);
+            
+            const cityscapePhoto = await cityscapeService.fetchCityscapePhoto(cityName);
+            
+            const newCityCommunity = await storage.createGroup({
+              name: cityName,
+              description: `The official ${cityName} tango community. Connect with dancers, teachers, and events in your city.`,
+              type: "city",
+              isPublic: true,
+              coverImage: cityscapePhoto?.url || "",
+              imageCredit: cityscapePhoto?.credit || "",
+              createdBy: req.userId!,
+            });
+
+            await storage.joinGroup(newCityCommunity.id, req.userId!);
+            
+            console.log(`[City Auto-Creation] ✅ Created ${cityName} community (ID: ${newCityCommunity.id})`);
+          }
+        }
+      }
+
       res.status(201).json(post);
     } catch (error) {
+      console.error("[POST /api/posts] Error:", error);
       res.status(500).json({ message: "Failed to create post" });
     }
   });

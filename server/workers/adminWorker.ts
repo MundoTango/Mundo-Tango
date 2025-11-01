@@ -58,6 +58,95 @@ async function handleSystemHealthAlert(job: Job) {
   console.log(`[A-ADMIN-02] ✅ Notified ${superAdmins.length} super admins`);
 }
 
+// A-ADMIN-03: User Activity Analysis
+async function handleUserActivityAnalysis(job: Job) {
+  const { adminIds, reportData } = job.data;
+  
+  console.log(`[A-ADMIN-03] User activity analysis report`);
+  
+  for (const adminId of adminIds) {
+    await storage.createNotification({
+      userId: adminId,
+      type: "activity_report",
+      title: "Weekly Activity Report 📊",
+      message: `${reportData.activeUsers} active users, ${reportData.newPosts} new posts this week`,
+      actionUrl: "/admin/analytics",
+    });
+  }
+  
+  console.log(`[A-ADMIN-03] ✅ Activity reports sent to ${adminIds.length} admins`);
+}
+
+// A-ADMIN-04: Platform Health Monitoring
+async function handlePlatformHealthMonitoring(job: Job) {
+  const { adminIds, errorRate, responseTime } = job.data;
+  
+  console.log(`[A-ADMIN-04] Platform health monitoring`);
+  
+  let healthStatus = "good";
+  if (errorRate > 5 || responseTime > 1000) {
+    healthStatus = "warning";
+  }
+  if (errorRate > 10 || responseTime > 2000) {
+    healthStatus = "critical";
+  }
+  
+  if (healthStatus !== "good") {
+    for (const adminId of adminIds) {
+      await storage.createNotification({
+        userId: adminId,
+        type: "health_monitoring",
+        title: `Platform Health: ${healthStatus.toUpperCase()} ⚠️`,
+        message: `Error rate: ${errorRate}%, Response time: ${responseTime}ms`,
+        actionUrl: "/platform/monitoring",
+      });
+    }
+    console.log(`[A-ADMIN-04] ✅ Health alerts sent`);
+  } else {
+    console.log(`[A-ADMIN-04] ✅ Platform health is good`);
+  }
+}
+
+// A-ADMIN-05: Backup Automation
+async function handleBackupAutomation(job: Job) {
+  const { adminIds, backupStatus, backupSize } = job.data;
+  
+  console.log(`[A-ADMIN-05] Backup automation notification`);
+  
+  for (const adminId of adminIds) {
+    await storage.createNotification({
+      userId: adminId,
+      type: "backup_status",
+      title: `Daily Backup ${backupStatus === "success" ? "✅" : "❌"}`,
+      message: backupStatus === "success" 
+        ? `Backup completed successfully (${backupSize})`
+        : "Backup failed - immediate attention required",
+      actionUrl: "/admin/backups",
+    });
+  }
+  
+  console.log(`[A-ADMIN-05] ✅ Backup notifications sent`);
+}
+
+// A-ADMIN-06: Performance Reports
+async function handlePerformanceReport(job: Job) {
+  const { adminIds, performanceData } = job.data;
+  
+  console.log(`[A-ADMIN-06] Weekly performance report`);
+  
+  for (const adminId of adminIds) {
+    await storage.createNotification({
+      userId: adminId,
+      type: "performance_report",
+      title: "Weekly Performance Summary 📈",
+      message: `Page load: ${performanceData.pageLoad}ms, API response: ${performanceData.apiResponse}ms`,
+      actionUrl: "/admin/performance",
+    });
+  }
+  
+  console.log(`[A-ADMIN-06] ✅ Performance reports sent`);
+}
+
 // Create Worker
 const adminWorker = new Worker(
   "admin-automation",
@@ -69,6 +158,18 @@ const adminWorker = new Worker(
           break;
         case "system-health-alert":
           await handleSystemHealthAlert(job);
+          break;
+        case "user-activity-analysis":
+          await handleUserActivityAnalysis(job);
+          break;
+        case "platform-health-monitoring":
+          await handlePlatformHealthMonitoring(job);
+          break;
+        case "backup-automation":
+          await handleBackupAutomation(job);
+          break;
+        case "performance-report":
+          await handlePerformanceReport(job);
           break;
         default:
           console.error(`Unknown job type: ${job.name}`);

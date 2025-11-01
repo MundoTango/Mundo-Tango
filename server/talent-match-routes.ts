@@ -1,5 +1,10 @@
 import { Router } from "express";
 import type { IStorage } from "./storage";
+import { resumeParser } from "./services/resume-parser";
+import { detectSkillSignals, matchVolunteerToTasks, generateClarifierQuestions } from "./algorithms/signal-detection";
+import Groq from "groq-sdk";
+
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export function createTalentMatchRoutes(storage: IStorage) {
   const router = Router();
@@ -57,11 +62,33 @@ export function createTalentMatchRoutes(storage: IStorage) {
   // RESUME MANAGEMENT
   // ============================================================================
 
-  // Upload resume
+  // Upload resume with AI parsing
   router.post("/volunteers/:volunteerId/resume", async (req, res) => {
     try {
-      const { filename, fileUrl, parsedText, links } = req.body;
+      const { filename, fileBuffer, fileUrl } = req.body;
       const volunteerId = parseInt(req.params.volunteerId);
+
+      let parsedText = "";
+      let skills: string[] = [];
+      let links: string[] = [];
+      let signals: string[] = [];
+
+      if (fileBuffer) {
+        const buffer = Buffer.from(fileBuffer, "base64");
+        const parsed = await resumeParser.parseResume(buffer, filename);
+        
+        parsedText = parsed.text;
+        skills = parsed.skills;
+        links = parsed.links;
+        signals = parsed.signals;
+      } else if (req.body.parsedText) {
+        parsedText = req.body.parsedText;
+        skills = req.body.skills || [];
+        links = req.body.links || [];
+      }
+
+      const skillSignals = detectSkillSignals(parsedText, skills);
+      signals = skillSignals.map(s => s.signal);
 
       const resume = await storage.createResume({
         volunteerId,
@@ -71,7 +98,15 @@ export function createTalentMatchRoutes(storage: IStorage) {
         links
       });
 
-      res.json(resume);
+      await storage.updateVolunteer(volunteerId, {
+        skills: skills,
+      });
+
+      res.json({
+        ...resume,
+        detectedSkills: skills,
+        detectedSignals: skillSignals,
+      });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
@@ -94,15 +129,35 @@ export function createTalentMatchRoutes(storage: IStorage) {
   // AI CLARIFIER SESSIONS
   // ============================================================================
 
-  // Start clarifier session
+  // Start clarifier session with AI
   router.post("/volunteers/:volunteerId/clarifier", async (req, res) => {
     try {
       const volunteerId = parseInt(req.params.volunteerId);
       
+      const volunteer = await storage.getVolunteerById(volunteerId);
+      if (!volunteer) {
+        return res.status(404).json({ error: "Volunteer not found" });
+      }
+
+      const resume = await storage.getResumeByVolunteerId(volunteerId);
+      
+      const initialSignals = volunteer.skills 
+        ? detectSkillSignals(resume?.parsedText || "", volunteer.skills)
+        : [];
+
+      const firstQuestion = generateClarifierQuestions(initialSignals, [])[0] || 
+        "Tell me about your technical background and what you're passionate about building.";
+
       const session = await storage.createClarifierSession({
         volunteerId,
-        chatLog: [],
-        detectedSignals: [],
+        chatLog: [
+          {
+            role: "assistant",
+            message: `Hi! I'm here to learn more about your skills and match you with the right tasks. ${firstQuestion}`,
+            timestamp: new Date().toISOString(),
+          }
+        ],
+        detectedSignals: initialSignals.map(s => s.signal),
         status: "active"
       });
 
@@ -112,7 +167,7 @@ export function createTalentMatchRoutes(storage: IStorage) {
     }
   });
 
-  // Add message to clarifier session
+  // Add message to clarifier session with AI response
   router.post("/clarifier/:sessionId/message", async (req, res) => {
     try {
       const sessionId = parseInt(req.params.sessionId);
@@ -130,6 +185,38 @@ export function createTalentMatchRoutes(storage: IStorage) {
         timestamp: new Date().toISOString()
       });
 
+      if (role === "user") {
+        const systemPrompt = `You are an AI interviewer for Mundo Tango's volunteer program. Your goal is to:
+1. Ask follow-up questions about their technical skills
+2. Understand what they're passionate about building
+3. Detect their expertise level
+4. Be friendly and conversational
+Keep responses concise (2-3 sentences max).`;
+
+        const messages = chatLog.map(msg => ({
+          role: msg.role === "assistant" ? "assistant" : "user",
+          content: msg.message,
+        }));
+
+        const aiResponse = await groq.chat.completions.create({
+          model: "llama-3.3-70b-versatile",
+          messages: [
+            { role: "system", content: systemPrompt },
+            ...messages,
+          ],
+          max_tokens: 150,
+          temperature: 0.7,
+        });
+
+        const aiMessage = aiResponse.choices[0]?.message?.content || "Tell me more about that.";
+
+        chatLog.push({
+          role: "assistant",
+          message: aiMessage,
+          timestamp: new Date().toISOString(),
+        });
+      }
+
       const updated = await storage.updateClarifierSession(sessionId, { chatLog });
       res.json(updated);
     } catch (error: any) {
@@ -137,11 +224,47 @@ export function createTalentMatchRoutes(storage: IStorage) {
     }
   });
 
-  // Complete clarifier session
+  // Complete clarifier session with task matching
   router.post("/clarifier/:sessionId/complete", async (req, res) => {
     try {
       const sessionId = parseInt(req.params.sessionId);
-      const { detectedSignals } = req.body;
+
+      const session = await storage.getClarifierSessionById(sessionId);
+      if (!session) {
+        return res.status(404).json({ error: "Session not found" });
+      }
+
+      const volunteer = await storage.getVolunteerById(session.volunteerId);
+      if (!volunteer) {
+        return res.status(404).json({ error: "Volunteer not found" });
+      }
+
+      const resume = await storage.getResumeByVolunteerId(session.volunteerId);
+      const chatText = (session.chatLog as any[])
+        .map((msg: any) => msg.message)
+        .join(" ");
+
+      const combinedText = `${resume?.parsedText || ""} ${chatText}`;
+      const skillSignals = detectSkillSignals(combinedText, volunteer.skills || []);
+      const detectedSignals = skillSignals.map(s => s.signal);
+
+      const allTasks = await storage.getAllTasks();
+      const openTasks = allTasks.filter(t => t.status === "open");
+      
+      const taskMatches = matchVolunteerToTasks(
+        volunteer.skills || [],
+        skillSignals,
+        openTasks
+      );
+
+      for (const match of taskMatches.slice(0, 5)) {
+        await storage.createAssignment({
+          volunteerId: session.volunteerId,
+          taskId: match.taskId,
+          matchReason: `AI match score: ${match.matchScore.toFixed(0)}%. Signals: ${match.matchedSignals.join(", ")}`,
+          status: "pending",
+        });
+      }
 
       const updated = await storage.updateClarifierSession(sessionId, {
         detectedSignals,
@@ -149,7 +272,11 @@ export function createTalentMatchRoutes(storage: IStorage) {
         completedAt: new Date()
       });
 
-      res.json(updated);
+      res.json({
+        ...updated,
+        taskMatches: taskMatches.slice(0, 5),
+        assignmentsCreated: Math.min(taskMatches.length, 5),
+      });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
