@@ -28,22 +28,7 @@ export function createFriendsRoutes(storage: IStorage) {
   router.get("/friends/suggestions", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const userId = req.userId!;
-      
-      const allUsers = await storage.getAllUsers();
-      const friends = await storage.getUserFriends(userId);
-      const pendingRequests = await storage.getFriendRequests(userId);
-      
-      const friendIds = new Set(friends.map((f: any) => f.id));
-      const pendingIds = new Set(pendingRequests.map((r: any) => r.senderId));
-      
-      const suggestions = allUsers
-        .filter(u => u.id !== userId && !friendIds.has(u.id) && !pendingIds.has(u.id))
-        .slice(0, 10)
-        .map(u => ({
-          ...u,
-          reason: "Suggested for you",
-        }));
-      
+      const suggestions = await storage.getFriendSuggestions(userId);
       res.json(suggestions);
     } catch (error: any) {
       res.status(500).json({ error: error.message });

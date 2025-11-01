@@ -715,11 +715,35 @@ export class DbStorage implements IStorage {
       .where(eq(friendships.userId, userId));
     const friendIds = myFriends.map(f => f.friendId);
     
-    const suggestions = await db.select()
+    if (friendIds.length === 0) {
+      const suggestions = await db.select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        email: users.email,
+        profileImage: users.profileImage,
+        bio: users.bio,
+        city: users.city,
+      })
+      .from(users)
+      .where(sql`${users.id} != ${userId}`)
+      .limit(10);
+      return suggestions;
+    }
+    
+    const suggestions = await db.select({
+      id: users.id,
+      name: users.name,
+      username: users.username,
+      email: users.email,
+      profileImage: users.profileImage,
+      bio: users.bio,
+      city: users.city,
+    })
       .from(users)
       .where(
         and(
-          sql`${users.id} NOT IN (${friendIds.length ? sql.join(friendIds.map(id => sql`${id}`), sql`, `) : sql`NULL`})`,
+          sql`${users.id} NOT IN (${sql.join(friendIds.map(id => sql`${id}`), sql`, `)})`,
           sql`${users.id} != ${userId}`
         )
       )
