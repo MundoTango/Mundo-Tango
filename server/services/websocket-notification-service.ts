@@ -3,7 +3,7 @@
  * Real-time notification delivery via WebSocket
  */
 
-import WebSocket from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 
 interface ConnectedClient {
   userId: number;
@@ -13,10 +13,10 @@ interface ConnectedClient {
 
 export class WebSocketNotificationService {
   private clients: Map<number, ConnectedClient[]> = new Map();
-  private wss: WebSocket.Server | null = null;
+  private wss: WebSocketServer | null = null;
 
   initialize(server: any) {
-    this.wss = new WebSocket.Server({ server, path: "/ws/notifications" });
+    this.wss = new WebSocketServer({ server, path: "/ws/notifications" });
 
     this.wss.on("connection", (ws: WebSocket, req: any) => {
       const userId = this.extractUserId(req);
