@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { Mic, MicOff, VideoOff } from 'lucide-react';
+import { Mic, MicOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
+import { MrBlueAvatar2D } from './MrBlueAvatar2D';
 
 interface MrBlueAvatarVideoProps {
   position?: [number, number];
@@ -34,10 +35,15 @@ export function MrBlueAvatarVideo({
   const recognitionRef = useRef<any>(null);
 
   // Fetch Mr. Blue avatar video
+  // Note: This may fail if Luma credits are insufficient - that's OK, we'll fallback to 2D
   const { data: videoData, isLoading, error } = useQuery({
     queryKey: ['/api/videos/mr-blue/avatar'],
     refetchOnWindowFocus: false,
-    retry: 1,
+    retry: 0, // Don't retry on failure - fail fast to 2D fallback
+    onError: (err) => {
+      console.log('Video fetch failed (expected if Luma credits low), using 2D fallback');
+      setVideoError(true);
+    }
   });
 
   // Initialize speech recognition
@@ -108,29 +114,16 @@ export function MrBlueAvatarVideo({
     setVideoError(true);
   };
 
-  // Show loading state
-  if (isLoading) {
+  // Fallback to 2D avatar if video unavailable or failed
+  // This includes: loading, error, or Luma credits insufficient
+  if (isLoading || error || videoError || !videoData?.videoPath) {
     return (
-      <div 
-        className="relative flex items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-accent/20 animate-pulse"
-        style={{ width: size, height: size }}
-        data-testid="mr-blue-loading"
-      >
-        <div className="text-primary/60 text-xs">Loading...</div>
-      </div>
-    );
-  }
-
-  // Show error state (fallback to 2D needed)
-  if (error || videoError || !videoData?.videoPath) {
-    return (
-      <div 
-        className="relative flex items-center justify-center rounded-full bg-muted border-2 border-dashed border-muted-foreground/20"
-        style={{ width: size, height: size }}
-        data-testid="mr-blue-video-error"
-      >
-        <VideoOff className="h-8 w-8 text-muted-foreground/40" />
-      </div>
+      <MrBlueAvatar2D
+        size={size}
+        expression={expression}
+        isActive={isActive}
+        onInteraction={onInteraction}
+      />
     );
   }
 

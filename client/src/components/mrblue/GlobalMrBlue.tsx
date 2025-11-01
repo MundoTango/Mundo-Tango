@@ -49,7 +49,7 @@ const PAGE_CONTEXTS: Record<string, Omit<PageContext, 'path'>> = {
     position: 'bottom-left',
     message: 'Admin mode activated. I\'m here to help.'
   },
-  '/chat': {
+  '/mr-blue-chat': {
     expression: 'happy',
     position: 'hidden', // Chat page has its own avatar
   },
@@ -116,8 +116,8 @@ export function GlobalMrBlue() {
 
     setContext(newContext);
 
-    // Hide on chat page (has its own avatar)
-    if (location.startsWith('/chat')) {
+    // Hide on mr-blue-chat page (has its own avatar)
+    if (location.startsWith('/mr-blue-chat')) {
       setIsHidden(true);
     } else {
       setIsHidden(false);
@@ -134,10 +134,11 @@ export function GlobalMrBlue() {
 
   const handleInteraction = () => {
     // Navigate to MrBlue chat
-    window.location.href = '/chat';
+    window.location.href = '/mr-blue-chat';
   };
 
-  if (isHidden || context.position === 'hidden') {
+  // Hide on mr-blue-chat page (has its own avatar)
+  if (location.startsWith('/mr-blue-chat') || isHidden || context.position === 'hidden') {
     return null;
   }
 
