@@ -1,0 +1,169 @@
+# Friendship System - Complete Implementation Handoff
+
+## Overview
+The Mundo Tango friendship system enables users to connect, build their network, and access friend-exclusive features. It implements a sophisticated 3-degree connection system with closeness scoring, friend requests with dance stories, mutual friend discovery, and friendship-gated content.
+
+## Table of Contents
+1. [Database Schema](#database-schema)
+2. [How Users Become Friends](#how-users-become-friends)
+3. [Friend Request Flow](#friend-request-flow)
+4. [What Happens Once They're Friends](#what-happens-once-theyre-friends)
+5. [Connection Degrees System](#connection-degrees-system)
+6. [API Endpoints](#api-endpoints)
+7. [Frontend Components](#frontend-components)
+8. [Friendship Features](#friendship-features)
+9. [Implementation Guide](#implementation-guide)
+
+---
+
+## Database Schema
+
+### 1. **friends** Table
+**Purpose:** Stores confirmed friendship relationships between users
+
+```typescript
+export const friends = pgTable("friends", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  friendId: integer("friend_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  status: varchar("status", { length: 20 }).default("accepted"), // 'accepted', 'blocked'
+  closenessScore: integer("closeness_score").default(75), // 0-100 score based on interactions
+  connectionDegree: integer("connection_degree").default(1), // Always 1 for direct friends
+  lastInteractionAt: timestamp("last_interaction_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  uniqueFriendship: unique().on(table.userId, table.friendId),
+  idxClosenessScore: index("idx_friends_closeness_score").on(table.closenessScore),
+  idxConnectionDegree: index("idx_friends_connection_degree").on(table.connectionDegree),
+  idxLastInteraction: index("idx_friends_last_interaction").on(table.lastInteractionAt),
+}));
+```
+
+**Key Fields:**
+- `userId` + `friendId`: Bidirectional relationship (both users get a record)
+- `closenessScore`: Dynamic 0-100 score based on:
+  - Shared events attended
+  - Mutual friends count
+  - Posts liked by friend
+  - Recent messages/interactions
+  - Shared group memberships
+- `connectionDegree`: Always 1 for direct friends
+- `status`: 'accepted' (active friendship) or 'blocked'
+
+### 2. **friendRequests** Table
+**Purpose:** Manages pending, accepted, and declined friend requests with optional dance story
+
+```typescript
+export const friendRequests = pgTable("friend_requests", {
+  id: serial("id").primaryKey(),
+  senderId: integer("sender_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  receiverId: integer("receiver_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  status: varchar("status", { length: 20 }).default("pending"), // 'pending', 'accepted', 'declined', 'cancelled', 'snoozed'
+  
+  // Dance Story Fields (Optional - if they danced together)
+  didWeDance: boolean("did_we_dance").default(false),
+  danceLocation: text("dance_location"), // Milonga name, event name, city
+  danceEventId: integer("dance_event_id").references(() => events.id),
+  danceStory: text("dance_story"), // Personal story about their dance
+  
+  // Messages
+  senderMessage: text("sender_message").notNull(), // Public message visible to receiver
+  senderPrivateNote: text("sender_private_note"), // Private note for sender's reference only
+  receiverResponse: text("receiver_response"), // Message when accepting/declining
+  
+  // Media attachments (photos from milonga, dance videos, etc)
+  mediaUrls: text("media_urls").array(),
+  
+  // Snooze functionality
+  snoozedUntil: timestamp("snoozed_until"), // If receiver wants to decide later
+  snoozedCount: integer("snoozed_count").default(0),
+  
+  // Timestamps
+  sentAt: timestamp("sent_at").defaultNow(),
+  respondedAt: timestamp("responded_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  idxSender: index("idx_friend_requests_sender").on(table.senderId),
+  idxReceiver: index("idx_friend_requests_receiver").on(table.receiverId),
+  idxStatus: index("idx_friend_requests_status").on(table.status),
+  idxSnoozed: index("idx_friend_requests_snoozed").on(table.snoozedUntil),
+}));
+```
+
+**Request Statuses:**
+- `pending`: Awaiting receiver's response
+- `accepted`: Converted to friendship in `friends` table
+- `declined`: Receiver rejected the request
+- `cancelled`: Sender cancelled before response
+- `snoozed`: Receiver wants to decide later
+
+### 3. **friendshipActivities** Table
+**Purpose:** Tracks all interactions between friends for closeness score calculation
+
+```typescript
+export const friendshipActivities = pgTable("friendship_activities", {
+  id: serial("id").primaryKey(),
+  friendshipId: integer("friendship_id").notNull().references(() => friends.id, { onDelete: "cascade" }),
+  activityType: varchar("activity_type", { length: 50 }).notNull(),
+  // Types: 'message_sent', 'post_liked', 'event_attended_together', 
+  //        'group_joined_together', 'memory_shared', 'dance_together'
+  metadata: jsonb("metadata"), // Activity-specific data
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  idxFriendship: index("idx_friendship_activities_friendship").on(table.friendshipId),
+  idxType: index("idx_friendship_activities_type").on(table.activityType),
+  idxCreatedAt: index("idx_friendship_activities_created").on(table.createdAt),
+}));
+```
+
+**Activity Types:**
+- `message_sent`: Direct message exchange
+- `post_liked`: Friend liked user's post
+- `event_attended_together`: Both RSVPed to same event
+- `group_joined_together`: Both members of same group
+- `memory_shared`: Tagged friend in memory/photo
+- `dance_together`: Logged a dance at milonga
+
+### 4. **friendshipMedia** Table
+**Purpose:** Stores photos/videos shared during friend request or friendship
+
+```typescript
+export const friendshipMedia = pgTable("friendship_media", {
+  id: serial("id").primaryKey(),
+  friendRequestId: integer("friend_request_id").references(() => friendRequests.id, { onDelete: "cascade" }),
+  friendshipId: integer("friendship_id").references(() => friends.id, { onDelete: "cascade" }),
+  uploaderId: integer("uploader_id").notNull().references(() => users.id),
+  mediaUrl: text("media_url").notNull(),
+  mediaType: varchar("media_type", { length: 20 }).notNull(), // 'image', 'video'
+  caption: text("caption"),
+  phase: text("phase").notNull().default("request"), // 'request', 'acceptance', 'friendship'
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  idxRequest: index("idx_friendship_media_request").on(table.friendRequestId),
+  idxFriendship: index("idx_friendship_media_friendship").on(table.friendshipId),
+}));
+```
+
+---
+
+## How Users Become Friends
+
+### Step 1: Discovering Potential Friends
+Users can discover others through:
+1. **Event Attendees**: See who else is going to milongas/events
+2. **Group Members**: Browse members of city/community groups
+3. **Mutual Friends**: "People you may know" suggestions
+4. **Search**: Search by name, city, dance style
+5. **Map**: Interactive map showing nearby dancers
+6. **Friend Suggestions Algorithm** (Agent #2): ML-based recommendations
+
+### Step 2: Viewing User Profile
+Before sending request, sender can see:
+- Public profile information
+- Connection degree (-1 = not connected)
+- Mutual friends count
+- Shared events/groups
+- Public posts/memories
+- Whether they've danced together before (if logged)

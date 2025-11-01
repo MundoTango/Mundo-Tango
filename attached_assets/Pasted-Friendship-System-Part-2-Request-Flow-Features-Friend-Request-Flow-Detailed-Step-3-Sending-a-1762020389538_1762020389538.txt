@@ -1,0 +1,693 @@
+Friendship System - Part 2: Request Flow & Features
+Friend Request Flow (Detailed)
+Step 3: Sending a Friend Request
+Frontend Component: FriendRequestForm.tsx
+
+// User fills out friend request form
+const friendRequestSchema = z.object({
+  receiverId: z.number(),
+  didWeDance: z.boolean().default(false),
+  danceLocation: z.string().optional(),
+  danceEventId: z.number().optional(),
+  danceStory: z.string().optional(),
+  senderPrivateNote: z.string().optional(),
+  senderMessage: z.string().min(1, 'Please add a message'),
+  mediaUrls: z.array(z.string()).optional(),
+});
+
+Form Fields:
+
+Did we dance together? (checkbox)
+
+If YES → Show additional fields:
+Dance location (milonga name, city)
+Dance story (personal memory)
+Link to event (if available)
+Photo/video upload from that night
+Your Message (required)
+
+Personal message to receiver
+Example: "Hi Maria! I loved dancing with you at La Viruta last week. Would love to connect!"
+Private Note (optional)
+
+Only visible to sender
+For sender's own reference
+Example: "Met at Sarah's birthday milonga"
+Media (optional)
+
+Upload photos from the milonga
+Video clips of dancing together
+Stored in friendshipMedia table
+API Call:
+
+POST /api/friend-requests/send
+Body: {
+  receiverId: 123,
+  didWeDance: true,
+  danceLocation: "La Viruta, Buenos Aires",
+  danceStory: "We danced a beautiful tanda to D'Arienzo!",
+  senderMessage: "Hi! Would love to stay connected",
+  mediaUrls: ["https://cloudinary.com/..."]
+}
+
+Backend Processing:
+
+Validate sender and receiver exist
+Check no existing friendship or pending request
+Create record in friendRequests table with status='pending'
+Upload any media to friendshipMedia table
+Send notification to receiver
+Return success
+Step 4: Receiver Views Request
+Frontend Component: FriendRequestList.tsx
+
+Receiver sees:
+
+Sender's profile photo and name
+Connection info (mutual friends, shared events)
+Sender's message
+Dance story (if provided)
+Photos/videos (if uploaded)
+Timestamp
+Actions Available:
+
+Accept → Creates friendship
+Decline → Rejects request
+Snooze → Postpone decision (up to 3 times)
+Block → Decline + prevent future requests
+Step 5: Accepting a Friend Request
+What Happens:
+
+Update friendRequest status to 'accepted'
+UPDATE friend_requests 
+SET status = 'accepted', 
+    responded_at = NOW(),
+    receiver_response = 'message from receiver'
+WHERE id = :requestId
+
+Create TWO friendship records (bidirectional)
+-- Record 1: Sender → Receiver
+INSERT INTO friends (user_id, friend_id, closeness_score, connection_degree, status)
+VALUES (:senderId, :receiverId, 75, 1, 'accepted');
+-- Record 2: Receiver → Sender
+INSERT INTO friends (user_id, friend_id, closeness_score, connection_degree, status)
+VALUES (:receiverId, :senderId, 75, 1, 'accepted');
+
+Copy media from friend request to friendship
+UPDATE friendship_media
+SET friendship_id = :newFriendshipId,
+    phase = 'acceptance'
+WHERE friend_request_id = :requestId;
+
+Send notifications
+
+Notify sender their request was accepted
+Trigger "New Friend" achievement/gamification
+Create initial friendship activity
+
+INSERT INTO friendship_activities (friendship_id, activity_type, metadata)
+VALUES (:friendshipId, 'friendship_created', '{"via":"friend_request"}');
+
+Update user stats
+Increment both users' friend counts
+Recalculate 2nd degree connections
+Update connection degree cache
+Step 6: Declining/Cancelling Requests
+Declining (Receiver):
+
+POST /api/friend-requests/:id/decline
+Body: { 
+  response: "Optional message to sender",
+  shouldBlock: false // If true, blocks future requests
+}
+
+Cancelling (Sender):
+
+DELETE /api/friend-requests/:id
+// Only if status === 'pending'
+
+What Happens Once They're Friends
+1. Immediate Access Changes
+Content Visibility:
+
+Can now see friend's "Friends Only" posts
+View private photo albums marked "Friends"
+See full event attendance list
+Profile Access:
+
+Full profile unlocked (if had privacy settings)
+Contact information revealed (if permitted)
+Full biography and interests
+Event & Group Features:
+
+Can send direct group invites
+See when friend RSVPs to same events
+Get notified when friend joins nearby events
+Messaging:
+
+Direct 1-on-1 messaging unlocked
+Can tag friend in posts/memories
+Receive mentions in comments
+2. Connection Degree Updates
+For Both Users:
+
+connectionDegree = 1 (direct friend)
+For Others:
+
+All of User A's friends become 2nd degree to User B
+All of User B's friends become 2nd degree to User A
+Example:
+
+Before: Alice → [no connection] → Bob
+After:  Alice ←→ Bob (1st degree)
+        Alice → [Bob's friends] (2nd degree)
+        Bob → [Alice's friends] (2nd degree)
+
+Backend Calculation:
+
+-- Find all 2nd degree connections for Alice
+SELECT DISTINCT u.* 
+FROM users u
+JOIN friends f1 ON u.id = f1.friend_id
+JOIN friends f2 ON f1.user_id = f2.friend_id
+WHERE f2.user_id = :aliceId
+  AND u.id != :aliceId
+  AND u.id NOT IN (
+    SELECT friend_id FROM friends WHERE user_id = :aliceId
+  );
+
+3. Closeness Score Calculation
+Initial Score: 75/100 (default for new friendships)
+
+Score Increases From:
+
+Attending same events (+5 per event)
+Shared group memberships (+3 per group)
+Direct messages sent (+1 per message, max +10/month)
+Posts liked by friend (+2 per like, max +10/month)
+Memories shared together (+5 per shared memory)
+Dances logged together (+10 per dance)
+Score Decreases From:
+
+No interaction for 30 days (-5)
+No interaction for 90 days (-15)
+Unfollowed posts (-10)
+Score Recalculation: Daily cron job
+
+UPDATE friends
+SET closeness_score = LEAST(100, GREATEST(0,
+  75 + -- Base score
+  (SELECT COUNT(*) * 5 FROM event_rsvps WHERE ...) + -- Shared events
+  (SELECT COUNT(*) * 3 FROM group_members WHERE ...) + -- Shared groups
+  (SELECT LEAST(10, COUNT(*)) FROM messages WHERE ...) -- Messages
+))
+WHERE id = :friendshipId;
+
+4. Friendship Dashboard
+Available at: /friends/:friendId
+
+Shows:
+
+Friendship stats (days since becoming friends)
+Closeness score with breakdown
+Mutual friends count + list
+Shared events timeline
+Shared groups
+Memory gallery (photos tagged with both)
+Activity feed (recent interactions)
+Example Stats Card:
+
+Friends since: Jan 15, 2024 (289 days)
+Closeness: 87/100 ⭐
+Mutual friends: 12
+Shared events: 8
+Shared groups: 3
+Total dances: 24
+
+5. Friend-Gated Features
+Housing Listings:
+
+-- Only friends can book
+WHERE housing.who_can_book IN ('friends_only', '1st_degree')
+  AND EXISTS (
+    SELECT 1 FROM friends 
+    WHERE user_id = :hostId 
+      AND friend_id = :viewerId 
+      AND status = 'accepted'
+  );
+
+Private Events:
+
+-- Friends-only events
+WHERE events.visibility = 'friends'
+  AND (
+    events.user_id = :viewerId 
+    OR EXISTS (SELECT 1 FROM friends WHERE ...)
+  );
+
+Recommendations Filtered: Agent #3 (Event Recommendations) prioritizes events where friends are attending:
+
+// Boost score if friends attending
+if (friendsAttending > 0) {
+  score += friendsAttending * 10;
+}
+
+6. Friendship Activities Tracking
+Logged Automatically:
+
+// When friend likes post
+createActivity(friendshipId, 'post_liked', { postId });
+// When both attend event  
+createActivity(friendshipId, 'event_attended_together', { eventId });
+// When send message
+createActivity(friendshipId, 'message_sent', { messageId });
+// When tag in memory
+createActivity(friendshipId, 'memory_shared', { memoryId });
+
+Used For:
+
+Closeness score calculation
+Activity timeline on friendship page
+"On This Day" memories
+Year-end friendship recap
+Connection Degrees System
+Overview
+Mundo Tango uses a 3-degree connection system to determine content visibility and feature access.
+
+Connection Levels:
+
+-1: Not connected (stranger)
+1: Direct friend (1st degree)
+2: Friend of friend (2nd degree)
+3: Extended network (3rd degree)
+Visual Representation
+You (User A)
+├── 1st Degree: Direct Friends
+│   ├── Bob (your friend)
+│   ├── Carol (your friend)
+│   └── David (your friend)
+├── 2nd Degree: Friends of Friends
+│   ├── Eve (Bob's friend)
+│   ├── Frank (Carol's friend)
+│   └── Grace (David's friend)
+└── 3rd Degree: Extended Network
+    ├── Henry (Eve's friend)
+    ├── Iris (Frank's friend)
+    └── Jack (Grace's friend)
+
+Badge Display
+Client-side Utility: friendshipHelpers.ts
+
+// Get connection degree badge
+const badge = getConnectionBadgeColor(connectionDegree);
+// Returns:
+{
+  1st: {
+    bgClass: 'bg-gradient-to-r from-pink-500 to-rose-500',
+    textClass: 'text-white',
+    iconColor: 'text-white'
+  },
+  2nd: {
+    bgClass: 'bg-gradient-to-r from-blue-400 to-cyan-400',
+    textClass: 'text-white',
+    iconColor: 'text-white'
+  },
+  3rd: {
+    bgClass: 'bg-gradient-to-r from-purple-400 to-indigo-400',
+    textClass: 'text-white',
+    iconColor: 'text-white'
+  }
+}
+
+Display:
+
+<span className={`px-2 py-1 rounded-full text-xs ${badge.bgClass} ${badge.textClass}`}>
+  {getConnectionLabel(degree, 'short')} {/* "1st", "2nd", "3rd" */}
+</span>
+
+Content Filtering by Degree
+Posts:
+
+SELECT p.* FROM posts p
+WHERE p.visibility IN (
+  CASE 
+    WHEN :connectionDegree = 1 THEN ('public', 'friends', 'private')
+    WHEN :connectionDegree = 2 THEN ('public', 'friends')
+    WHEN :connectionDegree = 3 THEN ('public')
+    ELSE ('public')
+  END
+);
+
+Events:
+
+-- Who can see event
+WHERE e.visibility IN (
+  'public', 
+  CASE WHEN :connectionDegree <= 2 THEN 'friends' END
+);
+
+Housing:
+
+-- Who can book
+WHERE h.who_can_book IN (
+  'anyone',
+  CASE WHEN :connectionDegree = 1 THEN 'friends_only' END,
+  CASE WHEN :connectionDegree <= 1 THEN '1st_degree' END,
+  CASE WHEN :connectionDegree <= 2 THEN '2nd_degree' END,
+  CASE WHEN :connectionDegree <= 3 THEN '3rd_degree' END
+);
+
+API Endpoints
+Friend Requests
+Send Friend Request
+POST /api/friend-requests/send
+Authorization: Bearer {token}
+Content-Type: application/json
+{
+  "receiverId": 123,
+  "didWeDance": true,
+  "danceLocation": "La Viruta, Buenos Aires",
+  "danceStory": "We danced a beautiful tanda!",
+  "senderMessage": "Hi! Would love to connect",
+  "senderPrivateNote": "Met at Sarah's party",
+  "mediaUrls": ["https://..."]
+}
+Response 200:
+{
+  "success": true,
+  "requestId": 456,
+  "message": "Friend request sent successfully"
+}
+
+Get Received Requests
+GET /api/friend-requests/received
+Authorization: Bearer {token}
+Response 200:
+{
+  "success": true,
+  "data": [
+    {
+      "id": 456,
+      "sender": {
+        "id": 789,
+        "name": "Maria Lopez",
+        "profileImage": "https://...",
+        "city": "Buenos Aires"
+      },
+      "didWeDance": true,
+      "danceLocation": "La Viruta",
+      "danceStory": "...",
+      "senderMessage": "...",
+      "mediaUrls": [...],
+      "sentAt": "2024-01-15T10:30:00Z",
+      "mutualFriends": 5,
+      "sharedEvents": 2
+    }
+  ]
+}
+
+Accept Friend Request
+POST /api/friend-requests/:id/accept
+Authorization: Bearer {token}
+Content-Type: application/json
+{
+  "response": "Thanks! Looking forward to dancing again!"
+}
+Response 200:
+{
+  "success": true,
+  "friendshipId": 999,
+  "message": "You are now friends!"
+}
+
+Decline Friend Request
+POST /api/friend-requests/:id/decline
+Authorization: Bearer {token}
+Content-Type: application/json
+{
+  "response": "Thanks, but I prefer to keep my circle small",
+  "shouldBlock": false
+}
+Response 200:
+{
+  "success": true,
+  "message": "Request declined"
+}
+
+Snooze Friend Request
+POST /api/friend-requests/:id/snooze
+Authorization: Bearer {token}
+Content-Type: application/json
+{
+  "snoozeDays": 7
+}
+Response 200:
+{
+  "success": true,
+  "snoozedUntil": "2024-01-22T10:30:00Z"
+}
+
+Friendships
+Get Friends List
+GET /api/friends?page=1&limit=20&sortBy=closeness
+Authorization: Bearer {token}
+Response 200:
+{
+  "success": true,
+  "data": [
+    {
+      "id": 999,
+      "friend": {
+        "id": 123,
+        "name": "Carlos Gomez",
+        "profileImage": "https://...",
+        "city": "Barcelona"
+      },
+      "friendsSince": "2024-01-01T00:00:00Z",
+      "closenessScore": 87,
+      "connectionDegree": 1,
+      "mutualFriends": 12,
+      "sharedEvents": 8
+    }
+  ],
+  "pagination": {
+    "total": 156,
+    "page": 1,
+    "pages": 8
+  }
+}
+
+Get Friendship Details
+GET /api/friends/friendship/:friendId
+Authorization: Bearer {token}
+Response 200:
+{
+  "id": 999,
+  "user": {
+    "id": 123,
+    "name": "Carlos Gomez",
+    "profileImage": "https://...",
+    "city": "Barcelona",
+    "bio": "..."
+  },
+  "friendsSince": "2024-01-01T00:00:00Z",
+  "connectionDegree": 1,
+  "stats": {
+    "totalDances": 24,
+    "sharedEvents": 8,
+    "sharedGroups": 3,
+    "closenessScore": 87
+  }
+}
+
+Get Mutual Friends
+GET /api/friends/friendship/:friendId/mutual-friends
+Authorization: Bearer {token}
+Response 200:
+[
+  {
+    "id": 456,
+    "name": "Ana Martinez",
+    "profileImage": "https://...",
+    "city": "Madrid"
+  },
+  // ... more mutual friends
+]
+
+Unfriend
+DELETE /api/friends/:friendshipId
+Authorization: Bearer {token}
+Response 200:
+{
+  "success": true,
+  "message": "Friendship removed"
+}
+
+Friend Suggestions
+Get Friend Suggestions
+GET /api/friends/suggestions?limit=10
+Authorization: Bearer {token}
+Response 200:
+{
+  "success": true,
+  "suggestions": [
+    {
+      "user": {
+        "id": 789,
+        "name": "Elena Rodriguez",
+        "profileImage": "https://...",
+        "city": "Barcelona"
+      },
+      "reason": "12 mutual friends",
+      "mutualFriends": 12,
+      "sharedEvents": 3,
+      "score": 85
+    }
+  ]
+}
+
+Frontend Components
+1. FriendRequestForm
+Path: client/src/components/FriendRequestForm.tsx
+Purpose: Send friend request with optional dance story
+
+Props:
+
+interface FriendRequestFormProps {
+  receiverId: number;
+  receiverName: string;
+  onSuccess?: () => void;
+  onCancel?: () => void;
+}
+
+Features:
+
+Checkbox for "We've danced together"
+Conditional fields for dance story
+Media upload (photos/videos)
+Private note field
+Real-time validation
+2. FriendRequestList
+Path: client/src/components/FriendRequestList.tsx
+Purpose: Display incoming friend requests
+
+Features:
+
+Shows sender profile + stats
+Dance story display (if provided)
+Media gallery
+Accept/Decline/Snooze actions
+Mutual friends count
+3. friendshipHelpers (Utilities)
+Path: client/src/utils/friendshipHelpers.ts
+Purpose: Connection degree utilities
+
+Key Functions:
+
+getConnectionLabel(degree: ConnectionDegree): string
+getConnectionBadgeColor(degree: ConnectionDegree): BadgeColors
+legacyFilterToNumeric(filter: string): string
+isValidConnectionDegree(degree: any): boolean
+
+Implementation Guide
+Adding a New Friendship Feature
+Step 1: Update Database Schema
+
+// shared/schema.ts
+export const friends = pgTable("friends", {
+  // ... existing fields
+  newFeature: text("new_feature"), // Add your field
+});
+
+Step 2: Run Migration
+
+npm run db:push --force
+
+Step 3: Update Storage Interface
+
+// server/storage.ts
+interface IStorage {
+  // Add method
+  updateFriendship(id: number, data: Partial<Friend>): Promise<Friend>;
+}
+
+Step 4: Create API Route
+
+// server/routes/friendsRoutes.ts
+router.patch('/friends/:id', authMiddleware, async (req, res) => {
+  const friendshipId = parseInt(req.params.id);
+  const updated = await storage.updateFriendship(friendshipId, req.body);
+  res.json(updated);
+});
+
+Step 5: Create Frontend Hook
+
+// client/src/hooks/useFriendship.ts
+export function useUpdateFriendship() {
+  return useMutation({
+    mutationFn: (data: UpdateFriendshipData) =>
+      apiRequest(`/api/friends/${data.id}`, {
+        method: 'PATCH',
+        body: data,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/friends'] });
+    },
+  });
+}
+
+Step 6: Use in Component
+
+const updateFriendship = useUpdateFriendship();
+const handleUpdate = () => {
+  updateFriendship.mutate({
+    id: friendshipId,
+    newFeature: value,
+  });
+};
+
+Testing the Friendship Flow
+Manual Test Checklist
+1. Send Friend Request
+
+ Navigate to user profile
+ Click "Send Friend Request"
+ Fill in message (required)
+ Check "We danced together"
+ Fill in dance story
+ Upload photo
+ Submit successfully
+ Verify notification sent to receiver
+2. Receive Request
+
+ Log in as receiver
+ See notification badge
+ View request in list
+ See dance story
+ See uploaded photo
+ See mutual friends count
+ Accept request
+3. Verify Friendship
+
+ Both users see each other in friends list
+ Closeness score = 75 (default)
+ Connection degree = 1
+ Can send direct messages
+ Can see "friends only" content
+ Mutual friends calculated correctly
+4. Unfriend
+
+ Remove friendship
+ Verify both records deleted
+ Connection degree reset to -1
+ Content visibility restricted again
+Next Steps
+Implement Friend Suggestions Algorithm (Agent #2)
+Add Friendship Analytics Dashboard
+Create "On This Day" Friendship Memories
+Build Year-End Friendship Recap
+Add Group Chat for Close Friends
+Related Documentation
+See MEMORIES_PAGE_MT_OCEAN_THEME.md for friend tagging in memories
+See ESA_AGENT_ORG_CHART.md for Agent #2 (Friend Suggestions)
+See COMPLETE_PAGE_LAYOUT_REPORT.txt for friendship UI patterns
