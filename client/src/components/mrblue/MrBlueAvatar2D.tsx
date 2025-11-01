@@ -187,21 +187,22 @@ export function MrBlueAvatar2D({
         ctx.fill();
       }
 
-      // Mouth (expression-based)
+      // Mouth (expression-based) - fuller lips
       ctx.strokeStyle = '#2C1810';
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 3.5;
+      ctx.lineCap = 'round';
       ctx.beginPath();
       
       if (expression === 'happy' || expression === 'friendly' || expression === 'excited') {
-        // Smile
-        ctx.arc(size / 2, size / 2 + 10, 20, 0.2, Math.PI - 0.2);
+        // Warm smile
+        ctx.arc(size / 2, size / 2 + 8, 22, 0.15, Math.PI - 0.15);
       } else if (expression === 'thoughtful' || expression === 'focused') {
-        // Neutral line
-        ctx.moveTo(size * 0.4, size / 2 + 20);
-        ctx.lineTo(size * 0.6, size / 2 + 20);
+        // Contemplative expression
+        ctx.moveTo(size * 0.38, size / 2 + 18);
+        ctx.quadraticCurveTo(size / 2, size / 2 + 16, size * 0.62, size / 2 + 18);
       } else {
-        // Professional slight smile
-        ctx.arc(size / 2, size / 2 + 15, 15, 0.3, Math.PI - 0.3);
+        // Professional confident smile
+        ctx.arc(size / 2, size / 2 + 12, 18, 0.25, Math.PI - 0.25);
       }
       ctx.stroke();
 
@@ -244,6 +245,40 @@ export function MrBlueAvatar2D({
         ctx.arc(size / 2 - 1, size * 0.65 - 1, 2, 0, Math.PI * 2);
         ctx.fill();
       }
+      
+      // Blazer collar (teal floral pattern suggestion)
+      // Left collar
+      const collarGradient = ctx.createLinearGradient(size * 0.2, size * 0.7, size * 0.35, size * 0.85);
+      collarGradient.addColorStop(0, '#008B8B'); // Dark teal
+      collarGradient.addColorStop(0.5, '#00A8A8'); // Medium teal
+      collarGradient.addColorStop(1, '#00C4C4'); // Light teal
+      
+      ctx.fillStyle = collarGradient;
+      ctx.beginPath();
+      ctx.moveTo(size * 0.32, size * 0.68);
+      ctx.quadraticCurveTo(size * 0.25, size * 0.75, size * 0.2, size * 0.85);
+      ctx.lineTo(size * 0.25, size * 0.9);
+      ctx.quadraticCurveTo(size * 0.28, size * 0.8, size * 0.35, size * 0.72);
+      ctx.closePath();
+      ctx.fill();
+      
+      // Right collar
+      ctx.beginPath();
+      ctx.moveTo(size * 0.68, size * 0.68);
+      ctx.quadraticCurveTo(size * 0.75, size * 0.75, size * 0.8, size * 0.85);
+      ctx.lineTo(size * 0.75, size * 0.9);
+      ctx.quadraticCurveTo(size * 0.72, size * 0.8, size * 0.65, size * 0.72);
+      ctx.closePath();
+      ctx.fill();
+      
+      // Floral pattern details (simplified)
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.beginPath();
+      ctx.arc(size * 0.27, size * 0.78, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(size * 0.73, size * 0.78, 3, 0, Math.PI * 2);
+      ctx.fill();
 
       ctx.restore();
 
