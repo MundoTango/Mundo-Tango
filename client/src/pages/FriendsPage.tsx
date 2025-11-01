@@ -1,15 +1,21 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Users, UserPlus, UserCheck } from "lucide-react";
 import { Link } from "wouter";
+import { MutualFriends } from "@/components/MutualFriends";
+import { queryClient, apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function FriendsPage() {
   const [activeTab, setActiveTab] = useState("all");
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   const { data: friends, isLoading: friendsLoading } = useQuery({
     queryKey: ["/api/friends"],
@@ -21,6 +27,34 @@ export default function FriendsPage() {
 
   const { data: suggestions, isLoading: suggestionsLoading } = useQuery({
     queryKey: ["/api/friends/suggestions"],
+  });
+
+  const acceptRequest = useMutation({
+    mutationFn: async (requestId: number) =>
+      apiRequest("POST", `/api/friends/accept/${requestId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/friends"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/friends/requests"] });
+      toast({ title: "Friend request accepted!" });
+    },
+  });
+
+  const declineRequest = useMutation({
+    mutationFn: async (requestId: number) =>
+      apiRequest("POST", `/api/friends/decline/${requestId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/friends/requests"] });
+      toast({ title: "Friend request declined" });
+    },
+  });
+
+  const sendRequest = useMutation({
+    mutationFn: async (userId: number) =>
+      apiRequest("POST", `/api/friends/request/${userId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/friends/suggestions"] });
+      toast({ title: "Friend request sent!" });
+    },
   });
 
   return (
@@ -75,11 +109,7 @@ export default function FriendsPage() {
                           <h3 className="font-semibold hover:underline">{friend.name}</h3>
                         </Link>
                         <p className="text-sm text-muted-foreground">@{friend.username}</p>
-                        {friend.mutualFriends > 0 && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {friend.mutualFriends} mutual friends
-                          </p>
-                        )}
+                        {user && <MutualFriends userId={friend.id} currentUserId={user.id} />}
                       </div>
                       <Button variant="outline" size="sm" data-testid={`button-message-${friend.id}`}>
                         Message
@@ -116,10 +146,21 @@ export default function FriendsPage() {
                         <p className="text-sm text-muted-foreground">@{request.username}</p>
                       </div>
                       <div className="flex gap-2">
-                        <Button size="sm" data-testid={`button-accept-${request.id}`}>
+                        <Button 
+                          size="sm" 
+                          data-testid={`button-accept-${request.id}`}
+                          onClick={() => acceptRequest.mutate(request.id)}
+                          disabled={acceptRequest.isPending}
+                        >
                           Accept
                         </Button>
-                        <Button variant="outline" size="sm" data-testid={`button-decline-${request.id}`}>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          data-testid={`button-decline-${request.id}`}
+                          onClick={() => declineRequest.mutate(request.id)}
+                          disabled={declineRequest.isPending}
+                        >
                           Decline
                         </Button>
                       </div>
@@ -159,7 +200,12 @@ export default function FriendsPage() {
                           </p>
                         )}
                       </div>
-                      <Button size="sm" data-testid={`button-add-${suggestion.id}`}>
+                      <Button 
+                        size="sm" 
+                        data-testid={`button-add-${suggestion.id}`}
+                        onClick={() => sendRequest.mutate(suggestion.id)}
+                        disabled={sendRequest.isPending}
+                      >
                         Add Friend
                       </Button>
                     </CardContent>

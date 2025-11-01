@@ -4,6 +4,28 @@ Mundo Tango is a social platform designed to connect the global tango community,
 
 The project encompasses a wide array of features including comprehensive social networking capabilities, event management, an advanced talent matching system, and AI-powered personal assistants (Life CEO agents). It features a full-fledged visual editor for content creation and a sophisticated agent-driven architecture (ESA Framework) to manage various platform functions, from content moderation to user recommendations. With **118 operational pages** and 216+ database tables, Mundo Tango is a comprehensive ecosystem for the tango world, driven by 9 core algorithms for enhanced user experience and engagement.
 
+### Recent Additions (November 1, 2025 - MB.MD Wave 2 COMPLETE)
+- **🎉 WAVE 2 COMPLETE - ALL 3 TRACKS OPERATIONAL:**
+  
+  **TRACK 2A: Friendship UI System**
+  - **Enhanced FriendsPage Component**: Fully functional tabs (All Friends, Requests, Suggestions) with real-time actions (Accept/Decline/Send Request)
+  - **MutualFriends Component**: Displays mutual friends count with avatars (up to 3 shown)
+  - **Friends API Routes** (`server/routes/friends-routes.ts`): 7 endpoints for friend management (GET friends, requests, suggestions, mutual friends; POST send/accept/decline request; DELETE unfriend)
+  - **Production Features**: Automatic friend suggestions algorithm, mutual friends discovery, instant notification on friend request actions
+  
+  **TRACK 2B: Post Actions Extensions**
+  - **PostEditHistory Component**: Modal dialog showing complete edit history with diff view (previous vs new content), edit reasons, timestamps
+  - **BookmarkCollections Component**: Advanced bookmark system with collections, notes, create-new-collection inline, collection selector dropdown
+  - **Analytics Routes** (`server/routes/analytics-routes.ts`): Post view tracking, share tracking (by platform), event view tracking, user stats aggregation
+  - **Bookmark Routes** (`server/routes/bookmark-routes.ts`): Collection management, bookmark with notes, get user bookmarks by collection, post edit history retrieval
+  - **Production Features**: Track post views/shares/engagement, bookmark collections with custom notes, edit history with reasoning
+  
+  **TRACK 2C: Notification Multi-Channel**
+  - **WebSocket Notification Service** (`server/services/websocket-notification-service.ts`): Real-time notification delivery via WebSocket (/ws/notifications endpoint), connection management with ping/pong heartbeat, stale connection cleanup (5min timeout)
+  - **Email Digest Service** (`server/services/email-digest-service.ts`): Daily/weekly digest scheduler, notification grouping by type, HTML email generation with CTA links
+  - **Multi-Channel Architecture**: 3-tier delivery (WebSocket real-time → Push notifications if offline → Email digest for batched updates)
+  - **Production Features**: Online/offline user tracking, broadcast to multiple users, digest frequency preferences (daily/weekly/never), notification grouping for better UX
+
 ### Recent Additions (November 1, 2025 - MB.MD Wave 1 COMPLETE)
 - **🎉 WAVE 1 COMPLETE - ALL 3 TRACKS OPERATIONAL:**
   
@@ -77,10 +99,10 @@ The project employs a modular and agent-driven development approach, utilizing a
 - **Authentication:** JWT-based authentication with httpOnly cookies.
 - **Database:** PostgreSQL with Drizzle ORM and serial IDs, comprising **261 tables** (Wave 8 expansion: +21 tables for ESA agents, post actions, search analytics, housing, media).
 - **Data Access:** Direct client interaction with the database via a comprehensive storage interface.
-- **Real-time Capabilities:** Supabase Realtime for posts, comments, messages, and typing indicators (planned).
+- **Real-time Capabilities:** Supabase Realtime for posts/comments/messages/typing indicators + **WebSocket notification system** (real-time delivery with connection management and heartbeat monitoring).
 - **Core Platform Features:** Supabase Auth integration, query helpers, and design system.
-- **Quality Infrastructure:** Error boundaries, centralized logging, performance monitoring, SEO metadata, and **comprehensive Playwright E2E test suite (8 test files, 50+ tests covering all customer journeys)**.
-- **Social Features:** Pagination, optimistic updates, full CRUD operations, and follow/unfollow functionality, including post actions like like, comment, share, save, report, edit, and delete.
+- **Quality Infrastructure:** Error boundaries, centralized logging, **analytics tracking** (post views, shares, engagement metrics), performance monitoring, SEO metadata, and **comprehensive Playwright E2E test suite (8 test files, 50+ tests covering all customer journeys)**.
+- **Social Features:** Pagination, optimistic updates, full CRUD operations, and **complete friendship system** (requests, mutual friends, suggestions). Post actions include like, comment, share, **bookmark with collections**, report, edit with history tracking, and delete.
 - **Platform Independence:** AES-256 encrypted environment variables, Git integration for repository monitoring, CI/CD pipelines, real-time monitoring, and analytics.
 - **AI Integration:** Production-ready AI features including **Talent Match AI** (PDF/DOCX resume parsing, 8-domain signal detection, Groq AI Clarifier interview system, automatic task matching with confidence scoring) and MrBlueChat (Groq SDK integration for streaming AI responses).
 - **Automation Infrastructure:** BullMQ with **39 automation functions** across 6 dedicated workers (User Lifecycle, Social Automation, Event Automation, Life CEO, Housing, Administration) - **195% of spec requirement**.

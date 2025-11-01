@@ -13,7 +13,11 @@ import queuesRoutes from "./routes/queues";
 import mentionRoutes from "./routes/mention-routes";
 import lifeCeoRoutes from "./routes/life-ceo-routes";
 import adminRoutes from "./routes/admin-routes";
+import { createFriendsRoutes } from "./routes/friends-routes";
+import { createAnalyticsRoutes } from "./routes/analytics-routes";
+import { createBookmarkRoutes } from "./routes/bookmark-routes";
 import { authenticateToken, AuthRequest } from "./middleware/auth";
+import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
   insertPostSchema, 
   insertPostCommentSchema,
@@ -73,6 +77,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/mentions", mentionRoutes);
   app.use("/api/life-ceo", lifeCeoRoutes);
   app.use("/api/admin", adminRoutes);
+  app.use("/api", createFriendsRoutes(storage));
+  app.use("/api", createAnalyticsRoutes(storage));
+  app.use("/api", createBookmarkRoutes(storage));
 
   app.post("/api/posts", authenticateToken, validateRequest(insertPostSchema), async (req: AuthRequest, res: Response) => {
     try {
@@ -849,6 +856,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use(errorHandler);
 
   const httpServer = createServer(app);
+
+  wsNotificationService.initialize(httpServer);
+  console.log("[WebSocket] Notification service initialized on /ws/notifications");
 
   return httpServer;
 }
