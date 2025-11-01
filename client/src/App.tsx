@@ -43,6 +43,7 @@ const GroupDetailsPage = lazy(() => import("@/pages/GroupDetailsPage"));
 // Talent & AI
 const TalentMatchPage = lazy(() => import("@/pages/TalentMatchPage"));
 const MrBlueChatPage = lazy(() => import("@/pages/MrBlueChatPage"));
+const VideoStudio = lazy(() => import("@/pages/VideoStudio"));
 
 // Life CEO Suite (16 agents)
 const LifeCEODashboardPage = lazy(() => import("@/pages/LifeCEODashboardPage"));
@@ -178,6 +179,7 @@ function Router() {
       <Route path="/volunteer" component={VolunteerPage} />
       <Route path="/talent-match" component={TalentMatchPage} />
       <Route path="/mr-blue-chat" component={MrBlueChatPage} />
+      <Route path="/video-studio" component={VideoStudio} />
       <Route path="/life-ceo" component={LifeCEODashboardPage} />
       <Route path="/life-ceo/health" component={HealthAgentPage} />
       <Route path="/life-ceo/finance" component={FinanceAgentPage} />
