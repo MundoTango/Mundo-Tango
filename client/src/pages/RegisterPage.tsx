@@ -117,15 +117,19 @@ export default function RegisterPage() {
         title="Join Mundo Tango"
         description="Create your Mundo Tango account and join the global Argentine tango community. Connect with dancers, discover events, and share your passion for tango."
       />
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <div className="text-4xl mb-2">💃🕺</div>
-            <CardTitle className="text-2xl font-serif">Join the Global Tango Community</CardTitle>
-            <CardDescription>Create your account to connect with dancers worldwide</CardDescription>
-          </CardHeader>
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
+      <div className="flex min-h-screen items-center justify-center relative overflow-hidden p-4">
+        {/* Ocean Gradient Background */}
+        <div className="absolute inset-0 -z-20 ocean-gradient opacity-30" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-accent/5 to-background" />
+        
+        <div className="w-full max-w-[480px]">
+          <form onSubmit={handleSubmit} className="glass-card p-8 rounded-2xl">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold mb-2">Join Mundo Tango</h1>
+              <p className="text-muted-foreground">Create your account to connect with dancers worldwide</p>
+            </div>
+
+            <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
                 <Input
@@ -137,6 +141,7 @@ export default function RegisterPage() {
                   required
                   disabled={isLoading}
                   data-testid="input-name"
+                  className="bg-background/60 backdrop-blur-sm"
                 />
               </div>
 
@@ -151,6 +156,7 @@ export default function RegisterPage() {
                   required
                   disabled={isLoading}
                   data-testid="input-email"
+                  className="bg-background/60 backdrop-blur-sm"
                 />
               </div>
 
@@ -168,6 +174,7 @@ export default function RegisterPage() {
                     maxLength={20}
                     disabled={isLoading}
                     data-testid="input-username"
+                    className="bg-background/60 backdrop-blur-sm pr-10"
                   />
                   {isCheckingUsername && (
                     <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-muted-foreground" />
@@ -200,6 +207,7 @@ export default function RegisterPage() {
                     minLength={8}
                     disabled={isLoading}
                     data-testid="input-password"
+                    className="bg-background/60 backdrop-blur-sm pr-10"
                   />
                   <button
                     type="button"
@@ -237,6 +245,7 @@ export default function RegisterPage() {
                     required
                     disabled={isLoading}
                     data-testid="input-confirm-password"
+                    className="bg-background/60 backdrop-blur-sm pr-10"
                   />
                   <button
                     type="button"
@@ -269,16 +278,18 @@ export default function RegisterPage() {
                 />
                 <label htmlFor="terms" className="text-sm leading-tight cursor-pointer">
                   I accept the{" "}
-                  <Link href="/terms" className="text-primary hover:underline" target="_blank">
-                    Terms & Conditions
+                  <Link href="/terms">
+                    <a className="text-primary hover:underline" target="_blank">
+                      Terms & Conditions
+                    </a>
                   </Link>
                 </label>
               </div>
-            </CardContent>
-            <CardFooter className="flex flex-col gap-4">
+
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full mt-6"
+                size="lg"
                 disabled={isLoading || !termsAccepted || usernameAvailable === false}
                 data-testid="button-register"
               >
@@ -291,15 +302,18 @@ export default function RegisterPage() {
                   "Create Account"
                 )}
               </Button>
-              <p className="text-sm text-center text-muted-foreground">
-                Already have an account?{" "}
-                <Link href="/login" className="text-primary hover:underline" data-testid="link-login">
-                  Sign in
-                </Link>
-              </p>
-            </CardFooter>
+            </div>
           </form>
-        </Card>
+
+          <p className="text-sm text-center text-muted-foreground mt-6">
+            Already have an account?{" "}
+            <Link href="/login">
+              <a className="text-primary hover:underline font-medium" data-testid="link-login">
+                Sign in
+              </a>
+            </Link>
+          </p>
+        </div>
       </div>
     </>
   );
