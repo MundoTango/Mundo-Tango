@@ -2,7 +2,15 @@
 
 Mundo Tango is a social platform designed to connect the global tango community, including dancers, teachers, organizers, and enthusiasts. Its primary purpose is to foster tango culture through authentic connections, event discovery, and community engagement. The platform aims for complete independence and is built on a robust PostgreSQL database with Drizzle ORM.
 
-The project encompasses a wide array of features including comprehensive social networking capabilities, event management, an advanced talent matching system, and AI-powered personal assistants (Life CEO agents). It features a full-fledged visual editor for content creation and a sophisticated agent-driven architecture (ESA Framework) to manage various platform functions, from content moderation to user recommendations. With 107 operational pages and 216+ database tables, Mundo Tango is a comprehensive ecosystem for the tango world, driven by 9 core algorithms for enhanced user experience and engagement.
+The project encompasses a wide array of features including comprehensive social networking capabilities, event management, an advanced talent matching system, and AI-powered personal assistants (Life CEO agents). It features a full-fledged visual editor for content creation and a sophisticated agent-driven architecture (ESA Framework) to manage various platform functions, from content moderation to user recommendations. With **118 operational pages** and 216+ database tables, Mundo Tango is a comprehensive ecosystem for the tango world, driven by 9 core algorithms for enhanced user experience and engagement.
+
+### Recent Additions (November 1, 2025 - MB.MD Wave 5)
+- **11 New Agent Dashboard Pages:**
+  - **Marketing Division (5 pages):** SEO Agent, Content Agent, Social Media Agent, Email Agent, Analytics Agent
+  - **HR Division (5 pages):** Recruiter Agent, Onboarding Agent, Performance Agent, Retention Agent, Culture Agent
+  - **H2AC Dashboard (1 page):** Human-to-Agent Communication central hub for monitoring all 134 AI agents
+- **Visual Editor:** Fully operational drag-and-drop page builder with component palette and JSX export
+- **Algorithm Suite:** 9 production-ready algorithms (Feed Ranking, Churn Prevention, Fuzzy Search, User/Event/Teacher Recommendations, Location Proximity, Resource Allocation, City Cityscape)
 
 ## User Preferences
 
