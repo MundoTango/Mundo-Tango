@@ -32,6 +32,14 @@ The project employs a modular and agent-driven development approach, utilizing a
   - **Design Options:** 4 distinct directions presented - Bold Minimaximalist (recommended), Dark Mode Premium, Warm Community Focus, Interactive Storytelling
   - **Key Insights:** 80% prefer dark mode, video-first is critical, micro-interactions increase retention 30%, storytelling increases engagement 65%
   - **Tango-Specific:** Auckland Tango, Tango Mercurio, Boston Tango analyzed for community features, event calendars, cultural authenticity
+- **Marketing Prototype Page (2025-11-01):** Isolated prototype combining Bold Minimaximalist + Interactive Storytelling approaches
+  - **Route:** `/marketing-prototype` (completely isolated from live marketing site)
+  - **Design Elements:** Oversized typography, scroll-triggered animations (Framer Motion), chapter-based sections (The Dance, The Music, The Community), parallax effects, asymmetrical layouts
+  - **Color Palette:** MT Ocean Theme only (turquoise → cobalt blue gradients, purple #8B5CF6) - NO burgundy/gold per user request
+  - **Key Features:** Animated gradient backgrounds (15s auto-shift), floating icons, stats grid (10K+ dancers, 50+ countries, 1K+ events), scroll indicators, "PROTOTYPE" badge for identification
+  - **Sections:** Hero (full-screen animated gradient), 3 chapters (icon-based with glow effects), global network stats, final CTA
+  - **Testing:** E2E verified - all animations, scrolling, navigation working correctly
+  - **Purpose:** Experimental design mockup for future marketing site redesign without impacting live pages
 
 ### Technical Implementations
 - **Backend:** Node.js with Express and TypeScript.

@@ -66,7 +66,7 @@ export default function MarketingPrototype() {
             transition={{ duration: 1, delay: 0.2 }}
           >
             <h1 className="text-7xl md:text-9xl font-bold mb-6 text-white tracking-tight">
-              WHERE TANGO
+              WHERE TANGO{" "}
               <br />
               <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
                 MEETS COMMUNITY
