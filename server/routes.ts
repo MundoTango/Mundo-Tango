@@ -17,6 +17,7 @@ import { createFriendsRoutes } from "./routes/friends-routes";
 import { createAnalyticsRoutes } from "./routes/analytics-routes";
 import { createBookmarkRoutes } from "./routes/bookmark-routes";
 import avatarRoutes from "./routes/avatarRoutes";
+import videoRoutes from "./routes/videoRoutes";
 import { authenticateToken, AuthRequest } from "./middleware/auth";
 import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
@@ -82,6 +83,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api", createAnalyticsRoutes(storage));
   app.use("/api", createBookmarkRoutes(storage));
   app.use("/api/avatar", avatarRoutes);
+  app.use("/api/videos", videoRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(insertPostSchema), async (req: AuthRequest, res: Response) => {
     try {
