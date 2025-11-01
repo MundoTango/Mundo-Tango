@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
-import { eq, and, gt, desc, asc, or, ilike, inArray, sql as sqlOp, lt, gte, lte } from "drizzle-orm";
+import { eq, and, gt, desc, asc, or, ilike, inArray, sql as sqlOp, lt, gte, lte, ne, notInArray } from "drizzle-orm";
 import {
   users,
   refreshTokens,
@@ -758,18 +758,17 @@ export class DbStorage implements IStorage {
     const friendIds = myFriends.map(f => f.friendId);
     
     if (friendIds.length === 0) {
-      const suggestions = await db.select({
-        id: users.id,
-        name: users.name,
-        username: users.username,
-        email: users.email,
-        profileImage: users.profileImage,
-        bio: users.bio,
-        city: users.city,
-      })
-      .from(users)
-      .where(sql`${users.id} != ${userId}`)
-      .limit(10);
+      const rawUsers = await db.select().from(users).where(ne(users.id, userId)).limit(10);
+      
+      const suggestions = rawUsers.map((u: any) => ({
+        id: u.id,
+        name: u.name,
+        username: u.username,
+        email: u.email,
+        profileImage: u.profileImage,
+        bio: u.bio,
+        city: u.city,
+      }));
       return suggestions;
     }
     
@@ -815,7 +814,12 @@ export class DbStorage implements IStorage {
   }
 
   async acceptFriendRequest(requestId: number, response?: string): Promise<void> {
-    const request = await db.select().from(friendRequests).where(eq(friendRequests.id, requestId)).limit(1);
+    const request = await db.select({
+      id: friendRequests.id,
+      senderId: friendRequests.senderId,
+      receiverId: friendRequests.receiverId,
+      didWeDance: friendRequests.didWeDance,
+    }).from(friendRequests).where(eq(friendRequests.id, requestId)).limit(1);
     if (!request[0]) throw new Error('Request not found');
     
     const { senderId, receiverId, didWeDance } = request[0];
@@ -869,16 +873,39 @@ export class DbStorage implements IStorage {
     
     if (mutualIds.length === 0) return [];
     
-    return await db.select().from(users).where(sql`${users.id} IN (${sql.join(mutualIds.map(id => sql`${id}`), sql`, `)})`);
+    return await db.select({
+      id: users.id,
+      name: users.name,
+      username: users.username,
+      email: users.email,
+      profileImage: users.profileImage,
+      bio: users.bio,
+      city: users.city,
+    }).from(users).where(sql`${users.id} IN (${sql.join(mutualIds.map(id => sql`${id}`), sql`, `)})`);
   }
 
   async calculateClosenessScore(friendshipId: number): Promise<number> {
-    const friendship = await db.select().from(friendships).where(eq(friendships.id, friendshipId)).limit(1);
+    const friendship = await db.select({
+      id: friendships.id,
+      userId: friendships.userId,
+      friendId: friendships.friendId,
+      closenessScore: friendships.closenessScore,
+      connectionDegree: friendships.connectionDegree,
+      lastInteractionAt: friendships.lastInteractionAt,
+      createdAt: friendships.createdAt,
+      updatedAt: friendships.updatedAt,
+    }).from(friendships).where(eq(friendships.id, friendshipId)).limit(1);
     if (!friendship[0]) return 0;
     
     let score = 75;
     
-    const activities = await db.select()
+    const activities = await db.select({
+      id: friendshipActivities.id,
+      friendshipId: friendshipActivities.friendshipId,
+      activityType: friendshipActivities.activityType,
+      metadata: friendshipActivities.metadata,
+      createdAt: friendshipActivities.createdAt,
+    })
       .from(friendshipActivities)
       .where(eq(friendshipActivities.friendshipId, friendshipId));
     
@@ -909,7 +936,7 @@ export class DbStorage implements IStorage {
   async getConnectionDegree(userId1: number, userId2: number): Promise<number> {
     if (userId1 === userId2) return 0;
     
-    const directFriendship = await db.select()
+    const directFriendship = await db.select({ id: friendships.id })
       .from(friendships)
       .where(and(eq(friendships.userId, userId1), eq(friendships.friendId, userId2)))
       .limit(1);
@@ -920,7 +947,7 @@ export class DbStorage implements IStorage {
       .where(eq(friendships.userId, userId1));
     const user1FriendIds = user1Friends.map(f => f.friendId);
     
-    const secondDegree = await db.select()
+    const secondDegree = await db.select({ id: friendships.id })
       .from(friendships)
       .where(
         and(
@@ -936,7 +963,7 @@ export class DbStorage implements IStorage {
       .where(sql`${friendships.userId} IN (${sql.join(user1FriendIds.map(id => sql`${id}`), sql`, `)})`);
     const secondDegreeIds = secondDegreeFriends.map(f => f.friendId);
     
-    const thirdDegree = await db.select()
+    const thirdDegree = await db.select({ id: friendships.id })
       .from(friendships)
       .where(
         and(
