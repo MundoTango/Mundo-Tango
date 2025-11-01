@@ -1,0 +1,591 @@
+{
+  "plan_name": "Mundo Tango \u2014 Full Technical + Strategic Plan (Marketing Site + Agents + Talent Match + ESA Core)",
+  "version": "1.0",
+  "generated_at": "2025-10-06T20:29:28.167762Z",
+  "vision": {
+    "core_story": "A dedicated, privacy-first social platform for tango \u2014 share memories, discover events, and contribute to building the platform itself.",
+    "differentiators": [
+      "Tango-focused social graph and memories",
+      "Volunteer-first platform development (Talent Match)",
+      "Open-source friendly stack and governance",
+      "Future travel/housing integrations"
+    ],
+    "audience_promise": "Bring your tango world into one place \u2014 connect, contribute, and grow the global community."
+  },
+  "audiences": [
+    {
+      "id": "dancers",
+      "needs": [
+        "discover events",
+        "share memories",
+        "connect"
+      ],
+      "primary_channels": [
+        "Instagram",
+        "TikTok",
+        "IG Reels"
+      ]
+    },
+    {
+      "id": "organizers",
+      "needs": [
+        "promote events",
+        "find volunteers",
+        "cross-post"
+      ],
+      "primary_channels": [
+        "Facebook",
+        "Email",
+        "WhatsApp"
+      ]
+    },
+    {
+      "id": "teachers",
+      "needs": [
+        "visibility",
+        "workshops",
+        "travel support"
+      ],
+      "primary_channels": [
+        "Instagram",
+        "YouTube"
+      ]
+    },
+    {
+      "id": "djs_musicians",
+      "needs": [
+        "gigs",
+        "profile",
+        "travel"
+      ],
+      "primary_channels": [
+        "Facebook",
+        "Instagram"
+      ]
+    },
+    {
+      "id": "volunteers_builders",
+      "needs": [
+        "meaningful contributions",
+        "clear tasks",
+        "recognition"
+      ],
+      "primary_channels": [
+        "GitHub",
+        "LinkedIn",
+        "Twitter/X"
+      ]
+    }
+  ],
+  "goals": {
+    "phase_1_mvp": {
+      "signups": 1000,
+      "regions": [
+        "US",
+        "EU",
+        "Argentina"
+      ],
+      "timeline_weeks": 12
+    },
+    "phase_2_travel": {
+      "bookings": 500,
+      "timeline_weeks": 20
+    },
+    "phase_3_cross_community": {
+      "new_verticals": 3,
+      "timeline_weeks": 36
+    },
+    "ongoing": {
+      "retention_metrics": [
+        "30d_return",
+        "90d_return"
+      ],
+      "content": [
+        "memories",
+        "events"
+      ]
+    }
+  },
+  "kpis": {
+    "acquisition": [
+      "signups",
+      "CAC",
+      "landing_to_talentmatch_CTA%"
+    ],
+    "engagement": [
+      "posts_per_user",
+      "event_RSVPs",
+      "DAU"
+    ],
+    "conversion": [
+      "volunteer_apply_rate%",
+      "accepted_assignments",
+      "resume_upload_rate%"
+    ],
+    "retention": [
+      "d30",
+      "d90"
+    ],
+    "advocacy": [
+      "NPS",
+      "organic_shares"
+    ]
+  },
+  "channels": {
+    "owned": [
+      "Website (Marketing)",
+      "Talent Match app",
+      "Email newsletter"
+    ],
+    "paid": [
+      "Meta ads",
+      "Google Search (tango festival queries)"
+    ],
+    "earned": [
+      "Influencer collabs (teachers, DJs)",
+      "press/blogs"
+    ],
+    "partnerships": [
+      "schools",
+      "event organizers",
+      "travel providers"
+    ]
+  },
+  "architecture": {
+    "apps": [
+      {
+        "name": "marketing-site",
+        "stack": "React + Vite + Tailwind",
+        "port": 5173
+      },
+      {
+        "name": "talent-match",
+        "stack": "React + Vite + Tailwind",
+        "port": 5174
+      },
+      {
+        "name": "server",
+        "stack": "Node + Express + JWT + Supabase (DB/Auth)",
+        "port": 4000
+      }
+    ],
+    "docs_layer": {
+      "path": "/docs",
+      "files": [
+        "ESA.md",
+        "ESA.json",
+        "AI_ClarifierLogic.md",
+        "phases/*",
+        "DEPLOYMENT.md",
+        "SCALING.md",
+        "MAINTENANCE.md"
+      ]
+    },
+    "env_vars": [
+      "VITE_API_URL",
+      "VITE_SUPABASE_URL",
+      "VITE_SUPABASE_ANON_KEY",
+      "PORT",
+      "JWT_SECRET",
+      "SUPABASE_SERVICE_ROLE",
+      "DOCS_DIR"
+    ],
+    "integration_flow": [
+      "Server loads ESA.json & Clarifier guide at boot",
+      "Talent Match calls server for clarifier Q&A and task suggestions",
+      "Marketing site links to Talent Match and displays volunteer CTA"
+    ]
+  },
+  "security_privacy": {
+    "auth": "JWT for admin endpoints; Supabase auth for users",
+    "rls": "Enable on volunteers, resumes, clarifier_sessions, assignments, tasks",
+    "consent": "Explain full-career r\u00e9sum\u00e9 philosophy; allow deletion and export",
+    "logging": "Request IDs; redact PII; audit trail for admin actions"
+  },
+  "agents": {
+    "engineering_core": [
+      "RequirementsAnalysis.Agent",
+      "ArchitectureDesign.Agent",
+      "DatabaseDesign.Agent",
+      "APIDesign.Agent",
+      "UIUXDesign.Agent",
+      "EnvironmentSetup.Agent",
+      "CoreInfrastructure.Agent",
+      "BasicFeatures.Agent",
+      "AdvancedFeatures.Agent",
+      "FrontendDevelopment.Agent",
+      "BackendDevelopment.Agent",
+      "IntegrationDevelopment.Agent",
+      "MobileDevelopment.Agent",
+      "TestingDevelopment.Agent",
+      "Documentation.Agent",
+      "Security.Agent",
+      "Deployment.Agent",
+      "Monitoring.Agent",
+      "Observability.Agent",
+      "Scaling.Agent",
+      "Maintenance.Agent"
+    ],
+    "marketing": [
+      "BrandArchitect.Agent",
+      "ContentFunnel.Agent",
+      "CommunityStoryteller.Agent",
+      "OSSEvangelist.Agent",
+      "Analytics.Agent"
+    ],
+    "hire_volunteer": [
+      "VolunteerArchitect.Agent",
+      "ATS.Agent",
+      "OrgPsych.Agent",
+      "Governance.Agent",
+      "UXHiring.Agent"
+    ],
+    "executive": [
+      "CEO.Agent",
+      "CTO.Agent",
+      "COO.Agent",
+      "CFO.Agent",
+      "CPO.Agent"
+    ],
+    "shadowing_rules": [
+      "Phases 1\u20135: BrandArchitect, VolunteerArchitect, OrgPsych, Governance, UXHiring shadow planning",
+      "Phases 6\u201315: ATS + Engineering agents co\u2011pilot build",
+      "Phases 16\u201321: Governance + Security review operations; Analytics monitors funnel"
+    ]
+  },
+  "implementation": {
+    "server_api": {
+      "base_url": "/api/v1",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/health",
+          "desc": "basic ok"
+        },
+        {
+          "method": "GET",
+          "path": "/esa",
+          "desc": "return ESA registry (agents/phases)"
+        },
+        {
+          "method": "POST",
+          "path": "/volunteers/resumes",
+          "desc": "store r\u00e9sum\u00e9 metadata; later storage/parse"
+        },
+        {
+          "method": "POST",
+          "path": "/volunteers/clarifier/session",
+          "desc": "start interview"
+        },
+        {
+          "method": "POST",
+          "path": "/volunteers/clarifier/message",
+          "desc": "next question from clarifier"
+        },
+        {
+          "method": "POST",
+          "path": "/volunteers/match/suggest",
+          "desc": "task recommendations from signals"
+        },
+        {
+          "method": "GET",
+          "path": "/tasks",
+          "desc": "list open tasks"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/assignments",
+          "auth": "JWT",
+          "desc": "pending assignments"
+        },
+        {
+          "method": "POST",
+          "path": "/admin/assignments/:id/status",
+          "auth": "JWT",
+          "desc": "approve/reject"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/audit",
+          "auth": "JWT",
+          "desc": "audit events"
+        },
+        {
+          "method": "POST",
+          "path": "/admin/notify",
+          "auth": "JWT",
+          "desc": "in\u2011app notification"
+        }
+      ],
+      "clarifier_logic": {
+        "inputs": [
+          "resume_text_or_links",
+          "chat_history",
+          "ESA.json"
+        ],
+        "signals_detection": [
+          "backend, node, api \u2192 BackendDevelopment.Agent",
+          "security, rls, auth \u2192 Security.Agent",
+          "sql, database, schema \u2192 DatabaseDesign.Agent",
+          "react, ui, accessibility \u2192 FrontendDevelopment.Agent",
+          "governance, compliance \u2192 Governance.Agent"
+        ],
+        "question_policy": [
+          "Ask about scope preferences",
+          "Ask hours/week and timeframe",
+          "Ask recent tools/languages",
+          "Ask 1\u20132 concrete project examples"
+        ],
+        "task_mapping_examples": [
+          {
+            "id": "t-rls-checklist",
+            "title": "Draft RLS checklist",
+            "hours": 4,
+            "reason": "security/rls signal"
+          },
+          {
+            "id": "t-express-hardening",
+            "title": "Harden Express endpoints",
+            "hours": 3,
+            "reason": "backend signal"
+          },
+          {
+            "id": "t-sql-indexing",
+            "title": "Add indexes & review schema",
+            "hours": 2,
+            "reason": "database signal"
+          },
+          {
+            "id": "t-readme-onboarding",
+            "title": "Improve README onboarding",
+            "hours": 2,
+            "reason": "general starter task"
+          }
+        ]
+      },
+      "data_model": {
+        "tables": [
+          {
+            "name": "volunteers",
+            "columns": {
+              "id": "uuid pk",
+              "profile": "jsonb",
+              "created_at": "timestamptz"
+            }
+          },
+          {
+            "name": "resumes",
+            "columns": {
+              "id": "uuid pk",
+              "volunteer_id": "uuid fk",
+              "filename": "text",
+              "parsed_text": "text",
+              "created_at": "timestamptz"
+            }
+          },
+          {
+            "name": "clarifier_sessions",
+            "columns": {
+              "id": "uuid pk",
+              "volunteer_id": "uuid fk",
+              "log": "jsonb",
+              "created_at": "timestamptz"
+            }
+          },
+          {
+            "name": "tasks",
+            "columns": {
+              "id": "uuid pk",
+              "title": "text",
+              "description": "text",
+              "domain": "text",
+              "phase": "text",
+              "created_at": "timestamptz"
+            }
+          },
+          {
+            "name": "assignments",
+            "columns": {
+              "id": "uuid pk",
+              "volunteer_id": "uuid fk",
+              "task_id": "uuid fk",
+              "status": "text",
+              "created_at": "timestamptz"
+            }
+          }
+        ],
+        "rls_enabled": true
+      }
+    },
+    "marketing_site": {
+      "routes": [
+        "/",
+        "/discover",
+        "/volunteer",
+        "/about",
+        "/join"
+      ],
+      "components": [
+        "Navbar",
+        "Footer (GoFundMe + socials)",
+        "Hero",
+        "Cards",
+        "Sections"
+      ],
+      "theme": {
+        "gradient": [
+          "#5EEAD4",
+          "#155E75"
+        ],
+        "a11y": "\u2265 AA contrast"
+      },
+      "copy_points": [
+        "Where Tango Meets Community",
+        "Share memories, find events, and help us build the future of tango tech",
+        "Volunteer to help build MT"
+      ]
+    },
+    "talent_match": {
+      "routes": [
+        "/ (Upload)",
+        "/clarifier",
+        "/recommendations",
+        "/profile",
+        "/admin/taskboard",
+        "/admin/pipeline",
+        "/admin/approvals",
+        "/admin/audit"
+      ],
+      "flow": [
+        "User signs in (MT account)",
+        "Upload r\u00e9sum\u00e9 or paste links",
+        "Clarifier interview (chat)",
+        "Agent signals \u2192 task suggestions",
+        "Apply \u2192 Admin board \u2192 notification"
+      ],
+      "ui_elements": [
+        "Chat bubbles",
+        "Task cards with hours & reason",
+        "Apply buttons",
+        "Status badges"
+      ]
+    },
+    "docs_layer": {
+      "files": [
+        "ESA.md",
+        "ESA.json",
+        "AI_ClarifierLogic.md",
+        "phases/*",
+        "API.md",
+        "DEPLOYMENT.md",
+        "SCALING.md",
+        "MAINTENANCE.md"
+      ],
+      "runtime_hooks": [
+        "Server loads ESA.json at boot",
+        "Clarifier reads AI_ClarifierLogic.md for prompts/guardrails"
+      ]
+    }
+  },
+  "roadmap": [
+    {
+      "milestone": "MVP Launch",
+      "weeks": 12,
+      "includes": [
+        "Marketing pages live",
+        "Server v1 live",
+        "Talent Match v1 live (mock clarifier)",
+        "Docs published"
+      ]
+    },
+    {
+      "milestone": "AI Upgrade",
+      "weeks": 20,
+      "includes": [
+        "OpenAI/NotebookLM integration",
+        "Resume parsing enrichment",
+        "Better task scoring"
+      ]
+    },
+    {
+      "milestone": "Travel/Map",
+      "weeks": 28,
+      "includes": [
+        "Discover map with events",
+        "Partner links",
+        "Housing recs MVP"
+      ]
+    },
+    {
+      "milestone": "Community Scaling",
+      "weeks": 36,
+      "includes": [
+        "Ambassador program",
+        "Localization/i18n",
+        "New hobbies pilot"
+      ]
+    }
+  ],
+  "deployment": {
+    "replit_steps": [
+      "Upload server/, marketing-site/, talent-match/, docs/",
+      "Set env vars in each app",
+      "Run npm install in each; then npm run dev",
+      "Open ports: 4000, 5173, 5174"
+    ],
+    "optional_monorepo": "Use npm workspaces with concurrently to run all apps in one command"
+  },
+  "governance": {
+    "code_of_conduct": "Respect all community members (dancers, organizers, DJs, volunteers).",
+    "equal_opportunity": "No discrimination; transparent criteria for assignments.",
+    "data_rights": "Export/delete r\u00e9sum\u00e9 data; consent for AI processing.",
+    "auditability": "Admin actions logged; clarifier transcripts attach to sessions."
+  },
+  "acceptance_checklist": {
+    "marketing": [
+      "Home hero + CTA to Talent Match",
+      "Footer links (GoFundMe, Facebook, Instagram)",
+      "Discover, Volunteer, About, Join pages render"
+    ],
+    "talent_match": [
+      "Upload flow succeeds",
+      "Clarifier asks \u22652 adaptive followups",
+      "Recommendations show hours+reasons",
+      "Apply creates a pending assignment"
+    ],
+    "server": [
+      "GET /health ok",
+      "GET /esa returns agents & phases",
+      "Clarifier message returns contextual question",
+      "JWT required for /admin (dev bypass ok)"
+    ],
+    "docs": [
+      "ESA.md + ESA.json present",
+      "Phases 01\u201321 complete",
+      "AI_ClarifierLogic guardrails defined"
+    ]
+  },
+  "risks_mitigations": [
+    {
+      "risk": "AI suggestions misaligned",
+      "mitigation": "Human-in-the-loop admin approval; conservative defaults"
+    },
+    {
+      "risk": "RLS misconfig exposes data",
+      "mitigation": "Security review in Phase 16; test policies"
+    },
+    {
+      "risk": "Volunteer drop-off after upload",
+      "mitigation": "Short clarifier; instant task previews; clear hours"
+    },
+    {
+      "risk": "Design inconsistency across apps",
+      "mitigation": "Shared Tailwind theme; component library"
+    },
+    {
+      "risk": "Replit resource limits",
+      "mitigation": "Run services separately or use monorepo with minimal watchers"
+    }
+  ],
+  "summary": "This plan combines strategy (audiences, goals, channels), execution (three apps + server API), ESA agents/phases, AI clarifier logic, schema/APIs, docs, governance, and a pragmatic Replit deployment path for a working MVP that can scale."
+}

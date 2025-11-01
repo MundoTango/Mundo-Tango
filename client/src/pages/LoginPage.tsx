@@ -39,63 +39,81 @@ export default function LoginPage() {
   return (
     <>
       <SEO
-        title="Sign In"
+        title="Sign In - Mundo Tango"
         description="Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
       />
-      <div className="flex min-h-screen items-center justify-center bg-muted p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl font-serif">Welcome Back</CardTitle>
-          <CardDescription>Sign in to your Mundo Tango account</CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="your@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={isLoading}
-                data-testid="input-email"
-              />
+      <div className="flex min-h-screen items-center justify-center relative overflow-hidden p-4">
+        {/* Ocean Gradient Background */}
+        <div className="absolute inset-0 -z-20 ocean-gradient opacity-30" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-accent/5 to-background" />
+        
+        {/* Glassmorphic Login Card */}
+        <div className="w-full max-w-[480px]">
+          <form onSubmit={handleSubmit} className="glass-card p-8 rounded-2xl">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold mb-2">Welcome Back</h1>
+              <p className="text-muted-foreground">Sign in to your Mundo Tango account</p>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={isLoading}
+                  data-testid="input-email"
+                  className="bg-background/60 backdrop-blur-sm"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={isLoading}
+                  data-testid="input-password"
+                  className="bg-background/60 backdrop-blur-sm"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full mt-6"
                 disabled={isLoading}
-                data-testid="input-password"
-              />
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col gap-4">
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading}
-              data-testid="button-login"
-            >
-              {isLoading ? "Signing in..." : "Sign In"}
-            </Button>
-            <p className="text-sm text-center text-muted-foreground">
-              Don't have an account?{" "}
-              <Link href="/register" className="text-primary hover:underline" data-testid="link-register">
-                Sign up
+                data-testid="button-login"
+                size="lg"
+              >
+                {isLoading ? "Signing in..." : "Log In"}
+              </Button>
+
+              <Link href="/password-reset">
+                <a className="block text-center text-sm text-primary hover:underline mt-4" data-testid="link-forgot-password">
+                  Forgot password?
+                </a>
               </Link>
-            </p>
-          </CardFooter>
-        </form>
-      </Card>
-    </div>
+            </div>
+          </form>
+
+          <p className="text-sm text-center text-muted-foreground mt-6">
+            Don't have an account?{" "}
+            <Link href="/register">
+              <a className="text-primary hover:underline font-medium" data-testid="link-register">
+                Sign up
+              </a>
+            </Link>
+          </p>
+        </div>
+      </div>
     </>
   );
 }

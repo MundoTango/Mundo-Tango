@@ -94,14 +94,13 @@ export default function HomePage() {
               Welcome to the Global Tango Community
             </div>
             
-            <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
-              Mundo Tango
+            <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl ocean-gradient-text">
+              Where Tango Meets Community
             </h1>
             
             <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground sm:text-xl">
-              Connect with dancers, discover events, and immerse yourself in the
-              vibrant world of tango. From Buenos Aires to New York, join thousands
-              of passionate dancers worldwide.
+              Share memories, find events, and help us build the future of tango tech.
+              Join thousands of passionate dancers connecting worldwide.
             </p>
             
             <div className="flex flex-wrap gap-4 justify-center mb-12">
@@ -111,10 +110,12 @@ export default function HomePage() {
                   Get Started Free
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="gap-2" data-testid="button-watch-demo">
-                <Play className="h-5 w-5" />
-                Watch Demo
-              </Button>
+              <Link href="/volunteer">
+                <Button size="lg" variant="outline" className="gap-2" data-testid="button-volunteer">
+                  <Heart className="h-5 w-5" />
+                  Volunteer to Help Build MT
+                </Button>
+              </Link>
             </div>
 
             {/* Quick Stats */}

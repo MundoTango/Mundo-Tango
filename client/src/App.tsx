@@ -14,6 +14,8 @@ import AboutPage from "@/pages/AboutPage";
 import CalendarPage from "@/pages/CalendarPage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
+import DiscoverPage from "@/pages/DiscoverPage";
+import VolunteerPage from "@/pages/VolunteerPage";
 import FeedPage from "@/pages/FeedPage";
 import ProfilePage from "@/pages/ProfilePage";
 import EventsPage from "@/pages/EventsPage";
@@ -102,6 +104,8 @@ function Router() {
     <Switch>
       <Route path="/" component={HomePage} />
       <Route path="/about" component={AboutPage} />
+      <Route path="/discover" component={DiscoverPage} />
+      <Route path="/volunteer" component={VolunteerPage} />
       <Route path="/login" component={LoginPage} />
       <Route path="/register" component={RegisterPage} />
       
