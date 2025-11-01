@@ -3,6 +3,7 @@ import { Mic, MicOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { MrBlueAvatar2D } from './MrBlueAvatar2D';
+import { useVideoStateManager, type VideoState } from '@/hooks/useVideoStateManager';
 
 interface MrBlueAvatarVideoProps {
   position?: [number, number];
@@ -10,6 +11,8 @@ interface MrBlueAvatarVideoProps {
   expression?: 'happy' | 'thoughtful' | 'excited' | 'focused' | 'friendly' | 'confident' | 'playful' | 'professional';
   isActive?: boolean;
   onInteraction?: () => void;
+  initialState?: VideoState;
+  enableStateTransitions?: boolean;
 }
 
 /**
@@ -26,7 +29,9 @@ export function MrBlueAvatarVideo({
   size = 200,
   expression = 'friendly',
   isActive = false,
-  onInteraction
+  onInteraction,
+  initialState = 'idle',
+  enableStateTransitions = true
 }: MrBlueAvatarVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isListening, setIsListening] = useState(false);
@@ -34,7 +39,21 @@ export function MrBlueAvatarVideo({
   const [videoError, setVideoError] = useState(false);
   const recognitionRef = useRef<any>(null);
 
-  // Fetch Mr. Blue avatar video
+  // Video state manager for dynamic expression changes
+  const videoStateManager = useVideoStateManager({
+    defaultState: initialState,
+    onStateChange: (state) => {
+      console.log('[MrBlueAvatarVideo] State changed to:', state);
+      if (state === 'listening') setIsListening(true);
+      else if (state === 'speaking') setIsSpeaking(true);
+      else {
+        setIsListening(false);
+        setIsSpeaking(false);
+      }
+    }
+  });
+
+  // Fetch Mr. Blue avatar video (fallback if state videos don't exist)
   // Note: This may fail if Luma credits are insufficient - that's OK, we'll fallback to 2D
   const { data: videoData, isLoading, error } = useQuery<{
     success: boolean;
@@ -46,6 +65,11 @@ export function MrBlueAvatarVideo({
     refetchOnWindowFocus: false,
     retry: 0, // Don't retry on failure - fail fast to 2D fallback
   });
+
+  // Get current state video path
+  const currentVideoPath = enableStateTransitions 
+    ? videoStateManager.getVideoPath() 
+    : videoData?.videoPath;
 
   // Debug logging
   useEffect(() => {
@@ -91,11 +115,11 @@ export function MrBlueAvatarVideo({
     };
   }, []);
 
-  // Auto-play video when loaded
+  // Auto-play video when loaded or state changes
   useEffect(() => {
     const video = videoRef.current;
-    if (video && videoData?.videoPath) {
-      // Force browser to load the source element
+    if (video && currentVideoPath) {
+      // Force browser to load the new source
       video.load();
       
       // Wait for metadata to load, then play
@@ -117,15 +141,18 @@ export function MrBlueAvatarVideo({
         video.removeEventListener('canplay', handleCanPlay);
       };
     }
-  }, [videoData]);
+  }, [currentVideoPath]);
 
   const handleUserSpeech = (transcript: string) => {
-    setIsSpeaking(true);
     console.log('Processing:', transcript);
     
-    setTimeout(() => {
-      setIsSpeaking(false);
-    }, 2000);
+    if (enableStateTransitions) {
+      // Mr. Blue speaks for ~3 seconds then returns to idle
+      videoStateManager.startSpeaking(3000);
+    } else {
+      setIsSpeaking(true);
+      setTimeout(() => setIsSpeaking(false), 2000);
+    }
   };
 
   const toggleListening = () => {
@@ -133,10 +160,18 @@ export function MrBlueAvatarVideo({
 
     if (isListening) {
       recognitionRef.current.stop();
-      setIsListening(false);
+      if (enableStateTransitions) {
+        videoStateManager.returnToIdle();
+      } else {
+        setIsListening(false);
+      }
     } else {
       recognitionRef.current.start();
-      setIsListening(true);
+      if (enableStateTransitions) {
+        videoStateManager.startListening();
+      } else {
+        setIsListening(true);
+      }
     }
   };
 
@@ -153,8 +188,8 @@ export function MrBlueAvatarVideo({
 
   // Fallback to 2D avatar if video unavailable or failed
   // This includes: loading, error, or Luma credits insufficient
-  if (isLoading || error || videoError || !videoData?.videoPath) {
-    console.log('[MrBlueAvatarVideo] Using 2D fallback:', { isLoading, error, videoError, hasVideoPath: !!videoData?.videoPath });
+  if (isLoading || error || videoError || (!currentVideoPath && !videoData?.videoPath)) {
+    console.log('[MrBlueAvatarVideo] Using 2D fallback:', { isLoading, error, videoError, hasVideoPath: !!currentVideoPath });
     return (
       <MrBlueAvatar2D
         size={size}
@@ -165,7 +200,7 @@ export function MrBlueAvatarVideo({
     );
   }
 
-  console.log('[MrBlueAvatarVideo] Rendering VIDEO element with src:', videoData.videoPath);
+  console.log('[MrBlueAvatarVideo] Rendering VIDEO element with src:', currentVideoPath, 'State:', videoStateManager.currentState);
   return (
     <div className="relative" style={{ width: size, height: size }}>
       {/* Luma Video Avatar */}
@@ -176,12 +211,12 @@ export function MrBlueAvatarVideo({
         playsInline
         autoPlay
         onError={handleVideoError}
-        onLoadedData={() => console.log('[MrBlueAvatarVideo] Video loaded successfully!')}
+        onLoadedData={() => console.log('[MrBlueAvatarVideo] Video loaded successfully!', videoStateManager.currentState)}
         onClick={onInteraction}
         className="w-full h-full object-cover rounded-full shadow-2xl hover:shadow-primary/20 transition-shadow cursor-pointer"
         data-testid="mr-blue-video-avatar"
       >
-        <source src={videoData.videoPath} type="video/mp4" />
+        <source src={currentVideoPath || videoData?.videoPath} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
