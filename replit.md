@@ -1,81 +1,8 @@
 ## Overview
 
-Mundo Tango is a social platform connecting the global tango community, including dancers, teachers, organizers, and enthusiasts. Its purpose is to foster tango culture through authentic connections, event discovery, and community engagement. The project is built with PostgreSQL + Drizzle ORM and is designed for complete platform independence.
+Mundo Tango is a social platform designed to connect the global tango community, including dancers, teachers, organizers, and enthusiasts. Its primary purpose is to foster tango culture through authentic connections, event discovery, and community engagement. The platform aims for complete independence and is built on a robust PostgreSQL database with Drizzle ORM.
 
-### Current Build Status (November 1, 2025) 
-**WAVE 1 (Marketing + Foundation)**: ✅ **100% COMPLETE** + **WAVE 2 (Talent Match + Life CEO)**: ✅ **API + STORAGE + 11 PAGES COMPLETE** + **Phase 6 TIER 1**: ✅ Complete + **WAVE 2A**: ✅ POST ACTIONS COMPLETE + **WAVE 2B**: ✅ FRIENDSHIP COMPLETE + **WAVE 2C**: ✅ NOTIFICATIONS COMPLETE + **WAVE 3A**: ✅ SEARCH COMPLETE + **WAVE 3B**: ✅ SETTINGS COMPLETE + **WAVE 3C**: ✅ BULLMQ INFRASTRUCTURE COMPLETE + **WAVE 4B**: ✅ ADMIN DASHBOARD COMPLETE + **🚨 CRITICAL LOGIN BUG**: ✅ FIXED (redirects to /feed) + **🎨 MT OCEAN THEME**: ✅ GLASSMORPHISM APPLIED + **📐 PATTERN B LAYOUT**: ✅ THREE-COLUMN FEED COMPLETE + **🎉 MB.MD MAXIMUM SIMULTANEOUS EXECUTION ACTIVE**
-- **Platform Pages**: 99/99 total pages operational (100% COMPLETE) 🎯✨
-  - **WAVE 1 NEW PAGES (3 total)**: ✅ DiscoverPage, VolunteerPage, Footer component
-  - **WAVE 2 NEW PAGES (11 total)**: ✅ TalentMatchPage, MrBlueChatPage, LifeCEODashboardPage, HealthAgentPage, FinanceAgentPage, CareerAgentPage, ProductivityAgentPage, TravelAgentPage, HomeManagementPage, TalentPipelinePage, TaskBoardPage
-  - **WAVE 3 NEW PAGES (3 total)**: ✅ LearningAgentPage, SocialAgentPage, WellnessAgentPage
-- **Database Architecture**: 16 NEW TABLES + 104 storage methods (100% COMPLETE) 🗄️✨
-  - **WAVE 2 EXPANSION**: 14 new Talent Match storage methods (volunteers, resumes, clarifier sessions, tasks, assignments)
-  - 7 Platform pages (Secrets, Git, Monitoring, Analytics, ESA Dashboard, Agent Tasks, Communications)
-  - 11 Marketing pages (Home, About, Calendar, Search, Teachers, Venues, Tutorials, Marketplace, FAQ, Dance Styles, Partner Finder)
-  - 9 Social pages (Feed, Profile, Events, Groups, Messages, Settings, Friends, Notifications)
-  - 5 Video/Media pages (VideoLessons, LiveStream, MediaGallery, MusicLibrary, Reviews)
-  - 5 Travel/Housing pages (HostHomes, TravelPlanner, Workshops, Workshop Detail, Booking Confirmation)
-  - 6 Content pages (Blog, CommunityGuidelines, PrivacyPolicy, Terms, Contact, Help)
-  - 5 E-commerce pages (Pricing, Checkout, Billing, PaymentSuccess, PaymentFailed, Marketplace Item Detail)
-  - 4 Onboarding pages (Onboarding, WelcomeTour, EmailVerification, PasswordReset)
-  - 8 Settings pages (Settings, EmailPreferences, NotificationSettings, PrivacySettings, AccountSettings, TwoFactorAuth, ProfileEdit, ActivityLog)
-  - 9 Admin pages (AdminDashboard, ContentModeration, UserReports, AdminUsers, SavedPosts, BlockedUsers, BlockedContent, TalentPipelinePage, TaskBoardPage)
-  - 9 Life CEO pages (LifeCEODashboard, HealthAgent, FinanceAgent, CareerAgent, ProductivityAgent, TravelAgent, HomeManagement, and 10 more agents pending)
-  - 3 Talent Match pages (TalentMatchPage - resume upload, MrBlueChatPage - AI chat, Admin pipeline & board)
-  - 5 Detail pages (TeacherDetail, VenueDetail, TutorialDetail, Newsletter, Leaderboard)
-  - 5 Social feature pages (Following, Followers, ReportUser, ReportContent, Dashboard)
-- **ESA Framework**: 134 agents registry system - **134 ACTIVE** (100% operational) ✅
-  - 50 Page agents active (ALL activated - Homepage, Login, Teachers, Venues, Calendar, Search, Events, Groups, Messages, Settings, etc.)
-  - 50 Algorithm agents active (ALL activated - Feed, Auth, Caching, Real-time, Event Recommendation, Search, Video Streaming, Load Balancing, Fraud Detection, etc.)
-  - 8 Mr Blue AI agents active (ALL activated - Chat, Code Analysis, Generation, Debugging, Performance Optimization, Testing, etc.)
-  - 16 Life CEO agents active (ALL activated - Health, Finance, Career, Productivity, Travel, Home Management, etc.)
-  - 5 Marketing agents active (ALL activated - SEO, Content, Social Media, Email, Analytics)
-  - 5 HR agents active (ALL activated - Recruiter, Onboarding, Performance, Retention, Culture)
-  - 0 tasks pending execution (all high priority tasks completed)
-  - 21+ inter-agent communications logged
-- **Design System**: ✅ MT Ocean Theme 100% implemented (November 1, 2025)
-  - Turquoise #40E0D0 → Dodger Blue #1E90FF → Cobalt Blue #0047AB gradients
-  - Light + Dark modes with glassmorphic effects + blur overlays (backdrop-filter: blur(18px))
-  - 377-line design system in index.css with utility classes: .glass, .glass-card, .glass-topbar, .ocean-gradient, .ocean-gradient-text
-  - **Global Topbar (E100)**: ✅ COMPLETE - Logo (E101), Search (E102), Notifications (E103), User Menu (E104), Theme Toggle (E105), Language (E106), Mr Blue AI (E107)
-  - **Three-Column Feed Layout (Pattern B)**: ✅ COMPLETE - Left sidebar (280px), Main content (flex-1), Right sidebar (320px)
-  - **FeedLeftSidebar**: User Profile card (E30), Quick Links nav (E31) - 9 navigation items
-  - **FeedRightSidebar**: Upcoming Events widget (E39), Who to Follow (E40), Trending Topics, Mr Blue AI quick access (E41)
-- **Automation Infrastructure**: ✅ BullMQ + Workers + Queue Management (100% COMPLETE - Nov 1)
-  - userLifecycleWorker.ts (135 lines) - Welcome, Profile completion, Re-engagement
-  - socialWorker.ts (168 lines) - Follow, Like, Comment, Friend request, Share notifications
-  - eventWorker.ts (146 lines) - Reminders, RSVP automation, New event notifications
-  - lifeCeoWorker.ts (134 lines) - Personal assistant tasks, life management
-  - housingWorker.ts (95 lines) - Booking confirmations, host/guest notifications
-  - adminWorker.ts (110 lines) - Content moderation, system health alerts
-  - server/routes/queues.ts (117 lines) - Queue management API, health checks, job triggers
-  - **Total**: 905 lines of automation code
-  - **API Endpoints**: POST /api/queues/user-lifecycle/welcome, /profile-reminder, /social/follow-notification, /events/reminder, GET /api/queues/health
-  - **Status**: Ready for Redis integration (BullMQ infrastructure complete, awaiting Redis service)
-- **Wave 2A Features**: ✅ Post Actions (100% COMPLETE - Oct 31)
-  - ✅ PostActions.tsx component (272 lines) - Like, comment, share, save, **REPORT, EDIT, DELETE** 
-  - ✅ ReportPostDialog.tsx (115 lines) - 6 report reasons, details textarea, submit workflow
-  - ✅ EditPostDialog.tsx (92 lines) - Edit content, validation, save changes
-  - ✅ Backend API routes (COMPLETE) - PATCH /api/posts/:id (edit), POST /api/posts/:id/report, DELETE /api/posts/:id (already existed)
-  - ✅ Storage method added - reportPost() writes to moderation_queue table
-  - ✅ All post interactions working: Like, Comment, Share, Save, Report, Edit, Delete
-- **Wave 3 Features**: ✅ AI Integration (100% COMPLETE - Nov 1) - **PRODUCTION-READY**
-  - ✅ TalentMatchPage (332 lines) - Real file upload (5MB limit, PDF/DOCX/TXT), URL validation (LinkedIn/GitHub regex), API integration with auth guard + loading states
-  - ✅ MrBlueChatPage (171 lines) - Groq SDK integration (llama-3.1-70b-versatile), /api/v1/chat endpoint, real streaming AI responses, auto-scroll, context-aware system prompts
-  - ✅ OnboardingPage (283 lines) - 6-step animated wizard with Framer Motion (Welcome 💃🕺, Location 📍, Photo 📸, 19 Tango Roles with emojis, Tour 🎯, Completion 🎉)
-  - ✅ server/ai-chat-routes.ts (52 lines) - Groq API wrapper with dual system prompts (interview mode vs general assistance)
-  - ✅ Authentication - Fixed critical race condition bug, auth loading states, proper error handling
-  - ✅ Production Ready - Zero LSP errors, full error handling, retry logic, timeout management
-- **AI Dependencies**: ✅ Installed (Groq SDK, Anthropic SDK, BullMQ, IORedis)
-- **Database**: ✅ 216+ tables verified (COMPREHENSIVE EXPANSION)
-  - **Core Social**: users, posts, comments, likes, follows, friends, notifications
-  - **Events & Groups**: events, rsvps, groups, members
-  - **Messaging**: chat_rooms, messages, conversations
-  - **NEW TABLES (16 total)**: ✅ saved_posts, friend_requests, workshops, reviews, live_streams, media, activity_logs, blocked_users, blocked_content, teachers, venues, tutorials, blog_posts, newsletter_subscriptions, bookings, payments
-  - **Storage Layer**: 104 storage methods implemented in DbStorage class (1957 total lines)
-  - **Wave 2 Talent Match API**: 11 REST endpoints (volunteers, resumes, clarifier, tasks, assignments, ESA agents) at /api/v1/*
-  - **talent-match-routes.ts**: 260 lines - Complete volunteer recruitment API with admin approval workflow
-- **MB.MD Protocol**: ✅ Active - MAXIMUM SIMULTANEOUS EXECUTION achieved
+The project encompasses a wide array of features including comprehensive social networking capabilities, event management, an advanced talent matching system, and AI-powered personal assistants (Life CEO agents). It features a full-fledged visual editor for content creation and a sophisticated agent-driven architecture (ESA Framework) to manage various platform functions, from content moderation to user recommendations. With 107 operational pages and 216+ database tables, Mundo Tango is a comprehensive ecosystem for the tango world, driven by 9 core algorithms for enhanced user experience and engagement.
 
 ## User Preferences
 
@@ -90,56 +17,42 @@ Mundo Tango is a social platform connecting the global tango community, includin
 
 ## System Architecture
 
-The project follows a modular and agent-driven development approach, leveraging an Expert Specialized Agents (ESA) framework.
+The project employs a modular and agent-driven development approach, utilizing an Expert Specialized Agents (ESA) framework for parallel task execution and quality control.
 
-**UI/UX Decisions:**
-- **Color Palette:** Tango-inspired (burgundy #B91C3B, purple #8B5CF6, gold #F59E0B).
-- **Design System:** Dark mode support, Tailwind CSS + shadcn/ui components, responsive design, and a custom typography system.
+### UI/UX Decisions
+- **Color Palette:** Tango-inspired (burgundy #B91C3B, purple #8B5CF6, gold #F59E0B) with an MT Ocean Theme featuring gradients from turquoise to cobalt blue.
+- **Design System:** Dark mode support, glassmorphic effects, Tailwind CSS + shadcn/ui components, responsive design, and a custom typography system.
+- **Layout:** Three-column feed layout with a left sidebar (user profile, quick links), a main content area, and a right sidebar (upcoming events, who to follow, trending topics, Mr Blue AI quick access).
 - **Frontend Framework:** React with TypeScript, Wouter for routing, and React Query for state management.
 
-**Technical Implementations:**
-- **Backend:** Node.js with Express, TypeScript (1638-line storage layer).
+### Technical Implementations
+- **Backend:** Node.js with Express and TypeScript, featuring a 1638-line storage layer.
 - **Authentication:** JWT-based authentication with httpOnly cookies.
-- **Database:** PostgreSQL with Drizzle ORM and serial IDs (216+ tables).
-- **Data Access:** Direct client interaction with the database via comprehensive storage interface.
-- **NEW Database Tables (October 31, 2025)**:
-  - **Social Features**: saved_posts (post bookmarking), friend_requests (friend management)
-  - **Events & Learning**: workshops (tango workshops), reviews (user reviews), tutorials (video lessons)
-  - **Media & Streaming**: live_streams (live events), media (gallery items)
-  - **User Management**: activity_logs (user actions), blocked_users, blocked_content
-  - **Community**: teachers (instructor profiles), venues (tango locations)
-  - **Content**: blog_posts (community blog), newsletter_subscriptions
-  - **Commerce**: bookings (event/workshop reservations), payments (transaction records)
-- **Real-time Capabilities:** Supabase Realtime for posts, comments, messages, and typing indicators (planned integration).
-- **Core Platform Features:** Supabase Auth integration, query helpers, frontend foundation, and design system.
+- **Database:** PostgreSQL with Drizzle ORM and serial IDs, comprising 216+ tables.
+- **Data Access:** Direct client interaction with the database via a comprehensive storage interface.
+- **Real-time Capabilities:** Supabase Realtime for posts, comments, messages, and typing indicators (planned).
+- **Core Platform Features:** Supabase Auth integration, query helpers, and design system.
 - **Quality Infrastructure:** Error boundaries, centralized logging, performance monitoring, and SEO metadata.
-- **Social Features:** Pagination, optimistic updates, full CRUD operations, and follow/unfollow functionality.
-- **Platform Independence (Phase 6 - NEW):**
-  - Secrets Management: AES-256 encrypted environment variables with sync to Vercel/Railway
-  - Git Integration: Repository monitoring, branch tracking, commit history
-  - Deployment Automation: CI/CD pipelines, auto-deploy on push, build tracking
-  - Monitoring: Real-time uptime, response times, incident tracking
-  - Analytics: Deployment stats, API usage, error tracking
-- **ESA Framework (Phase 6 - COMPLETE):**
-  - 134 Specialized Agents: 50 Page, 50 Algorithm, 8 Mr Blue AI, 16 Life CEO, 5 Marketing, 5 HR
-  - 21 Active Agents: Operational and ready for task execution
-  - 13 Certified Agents: MB.MD Protocol Level 1 certification (85% performance)
-  - Agent Coordination: 20 pending tasks + 21 inter-agent communications
-  - H2AC Protocol: Human-to-Agent Communication framework implemented
-  - Training System: Ultra-Micro Parallel methodology with 5-day bootcamp structure
-  - Database Tables: esa_agents, agent_tasks, agent_communications, agent_certifications, agent_training_sessions
-  - Frontend Dashboards: ESA Dashboard, Agent Tasks, Agent Communications (all with live data)
+- **Social Features:** Pagination, optimistic updates, full CRUD operations, and follow/unfollow functionality, including post actions like like, comment, share, save, report, edit, and delete.
+- **Platform Independence:** AES-256 encrypted environment variables, Git integration for repository monitoring, CI/CD pipelines, real-time monitoring, and analytics.
+- **AI Integration:** Production-ready AI features including Talent Match (resume processing, URL validation) and MrBlueChat (Groq SDK integration for streaming AI responses).
+- **Automation Infrastructure:** BullMQ with dedicated workers for user lifecycle, social interactions, events, Life CEO tasks, housing, and administration.
+- **Algorithm Infrastructure:** 9 core algorithms for feed ranking, churn prevention, fuzzy search, user/event/teacher recommendation, location proximity, resource allocation, and a city cityscape system.
+- **Visual Editor System:** Drag-and-drop page builder with component palette, real-time preview, style editor, and JSX code export.
 
-**System Design Choices:**
-- **MB.MD Protocol:** A foundational development methodology emphasizing simultaneous, recursive, and critical execution.
-- **Agent-Driven Development:** Utilizes an ESA framework with a hierarchy of agents for parallel task execution and quality control.
+### System Design Choices
+- **MB.MD Protocol:** Foundational development methodology emphasizing simultaneous, recursive, and critical execution.
+- **Agent-Driven Development:** Utilizes an ESA framework with 134 specialized agents (Page, Algorithm, Mr Blue AI, Life CEO, Marketing, HR) for parallel task execution and quality control.
 - **Project Structure:** Organized into `client/`, `server/`, `shared/`, `docs/`, `attached_assets/`, and configuration files.
 
 ## External Dependencies
 
 - **Database:** PostgreSQL (with Drizzle ORM)
 - **Authentication:** Google OAuth (planned)
-- **AI Integration:** Multi-AI integration (5 providers, including OpenAI for `OPENAI_API_KEY`)
+- **AI Integration:** Multi-AI integration (5 providers, including OpenAI for `OPENAI_API_KEY`, Groq SDK, Anthropic SDK)
 - **Payments:** Stripe (`STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`)
-- **Real-time Communication:** Supabase Realtime (posts, messages, typing - planned integration)
-- **Deployment & Hosting:** Vercel, Railway, Supabase (for platform independence features)
+- **Real-time Communication:** Supabase Realtime (planned integration)
+- **Deployment & Hosting:** Vercel, Railway, Supabase
+- **Queue Management:** BullMQ (awaiting Redis service)
+- **UI Components:** shadcn/ui
+- **Animation Library:** Framer Motion
