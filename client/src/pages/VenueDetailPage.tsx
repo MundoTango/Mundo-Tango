@@ -7,17 +7,21 @@ import { PageLayout } from "@/components/PageLayout";
 export default function VenueDetailPage() {
   return (
     <PageLayout title="La Catedral Tango" showBreadcrumbs>
-<div className="min-h-screen bg-background py-8 px-4">
-      <div className="container mx-auto max-w-4xl">
-        
-            <div className="flex items-center gap-1">
-              <Star className="h-4 w-4 fill-primary text-primary" />
-              4.8 (245 reviews)
+      <div className="min-h-screen bg-background py-8 px-4">
+        <div className="container mx-auto max-w-4xl">
+          {/* Venue Header */}
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold mb-2">La Catedral Tango</h1>
+            <div className="flex items-center gap-4 flex-wrap">
+              <Badge variant="outline">Milonga</Badge>
+              <div className="flex items-center gap-1">
+                <Star className="h-4 w-4 fill-primary text-primary" />
+                4.8 (245 reviews)
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="grid gap-8 lg:grid-cols-3">
+          <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-6">
             <Card>
               <CardHeader>
@@ -91,6 +95,7 @@ export default function VenueDetailPage() {
               </CardContent>
             </Card>
           </div>
+        </div>
         </div>
       </div>
     </PageLayout>

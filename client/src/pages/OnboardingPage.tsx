@@ -88,8 +88,35 @@ export default function OnboardingPage() {
       />
 
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-primary/10 via-accent/5 to-background p-4">
-        {/* Progress Bar */}
-        
+        <div className="w-full max-w-2xl">
+          {/* Progress Bar */}
+          <div className="mb-8">
+            <Progress value={progress} className="h-2" data-testid="progress-bar" />
+            <p className="text-center text-sm text-muted-foreground mt-2">
+              Step {currentStep} of {totalSteps}
+            </p>
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.3 }}
+            >
+              <Card className="mb-6">
+                <CardContent className="pt-8 pb-8">
+                  {/* Step 1: Welcome */}
+                  {currentStep === 1 && (
+                    <div className="text-center space-y-6">
+                      <div className="text-6xl mb-4">👋</div>
+                      <h2 className="text-2xl font-bold">Welcome to Mundo Tango!</h2>
+                      <p className="text-lg text-muted-foreground max-w-md mx-auto">
+                        Let's set up your profile so you can start connecting with the global tango community.
+                      </p>
+                    </div>
                   )}
 
                   {/* Step 2: Location */}

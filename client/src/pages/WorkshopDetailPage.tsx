@@ -7,11 +7,20 @@ import { PageLayout } from "@/components/PageLayout";
 export default function WorkshopDetailPage() {
   return (
     <PageLayout title="Advanced Tango Technique Workshop" showBreadcrumbs>
-<div className="min-h-screen bg-background py-8 px-4">
-      <div className="container mx-auto max-w-4xl">
-        
+      <div className="min-h-screen bg-background py-8 px-4">
+        <div className="container mx-auto max-w-4xl">
+          {/* Workshop Header */}
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold mb-2">Advanced Tango Technique Workshop</h1>
+            <div className="flex items-center gap-2 flex-wrap">
+              <Badge variant="outline">Workshop</Badge>
+              <Badge variant="secondary">Advanced Level</Badge>
+            </div>
+          </div>
 
-            <Card>
+          <div className="grid gap-8 lg:grid-cols-3">
+            <div className="lg:col-span-2 space-y-6">
+              <Card>
               <CardHeader>
                 <CardTitle>Workshop Details</CardTitle>
               </CardHeader>
@@ -74,6 +83,7 @@ export default function WorkshopDetailPage() {
               </CardContent>
             </Card>
           </div>
+        </div>
         </div>
       </div>
     </PageLayout>

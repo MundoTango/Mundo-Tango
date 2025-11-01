@@ -27,13 +27,24 @@ export default function SearchPage() {
 
   return (
     <PageLayout title="Search" showBreadcrumbs>
-<div className="min-h-screen bg-background py-8 px-4">
-      <div className="container mx-auto max-w-4xl">
-        {/* Search Header */}
-        
-        </div>
+      <div className="min-h-screen bg-background py-8 px-4">
+        <div className="container mx-auto max-w-4xl">
+          {/* Search Header */}
+          <div className="mb-8">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search for people, events, or groups..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="pl-10"
+                data-testid="input-search"
+              />
+            </div>
+          </div>
 
-        {/* Results */}
+          {/* Results */}
         {query.length > 2 ? (
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-6">
@@ -128,6 +139,7 @@ export default function SearchPage() {
             </CardContent>
           </Card>
         )}
+        </div>
       </div>
     </PageLayout>
   );
