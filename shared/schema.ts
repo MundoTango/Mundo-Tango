@@ -1303,6 +1303,487 @@ export type InsertH2acMessage = z.infer<typeof insertH2acMessageSchema>;
 export type SelectH2acMessage = typeof h2acMessages.$inferSelect;
 
 // ============================================================================
+// MEGA WAVE 8: MASSIVE DATABASE EXPANSION (MB.MD Protocol)
+// ============================================================================
+
+// ============================================================================
+// ESA AGENT FRAMEWORK TABLES (Wave 8A)
+// ============================================================================
+
+// ESA Agents (134 total agents)
+export const esaAgents = pgTable("esa_agents", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id").notNull().unique(),
+  name: varchar("name").notNull(),
+  type: varchar("type").notNull(),
+  division: varchar("division"),
+  certificationLevel: integer("certification_level").default(1),
+  specialization: text("specialization"),
+  status: varchar("status").default("active").notNull(),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  agentIdIdx: index("esa_agents_agent_id_idx").on(table.agentId),
+  typeIdx: index("esa_agents_type_idx").on(table.type),
+  divisionIdx: index("esa_agents_division_idx").on(table.division),
+  statusIdx: index("esa_agents_status_idx").on(table.status),
+}));
+
+// ESA Agent Certifications
+export const esaAgentCertifications = pgTable("esa_agent_certifications", {
+  id: serial("id").primaryKey(),
+  agentId: integer("agent_id").notNull().references(() => esaAgents.id, { onDelete: "cascade" }),
+  certificationLevel: integer("certification_level").notNull(),
+  certificationDate: timestamp("certification_date").notNull(),
+  certifiedBy: varchar("certified_by"),
+  skills: text("skills").array(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  agentIdx: index("esa_certifications_agent_idx").on(table.agentId),
+  levelIdx: index("esa_certifications_level_idx").on(table.certificationLevel),
+}));
+
+// ESA Agent Communications (agent-to-agent messaging)
+export const esaAgentCommunications = pgTable("esa_agent_communications", {
+  id: serial("id").primaryKey(),
+  senderAgentId: integer("sender_agent_id").notNull().references(() => esaAgents.id, { onDelete: "cascade" }),
+  recipientAgentId: integer("recipient_agent_id").notNull().references(() => esaAgents.id, { onDelete: "cascade" }),
+  messageType: varchar("message_type").notNull(),
+  subject: text("subject"),
+  content: text("content").notNull(),
+  priority: varchar("priority").default("normal"),
+  status: varchar("status").default("sent").notNull(),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow(),
+  readAt: timestamp("read_at"),
+  respondedAt: timestamp("responded_at"),
+}, (table) => ({
+  senderIdx: index("esa_comms_sender_idx").on(table.senderAgentId),
+  recipientIdx: index("esa_comms_recipient_idx").on(table.recipientAgentId),
+  statusIdx: index("esa_comms_status_idx").on(table.status),
+  createdAtIdx: index("esa_comms_created_at_idx").on(table.createdAt),
+}));
+
+// ESA Agent Metrics
+export const esaAgentMetrics = pgTable("esa_agent_metrics", {
+  id: serial("id").primaryKey(),
+  agentId: integer("agent_id").notNull().references(() => esaAgents.id, { onDelete: "cascade" }),
+  metricType: varchar("metric_type").notNull(),
+  metricValue: integer("metric_value").notNull(),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+  metadata: jsonb("metadata"),
+}, (table) => ({
+  agentIdx: index("esa_metrics_agent_idx").on(table.agentId),
+  typeIdx: index("esa_metrics_type_idx").on(table.metricType),
+  timestampIdx: index("esa_metrics_timestamp_idx").on(table.timestamp),
+}));
+
+// ESA Agent Tasks (agent-specific tasks)
+export const esaAgentTasks = pgTable("esa_agent_tasks", {
+  id: serial("id").primaryKey(),
+  agentId: integer("agent_id").notNull().references(() => esaAgents.id, { onDelete: "cascade" }),
+  taskTitle: text("task_title").notNull(),
+  taskDescription: text("task_description"),
+  status: varchar("status").default("pending").notNull(),
+  priority: varchar("priority").default("medium"),
+  dueDate: timestamp("due_date"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  agentIdx: index("esa_tasks_agent_idx").on(table.agentId),
+  statusIdx: index("esa_tasks_status_idx").on(table.status),
+  dueDateIdx: index("esa_tasks_due_date_idx").on(table.dueDate),
+}));
+
+// ============================================================================
+// POST ACTIONS TABLES (Wave 8B)
+// ============================================================================
+
+// Post Edits (edit history tracking)
+export const postEdits = pgTable("post_edits", {
+  id: serial("id").primaryKey(),
+  postId: integer("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  previousContent: text("previous_content").notNull(),
+  newContent: text("new_content").notNull(),
+  editReason: text("edit_reason"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  postIdx: index("post_edits_post_idx").on(table.postId),
+  userIdx: index("post_edits_user_idx").on(table.userId),
+  createdAtIdx: index("post_edits_created_at_idx").on(table.createdAt),
+}));
+
+// Post Reports (user-reported content)
+export const postReports = pgTable("post_reports", {
+  id: serial("id").primaryKey(),
+  postId: integer("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
+  reporterId: integer("reporter_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  reason: varchar("reason").notNull(),
+  details: text("details"),
+  status: varchar("status").default("pending").notNull(),
+  reviewedBy: integer("reviewed_by").references(() => users.id),
+  reviewedAt: timestamp("reviewed_at"),
+  action: varchar("action"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  postIdx: index("post_reports_post_idx").on(table.postId),
+  reporterIdx: index("post_reports_reporter_idx").on(table.reporterId),
+  statusIdx: index("post_reports_status_idx").on(table.status),
+}));
+
+// Post Bookmarks (saved posts with collections)
+export const postBookmarks = pgTable("post_bookmarks", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  postId: integer("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
+  collectionName: varchar("collection_name"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("post_bookmarks_user_idx").on(table.userId),
+  postIdx: index("post_bookmarks_post_idx").on(table.postId),
+  collectionIdx: index("post_bookmarks_collection_idx").on(table.collectionName),
+  uniqueBookmark: uniqueIndex("unique_post_bookmark").on(table.userId, table.postId),
+}));
+
+// Post Share Analytics (track share metrics)
+export const postShareAnalytics = pgTable("post_share_analytics", {
+  id: serial("id").primaryKey(),
+  postId: integer("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
+  shareType: varchar("share_type").notNull(),
+  platform: varchar("platform"),
+  clicks: integer("clicks").default(0),
+  conversions: integer("conversions").default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  postIdx: index("post_share_analytics_post_idx").on(table.postId),
+  shareTypeIdx: index("post_share_analytics_type_idx").on(table.shareType),
+  createdAtIdx: index("post_share_analytics_created_at_idx").on(table.createdAt),
+}));
+
+// Comment Likes (for nested comment interactions)
+export const commentLikes = pgTable("comment_likes", {
+  id: serial("id").primaryKey(),
+  commentId: integer("comment_id").notNull().references(() => postComments.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  commentIdx: index("comment_likes_comment_idx").on(table.commentId),
+  userIdx: index("comment_likes_user_idx").on(table.userId),
+  uniqueLike: uniqueIndex("unique_comment_like").on(table.commentId, table.userId),
+}));
+
+// ============================================================================
+// SEARCH & ANALYTICS TABLES (Wave 8C)
+// ============================================================================
+
+// Search History (user search queries)
+export const searchHistory = pgTable("search_history", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }),
+  query: text("query").notNull(),
+  resultCount: integer("result_count"),
+  clicked: boolean("clicked").default(false),
+  clickedResultType: varchar("clicked_result_type"),
+  clickedResultId: integer("clicked_result_id"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("search_history_user_idx").on(table.userId),
+  queryIdx: index("search_history_query_idx").on(table.query),
+  createdAtIdx: index("search_history_created_at_idx").on(table.createdAt),
+}));
+
+// Search Analytics (aggregate search metrics)
+export const searchAnalytics = pgTable("search_analytics", {
+  id: serial("id").primaryKey(),
+  query: text("query").notNull(),
+  searchCount: integer("search_count").default(1),
+  avgResultCount: integer("avg_result_count"),
+  clickThroughRate: integer("click_through_rate"),
+  lastSearchedAt: timestamp("last_searched_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  queryIdx: index("search_analytics_query_idx").on(table.query),
+  searchCountIdx: index("search_analytics_count_idx").on(table.searchCount),
+}));
+
+// User Interactions (engagement tracking)
+export const userInteractions = pgTable("user_interactions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  targetType: varchar("target_type").notNull(),
+  targetId: integer("target_id").notNull(),
+  interactionType: varchar("interaction_type").notNull(),
+  durationSeconds: integer("duration_seconds"),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_interactions_user_idx").on(table.userId),
+  targetIdx: index("user_interactions_target_idx").on(table.targetType, table.targetId),
+  typeIdx: index("user_interactions_type_idx").on(table.interactionType),
+  createdAtIdx: index("user_interactions_created_at_idx").on(table.createdAt),
+}));
+
+// Page Views (analytics)
+export const pageViews = pgTable("page_views", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }),
+  pagePath: text("page_path").notNull(),
+  referrer: text("referrer"),
+  userAgent: text("user_agent"),
+  ipAddress: varchar("ip_address"),
+  sessionId: varchar("session_id"),
+  durationSeconds: integer("duration_seconds"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("page_views_user_idx").on(table.userId),
+  pagePathIdx: index("page_views_page_path_idx").on(table.pagePath),
+  sessionIdx: index("page_views_session_idx").on(table.sessionId),
+  createdAtIdx: index("page_views_created_at_idx").on(table.createdAt),
+}));
+
+// ============================================================================
+// HOUSING & MARKETPLACE TABLES (Wave 8D)
+// ============================================================================
+
+// Housing Listings
+export const housingListings = pgTable("housing_listings", {
+  id: serial("id").primaryKey(),
+  hostId: integer("host_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: varchar("title").notNull(),
+  description: text("description").notNull(),
+  propertyType: varchar("property_type").notNull(),
+  bedrooms: integer("bedrooms"),
+  bathrooms: integer("bathrooms"),
+  maxGuests: integer("max_guests"),
+  pricePerNight: integer("price_per_night").notNull(),
+  currency: varchar("currency").default("USD"),
+  address: text("address").notNull(),
+  city: varchar("city").notNull(),
+  country: varchar("country").notNull(),
+  latitude: text("latitude"),
+  longitude: text("longitude"),
+  amenities: text("amenities").array(),
+  houseRules: text("house_rules"),
+  images: text("images").array(),
+  status: varchar("status").default("active").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  hostIdx: index("housing_host_idx").on(table.hostId),
+  cityIdx: index("housing_city_idx").on(table.city),
+  statusIdx: index("housing_status_idx").on(table.status),
+  createdAtIdx: index("housing_created_at_idx").on(table.createdAt),
+}));
+
+// Housing Bookings
+export const housingBookings = pgTable("housing_bookings", {
+  id: serial("id").primaryKey(),
+  listingId: integer("listing_id").notNull().references(() => housingListings.id, { onDelete: "cascade" }),
+  guestId: integer("guest_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  checkInDate: timestamp("check_in_date").notNull(),
+  checkOutDate: timestamp("check_out_date").notNull(),
+  guests: integer("guests").notNull(),
+  totalAmount: integer("total_amount").notNull(),
+  status: varchar("status").default("pending").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  listingIdx: index("housing_bookings_listing_idx").on(table.listingId),
+  guestIdx: index("housing_bookings_guest_idx").on(table.guestId),
+  statusIdx: index("housing_bookings_status_idx").on(table.status),
+}));
+
+// Marketplace Items
+export const marketplaceItems = pgTable("marketplace_items", {
+  id: serial("id").primaryKey(),
+  sellerId: integer("seller_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: varchar("title").notNull(),
+  description: text("description").notNull(),
+  category: varchar("category").notNull(),
+  condition: varchar("condition").notNull(),
+  price: integer("price").notNull(),
+  currency: varchar("currency").default("USD"),
+  images: text("images").array(),
+  location: text("location"),
+  city: varchar("city"),
+  country: varchar("country"),
+  status: varchar("status").default("available").notNull(),
+  views: integer("views").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  sellerIdx: index("marketplace_seller_idx").on(table.sellerId),
+  categoryIdx: index("marketplace_category_idx").on(table.category),
+  statusIdx: index("marketplace_status_idx").on(table.status),
+  cityIdx: index("marketplace_city_idx").on(table.city),
+}));
+
+// ============================================================================
+// MEDIA & CONTENT TABLES (Wave 8E)
+// ============================================================================
+
+// Media Albums
+export const mediaAlbums = pgTable("media_albums", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name").notNull(),
+  description: text("description"),
+  coverImageUrl: text("cover_image_url"),
+  mediaCount: integer("media_count").default(0),
+  privacy: varchar("privacy").default("public"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("media_albums_user_idx").on(table.userId),
+  createdAtIdx: index("media_albums_created_at_idx").on(table.createdAt),
+}));
+
+// Album Media (junction table)
+export const albumMedia = pgTable("album_media", {
+  id: serial("id").primaryKey(),
+  albumId: integer("album_id").notNull().references(() => mediaAlbums.id, { onDelete: "cascade" }),
+  mediaId: integer("media_id").notNull().references(() => media.id, { onDelete: "cascade" }),
+  order: integer("order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  albumIdx: index("album_media_album_idx").on(table.albumId),
+  mediaIdx: index("album_media_media_idx").on(table.mediaId),
+  uniqueAlbumMedia: uniqueIndex("unique_album_media").on(table.albumId, table.mediaId),
+}));
+
+// Video Uploads
+export const videoUploads = pgTable("video_uploads", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: varchar("title").notNull(),
+  description: text("description"),
+  videoUrl: text("video_url").notNull(),
+  thumbnailUrl: text("thumbnail_url"),
+  durationSeconds: integer("duration_seconds"),
+  views: integer("views").default(0),
+  likes: integer("likes").default(0),
+  privacy: varchar("privacy").default("public"),
+  processingStatus: varchar("processing_status").default("pending"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("video_uploads_user_idx").on(table.userId),
+  statusIdx: index("video_uploads_status_idx").on(table.processingStatus),
+  createdAtIdx: index("video_uploads_created_at_idx").on(table.createdAt),
+}));
+
+// Tutorial Modules (structured learning content)
+export const tutorialModules = pgTable("tutorial_modules", {
+  id: serial("id").primaryKey(),
+  tutorialId: integer("tutorial_id").notNull().references(() => tutorials.id, { onDelete: "cascade" }),
+  title: varchar("title").notNull(),
+  description: text("description"),
+  order: integer("order").notNull(),
+  contentType: varchar("content_type").notNull(),
+  contentUrl: text("content_url"),
+  durationMinutes: integer("duration_minutes"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  tutorialIdx: index("tutorial_modules_tutorial_idx").on(table.tutorialId),
+  orderIdx: index("tutorial_modules_order_idx").on(table.order),
+}));
+
+// ============================================================================
+// ZOD SCHEMAS FOR NEW TABLES
+// ============================================================================
+
+// ESA Agents
+export const insertEsaAgentSchema = createInsertSchema(esaAgents).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertEsaAgent = z.infer<typeof insertEsaAgentSchema>;
+export type SelectEsaAgent = typeof esaAgents.$inferSelect;
+
+export const insertEsaAgentCertificationSchema = createInsertSchema(esaAgentCertifications).omit({ id: true, createdAt: true });
+export type InsertEsaAgentCertification = z.infer<typeof insertEsaAgentCertificationSchema>;
+export type SelectEsaAgentCertification = typeof esaAgentCertifications.$inferSelect;
+
+export const insertEsaAgentCommunicationSchema = createInsertSchema(esaAgentCommunications).omit({ id: true, createdAt: true, readAt: true, respondedAt: true });
+export type InsertEsaAgentCommunication = z.infer<typeof insertEsaAgentCommunicationSchema>;
+export type SelectEsaAgentCommunication = typeof esaAgentCommunications.$inferSelect;
+
+export const insertEsaAgentMetricSchema = createInsertSchema(esaAgentMetrics).omit({ id: true });
+export type InsertEsaAgentMetric = z.infer<typeof insertEsaAgentMetricSchema>;
+export type SelectEsaAgentMetric = typeof esaAgentMetrics.$inferSelect;
+
+export const insertEsaAgentTaskSchema = createInsertSchema(esaAgentTasks).omit({ id: true, createdAt: true, updatedAt: true, completedAt: true });
+export type InsertEsaAgentTask = z.infer<typeof insertEsaAgentTaskSchema>;
+export type SelectEsaAgentTask = typeof esaAgentTasks.$inferSelect;
+
+// Post Actions
+export const insertPostEditSchema = createInsertSchema(postEdits).omit({ id: true, createdAt: true });
+export type InsertPostEdit = z.infer<typeof insertPostEditSchema>;
+export type SelectPostEdit = typeof postEdits.$inferSelect;
+
+export const insertPostReportSchema = createInsertSchema(postReports).omit({ id: true, createdAt: true, reviewedAt: true });
+export type InsertPostReport = z.infer<typeof insertPostReportSchema>;
+export type SelectPostReport = typeof postReports.$inferSelect;
+
+export const insertPostBookmarkSchema = createInsertSchema(postBookmarks).omit({ id: true, createdAt: true });
+export type InsertPostBookmark = z.infer<typeof insertPostBookmarkSchema>;
+export type SelectPostBookmark = typeof postBookmarks.$inferSelect;
+
+export const insertPostShareAnalyticsSchema = createInsertSchema(postShareAnalytics).omit({ id: true, createdAt: true });
+export type InsertPostShareAnalytics = z.infer<typeof insertPostShareAnalyticsSchema>;
+export type SelectPostShareAnalytics = typeof postShareAnalytics.$inferSelect;
+
+export const insertCommentLikeSchema = createInsertSchema(commentLikes).omit({ id: true, createdAt: true });
+export type InsertCommentLike = z.infer<typeof insertCommentLikeSchema>;
+export type SelectCommentLike = typeof commentLikes.$inferSelect;
+
+// Search & Analytics
+export const insertSearchHistorySchema = createInsertSchema(searchHistory).omit({ id: true, createdAt: true });
+export type InsertSearchHistory = z.infer<typeof insertSearchHistorySchema>;
+export type SelectSearchHistory = typeof searchHistory.$inferSelect;
+
+export const insertSearchAnalyticsSchema = createInsertSchema(searchAnalytics).omit({ id: true, createdAt: true });
+export type InsertSearchAnalytics = z.infer<typeof insertSearchAnalyticsSchema>;
+export type SelectSearchAnalytics = typeof searchAnalytics.$inferSelect;
+
+export const insertUserInteractionSchema = createInsertSchema(userInteractions).omit({ id: true, createdAt: true });
+export type InsertUserInteraction = z.infer<typeof insertUserInteractionSchema>;
+export type SelectUserInteraction = typeof userInteractions.$inferSelect;
+
+export const insertPageViewSchema = createInsertSchema(pageViews).omit({ id: true, createdAt: true });
+export type InsertPageView = z.infer<typeof insertPageViewSchema>;
+export type SelectPageView = typeof pageViews.$inferSelect;
+
+// Housing & Marketplace
+export const insertHousingListingSchema = createInsertSchema(housingListings).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertHousingListing = z.infer<typeof insertHousingListingSchema>;
+export type SelectHousingListing = typeof housingListings.$inferSelect;
+
+export const insertHousingBookingSchema = createInsertSchema(housingBookings).omit({ id: true, createdAt: true });
+export type InsertHousingBooking = z.infer<typeof insertHousingBookingSchema>;
+export type SelectHousingBooking = typeof housingBookings.$inferSelect;
+
+export const insertMarketplaceItemSchema = createInsertSchema(marketplaceItems).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertMarketplaceItem = z.infer<typeof insertMarketplaceItemSchema>;
+export type SelectMarketplaceItem = typeof marketplaceItems.$inferSelect;
+
+// Media & Content
+export const insertMediaAlbumSchema = createInsertSchema(mediaAlbums).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertMediaAlbum = z.infer<typeof insertMediaAlbumSchema>;
+export type SelectMediaAlbum = typeof mediaAlbums.$inferSelect;
+
+export const insertAlbumMediaSchema = createInsertSchema(albumMedia).omit({ id: true, createdAt: true });
+export type InsertAlbumMedia = z.infer<typeof insertAlbumMediaSchema>;
+export type SelectAlbumMedia = typeof albumMedia.$inferSelect;
+
+export const insertVideoUploadSchema = createInsertSchema(videoUploads).omit({ id: true, createdAt: true });
+export type InsertVideoUpload = z.infer<typeof insertVideoUploadSchema>;
+export type SelectVideoUpload = typeof videoUploads.$inferSelect;
+
+export const insertTutorialModuleSchema = createInsertSchema(tutorialModules).omit({ id: true, createdAt: true });
+export type InsertTutorialModule = z.infer<typeof insertTutorialModuleSchema>;
+export type SelectTutorialModule = typeof tutorialModules.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
