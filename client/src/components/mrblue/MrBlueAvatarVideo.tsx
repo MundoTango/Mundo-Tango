@@ -186,10 +186,15 @@ export function MrBlueAvatarVideo({
     setVideoError(true);
   };
 
-  // Fallback to 2D avatar if video unavailable or failed
-  // This includes: loading, error, or Luma credits insufficient
-  if (isLoading || error || videoError || (!currentVideoPath && !videoData?.videoPath)) {
-    console.log('[MrBlueAvatarVideo] Using 2D fallback:', { isLoading, error, videoError, hasVideoPath: !!currentVideoPath });
+  // Fallback to 2D avatar ONLY if:
+  // 1. Video failed to load (videoError)
+  // 2. API error occurred  
+  // 3. No video path available at all
+  // Note: Don't fallback during isLoading if we have a valid path from videoStateManager
+  const shouldFallback = videoError || error || (!currentVideoPath && !videoData?.videoPath);
+  
+  if (shouldFallback) {
+    console.log('[MrBlueAvatarVideo] Using 2D fallback:', { error, videoError, hasCurrentPath: !!currentVideoPath, hasVideoDataPath: !!videoData?.videoPath });
     return (
       <MrBlueAvatar2D
         size={size}
@@ -200,7 +205,14 @@ export function MrBlueAvatarVideo({
     );
   }
 
-  console.log('[MrBlueAvatarVideo] Rendering VIDEO element with src:', currentVideoPath, 'State:', videoStateManager.currentState);
+  // CRITICAL DEBUG: Log all video path sources
+  console.log('[MrBlueAvatarVideo] Video Path Debug:', {
+    currentVideoPath,
+    'videoData?.videoPath': videoData?.videoPath,
+    enableStateTransitions,
+    currentState: videoStateManager.currentState,
+    computedPath: currentVideoPath || videoData?.videoPath
+  });
   
   const handleMouseEnter = () => {
     if (enableStateTransitions) {
@@ -232,6 +244,7 @@ export function MrBlueAvatarVideo({
         {/* Video with edge fade mask (Option C) */}
         <video
           ref={videoRef}
+          src={currentVideoPath || videoData?.videoPath}
           loop
           muted
           playsInline
@@ -247,7 +260,6 @@ export function MrBlueAvatarVideo({
           }}
           data-testid="mr-blue-video-avatar"
         >
-          <source src={currentVideoPath || videoData?.videoPath} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </div>

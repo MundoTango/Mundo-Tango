@@ -152,23 +152,15 @@ export function GlobalMrBlue() {
       }`}
       data-testid="global-mr-blue"
     >
-      {/* Avatar - Luma Video with 2D fallback */}
+      {/* Avatar - Luma Video with built-in 2D fallback */}
       <div className="relative">
-        <ErrorBoundary fallback={
-          <MrBlueAvatar2D
-            size={isMinimized ? 80 : 160}
-            expression={context.expression}
-            isActive={!isMinimized}
-            onInteraction={handleInteraction}
-          />
-        }>
-          <MrBlueAvatarVideo
-            size={isMinimized ? 80 : 160}
-            expression={context.expression}
-            isActive={!isMinimized}
-            onInteraction={handleInteraction}
-          />
-        </ErrorBoundary>
+        <MrBlueAvatarVideo
+          size={isMinimized ? 80 : 160}
+          expression={context.expression}
+          isActive={!isMinimized}
+          onInteraction={handleInteraction}
+          enableStateTransitions={true}
+        />
 
         {/* Control Buttons */}
         <div className="absolute -top-2 -right-2 flex gap-1">
