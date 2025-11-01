@@ -120,6 +120,17 @@ import ReportContentPage from "@/pages/ReportContentPage";
 import AdminUsersPage from "@/pages/AdminUsersPage";
 import DashboardPage from "@/pages/DashboardPage";
 import VisualEditorPage from "@/pages/VisualEditorPage";
+import SEOAgentPage from "@/pages/marketing/SEOAgentPage";
+import ContentAgentPage from "@/pages/marketing/ContentAgentPage";
+import SocialMediaAgentPage from "@/pages/marketing/SocialMediaAgentPage";
+import EmailAgentPage from "@/pages/marketing/EmailAgentPage";
+import AnalyticsAgentPage from "@/pages/marketing/AnalyticsAgentPage";
+import RecruiterAgentPage from "@/pages/hr/RecruiterAgentPage";
+import OnboardingAgentPage from "@/pages/hr/OnboardingAgentPage";
+import PerformanceAgentPage from "@/pages/hr/PerformanceAgentPage";
+import RetentionAgentPage from "@/pages/hr/RetentionAgentPage";
+import CultureAgentPage from "@/pages/hr/CultureAgentPage";
+import H2ACDashboardPage from "@/pages/H2ACDashboardPage";
 
 function Router() {
   return (
@@ -605,6 +616,20 @@ function Router() {
           </AppLayout>
         </ProtectedRoute>
       </Route>
+
+      <Route path="/marketing/seo" component={SEOAgentPage} />
+      <Route path="/marketing/content" component={ContentAgentPage} />
+      <Route path="/marketing/social-media" component={SocialMediaAgentPage} />
+      <Route path="/marketing/email" component={EmailAgentPage} />
+      <Route path="/marketing/analytics" component={AnalyticsAgentPage} />
+      
+      <Route path="/hr/recruiter" component={RecruiterAgentPage} />
+      <Route path="/hr/onboarding" component={OnboardingAgentPage} />
+      <Route path="/hr/performance" component={PerformanceAgentPage} />
+      <Route path="/hr/retention" component={RetentionAgentPage} />
+      <Route path="/hr/culture" component={CultureAgentPage} />
+      
+      <Route path="/h2ac-dashboard" component={H2ACDashboardPage} />
 
       <Route component={NotFound} />
     </Switch>
