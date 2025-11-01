@@ -1,0 +1,82 @@
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+WARNING: Using default encryption key in development. Set SECRETS_ENCRYPTION_KEY in production!
+🔍 Testing Redis connection at localhost:6379...
+⚠️  Redis unavailable - using IN-MEMORY queue fallback
+⚠️  Note: Jobs will not persist across restarts
+[ioredis] Unhandled error event: Error: connect ECONNREFUSED 127.0.0.1:6379
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)
+[WS] WebSocket notification service initialized
+[WebSocket] Notification service initialized on /ws/notifications
+5:01:46 PM [express] serving on port 5000
+[Preview Expiration] Started preview expiration checker (runs every hour)
+Browserslist: browsers data (caniuse-lite) is 13 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[replit-cartographer] Error processing /home/runner/workspace/client/src/pages/RegisterPage.tsx: SyntaxError: Binding invalid left-hand side in function parameter list. (66:4)
+    at toParseError (/home/runner/workspace/node_modules/@babel/parser/src/parse-error.ts:95:45)
+    at raise (/home/runner/workspace/node_modules/@babel/parser/src/tokenizer/index.ts:1503:19)
+    at checkLVal (/home/runner/workspace/node_modules/@babel/parser/src/parser/lval.ts:744:12)
+    at checkParams (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:2692:12)
+    at parseFunctionBody (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:2603:12)
+    at parseArrowExpression (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:2553:10)
+    at parseParenAndDistinguishExpression (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:1837:12)
+    at parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:1162:21)
+    at parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/src/plugins/jsx/index.ts:583:22)
+    at parseExprSubscripts (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:734:23)
+    at parseUpdate (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:713:21)
+    at parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:675:23)
+    at parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/src/plugins/typescript/index.ts:3855:20)
+    at parseMaybeUnaryOrPrivate (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:409:14)
+    at parseExprOps (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:421:23)
+    at parseMaybeConditional (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:376:23)
+    at parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:301:21)
+    at parseMaybeAssign (/home/runner/workspace/node_modules/@babel/parser/src/plugins/typescript/index.ts:3727:22)
+    at parseExpressionBase (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:226:23)
+    at callback (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:217:39)
+    at allowInAnd (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:3187:16)
+    at parseExpression (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:217:17)
+    at parseReturnStatement (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:1110:28)
+    at parseStatementContent (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:538:21)
+    at parseStatementContent (/home/runner/workspace/node_modules/@babel/parser/src/plugins/typescript/index.ts:3185:20)
+    at parseStatementLike (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:477:17)
+    at parseStatementListItem (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:426:17)
+    at parseBlockOrModuleBlockBody (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:1439:16)
+    at parseBlockBody (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:1412:10)
+    at parseBlock (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:1380:10)
+    at parseStatementContent (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:617:21)
+    at parseStatementContent (/home/runner/workspace/node_modules/@babel/parser/src/plugins/typescript/index.ts:3185:20)
+    at parseStatementLike (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:477:17)
+    at parseStatementOrSloppyAnnexBFunctionDeclaration (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:446:17)
+    at parseIfStatement (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:1089:28)
+    at parseStatementContent (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:536:21)
+    at parseStatementContent (/home/runner/workspace/node_modules/@babel/parser/src/plugins/typescript/index.ts:3185:20)
+    at parseStatementLike (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:477:17)
+    at parseStatementListItem (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:426:17)
+    at parseBlockOrModuleBlockBody (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:1439:16)
+    at parseBlockBody (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:1412:10)
+    at parseBlock (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:1380:10)
+    at parseFunctionBody (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:2616:24)
+    at parseArrowExpression (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:2553:10)
+    at parseParenAndDistinguishExpression (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:1837:12)
+    at parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:1162:21)
+    at parseExprAtom (/home/runner/workspace/node_modules/@babel/parser/src/plugins/jsx/index.ts:583:22)
+    at parseExprSubscripts (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:734:23)
+    at parseUpdate (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:713:21)
+    at parseMaybeUnary (/home/runner/workspace/node_modules/@babel/parser/src/parser/expression.ts:675:23) {
+  code: 'BABEL_PARSER_SYNTAX_ERROR',
+  reasonCode: 'InvalidLhsBinding',
+  loc: Position { line: 66, column: 4, index: 2902 },
+  pos: 2902,
+  syntaxPlugin: undefined
+}
+5:01:48 PM [vite] Pre-transform error: /home/runner/workspace/client/src/pages/RegisterPage.tsx: Binding invalid left-hand side in function parameter list. (66:4)
+
+  64 |       const debounce = setTimeout(checkUsername, 500);
+  65 |       return (
+> 66 |     <PageLayout title="Join Mundo Tango" showBreadcrumbs>
+     |     ^
+  67 |
+  68 |     </PageLayout>) => clearTimeout(debounce);
+  69 |     } else {

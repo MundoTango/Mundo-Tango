@@ -105,13 +105,32 @@ export function MrBlueAvatar2D({
       ctx.scale(scale, scale);
       ctx.translate(-size / 2, -size / 2);
 
-      // Mr. Blue mohawk (simplified)
-      ctx.fillStyle = '#00FFFF'; // Cyan mohawk
+      // Mr. Blue mohawk (professional styled)
+      // Mohawk base - wider and more detailed
+      const mohawkGradient = ctx.createLinearGradient(size / 2, size * 0.1, size / 2, size * 0.35);
+      mohawkGradient.addColorStop(0, '#00FFFF'); // Bright cyan top
+      mohawkGradient.addColorStop(0.5, '#00D4FF'); // Mid turquoise
+      mohawkGradient.addColorStop(1, '#00B8D4'); // Darker base
+      
+      ctx.fillStyle = mohawkGradient;
       ctx.beginPath();
-      ctx.moveTo(size / 2, size * 0.15);
-      ctx.lineTo(size * 0.4, size * 0.3);
-      ctx.lineTo(size * 0.6, size * 0.3);
+      // Left spike
+      ctx.moveTo(size * 0.35, size * 0.3);
+      ctx.quadraticCurveTo(size * 0.4, size * 0.1, size * 0.45, size * 0.15);
+      ctx.lineTo(size * 0.48, size * 0.25);
+      // Center spike (tallest)
+      ctx.lineTo(size * 0.48, size * 0.25);
+      ctx.quadraticCurveTo(size / 2, size * 0.05, size * 0.52, size * 0.25);
+      // Right spike
+      ctx.lineTo(size * 0.55, size * 0.15);
+      ctx.quadraticCurveTo(size * 0.6, size * 0.1, size * 0.65, size * 0.3);
       ctx.closePath();
+      ctx.fill();
+      
+      // Mohawk highlights
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.beginPath();
+      ctx.ellipse(size * 0.48, size * 0.18, 8, 15, -0.3, 0, Math.PI * 2);
       ctx.fill();
 
       // Face (simple circle)
@@ -127,25 +146,44 @@ export function MrBlueAvatar2D({
       ctx.arc(size / 2, size / 2, size * 0.25, 0, Math.PI * 2);
       ctx.fill();
 
-      // Eyes (expression-based)
+      // Eyes (expression-based) - more detailed
       ctx.fillStyle = '#2C1810';
-      const eyeY = size / 2 - 15;
+      const eyeY = size / 2 - 12;
+      const eyeSize = 6;
       
       if (expression === 'happy' || expression === 'excited') {
-        // Happy eyes (crescents)
+        // Happy eyes (crescents with sparkle)
         ctx.beginPath();
-        ctx.arc(size * 0.4, eyeY, 5, 0, Math.PI);
+        ctx.arc(size * 0.42, eyeY, eyeSize, 0, Math.PI);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(size * 0.6, eyeY, 5, 0, Math.PI);
+        ctx.arc(size * 0.58, eyeY, eyeSize, 0, Math.PI);
+        ctx.fill();
+        
+        // Eye sparkles
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.beginPath();
+        ctx.arc(size * 0.43, eyeY - 2, 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(size * 0.59, eyeY - 2, 2, 0, Math.PI * 2);
         ctx.fill();
       } else {
-        // Normal eyes (dots)
+        // Normal eyes (detailed with highlights)
         ctx.beginPath();
-        ctx.arc(size * 0.4, eyeY, 4, 0, Math.PI * 2);
+        ctx.arc(size * 0.42, eyeY, eyeSize, 0, Math.PI * 2);
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(size * 0.6, eyeY, 4, 0, Math.PI * 2);
+        ctx.arc(size * 0.58, eyeY, eyeSize, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Eye highlights
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.beginPath();
+        ctx.arc(size * 0.43, eyeY - 2, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(size * 0.59, eyeY - 2, 2.5, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -167,19 +205,44 @@ export function MrBlueAvatar2D({
       }
       ctx.stroke();
 
-      // Jewelry sparkle (turquoise accessories)
+      // Jewelry - turquoise accessories (more prominent)
+      // Earrings
+      ctx.fillStyle = '#00D4FF';
+      ctx.beginPath();
+      ctx.arc(size * 0.28, size * 0.48, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(size * 0.72, size * 0.48, 4, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Earring sparkle animation
       if (frame % 60 < 30) {
-        ctx.fillStyle = '#00FFFF';
-        ctx.globalAlpha = 0.7;
-        // Earring
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
         ctx.beginPath();
-        ctx.arc(size * 0.25, size / 2, 3, 0, Math.PI * 2);
+        ctx.arc(size * 0.28, size * 0.48, 2, 0, Math.PI * 2);
         ctx.fill();
-        // Bracelet
         ctx.beginPath();
-        ctx.arc(size * 0.75, size * 0.7, 3, 0, Math.PI * 2);
+        ctx.arc(size * 0.72, size * 0.48, 2, 0, Math.PI * 2);
         ctx.fill();
-        ctx.globalAlpha = 1.0;
+      }
+      
+      // Necklace/chain
+      ctx.strokeStyle = '#00B8D4';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(size / 2, size * 0.62, size * 0.15, -0.5, Math.PI + 0.5);
+      ctx.stroke();
+      
+      // Pendant
+      ctx.fillStyle = '#00FFFF';
+      ctx.beginPath();
+      ctx.arc(size / 2, size * 0.65, 5, 0, Math.PI * 2);
+      ctx.fill();
+      if (frame % 90 < 45) {
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.beginPath();
+        ctx.arc(size / 2 - 1, size * 0.65 - 1, 2, 0, Math.PI * 2);
+        ctx.fill();
       }
 
       ctx.restore();

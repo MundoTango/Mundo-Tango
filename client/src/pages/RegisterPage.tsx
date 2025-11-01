@@ -62,10 +62,7 @@ export default function RegisterPage() {
       };
       
       const debounce = setTimeout(checkUsername, 500);
-      return (
-    <PageLayout title="Join Mundo Tango" showBreadcrumbs>
-
-    </PageLayout>) => clearTimeout(debounce);
+      return () => clearTimeout(debounce);
     } else {
       setUsernameAvailable(null);
     }

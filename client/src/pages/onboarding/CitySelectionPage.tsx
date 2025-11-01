@@ -65,10 +65,7 @@ export default function CitySelectionPage() {
     };
 
     const debounce = setTimeout(searchCities, 300);
-    return (
-    <PageLayout title="CitySelection" showBreadcrumbs>
-
-    </PageLayout>) => clearTimeout(debounce);
+    return () => clearTimeout(debounce);
   }, [citySearch]);
 
   const handleCitySelect = (city: CitySuggestion) => {
