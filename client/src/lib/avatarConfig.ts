@@ -7,7 +7,7 @@ export const AVATAR_CONFIG = {
   // Set to 'auto' to use 3D if model available, fallback to 2D
   // Set to '3d' to force 3D (with placeholder if model not ready)
   // Set to '2d' to force 2D canvas
-  mode: 'auto' as '2d' | '3d' | 'auto',
+  mode: '3d' as '2d' | '3d' | 'auto',  // Force 3D mode - shows placeholder until GLB uploaded
   
   // Enable this to show both 2D and 3D side-by-side for testing
   debug: false,

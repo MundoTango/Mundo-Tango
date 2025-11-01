@@ -1,5 +1,7 @@
 import express from 'express';
 import { lumaService } from '../services/lumaAvatarService';
+import fs from 'fs';
+import path from 'path';
 
 const router = express.Router();
 
@@ -114,9 +116,6 @@ router.post('/complete', async (req, res) => {
  */
 router.get('/info', async (req, res) => {
   try {
-    const fs = require('fs');
-    const path = require('path');
-    
     const modelsDir = path.join(process.cwd(), 'client/public/models');
     const avatarPath = path.join(modelsDir, 'mr-blue-avatar.glb');
     const pixarPath = path.join(modelsDir, 'mr-blue-pixar.png');
