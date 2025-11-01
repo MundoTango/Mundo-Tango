@@ -135,7 +135,7 @@ export function matchVolunteerToTasks(
       matches.push({
         taskId: task.id,
         matchScore: Math.min(matchScore, 100),
-        matchedSignals: [...new Set(matchedSignals)],
+        matchedSignals: Array.from(new Set(matchedSignals)),
         requiredSkills,
         volunteerSkills,
       });

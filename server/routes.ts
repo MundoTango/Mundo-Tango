@@ -98,11 +98,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const newCityCommunity = await storage.createGroup({
               name: cityName,
               description: `The official ${cityName} tango community. Connect with dancers, teachers, and events in your city.`,
-              type: "city",
-              isPublic: true,
-              coverImage: cityscapePhoto?.url || "",
-              imageCredit: cityscapePhoto?.credit || "",
-              createdBy: req.userId!,
+              groupType: "city",
+              creatorId: req.userId!,
+              coverPhoto: cityscapePhoto?.url || "",
+              city: cityName,
             });
 
             await storage.joinGroup(newCityCommunity.id, req.userId!);

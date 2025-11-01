@@ -4,7 +4,7 @@
  * Used by Talent Match AI for signal detection
  */
 
-import pdf from "pdf-parse";
+import * as pdfParse from "pdf-parse";
 import mammoth from "mammoth";
 
 export interface ParsedResume {
@@ -48,7 +48,7 @@ export class ResumeParser {
    */
   private async parsePDF(buffer: Buffer): Promise<string> {
     try {
-      const data = await pdf(buffer);
+      const data = await (pdfParse as any).default(buffer);
       return data.text;
     } catch (error) {
       console.error("[Resume Parser] PDF parsing error:", error);
@@ -90,7 +90,7 @@ export class ResumeParser {
       }
     }
     
-    return [...new Set(foundSkills)];
+    return Array.from(new Set(foundSkills));
   }
   
   /**
@@ -156,7 +156,7 @@ export class ResumeParser {
       signals.push("project-management");
     }
     
-    return [...new Set(signals)];
+    return Array.from(new Set(signals));
   }
 }
 
