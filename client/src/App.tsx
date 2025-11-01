@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AppLayout } from "./components/AppLayout";
+import { GlobalTopbar } from "./components/GlobalTopbar";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/HomePage";
@@ -106,9 +107,7 @@ function Router() {
       
       <Route path="/feed">
         <ProtectedRoute>
-          <AppLayout>
-            <FeedPage />
-          </AppLayout>
+          <FeedPage />
         </ProtectedRoute>
       </Route>
 

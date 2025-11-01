@@ -13,6 +13,9 @@ import { Heart, MessageCircle, Share2, Image as ImageIcon, Globe, Users, Lock, X
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { SEO } from "@/components/SEO";
+import { GlobalTopbar } from "@/components/GlobalTopbar";
+import { FeedLeftSidebar } from "@/components/FeedLeftSidebar";
+import { FeedRightSidebar } from "@/components/FeedRightSidebar";
 
 type Post = {
   id: number;
@@ -130,24 +133,28 @@ export default function FeedPage() {
         title="Home Feed"
         description="Connect with the tango community. Share your dance moments, discover events, and engage with fellow tango enthusiasts from around the world."
       />
-      <div className="max-w-2xl mx-auto p-6 space-y-6">
-        {newPostsAvailable && (
-          <Card className="p-4 bg-primary/10 border-primary" data-testid="banner-new-posts">
-            <div className="flex items-center justify-between gap-4">
-              <p className="text-sm font-medium">New posts available</p>
-              <Button
-                onClick={loadNewPosts}
-                size="sm"
-                variant="default"
-                className="hover-elevate active-elevate-2"
-                data-testid="button-load-new-posts"
-              >
-                <ChevronDown className="h-4 w-4 mr-2" />
-                Load New Posts
-              </Button>
-            </div>
-          </Card>
-        )}
+      <GlobalTopbar />
+      <div className="flex min-h-screen bg-background">
+        <FeedLeftSidebar />
+        
+        <main className="flex-1 max-w-3xl p-6 space-y-6">
+          {newPostsAvailable && (
+            <Card className="p-4 bg-primary/10 border-primary" data-testid="banner-new-posts">
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-sm font-medium">New posts available</p>
+                <Button
+                  onClick={loadNewPosts}
+                  size="sm"
+                  variant="default"
+                  className="hover-elevate active-elevate-2"
+                  data-testid="button-load-new-posts"
+                >
+                  <ChevronDown className="h-4 w-4 mr-2" />
+                  Load New Posts
+                </Button>
+              </div>
+            </Card>
+          )}
 
         <Card className="p-6">
           <form onSubmit={handleCreatePost} className="space-y-4">
@@ -299,6 +306,9 @@ export default function FeedPage() {
             </Card>
           )}
         </div>
+        </main>
+        
+        <FeedRightSidebar />
       </div>
     </>
   );
