@@ -2139,51 +2139,6 @@ export class DbStorage implements IStorage {
       )
       .orderBy(desc(lifeCeoRecommendations.createdAt));
   }
-
-  // ========================================================================
-  // ADMIN DASHBOARD METHODS
-  // ========================================================================
-
-  async getAdminStats(): Promise<any> {
-    const [totalUsers] = await db.select({ count: sqlOp`count(*)::int` }).from(users);
-    const [totalPosts] = await db.select({ count: sqlOp`count(*)::int` }).from(posts);
-    const [totalEvents] = await db.select({ count: sqlOp`count(*)::int` }).from(events);
-    const [pendingReports] = await db.select({ count: sqlOp`count(*)::int` })
-      .from(moderationQueue)
-      .where(eq(moderationQueue.status, 'pending'));
-
-    return {
-      totalUsers: totalUsers?.count || 0,
-      totalPosts: totalPosts?.count || 0,
-      totalEvents: totalEvents?.count || 0,
-      pendingReports: pendingReports?.count || 0,
-      activeUsers: 0,
-      userGrowth: 0,
-      engagementRate: 0,
-    };
-  }
-
-  async getModerationQueue(): Promise<any[]> {
-    return await db.select()
-      .from(moderationQueue)
-      .where(eq(moderationQueue.status, 'pending'))
-      .orderBy(desc(moderationQueue.createdAt))
-      .limit(50);
-  }
-
-  async getRecentAdminActivity(): Promise<any[]> {
-    const activities = await db.select()
-      .from(activityLogs)
-      .orderBy(desc(activityLogs.createdAt))
-      .limit(20);
-    
-    return activities.map(activity => ({
-      id: activity.id,
-      user: 'User',
-      action: activity.action || 'performed action',
-      timestamp: activity.createdAt?.toISOString() || new Date().toISOString(),
-    }));
-  }
 }
 
 export const storage = new DbStorage();
