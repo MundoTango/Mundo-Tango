@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { PageLayout } from "@/components/PageLayout";
 
 interface UserSettings {
   emailNotifications: boolean;
@@ -80,13 +81,8 @@ export default function UserSettingsPage() {
   }
 
   return (
-    <div className="container max-w-4xl mx-auto p-6" data-testid="page-user-settings">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2" data-testid="text-page-title">
-          Settings
-        </h1>
-        <p className="text-muted-foreground">Manage your account preferences</p>
-      </div>
+    <PageLayout title="Settings" showBreadcrumbs>
+      <div className="container max-w-4xl mx-auto p-6" data-testid="page-user-settings">
 
       <Tabs defaultValue="account" data-testid="tabs-settings">
         <TabsList className="grid w-full grid-cols-5">
@@ -354,6 +350,7 @@ export default function UserSettingsPage() {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </PageLayout>
   );
 }

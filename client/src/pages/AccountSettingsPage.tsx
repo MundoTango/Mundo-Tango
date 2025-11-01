@@ -3,18 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { User, Mail, Globe, Trash2 } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
 
 export default function AccountSettingsPage() {
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <PageLayout title="Account Settings" showBreadcrumbs>
       <div className="container mx-auto max-w-2xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Account Settings</h1>
-          <p className="text-muted-foreground">
-            Manage your account details and preferences
-          </p>
-        </div>
-
         <div className="space-y-6">
           <Card>
             <CardHeader>
@@ -98,6 +92,6 @@ export default function AccountSettingsPage() {
           </Button>
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 }
