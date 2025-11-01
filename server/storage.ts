@@ -677,26 +677,45 @@ export class DbStorage implements IStorage {
   async getUserFriends(userId: number): Promise<any[]> {
     const friendshipsData = await db
       .select({
-        friendship: friendships,
-        friend: users,
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        email: users.email,
+        profileImage: users.profileImage,
+        bio: users.bio,
+        city: users.city,
+        closenessScore: friendships.closenessScore,
+        connectionDegree: friendships.connectionDegree,
+        lastInteractionAt: friendships.lastInteractionAt,
       })
       .from(friendships)
       .leftJoin(users, eq(friendships.friendId, users.id))
       .where(eq(friendships.userId, userId));
     
-    return friendshipsData.map(row => ({
-      ...row.friend,
-      closenessScore: row.friendship.closenessScore,
-      connectionDegree: row.friendship.connectionDegree,
-      lastInteractionAt: row.friendship.lastInteractionAt,
-    }));
+    return friendshipsData;
   }
 
   async getFriendRequests(userId: number): Promise<any[]> {
     const pending = await db
       .select({
-        request: friendRequests,
-        sender: users,
+        id: friendRequests.id,
+        senderId: friendRequests.senderId,
+        receiverId: friendRequests.receiverId,
+        senderMessage: friendRequests.senderMessage,
+        receiverMessage: friendRequests.receiverMessage,
+        didWeDance: friendRequests.didWeDance,
+        danceLocation: friendRequests.danceLocation,
+        danceStory: friendRequests.danceStory,
+        mediaUrls: friendRequests.mediaUrls,
+        status: friendRequests.status,
+        createdAt: friendRequests.createdAt,
+        respondedAt: friendRequests.respondedAt,
+        senderName: users.name,
+        senderUsername: users.username,
+        senderEmail: users.email,
+        senderProfileImage: users.profileImage,
+        senderBio: users.bio,
+        senderCity: users.city,
       })
       .from(friendRequests)
       .leftJoin(users, eq(friendRequests.senderId, users.id))
@@ -706,7 +725,30 @@ export class DbStorage implements IStorage {
           eq(friendRequests.status, 'pending')
         )
       );
-    return pending.map(row => ({ ...row.request, sender: row.sender }));
+    
+    return pending.map(row => ({
+      id: row.id,
+      senderId: row.senderId,
+      receiverId: row.receiverId,
+      senderMessage: row.senderMessage,
+      receiverMessage: row.receiverMessage,
+      didWeDance: row.didWeDance,
+      danceLocation: row.danceLocation,
+      danceStory: row.danceStory,
+      mediaUrls: row.mediaUrls,
+      status: row.status,
+      createdAt: row.createdAt,
+      respondedAt: row.respondedAt,
+      sender: {
+        id: row.senderId,
+        name: row.senderName,
+        username: row.senderUsername,
+        email: row.senderEmail,
+        profileImage: row.senderProfileImage,
+        bio: row.senderBio,
+        city: row.senderCity,
+      }
+    }));
   }
 
   async getFriendSuggestions(userId: number): Promise<any[]> {
