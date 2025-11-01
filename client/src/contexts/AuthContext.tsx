@@ -220,7 +220,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         country: data.user.country,
       });
 
-      navigate("/");
+      // Redirect to feed after successful login per spec (PART 2, section 2.1, line 556)
+      navigate("/feed");
     } catch (error) {
       console.error("Login error:", error);
       throw error;
