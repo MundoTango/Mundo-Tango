@@ -110,15 +110,21 @@ router.post('/complete', async (req, res) => {
 
 /**
  * GET /api/avatar/info
- * Get current avatar status
+ * Get current avatar status and model availability
  */
 router.get('/info', async (req, res) => {
   try {
     const fs = require('fs');
     const path = require('path');
     
-    const avatarPath = path.join(process.cwd(), 'client/public/models/mr-blue-avatar.glb');
-    const pixarPath = path.join(process.cwd(), 'client/public/models/mr-blue-pixar.png');
+    const modelsDir = path.join(process.cwd(), 'client/public/models');
+    const avatarPath = path.join(modelsDir, 'mr-blue-avatar.glb');
+    const pixarPath = path.join(modelsDir, 'mr-blue-pixar.png');
+    
+    // Ensure models directory exists
+    if (!fs.existsSync(modelsDir)) {
+      fs.mkdirSync(modelsDir, { recursive: true });
+    }
     
     const avatarExists = fs.existsSync(avatarPath);
     const pixarExists = fs.existsSync(pixarPath);

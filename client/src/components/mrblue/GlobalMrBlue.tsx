@@ -1,8 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import { useLocation } from 'wouter';
 import { MrBlueAvatar2D } from './MrBlueAvatar2D';
+import { ErrorBoundary } from './ErrorBoundary';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { AVATAR_CONFIG, shouldUse3D } from '@/lib/avatarConfig';
+
+// Lazy load 3D component (only loads if needed)
+const MrBlueAvatar3D = lazy(() => import('./MrBlueAvatar3D'));
 
 type AvatarExpression = 'happy' | 'thoughtful' | 'excited' | 'focused' | 'friendly' | 'confident' | 'playful' | 'professional';
 
@@ -63,11 +68,39 @@ export function GlobalMrBlue() {
   const [location] = useLocation();
   const [isMinimized, setIsMinimized] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
+  const [use3D, setUse3D] = useState(false);
+  const [modelAvailable, setModelAvailable] = useState(false);
   const [context, setContext] = useState<PageContext>({
     path: location,
     expression: 'friendly',
     position: 'bottom-right'
   });
+
+  // Check if 3D model is available
+  useEffect(() => {
+    if (!AVATAR_CONFIG.model.autoCheck) return;
+
+    const checkModel = async () => {
+      try {
+        const response = await fetch('/api/avatar/info');
+        if (response.ok) {
+          const data = await response.json();
+          const available = data.modelExists || false;
+          setModelAvailable(available);
+          setUse3D(shouldUse3D(available));
+        }
+      } catch (error) {
+        console.log('3D model check failed, using 2D');
+        setUse3D(false);
+      }
+    };
+
+    checkModel();
+    
+    // Periodic check
+    const interval = setInterval(checkModel, AVATAR_CONFIG.model.checkInterval);
+    return () => clearInterval(interval);
+  }, []);
 
   // Update context when location changes
   useEffect(() => {
@@ -114,14 +147,41 @@ export function GlobalMrBlue() {
       }`}
       data-testid="global-mr-blue"
     >
-      {/* Avatar */}
+      {/* Avatar - 3D or 2D based on config */}
       <div className="relative">
-        <MrBlueAvatar2D
-          size={isMinimized ? 80 : 160}
-          expression={context.expression}
-          isActive={!isMinimized}
-          onInteraction={handleInteraction}
-        />
+        {use3D ? (
+          <Suspense fallback={
+            <MrBlueAvatar2D
+              size={isMinimized ? 80 : 160}
+              expression={context.expression}
+              isActive={!isMinimized}
+              onInteraction={handleInteraction}
+            />
+          }>
+            <ErrorBoundary fallback={
+              <MrBlueAvatar2D
+                size={isMinimized ? 80 : 160}
+                expression={context.expression}
+                isActive={!isMinimized}
+                onInteraction={handleInteraction}
+              />
+            }>
+              <div onClick={handleInteraction} style={{ cursor: 'pointer' }}>
+                <MrBlueAvatar3D
+                  size={isMinimized ? 80 : 160}
+                  expression={context.expression}
+                />
+              </div>
+            </ErrorBoundary>
+          </Suspense>
+        ) : (
+          <MrBlueAvatar2D
+            size={isMinimized ? 80 : 160}
+            expression={context.expression}
+            isActive={!isMinimized}
+            onInteraction={handleInteraction}
+          />
+        )}
 
         {/* Control Buttons */}
         <div className="absolute -top-2 -right-2 flex gap-1">
