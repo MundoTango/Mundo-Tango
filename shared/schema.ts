@@ -392,6 +392,130 @@ export const lifeCeoChatMessages = pgTable("life_ceo_chat_messages", {
 }));
 
 // ============================================================================
+// LIFE CEO SYSTEM (16 Agents - P66-P81)
+// ============================================================================
+
+// Life CEO Domains (16 life domains)
+export const lifeCeoDomains = pgTable("life_ceo_domains", {
+  id: serial("id").primaryKey(),
+  name: varchar("name").notNull().unique(),
+  agentId: varchar("agent_id").notNull(),
+  description: text("description"),
+  icon: varchar("icon"),
+  color: varchar("color"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Life CEO Goals
+export const lifeCeoGoals = pgTable("life_ceo_goals", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  domainId: integer("domain_id").references(() => lifeCeoDomains.id),
+  title: text("title").notNull(),
+  description: text("description"),
+  targetDate: timestamp("target_date"),
+  status: varchar("status").default("active").notNull(),
+  progress: integer("progress").default(0),
+  priority: varchar("priority").default("medium"),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  completedAt: timestamp("completed_at"),
+}, (table) => ({
+  userIdx: index("life_ceo_goals_user_idx").on(table.userId),
+  domainIdx: index("life_ceo_goals_domain_idx").on(table.domainId),
+  statusIdx: index("life_ceo_goals_status_idx").on(table.status),
+}));
+
+// Life CEO Tasks (different from talent match tasks)
+export const lifeCeoTasks = pgTable("life_ceo_tasks", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  goalId: integer("goal_id").references(() => lifeCeoGoals.id, { onDelete: "cascade" }),
+  domainId: integer("domain_id").references(() => lifeCeoDomains.id),
+  title: text("title").notNull(),
+  description: text("description"),
+  dueDate: timestamp("due_date"),
+  status: varchar("status").default("pending").notNull(),
+  priority: varchar("priority").default("medium"),
+  estimatedMinutes: integer("estimated_minutes"),
+  actualMinutes: integer("actual_minutes"),
+  recurring: varchar("recurring"),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  completedAt: timestamp("completed_at"),
+}, (table) => ({
+  userIdx: index("life_ceo_tasks_user_idx").on(table.userId),
+  goalIdx: index("life_ceo_tasks_goal_idx").on(table.goalId),
+  domainIdx: index("life_ceo_tasks_domain_idx").on(table.domainId),
+  statusIdx: index("life_ceo_tasks_status_idx").on(table.status),
+  dueDateIdx: index("life_ceo_tasks_due_date_idx").on(table.dueDate),
+}));
+
+// Life CEO Goal Milestones
+export const lifeCeoMilestones = pgTable("life_ceo_milestones", {
+  id: serial("id").primaryKey(),
+  goalId: integer("goal_id").notNull().references(() => lifeCeoGoals.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  targetPercentage: integer("target_percentage").notNull(),
+  achieved: boolean("achieved").default(false),
+  achievedAt: timestamp("achieved_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  goalIdx: index("life_ceo_milestones_goal_idx").on(table.goalId),
+}));
+
+// Life CEO Agent Recommendations
+export const lifeCeoRecommendations = pgTable("life_ceo_recommendations", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  domainId: integer("domain_id").references(() => lifeCeoDomains.id),
+  agentId: varchar("agent_id").notNull(),
+  type: varchar("type").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  actionUrl: text("action_url"),
+  priority: varchar("priority").default("medium"),
+  status: varchar("status").default("pending").notNull(),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow(),
+  dismissedAt: timestamp("dismissed_at"),
+  completedAt: timestamp("completed_at"),
+}, (table) => ({
+  userIdx: index("life_ceo_recommendations_user_idx").on(table.userId),
+  domainIdx: index("life_ceo_recommendations_domain_idx").on(table.domainId),
+  statusIdx: index("life_ceo_recommendations_status_idx").on(table.status),
+}));
+
+// ============================================================================
+// H2AC FRAMEWORK (Human-to-Agent Communication)
+// ============================================================================
+
+// H2AC Agent Messages (Agent-to-Agent, Agent-to-Human communications)
+export const h2acMessages = pgTable("h2ac_messages", {
+  id: serial("id").primaryKey(),
+  senderType: varchar("sender_type").notNull(),
+  senderId: varchar("sender_id").notNull(),
+  recipientType: varchar("recipient_type").notNull(),
+  recipientId: varchar("recipient_id").notNull(),
+  messageType: varchar("message_type").notNull(),
+  subject: text("subject"),
+  content: text("content").notNull(),
+  priority: varchar("priority").default("normal"),
+  status: varchar("status").default("sent").notNull(),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow(),
+  readAt: timestamp("read_at"),
+  respondedAt: timestamp("responded_at"),
+}, (table) => ({
+  senderIdx: index("h2ac_messages_sender_idx").on(table.senderType, table.senderId),
+  recipientIdx: index("h2ac_messages_recipient_idx").on(table.recipientType, table.recipientId),
+  statusIdx: index("h2ac_messages_status_idx").on(table.status),
+  createdAtIdx: index("h2ac_messages_created_at_idx").on(table.createdAt),
+}));
+
+// ============================================================================
 // INSERT SCHEMAS & TYPES
 // ============================================================================
 
@@ -1151,6 +1275,32 @@ export type SelectModerationQueue = typeof moderationQueue.$inferSelect;
 export const insertPostShareSchema = createInsertSchema(postShares).omit({ id: true, createdAt: true });
 export type InsertPostShare = z.infer<typeof insertPostShareSchema>;
 export type SelectPostShare = typeof postShares.$inferSelect;
+
+// Life CEO System
+export const insertLifeCeoDomainSchema = createInsertSchema(lifeCeoDomains).omit({ id: true, createdAt: true });
+export type InsertLifeCeoDomain = z.infer<typeof insertLifeCeoDomainSchema>;
+export type SelectLifeCeoDomain = typeof lifeCeoDomains.$inferSelect;
+
+export const insertLifeCeoGoalSchema = createInsertSchema(lifeCeoGoals).omit({ id: true, createdAt: true, updatedAt: true, completedAt: true });
+export type InsertLifeCeoGoal = z.infer<typeof insertLifeCeoGoalSchema>;
+export type SelectLifeCeoGoal = typeof lifeCeoGoals.$inferSelect;
+
+export const insertLifeCeoTaskSchema = createInsertSchema(lifeCeoTasks).omit({ id: true, createdAt: true, updatedAt: true, completedAt: true });
+export type InsertLifeCeoTask = z.infer<typeof insertLifeCeoTaskSchema>;
+export type SelectLifeCeoTask = typeof lifeCeoTasks.$inferSelect;
+
+export const insertLifeCeoMilestoneSchema = createInsertSchema(lifeCeoMilestones).omit({ id: true, createdAt: true, achievedAt: true });
+export type InsertLifeCeoMilestone = z.infer<typeof insertLifeCeoMilestoneSchema>;
+export type SelectLifeCeoMilestone = typeof lifeCeoMilestones.$inferSelect;
+
+export const insertLifeCeoRecommendationSchema = createInsertSchema(lifeCeoRecommendations).omit({ id: true, createdAt: true, dismissedAt: true, completedAt: true });
+export type InsertLifeCeoRecommendation = z.infer<typeof insertLifeCeoRecommendationSchema>;
+export type SelectLifeCeoRecommendation = typeof lifeCeoRecommendations.$inferSelect;
+
+// H2AC Framework
+export const insertH2acMessageSchema = createInsertSchema(h2acMessages).omit({ id: true, createdAt: true, readAt: true, respondedAt: true });
+export type InsertH2acMessage = z.infer<typeof insertH2acMessageSchema>;
+export type SelectH2acMessage = typeof h2acMessages.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)

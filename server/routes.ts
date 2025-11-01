@@ -11,6 +11,8 @@ import { createTalentMatchRoutes } from "./talent-match-routes";
 import { createAIChatRoutes } from "./ai-chat-routes";
 import queuesRoutes from "./routes/queues";
 import mentionRoutes from "./routes/mention-routes";
+import lifeCeoRoutes from "./routes/life-ceo-routes";
+import adminRoutes from "./routes/admin-routes";
 import { authenticateToken, AuthRequest } from "./middleware/auth";
 import { 
   insertPostSchema, 
@@ -68,6 +70,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/v1", createAIChatRoutes());
   app.use("/api/queues", queuesRoutes);
   app.use("/api/mentions", mentionRoutes);
+  app.use("/api/life-ceo", lifeCeoRoutes);
+  app.use("/api/admin", adminRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(insertPostSchema), async (req: AuthRequest, res: Response) => {
     try {
