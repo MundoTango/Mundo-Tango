@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,25 +7,68 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
-import { Upload, Link as LinkIcon, Sparkles, ArrowRight } from "lucide-react";
+import { Upload, Link as LinkIcon, Sparkles, ArrowRight, CheckCircle, FileText } from "lucide-react";
 import { motion } from "framer-motion";
+import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function TalentMatchPage() {
+  const [, setLocation] = useLocation();
+  const { user } = useAuth();
   const [step, setStep] = useState<"upload" | "clarifier" | "results">("upload");
   const [resumeText, setResumeText] = useState("");
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  const validateUrl = (url: string, type: "linkedin" | "github"): boolean => {
+    if (!url) return true; // Empty is valid
+    
+    if (type === "linkedin") {
+      return url.includes("linkedin.com/in/") || url.includes("linkedin.com/pub/");
+    } else {
+      return url.includes("github.com/");
+    }
+  };
 
   const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // TODO: Parse resume file
+    const validTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain"];
+    if (!validTypes.includes(file.type)) {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload a PDF, DOC, DOCX, or TXT file",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please upload a file smaller than 5MB",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setUploadedFile(file);
+    
+    // Parse text from file
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      setResumeText(text);
+    };
+    reader.readAsText(file);
+
     toast({
       title: "Resume uploaded",
-      description: `Processing ${file.name}...`
+      description: `${file.name} loaded successfully`
     });
   };
 
@@ -39,16 +82,85 @@ export default function TalentMatchPage() {
       return;
     }
 
+    // Validate URLs
+    if (linkedinUrl && !validateUrl(linkedinUrl, "linkedin")) {
+      toast({
+        title: "Invalid LinkedIn URL",
+        description: "Please enter a valid LinkedIn profile URL (e.g., linkedin.com/in/yourname)",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (githubUrl && !validateUrl(githubUrl, "github")) {
+      toast({
+        title: "Invalid GitHub URL",
+        description: "Please enter a valid GitHub profile URL (e.g., github.com/yourname)",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Login required",
+        description: "Please login to continue with talent matching",
+        variant: "destructive"
+      });
+      setLocation("/login");
+      return;
+    }
+
     setIsLoading(true);
     
     try {
-      // TODO: Create volunteer + start clarifier session
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setStep("clarifier");
+      // Create volunteer profile
+      const volunteer = await apiRequest("/api/v1/volunteers", {
+        method: "POST",
+        body: {
+          userId: user.id,
+          profile: {
+            resumeText,
+            linkedinUrl,
+            githubUrl,
+            uploadedFileName: uploadedFile?.name
+          },
+          skills: [],
+          availability: "flexible",
+          hoursPerWeek: 10
+        }
+      });
+
+      // Create resume record if we have text
+      if (resumeText) {
+        await apiRequest(`/api/v1/volunteers/${volunteer.id}/resume`, {
+          method: "POST",
+          body: {
+            filename: uploadedFile?.name || "pasted-resume.txt",
+            fileUrl: linkedinUrl || githubUrl || "",
+            parsedText: resumeText,
+            links: [linkedinUrl, githubUrl].filter(Boolean)
+          }
+        });
+      }
+
+      // Start clarifier session
+      const session = await apiRequest(`/api/v1/volunteers/${volunteer.id}/clarifier`, {
+        method: "POST"
+      });
+
+      toast({
+        title: "Profile created!",
+        description: "Starting AI interview...",
+      });
+
+      // Navigate to Mr Blue Chat with session context
+      setLocation(`/mr-blue-chat?session=${session.id}&volunteer=${volunteer.id}`);
+
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message,
+        description: error.message || "Failed to create volunteer profile",
         variant: "destructive"
       });
     } finally {
@@ -83,144 +195,126 @@ export default function TalentMatchPage() {
           </motion.div>
 
           {/* Step 1: Upload Information */}
-          {step === "upload" && (
-            <motion.div {...fadeInUp}>
-              <Card className="glass-card">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Upload className="h-5 w-5 text-primary" />
-                    Share Your Experience
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Resume Upload */}
+          <motion.div {...fadeInUp}>
+            <Card className="glass-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Upload className="h-5 w-5 text-primary" />
+                  Share Your Experience
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* File Upload with Preview */}
+                <div className="space-y-2">
+                  <Label htmlFor="resume-upload">Upload Resume (PDF, DOCX, TXT - Max 5MB)</Label>
+                  <Input
+                    id="resume-upload"
+                    type="file"
+                    accept=".pdf,.doc,.docx,.txt"
+                    onChange={handleResumeUpload}
+                    data-testid="input-resume-upload"
+                  />
+                  {uploadedFile && (
+                    <div className="flex items-center gap-2 p-3 bg-green-500/5 border border-green-500/20 rounded-lg">
+                      <FileText className="h-4 w-4 text-green-500" />
+                      <span className="text-sm font-medium">{uploadedFile.name}</span>
+                      <CheckCircle className="h-4 w-4 text-green-500 ml-auto" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">Or paste your resume</span>
+                  </div>
+                </div>
+
+                {/* Resume Text */}
+                <div className="space-y-2">
+                  <Label htmlFor="resume-text">Resume Text</Label>
+                  <Textarea
+                    id="resume-text"
+                    placeholder="Paste your resume text here..."
+                    value={resumeText}
+                    onChange={(e) => setResumeText(e.target.value)}
+                    rows={8}
+                    data-testid="textarea-resume"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {resumeText.length} characters
+                  </p>
+                </div>
+
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">Or share your profiles</span>
+                  </div>
+                </div>
+
+                {/* Links with Validation */}
+                <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="resume-upload">Upload Resume (PDF, DOCX)</Label>
+                    <Label htmlFor="linkedin-url">
+                      <LinkIcon className="h-4 w-4 inline mr-1" />
+                      LinkedIn URL
+                    </Label>
                     <Input
-                      id="resume-upload"
-                      type="file"
-                      accept=".pdf,.doc,.docx"
-                      onChange={handleResumeUpload}
-                      data-testid="input-resume-upload"
+                      id="linkedin-url"
+                      type="url"
+                      placeholder="https://linkedin.com/in/yourname"
+                      value={linkedinUrl}
+                      onChange={(e) => setLinkedinUrl(e.target.value)}
+                      data-testid="input-linkedin"
+                      className={linkedinUrl && !validateUrl(linkedinUrl, "linkedin") ? "border-red-500" : ""}
                     />
+                    {linkedinUrl && !validateUrl(linkedinUrl, "linkedin") && (
+                      <p className="text-xs text-red-500">Invalid LinkedIn URL</p>
+                    )}
                   </div>
 
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-muted-foreground">Or paste your resume</span>
-                    </div>
-                  </div>
-
-                  {/* Resume Text */}
                   <div className="space-y-2">
-                    <Label htmlFor="resume-text">Resume Text</Label>
-                    <Textarea
-                      id="resume-text"
-                      placeholder="Paste your resume text here..."
-                      value={resumeText}
-                      onChange={(e) => setResumeText(e.target.value)}
-                      rows={8}
-                      data-testid="textarea-resume"
+                    <Label htmlFor="github-url">
+                      <LinkIcon className="h-4 w-4 inline mr-1" />
+                      GitHub URL
+                    </Label>
+                    <Input
+                      id="github-url"
+                      type="url"
+                      placeholder="https://github.com/yourname"
+                      value={githubUrl}
+                      onChange={(e) => setGithubUrl(e.target.value)}
+                      data-testid="input-github"
+                      className={githubUrl && !validateUrl(githubUrl, "github") ? "border-red-500" : ""}
                     />
+                    {githubUrl && !validateUrl(githubUrl, "github") && (
+                      <p className="text-xs text-red-500">Invalid GitHub URL</p>
+                    )}
                   </div>
+                </div>
 
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-muted-foreground">Or share your profiles</span>
-                    </div>
-                  </div>
+                <Button
+                  onClick={handleStartClarifier}
+                  disabled={isLoading || (!resumeText && !linkedinUrl && !githubUrl)}
+                  size="lg"
+                  className="w-full gap-2"
+                  data-testid="button-start-clarifier"
+                >
+                  {isLoading ? "Creating Profile..." : "Start AI Interview"}
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
 
-                  {/* Links */}
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="linkedin-url">
-                        <LinkIcon className="h-4 w-4 inline mr-1" />
-                        LinkedIn URL
-                      </Label>
-                      <Input
-                        id="linkedin-url"
-                        type="url"
-                        placeholder="https://linkedin.com/in/yourname"
-                        value={linkedinUrl}
-                        onChange={(e) => setLinkedinUrl(e.target.value)}
-                        data-testid="input-linkedin"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="github-url">
-                        <LinkIcon className="h-4 w-4 inline mr-1" />
-                        GitHub URL
-                      </Label>
-                      <Input
-                        id="github-url"
-                        type="url"
-                        placeholder="https://github.com/yourname"
-                        value={githubUrl}
-                        onChange={(e) => setGithubUrl(e.target.value)}
-                        data-testid="input-github"
-                      />
-                    </div>
-                  </div>
-
-                  <Button
-                    onClick={handleStartClarifier}
-                    disabled={isLoading}
-                    size="lg"
-                    className="w-full gap-2"
-                    data-testid="button-start-clarifier"
-                  >
-                    {isLoading ? "Processing..." : "Start AI Interview"}
-                    <ArrowRight className="h-5 w-5" />
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-
-          {/* Step 2: AI Clarifier (TODO: Build interactive chat) */}
-          {step === "clarifier" && (
-            <motion.div {...fadeInUp}>
-              <Card className="glass-card">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-primary" />
-                    AI Clarifier Interview
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-4">
-                    Interactive AI interview system will be built here in Wave 3
-                  </p>
-                  <Button onClick={() => setStep("results")} data-testid="button-view-results">
-                    View Recommendations
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-
-          {/* Step 3: Task Recommendations (TODO: Build results view) */}
-          {step === "results" && (
-            <motion.div {...fadeInUp}>
-              <Card className="glass-card">
-                <CardHeader>
-                  <CardTitle>Your Matched Tasks</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Task recommendation results will be shown here in Wave 3
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
+                <p className="text-xs text-center text-muted-foreground">
+                  By continuing, you'll be redirected to chat with Mr Blue AI for the interview process
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Back to Volunteer Page */}
           <div className="text-center mt-8">
