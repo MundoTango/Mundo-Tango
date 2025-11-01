@@ -28,6 +28,13 @@ import HomeManagementPage from "@/pages/life-ceo/HomeManagementPage";
 import LearningAgentPage from "@/pages/life-ceo/LearningAgentPage";
 import SocialAgentPage from "@/pages/life-ceo/SocialAgentPage";
 import WellnessAgentPage from "@/pages/life-ceo/WellnessAgentPage";
+import EntertainmentAgentPage from "@/pages/life-ceo/EntertainmentAgentPage";
+import CreativityAgentPage from "@/pages/life-ceo/CreativityAgentPage";
+import FitnessAgentPage from "@/pages/life-ceo/FitnessAgentPage";
+import NutritionAgentPage from "@/pages/life-ceo/NutritionAgentPage";
+import SleepAgentPage from "@/pages/life-ceo/SleepAgentPage";
+import StressAgentPage from "@/pages/life-ceo/StressAgentPage";
+import RelationshipAgentPage from "@/pages/life-ceo/RelationshipAgentPage";
 import TalentPipelinePage from "@/pages/admin/TalentPipelinePage";
 import TaskBoardPage from "@/pages/admin/TaskBoardPage";
 import FeedPage from "@/pages/FeedPage";
@@ -132,6 +139,13 @@ function Router() {
       <Route path="/life-ceo/learning" component={LearningAgentPage} />
       <Route path="/life-ceo/social" component={SocialAgentPage} />
       <Route path="/life-ceo/wellness" component={WellnessAgentPage} />
+      <Route path="/life-ceo/entertainment" component={EntertainmentAgentPage} />
+      <Route path="/life-ceo/creativity" component={CreativityAgentPage} />
+      <Route path="/life-ceo/fitness" component={FitnessAgentPage} />
+      <Route path="/life-ceo/nutrition" component={NutritionAgentPage} />
+      <Route path="/life-ceo/sleep" component={SleepAgentPage} />
+      <Route path="/life-ceo/stress" component={StressAgentPage} />
+      <Route path="/life-ceo/relationship" component={RelationshipAgentPage} />
       <Route path="/admin/talent-pipeline" component={TalentPipelinePage} />
       <Route path="/admin/task-board" component={TaskBoardPage} />
       <Route path="/login" component={LoginPage} />
