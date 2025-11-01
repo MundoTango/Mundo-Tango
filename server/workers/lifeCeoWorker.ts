@@ -4,13 +4,9 @@
  * Automations: A-CEO-01, A-CEO-02
  */
 
-import { Worker, Job } from "bullmq";
+import { Job } from "bullmq";
 import { storage } from "../storage";
-
-const connection = {
-  host: process.env.REDIS_HOST || "localhost",
-  port: parseInt(process.env.REDIS_PORT || "6379"),
-};
+import { createWorker } from "./redis-fallback";
 
 // A-CEO-01: Daily Goal Reminder
 async function handleDailyGoalReminder(job: Job) {
@@ -196,8 +192,8 @@ async function handleMonthlyRetrospective(job: Job) {
   console.log(`[A-CEO-10] ✅ Monthly retrospective sent`);
 }
 
-// Create Worker
-const lifeCeoWorker = new Worker(
+// Create Worker with automatic Redis fallback
+const lifeCeoWorker = createWorker(
   "life-ceo-automation",
   async (job: Job) => {
     try {

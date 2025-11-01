@@ -1,18 +1,13 @@
 import { Router } from "express";
-import { Queue } from "bullmq";
+import { createQueue } from "../workers/redis-fallback";
 
-const connection = {
-  host: process.env.REDIS_HOST || "localhost",
-  port: parseInt(process.env.REDIS_PORT || "6379"),
-};
-
-// Initialize queues
-const userLifecycleQueue = new Queue("user-lifecycle", { connection });
-const socialQueue = new Queue("social-automation", { connection });
-const eventQueue = new Queue("event-automation", { connection });
-const lifeCeoQueue = new Queue("life-ceo-automation", { connection });
-const housingQueue = new Queue("housing-automation", { connection });
-const adminQueue = new Queue("admin-automation", { connection });
+// Initialize queues with automatic Redis fallback
+const userLifecycleQueue = createQueue("user-lifecycle");
+const socialQueue = createQueue("social-automation");
+const eventQueue = createQueue("event-automation");
+const lifeCeoQueue = createQueue("life-ceo-automation");
+const housingQueue = createQueue("housing-automation");
+const adminQueue = createQueue("admin-automation");
 
 const router = Router();
 

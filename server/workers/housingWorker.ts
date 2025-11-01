@@ -4,13 +4,9 @@
  * Automations: A-HOUSING-01
  */
 
-import { Worker, Job } from "bullmq";
+import { Job } from "bullmq";
 import { storage } from "../storage";
-
-const connection = {
-  host: process.env.REDIS_HOST || "localhost",
-  port: parseInt(process.env.REDIS_PORT || "6379"),
-};
+import { createWorker } from "./redis-fallback";
 
 // A-HOUSING-01: Booking Confirmation
 async function handleBookingConfirmation(job: Job) {
@@ -115,8 +111,8 @@ async function handleSearchAlert(job: Job) {
   console.log(`[A-HOUSING-05] ✅ Search alert sent`);
 }
 
-// Create Worker
-const housingWorker = new Worker(
+// Create Worker with automatic Redis fallback
+const housingWorker = createWorker(
   "housing-automation",
   async (job: Job) => {
     try {

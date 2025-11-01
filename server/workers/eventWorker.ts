@@ -4,13 +4,9 @@
  * Automations: A-EVENT-01, A-EVENT-02, A-EVENT-03
  */
 
-import { Worker, Job } from "bullmq";
+import { Job } from "bullmq";
 import { storage } from "../storage";
-
-const connection = {
-  host: process.env.REDIS_HOST || "localhost",
-  port: parseInt(process.env.REDIS_PORT || "6379"),
-};
+import { createWorker } from "./redis-fallback";
 
 // A-EVENT-01: Event Reminder (1 hour before)
 async function handleEventReminder(job: Job) {
@@ -210,8 +206,8 @@ async function handleRecurringEventReminder(job: Job) {
   console.log(`[A-EVENT-08] ✅ Recurring reminder sent`);
 }
 
-// Create Worker
-const eventWorker = new Worker(
+// Create Worker with automatic Redis fallback
+const eventWorker = createWorker(
   "event-automation",
   async (job: Job) => {
     try {

@@ -4,13 +4,9 @@
  * Automations: A-ADMIN-01, A-ADMIN-02
  */
 
-import { Worker, Job } from "bullmq";
+import { Job } from "bullmq";
 import { storage } from "../storage";
-
-const connection = {
-  host: process.env.REDIS_HOST || "localhost",
-  port: parseInt(process.env.REDIS_PORT || "6379"),
-};
+import { createWorker } from "./redis-fallback";
 
 // A-ADMIN-01: Content Moderation Alert
 async function handleModerationAlert(job: Job) {
@@ -147,8 +143,8 @@ async function handlePerformanceReport(job: Job) {
   console.log(`[A-ADMIN-06] ✅ Performance reports sent`);
 }
 
-// Create Worker
-const adminWorker = new Worker(
+// Create Worker with automatic Redis fallback
+const adminWorker = createWorker(
   "admin-automation",
   async (job: Job) => {
     try {

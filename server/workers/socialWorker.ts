@@ -4,13 +4,9 @@
  * Automations: A-SOCIAL-01 through A-SOCIAL-05
  */
 
-import { Worker, Job } from "bullmq";
+import { Job } from "bullmq";
 import { storage } from "../storage";
-
-const connection = {
-  host: process.env.REDIS_HOST || "localhost",
-  port: parseInt(process.env.REDIS_PORT || "6379"),
-};
+import { createWorker } from "./redis-fallback";
 
 // A-SOCIAL-01: Follow Notification
 async function handleFollowNotification(job: Job) {
@@ -209,8 +205,8 @@ async function handleConnectionMilestone(job: Job) {
   console.log(`[A-SOCIAL-10] ✅ Connection milestone sent`);
 }
 
-// Create Worker
-const socialWorker = new Worker(
+// Create Worker with automatic Redis fallback
+const socialWorker = createWorker(
   "social-automation",
   async (job: Job) => {
     try {

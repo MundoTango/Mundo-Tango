@@ -4,13 +4,9 @@
  * Automations: A-USER-01, A-USER-02, A-USER-03
  */
 
-import { Worker, Job } from "bullmq";
+import { Job } from "bullmq";
 import { storage } from "../storage";
-
-const connection = {
-  host: process.env.REDIS_HOST || "localhost",
-  port: parseInt(process.env.REDIS_PORT || "6379"),
-};
+import { createWorker } from "./redis-fallback";
 
 // A-USER-01: New User Welcome
 async function handleNewUserWelcome(job: Job) {
@@ -241,8 +237,8 @@ function calculateProfileCompletion(user: any): number {
   return score;
 }
 
-// Create Worker
-const userLifecycleWorker = new Worker(
+// Create Worker with automatic Redis fallback
+const userLifecycleWorker = createWorker(
   "user-lifecycle",
   async (job: Job) => {
     try {
