@@ -166,7 +166,7 @@ export function fuzzySearch<T extends Record<string, any>>(
         matches.push(match);
         
         // Apply field weight (default 1.0)
-        const weight = fieldWeights[field] || 1.0;
+        const weight = (fieldWeights as Record<string, number>)[String(field)] || 1.0;
         totalScore += match.score * weight;
         totalWeight += weight;
       }

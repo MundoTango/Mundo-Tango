@@ -119,6 +119,7 @@ import ReportUserPage from "@/pages/ReportUserPage";
 import ReportContentPage from "@/pages/ReportContentPage";
 import AdminUsersPage from "@/pages/AdminUsersPage";
 import DashboardPage from "@/pages/DashboardPage";
+import VisualEditorPage from "@/pages/VisualEditorPage";
 
 function Router() {
   return (
@@ -593,6 +594,14 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <DashboardPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/visual-editor">
+        <ProtectedRoute>
+          <AppLayout>
+            <VisualEditorPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>

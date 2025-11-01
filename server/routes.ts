@@ -732,11 +732,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let community = await storage.getCommunityByCity(cityName);
       
       if (!community) {
+        // Import cityscape system
+        const { assignCityscapeToCommunity } = await import('./algorithms/cityCityscape');
+        const cityscapeData = assignCityscapeToCommunity(cityName);
+        
         community = await storage.createCommunity({
           name: `${cityName} Tango Community`,
           cityName,
           country,
           description: `Connect with tango dancers in ${cityName}`,
+          ...cityscapeData
         });
       }
       
