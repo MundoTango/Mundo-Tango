@@ -352,6 +352,14 @@ export interface IStorage {
   createCicdRun(run: any): Promise<any>;
   getCicdRuns(pipelineId: number): Promise<any[]>;
   updateCicdRun(id: number, userId: number, data: any): Promise<any | null>;
+
+  // Search
+  search(query: string, userId: number): Promise<any[]>;
+
+  // Admin
+  getAdminStats(): Promise<any>;
+  getModerationQueue(): Promise<any[]>;
+  getRecentAdminActivity(): Promise<any[]>;
 }
 
 export class DbStorage implements IStorage {
@@ -1688,6 +1696,154 @@ export class DbStorage implements IStorage {
   async updateCicdRun(id: number, userId: number, data: any): Promise<any | null> {
     const result = await db.update(cicdRuns).set(data).where(and(eq(cicdRuns.id, id), eq(cicdRuns.userId, userId))).returning();
     return result[0] || null;
+  }
+
+  // Search implementation
+  async search(query: string, userId: number): Promise<any[]> {
+    const lowerQuery = `%${query.toLowerCase()}%`;
+    const results: any[] = [];
+
+    // Search users
+    const userResults = await db.select({
+      id: users.id,
+      type: sql<string>`'user'`,
+      title: users.username,
+      subtitle: users.email,
+      image: users.profilePicture,
+      url: sql<string>`'/profile/' || ${users.id}`,
+    }).from(users).where(
+      or(
+        ilike(users.username, lowerQuery),
+        ilike(users.email, lowerQuery),
+        ilike(users.fullName, lowerQuery)
+      )
+    ).limit(5);
+    results.push(...userResults);
+
+    // Search posts
+    const postResults = await db.select({
+      id: posts.id,
+      type: sql<string>`'post'`,
+      title: posts.content,
+      subtitle: users.username,
+      image: users.profilePicture,
+      url: sql<string>`'/feed#post-' || ${posts.id}`,
+    }).from(posts)
+      .leftJoin(users, eq(posts.userId, users.id))
+      .where(ilike(posts.content, lowerQuery))
+      .limit(5);
+    results.push(...postResults);
+
+    // Search events
+    const eventResults = await db.select({
+      id: events.id,
+      type: sql<string>`'event'`,
+      title: events.title,
+      subtitle: events.location,
+      image: events.imageUrl,
+      url: sql<string>`'/events/' || ${events.id}`,
+    }).from(events)
+      .where(
+        or(
+          ilike(events.title, lowerQuery),
+          ilike(events.description, lowerQuery),
+          ilike(events.location, lowerQuery)
+        )
+      )
+      .limit(5);
+    results.push(...eventResults);
+
+    // Search groups
+    const groupResults = await db.select({
+      id: groups.id,
+      type: sql<string>`'group'`,
+      title: groups.name,
+      subtitle: groups.description,
+      image: groups.imageUrl,
+      url: sql<string>`'/groups/' || ${groups.id}`,
+    }).from(groups)
+      .where(
+        or(
+          ilike(groups.name, lowerQuery),
+          ilike(groups.description, lowerQuery)
+        )
+      )
+      .limit(5);
+    results.push(...groupResults);
+
+    return results;
+  }
+
+  // Admin stats implementation
+  async getAdminStats(): Promise<any> {
+    const [totalUsersResult] = await db.select({ count: sql<number>`count(*)` }).from(users);
+    const [activeUsersResult] = await db.select({ count: sql<number>`count(*)` })
+      .from(users)
+      .where(gte(users.lastActive, new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)));
+    const [totalPostsResult] = await db.select({ count: sql<number>`count(*)` }).from(posts);
+    const [totalEventsResult] = await db.select({ count: sql<number>`count(*)` }).from(events);
+    const [pendingReportsResult] = await db.select({ count: sql<number>`count(*)` })
+      .from(moderationQueue)
+      .where(eq(moderationQueue.status, 'pending'));
+    const [resolvedReportsResult] = await db.select({ count: sql<number>`count(*)` })
+      .from(moderationQueue)
+      .where(eq(moderationQueue.status, 'resolved'));
+
+    return {
+      totalUsers: totalUsersResult.count,
+      activeUsers: activeUsersResult.count,
+      totalPosts: totalPostsResult.count,
+      totalEvents: totalEventsResult.count,
+      pendingReports: pendingReportsResult.count,
+      resolvedReports: resolvedReportsResult.count,
+      userGrowth: 12.5, // Mock - calculate from actual data
+      engagementRate: 67.3, // Mock - calculate from actual data
+    };
+  }
+
+  // Moderation queue implementation
+  async getModerationQueue(): Promise<any[]> {
+    const queue = await db.select({
+      id: moderationQueue.id,
+      type: moderationQueue.contentType,
+      reportedBy: users.username,
+      reason: moderationQueue.reason,
+      status: moderationQueue.status,
+      createdAt: moderationQueue.createdAt,
+      contentPreview: moderationQueue.details,
+    })
+    .from(moderationQueue)
+    .leftJoin(users, eq(moderationQueue.reportedBy, users.id))
+    .where(eq(moderationQueue.status, 'pending'))
+    .orderBy(desc(moderationQueue.createdAt))
+    .limit(20);
+
+    return queue.map((item) => ({
+      ...item,
+      createdAt: item.createdAt?.toISOString() || new Date().toISOString(),
+      contentPreview: item.contentPreview || 'No preview available',
+    }));
+  }
+
+  // Recent admin activity implementation
+  async getRecentAdminActivity(): Promise<any[]> {
+    const activities = await db.select({
+      id: activityLogs.id,
+      type: activityLogs.actionType,
+      user: users.username,
+      action: activityLogs.details,
+      timestamp: activityLogs.createdAt,
+    })
+    .from(activityLogs)
+    .leftJoin(users, eq(activityLogs.userId, users.id))
+    .orderBy(desc(activityLogs.createdAt))
+    .limit(15);
+
+    return activities.map((activity) => ({
+      ...activity,
+      timestamp: activity.timestamp?.toISOString() || new Date().toISOString(),
+      action: activity.action || `performed ${activity.type}`,
+    }));
   }
 }
 

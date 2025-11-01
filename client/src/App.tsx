@@ -32,6 +32,7 @@ import AgentCommunicationsPage from "@/pages/AgentCommunicationsPage";
 import FriendsListPage from "@/pages/FriendsListPage";
 import NotificationsPage from "@/pages/NotificationsPage";
 import SearchPage from "@/pages/SearchPage";
+import UserSettingsPage from "@/pages/UserSettingsPage";
 import TeachersPage from "@/pages/TeachersPage";
 import VenuesPage from "@/pages/VenuesPage";
 import TutorialsPage from "@/pages/TutorialsPage";
@@ -170,7 +171,7 @@ function Router() {
       <Route path="/settings">
         <ProtectedRoute>
           <AppLayout>
-            <SettingsPage />
+            <UserSettingsPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
