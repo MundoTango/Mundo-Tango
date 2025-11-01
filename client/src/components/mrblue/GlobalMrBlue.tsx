@@ -1,6 +1,7 @@
 import { useState, useEffect, Suspense, lazy } from 'react';
 import { useLocation } from 'wouter';
 import { MrBlueAvatar2D } from './MrBlueAvatar2D';
+import { MrBlueAvatarVideo } from './MrBlueAvatarVideo';
 import { ErrorBoundary } from './ErrorBoundary';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -147,41 +148,23 @@ export function GlobalMrBlue() {
       }`}
       data-testid="global-mr-blue"
     >
-      {/* Avatar - 3D or 2D based on config */}
+      {/* Avatar - Luma Video with 2D fallback */}
       <div className="relative">
-        {use3D ? (
-          <Suspense fallback={
-            <MrBlueAvatar2D
-              size={isMinimized ? 80 : 160}
-              expression={context.expression}
-              isActive={!isMinimized}
-              onInteraction={handleInteraction}
-            />
-          }>
-            <ErrorBoundary fallback={
-              <MrBlueAvatar2D
-                size={isMinimized ? 80 : 160}
-                expression={context.expression}
-                isActive={!isMinimized}
-                onInteraction={handleInteraction}
-              />
-            }>
-              <div onClick={handleInteraction} style={{ cursor: 'pointer' }}>
-                <MrBlueAvatar3D
-                  size={isMinimized ? 80 : 160}
-                  expression={context.expression}
-                />
-              </div>
-            </ErrorBoundary>
-          </Suspense>
-        ) : (
+        <ErrorBoundary fallback={
           <MrBlueAvatar2D
             size={isMinimized ? 80 : 160}
             expression={context.expression}
             isActive={!isMinimized}
             onInteraction={handleInteraction}
           />
-        )}
+        }>
+          <MrBlueAvatarVideo
+            size={isMinimized ? 80 : 160}
+            expression={context.expression}
+            isActive={!isMinimized}
+            onInteraction={handleInteraction}
+          />
+        </ErrorBoundary>
 
         {/* Control Buttons */}
         <div className="absolute -top-2 -right-2 flex gap-1">

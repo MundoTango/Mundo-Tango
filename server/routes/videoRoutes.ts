@@ -166,4 +166,45 @@ router.post('/mr-blue/from-photo', async (req, res) => {
   }
 });
 
+/**
+ * GET /api/videos/mr-blue/avatar
+ * Get Mr. Blue avatar video (generates if needed)
+ */
+router.get('/mr-blue/avatar', async (req, res) => {
+  try {
+    const result = await lumaVideoService.getOrGenerateAvatar();
+
+    res.json({
+      success: true,
+      ...result
+    });
+  } catch (error: any) {
+    console.error('Avatar video error:', error);
+    res.status(500).json({
+      error: error.message || 'Failed to get avatar video'
+    });
+  }
+});
+
+/**
+ * POST /api/videos/mr-blue/avatar/save/:generationId
+ * Save completed avatar video
+ */
+router.post('/mr-blue/avatar/save/:generationId', async (req, res) => {
+  try {
+    const { generationId } = req.params;
+    const videoPath = await lumaVideoService.saveAvatarVideo(generationId);
+
+    res.json({
+      success: true,
+      videoPath,
+      message: 'Avatar video saved successfully!'
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      error: error.message || 'Failed to save avatar video'
+    });
+  }
+});
+
 export default router;

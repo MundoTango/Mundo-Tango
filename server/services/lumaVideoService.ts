@@ -231,6 +231,85 @@ export class LumaVideoService {
       loop: false
     });
   }
+
+  /**
+   * Generate Mr. Blue avatar looping video (1:1 square)
+   * Perfect for avatar display with seamless loop
+   */
+  async generateMrBlueAvatar(): Promise<VideoGenerationResponse> {
+    const prompt = `Professional AI companion with bright turquoise mohawk hairstyle, 
+                    wearing teal floral blazer with silver jewelry, 
+                    friendly warm smile, gentle subtle nod, 
+                    modern office background with soft lighting, 
+                    cinematic quality, professional demeanor, 
+                    smooth natural movement, seamless loop animation`;
+
+    return this.generateFromText({
+      prompt,
+      aspectRatio: '1:1',
+      loop: true
+    });
+  }
+
+  /**
+   * Get or generate Mr. Blue avatar video
+   * Returns existing video if available, generates new one if not
+   */
+  async getOrGenerateAvatar(): Promise<{ videoPath?: string; generationId?: string; state: string }> {
+    const videoDir = path.join(process.cwd(), 'client/public/videos');
+    const avatarFile = 'mr-blue-avatar.mp4';
+    const avatarPath = path.join(videoDir, avatarFile);
+
+    // Check if avatar video already exists
+    if (fs.existsSync(avatarPath)) {
+      console.log('✅ Using existing Mr. Blue avatar video');
+      return {
+        videoPath: `/videos/${avatarFile}`,
+        state: 'completed'
+      };
+    }
+
+    console.log('🎬 Generating new Mr. Blue avatar video...');
+    const generation = await this.generateMrBlueAvatar();
+
+    return {
+      generationId: generation.id,
+      state: generation.state
+    };
+  }
+
+  /**
+   * Save avatar video with standard name
+   */
+  async saveAvatarVideo(generationId: string): Promise<string> {
+    const status = await this.getGenerationStatus(generationId);
+
+    if (status.state !== 'completed' || !status.video?.url) {
+      throw new Error(`Video not ready. State: ${status.state}`);
+    }
+
+    const videoUrl = status.video.url;
+    const response = await fetch(videoUrl);
+
+    if (!response.ok) {
+      throw new Error(`Failed to download video: ${response.status}`);
+    }
+
+    const buffer = await response.buffer();
+    const outputDir = path.join(process.cwd(), 'client/public/videos');
+    
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+
+    const filename = 'mr-blue-avatar.mp4';
+    const outputPath = path.join(outputDir, filename);
+    
+    fs.writeFileSync(outputPath, buffer);
+    console.log(`✅ Saved avatar video to ${outputPath}`);
+
+    return `/videos/${filename}`;
+  }
 }
 
 export const lumaVideoService = new LumaVideoService();
