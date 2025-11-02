@@ -22,6 +22,8 @@ import HomePage from "@/pages/HomePage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import MarketingPrototype from "@/pages/MarketingPrototype";
+import MarketingPrototypeEnhanced from "@/pages/MarketingPrototypeEnhanced";
+import MarketingPrototypeOcean from "@/pages/MarketingPrototypeOcean";
 
 // Lazy-loaded pages for better performance
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
@@ -184,6 +186,8 @@ function Router() {
     <Switch>
       <Route path="/" component={HomePage} />
       <Route path="/marketing-prototype" component={MarketingPrototype} />
+      <Route path="/marketing-prototype-enhanced" component={MarketingPrototypeEnhanced} />
+      <Route path="/marketing-prototype-ocean" component={MarketingPrototypeOcean} />
       <Route path="/about" component={AboutPage} />
       <Route path="/discover" component={DiscoverPage} />
       <Route path="/volunteer" component={VolunteerPage} />

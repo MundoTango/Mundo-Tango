@@ -163,9 +163,13 @@ export interface IStorage {
   getUserFriends(userId: number): Promise<any[]>;
   getFriendRequests(userId: number): Promise<any[]>;
   getFriendSuggestions(userId: number): Promise<any[]>;
-  sendFriendRequest(senderId: number, receiverId: number): Promise<any>;
+  sendFriendRequest(data: { senderId: number; receiverId: number; [key: string]: any }): Promise<any>;
   acceptFriendRequest(requestId: number): Promise<void>;
   declineFriendRequest(requestId: number): Promise<void>;
+  getMutualFriends(userId1: number, userId2: number): Promise<SelectUser[]>;
+  getConnectionDegree(userId1: number, userId2: number): Promise<number | null>;
+  snoozeFriendRequest(requestId: number, days: number): Promise<void>;
+  removeFriend(userId: number, friendId: number): Promise<void>;
   
   // Communities
   getCommunityByCity(cityName: string): Promise<any | undefined>;
@@ -815,7 +819,7 @@ export class DbStorage implements IStorage {
     }
   }
 
-  async acceptFriendRequest(requestId: number, response?: string): Promise<void> {
+  async acceptFriendRequest(requestId: number): Promise<void> {
     const request = await db.select({
       id: friendRequests.id,
       senderId: friendRequests.senderId,
@@ -830,8 +834,7 @@ export class DbStorage implements IStorage {
     await db.update(friendRequests)
       .set({ 
         status: 'accepted', 
-        respondedAt: new Date(),
-        receiverMessage: response 
+        respondedAt: new Date()
       })
       .where(eq(friendRequests.id, requestId));
     
@@ -937,7 +940,7 @@ export class DbStorage implements IStorage {
     return score;
   }
 
-  async getConnectionDegree(userId1: number, userId2: number): Promise<number> {
+  async getConnectionDegree(userId1: number, userId2: number): Promise<number | null> {
     if (userId1 === userId2) return 0;
     
     const directFriendship = await db.select({ id: friendships.id })
@@ -982,7 +985,7 @@ export class DbStorage implements IStorage {
       .limit(1);
     if (thirdDegree.length > 0) return 3;
     
-    return -1;
+    return null;
   }
 
   async logFriendshipActivity(friendshipId: number, activityType: string, metadata?: any): Promise<void> {

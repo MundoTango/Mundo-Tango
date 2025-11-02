@@ -78,7 +78,7 @@ export function createFriendsRoutes(storage: IStorage) {
   router.post("/friends/requests/:requestId/accept", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const requestId = parseInt(req.params.requestId);
-      await storage.acceptFriendRequest(requestId, req.body.response);
+      await storage.acceptFriendRequest(requestId);
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
