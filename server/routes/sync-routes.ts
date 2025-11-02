@@ -199,7 +199,7 @@ router.post('/sync-conflicts/:id/resolve', authenticateToken, requireRoleLevel(6
       return res.status(400).json({ message: 'resolutionStrategy is required' });
     }
 
-    const [conflict] = await db.execute<any>(`
+    const results = await db.execute<any>(`
       UPDATE sync_conflicts SET
         resolution_strategy = $1,
         is_resolved = true,
@@ -208,6 +208,7 @@ router.post('/sync-conflicts/:id/resolve', authenticateToken, requireRoleLevel(6
       WHERE id = $3
       RETURNING *
     `, [resolutionStrategy, req.userId, id]);
+    const [conflict] = results.rows || [];
 
     if (!conflict) {
       return res.status(404).json({ message: 'Conflict not found' });

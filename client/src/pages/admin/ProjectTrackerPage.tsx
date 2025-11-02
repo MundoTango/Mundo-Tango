@@ -102,10 +102,7 @@ export default function ProjectTrackerPage() {
   // Create project mutation
   const createProjectMutation = useMutation({
     mutationFn: async (data: z.infer<typeof projectSchema>) => {
-      return apiRequest('/api/plan/projects', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      return apiRequest('POST', '/api/plan/projects', data);
     },
     onSuccess: () => {
       toast({ title: 'Project created successfully' });
@@ -125,10 +122,7 @@ export default function ProjectTrackerPage() {
   // Create task mutation
   const createTaskMutation = useMutation({
     mutationFn: async (data: z.infer<typeof taskSchema>) => {
-      return apiRequest(`/api/plan/projects/${selectedProject}/tasks`, {
-        method: 'POST',
-        body: JSON.stringify({ ...data, status: taskStatus }),
-      });
+      return apiRequest('POST', `/api/plan/projects/${selectedProject}/tasks`, { ...data, status: taskStatus });
     },
     onSuccess: () => {
       toast({ title: 'Task created successfully' });
@@ -148,10 +142,7 @@ export default function ProjectTrackerPage() {
   // Update task status mutation
   const updateTaskStatusMutation = useMutation({
     mutationFn: async ({ taskId, status }: { taskId: number; status: string }) => {
-      return apiRequest(`/api/plan/tasks/${taskId}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ status }),
-      });
+      return apiRequest('PATCH', `/api/plan/tasks/${taskId}`, { status });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/plan/projects', selectedProject, '/tasks'] });

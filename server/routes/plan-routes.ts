@@ -53,9 +53,10 @@ router.get('/projects', authenticateToken, async (req: AuthRequest, res) => {
 router.get('/projects/:id', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const { id } = req.params;
-    const [project] = await db.execute<any>(`
+    const results = await db.execute<any>(`
       SELECT * FROM plan_projects WHERE id = $1
     `, [id]);
+    const [project] = results.rows || [];
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
@@ -81,7 +82,7 @@ router.post('/projects', authenticateToken, async (req: AuthRequest, res) => {
       return res.status(400).json({ message: 'Project name is required' });
     }
 
-    const [project] = await db.execute<any>(`
+    const results = await db.execute<any>(`
       INSERT INTO plan_projects (
         name, description, status, priority, owner_id,
         github_repo_url, jira_project_key, start_date, target_date,
@@ -99,6 +100,7 @@ router.post('/projects', authenticateToken, async (req: AuthRequest, res) => {
       startDate || null,
       targetDate || null,
     ]);
+    const [project] = results.rows || [];
 
     res.status(201).json({ project });
   } catch (error) {
@@ -161,11 +163,12 @@ router.patch('/projects/:id', authenticateToken, async (req: AuthRequest, res) =
     updates.push(`updated_at = NOW()`);
     params.push(id);
 
-    const [project] = await db.execute<any>(`
+    const results = await db.execute<any>(`
       UPDATE plan_projects SET ${updates.join(', ')}
       WHERE id = $${paramIndex}
       RETURNING *
     `, params);
+    const [project] = results.rows || [];
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
@@ -228,7 +231,7 @@ router.post('/projects/:projectId/tasks', authenticateToken, async (req: AuthReq
       return res.status(400).json({ message: 'Task title is required' });
     }
 
-    const [task] = await db.execute<any>(`
+    const results = await db.execute<any>(`
       INSERT INTO plan_tasks (
         project_id, title, description, status, priority,
         assigned_to, created_by, estimated_hours, due_date,
@@ -248,6 +251,7 @@ router.post('/projects/:projectId/tasks', authenticateToken, async (req: AuthReq
       parentTaskId || null,
       labels || [],
     ]);
+    const [task] = results.rows || [];
 
     res.status(201).json({ task });
   } catch (error) {
@@ -318,11 +322,12 @@ router.patch('/tasks/:id', authenticateToken, async (req: AuthRequest, res) => {
     updates.push(`updated_at = NOW()`);
     params.push(id);
 
-    const [task] = await db.execute<any>(`
+    const results = await db.execute<any>(`
       UPDATE plan_tasks SET ${updates.join(', ')}
       WHERE id = $${paramIndex}
       RETURNING *
     `, params);
+    const [task] = results.rows || [];
 
     if (!task) {
       return res.status(404).json({ message: 'Task not found' });
@@ -394,7 +399,7 @@ router.post('/comments', authenticateToken, async (req: AuthRequest, res) => {
       return res.status(400).json({ message: 'projectId or taskId is required' });
     }
 
-    const [comment] = await db.execute<any>(`
+    const results = await db.execute<any>(`
       INSERT INTO plan_comments (
         project_id, task_id, user_id, content, mentions,
         created_at, updated_at
@@ -407,6 +412,7 @@ router.post('/comments', authenticateToken, async (req: AuthRequest, res) => {
       content,
       mentions || [],
     ]);
+    const [comment] = results.rows || [];
 
     res.status(201).json({ comment });
   } catch (error) {
@@ -425,7 +431,7 @@ router.patch('/comments/:id', authenticateToken, async (req: AuthRequest, res) =
       return res.status(400).json({ message: 'Comment content is required' });
     }
 
-    const [comment] = await db.execute<any>(`
+    const results = await db.execute<any>(`
       UPDATE plan_comments SET
         content = $1,
         is_edited = true,
@@ -434,6 +440,7 @@ router.patch('/comments/:id', authenticateToken, async (req: AuthRequest, res) =
       WHERE id = $2 AND user_id = $3
       RETURNING *
     `, [content, id, req.userId]);
+    const [comment] = results.rows || [];
 
     if (!comment) {
       return res.status(404).json({ message: 'Comment not found or unauthorized' });

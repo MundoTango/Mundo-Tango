@@ -29,9 +29,8 @@ export default function SelfHealingPage() {
   const handleScan = async () => {
     setScanning(true);
     try {
-      const result = await apiRequest('/api/admin/self-healing/scan', {
-        method: 'POST',
-      });
+      const response = await apiRequest('POST', '/api/admin/self-healing/scan');
+      const result = await response.json();
       
       toast({
         title: 'Scan completed',
