@@ -258,28 +258,42 @@ export class FeatureFlagService {
     const limit = tierLimit[0].limitValue;
 
     // Check if quota exceeded
-    if (limit !== null && current >= limit) {
-      return {
-        allowed: false,
-        current,
-        limit,
-        isUnlimited: false,
-        reason: `Quota exceeded: ${current}/${limit}`,
-      };
+    const result = limit !== null && current >= limit
+      ? {
+          allowed: false,
+          current,
+          limit,
+          isUnlimited: false,
+          reason: `Quota exceeded: ${current}/${limit}`,
+        }
+      : {
+          allowed: true,
+          current,
+          limit,
+          isUnlimited: false,
+        };
+
+    // Cache result
+    try {
+      await redis.setex(cacheKey, CACHE_TTL, JSON.stringify(result));
+    } catch (err) {
+      console.warn('[FeatureFlagService] Redis write error');
     }
 
-    return {
-      allowed: true,
-      current,
-      limit,
-      isUnlimited: false,
-    };
+    return result;
   }
 
   /**
-   * Increment quota usage for a feature
+   * Increment quota usage for a feature (invalidates cache)
    */
   static async incrementQuota(userId: number, featureName: string): Promise<void> {
+    // Invalidate cache
+    const cacheKey = `quota:${userId}:${featureName}`;
+    try {
+      await redis.del(cacheKey);
+    } catch (err) {
+      console.warn('[FeatureFlagService] Redis delete error');
+    }
     // Get feature flag
     const feature = await db
       .select()
