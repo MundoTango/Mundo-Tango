@@ -25,6 +25,8 @@ import pricingRoutes from "./routes/pricing-routes";
 import planRoutes from "./routes/plan-routes";
 import syncRoutes from "./routes/sync-routes";
 import selfHealingRoutes from "./routes/self-healing-routes";
+import agentHealthRoutes from "./routes/agent-health-routes";
+import predictiveContextRoutes from "./routes/predictive-context-routes";
 import { authenticateToken, AuthRequest } from "./middleware/auth";
 import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
@@ -83,6 +85,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/plan", planRoutes);
   app.use("/api/sync", syncRoutes);
   app.use("/api/admin/self-healing", selfHealingRoutes);
+  
+  // Phase 4 Deployment Blocker Routes
+  app.use("/api/agents", agentHealthRoutes);
+  app.use("/api/predictive", predictiveContextRoutes);
   
   // Existing routes
   app.use("/api/auth", authRoutes);
