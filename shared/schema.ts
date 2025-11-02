@@ -1854,9 +1854,10 @@ export type SelectTutorialModule = typeof tutorialModules.$inferSelect;
 
 // ============================================================================
 // GOD-LEVEL RBAC (8-Tier System) - BLOCKER 1
+// Note: Using platform_* prefix to avoid collision with Life CEO roles table
 // ============================================================================
 
-export const roles = pgTable("roles", {
+export const platformRoles = pgTable("platform_roles", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 50 }).notNull().unique(),
   displayName: varchar("display_name", { length: 100 }).notNull(),
@@ -1865,11 +1866,11 @@ export const roles = pgTable("roles", {
   isSystemRole: boolean("is_system_role").default(true),
   createdAt: timestamp("created_at").defaultNow(),
 }, (table) => ({
-  idxName: index("idx_roles_name").on(table.name),
-  idxLevel: index("idx_roles_level").on(table.roleLevel),
+  idxName: index("idx_platform_roles_name").on(table.name),
+  idxLevel: index("idx_platform_roles_level").on(table.roleLevel),
 }));
 
-export const permissions = pgTable("permissions", {
+export const platformPermissions = pgTable("platform_permissions", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 100 }).notNull().unique(),
   displayName: varchar("display_name", { length: 255 }).notNull(),
@@ -1877,33 +1878,33 @@ export const permissions = pgTable("permissions", {
   category: varchar("category", { length: 50 }),
   createdAt: timestamp("created_at").defaultNow(),
 }, (table) => ({
-  idxName: index("idx_permissions_name").on(table.name),
-  idxCategory: index("idx_permissions_category").on(table.category),
+  idxName: index("idx_platform_permissions_name").on(table.name),
+  idxCategory: index("idx_platform_permissions_category").on(table.category),
 }));
 
-export const userRoles = pgTable("user_roles", {
+export const platformUserRoles = pgTable("platform_user_roles", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  roleId: integer("role_id").notNull().references(() => roles.id, { onDelete: "cascade" }),
+  roleId: integer("role_id").notNull().references(() => platformRoles.id, { onDelete: "cascade" }),
   assignedBy: integer("assigned_by").references(() => users.id),
   assignedAt: timestamp("assigned_at").defaultNow(),
   expiresAt: timestamp("expires_at"),
   createdAt: timestamp("created_at").defaultNow(),
 }, (table) => ({
-  idxUser: index("idx_user_roles_user").on(table.userId),
-  idxRole: index("idx_user_roles_role").on(table.roleId),
-  uniqueUserRole: uniqueIndex("unique_user_role").on(table.userId, table.roleId),
+  idxUser: index("idx_platform_user_roles_user").on(table.userId),
+  idxRole: index("idx_platform_user_roles_role").on(table.roleId),
+  uniqueUserRole: uniqueIndex("unique_platform_user_role").on(table.userId, table.roleId),
 }));
 
-export const rolePermissions = pgTable("role_permissions", {
+export const platformRolePermissions = pgTable("platform_role_permissions", {
   id: serial("id").primaryKey(),
-  roleId: integer("role_id").notNull().references(() => roles.id, { onDelete: "cascade" }),
-  permissionId: integer("permission_id").notNull().references(() => permissions.id, { onDelete: "cascade" }),
+  roleId: integer("role_id").notNull().references(() => platformRoles.id, { onDelete: "cascade" }),
+  permissionId: integer("permission_id").notNull().references(() => platformPermissions.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow(),
 }, (table) => ({
-  idxRole: index("idx_role_permissions_role").on(table.roleId),
-  idxPermission: index("idx_role_permissions_permission").on(table.permissionId),
-  uniqueRolePermission: uniqueIndex("unique_role_permission").on(table.roleId, table.permissionId),
+  idxRole: index("idx_platform_role_permissions_role").on(table.roleId),
+  idxPermission: index("idx_platform_role_permissions_permission").on(table.permissionId),
+  uniqueRolePermission: uniqueIndex("unique_platform_role_permission").on(table.roleId, table.permissionId),
 }));
 
 // ============================================================================
@@ -2065,22 +2066,22 @@ export const pricingExperiments = pgTable("pricing_experiments", {
 // ZOD SCHEMAS & TYPES - RBAC, FEATURE FLAGS, PRICING
 // ============================================================================
 
-// RBAC
-export const insertRoleSchema = createInsertSchema(roles).omit({ id: true, createdAt: true });
-export type InsertRole = z.infer<typeof insertRoleSchema>;
-export type SelectRole = typeof roles.$inferSelect;
+// RBAC (Platform Roles)
+export const insertPlatformRoleSchema = createInsertSchema(platformRoles).omit({ id: true, createdAt: true });
+export type InsertPlatformRole = z.infer<typeof insertPlatformRoleSchema>;
+export type SelectPlatformRole = typeof platformRoles.$inferSelect;
 
-export const insertPermissionSchema = createInsertSchema(permissions).omit({ id: true, createdAt: true });
-export type InsertPermission = z.infer<typeof insertPermissionSchema>;
-export type SelectPermission = typeof permissions.$inferSelect;
+export const insertPlatformPermissionSchema = createInsertSchema(platformPermissions).omit({ id: true, createdAt: true });
+export type InsertPlatformPermission = z.infer<typeof insertPlatformPermissionSchema>;
+export type SelectPlatformPermission = typeof platformPermissions.$inferSelect;
 
-export const insertUserRoleSchema = createInsertSchema(userRoles).omit({ id: true, assignedAt: true, createdAt: true });
-export type InsertUserRole = z.infer<typeof insertUserRoleSchema>;
-export type SelectUserRole = typeof userRoles.$inferSelect;
+export const insertPlatformUserRoleSchema = createInsertSchema(platformUserRoles).omit({ id: true, assignedAt: true, createdAt: true });
+export type InsertPlatformUserRole = z.infer<typeof insertPlatformUserRoleSchema>;
+export type SelectPlatformUserRole = typeof platformUserRoles.$inferSelect;
 
-export const insertRolePermissionSchema = createInsertSchema(rolePermissions).omit({ id: true, createdAt: true });
-export type InsertRolePermission = z.infer<typeof insertRolePermissionSchema>;
-export type SelectRolePermission = typeof rolePermissions.$inferSelect;
+export const insertPlatformRolePermissionSchema = createInsertSchema(platformRolePermissions).omit({ id: true, createdAt: true });
+export type InsertPlatformRolePermission = z.infer<typeof insertPlatformRolePermissionSchema>;
+export type SelectPlatformRolePermission = typeof platformRolePermissions.$inferSelect;
 
 // Feature Flags
 export const insertFeatureFlagSchema = createInsertSchema(featureFlags).omit({ id: true, createdAt: true, updatedAt: true });

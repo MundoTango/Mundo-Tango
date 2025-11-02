@@ -1,5 +1,5 @@
 import Stripe from 'stripe';
-import { db } from '@db';
+import { db } from '@shared/db';
 import { pricingTiers, tierFeatures, promoCodes, subscriptions } from '@shared/schema';
 import { eq, and } from 'drizzle-orm';
 

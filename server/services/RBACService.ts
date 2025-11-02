@@ -1,5 +1,5 @@
-import { db } from '@db';
-import { roles, permissions, userRoles, rolePermissions, users } from '@shared/schema';
+import { db } from '@shared/db';
+import { platformRoles, platformPermissions, platformUserRoles, platformRolePermissions, users } from '@shared/schema';
 import { eq, and, inArray } from 'drizzle-orm';
 
 /**
@@ -22,11 +22,11 @@ export class RBACService {
   static async getUserRoleLevel(userId: number): Promise<number> {
     const userRolesData = await db
       .select({
-        roleLevel: roles.roleLevel,
+        roleLevel: platformRoles.roleLevel,
       })
-      .from(userRoles)
-      .innerJoin(roles, eq(userRoles.roleId, roles.id))
-      .where(eq(userRoles.userId, userId));
+      .from(platformUserRoles)
+      .innerJoin(platformRoles, eq(platformUserRoles.roleId, platformRoles.id))
+      .where(eq(platformUserRoles.userId, userId));
 
     if (userRolesData.length === 0) {
       return 1; // Default: Free User (Tier 1)
@@ -50,9 +50,9 @@ export class RBACService {
 
     // Get user's role IDs
     const userRolesData = await db
-      .select({ roleId: userRoles.roleId })
-      .from(userRoles)
-      .where(eq(userRoles.userId, userId));
+      .select({ roleId: platformUserRoles.roleId })
+      .from(platformUserRoles)
+      .where(eq(platformUserRoles.userId, userId));
 
     if (userRolesData.length === 0) {
       return false;
@@ -62,9 +62,9 @@ export class RBACService {
 
     // Check if any of user's roles have the permission
     const permission = await db
-      .select({ id: permissions.id })
-      .from(permissions)
-      .where(eq(permissions.name, permissionName))
+      .select({ id: platformPermissions.id })
+      .from(platformPermissions)
+      .where(eq(platformPermissions.name, permissionName))
       .limit(1);
 
     if (permission.length === 0) {
@@ -73,11 +73,11 @@ export class RBACService {
 
     const hasPermission = await db
       .select()
-      .from(rolePermissions)
+      .from(platformRolePermissions)
       .where(
         and(
-          inArray(rolePermissions.roleId, roleIds),
-          eq(rolePermissions.permissionId, permission[0].id)
+          inArray(platformRolePermissions.roleId, roleIds),
+          eq(platformRolePermissions.permissionId, permission[0].id)
         )
       )
       .limit(1);
@@ -98,9 +98,9 @@ export class RBACService {
 
     // Get user's role IDs
     const userRolesData = await db
-      .select({ roleId: userRoles.roleId })
-      .from(userRoles)
-      .where(eq(userRoles.userId, userId));
+      .select({ roleId: platformUserRoles.roleId })
+      .from(platformUserRoles)
+      .where(eq(platformUserRoles.userId, userId));
 
     if (userRolesData.length === 0) {
       return false;
@@ -130,15 +130,15 @@ export class RBACService {
 
     // God (Tier 8) gets ALL permissions
     if (userRoleLevel === 8) {
-      const allPermissions = await db.select({ name: permissions.name }).from(permissions);
+      const allPermissions = await db.select({ name: platformPermissions.name }).from(platformPermissions);
       return allPermissions.map((p: any) => p.name);
     }
 
     // Get user's role IDs
     const userRolesData = await db
-      .select({ roleId: userRoles.roleId })
-      .from(userRoles)
-      .where(eq(userRoles.userId, userId));
+      .select({ roleId: platformUserRoles.roleId })
+      .from(platformUserRoles)
+      .where(eq(platformUserRoles.userId, userId));
 
     if (userRolesData.length === 0) {
       return [];
@@ -149,11 +149,11 @@ export class RBACService {
     // Get all permissions for these roles
     const userPermissions = await db
       .select({
-        name: permissions.name,
+        name: platformPermissions.name,
       })
-      .from(rolePermissions)
-      .innerJoin(permissions, eq(rolePermissions.permissionId, permissions.id))
-      .where(inArray(rolePermissions.roleId, roleIds));
+      .from(platformRolePermissions)
+      .innerJoin(platformPermissions, eq(platformRolePermissions.permissionId, platformPermissions.id))
+      .where(inArray(platformRolePermissions.roleId, roleIds));
 
     return Array.from(new Set(userPermissions.map((p: any) => p.name))); // Deduplicate
   }
@@ -169,8 +169,8 @@ export class RBACService {
   ): Promise<void> {
     const role = await db
       .select()
-      .from(roles)
-      .where(eq(roles.name, roleName))
+      .from(platformRoles)
+      .where(eq(platformRoles.name, roleName))
       .limit(1);
 
     if (role.length === 0) {
@@ -178,7 +178,7 @@ export class RBACService {
     }
 
     await db
-      .insert(userRoles)
+      .insert(platformUserRoles)
       .values({
         userId,
         roleId: role[0].id,
@@ -194,8 +194,8 @@ export class RBACService {
   static async removeRole(userId: number, roleName: string): Promise<void> {
     const role = await db
       .select()
-      .from(roles)
-      .where(eq(roles.name, roleName))
+      .from(platformRoles)
+      .where(eq(platformRoles.name, roleName))
       .limit(1);
 
     if (role.length === 0) {
@@ -203,11 +203,11 @@ export class RBACService {
     }
 
     await db
-      .delete(userRoles)
+      .delete(platformUserRoles)
       .where(
         and(
-          eq(userRoles.userId, userId),
-          eq(userRoles.roleId, role[0].id)
+          eq(platformUserRoles.userId, userId),
+          eq(platformUserRoles.roleId, role[0].id)
         )
       );
   }

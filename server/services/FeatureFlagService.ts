@@ -1,4 +1,4 @@
-import { db } from '@db';
+import { db } from '@shared/db';
 import { featureFlags, tierLimits, userFeatureUsage, users } from '@shared/schema';
 import { eq, and } from 'drizzle-orm';
 
