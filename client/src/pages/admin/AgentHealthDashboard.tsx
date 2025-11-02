@@ -54,7 +54,7 @@ export default function AgentHealthDashboard() {
   const { toast } = useToast();
   const [expandedAgent, setExpandedAgent] = useState<string | null>(null);
   const [selectedCheckType, setSelectedCheckType] = useState<string>('availability');
-  const [historyFilter, setHistoryFilter] = useState<string>('');
+  const [historyFilter, setHistoryFilter] = useState<string>('all');
 
   // Fetch all agent health statuses with auto-refresh
   const { data: healthData = [], isLoading: isLoadingHealth, refetch: refetchHealth } = useQuery<AgentHealthStatus[]>({
@@ -64,9 +64,9 @@ export default function AgentHealthDashboard() {
 
   // Fetch validation history
   const { data: historyData = [], isLoading: isLoadingHistory } = useQuery<ValidationCheckResult[]>({
-    queryKey: ['/api/agents/validation/history', { limit: 20, agentCode: historyFilter || undefined }],
+    queryKey: ['/api/agents/validation/history', { limit: 20, agentCode: historyFilter !== 'all' ? historyFilter : undefined }],
     queryFn: async () => {
-      const url = historyFilter
+      const url = historyFilter && historyFilter !== 'all'
         ? `/api/agents/validation/history?agentCode=${historyFilter}&limit=20`
         : '/api/agents/validation/history?limit=20';
       const response = await fetch(url);
@@ -436,7 +436,7 @@ export default function AgentHealthDashboard() {
                 <SelectValue placeholder="Filter by agent (all)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Agents</SelectItem>
+                <SelectItem value="all">All Agents</SelectItem>
                 {healthData.map((agent) => (
                   <SelectItem key={agent.agentCode} value={agent.agentCode}>
                     {agent.agentCode}

@@ -60,7 +60,7 @@ export class AgentValidationService {
       // Insert health check result
       await executeRawQuery(
         `INSERT INTO agent_health (
-          agent_code, status, last_check_at, response_time, error_count, created_at, updated_at
+          agent_code, status, last_check_time, response_time_ms, error_count, created_at, updated_at
         ) VALUES ($1, $2, NOW(), $3, $4, NOW(), NOW())`,
         [agentCode, status, responseTime, errorCount]
       );
@@ -76,7 +76,7 @@ export class AgentValidationService {
       // Agent is offline/failing
       await executeRawQuery(
         `INSERT INTO agent_health (
-          agent_code, status, last_check_at, error_count, error_details, created_at, updated_at
+          agent_code, status, last_check_time, error_count, error_details, created_at, updated_at
         ) VALUES ($1, $2, NOW(), 1, $3, NOW(), NOW())`,
         [agentCode, 'offline', JSON.stringify({ error: error.message })]
       );
@@ -250,7 +250,7 @@ export class AgentValidationService {
     try {
       const results = await executeRawQuery<any>(
         `SELECT DISTINCT ON (agent_code)
-          agent_code, status, last_check_at, response_time, error_count, error_details
+          agent_code, status, last_check_time, response_time_ms, error_count, error_details
         FROM agent_health
         ORDER BY agent_code, created_at DESC`
       );
@@ -258,8 +258,8 @@ export class AgentValidationService {
       return results.map((r) => ({
         agentCode: r.agent_code,
         status: r.status,
-        lastCheckAt: new Date(r.last_check_at),
-        responseTime: r.response_time,
+        lastCheckAt: new Date(r.last_check_time),
+        responseTime: r.response_time_ms,
         errorCount: r.error_count,
         errorDetails: r.error_details,
       }));
