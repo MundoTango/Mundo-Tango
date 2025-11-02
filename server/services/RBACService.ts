@@ -110,11 +110,11 @@ export class RBACService {
 
     const hasPermission = await db
       .select()
-      .from(rolePermissions)
+      .from(platformRolePermissions)
       .where(
         and(
-          inArray(rolePermissions.roleId, roleIds),
-          eq(rolePermissions.permissionId, permissionId)
+          inArray(platformRolePermissions.roleId, roleIds),
+          eq(platformRolePermissions.permissionId, permissionId)
         )
       )
       .limit(1);
