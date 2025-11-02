@@ -1,6 +1,7 @@
 import { db } from '@shared/db';
 import { featureFlags, tierLimits, userFeatureUsage, users, platformUserRoles, platformRoles } from '@shared/schema';
 import { eq, and, sql } from 'drizzle-orm';
+import Redis from 'ioredis';
 
 /**
  * Feature Flag Service with Redis Caching
@@ -10,7 +11,23 @@ import { eq, and, sql } from 'drizzle-orm';
  * - Quota features (usage limits with tracking)
  * - Tier-based enforcement
  * - Automatic quota resets (daily/weekly/monthly)
+ * - Redis caching for performance (TTL: 5 minutes)
  */
+
+const redis = new Redis({
+  host: process.env.REDIS_HOST || 'localhost',
+  port: parseInt(process.env.REDIS_PORT || '6379'),
+  maxRetriesPerRequest: 3,
+  retryStrategy: (times) => {
+    if (times > 3) {
+      console.warn('[FeatureFlagService] Redis unavailable, using direct DB queries');
+      return null;
+    }
+    return Math.min(times * 100, 2000);
+  }
+});
+
+const CACHE_TTL = 300; // 5 minutes
 
 interface FeatureAccessResult {
   allowed: boolean;
@@ -55,9 +72,20 @@ export class FeatureFlagService {
   }
 
   /**
-   * Check if user can use a boolean feature
+   * Check if user can use a boolean feature (with Redis caching)
    */
   static async canUseFeature(userId: number, featureName: string): Promise<FeatureAccessResult> {
+    // Try cache first
+    const cacheKey = `feature:${userId}:${featureName}`;
+    try {
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        return JSON.parse(cached);
+      }
+    } catch (err) {
+      console.warn('[FeatureFlagService] Redis read error, using DB');
+    }
+
     // Get user's tier from RBAC roles (not users.subscriptionTier)
     const userTier = await this.getUserTierName(userId);
 
@@ -93,21 +121,39 @@ export class FeatureFlagService {
     }
 
     // For boolean features, limitValue = 1 means enabled
-    if (feature[0].featureType === 'boolean') {
-      return { allowed: tierLimit[0].limitValue === 1 };
+    const result = feature[0].featureType === 'boolean' 
+      ? { allowed: tierLimit[0].limitValue === 1 }
+      : { allowed: true };
+
+    // Cache result
+    try {
+      await redis.setex(cacheKey, CACHE_TTL, JSON.stringify(result));
+    } catch (err) {
+      console.warn('[FeatureFlagService] Redis write error');
     }
 
-    return { allowed: true };
+    return result;
   }
 
   /**
-   * Check if user can use a quota-based feature
+   * Check if user can use a quota-based feature (with Redis caching)
    * Returns current usage, limit, and whether action is allowed
    */
   static async canUseQuotaFeature(
     userId: number,
     featureName: string
   ): Promise<QuotaFeatureResult> {
+    // Try cache first
+    const cacheKey = `quota:${userId}:${featureName}`;
+    try {
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        return JSON.parse(cached);
+      }
+    } catch (err) {
+      console.warn('[FeatureFlagService] Redis read error, using DB');
+    }
+
     // Get user's tier from RBAC roles (not users.subscriptionTier)
     const userTier = await this.getUserTierName(userId);
 
