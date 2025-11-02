@@ -1853,6 +1853,270 @@ export type InsertTutorialModule = z.infer<typeof insertTutorialModuleSchema>;
 export type SelectTutorialModule = typeof tutorialModules.$inferSelect;
 
 // ============================================================================
+// GOD-LEVEL RBAC (8-Tier System) - BLOCKER 1
+// ============================================================================
+
+export const roles = pgTable("roles", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 50 }).notNull().unique(),
+  displayName: varchar("display_name", { length: 100 }).notNull(),
+  description: text("description"),
+  roleLevel: integer("role_level").notNull().unique(),
+  isSystemRole: boolean("is_system_role").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  idxName: index("idx_roles_name").on(table.name),
+  idxLevel: index("idx_roles_level").on(table.roleLevel),
+}));
+
+export const permissions = pgTable("permissions", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 100 }).notNull().unique(),
+  displayName: varchar("display_name", { length: 255 }).notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 50 }),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  idxName: index("idx_permissions_name").on(table.name),
+  idxCategory: index("idx_permissions_category").on(table.category),
+}));
+
+export const userRoles = pgTable("user_roles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  roleId: integer("role_id").notNull().references(() => roles.id, { onDelete: "cascade" }),
+  assignedBy: integer("assigned_by").references(() => users.id),
+  assignedAt: timestamp("assigned_at").defaultNow(),
+  expiresAt: timestamp("expires_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  idxUser: index("idx_user_roles_user").on(table.userId),
+  idxRole: index("idx_user_roles_role").on(table.roleId),
+  uniqueUserRole: uniqueIndex("unique_user_role").on(table.userId, table.roleId),
+}));
+
+export const rolePermissions = pgTable("role_permissions", {
+  id: serial("id").primaryKey(),
+  roleId: integer("role_id").notNull().references(() => roles.id, { onDelete: "cascade" }),
+  permissionId: integer("permission_id").notNull().references(() => permissions.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  idxRole: index("idx_role_permissions_role").on(table.roleId),
+  idxPermission: index("idx_role_permissions_permission").on(table.permissionId),
+  uniqueRolePermission: uniqueIndex("unique_role_permission").on(table.roleId, table.permissionId),
+}));
+
+// ============================================================================
+// FEATURE FLAG SYSTEM - BLOCKER 2
+// ============================================================================
+
+export const featureFlags = pgTable("feature_flags", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 100 }).notNull().unique(),
+  displayName: varchar("display_name", { length: 255 }).notNull(),
+  description: text("description"),
+  featureType: varchar("feature_type", { length: 20 }).notNull().default("boolean"),
+  category: varchar("category", { length: 50 }),
+  isEnabled: boolean("is_enabled").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  idxName: index("idx_feature_flags_name").on(table.name),
+  idxType: index("idx_feature_flags_type").on(table.featureType),
+  idxCategory: index("idx_feature_flags_category").on(table.category),
+}));
+
+export const tierLimits = pgTable("tier_limits", {
+  id: serial("id").primaryKey(),
+  tierName: varchar("tier_name", { length: 50 }).notNull(),
+  featureFlagId: integer("feature_flag_id").notNull().references(() => featureFlags.id, { onDelete: "cascade" }),
+  limitValue: integer("limit_value"),
+  isUnlimited: boolean("is_unlimited").default(false),
+  resetPeriod: varchar("reset_period", { length: 20 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  idxTier: index("idx_tier_limits_tier").on(table.tierName),
+  idxFeature: index("idx_tier_limits_feature").on(table.featureFlagId),
+  uniqueTierFeature: uniqueIndex("unique_tier_feature").on(table.tierName, table.featureFlagId),
+}));
+
+export const userFeatureUsage = pgTable("user_feature_usage", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  featureFlagId: integer("feature_flag_id").notNull().references(() => featureFlags.id, { onDelete: "cascade" }),
+  currentUsage: integer("current_usage").default(0),
+  lastResetAt: timestamp("last_reset_at").defaultNow(),
+  periodStart: timestamp("period_start").defaultNow(),
+  periodEnd: timestamp("period_end"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  idxUser: index("idx_user_feature_usage_user").on(table.userId),
+  idxFeature: index("idx_user_feature_usage_feature").on(table.featureFlagId),
+  uniqueUserFeature: uniqueIndex("unique_user_feature").on(table.userId, table.featureFlagId),
+}));
+
+// ============================================================================
+// DYNAMIC PRICING MANAGEMENT - BLOCKER 3
+// ============================================================================
+
+export const pricingTiers = pgTable("pricing_tiers", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 100 }).notNull().unique(),
+  displayName: varchar("display_name", { length: 100 }).notNull(),
+  description: text("description"),
+  monthlyPrice: integer("monthly_price").notNull(),
+  annualPrice: integer("annual_price"),
+  stripeMonthlyPriceId: varchar("stripe_monthly_price_id", { length: 255 }),
+  stripeAnnualPriceId: varchar("stripe_annual_price_id", { length: 255 }),
+  stripeProductId: varchar("stripe_product_id", { length: 255 }),
+  displayOrder: integer("display_order").default(0),
+  isPopular: boolean("is_popular").default(false),
+  isVisible: boolean("is_visible").default(true),
+  features: jsonb("features"),
+  roleLevel: integer("role_level"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  idxName: index("idx_pricing_tiers_name").on(table.name),
+  idxVisible: index("idx_pricing_tiers_visible").on(table.isVisible),
+  idxRoleLevel: index("idx_pricing_tiers_role_level").on(table.roleLevel),
+}));
+
+export const tierFeatures = pgTable("tier_features", {
+  id: serial("id").primaryKey(),
+  tierId: integer("tier_id").notNull().references(() => pricingTiers.id, { onDelete: "cascade" }),
+  featureKey: varchar("feature_key", { length: 100 }).notNull(),
+  featureName: varchar("feature_name", { length: 255 }).notNull(),
+  featureDescription: text("feature_description"),
+  limitType: varchar("limit_type", { length: 20 }).default("boolean"),
+  limitValue: integer("limit_value"),
+  isEnabled: boolean("is_enabled").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  idxTier: index("idx_tier_features_tier").on(table.tierId),
+  idxFeature: index("idx_tier_features_feature").on(table.featureKey),
+  uniqueTierFeature: uniqueIndex("unique_tier_feature_key").on(table.tierId, table.featureKey),
+}));
+
+export const promoCodes = pgTable("promo_codes", {
+  id: serial("id").primaryKey(),
+  code: varchar("code", { length: 50 }).notNull().unique(),
+  discountType: varchar("discount_type", { length: 20 }).notNull(),
+  discountValue: integer("discount_value").notNull(),
+  applicableTiers: integer("applicable_tiers").array(),
+  stripeCouponId: varchar("stripe_coupon_id", { length: 255 }),
+  maxRedemptions: integer("max_redemptions"),
+  currentRedemptions: integer("current_redemptions").default(0),
+  validFrom: timestamp("valid_from").defaultNow(),
+  validUntil: timestamp("valid_until"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  idxCode: index("idx_promo_codes_code").on(table.code),
+  idxActive: index("idx_promo_codes_active").on(table.isActive),
+}));
+
+export const subscriptions = pgTable("subscriptions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  tierId: integer("tier_id").notNull().references(() => pricingTiers.id),
+  stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }).unique(),
+  stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
+  billingInterval: varchar("billing_interval", { length: 20 }).notNull(),
+  status: varchar("status", { length: 20 }).default("active"),
+  amount: integer("amount").notNull(),
+  promoCodeId: integer("promo_code_id").references(() => promoCodes.id),
+  currentPeriodStart: timestamp("current_period_start").notNull(),
+  currentPeriodEnd: timestamp("current_period_end").notNull(),
+  cancelAt: timestamp("cancel_at"),
+  cancelledAt: timestamp("cancelled_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  idxUser: index("idx_subscriptions_user").on(table.userId),
+  idxTier: index("idx_subscriptions_tier").on(table.tierId),
+  idxStatus: index("idx_subscriptions_status").on(table.status),
+  idxStripe: index("idx_subscriptions_stripe").on(table.stripeSubscriptionId),
+}));
+
+export const pricingExperiments = pgTable("pricing_experiments", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  tierId: integer("tier_id").notNull().references(() => pricingTiers.id),
+  originalPrice: integer("original_price").notNull(),
+  testPrice: integer("test_price").notNull(),
+  trafficPercentage: integer("traffic_percentage").default(50),
+  status: varchar("status", { length: 20 }).default("draft"),
+  conversionRateOriginal: integer("conversion_rate_original"),
+  conversionRateTest: integer("conversion_rate_test"),
+  winner: varchar("winner", { length: 20 }),
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  idxTier: index("idx_pricing_experiments_tier").on(table.tierId),
+  idxStatus: index("idx_pricing_experiments_status").on(table.status),
+}));
+
+// ============================================================================
+// ZOD SCHEMAS & TYPES - RBAC, FEATURE FLAGS, PRICING
+// ============================================================================
+
+// RBAC
+export const insertRoleSchema = createInsertSchema(roles).omit({ id: true, createdAt: true });
+export type InsertRole = z.infer<typeof insertRoleSchema>;
+export type SelectRole = typeof roles.$inferSelect;
+
+export const insertPermissionSchema = createInsertSchema(permissions).omit({ id: true, createdAt: true });
+export type InsertPermission = z.infer<typeof insertPermissionSchema>;
+export type SelectPermission = typeof permissions.$inferSelect;
+
+export const insertUserRoleSchema = createInsertSchema(userRoles).omit({ id: true, assignedAt: true, createdAt: true });
+export type InsertUserRole = z.infer<typeof insertUserRoleSchema>;
+export type SelectUserRole = typeof userRoles.$inferSelect;
+
+export const insertRolePermissionSchema = createInsertSchema(rolePermissions).omit({ id: true, createdAt: true });
+export type InsertRolePermission = z.infer<typeof insertRolePermissionSchema>;
+export type SelectRolePermission = typeof rolePermissions.$inferSelect;
+
+// Feature Flags
+export const insertFeatureFlagSchema = createInsertSchema(featureFlags).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertFeatureFlag = z.infer<typeof insertFeatureFlagSchema>;
+export type SelectFeatureFlag = typeof featureFlags.$inferSelect;
+
+export const insertTierLimitSchema = createInsertSchema(tierLimits).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertTierLimit = z.infer<typeof insertTierLimitSchema>;
+export type SelectTierLimit = typeof tierLimits.$inferSelect;
+
+export const insertUserFeatureUsageSchema = createInsertSchema(userFeatureUsage).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertUserFeatureUsage = z.infer<typeof insertUserFeatureUsageSchema>;
+export type SelectUserFeatureUsage = typeof userFeatureUsage.$inferSelect;
+
+// Pricing
+export const insertPricingTierSchema = createInsertSchema(pricingTiers).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertPricingTier = z.infer<typeof insertPricingTierSchema>;
+export type SelectPricingTier = typeof pricingTiers.$inferSelect;
+
+export const insertTierFeatureSchema = createInsertSchema(tierFeatures).omit({ id: true, createdAt: true });
+export type InsertTierFeature = z.infer<typeof insertTierFeatureSchema>;
+export type SelectTierFeature = typeof tierFeatures.$inferSelect;
+
+export const insertPromoCodeSchema = createInsertSchema(promoCodes).omit({ id: true, createdAt: true });
+export type InsertPromoCode = z.infer<typeof insertPromoCodeSchema>;
+export type SelectPromoCode = typeof promoCodes.$inferSelect;
+
+export const insertSubscriptionSchema = createInsertSchema(subscriptions).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertSubscription = z.infer<typeof insertSubscriptionSchema>;
+export type SelectSubscription = typeof subscriptions.$inferSelect;
+
+export const insertPricingExperimentSchema = createInsertSchema(pricingExperiments).omit({ id: true, createdAt: true });
+export type InsertPricingExperiment = z.infer<typeof insertPricingExperimentSchema>;
+export type SelectPricingExperiment = typeof pricingExperiments.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
