@@ -1,12 +1,14 @@
-import { Link, LinkProps } from "wouter";
+import { Link } from "wouter";
 import { useState, useRef, useEffect } from "react";
 import { usePredictiveContext } from "@/providers/PredictiveContextProvider";
 import { useAuth } from "@/contexts/AuthContext";
 
-interface PredictiveLinkProps extends LinkProps {
+interface PredictiveLinkProps {
   to: string;
   children: React.ReactNode;
   className?: string;
+  onClick?: () => void;
+  [key: string]: any;
 }
 
 export function PredictiveLink({ to, children, className, ...props }: PredictiveLinkProps) {

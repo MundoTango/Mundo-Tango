@@ -7,6 +7,16 @@ import { useState } from 'react';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 
+interface PageHealth {
+  id: number;
+  page_path: string;
+  status: 'healthy' | 'unhealthy';
+  last_checked_at: string;
+  error_details?: string;
+  fix_suggested?: string;
+  fix_applied?: boolean;
+}
+
 /**
  * BLOCKER 5: Self-Healing System Dashboard
  * 
@@ -21,7 +31,7 @@ export default function SelfHealingPage() {
   const [scanning, setScanning] = useState(false);
 
   // Fetch page health data
-  const { data: pageHealth = [], isLoading } = useQuery({
+  const { data: pageHealth = [], isLoading } = useQuery<PageHealth[]>({
     queryKey: ['/api/admin/self-healing/dashboard'],
   });
 
@@ -60,8 +70,8 @@ export default function SelfHealingPage() {
     );
   }
 
-  const healthyPages = pageHealth.filter((p: any) => p.status === 'healthy').length;
-  const unhealthyPages = pageHealth.filter((p: any) => p.status === 'unhealthy').length;
+  const healthyPages = pageHealth.filter(p => p.status === 'healthy').length;
+  const unhealthyPages = pageHealth.filter(p => p.status === 'unhealthy').length;
 
   return (
     <div className="p-6 space-y-6">

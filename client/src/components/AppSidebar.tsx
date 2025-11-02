@@ -29,10 +29,10 @@ export function AppSidebar() {
   const [location] = useLocation();
   const { user, profile, logout } = useAuth();
 
-  // Use profile data (Supabase) for display, fallback to user email
-  const displayName = profile?.full_name || user?.email?.split('@')[0] || "User";
+  // Use profile data for display, fallback to user email
+  const displayName = profile?.name || user?.email?.split('@')[0] || "User";
   const username = profile?.username || user?.email?.split('@')[0] || "user";
-  const avatarUrl = profile?.avatar_url;
+  const avatarUrl = profile?.profileImage;
 
   return (
     <Sidebar>
