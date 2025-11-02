@@ -14,6 +14,7 @@ import { useLocation } from 'wouter';
 import { getThemeForRoute, type VisualTheme } from '@/config/theme-routes';
 import { boldMinimaximalistTokens } from '@/config/tokens/semantic-bold';
 import { mtOceanTokens } from '@/config/tokens/semantic-ocean';
+import { boldOceanTokens } from '@/config/tokens/semantic-bold-ocean';
 
 export type DarkMode = 'light' | 'dark';
 
@@ -71,7 +72,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     // Apply CSS custom properties
     const tokens = visualTheme === 'bold-minimaximalist' 
       ? boldMinimaximalistTokens 
-      : mtOceanTokens;
+      : visualTheme === 'bold-ocean'
+        ? boldOceanTokens
+        : mtOceanTokens;
     
     applyCSSVariables(root, tokens, darkMode);
   }, [darkMode, visualTheme]);
@@ -108,7 +111,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
  */
 function applyCSSVariables(
   root: HTMLElement, 
-  tokens: typeof boldMinimaximalistTokens | typeof mtOceanTokens,
+  tokens: typeof boldMinimaximalistTokens | typeof mtOceanTokens | typeof boldOceanTokens,
   darkMode: DarkMode
 ) {
   const isDark = darkMode === 'dark';

@@ -2,35 +2,50 @@
  * THEME ROUTE CONFIGURATION
  * Defines which routes use which visual theme
  * 
- * MARKETING ROUTES (Bold Minimaximalist):
- * - Landing/marketing pages
+ * BOLD OCEAN ROUTES (Bold Ocean Hybrid) - NEW DEFAULT:
+ * - Marketing pages with Ocean colors + Bold aesthetics
+ * - Landing/pricing pages
  * - Public-facing content
- * - Pricing pages
  * 
- * PLATFORM ROUTES (MT Ocean):
+ * BOLD MINIMAXIMALIST ROUTES (Pure Bold):
+ * - Special marketing prototypes only
+ * - Burgundy color scheme
+ * 
+ * MT OCEAN ROUTES (Pure Ocean):
+ * - Platform/social pages  
  * - All authenticated pages
  * - Admin center
- * - Social features
- * - All other pages
  */
 
-export type VisualTheme = 'bold-minimaximalist' | 'mt-ocean';
+export type VisualTheme = 'bold-minimaximalist' | 'mt-ocean' | 'bold-ocean';
 
 /**
- * Marketing routes that use Bold Minimaximalist theme
+ * Bold Ocean Hybrid routes - Marketing with Ocean colors
+ * DEFAULT for marketing pages
  */
-export const MARKETING_ROUTES = [
-  '/marketing-prototype',
+export const BOLD_OCEAN_ROUTES = [
   '/marketing-prototype-enhanced',
   '/pricing',
   '/landing',
+  '/about',
+  '/contact',
+  '/volunteer',
 ] as const;
 
 /**
- * Platform routes explicitly using MT Ocean theme
- * (Default for all non-marketing routes)
+ * Bold Minimaximalist routes - Pure burgundy theme
+ * ONLY for specific prototypes
  */
-export const PLATFORM_ROUTES = [
+export const BOLD_MINIMAXIMALIST_ROUTES = [
+  '/marketing-prototype',
+] as const;
+
+/**
+ * MT Ocean routes - Pure turquoise theme
+ * DEFAULT for platform/authenticated pages
+ */
+export const MT_OCEAN_ROUTES = [
+  '/',  // HomePage uses pure Ocean
   '/marketing-prototype-ocean',
   '/feed',
   '/memories',
@@ -47,17 +62,26 @@ export const PLATFORM_ROUTES = [
 ] as const;
 
 /**
- * Check if a route should use Bold Minimaximalist theme
- */
-export function isMarketingRoute(pathname: string): boolean {
-  return MARKETING_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'));
-}
-
-/**
  * Get the theme for a given route
  */
 export function getThemeForRoute(pathname: string): VisualTheme {
-  return isMarketingRoute(pathname) ? 'bold-minimaximalist' : 'mt-ocean';
+  // Check Bold Ocean Hybrid first (marketing with ocean colors)
+  if (BOLD_OCEAN_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'))) {
+    return 'bold-ocean';
+  }
+  
+  // Check Bold Minimaximalist (pure burgundy - limited use)
+  if (BOLD_MINIMAXIMALIST_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'))) {
+    return 'bold-minimaximalist';
+  }
+  
+  // Check MT Ocean explicitly
+  if (MT_OCEAN_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'))) {
+    return 'mt-ocean';
+  }
+  
+  // Default to MT Ocean for all other routes (platform pages)
+  return 'mt-ocean';
 }
 
 /**
@@ -68,7 +92,8 @@ export function getRouteThemeConfig(pathname: string) {
   
   return {
     visualTheme,
-    isMarketing: visualTheme === 'bold-minimaximalist',
-    isPlatform: visualTheme === 'mt-ocean',
+    isBoldOcean: visualTheme === 'bold-ocean',
+    isBoldMinimaximalist: visualTheme === 'bold-minimaximalist',
+    isMTOcean: visualTheme === 'mt-ocean',
   };
 }
