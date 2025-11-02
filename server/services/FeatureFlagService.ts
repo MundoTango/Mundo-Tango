@@ -1,6 +1,6 @@
 import { db } from '@shared/db';
-import { featureFlags, tierLimits, userFeatureUsage, users } from '@shared/schema';
-import { eq, and } from 'drizzle-orm';
+import { featureFlags, tierLimits, userFeatureUsage, users, platformUserRoles, platformRoles } from '@shared/schema';
+import { eq, and, sql } from 'drizzle-orm';
 
 /**
  * Feature Flag Service with Redis Caching
@@ -27,21 +27,39 @@ interface QuotaFeatureResult {
 
 export class FeatureFlagService {
   /**
+   * Get user's tier name from their RBAC role level
+   * Maps role level to tier name for feature flag checks
+   */
+  private static async getUserTierName(userId: number): Promise<string> {
+    // Get user's highest role level from RBAC
+    const userRolesData = await db
+      .select({
+        roleLevel: platformRoles.roleLevel,
+        roleName: platformRoles.name,
+      })
+      .from(platformUserRoles)
+      .innerJoin(platformRoles, eq(platformUserRoles.roleId, platformRoles.id))
+      .where(eq(platformUserRoles.userId, userId));
+
+    if (userRolesData.length === 0) {
+      return 'free'; // Default: Free tier
+    }
+
+    // Get highest role level
+    const maxRoleLevel = Math.max(...userRolesData.map((r: any) => r.roleLevel));
+
+    // Map role level to tier name for feature flag tier_limits table
+    // tier_limits.tierName uses role names: 'free', 'premium', 'community_leader', 'admin', etc.
+    const highestRole = userRolesData.find((r: any) => r.roleLevel === maxRoleLevel);
+    return highestRole?.roleName || 'free';
+  }
+
+  /**
    * Check if user can use a boolean feature
    */
   static async canUseFeature(userId: number, featureName: string): Promise<FeatureAccessResult> {
-    // Get user's subscription tier
-    const user = await db
-      .select({ subscriptionTier: users.subscriptionTier })
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1);
-
-    if (user.length === 0) {
-      return { allowed: false, reason: 'User not found' };
-    }
-
-    const userTier = user[0].subscriptionTier || 'free';
+    // Get user's tier from RBAC roles (not users.subscriptionTier)
+    const userTier = await this.getUserTierName(userId);
 
     // Get feature flag
     const feature = await db
@@ -90,24 +108,8 @@ export class FeatureFlagService {
     userId: number,
     featureName: string
   ): Promise<QuotaFeatureResult> {
-    // Get user's subscription tier
-    const user = await db
-      .select({ subscriptionTier: users.subscriptionTier })
-      .from(users)
-      .where(eq(users.id, userId))
-      .limit(1);
-
-    if (user.length === 0) {
-      return {
-        allowed: false,
-        current: 0,
-        limit: null,
-        isUnlimited: false,
-        reason: 'User not found',
-      };
-    }
-
-    const userTier = user[0].subscriptionTier || 'free';
+    // Get user's tier from RBAC roles (not users.subscriptionTier)
+    const userTier = await this.getUserTierName(userId);
 
     // Get feature flag
     const feature = await db
@@ -243,19 +245,42 @@ export class FeatureFlagService {
       throw new Error('Feature not found');
     }
 
-    // Update usage
-    await db
-      .update(userFeatureUsage)
-      .set({
-        currentUsage: db.$count(userFeatureUsage.currentUsage, '+', 1) as any,
-        updatedAt: new Date(),
-      })
+    // Check if usage record exists
+    const existing = await db
+      .select()
+      .from(userFeatureUsage)
       .where(
         and(
           eq(userFeatureUsage.userId, userId),
           eq(userFeatureUsage.featureFlagId, feature[0].id)
         )
-      );
+      )
+      .limit(1);
+
+    if (existing.length === 0) {
+      // Create initial usage record
+      await db.insert(userFeatureUsage).values({
+        userId,
+        featureFlagId: feature[0].id,
+        currentUsage: 1,
+        periodStart: new Date(),
+        periodEnd: this.calculatePeriodEnd(new Date(), 'monthly'), // Default to monthly
+      });
+    } else {
+      // Increment existing usage
+      await db
+        .update(userFeatureUsage)
+        .set({
+          currentUsage: sql`${userFeatureUsage.currentUsage} + 1`,
+          updatedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(userFeatureUsage.userId, userId),
+            eq(userFeatureUsage.featureFlagId, feature[0].id)
+          )
+        );
+    }
   }
 
   /**
