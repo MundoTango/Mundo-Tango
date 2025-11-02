@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { GitBranch, GitCommit, ExternalLink, RefreshCw } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 interface GitInfo {
   owner: string;
@@ -37,19 +38,23 @@ export default function GitRepositoryPage() {
 
   if (isLoading || !gitInfo) {
     return (
-    <PageLayout title="Git Repository" showBreadcrumbs>
+      <SelfHealingErrorBoundary pageName="Git Repository" fallbackRoute="/platform">
+        <PageLayout title="Git Repository" showBreadcrumbs>
 <div className="container mx-auto p-6">
         <div className="text-center py-8" data-testid="loading-git-info">
           Loading repository information...
         </div>
       </div>
-    </PageLayout>);
+        </PageLayout>
+      </SelfHealingErrorBoundary>
+    );
   }
 
   const repoUrl = `https://github.com/${gitInfo.owner}/${gitInfo.repo}`;
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <SelfHealingErrorBoundary pageName="Git Repository" fallbackRoute="/platform">
+      <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold" data-testid="text-page-title">Git Repository</h1>
@@ -165,6 +170,7 @@ export default function GitRepositoryPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </SelfHealingErrorBoundary>
   );
 }

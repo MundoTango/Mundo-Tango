@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingBag, Tag, Clock } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function MarketplacePage() {
   const [activeTab, setActiveTab] = useState("all");
@@ -16,7 +17,8 @@ export default function MarketplacePage() {
   });
 
   return (
-    <PageLayout title="Tango Marketplace" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Marketplace" fallbackRoute="/feed">
+      <PageLayout title="Tango Marketplace" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
@@ -109,5 +111,7 @@ export default function MarketplacePage() {
         </Tabs>
       </div>
     </div>
-    </PageLayout>);
+      </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

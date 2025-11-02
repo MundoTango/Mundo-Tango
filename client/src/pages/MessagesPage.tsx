@@ -17,13 +17,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import { formatDistanceToNow } from "date-fns";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function MessagesPage() {
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const { data: conversations, isLoading } = useConversations();
 
   return (
-    <PageLayout title="Messages" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Messages" fallbackRoute="/feed">
+      <PageLayout title="Messages" showBreadcrumbs>
 <>
       <SEO 
         title="Messages"
@@ -118,7 +120,9 @@ export default function MessagesPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+      </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }
 
 function ConversationView({ conversationId }: { conversationId: string }) {

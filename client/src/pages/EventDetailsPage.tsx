@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function EventDetailsPage() {
   const [, params] = useRoute("/events/:id");
@@ -34,7 +35,8 @@ export default function EventDetailsPage() {
 
   if (isLoading) {
     return (
-    <PageLayout title="EventDetails" showBreadcrumbs>
+      <SelfHealingErrorBoundary pageName="Event Details" fallbackRoute="/events">
+        <PageLayout title="EventDetails" showBreadcrumbs>
 <>
         <SEO 
           title="Event Details"
@@ -46,12 +48,15 @@ export default function EventDetailsPage() {
           <Skeleton className="h-32 w-full" />
         </div>
       </>
-    </PageLayout>);
+        </PageLayout>
+      </SelfHealingErrorBoundary>
+    );
   }
 
   if (!event) {
     return (
-      <>
+      <SelfHealingErrorBoundary pageName="Event Details" fallbackRoute="/events">
+        <>
         <SEO 
           title="Event Details"
           description="View event details, RSVP, and connect with attendees for this tango event."
@@ -63,12 +68,14 @@ export default function EventDetailsPage() {
             </CardContent>
           </Card>
         </div>
-      </>
+        </>
+      </SelfHealingErrorBoundary>
     );
   }
 
   return (
-    <>
+    <SelfHealingErrorBoundary pageName="Event Details" fallbackRoute="/events">
+      <>
       <SEO 
         title="Event Details"
         description="View event details, RSVP, and connect with attendees for this tango event."
@@ -155,6 +162,7 @@ export default function EventDetailsPage() {
         </CardContent>
       </Card>
       </div>
-    </>
+      </>
+    </SelfHealingErrorBoundary>
   );
 }

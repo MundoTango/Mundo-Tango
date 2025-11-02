@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Activity, AlertCircle, CheckCircle, Clock, TrendingUp, Zap } from "lucide-react";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 interface MonitoringData {
   vercel: {
@@ -73,13 +74,16 @@ export default function MonitoringPage() {
 
   if (isLoading || !monitoring) {
     return (
-    <PageLayout title="Monitoring Dashboard" showBreadcrumbs>
+      <SelfHealingErrorBoundary pageName="Monitoring" fallbackRoute="/platform">
+        <PageLayout title="Monitoring Dashboard" showBreadcrumbs>
 <div className="container mx-auto p-6">
         <div className="text-center py-8" data-testid="loading-monitoring">
           Loading monitoring data...
         </div>
       </div>
-    </PageLayout>);
+        </PageLayout>
+      </SelfHealingErrorBoundary>
+    );
   }
 
   const getStatusBadge = (status: string) => {
@@ -96,7 +100,8 @@ export default function MonitoringPage() {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <SelfHealingErrorBoundary pageName="Monitoring" fallbackRoute="/platform">
+      <div className="container mx-auto p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold" data-testid="text-page-title">Monitoring Dashboard</h1>
         <p className="text-muted-foreground mt-1">
@@ -252,6 +257,7 @@ export default function MonitoringPage() {
           )}
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </SelfHealingErrorBoundary>
   );
 }

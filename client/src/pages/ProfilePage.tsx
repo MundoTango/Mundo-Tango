@@ -24,6 +24,7 @@ import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import type { Profile } from "@shared/supabase-types";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 const editProfileSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters").max(50),
@@ -186,7 +187,8 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-    <PageLayout title="Profile" showBreadcrumbs>
+      <SelfHealingErrorBoundary pageName="Profile" fallbackRoute="/feed">
+        <PageLayout title="Profile" showBreadcrumbs>
 <>
         <SEO 
           title="Profile"
@@ -207,12 +209,15 @@ export default function ProfilePage() {
           </Card>
         </div>
       </>
-    </PageLayout>);
+        </PageLayout>
+      </SelfHealingErrorBoundary>
+    );
   }
 
   if (!profile) {
     return (
-      <>
+      <SelfHealingErrorBoundary pageName="Profile" fallbackRoute="/feed">
+        <>
         <SEO 
           title="Profile Not Found"
           description="The requested profile could not be found."
@@ -226,12 +231,14 @@ export default function ProfilePage() {
             </CardContent>
           </Card>
         </div>
-      </>
+        </>
+      </SelfHealingErrorBoundary>
     );
   }
 
   return (
-    <>
+    <SelfHealingErrorBoundary pageName="Profile" fallbackRoute="/feed">
+      <>
       <SEO 
         title={`${profile.full_name || profile.username} - Profile`}
         description={profile.bio || `View ${profile.username}'s Mundo Tango profile.`}
@@ -544,6 +551,7 @@ export default function ProfilePage() {
           </TabsContent>
         </Tabs>
       </div>
-    </>
+      </>
+    </SelfHealingErrorBoundary>
   );
 }

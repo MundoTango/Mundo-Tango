@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Play, BookOpen, Clock, TrendingUp } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function TutorialsPage() {
   const [activeTab, setActiveTab] = useState("all");
@@ -16,7 +17,8 @@ export default function TutorialsPage() {
   });
 
   return (
-    <PageLayout title="Tango Tutorials" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Tutorials" fallbackRoute="/feed">
+      <PageLayout title="Tango Tutorials" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
@@ -120,5 +122,7 @@ export default function TutorialsPage() {
         </Tabs>
       </div>
     </div>
-    </PageLayout>);
+      </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

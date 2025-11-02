@@ -7,6 +7,7 @@ import {Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {Bot, Brain, CheckCircle, Clock, Users, Zap, Award, Activity } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 interface AgentStats {
   totalAgents: number;
@@ -51,17 +52,21 @@ export default function ESADashboardPage() {
 
   if (statsLoading) {
     return (
-    <PageLayout title="ESA Framework Dashboard" showBreadcrumbs>
+      <SelfHealingErrorBoundary pageName="ESA Dashboard" fallbackRoute="/platform">
+        <PageLayout title="ESA Framework Dashboard" showBreadcrumbs>
 <div className="container mx-auto p-6">
         <div className="text-center py-8" data-testid="loading-esa-stats">
           Loading ESA Framework...
         </div>
       </div>
-    </PageLayout>);
+        </PageLayout>
+      </SelfHealingErrorBoundary>
+    );
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <SelfHealingErrorBoundary pageName="ESA Dashboard" fallbackRoute="/platform">
+      <div className="container mx-auto p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold" data-testid="text-page-title">ESA Framework Dashboard</h1>
         <p className="text-muted-foreground mt-1">
@@ -316,6 +321,7 @@ export default function ESADashboardPage() {
           )}
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </SelfHealingErrorBoundary>
   );
 }

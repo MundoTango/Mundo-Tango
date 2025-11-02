@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import { Crown, ExternalLink } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function SettingsPage() {
   const { profile, useUpdatePreferences, useSubscription } = useAuth();
@@ -76,7 +77,8 @@ export default function SettingsPage() {
   };
 
   return (
-    <PageLayout title="Settings" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Settings" fallbackRoute="/feed">
+      <PageLayout title="Settings" showBreadcrumbs>
 <>
       <SEO 
         title="Settings"
@@ -310,5 +312,7 @@ export default function SettingsPage() {
         </Card>
       </div>
     </>
-    </PageLayout>);
+      </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

@@ -7,6 +7,7 @@ import { Users } from "lucide-react";
 import type { SelectGroup } from "@shared/schema";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function GroupsPage() {
   const { data: groups, isLoading } = useQuery<SelectGroup[]>({
@@ -14,7 +15,8 @@ export default function GroupsPage() {
   });
 
   return (
-    <PageLayout title="Tango Groups" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Groups" fallbackRoute="/feed">
+      <PageLayout title="Tango Groups" showBreadcrumbs>
 <>
       <SEO 
         title="Tango Groups"
@@ -82,5 +84,7 @@ export default function GroupsPage() {
       )}
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MessageSquare, Send, Inbox, Bot, AlertTriangle, Info } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 interface AgentCommunication {
   id: number;
@@ -64,11 +65,14 @@ export default function AgentCommunicationsPage() {
 
   if (isLoading) {
     return (
-    <PageLayout title="Agent Communications" showBreadcrumbs>
+      <SelfHealingErrorBoundary pageName="Agent Communications" fallbackRoute="/platform">
+        <PageLayout title="Agent Communications" showBreadcrumbs>
 <div className="container mx-auto p-6">
         <div className="text-center py-8">Loading communications...</div>
       </div>
-    </PageLayout>);
+        </PageLayout>
+      </SelfHealingErrorBoundary>
+    );
   }
 
   const agentToAgent = communications.filter(c => c.communicationType === "agent_to_agent");
@@ -76,7 +80,8 @@ export default function AgentCommunicationsPage() {
   const userToAgent = communications.filter(c => c.communicationType === "user_to_agent");
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <SelfHealingErrorBoundary pageName="Agent Communications" fallbackRoute="/platform">
+      <div className="container mx-auto p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold" data-testid="text-page-title">Agent Communications</h1>
         <p className="text-muted-foreground mt-1">
@@ -284,6 +289,7 @@ export default function AgentCommunicationsPage() {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </SelfHealingErrorBoundary>
   );
 }

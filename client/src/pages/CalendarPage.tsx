@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar as CalendarIcon, MapPin, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth } from "date-fns";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function CalendarPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -27,7 +28,8 @@ export default function CalendarPage() {
   };
 
   return (
-    <PageLayout title="Event Calendar" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Calendar" fallbackRoute="/events">
+      <PageLayout title="Event Calendar" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-7xl">
         {/* Header */}
@@ -166,5 +168,7 @@ export default function CalendarPage() {
         </div>
       </div>
     </div>
-    </PageLayout>);
+      </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

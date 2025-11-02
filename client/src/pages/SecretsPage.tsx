@@ -13,6 +13,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Plus, Eye, EyeOff, Trash2, RefreshCw, Check, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 interface Secret {
   id: number;
@@ -127,7 +128,8 @@ export default function SecretsPage() {
   };
 
   return (
-    <PageLayout title="Secrets Management" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Secrets" fallbackRoute="/platform">
+      <PageLayout title="Secrets Management" showBreadcrumbs>
 <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -331,6 +333,8 @@ export default function SecretsPage() {
           )}
         </CardContent>
       </Card>
-    </div>
-    </PageLayout>);
+      </div>
+      </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

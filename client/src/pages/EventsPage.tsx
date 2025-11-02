@@ -15,6 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import type { RSVP, EventWithProfile } from "@shared/supabase-types";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 const CATEGORIES = ["All", "Milonga", "Workshop", "Performance", "Festival"];
 
@@ -55,7 +56,8 @@ function EventCard({ event }: { event: EventWithProfile }) {
   };
 
   return (
-    <PageLayout title="Discover Events" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Events" fallbackRoute="/feed">
+      <PageLayout title="Discover Events" showBreadcrumbs>
 <Card 
       className="overflow-hidden hover-elevate" 
       data-testid={`card-event-${event.id}`}
@@ -156,7 +158,9 @@ function EventCard({ event }: { event: EventWithProfile }) {
         </Link>
       </CardFooter>
     </Card>
-    </PageLayout>);
+      </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }
 
 export default function EventsPage() {
@@ -172,7 +176,8 @@ export default function EventsPage() {
   });
 
   return (
-    <>
+    <SelfHealingErrorBoundary pageName="Events" fallbackRoute="/feed">
+      <>
       <SEO
         title="Discover Events"
         description="Find tango events, milongas, and workshops near you. Join the global tango community and discover authentic Argentine tango experiences worldwide."
@@ -263,6 +268,7 @@ export default function EventsPage() {
           </Card>
         )}
       </div>
-    </>
+      </>
+    </SelfHealingErrorBoundary>
   );
 }

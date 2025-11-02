@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle, Clock, AlertCircle, ListTodo, Play } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 interface AgentTask {
   id: number;
@@ -70,11 +71,14 @@ export default function AgentTasksPage() {
 
   if (isLoading) {
     return (
-    <PageLayout title="Agent Tasks" showBreadcrumbs>
+      <SelfHealingErrorBoundary pageName="Agent Tasks" fallbackRoute="/platform">
+        <PageLayout title="Agent Tasks" showBreadcrumbs>
 <div className="container mx-auto p-6">
         <div className="text-center py-8">Loading agent tasks...</div>
       </div>
-    </PageLayout>);
+        </PageLayout>
+      </SelfHealingErrorBoundary>
+    );
   }
 
   const pendingTasks = tasks.filter(t => t.status === "pending");
@@ -82,7 +86,8 @@ export default function AgentTasksPage() {
   const completedTasks = tasks.filter(t => t.status === "completed");
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <SelfHealingErrorBoundary pageName="Agent Tasks" fallbackRoute="/platform">
+      <div className="container mx-auto p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold" data-testid="text-page-title">Agent Tasks</h1>
         <p className="text-muted-foreground mt-1">
@@ -294,6 +299,7 @@ export default function AgentTasksPage() {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </SelfHealingErrorBoundary>
   );
 }

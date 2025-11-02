@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, MapPin, Calendar, MessageCircle } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function PartnerFinderPage() {
   const [activeTab, setActiveTab] = useState("all");
@@ -17,7 +18,8 @@ export default function PartnerFinderPage() {
   });
 
   return (
-    <PageLayout title="Practice Partner Finder" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Partner Finder" fallbackRoute="/feed">
+      <PageLayout title="Practice Partner Finder" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
@@ -157,5 +159,7 @@ export default function PartnerFinderPage() {
         </Card>
       </div>
     </div>
-    </PageLayout>);
+      </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

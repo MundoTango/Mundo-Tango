@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { GraduationCap, MapPin, Star } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function TeachersPage() {
   const { data: teachers, isLoading } = useQuery({
@@ -13,7 +14,8 @@ export default function TeachersPage() {
   });
 
   return (
-    <PageLayout title="Tango Teachers" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Teachers" fallbackRoute="/feed">
+      <PageLayout title="Tango Teachers" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
@@ -91,5 +93,7 @@ export default function TeachersPage() {
         )}
       </div>
     </div>
-    </PageLayout>);
+      </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

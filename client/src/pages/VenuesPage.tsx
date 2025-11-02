@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Star, Clock, Phone, Globe } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function VenuesPage() {
   const { data: venues, isLoading } = useQuery({
@@ -13,7 +14,8 @@ export default function VenuesPage() {
   });
 
   return (
-    <PageLayout title="Tango Venues" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Venues" fallbackRoute="/feed">
+      <PageLayout title="Tango Venues" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
@@ -123,5 +125,7 @@ export default function VenuesPage() {
         )}
       </div>
     </div>
-    </PageLayout>);
+      </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

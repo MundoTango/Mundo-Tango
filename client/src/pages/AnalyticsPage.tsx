@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowDown, ArrowUp, Users, Zap, Server, AlertTriangle } from "lucide-react";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Line, LineChart } from "recharts";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 interface AnalyticsData {
   overview: {
@@ -78,19 +79,23 @@ export default function AnalyticsPage() {
 
   if (isLoading || !analytics) {
     return (
-    <PageLayout title="Analytics Dashboard" showBreadcrumbs>
+      <SelfHealingErrorBoundary pageName="Analytics" fallbackRoute="/platform">
+        <PageLayout title="Analytics Dashboard" showBreadcrumbs>
 <div className="container mx-auto p-6">
         <div className="text-center py-8" data-testid="loading-analytics">
           Loading analytics...
         </div>
       </div>
-    </PageLayout>);
+        </PageLayout>
+      </SelfHealingErrorBoundary>
+    );
   }
 
   const successRate = ((analytics.overview.successfulDeployments / analytics.overview.totalDeployments) * 100).toFixed(1);
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <SelfHealingErrorBoundary pageName="Analytics" fallbackRoute="/platform">
+      <div className="container mx-auto p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold" data-testid="text-page-title">Analytics Dashboard</h1>
         <p className="text-muted-foreground mt-1">
@@ -281,6 +286,7 @@ export default function AnalyticsPage() {
           )}
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </SelfHealingErrorBoundary>
   );
 }
