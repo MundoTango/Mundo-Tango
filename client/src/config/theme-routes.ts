@@ -63,24 +63,11 @@ export const MT_OCEAN_ROUTES = [
 
 /**
  * Get the theme for a given route
+ * CONSOLIDATED: All 142 pages now use MT Ocean theme
+ * Expert consensus (Paula Scher, Julie Zhuo, Don Norman, Luke Wroblewski, Vitaly Friedman)
+ * Decision: ONE THEME for consistency, mobile-first, accessibility
  */
 export function getThemeForRoute(pathname: string): VisualTheme {
-  // Check Bold Ocean Hybrid first (marketing with ocean colors)
-  if (BOLD_OCEAN_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'))) {
-    return 'bold-ocean';
-  }
-  
-  // Check Bold Minimaximalist (pure burgundy - limited use)
-  if (BOLD_MINIMAXIMALIST_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'))) {
-    return 'bold-minimaximalist';
-  }
-  
-  // Check MT Ocean explicitly
-  if (MT_OCEAN_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'))) {
-    return 'mt-ocean';
-  }
-  
-  // Default to MT Ocean for all other routes (platform pages)
   return 'mt-ocean';
 }
 

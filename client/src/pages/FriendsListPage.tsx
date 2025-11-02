@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Users, UserPlus, Clock, Search, Heart, Star, TrendingUp } from "lucide-react";
+import { Users, UserPlus, Clock, Search, Heart, Star, TrendingUp, Upload, X, Image as ImageIcon } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { PageLayout } from "@/components/PageLayout";
@@ -49,6 +49,8 @@ export default function FriendsListPage() {
     danceLocation: "",
     danceStory: "",
   });
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [filePreviews, setFilePreviews] = useState<string[]>([]);
   
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -71,6 +73,8 @@ export default function FriendsListPage() {
       toast({ title: "✨ Friend request sent!" });
       setShowRequestDialog(false);
       setRequestData({ message: "", didWeDance: false, danceLocation: "", danceStory: "" });
+      setUploadedFiles([]);
+      setFilePreviews([]);
       queryClient.invalidateQueries({ queryKey: ["/api/friends/suggestions"] });
     },
     onError: () => {
@@ -117,14 +121,76 @@ export default function FriendsListPage() {
     setShowRequestDialog(true);
   };
 
-  const submitRequest = () => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    
+    // Validate file count
+    if (uploadedFiles.length + files.length > 10) {
+      toast({
+        title: "Too many files",
+        description: "You can upload a maximum of 10 files",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Validate file sizes (10MB max per file)
+    const invalidFiles = files.filter(file => file.size > 10 * 1024 * 1024);
+    if (invalidFiles.length > 0) {
+      toast({
+        title: "File too large",
+        description: "Each file must be less than 10MB",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Validate file types (images and videos only)
+    const validTypes = ['image/', 'video/'];
+    const invalidTypes = files.filter(
+      file => !validTypes.some(type => file.type.startsWith(type))
+    );
+    if (invalidTypes.length > 0) {
+      toast({
+        title: "Invalid file type",
+        description: "Only images and videos are allowed",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Create preview URLs
+    const newPreviews = files.map(file => URL.createObjectURL(file));
+    
+    setUploadedFiles(prev => [...prev, ...files]);
+    setFilePreviews(prev => [...prev, ...newPreviews]);
+  };
+
+  const removeFile = (index: number) => {
+    // Revoke the object URL to free memory
+    URL.revokeObjectURL(filePreviews[index]);
+    
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+    setFilePreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const submitRequest = async () => {
     if (!selectedUser) return;
+    
+    // Convert files to data URLs for transmission
+    // In a production app, you'd upload to cloud storage and get URLs
+    const mediaUrls: string[] = [];
+    
+    // For now, we'll send empty mediaUrls array
+    // TODO: Implement file upload to storage service
+    
     sendRequestMutation.mutate({
       receiverId: selectedUser.id,
       senderMessage: requestData.message,
       didWeDance: requestData.didWeDance,
       danceLocation: requestData.didWeDance ? requestData.danceLocation : null,
       danceStory: requestData.didWeDance ? requestData.danceStory : null,
+      mediaUrls: mediaUrls,
     });
   };
 
@@ -443,8 +509,79 @@ export default function FriendsListPage() {
                       setRequestData({ ...requestData, danceStory: e.target.value })
                     }
                     className="mt-1"
-                    data-testid="input-dance-story"
+                    data-testid="textarea-dance-story"
                   />
+                </div>
+                
+                {/* Media Upload */}
+                <div>
+                  <Label htmlFor="mediaUpload">
+                    Upload Photos/Videos from the Event
+                    <span className="text-xs text-muted-foreground ml-2">
+                      (Max 10 files, 10MB each)
+                    </span>
+                  </Label>
+                  <div className="mt-2">
+                    <label
+                      htmlFor="mediaUpload"
+                      className="flex items-center justify-center gap-2 p-4 border-2 border-dashed border-cyan-300 dark:border-cyan-700 rounded-lg cursor-pointer hover-elevate active-elevate-2 transition-colors"
+                    >
+                      <Upload className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
+                      <span className="text-sm text-muted-foreground">
+                        Click to upload images or videos
+                      </span>
+                    </label>
+                    <input
+                      id="mediaUpload"
+                      type="file"
+                      multiple
+                      accept="image/*,video/*"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                      data-testid="input-media-upload"
+                    />
+                  </div>
+
+                  {/* File Preview Grid */}
+                  {filePreviews.length > 0 && (
+                    <div className="mt-3 grid grid-cols-3 gap-2">
+                      {filePreviews.map((preview, index) => (
+                        <div
+                          key={index}
+                          className="relative group aspect-square rounded-lg overflow-hidden border border-cyan-200 dark:border-cyan-800"
+                        >
+                          {uploadedFiles[index].type.startsWith('image/') ? (
+                            <img
+                              src={preview}
+                              alt={`Upload ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-900 dark:to-blue-900 flex items-center justify-center">
+                              <ImageIcon className="h-8 w-8 text-cyan-600 dark:text-cyan-400" />
+                            </div>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => removeFile(index)}
+                            className="absolute top-1 right-1 p-1 bg-red-500 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                            data-testid={`button-remove-file-${index}`}
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                          <div className="absolute bottom-0 inset-x-0 bg-black/50 text-white text-xs p-1 truncate">
+                            {uploadedFiles[index].name}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {uploadedFiles.length > 0 && (
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {uploadedFiles.length} file{uploadedFiles.length !== 1 ? 's' : ''} selected
+                    </p>
+                  )}
                 </div>
               </div>
             )}

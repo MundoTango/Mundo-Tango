@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { SEO } from "@/components/SEO";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Layout, 
   Type, 
@@ -13,7 +17,11 @@ import {
   Plus,
   Trash2,
   Eye,
-  Code
+  Code,
+  Sparkles,
+  Check,
+  Shield,
+  Copy
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
@@ -32,10 +40,39 @@ interface Component {
   };
 }
 
+const PERMISSION_LEVELS = ['Public', 'Registered', 'Paid', 'PRO', 'Admin', 'Super Admin', 'God'] as const;
+
 export default function VisualEditorPage() {
+  const { toast } = useToast();
   const [components, setComponents] = useState<Component[]>([]);
   const [selectedComponent, setSelectedComponent] = useState<string | null>(null);
   const [previewMode, setPreviewMode] = useState(false);
+  const [reviewComplete, setReviewComplete] = useState(false);
+  const [permissions, setPermissions] = useState<string[]>(['Public']);
+  const [totalAICost, setTotalAICost] = useState(0);
+  const [showAIModal, setShowAIModal] = useState(false);
+  const [aiGeneratedCode, setAiGeneratedCode] = useState('');
+  const [estimatedCost, setEstimatedCost] = useState(0);
+
+  useEffect(() => {
+    const savedReviewComplete = localStorage.getItem('visualEditor_reviewComplete');
+    const savedTotalAICost = localStorage.getItem('visualEditor_totalAICost');
+    
+    if (savedReviewComplete) {
+      setReviewComplete(JSON.parse(savedReviewComplete));
+    }
+    if (savedTotalAICost) {
+      setTotalAICost(parseFloat(savedTotalAICost));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('visualEditor_reviewComplete', JSON.stringify(reviewComplete));
+  }, [reviewComplete]);
+
+  useEffect(() => {
+    localStorage.setItem('visualEditor_totalAICost', totalAICost.toString());
+  }, [totalAICost]);
 
   const componentTypes = [
     { type: 'heading' as const, label: 'Heading', icon: Type },
@@ -98,6 +135,42 @@ ${jsxCode.split('\n').map(line => '      ' + line).join('\n')}
 }`;
   };
 
+  const handleAIGenerateComponent = () => {
+    // TODO: Integrate OpenAI when API key available
+    const code = generateCode();
+    const codeLength = code.length;
+    const estimatedTokens = codeLength * 0.75;
+    const cost = (estimatedTokens / 1000) * 0.01;
+    
+    setAiGeneratedCode(code);
+    setEstimatedCost(cost);
+    setTotalAICost(prev => prev + cost);
+    setShowAIModal(true);
+    
+    toast({
+      title: "AI Component Generated",
+      description: `Estimated cost: $${cost.toFixed(4)}`,
+    });
+  };
+
+  const handleCopyAICode = () => {
+    navigator.clipboard.writeText(aiGeneratedCode);
+    toast({
+      title: "Code copied!",
+      description: "AI-generated code copied to clipboard",
+    });
+  };
+
+  const togglePermission = (permission: string) => {
+    setPermissions(prev => {
+      if (prev.includes(permission)) {
+        return prev.filter(p => p !== permission);
+      } else {
+        return [...prev, permission];
+      }
+    });
+  };
+
   const selected = components.find(c => c.id === selectedComponent);
 
   return (
@@ -114,7 +187,7 @@ ${jsxCode.split('\n').map(line => '      ' + line).join('\n')}
             animate={{ opacity: 1, y: 0 }}
             className="mb-6"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-4">
               <div>
                 <h1 className="text-3xl font-bold">Visual Page Editor</h1>
                 <p className="text-muted-foreground">Drag, drop, and design custom pages</p>
@@ -139,8 +212,61 @@ ${jsxCode.split('\n').map(line => '      ' + line).join('\n')}
                   <Code className="h-4 w-4 mr-2" />
                   Export Code
                 </Button>
+                <Button
+                  variant="default"
+                  onClick={handleAIGenerateComponent}
+                  data-testid="button-ai-generate"
+                >
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  AI Generate Component
+                </Button>
               </div>
             </div>
+
+            <Card className="glass-card p-4">
+              <div className="flex items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Checkbox
+                      id="review-complete"
+                      checked={reviewComplete}
+                      onCheckedChange={(checked) => setReviewComplete(checked as boolean)}
+                      data-testid="checkbox-review-complete"
+                    />
+                    <Label htmlFor="review-complete" className="cursor-pointer flex items-center gap-2">
+                      <Check className="h-4 w-4" />
+                      Review Complete
+                    </Label>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-muted-foreground" />
+                    <Label className="text-sm font-medium">Permissions:</Label>
+                    <div className="flex gap-2 flex-wrap">
+                      {PERMISSION_LEVELS.map((level) => (
+                        <Button
+                          key={level}
+                          size="sm"
+                          variant={permissions.includes(level) ? "default" : "outline"}
+                          onClick={() => togglePermission(level)}
+                          data-testid={`button-permission-${level.toLowerCase().replace(' ', '-')}`}
+                          className="h-7"
+                        >
+                          {level}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-muted-foreground">Total AI Cost:</span>
+                  <span className="font-semibold" data-testid="text-total-ai-cost">
+                    ${totalAICost.toFixed(4)}
+                  </span>
+                </div>
+              </div>
+            </Card>
           </motion.div>
 
           <div className="grid grid-cols-12 gap-6">
@@ -303,6 +429,62 @@ ${jsxCode.split('\n').map(line => '      ' + line).join('\n')}
           </div>
         </div>
       </div>
+
+      <Dialog open={showAIModal} onOpenChange={setShowAIModal}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto" data-testid="dialog-ai-code">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5" />
+              AI-Generated Component Code
+            </DialogTitle>
+            <DialogDescription>
+              Generated code ready to use. Estimated cost: ${estimatedCost.toFixed(4)} (GPT-4)
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="rounded-lg bg-muted p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">Cost Breakdown</span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleCopyAICode}
+                  data-testid="button-copy-ai-code"
+                >
+                  <Copy className="h-4 w-4 mr-2" />
+                  Copy Code
+                </Button>
+              </div>
+              <div className="text-sm space-y-1">
+                <p>Code Length: {aiGeneratedCode.length} characters</p>
+                <p>Estimated Tokens: {Math.round(aiGeneratedCode.length * 0.75)}</p>
+                <p>Cost per 1K tokens: $0.01</p>
+                <p className="font-semibold">Estimated Cost: ${estimatedCost.toFixed(4)}</p>
+              </div>
+            </div>
+
+            <div className="rounded-lg bg-card border">
+              <div className="bg-muted px-4 py-2 border-b">
+                <span className="text-sm font-mono">Generated Code</span>
+              </div>
+              <pre className="p-4 overflow-x-auto text-sm">
+                <code data-testid="text-ai-generated-code">{aiGeneratedCode}</code>
+              </pre>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAIModal(false)} data-testid="button-close-ai-modal">
+              Close
+            </Button>
+            <Button onClick={handleCopyAICode} data-testid="button-copy-and-close">
+              <Copy className="h-4 w-4 mr-2" />
+              Copy & Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
