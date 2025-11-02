@@ -1372,98 +1372,89 @@ export type InsertH2acMessage = z.infer<typeof insertH2acMessageSchema>;
 export type SelectH2acMessage = typeof h2acMessages.$inferSelect;
 
 // ============================================================================
-// MEGA WAVE 8: MASSIVE DATABASE EXPANSION (MB.MD Protocol)
+// PHASE 4: BLOCKER 8 - Agent Validation Protocol
 // ============================================================================
 
-// ============================================================================
-// ESA AGENT FRAMEWORK TABLES (Wave 8A)
-// ============================================================================
-
-// ESA Agents (134 total agents)
-export const esaAgents = pgTable("esa_agents", {
+// Agent Health Status (tracks health of 134 ESA agents)
+export const agentHealth = pgTable("agent_health", {
   id: serial("id").primaryKey(),
-  agentId: varchar("agent_id").notNull().unique(),
-  name: varchar("name").notNull(),
-  type: varchar("type").notNull(),
-  division: varchar("division"),
-  certificationLevel: integer("certification_level").default(1),
-  specialization: text("specialization"),
-  status: varchar("status").default("active").notNull(),
+  agentCode: varchar("agent_code").notNull(), // References platform-schema.ts esaAgents.agentCode
+  status: varchar("status").default("unknown").notNull(), // 'healthy' | 'degraded' | 'failing' | 'offline' | 'unknown'
+  lastCheckAt: timestamp("last_check_at").defaultNow().notNull(),
+  responseTime: integer("response_time"), // milliseconds
+  errorCount: integer("error_count").default(0),
+  errorDetails: jsonb("error_details"),
   metadata: jsonb("metadata"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => ({
-  agentIdIdx: index("esa_agents_agent_id_idx").on(table.agentId),
-  typeIdx: index("esa_agents_type_idx").on(table.type),
-  divisionIdx: index("esa_agents_division_idx").on(table.division),
-  statusIdx: index("esa_agents_status_idx").on(table.status),
+  agentCodeIdx: index("agent_health_agent_code_idx").on(table.agentCode),
+  statusIdx: index("agent_health_status_idx").on(table.status),
+  lastCheckIdx: index("agent_health_last_check_idx").on(table.lastCheckAt),
 }));
 
-// ESA Agent Certifications
-export const esaAgentCertifications = pgTable("esa_agent_certifications", {
+// Validation Checks (cross-agent validation logs)
+export const validationChecks = pgTable("validation_checks", {
   id: serial("id").primaryKey(),
-  agentId: integer("agent_id").notNull().references(() => esaAgents.id, { onDelete: "cascade" }),
-  certificationLevel: integer("certification_level").notNull(),
-  certificationDate: timestamp("certification_date").notNull(),
-  certifiedBy: varchar("certified_by"),
-  skills: text("skills").array(),
-  createdAt: timestamp("created_at").defaultNow(),
-}, (table) => ({
-  agentIdx: index("esa_certifications_agent_idx").on(table.agentId),
-  levelIdx: index("esa_certifications_level_idx").on(table.certificationLevel),
-}));
-
-// ESA Agent Communications (agent-to-agent messaging)
-export const esaAgentCommunications = pgTable("esa_agent_communications", {
-  id: serial("id").primaryKey(),
-  senderAgentId: integer("sender_agent_id").notNull().references(() => esaAgents.id, { onDelete: "cascade" }),
-  recipientAgentId: integer("recipient_agent_id").notNull().references(() => esaAgents.id, { onDelete: "cascade" }),
-  messageType: varchar("message_type").notNull(),
-  subject: text("subject"),
-  content: text("content").notNull(),
-  priority: varchar("priority").default("normal"),
-  status: varchar("status").default("sent").notNull(),
+  checkType: varchar("check_type").notNull(), // 'availability' | 'performance' | 'integration' | 'fallback'
+  agentCode: varchar("agent_code").notNull(),
+  result: varchar("result").notNull(), // 'pass' | 'fail' | 'warning'
+  details: text("details"),
+  executionTime: integer("execution_time"), // milliseconds
+  fallbackActivated: boolean("fallback_activated").default(false),
+  fallbackAgentCode: varchar("fallback_agent_code"),
   metadata: jsonb("metadata"),
   createdAt: timestamp("created_at").defaultNow(),
-  readAt: timestamp("read_at"),
-  respondedAt: timestamp("responded_at"),
 }, (table) => ({
-  senderIdx: index("esa_comms_sender_idx").on(table.senderAgentId),
-  recipientIdx: index("esa_comms_recipient_idx").on(table.recipientAgentId),
-  statusIdx: index("esa_comms_status_idx").on(table.status),
-  createdAtIdx: index("esa_comms_created_at_idx").on(table.createdAt),
+  checkTypeIdx: index("validation_checks_type_idx").on(table.checkType),
+  agentCodeIdx: index("validation_checks_agent_code_idx").on(table.agentCode),
+  resultIdx: index("validation_checks_result_idx").on(table.result),
+  createdAtIdx: index("validation_checks_created_at_idx").on(table.createdAt),
 }));
 
-// ESA Agent Metrics
-export const esaAgentMetrics = pgTable("esa_agent_metrics", {
+// ============================================================================
+// PHASE 4: BLOCKER 9 - Predictive Context System
+// ============================================================================
+
+// User Patterns (Markov chain data for prediction)
+export const userPatterns = pgTable("user_patterns", {
   id: serial("id").primaryKey(),
-  agentId: integer("agent_id").notNull().references(() => esaAgents.id, { onDelete: "cascade" }),
-  metricType: varchar("metric_type").notNull(),
-  metricValue: integer("metric_value").notNull(),
-  timestamp: timestamp("timestamp").defaultNow().notNull(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  fromPage: varchar("from_page").notNull(), // Current page path
+  toPage: varchar("to_page").notNull(), // Next page path
+  transitionCount: integer("transition_count").default(1),
+  avgTimeOnPage: integer("avg_time_on_page"), // milliseconds
+  lastTransitionAt: timestamp("last_transition_at").defaultNow(),
   metadata: jsonb("metadata"),
-}, (table) => ({
-  agentIdx: index("esa_metrics_agent_idx").on(table.agentId),
-  typeIdx: index("esa_metrics_type_idx").on(table.metricType),
-  timestampIdx: index("esa_metrics_timestamp_idx").on(table.timestamp),
-}));
-
-// ESA Agent Tasks (agent-specific tasks)
-export const esaAgentTasks = pgTable("esa_agent_tasks", {
-  id: serial("id").primaryKey(),
-  agentId: integer("agent_id").notNull().references(() => esaAgents.id, { onDelete: "cascade" }),
-  taskTitle: text("task_title").notNull(),
-  taskDescription: text("task_description"),
-  status: varchar("status").default("pending").notNull(),
-  priority: varchar("priority").default("medium"),
-  dueDate: timestamp("due_date"),
-  completedAt: timestamp("completed_at"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => ({
-  agentIdx: index("esa_tasks_agent_idx").on(table.agentId),
-  statusIdx: index("esa_tasks_status_idx").on(table.status),
-  dueDateIdx: index("esa_tasks_due_date_idx").on(table.dueDate),
+  userIdx: index("user_patterns_user_idx").on(table.userId),
+  fromPageIdx: index("user_patterns_from_page_idx").on(table.fromPage),
+  toPageIdx: index("user_patterns_to_page_idx").on(table.toPage),
+  uniquePattern: uniqueIndex("unique_user_pattern").on(table.userId, table.fromPage, table.toPage),
+}));
+
+// Prediction Cache (predicted next actions for cache warming)
+export const predictionCache = pgTable("prediction_cache", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  currentPage: varchar("current_page").notNull(),
+  predictedPages: text("predicted_pages").array(), // Top 3-5 likely next pages
+  confidence: integer("confidence"), // 0-100 prediction confidence
+  cacheWarmed: boolean("cache_warmed").default(false),
+  warmedAt: timestamp("warmed_at"),
+  hitCount: integer("hit_count").default(0), // Track prediction accuracy
+  missCount: integer("miss_count").default(0),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  expiresAt: timestamp("expires_at"), // Cache expiry (24 hours)
+}, (table) => ({
+  userIdx: index("prediction_cache_user_idx").on(table.userId),
+  currentPageIdx: index("prediction_cache_current_page_idx").on(table.currentPage),
+  expiresAtIdx: index("prediction_cache_expires_at_idx").on(table.expiresAt),
+  uniquePrediction: uniqueIndex("unique_prediction").on(table.userId, table.currentPage),
 }));
 
 // ============================================================================
@@ -1763,26 +1754,23 @@ export const tutorialModules = pgTable("tutorial_modules", {
 // ZOD SCHEMAS FOR NEW TABLES
 // ============================================================================
 
-// ESA Agents
-export const insertEsaAgentSchema = createInsertSchema(esaAgents).omit({ id: true, createdAt: true, updatedAt: true });
-export type InsertEsaAgent = z.infer<typeof insertEsaAgentSchema>;
-export type SelectEsaAgent = typeof esaAgents.$inferSelect;
+// Phase 4: BLOCKER 8 - Agent Validation Protocol
+export const insertAgentHealthSchema = createInsertSchema(agentHealth).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertAgentHealth = z.infer<typeof insertAgentHealthSchema>;
+export type SelectAgentHealth = typeof agentHealth.$inferSelect;
 
-export const insertEsaAgentCertificationSchema = createInsertSchema(esaAgentCertifications).omit({ id: true, createdAt: true });
-export type InsertEsaAgentCertification = z.infer<typeof insertEsaAgentCertificationSchema>;
-export type SelectEsaAgentCertification = typeof esaAgentCertifications.$inferSelect;
+export const insertValidationCheckSchema = createInsertSchema(validationChecks).omit({ id: true, createdAt: true });
+export type InsertValidationCheck = z.infer<typeof insertValidationCheckSchema>;
+export type SelectValidationCheck = typeof validationChecks.$inferSelect;
 
-export const insertEsaAgentCommunicationSchema = createInsertSchema(esaAgentCommunications).omit({ id: true, createdAt: true, readAt: true, respondedAt: true });
-export type InsertEsaAgentCommunication = z.infer<typeof insertEsaAgentCommunicationSchema>;
-export type SelectEsaAgentCommunication = typeof esaAgentCommunications.$inferSelect;
+// Phase 4: BLOCKER 9 - Predictive Context System
+export const insertUserPatternSchema = createInsertSchema(userPatterns).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertUserPattern = z.infer<typeof insertUserPatternSchema>;
+export type SelectUserPattern = typeof userPatterns.$inferSelect;
 
-export const insertEsaAgentMetricSchema = createInsertSchema(esaAgentMetrics).omit({ id: true });
-export type InsertEsaAgentMetric = z.infer<typeof insertEsaAgentMetricSchema>;
-export type SelectEsaAgentMetric = typeof esaAgentMetrics.$inferSelect;
-
-export const insertEsaAgentTaskSchema = createInsertSchema(esaAgentTasks).omit({ id: true, createdAt: true, updatedAt: true, completedAt: true });
-export type InsertEsaAgentTask = z.infer<typeof insertEsaAgentTaskSchema>;
-export type SelectEsaAgentTask = typeof esaAgentTasks.$inferSelect;
+export const insertPredictionCacheSchema = createInsertSchema(predictionCache).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertPredictionCache = z.infer<typeof insertPredictionCacheSchema>;
+export type SelectPredictionCache = typeof predictionCache.$inferSelect;
 
 // Post Actions
 export const insertPostEditSchema = createInsertSchema(postEdits).omit({ id: true, createdAt: true });
