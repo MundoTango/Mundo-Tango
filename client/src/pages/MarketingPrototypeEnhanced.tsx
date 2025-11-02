@@ -1,18 +1,26 @@
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
-import { useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { ArrowDown, Sparkles, Music, Users, Heart, Globe, Play, Pause, Check } from "lucide-react";
-import { Link } from "wouter";
-import { cn } from "@/lib/utils";
-import { getTheme, ACTIVE_THEME } from "@/config/theme";
+/**
+ * MARKETING PROTOTYPE - BOLD MINIMAXIMALIST THEME
+ * Automatically uses burgundy #b91c3b, 800 font weight, 6px radius
+ * Route: /marketing-prototype-enhanced
+ * 
+ * DESIGN CHARACTERISTICS:
+ * - Burgundy (#b91c3b) primary - PASSIONATE
+ * - Purple (#8b5cf6) creative accent - ARTISTIC
+ * - Gold (#f59e0b) warmth accent - AUTHENTIC
+ * - Heavy 800 typography - DRAMATIC
+ * - Sharp 6px corners - CRISP
+ * - Strong burgundy shadows - DEPTH
+ * - Fast 150ms animations - ENERGETIC
+ */
 
-const theme = getTheme();
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+import { AdaptiveButton } from "@/components/adaptive/AdaptiveButton";
+import { AdaptiveCard } from "@/components/adaptive/AdaptiveCard";
+import { ArrowDown, Sparkles, Music, Users, Heart, Globe, Calendar, MapPin, Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function MarketingPrototypeEnhanced() {
-  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const heroRef = useRef(null);
   
   const { scrollYProgress } = useScroll({
@@ -23,42 +31,33 @@ export default function MarketingPrototypeEnhanced() {
   const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
 
-  const toggleVideo = () => {
-    if (videoRef.current) {
-      if (isVideoPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
-      }
-      setIsVideoPlaying(!isVideoPlaying);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
-      {/* Video Hero Section */}
+    <div className="min-h-screen bg-[var(--color-background)] overflow-x-hidden">
+      {/* HERO SECTION - Burgundy Gradient */}
       <motion.section
         ref={heroRef}
         style={{ opacity: heroOpacity, scale: heroScale }}
         className="relative h-screen flex items-center justify-center overflow-hidden"
         data-testid="section-hero"
       >
-        {/* Video Background - Placeholder for now */}
-        <div className={cn("absolute inset-0 animate-gradient-shift", theme.heroAnimated.includes('cyan') ? "bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600" : "bg-gradient-to-br from-rose-600 via-purple-600 to-cyan-500")} />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
+        {/* Bold Minimaximalist Gradient: Burgundy → Purple → Gold */}
+        <div className="absolute inset-0 bg-[var(--gradient-hero)]" />
+        
+        {/* Dark wash for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
         {/* Floating Animated Elements */}
         <motion.div
           animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          className={cn("absolute top-20 left-10", ACTIVE_THEME === 'ocean' ? "text-cyan-400/30" : "text-rose-400/30")}
+          className="absolute top-20 left-10 text-[var(--color-accent)]/30"
         >
           <Sparkles size={120} />
         </motion.div>
         <motion.div
           animate={{ y: [0, 20, 0], rotate: [0, -5, 0] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          className={cn("absolute bottom-20 right-10", ACTIVE_THEME === 'ocean' ? "text-purple-400/30" : "text-purple-400/30")}
+          className="absolute bottom-20 right-10 text-[var(--color-secondary)]/30"
         >
           <Music size={100} />
         </motion.div>
@@ -70,13 +69,17 @@ export default function MarketingPrototypeEnhanced() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2 }}
           >
-            <Badge className={cn("mb-6 text-white font-semibold text-sm px-4 py-2", theme.badge)} data-testid="badge-network">
+            <span 
+              className="inline-block mb-6 text-white font-[var(--font-weight-body)] text-sm px-6 py-3 bg-[var(--color-primary)]/90 rounded-[var(--radius-base)] shadow-[var(--shadow-large)]"
+              data-testid="badge-network"
+            >
               THE GLOBAL TANGO NETWORK
-            </Badge>
-            <h1 className="text-7xl md:text-9xl font-bold mb-6 text-white tracking-tight">
+            </span>
+            
+            <h1 className="text-7xl md:text-9xl font-[var(--font-weight-heading)] mb-6 text-white tracking-tight leading-[var(--line-height-heading)]">
               WHERE TANGO{" "}
               <br />
-              <span className={cn("bg-gradient-to-r bg-clip-text text-transparent", theme.accentGradient)}>
+              <span className="bg-gradient-to-r from-[var(--color-accent)] via-white to-[var(--color-secondary)] bg-clip-text text-transparent">
                 MEETS COMMUNITY
               </span>
             </h1>
@@ -86,7 +89,7 @@ export default function MarketingPrototypeEnhanced() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.5 }}
-            className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto"
+            className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto font-[var(--font-weight-body)]"
           >
             Connect with 10,000+ dancers worldwide. Discover events, find partners, and immerse yourself in the global tango movement.
           </motion.p>
@@ -97,21 +100,22 @@ export default function MarketingPrototypeEnhanced() {
             transition={{ duration: 0.8, delay: 0.8 }}
             className="flex flex-wrap gap-4 justify-center"
           >
-            <Button
+            <AdaptiveButton
               size="lg"
-              className={cn("text-lg px-8 py-6 shadow-2xl transition-all hover:scale-105", theme.ctaPrimary)}
+              variant="primary"
+              className="shadow-[var(--shadow-xlarge)]"
               data-testid="button-join-community"
             >
               Join the Community
-            </Button>
-            <Button
+            </AdaptiveButton>
+            <AdaptiveButton
               size="lg"
-              variant="outline"
-              className={cn("text-lg px-8 py-6 backdrop-blur-sm transition-all hover:scale-105", theme.ctaSecondary)}
+              variant="secondary"
+              className="backdrop-blur-sm bg-white/10 text-white border-white hover:bg-white/20"
               data-testid="button-explore-events"
             >
               Explore Events
-            </Button>
+            </AdaptiveButton>
           </motion.div>
         </div>
 
@@ -129,154 +133,252 @@ export default function MarketingPrototypeEnhanced() {
         </motion.div>
       </motion.section>
 
-      {/* Stats Section with Scroll Reveal */}
-      <ScrollRevealSection delay={0.2}>
-        <section className="py-20 bg-gradient-to-br from-background via-card/50 to-background" data-testid="section-stats">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <StatCard number="10,000+" label="Active Dancers" delay={0.1} />
-              <StatCard number="50+" label="Countries" delay={0.2} />
-              <StatCard number="500+" label="Events Monthly" delay={0.3} />
-              <StatCard number="100+" label="Cities" delay={0.4} />
-            </div>
+      {/* STATS SECTION */}
+      <section className="py-20 bg-[var(--color-background)]" data-testid="section-stats">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <StatCard number="10,000+" label="Active Dancers" />
+            <StatCard number="50+" label="Countries" />
+            <StatCard number="500+" label="Events Monthly" />
+            <StatCard number="100+" label="Cities" />
           </div>
-        </section>
-      </ScrollRevealSection>
+        </div>
+      </section>
 
-      {/* Features Grid with Micro-Interactions */}
-      <ScrollRevealSection delay={0.3}>
-        <section className="py-32 px-4" data-testid="section-features">
-          <div className="max-w-7xl mx-auto">
-            <motion.h2
-              className={cn("text-6xl font-bold text-center mb-16 bg-gradient-to-r bg-clip-text text-transparent", theme.accentGradient)}
-            >
-              7 Ways to Connect
-            </motion.h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <FeatureCard
-                icon={<Heart className={theme.accentText} />}
-                title="Social Feed"
-                description="Share your tango journey with a vibrant community"
-                delay={0.1}
-              />
-              <FeatureCard
-                icon={<Users className={theme.accentText} />}
-                title="Find Partners"
-                description="Connect with dancers worldwide for events and practice"
-                delay={0.2}
-              />
-              <FeatureCard
-                icon={<Music className={theme.accentText} />}
-                title="Events & Milongas"
-                description="Discover and attend tango events in your city"
-                delay={0.3}
-              />
-              <FeatureCard
-                icon={<Globe className={theme.accentText} />}
-                title="Housing Network"
-                description="Find accommodation with fellow tango enthusiasts"
-                delay={0.4}
-              />
-              <FeatureCard
-                icon={<Sparkles className={theme.accentText} />}
-                title="Workshops"
-                description="Learn from world-class teachers and maestros"
-                delay={0.5}
-              />
-              <FeatureCard
-                icon={<Heart className={theme.accentText} />}
-                title="Volunteer"
-                description="Contribute to the global tango community"
-                delay={0.6}
-              />
-            </div>
+      {/* FEATURES SECTION */}
+      <section className="py-32 px-4 bg-[var(--color-surface)]" data-testid="section-features">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-[var(--font-size-hero)] font-[var(--font-weight-heading)] text-center mb-4 text-[var(--color-text-primary)] leading-[var(--line-height-heading)]">
+            7 Ways to Connect
+          </h2>
+          <p className="text-center text-[var(--color-text-secondary)] text-xl mb-16 max-w-2xl mx-auto font-[var(--font-weight-body)]">
+            Mundo Tango brings the global tango community together through powerful features
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <FeatureCard
+              icon={<Heart className="text-[var(--color-primary)]" size={48} />}
+              title="Social Feed"
+              description="Share your tango journey with a vibrant community"
+            />
+            <FeatureCard
+              icon={<Users className="text-[var(--color-primary)]" size={48} />}
+              title="Find Partners"
+              description="Connect with dancers worldwide for events and practice"
+            />
+            <FeatureCard
+              icon={<Music className="text-[var(--color-secondary)]" size={48} />}
+              title="Events & Milongas"
+              description="Discover and attend tango events in your city"
+            />
+            <FeatureCard
+              icon={<Globe className="text-[var(--color-secondary)]" size={48} />}
+              title="Global Community"
+              description="Join dancers from over 50 countries"
+            />
+            <FeatureCard
+              icon={<Calendar className="text-[var(--color-accent)]" size={48} />}
+              title="Event Calendar"
+              description="Never miss a milonga with our comprehensive calendar"
+            />
+            <FeatureCard
+              icon={<MapPin className="text-[var(--color-accent)]" size={48} />}
+              title="Interactive Map"
+              description="Explore tango venues and events on our interactive map"
+            />
           </div>
-        </section>
-      </ScrollRevealSection>
+        </div>
+      </section>
 
-      {/* CTA Section */}
-      <ScrollRevealSection delay={0.2}>
-        <section className={cn("py-32 relative overflow-hidden", theme.hero)} data-testid="section-cta">
-          <div className="absolute inset-0 bg-black/40" />
-          <div className="relative z-10 max-w-4xl mx-auto text-center px-4">
-            <h2 className="text-5xl md:text-7xl font-bold text-white mb-6">
-              Ready to Dance?
-            </h2>
-            <p className="text-xl text-white/90 mb-12">
-              Join thousands of dancers already on Mundo Tango
-            </p>
-            <Button
-              size="lg"
-              className="bg-white text-gray-900 hover:bg-white/90 text-xl px-12 py-8 shadow-2xl transition-all hover:scale-105"
-              data-testid="button-get-started"
-            >
-              Get Started Free
-            </Button>
+      {/* PRICING TEASER */}
+      <section className="py-32 px-4 bg-[var(--color-background)]">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-[var(--font-size-h1)] font-[var(--font-weight-heading)] mb-6 text-[var(--color-text-primary)] leading-[var(--line-height-heading)]">
+            Join the Movement
+          </h2>
+          <p className="text-xl text-[var(--color-text-secondary)] mb-12 font-[var(--font-weight-body)]">
+            Start connecting with the global tango community today
+          </p>
+          
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <PricingCard
+              title="Dancer"
+              price="Free"
+              features={[
+                "Social feed access",
+                "Event discovery",
+                "Basic messaging",
+                "Community groups"
+              ]}
+            />
+            <PricingCard
+              title="Pro"
+              price="$9/mo"
+              features={[
+                "Everything in Dancer",
+                "Advanced search",
+                "Event creation",
+                "Priority support",
+                "Analytics dashboard"
+              ]}
+              highlighted
+            />
+            <PricingCard
+              title="Organizer"
+              price="$29/mo"
+              features={[
+                "Everything in Pro",
+                "Unlimited events",
+                "Ticketing system",
+                "Marketing tools",
+                "Custom branding"
+              ]}
+            />
           </div>
-        </section>
-      </ScrollRevealSection>
+
+          <AdaptiveButton size="lg" variant="primary">
+            View Full Pricing
+          </AdaptiveButton>
+        </div>
+      </section>
+
+      {/* CTA SECTION */}
+      <section className="relative py-32 px-4 overflow-hidden">
+        {/* Background with gradient */}
+        <div className="absolute inset-0 bg-[var(--gradient-primary)]" />
+        <div className="absolute inset-0 bg-black/40" />
+        
+        <div className="relative z-10 max-w-4xl mx-auto text-center text-white">
+          <h2 className="text-[var(--font-size-hero)] font-[var(--font-weight-heading)] mb-6 leading-[var(--line-height-heading)]">
+            Ready to Dance?
+          </h2>
+          <p className="text-2xl mb-12 font-[var(--font-weight-body)]">
+            Join 10,000+ dancers from around the world
+          </p>
+          
+          <div className="flex flex-wrap gap-4 justify-center">
+            <AdaptiveButton 
+              size="lg" 
+              variant="primary"
+              className="bg-white text-[var(--color-primary)] hover:bg-gray-100"
+            >
+              Create Free Account
+            </AdaptiveButton>
+            <AdaptiveButton 
+              size="lg" 
+              variant="secondary"
+              className="border-white text-white hover:bg-white/10"
+            >
+              Learn More
+            </AdaptiveButton>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
 
-function ScrollRevealSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
+// STAT CARD COMPONENT
+function StatCard({ number, label }: { number: string; label: string }) {
   return (
     <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 50 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-      transition={{ duration: 0.8, delay }}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-function StatCard({ number, label, delay }: { number: string; label: string; delay: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
-      transition={{ duration: 0.6, delay }}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
       className="text-center"
     >
-      <div className={cn("text-5xl md:text-6xl font-bold mb-2", theme.accentText)}>{number}</div>
-      <div className="text-lg text-muted-foreground">{label}</div>
+      <div className="text-5xl font-[var(--font-weight-heading)] text-[var(--color-primary)] mb-2 leading-[var(--line-height-heading)]">
+        {number}
+      </div>
+      <div className="text-[var(--color-text-secondary)] font-[var(--font-weight-body)] uppercase tracking-wide text-sm">
+        {label}
+      </div>
     </motion.div>
   );
 }
 
-function FeatureCard({ icon, title, description, delay }: { icon: React.ReactNode; title: string; description: string; delay: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
+// FEATURE CARD COMPONENT
+function FeatureCard({ 
+  icon, 
+  title, 
+  description 
+}: { 
+  icon: React.ReactNode; 
+  title: string; 
+  description: string;
+}) {
   return (
     <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-      transition={{ duration: 0.6, delay }}
-      whileHover={{ scale: 1.05, rotate: 1 }}
-      whileTap={{ scale: 0.98 }}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      whileHover={{ y: -8 }}
+      transition={{ duration: 0.3 }}
     >
-      <Card className={cn("h-full transition-all hover:shadow-2xl cursor-pointer", `border-2 ${theme.cardBorder}`)}>
-        <CardContent className="p-8">
-          <div className="mb-4">{icon}</div>
-          <h3 className="text-2xl font-bold mb-3">{title}</h3>
-          <p className="text-muted-foreground">{description}</p>
-          <div className="mt-6 flex items-center gap-2 text-sm font-medium" style={{ color: theme.primary }}>
-            <span>Learn More</span>
-            <ArrowDown className="rotate-[-90deg] h-4 w-4" />
-          </div>
-        </CardContent>
-      </Card>
+      <AdaptiveCard 
+        variant="solid" 
+        className="h-full hover:shadow-[var(--shadow-xlarge)] transition-all duration-[var(--transition-speed)]"
+      >
+        <div className="mb-4">{icon}</div>
+        <h3 className="text-[var(--font-size-h3)] font-[var(--font-weight-subheading)] mb-3 text-[var(--color-text-primary)]">
+          {title}
+        </h3>
+        <p className="text-[var(--color-text-secondary)] font-[var(--font-weight-body)]">
+          {description}
+        </p>
+      </AdaptiveCard>
     </motion.div>
+  );
+}
+
+// PRICING CARD COMPONENT
+function PricingCard({
+  title,
+  price,
+  features,
+  highlighted = false
+}: {
+  title: string;
+  price: string;
+  features: string[];
+  highlighted?: boolean;
+}) {
+  return (
+    <AdaptiveCard 
+      variant="solid"
+      className={cn(
+        "relative",
+        highlighted && "ring-4 ring-[var(--color-primary)] shadow-[var(--shadow-xlarge)]"
+      )}
+    >
+      {highlighted && (
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[var(--color-accent)] text-white px-4 py-1 rounded-[var(--radius-button)] text-sm font-[var(--font-weight-body)]">
+          MOST POPULAR
+        </div>
+      )}
+      
+      <h3 className="text-[var(--font-size-h3)] font-[var(--font-weight-heading)] mb-2 text-[var(--color-text-primary)]">
+        {title}
+      </h3>
+      <div className="text-4xl font-[var(--font-weight-heading)] text-[var(--color-primary)] mb-6">
+        {price}
+      </div>
+      
+      <ul className="space-y-3 mb-8">
+        {features.map((feature, idx) => (
+          <li key={idx} className="flex items-start gap-2 text-[var(--color-text-secondary)] font-[var(--font-weight-body)]">
+            <Check className="text-[var(--color-primary)] shrink-0 mt-1" size={20} />
+            <span>{feature}</span>
+          </li>
+        ))}
+      </ul>
+      
+      <AdaptiveButton 
+        variant={highlighted ? "primary" : "secondary"}
+        className="w-full"
+      >
+        Get Started
+      </AdaptiveButton>
+    </AdaptiveCard>
   );
 }
