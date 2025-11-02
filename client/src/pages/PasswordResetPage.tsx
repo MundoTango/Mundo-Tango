@@ -4,10 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Key } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function PasswordResetPage() {
   return (
-    <PageLayout title="PasswordReset" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Password Reset" fallbackRoute="/login">
+      <PageLayout title="PasswordReset" showBreadcrumbs>
 <div className="min-h-screen bg-background flex items-center justify-center py-8 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
@@ -36,5 +38,7 @@ export default function PasswordResetPage() {
         </CardContent>
       </Card>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

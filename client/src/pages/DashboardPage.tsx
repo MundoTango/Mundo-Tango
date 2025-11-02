@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Users, Heart, MessageCircle } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function DashboardPage() {
   const stats = [
@@ -13,7 +14,8 @@ export default function DashboardPage() {
   ];
 
   return (
-    <PageLayout title="Dashboard" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Dashboard" fallbackRoute="/feed">
+      <PageLayout title="Dashboard" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         
@@ -78,5 +80,7 @@ export default function DashboardPage() {
         </div>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

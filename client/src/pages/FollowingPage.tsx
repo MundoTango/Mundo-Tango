@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Users } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function FollowingPage() {
   const { data: following, isLoading } = useQuery({
@@ -11,7 +12,8 @@ export default function FollowingPage() {
   });
 
   return (
-    <PageLayout title="Following" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Following" fallbackRoute="/profile">
+      <PageLayout title="Following" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-2xl">
         
@@ -52,5 +54,7 @@ export default function FollowingPage() {
         )}
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

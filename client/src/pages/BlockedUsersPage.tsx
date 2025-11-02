@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { UserX } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function BlockedUsersPage() {
   const blockedUsers = [
@@ -11,7 +12,8 @@ export default function BlockedUsersPage() {
   ];
 
   return (
-    <PageLayout title="Blocked Users" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Blocked Users" fallbackRoute="/settings">
+      <PageLayout title="Blocked Users" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-2xl">
         
@@ -50,5 +52,7 @@ export default function BlockedUsersPage() {
         )}
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

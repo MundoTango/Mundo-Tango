@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Calendar, MapPin, Users, Download } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function BookingConfirmationPage() {
   return (
-    <PageLayout title="Booking Confirmed!" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Booking Confirmation" fallbackRoute="/events">
+      <PageLayout title="Booking Confirmed!" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-2xl">
         
@@ -76,5 +78,7 @@ export default function BookingConfirmationPage() {
         </Card>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

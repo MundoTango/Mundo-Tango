@@ -4,10 +4,12 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function EmailPreferencesPage() {
   return (
-    <PageLayout title="Email Preferences" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Email Preferences" fallbackRoute="/settings">
+      <PageLayout title="Email Preferences" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-2xl">
         
@@ -77,5 +79,7 @@ export default function EmailPreferencesPage() {
         </Button>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

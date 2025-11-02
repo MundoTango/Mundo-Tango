@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function PaymentSuccessPage() {
   return (
-    <PageLayout title="Payment Successful!" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Payment Success" fallbackRoute="/pricing">
+      <PageLayout title="Payment Successful!" showBreadcrumbs>
 <div className="min-h-screen bg-background flex items-center justify-center py-8 px-4">
       <Card className="w-full max-w-md">
         <CardContent className="pt-6 text-center space-y-6">
@@ -47,5 +49,7 @@ export default function PaymentSuccessPage() {
         </CardContent>
       </Card>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

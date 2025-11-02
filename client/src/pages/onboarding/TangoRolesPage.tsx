@@ -8,6 +8,7 @@ import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 const TANGO_ROLES = [
   { id: "dancer-leader", emoji: "🕺", name: "Dancer (Leader)", description: "I lead in tango dancing" },
@@ -92,7 +93,8 @@ export default function TangoRolesPage() {
   };
 
   return (
-    <PageLayout title="TangoRoles" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Tango Roles" fallbackRoute="/">
+      <PageLayout title="TangoRoles" showBreadcrumbs>
 <>
       <SEO title="Your Tango Roles - Mundo Tango" description="Tell us what you do in the tango community" />
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
@@ -182,5 +184,7 @@ export default function TangoRolesPage() {
         </Card>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

@@ -2,10 +2,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Mail, CheckCircle } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function EmailVerificationPage() {
   return (
-    <PageLayout title="Verify Your Email" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Email Verification" fallbackRoute="/login">
+      <PageLayout title="Verify Your Email" showBreadcrumbs>
 <div className="min-h-screen bg-background flex items-center justify-center py-8 px-4">
       <Card className="w-full max-w-md">
         <CardContent className="pt-6 text-center space-y-6">
@@ -39,5 +41,7 @@ export default function EmailVerificationPage() {
         </CardContent>
       </Card>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

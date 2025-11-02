@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EyeOff } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function BlockedContentPage() {
   const blockedContent = [
@@ -10,7 +11,8 @@ export default function BlockedContentPage() {
   ];
 
   return (
-    <PageLayout title="Blocked Content" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Blocked Content" fallbackRoute="/settings">
+      <PageLayout title="Blocked Content" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-2xl">
         
@@ -43,5 +45,7 @@ export default function BlockedContentPage() {
         )}
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

@@ -4,6 +4,7 @@ import Joyride, { Step, CallBackProps, STATUS } from "react-joyride";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 const TOUR_STEPS: Step[] = [
   {
@@ -76,7 +77,8 @@ export default function GuidedTourPage() {
   };
 
   return (
-    <PageLayout title="GuidedTour" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Guided Tour" fallbackRoute="/">
+      <PageLayout title="GuidedTour" showBreadcrumbs>
 <>
       <SEO title="Platform Tour - Mundo Tango" description="Take a quick tour of Mundo Tango" />
       <Joyride
@@ -106,5 +108,7 @@ export default function GuidedTourPage() {
       />
       <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40" />
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

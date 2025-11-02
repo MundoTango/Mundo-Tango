@@ -4,10 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Calendar, ShoppingCart, Heart } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function MarketplaceItemPage() {
   return (
-    <PageLayout title="Professional Tango Shoes - Size 8" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Marketplace Item" fallbackRoute="/marketplace">
+      <PageLayout title="Professional Tango Shoes - Size 8" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         <div className="grid gap-8 lg:grid-cols-2">
@@ -89,5 +91,7 @@ export default function MarketplaceItemPage() {
         </div>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

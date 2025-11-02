@@ -955,7 +955,7 @@ export const insertSavedPostSchema = createInsertSchema(savedPosts).omit({ id: t
 export type InsertSavedPost = z.infer<typeof insertSavedPostSchema>;
 export type SelectSavedPost = typeof savedPosts.$inferSelect;
 
-export const insertFriendRequestSchema = createInsertSchema(friendRequests).omit({ id: true, createdAt: true, respondedAt: true, snoozedCount: true });
+export const insertFriendRequestSchema = createInsertSchema(friendRequests).omit({ id: true, createdAt: true, respondedAt: true, snoozeReminderSent: true });
 export type InsertFriendRequest = z.infer<typeof insertFriendRequestSchema>;
 export type SelectFriendRequest = typeof friendRequests.$inferSelect;
 

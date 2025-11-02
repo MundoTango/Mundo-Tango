@@ -6,10 +6,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Camera } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function ProfileEditPage() {
   return (
-    <PageLayout title="Edit Profile" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Profile Edit" fallbackRoute="/profile">
+      <PageLayout title="Edit Profile" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-2xl">
         
@@ -96,5 +98,7 @@ export default function ProfileEditPage() {
         </Button>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

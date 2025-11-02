@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Star, Calendar, Award } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function TeacherDetailPage() {
   return (
-    <PageLayout title="Carlos Rodriguez" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Teacher Detail" fallbackRoute="/teachers">
+      <PageLayout title="Carlos Rodriguez" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
         <Card className="mb-8">
@@ -103,5 +105,7 @@ export default function TeacherDetailPage() {
         </Card>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

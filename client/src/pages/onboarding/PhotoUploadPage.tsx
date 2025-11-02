@@ -8,6 +8,7 @@ import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function PhotoUploadPage() {
   const [, navigate] = useLocation();
@@ -144,7 +145,8 @@ export default function PhotoUploadPage() {
   };
 
   return (
-    <PageLayout title="PhotoUpload" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Photo Upload" fallbackRoute="/">
+      <PageLayout title="PhotoUpload" showBreadcrumbs>
 <>
       <SEO title="Add Profile Photo - Mundo Tango" description="Upload your profile photo" />
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
@@ -207,8 +209,8 @@ export default function PhotoUploadPage() {
                   <div>
                     <p className="font-medium">Drop your photo here or</p>
                     <Button
-                      variant="link"
-                      className="p-0 h-auto"
+                      variant="ghost"
+                      className="p-0 h-auto text-primary underline hover:text-primary/80"
                       onClick={() => fileInputRef.current?.click()}
                       data-testid="button-browse"
                     >
@@ -273,5 +275,7 @@ export default function PhotoUploadPage() {
         </Card>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

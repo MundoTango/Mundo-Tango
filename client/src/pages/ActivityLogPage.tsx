@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, LogIn, Settings, Heart } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function ActivityLogPage() {
   const activities = [
@@ -13,7 +14,8 @@ export default function ActivityLogPage() {
   ];
 
   return (
-    <PageLayout title="Activity Log" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Activity Log" fallbackRoute="/profile">
+      <PageLayout title="Activity Log" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-2xl">
         
@@ -48,5 +50,7 @@ export default function ActivityLogPage() {
         </Card>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }
