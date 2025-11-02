@@ -22,6 +22,8 @@ import mrblueVideoRoutes from "./routes/mrblue-video-routes";
 import rbacRoutes from "./routes/rbac-routes";
 import featureFlagsRoutes from "./routes/feature-flags-routes";
 import pricingRoutes from "./routes/pricing-routes";
+import planRoutes from "./routes/plan-routes";
+import syncRoutes from "./routes/sync-routes";
 import { authenticateToken, AuthRequest } from "./middleware/auth";
 import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
@@ -71,10 +73,14 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Phase 1 Deployment Blocker Routes
+  // Phase 1 & 2 Deployment Blocker Routes
   app.use("/api/rbac", rbacRoutes);
   app.use("/api/feature-flags", featureFlagsRoutes);
   app.use("/api/pricing", pricingRoutes);
+  
+  // Phase 3 Deployment Blocker Routes
+  app.use("/api/plan", planRoutes);
+  app.use("/api/sync", syncRoutes);
   
   // Existing routes
   app.use("/api/auth", authRoutes);
