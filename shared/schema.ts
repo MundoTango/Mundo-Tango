@@ -2063,6 +2063,55 @@ export const pricingExperiments = pgTable("pricing_experiments", {
 }));
 
 // ============================================================================
+// CONVERSION TRACKING (PHASE 2 - BLOCKER 4)
+// ============================================================================
+
+export const upgradeEvents = pgTable("upgrade_events", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  eventType: varchar("event_type", { length: 50 }).notNull(),
+  featureName: varchar("feature_name", { length: 100 }),
+  currentTier: varchar("current_tier", { length: 50 }).notNull(),
+  targetTier: varchar("target_tier", { length: 50 }),
+  currentQuota: integer("current_quota"),
+  quotaLimit: integer("quota_limit"),
+  conversionCompleted: boolean("conversion_completed").default(false),
+  checkoutSessionId: varchar("checkout_session_id", { length: 255 }),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  idxUser: index("idx_upgrade_events_user").on(table.userId),
+  idxEventType: index("idx_upgrade_events_type").on(table.eventType),
+  idxFeature: index("idx_upgrade_events_feature").on(table.featureName),
+  idxConversion: index("idx_upgrade_events_conversion").on(table.conversionCompleted),
+  idxCreatedAt: index("idx_upgrade_events_created_at").on(table.createdAt),
+}));
+
+export const checkoutSessions = pgTable("checkout_sessions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  stripeSessionId: varchar("stripe_session_id", { length: 255 }).notNull().unique(),
+  tierId: integer("tier_id").notNull().references(() => pricingTiers.id),
+  priceId: varchar("price_id", { length: 255 }).notNull(),
+  billingInterval: varchar("billing_interval", { length: 20 }).notNull(),
+  amount: integer("amount").notNull(),
+  promoCodeId: integer("promo_code_id").references(() => promoCodes.id),
+  status: varchar("status", { length: 50 }).default("pending"),
+  completedAt: timestamp("completed_at"),
+  cancelledAt: timestamp("cancelled_at"),
+  expiresAt: timestamp("expires_at").notNull(),
+  successUrl: text("success_url"),
+  cancelUrl: text("cancel_url"),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  idxUser: index("idx_checkout_sessions_user").on(table.userId),
+  idxStripeSession: index("idx_checkout_sessions_stripe").on(table.stripeSessionId),
+  idxStatus: index("idx_checkout_sessions_status").on(table.status),
+  idxExpiresAt: index("idx_checkout_sessions_expires").on(table.expiresAt),
+}));
+
+// ============================================================================
 // ZOD SCHEMAS & TYPES - RBAC, FEATURE FLAGS, PRICING
 // ============================================================================
 
@@ -2116,6 +2165,15 @@ export type SelectSubscription = typeof subscriptions.$inferSelect;
 export const insertPricingExperimentSchema = createInsertSchema(pricingExperiments).omit({ id: true, createdAt: true });
 export type InsertPricingExperiment = z.infer<typeof insertPricingExperimentSchema>;
 export type SelectPricingExperiment = typeof pricingExperiments.$inferSelect;
+
+// Conversion Tracking (Phase 2)
+export const insertUpgradeEventSchema = createInsertSchema(upgradeEvents).omit({ id: true, createdAt: true });
+export type InsertUpgradeEvent = z.infer<typeof insertUpgradeEventSchema>;
+export type SelectUpgradeEvent = typeof upgradeEvents.$inferSelect;
+
+export const insertCheckoutSessionSchema = createInsertSchema(checkoutSessions).omit({ id: true, createdAt: true });
+export type InsertCheckoutSession = z.infer<typeof insertCheckoutSessionSchema>;
+export type SelectCheckoutSession = typeof checkoutSessions.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
