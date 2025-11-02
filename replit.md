@@ -16,7 +16,17 @@ Mundo Tango is a social platform designed to connect the global tango community,
 The project utilizes a modular and agent-driven development approach, employing an Expert Specialized Agents (ESA) framework for parallel task execution and quality control.
 
 #### UI/UX Decisions
-The platform features a tango-inspired color palette (burgundy, purple, gold) with an MT Ocean Theme for gradients. It implements a modern design system with dark mode support, glassmorphic effects, Tailwind CSS + shadcn/ui components, responsive design, and custom typography. The layout is a three-column feed with a left sidebar for user profiles, a main content area, and a right sidebar for events, suggestions, and AI access. The frontend is built with React, TypeScript, Wouter for routing, and React Query for state management. Design research informed decisions like bold minimaximalist and interactive storytelling approaches, focusing on dark mode optimization, video-first design, and global accessibility. A marketing prototype page exists at `/marketing-prototype` showcasing experimental design elements.
+The platform features a comprehensive **3-layer design token system** (Primitive → Semantic → Component) enabling instant theme switching across all 142 pages. Two distinct visual themes are implemented: **Bold Minimaximalist** (burgundy #b91c3b, 800 font weight, 6px radius, strong shadows) for 3 marketing pages, and **MT Ocean** (turquoise #14b8a6, 400 font weight, 16px radius, glassmorphic effects) for 139 platform pages. Theme switching is **automatic based on route** via ThemeProvider, with CSS variables applied at runtime. The system supports **easy theme changes** by modifying a single constant or adding new semantic token sets.
+
+The platform features a tango-inspired color palette with dark mode support, glassmorphic effects, Tailwind CSS + shadcn/ui components, responsive design, and custom typography. The layout is a three-column feed with a left sidebar for user profiles, a main content area, and a right sidebar for events, suggestions, and AI access. The frontend is built with React, TypeScript, Wouter for routing, and React Query for state management. Design research informed decisions like bold minimaximalist and interactive storytelling approaches, focusing on dark mode optimization, video-first design, and global accessibility.
+
+**Design System Components**:
+- **Primitive Tokens** (`client/src/config/tokens/primitives.ts`): Raw color/spacing/typography values
+- **Semantic Tokens**: Bold theme (`semantic-bold.ts`) + Ocean theme (`semantic-ocean.ts`)
+- **Component Tokens** (`components.ts`): Button, card, typography, form tokens
+- **ThemeProvider** (`client/src/contexts/theme-context.tsx`): Route-based auto-detection
+- **Adaptive Components**: AdaptiveButton, AdaptiveCard, AdaptiveHeading (auto-switch between themes)
+- **Documentation**: Complete guides in `docs/` (DESIGN_TOKEN_SYSTEM.md, THEME_USAGE_GUIDE.md, COMPONENT_SHOWCASE.md, THEME_MIGRATION_GUIDE.md)
 
 #### Technical Implementations
 The backend uses Node.js with Express and TypeScript. Authentication is JWT-based with httpOnly cookies. PostgreSQL with Drizzle ORM serves as the database. Data access is facilitated by direct client interaction via a comprehensive storage interface. Real-time capabilities are provided by Supabase Realtime for various social features and a WebSocket notification system. Key features include a robust RBAC system (8-tier role hierarchy), a dynamic feature flag system with Redis, and integrated dynamic pricing management via Stripe.

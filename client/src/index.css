@@ -371,4 +371,36 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+
+  /* ========== DESIGN TOKEN SYSTEM ========== */
+  /* These CSS variables are populated by ThemeProvider based on route */
+  /* Bold Minimaximalist on marketing routes, MT Ocean on platform routes */
+  
+  /* Design token CSS variables will be set by ThemeProvider */
+  /* See client/src/contexts/theme-context.tsx for implementation */
+  
+  /* Transition speeds for Tailwind integration */
+  .duration-150 {
+    transition-duration: 150ms;
+  }
+  
+  .duration-300 {
+    transition-duration: 300ms;
+  }
+  
+  /* Theme-aware utility classes */
+  @layer utilities {
+    .theme-transition {
+      transition-duration: var(--transition-speed);
+      transition-timing-function: var(--animation-curve);
+    }
+    
+    .theme-shadow {
+      box-shadow: var(--shadow-medium);
+    }
+    
+    .theme-shadow-large {
+      box-shadow: var(--shadow-large);
+    }
+  }
 }
