@@ -364,7 +364,7 @@ router.post('/track-upgrade-event', authenticateToken, async (req: AuthRequest, 
       return res.status(401).json({ message: 'Authentication required' });
     }
 
-    const { eventType, featureName, currentTier, targetTier, currentQuota, quotaLimit } = req.body;
+    const { eventType, featureName, currentTier, targetTier, currentQuota, quotaLimit, checkoutSessionId } = req.body;
 
     if (!eventType || !currentTier) {
       return res.status(400).json({ message: 'eventType and currentTier are required' });
@@ -381,7 +381,7 @@ router.post('/track-upgrade-event', authenticateToken, async (req: AuthRequest, 
         currentQuota,
         quotaLimit,
         conversionCompleted: false,
-        checkoutSessionId: null,
+        checkoutSessionId: checkoutSessionId || null,
         metadata: req.body.metadata || {},
       })
       .returning();
