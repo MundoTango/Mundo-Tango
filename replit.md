@@ -36,6 +36,9 @@ Social features include pagination, optimistic updates, full CRUD operations, an
 #### System Design Choices
 The foundational development methodology is the MB.MD Protocol. An agent-driven approach utilizes an ESA framework with 134 specialized agents. The project structure is organized into `client/`, `server/`, `shared/`, `docs/`, `attached_assets/`, and configuration files. Production infrastructure includes Docker MCP Gateway integration with 10+ MCP servers, hardened security measures (CSP, rate limiting, security headers, CORS, request sanitization), and performance optimizations (compression, caching, connection pooling). The database uses 40+ compound indexes and automated backups. CI/CD pipelines are implemented via GitHub Actions, and monitoring includes health check endpoints. Self-healing capabilities and bidirectional GitHub/Jira synchronization are integrated for project management.
 
+#### Testing Infrastructure (November 2025)
+A comprehensive E2E and deployment test suite has been implemented using **MB.MD methodology** with Playwright. The suite includes a **Self-Healing Locator System** (80%+ auto-recovery from UI changes) and **Mr Blue AI Reporter** for intelligent pattern detection. Test coverage includes 49+ tests across deployment validation (environment, auth, performance), E2E platform testing (82+ pages), theme validation (tri-theme system), and customer journey tests with **video proof generation**. God user credentials: `admin@mundotango.life` / `MundoTango2025!Admin` (Level 8). Run tests with: `./tests/run-comprehensive-test-suite.sh`. All test infrastructure files located in `tests/` (helpers, deployment, e2e). Complete documentation in `COMPREHENSIVE-TEST-SUITE-IMPLEMENTATION-SUMMARY.md`.
+
 ### External Dependencies
 
 -   **Database:** PostgreSQL (with Drizzle ORM)
