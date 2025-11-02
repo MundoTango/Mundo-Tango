@@ -72,6 +72,8 @@ const RelationshipAgentPage = lazy(() => import("@/pages/life-ceo/RelationshipAg
 const TalentPipelinePage = lazy(() => import("@/pages/admin/TalentPipelinePage"));
 const TaskBoardPage = lazy(() => import("@/pages/admin/TaskBoardPage"));
 const PricingManagerPage = lazy(() => import("@/pages/admin/PricingManagerPage"));
+const SelfHealingPage = lazy(() => import("@/pages/admin/SelfHealingPage"));
+const ProjectTrackerPage = lazy(() => import("@/pages/admin/ProjectTrackerPage"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
 const AdminUsersPage = lazy(() => import("@/pages/AdminUsersPage"));
 const ContentModerationPage = lazy(() => import("@/pages/ContentModerationPage"));
@@ -526,6 +528,22 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <PricingManagerPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/self-healing">
+        <ProtectedRoute>
+          <AppLayout>
+            <SelfHealingPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/project-tracker">
+        <ProtectedRoute>
+          <AppLayout>
+            <ProjectTrackerPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
