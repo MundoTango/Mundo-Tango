@@ -11,6 +11,8 @@ import { useState } from "react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
+import { AdaptiveButton } from "@/components/adaptive/AdaptiveButton";
+import { AdaptiveCard } from "@/components/adaptive/AdaptiveCard";
 
 export default function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -87,61 +89,69 @@ export default function HomePage() {
       />
       <div className="min-h-screen">
       {/* Hero Section with Video Background */}
-      <section className="relative overflow-hidden min-h-screen flex items-center justify-center">
-        {/* Video Background Placeholder */}
-        <div className="absolute inset-0 -z-20 bg-gradient-to-br from-primary/20 via-accent/10 to-background" />
-        <div className="absolute inset-0 -z-10 bg-ocean-gradient opacity-10 blur-3xl" />
+      <section className="relative overflow-hidden min-h-screen flex items-center justify-center" data-testid="section-hero">
+        {/* Video Background Placeholder - Using Design Tokens */}
+        <div className="absolute inset-0 -z-20 bg-[var(--gradient-hero)]" />
+        <div className="absolute inset-0 -z-10 opacity-10 blur-3xl" style={{ background: 'var(--gradient-primary)' }} />
         
-        <div className="container mx-auto max-w-6xl px-4 text-center">
+        <div className="container mx-auto max-w-6xl px-[var(--spacing-page)] text-center">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="backdrop-blur-md bg-background/60 rounded-3xl p-8 md:p-12 border border-primary/20"
+            className="backdrop-blur-md bg-background/60 p-8 md:p-12 border border-primary/20"
+            style={{ borderRadius: 'var(--radius-card)' }}
           >
-            <div className="mb-6 inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+            <div className="mb-6 inline-block bg-primary/10 px-4 py-2 text-primary"
+                 style={{ 
+                   borderRadius: 'var(--radius-pill)',
+                   fontSize: 'var(--font-size-caption)',
+                   fontWeight: 'var(--font-weight-body)'
+                 }}>
               Welcome to the Global Tango Community
             </div>
             
+            <h1 className="text-[var(--font-size-h1)] font-[var(--font-weight-heading)] mb-4">
+              Where Tango Meets Community
+            </h1>
             
-            
-            <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground sm:text-xl">
+            <p className="mx-auto mb-8 max-w-2xl text-[var(--font-size-body)] text-muted-foreground sm:text-xl">
               Share memories, find events, and help us build the future of tango tech.
               Join thousands of passionate dancers connecting worldwide.
             </p>
             
             <div className="flex flex-wrap gap-4 justify-center mb-12">
               <Link href="/register">
-                <Button size="lg" className="gap-2" data-testid="button-get-started">
+                <AdaptiveButton size="lg" variant="primary" className="gap-2" data-testid="button-get-started">
                   <Sparkles className="h-5 w-5" />
                   Get Started Free
-                </Button>
+                </AdaptiveButton>
               </Link>
               <Link href="/volunteer">
-                <Button size="lg" variant="outline" className="gap-2" data-testid="button-volunteer">
+                <AdaptiveButton size="lg" variant="secondary" className="gap-2" data-testid="button-volunteer">
                   <Heart className="h-5 w-5" />
                   Volunteer to Help Build MT
-                </Button>
+                </AdaptiveButton>
               </Link>
             </div>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 pt-8 border-t border-primary/20">
+            {/* Quick Stats - Using Design Tokens */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-[var(--spacing-section)] pt-8 border-t border-primary/20" data-testid="section-stats">
               <div>
-                <div className="text-3xl font-bold text-primary">10,000+</div>
-                <div className="text-sm text-muted-foreground">Active Dancers</div>
+                <div className="text-[var(--font-size-h2)] font-[var(--font-weight-heading)] text-primary">10,000+</div>
+                <div className="text-[var(--font-size-caption)] text-muted-foreground">Active Dancers</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-primary">500+</div>
-                <div className="text-sm text-muted-foreground">Cities</div>
+                <div className="text-[var(--font-size-h2)] font-[var(--font-weight-heading)] text-primary">500+</div>
+                <div className="text-[var(--font-size-caption)] text-muted-foreground">Cities</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-primary">2,000+</div>
-                <div className="text-sm text-muted-foreground">Monthly Events</div>
+                <div className="text-[var(--font-size-h2)] font-[var(--font-weight-heading)] text-primary">2,000+</div>
+                <div className="text-[var(--font-size-caption)] text-muted-foreground">Monthly Events</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-primary">1,200+</div>
-                <div className="text-sm text-muted-foreground">Teachers</div>
+                <div className="text-[var(--font-size-h2)] font-[var(--font-weight-heading)] text-primary">1,200+</div>
+                <div className="text-[var(--font-size-caption)] text-muted-foreground">Teachers</div>
               </div>
             </div>
           </motion.div>
@@ -149,11 +159,11 @@ export default function HomePage() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-20 px-4 bg-card/30">
+      <section className="py-20 px-[var(--spacing-page)] bg-card/30">
         <div className="container mx-auto max-w-6xl">
           <motion.div {...fadeInUp} className="mb-16 text-center">
-            <h2 className="mb-4 text-3xl font-bold sm:text-4xl">How It Works</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <h2 className="mb-4 text-[var(--font-size-h2)] font-[var(--font-weight-heading)]">How It Works</h2>
+            <p className="text-[var(--font-size-body)] text-muted-foreground max-w-2xl mx-auto">
               Start your tango journey in three simple steps
             </p>
           </motion.div>
@@ -168,12 +178,13 @@ export default function HomePage() {
               { num: "3", icon: Heart, title: "Dance & Grow", desc: "Attend events, take lessons, make friends, and become part of the global tango community" }
             ].map((step, idx) => (
               <motion.div key={idx} {...fadeInUp} className="text-center">
-                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-2xl font-bold text-primary backdrop-blur-md border border-primary/20">
+                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary backdrop-blur-md border border-primary/20"
+                     style={{ fontSize: 'var(--font-size-h2)', fontWeight: 'var(--font-weight-heading)' }}>
                   {step.num}
                 </div>
                 <step.icon className="mx-auto mb-4 h-12 w-12 text-primary" />
-                <h3 className="mb-3 text-xl font-semibold">{step.title}</h3>
-                <p className="text-muted-foreground">{step.desc}</p>
+                <h3 className="mb-3 text-[var(--font-size-h3)] font-[var(--font-weight-subheading)]">{step.title}</h3>
+                <p className="text-muted-foreground font-[var(--font-weight-body)]">{step.desc}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -181,18 +192,18 @@ export default function HomePage() {
       </section>
 
       {/* Features Showcase - Expanded */}
-      <section className="py-24 px-4">
+      <section className="py-24 px-[var(--spacing-page)]" data-testid="section-features">
         <div className="container mx-auto max-w-6xl">
           <motion.div {...fadeInUp} className="mb-16 text-center">
-            <h2 className="mb-4 text-3xl font-bold sm:text-4xl">Everything You Need</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <h2 className="mb-4 text-[var(--font-size-h2)] font-[var(--font-weight-heading)]">Everything You Need</h2>
+            <p className="text-[var(--font-size-body)] text-muted-foreground max-w-2xl mx-auto">
               Connect, discover, and grow your tango journey with powerful features
             </p>
           </motion.div>
           
           <motion.div 
             {...staggerContainer}
-            className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
+            className="grid gap-[var(--spacing-section)] md:grid-cols-2 lg:grid-cols-3"
           >
             {[
               { icon: Users, title: "Global Community", desc: "Connect with dancers, teachers, and organizers from around the world", testId: "card-feature-community" },
@@ -205,17 +216,17 @@ export default function HomePage() {
               { icon: Globe, title: "Travel Planner", desc: "Plan your tango trips and find hosts in cities worldwide", testId: "card-feature-travel" }
             ].map((feature, idx) => (
               <motion.div key={idx} {...fadeInUp}>
-                <Card className="hover-elevate h-full" data-testid={feature.testId}>
+                <AdaptiveCard variant="glass" className="h-full" data-testid={feature.testId}>
                   <CardContent className="pt-6">
                     <feature.icon className="mb-4 h-12 w-12 text-primary" />
-                    <h3 className="mb-2 text-xl font-semibold">{feature.title}</h3>
-                    <p className="text-sm text-muted-foreground">{feature.desc}</p>
-                    <div className="mt-4 flex items-center gap-2 text-sm text-primary">
+                    <h3 className="mb-2 text-[var(--font-size-h3)] font-[var(--font-weight-subheading)]">{feature.title}</h3>
+                    <p className="text-[var(--font-size-caption)] text-muted-foreground font-[var(--font-weight-body)]">{feature.desc}</p>
+                    <div className="mt-4 flex items-center gap-2 text-[var(--font-size-caption)] text-primary">
                       <Check className="h-4 w-4" />
                       <span>Available now</span>
                     </div>
                   </CardContent>
-                </Card>
+                </AdaptiveCard>
               </motion.div>
             ))}
           </motion.div>
@@ -302,19 +313,20 @@ export default function HomePage() {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-24 px-4 bg-gradient-to-br from-primary/10 via-accent/5 to-background">
+      <section className="py-24 px-[var(--spacing-page)] bg-[var(--gradient-secondary)]">
         <motion.div {...fadeInUp} className="container mx-auto max-w-4xl text-center">
-          <div className="backdrop-blur-md bg-background/60 rounded-3xl p-8 md:p-12 border border-primary/20">
-            <h2 className="mb-4 text-3xl font-bold sm:text-4xl">Ready to Join the Community?</h2>
-            <p className="mb-8 text-lg text-muted-foreground max-w-2xl mx-auto">
+          <div className="backdrop-blur-md bg-background/60 p-8 md:p-12 border border-primary/20"
+               style={{ borderRadius: 'var(--radius-card)' }}>
+            <h2 className="mb-4 text-[var(--font-size-h2)] font-[var(--font-weight-heading)]">Ready to Join the Community?</h2>
+            <p className="mb-8 text-[var(--font-size-body)] text-muted-foreground max-w-2xl mx-auto">
               Create your free account today and start connecting with passionate tango dancers worldwide. 
               No credit card required.
             </p>
             <Link href="/register">
-              <Button size="lg" className="gap-2 mb-6" data-testid="button-cta-final">
+              <AdaptiveButton size="lg" variant="primary" className="gap-2 mb-6" data-testid="button-cta-final">
                 <Sparkles className="h-5 w-5" />
                 Join Mundo Tango Free
-              </Button>
+              </AdaptiveButton>
             </Link>
             <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
