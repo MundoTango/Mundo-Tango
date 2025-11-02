@@ -7,6 +7,33 @@ import { eq } from 'drizzle-orm';
 
 const router = Router();
 
+// Get user's roles (multiple roles support)
+router.get('/my-roles', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    if (!req.userId) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+
+    const userRoles = await db
+      .select({
+        id: platformUserRoles.id,
+        roleId: platformUserRoles.roleId,
+        roleName: platformRoles.name,
+        roleLevel: platformRoles.roleLevel,
+        assignedAt: platformUserRoles.assignedAt,
+        expiresAt: platformUserRoles.expiresAt,
+      })
+      .from(platformUserRoles)
+      .innerJoin(platformRoles, eq(platformUserRoles.roleId, platformRoles.id))
+      .where(eq(platformUserRoles.userId, req.userId));
+
+    res.json({ roles: userRoles });
+  } catch (error) {
+    console.error('Get user roles error:', error);
+    res.status(500).json({ message: 'Error fetching user roles' });
+  }
+});
+
 // Get user's current role level
 router.get('/my-role-level', authenticateToken, async (req: AuthRequest, res) => {
   try {
@@ -30,6 +57,21 @@ router.get('/my-role-level', authenticateToken, async (req: AuthRequest, res) =>
 
 // Get user's permissions
 router.get('/my-permissions', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    if (!req.userId) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+
+    const permissions = await RBACService.getUserPermissions(req.userId);
+    res.json({ permissions });
+  } catch (error) {
+    console.error('Get permissions error:', error);
+    res.status(500).json({ message: 'Error fetching permissions' });
+  }
+});
+
+// Alias: Get user's permissions (for API consistency)
+router.get('/permissions', authenticateToken, async (req: AuthRequest, res) => {
   try {
     if (!req.userId) {
       return res.status(401).json({ message: 'Authentication required' });
@@ -71,14 +113,14 @@ router.get('/roles', authenticateToken, requireRoleLevel(7), async (req, res) =>
   }
 });
 
-// Get all permissions (God/Super Admin only)
-router.get('/permissions', authenticateToken, requireRoleLevel(7), async (req, res) => {
+// Get all permissions from system (God/Super Admin only)
+router.get('/all-permissions', authenticateToken, requireRoleLevel(7), async (req, res) => {
   try {
     const permissions = await db.select().from(platformPermissions);
     res.json({ permissions });
   } catch (error) {
-    console.error('Get permissions error:', error);
-    res.status(500).json({ message: 'Error fetching permissions' });
+    console.error('Get all permissions error:', error);
+    res.status(500).json({ message: 'Error fetching all permissions' });
   }
 });
 
