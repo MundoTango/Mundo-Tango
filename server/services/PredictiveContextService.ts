@@ -55,8 +55,7 @@ export class PredictiveContextService {
           `UPDATE user_patterns SET
             transition_count = $1,
             avg_time_on_page_ms = $2,
-            last_transition_at = NOW(),
-            updated_at = NOW()
+            last_transition_at = NOW()
           WHERE id = $3`,
           [newCount, newAvgTime, existing.id]
         );
@@ -65,8 +64,8 @@ export class PredictiveContextService {
         await executeRawQuery(
           `INSERT INTO user_patterns (
             user_id, from_page, to_page, transition_count, avg_time_on_page_ms,
-            last_transition_at, created_at, updated_at
-          ) VALUES ($1, $2, $3, 1, $4, NOW(), NOW(), NOW())`,
+            last_transition_at, created_at
+          ) VALUES ($1, $2, $3, 1, $4, NOW(), NOW())`,
           [userId, fromPage, toPage, timeOnPage]
         );
       }
@@ -172,23 +171,20 @@ export class PredictiveContextService {
         await executeRawQuery(
           `UPDATE prediction_cache SET
             predicted_pages = $1,
-            confidence = $2,
-            cache_warmed = true,
-            warmed_at = NOW(),
-            updated_at = NOW(),
+            confidence_scores = $2,
+            cache_warmed_at = NOW(),
             expires_at = NOW() + INTERVAL '24 hours'
           WHERE id = $3`,
-          [prediction.predictedPages, prediction.confidence, existing.id]
+          [JSON.stringify(prediction.predictedPages), JSON.stringify({ overall: prediction.confidence }), existing.id]
         );
       } else {
         // Create new cache entry
         await executeRawQuery(
           `INSERT INTO prediction_cache (
-            user_id, current_page, predicted_pages, confidence,
-            cache_warmed, warmed_at, hit_count, miss_count,
-            created_at, updated_at, expires_at
-          ) VALUES ($1, $2, $3, $4, true, NOW(), 0, 0, NOW(), NOW(), NOW() + INTERVAL '24 hours')`,
-          [userId, currentPage, prediction.predictedPages, prediction.confidence]
+            user_id, current_page, predicted_pages, confidence_scores,
+            cache_warmed_at, hit_count, created_at, expires_at
+          ) VALUES ($1, $2, $3, $4, NOW(), 0, NOW(), NOW() + INTERVAL '24 hours')`,
+          [userId, currentPage, JSON.stringify(prediction.predictedPages), JSON.stringify({ overall: prediction.confidence })]
         );
       }
 
@@ -218,10 +214,10 @@ export class PredictiveContextService {
   ): Promise<PredictionResult | null> {
     try {
       const [cache] = await executeRawQuery<any>(
-        `SELECT predicted_pages, confidence FROM prediction_cache
+        `SELECT predicted_pages, confidence_scores FROM prediction_cache
          WHERE user_id = $1 AND current_page = $2
          AND expires_at > NOW()
-         AND cache_warmed = true`,
+         AND cache_warmed_at IS NOT NULL`,
         [userId, currentPage]
       );
 
@@ -229,10 +225,18 @@ export class PredictiveContextService {
         return null;
       }
 
+      // Parse JSONB fields
+      const predictedPages = typeof cache.predicted_pages === 'string' 
+        ? JSON.parse(cache.predicted_pages) 
+        : cache.predicted_pages || [];
+      const confidenceScores = typeof cache.confidence_scores === 'string'
+        ? JSON.parse(cache.confidence_scores)
+        : cache.confidence_scores || {};
+
       return {
         currentPage,
-        predictedPages: cache.predicted_pages || [],
-        confidence: cache.confidence || 0,
+        predictedPages,
+        confidence: confidenceScores.overall || 0,
       };
     } catch (error) {
       return null;
