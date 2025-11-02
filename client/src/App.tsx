@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "./contexts/AuthContext";
 import { MrBlueProvider } from "./contexts/MrBlueContext";
+import { PredictiveContextProvider } from "./providers/PredictiveContextProvider";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AppLayout } from "./components/AppLayout";
 import { GlobalTopbar } from "./components/GlobalTopbar";
@@ -74,6 +75,7 @@ const TaskBoardPage = lazy(() => import("@/pages/admin/TaskBoardPage"));
 const PricingManagerPage = lazy(() => import("@/pages/admin/PricingManagerPage"));
 const SelfHealingPage = lazy(() => import("@/pages/admin/SelfHealingPage"));
 const ProjectTrackerPage = lazy(() => import("@/pages/admin/ProjectTrackerPage"));
+const AgentHealthDashboard = lazy(() => import("@/pages/admin/AgentHealthDashboard"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
 const AdminUsersPage = lazy(() => import("@/pages/AdminUsersPage"));
 const ContentModerationPage = lazy(() => import("@/pages/ContentModerationPage"));
@@ -548,6 +550,14 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/admin/agent-health">
+        <ProtectedRoute>
+          <AppLayout>
+            <AgentHealthDashboard />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/admin/users">
         <ProtectedRoute>
           <AppLayout>
@@ -707,16 +717,18 @@ function App() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <MrBlueProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Suspense fallback={<LoadingFallback />}>
-                <Router />
-              </Suspense>
-              <GlobalMrBlue />
-              <ChatSidePanel />
-            </TooltipProvider>
-          </MrBlueProvider>
+          <PredictiveContextProvider>
+            <MrBlueProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Suspense fallback={<LoadingFallback />}>
+                  <Router />
+                </Suspense>
+                <GlobalMrBlue />
+                <ChatSidePanel />
+              </TooltipProvider>
+            </MrBlueProvider>
+          </PredictiveContextProvider>
         </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>

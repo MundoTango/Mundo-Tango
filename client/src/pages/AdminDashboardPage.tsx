@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { PageLayout } from "@/components/PageLayout";
+import { PredictionStats } from "@/components/PredictionStats";
 
 interface DashboardStats {
   totalUsers: number;
@@ -161,6 +162,10 @@ export default function AdminDashboardPage() {
             <BarChart3 className="h-4 w-4 mr-2" />
             Analytics
           </TabsTrigger>
+          <TabsTrigger value="predictions" data-testid="tab-predictions">
+            <TrendingUp className="h-4 w-4 mr-2" />
+            Predictions
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="moderation" className="space-y-4">
@@ -266,6 +271,10 @@ export default function AdminDashboardPage() {
               <p className="text-muted-foreground">Analytics charts coming soon...</p>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="predictions">
+          <PredictionStats />
         </TabsContent>
       </Tabs>
     </div>

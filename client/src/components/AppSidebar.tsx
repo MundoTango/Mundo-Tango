@@ -1,5 +1,5 @@
 import { Home, Calendar, Users, MessageSquare, Settings, LogOut, Server } from "lucide-react";
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import {
   Sidebar,
   SidebarContent,
@@ -14,6 +14,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import { PredictiveLink } from "@/components/PredictiveLink";
 
 const menuItems = [
   { title: "Memories", url: "/", icon: Home },
@@ -49,10 +50,10 @@ export function AppSidebar() {
                     data-active={location === item.url}
                     data-testid={`nav-${item.title.toLowerCase()}`}
                   >
-                    <Link href={item.url}>
+                    <PredictiveLink to={item.url}>
                       <item.icon className="h-5 w-5" />
                       <span>{item.title}</span>
-                    </Link>
+                    </PredictiveLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
