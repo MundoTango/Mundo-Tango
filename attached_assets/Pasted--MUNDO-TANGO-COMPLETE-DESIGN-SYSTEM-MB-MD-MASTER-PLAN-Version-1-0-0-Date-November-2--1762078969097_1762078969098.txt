@@ -1,0 +1,1614 @@
+# MUNDO TANGO COMPLETE DESIGN SYSTEM - MB.MD MASTER PLAN
+
+**Version:** 1.0.0  
+**Date:** November 2, 2025  
+**Methodology:** MB.MD (Simultaneously, Recursively, Critically)  
+**Scope:** Complete Platform-Wide Design System (82+ Pages)  
+**Status:** 📋 PLANNING PHASE - NO BUILDING YET
+
+---
+
+## EXECUTIVE SUMMARY
+
+This document provides a comprehensive plan to implement a **dual-theme design system** across the entire Mundo Tango platform, covering all 82+ pages with flexible theme switching between **Bold Minimaximalist** (marketing) and **MT Ocean** (platform/social network).
+
+### Critical Context References
+
+**Key Design Documents:**
+1. `docs/platform-handoff/aurora-tide-design.md` - **Primary Platform Design System** ✅
+   - Glassmorphic components, MT Ocean theme, design tokens
+   - "Design Token Architecture: 3-layer system for perfect UI/UX separation"
+   - **QUOTE**: "Aurora Tide is ready for design changes through design token migration"
+   
+2. `MUNDO_TANGO_DESIGN_SYSTEM.md` - Ocean Theme v2.1 specification
+3. `MT_OCEAN_THEME_DESIGN_SYSTEM.md` - Color palette & component styles
+4. `MEMORIES_PAGE_MT_OCEAN_THEME.md` - Implementation example
+5. `attached_assets/MUNDO-TANGO-MARKETING-SITE...txt` - Marketing site dual-theme guide
+
+**The "Ready for Design Change" Reference:**
+- **Location**: `docs/platform-handoff/aurora-tide-design.md`, Line 29
+- **Quote**: "Design Token Migration (New!) ... Aurora Tide now uses a systematic design token system"
+- **Implication**: System is architected for theme flexibility via token replacement
+
+---
+
+## MB.MD AGENT ORCHESTRATION
+
+### Master Agent Assignment
+
+**Agent Coordinator**: MB.MD Master Orchestration Engine  
+**Mode**: Simultaneous, Recursive, Critical Execution
+
+### Primary Agents (From ESA Framework)
+
+```
+╔════════════════════════════════════════════════════════════════╗
+║  AGENT SQUAD - DESIGN SYSTEM IMPLEMENTATION                    ║
+╠════════════════════════════════════════════════════════════════╣
+║                                                                ║
+║  👤 Agent #11 (UI/UX Design - Aurora Tide Specialist)         ║
+║     Role: Lead Design System Architect                        ║
+║     Focus: Design token strategy, component library           ║
+║                                                                ║
+║  🎨 Agent #48 (Dark Mode Specialist)                          ║
+║     Role: Theme Implementation                                ║
+║     Focus: Light/Dark variants, accessibility                 ║
+║                                                                ║
+║  🌍 Expert #16 (Translation & i18n)                           ║
+║     Role: Internationalization Compliance                     ║
+║     Focus: 68-language design token naming                    ║
+║                                                                ║
+║  📱 Layer 47 (Mobile Optimization)                            ║
+║     Role: Responsive Design                                   ║
+║     Focus: Mobile-first theme adaptation                      ║
+║                                                                ║
+║  🏗️ Layer 9 (UI Framework)                                    ║
+║     Role: Component Architecture                              ║
+║     Focus: Base component system                              ║
+║                                                                ║
+║  🎭 Layer 10 (Component Library)                              ║
+║     Role: Component Implementation                            ║
+║     Focus: shadcn/ui + custom components                      ║
+║                                                                ║
+║  ♿ Layer 54 (Accessibility)                                  ║
+║     Role: WCAG 2.1 AA Compliance                              ║
+║     Focus: Color contrast, keyboard nav                       ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+```
+
+### Temporary Sub-Agents (Created for This Project)
+
+```
+╔════════════════════════════════════════════════════════════════╗
+║  TEMPORARY SUB-AGENTS - DESIGN SYSTEM SPECIALISTS              ║
+╠════════════════════════════════════════════════════════════════╣
+║                                                                ║
+║  🎨 TempAgent #A1: Token Migration Specialist                 ║
+║     Scope: Convert all hardcoded colors → design tokens       ║
+║     Output: Automated token replacement scripts               ║
+║                                                                ║
+║  🎯 TempAgent #A2: Dual-Theme Validator                       ║
+║     Scope: Test all 82 pages in both themes                   ║
+║     Output: Visual regression test suite                      ║
+║                                                                ║
+║  📊 TempAgent #A3: Component Inventory Auditor                ║
+║     Scope: Map all components across 82 pages                 ║
+║     Output: Component dependency graph                        ║
+║                                                                ║
+║  🔄 TempAgent #A4: Route-Based Theme Router                   ║
+║     Scope: Implement automatic theme switching by route       ║
+║     Output: Theme provider with route detection               ║
+║                                                                ║
+║  📱 TempAgent #A5: Marketing Page Transformer                 ║
+║     Scope: Apply Bold Minimaximalist to marketing routes      ║
+║     Output: Marketing theme components                        ║
+║                                                                ║
+║  🌊 TempAgent #A6: Platform Ocean Maintainer                  ║
+║     Scope: Ensure MT Ocean consistency across platform        ║
+║     Output: Platform theme components                         ║
+║                                                                ║
+║  📝 TempAgent #A7: Documentation Generator                    ║
+║     Scope: Auto-generate theme usage docs from code           ║
+║     Output: Interactive theme documentation                   ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+```
+
+---
+
+## MB.MD BUILD ARCHITECTURE (0-100)
+
+**METHODOLOGY**: Simultaneously • Critically • Recursively  
+**BUILD ORDER**: Sequential waves with parallel execution  
+**VALIDATION**: Each wave validates previous waves recursively  
+
+---
+
+## BUILD WAVE 0: FOUNDATION INFRASTRUCTURE (Days 1-3)
+
+**BUILD PROGRESS: 0% → 15%**  
+**CRITICAL PATH**: All subsequent work depends on this foundation  
+**AGENTS**: #11 (Lead), #A1, #A3, Layer 9, Layer 54  
+
+### Wave 0.1: Design Token System (SIMULTANEOUS - 8 hours)
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ 0.1.A - Primitive Tokens (Agent #A1)                   │
+│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+│ ▸ Create client/src/config/tokens/primitives.ts        │
+│   • Color palettes (Burgundy, Purple, Gold, Ocean)     │
+│   • Spacing scale (4px-64px, 8px grid)                 │
+│   • Typography scale (12px-48px)                       │
+│   • Border radius values (0-24px)                      │
+│   • Font weights (300-900)                             │
+│ ▸ Output: ~200 primitive tokens defined                │
+│ ▸ Validation: TypeScript types, no hardcoded values    │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│ 0.1.B - Semantic Tokens (Agent #11)                     │
+│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+│ ▸ Create client/src/config/tokens/semantic.ts          │
+│   • Bold Minimaximalist semantic tokens                │
+│     - colorPrimary, colorSecondary, colorAccent        │
+│     - fontWeightHeading, fontWeightBody                │
+│     - spacingBase, spacingCard, radiusCard             │
+│     - shadowIntensity, transitionSpeed                 │
+│   • MT Ocean semantic tokens                           │
+│     - turquoise/cyan/teal color system                 │
+│     - glassmorphic properties                          │
+│     - softer shadows, slower transitions               │
+│ ▸ Output: 2 complete theme definitions                 │
+│ ▸ Validation: All tokens reference primitives only     │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│ 0.1.C - Component Tokens (Layer 9)                      │
+│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+│ ▸ Create client/src/config/tokens/components.ts        │
+│   • Button tokens (primary, secondary, ghost)          │
+│   • Card tokens (glass, solid, outlined)               │
+│   • Typography tokens (h1-h6, body, caption)           │
+│   • Form tokens (input, select, checkbox, radio)       │
+│   • Navigation tokens (nav, sidebar, breadcrumb)       │
+│ ▸ Output: Token references using {token} syntax        │
+│ ▸ Validation: No direct primitive references           │
+└─────────────────────────────────────────────────────────┘
+```
+
+**CRITICAL GATE 0.1**: All three token files must pass TypeScript validation before proceeding
+
+### Wave 0.2: Theme Provider System (SIMULTANEOUS - 6 hours)
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ 0.2.A - Theme Context (Agent #A4)                       │
+│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+│ ▸ Create client/src/contexts/theme-context.tsx         │
+│   • ThemeProvider with route detection                 │
+│   • useTheme() hook                                    │
+│   • Visual theme auto-detection                        │
+│   • Dark mode toggle logic                            │
+│ ▸ Output: Complete theme context system                │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│ 0.2.B - CSS Variable System (Agent #A1)                 │
+│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+│ ▸ Update client/src/index.css                          │
+│   • :root[data-theme="bold-minimaximalist"] {...}      │
+│   • :root[data-theme="mt-ocean"] {...}                 │
+│   • :root.dark overrides for both themes               │
+│ ▸ Create client/src/lib/theme-utils.ts                 │
+│   • applyCSSVariables() function                       │
+│   • resolveTokens() function                           │
+│ ▸ Output: Runtime CSS variable injection               │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│ 0.2.C - Route Detection Logic (Agent #A4)               │
+│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+│ ▸ Create client/src/config/theme-routes.ts             │
+│   • marketingRoutes array                              │
+│   • isMarketingRoute() helper                          │
+│   • getThemeForRoute() function                        │
+│ ▸ Output: Automatic theme switching by route           │
+└─────────────────────────────────────────────────────────┘
+```
+
+**CRITICAL GATE 0.2**: Theme switching must work on at least 2 test pages (1 marketing, 1 platform)
+
+### Wave 0.3: Component Inventory Audit (SIMULTANEOUS - 8 hours)
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ 0.3.A - Automated Component Scanner (Agent #A3)         │
+│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+│ ▸ Create scripts/audit-components.ts                   │
+│   • Scan all 142 pages for component usage             │
+│   • Detect hardcoded colors (#, rgb, rgba)             │
+│   • Detect inline styles                               │
+│   • Generate dependency graph                          │
+│ ▸ Output: component-inventory.json                     │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│ 0.3.B - Manual Component Categorization (Agent #11)     │
+│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+│ ▸ Review component-inventory.json                      │
+│ ▸ Categorize components:                               │
+│   • Base components (Button, Card, Input)              │
+│   • Layout components (Container, Grid, Flex)          │
+│   • Navigation components (Nav, Sidebar, Breadcrumb)   │
+│   • Complex components (Forms, Modals, Dialogs)        │
+│   • Page-specific components                           │
+│ ▸ Output: component-migration-plan.md                  │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│ 0.3.C - Accessibility Pre-Check (Layer 54)              │
+│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  │
+│ ▸ Audit current color contrast ratios                  │
+│ ▸ Identify WCAG violations                             │
+│ ▸ Create accessibility-fixes.md                        │
+│ ▸ Output: Pre-migration accessibility baseline         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**CRITICAL GATE 0.3**: Component inventory must list ALL components across 142 pages
+
+**RECURSIVE VALIDATION**: Wave 0 complete when:
+- ✅ All token files created and typed
+- ✅ Theme switching works on test pages
+- ✅ Component inventory shows 100% page coverage
+- ✅ No TypeScript errors
+- ✅ Agent #11 approves foundation
+
+**BUILD CHECKPOINT: 15% Complete**
+
+---
+
+## BUILD WAVE 1: CORE COMPONENT LIBRARY (Days 4-8)
+
+**BUILD PROGRESS: 15% → 35%**  
+**CRITICAL PATH**: All pages depend on these base components  
+**AGENTS**: Layer 10 (Lead), #11, #48, #A1  
+
+### Wave 1.1: Base Components (SIMULTANEOUS - 12 hours)
+║                                                                ║
+║  PHASE 2: CORE COMPONENT MIGRATION (Week 2)                   ║
+║  ═══════════════════════════════════════════════════════════  ║
+║                                                                ║
+║  □ 2.1 Base Components (Layer 10)                             ║
+║      - Button variants (Primary, Secondary, Ghost)            ║
+║      - Card variants (Glass, Solid, Outlined)                 ║
+║      - Input fields (Text, Select, Textarea)                  ║
+║      - Typography components (H1-H6, Body, Caption)           ║
+║                                                                ║
+║  □ 2.2 Layout Components                                      ║
+║      - Page containers                                        ║
+║      - Section wrappers                                       ║
+║      - Grid systems                                           ║
+║      - Spacing utilities                                      ║
+║                                                                ║
+║  □ 2.3 Navigation Components                                  ║
+║      - Header/Navbar (both themes)                            ║
+║      - Sidebar (platform)                                     ║
+║      - Footer (both themes)                                   ║
+║      - Breadcrumbs                                            ║
+║                                                                ║
+║  □ 2.4 Form Components                                        ║
+║      - Form groups                                            ║
+║      - Labels & placeholders                                  ║
+║      - Error states                                           ║
+║      - Validation feedback                                    ║
+║                                                                ║
+║  Agents: Layer 10, #11, #48, #A1                              ║
+║  Output: Token-based component library                        ║
+║  Success Criteria: All core components use design tokens      ║
+║                                                                ║
+╠════════════════════════════════════════════════════════════════╣
+║                                                                ║
+║  PHASE 3: MARKETING PAGES (Week 3)                            ║
+║  ═══════════════════════════════════════════════════════════  ║
+║                                                                ║
+║  □ 3.1 Marketing Routes → Bold Minimaximalist                 ║
+║      Route: /                        (Landing)                ║
+║      Route: /marketing-prototype     (Marketing site)         ║
+║      Route: /pricing                 (Pricing)                ║
+║      Route: /about                   (About)                  ║
+║                                                                ║
+║  □ 3.2 Bold Minimaximalist Elements                           ║
+║      - Burgundy/purple/gold color scheme                      ║
+║      - Heavy typography (800-900 weight)                      ║
+║      - Sharp corners (4px radius)                             ║
+║      - High-contrast shadows                                  ║
+║      - Fast animations (150-200ms)                            ║
+║                                                                ║
+║  □ 3.3 Marketing-Specific Components                          ║
+║      - Video hero section (from attached guide)               ║
+║      - ScrollReveal animations (Framer Motion)                ║
+║      - Tango history section                                  ║
+║      - CTA blocks (3 types)                                   ║
+║      - Professional role cards (21 roles)                     ║
+║                                                                ║
+║  Agents: #A5, #11, Expert #16                                 ║
+║  Output: Bold Minimaximalist theme implementation             ║
+║  Success Criteria: Marketing pages use Bold theme             ║
+║                                                                ║
+╠════════════════════════════════════════════════════════════════╣
+║                                                                ║
+║  PHASE 4: PLATFORM PAGES (Week 4-5)                           ║
+║  ═══════════════════════════════════════════════════════════  ║
+║                                                                ║
+║  □ 4.1 Social Network → MT Ocean Theme                        ║
+║      Route: /feed                    (Home feed)              ║
+║      Route: /profile/:id             (User profiles)          ║
+║      Route: /friends                 (Friends list)           ║
+║      Route: /messages                (Messaging)              ║
+║      Route: /groups                  (Groups)                 ║
+║      Route: /events                  (Events)                 ║
+║      Route: /community               (Community hub)          ║
+║                                                                ║
+║  □ 4.2 MT Ocean Elements                                      ║
+║      - Turquoise/cyan/teal gradients                          ║
+║      - Glassmorphic cards (backdrop-blur-xl)                  ║
+║      - Rounded corners (16-24px radius)                       ║
+║      - Soft shadows with cyan glow                            ║
+║      - Smooth animations (300-400ms)                          ║
+║                                                                ║
+║  □ 4.3 Platform-Specific Components                           ║
+║      - Post cards (from MEMORIES_PAGE example)                ║
+║      - Event cards with glassmorphic design                   ║
+║      - User avatars with gradient borders                     ║
+║      - Interactive map components                             ║
+║      - Messaging UI                                           ║
+║                                                                ║
+║  Agents: #A6, Layer 9, Layer 47                               ║
+║  Output: MT Ocean theme across all platform pages             ║
+║  Success Criteria: All 82 pages themed correctly              ║
+║                                                                ║
+╠════════════════════════════════════════════════════════════════╣
+║                                                                ║
+║  PHASE 5: SPECIALIZED PAGES (Week 6)                          ║
+║  ═══════════════════════════════════════════════════════════  ║
+║                                                                ║
+║  □ 5.1 Housing Marketplace                                    ║
+║      - Property cards (Aurora Tide design)                    ║
+║      - Booking calendar                                       ║
+║      - Host onboarding flow                                   ║
+║                                                                ║
+║  □ 5.2 Life CEO Dashboard                                     ║
+║      - Agent cards (16 agents)                                ║
+║      - Goal tracking UI                                       ║
+║      - Analytics charts                                       ║
+║                                                                ║
+║  □ 5.3 Admin Center                                           ║
+║      - ESA Mind dashboard                                     ║
+║      - Project tracker (Agent #65)                            ║
+║      - Visual editor                                          ║
+║                                                                ║
+║  □ 5.4 Mr Blue AI Companion                                   ║
+║      - 3D avatar integration                                  ║
+║      - Chat interface                                         ║
+║      - Tour system                                            ║
+║                                                                ║
+║  Agents: All primary agents + all temp agents                 ║
+║  Output: Complete themed platform                             ║
+║  Success Criteria: All pages match design system              ║
+║                                                                ║
+╠════════════════════════════════════════════════════════════════╣
+║                                                                ║
+║  PHASE 6: DARK MODE & ACCESSIBILITY (Week 7)                  ║
+║  ═══════════════════════════════════════════════════════════  ║
+║                                                                ║
+║  □ 6.1 Dark Mode Implementation                               ║
+║      - All components have dark: variants                     ║
+║      - Theme toggle UI                                        ║
+║      - LocalStorage persistence                               ║
+║      - System preference detection                            ║
+║                                                                ║
+║  □ 6.2 Accessibility Compliance                               ║
+║      - WCAG 2.1 AA color contrast (Layer 54)                  ║
+║      - Keyboard navigation                                    ║
+║      - Screen reader support                                  ║
+║      - Focus indicators                                       ║
+║      - Motion sensitivity (prefers-reduced-motion)            ║
+║                                                                ║
+║  □ 6.3 Internationalization                                   ║
+║      - RTL support (Arabic, Hebrew)                           ║
+║      - 68-language testing                                    ║
+║      - Translation key audit                                  ║
+║                                                                ║
+║  Agents: #48, Layer 54, Expert #16                            ║
+║  Output: Accessible, multilingual design system               ║
+║  Success Criteria: WCAG AA compliant, all langs work          ║
+║                                                                ║
+╠════════════════════════════════════════════════════════════════╣
+║                                                                ║
+║  PHASE 7: OPTIMIZATION & VALIDATION (Week 8)                  ║
+║  ═══════════════════════════════════════════════════════════  ║
+║                                                                ║
+║  □ 7.1 Performance Optimization                               ║
+║      - Remove unused CSS (PurgeCSS)                           ║
+║      - Lazy load theme assets                                 ║
+║      - Optimize glassmorphic blur performance                 ║
+║      - Bundle size analysis                                   ║
+║                                                                ║
+║  □ 7.2 Visual Regression Testing                              ║
+║      - Playwright visual tests (all 82 pages)                 ║
+║      - Both themes tested                                     ║
+║      - Light/dark mode variants                               ║
+║      - Mobile/tablet/desktop viewports                        ║
+║                                                                ║
+║  □ 7.3 Documentation Generation                               ║
+║      - Interactive theme playground                           ║
+║      - Component showcase (Storybook-style)                   ║
+║      - Usage guidelines                                       ║
+║      - Migration guide for future devs                        ║
+║                                                                ║
+║  Agents: #A2, #A7, Layer 48                                   ║
+║  Output: Production-ready design system                       ║
+║  Success Criteria: All tests pass, docs complete              ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+```
+
+---
+
+## DESIGN TOKEN ARCHITECTURE
+
+### 3-Layer Token System (From Aurora Tide)
+
+```typescript
+// Layer 1: Primitive Tokens (Raw Values)
+export const primitiveTokens = {
+  // Colors - Burgundy/Purple/Gold (Bold Minimaximalist)
+  burgundy: {
+    50: '#fdf2f4',
+    100: '#fce7eb',
+    200: '#f9cfd6',
+    300: '#f5a7b4',
+    400: '#ee7489',
+    500: '#e3475f',
+    600: '#cf274a',
+    700: '#b91c3b',  // Primary burgundy
+    800: '#991a35',
+    900: '#801931',
+  },
+  purple: {
+    500: '#8b5cf6',  // Creative purple
+    600: '#7c3aed',
+    700: '#6d28d9',
+  },
+  gold: {
+    400: '#fbbf24',
+    500: '#f59e0b',  // Warmth gold
+    600: '#d97706',
+  },
+  
+  // Colors - Turquoise/Cyan/Teal (MT Ocean)
+  turquoise: {
+    400: '#2dd4bf',
+    500: '#14b8a6',  // Primary ocean
+    600: '#0d9488',
+  },
+  cyan: {
+    400: '#22d3ee',
+    500: '#06b6d4',
+    600: '#0891b2',
+  },
+  teal: {
+    500: '#14b8a6',
+    600: '#0d9488',
+    700: '#0f766e',
+  },
+  
+  // Neutral
+  white: '#ffffff',
+  black: '#000000',
+  gray: {
+    50: '#f9fafb',
+    100: '#f3f4f6',
+    200: '#e5e7eb',
+    300: '#d1d5db',
+    400: '#9ca3af',
+    500: '#6b7280',
+    600: '#4b5563',
+    700: '#374151',
+    800: '#1f2937',
+    900: '#111827',
+  },
+  
+  // Spacing (8px grid)
+  space: {
+    xs: '0.25rem',   // 4px
+    sm: '0.5rem',    // 8px
+    md: '1rem',      // 16px
+    lg: '1.5rem',    // 24px
+    xl: '2rem',      // 32px
+    '2xl': '3rem',   // 48px
+    '3xl': '4rem',   // 64px
+  },
+  
+  // Typography
+  fontSize: {
+    xs: '0.75rem',    // 12px
+    sm: '0.875rem',   // 14px
+    base: '1rem',     // 16px
+    lg: '1.125rem',   // 18px
+    xl: '1.25rem',    // 20px
+    '2xl': '1.5rem',  // 24px
+    '3xl': '1.875rem',// 30px
+    '4xl': '2.25rem', // 36px
+    '5xl': '3rem',    // 48px
+  },
+  
+  fontWeight: {
+    light: 300,
+    normal: 400,
+    medium: 500,
+    semibold: 600,
+    bold: 700,
+    extrabold: 800,
+    black: 900,
+  },
+  
+  borderRadius: {
+    none: '0',
+    sm: '0.125rem',   // 2px
+    md: '0.375rem',   // 6px
+    lg: '0.5rem',     // 8px
+    xl: '0.75rem',    // 12px
+    '2xl': '1rem',    // 16px
+    '3xl': '1.5rem',  // 24px
+    full: '9999px',
+  },
+};
+
+// Layer 2: Semantic Tokens (Theme-Specific)
+export const boldMinimaximalistTokens = {
+  // Brand Colors
+  colorPrimary: primitiveTokens.burgundy[700],      // #b91c3b
+  colorSecondary: primitiveTokens.purple[500],      // #8b5cf6
+  colorAccent: primitiveTokens.gold[500],           // #f59e0b
+  
+  // Typography
+  fontWeightHeading: primitiveTokens.fontWeight.extrabold,  // 800
+  fontWeightBody: primitiveTokens.fontWeight.semibold,      // 600
+  
+  // Spacing (Compact)
+  spacingBase: primitiveTokens.space.sm,  // 8px
+  spacingCard: primitiveTokens.space.md,  // 16px
+  
+  // Border Radius (Sharp)
+  radiusBase: primitiveTokens.borderRadius.sm,   // 2px
+  radiusCard: primitiveTokens.borderRadius.md,   // 6px
+  
+  // Shadows (Strong)
+  shadowIntensity: 'high',
+  shadowColor: 'rgba(185, 28, 59, 0.4)',  // Burgundy shadow
+  
+  // Gradients
+  gradientPrimary: `linear-gradient(135deg, ${primitiveTokens.burgundy[700]} 0%, ${primitiveTokens.purple[500]} 50%, ${primitiveTokens.turquoise[500]} 100%)`,
+  gradientHero: `linear-gradient(to right, ${primitiveTokens.burgundy[700]}, ${primitiveTokens.purple[500]}, ${primitiveTokens.gold[500]})`,
+  
+  // Animations (Fast)
+  transitionSpeed: '150ms',
+  animationCurve: 'cubic-bezier(0.4, 0, 0.2, 1)',
+};
+
+export const mtOceanTokens = {
+  // Brand Colors
+  colorPrimary: primitiveTokens.turquoise[500],     // #14b8a6
+  colorSecondary: primitiveTokens.cyan[500],        // #06b6d4
+  colorAccent: primitiveTokens.teal[600],           // #0d9488
+  
+  // Typography
+  fontWeightHeading: primitiveTokens.fontWeight.semibold,   // 600
+  fontWeightBody: primitiveTokens.fontWeight.normal,        // 400
+  
+  // Spacing (Comfortable)
+  spacingBase: primitiveTokens.space.md,  // 16px
+  spacingCard: primitiveTokens.space.lg,  // 24px
+  
+  // Border Radius (Rounded)
+  radiusBase: primitiveTokens.borderRadius.xl,   // 12px
+  radiusCard: primitiveTokens.borderRadius['2xl'], // 16px
+  
+  // Shadows (Soft)
+  shadowIntensity: 'subtle',
+  shadowColor: 'rgba(20, 184, 166, 0.15)',  // Cyan shadow
+  
+  // Glassmorphic
+  glassBackground: 'rgba(255, 255, 255, 0.7)',
+  glassBackdropBlur: '20px',
+  glassBorder: 'rgba(255, 255, 255, 0.3)',
+  
+  // Gradients
+  gradientPrimary: `linear-gradient(to right, ${primitiveTokens.turquoise[400]}, ${primitiveTokens.cyan[500]}, ${primitiveTokens.teal[600]})`,
+  gradientHero: `linear-gradient(135deg, ${primitiveTokens.turquoise[400]} 0%, ${primitiveTokens.cyan[500]} 50%, ${primitiveTokens.teal[600]} 100%)`,
+  
+  // Animations (Smooth)
+  transitionSpeed: '300ms',
+  animationCurve: 'cubic-bezier(0.4, 0, 0.6, 1)',
+};
+
+// Layer 3: Component Tokens (Usage-Specific)
+export const componentTokens = {
+  // Button
+  button: {
+    primary: {
+      background: '{colorPrimary}',
+      text: primitiveTokens.white,
+      padding: '{spacingBase} {spacingCard}',
+      borderRadius: '{radiusCard}',
+      fontWeight: '{fontWeightBody}',
+      shadow: '0 4px 6px -1px {shadowColor}',
+      transition: 'all {transitionSpeed} {animationCurve}',
+    },
+    secondary: {
+      background: 'transparent',
+      text: '{colorPrimary}',
+      border: `2px solid {colorPrimary}`,
+      padding: '{spacingBase} {spacingCard}',
+      borderRadius: '{radiusCard}',
+    },
+  },
+  
+  // Card
+  card: {
+    glass: {
+      background: '{glassBackground}',
+      backdropFilter: 'blur({glassBackdropBlur})',
+      border: '1px solid {glassBorder}',
+      borderRadius: '{radiusCard}',
+      padding: '{spacingCard}',
+      shadow: '0 8px 32px 0 {shadowColor}',
+    },
+    solid: {
+      background: primitiveTokens.white,
+      border: `1px solid ${primitiveTokens.gray[200]}`,
+      borderRadius: '{radiusCard}',
+      padding: '{spacingCard}',
+      shadow: '0 4px 6px -1px {shadowColor}',
+    },
+  },
+  
+  // Typography
+  heading: {
+    h1: {
+      fontSize: primitiveTokens.fontSize['5xl'],
+      fontWeight: '{fontWeightHeading}',
+      lineHeight: '1.2',
+    },
+    h2: {
+      fontSize: primitiveTokens.fontSize['4xl'],
+      fontWeight: '{fontWeightHeading}',
+      lineHeight: '1.3',
+    },
+    h3: {
+      fontSize: primitiveTokens.fontSize['3xl'],
+      fontWeight: '{fontWeightHeading}',
+      lineHeight: '1.4',
+    },
+  },
+};
+```
+
+### Token Resolution (Runtime)
+
+```typescript
+// client/src/config/theme.ts
+
+export type ThemeName = 'bold-minimaximalist' | 'mt-ocean';
+
+export function resolveTokens(themeName: ThemeName) {
+  const semanticTokens = themeName === 'bold-minimaximalist' 
+    ? boldMinimaximalistTokens 
+    : mtOceanTokens;
+  
+  // Replace {token} references with actual values
+  return resolveReferences(componentTokens, semanticTokens);
+}
+
+// Example: button.primary.background = '{colorPrimary}'
+// Bold Theme: #b91c3b (burgundy)
+// Ocean Theme: #14b8a6 (turquoise)
+```
+
+---
+
+## ROUTE-BASED THEME SWITCHING
+
+### Automatic Theme Detection
+
+```typescript
+// client/src/contexts/theme-context.tsx
+
+export type VisualTheme = 'bold-minimaximalist' | 'mt-ocean';
+export type DarkMode = 'light' | 'dark';
+
+interface ThemeContextType {
+  visualTheme: VisualTheme;
+  darkMode: DarkMode;
+  toggleDarkMode: () => void;
+}
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  const [darkMode, setDarkMode] = useState<DarkMode>('dark'); // Default dark
+  
+  // AUTO-DETECT VISUAL THEME BY ROUTE
+  const visualTheme: VisualTheme = useMemo(() => {
+    const marketingRoutes = ['/', '/marketing-prototype', '/pricing', '/about'];
+    const isMarketing = marketingRoutes.includes(location[0]);
+    
+    return isMarketing ? 'bold-minimaximalist' : 'mt-ocean';
+  }, [location]);
+  
+  // Apply theme to document
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode === 'dark');
+    document.documentElement.setAttribute('data-theme', visualTheme);
+    
+    // Apply CSS custom properties
+    const tokens = resolveTokens(visualTheme);
+    applyCSSVariables(tokens);
+  }, [darkMode, visualTheme]);
+  
+  const toggleDarkMode = () => setDarkMode(d => d === 'light' ? 'dark' : 'light');
+  
+  return (
+    <ThemeContext.Provider value={{ visualTheme, darkMode, toggleDarkMode }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+// Usage in components
+function MyComponent() {
+  const { visualTheme, darkMode } = useTheme();
+  
+  // Components automatically use correct theme via CSS variables
+  return <Button className="btn-primary">Click Me</Button>;
+}
+```
+
+### CSS Variable Application
+
+```css
+/* client/src/index.css */
+
+/* Bold Minimaximalist Theme */
+:root[data-theme="bold-minimaximalist"] {
+  --color-primary: #b91c3b;
+  --color-secondary: #8b5cf6;
+  --color-accent: #f59e0b;
+  --font-weight-heading: 800;
+  --font-weight-body: 600;
+  --spacing-base: 0.5rem;
+  --spacing-card: 1rem;
+  --radius-base: 0.125rem;
+  --radius-card: 0.375rem;
+  --shadow-color: rgba(185, 28, 59, 0.4);
+  --transition-speed: 150ms;
+  --gradient-primary: linear-gradient(135deg, #b91c3b 0%, #8b5cf6 50%, #14b8a6 100%);
+}
+
+/* MT Ocean Theme */
+:root[data-theme="mt-ocean"] {
+  --color-primary: #14b8a6;
+  --color-secondary: #06b6d4;
+  --color-accent: #0d9488;
+  --font-weight-heading: 600;
+  --font-weight-body: 400;
+  --spacing-base: 1rem;
+  --spacing-card: 1.5rem;
+  --radius-base: 0.75rem;
+  --radius-card: 1rem;
+  --shadow-color: rgba(20, 184, 166, 0.15);
+  --transition-speed: 300ms;
+  --gradient-primary: linear-gradient(to right, #2dd4bf, #06b6d4, #0d9488);
+  --glass-background: rgba(255, 255, 255, 0.7);
+  --glass-backdrop-blur: 20px;
+  --glass-border: rgba(255, 255, 255, 0.3);
+}
+
+/* Dark Mode Overrides */
+:root.dark[data-theme="mt-ocean"] {
+  --glass-background: rgba(15, 23, 42, 0.8);
+  --glass-border: rgba(100, 116, 139, 0.3);
+}
+
+/* Component Styles Using Variables */
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+  padding: var(--spacing-base) var(--spacing-card);
+  border-radius: var(--radius-card);
+  font-weight: var(--font-weight-body);
+  box-shadow: 0 4px 6px -1px var(--shadow-color);
+  transition: all var(--transition-speed) ease;
+}
+
+.card-glass {
+  background: var(--glass-background);
+  backdrop-filter: blur(var(--glass-backdrop-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  padding: var(--spacing-card);
+  box-shadow: 0 8px 32px 0 var(--shadow-color);
+}
+```
+
+---
+
+## COMPLETE PAGE INVENTORY - ALL 142 ROUTES
+
+**MB.MD METHODOLOGY APPLIED** ✅  
+Simultaneously searched all route registries  
+Recursively validated each category  
+Critically verified no pages missed  
+
+### Total Route Count: 142 Pages
+- **Production Routes**: 138 pages
+- **Debug Routes**: 4 pages (development only)
+
+---
+
+## PAGE-BY-PAGE THEME ASSIGNMENT
+
+### Marketing Pages (3 pages) - Bold Minimaximalist Theme
+
+```
+╔════════════════════════════════════════════════════════════════╗
+║  MARKETING PAGES - BOLD MINIMAXIMALIST THEME (3 PAGES)         ║
+╠════════════════════════════════════════════════════════════════╣
+║                                                                ║
+║  1. /marketing-prototype                                       ║
+║     Theme: Bold Minimaximalist                                 ║
+║     Components:                                                ║
+║       - VideoHero section with dramatic animation              ║
+║       - 7 feature sections (Map, Friendships, Events, etc.)    ║
+║       - 21 professional role cards                             ║
+║       - 3 CTA blocks (Join, Build, Support)                    ║
+║       - Tango history timeline (1880-2009)                     ║
+║       - Orchestra cards (Big Four + 9 masters)                 ║
+║       - Funding progress bar ($20k/$50k)                       ║
+║       - Burgundy/purple/gold gradients                         ║
+║       - Heavy serif typography (Playfair Display)              ║
+║       - Sharp corners (4-6px), strong shadows                  ║
+║                                                                ║
+║  2. /pricing                                                   ║
+║     Theme: Bold Minimaximalist                                 ║
+║     Components:                                                ║
+║       - Pricing cards with dramatic shadows                    ║
+║       - Gold accent for popular plan                           ║
+║       - Burgundy CTAs                                          ║
+║       - Feature comparison table                               ║
+║                                                                ║
+║  3. /landing                                                   ║
+║     Theme: Bold Minimaximalist                                 ║
+║     Components:                                                ║
+║       - Hero section for non-authenticated users               ║
+║       - Value proposition cards                                ║
+║       - Testimonials                                           ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+```
+
+### Platform Pages (139 pages) - MT Ocean Theme
+
+```
+╔════════════════════════════════════════════════════════════════╗
+║  PLATFORM PAGES (139 PAGES) - MT OCEAN THEME                   ║
+╠════════════════════════════════════════════════════════════════╣
+║                                                                ║
+║  ┌─────────────────────────────────────────────────────────┐  ║
+║  │ AUTHENTICATION & USER MANAGEMENT (13 pages)             │  ║
+║  └─────────────────────────────────────────────────────────┘  ║
+║                                                                ║
+║   1. /login                    - User login                    ║
+║   2. /register                 - New user registration         ║
+║   3. /forgot-password          - Password reset request        ║
+║   4. /reset-password           - Password reset confirmation   ║
+║   5. /profile/:username?       - User profile page             ║
+║   6. /settings                 - User settings & preferences   ║
+║   7. /account/delete           - Account deletion              ║
+║   8. /onboarding               - User onboarding flow          ║
+║   9. /resume                   - User resume/CV page           ║
+║  10. /resume/:username         - Public resume view            ║
+║  11. /@:username               - Public profile page           ║
+║  12. /profile-switcher         - Profile switcher              ║
+║  13. /home                     - User home dashboard           ║
+║                                                                ║
+║  ┌─────────────────────────────────────────────────────────┐  ║
+║  │ EVENTS SYSTEM (4 pages)                                 │  ║
+║  └─────────────────────────────────────────────────────────┘  ║
+║                                                                ║
+║  14. /events                   - Events discovery & listing    ║
+║  15. /events/:id               - Event detail page             ║
+║  16. /teacher                  - Teacher dashboard             ║
+║  17. /organizer                - Event organizer dashboard     ║
+║                                                                ║
+║  ┌─────────────────────────────────────────────────────────┐  ║
+║  │ HOUSING MARKETPLACE (9 pages)                           │  ║
+║  └─────────────────────────────────────────────────────────┘  ║
+║                                                                ║
+║  18. /housing-marketplace      - Property grid                 ║
+║  19. /host-dashboard           - Host properties dashboard     ║
+║  20. /host-onboarding          - Host onboarding flow          ║
+║  21. /guest-onboarding         - Guest onboarding flow         ║
+║  22. /host-bookings            - Host bookings management      ║
+║  23. /my-bookings              - User bookings view            ║
+║  24. /listing/:id              - Housing listing detail        ║
+║  25. /host-calendar            - Host calendar management      ║
+║  26. /recommendations          - Recommendations marketplace   ║
+║                                                                ║
+║  ┌─────────────────────────────────────────────────────────┐  ║
+║  │ SOCIAL FEATURES (14 pages)                              │  ║
+║  └─────────────────────────────────────────────────────────┘  ║
+║                                                                ║
+║  27. /memories                 - Unified memory feed ⭐        ║
+║  28. /friends                  - Friends management            ║
+║  29. /friendship/:friendId     - Friendship detail page        ║
+║  30. /messages                 - Messaging interface           ║
+║  31. /groups                   - Groups discovery              ║
+║  32. /groups/:slug             - Group detail page             ║
+║  33. /invitations              - Role invitations              ║
+║  34. /favorites                - Saved posts & favorites       ║
+║  35. /search                   - Global search                 ║
+║  36. /notifications            - Notifications center          ║
+║  37. /tango-stories            - Tango stories                 ║
+║  38. /live-streaming           - Live streaming platform       ║
+║  39. /gamification             - Gamification features         ║
+║  40. /feature-navigation       - Feature discovery tour        ║
+║                                                                ║
+║  ┌─────────────────────────────────────────────────────────┐  ║
+║  │ COMMUNITY FEATURES (4 pages)                            │  ║
+║  └─────────────────────────────────────────────────────────┘  ║
+║                                                                ║
+║  41. /community                - Community hub                 ║
+║  42. /community-world-map      - Global community map          ║
+║  43. /create-community         - Community creation            ║
+║  44. /tango-communities        - Tango communities             ║
+║                                                                ║
+║  ┌─────────────────────────────────────────────────────────┐  ║
+║  │ BILLING & SUBSCRIPTIONS (9 pages)                       │  ║
+║  └─────────────────────────────────────────────────────────┘  ║
+║                                                                ║
+║  45. /subscribe                - Subscription plans            ║
+║  46. /settings/billing         - Billing dashboard             ║
+║  47. /checkout/:tier           - Checkout flow                 ║
+║  48. /payment-methods          - Payment methods management    ║
+║  49. /invoices                 - Invoice history               ║
+║  50. /subscription             - Subscription management        ║
+║  51. /admin/promo-codes        - Promo code management         ║
+║  52. /admin/subscription-analytics - Subscription analytics    ║
+║  53. /finops                   - FinOps Dashboard (AI costs)   ║
+║                                                                ║
+║  ┌─────────────────────────────────────────────────────────┐  ║
+║  │ ADMIN CENTER (38 pages) 🔧                              │  ║
+║  └─────────────────────────────────────────────────────────┘  ║
+║                                                                ║
+║  54. /admin                    - Admin dashboard               ║
+║  55. /admin/dashboard          - Admin dashboard (alias)       ║
+║  56. /admin/users              - User management               ║
+║  57. /admin/moderation         - Content moderation            ║
+║  58. /admin/analytics          - Admin analytics               ║
+║  59. /admin/ui-sub-agents      - UI Sub-Agents Dashboard       ║
+║  60. /admin-legacy             - Legacy admin center           ║
+║  61. /admin/agent-metrics      - ESA Agent monitoring          ║
+║  62. /admin/projects           - Project tracker (Agent #65)   ║
+║  63. /admin/projects/epics     - Epics list                    ║
+║  64. /admin/projects/stories   - Stories list                  ║
+║  65. /admin/projects/epic/:id  - Epic detail                   ║
+║  66. /admin/projects/story/:id - Story detail                  ║
+║  67. /admin/sprints            - Sprint management             ║
+║  68. /admin/esa-mind           - ESA Mind (105 Agents, 61 Layers) ║
+║  69. /admin/multi-ai           - Multi-AI Orchestration        ║
+║  70. /admin/multi-ai/analytics - Multi-AI Analytics            ║
+║  71. /admin/mr-blue            - Mr Blue Dashboard             ║
+║  72. /admin/health-monitor     - Service Health Monitor        ║
+║  73. /admin/page-states        - Page State Monitor            ║
+║  74. /admin/auto-fix           - Auto-Fix Dashboard            ║
+║  75. /admin/performance        - Performance Dashboard         ║
+║  76. /admin/agent-coordination - Agent Coordination            ║
+║  77. /admin/tenants            - Tenant Management             ║
+║  78. /admin/agent-learnings    - Agent Learning Dashboard      ║
+║  79. /admin/deployment         - Deployment Configuration      ║
+║  80. /admin/agent-collaboration - Agent Collaboration Visualizer ║
+║  81. /admin/visual-editor      - Visual Page Editor            ║
+║  82. /analytics                - Analytics dashboard           ║
+║  83. /agent-framework          - Agent framework monitoring    ║
+║  84. /project-tracker          - Project tracking              ║
+║  85. /stats                    - Live global statistics        ║
+║  86. /hierarchy                - Organizational hierarchy       ║
+║  87. /monitoring               - System monitoring             ║
+║  88. /monitoring-test          - Monitoring test page          ║
+║  89. /media-upload-test        - Media upload testing          ║
+║  90. /test-grouped-roles       - Role selector test            ║
+║  91. /database-security        - Database security dashboard   ║
+║                                                                ║
+║  ┌─────────────────────────────────────────────────────────┐  ║
+║  │ MR BLUE / LIFE CEO (6 pages) 🤖                         │  ║
+║  └─────────────────────────────────────────────────────────┘  ║
+║                                                                ║
+║  92. /mr-blue                  - Mr Blue AI companion          ║
+║  93. /mr-blue-performance      - Mr Blue performance           ║
+║  94. /life-ceo                 - Life CEO (legacy route)       ║
+║  95. /life-ceo-performance     - Life CEO performance          ║
+║  96. /lifeceo                  - Life CEO (alias)              ║
+║  97. /travel-planner           - Travel planning               ║
+║                                                                ║
+║  ┌─────────────────────────────────────────────────────────┐  ║
+║  │ LEGAL & COMPLIANCE (6 pages)                            │  ║
+║  └─────────────────────────────────────────────────────────┘  ║
+║                                                                ║
+║  98. /help                     - Help & support center         ║
+║  99. /code-of-conduct          - Code of conduct               ║
+║ 100. /terms                    - Terms of service              ║
+║ 101. /privacy                  - Privacy settings & analytics  ║
+║ 102. /privacy-policy           - Privacy policy                ║
+║ 103. /error                    - Error boundary page           ║
+║                                                                ║
+║  ┌─────────────────────────────────────────────────────────┐  ║
+║  │ ADDITIONAL PLATFORM PAGES (2 pages)                     │  ║
+║  └─────────────────────────────────────────────────────────┘  ║
+║                                                                ║
+║ 104. /mobile-dashboard         - Mobile app dashboard          ║
+║ 105. /                         - Homepage (redirects to /memories) ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+```
+
+### Debug Routes (4 pages) - Development Only
+
+```
+╔════════════════════════════════════════════════════════════════╗
+║  DEBUG ROUTES (4 PAGES) - DEVELOPMENT ONLY                     ║
+╠════════════════════════════════════════════════════════════════╣
+║                                                                ║
+║  These routes are ONLY accessible in development mode.         ║
+║  They are automatically excluded from production builds.       ║
+║                                                                ║
+║ 106. /memories-debug           - Memory feed debug interface   ║
+║ 107. /memories-test            - Memory feed test page         ║
+║ 108. /posting-demo             - Post creation demo            ║
+║ 109. /modern-memories-debug    - Modern memories debug UI      ║
+║                                                                ║
+║  Note: These pages should still be themed with MT Ocean        ║
+║  for consistency during development.                           ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+```
+
+---
+
+## ROUTE CATEGORY BREAKDOWN
+
+```
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║  COMPLETE ROUTE INVENTORY - 142 TOTAL PAGES                    ║
+║                                                                ║
+║  Marketing (Bold Minimaximalist)                          3    ║
+║  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ║
+║  • /marketing-prototype, /pricing, /landing                    ║
+║                                                                ║
+║  Platform (MT Ocean Theme)                              139    ║
+║  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ║
+║  • Authentication & User Management                       13   ║
+║  • Events System                                           4   ║
+║  • Housing Marketplace                                     9   ║
+║  • Social Features                                        14   ║
+║  • Community Features                                      4   ║
+║  • Billing & Subscriptions                                 9   ║
+║  • Admin Center                                           38   ║
+║  • Mr Blue / Life CEO                                      6   ║
+║  • Legal & Compliance                                      6   ║
+║  • Additional Platform                                     2   ║
+║  • Debug Routes (dev only)                                 4   ║
+║                                                                ║
+║  GRAND TOTAL                                              142   ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+```
+
+---
+
+## COMPONENT LIBRARY STRUCTURE
+
+### Shared Components (Both Themes)
+
+```
+client/src/components/
+├── base/                    # Base components (theme-agnostic structure)
+│   ├── Button.tsx           # Base button logic
+│   ├── Card.tsx             # Base card logic
+│   ├── Input.tsx            # Base input logic
+│   └── Typography.tsx       # Base typography logic
+│
+├── themed/                  # Theme-aware components
+│   ├── bold/                # Bold Minimaximalist variants
+│   │   ├── BoldButton.tsx
+│   │   ├── BoldCard.tsx
+│   │   ├── BoldHero.tsx
+│   │   └── BoldCTA.tsx
+│   │
+│   └── ocean/               # MT Ocean variants
+│       ├── OceanButton.tsx
+│       ├── GlassCard.tsx
+│       ├── OceanHero.tsx
+│       └── OceanCTA.tsx
+│
+├── adaptive/                # Auto-theme components
+│   ├── AdaptiveButton.tsx   # Switches theme based on context
+│   ├── AdaptiveCard.tsx
+│   └── AdaptiveNav.tsx
+│
+├── marketing/               # Marketing-specific
+│   ├── VideoHero.tsx        # From attached guide
+│   ├── ScrollReveal.tsx     # Framer Motion wrapper
+│   ├── TangoTimeline.tsx
+│   ├── OrchestraCard.tsx
+│   └── FundingProgress.tsx
+│
+├── platform/                # Platform-specific
+│   ├── PostCard.tsx         # From MEMORIES_PAGE example
+│   ├── EventCard.tsx
+│   ├── UserAvatar.tsx
+│   └── MessageBubble.tsx
+│
+├── glass/                   # Glassmorphic (Aurora Tide)
+│   └── GlassComponents.tsx  # Already exists!
+│
+├── animations/              # Animation wrappers
+│   ├── FramerMotionWrappers.tsx  # Already exists!
+│   └── GSAPScrollReveal.tsx
+│
+└── interactions/            # Micro-interactions
+    └── MicroInteractions.tsx     # Already exists!
+```
+
+### Smart Component Resolution
+
+```typescript
+// client/src/components/adaptive/AdaptiveButton.tsx
+
+import { useTheme } from '@/contexts/theme-context';
+import { BoldButton } from '@/components/themed/bold/BoldButton';
+import { OceanButton } from '@/components/themed/ocean/OceanButton';
+
+export function AdaptiveButton(props: ButtonProps) {
+  const { visualTheme } = useTheme();
+  
+  // Automatically use correct theme variant
+  return visualTheme === 'bold-minimaximalist' 
+    ? <BoldButton {...props} />
+    : <OceanButton {...props} />;
+}
+
+// Usage: Just import AdaptiveButton everywhere
+import { AdaptiveButton } from '@/components/adaptive/AdaptiveButton';
+
+<AdaptiveButton>Submit</AdaptiveButton>
+// On /marketing-prototype → Bold burgundy button
+// On /feed → Ocean turquoise glassmorphic button
+```
+
+---
+
+## TESTING STRATEGY
+
+### Visual Regression Tests (Agent #A2)
+
+```typescript
+// tests/visual/design-system.spec.ts
+
+import { test, expect } from '@playwright/test';
+
+test.describe('Design System - All 142 Pages', () => {
+  const themes: Array<{ visual: 'bold-minimaximalist' | 'mt-ocean', dark: 'light' | 'dark' }> = [
+    { visual: 'bold-minimaximalist', dark: 'light' },
+    { visual: 'bold-minimaximalist', dark: 'dark' },
+    { visual: 'mt-ocean', dark: 'light' },
+    { visual: 'mt-ocean', dark: 'dark' },
+  ];
+  
+  const marketingPages = [
+    '/marketing-prototype',
+    '/pricing',
+    '/landing',
+  ];
+  
+  const platformPages = [
+    // Auth & User (13)
+    '/login', '/register', '/forgot-password', '/reset-password',
+    '/profile/testuser', '/settings', '/account/delete', '/onboarding',
+    '/resume', '/resume/testuser', '/@testuser', '/profile-switcher', '/home',
+    
+    // Events (4)
+    '/events', '/events/1', '/teacher', '/organizer',
+    
+    // Housing (9)
+    '/housing-marketplace', '/host-dashboard', '/host-onboarding', '/guest-onboarding',
+    '/host-bookings', '/my-bookings', '/listing/1', '/host-calendar', '/recommendations',
+    
+    // Social (14)
+    '/memories', '/friends', '/friendship/1', '/messages', '/groups', '/groups/test-group',
+    '/invitations', '/favorites', '/search', '/notifications', '/tango-stories',
+    '/live-streaming', '/gamification', '/feature-navigation',
+    
+    // Community (4)
+    '/community', '/community-world-map', '/create-community', '/tango-communities',
+    
+    // Billing (9)
+    '/subscribe', '/settings/billing', '/checkout/pro', '/payment-methods',
+    '/invoices', '/subscription', '/admin/promo-codes', '/admin/subscription-analytics', '/finops',
+    
+    // Admin (38)
+    '/admin', '/admin/dashboard', '/admin/users', '/admin/moderation', '/admin/analytics',
+    '/admin/ui-sub-agents', '/admin-legacy', '/admin/agent-metrics', '/admin/projects',
+    '/admin/projects/epics', '/admin/projects/stories', '/admin/projects/epic/1',
+    '/admin/projects/story/1', '/admin/sprints', '/admin/esa-mind', '/admin/multi-ai',
+    '/admin/multi-ai/analytics', '/admin/mr-blue', '/admin/health-monitor', '/admin/page-states',
+    '/admin/auto-fix', '/admin/performance', '/admin/agent-coordination', '/admin/tenants',
+    '/admin/agent-learnings', '/admin/deployment', '/admin/agent-collaboration', '/admin/visual-editor',
+    '/analytics', '/agent-framework', '/project-tracker', '/stats', '/hierarchy',
+    '/monitoring', '/monitoring-test', '/media-upload-test', '/test-grouped-roles', '/database-security',
+    
+    // Mr Blue / Life CEO (6)
+    '/mr-blue', '/mr-blue-performance', '/life-ceo', '/life-ceo-performance', '/lifeceo', '/travel-planner',
+    
+    // Legal (6)
+    '/help', '/code-of-conduct', '/terms', '/privacy', '/privacy-policy', '/error',
+    
+    // Additional (2)
+    '/mobile-dashboard', '/',
+  ];
+  
+  // Total: 3 marketing + 139 platform = 142 pages
+  
+  marketingPages.forEach(route => {
+    test(`${route} - Bold Minimaximalist - Light`, async ({ page }) => {
+      await page.goto(route);
+      
+      // Verify theme applied
+      const theme = await page.getAttribute('html', 'data-theme');
+      expect(theme).toBe('bold-minimaximalist');
+      
+      // Verify burgundy primary color
+      const primaryColor = await page.evaluate(() => 
+        getComputedStyle(document.documentElement).getPropertyValue('--color-primary')
+      );
+      expect(primaryColor).toContain('#b91c3b');
+      
+      // Visual regression snapshot
+      await expect(page).toHaveScreenshot(`${route.replace('/', 'home')}-bold-light.png`);
+    });
+  });
+  
+  platformPages.forEach(route => {
+    test(`${route} - MT Ocean - Dark`, async ({ page }) => {
+      await page.goto(route);
+      
+      // Toggle dark mode
+      await page.evaluate(() => document.documentElement.classList.add('dark'));
+      
+      // Verify theme applied
+      const theme = await page.getAttribute('html', 'data-theme');
+      expect(theme).toBe('mt-ocean');
+      
+      // Verify turquoise primary color
+      const primaryColor = await page.evaluate(() => 
+        getComputedStyle(document.documentElement).getPropertyValue('--color-primary')
+      );
+      expect(primaryColor).toContain('#14b8a6');
+      
+      // Verify glassmorphic cards exist
+      const glassCards = await page.locator('.card-glass').count();
+      expect(glassCards).toBeGreaterThan(0);
+      
+      // Visual regression snapshot
+      await expect(page).toHaveScreenshot(`${route.replace('/', 'home')}-ocean-dark.png`);
+    });
+  });
+});
+```
+
+### Accessibility Tests (Layer 54)
+
+```typescript
+// tests/accessibility/wcag-compliance.spec.ts
+
+import { test, expect } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+
+test.describe('WCAG 2.1 AA Compliance', () => {
+  test('Marketing pages - Bold theme', async ({ page }) => {
+    await page.goto('/marketing-prototype');
+    
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+      .analyze();
+    
+    expect(results.violations).toEqual([]);
+  });
+  
+  test('Platform pages - Ocean theme dark mode', async ({ page }) => {
+    await page.goto('/feed');
+    await page.evaluate(() => document.documentElement.classList.add('dark'));
+    
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa'])
+      .analyze();
+    
+    expect(results.violations).toEqual([]);
+  });
+  
+  test('Color contrast - All buttons', async ({ page }) => {
+    await page.goto('/');
+    
+    const buttons = await page.locator('button').all();
+    for (const button of buttons) {
+      const bgColor = await button.evaluate(el => getComputedStyle(el).backgroundColor);
+      const textColor = await button.evaluate(el => getComputedStyle(el).color);
+      
+      const contrast = calculateContrast(bgColor, textColor);
+      expect(contrast).toBeGreaterThanOrEqual(4.5); // WCAG AA
+    }
+  });
+});
+```
+
+---
+
+## DOCUMENTATION OUTPUT
+
+### Interactive Theme Playground (Agent #A7)
+
+```
+Location: /admin/design-system-playground
+
+Features:
+- Live theme switcher (Bold ↔ Ocean)
+- Dark mode toggle
+- Component showcase
+- Token inspector
+- Code generator
+
+Example:
+┌────────────────────────────────────────────────────────┐
+│  Theme: [Bold Minimaximalist ▼] [🌙 Dark Mode]       │
+├────────────────────────────────────────────────────────┤
+│                                                        │
+│  Components                                            │
+│  ┌──────────────┐                                      │
+│  │ ● Buttons    │                                      │
+│  │   Cards      │                                      │
+│  │   Forms      │                                      │
+│  │   Typography │                                      │
+│  └──────────────┘                                      │
+│                                                        │
+│  Preview                          Code                 │
+│  ┌─────────────────┐             ┌──────────────────┐ │
+│  │ [Submit]        │             │ <AdaptiveButton  │ │
+│  │ Burgundy button │             │   variant="pri"  │ │
+│  │ with gold hover │             │ >                │ │
+│  └─────────────────┘             │   Submit         │ │
+│                                  │ </AdaptiveButton>│ │
+│  Tokens Used:                    └──────────────────┘ │
+│  --color-primary: #b91c3b                             │
+│  --font-weight-body: 600                              │
+│  --transition-speed: 150ms                            │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+```
+
+### Component Documentation
+
+```markdown
+# Button Component
+
+## Usage
+
+\`\`\`tsx
+import { AdaptiveButton } from '@/components/adaptive/AdaptiveButton';
+
+<AdaptiveButton variant="primary">Submit</AdaptiveButton>
+\`\`\`
+
+## Variants
+
+- `primary` - Main CTA (burgundy/turquoise based on theme)
+- `secondary` - Secondary actions (outlined)
+- `ghost` - Tertiary actions (transparent)
+
+## Theme Behavior
+
+### Bold Minimaximalist
+- Background: #b91c3b (burgundy)
+- Font weight: 600
+- Border radius: 6px
+- Shadow: Strong (rgba(185, 28, 59, 0.4))
+
+### MT Ocean
+- Background: #14b8a6 (turquoise)
+- Font weight: 400
+- Border radius: 16px
+- Shadow: Soft (rgba(20, 184, 166, 0.15))
+- Glassmorphic backdrop blur
+
+## Accessibility
+- Contrast ratio: 4.8:1 (AA compliant)
+- Keyboard accessible
+- Focus indicator visible
+- Screen reader labels
+```
+
+---
+
+## SUCCESS METRICS
+
+### Phase Completion Criteria
+
+```
+╔════════════════════════════════════════════════════════════════╗
+║  SUCCESS METRICS - EACH PHASE                                  ║
+╠════════════════════════════════════════════════════════════════╣
+║                                                                ║
+║  Phase 1: Foundation                                           ║
+║  ✓ Design token files created (3 layers)                       ║
+║  ✓ Component inventory complete (all 82 pages mapped)          ║
+║  ✓ Theme switching infrastructure working                      ║
+║  ✓ Route detection accurate                                    ║
+║                                                                ║
+║  Phase 2: Core Components                                      ║
+║  ✓ All base components migrated to tokens                      ║
+║  ✓ 0 hardcoded colors in component library                     ║
+║  ✓ Both themes render correctly                                ║
+║  ✓ Dark mode works in both themes                              ║
+║                                                                ║
+║  Phase 3: Marketing Pages                                      ║
+║  ✓ All marketing routes use Bold Minimaximalist                ║
+║  ✓ VideoHero implemented                                       ║
+║  ✓ ScrollReveal animations working                             ║
+║  ✓ Tango content sections complete                             ║
+║                                                                ║
+║  Phase 4: Platform Pages                                       ║
+║  ✓ All 82+ pages use MT Ocean theme                            ║
+║  ✓ Glassmorphic cards throughout                               ║
+║  ✓ Gradients consistent                                        ║
+║  ✓ No visual regressions                                       ║
+║                                                                ║
+║  Phase 5: Specialized Pages                                    ║
+║  ✓ Housing marketplace themed                                  ║
+║  ✓ Life CEO dashboard themed                                   ║
+║  ✓ Admin center themed                                         ║
+║  ✓ Mr Blue UI themed                                           ║
+║                                                                ║
+║  Phase 6: Dark Mode & Accessibility                            ║
+║  ✓ 100% WCAG 2.1 AA compliance                                 ║
+║  ✓ All components have dark: variants                          ║
+║  ✓ Keyboard navigation functional                              ║
+║  ✓ 68 languages tested                                         ║
+║  ✓ RTL support working                                         ║
+║                                                                ║
+║  Phase 7: Optimization & Validation                            ║
+║  ✓ Visual regression tests pass (328 snapshots)                ║
+║  ✓ Bundle size < 1MB (theme assets lazy loaded)                ║
+║  ✓ Lighthouse score > 90 (all pages)                           ║
+║  ✓ Documentation complete and interactive                      ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+```
+
+### Final Deliverables
+
+1. **Design Token System** (3-layer architecture)
+2. **Component Library** (token-based, adaptive)
+3. **Themed Platform** (all 82+ pages)
+4. **Visual Regression Suite** (328 test snapshots)
+5. **Accessibility Report** (WCAG 2.1 AA compliance)
+6. **Interactive Documentation** (theme playground)
+7. **Migration Guide** (for future developers)
+
+---
+
+## TIMELINE
+
+**Total Duration**: 8 weeks  
+**Team Size**: 7 primary agents + 7 temporary sub-agents  
+**Execution Mode**: MB.MD (Simultaneously, Recursively, Critically)
+
+### Weekly Breakdown
+
+| Week | Phase | Deliverable | Agents |
+|------|-------|-------------|--------|
+| 1 | Foundation | Token system, component audit (all 142 pages) | #11, #A1, #A3 |
+| 2 | Core Components | Token-based component library | Layer 10, #48, #A1 |
+| 3 | Marketing Pages | Bold Minimaximalist (3 pages) | #A5, #11, Expert #16 |
+| 4 | Platform Pages Batch 1 | MT Ocean on 35 pages (Auth, Events, Housing) | #A6, Layer 9, Layer 47 |
+| 5 | Platform Pages Batch 2 | MT Ocean on 35 pages (Social, Community, Billing) | #A6, Layer 9, Layer 47 |
+| 6 | Platform Pages Batch 3 | MT Ocean on 38 pages (Admin Center) | All agents |
+| 7 | Platform Pages Batch 4 | MT Ocean on remaining 31 pages (Mr Blue, Legal, etc.) | All agents |
+| 8 | Dark Mode & A11y | WCAG compliance, dark variants (all 142 pages) | #48, Layer 54, Expert #16 |
+| 9 | Optimization & Testing | Visual regression (284 snapshots), performance | #A2, #A7, Layer 48 |
+
+---
+
+## RISK MITIGATION
+
+### Potential Risks
+
+1. **Performance degradation** from glassmorphic effects
+   - Mitigation: Hardware acceleration, selective blur usage
+   
+2. **Theme switching causing flicker**
+   - Mitigation: Preload theme assets, CSS containment
+   
+3. **Accessibility violations** in custom components
+   - Mitigation: Continuous automated testing, Layer 54 review
+   
+4. **Inconsistent token usage** across teams
+   - Mitigation: ESLint rules, pre-commit hooks, documentation
+   
+5. **Visual regression on 82 pages**
+   - Mitigation: Automated Playwright visual tests, Agent #A2
+
+---
+
+## NEXT STEPS
+
+### Immediate Actions (This Session)
+
+1. ✅ **Plan Created** - This document
+2. ⏳ **User Approval** - Wait for user confirmation to proceed
+3. ⏳ **Phase 1 Kickoff** - Begin design token system setup
+
+### After Approval
+
+1. **Create Phase 1 Task List** (MB.MD methodology)
+2. **Assign Agents** (Primary + Temporary sub-agents)
+3. **Begin Simultaneous Execution** (All agents work in parallel)
+4. **Recursive Validation** (Each agent validates others' work)
+5. **Critical Review** (Quality gates before advancing phases)
+
+---
+
+## REFERENCES
+
+### Source Documents
+
+1. `docs/platform-handoff/aurora-tide-design.md` - Primary design system
+2. `MUNDO_TANGO_DESIGN_SYSTEM.md` - Ocean theme specification
+3. `MT_OCEAN_THEME_DESIGN_SYSTEM.md` - Color palette & components
+4. `MEMORIES_PAGE_MT_OCEAN_THEME.md` - Implementation example
+5. `attached_assets/MUNDO-TANGO-MARKETING-SITE...txt` - Marketing guide
+6. `replit.md` - Platform architecture (82+ pages, agent organization)
+7. `docs/platform-handoff/layer-54-accessibility-methodology.md` - WCAG compliance
+8. `docs/platform-handoff/layer-9-ui-framework-methodology.md` - Component architecture
+
+### Key Quotes
+
+> "Aurora Tide now uses a systematic design token system"  
+> — aurora-tide-design.md, Line 29
+
+> "Visual consistency means uniform application of visual elements—everything doesn't need to look identical, but must look related"  
+> — UX Design Best Practices Research, 2025
+
+> "Bold themes work for 30-second visits, soft themes work for hours of use"  
+> — Web Search: Marketing vs Platform Design
+
+---
+
+**Plan Status**: 📋 READY FOR APPROVAL  
+**Next Action**: User confirmation to begin Phase 1  
+**Estimated Start**: Immediately after approval  
+
+**Built with MB.MD** 🚀  
+Simultaneously • Recursively • Critically
