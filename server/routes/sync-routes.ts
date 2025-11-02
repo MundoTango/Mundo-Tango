@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { authenticateToken, requireRoleLevel, AuthRequest } from '../middleware/auth';
 import { GitHubSyncService } from '../services/GitHubSyncService';
 import { JiraSyncService } from '../services/JiraSyncService';
-import { db } from '@shared/db';
+import { db, executeRawQuery } from '@shared/db';
 
 /**
  * BLOCKER 7: GitHub/Jira Sync Routes
@@ -151,7 +151,7 @@ router.get('/projects/:projectId/sync-mappings', authenticateToken, async (req: 
   try {
     const { projectId } = req.params;
 
-    const results = await db.execute<any>(`
+    const results = await executeRawQuery<any>(`
       SELECT sm.*
       FROM sync_mappings sm
       JOIN plan_tasks pt ON sm.internal_id = pt.id AND sm.internal_type = 'plan_task'
@@ -159,7 +159,7 @@ router.get('/projects/:projectId/sync-mappings', authenticateToken, async (req: 
       ORDER BY sm.last_synced_at DESC
     `, [projectId]);
 
-    res.json({ mappings: results.rows || [] });
+    res.json({ mappings: results });
   } catch (error) {
     console.error('Get sync mappings error:', error);
     res.status(500).json({ message: 'Error fetching sync mappings' });
@@ -181,8 +181,8 @@ router.get('/sync-conflicts', authenticateToken, requireRoleLevel(6), async (req
 
     query += ' ORDER BY created_at DESC LIMIT 100';
 
-    const results = await db.execute<any>(query, params);
-    res.json({ conflicts: results.rows || [] });
+    const results = await executeRawQuery<any>(query, params);
+    res.json({ conflicts: results });
   } catch (error) {
     console.error('Get sync conflicts error:', error);
     res.status(500).json({ message: 'Error fetching sync conflicts' });
@@ -199,7 +199,7 @@ router.post('/sync-conflicts/:id/resolve', authenticateToken, requireRoleLevel(6
       return res.status(400).json({ message: 'resolutionStrategy is required' });
     }
 
-    const results = await db.execute<any>(`
+    const results = await executeRawQuery<any>(`
       UPDATE sync_conflicts SET
         resolution_strategy = $1,
         is_resolved = true,
@@ -208,7 +208,7 @@ router.post('/sync-conflicts/:id/resolve', authenticateToken, requireRoleLevel(6
       WHERE id = $3
       RETURNING *
     `, [resolutionStrategy, req.userId, id]);
-    const [conflict] = results.rows || [];
+    const [conflict] = results;
 
     if (!conflict) {
       return res.status(404).json({ message: 'Conflict not found' });

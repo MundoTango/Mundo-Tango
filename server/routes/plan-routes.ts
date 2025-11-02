@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authenticateToken, requireRoleLevel, AuthRequest } from '../middleware/auth';
-import { db } from '@shared/db';
+import { db, executeRawQuery } from '@shared/db';
 
 /**
  * BLOCKER 6: "The Plan" Project Tracker API Routes
@@ -41,8 +41,8 @@ router.get('/projects', authenticateToken, async (req: AuthRequest, res) => {
 
     query += ' ORDER BY priority DESC, created_at DESC';
 
-    const results = await db.execute<any>(query, params);
-    res.json({ projects: results.rows || [] });
+    const results = await executeRawQuery<any>(query, params);
+    res.json({ projects: results });
   } catch (error) {
     console.error('Get projects error:', error);
     res.status(500).json({ message: 'Error fetching projects' });
@@ -53,10 +53,10 @@ router.get('/projects', authenticateToken, async (req: AuthRequest, res) => {
 router.get('/projects/:id', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const { id } = req.params;
-    const results = await db.execute<any>(`
+    const results = await executeRawQuery<any>(`
       SELECT * FROM plan_projects WHERE id = $1
     `, [id]);
-    const [project] = results.rows || [];
+    const [project] = results;
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
@@ -78,18 +78,14 @@ router.post('/projects', authenticateToken, async (req: AuthRequest, res) => {
 
     const { name, description, status, priority, githubRepoUrl, jiraProjectKey, startDate, targetDate } = req.body;
 
+    console.log('[CREATE PROJECT] Request body:', JSON.stringify(req.body, null, 2));
+    console.log('[CREATE PROJECT] User ID:', req.userId);
+
     if (!name) {
       return res.status(400).json({ message: 'Project name is required' });
     }
 
-    const results = await db.execute<any>(`
-      INSERT INTO plan_projects (
-        name, description, status, priority, owner_id,
-        github_repo_url, jira_project_key, start_date, target_date,
-        created_at, updated_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())
-      RETURNING *
-    `, [
+    const params = [
       name,
       description || null,
       status || 'planning',
@@ -99,13 +95,20 @@ router.post('/projects', authenticateToken, async (req: AuthRequest, res) => {
       jiraProjectKey || null,
       startDate || null,
       targetDate || null,
-    ]);
-    const [project] = results.rows || [];
+    ];
+    console.log('[CREATE PROJECT] SQL params:', JSON.stringify(params, null, 2));
 
+    const query = 'INSERT INTO plan_projects (name, description, status, priority, owner_id, github_repo_url, jira_project_key, start_date, target_date, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW()) RETURNING *';
+    const results = await executeRawQuery<any>(query, params);
+    const [project] = results;
+
+    console.log('[CREATE PROJECT] Success! Project ID:', project?.id);
     res.status(201).json({ project });
-  } catch (error) {
-    console.error('Create project error:', error);
-    res.status(500).json({ message: 'Error creating project' });
+  } catch (error: any) {
+    console.error('[CREATE PROJECT] Error:', error);
+    console.error('[CREATE PROJECT] Error message:', error?.message);
+    console.error('[CREATE PROJECT] Error stack:', error?.stack);
+    res.status(500).json({ message: 'Error creating project', error: error?.message });
   }
 });
 
@@ -163,12 +166,12 @@ router.patch('/projects/:id', authenticateToken, async (req: AuthRequest, res) =
     updates.push(`updated_at = NOW()`);
     params.push(id);
 
-    const results = await db.execute<any>(`
+    const results = await executeRawQuery<any>(`
       UPDATE plan_projects SET ${updates.join(', ')}
       WHERE id = $${paramIndex}
       RETURNING *
     `, params);
-    const [project] = results.rows || [];
+    const [project] = results;
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
@@ -185,7 +188,7 @@ router.patch('/projects/:id', authenticateToken, async (req: AuthRequest, res) =
 router.delete('/projects/:id', authenticateToken, requireRoleLevel(6), async (req: AuthRequest, res) => {
   try {
     const { id } = req.params;
-    await db.execute(`DELETE FROM plan_projects WHERE id = $1`, [id]);
+    await executeRawQuery(`DELETE FROM plan_projects WHERE id = $1`, [id]);
     res.json({ message: 'Project deleted successfully' });
   } catch (error) {
     console.error('Delete project error:', error);
@@ -213,8 +216,8 @@ router.get('/projects/:projectId/tasks', authenticateToken, async (req: AuthRequ
 
     query += ' ORDER BY position ASC, created_at DESC';
 
-    const results = await db.execute<any>(query, params);
-    res.json({ tasks: results.rows || [] });
+    const results = await executeRawQuery<any>(query, params);
+    res.json({ tasks: results });
   } catch (error) {
     console.error('Get tasks error:', error);
     res.status(500).json({ message: 'Error fetching tasks' });
@@ -231,7 +234,7 @@ router.post('/projects/:projectId/tasks', authenticateToken, async (req: AuthReq
       return res.status(400).json({ message: 'Task title is required' });
     }
 
-    const results = await db.execute<any>(`
+    const results = await executeRawQuery<any>(`
       INSERT INTO plan_tasks (
         project_id, title, description, status, priority,
         assigned_to, created_by, estimated_hours, due_date,
@@ -251,7 +254,7 @@ router.post('/projects/:projectId/tasks', authenticateToken, async (req: AuthReq
       parentTaskId || null,
       labels || [],
     ]);
-    const [task] = results.rows || [];
+    const [task] = results;
 
     res.status(201).json({ task });
   } catch (error) {
@@ -322,12 +325,12 @@ router.patch('/tasks/:id', authenticateToken, async (req: AuthRequest, res) => {
     updates.push(`updated_at = NOW()`);
     params.push(id);
 
-    const results = await db.execute<any>(`
+    const results = await executeRawQuery<any>(`
       UPDATE plan_tasks SET ${updates.join(', ')}
       WHERE id = $${paramIndex}
       RETURNING *
     `, params);
-    const [task] = results.rows || [];
+    const [task] = results;
 
     if (!task) {
       return res.status(404).json({ message: 'Task not found' });
@@ -344,7 +347,7 @@ router.patch('/tasks/:id', authenticateToken, async (req: AuthRequest, res) => {
 router.delete('/tasks/:id', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const { id } = req.params;
-    await db.execute(`DELETE FROM plan_tasks WHERE id = $1`, [id]);
+    await executeRawQuery(`DELETE FROM plan_tasks WHERE id = $1`, [id]);
     res.json({ message: 'Task deleted successfully' });
   } catch (error) {
     console.error('Delete task error:', error);
@@ -378,8 +381,8 @@ router.get('/comments', authenticateToken, async (req: AuthRequest, res) => {
 
     query += ' ORDER BY c.created_at ASC';
 
-    const results = await db.execute<any>(query, params);
-    res.json({ comments: results.rows || [] });
+    const results = await executeRawQuery<any>(query, params);
+    res.json({ comments: results });
   } catch (error) {
     console.error('Get comments error:', error);
     res.status(500).json({ message: 'Error fetching comments' });
@@ -399,7 +402,7 @@ router.post('/comments', authenticateToken, async (req: AuthRequest, res) => {
       return res.status(400).json({ message: 'projectId or taskId is required' });
     }
 
-    const results = await db.execute<any>(`
+    const results = await executeRawQuery<any>(`
       INSERT INTO plan_comments (
         project_id, task_id, user_id, content, mentions,
         created_at, updated_at
@@ -412,7 +415,7 @@ router.post('/comments', authenticateToken, async (req: AuthRequest, res) => {
       content,
       mentions || [],
     ]);
-    const [comment] = results.rows || [];
+    const [comment] = results;
 
     res.status(201).json({ comment });
   } catch (error) {
@@ -431,7 +434,7 @@ router.patch('/comments/:id', authenticateToken, async (req: AuthRequest, res) =
       return res.status(400).json({ message: 'Comment content is required' });
     }
 
-    const results = await db.execute<any>(`
+    const results = await executeRawQuery<any>(`
       UPDATE plan_comments SET
         content = $1,
         is_edited = true,
@@ -440,7 +443,7 @@ router.patch('/comments/:id', authenticateToken, async (req: AuthRequest, res) =
       WHERE id = $2 AND user_id = $3
       RETURNING *
     `, [content, id, req.userId]);
-    const [comment] = results.rows || [];
+    const [comment] = results;
 
     if (!comment) {
       return res.status(404).json({ message: 'Comment not found or unauthorized' });
@@ -457,7 +460,7 @@ router.patch('/comments/:id', authenticateToken, async (req: AuthRequest, res) =
 router.delete('/comments/:id', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const { id } = req.params;
-    await db.execute(`DELETE FROM plan_comments WHERE id = $1 AND user_id = $2`, [id, req.userId]);
+    await executeRawQuery(`DELETE FROM plan_comments WHERE id = $1 AND user_id = $2`, [id, req.userId]);
     res.json({ message: 'Comment deleted successfully' });
   } catch (error) {
     console.error('Delete comment error:', error);
