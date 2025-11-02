@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, Award, Star } from "lucide-react";
 import { useState } from "react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function LeaderboardPage() {
   const [activeTab, setActiveTab] = useState("points");
@@ -15,7 +16,8 @@ export default function LeaderboardPage() {
   });
 
   return (
-    <PageLayout title="Community Leaderboard" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Leaderboard" fallbackRoute="/feed">
+      <PageLayout title="Community Leaderboard" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
         
@@ -91,5 +93,7 @@ export default function LeaderboardPage() {
         </Tabs>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

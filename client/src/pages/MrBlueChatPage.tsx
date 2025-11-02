@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Send, Bot, User, Sparkles, Home } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 interface Message {
   id: string;
@@ -120,7 +121,8 @@ export default function MrBlueChatPage() {
   };
 
   return (
-    <PageLayout title="Mr Blue AI" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Mr Blue AI Chat" fallbackRoute="/dashboard">
+      <PageLayout title="Mr Blue AI" showBreadcrumbs>
 <>
       <SEO
         title="Mr Blue AI Chat - Mundo Tango"
@@ -246,5 +248,7 @@ export default function MrBlueChatPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

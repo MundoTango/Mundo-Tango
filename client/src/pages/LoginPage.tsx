@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { PublicLayout } from "@/components/PublicLayout";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -39,7 +40,8 @@ export default function LoginPage() {
   };
 
   return (
-    <PageLayout title="Welcome Back" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Login" fallbackRoute="/">
+      <PageLayout title="Welcome Back" showBreadcrumbs>
 <PublicLayout>
       <SEO
         title="Sign In - Mundo Tango"
@@ -115,5 +117,7 @@ export default function LoginPage() {
         </div>
       </div>
     </PublicLayout>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowDown, Sparkles, Music, Users, Heart, Globe } from "lucide-react";
 import { Link } from "wouter";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function MarketingPrototype() {
   const heroRef = useRef(null);
@@ -15,6 +16,7 @@ export default function MarketingPrototype() {
   const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
 
   return (
+    <SelfHealingErrorBoundary pageName="Marketing Prototype" fallbackRoute="/">
     <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Hero Section - Full Screen with Animated Gradient */}
       <motion.section
@@ -234,6 +236,7 @@ export default function MarketingPrototype() {
         </div>
       </div>
     </div>
+    </SelfHealingErrorBoundary>
   );
 }
 

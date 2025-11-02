@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Music, Play, Heart, Download, Search } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function MusicLibraryPage() {
   const [activeTab, setActiveTab] = useState("tango");
@@ -17,7 +18,8 @@ export default function MusicLibraryPage() {
   });
 
   return (
-    <PageLayout title="Music Library" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Music Library" fallbackRoute="/feed">
+      <PageLayout title="Music Library" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         
@@ -93,5 +95,7 @@ export default function MusicLibraryPage() {
         </Tabs>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

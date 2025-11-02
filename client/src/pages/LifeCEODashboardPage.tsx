@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function LifeCEODashboardPage() {
   const agents = [
@@ -37,7 +38,8 @@ export default function LifeCEODashboardPage() {
   };
 
   return (
-    <PageLayout title="Life CEO Dashboard" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Life CEO Dashboard" fallbackRoute="/dashboard">
+      <PageLayout title="Life CEO Dashboard" showBreadcrumbs>
 <>
       <SEO
         title="Life CEO Dashboard - Mundo Tango"
@@ -192,5 +194,7 @@ export default function LifeCEODashboardPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

@@ -19,6 +19,7 @@ import { AdaptiveButton } from "@/components/adaptive/AdaptiveButton";
 import { AdaptiveCard } from "@/components/adaptive/AdaptiveCard";
 import { ArrowDown, Sparkles, Music, Users, Heart, Globe, Calendar, MapPin, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function MarketingPrototypeEnhanced() {
   const heroRef = useRef(null);
@@ -32,6 +33,7 @@ export default function MarketingPrototypeEnhanced() {
   const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
 
   return (
+    <SelfHealingErrorBoundary pageName="Marketing Enhanced" fallbackRoute="/">
     <div className="min-h-screen bg-[var(--color-background)] overflow-x-hidden">
       {/* HERO SECTION - Burgundy Gradient */}
       <motion.section
@@ -275,6 +277,7 @@ export default function MarketingPrototypeEnhanced() {
         </div>
       </section>
     </div>
+    </SelfHealingErrorBoundary>
   );
 }
 

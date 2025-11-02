@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { MrBlueAvatarVideo } from '@/components/mrblue/MrBlueAvatarVideo';
 import type { VideoState } from '@/hooks/useVideoStateManager';
 import { Sparkles, Brain, Smile, Mic, MessageSquare, ThumbsUp, PartyPopper, AlertCircle, CheckCircle, ArrowLeft, ArrowRight } from 'lucide-react';
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 const VIDEO_STATES: { state: VideoState; icon: any; label: string; description: string }[] = [
   { state: 'idle', icon: Smile, label: 'Idle', description: 'Relaxed, gentle breathing' },
@@ -41,6 +42,7 @@ export default function MrBlueVideoDemo() {
   };
 
   return (
+    <SelfHealingErrorBoundary pageName="Mr Blue Video Demo" fallbackRoute="/dashboard">
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
@@ -172,5 +174,6 @@ export default function MrBlueVideoDemo() {
         </Card>
       </div>
     </div>
+    </SelfHealingErrorBoundary>
   );
 }

@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Mail, Check } from "lucide-react";
 import { useState } from "react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function NewsletterPage() {
   const [subscribed, setSubscribed] = useState(false);
@@ -15,7 +16,8 @@ export default function NewsletterPage() {
   };
 
   return (
-    <PageLayout title="Stay Connected with Tango" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Newsletter" fallbackRoute="/">
+      <PageLayout title="Stay Connected with Tango" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
         
@@ -95,5 +97,7 @@ export default function NewsletterPage() {
         </div>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Image, Video, Heart, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function MediaGalleryPage() {
   const [activeTab, setActiveTab] = useState("all");
@@ -14,7 +15,8 @@ export default function MediaGalleryPage() {
   });
 
   return (
-    <PageLayout title="Media Gallery" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Media Gallery" fallbackRoute="/feed">
+      <PageLayout title="Media Gallery" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         
@@ -76,5 +78,7 @@ export default function MediaGalleryPage() {
         </Tabs>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

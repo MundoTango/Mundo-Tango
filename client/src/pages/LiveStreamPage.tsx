@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Radio, Users, Eye, Calendar } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function LiveStreamPage() {
   const { data: streams, isLoading } = useQuery({
@@ -12,7 +13,8 @@ export default function LiveStreamPage() {
   });
 
   return (
-    <PageLayout title="Live Streams" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Live Streams" fallbackRoute="/feed">
+      <PageLayout title="Live Streams" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         
@@ -105,5 +107,7 @@ export default function LiveStreamPage() {
         )}
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

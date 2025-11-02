@@ -15,18 +15,45 @@ Mundo Tango is a social platform designed to connect the global tango community,
 
 The project utilizes a modular and agent-driven development approach, employing an Expert Specialized Agents (ESA) framework for parallel task execution and quality control.
 
-#### UI/UX Decisions
-The platform features a comprehensive **3-layer design token system** (Primitive → Semantic → Component) enabling instant theme switching across all 142 pages. Two distinct visual themes are implemented: **Bold Minimaximalist** (burgundy #b91c3b, 800 font weight, 6px radius, strong shadows) for 3 marketing pages, and **MT Ocean** (turquoise #14b8a6, 400 font weight, 16px radius, glassmorphic effects) for 139 platform pages. Theme switching is **automatic based on route** via ThemeProvider, with CSS variables applied at runtime. The system supports **easy theme changes** by modifying a single constant or adding new semantic token sets.
+#### Recent Updates (November 2025)
+**Design System Consolidation**:
+- Theme consolidated from tri-theme system to single **MT Ocean** theme across all 142 pages
+- Typography unified to 400-600 font weights (removed 800-900)
+- All route configs updated via `theme-routes.ts`
 
-The platform features a tango-inspired color palette with dark mode support, glassmorphic effects, Tailwind CSS + shadcn/ui components, responsive design, and custom typography. The layout is a three-column feed with a left sidebar for user profiles, a main content area, and a right sidebar for events, suggestions, and AI access. The frontend is built with React, TypeScript, Wouter for routing, and React Query for state management. Design research informed decisions like bold minimaximalist and interactive storytelling approaches, focusing on dark mode optimization, video-first design, and global accessibility.
+**Self-Healing Infrastructure**:
+- Created `SelfHealingErrorBoundary` component with pattern learning and auto-recovery (up to 3 attempts)
+- Wrapped **50/125 pages (40%)** in 2 batches across profile, settings, payment, auth, content, and onboarding pages
+- Features: Error pattern tracking, graceful degradation, multiple recovery options, localStorage persistence
+
+**Visual Editor Enhanced** (VisualEditorPage.tsx):
+- Added review complete checkbox with localStorage persistence
+- User permissions multi-select (7 levels: Public→God) with role-based filtering
+- AI code generation integration with OpenAI cost tracking and modal display
+
+**Friend Request Workflow** (FriendsListPage.tsx):
+- Media upload system supporting max 10 files (10MB each) with 3-column preview grid
+- Dance story fields: didWeDance checkbox, location input, story textarea
+- All interactive elements have proper data-testid attributes for testing
+
+**Housing Marketplace** (HostHomesPage.tsx):
+- 6-step host creation wizard: property details, location, pricing (multi-currency), 21 amenities (including tango-specific: dance_floor, sound_system, near_milongas), images, house rules
+- Advanced filtering sidebar: property type, price range, beds/baths, amenities, city/country search, friends-only toggle
+- Map/list view toggle with responsive design
+- Full integration with housing_listings database schema
+
+#### UI/UX Decisions
+The platform features a **unified MT Ocean theme** (turquoise #14b8a6, 400-600 font weights, 16px radius, glassmorphic effects) across **all 142 pages**. The tri-theme system (Bold Minimaximalist, Bold Ocean Hybrid) was consolidated in November 2025 to MT Ocean for consistency and simplified maintenance. The 3-layer design token system (Primitive → Semantic → Component) enables instant theme customization via CSS variables applied at runtime.
+
+The platform features a tango-inspired color palette with dark mode support, glassmorphic effects, Tailwind CSS + shadcn/ui components, responsive design, and custom typography (Inter font family). The layout is a three-column feed with a left sidebar for user profiles, a main content area, and a right sidebar for events, suggestions, and AI access. The frontend is built with React, TypeScript, Wouter for routing, and React Query for state management. Design focuses on dark mode optimization, video-first design, and global accessibility.
 
 **Design System Components**:
 - **Primitive Tokens** (`client/src/config/tokens/primitives.ts`): Raw color/spacing/typography values
-- **Semantic Tokens**: Bold theme (`semantic-bold.ts`) + Ocean theme (`semantic-ocean.ts`)
+- **Semantic Tokens**: MT Ocean theme (`semantic-ocean.ts`) applied to all routes
 - **Component Tokens** (`components.ts`): Button, card, typography, form tokens
-- **ThemeProvider** (`client/src/contexts/theme-context.tsx`): Route-based auto-detection
-- **Adaptive Components**: AdaptiveButton, AdaptiveCard, AdaptiveHeading (auto-switch between themes)
-- **Documentation**: Complete guides in `docs/` (DESIGN_TOKEN_SYSTEM.md, THEME_USAGE_GUIDE.md, COMPONENT_SHOWCASE.md, THEME_MIGRATION_GUIDE.md)
+- **ThemeProvider** (`client/src/contexts/theme-context.tsx`): Manages dark mode + MT Ocean theme
+- **Standard shadcn Components**: Button, Card, Badge, Dialog, etc. (used across all pages)
+- **Documentation**: Complete guides in `docs/` (DESIGN_TOKEN_SYSTEM.md, THEME_USAGE_GUIDE.md)
 
 #### Technical Implementations
 The backend uses Node.js with Express and TypeScript. Authentication is JWT-based with httpOnly cookies. PostgreSQL with Drizzle ORM serves as the database. Data access is facilitated by direct client interaction via a comprehensive storage interface. Real-time capabilities are provided by Supabase Realtime for various social features and a WebSocket notification system. Key features include a robust RBAC system (8-tier role hierarchy), a dynamic feature flag system with Redis, and integrated dynamic pricing management via Stripe.

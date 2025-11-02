@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowDown, Sparkles, Music, Users, Heart, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getThemeByName } from "@/config/theme";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 const theme = getThemeByName('ocean');
 
@@ -21,6 +22,7 @@ export default function MarketingPrototypeOcean() {
   const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
 
   return (
+    <SelfHealingErrorBoundary pageName="Marketing Ocean" fallbackRoute="/">
     <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Video Hero Section - MT Ocean Theme */}
       <motion.section
@@ -200,6 +202,7 @@ export default function MarketingPrototypeOcean() {
         </section>
       </ScrollRevealSection>
     </div>
+    </SelfHealingErrorBoundary>
   );
 }
 
