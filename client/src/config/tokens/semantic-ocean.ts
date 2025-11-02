@@ -95,7 +95,7 @@ export const mtOceanTokens = {
   // BORDERS
   borderWidth: '1px',
   borderColor: primitiveTokens.turquoise[500],
-  borderColorLight: primitiveTokens.turquoise[300],
+  borderColorLight: primitiveTokens.turquoise[400],
 } as const;
 
 export type MTOceanTokens = typeof mtOceanTokens;
