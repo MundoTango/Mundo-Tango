@@ -120,7 +120,7 @@ router.post('/validate-promo', authenticateToken, async (req: AuthRequest, res) 
     }
 
     // Check max redemptions
-    if (promo.maxRedemptions && promo.currentRedemptions >= promo.maxRedemptions) {
+    if (promo.maxRedemptions && (promo.currentRedemptions || 0) >= promo.maxRedemptions) {
       return res.status(400).json({ message: 'Promo code redemption limit reached' });
     }
 

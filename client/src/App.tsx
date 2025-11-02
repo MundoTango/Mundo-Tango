@@ -71,6 +71,7 @@ const RelationshipAgentPage = lazy(() => import("@/pages/life-ceo/RelationshipAg
 // Admin & ESA Framework
 const TalentPipelinePage = lazy(() => import("@/pages/admin/TalentPipelinePage"));
 const TaskBoardPage = lazy(() => import("@/pages/admin/TaskBoardPage"));
+const PricingManagerPage = lazy(() => import("@/pages/admin/PricingManagerPage"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
 const AdminUsersPage = lazy(() => import("@/pages/AdminUsersPage"));
 const ContentModerationPage = lazy(() => import("@/pages/ContentModerationPage"));
@@ -517,6 +518,14 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <UserReportsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/pricing-manager">
+        <ProtectedRoute>
+          <AppLayout>
+            <PricingManagerPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
