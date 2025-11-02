@@ -2,10 +2,17 @@ import { Router } from 'express';
 import { PricingManagerService } from '../services/PricingManagerService';
 import { authenticateToken, requireRoleLevel, optionalAuth, AuthRequest } from '../middleware/auth';
 import { db } from '@shared/db';
-import { pricingTiers, subscriptions, promoCodes } from '@shared/schema';
+import { pricingTiers, subscriptions, promoCodes, upgradeEvents, checkoutSessions, tierLimits } from '@shared/schema';
 import { eq, and } from 'drizzle-orm';
+import Stripe from 'stripe';
 
 const router = Router();
+
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY || process.env.TESTING_STRIPE_SECRET_KEY;
+if (!stripeSecretKey) {
+  console.warn('⚠️ Stripe not configured - checkout routes will fail');
+}
+const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, { apiVersion: '2025-10-29.clover' }) : null;
 
 // Get all active pricing tiers (public)
 router.get('/tiers', optionalAuth, async (req, res) => {
@@ -239,6 +246,228 @@ router.patch('/admin/tiers/:tierId/popular', authenticateToken, requireRoleLevel
   } catch (error) {
     console.error('Update popularity error:', error);
     res.status(500).json({ message: 'Error updating tier popularity' });
+  }
+});
+
+// ============================================================================
+// PHASE 2: CONVERSION BLOCKERS (Blocker 4: Upgrade Modal System)
+// ============================================================================
+
+// Create Stripe checkout session for tier upgrade
+router.post('/checkout-session', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    if (!req.userId) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+
+    if (!stripe) {
+      return res.status(503).json({ message: 'Payment system unavailable' });
+    }
+
+    const { tierId, billingInterval = 'monthly', promoCode } = req.body;
+
+    if (!tierId) {
+      return res.status(400).json({ message: 'tierId is required' });
+    }
+
+    const [tier] = await db.select().from(pricingTiers).where(eq(pricingTiers.id, tierId)).limit(1);
+    if (!tier) {
+      return res.status(404).json({ message: 'Tier not found' });
+    }
+
+    const priceId = billingInterval === 'annual' ? tier.stripeAnnualPriceId : tier.stripeMonthlyPriceId;
+    if (!priceId) {
+      return res.status(400).json({ message: `No ${billingInterval} price available for this tier` });
+    }
+
+    const amount = billingInterval === 'annual' ? tier.annualPrice || 0 : tier.monthlyPrice;
+
+    let promoCodeId: number | null = null;
+    if (promoCode) {
+      const [promo] = await db
+        .select()
+        .from(promoCodes)
+        .where(and(eq(promoCodes.code, promoCode), eq(promoCodes.isActive, true)))
+        .limit(1);
+      
+      if (promo) {
+        promoCodeId = promo.id;
+      }
+    }
+
+    const successUrl = `${req.headers.origin || 'http://localhost:5000'}/upgrade/success?session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${req.headers.origin || 'http://localhost:5000'}/upgrade/cancelled`;
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'subscription',
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      client_reference_id: req.userId.toString(),
+      metadata: {
+        userId: req.userId.toString(),
+        tierId: tierId.toString(),
+        billingInterval,
+      },
+    });
+
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    const [checkoutSession] = await db
+      .insert(checkoutSessions)
+      .values({
+        userId: req.userId,
+        stripeSessionId: session.id,
+        tierId,
+        priceId,
+        billingInterval,
+        amount,
+        promoCodeId,
+        status: 'pending',
+        expiresAt,
+        successUrl,
+        cancelUrl,
+        metadata: { sessionUrl: session.url },
+      })
+      .returning();
+
+    await db.insert(upgradeEvents).values({
+      userId: req.userId,
+      eventType: 'checkout_created',
+      featureName: null,
+      currentTier: 'free',
+      targetTier: tier.name,
+      currentQuota: null,
+      quotaLimit: null,
+      conversionCompleted: false,
+      checkoutSessionId: session.id,
+      metadata: { tierId, billingInterval },
+    });
+
+    res.json({ sessionId: session.id, url: session.url, checkoutSession });
+  } catch (error: any) {
+    console.error('Create checkout session error:', error);
+    res.status(500).json({ message: error.message || 'Error creating checkout session' });
+  }
+});
+
+// Track upgrade event (when user sees upgrade modal)
+router.post('/track-upgrade-event', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    if (!req.userId) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+
+    const { eventType, featureName, currentTier, targetTier, currentQuota, quotaLimit } = req.body;
+
+    if (!eventType || !currentTier) {
+      return res.status(400).json({ message: 'eventType and currentTier are required' });
+    }
+
+    const [event] = await db
+      .insert(upgradeEvents)
+      .values({
+        userId: req.userId,
+        eventType,
+        featureName,
+        currentTier,
+        targetTier,
+        currentQuota,
+        quotaLimit,
+        conversionCompleted: false,
+        checkoutSessionId: null,
+        metadata: req.body.metadata || {},
+      })
+      .returning();
+
+    res.json({ event });
+  } catch (error: any) {
+    console.error('Track upgrade event error:', error);
+    res.status(500).json({ message: error.message || 'Error tracking upgrade event' });
+  }
+});
+
+// ============================================================================
+// PHASE 2: ADMIN PRICING MANAGER UI (Blocker 10)
+// ============================================================================
+
+// Bulk toggle feature for tier (God/Super Admin only)
+router.post('/admin/toggle-feature-for-tier', authenticateToken, requireRoleLevel(7), async (req: AuthRequest, res) => {
+  try {
+    const { tierName, featureFlagId, limitValue, isUnlimited } = req.body;
+
+    if (!tierName || !featureFlagId) {
+      return res.status(400).json({ message: 'tierName and featureFlagId are required' });
+    }
+
+    const [existing] = await db
+      .select()
+      .from(tierLimits)
+      .where(
+        and(
+          eq(tierLimits.tierName, tierName),
+          eq(tierLimits.featureFlagId, featureFlagId)
+        )
+      )
+      .limit(1);
+
+    if (existing) {
+      const [updated] = await db
+        .update(tierLimits)
+        .set({ 
+          limitValue: isUnlimited ? null : limitValue,
+          isUnlimited: isUnlimited || false,
+          updatedAt: new Date() 
+        })
+        .where(eq(tierLimits.id, existing.id))
+        .returning();
+
+      return res.json({ limit: updated, action: 'updated' });
+    }
+
+    const [created] = await db
+      .insert(tierLimits)
+      .values({
+        tierName,
+        featureFlagId,
+        limitValue: isUnlimited ? null : limitValue,
+        isUnlimited: isUnlimited || false,
+      })
+      .returning();
+
+    res.json({ limit: created, action: 'created' });
+  } catch (error: any) {
+    console.error('Toggle feature error:', error);
+    res.status(500).json({ message: error.message || 'Error toggling feature' });
+  }
+});
+
+// Get all tier limits (for admin UI matrix)
+router.get('/admin/tier-limits', authenticateToken, requireRoleLevel(7), async (req: AuthRequest, res) => {
+  try {
+    const limits = await db.select().from(tierLimits);
+    
+    const matrix: Record<string, Record<number, { limitValue: number | null; isUnlimited: boolean }>> = {};
+    for (const limit of limits) {
+      if (!matrix[limit.tierName]) {
+        matrix[limit.tierName] = {};
+      }
+      matrix[limit.tierName][limit.featureFlagId] = {
+        limitValue: limit.limitValue,
+        isUnlimited: limit.isUnlimited || false,
+      };
+    }
+
+    res.json({ limits, matrix });
+  } catch (error) {
+    console.error('Get tier limits error:', error);
+    res.status(500).json({ message: 'Error fetching tier limits' });
   }
 });
 
