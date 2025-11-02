@@ -92,6 +92,7 @@
     "react-resizable-panels": "^2.1.7",
     "recharts": "^2.15.2",
     "speakeasy": "^2.0.0",
+    "stripe": "^19.2.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.169.0",

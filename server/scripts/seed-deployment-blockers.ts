@@ -164,8 +164,11 @@ async function seedDeploymentBlockers() {
   }
 }
 
-// Run if called directly
-if (require.main === module) {
+export { seedDeploymentBlockers };
+
+// Run if called directly (ES module compatible)
+const isMainModule = import.meta.url === `file://${process.argv[1]}`;
+if (isMainModule) {
   seedDeploymentBlockers()
     .then(() => {
       console.log('✅ Seeding completed successfully');
@@ -176,5 +179,3 @@ if (require.main === module) {
       process.exit(1);
     });
 }
-
-export { seedDeploymentBlockers };
