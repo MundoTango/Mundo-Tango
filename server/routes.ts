@@ -139,10 +139,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
               type: 'mention',
               title: 'You were mentioned',
               message: `Someone mentioned you in a post`,
-              relatedId: post.id,
-              relatedType: 'post',
+              data: JSON.stringify({ postId: post.id, relatedType: 'post' }),
               actionUrl: `/feed#post-${post.id}`,
-              read: false
+              isRead: false
             });
             
             wsNotificationService.sendNotification(mentionedUserId, {

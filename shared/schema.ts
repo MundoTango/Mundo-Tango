@@ -286,16 +286,15 @@ export const notifications = pgTable("notifications", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   type: varchar("type").notNull(),
-  title: text("title").notNull(),
+  title: varchar("title").notNull(),
   message: text("message").notNull(),
-  relatedId: integer("related_id"),
-  relatedType: varchar("related_type"),
+  data: text("data").$type<string>(),
+  isRead: boolean("is_read").default(false).notNull(),
   actionUrl: text("action_url"),
-  read: boolean("read").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 }, (table) => ({
   userIdx: index("notifications_user_idx").on(table.userId),
-  readIdx: index("notifications_read_idx").on(table.read),
+  readIdx: index("notifications_read_idx").on(table.isRead),
   createdAtIdx: index("notifications_created_at_idx").on(table.createdAt),
 }));
 
