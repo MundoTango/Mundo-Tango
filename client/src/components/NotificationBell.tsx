@@ -37,7 +37,7 @@ export function NotificationBell() {
 
   return (
     <Popover>
-      <PopoverTrigger asChild><Button variant="ghost" size="icon" className="relative" data-testid="button-notification-bell"><Bell className="h-5 w-5" />{unreadCount > 0 && (<Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs" data-testid="badge-unread-count">{unreadCount > 9 ? "9+" : unreadCount}</Badge>)}</Button></PopoverTrigger>
+      <PopoverTrigger asChild><Button variant="ghost" size="icon" className="relative" data-testid="button-notification-bell"><span className="relative flex items-center justify-center"><Bell className="h-5 w-5" />{unreadCount > 0 && (<Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs" data-testid="badge-unread-count">{unreadCount > 9 ? "9+" : unreadCount}</Badge>)}</span></Button></PopoverTrigger>
       <PopoverContent className="w-80 p-0" align="end" data-testid="popover-notifications">
         <div className="flex items-center justify-between p-4 border-b">
           <h3 className="font-semibold">Notifications</h3>
