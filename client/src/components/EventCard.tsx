@@ -56,14 +56,14 @@ export function EventCard({ event, onRSVP, userRSVPStatus }: EventCardProps) {
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
             <span data-testid={`text-event-date-${event.id}`}>
-              {format(new Date(event.startDate), "EEE, MMM d, yyyy")}
+              {format(new Date(event.startDate || Date.now()), "EEE, MMM d, yyyy")}
             </span>
           </div>
           
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4" />
             <span data-testid={`text-event-time-${event.id}`}>
-              {format(new Date(event.startDate), "h:mm a")} - {format(new Date(event.endDate), "h:mm a")}
+              {format(new Date(event.startDate || Date.now()), "h:mm a")} - {format(new Date(event.endDate || Date.now()), "h:mm a")}
             </span>
           </div>
           
@@ -98,7 +98,7 @@ export function EventCard({ event, onRSVP, userRSVPStatus }: EventCardProps) {
           <div className="flex items-center gap-2 text-sm">
             <Users className="h-4 w-4" />
             <span className="text-muted-foreground" data-testid={`text-event-attendees-${event.id}`}>
-              {event.attendeeCount} attending
+              {event.attendingCount || 0} attending
             </span>
             {event.maxAttendees && (
               <span className="text-muted-foreground">/ {event.maxAttendees}</span>
@@ -117,7 +117,7 @@ export function EventCard({ event, onRSVP, userRSVPStatus }: EventCardProps) {
           )}
         </div>
         
-        {event.price !== null && event.price > 0 && (
+        {event.price !== null && (typeof event.price === 'number') && event.price > 0 && (
           <div className="pt-2 border-t">
             <span className="font-semibold" data-testid={`text-event-price-${event.id}`}>
               ${event.price}

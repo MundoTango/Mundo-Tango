@@ -44,10 +44,10 @@ export default function GroupsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {groups.map((group) => (
             <Card key={group.id} className="overflow-hidden" data-testid={`card-group-${group.id}`}>
-              {group.coverPhoto && (
+              {group.coverImage && (
                 <div className="h-32 w-full overflow-hidden">
                   <img
-                    src={group.coverPhoto}
+                    src={group.coverImage}
                     alt={group.name}
                     className="w-full h-full object-cover"
                   />
@@ -57,7 +57,7 @@ export default function GroupsPage() {
                 <CardTitle data-testid="text-group-name">{group.name}</CardTitle>
                 <CardDescription className="flex items-center gap-2">
                   <Users className="h-4 w-4" />
-                  {group.memberCount || 0} members · {group.groupType}
+                  {group.memberCount || 0} members · {group.type || 'Group'}
                 </CardDescription>
               </CardHeader>
               <CardContent>

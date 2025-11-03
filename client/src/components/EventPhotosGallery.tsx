@@ -129,7 +129,7 @@ export function EventPhotosGallery({
                           </Avatar>
                           <div className="text-sm">
                             <p className="text-muted-foreground">
-                              Uploaded {formatDistanceToNow(new Date(photo.createdAt), { addSuffix: true })}
+                              Uploaded {formatDistanceToNow(new Date(photo.createdAt || Date.now()), { addSuffix: true })}
                             </p>
                           </div>
                         </div>

@@ -34,7 +34,7 @@ export function GroupCard({ group, onJoin, isJoined }: GroupCardProps) {
               </Link>
               
               <div className="flex items-center gap-2 mt-1 flex-wrap">
-                {group.privacy === 'private' ? (
+                {group.type === 'private' ? (
                   <Badge variant="secondary" className="text-xs gap-1">
                     <Lock className="h-3 w-3" />
                     Private
@@ -81,10 +81,10 @@ export function GroupCard({ group, onJoin, isJoined }: GroupCardProps) {
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
             <Calendar className="h-3 w-3" />
-            Created {formatDistanceToNow(new Date(group.createdAt), { addSuffix: true })}
+            Created {formatDistanceToNow(new Date(group.createdAt || Date.now()), { addSuffix: true })}
           </span>
-          {group.postCount > 0 && (
-            <span>{group.postCount} posts</span>
+          {(group.postCount || 0) > 0 && (
+            <span>{group.postCount || 0} posts</span>
           )}
         </div>
       </CardContent>

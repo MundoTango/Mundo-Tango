@@ -148,7 +148,7 @@ export function EventCommentsSection({
           
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <span data-testid={`text-comment-time-${comment.id}`}>
-              {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+              {formatDistanceToNow(new Date(comment.createdAt || Date.now()), { addSuffix: true })}
             </span>
             {!isReply && (
               <Button 

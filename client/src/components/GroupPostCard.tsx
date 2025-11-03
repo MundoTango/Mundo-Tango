@@ -58,7 +58,7 @@ export function GroupPostCard({
                 )}
               </div>
               <span className="text-xs text-muted-foreground" data-testid={`text-post-time-${post.id}`}>
-                {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+                {formatDistanceToNow(new Date(post.createdAt || Date.now()), { addSuffix: true })}
               </span>
             </div>
           </div>
@@ -107,9 +107,9 @@ export function GroupPostCard({
           {post.content}
         </div>
         
-        {post.media && post.media.length > 0 && (
+        {post.mediaUrls && post.mediaUrls.length > 0 && (
           <div className="grid grid-cols-2 gap-2">
-            {post.media.slice(0, 4).map((url, idx) => (
+            {post.mediaUrls.slice(0, 4).map((url: string, idx: number) => (
               <img 
                 key={idx}
                 src={url} 

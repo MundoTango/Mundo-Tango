@@ -36,7 +36,7 @@ function EventCard({ event }: { event: EventWithProfile }) {
     },
   });
 
-  const userRsvp = eventRsvps?.find((r) => r.user_id === user?.id);
+  const userRsvp = eventRsvps?.find((r) => String(r.user_id) === String(user?.id));
   const isRsvped = userRsvp?.status === "going";
   const isFull = attendance?.capacity && attendance.attending >= attendance.capacity;
 

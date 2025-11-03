@@ -52,7 +52,7 @@ export function GroupMembers({
       <CardContent>
         <div className="space-y-3">
           {members.map((member) => {
-            const roleBadge = getRoleBadge(member.role);
+            const roleBadge = getRoleBadge(member.role || 'member');
             const RoleIcon = roleBadge.icon;
             
             return (
@@ -80,7 +80,7 @@ export function GroupMembers({
                       </Badge>
                     </div>
                     <span className="text-xs text-muted-foreground" data-testid={`text-member-joined-${member.userId}`}>
-                      Joined {formatDistanceToNow(new Date(member.joinedAt), { addSuffix: true })}
+                      Joined {formatDistanceToNow(new Date(member.joinedAt || Date.now()), { addSuffix: true })}
                     </span>
                   </div>
                 </div>
