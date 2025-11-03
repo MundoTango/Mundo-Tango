@@ -1,15 +1,32 @@
 import { Link, useLocation } from "wouter";
-import { Bell, User, Moon, Sun, MessageSquare, Heart, Settings, HelpCircle } from "lucide-react";
+import { Bell, Moon, Sun, MessageSquare, Heart, Settings, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/hooks/use-theme";
-import { SearchBar } from "./SearchBar";
-import { LanguageSelectorButton } from "./LanguageSelector";
+import { SearchBar } from "../SearchBar";
+import { LanguageSelectorButton } from "../LanguageSelector";
 
-export function GlobalTopbar() {
+/**
+ * ESA TOP NAVIGATION BAR
+ * Mirror of GlobalTopbar with documented button placement
+ * 
+ * Layout (left to right):
+ * - Logo → / (redirects to /memories)
+ * - Search Bar (center)
+ * - Language Selector
+ * - Theme Toggle
+ * - Favorites ❤️ → /favorites
+ * - Messages 💬 → /messages
+ * - Notifications 🔔 → /notifications
+ * - Mr Blue AI → /mr-blue-chat
+ * - Settings ⚙️ → /settings
+ * - Help ❓ → /help
+ * - User Menu
+ */
+export function TopNavigationBar() {
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const [, setLocation] = useLocation();
@@ -18,9 +35,9 @@ export function GlobalTopbar() {
   const unreadMessages = 5; // TODO: Get from API
 
   return (
-    <header className="glass-topbar sticky top-0 z-50 w-full" data-testid="global-topbar">
+    <header className="glass-topbar sticky top-0 z-50 w-full" data-testid="esa-topbar">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
-        {/* E101 - Logo */}
+        {/* Logo */}
         <Link href="/">
           <div className="flex items-center gap-2 hover-elevate px-3 py-2 rounded-lg cursor-pointer" data-testid="link-logo">
             <div className="w-8 h-8 ocean-gradient rounded-lg flex items-center justify-center">
@@ -30,17 +47,17 @@ export function GlobalTopbar() {
           </div>
         </Link>
 
-        {/* E102 - Search */}
+        {/* Global Search */}
         <div className="flex-1 max-w-2xl">
           <SearchBar />
         </div>
 
         {/* Right side actions */}
         <div className="flex items-center gap-2">
-          {/* E106 - Language Switcher */}
+          {/* Language Selector */}
           <LanguageSelectorButton />
 
-          {/* E105 - Theme Toggle */}
+          {/* Theme Toggle */}
           <Button
             variant="ghost"
             size="icon"
@@ -74,7 +91,7 @@ export function GlobalTopbar() {
             </Button>
           </Link>
 
-          {/* E103 - Notifications */}
+          {/* Notifications */}
           <Link href="/notifications">
             <Button variant="ghost" size="icon" className="relative" data-testid="button-notifications">
               <span className="relative flex items-center justify-center">
@@ -91,8 +108,8 @@ export function GlobalTopbar() {
             </Button>
           </Link>
 
-          {/* E107 - Mr Blue AI */}
-          <Link href="/mr-blue">
+          {/* Mr Blue AI */}
+          <Link href="/mr-blue-chat">
             <Button 
               variant="ghost" 
               size="icon" 
@@ -117,7 +134,7 @@ export function GlobalTopbar() {
             </Button>
           </Link>
 
-          {/* E104 - User Menu */}
+          {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full" data-testid="button-user-menu">

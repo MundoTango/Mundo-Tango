@@ -137,7 +137,14 @@ export function AppSidebar() {
             <SidebarMenu>
               {socialItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}><Link to={item.url}><item.icon className="h-5 w-5" /><span>{item.title}</span></Link></SidebarMenuButton>
+                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                    <Link to={item.url}>
+                      <>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </>
+                    </Link>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -151,7 +158,14 @@ export function AppSidebar() {
             <SidebarMenu>
               {communityItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}><Link to={item.url}><item.icon className="h-5 w-5" /><span>{item.title}</span></Link></SidebarMenuButton>
+                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                    <Link to={item.url}>
+                      <>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </>
+                    </Link>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -165,7 +179,14 @@ export function AppSidebar() {
             <SidebarMenu>
               {eventsItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}><Link to={item.url}><item.icon className="h-5 w-5" /><span>{item.title}</span></Link></SidebarMenuButton>
+                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                    <Link to={item.url}>
+                      <>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </>
+                    </Link>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -179,7 +200,14 @@ export function AppSidebar() {
             <SidebarMenu>
               {tangoItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}><Link to={item.url}><item.icon className="h-5 w-5" /><span>{item.title}</span></Link></SidebarMenuButton>
+                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                    <Link to={item.url}>
+                      <>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </>
+                    </Link>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -193,7 +221,14 @@ export function AppSidebar() {
             <SidebarMenu>
               {resourcesItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}><Link to={item.url}><item.icon className="h-5 w-5" /><span>{item.title}</span></Link></SidebarMenuButton>
+                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                    <Link to={item.url}>
+                      <>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </>
+                    </Link>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -207,7 +242,14 @@ export function AppSidebar() {
             <SidebarMenu>
               {toolsItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}><Link to={item.url}><item.icon className="h-5 w-5" /><span>{item.title}</span></Link></SidebarMenuButton>
+                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                    <Link to={item.url}>
+                      <>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </>
+                    </Link>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -221,7 +263,14 @@ export function AppSidebar() {
             <SidebarMenu>
               {personalItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}><Link to={item.url}><item.icon className="h-5 w-5" /><span>{item.title}</span></Link></SidebarMenuButton>
+                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                    <Link to={item.url}>
+                      <>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </>
+                    </Link>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -238,7 +287,14 @@ export function AppSidebar() {
                 <SidebarMenu>
                   {adminItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}><Link to={item.url}><item.icon className="h-5 w-5" /><span>{item.title}</span></Link></SidebarMenuButton>
+                      <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                        <Link to={item.url}>
+                          <>
+                            <item.icon className="h-5 w-5" />
+                            <span>{item.title}</span>
+                          </>
+                        </Link>
+                      </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
                 </SidebarMenu>
@@ -255,7 +311,14 @@ export function AppSidebar() {
               <SidebarMenu>
                 {esaItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}><Link to={item.url}><item.icon className="h-5 w-5" /><span>{item.title}</span></Link></SidebarMenuButton>
+                    <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                      <Link to={item.url}>
+                        <>
+                          <item.icon className="h-5 w-5" />
+                          <span>{item.title}</span>
+                        </>
+                      </Link>
+                    </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
               </SidebarMenu>

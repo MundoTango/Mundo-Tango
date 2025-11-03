@@ -193,7 +193,7 @@ const VisualEditorPage = lazy(() => import("@/pages/VisualEditorPage"));
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={HomePage} />
+      <Route path="/" component={MemoriesPage} />
       <Route path="/marketing-prototype" component={MarketingPrototype} />
       <Route path="/marketing-prototype-enhanced" component={MarketingPrototypeEnhanced} />
       <Route path="/marketing-prototype-ocean" component={MarketingPrototypeOcean} />
