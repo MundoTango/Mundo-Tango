@@ -12,6 +12,7 @@ import {
   uniqueIndex,
   real,
   unique,
+  numeric,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -147,23 +148,28 @@ export const eventRsvps = pgTable("event_rsvps", {
 
 export const groups = pgTable("groups", {
   id: serial("id").primaryKey(),
-  creatorId: integer("creator_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  name: text("name").notNull(),
-  description: text("description").notNull(),
-  avatar: text("avatar"),
-  coverPhoto: text("cover_photo"),
-  groupType: varchar("group_type").notNull(),
-  category: varchar("category"),
-  location: text("location"),
+  name: varchar("name").notNull(),
+  slug: varchar("slug").notNull().unique(),
+  type: varchar("type").notNull(),
+  roleType: varchar("role_type"),
+  emoji: varchar("emoji"),
+  imageUrl: text("image_url"),
+  coverImage: text("coverImage"),
+  description: text("description"),
+  isPrivate: boolean("is_private").default(false).notNull(),
+  visibility: varchar("visibility").default("public").notNull(),
   city: varchar("city"),
   country: varchar("country"),
-  rules: text("rules"),
+  latitude: numeric("latitude"),
+  longitude: numeric("longitude"),
   memberCount: integer("member_count").default(0).notNull(),
+  createdBy: integer("created_by").references(() => users.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => ({
-  creatorIdx: index("groups_creator_idx").on(table.creatorId),
-  nameIdx: index("groups_name_idx").on(table.name),
+  slugIdx: index("groups_slug_idx").on(table.slug),
+  typeIdx: index("groups_type_idx").on(table.type),
+  cityIdx: index("groups_city_idx").on(table.city),
 }));
 
 export const groupMembers = pgTable("group_members", {
