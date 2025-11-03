@@ -160,7 +160,7 @@ export default function FeedPage() {
         // Search for mentions
         if (textAfterAt.length > 0) {
           try {
-            const response = await apiRequest('GET', `/api/mentions/search?query=${encodeURIComponent(textAfterAt)}`);
+            const response = await apiRequest('GET', `/api/mentions/search?q=${encodeURIComponent(textAfterAt)}`);
             const results = await response.json();
             setMentionResults(results || []);
           } catch (error) {
