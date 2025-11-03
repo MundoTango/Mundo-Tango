@@ -296,6 +296,42 @@ router.get("/esa/communications", async (req: AuthRequest, res: Response) => {
   }
 });
 
+// POST /api/platform/esa/communications - Create new communication (ESCALATION/NOTIFICATIONS)
+router.post("/esa/communications", async (req: AuthRequest, res: Response) => {
+  try {
+    const {
+      messageType = 'escalation',
+      subject,
+      message,
+      priority = 'urgent',
+      taskId,
+      communicationType = 'A2A', // Agent-to-Agent by default
+    } = req.body;
+
+    // Create communication record
+    const comm = await db.insert(agentCommunications).values({
+      communicationType,
+      messageType,
+      subject,
+      message,
+      priority,
+      taskId,
+      requiresResponse: priority === 'urgent' || priority === 'high',
+    }).returning();
+
+    console.log(`[ESA Communications] Created ${messageType} message: ${subject}`);
+
+    res.json({
+      success: true,
+      communication: comm[0],
+      message: 'Communication sent to ESA framework',
+    });
+  } catch (error: any) {
+    console.error('[ESA Communications] Failed to create communication:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // GET /api/platform/esa/communications/stats - Get communication statistics
 router.get("/esa/communications/stats", async (req: AuthRequest, res: Response) => {
   try {

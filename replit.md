@@ -38,6 +38,21 @@ The project utilizes a modular and agent-driven development approach, employing 
   - Fixed GitRepositoryPage.tsx external link (ExternalLink icon + text - line 70-73)
   - **Pattern Rule**: Wrap multiple children in `<>` fragment when using `asChild` prop (Radix UI requires EXACTLY ONE child)
   - **Total Fixed**: 7 components, 35+ asChild instances scanned
+- **ESA Escalation System Integrated (MB.MD Wave 2 - Nov 3, 2025)**: TRUE auto-healing with intelligent ESA escalation
+  - **localStorage Persistence Fix**: Retry count persists across page reloads (prevents infinite loop from `window.location.reload()`)
+  - **30-Second Cooldown**: Auto-reset retry count after cooldown period
+  - **4-Layer Defense System**:
+    1. **Instant Auto-Fix (100ms)**: React.Children.only errors, known patterns
+    2. **Gradual Self-Healing (1-4s)**: Network errors, chunk loading, exponential backoff
+    3. **Mr Blue AI Analysis (3s)**: Groq SDK intelligent diagnosis with structured JSON response
+    4. **ESA ESCALATION (NEW)**: After 3 failed attempts, automatically escalate to colleague agents and manager
+  - **ESA Integration**:
+    - Created POST `/api/platform/esa/tasks` endpoint (creates critical tasks for DEBUG-001 agent)
+    - Created POST `/api/platform/esa/communications` endpoint (notifies manager via A2A messaging)
+    - Self-healing boundary calls both endpoints after max retries exceeded
+    - Tasks visible in ESA Dashboard (`/esa/tasks`) for God/Super Admin
+  - **Documentation**: Complete guide in `docs/SELF-HEALING-ESA-ESCALATION.md`
+  - **Zero Infinite Loops**: Production-ready with proper exit conditions
 - **Playwright Login Loop Fixed (MB.MD Protocol)**:
   - **Nested Link Bug**: Fixed LoginPage.tsx nested `<a>` tags (wouter `<Link>` already creates `<a>`)
   - **Layout Nesting**: Removed triple-nested layouts (SelfHealingErrorBoundary → PageLayout → PublicLayout)
