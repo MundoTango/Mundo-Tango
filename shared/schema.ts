@@ -277,7 +277,7 @@ export const eventPhotos = pgTable("event_photos", {
   idxFeatured: index("event_photos_featured_idx").on(table.isFeatured),
 }));
 
-export const eventComments: any = pgTable("event_comments", {
+export const eventComments = pgTable("event_comments", {
   id: serial("id").primaryKey(),
   eventId: integer("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
   userId: integer("user_id").notNull().references(() => users.id),
