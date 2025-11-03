@@ -638,7 +638,7 @@ describe('VisualEditorPage', () => {
 ### E2E Tests
 ```typescript
 test('Visual Editor - Complete workflow', async ({ page }) => {
-  await page.goto('/visual-editor');
+  await page.goto('/admin/visual-editor');
   
   // Add components
   await page.click('[data-testid="button-add-heading"]');

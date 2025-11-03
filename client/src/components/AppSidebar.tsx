@@ -24,6 +24,7 @@ import {
   Star,
   ListChecks,
   Network,
+  Layout,
 } from "lucide-react";
 import { useLocation } from "wouter";
 import {
@@ -93,10 +94,11 @@ const personalItems = [
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
-// Admin (2 items - role-based)
+// Admin (3 items - role-based)
 const adminItems = [
   { title: "Admin", url: "/admin", icon: Shield },
   { title: "Platform", url: "/platform", icon: Server },
+  { title: "Visual Editor", url: "/admin/visual-editor", icon: Layout },
 ];
 
 // ESA Framework (3 items - God/Super Admin only)

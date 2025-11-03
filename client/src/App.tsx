@@ -747,7 +747,7 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
-      <Route path="/visual-editor">
+      <Route path="/admin/visual-editor">
         <ProtectedRoute>
           <AppLayout>
             <VisualEditorPage />

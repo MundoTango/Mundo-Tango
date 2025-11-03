@@ -1,6 +1,6 @@
 ### Overview
 
-Mundo Tango is a social platform designed to connect the global tango community, including dancers, teachers, organizers, and enthusiasts. Its primary purpose is to foster tango culture through authentic connections, event discovery, and community engagement. The platform aims for independence and features comprehensive social networking capabilities, robust event management, an advanced talent matching system, and AI-powered personal assistants (Life CEO agents). It incorporates a visual editor and an agent-driven architecture (ESA Framework) for functions such as content moderation and user recommendations. The project currently features **133 operational pages** (136 total .tsx files including 3 legacy duplicates), 263 database tables, and 50+ production-ready algorithms to enhance user experience and engagement. The business vision is to become the leading digital hub for the global tango ecosystem, offering market potential for premium services, event monetization, and targeted advertising, with the ambition to scale internationally and become synonymous with tango online.
+Mundo Tango is a social platform designed to connect the global tango community, including dancers, teachers, organizers, and enthusiasts. Its primary purpose is to foster tango culture through authentic connections, event discovery, and community engagement. The platform aims for independence and features comprehensive social networking capabilities, robust event management, an advanced talent matching system, and AI-powered personal assistants (Life CEO agents). It incorporates a visual editor and an agent-driven architecture (ESA Framework) for functions such as content moderation and user recommendations. The project currently features **142 operational pages** (all routes 100% complete), 268 database tables (5 new tables added), 68 language support via i18next, and 50+ production-ready algorithms to enhance user experience and engagement. The business vision is to become the leading digital hub for the global tango ecosystem, offering market potential for premium services, event monetization, and targeted advertising, with the ambition to scale internationally and become synonymous with tango online.
 
 ### User Preferences
 
@@ -16,6 +16,16 @@ Mundo Tango is a social platform designed to connect the global tango community,
 The project utilizes a modular and agent-driven development approach, employing an Expert Specialized Agents (ESA) framework for parallel task execution and quality control.
 
 #### Recent Updates (November 2025)
+**MB.MD Wave 1 Complete (December 2025)**:
+- **8 Missing Routes Implemented** (142/142 = 100%): MemoriesPage, CommunityWorldMapPage, RecommendationsPage, InvitationsPage, FavoritesPage, ESADashboardPage, ESATasksPage, ESACommunicationsPage
+- **Database Expansion**: Added 5 tables (memories, recommendations, roleInvitations, favorites, communityStats) with 25+ CRUD methods in storage.ts
+- **API Routes**: Created 8 route groups with 15 total endpoints for new features (memories, recommendations, community-map, invitations, favorites, ESA platform)
+- **Navigation Enhancement**: Sidebar expanded from 20 to 27 items (35% increase), including new ESA Framework section (God/Super Admin only)
+- **i18n Infrastructure**: Complete setup with i18next, 68 language support, 6 priority languages (en, es, pt, fr, de, it), LanguageSelector component integrated in GlobalTopbar
+- **Production README**: Created comprehensive 802-line README.md with tech stack, quick start, project structure, and documentation links
+- **Testing Expansion**: Generated 95 new E2E tests across 8 test files (memories.spec.ts, community-map.spec.ts, recommendations.spec.ts, invitations.spec.ts, favorites.spec.ts, esa-framework.spec.ts, esa-tasks.spec.ts, esa-communications.spec.ts)
+- **Zero LSP Errors**: Fixed all 22 TypeScript errors across 6 new pages
+
 **Design System Consolidation**:
 - Theme consolidated from tri-theme system to single **MT Ocean** theme across all 142 pages
 - Typography unified to 400-600 font weights (removed 800-900)
