@@ -52,15 +52,12 @@ const categoryColors = {
 };
 
 export default function FavoritesPage() {
-  const { data: favorites = [], isLoading } = useQuery<Favorite[]>({
+  const { data, isLoading } = useQuery<{ favorites: Favorite[]; total: number }>({
     queryKey: ["/api/favorites"],
   });
 
-  const { data: stats } = useQuery<{
-    total: number;
-  }>({
-    queryKey: ["/api/favorites/stats"],
-  });
+  const favorites = data?.favorites || [];
+  const total = data?.total || 0;
 
   const favoritesByType = {
     event: favorites.filter(f => f.itemType === 'event'),
@@ -181,7 +178,7 @@ export default function FavoritesPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold" data-testid="text-total-favorites">
-                    {stats?.total || 0}
+                    {total}
                   </div>
                 </CardContent>
               </Card>
