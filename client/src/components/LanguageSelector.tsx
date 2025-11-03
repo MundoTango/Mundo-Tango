@@ -104,11 +104,13 @@ export function LanguageSelector() {
         className="w-[180px]" 
         data-testid="button-language-selector"
       >
-        <Globe className="h-4 w-4 mr-2" />
-        <SelectValue>
-          {currentLanguage.flag && <span className="mr-2">{currentLanguage.flag}</span>}
-          {currentLanguage.nativeName}
-        </SelectValue>
+        <>
+          <Globe className="h-4 w-4 mr-2" />
+          <SelectValue>
+            {currentLanguage.flag && <span className="mr-2">{currentLanguage.flag}</span>}
+            {currentLanguage.nativeName}
+          </SelectValue>
+        </>
       </SelectTrigger>
       <SelectContent className="max-h-[400px]">
         {languages.map((language) => (
