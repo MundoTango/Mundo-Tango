@@ -17,7 +17,9 @@ import {
   Plus 
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { PageLayout } from "@/components/PageLayout";
+import { SEO } from "@/components/SEO";
+import { FeedLeftSidebar } from "@/components/FeedLeftSidebar";
+import { FeedRightSidebar } from "@/components/FeedRightSidebar";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 interface Memory {
@@ -62,25 +64,31 @@ export default function MemoriesPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Memories" fallbackRoute="/feed">
-      <PageLayout title="My Tango Memories" showBreadcrumbs>
-        <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-8 px-4">
-          <div className="container mx-auto max-w-6xl space-y-8">
-            {/* Header with stats */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <>
+        <SEO
+          title="My Tango Memories"
+          description="Your personal timeline of tango milestones, moments, and memories from around the world."
+        />
+        <div className="flex min-h-screen bg-background">
+          <FeedLeftSidebar />
+          
+          <main className="flex-1 max-w-3xl p-6 space-y-6">
+            {/* Header */}
+            <div className="flex items-center justify-between gap-4">
               <div>
-                <h1 className="text-4xl font-bold font-serif text-foreground" data-testid="text-page-title">
+                <h1 className="text-3xl font-bold text-foreground" data-testid="text-page-title">
                   My Tango Journey
                 </h1>
-                <p className="text-muted-foreground mt-2">
-                  Your personal timeline of milestones, moments, and memories
+                <p className="text-muted-foreground text-sm mt-1">
+                  Your personal timeline of milestones and memories
                 </p>
               </div>
               <Button 
-                size="lg"
+                size="default"
                 className="gap-2"
                 data-testid="button-create-memory"
               >
-                <Plus className="h-5 w-5" />
+                <Plus className="h-4 w-4" />
                 Add Memory
               </Button>
             </div>
@@ -267,9 +275,11 @@ export default function MemoriesPage() {
                 </Card>
               </TabsContent>
             </Tabs>
-          </div>
+          </main>
+          
+          <FeedRightSidebar />
         </div>
-      </PageLayout>
+      </>
     </SelfHealingErrorBoundary>
   );
 }
