@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 const agents = [
   { id: "A1", name: "Goals.Agent", icon: Target, description: "Goal setting & tracking", route: "/life-ceo/goals" },
@@ -52,8 +53,9 @@ export default function LifeCEODashboard() {
   const { data: tasks = [] } = useQuery({ queryKey: ["/api/life-ceo/tasks"] });
 
   return (
-    <PageLayout title="Life CEO" showBreadcrumbs>
-<div className="container mx-auto py-8 px-4">
+    <SelfHealingErrorBoundary pageName="LifeCEODashboard" fallbackRoute="/feed">
+      <PageLayout title="Life CEO" showBreadcrumbs>
+        <div className="container mx-auto py-8 px-4">
       
 
       {/* Active Goals */}
@@ -133,6 +135,8 @@ export default function LifeCEODashboard() {
           ))}
         </div>
       </div>
-    </div>
-    </PageLayout>);
+        </div>
+      </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

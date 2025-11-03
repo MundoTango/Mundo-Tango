@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Apple, Utensils, Droplets, TrendingUp, Target, Flame } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function NutritionAgentPage() {
   const stats = [
@@ -27,6 +28,7 @@ export default function NutritionAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="NutritionAgentPage" fallbackRoute="/life-ceo">
     <PageLayout title="Nutrition Agent" showBreadcrumbs>
 <>
       <SEO
@@ -160,5 +162,6 @@ export default function NutritionAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

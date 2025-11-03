@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Plane, MapPin, Calendar, DollarSign, Briefcase, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function TravelAgentPage() {
   const upcomingTrips = [
@@ -18,6 +19,7 @@ export default function TravelAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="TravelAgentPage" fallbackRoute="/life-ceo">
     <PageLayout title="Travel Agent" showBreadcrumbs>
 <>
       <SEO
@@ -127,5 +129,6 @@ export default function TravelAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

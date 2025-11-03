@@ -6,6 +6,7 @@ import { SEO } from "@/components/SEO";
 import { BookOpen, PlayCircle, CheckCircle2, TrendingUp, Award, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function LearningAgentPage() {
   const [activeCourses] = useState([
@@ -34,6 +35,7 @@ export default function LearningAgentPage() {
   };
 
   return (
+    <SelfHealingErrorBoundary pageName="LearningAgentPage" fallbackRoute="/life-ceo">
     <PageLayout title="Learning Agent" showBreadcrumbs>
 <>
       <SEO
@@ -201,5 +203,6 @@ export default function LearningAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

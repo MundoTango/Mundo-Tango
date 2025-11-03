@@ -6,6 +6,7 @@ import { Sparkles, Users, Calendar, MapPin } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function WelcomePage() {
   const [, navigate] = useLocation();
@@ -22,8 +23,9 @@ export default function WelcomePage() {
   };
 
   return (
-    <PageLayout title="Welcome" showBreadcrumbs>
-<>
+    <SelfHealingErrorBoundary pageName="OnboardingWelcome" fallbackRoute="/feed">
+      <PageLayout title="Welcome" showBreadcrumbs>
+        <>
       <SEO
         title="Welcome to Mundo Tango"
         description="Complete your profile and join the global tango community"
@@ -101,7 +103,9 @@ export default function WelcomePage() {
             </Button>
           </CardFooter>
         </Card>
-      </div>
-    </>
-    </PageLayout>);
+        </div>
+        </>
+      </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

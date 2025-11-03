@@ -9,6 +9,7 @@ import { MapPin, Loader2 } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 interface CitySuggestion {
   display_name: string;
@@ -127,8 +128,9 @@ export default function CitySelectionPage() {
   };
 
   return (
-    <>
-      <SEO title="Select Your City - Mundo Tango" description="Choose your city and join your local tango community" />
+    <SelfHealingErrorBoundary pageName="OnboardingCitySelection" fallbackRoute="/onboarding/welcome">
+      <>
+        <SEO title="Select Your City - Mundo Tango" description="Choose your city and join your local tango community" />
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
         <Card className="w-full max-w-md">
           <CardHeader>
@@ -215,6 +217,7 @@ export default function CitySelectionPage() {
           </CardFooter>
         </Card>
       </div>
-    </>
+      </>
+    </SelfHealingErrorBoundary>
   );
 }

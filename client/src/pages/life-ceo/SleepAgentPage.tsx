@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Moon, Sun, TrendingUp, Clock, Battery, Stars } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function SleepAgentPage() {
   const stats = [
@@ -30,6 +31,7 @@ export default function SleepAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="SleepAgentPage" fallbackRoute="/life-ceo">
     <PageLayout title="Sleep Agent" showBreadcrumbs>
 <>
       <SEO
@@ -152,5 +154,6 @@ export default function SleepAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

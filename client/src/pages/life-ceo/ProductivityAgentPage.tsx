@@ -5,6 +5,7 @@ import { SEO } from "@/components/SEO";
 import { Target, CheckCircle2, Clock, TrendingUp, ListTodo, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function ProductivityAgentPage() {
   const todayTasks = [
@@ -24,8 +25,9 @@ export default function ProductivityAgentPage() {
   ];
 
   return (
-    <PageLayout title="Productivity Agent" showBreadcrumbs>
-<>
+    <SelfHealingErrorBoundary pageName="LifeCEOProductivityAgent" fallbackRoute="/life-ceo">
+      <PageLayout title="Productivity Agent" showBreadcrumbs>
+        <>
       <SEO
         title="Productivity Agent - Life CEO"
         description="Manage tasks, track time, and boost productivity with your AI productivity agent."
@@ -151,6 +153,8 @@ export default function ProductivityAgentPage() {
           </div>
         </div>
       </div>
-    </>
-    </PageLayout>);
+        </>
+      </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

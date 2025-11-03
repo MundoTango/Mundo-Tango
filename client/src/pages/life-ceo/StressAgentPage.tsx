@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Brain, Heart, Wind, Smile, TrendingDown, Activity } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function StressAgentPage() {
   const stats = [
@@ -27,6 +28,7 @@ export default function StressAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="StressAgentPage" fallbackRoute="/life-ceo">
     <PageLayout title="Stress Management Agent" showBreadcrumbs>
 <>
       <SEO
@@ -164,5 +166,6 @@ export default function StressAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

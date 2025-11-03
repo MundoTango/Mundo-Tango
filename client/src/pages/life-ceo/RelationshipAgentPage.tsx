@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Heart, Users, MessageCircle, TrendingUp, Calendar, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function RelationshipAgentPage() {
   const stats = [
@@ -32,6 +33,7 @@ export default function RelationshipAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="RelationshipAgentPage" fallbackRoute="/life-ceo">
     <PageLayout title="Relationship Agent" showBreadcrumbs>
 <>
       <SEO
@@ -170,5 +172,6 @@ export default function RelationshipAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

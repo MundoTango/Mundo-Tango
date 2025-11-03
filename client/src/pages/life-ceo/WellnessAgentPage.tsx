@@ -6,6 +6,7 @@ import { SEO } from "@/components/SEO";
 import { Heart, Brain, Smile, Moon, Sun, Activity } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function WellnessAgentPage() {
   const [todayMood] = useState<"great" | "good" | "okay" | "low">("good");
@@ -44,6 +45,7 @@ export default function WellnessAgentPage() {
   };
 
   return (
+    <SelfHealingErrorBoundary pageName="WellnessAgentPage" fallbackRoute="/life-ceo">
     <PageLayout title="Wellness Agent" showBreadcrumbs>
 <>
       <SEO
@@ -245,5 +247,6 @@ export default function WellnessAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

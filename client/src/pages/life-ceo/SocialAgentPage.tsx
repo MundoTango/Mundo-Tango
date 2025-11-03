@@ -6,6 +6,7 @@ import { SEO } from "@/components/SEO";
 import { Users, Calendar, MessageCircle, TrendingUp, MapPin, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function SocialAgentPage() {
   const [upcomingEvents] = useState([
@@ -40,6 +41,7 @@ export default function SocialAgentPage() {
   };
 
   return (
+    <SelfHealingErrorBoundary pageName="SocialAgentPage" fallbackRoute="/life-ceo">
     <PageLayout title="Social Agent" showBreadcrumbs>
 <>
       <SEO
@@ -229,5 +231,6 @@ export default function SocialAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }
