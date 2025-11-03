@@ -1,5 +1,5 @@
 import { Switch, Route } from "wouter";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState, useEffect } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -18,6 +18,7 @@ import { GlobalMrBlue } from "./components/mrblue/GlobalMrBlue";
 import { ChatSidePanel } from "./components/mrblue/ChatSidePanel";
 import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
 import { LoadingFallback } from "./components/LoadingFallback";
+import { VisualEditorOverlay } from "./components/visual-editor/VisualEditorOverlay";
 
 // Core Pages (loaded immediately for fast initial render)
 import NotFound from "@/pages/not-found";
@@ -796,6 +797,15 @@ function Router() {
 }
 
 function App() {
+  const [isVisualEditorOpen, setIsVisualEditorOpen] = useState(false);
+
+  useEffect(() => {
+    // Check for ?edit=true in URL to open Visual Editor
+    const params = new URLSearchParams(window.location.search);
+    const editMode = params.get('edit') === 'true';
+    setIsVisualEditorOpen(editMode);
+  }, []);
+
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
@@ -811,6 +821,10 @@ function App() {
                   <GlobalMrBlue />
                   <ChatSidePanel />
                   <MrBlueFloatingButton />
+                  <VisualEditorOverlay 
+                    isOpen={isVisualEditorOpen} 
+                    onClose={() => setIsVisualEditorOpen(false)} 
+                  />
                 </TooltipProvider>
               </MrBlueProvider>
             </PredictiveContextProvider>

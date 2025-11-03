@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Bell, User, Moon, Sun, MessageSquare, Heart, Settings, HelpCircle } from "lucide-react";
+import { Bell, User, Moon, Sun, MessageSquare, Heart, Settings, HelpCircle, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
@@ -16,6 +16,9 @@ export function GlobalTopbar() {
 
   const unreadNotifications = 3; // TODO: Get from API
   const unreadMessages = 5; // TODO: Get from API
+  
+  // Check if user has admin access
+  const hasAdminAccess = user?.role && ['god', 'super_admin', 'admin', 'moderator'].includes(user.role);
 
   return (
     <header className="glass-topbar sticky top-0 z-50 w-full" data-testid="global-topbar">
@@ -146,6 +149,22 @@ export function GlobalTopbar() {
               <DropdownMenuItem onClick={() => setLocation("/dashboard")} data-testid="menu-item-dashboard">
                 Dashboard
               </DropdownMenuItem>
+              
+              {/* Admin Panel - Only for admin roles */}
+              {hasAdminAccess && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={() => setLocation("/admin/dashboard")} 
+                    data-testid="menu-item-admin"
+                    className="text-primary"
+                  >
+                    <Shield className="h-4 w-4 mr-2" />
+                    Admin Panel
+                  </DropdownMenuItem>
+                </>
+              )}
+              
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={logout} data-testid="menu-item-logout">
                 Logout
