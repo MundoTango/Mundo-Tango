@@ -33,9 +33,16 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
   private recoveryAttempts = 0;
   private maxRecoveryAttempts = 3;
   private recoveryTimeout: NodeJS.Timeout | null = null;
+  private readonly RECOVERY_STORAGE_KEY = 'self-healing-recovery-count';
+  private readonly RECOVERY_TIMESTAMP_KEY = 'self-healing-last-attempt';
+  private readonly COOLDOWN_PERIOD = 30000; // 30 seconds cooldown
 
   constructor(props: Props) {
     super(props);
+    
+    // CRITICAL FIX: Restore retry count from localStorage to persist across reloads
+    this.recoveryAttempts = this.getStoredRecoveryCount();
+    
     this.state = { 
       hasError: false, 
       error: null,
@@ -43,6 +50,57 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
       errorCount: 0,
       lastErrorTime: null,
     };
+  }
+
+  getStoredRecoveryCount(): number {
+    try {
+      const stored = localStorage.getItem(this.RECOVERY_STORAGE_KEY);
+      const lastAttempt = localStorage.getItem(this.RECOVERY_TIMESTAMP_KEY);
+      
+      if (!stored || !lastAttempt) return 0;
+      
+      const count = parseInt(stored, 10);
+      const timestamp = parseInt(lastAttempt, 10);
+      const now = Date.now();
+      
+      // Reset count if cooldown period has passed
+      if (now - timestamp > this.COOLDOWN_PERIOD) {
+        console.log('[Self-Healing] Cooldown period passed, resetting recovery count');
+        this.clearRecoveryState();
+        return 0;
+      }
+      
+      return isNaN(count) ? 0 : count;
+    } catch {
+      return 0;
+    }
+  }
+
+  storeRecoveryCount(count: number) {
+    try {
+      localStorage.setItem(this.RECOVERY_STORAGE_KEY, count.toString());
+      localStorage.setItem(this.RECOVERY_TIMESTAMP_KEY, Date.now().toString());
+    } catch (err) {
+      console.error('[Self-Healing] Failed to store recovery count:', err);
+    }
+  }
+
+  clearRecoveryState() {
+    try {
+      localStorage.removeItem(this.RECOVERY_STORAGE_KEY);
+      localStorage.removeItem(this.RECOVERY_TIMESTAMP_KEY);
+    } catch (err) {
+      console.error('[Self-Healing] Failed to clear recovery state:', err);
+    }
+  }
+
+  componentDidMount() {
+    // Success! Clear recovery state if component mounts without errors
+    if (!this.state.hasError && this.recoveryAttempts > 0) {
+      console.log('[Self-Healing] ✅ Component mounted successfully, clearing recovery state');
+      this.clearRecoveryState();
+      this.recoveryAttempts = 0;
+    }
   }
 
   static getDerivedStateFromError(error: Error): Partial<State> {
@@ -62,10 +120,15 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
     // Increment recovery attempts
     this.recoveryAttempts++;
     
+    // CRITICAL FIX: Persist retry count to localStorage
+    this.storeRecoveryCount(this.recoveryAttempts);
+    console.log(`[Self-Healing] Recovery attempt ${this.recoveryAttempts}/${this.maxRecoveryAttempts} (persisted to localStorage)`);
+    
     // CRITICAL: Prevent infinite loops - stop after max attempts
     if (this.recoveryAttempts > this.maxRecoveryAttempts) {
       console.error(`[Self-Healing] ⛔ Max recovery attempts (${this.maxRecoveryAttempts}) exceeded. Showing error UI.`);
       console.error('[Self-Healing] 🔍 This error requires manual intervention or code fix.');
+      console.error('[Self-Healing] 🧹 Clear localStorage and hard refresh to reset.');
       
       // Log to backend but don't attempt recovery
       logger.error('Self-Healing Boundary max attempts exceeded', error, {
@@ -247,6 +310,7 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
 
   handleManualReset = () => {
     this.recoveryAttempts = 0;
+    this.clearRecoveryState(); // Clear localStorage too
     if (this.recoveryTimeout) {
       clearTimeout(this.recoveryTimeout);
     }
