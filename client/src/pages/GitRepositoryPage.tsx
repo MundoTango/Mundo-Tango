@@ -64,8 +64,10 @@ export default function GitRepositoryPage() {
         </div>
         <Button variant="outline" asChild data-testid="button-view-on-github">
           <a href={repoUrl} target="_blank" rel="noopener noreferrer">
-            <ExternalLink className="w-4 h-4 mr-2" />
-            View on GitHub
+            <>
+              <ExternalLink className="w-4 h-4 mr-2" />
+              View on GitHub
+            </>
           </a>
         </Button>
       </div>
