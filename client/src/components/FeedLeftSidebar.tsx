@@ -122,8 +122,10 @@ export function FeedLeftSidebar() {
             className="w-full mt-4 bg-gradient-to-r from-primary to-secondary text-white border-0 hover:opacity-90"
             data-testid="button-global-community"
           >
-            Mundo Tango
-            <span className="ml-2 text-xs">Global Tango Community</span>
+            <span className="flex items-center justify-center gap-2 flex-wrap">
+              <span>Mundo Tango</span>
+              <span className="text-xs">Global Tango Community</span>
+            </span>
           </Button>
         </Link>
       </Card>
