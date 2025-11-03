@@ -2354,24 +2354,22 @@ export class DbStorage implements IStorage {
 
   async searchGroups(query: string, limit: number): Promise<any[]> {
     const lowerQuery = `%${query.toLowerCase()}%`;
-    const results = await db.select({
-      id: groups.id,
-      name: groups.name,
-      avatar: groups.avatar,
-      category: groups.category,
-      memberCount: groups.memberCount,
-    })
-    .from(groups)
-    .where(
-      or(
-        ilike(groups.name, lowerQuery),
-        ilike(groups.description, lowerQuery),
-        ilike(groups.category, lowerQuery)
-      )
-    )
-    .limit(limit);
+    const results = await db.execute(sql`
+      SELECT 
+        id,
+        name,
+        image_url as avatar,
+        type as category,
+        member_count as "memberCount"
+      FROM groups
+      WHERE 
+        name ILIKE ${lowerQuery} OR
+        description ILIKE ${lowerQuery} OR
+        type ILIKE ${lowerQuery}
+      LIMIT ${limit}
+    `);
     
-    return results;
+    return results.rows || [];
   }
 
   async searchCommunities(query: string, limit: number): Promise<any[]> {

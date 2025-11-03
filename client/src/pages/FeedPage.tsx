@@ -14,10 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { SEO } from "@/components/SEO";
-import { GlobalTopbar } from "@/components/GlobalTopbar";
-import { FeedLeftSidebar } from "@/components/FeedLeftSidebar";
 import { FeedRightSidebar } from "@/components/FeedRightSidebar";
-import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -163,10 +160,12 @@ export default function FeedPage() {
         // Search for mentions
         if (textAfterAt.length > 0) {
           try {
-            const results = await apiRequest(`/api/mentions/search?query=${encodeURIComponent(textAfterAt)}`);
+            const response = await apiRequest('GET', `/api/mentions/search?query=${encodeURIComponent(textAfterAt)}`);
+            const results = await response.json();
             setMentionResults(results || []);
           } catch (error) {
             console.error('Failed to search mentions:', error);
+            setMentionResults([]);
           }
         } else {
           setMentionResults([]);
@@ -254,17 +253,12 @@ export default function FeedPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Feed" fallbackRoute="/feed">
-    <PageLayout title="Feed" showBreadcrumbs>
-<>
       <SEO
         title="Home Feed"
         description="Connect with the tango community. Share your dance moments, discover events, and engage with fellow tango enthusiasts from around the world."
       />
-      <GlobalTopbar />
       <div className="flex min-h-screen bg-background">
-        <FeedLeftSidebar />
-        
-        <main className="flex-1 max-w-3xl p-6 space-y-6">
+        <main className="flex-1 max-w-3xl mx-auto p-6 space-y-6">
           {newPostsAvailable && (
             <Card className="p-4 bg-primary/10 border-primary" data-testid="banner-new-posts">
               <div className="flex items-center justify-between gap-4">
@@ -577,9 +571,8 @@ export default function FeedPage() {
         
         <FeedRightSidebar />
       </div>
-    </>
-    </PageLayout>
-    </SelfHealingErrorBoundary>);
+    </SelfHealingErrorBoundary>
+  );
 }
 
 function PostCard({ post }: { post: Post }) {
