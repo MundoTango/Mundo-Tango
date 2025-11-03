@@ -130,6 +130,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId: req.userId!
       });
 
+      // Send mention notifications
+      if (req.body.mentions && Array.isArray(req.body.mentions)) {
+        for (const mentionedUserId of req.body.mentions) {
+          if (mentionedUserId !== req.userId) {
+            await storage.createNotification({
+              userId: mentionedUserId,
+              type: 'mention',
+              title: 'You were mentioned',
+              message: `Someone mentioned you in a post`,
+              relatedId: post.id,
+              relatedType: 'post',
+              actionUrl: `/feed#post-${post.id}`,
+              read: false
+            });
+            
+            wsNotificationService.sendNotification(mentionedUserId, {
+              type: 'mention',
+              title: 'You were mentioned',
+              message: `Someone mentioned you in a post`,
+              postId: post.id
+            });
+          }
+        }
+      }
+
       if (post.location) {
         const cityName = cityscapeService.parseCityFromLocation(post.location);
         
