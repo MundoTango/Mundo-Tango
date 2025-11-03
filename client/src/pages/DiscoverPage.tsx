@@ -9,6 +9,7 @@ import {
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 export default function DiscoverPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -61,6 +62,7 @@ export default function DiscoverPage() {
 
   return (
     <PageLayout title="Discover Tango Events" showBreadcrumbs>
+<SelfHealingErrorBoundary pageName="Discover Events" fallbackRoute="/feed">
 <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-accent/5 to-background py-20 px-4">
@@ -225,5 +227,6 @@ export default function DiscoverPage() {
         </motion.div>
       </section>
     </div>
+    </SelfHealingErrorBoundary>
     </PageLayout>);
 }

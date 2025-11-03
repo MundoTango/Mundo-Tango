@@ -6,11 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, MapPin, Plane, Hotel, Music } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function TravelPlannerPage() {
   const [activeTab, setActiveTab] = useState("festivals");
 
   return (
+    <SelfHealingErrorBoundary pageName="Tango Travel Planner" fallbackRoute="/feed">
     <PageLayout title="Tango Travel Planner" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
@@ -105,5 +107,7 @@ export default function TravelPlannerPage() {
         </div>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

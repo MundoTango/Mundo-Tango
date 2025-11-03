@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Users, Clock } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function WorkshopsPage() {
   const { data: workshops, isLoading } = useQuery({
@@ -12,6 +13,7 @@ export default function WorkshopsPage() {
   });
 
   return (
+    <SelfHealingErrorBoundary pageName="Tango Workshops" fallbackRoute="/events">
     <PageLayout title="Tango Workshops" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
@@ -95,5 +97,7 @@ export default function WorkshopsPage() {
         )}
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

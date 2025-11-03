@@ -19,6 +19,7 @@ import { RefreshCw, Activity, AlertTriangle, CheckCircle, XCircle, HelpCircle, C
 import { useState, useEffect } from 'react';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 /**
  * BLOCKER 8: Agent Health Dashboard
@@ -195,6 +196,7 @@ export default function AgentHealthDashboard() {
   }
 
   return (
+    <SelfHealingErrorBoundary pageName="Agent Health Dashboard" fallbackRoute="/admin">
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
@@ -509,5 +511,6 @@ export default function AgentHealthDashboard() {
         </CardContent>
       </Card>
     </div>
+    </SelfHealingErrorBoundary>
   );
 }

@@ -8,6 +8,7 @@ import { BookOpen, Calendar, Clock, Search } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 export default function BlogPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -18,6 +19,7 @@ export default function BlogPage() {
 
   return (
     <PageLayout title="Tango Blog" showBreadcrumbs>
+<SelfHealingErrorBoundary pageName="Tango Blog" fallbackRoute="/">
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         
@@ -112,5 +114,6 @@ export default function BlogPage() {
         )}
       </div>
     </div>
+    </SelfHealingErrorBoundary>
     </PageLayout>);
 }

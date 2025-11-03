@@ -7,6 +7,7 @@ import { Bell, Heart, MessageCircle, UserPlus, Calendar, CheckCheck } from "luci
 import { apiRequest } from "@/lib/queryClient";
 import { formatDistanceToNow } from "date-fns";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 const notificationIcons: Record<string, any> = {
   like: Heart,
@@ -45,6 +46,7 @@ export default function NotificationsPage() {
 
   return (
     <PageLayout title="Notifications" showBreadcrumbs>
+<SelfHealingErrorBoundary pageName="Notifications" fallbackRoute="/feed">
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-3xl">
         {/* Header */}
@@ -118,6 +120,7 @@ export default function NotificationsPage() {
           </Card>
         )}
       </div>
+    </SelfHealingErrorBoundary>
     </PageLayout>
   );
 }

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Play, Clock, Users, Star } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function VideoLessonsPage() {
   const [activeTab, setActiveTab] = useState("all");
@@ -16,6 +17,7 @@ export default function VideoLessonsPage() {
   });
 
   return (
+    <SelfHealingErrorBoundary pageName="Video Lessons" fallbackRoute="/feed">
     <PageLayout title="Video Lessons" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
@@ -102,5 +104,7 @@ export default function VideoLessonsPage() {
         </Tabs>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

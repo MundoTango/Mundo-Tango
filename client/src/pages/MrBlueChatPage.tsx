@@ -121,7 +121,7 @@ export default function MrBlueChatPage() {
   };
 
   return (
-    <SelfHealingErrorBoundary pageName="Mr Blue AI Chat" fallbackRoute="/dashboard">
+    <SelfHealingErrorBoundary pageName="Mr Blue AI Chat" fallbackRoute="/feed">
       <PageLayout title="Mr Blue AI" showBreadcrumbs>
 <>
       <SEO

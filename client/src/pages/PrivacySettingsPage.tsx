@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Shield } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 export default function PrivacySettingsPage() {
   return (
     <PageLayout title="Privacy Settings" showBreadcrumbs>
+<SelfHealingErrorBoundary pageName="Privacy Settings" fallbackRoute="/settings">
       <div className="container mx-auto max-w-2xl">
 
         <Card className="mb-6">
@@ -83,6 +85,7 @@ export default function PrivacySettingsPage() {
           Save Settings
         </Button>
       </div>
+    </SelfHealingErrorBoundary>
     </PageLayout>
   );
 }

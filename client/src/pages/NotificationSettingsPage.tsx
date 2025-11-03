@@ -4,10 +4,12 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 export default function NotificationSettingsPage() {
   return (
     <PageLayout title="Notification Settings" showBreadcrumbs>
+<SelfHealingErrorBoundary pageName="Notification Settings" fallbackRoute="/settings">
       <div className="container mx-auto max-w-2xl">
 
         <Card className="mb-6">
@@ -74,6 +76,7 @@ export default function NotificationSettingsPage() {
           Save Settings
         </Button>
       </div>
+    </SelfHealingErrorBoundary>
     </PageLayout>
   );
 }

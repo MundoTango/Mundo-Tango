@@ -14,12 +14,16 @@ export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
 
-  const { data: results, isLoading } = useQuery({
+  const { data: results, isLoading } = useQuery<{
+    users?: any[];
+    events?: any[];
+    groups?: any[];
+  }>({
     queryKey: ["/api/search", query],
     enabled: query.length > 2,
   });
 
-  const filteredResults = results || {};
+  const filteredResults = results || { users: [], events: [], groups: [] };
   const allResults = [
     ...(filteredResults.users || []),
     ...(filteredResults.events || []),

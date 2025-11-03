@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Dumbbell, Activity, Trophy, Flame, TrendingUp, Target } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function FitnessAgentPage() {
   const stats = [
@@ -26,6 +27,7 @@ export default function FitnessAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="Fitness Agent" fallbackRoute="/platform">
     <PageLayout title="Fitness Agent" showBreadcrumbs>
 <>
       <SEO
@@ -158,5 +160,7 @@ export default function FitnessAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

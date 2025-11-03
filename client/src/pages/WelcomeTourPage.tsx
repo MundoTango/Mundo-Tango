@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, Calendar, Music, MessageCircle, ChevronRight, ChevronLeft } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 const tourSteps = [
   {
@@ -35,6 +36,7 @@ export default function WelcomeTourPage() {
   const [currentStep, setCurrentStep] = useState(0);
 
   return (
+    <SelfHealingErrorBoundary pageName="Welcome to Mundo Tango!" fallbackRoute="/">
     <PageLayout title="Welcome to Mundo Tango!" showBreadcrumbs>
 <div className="min-h-screen bg-background flex items-center justify-center py-8 px-4">
       <div className="container max-w-3xl">
@@ -106,5 +108,7 @@ export default function WelcomeTourPage() {
         </div>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 export default function VolunteerPage() {
   const fadeInUp = {
@@ -65,6 +66,7 @@ export default function VolunteerPage() {
 
   return (
     <PageLayout title="Help Build Mundo Tango" showBreadcrumbs>
+<SelfHealingErrorBoundary pageName="Volunteer Page" fallbackRoute="/">
 <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-accent/5 to-background py-24 px-4">
@@ -238,5 +240,6 @@ export default function VolunteerPage() {
         </motion.div>
       </section>
     </div>
+    </SelfHealingErrorBoundary>
     </PageLayout>);
 }

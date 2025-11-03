@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Video, Wand2, Image as ImageIcon, Loader2, Download } from 'lucide-react';
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 type AspectRatio = '16:9' | '9:16' | '1:1';
 
@@ -205,6 +206,7 @@ export default function VideoStudio() {
   };
 
   return (
+    <SelfHealingErrorBoundary pageName="Video Studio" fallbackRoute="/feed">
     <div className="container mx-auto p-6 max-w-4xl">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Mr. Blue Video Studio</h1>
@@ -371,5 +373,6 @@ export default function VideoStudio() {
       {/* Generation Status Display */}
       {renderGenerationStatus()}
     </div>
+    </SelfHealingErrorBoundary>
   );
 }

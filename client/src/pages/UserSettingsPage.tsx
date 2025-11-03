@@ -19,6 +19,7 @@ import {
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 interface UserSettings {
   emailNotifications: boolean;
@@ -82,6 +83,7 @@ export default function UserSettingsPage() {
 
   return (
     <PageLayout title="Settings" showBreadcrumbs>
+<SelfHealingErrorBoundary pageName="User Settings" fallbackRoute="/settings">
       <div className="container max-w-4xl mx-auto p-6" data-testid="page-user-settings">
 
       <Tabs defaultValue="account" data-testid="tabs-settings">
@@ -351,6 +353,7 @@ export default function UserSettingsPage() {
         </TabsContent>
       </Tabs>
       </div>
+    </SelfHealingErrorBoundary>
     </PageLayout>
   );
 }

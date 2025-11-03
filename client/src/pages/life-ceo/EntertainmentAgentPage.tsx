@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Film, Music, Gamepad2, Popcorn, Star, TrendingUp, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function EntertainmentAgentPage() {
   const stats = [
@@ -26,6 +27,7 @@ export default function EntertainmentAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="Entertainment Agent" fallbackRoute="/platform">
     <PageLayout title="Entertainment Agent" showBreadcrumbs>
 <>
       <SEO
@@ -142,5 +144,7 @@ export default function EntertainmentAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

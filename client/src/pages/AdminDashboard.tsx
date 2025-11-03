@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Users, FileText, Calendar, AlertTriangle } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 export default function AdminDashboard() {
   const { data: stats } = useQuery({ queryKey: ["/api/admin/stats/overview"] });
@@ -17,6 +18,7 @@ export default function AdminDashboard() {
 
   return (
     <PageLayout title="Admin Dashboard" showBreadcrumbs>
+<SelfHealingErrorBoundary pageName="Admin Dashboard" fallbackRoute="/admin">
 <div className="container mx-auto py-8 px-4">
       
 
@@ -122,5 +124,6 @@ export default function AdminDashboard() {
         </CardContent>
       </Card>
     </div>
+    </SelfHealingErrorBoundary>
     </PageLayout>);
 }

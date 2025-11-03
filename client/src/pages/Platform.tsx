@@ -11,12 +11,14 @@ import { BackupsManager } from "@/components/platform/BackupsManager";
 import { CICDManager } from "@/components/platform/CICDManager";
 import { Globe, BarChart3, Users, DollarSign, Database, GitBranch, Rocket, Key, Eye } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 export default function Platform() {
   const [activeTab, setActiveTab] = useState("deploy");
 
   return (
     <PageLayout title="Platform Dashboard" showBreadcrumbs>
+<SelfHealingErrorBoundary pageName="Platform Dashboard" fallbackRoute="/feed">
 <div className="min-h-screen bg-background">
       <div className="container mx-auto py-8 px-4">
         
@@ -99,5 +101,6 @@ export default function Platform() {
         </Tabs>
       </div>
     </div>
+    </SelfHealingErrorBoundary>
     </PageLayout>);
 }

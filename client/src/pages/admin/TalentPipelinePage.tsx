@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Users, FileText, MessageSquare, CheckCircle, XCircle, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 export default function TalentPipelinePage() {
   const pipeline = [
@@ -23,6 +24,7 @@ export default function TalentPipelinePage() {
 
   return (
     <PageLayout title="Talent Pipeline" showBreadcrumbs>
+<SelfHealingErrorBoundary pageName="Talent Pipeline" fallbackRoute="/admin">
 <>
       <SEO
         title="Talent Pipeline - Admin"
@@ -113,5 +115,6 @@ export default function TalentPipelinePage() {
         </div>
       </div>
     </>
+    </SelfHealingErrorBoundary>
     </PageLayout>);
 }

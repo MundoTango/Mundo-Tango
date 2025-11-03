@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Heart, TrendingUp, Activity, Apple, Dumbbell, Moon, Droplets } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function HealthAgentPage() {
   const stats = [
@@ -20,6 +21,7 @@ export default function HealthAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="Health Agent" fallbackRoute="/platform">
     <PageLayout title="Health Agent" showBreadcrumbs>
       <SEO
         title="Health Agent - Life CEO"
@@ -135,5 +137,6 @@ export default function HealthAgentPage() {
         </div>
       </div>
     </PageLayout>
+    </SelfHealingErrorBoundary>
   );
 }

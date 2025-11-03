@@ -38,7 +38,7 @@ export default function LifeCEODashboardPage() {
   };
 
   return (
-    <SelfHealingErrorBoundary pageName="Life CEO Dashboard" fallbackRoute="/dashboard">
+    <SelfHealingErrorBoundary pageName="Life CEO Dashboard" fallbackRoute="/feed">
       <PageLayout title="Life CEO Dashboard" showBreadcrumbs>
 <>
       <SEO

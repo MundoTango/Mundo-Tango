@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { DollarSign, TrendingUp, TrendingDown, Wallet, CreditCard, PiggyBank, Target } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function FinanceAgentPage() {
   const summary = [
@@ -21,6 +22,7 @@ export default function FinanceAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="Finance Agent" fallbackRoute="/platform">
     <PageLayout title="Finance Agent" showBreadcrumbs>
       <SEO
         title="Finance Agent - Life CEO"
@@ -158,5 +160,6 @@ export default function FinanceAgentPage() {
         </div>
       </div>
     </PageLayout>
+    </SelfHealingErrorBoundary>
   );
 }

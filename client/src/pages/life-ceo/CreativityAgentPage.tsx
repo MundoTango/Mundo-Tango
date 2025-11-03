@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Palette, Lightbulb, Pen, Camera, Sparkles, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function CreativityAgentPage() {
   const stats = [
@@ -26,6 +27,7 @@ export default function CreativityAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="Creativity Agent" fallbackRoute="/platform">
     <PageLayout title="Creativity Agent" showBreadcrumbs>
 <>
       <SEO
@@ -147,5 +149,7 @@ export default function CreativityAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

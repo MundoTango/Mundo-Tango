@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 export default function AdminUsersPage() {
   const users = [
@@ -15,6 +16,7 @@ export default function AdminUsersPage() {
 
   return (
     <PageLayout title="User Management" showBreadcrumbs>
+<SelfHealingErrorBoundary pageName="Admin Users" fallbackRoute="/admin">
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
         
@@ -59,6 +61,7 @@ export default function AdminUsersPage() {
           </CardContent>
         </Card>
       </div>
+    </SelfHealingErrorBoundary>
     </PageLayout>
   );
 }

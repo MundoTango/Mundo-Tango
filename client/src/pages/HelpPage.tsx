@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Search, Book, MessageCircle, Mail } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 export default function HelpPage() {
   return (
     <PageLayout title="How Can We Help?" showBreadcrumbs>
+<SelfHealingErrorBoundary pageName="Help Center" fallbackRoute="/">
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
         
@@ -73,6 +75,7 @@ export default function HelpPage() {
           </CardContent>
         </Card>
       </div>
+    </SelfHealingErrorBoundary>
     </PageLayout>
   );
 }

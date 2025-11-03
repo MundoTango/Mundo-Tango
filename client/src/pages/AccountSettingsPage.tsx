@@ -4,10 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { User, Mail, Globe, Trash2 } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 export default function AccountSettingsPage() {
   return (
     <PageLayout title="Account Settings" showBreadcrumbs>
+<SelfHealingErrorBoundary pageName="Account Settings" fallbackRoute="/settings">
       <div className="container mx-auto max-w-2xl">
         <div className="space-y-6">
           <Card>
@@ -92,6 +94,7 @@ export default function AccountSettingsPage() {
           </Button>
         </div>
       </div>
+    </SelfHealingErrorBoundary>
     </PageLayout>
   );
 }

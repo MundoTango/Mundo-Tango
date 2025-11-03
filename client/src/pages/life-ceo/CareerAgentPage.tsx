@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Briefcase, TrendingUp, Target, FileText, Users, Award, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function CareerAgentPage() {
   const metrics = [
@@ -22,6 +23,7 @@ export default function CareerAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="Career Agent" fallbackRoute="/platform">
     <PageLayout title="Career Agent" showBreadcrumbs>
 <>
       <SEO
@@ -170,5 +172,7 @@ export default function CareerAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Star, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 export default function ReviewsPage() {
   const { data: reviews, isLoading } = useQuery({
@@ -13,6 +14,7 @@ export default function ReviewsPage() {
 
   return (
     <PageLayout title="Community Reviews" showBreadcrumbs>
+<SelfHealingErrorBoundary pageName="Community Reviews" fallbackRoute="/">
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
         
@@ -81,5 +83,6 @@ export default function ReviewsPage() {
         )}
       </div>
     </div>
+    </SelfHealingErrorBoundary>
     </PageLayout>);
 }

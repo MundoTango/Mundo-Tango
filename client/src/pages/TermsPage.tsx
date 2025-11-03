@@ -1,9 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, AlertTriangle, Scale, UserX } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function TermsPage() {
   return (
+    <SelfHealingErrorBoundary pageName="Terms of Service" fallbackRoute="/">
     <PageLayout title="Terms of Service" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
@@ -161,5 +163,7 @@ export default function TermsPage() {
         </Card>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

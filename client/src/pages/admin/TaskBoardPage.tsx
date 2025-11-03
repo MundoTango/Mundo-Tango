@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { ListTodo, Clock, User, Tag, Plus } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 export default function TaskBoardPage() {
   const columns = [
@@ -36,6 +37,7 @@ export default function TaskBoardPage() {
 
   return (
     <PageLayout title="Task Board" showBreadcrumbs>
+<SelfHealingErrorBoundary pageName="Task Board" fallbackRoute="/admin">
 <>
       <SEO
         title="Task Board - Admin"
@@ -135,5 +137,6 @@ export default function TaskBoardPage() {
         </div>
       </div>
     </>
+    </SelfHealingErrorBoundary>
     </PageLayout>);
 }

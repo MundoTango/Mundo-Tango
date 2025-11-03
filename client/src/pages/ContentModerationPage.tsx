@@ -5,11 +5,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import { useState } from "react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function ContentModerationPage() {
   const [activeTab, setActiveTab] = useState("pending");
 
   return (
+    <SelfHealingErrorBoundary pageName="Content Moderation" fallbackRoute="/admin">
     <PageLayout title="Content Moderation" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
@@ -60,5 +62,7 @@ export default function ContentModerationPage() {
         </Tabs>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

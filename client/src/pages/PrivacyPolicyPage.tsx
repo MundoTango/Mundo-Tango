@@ -150,5 +150,7 @@ export default function PrivacyPolicyPage() {
         </Card>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { Settings, Save, RefreshCw } from 'lucide-react';
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 interface TierLimit {
   id: number;
@@ -116,6 +117,7 @@ export default function PricingManagerPage() {
   const features: FeatureFlag[] = (featuresData as any)?.flags || [];
 
   return (
+    <SelfHealingErrorBoundary pageName="Pricing Manager" fallbackRoute="/admin">
     <div className="container mx-auto py-8 px-4 max-w-7xl" data-testid="page-pricing-manager">
       <Card>
         <CardHeader>
@@ -238,5 +240,6 @@ export default function PricingManagerPage() {
         </CardContent>
       </Card>
     </div>
+    </SelfHealingErrorBoundary>
   );
 }

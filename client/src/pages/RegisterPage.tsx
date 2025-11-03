@@ -11,6 +11,7 @@ import { SEO } from "@/components/SEO";
 import { Eye, EyeOff, Check, X, Loader2 } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -114,6 +115,7 @@ export default function RegisterPage() {
   };
 
   return (
+    <SelfHealingErrorBoundary pageName="Register" fallbackRoute="/login">
     <PublicLayout>
       <SEO
         title="Join Mundo Tango"
@@ -318,5 +320,6 @@ export default function RegisterPage() {
         </div>
       </div>
     </PublicLayout>
+    </SelfHealingErrorBoundary>
   );
 }
