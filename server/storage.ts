@@ -1681,6 +1681,11 @@ export class DbStorage implements IStorage {
 
   async joinGroup(groupId: number, userId: number): Promise<SelectGroupMember | undefined> {
     try {
+      const isMember = await this.isGroupMember(groupId, userId);
+      if (isMember) {
+        return undefined;
+      }
+      
       const result = await db.insert(groupMembers).values({ groupId, userId }).returning();
       await db.update(groups).set({ memberCount: sqlOp`${groups.memberCount} + 1` }).where(eq(groups.id, groupId));
       return result[0];

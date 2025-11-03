@@ -649,6 +649,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/groups/:id/membership", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const groupId = parseInt(req.params.id);
+      const isMember = await storage.isGroupMember(groupId, req.userId!);
+      res.json({ isMember });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to check membership" });
+    }
+  });
+
   app.get("/api/messages/conversations", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const conversations = await storage.getUserConversations(req.userId!);

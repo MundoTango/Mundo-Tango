@@ -27,6 +27,17 @@ export default function GroupDetailsPage() {
     },
   });
 
+  const { data: membershipData } = useQuery<{ isMember: boolean }>({
+    queryKey: ["/api/groups", group?.id, "membership"],
+    queryFn: async () => {
+      if (!group?.id) return { isMember: false };
+      const res = await fetch(`/api/groups/${group.id}/membership`, { credentials: "include" });
+      if (!res.ok) return { isMember: false };
+      return res.json();
+    },
+    enabled: !!group?.id,
+  });
+
   const joinGroup = useMutation({
     mutationFn: async () => {
       const res = await apiRequest("POST", `/api/groups/${group?.id || groupIdOrSlug}/join`);
@@ -34,9 +45,25 @@ export default function GroupDetailsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/groups", groupIdOrSlug] });
+      queryClient.invalidateQueries({ queryKey: ["/api/groups", group?.id, "membership"] });
       toast({
         title: "Joined group!",
         description: "You are now a member of this group.",
+      });
+    },
+  });
+
+  const leaveGroup = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest("DELETE", `/api/groups/${group?.id || groupIdOrSlug}/leave`);
+      return res;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/groups", groupIdOrSlug] });
+      queryClient.invalidateQueries({ queryKey: ["/api/groups", group?.id, "membership"] });
+      toast({
+        title: "Left group",
+        description: "You are no longer a member of this group.",
       });
     },
   });
@@ -126,13 +153,24 @@ export default function GroupDetailsPage() {
                 </CardDescription>
               </div>
             </div>
-            <Button
-              onClick={() => joinGroup.mutate()}
-              disabled={joinGroup.isPending}
-              data-testid="button-join-group"
-            >
-              {joinGroup.isPending ? "Joining..." : "Join Group"}
-            </Button>
+            {membershipData?.isMember ? (
+              <Button
+                onClick={() => leaveGroup.mutate()}
+                disabled={leaveGroup.isPending}
+                variant="outline"
+                data-testid="button-leave-group"
+              >
+                {leaveGroup.isPending ? "Leaving..." : "Leave Group"}
+              </Button>
+            ) : (
+              <Button
+                onClick={() => joinGroup.mutate()}
+                disabled={joinGroup.isPending}
+                data-testid="button-join-group"
+              >
+                {joinGroup.isPending ? "Joining..." : "Join Group"}
+              </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent>
