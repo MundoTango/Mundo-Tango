@@ -800,3 +800,5 @@ function App() {
 }
 
 export default App;
+// Force rebuild marker
+export const REBUILD_TIMESTAMP = Date.now();
