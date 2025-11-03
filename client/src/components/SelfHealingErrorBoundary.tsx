@@ -59,6 +59,27 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
     
     console.error(`[Self-Healing Boundary] Error on ${pageName}:`, error, errorInfo);
     
+    // Increment recovery attempts
+    this.recoveryAttempts++;
+    
+    // CRITICAL: Prevent infinite loops - stop after max attempts
+    if (this.recoveryAttempts > this.maxRecoveryAttempts) {
+      console.error(`[Self-Healing] ⛔ Max recovery attempts (${this.maxRecoveryAttempts}) exceeded. Showing error UI.`);
+      console.error('[Self-Healing] 🔍 This error requires manual intervention or code fix.');
+      
+      // Log to backend but don't attempt recovery
+      logger.error('Self-Healing Boundary max attempts exceeded', error, {
+        page: pageName,
+        component: errorInfo.componentStack || '',
+        errorCount: this.state.errorCount,
+        recoveryAttempts: this.recoveryAttempts,
+      });
+      
+      this.setState({ errorInfo });
+      // Show error UI - don't attempt auto-recovery
+      return;
+    }
+    
     // Log to backend for pattern analysis
     logger.error('Self-Healing Boundary caught error', error, {
       page: pageName,
@@ -73,7 +94,7 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
     const autoFixed = await this.tryInstantAutoFix(error, errorInfo);
     
     if (autoFixed) {
-      console.log('[Self-Healing] ✅ Auto-fixed known error pattern');
+      console.log(`[Self-Healing] ✅ Auto-fixed known error pattern (attempt ${this.recoveryAttempts}/${this.maxRecoveryAttempts})`);
       // Reset error state and let component re-render
       this.handleAutoRecover();
       return;
@@ -186,8 +207,8 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
     const isRecoverable = this.isRecoverableError(error);
     
     if (isRecoverable) {
-      this.recoveryAttempts++;
-      console.log(`[Self-Healing] Attempting auto-recovery (${this.recoveryAttempts}/${this.maxRecoveryAttempts})`);
+      // Note: recoveryAttempts already incremented in componentDidCatch
+      console.log(`[Self-Healing] Attempting gradual recovery (${this.recoveryAttempts}/${this.maxRecoveryAttempts})`);
       
       // Exponential backoff: 1s, 2s, 4s
       const delay = Math.pow(2, this.recoveryAttempts - 1) * 1000;
@@ -220,7 +241,7 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
       error: null,
       errorInfo: null,
     });
-    // Force re-render
+    // Force re-render and reset counter (page reload naturally resets class instance)
     window.location.reload();
   };
 

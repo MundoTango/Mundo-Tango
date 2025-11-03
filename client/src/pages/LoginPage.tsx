@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { PublicLayout } from "@/components/PublicLayout";
-import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function LoginPage() {
@@ -41,8 +40,7 @@ export default function LoginPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Login" fallbackRoute="/">
-      <PageLayout title="Welcome Back" showBreadcrumbs>
-<PublicLayout>
+      <PublicLayout>
       <SEO
         title="Sign In - Mundo Tango"
         description="Sign in to your Mundo Tango account to connect with the global tango community, discover events, and share your passion for Argentine tango."
@@ -98,26 +96,29 @@ export default function LoginPage() {
                 {isLoading ? "Signing in..." : "Log In"}
               </Button>
 
-              <Link href="/password-reset">
-                <a className="block text-center text-sm text-primary hover:underline mt-4" data-testid="link-forgot-password">
-                  Forgot password?
-                </a>
+              <Link 
+                href="/password-reset" 
+                className="block text-center text-sm text-primary hover:underline mt-4" 
+                data-testid="link-forgot-password"
+              >
+                Forgot password?
               </Link>
             </div>
           </form>
 
           <p className="text-sm text-center text-muted-foreground mt-6">
             Don't have an account?{" "}
-            <Link href="/register">
-              <a className="text-primary hover:underline font-medium" data-testid="link-register">
-                Sign up
-              </a>
+            <Link 
+              href="/register" 
+              className="text-primary hover:underline font-medium" 
+              data-testid="link-register"
+            >
+              Sign up
             </Link>
           </p>
         </div>
       </div>
-    </PublicLayout>
-    </PageLayout>
+      </PublicLayout>
     </SelfHealingErrorBoundary>
   );
 }
