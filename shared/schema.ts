@@ -13,6 +13,7 @@ import {
   real,
   unique,
   numeric,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -97,49 +98,225 @@ export const follows = pgTable("follows", {
 
 export const events = pgTable("events", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  title: varchar("title").notNull(),
+  
+  // Basic Information
+  title: varchar("title", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).unique(),
   description: text("description").notNull(),
-  imageUrl: text("image_url"),
-  eventType: varchar("event_type").notNull(),
+  longDescription: text("long_description"),
+  
+  // Event Type & Category
+  eventType: varchar("event_type", { length: 50 }).notNull(),
+  category: varchar("category", { length: 50 }),
+  
+  // Date & Time
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date"),
   date: text("date"),
+  startDateTime: timestamp("start_date_time"),
+  endDateTime: timestamp("end_date_time"),
+  timezone: varchar("timezone", { length: 50 }).default("UTC"),
+  isRecurring: boolean("is_recurring").default(false),
+  recurring: varchar("recurring"),
+  recurrenceRule: text("recurrence_rule"),
+  
+  // Location
   location: text("location").notNull(),
-  venue: varchar("venue"),
+  venue: varchar("venue", { length: 255 }),
+  venueName: varchar("venue_name", { length: 255 }),
   address: text("address"),
-  city: varchar("city"),
-  country: varchar("country"),
+  city: varchar("city", { length: 255 }),
+  country: varchar("country", { length: 255 }),
   latitude: text("latitude"),
   longitude: text("longitude"),
-  price: text("price"),
-  currency: varchar("currency"),
-  ticketUrl: text("ticket_url"),
-  maxAttendees: integer("max_attendees"),
-  isPaid: boolean("is_paid").default(false),
   isOnline: boolean("is_online").default(false),
+  onlineLink: text("online_link"),
   meetingUrl: text("meeting_url"),
-  recurring: varchar("recurring"),
-  status: varchar("status").default("published"),
+  
+  // Media
+  imageUrl: text("image_url"),
+  coverImage: text("cover_image"),
+  mediaUrls: text("media_urls").array(),
+  
+  // Organizer
+  organizerId: integer("organizer_id").references(() => users.id),
+  coOrganizers: integer("co_organizers").array(),
+  groupId: integer("group_id").references(() => groups.id),
+  
+  // Capacity & RSVPs
+  maxAttendees: integer("max_attendees"),
+  currentAttendees: integer("current_attendees").default(0),
+  waitlistEnabled: boolean("waitlist_enabled").default(false),
+  waitlistCount: integer("waitlist_count").default(0),
+  
+  // Ticketing
+  isPaid: boolean("is_paid").default(false),
+  isFree: boolean("is_free").default(true),
+  price: text("price"),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  ticketUrl: text("ticket_url"),
+  ticketLink: text("ticket_link"),
+  stripePriceId: varchar("stripe_price_id", { length: 255 }),
+  
+  // Visibility & Privacy
+  visibility: varchar("visibility", { length: 20 }).default("public"),
+  requiresApproval: boolean("requires_approval").default(false),
+  
+  // Features
+  allowGuestPlusOne: boolean("allow_guest_plus_one").default(false),
+  allowPhotos: boolean("allow_photos").default(true),
+  allowComments: boolean("allow_comments").default(true),
+  
+  // Music & Style
+  musicStyle: varchar("music_style", { length: 100 }),
+  danceStyles: text("dance_styles").array(),
+  djName: varchar("dj_name", { length: 255 }),
+  
+  // Additional Info
   tags: text("tags").array(),
+  dressCode: varchar("dress_code", { length: 100 }),
+  ageRestriction: varchar("age_restriction", { length: 50 }),
+  wheelchairAccessible: boolean("wheelchair_accessible").default(false),
+  parkingAvailable: boolean("parking_available").default(false),
+  
+  // Status
+  status: varchar("status", { length: 20 }).default("published"),
+  cancellationReason: text("cancellation_reason"),
+  
+  // Stats
+  viewCount: integer("view_count").default(0),
+  shareCount: integer("share_count").default(0),
+  
+  // Timestamps
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+  publishedAt: timestamp("published_at"),
 }, (table) => ({
   userIdx: index("events_user_idx").on(table.userId),
   startDateIdx: index("events_start_date_idx").on(table.startDate),
   cityIdx: index("events_city_idx").on(table.city),
+  typeIdx: index("events_type_idx").on(table.eventType),
+  statusIdx: index("events_status_idx").on(table.status),
+  organizerIdx: index("events_organizer_idx").on(table.organizerId),
+  groupIdx: index("events_group_idx").on(table.groupId),
+  slugIdx: index("events_slug_idx").on(table.slug),
 }));
 
 export const eventRsvps = pgTable("event_rsvps", {
   id: serial("id").primaryKey(),
   eventId: integer("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  status: varchar("status").notNull(),
+  
+  // RSVP Status
+  status: varchar("status", { length: 20 }).default("going"),
+  
+  // Guest Information
+  guestCount: integer("guest_count").default(0),
+  guestNames: text("guest_names").array(),
+  
+  // Preferences
+  role: varchar("role", { length: 50 }),
+  dietaryRestrictions: text("dietary_restrictions"),
+  specialRequests: text("special_requests"),
+  
+  // Payment (if ticketed)
+  ticketsPurchased: integer("tickets_purchased").default(1),
+  totalPaid: numeric("total_paid", { precision: 10, scale: 2 }),
+  paymentStatus: varchar("payment_status", { length: 20 }),
+  stripePaymentId: varchar("stripe_payment_id", { length: 255 }),
+  
+  // Check-in
+  checkedIn: boolean("checked_in").default(false),
+  checkedInAt: timestamp("checked_in_at"),
+  checkedInBy: integer("checked_in_by").references(() => users.id),
+  
+  // Notifications
+  notificationsEnabled: boolean("notifications_enabled").default(true),
+  reminderSent: boolean("reminder_sent").default(false),
+  
+  // Timestamps
   createdAt: timestamp("created_at").defaultNow(),
+  rsvpedAt: timestamp("rsvped_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => ({
   eventIdx: index("event_rsvps_event_idx").on(table.eventId),
   userIdx: index("event_rsvps_user_idx").on(table.userId),
   uniqueRsvp: uniqueIndex("unique_rsvp").on(table.eventId, table.userId),
+  statusIdx: index("event_rsvps_status_idx").on(table.status),
+}));
+
+export const eventPhotos = pgTable("event_photos", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
+  uploaderId: integer("uploader_id").notNull().references(() => users.id),
+  
+  // Photo Details
+  photoUrl: text("photo_url").notNull(),
+  thumbnailUrl: text("thumbnail_url"),
+  caption: text("caption"),
+  
+  // Tagged People
+  taggedUsers: integer("tagged_users").array(),
+  
+  // Engagement
+  likeCount: integer("like_count").default(0),
+  commentCount: integer("comment_count").default(0),
+  
+  // Visibility
+  visibility: varchar("visibility", { length: 20 }).default("public"),
+  
+  // Moderation
+  isApproved: boolean("is_approved").default(true),
+  isFeatured: boolean("is_featured").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  idxEvent: index("event_photos_event_idx").on(table.eventId),
+  idxUploader: index("event_photos_uploader_idx").on(table.uploaderId),
+  idxFeatured: index("event_photos_featured_idx").on(table.isFeatured),
+}));
+
+export const eventComments: any = pgTable("event_comments", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id),
+  
+  // Comment Content
+  content: text("content").notNull(),
+  parentCommentId: integer("parent_comment_id"),
+  
+  // Engagement
+  likeCount: integer("like_count").default(0),
+  
+  // Moderation
+  isEdited: boolean("is_edited").default(false),
+  isDeleted: boolean("is_deleted").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  idxEvent: index("event_comments_event_idx").on(table.eventId),
+  idxUser: index("event_comments_user_idx").on(table.userId),
+  idxParent: index("event_comments_parent_idx").on(table.parentCommentId),
+}));
+
+export const eventReminders = pgTable("event_reminders", {
+  id: serial("id").primaryKey(),
+  rsvpId: integer("rsvp_id").notNull().references(() => eventRsvps.id, { onDelete: "cascade" }),
+  
+  // Reminder Settings
+  reminderType: varchar("reminder_type", { length: 20 }).notNull(),
+  reminderTime: timestamp("reminder_time").notNull(),
+  
+  // Delivery
+  sentAt: timestamp("sent_at"),
+  deliveryMethod: varchar("delivery_method", { length: 20 }).default("email"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  idxRSVP: index("event_reminders_rsvp_idx").on(table.rsvpId),
+  idxTime: index("event_reminders_time_idx").on(table.reminderTime),
 }));
 
 // ============================================================================
@@ -148,40 +325,187 @@ export const eventRsvps = pgTable("event_rsvps", {
 
 export const groups = pgTable("groups", {
   id: serial("id").primaryKey(),
-  name: varchar("name").notNull(),
-  slug: varchar("slug").notNull().unique(),
-  type: varchar("type").notNull(),
-  roleType: varchar("role_type"),
-  emoji: varchar("emoji"),
-  imageUrl: text("image_url"),
-  coverImage: text("coverImage"),
+  name: varchar("name", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
   description: text("description"),
-  isPrivate: boolean("is_private").default(false).notNull(),
-  visibility: varchar("visibility").default("public").notNull(),
-  city: varchar("city"),
-  country: varchar("country"),
-  latitude: numeric("latitude"),
-  longitude: numeric("longitude"),
-  memberCount: integer("member_count").default(0).notNull(),
+  longDescription: text("long_description"),
+  
+  // Group Type & Location
+  type: varchar("type", { length: 50 }).default("city"),
+  roleType: varchar("role_type", { length: 50 }),
+  city: varchar("city", { length: 255 }),
+  country: varchar("country", { length: 255 }),
+  region: varchar("region", { length: 255 }),
+  latitude: numeric("latitude", { precision: 10, scale: 7 }),
+  longitude: numeric("longitude", { precision: 10, scale: 7 }),
+  
+  // Visibility & Privacy
+  isPrivate: boolean("is_private").default(false),
+  visibility: varchar("visibility", { length: 20 }).default("public"),
+  joinApproval: varchar("join_approval", { length: 20 }).default("open"),
+  
+  // Media
+  emoji: varchar("emoji", { length: 10 }),
+  imageUrl: text("image_url"),
+  coverImage: text("cover_image"),
+  logoImage: text("logo_image"),
+  
+  // Statistics
+  memberCount: integer("member_count").default(0),
+  postCount: integer("post_count").default(0),
+  eventCount: integer("event_count").default(0),
+  
+  // Settings
+  allowEvents: boolean("allow_events").default(true),
+  allowPosts: boolean("allow_posts").default(true),
+  allowDiscussions: boolean("allow_discussions").default(true),
+  whoCanPost: varchar("who_can_post", { length: 20 }).default("members"),
+  
+  // Ownership
   createdBy: integer("created_by").references(() => users.id, { onDelete: "cascade" }),
+  ownerId: integer("owner_id").references(() => users.id),
+  
+  // Metadata
+  tags: text("tags").array(),
+  rules: text("rules"),
+  language: varchar("language", { length: 10 }).default("en"),
+  
+  // Timestamps
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+  lastActivityAt: timestamp("last_activity_at").defaultNow(),
 }, (table) => ({
   slugIdx: index("groups_slug_idx").on(table.slug),
   typeIdx: index("groups_type_idx").on(table.type),
   cityIdx: index("groups_city_idx").on(table.city),
+  visibilityIdx: index("groups_visibility_idx").on(table.visibility),
 }));
 
 export const groupMembers = pgTable("group_members", {
   id: serial("id").primaryKey(),
   groupId: integer("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  role: varchar("role").default("member").notNull(),
-  joinedAt: timestamp("joined_at").defaultNow().notNull(),
+  
+  // Role System
+  role: varchar("role", { length: 20 }).default("member"),
+  
+  // Permissions
+  canPost: boolean("can_post").default(true),
+  canComment: boolean("can_comment").default(true),
+  canCreateEvents: boolean("can_create_events").default(false),
+  canInvite: boolean("can_invite").default(true),
+  canModerate: boolean("can_moderate").default(false),
+  
+  // Join Information
+  joinedAt: timestamp("joined_at").defaultNow(),
+  invitedBy: integer("invited_by").references(() => users.id),
+  joinMessage: text("join_message"),
+  approvedBy: integer("approved_by").references(() => users.id),
+  approvedAt: timestamp("approved_at"),
+  
+  // Activity Tracking
+  lastVisitedAt: timestamp("last_visited_at").defaultNow(),
+  postCount: integer("post_count").default(0),
+  commentCount: integer("comment_count").default(0),
+  
+  // Notifications
+  notificationLevel: varchar("notification_level", { length: 20 }).default("all"),
+  muteUntil: timestamp("mute_until"),
+  
+  // Status
+  status: varchar("status", { length: 20 }).default("active"),
+  bannedReason: text("banned_reason"),
+  bannedUntil: timestamp("banned_until"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => ({
   groupIdx: index("group_members_group_idx").on(table.groupId),
   userIdx: index("group_members_user_idx").on(table.userId),
   uniqueMember: uniqueIndex("unique_member").on(table.groupId, table.userId),
+  roleIdx: index("group_members_role_idx").on(table.role),
+  statusIdx: index("group_members_status_idx").on(table.status),
+}));
+
+export const groupInvites = pgTable("group_invites", {
+  id: serial("id").primaryKey(),
+  groupId: integer("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
+  inviterId: integer("inviter_id").notNull().references(() => users.id),
+  inviteeId: integer("invitee_id").notNull().references(() => users.id),
+  
+  message: text("message"),
+  status: varchar("status", { length: 20 }).default("pending"),
+  
+  sentAt: timestamp("sent_at").defaultNow(),
+  respondedAt: timestamp("responded_at"),
+  expiresAt: timestamp("expires_at"),
+}, (table) => ({
+  uniqueInvite: unique().on(table.groupId, table.inviteeId),
+  idxGroup: index("group_invites_group_idx").on(table.groupId),
+  idxInvitee: index("group_invites_invitee_idx").on(table.inviteeId),
+  idxStatus: index("group_invites_status_idx").on(table.status),
+}));
+
+export const groupPosts = pgTable("group_posts", {
+  id: serial("id").primaryKey(),
+  groupId: integer("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
+  authorId: integer("author_id").notNull().references(() => users.id),
+  
+  // Content
+  title: varchar("title", { length: 255 }),
+  content: text("content").notNull(),
+  mediaUrls: text("media_urls").array(),
+  mediaType: varchar("media_type", { length: 20 }),
+  
+  // Post Type
+  postType: varchar("post_type", { length: 20 }).default("discussion"),
+  
+  // Linked Content
+  linkedEventId: integer("linked_event_id").references(() => events.id),
+  
+  // Engagement
+  likeCount: integer("like_count").default(0),
+  commentCount: integer("comment_count").default(0),
+  shareCount: integer("share_count").default(0),
+  
+  // Moderation
+  isPinned: boolean("is_pinned").default(false),
+  pinnedBy: integer("pinned_by").references(() => users.id),
+  pinnedAt: timestamp("pinned_at"),
+  isApproved: boolean("is_approved").default(true),
+  approvedBy: integer("approved_by").references(() => users.id),
+  
+  // Status
+  status: varchar("status", { length: 20 }).default("published"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  publishedAt: timestamp("published_at").defaultNow(),
+}, (table) => ({
+  idxGroup: index("group_posts_group_idx").on(table.groupId),
+  idxAuthor: index("group_posts_author_idx").on(table.authorId),
+  idxType: index("group_posts_type_idx").on(table.postType),
+  idxStatus: index("group_posts_status_idx").on(table.status),
+  idxPinned: index("group_posts_pinned_idx").on(table.isPinned),
+  idxCreated: index("group_posts_created_idx").on(table.createdAt),
+}));
+
+export const groupCategories = pgTable("group_categories", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  slug: varchar("slug", { length: 100 }).notNull().unique(),
+  description: text("description"),
+  icon: varchar("icon", { length: 50 }),
+  color: varchar("color", { length: 20 }),
+  groupCount: integer("group_count").default(0),
+  sortOrder: integer("sort_order").default(0),
+});
+
+export const groupCategoryAssignments = pgTable("group_category_assignments", {
+  groupId: integer("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
+  categoryId: integer("category_id").notNull().references(() => groupCategories.id, { onDelete: "cascade" }),
+}, (table) => ({
+  pk: primaryKey({ columns: [table.groupId, table.categoryId] }),
 }));
 
 // ============================================================================
@@ -564,10 +888,43 @@ export type SelectEvent = typeof events.$inferSelect;
 // Event RSVPs
 export const insertEventRsvpSchema = createInsertSchema(eventRsvps).omit({ 
   id: true, 
-  createdAt: true 
+  createdAt: true,
+  rsvpedAt: true,
+  updatedAt: true,
 });
 export type InsertEventRsvp = z.infer<typeof insertEventRsvpSchema>;
 export type SelectEventRsvp = typeof eventRsvps.$inferSelect;
+
+// Event Photos
+export const insertEventPhotoSchema = createInsertSchema(eventPhotos).omit({ 
+  id: true, 
+  createdAt: true,
+  likeCount: true,
+  commentCount: true,
+});
+export type InsertEventPhoto = z.infer<typeof insertEventPhotoSchema>;
+export type SelectEventPhoto = typeof eventPhotos.$inferSelect;
+
+// Event Comments  
+export const insertEventCommentSchema = createInsertSchema(eventComments, {
+  content: z.string().min(1),
+}).omit({ 
+  id: true, 
+  createdAt: true,
+  updatedAt: true,
+  likeCount: true,
+});
+export type InsertEventComment = z.infer<typeof insertEventCommentSchema>;
+export type SelectEventComment = typeof eventComments.$inferSelect;
+
+// Event Reminders
+export const insertEventReminderSchema = createInsertSchema(eventReminders).omit({ 
+  id: true, 
+  createdAt: true,
+  sentAt: true,
+});
+export type InsertEventReminder = z.infer<typeof insertEventReminderSchema>;
+export type SelectEventReminder = typeof eventReminders.$inferSelect;
 
 // Groups
 export const insertGroupSchema = createInsertSchema(groups, {
@@ -586,10 +943,49 @@ export type SelectGroup = typeof groups.$inferSelect;
 // Group Members
 export const insertGroupMemberSchema = createInsertSchema(groupMembers).omit({ 
   id: true, 
-  joinedAt: true 
+  joinedAt: true,
+  createdAt: true,
+  updatedAt: true,
+  lastVisitedAt: true,
+  postCount: true,
+  commentCount: true,
 });
 export type InsertGroupMember = z.infer<typeof insertGroupMemberSchema>;
 export type SelectGroupMember = typeof groupMembers.$inferSelect;
+
+// Group Invites
+export const insertGroupInviteSchema = createInsertSchema(groupInvites).omit({ 
+  id: true, 
+  sentAt: true,
+  respondedAt: true,
+});
+export type InsertGroupInvite = z.infer<typeof insertGroupInviteSchema>;
+export type SelectGroupInvite = typeof groupInvites.$inferSelect;
+
+// Group Posts
+export const insertGroupPostSchema = createInsertSchema(groupPosts, {
+  content: z.string().min(1),
+}).omit({ 
+  id: true, 
+  createdAt: true,
+  updatedAt: true,
+  publishedAt: true,
+  likeCount: true,
+  commentCount: true,
+  shareCount: true,
+});
+export type InsertGroupPost = z.infer<typeof insertGroupPostSchema>;
+export type SelectGroupPost = typeof groupPosts.$inferSelect;
+
+// Group Categories
+export const insertGroupCategorySchema = createInsertSchema(groupCategories, {
+  name: z.string().min(1).max(100),
+}).omit({ 
+  id: true,
+  groupCount: true,
+});
+export type InsertGroupCategory = z.infer<typeof insertGroupCategorySchema>;
+export type SelectGroupCategory = typeof groupCategories.$inferSelect;
 
 // Posts
 export const insertPostSchema = createInsertSchema(posts, {
@@ -642,7 +1038,7 @@ export type SelectChatRoom = typeof chatRooms.$inferSelect;
 export const insertNotificationSchema = createInsertSchema(notifications).omit({ 
   id: true, 
   createdAt: true,
-  read: true,
+  isRead: true,
 });
 export type InsertNotification = z.infer<typeof insertNotificationSchema>;
 export type SelectNotification = typeof notifications.$inferSelect;

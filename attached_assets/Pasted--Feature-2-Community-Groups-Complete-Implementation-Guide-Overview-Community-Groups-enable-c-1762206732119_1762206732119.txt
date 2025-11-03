@@ -1,0 +1,1004 @@
+# Feature 2: Community Groups - Complete Implementation Guide
+
+## Overview
+Community Groups enable city-based and interest-based communities where users can join, participate, share content, organize events, and build local tango networks. Each city has its main community group, plus specialty groups for workshops, practice sessions, and social gatherings.
+
+## Table of Contents
+1. [Database Schema](#database-schema)
+2. [Group Types & Hierarchy](#group-types--hierarchy)
+3. [Membership System](#membership-system)
+4. [Group Features](#group-features)
+5. [API Endpoints](#api-endpoints)
+6. [Frontend Components](#frontend-components)
+7. [Implementation Guide](#implementation-guide)
+8. [Testing Guide](#testing-guide)
+
+---
+
+## Database Schema
+
+### 1. **groups** Table
+**Purpose:** Core group information for city and specialty communities
+
+```typescript
+export const groups = pgTable("groups", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  description: text("description"),
+  longDescription: text("long_description"), // Full markdown content
+  
+  // Group Type & Location
+  type: varchar("type", { length: 50 }).default("city"), // 'city', 'specialty', 'practice', 'workshop'
+  city: varchar("city", { length: 255 }),
+  country: varchar("country", { length: 255 }),
+  region: varchar("region", { length: 255 }), // State/province
+  
+  // Visibility & Privacy
+  visibility: varchar("visibility", { length: 20 }).default("public"), // 'public', 'private', 'secret'
+  joinApproval: varchar("join_approval", { length: 20 }).default("open"), // 'open', 'approval', 'invite_only'
+  
+  // Media
+  coverImage: text("cover_image"),
+  logoImage: text("logo_image"),
+  
+  // Statistics
+  memberCount: integer("member_count").default(0),
+  postCount: integer("post_count").default(0),
+  eventCount: integer("event_count").default(0),
+  
+  // Settings
+  allowEvents: boolean("allow_events").default(true),
+  allowPosts: boolean("allow_posts").default(true),
+  allowDiscussions: boolean("allow_discussions").default(true),
+  whoCanPost: varchar("who_can_post", { length: 20 }).default("members"), // 'members', 'admins', 'moderators'
+  
+  // Ownership
+  ownerId: integer("owner_id").notNull().references(() => users.id),
+  
+  // Metadata
+  tags: text("tags").array(), // ['beginner-friendly', 'milonga', 'lessons']
+  rules: text("rules"), // Group rules markdown
+  language: varchar("language", { length: 10 }).default("en"),
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  lastActivityAt: timestamp("last_activity_at").defaultNow(),
+}, (table) => ({
+  idxCity: index("idx_groups_city").on(table.city),
+  idxType: index("idx_groups_type").on(table.type),
+  idxVisibility: index("idx_groups_visibility").on(table.visibility),
+  idxSlug: index("idx_groups_slug").on(table.slug),
+}));
+```
+
+### 2. **groupMembers** Table
+**Purpose:** User memberships in groups with roles and permissions
+
+```typescript
+export const groupMembers = pgTable("group_members", {
+  id: serial("id").primaryKey(),
+  groupId: integer("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // Role System
+  role: varchar("role", { length: 20 }).default("member"),
+  // Roles: 'owner', 'admin', 'moderator', 'member', 'pending'
+  
+  // Permissions
+  canPost: boolean("can_post").default(true),
+  canComment: boolean("can_comment").default(true),
+  canCreateEvents: boolean("can_create_events").default(false),
+  canInvite: boolean("can_invite").default(true),
+  canModerate: boolean("can_moderate").default(false),
+  
+  // Join Information
+  joinedAt: timestamp("joined_at").defaultNow(),
+  invitedBy: integer("invited_by").references(() => users.id),
+  joinMessage: text("join_message"), // Message when requesting to join
+  approvedBy: integer("approved_by").references(() => users.id),
+  approvedAt: timestamp("approved_at"),
+  
+  // Activity Tracking
+  lastVisitedAt: timestamp("last_visited_at").defaultNow(),
+  postCount: integer("post_count").default(0),
+  commentCount: integer("comment_count").default(0),
+  
+  // Notifications
+  notificationLevel: varchar("notification_level", { length: 20 }).default("all"),
+  // 'all', 'mentions', 'important', 'none'
+  muteUntil: timestamp("mute_until"),
+  
+  // Status
+  status: varchar("status", { length: 20 }).default("active"),
+  // 'active', 'pending', 'banned', 'left'
+  bannedReason: text("banned_reason"),
+  bannedUntil: timestamp("banned_until"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  uniqueMembership: unique().on(table.groupId, table.userId),
+  idxGroup: index("idx_group_members_group").on(table.groupId),
+  idxUser: index("idx_group_members_user").on(table.userId),
+  idxRole: index("idx_group_members_role").on(table.role),
+  idxStatus: index("idx_group_members_status").on(table.status),
+}));
+```
+
+### 3. **groupInvites** Table
+**Purpose:** Pending invitations to join groups
+
+```typescript
+export const groupInvites = pgTable("group_invites", {
+  id: serial("id").primaryKey(),
+  groupId: integer("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
+  inviterId: integer("inviter_id").notNull().references(() => users.id),
+  inviteeId: integer("invitee_id").notNull().references(() => users.id),
+  
+  message: text("message"),
+  status: varchar("status", { length: 20 }).default("pending"), // 'pending', 'accepted', 'declined', 'cancelled'
+  
+  sentAt: timestamp("sent_at").defaultNow(),
+  respondedAt: timestamp("responded_at"),
+  expiresAt: timestamp("expires_at"), // Optional expiration (30 days default)
+}, (table) => ({
+  uniqueInvite: unique().on(table.groupId, table.inviteeId),
+  idxGroup: index("idx_group_invites_group").on(table.groupId),
+  idxInvitee: index("idx_group_invites_invitee").on(table.inviteeId),
+  idxStatus: index("idx_group_invites_status").on(table.status),
+}));
+```
+
+### 4. **groupPosts** Table
+**Purpose:** Posts shared within groups
+
+```typescript
+export const groupPosts = pgTable("group_posts", {
+  id: serial("id").primaryKey(),
+  groupId: integer("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
+  authorId: integer("author_id").notNull().references(() => users.id),
+  
+  // Content
+  title: varchar("title", { length: 255 }),
+  content: text("content").notNull(),
+  mediaUrls: text("media_urls").array(),
+  mediaType: varchar("media_type", { length: 20 }), // 'photo', 'video', 'link', 'document'
+  
+  // Post Type
+  postType: varchar("post_type", { length: 20 }).default("discussion"),
+  // 'discussion', 'announcement', 'question', 'photo', 'video', 'poll', 'event_share'
+  
+  // Linked Content
+  linkedEventId: integer("linked_event_id").references(() => events.id),
+  linkedHousingId: integer("linked_housing_id").references(() => housing.id),
+  
+  // Engagement
+  likeCount: integer("like_count").default(0),
+  commentCount: integer("comment_count").default(0),
+  shareCount: integer("share_count").default(0),
+  
+  // Moderation
+  isPinned: boolean("is_pinned").default(false),
+  pinnedBy: integer("pinned_by").references(() => users.id),
+  pinnedAt: timestamp("pinned_at"),
+  isApproved: boolean("is_approved").default(true),
+  approvedBy: integer("approved_by").references(() => users.id),
+  
+  // Status
+  status: varchar("status", { length: 20 }).default("published"),
+  // 'draft', 'published', 'archived', 'deleted', 'flagged'
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  publishedAt: timestamp("published_at").defaultNow(),
+}, (table) => ({
+  idxGroup: index("idx_group_posts_group").on(table.groupId),
+  idxAuthor: index("idx_group_posts_author").on(table.authorId),
+  idxType: index("idx_group_posts_type").on(table.postType),
+  idxStatus: index("idx_group_posts_status").on(table.status),
+  idxPinned: index("idx_group_posts_pinned").on(table.isPinned),
+  idxCreated: index("idx_group_posts_created").on(table.createdAt),
+}));
+```
+
+### 5. **groupCategories** Table
+**Purpose:** Organize groups by categories/topics
+
+```typescript
+export const groupCategories = pgTable("group_categories", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  slug: varchar("slug", { length: 100 }).notNull().unique(),
+  description: text("description"),
+  icon: varchar("icon", { length: 50 }), // Lucide icon name
+  color: varchar("color", { length: 20 }), // Hex color for category badge
+  groupCount: integer("group_count").default(0),
+  sortOrder: integer("sort_order").default(0),
+});
+
+export const groupCategoryAssignments = pgTable("group_category_assignments", {
+  groupId: integer("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
+  categoryId: integer("category_id").notNull().references(() => groupCategories.id, { onDelete: "cascade" }),
+}, (table) => ({
+  pk: primaryKey({ columns: [table.groupId, table.categoryId] }),
+}));
+```
+
+---
+
+## Group Types & Hierarchy
+
+### City Groups (Main Communities)
+**Purpose:** Central hub for each city's tango community
+
+**Characteristics:**
+- One per city (e.g., "Buenos Aires Tango", "Barcelona Tango")
+- Auto-created when first user registers in that city
+- Owner: First registered user or admin
+- Join: Open (auto-join on registration if user's city matches)
+
+**Features:**
+- City-wide event calendar
+- Local milonga listings
+- Housing for visitors
+- Newcomer welcome threads
+- Practice group coordination
+
+**Example Cities:**
+```typescript
+const cityGroups = [
+  { name: "Buenos Aires Tango", city: "Buenos Aires", country: "Argentina" },
+  { name: "Barcelona Tango Community", city: "Barcelona", country: "Spain" },
+  { name: "Paris Tango", city: "Paris", country: "France" },
+  { name: "NYC Tango", city: "New York", country: "USA" },
+];
+```
+
+### Specialty Groups
+**Purpose:** Interest-based communities within or across cities
+
+**Types:**
+- **Workshop Groups**: "Advanced Musicality Workshop"
+- **Practice Groups**: "Monday Night Practica - Brooklyn"
+- **Style Groups**: "Milonguero Style Enthusiasts"
+- **Social Groups**: "Tango & Wine Tasting"
+
+**Characteristics:**
+- Can be city-specific or global
+- Join: Usually requires approval
+- Smaller, focused membership
+
+---
+
+## Membership System
+
+### Joining a Group
+
+#### Open Groups (Auto-Join)
+```typescript
+// User clicks "Join"
+POST /api/groups/:id/join
+
+// Immediately added as member
+INSERT INTO group_members (group_id, user_id, role, status)
+VALUES (:groupId, :userId, 'member', 'active');
+
+// Increment member count
+UPDATE groups SET member_count = member_count + 1 WHERE id = :groupId;
+```
+
+#### Approval-Required Groups
+```typescript
+// Step 1: User requests to join with optional message
+POST /api/groups/:id/request-join
+Body: { message: "I've been dancing tango for 5 years..." }
+
+// Create pending membership
+INSERT INTO group_members (group_id, user_id, role, status, join_message)
+VALUES (:groupId, :userId, 'member', 'pending', :message);
+
+// Notify group admins
+notifyGroupAdmins(groupId, 'new_join_request', { userId, message });
+
+// Step 2: Admin approves/declines
+POST /api/groups/:id/members/:userId/approve
+
+// Update status
+UPDATE group_members 
+SET status = 'active', 
+    approved_by = :adminId,
+    approved_at = NOW()
+WHERE group_id = :groupId AND user_id = :userId;
+```
+
+#### Invite-Only Groups
+```typescript
+// Step 1: Member sends invite
+POST /api/groups/:id/invite
+Body: { inviteeId: 123, message: "..." }
+
+// Create invite record
+INSERT INTO group_invites (group_id, inviter_id, invitee_id, message, expires_at)
+VALUES (:groupId, :inviterId, :inviteeId, :message, NOW() + INTERVAL '30 days');
+
+// Step 2: Invitee accepts
+POST /api/group-invites/:id/accept
+
+// Create membership
+INSERT INTO group_members (group_id, user_id, invited_by)
+VALUES (:groupId, :userId, :inviterId);
+```
+
+### Role Hierarchy
+
+**Owner (1 per group)**
+- Full control over group
+- Can delete group
+- Can transfer ownership
+- All admin permissions
+
+**Admin (Multiple allowed)**
+- Manage members (approve, ban, promote)
+- Edit group settings
+- Pin/unpin posts
+- Create events
+- All moderator permissions
+
+**Moderator (Multiple allowed)**
+- Delete/edit posts
+- Moderate comments
+- Ban disruptive users (temporary)
+- Pin important discussions
+
+**Member**
+- Create posts (if allowed)
+- Comment on posts
+- RSVP to events
+- Invite others (if allowed)
+
+---
+
+## Group Features
+
+### 1. Group Feed
+**Displays:** Posts, events, announcements, polls
+
+**Feed Algorithm:**
+```typescript
+// Prioritize:
+1. Pinned posts (always on top)
+2. Admin announcements (high priority)
+3. Recent activity (comments, likes)
+4. Recency (newest first)
+5. Post type (events > questions > discussions)
+
+// SQL Query
+SELECT p.*,
+  u.name as author_name,
+  u.profile_image as author_image,
+  (p.like_count + p.comment_count * 2) as engagement_score,
+  CASE 
+    WHEN p.is_pinned THEN 1000000
+    WHEN p.post_type = 'announcement' THEN 100000
+    WHEN p.post_type = 'event_share' THEN 10000
+    ELSE 0
+  END + EXTRACT(EPOCH FROM p.created_at) as sort_score
+FROM group_posts p
+JOIN users u ON p.author_id = u.id
+WHERE p.group_id = :groupId 
+  AND p.status = 'published'
+ORDER BY sort_score DESC
+LIMIT 20 OFFSET :offset;
+```
+
+### 2. Group Events
+**Features:**
+- Create events within group
+- Auto-share to group feed
+- RSVP visibility (all members can see attendees)
+- Event types: milongas, workshops, practicas, social gatherings
+
+### 3. Member Directory
+**Display:**
+- All group members with profiles
+- Filter by role (admins, moderators, members)
+- Search by name
+- Sort by join date, activity, contribution
+
+### 4. Group Analytics (Admin Only)
+**Metrics:**
+- Member growth over time
+- Post engagement rates
+- Top contributors
+- Peak activity times
+- Geographic distribution
+
+---
+
+## API Endpoints
+
+### Group Management
+
+#### Create Group
+```http
+POST /api/groups
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "name": "Buenos Aires Advanced Milongueros",
+  "description": "For experienced dancers practicing milonguero style",
+  "type": "specialty",
+  "city": "Buenos Aires",
+  "country": "Argentina",
+  "visibility": "public",
+  "joinApproval": "approval",
+  "tags": ["advanced", "milonguero", "close-embrace"],
+  "rules": "## Group Rules\n1. Be respectful\n2. Share constructive feedback",
+  "coverImage": "https://..."
+}
+
+Response 201:
+{
+  "success": true,
+  "group": {
+    "id": 42,
+    "name": "Buenos Aires Advanced Milongueros",
+    "slug": "buenos-aires-advanced-milongueros",
+    "ownerId": 123,
+    "memberCount": 1,
+    "createdAt": "2024-01-15T10:00:00Z"
+  }
+}
+```
+
+#### Get Group Details
+```http
+GET /api/groups/:id
+Authorization: Bearer {token}
+
+Response 200:
+{
+  "success": true,
+  "group": {
+    "id": 42,
+    "name": "Buenos Aires Advanced Milongueros",
+    "slug": "buenos-aires-advanced-milongueros",
+    "description": "...",
+    "memberCount": 156,
+    "postCount": 234,
+    "eventCount": 12,
+    "owner": { "id": 123, "name": "Maria Lopez" },
+    "admins": [{ "id": 456, "name": "Carlos Gomez" }],
+    "userRole": "member", // Current user's role
+    "userIsMember": true,
+    "canPost": true,
+    "canCreateEvents": false
+  }
+}
+```
+
+#### Update Group
+```http
+PATCH /api/groups/:id
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "description": "Updated description",
+  "rules": "Updated rules"
+}
+
+Response 200:
+{
+  "success": true,
+  "group": { ... }
+}
+```
+
+#### Delete Group
+```http
+DELETE /api/groups/:id
+Authorization: Bearer {token}
+
+Response 200:
+{
+  "success": true,
+  "message": "Group deleted successfully"
+}
+```
+
+### Membership
+
+#### Join Group
+```http
+POST /api/groups/:id/join
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "message": "I'd love to join this community!" // Optional, required for approval groups
+}
+
+Response 200:
+{
+  "success": true,
+  "status": "active", // or "pending" if requires approval
+  "message": "You've joined the group!"
+}
+```
+
+#### Leave Group
+```http
+POST /api/groups/:id/leave
+Authorization: Bearer {token}
+
+Response 200:
+{
+  "success": true,
+  "message": "You've left the group"
+}
+```
+
+#### Get Group Members
+```http
+GET /api/groups/:id/members?role=all&page=1&limit=50
+Authorization: Bearer {token}
+
+Response 200:
+{
+  "success": true,
+  "members": [
+    {
+      "userId": 123,
+      "name": "Maria Lopez",
+      "profileImage": "...",
+      "role": "owner",
+      "joinedAt": "2024-01-01T00:00:00Z",
+      "postCount": 45,
+      "lastVisitedAt": "2024-01-14T12:00:00Z"
+    }
+  ],
+  "pagination": {
+    "total": 156,
+    "page": 1,
+    "pages": 4
+  }
+}
+```
+
+#### Invite User
+```http
+POST /api/groups/:id/invite
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "inviteeId": 789,
+  "message": "I think you'd enjoy this group!"
+}
+
+Response 200:
+{
+  "success": true,
+  "inviteId": 999,
+  "expiresAt": "2024-02-14T10:00:00Z"
+}
+```
+
+#### Approve/Decline Join Request
+```http
+POST /api/groups/:id/members/:userId/approve
+Authorization: Bearer {token}
+
+Response 200:
+{
+  "success": true,
+  "message": "Member approved"
+}
+
+POST /api/groups/:id/members/:userId/decline
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "reason": "Group is currently at capacity"
+}
+
+Response 200:
+{
+  "success": true,
+  "message": "Request declined"
+}
+```
+
+#### Update Member Role
+```http
+PATCH /api/groups/:id/members/:userId
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "role": "moderator", // 'admin', 'moderator', 'member'
+  "canCreateEvents": true,
+  "canModerate": true
+}
+
+Response 200:
+{
+  "success": true,
+  "member": { ... }
+}
+```
+
+#### Ban Member
+```http
+POST /api/groups/:id/members/:userId/ban
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "reason": "Repeated violations of group rules",
+  "duration": "permanent" // or number of days
+}
+
+Response 200:
+{
+  "success": true,
+  "message": "Member banned"
+}
+```
+
+### Group Posts
+
+#### Create Post
+```http
+POST /api/groups/:id/posts
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "title": "Great milonga last night!",
+  "content": "Had an amazing time at La Viruta...",
+  "postType": "discussion",
+  "mediaUrls": ["https://cloudinary.com/..."]
+}
+
+Response 201:
+{
+  "success": true,
+  "post": {
+    "id": 567,
+    "groupId": 42,
+    "authorId": 123,
+    "title": "Great milonga last night!",
+    "content": "...",
+    "createdAt": "2024-01-15T22:30:00Z"
+  }
+}
+```
+
+#### Get Group Posts
+```http
+GET /api/groups/:id/posts?page=1&limit=20&type=all
+Authorization: Bearer {token}
+
+Response 200:
+{
+  "success": true,
+  "posts": [
+    {
+      "id": 567,
+      "author": {
+        "id": 123,
+        "name": "Maria Lopez",
+        "profileImage": "..."
+      },
+      "title": "Great milonga last night!",
+      "content": "...",
+      "postType": "discussion",
+      "likeCount": 24,
+      "commentCount": 8,
+      "isPinned": false,
+      "createdAt": "2024-01-15T22:30:00Z"
+    }
+  ],
+  "pagination": { "total": 234, "page": 1, "pages": 12 }
+}
+```
+
+#### Pin/Unpin Post (Admin)
+```http
+POST /api/groups/:groupId/posts/:postId/pin
+Authorization: Bearer {token}
+
+Response 200:
+{
+  "success": true,
+  "message": "Post pinned"
+}
+```
+
+### Group Discovery
+
+#### Search Groups
+```http
+GET /api/groups/search?q=barcelona&type=all&city=Barcelona
+Authorization: Bearer {token}
+
+Response 200:
+{
+  "success": true,
+  "groups": [
+    {
+      "id": 12,
+      "name": "Barcelona Tango Community",
+      "description": "...",
+      "memberCount": 450,
+      "city": "Barcelona",
+      "coverImage": "...",
+      "userIsMember": false
+    }
+  ]
+}
+```
+
+#### Get Suggested Groups
+```http
+GET /api/groups/suggested?limit=5
+Authorization: Bearer {token}
+
+Response 200:
+{
+  "success": true,
+  "suggestions": [
+    {
+      "group": { ... },
+      "reason": "Based on your location: Barcelona",
+      "mutualMemberCount": 12
+    }
+  ]
+}
+```
+
+---
+
+## Frontend Components
+
+### 1. GroupCard
+**Purpose:** Display group in lists/search results
+
+```typescript
+interface GroupCardProps {
+  group: {
+    id: number;
+    name: string;
+    description: string;
+    coverImage: string;
+    memberCount: number;
+    city?: string;
+    type: string;
+  };
+  userIsMember: boolean;
+  onJoin?: () => void;
+}
+
+// Features:
+- Cover image
+- Group name + badge (City/Specialty)
+- Member count
+- Location
+- Join button (if not member)
+- "Visit" button (if member)
+```
+
+### 2. GroupFeed
+**Purpose:** Main group content stream
+
+```typescript
+interface GroupFeedProps {
+  groupId: number;
+  canPost: boolean;
+}
+
+// Features:
+- Create post button (if allowed)
+- Pinned posts section
+- Infinite scroll feed
+- Post filtering (all/announcements/questions)
+- Real-time updates via WebSocket
+```
+
+### 3. GroupSidebar
+**Purpose:** Group info and actions
+
+```typescript
+interface GroupSidebarProps {
+  group: Group;
+  userRole: 'owner' | 'admin' | 'moderator' | 'member' | null;
+}
+
+// Displays:
+- Group stats (members, posts, events)
+- About section
+- Rules
+- Admin quick actions
+- Member directory link
+- Upcoming events
+```
+
+### 4. MemberList
+**Purpose:** Browse group members
+
+```typescript
+interface MemberListProps {
+  groupId: number;
+  canManageMembers: boolean;
+}
+
+// Features:
+- Search members
+- Filter by role
+- Sort by join date/activity
+- Promote/demote (if admin)
+- Ban/remove (if admin)
+```
+
+---
+
+## Implementation Guide
+
+### Creating Your First Group
+
+**Step 1: Set up database tables**
+```bash
+# Schema already defined in shared/schema.ts
+npm run db:push --force
+```
+
+**Step 2: Create API routes**
+```typescript
+// server/routes/groupRoutes.ts
+import { Router } from 'express';
+import { isAuthenticated } from '../replitAuth';
+import { storage } from '../storage';
+
+const router = Router();
+
+router.post('/groups', isAuthenticated, async (req, res) => {
+  const ownerId = req.user!.id;
+  const groupData = {
+    ...req.body,
+    ownerId,
+    slug: generateSlug(req.body.name),
+  };
+  
+  const group = await storage.createGroup(groupData);
+  
+  // Auto-add creator as owner/member
+  await storage.createGroupMember({
+    groupId: group.id,
+    userId: ownerId,
+    role: 'owner',
+    status: 'active',
+  });
+  
+  res.status(201).json({ success: true, group });
+});
+
+export default router;
+```
+
+**Step 3: Implement storage methods**
+```typescript
+// server/storage.ts
+interface IStorage {
+  createGroup(data: InsertGroup): Promise<Group>;
+  getGroup(id: number): Promise<Group | null>;
+  updateGroup(id: number, data: Partial<Group>): Promise<Group>;
+  deleteGroup(id: number): Promise<void>;
+  
+  createGroupMember(data: InsertGroupMember): Promise<GroupMember>;
+  getGroupMembers(groupId: number, filters?: MemberFilters): Promise<GroupMember[]>;
+  updateGroupMember(id: number, data: Partial<GroupMember>): Promise<GroupMember>;
+  removeGroupMember(groupId: number, userId: number): Promise<void>;
+}
+```
+
+**Step 4: Create frontend components**
+```typescript
+// client/src/components/groups/GroupCard.tsx
+export function GroupCard({ group, onJoin }: GroupCardProps) {
+  return (
+    <Card>
+      <img src={group.coverImage} alt={group.name} />
+      <CardHeader>
+        <CardTitle>{group.name}</CardTitle>
+        <Badge>{group.type}</Badge>
+      </CardHeader>
+      <CardContent>
+        <p>{group.description}</p>
+        <div className="flex gap-2 text-sm text-gray-600">
+          <Users className="h-4 w-4" />
+          <span>{group.memberCount} members</span>
+        </div>
+      </CardContent>
+      <CardFooter>
+        {!group.userIsMember && (
+          <Button onClick={onJoin}>Join Group</Button>
+        )}
+      </CardFooter>
+    </Card>
+  );
+}
+```
+
+**Step 5: Add to routing**
+```typescript
+// client/src/App.tsx
+<Route path="/groups" component={GroupsListPage} />
+<Route path="/groups/:id" component={GroupDetailPage} />
+<Route path="/groups/:id/members" component={GroupMembersPage} />
+```
+
+---
+
+## Testing Guide
+
+### Manual Test Checklist
+
+**Group Creation**
+- [ ] Create public city group
+- [ ] Create private specialty group
+- [ ] Create invite-only practice group
+- [ ] Verify slug generation
+- [ ] Verify owner auto-added as member
+
+**Joining Groups**
+- [ ] Join open group (instant)
+- [ ] Request to join approval group
+- [ ] Accept invite to invite-only group
+- [ ] Verify member count increments
+- [ ] Verify user appears in member list
+
+**Posting in Groups**
+- [ ] Create text post
+- [ ] Create post with images
+- [ ] Create announcement (admin)
+- [ ] Pin post (admin)
+- [ ] Delete post (moderator)
+- [ ] Verify feed order (pinned first)
+
+**Member Management**
+- [ ] Promote member to moderator
+- [ ] Promote moderator to admin
+- [ ] Demote admin to member
+- [ ] Ban disruptive member
+- [ ] Remove banned member
+- [ ] Verify permissions apply correctly
+
+**Group Discovery**
+- [ ] Search groups by name
+- [ ] Filter by city
+- [ ] Filter by type
+- [ ] View suggested groups
+- [ ] Verify location-based suggestions
+
+---
+
+## Related Features
+- Events: Groups can host events
+- Housing: Groups can share housing listings
+- Messaging: Group chat functionality
+- Notifications: Group activity notifications
+
+---
+
+## Next Steps
+1. Implement group chat (real-time messaging)
+2. Add group photo albums
+3. Create group analytics dashboard
+4. Build group recommendation engine
+5. Add group achievements/badges

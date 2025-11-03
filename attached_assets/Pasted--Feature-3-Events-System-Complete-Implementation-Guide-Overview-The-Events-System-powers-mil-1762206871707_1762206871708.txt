@@ -1,0 +1,1201 @@
+# Feature 3: Events System - Complete Implementation Guide
+
+## Overview
+The Events System powers milongas, workshops, practicas, festivals, and social gatherings. Users can create events, manage RSVPs, sell tickets, share photos, and build their dance calendar. Events integrate with groups, housing, and the interactive map.
+
+## Table of Contents
+1. [Database Schema](#database-schema)
+2. [Event Types](#event-types)
+3. [RSVP & Ticketing System](#rsvp--ticketing-system)
+4. [Event Discovery & Search](#event-discovery--search)
+5. [API Endpoints](#api-endpoints)
+6. [Frontend Components](#frontend-components)
+7. [Implementation Guide](#implementation-guide)
+8. [Testing Guide](#testing-guide)
+
+---
+
+## Database Schema
+
+### 1. **events** Table
+**Purpose:** Core event information
+
+```typescript
+export const events = pgTable("events", {
+  id: serial("id").primaryKey(),
+  
+  // Basic Information
+  title: varchar("title", { length: 255 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  description: text("description"),
+  longDescription: text("long_description"), // Full markdown content
+  
+  // Event Type & Category
+  eventType: varchar("event_type", { length: 50 }).notNull(),
+  // Types: 'milonga', 'practica', 'workshop', 'festival', 'performance', 'social'
+  category: varchar("category", { length: 50 }),
+  // Categories: 'beginner-friendly', 'intermediate', 'advanced', 'all-levels'
+  
+  // Date & Time
+  startDateTime: timestamp("start_date_time").notNull(),
+  endDateTime: timestamp("end_date_time").notNull(),
+  timezone: varchar("timezone", { length: 50 }).default("UTC"),
+  isRecurring: boolean("is_recurring").default(false),
+  recurrenceRule: text("recurrence_rule"), // iCal RRULE format
+  
+  // Location
+  venueName: varchar("venue_name", { length: 255 }),
+  address: text("address"),
+  city: varchar("city", { length: 255 }).notNull(),
+  country: varchar("country", { length: 255 }).notNull(),
+  latitude: decimal("latitude", { precision: 10, scale: 7 }),
+  longitude: decimal("longitude", { precision: 10, scale: 7 }),
+  isOnline: boolean("is_online").default(false),
+  onlineLink: text("online_link"), // Zoom, Google Meet, etc
+  
+  // Media
+  coverImage: text("cover_image"),
+  mediaUrls: text("media_urls").array(),
+  
+  // Organizer
+  organizerId: integer("organizer_id").notNull().references(() => users.id),
+  coOrganizers: integer("co_organizers").array(), // User IDs
+  groupId: integer("group_id").references(() => groups.id), // If group event
+  
+  // Capacity & RSVPs
+  maxAttendees: integer("max_attendees"),
+  currentAttendees: integer("current_attendees").default(0),
+  waitlistEnabled: boolean("waitlist_enabled").default(false),
+  waitlistCount: integer("waitlist_count").default(0),
+  
+  // Ticketing
+  isFree: boolean("is_free").default(true),
+  price: decimal("price", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  ticketLink: text("ticket_link"), // External ticketing (Eventbrite, etc)
+  
+  // Visibility & Privacy
+  visibility: varchar("visibility", { length: 20 }).default("public"),
+  // 'public', 'private', 'friends', 'group_only'
+  requiresApproval: boolean("requires_approval").default(false),
+  
+  // Features
+  allowGuestPlusOne: boolean("allow_guest_plus_one").default(false),
+  allowPhotos: boolean("allow_photos").default(true),
+  allowComments: boolean("allow_comments").default(true),
+  
+  // Music & Style
+  musicStyle: varchar("music_style", { length: 100 }),
+  // 'traditional', 'alternative', 'mixed', 'live-orchestra', 'neo-tango'
+  danceStyles: text("dance_styles").array(),
+  // ['tango', 'vals', 'milonga', 'nuevo']
+  djName: varchar("dj_name", { length: 255 }),
+  
+  // Additional Info
+  dressCode: varchar("dress_code", { length: 100 }),
+  ageRestriction: varchar("age_restriction", { length: 50 }),
+  wheelchairAccessible: boolean("wheelchair_accessible").default(false),
+  parkingAvailable: boolean("parking_available").default(false),
+  
+  // Status
+  status: varchar("status", { length: 20 }).default("published"),
+  // 'draft', 'published', 'cancelled', 'completed'
+  cancellationReason: text("cancellation_reason"),
+  
+  // Stats
+  viewCount: integer("view_count").default(0),
+  shareCount: integer("share_count").default(0),
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  publishedAt: timestamp("published_at"),
+}, (table) => ({
+  idxCity: index("idx_events_city").on(table.city),
+  idxType: index("idx_events_type").on(table.eventType),
+  idxStartDate: index("idx_events_start_date").on(table.startDateTime),
+  idxStatus: index("idx_events_status").on(table.status),
+  idxOrganizer: index("idx_events_organizer").on(table.organizerId),
+  idxGroup: index("idx_events_group").on(table.groupId),
+  idxSlug: index("idx_events_slug").on(table.slug),
+}));
+```
+
+### 2. **eventRSVPs** Table
+**Purpose:** Track who's attending events
+
+```typescript
+export const eventRSVPs = pgTable("event_rsvps", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // RSVP Status
+  status: varchar("status", { length: 20 }).default("going"),
+  // 'going', 'maybe', 'not_going', 'waitlist', 'pending_approval'
+  
+  // Guest Information
+  guestCount: integer("guest_count").default(0), // +1, +2, etc
+  guestNames: text("guest_names").array(),
+  
+  // Preferences
+  role: varchar("role", { length: 50 }),
+  // 'attendee', 'volunteer', 'performer', 'instructor'
+  dietaryRestrictions: text("dietary_restrictions"),
+  specialRequests: text("special_requests"),
+  
+  // Payment (if ticketed)
+  ticketsPurchased: integer("tickets_purchased").default(1),
+  totalPaid: decimal("total_paid", { precision: 10, scale: 2 }),
+  paymentStatus: varchar("payment_status", { length: 20 }),
+  // 'pending', 'completed', 'refunded'
+  stripePaymentId: varchar("stripe_payment_id", { length: 255 }),
+  
+  // Check-in
+  checkedIn: boolean("checked_in").default(false),
+  checkedInAt: timestamp("checked_in_at"),
+  checkedInBy: integer("checked_in_by").references(() => users.id),
+  
+  // Notifications
+  notificationsEnabled: boolean("notifications_enabled").default(true),
+  reminderSent: boolean("reminder_sent").default(false),
+  
+  // Timestamps
+  rsvpedAt: timestamp("rsvped_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  uniqueRSVP: unique().on(table.eventId, table.userId),
+  idxEvent: index("idx_event_rsvps_event").on(table.eventId),
+  idxUser: index("idx_event_rsvps_user").on(table.userId),
+  idxStatus: index("idx_event_rsvps_status").on(table.status),
+}));
+```
+
+### 3. **eventPhotos** Table
+**Purpose:** User-uploaded photos from events
+
+```typescript
+export const eventPhotos = pgTable("event_photos", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
+  uploaderId: integer("uploader_id").notNull().references(() => users.id),
+  
+  // Photo Details
+  photoUrl: text("photo_url").notNull(),
+  thumbnailUrl: text("thumbnail_url"),
+  caption: text("caption"),
+  
+  // Tagged People
+  taggedUsers: integer("tagged_users").array(),
+  
+  // Engagement
+  likeCount: integer("like_count").default(0),
+  commentCount: integer("comment_count").default(0),
+  
+  // Visibility
+  visibility: varchar("visibility", { length: 20 }).default("public"),
+  // 'public', 'attendees_only', 'private'
+  
+  // Moderation
+  isApproved: boolean("is_approved").default(true),
+  isFeatured: boolean("is_featured").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  idxEvent: index("idx_event_photos_event").on(table.eventId),
+  idxUploader: index("idx_event_photos_uploader").on(table.uploaderId),
+  idxFeatured: index("idx_event_photos_featured").on(table.isFeatured),
+}));
+```
+
+### 4. **eventComments** Table
+**Purpose:** Comments on events
+
+```typescript
+export const eventComments = pgTable("event_comments", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id),
+  
+  // Comment Content
+  content: text("content").notNull(),
+  parentCommentId: integer("parent_comment_id").references(() => eventComments.id),
+  // For threaded replies
+  
+  // Engagement
+  likeCount: integer("like_count").default(0),
+  
+  // Moderation
+  isEdited: boolean("is_edited").default(false),
+  isDeleted: boolean("is_deleted").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  idxEvent: index("idx_event_comments_event").on(table.eventId),
+  idxUser: index("idx_event_comments_user").on(table.userId),
+  idxParent: index("idx_event_comments_parent").on(table.parentCommentId),
+}));
+```
+
+### 5. **eventReminders** Table
+**Purpose:** Scheduled reminders for attendees
+
+```typescript
+export const eventReminders = pgTable("event_reminders", {
+  id: serial("id").primaryKey(),
+  rsvpId: integer("rsvp_id").notNull().references(() => eventRSVPs.id, { onDelete: "cascade" }),
+  
+  // Reminder Settings
+  reminderType: varchar("reminder_type", { length: 20 }).notNull(),
+  // '1_day', '1_hour', '30_min', 'custom'
+  reminderTime: timestamp("reminder_time").notNull(),
+  
+  // Delivery
+  sentAt: timestamp("sent_at"),
+  deliveryMethod: varchar("delivery_method", { length: 20 }).default("email"),
+  // 'email', 'push', 'sms'
+  
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  idxRSVP: index("idx_event_reminders_rsvp").on(table.rsvpId),
+  idxTime: index("idx_event_reminders_time").on(table.reminderTime),
+}));
+```
+
+---
+
+## Event Types
+
+### Milonga (Social Dance)
+**Characteristics:**
+- Evening dance event (typically 8pm-1am)
+- DJ plays traditional tandas
+- Codes: traditional milongas follow codigos (mirada/cabeceo)
+- Usually weekly recurring events
+
+**Example:**
+```typescript
+{
+  eventType: 'milonga',
+  title: 'La Viruta Milonga',
+  musicStyle: 'traditional',
+  danceStyles: ['tango', 'vals', 'milonga'],
+  isRecurring: true,
+  recurrenceRule: 'FREQ=WEEKLY;BYDAY=FR',
+  dressCode: 'smart_casual'
+}
+```
+
+### Practica (Practice Session)
+**Characteristics:**
+- Informal practice environment
+- OK to stop/start, experiment
+- Often includes instruction time
+- Lower cost or free
+
+**Example:**
+```typescript
+{
+  eventType: 'practica',
+  title: 'Sunday Afternoon Practica',
+  category: 'all-levels',
+  isFree: true,
+  allowGuestPlusOne: true
+}
+```
+
+### Workshop/Class
+**Characteristics:**
+- Structured instruction
+- Specific topic/technique
+- Level requirements
+- Limited capacity
+- Usually requires payment
+
+**Example:**
+```typescript
+{
+  eventType: 'workshop',
+  title: 'Advanced Musicality with Chicho Frumboli',
+  category: 'advanced',
+  maxAttendees: 30,
+  isFree: false,
+  price: 45.00,
+  requiresApproval: true // Skill verification
+}
+```
+
+### Festival
+**Characteristics:**
+- Multi-day event
+- Multiple milongas/workshops
+- International attendees
+- Often includes performances
+
+**Example:**
+```typescript
+{
+  eventType: 'festival',
+  title: 'Buenos Aires Tango Festival 2024',
+  startDateTime: '2024-08-15 10:00',
+  endDateTime: '2024-08-20 02:00',
+  price: 350.00,
+  ticketLink: 'https://eventbrite.com/...'
+}
+```
+
+---
+
+## RSVP & Ticketing System
+
+### RSVP Flow
+
+#### Free Event - Instant RSVP
+```typescript
+// User clicks "I'm Going"
+POST /api/events/:id/rsvp
+Body: { status: 'going', guestCount: 0 }
+
+// Immediately confirmed
+INSERT INTO event_rsvps (event_id, user_id, status, rsvped_at)
+VALUES (:eventId, :userId, 'going', NOW());
+
+// Update attendee count
+UPDATE events 
+SET current_attendees = current_attendees + 1
+WHERE id = :eventId;
+
+// Send confirmation email
+sendEmail(user.email, 'RSVP Confirmed', eventDetails);
+```
+
+#### Approval-Required Event
+```typescript
+// Step 1: User requests to attend
+POST /api/events/:id/rsvp
+Body: { 
+  status: 'going',
+  specialRequests: 'I'm an advanced dancer with 5 years experience'
+}
+
+// Create pending RSVP
+INSERT INTO event_rsvps (event_id, user_id, status)
+VALUES (:eventId, :userId, 'pending_approval');
+
+// Notify organizer
+notifyOrganizer(eventId, 'new_rsvp_request', { userId });
+
+// Step 2: Organizer approves
+POST /api/events/:eventId/rsvps/:userId/approve
+
+// Update status
+UPDATE event_rsvps 
+SET status = 'going', updated_at = NOW()
+WHERE event_id = :eventId AND user_id = :userId;
+
+// Notify attendee
+sendEmail(user.email, 'RSVP Approved!', eventDetails);
+```
+
+#### Capacity-Limited Event (Waitlist)
+```typescript
+// Check capacity before RSVP
+const event = await storage.getEvent(eventId);
+if (event.currentAttendees >= event.maxAttendees) {
+  // Add to waitlist
+  INSERT INTO event_rsvps (event_id, user_id, status)
+  VALUES (:eventId, :userId, 'waitlist');
+  
+  UPDATE events 
+  SET waitlist_count = waitlist_count + 1
+  WHERE id = :eventId;
+  
+  return { status: 'waitlist', position: waitlistCount + 1 };
+}
+
+// If someone cancels, promote from waitlist
+const nextInLine = await storage.getNextWaitlistUser(eventId);
+if (nextInLine) {
+  UPDATE event_rsvps 
+  SET status = 'going'
+  WHERE id = nextInLine.id;
+  
+  sendEmail(nextInLine.email, 'Spot Available!', eventDetails);
+}
+```
+
+### Ticketing Flow (Stripe Integration)
+
+#### Create Ticketed Event
+```typescript
+// Organizer creates paid event
+POST /api/events
+Body: {
+  title: 'Advanced Workshop',
+  isFree: false,
+  price: 50.00,
+  currency: 'USD',
+  maxAttendees: 30
+}
+
+// Create Stripe Price object
+const stripePrice = await stripe.prices.create({
+  unit_amount: 5000, // $50.00 in cents
+  currency: 'usd',
+  product_data: {
+    name: 'Advanced Workshop Ticket',
+    metadata: { eventId: event.id }
+  }
+});
+
+// Store in event record
+UPDATE events SET stripe_price_id = :stripePriceId WHERE id = :eventId;
+```
+
+#### Purchase Ticket
+```typescript
+// User RSVPs to paid event
+POST /api/events/:id/purchase
+Body: { ticketCount: 2 }
+
+// Create Stripe Checkout session
+const session = await stripe.checkout.sessions.create({
+  mode: 'payment',
+  line_items: [{
+    price: event.stripePriceId,
+    quantity: ticketCount
+  }],
+  success_url: `${DOMAIN}/events/${eventId}/rsvp-success`,
+  cancel_url: `${DOMAIN}/events/${eventId}`,
+  metadata: {
+    eventId,
+    userId,
+    ticketCount
+  }
+});
+
+// Redirect to Stripe Checkout
+return { checkoutUrl: session.url };
+
+// Webhook handler (after successful payment)
+webhook.on('checkout.session.completed', async (session) => {
+  const { eventId, userId, ticketCount } = session.metadata;
+  
+  // Create RSVP record
+  INSERT INTO event_rsvps (
+    event_id, user_id, status, tickets_purchased, 
+    total_paid, payment_status, stripe_payment_id
+  )
+  VALUES (
+    :eventId, :userId, 'going', :ticketCount,
+    :amount, 'completed', :sessionId
+  );
+  
+  // Update attendee count
+  UPDATE events 
+  SET current_attendees = current_attendees + :ticketCount
+  WHERE id = :eventId;
+  
+  // Send ticket email with QR code
+  const qrCode = generateQRCode({ rsvpId, userId });
+  sendTicketEmail(user.email, event, qrCode);
+});
+```
+
+#### Check-In System
+```typescript
+// Organizer scans QR code at event entrance
+POST /api/events/:eventId/check-in
+Body: { qrCodeData: 'encrypted-rsvp-data' }
+
+// Decrypt and validate
+const { rsvpId, userId } = decryptQRCode(qrCodeData);
+const rsvp = await storage.getRSVP(rsvpId);
+
+// Verify not already checked in
+if (rsvp.checkedIn) {
+  return { error: 'Already checked in' };
+}
+
+// Mark as checked in
+UPDATE event_rsvps 
+SET checked_in = true, 
+    checked_in_at = NOW(),
+    checked_in_by = :organizerId
+WHERE id = :rsvpId;
+
+return { 
+  success: true, 
+  attendee: { name: user.name, ticketsPurchased: rsvp.ticketsPurchased }
+};
+```
+
+---
+
+## Event Discovery & Search
+
+### Search Algorithm
+
+```typescript
+// Multi-criteria event search
+GET /api/events/search?
+  q=milonga&
+  city=Barcelona&
+  startDate=2024-01-15&
+  endDate=2024-01-31&
+  type=milonga&
+  isFree=true&
+  musicStyle=traditional
+
+// SQL Query with scoring
+SELECT e.*,
+  u.name as organizer_name,
+  (
+    -- Base score
+    100 +
+    
+    -- Proximity to search date (prefer nearby dates)
+    - ABS(EXTRACT(EPOCH FROM (e.start_date_time - :searchDate))) / 3600 +
+    
+    -- Popularity boost
+    e.current_attendees * 2 +
+    e.view_count * 0.1 +
+    
+    -- Friend attendance boost
+    (SELECT COUNT(*) FROM event_rsvps r 
+     JOIN friends f ON r.user_id = f.friend_id
+     WHERE r.event_id = e.id AND f.user_id = :userId AND r.status = 'going'
+    ) * 50 +
+    
+    -- Text match relevance
+    CASE 
+      WHEN e.title ILIKE '%' || :query || '%' THEN 100
+      WHEN e.description ILIKE '%' || :query || '%' THEN 50
+      ELSE 0
+    END
+  ) as relevance_score
+FROM events e
+JOIN users u ON e.organizer_id = u.id
+WHERE e.status = 'published'
+  AND e.start_date_time >= :startDate
+  AND e.start_date_time <= :endDate
+  AND (:city IS NULL OR e.city = :city)
+  AND (:type IS NULL OR e.event_type = :type)
+  AND (:isFree IS NULL OR e.is_free = :isFree)
+ORDER BY relevance_score DESC
+LIMIT 50;
+```
+
+### Personalized Recommendations (Agent #3)
+
+```typescript
+// Get recommended events for user
+GET /api/events/recommended
+
+// Algorithm factors:
+1. User's city + nearby cities (100km radius)
+2. User's dance skill level (from profile)
+3. User's music preferences
+4. Friends' RSVPs (high weight)
+5. Past event attendance patterns
+6. Groups user is member of
+7. Time preferences (weekday vs weekend)
+
+// Example scoring
+function calculateRecommendationScore(event, user) {
+  let score = 0;
+  
+  // Location match (high priority)
+  if (event.city === user.city) score += 100;
+  else if (distanceBetween(event, user) < 50) score += 50;
+  
+  // Skill level match
+  if (event.category === user.skillLevel) score += 50;
+  
+  // Friends attending (very high priority)
+  const friendsGoing = await getFriendsAttending(event.id, user.id);
+  score += friendsGoing.length * 75;
+  
+  // Music preference
+  if (user.musicPreferences.includes(event.musicStyle)) score += 40;
+  
+  // Time preference
+  const eventDay = event.startDateTime.getDay();
+  if (user.preferredDays.includes(eventDay)) score += 30;
+  
+  // Group affiliation
+  if (user.groups.includes(event.groupId)) score += 60;
+  
+  // Past similar event attendance
+  const similarEvents = await getSimilarEventsAttended(user.id, event);
+  score += similarEvents.length * 20;
+  
+  return score;
+}
+```
+
+---
+
+## API Endpoints
+
+### Event Management
+
+#### Create Event
+```http
+POST /api/events
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "title": "La Viruta Friday Milonga",
+  "description": "Traditional milonga with DJ Carlos",
+  "eventType": "milonga",
+  "startDateTime": "2024-01-19T21:00:00Z",
+  "endDateTime": "2024-01-20T02:00:00Z",
+  "venueName": "La Viruta",
+  "address": "Armenia 1366, Buenos Aires",
+  "city": "Buenos Aires",
+  "country": "Argentina",
+  "latitude": -34.5872,
+  "longitude": -58.4230,
+  "isFree": false,
+  "price": 15.00,
+  "currency": "USD",
+  "maxAttendees": 150,
+  "musicStyle": "traditional",
+  "danceStyles": ["tango", "vals", "milonga"],
+  "djName": "DJ Carlos Martinez"
+}
+
+Response 201:
+{
+  "success": true,
+  "event": {
+    "id": 123,
+    "title": "La Viruta Friday Milonga",
+    "slug": "la-viruta-friday-milonga-123",
+    "organizerId": 456,
+    "createdAt": "2024-01-15T10:00:00Z"
+  }
+}
+```
+
+#### Get Event Details
+```http
+GET /api/events/:id
+Authorization: Bearer {token}
+
+Response 200:
+{
+  "success": true,
+  "event": {
+    "id": 123,
+    "title": "La Viruta Friday Milonga",
+    "description": "...",
+    "organizer": {
+      "id": 456,
+      "name": "Carlos Martinez",
+      "profileImage": "..."
+    },
+    "attendees": {
+      "going": 87,
+      "maybe": 23,
+      "waitlist": 5
+    },
+    "userRSVP": {
+      "status": "going",
+      "rsvpedAt": "2024-01-16T14:30:00Z"
+    },
+    "friendsAttending": [
+      { "id": 789, "name": "Maria Lopez", "profileImage": "..." },
+      { "id": 890, "name": "Juan Garcia", "profileImage": "..." }
+    ]
+  }
+}
+```
+
+#### Update Event
+```http
+PATCH /api/events/:id
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "description": "Updated description with special guest DJ!",
+  "djName": "DJ Carlos Martinez + Guest DJ Elena"
+}
+
+Response 200:
+{
+  "success": true,
+  "event": { ... }
+}
+```
+
+#### Cancel Event
+```http
+POST /api/events/:id/cancel
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "reason": "Venue unexpectedly closed"
+}
+
+Response 200:
+{
+  "success": true,
+  "message": "Event cancelled. All attendees notified."
+}
+```
+
+### RSVP Management
+
+#### RSVP to Event
+```http
+POST /api/events/:id/rsvp
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "status": "going",
+  "guestCount": 1,
+  "guestNames": ["Partner Name"],
+  "dietaryRestrictions": "Vegetarian",
+  "specialRequests": "First time at this venue"
+}
+
+Response 200:
+{
+  "success": true,
+  "rsvp": {
+    "id": 999,
+    "status": "going",
+    "totalAttendees": 2, // user + 1 guest
+    "qrCode": "data:image/png;base64,..." // If ticketed
+  }
+}
+```
+
+#### Update RSVP
+```http
+PATCH /api/events/:eventId/rsvp
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "status": "maybe"
+}
+
+Response 200:
+{
+  "success": true,
+  "rsvp": { ... }
+}
+```
+
+#### Cancel RSVP
+```http
+DELETE /api/events/:eventId/rsvp
+Authorization: Bearer {token}
+
+Response 200:
+{
+  "success": true,
+  "message": "RSVP cancelled"
+}
+```
+
+#### Get Event Attendees
+```http
+GET /api/events/:id/attendees?status=going
+Authorization: Bearer {token}
+
+Response 200:
+{
+  "success": true,
+  "attendees": [
+    {
+      "user": {
+        "id": 123,
+        "name": "Maria Lopez",
+        "profileImage": "...",
+        "city": "Buenos Aires"
+      },
+      "status": "going",
+      "rsvpedAt": "2024-01-16T10:00:00Z",
+      "guestCount": 1,
+      "role": "attendee"
+    }
+  ],
+  "summary": {
+    "going": 87,
+    "maybe": 23,
+    "waitlist": 5
+  }
+}
+```
+
+### Event Discovery
+
+#### Search Events
+```http
+GET /api/events/search?
+  q=milonga&
+  city=Barcelona&
+  startDate=2024-01-15&
+  endDate=2024-01-31&
+  type=milonga&
+  isFree=true
+
+Authorization: Bearer {token}
+
+Response 200:
+{
+  "success": true,
+  "events": [
+    {
+      "id": 123,
+      "title": "Barcelona Monday Milonga",
+      "eventType": "milonga",
+      "startDateTime": "2024-01-22T21:00:00Z",
+      "venueName": "La Milonguita",
+      "city": "Barcelona",
+      "attendeesCount": 45,
+      "friendsAttending": 3,
+      "coverImage": "..."
+    }
+  ],
+  "pagination": {
+    "total": 15,
+    "page": 1,
+    "pages": 1
+  }
+}
+```
+
+#### Get Recommended Events
+```http
+GET /api/events/recommended?limit=10
+Authorization: Bearer {token}
+
+Response 200:
+{
+  "success": true,
+  "recommendations": [
+    {
+      "event": { ... },
+      "score": 285,
+      "reasons": [
+        "3 friends are attending",
+        "In your city",
+        "Matches your skill level"
+      ]
+    }
+  ]
+}
+```
+
+#### Get Calendar
+```http
+GET /api/events/calendar?
+  month=2024-01&
+  city=Barcelona
+
+Authorization: Bearer {token}
+
+Response 200:
+{
+  "success": true,
+  "calendar": {
+    "2024-01-15": [
+      { "id": 123, "title": "Monday Practica", "time": "19:00" }
+    ],
+    "2024-01-19": [
+      { "id": 124, "title": "Friday Milonga", "time": "21:00" },
+      { "id": 125, "title": "Late Night Milonga", "time": "23:30" }
+    ]
+  }
+}
+```
+
+---
+
+## Frontend Components
+
+### 1. EventCard
+**Purpose:** Display event in lists/calendar
+
+```typescript
+interface EventCardProps {
+  event: Event;
+  userRSVP?: RSVP;
+  showAttendees?: boolean;
+}
+
+// Features:
+- Cover image
+- Event type badge
+- Date/time display
+- Location with map icon
+- Attendee avatars (first 5)
+- RSVP button
+- Price indicator
+- Friends attending badge
+```
+
+### 2. EventDetailPage
+**Purpose:** Full event page
+
+```typescript
+interface EventDetailPageProps {
+  eventId: number;
+}
+
+// Sections:
+- Hero image
+- Title, date, location
+- Organizer info
+- Description
+- Attendees list
+- Photo gallery
+- Comments
+- Related events
+- RSVP/ticket purchase
+- Share buttons
+```
+
+### 3. RSVPModal
+**Purpose:** RSVP form with options
+
+```typescript
+interface RSVPModalProps {
+  event: Event;
+  onSubmit: (data: RSVPData) => void;
+}
+
+// Form fields:
+- Status selector (Going/Maybe/Not Going)
+- Guest count (if +1 allowed)
+- Guest names
+- Dietary restrictions
+- Special requests
+- Role selection (if applicable)
+```
+
+### 4. EventCalendar
+**Purpose:** Month/week view of events
+
+```typescript
+interface EventCalendarProps {
+  initialDate?: Date;
+  filterCity?: string;
+  filterType?: string;
+}
+
+// Features:
+- Month/week/day views
+- Color-coded by event type
+- Click to view details
+- Filter panel
+- User's RSVPs highlighted
+```
+
+### 5. CreateEventForm
+**Purpose:** Multi-step event creation
+
+```typescript
+interface CreateEventFormProps {
+  onSuccess?: (event: Event) => void;
+}
+
+// Steps:
+1. Basic Info (title, type, description)
+2. Date & Time (with recurring options)
+3. Location (address picker with map)
+4. Capacity & Settings
+5. Pricing (free or ticketed)
+6. Preview & Publish
+```
+
+---
+
+## Implementation Guide
+
+### Creating an Event
+
+**Step 1: Frontend Form**
+```typescript
+// client/src/components/events/CreateEventForm.tsx
+const createEventMutation = useMutation({
+  mutationFn: (data: InsertEvent) =>
+    apiRequest('/api/events', {
+      method: 'POST',
+      body: data,
+    }),
+  onSuccess: (event) => {
+    toast({ title: "Event created!" });
+    router.push(`/events/${event.id}`);
+  },
+});
+
+const onSubmit = (data: EventFormData) => {
+  createEventMutation.mutate({
+    ...data,
+    organizerId: currentUser.id,
+    slug: generateSlug(data.title),
+  });
+};
+```
+
+**Step 2: Backend Route**
+```typescript
+// server/routes/eventRoutes.ts
+router.post('/events', isAuthenticated, async (req, res) => {
+  const eventData = {
+    ...req.body,
+    organizerId: req.user!.id,
+  };
+  
+  // Validate
+  const validated = insertEventSchema.parse(eventData);
+  
+  // Create event
+  const event = await storage.createEvent(validated);
+  
+  // If group event, auto-share to group feed
+  if (event.groupId) {
+    await storage.createGroupPost({
+      groupId: event.groupId,
+      authorId: event.organizerId,
+      postType: 'event_share',
+      linkedEventId: event.id,
+      content: `New event: ${event.title}`,
+    });
+  }
+  
+  res.status(201).json({ success: true, event });
+});
+```
+
+### Handling RSVPs
+
+**Frontend**
+```typescript
+const rsvpMutation = useMutation({
+  mutationFn: (data: RSVPData) =>
+    apiRequest(`/api/events/${eventId}/rsvp`, {
+      method: 'POST',
+      body: data,
+    }),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['/api/events', eventId] });
+    toast({ title: "RSVP confirmed!" });
+  },
+});
+```
+
+**Backend**
+```typescript
+router.post('/events/:id/rsvp', isAuthenticated, async (req, res) => {
+  const eventId = parseInt(req.params.id);
+  const userId = req.user!.id;
+  
+  // Check existing RSVP
+  const existing = await storage.getRSVP(eventId, userId);
+  if (existing) {
+    return res.status(400).json({ error: 'Already RSVPed' });
+  }
+  
+  // Check capacity
+  const event = await storage.getEvent(eventId);
+  if (event.maxAttendees && event.currentAttendees >= event.maxAttendees) {
+    // Add to waitlist
+    const rsvp = await storage.createRSVP({
+      eventId,
+      userId,
+      status: 'waitlist',
+      ...req.body,
+    });
+    
+    return res.json({ 
+      success: true, 
+      status: 'waitlist',
+      position: event.waitlistCount + 1 
+    });
+  }
+  
+  // Create RSVP
+  const rsvp = await storage.createRSVP({
+    eventId,
+    userId,
+    status: req.body.status || 'going',
+    ...req.body,
+  });
+  
+  // Update attendee count
+  await storage.incrementEventAttendees(eventId);
+  
+  // Send confirmation
+  sendRSVPConfirmation(userId, event);
+  
+  res.json({ success: true, rsvp });
+});
+```
+
+---
+
+## Testing Guide
+
+### Manual Test Checklist
+
+**Event Creation**
+- [ ] Create free milonga
+- [ ] Create paid workshop ($50)
+- [ ] Create recurring practica (weekly)
+- [ ] Create festival (multi-day)
+- [ ] Add cover image
+- [ ] Set capacity limit
+- [ ] Enable approval required
+
+**RSVP Flow**
+- [ ] RSVP to free event (instant)
+- [ ] RSVP to paid event (Stripe)
+- [ ] Request approval event
+- [ ] Join waitlist (full event)
+- [ ] Cancel RSVP
+- [ ] Update RSVP (going → maybe)
+
+**Search & Discovery**
+- [ ] Search by city
+- [ ] Filter by event type
+- [ ] Filter by date range
+- [ ] Filter by price (free only)
+- [ ] View recommended events
+- [ ] See friends attending
+
+**Organizer Features**
+- [ ] Edit event details
+- [ ] Cancel event
+- [ ] Approve RSVP request
+- [ ] Check in attendee (QR code)
+- [ ] View attendee list
+- [ ] Export attendee list (CSV)
+
+---
+
+## Related Features
+- Groups: Events can be group-hosted
+- Housing: Link housing offers to events
+- Map: Events displayed on interactive map
+- Payments: Stripe integration for tickets
+
+---
+
+## Next Steps
+1. Add event livestreaming (for online events)
+2. Build event photo contest feature
+3. Create "dance card" feature (track who you danced with)
+4. Add post-event surveys
+5. Implement recurring event management UI
