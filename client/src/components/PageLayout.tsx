@@ -47,9 +47,7 @@ export function PageLayout({
                       ) : (
                         <BreadcrumbLink asChild>
                           <Link href={crumb.path} data-testid={`breadcrumb-link-${crumb.path.replace(/\//g, '-') || 'home'}`}>
-                            <>
-                              {isHome ? <Home className="w-4 h-4" /> : crumb.label}
-                            </>
+                            {isHome ? <Home className="w-4 h-4" /> : crumb.label}
                           </Link>
                         </BreadcrumbLink>
                       )}
