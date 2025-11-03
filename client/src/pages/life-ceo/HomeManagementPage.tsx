@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Home, Wrench, ShoppingCart, Calendar, CheckCircle2, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function HomeManagementPage() {
   const maintenance = [
@@ -19,8 +20,9 @@ export default function HomeManagementPage() {
   ];
 
   return (
-    <PageLayout title="Home Management" showBreadcrumbs>
-<>
+    <SelfHealingErrorBoundary pageName="LifeCEOHomeManagement" fallbackRoute="/life-ceo">
+      <PageLayout title="Home Management" showBreadcrumbs>
+        <>
       <SEO
         title="Home Management - Life CEO"
         description="Track home maintenance, shopping lists, and household tasks with your AI home agent."
@@ -134,6 +136,8 @@ export default function HomeManagementPage() {
           </div>
         </div>
       </div>
-    </>
-    </PageLayout>);
+        </>
+      </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }
