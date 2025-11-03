@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
-import { eq, and, gt, desc, asc, or, ilike, inArray, sql as sqlOp, lt, gte, lte, ne, notInArray } from "drizzle-orm";
+import { eq, and, gt, desc, asc, or, ilike, inArray, sql, lt, gte, lte, ne, notInArray } from "drizzle-orm";
 import {
   users,
   refreshTokens,
@@ -130,8 +130,8 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL must be set");
 }
 
-const sql = neon(process.env.DATABASE_URL);
-const db = drizzle(sql);
+const sqlClient = neon(process.env.DATABASE_URL);
+const db = drizzle(sqlClient);
 
 export interface IStorage {
   getUserById(id: number): Promise<SelectUser | undefined>;

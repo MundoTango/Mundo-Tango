@@ -69,6 +69,9 @@ const validateRequest = (schema: z.ZodSchema) => {
   };
 };
 
+const createPostBodySchema = insertPostSchema.omit({ userId: true });
+const createCommentBodySchema = insertPostCommentSchema.omit({ userId: true, postId: true });
+
 const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
   console.error("Error:", err);
   
@@ -120,7 +123,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/videos", videoRoutes);
   app.use("/api/mrblue", mrblueVideoRoutes);
 
-  app.post("/api/posts", authenticateToken, validateRequest(insertPostSchema), async (req: AuthRequest, res: Response) => {
+  app.post("/api/posts", authenticateToken, validateRequest(createPostBodySchema), async (req: AuthRequest, res: Response) => {
     try {
       const post = await storage.createPost({
         ...req.body,
