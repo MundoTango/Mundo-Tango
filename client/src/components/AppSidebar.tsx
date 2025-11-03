@@ -238,18 +238,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                   {adminItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton 
-                        asChild 
-                        data-active={location === item.url}
-                        data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                      >
-                        <PredictiveLink to={item.url}>
-                          <>
-                            <item.icon className="h-5 w-5" />
-                            <span>{item.title}</span>
-                          </>
-                        </PredictiveLink>
-                      </SidebarMenuButton>
+                      <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}><Link to={item.url}><item.icon className="h-5 w-5" /><span>{item.title}</span></Link></SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
                 </SidebarMenu>
@@ -266,18 +255,7 @@ export function AppSidebar() {
               <SidebarMenu>
                 {esaItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton 
-                      asChild 
-                      data-active={location === item.url}
-                      data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                    >
-                      <PredictiveLink to={item.url}>
-                        <>
-                          <item.icon className="h-5 w-5" />
-                          <span>{item.title}</span>
-                        </>
-                      </PredictiveLink>
-                    </SidebarMenuButton>
+                    <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}><Link to={item.url}><item.icon className="h-5 w-5" /><span>{item.title}</span></Link></SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
               </SidebarMenu>
