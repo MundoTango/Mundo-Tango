@@ -53,5 +53,72 @@ Be helpful, concise, and friendly. Keep responses under 3 sentences when possibl
     }
   });
 
+  // Mr Blue Bug Report Analysis endpoint
+  router.post("/report-bug", async (req, res) => {
+    try {
+      const { page, error, stack, componentStack, timestamp, userAgent } = req.body;
+
+      if (!error || !page) {
+        return res.status(400).json({ error: "Error details and page name are required" });
+      }
+
+      // System prompt for bug analysis
+      const systemPrompt = `You are Mr Blue, an expert debugging AI for Mundo Tango platform.
+Analyze React errors and provide actionable fixes. Focus on:
+1. Root cause identification
+2. Simple fixes you can describe in 2-3 steps
+3. Code snippets when helpful
+4. Whether this needs human developer attention
+
+Be concise, technical, and helpful. If it's a simple fix (like missing key prop, incorrect prop type, etc), 
+provide exact steps to fix. If complex, explain why and suggest investigation steps.`;
+
+      // Create analysis prompt
+      const userPrompt = `Page: ${page}
+Error: ${error}
+Stack: ${stack?.substring(0, 500) || 'No stack trace'}
+Component Stack: ${componentStack?.substring(0, 300) || 'No component stack'}
+Browser: ${userAgent || 'Unknown'}
+Time: ${timestamp}
+
+Analyze this error and provide:
+1. Root cause (1 sentence)
+2. Is this auto-fixable? (Yes/No)
+3. Fix steps (if auto-fixable) or investigation steps (if not)
+4. Severity (Low/Medium/High/Critical)`;
+
+      // Call Groq API for analysis
+      const completion = await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt }
+        ],
+        temperature: 0.3, // Lower temperature for more focused analysis
+        max_tokens: 800,
+        top_p: 0.9
+      });
+
+      const analysis = completion.choices[0]?.message?.content || "Unable to analyze error.";
+
+      // Store bug report in console (future: save to database)
+      console.log(`[Mr Blue Bug Report] Page: ${page}, Error: ${error}`);
+      console.log(`[Mr Blue Analysis] ${analysis}`);
+
+      res.json({ 
+        analysis,
+        reported: true,
+        timestamp: new Date().toISOString()
+      });
+
+    } catch (error: any) {
+      console.error("Mr Blue Bug Report Error:", error);
+      res.status(500).json({ 
+        error: "Failed to analyze bug report",
+        details: error.message 
+      });
+    }
+  });
+
   return router;
 }

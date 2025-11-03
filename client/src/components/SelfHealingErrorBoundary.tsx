@@ -146,12 +146,9 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
     window.location.href = fallbackRoute;
   };
 
-  handleReportBug = () => {
+  handleReportBug = async () => {
     const { pageName = 'Unknown Page' } = this.props;
     const { error, errorInfo } = this.state;
-    
-    // TODO: Integrate with H2AC (Human-to-AI-to-Cloud) system
-    // This will send error reports to Mr Blue AI for analysis
     
     const bugReport = {
       page: pageName,
@@ -162,11 +159,40 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
       userAgent: navigator.userAgent,
     };
     
-    console.log('[Self-Healing] Bug report:', bugReport);
+    console.log('[Self-Healing] Sending bug report to Mr Blue AI...', bugReport);
     
-    // Copy to clipboard for now
-    navigator.clipboard.writeText(JSON.stringify(bugReport, null, 2));
-    alert('Error details copied to clipboard. Please share with support.');
+    try {
+      // Send to Mr Blue AI for analysis
+      const response = await fetch('/api/v1/report-bug', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bugReport),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send bug report');
+      }
+
+      const data = await response.json();
+      
+      console.log('[Mr Blue Analysis]:', data.analysis);
+      
+      // Show analysis in a dialog/alert (future: show in modal)
+      alert(`🤖 Mr Blue AI Analysis:\n\n${data.analysis}\n\nFull details copied to clipboard.`);
+      
+      // Also copy to clipboard as backup
+      navigator.clipboard.writeText(JSON.stringify({
+        bugReport,
+        mrBlueAnalysis: data.analysis,
+      }, null, 2));
+
+    } catch (error: any) {
+      console.error('[Self-Healing] Failed to send to Mr Blue:', error);
+      
+      // Fallback: just copy to clipboard
+      navigator.clipboard.writeText(JSON.stringify(bugReport, null, 2));
+      alert('⚠️ Could not connect to Mr Blue AI. Error details copied to clipboard.');
+    }
   };
 
   componentWillUnmount() {
