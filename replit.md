@@ -32,9 +32,15 @@ The project utilizes a modular and agent-driven development approach, employing 
   - Fixed PageLayout.tsx breadcrumb navigation
   - Fixed LanguageSelector.tsx button trigger
   - Pattern: Wrap multiple children in `<>` fragment when using `asChild` prop
+- **Playwright Login Loop Fixed (MB.MD Protocol)**:
+  - **Nested Link Bug**: Fixed LoginPage.tsx nested `<a>` tags (wouter `<Link>` already creates `<a>`)
+  - **Layout Nesting**: Removed triple-nested layouts (SelfHealingErrorBoundary → PageLayout → PublicLayout)
+  - **Infinite Loop Prevention**: Added max retry limit (3 attempts) in auto-healing system
+  - **Clean Console**: Zero DOM nesting warnings, zero hook call errors
 - **True Auto-Healing System Implemented**: SelfHealingErrorBoundary now automatically fixes errors without user intervention
   - **Pattern Detection**: Recognizes 3 error types (React.Children.only, chunk loading, network failures)
   - **Instant Auto-Fix**: Attempts automatic recovery in 100ms-2s based on error type
+  - **Max Retry Protection**: Stops after 3 attempts to prevent infinite loops
   - **Mr Blue AI Background Analysis**: Sends errors to AI for intelligent diagnosis (non-blocking)
   - **Structured JSON Response**: Mr Blue returns autoFixable flag, severity, and fix steps
   - **Console Diagnostics**: Logs fix suggestions with emoji indicators (🔧🔄💡⚠️)
@@ -44,7 +50,7 @@ The project utilizes a modular and agent-driven development approach, employing 
   - Human-readable analysis with code snippets
   - Automatic retry for auto-fixable errors (3s delay)
 - **E2E Testing**: Created `login-error-recovery.spec.ts` with 8 comprehensive tests
-- **Zero Console Errors**: Application runs cleanly with no React errors
+- **Zero Console Errors**: Application runs cleanly with no React errors, validated via console logs
 
 **Design System Consolidation**:
 - Theme consolidated from tri-theme system to single **MT Ocean** theme across all 142 pages
