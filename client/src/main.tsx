@@ -4,3 +4,4 @@ import "./index.css";
 import "./lib/i18n";
 
 createRoot(document.getElementById("root")!).render(<App />);
+// Build 1762146413
