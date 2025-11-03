@@ -55,8 +55,10 @@ export function FeedLeftSidebar() {
                 className="w-full justify-start hover-elevate"
                 data-testid={`link-${link.label.toLowerCase()}`}
               >
-                <link.icon className="h-4 w-4 mr-3" />
-                {link.label}
+                <span className="flex items-center">
+                  <link.icon className="h-4 w-4 mr-3" />
+                  {link.label}
+                </span>
               </Button>
             </Link>
           ))}
