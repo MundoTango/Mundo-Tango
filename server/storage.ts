@@ -13,8 +13,15 @@ import {
   follows,
   events,
   eventRsvps,
+  eventPhotos,
+  eventComments,
+  eventReminders,
   groups,
   groupMembers,
+  groupInvites,
+  groupPosts,
+  groupCategories,
+  groupCategoryAssignments,
   chatRooms,
   chatRoomUsers,
   chatMessages,
@@ -79,10 +86,22 @@ import {
   type InsertEvent,
   type SelectEventRsvp,
   type InsertEventRsvp,
+  type SelectEventPhoto,
+  type InsertEventPhoto,
+  type SelectEventComment,
+  type InsertEventComment,
+  type SelectEventReminder,
+  type InsertEventReminder,
   type SelectGroup,
   type InsertGroup,
   type SelectGroupMember,
   type InsertGroupMember,
+  type SelectGroupInvite,
+  type InsertGroupInvite,
+  type SelectGroupPost,
+  type InsertGroupPost,
+  type SelectGroupCategory,
+  type InsertGroupCategory,
   type SelectChatRoom,
   type InsertChatRoom,
   type SelectChatRoomUser,
@@ -468,6 +487,77 @@ export interface IStorage {
   getAdminStats(): Promise<any>;
   getModerationQueue(): Promise<any[]>;
   getRecentAdminActivity(): Promise<any[]>;
+  
+  // ============================================================================
+  // GROUPS - ENHANCED OPERATIONS
+  // ============================================================================
+  
+  // Group Invites
+  sendGroupInvite(invite: InsertGroupInvite): Promise<SelectGroupInvite>;
+  getGroupInvites(groupId: number): Promise<SelectGroupInvite[]>;
+  getUserGroupInvites(userId: number): Promise<SelectGroupInvite[]>;
+  acceptGroupInvite(inviteId: number): Promise<void>;
+  declineGroupInvite(inviteId: number): Promise<void>;
+  
+  // Group Posts
+  createGroupPost(post: InsertGroupPost): Promise<SelectGroupPost>;
+  getGroupPosts(groupId: number, params: { limit?: number; offset?: number }): Promise<SelectGroupPost[]>;
+  getGroupPostById(id: number): Promise<SelectGroupPost | undefined>;
+  updateGroupPost(id: number, data: Partial<SelectGroupPost>): Promise<SelectGroupPost | undefined>;
+  deleteGroupPost(id: number): Promise<void>;
+  pinGroupPost(postId: number): Promise<void>;
+  unpinGroupPost(postId: number): Promise<void>;
+  approveGroupPost(postId: number, approverId: number): Promise<void>;
+  
+  // Group Categories
+  createGroupCategory(category: InsertGroupCategory): Promise<SelectGroupCategory>;
+  getGroupCategories(): Promise<SelectGroupCategory[]>;
+  assignGroupCategory(groupId: number, categoryId: number): Promise<void>;
+  removeGroupCategory(groupId: number, categoryId: number): Promise<void>;
+  getGroupsByCategory(categoryId: number): Promise<SelectGroup[]>;
+  
+  // Enhanced Group Membership
+  updateGroupMember(groupId: number, userId: number, data: Partial<SelectGroupMember>): Promise<SelectGroupMember | undefined>;
+  banGroupMember(groupId: number, userId: number): Promise<void>;
+  getSuggestedGroups(userId: number, limit?: number): Promise<SelectGroup[]>;
+  
+  // ============================================================================
+  // EVENTS - ENHANCED OPERATIONS
+  // ============================================================================
+  
+  // Event Photos
+  uploadEventPhoto(photo: InsertEventPhoto): Promise<SelectEventPhoto>;
+  getEventPhotos(eventId: number): Promise<SelectEventPhoto[]>;
+  getEventPhotoById(id: number): Promise<SelectEventPhoto | undefined>;
+  deleteEventPhoto(id: number): Promise<void>;
+  featureEventPhoto(photoId: number): Promise<void>;
+  unfeatureEventPhoto(photoId: number): Promise<void>;
+  
+  // Event Comments
+  createEventComment(comment: InsertEventComment): Promise<SelectEventComment>;
+  getEventComments(eventId: number): Promise<SelectEventComment[]>;
+  updateEventComment(id: number, content: string): Promise<SelectEventComment | undefined>;
+  deleteEventComment(id: number): Promise<void>;
+  
+  // Event Reminders
+  createEventReminder(reminder: InsertEventReminder): Promise<SelectEventReminder>;
+  getEventReminders(rsvpId: number): Promise<SelectEventReminder[]>;
+  markReminderSent(reminderId: number): Promise<void>;
+  
+  // Enhanced Event RSVPs
+  checkInEventAttendee(eventId: number, userId: number): Promise<SelectEventRsvp | undefined>;
+  addToWaitlist(eventId: number, userId: number, guestCount?: number): Promise<SelectEventRsvp | undefined>;
+  getEventWaitlist(eventId: number): Promise<SelectEventRsvp[]>;
+  searchEvents(params: { 
+    query?: string;
+    eventType?: string;
+    city?: string;
+    startDate?: Date;
+    endDate?: Date;
+    musicStyle?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<SelectEvent[]>;
 }
 
 export class DbStorage implements IStorage {
@@ -2701,6 +2791,432 @@ export class DbStorage implements IStorage {
       .where(eq(communityStats.id, id))
       .returning();
     return result[0];
+  }
+
+  // ============================================================================
+  // GROUPS - ENHANCED OPERATIONS IMPLEMENTATION
+  // ============================================================================
+
+  // Group Invites
+  async sendGroupInvite(invite: InsertGroupInvite): Promise<SelectGroupInvite> {
+    const result = await db.insert(groupInvites).values(invite).returning();
+    return result[0];
+  }
+
+  async getGroupInvites(groupId: number): Promise<SelectGroupInvite[]> {
+    return await db.select().from(groupInvites).where(eq(groupInvites.groupId, groupId));
+  }
+
+  async getUserGroupInvites(userId: number): Promise<SelectGroupInvite[]> {
+    return await db
+      .select()
+      .from(groupInvites)
+      .where(
+        and(
+          eq(groupInvites.inviteeId, userId),
+          eq(groupInvites.status, 'pending')
+        )
+      )
+      .orderBy(desc(groupInvites.sentAt));
+  }
+
+  async acceptGroupInvite(inviteId: number): Promise<void> {
+    const invite = await db.select().from(groupInvites).where(eq(groupInvites.id, inviteId)).limit(1);
+    if (invite[0]) {
+      await db.insert(groupMembers).values({
+        groupId: invite[0].groupId,
+        userId: invite[0].inviteeId,
+        role: 'member',
+        joinedVia: 'invite',
+        invitedBy: invite[0].inviterId,
+      });
+      await db
+        .update(groupInvites)
+        .set({ status: 'accepted', respondedAt: new Date() })
+        .where(eq(groupInvites.id, inviteId));
+      
+      await db
+        .update(groups)
+        .set({ memberCount: sql`${groups.memberCount} + 1` })
+        .where(eq(groups.id, invite[0].groupId));
+    }
+  }
+
+  async declineGroupInvite(inviteId: number): Promise<void> {
+    await db
+      .update(groupInvites)
+      .set({ status: 'declined', respondedAt: new Date() })
+      .where(eq(groupInvites.id, inviteId));
+  }
+
+  // Group Posts
+  async createGroupPost(post: InsertGroupPost): Promise<SelectGroupPost> {
+    const result = await db.insert(groupPosts).values({
+      ...post,
+      publishedAt: new Date(),
+    }).returning();
+    
+    await db
+      .update(groups)
+      .set({ 
+        postCount: sql`${groups.postCount} + 1`,
+        lastActivityAt: new Date(),
+      })
+      .where(eq(groups.id, post.groupId));
+    
+    return result[0];
+  }
+
+  async getGroupPosts(groupId: number, params: { limit?: number; offset?: number }): Promise<SelectGroupPost[]> {
+    const { limit = 20, offset = 0 } = params;
+    
+    return await db
+      .select()
+      .from(groupPosts)
+      .where(
+        and(
+          eq(groupPosts.groupId, groupId),
+          eq(groupPosts.isApproved, true)
+        )
+      )
+      .orderBy(desc(groupPosts.isPinned), desc(groupPosts.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async getGroupPostById(id: number): Promise<SelectGroupPost | undefined> {
+    const result = await db.select().from(groupPosts).where(eq(groupPosts.id, id)).limit(1);
+    return result[0];
+  }
+
+  async updateGroupPost(id: number, data: Partial<SelectGroupPost>): Promise<SelectGroupPost | undefined> {
+    const result = await db
+      .update(groupPosts)
+      .set({ ...data, editedAt: new Date() })
+      .where(eq(groupPosts.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deleteGroupPost(id: number): Promise<void> {
+    const post = await db.select().from(groupPosts).where(eq(groupPosts.id, id)).limit(1);
+    if (post[0]) {
+      await db.delete(groupPosts).where(eq(groupPosts.id, id));
+      await db
+        .update(groups)
+        .set({ postCount: sql`${groups.postCount} - 1` })
+        .where(eq(groups.id, post[0].groupId));
+    }
+  }
+
+  async pinGroupPost(postId: number): Promise<void> {
+    await db.update(groupPosts).set({ isPinned: true }).where(eq(groupPosts.id, postId));
+  }
+
+  async unpinGroupPost(postId: number): Promise<void> {
+    await db.update(groupPosts).set({ isPinned: false }).where(eq(groupPosts.id, postId));
+  }
+
+  async approveGroupPost(postId: number, approverId: number): Promise<void> {
+    await db
+      .update(groupPosts)
+      .set({ 
+        isApproved: true,
+        approvedBy: approverId,
+        approvedAt: new Date(),
+      })
+      .where(eq(groupPosts.id, postId));
+  }
+
+  // Group Categories
+  async createGroupCategory(category: InsertGroupCategory): Promise<SelectGroupCategory> {
+    const result = await db.insert(groupCategories).values(category).returning();
+    return result[0];
+  }
+
+  async getGroupCategories(): Promise<SelectGroupCategory[]> {
+    return await db
+      .select()
+      .from(groupCategories)
+      .where(eq(groupCategories.isActive, true))
+      .orderBy(asc(groupCategories.displayOrder), asc(groupCategories.name));
+  }
+
+  async assignGroupCategory(groupId: number, categoryId: number): Promise<void> {
+    await db.insert(groupCategoryAssignments).values({ groupId, categoryId });
+    await db
+      .update(groupCategories)
+      .set({ groupCount: sql`${groupCategories.groupCount} + 1` })
+      .where(eq(groupCategories.id, categoryId));
+  }
+
+  async removeGroupCategory(groupId: number, categoryId: number): Promise<void> {
+    await db
+      .delete(groupCategoryAssignments)
+      .where(
+        and(
+          eq(groupCategoryAssignments.groupId, groupId),
+          eq(groupCategoryAssignments.categoryId, categoryId)
+        )
+      );
+    await db
+      .update(groupCategories)
+      .set({ groupCount: sql`${groupCategories.groupCount} - 1` })
+      .where(eq(groupCategories.id, categoryId));
+  }
+
+  async getGroupsByCategory(categoryId: number): Promise<SelectGroup[]> {
+    const assignments = await db
+      .select({ groupId: groupCategoryAssignments.groupId })
+      .from(groupCategoryAssignments)
+      .where(eq(groupCategoryAssignments.categoryId, categoryId));
+    
+    const groupIds = assignments.map(a => a.groupId);
+    
+    if (groupIds.length === 0) return [];
+    
+    return await db
+      .select()
+      .from(groups)
+      .where(inArray(groups.id, groupIds))
+      .orderBy(desc(groups.memberCount));
+  }
+
+  // Enhanced Group Membership
+  async updateGroupMember(groupId: number, userId: number, data: Partial<SelectGroupMember>): Promise<SelectGroupMember | undefined> {
+    const result = await db
+      .update(groupMembers)
+      .set({ ...data, updatedAt: new Date() })
+      .where(
+        and(
+          eq(groupMembers.groupId, groupId),
+          eq(groupMembers.userId, userId)
+        )
+      )
+      .returning();
+    return result[0];
+  }
+
+  async banGroupMember(groupId: number, userId: number): Promise<void> {
+    await db
+      .update(groupMembers)
+      .set({ status: 'banned' })
+      .where(
+        and(
+          eq(groupMembers.groupId, groupId),
+          eq(groupMembers.userId, userId)
+        )
+      );
+    await db
+      .update(groups)
+      .set({ memberCount: sql`${groups.memberCount} - 1` })
+      .where(eq(groups.id, groupId));
+  }
+
+  async getSuggestedGroups(userId: number, limit = 10): Promise<SelectGroup[]> {
+    return await db
+      .select()
+      .from(groups)
+      .where(
+        and(
+          eq(groups.privacy, 'public'),
+          ne(groups.joinApprovalRequired, true)
+        )
+      )
+      .orderBy(desc(groups.memberCount), desc(groups.lastActivityAt))
+      .limit(limit);
+  }
+
+  // ============================================================================
+  // EVENTS - ENHANCED OPERATIONS IMPLEMENTATION
+  // ============================================================================
+
+  // Event Photos
+  async uploadEventPhoto(photo: InsertEventPhoto): Promise<SelectEventPhoto> {
+    const result = await db.insert(eventPhotos).values(photo).returning();
+    return result[0];
+  }
+
+  async getEventPhotos(eventId: number): Promise<SelectEventPhoto[]> {
+    return await db
+      .select()
+      .from(eventPhotos)
+      .where(
+        and(
+          eq(eventPhotos.eventId, eventId),
+          eq(eventPhotos.isApproved, true)
+        )
+      )
+      .orderBy(desc(eventPhotos.isFeatured), desc(eventPhotos.createdAt));
+  }
+
+  async getEventPhotoById(id: number): Promise<SelectEventPhoto | undefined> {
+    const result = await db.select().from(eventPhotos).where(eq(eventPhotos.id, id)).limit(1);
+    return result[0];
+  }
+
+  async deleteEventPhoto(id: number): Promise<void> {
+    await db.delete(eventPhotos).where(eq(eventPhotos.id, id));
+  }
+
+  async featureEventPhoto(photoId: number): Promise<void> {
+    await db.update(eventPhotos).set({ isFeatured: true }).where(eq(eventPhotos.id, photoId));
+  }
+
+  async unfeatureEventPhoto(photoId: number): Promise<void> {
+    await db.update(eventPhotos).set({ isFeatured: false }).where(eq(eventPhotos.id, photoId));
+  }
+
+  // Event Comments
+  async createEventComment(comment: InsertEventComment): Promise<SelectEventComment> {
+    const result = await db.insert(eventComments).values(comment).returning();
+    return result[0];
+  }
+
+  async getEventComments(eventId: number): Promise<SelectEventComment[]> {
+    return await db
+      .select()
+      .from(eventComments)
+      .where(
+        and(
+          eq(eventComments.eventId, eventId),
+          eq(eventComments.isDeleted, false)
+        )
+      )
+      .orderBy(asc(eventComments.createdAt));
+  }
+
+  async updateEventComment(id: number, content: string): Promise<SelectEventComment | undefined> {
+    const result = await db
+      .update(eventComments)
+      .set({ 
+        content,
+        isEdited: true,
+        updatedAt: new Date(),
+      })
+      .where(eq(eventComments.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deleteEventComment(id: number): Promise<void> {
+    await db
+      .update(eventComments)
+      .set({ isDeleted: true })
+      .where(eq(eventComments.id, id));
+  }
+
+  // Event Reminders
+  async createEventReminder(reminder: InsertEventReminder): Promise<SelectEventReminder> {
+    const result = await db.insert(eventReminders).values(reminder).returning();
+    return result[0];
+  }
+
+  async getEventReminders(rsvpId: number): Promise<SelectEventReminder[]> {
+    return await db.select().from(eventReminders).where(eq(eventReminders.rsvpId, rsvpId));
+  }
+
+  async markReminderSent(reminderId: number): Promise<void> {
+    await db
+      .update(eventReminders)
+      .set({ sentAt: new Date() })
+      .where(eq(eventReminders.id, reminderId));
+  }
+
+  // Enhanced Event RSVPs
+  async checkInEventAttendee(eventId: number, userId: number): Promise<SelectEventRsvp | undefined> {
+    const result = await db
+      .update(eventRsvps)
+      .set({ 
+        checkedIn: true,
+        checkInTime: new Date(),
+      })
+      .where(
+        and(
+          eq(eventRsvps.eventId, eventId),
+          eq(eventRsvps.userId, userId)
+        )
+      )
+      .returning();
+    return result[0];
+  }
+
+  async addToWaitlist(eventId: number, userId: number, guestCount = 1): Promise<SelectEventRsvp | undefined> {
+    const result = await db
+      .insert(eventRsvps)
+      .values({
+        eventId,
+        userId,
+        status: 'waitlist',
+        guestCount,
+      })
+      .returning();
+    return result[0];
+  }
+
+  async getEventWaitlist(eventId: number): Promise<SelectEventRsvp[]> {
+    return await db
+      .select()
+      .from(eventRsvps)
+      .where(
+        and(
+          eq(eventRsvps.eventId, eventId),
+          eq(eventRsvps.status, 'waitlist')
+        )
+      )
+      .orderBy(asc(eventRsvps.createdAt));
+  }
+
+  async searchEvents(params: { 
+    query?: string;
+    eventType?: string;
+    city?: string;
+    startDate?: Date;
+    endDate?: Date;
+    musicStyle?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<SelectEvent[]> {
+    const { query, eventType, city, startDate, endDate, musicStyle, limit = 20, offset = 0 } = params;
+    
+    let conditions = [eq(events.isPublic, true)];
+    
+    if (query) {
+      conditions.push(
+        or(
+          ilike(events.title, `%${query}%`),
+          ilike(events.description, `%${query}%`)
+        ) as any
+      );
+    }
+    
+    if (eventType) {
+      conditions.push(eq(events.eventType, eventType));
+    }
+    
+    if (city) {
+      conditions.push(eq(events.city, city));
+    }
+    
+    if (startDate) {
+      conditions.push(gte(events.startDate, startDate));
+    }
+    
+    if (endDate) {
+      conditions.push(lte(events.startDate, endDate));
+    }
+    
+    if (musicStyle) {
+      conditions.push(eq(events.musicStyle, musicStyle));
+    }
+    
+    return await db
+      .select()
+      .from(events)
+      .where(and(...conditions))
+      .orderBy(asc(events.startDate))
+      .limit(limit)
+      .offset(offset);
   }
 }
 

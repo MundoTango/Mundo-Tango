@@ -1394,5 +1394,550 @@ export async function registerRoutes(app: Express): Promise<Server> {
   wsNotificationService.initialize(httpServer);
   console.log("[WebSocket] Notification service initialized on /ws/notifications");
 
+  // ============================================================================
+  // GROUPS - COMPREHENSIVE API ROUTES
+  // ============================================================================
+
+  // Create Group
+  app.post("/api/groups", authenticateToken, validateRequest(insertGroupSchema.omit({ creatorId: true })), async (req: AuthRequest, res: Response) => {
+    try {
+      const group = await storage.createGroup({ ...req.body, creatorId: req.user!.id });
+      await storage.joinGroup(group.id, req.user!.id);
+      res.status(201).json(group);
+    } catch (error) {
+      console.error("Create group error:", error);
+      res.status(500).json({ message: "Failed to create group" });
+    }
+  });
+
+  // Get Group by ID
+  app.get("/api/groups/:id", async (req: Request, res: Response) => {
+    try {
+      const group = await storage.getGroupById(parseInt(req.params.id));
+      if (!group) return res.status(404).json({ message: "Group not found" });
+      res.json(group);
+    } catch (error) {
+      console.error("Get group error:", error);
+      res.status(500).json({ message: "Failed to fetch group" });
+    }
+  });
+
+  // Search Groups
+  app.get("/api/groups", async (req: Request, res: Response) => {
+    try {
+      const { search, limit, offset } = req.query;
+      const groups = await storage.getGroups({
+        search: search as string,
+        limit: limit ? parseInt(limit as string) : undefined,
+        offset: offset ? parseInt(offset as string) : undefined,
+      });
+      res.json(groups);
+    } catch (error) {
+      console.error("Search groups error:", error);
+      res.status(500).json({ message: "Failed to search groups" });
+    }
+  });
+
+  // Update Group
+  app.put("/api/groups/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const group = await storage.updateGroup(parseInt(req.params.id), req.body);
+      if (!group) return res.status(404).json({ message: "Group not found" });
+      res.json(group);
+    } catch (error) {
+      console.error("Update group error:", error);
+      res.status(500).json({ message: "Failed to update group" });
+    }
+  });
+
+  // Delete Group
+  app.delete("/api/groups/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteGroup(parseInt(req.params.id));
+      res.status(204).send();
+    } catch (error) {
+      console.error("Delete group error:", error);
+      res.status(500).json({ message: "Failed to delete group" });
+    }
+  });
+
+  // Get Suggested Groups
+  app.get("/api/groups/suggested/for-user", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { limit } = req.query;
+      const groups = await storage.getSuggestedGroups(req.user!.id, limit ? parseInt(limit as string) : 10);
+      res.json(groups);
+    } catch (error) {
+      console.error("Get suggested groups error:", error);
+      res.status(500).json({ message: "Failed to fetch suggested groups" });
+    }
+  });
+
+  // Join Group
+  app.post("/api/groups/:id/join", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const member = await storage.joinGroup(parseInt(req.params.id), req.user!.id);
+      res.status(201).json(member);
+    } catch (error) {
+      console.error("Join group error:", error);
+      res.status(500).json({ message: "Failed to join group" });
+    }
+  });
+
+  // Leave Group
+  app.post("/api/groups/:id/leave", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.leaveGroup(parseInt(req.params.id), req.user!.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Leave group error:", error);
+      res.status(500).json({ message: "Failed to leave group" });
+    }
+  });
+
+  // Get Group Members
+  app.get("/api/groups/:id/members", async (req: Request, res: Response) => {
+    try {
+      const members = await storage.getGroupMembers(parseInt(req.params.id));
+      res.json(members);
+    } catch (error) {
+      console.error("Get group members error:", error);
+      res.status(500).json({ message: "Failed to fetch group members" });
+    }
+  });
+
+  // Update Group Member
+  app.put("/api/groups/:groupId/members/:userId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const member = await storage.updateGroupMember(
+        parseInt(req.params.groupId),
+        parseInt(req.params.userId),
+        req.body
+      );
+      if (!member) return res.status(404).json({ message: "Member not found" });
+      res.json(member);
+    } catch (error) {
+      console.error("Update group member error:", error);
+      res.status(500).json({ message: "Failed to update member" });
+    }
+  });
+
+  // Ban Group Member
+  app.post("/api/groups/:groupId/members/:userId/ban", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.banGroupMember(parseInt(req.params.groupId), parseInt(req.params.userId));
+      res.status(204).send();
+    } catch (error) {
+      console.error("Ban group member error:", error);
+      res.status(500).json({ message: "Failed to ban member" });
+    }
+  });
+
+  // Send Group Invite
+  app.post("/api/groups/:id/invites", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const invite = await storage.sendGroupInvite({
+        groupId: parseInt(req.params.id),
+        inviterId: req.user!.id,
+        inviteeId: req.body.inviteeId,
+        message: req.body.message,
+      });
+      res.status(201).json(invite);
+    } catch (error) {
+      console.error("Send group invite error:", error);
+      res.status(500).json({ message: "Failed to send invite" });
+    }
+  });
+
+  // Get User's Group Invites
+  app.get("/api/groups/invites/my-invites", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const invites = await storage.getUserGroupInvites(req.user!.id);
+      res.json(invites);
+    } catch (error) {
+      console.error("Get group invites error:", error);
+      res.status(500).json({ message: "Failed to fetch invites" });
+    }
+  });
+
+  // Accept Group Invite
+  app.post("/api/groups/invites/:id/accept", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.acceptGroupInvite(parseInt(req.params.id));
+      res.status(204).send();
+    } catch (error) {
+      console.error("Accept group invite error:", error);
+      res.status(500).json({ message: "Failed to accept invite" });
+    }
+  });
+
+  // Decline Group Invite
+  app.post("/api/groups/invites/:id/decline", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.declineGroupInvite(parseInt(req.params.id));
+      res.status(204).send();
+    } catch (error) {
+      console.error("Decline group invite error:", error);
+      res.status(500).json({ message: "Failed to decline invite" });
+    }
+  });
+
+  // Create Group Post
+  app.post("/api/groups/:id/posts", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const post = await storage.createGroupPost({
+        groupId: parseInt(req.params.id),
+        authorId: req.user!.id,
+        ...req.body,
+      });
+      res.status(201).json(post);
+    } catch (error) {
+      console.error("Create group post error:", error);
+      res.status(500).json({ message: "Failed to create post" });
+    }
+  });
+
+  // Get Group Posts
+  app.get("/api/groups/:id/posts", async (req: Request, res: Response) => {
+    try {
+      const { limit, offset } = req.query;
+      const posts = await storage.getGroupPosts(parseInt(req.params.id), {
+        limit: limit ? parseInt(limit as string) : undefined,
+        offset: offset ? parseInt(offset as string) : undefined,
+      });
+      res.json(posts);
+    } catch (error) {
+      console.error("Get group posts error:", error);
+      res.status(500).json({ message: "Failed to fetch posts" });
+    }
+  });
+
+  // Update Group Post
+  app.put("/api/groups/posts/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const post = await storage.updateGroupPost(parseInt(req.params.id), req.body);
+      if (!post) return res.status(404).json({ message: "Post not found" });
+      res.json(post);
+    } catch (error) {
+      console.error("Update group post error:", error);
+      res.status(500).json({ message: "Failed to update post" });
+    }
+  });
+
+  // Delete Group Post
+  app.delete("/api/groups/posts/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteGroupPost(parseInt(req.params.id));
+      res.status(204).send();
+    } catch (error) {
+      console.error("Delete group post error:", error);
+      res.status(500).json({ message: "Failed to delete post" });
+    }
+  });
+
+  // Pin Group Post
+  app.post("/api/groups/posts/:id/pin", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.pinGroupPost(parseInt(req.params.id));
+      res.status(204).send();
+    } catch (error) {
+      console.error("Pin group post error:", error);
+      res.status(500).json({ message: "Failed to pin post" });
+    }
+  });
+
+  // Unpin Group Post
+  app.post("/api/groups/posts/:id/unpin", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.unpinGroupPost(parseInt(req.params.id));
+      res.status(204).send();
+    } catch (error) {
+      console.error("Unpin group post error:", error);
+      res.status(500).json({ message: "Failed to unpin post" });
+    }
+  });
+
+  // Approve Group Post
+  app.post("/api/groups/posts/:id/approve", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.approveGroupPost(parseInt(req.params.id), req.user!.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Approve group post error:", error);
+      res.status(500).json({ message: "Failed to approve post" });
+    }
+  });
+
+  // Get Group Categories
+  app.get("/api/groups/categories", async (req: Request, res: Response) => {
+    try {
+      const categories = await storage.getGroupCategories();
+      res.json(categories);
+    } catch (error) {
+      console.error("Get group categories error:", error);
+      res.status(500).json({ message: "Failed to fetch categories" });
+    }
+  });
+
+  // Create Group Category
+  app.post("/api/groups/categories", authenticateToken, requireRoleLevel(7), async (req: AuthRequest, res: Response) => {
+    try {
+      const category = await storage.createGroupCategory(req.body);
+      res.status(201).json(category);
+    } catch (error) {
+      console.error("Create group category error:", error);
+      res.status(500).json({ message: "Failed to create category" });
+    }
+  });
+
+  // Assign Category to Group
+  app.post("/api/groups/:groupId/categories/:categoryId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.assignGroupCategory(parseInt(req.params.groupId), parseInt(req.params.categoryId));
+      res.status(204).send();
+    } catch (error) {
+      console.error("Assign group category error:", error);
+      res.status(500).json({ message: "Failed to assign category" });
+    }
+  });
+
+  // Remove Category from Group
+  app.delete("/api/groups/:groupId/categories/:categoryId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.removeGroupCategory(parseInt(req.params.groupId), parseInt(req.params.categoryId));
+      res.status(204).send();
+    } catch (error) {
+      console.error("Remove group category error:", error);
+      res.status(500).json({ message: "Failed to remove category" });
+    }
+  });
+
+  // Get Groups by Category
+  app.get("/api/groups/categories/:id/groups", async (req: Request, res: Response) => {
+    try {
+      const groups = await storage.getGroupsByCategory(parseInt(req.params.id));
+      res.json(groups);
+    } catch (error) {
+      console.error("Get groups by category error:", error);
+      res.status(500).json({ message: "Failed to fetch groups" });
+    }
+  });
+
+  // ============================================================================
+  // EVENTS - COMPREHENSIVE API ROUTES
+  // ============================================================================
+
+  // Search Events (Enhanced)
+  app.get("/api/events/search", async (req: Request, res: Response) => {
+    try {
+      const { query, eventType, city, startDate, endDate, musicStyle, limit, offset } = req.query;
+      const events = await storage.searchEvents({
+        query: query as string,
+        eventType: eventType as string,
+        city: city as string,
+        startDate: startDate ? new Date(startDate as string) : undefined,
+        endDate: endDate ? new Date(endDate as string) : undefined,
+        musicStyle: musicStyle as string,
+        limit: limit ? parseInt(limit as string) : undefined,
+        offset: offset ? parseInt(offset as string) : undefined,
+      });
+      res.json(events);
+    } catch (error) {
+      console.error("Search events error:", error);
+      res.status(500).json({ message: "Failed to search events" });
+    }
+  });
+
+  // Update Event
+  app.put("/api/events/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const event = await storage.updateEvent(parseInt(req.params.id), req.body);
+      if (!event) return res.status(404).json({ message: "Event not found" });
+      res.json(event);
+    } catch (error) {
+      console.error("Update event error:", error);
+      res.status(500).json({ message: "Failed to update event" });
+    }
+  });
+
+  // Delete Event
+  app.delete("/api/events/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteEvent(parseInt(req.params.id));
+      res.status(204).send();
+    } catch (error) {
+      console.error("Delete event error:", error);
+      res.status(500).json({ message: "Failed to delete event" });
+    }
+  });
+
+  // Check-in Event Attendee
+  app.post("/api/events/:eventId/rsvps/:userId/check-in", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const rsvp = await storage.checkInEventAttendee(parseInt(req.params.eventId), parseInt(req.params.userId));
+      if (!rsvp) return res.status(404).json({ message: "RSVP not found" });
+      res.json(rsvp);
+    } catch (error) {
+      console.error("Check-in attendee error:", error);
+      res.status(500).json({ message: "Failed to check-in attendee" });
+    }
+  });
+
+  // Add to Waitlist
+  app.post("/api/events/:id/waitlist", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const rsvp = await storage.addToWaitlist(parseInt(req.params.id), req.user!.id, req.body.guestCount);
+      res.status(201).json(rsvp);
+    } catch (error) {
+      console.error("Add to waitlist error:", error);
+      res.status(500).json({ message: "Failed to add to waitlist" });
+    }
+  });
+
+  // Get Event Waitlist
+  app.get("/api/events/:id/waitlist", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const waitlist = await storage.getEventWaitlist(parseInt(req.params.id));
+      res.json(waitlist);
+    } catch (error) {
+      console.error("Get waitlist error:", error);
+      res.status(500).json({ message: "Failed to fetch waitlist" });
+    }
+  });
+
+  // Upload Event Photo
+  app.post("/api/events/:id/photos", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const photo = await storage.uploadEventPhoto({
+        eventId: parseInt(req.params.id),
+        uploaderId: req.user!.id,
+        ...req.body,
+      });
+      res.status(201).json(photo);
+    } catch (error) {
+      console.error("Upload event photo error:", error);
+      res.status(500).json({ message: "Failed to upload photo" });
+    }
+  });
+
+  // Get Event Photos
+  app.get("/api/events/:id/photos", async (req: Request, res: Response) => {
+    try {
+      const photos = await storage.getEventPhotos(parseInt(req.params.id));
+      res.json(photos);
+    } catch (error) {
+      console.error("Get event photos error:", error);
+      res.status(500).json({ message: "Failed to fetch photos" });
+    }
+  });
+
+  // Delete Event Photo
+  app.delete("/api/events/photos/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteEventPhoto(parseInt(req.params.id));
+      res.status(204).send();
+    } catch (error) {
+      console.error("Delete event photo error:", error);
+      res.status(500).json({ message: "Failed to delete photo" });
+    }
+  });
+
+  // Feature Event Photo
+  app.post("/api/events/photos/:id/feature", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.featureEventPhoto(parseInt(req.params.id));
+      res.status(204).send();
+    } catch (error) {
+      console.error("Feature event photo error:", error);
+      res.status(500).json({ message: "Failed to feature photo" });
+    }
+  });
+
+  // Unfeature Event Photo
+  app.post("/api/events/photos/:id/unfeature", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.unfeatureEventPhoto(parseInt(req.params.id));
+      res.status(204).send();
+    } catch (error) {
+      console.error("Unfeature event photo error:", error);
+      res.status(500).json({ message: "Failed to unfeature photo" });
+    }
+  });
+
+  // Create Event Comment
+  app.post("/api/events/:id/comments", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const comment = await storage.createEventComment({
+        eventId: parseInt(req.params.id),
+        userId: req.user!.id,
+        content: req.body.content,
+        parentCommentId: req.body.parentCommentId,
+      });
+      res.status(201).json(comment);
+    } catch (error) {
+      console.error("Create event comment error:", error);
+      res.status(500).json({ message: "Failed to create comment" });
+    }
+  });
+
+  // Get Event Comments
+  app.get("/api/events/:id/comments", async (req: Request, res: Response) => {
+    try {
+      const comments = await storage.getEventComments(parseInt(req.params.id));
+      res.json(comments);
+    } catch (error) {
+      console.error("Get event comments error:", error);
+      res.status(500).json({ message: "Failed to fetch comments" });
+    }
+  });
+
+  // Update Event Comment
+  app.put("/api/events/comments/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const comment = await storage.updateEventComment(parseInt(req.params.id), req.body.content);
+      if (!comment) return res.status(404).json({ message: "Comment not found" });
+      res.json(comment);
+    } catch (error) {
+      console.error("Update event comment error:", error);
+      res.status(500).json({ message: "Failed to update comment" });
+    }
+  });
+
+  // Delete Event Comment
+  app.delete("/api/events/comments/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteEventComment(parseInt(req.params.id));
+      res.status(204).send();
+    } catch (error) {
+      console.error("Delete event comment error:", error);
+      res.status(500).json({ message: "Failed to delete comment" });
+    }
+  });
+
+  // Create Event Reminder
+  app.post("/api/events/rsvps/:rsvpId/reminders", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const reminder = await storage.createEventReminder({
+        rsvpId: parseInt(req.params.rsvpId),
+        ...req.body,
+      });
+      res.status(201).json(reminder);
+    } catch (error) {
+      console.error("Create event reminder error:", error);
+      res.status(500).json({ message: "Failed to create reminder" });
+    }
+  });
+
+  // Get Event Reminders
+  app.get("/api/events/rsvps/:rsvpId/reminders", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const reminders = await storage.getEventReminders(parseInt(req.params.rsvpId));
+      res.json(reminders);
+    } catch (error) {
+      console.error("Get event reminders error:", error);
+      res.status(500).json({ message: "Failed to fetch reminders" });
+    }
+  });
+
   return httpServer;
 }
