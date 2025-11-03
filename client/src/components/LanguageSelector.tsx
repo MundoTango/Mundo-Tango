@@ -138,15 +138,7 @@ export function LanguageSelectorButton() {
 
   return (
     <Select value={i18n.language} onValueChange={(code) => i18n.changeLanguage(code)}>
-      <SelectTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="icon"
-          data-testid="button-language-selector-icon"
-        >
-          <Globe className="h-5 w-5" />
-        </Button>
-      </SelectTrigger>
+      <SelectTrigger asChild><Button variant="ghost" size="icon" data-testid="button-language-selector-icon"><Globe className="h-5 w-5" /></Button></SelectTrigger>
       <SelectContent align="end" className="max-h-[400px] w-[250px]">
         {languages.map((language) => (
           <SelectItem 
