@@ -5,10 +5,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Flag } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function ReportContentPage() {
   return (
-    <PageLayout title="Report Content" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Report Content" fallbackRoute="/feed">
+      <PageLayout title="Report Content" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-2xl">
         
@@ -69,5 +71,6 @@ export default function ReportContentPage() {
         </Card>
       </div>
     </PageLayout>
+    </SelfHealingErrorBoundary>
   );
 }

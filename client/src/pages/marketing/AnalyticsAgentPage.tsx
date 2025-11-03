@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { BarChart3, TrendingUp, Users, Clock, Globe, Smartphone } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function AnalyticsAgentPage() {
   const metrics = [
@@ -28,6 +29,7 @@ export default function AnalyticsAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="Analytics Agent" fallbackRoute="/platform">
     <PageLayout title="Analytics Agent" showBreadcrumbs>
 <>
       <SEO
@@ -148,5 +150,6 @@ export default function AnalyticsAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

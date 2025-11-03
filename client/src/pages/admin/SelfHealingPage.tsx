@@ -6,6 +6,7 @@ import { AlertCircle, CheckCircle, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 interface PageHealth {
   id: number;
@@ -74,6 +75,7 @@ export default function SelfHealingPage() {
   const unhealthyPages = pageHealth.filter(p => p.status === 'unhealthy').length;
 
   return (
+    <SelfHealingErrorBoundary pageName="Self-Healing Dashboard" fallbackRoute="/platform">
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -189,5 +191,6 @@ export default function SelfHealingPage() {
         </CardContent>
       </Card>
     </div>
+    </SelfHealingErrorBoundary>
   );
 }

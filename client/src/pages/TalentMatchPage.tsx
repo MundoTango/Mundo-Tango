@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function TalentMatchPage() {
   const [, setLocation] = useLocation();
@@ -198,6 +199,7 @@ export default function TalentMatchPage() {
   };
 
   return (
+    <SelfHealingErrorBoundary pageName="Talent Match" fallbackRoute="/platform">
     <>
       <SEO
         title="Talent Match - Mundo Tango"
@@ -350,5 +352,6 @@ export default function TalentMatchPage() {
         </div>
       </div>
     </>
+    </SelfHealingErrorBoundary>
   );
 }

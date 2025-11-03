@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Users, Calendar, MapPin } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
@@ -26,7 +27,8 @@ export default function SearchPage() {
   ];
 
   return (
-    <PageLayout title="Search" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Search" fallbackRoute="/">
+      <PageLayout title="Search" showBreadcrumbs>
       <div className="min-h-screen bg-background py-8 px-4">
         <div className="container mx-auto max-w-4xl">
           {/* Search Header */}
@@ -142,6 +144,7 @@ export default function SearchPage() {
         </div>
       </div>
     </PageLayout>
+    </SelfHealingErrorBoundary>
   );
 }
 

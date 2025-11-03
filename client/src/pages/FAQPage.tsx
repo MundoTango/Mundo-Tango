@@ -11,6 +11,7 @@ import { Search, HelpCircle } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 const faqs = [
   {
@@ -105,7 +106,8 @@ export default function FAQPage() {
   })).filter(category => category.questions.length > 0);
 
   return (
-    <PageLayout title="Frequently Asked Questions" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="FAQ" fallbackRoute="/">
+      <PageLayout title="Frequently Asked Questions" showBreadcrumbs>
       <SEO
         title="FAQ - Mundo Tango"
         description="Find answers to common questions about Mundo Tango. Learn how to get started, find events, connect with dancers, and make the most of our platform."
@@ -180,5 +182,6 @@ export default function FAQPage() {
         </div>
       </div>
     </PageLayout>
+    </SelfHealingErrorBoundary>
   );
 }

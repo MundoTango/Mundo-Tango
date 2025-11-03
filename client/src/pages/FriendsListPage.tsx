@@ -14,6 +14,7 @@ import { Users, UserPlus, Clock, Search, Heart, Star, TrendingUp, Upload, X, Ima
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 interface Friend {
   id: number;
@@ -356,7 +357,8 @@ export default function FriendsListPage() {
   );
 
   return (
-    <PageLayout title="Friends" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Friends" fallbackRoute="/feed">
+      <PageLayout title="Friends" showBreadcrumbs>
       {/* MT Ocean Theme Background */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-50 via-blue-100 to-teal-100 dark:from-slate-900 dark:via-blue-950 dark:to-cyan-950" />
@@ -603,5 +605,6 @@ export default function FriendsListPage() {
         </DialogContent>
       </Dialog>
     </PageLayout>
+    </SelfHealingErrorBoundary>
   );
 }

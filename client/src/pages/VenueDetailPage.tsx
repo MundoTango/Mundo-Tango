@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Clock, Phone, Mail, Star, Calendar } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function VenueDetailPage() {
   return (
-    <PageLayout title="La Catedral Tango" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Venue Details" fallbackRoute="/events">
+      <PageLayout title="La Catedral Tango" showBreadcrumbs>
       <div className="min-h-screen bg-background py-8 px-4">
         <div className="container mx-auto max-w-4xl">
           {/* Venue Header */}
@@ -99,5 +101,6 @@ export default function VenueDetailPage() {
         </div>
       </div>
     </PageLayout>
+    </SelfHealingErrorBoundary>
   );
 }

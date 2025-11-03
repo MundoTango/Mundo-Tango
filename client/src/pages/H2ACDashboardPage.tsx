@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { MessageSquare, Bot, Users, TrendingUp, AlertCircle, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function H2ACDashboardPage() {
   const metrics = [
@@ -54,6 +55,7 @@ export default function H2ACDashboardPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="H2AC Dashboard" fallbackRoute="/feed">
     <PageLayout title="H2AC Dashboard" showBreadcrumbs>
 <>
       <SEO
@@ -192,5 +194,6 @@ export default function H2ACDashboardPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

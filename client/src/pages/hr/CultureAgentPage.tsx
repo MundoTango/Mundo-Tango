@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Heart, Users, TrendingUp, Calendar, MessageCircle, Award } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function CultureAgentPage() {
   const metrics = [
@@ -33,6 +34,7 @@ export default function CultureAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="Culture Agent" fallbackRoute="/platform">
     <PageLayout title="Culture Agent" showBreadcrumbs>
 <>
       <SEO
@@ -174,5 +176,6 @@ export default function CultureAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

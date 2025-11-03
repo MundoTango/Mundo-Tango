@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Target, TrendingUp, Award, Users, BarChart3, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function PerformanceAgentPage() {
   const metrics = [
@@ -26,6 +27,7 @@ export default function PerformanceAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="Performance Agent" fallbackRoute="/platform">
     <PageLayout title="Performance Agent" showBreadcrumbs>
 <>
       <SEO
@@ -154,5 +156,6 @@ export default function PerformanceAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

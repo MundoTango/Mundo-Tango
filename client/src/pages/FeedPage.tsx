@@ -18,6 +18,7 @@ import { GlobalTopbar } from "@/components/GlobalTopbar";
 import { FeedLeftSidebar } from "@/components/FeedLeftSidebar";
 import { FeedRightSidebar } from "@/components/FeedRightSidebar";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 type Post = {
   id: number;
@@ -152,6 +153,7 @@ export default function FeedPage() {
   };
 
   return (
+    <SelfHealingErrorBoundary pageName="Feed" fallbackRoute="/feed">
     <PageLayout title="Feed" showBreadcrumbs>
 <>
       <SEO
@@ -359,7 +361,8 @@ export default function FeedPage() {
         <FeedRightSidebar />
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }
 
 function PostCard({ post }: { post: Post }) {

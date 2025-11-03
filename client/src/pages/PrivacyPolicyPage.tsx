@@ -1,8 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Lock, Eye, Database, Mail } from "lucide-react";
+import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function PrivacyPolicyPage() {
   return (
+    <SelfHealingErrorBoundary pageName="Privacy Policy" fallbackRoute="/">
     <PageLayout title="Privacy Policy" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">

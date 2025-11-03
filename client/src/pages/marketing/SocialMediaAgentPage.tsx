@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Share2, TrendingUp, Users, MessageCircle, Heart, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function SocialMediaAgentPage() {
   const metrics = [
@@ -26,6 +27,7 @@ export default function SocialMediaAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="Social Media Agent" fallbackRoute="/platform">
     <PageLayout title="Social Media Agent" showBreadcrumbs>
 <>
       <SEO
@@ -148,5 +150,6 @@ export default function SocialMediaAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

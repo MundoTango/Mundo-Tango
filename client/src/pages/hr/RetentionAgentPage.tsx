@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Heart, TrendingDown, AlertTriangle, Users, Shield, Smile } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function RetentionAgentPage() {
   const metrics = [
@@ -27,6 +28,7 @@ export default function RetentionAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="Retention Agent" fallbackRoute="/platform">
     <PageLayout title="Retention Agent" showBreadcrumbs>
 <>
       <SEO
@@ -158,5 +160,6 @@ export default function RetentionAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

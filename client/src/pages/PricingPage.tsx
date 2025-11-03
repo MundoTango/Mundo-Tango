@@ -5,6 +5,7 @@ import { Check, Zap, Crown, Users } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 const plans = [
   {
@@ -67,6 +68,7 @@ const plans = [
 
 export default function PricingPage() {
   return (
+    <SelfHealingErrorBoundary pageName="Pricing" fallbackRoute="/">
     <PageLayout title="Simple, Transparent Pricing" showBreadcrumbs>
 <PublicLayout>
       <SEO
@@ -190,5 +192,6 @@ export default function PricingPage() {
       </div>
     </div>
     </PublicLayout>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

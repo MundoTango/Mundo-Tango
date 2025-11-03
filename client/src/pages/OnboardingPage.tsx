@@ -9,6 +9,7 @@ import { SEO } from "@/components/SEO";
 import { ChevronLeft, ChevronRight, MapPin, Camera, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 const tangoRoles = [
   { id: "dancer", label: "Dancer", emoji: "💃" },
@@ -81,7 +82,8 @@ export default function OnboardingPage() {
   };
 
   return (
-    <PageLayout title="Welcome to Mundo Tango!" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Onboarding" fallbackRoute="/">
+      <PageLayout title="Welcome to Mundo Tango!" showBreadcrumbs>
       <SEO
         title="Welcome to Mundo Tango"
         description="Complete your profile to join the global tango community"
@@ -274,5 +276,6 @@ export default function OnboardingPage() {
         </div>
       </div>
     </PageLayout>
+    </SelfHealingErrorBoundary>
   );
 }

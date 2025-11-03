@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { UserCheck, CheckCircle, AlertCircle, Clock, Users, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function OnboardingAgentPage() {
   const metrics = [
@@ -28,6 +29,7 @@ export default function OnboardingAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="Onboarding Agent" fallbackRoute="/platform">
     <PageLayout title="Onboarding Agent" showBreadcrumbs>
 <>
       <SEO
@@ -146,5 +148,6 @@ export default function OnboardingAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

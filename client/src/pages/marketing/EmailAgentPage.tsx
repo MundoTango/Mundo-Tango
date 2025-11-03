@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { Mail, Send, Users, TrendingUp, MousePointerClick, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function EmailAgentPage() {
   const metrics = [
@@ -27,6 +28,7 @@ export default function EmailAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="Email Agent" fallbackRoute="/platform">
     <PageLayout title="Email Agent" showBreadcrumbs>
 <>
       <SEO
@@ -153,5 +155,6 @@ export default function EmailAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

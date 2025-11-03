@@ -3,9 +3,11 @@ import { Users, Globe, Heart, Target } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function AboutPage() {
   return (
+    <SelfHealingErrorBoundary pageName="About" fallbackRoute="/">
     <PageLayout title="About Mundo Tango" showBreadcrumbs>
 <PublicLayout>
       <SEO
@@ -118,5 +120,6 @@ export default function AboutPage() {
       </div>
     </div>
     </PublicLayout>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

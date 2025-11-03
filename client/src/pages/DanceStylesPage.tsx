@@ -4,6 +4,7 @@ import { Music, Heart, Zap, Clock } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 const danceStyles = [
   {
@@ -58,6 +59,7 @@ const danceStyles = [
 
 export default function DanceStylesPage() {
   return (
+    <SelfHealingErrorBoundary pageName="Dance Styles" fallbackRoute="/feed">
     <PageLayout title="Tango Dance Styles" showBreadcrumbs>
 <PublicLayout>
       <SEO
@@ -142,5 +144,6 @@ export default function DanceStylesPage() {
       </div>
     </div>
     </PublicLayout>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

@@ -12,6 +12,7 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function FriendsPage() {
   const [activeTab, setActiveTab] = useState("all");
@@ -59,6 +60,7 @@ export default function FriendsPage() {
   });
 
   return (
+    <SelfHealingErrorBoundary pageName="Friends" fallbackRoute="/feed">
     <PageLayout title="Friends" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-4xl">
@@ -221,5 +223,6 @@ export default function FriendsPage() {
         </Tabs>
       </div>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

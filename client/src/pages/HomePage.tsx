@@ -13,6 +13,7 @@ import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { AdaptiveButton } from "@/components/adaptive/AdaptiveButton";
 import { AdaptiveCard } from "@/components/adaptive/AdaptiveCard";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -81,7 +82,8 @@ export default function HomePage() {
   ];
 
   return (
-    <PageLayout title="Where Tango Meets Community" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Home" fallbackRoute="/">
+      <PageLayout title="Where Tango Meets Community" showBreadcrumbs>
 <PublicLayout>
       <SEO
         title="Mundo Tango - Connect with the Global Tango Community"
@@ -347,5 +349,7 @@ export default function HomePage() {
       </section>
     </div>
     </PublicLayout>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

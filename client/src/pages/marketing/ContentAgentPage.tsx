@@ -4,6 +4,7 @@ import { SEO } from "@/components/SEO";
 import { FileText, Calendar, TrendingUp, Eye, Heart, Share2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function ContentAgentPage() {
   const metrics = [
@@ -27,6 +28,7 @@ export default function ContentAgentPage() {
   ];
 
   return (
+    <SelfHealingErrorBoundary pageName="Content Agent" fallbackRoute="/platform">
     <PageLayout title="Content Agent" showBreadcrumbs>
 <>
       <SEO
@@ -148,5 +150,6 @@ export default function ContentAgentPage() {
         </div>
       </div>
     </>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

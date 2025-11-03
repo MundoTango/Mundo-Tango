@@ -16,6 +16,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { PageLayout } from "@/components/PageLayout";
 import { PredictionStats } from "@/components/PredictionStats";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 interface DashboardStats {
   totalUsers: number;
@@ -94,7 +95,8 @@ export default function AdminDashboardPage() {
   );
 
   return (
-    <PageLayout title="Admin Dashboard" showBreadcrumbs>
+    <SelfHealingErrorBoundary pageName="Admin Dashboard" fallbackRoute="/admin">
+      <PageLayout title="Admin Dashboard" showBreadcrumbs>
 <div className="container mx-auto p-6" data-testid="page-admin-dashboard">
       <div className="mb-6">
         
@@ -278,5 +280,7 @@ export default function AdminDashboardPage() {
         </TabsContent>
       </Tabs>
     </div>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

@@ -34,6 +34,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 /**
  * BLOCKER 6: "The Plan" Project Tracker
@@ -165,6 +166,7 @@ export default function ProjectTrackerPage() {
   };
 
   return (
+    <SelfHealingErrorBoundary pageName="Project Tracker" fallbackRoute="/platform">
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -484,5 +486,6 @@ export default function ProjectTrackerPage() {
         </div>
       )}
     </div>
+    </SelfHealingErrorBoundary>
   );
 }

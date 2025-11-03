@@ -8,6 +8,7 @@ import { useState } from "react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -23,6 +24,7 @@ export default function ContactPage() {
   };
 
   return (
+    <SelfHealingErrorBoundary pageName="Contact" fallbackRoute="/">
     <PageLayout title="Contact Us" showBreadcrumbs>
 <PublicLayout>
       <SEO
@@ -176,5 +178,6 @@ export default function ContactPage() {
       </div>
     </div>
     </PublicLayout>
-    </PageLayout>);
+    </PageLayout>
+    </SelfHealingErrorBoundary>);
 }

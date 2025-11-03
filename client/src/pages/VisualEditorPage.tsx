@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 interface Component {
   id: string;
@@ -174,7 +175,9 @@ ${jsxCode.split('\n').map(line => '      ' + line).join('\n')}
   const selected = components.find(c => c.id === selectedComponent);
 
   return (
-    <>
+    <SelfHealingErrorBoundary pageName="Visual Editor" fallbackRoute="/admin">
+      <PageLayout title="Visual Editor" showBreadcrumbs>
+      <>
       <SEO
         title="Visual Editor - Page Builder"
         description="Create custom pages with drag-and-drop visual editor"
@@ -486,5 +489,7 @@ ${jsxCode.split('\n').map(line => '      ' + line).join('\n')}
         </DialogContent>
       </Dialog>
     </>
+      </PageLayout>
+    </SelfHealingErrorBoundary>
   );
 }
