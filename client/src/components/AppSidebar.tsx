@@ -144,8 +144,10 @@ export function AppSidebar() {
                     data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
                   >
                     <PredictiveLink to={item.url}>
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.title}</span>
+                      <>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </>
                     </PredictiveLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -167,8 +169,10 @@ export function AppSidebar() {
                     data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
                   >
                     <PredictiveLink to={item.url}>
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.title}</span>
+                      <>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </>
                     </PredictiveLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -190,8 +194,10 @@ export function AppSidebar() {
                     data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
                   >
                     <PredictiveLink to={item.url}>
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.title}</span>
+                      <>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </>
                     </PredictiveLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -213,8 +219,10 @@ export function AppSidebar() {
                     data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
                   >
                     <PredictiveLink to={item.url}>
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.title}</span>
+                      <>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </>
                     </PredictiveLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -236,8 +244,10 @@ export function AppSidebar() {
                     data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
                   >
                     <PredictiveLink to={item.url}>
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.title}</span>
+                      <>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </>
                     </PredictiveLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -259,8 +269,10 @@ export function AppSidebar() {
                     data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
                   >
                     <PredictiveLink to={item.url}>
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.title}</span>
+                      <>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </>
                     </PredictiveLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -282,8 +294,10 @@ export function AppSidebar() {
                     data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
                   >
                     <PredictiveLink to={item.url}>
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.title}</span>
+                      <>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </>
                     </PredictiveLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -308,8 +322,10 @@ export function AppSidebar() {
                         data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
                       >
                         <PredictiveLink to={item.url}>
-                          <item.icon className="h-5 w-5" />
-                          <span>{item.title}</span>
+                          <>
+                            <item.icon className="h-5 w-5" />
+                            <span>{item.title}</span>
+                          </>
                         </PredictiveLink>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -334,8 +350,10 @@ export function AppSidebar() {
                       data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
                     >
                       <PredictiveLink to={item.url}>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
+                        <>
+                          <item.icon className="h-5 w-5" />
+                          <span>{item.title}</span>
+                        </>
                       </PredictiveLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
