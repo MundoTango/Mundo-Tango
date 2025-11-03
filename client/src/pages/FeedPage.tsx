@@ -597,16 +597,7 @@ function CommentItem({ comment, postId }: { comment: any; postId: number }) {
               </span>
               {isOwner && !isPending && (
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6 hover-elevate active-elevate-2"
-                      data-testid={`button-comment-menu-${comment.id}`}
-                    >
-                      <MoreVertical className="h-3 w-3" />
-                    </Button>
-                  </DropdownMenuTrigger>
+                  <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-6 w-6 hover-elevate active-elevate-2" data-testid={`button-comment-menu-${comment.id}`}><MoreVertical className="h-3 w-3" /></Button></DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
                       onClick={() => setIsEditing(true)}

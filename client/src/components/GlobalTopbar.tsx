@@ -98,16 +98,7 @@ export function GlobalTopbar() {
 
           {/* E104 - User Menu */}
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full" data-testid="button-user-menu">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={user?.profileImage || undefined} />
-                  <AvatarFallback>
-                    {user?.name?.charAt(0) || user?.username?.charAt(0) || <User className="h-4 w-4" />}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
+            <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="rounded-full" data-testid="button-user-menu"><Avatar className="h-8 w-8"><AvatarImage src={user?.profileImage || undefined} /><AvatarFallback>{user?.name?.charAt(0) || user?.username?.charAt(0) || <User className="h-4 w-4" />}</AvatarFallback></Avatar></Button></DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <div className="px-2 py-1.5 text-sm font-semibold" data-testid="text-user-name">
                 {user?.name || user?.username}
