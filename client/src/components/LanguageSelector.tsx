@@ -144,7 +144,9 @@ export function LanguageSelectorButton() {
           size="icon"
           data-testid="button-language-selector-icon"
         >
-          <Globe className="h-5 w-5" />
+          <>
+            <Globe className="h-5 w-5" />
+          </>
         </Button>
       </SelectTrigger>
       <SelectContent align="end" className="max-h-[400px] w-[250px]">
