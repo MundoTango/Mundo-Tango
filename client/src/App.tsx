@@ -40,6 +40,11 @@ const FollowersPage = lazy(() => import("@/pages/FollowersPage"));
 const MessagesPage = lazy(() => import("@/pages/MessagesPage"));
 const NotificationsPage = lazy(() => import("@/pages/NotificationsPage"));
 const SearchPage = lazy(() => import("@/pages/SearchPage"));
+const MemoriesPage = lazy(() => import("@/pages/MemoriesPage"));
+const CommunityWorldMapPage = lazy(() => import("@/pages/CommunityWorldMapPage"));
+const RecommendationsPage = lazy(() => import("@/pages/RecommendationsPage"));
+const InvitationsPage = lazy(() => import("@/pages/InvitationsPage"));
+const FavoritesPage = lazy(() => import("@/pages/FavoritesPage"));
 
 // Events & Groups
 const EventsPage = lazy(() => import("@/pages/EventsPage"));
@@ -90,7 +95,9 @@ const SecretsPage = lazy(() => import("@/pages/SecretsPage"));
 const GitRepositoryPage = lazy(() => import("@/pages/GitRepositoryPage"));
 const MonitoringPage = lazy(() => import("@/pages/MonitoringPage"));
 const AnalyticsPage = lazy(() => import("@/pages/AnalyticsPage"));
-const ESADashboardPage = lazy(() => import("@/pages/ESADashboardPage"));
+const ESADashboardPage = lazy(() => import("@/pages/platform/ESADashboardPage"));
+const ESATasksPage = lazy(() => import("@/pages/platform/ESATasksPage"));
+const ESACommunicationsPage = lazy(() => import("@/pages/platform/ESACommunicationsPage"));
 const AgentTasksPage = lazy(() => import("@/pages/AgentTasksPage"));
 const AgentCommunicationsPage = lazy(() => import("@/pages/AgentCommunicationsPage"));
 
@@ -223,6 +230,46 @@ function Router() {
       <Route path="/feed">
         <ProtectedRoute>
           <FeedPage />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/memories">
+        <ProtectedRoute>
+          <AppLayout>
+            <MemoriesPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/recommendations">
+        <ProtectedRoute>
+          <AppLayout>
+            <RecommendationsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/community-world-map">
+        <ProtectedRoute>
+          <AppLayout>
+            <CommunityWorldMapPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/invitations">
+        <ProtectedRoute>
+          <AppLayout>
+            <InvitationsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/favorites">
+        <ProtectedRoute>
+          <AppLayout>
+            <FavoritesPage />
+          </AppLayout>
         </ProtectedRoute>
       </Route>
 
@@ -417,7 +464,15 @@ function Router() {
       <Route path="/platform/esa/tasks">
         <ProtectedRoute>
           <AppLayout>
-            <AgentTasksPage />
+            <ESATasksPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/platform/esa/communications">
+        <ProtectedRoute>
+          <AppLayout>
+            <ESACommunicationsPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
