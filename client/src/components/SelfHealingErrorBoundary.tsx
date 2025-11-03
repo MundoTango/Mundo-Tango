@@ -54,7 +54,7 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  async componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     const { pageName = 'Unknown Page' } = this.props;
     
     console.error(`[Self-Healing Boundary] Error on ${pageName}:`, error, errorInfo);
@@ -69,8 +69,102 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
 
     this.setState({ errorInfo });
 
-    // Attempt auto-recovery for transient errors
+    // TRACK 1: Try instant auto-fix for known patterns
+    const autoFixed = await this.tryInstantAutoFix(error, errorInfo);
+    
+    if (autoFixed) {
+      console.log('[Self-Healing] ✅ Auto-fixed known error pattern');
+      // Reset error state and let component re-render
+      this.handleAutoRecover();
+      return;
+    }
+
+    // TRACK 2: Attempt gradual self-healing for recoverable errors
     this.attemptSelfHealing(error);
+
+    // TRACK 3: Send to Mr Blue AI in background (non-blocking)
+    this.sendToMrBlueForAnalysis(error, errorInfo);
+  }
+
+  async tryInstantAutoFix(error: Error, errorInfo: React.ErrorInfo): Promise<boolean> {
+    const errorMessage = error.toString();
+    const stack = error.stack || '';
+
+    // Pattern 1: React.Children.only error
+    if (errorMessage.includes('React.Children.only') || 
+        errorMessage.includes('expected to receive a single React element child')) {
+      console.warn('[Auto-Heal] 🔧 Detected React.Children.only error');
+      console.warn('[Auto-Heal] 💡 Fix: Wrap multiple children in <> fragment when using asChild prop');
+      console.warn('[Auto-Heal] 📍 Component stack:', errorInfo.componentStack?.substring(0, 200));
+      
+      // Force re-render - sometimes fixes dynamic render issues
+      setTimeout(() => {
+        this.handleAutoRecover();
+      }, 100);
+      
+      return true;
+    }
+
+    // Pattern 2: Loading chunk failed (dynamic import)
+    if (errorMessage.includes('Loading chunk') || 
+        errorMessage.includes('dynamically imported module')) {
+      console.warn('[Auto-Heal] 🔧 Detected chunk loading error - attempting reload');
+      
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+      
+      return true;
+    }
+
+    // Pattern 3: Network/fetch errors
+    if (errorMessage.match(/network|fetch.*failed|CORS/i)) {
+      console.warn('[Auto-Heal] 🔧 Detected network error - retrying in 2s');
+      
+      setTimeout(() => {
+        this.handleAutoRecover();
+      }, 2000);
+      
+      return true;
+    }
+
+    return false;
+  }
+
+  async sendToMrBlueForAnalysis(error: Error, errorInfo: React.ErrorInfo) {
+    const { pageName = 'Unknown Page' } = this.props;
+    
+    try {
+      const bugReport = {
+        page: pageName,
+        error: error.toString(),
+        stack: error.stack,
+        componentStack: errorInfo.componentStack,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+      };
+      
+      console.log('[Self-Healing] 🤖 Sending to Mr Blue AI for analysis...');
+      
+      const response = await fetch('/api/v1/report-bug', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bugReport),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('[Mr Blue Analysis] 🤖', data.analysis);
+        
+        // Check if Mr Blue suggests it's auto-fixable
+        if (data.analysis?.includes('auto-fixable') || 
+            data.analysis?.includes('Auto-fixable: Yes')) {
+          console.log('[Self-Healing] 💡 Mr Blue suggests this is auto-fixable');
+        }
+      }
+    } catch (err) {
+      console.error('[Self-Healing] Failed to contact Mr Blue:', err);
+    }
   }
 
   attemptSelfHealing(error: Error) {
