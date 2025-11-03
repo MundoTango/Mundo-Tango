@@ -156,10 +156,19 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
         const data = await response.json();
         console.log('[Mr Blue Analysis] 🤖', data.analysis);
         
-        // Check if Mr Blue suggests it's auto-fixable
-        if (data.analysis?.includes('auto-fixable') || 
-            data.analysis?.includes('Auto-fixable: Yes')) {
-          console.log('[Self-Healing] 💡 Mr Blue suggests this is auto-fixable');
+        // Check structured response for auto-fix flag
+        if (data.structured?.autoFixable) {
+          console.log('[Self-Healing] 💡 Mr Blue confirms this is auto-fixable');
+          console.log('[Self-Healing] 📝 Fix steps:', data.structured.fixSteps);
+          
+          // For auto-fixable errors, attempt recovery after showing analysis
+          setTimeout(() => {
+            console.log('[Self-Healing] 🔄 Attempting Mr Blue suggested auto-fix...');
+            this.handleAutoRecover();
+          }, 3000);
+        } else {
+          console.log('[Self-Healing] ⚠️ Mr Blue says this requires manual intervention');
+          console.log('[Self-Healing] 🎯 Severity:', data.structured?.severity);
         }
       }
     } catch (err) {

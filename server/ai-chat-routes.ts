@@ -62,16 +62,22 @@ Be helpful, concise, and friendly. Keep responses under 3 sentences when possibl
         return res.status(400).json({ error: "Error details and page name are required" });
       }
 
-      // System prompt for bug analysis
+      // System prompt for bug analysis with structured output
       const systemPrompt = `You are Mr Blue, an expert debugging AI for Mundo Tango platform.
-Analyze React errors and provide actionable fixes. Focus on:
-1. Root cause identification
-2. Simple fixes you can describe in 2-3 steps
-3. Code snippets when helpful
-4. Whether this needs human developer attention
+Analyze React errors and provide actionable fixes in a structured format.
 
-Be concise, technical, and helpful. If it's a simple fix (like missing key prop, incorrect prop type, etc), 
-provide exact steps to fix. If complex, explain why and suggest investigation steps.`;
+IMPORTANT: Return your response as valid JSON with this structure:
+{
+  "rootCause": "One sentence explaining what went wrong",
+  "autoFixable": true/false,
+  "severity": "Low|Medium|High|Critical",
+  "fixSteps": ["Step 1", "Step 2", "Step 3"],
+  "codeSnippet": "Optional code example if helpful",
+  "explanation": "Brief explanation for developers"
+}
+
+Auto-fixable means the self-healing system can fix it automatically (e.g., network retry, re-render, chunk reload).
+If it requires code changes, it's NOT auto-fixable.`;
 
       // Create analysis prompt
       const userPrompt = `Page: ${page}
@@ -81,11 +87,7 @@ Component Stack: ${componentStack?.substring(0, 300) || 'No component stack'}
 Browser: ${userAgent || 'Unknown'}
 Time: ${timestamp}
 
-Analyze this error and provide:
-1. Root cause (1 sentence)
-2. Is this auto-fixable? (Yes/No)
-3. Fix steps (if auto-fixable) or investigation steps (if not)
-4. Severity (Low/Medium/High/Critical)`;
+Analyze this error and return JSON following the specified structure.`;
 
       // Call Groq API for analysis
       const completion = await groq.chat.completions.create({
@@ -94,19 +96,52 @@ Analyze this error and provide:
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
         ],
-        temperature: 0.3, // Lower temperature for more focused analysis
+        temperature: 0.3,
         max_tokens: 800,
-        top_p: 0.9
+        top_p: 0.9,
+        response_format: { type: "json_object" }
       });
 
-      const analysis = completion.choices[0]?.message?.content || "Unable to analyze error.";
+      const rawAnalysis = completion.choices[0]?.message?.content || "{}";
+      
+      // Parse JSON response
+      let parsedAnalysis;
+      try {
+        parsedAnalysis = JSON.parse(rawAnalysis);
+      } catch (e) {
+        // Fallback if JSON parsing fails
+        parsedAnalysis = {
+          rootCause: "Unable to parse error analysis",
+          autoFixable: false,
+          severity: "Unknown",
+          fixSteps: ["Contact support"],
+          explanation: rawAnalysis
+        };
+      }
+
+      // Create human-readable analysis for backward compatibility
+      const analysis = `
+🔍 Root Cause: ${parsedAnalysis.rootCause || 'Unknown'}
+
+⚙️ Auto-fixable: ${parsedAnalysis.autoFixable ? 'Yes' : 'No'}
+
+🎯 Severity: ${parsedAnalysis.severity || 'Unknown'}
+
+📝 Fix Steps:
+${(parsedAnalysis.fixSteps || []).map((step: string, i: number) => `${i + 1}. ${step}`).join('\n')}
+
+${parsedAnalysis.codeSnippet ? `\n💻 Code Snippet:\n${parsedAnalysis.codeSnippet}\n` : ''}
+
+${parsedAnalysis.explanation ? `\n📖 Explanation:\n${parsedAnalysis.explanation}` : ''}
+      `.trim();
 
       // Store bug report in console (future: save to database)
       console.log(`[Mr Blue Bug Report] Page: ${page}, Error: ${error}`);
       console.log(`[Mr Blue Analysis] ${analysis}`);
 
       res.json({ 
-        analysis,
+        analysis,  // Human-readable text
+        structured: parsedAnalysis,  // Structured JSON for auto-fix
         reported: true,
         timestamp: new Date().toISOString()
       });
