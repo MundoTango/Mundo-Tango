@@ -1,0 +1,164 @@
+/**
+ * Visual Editor Styles
+ * Purple outline/border states for component selection
+ * Glassmorphic edit controls, drag/drop indicators
+ */
+
+/* Component Selection States */
+.editor-hover {
+  outline: 2px solid hsl(var(--purple-primary)) !important;
+  outline-offset: 2px;
+  cursor: pointer;
+  position: relative;
+  z-index: 9998;
+  transition: outline 0.15s ease;
+}
+
+.editor-selected {
+  outline: 3px solid hsl(var(--purple-primary)) !important;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 3px hsla(var(--purple-primary-hsl), 0.1);
+  position: relative;
+  z-index: 9999;
+}
+
+.editor-dragging {
+  cursor: move !important;
+  opacity: 0.8;
+  outline: 2px dashed hsl(var(--purple-primary)) !important;
+  outline-offset: 4px;
+  z-index: 10000;
+  transition: none;
+}
+
+/* Snap Guide Lines */
+.editor-snap-line-vertical {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: hsl(var(--primary));
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.editor-snap-line-horizontal {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: hsl(var(--primary));
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Glassmorphic Edit Controls */
+.glass-card {
+  background: hsla(var(--card-hsl), 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid hsla(var(--border-hsl), 0.3);
+}
+
+/* Visual Editor Overlay */
+[data-visual-editor] {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Purple Primary Color (for editor highlights) */
+:root {
+  --purple-primary: 270 80% 60%;
+  --purple-primary-hsl: 270, 80%, 60%;
+}
+
+.dark {
+  --purple-primary: 270 70% 70%;
+  --purple-primary-hsl: 270, 70%, 70%;
+}
+
+/* Animation for selection */
+@keyframes editor-select-pulse {
+  0%, 100% {
+    outline-color: hsl(var(--purple-primary));
+  }
+  50% {
+    outline-color: hsla(var(--purple-primary-hsl), 0.6);
+  }
+}
+
+.editor-selected {
+  animation: editor-select-pulse 2s ease-in-out infinite;
+}
+
+/* Component Info Tooltip */
+.editor-tooltip {
+  position: absolute;
+  top: -32px;
+  left: 0;
+  background: hsl(var(--purple-primary));
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10001;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.editor-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 12px;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid hsl(var(--purple-primary));
+}
+
+/* Resize Handles */
+.editor-resize-handle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: hsl(var(--purple-primary));
+  border: 1px solid white;
+  border-radius: 50%;
+  z-index: 10001;
+  cursor: pointer;
+}
+
+.editor-resize-handle-nw { top: -4px; left: -4px; cursor: nw-resize; }
+.editor-resize-handle-ne { top: -4px; right: -4px; cursor: ne-resize; }
+.editor-resize-handle-sw { bottom: -4px; left: -4px; cursor: sw-resize; }
+.editor-resize-handle-se { bottom: -4px; right: -4px; cursor: se-resize; }
+.editor-resize-handle-n { top: -4px; left: 50%; transform: translateX(-50%); cursor: n-resize; }
+.editor-resize-handle-s { bottom: -4px; left: 50%; transform: translateX(-50%); cursor: s-resize; }
+.editor-resize-handle-w { top: 50%; left: -4px; transform: translateY(-50%); cursor: w-resize; }
+.editor-resize-handle-e { top: 50%; right: -4px; transform: translateY(-50%); cursor: e-resize; }
+
+/* Grid Overlay (optional) */
+.editor-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(hsla(var(--muted-hsl), 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, hsla(var(--muted-hsl), 0.1) 1px, transparent 1px);
+  background-size: 8px 8px;
+  pointer-events: none;
+  z-index: 9997;
+}
+
+/* Disable transitions during drag */
+.editor-dragging * {
+  transition: none !important;
+}
