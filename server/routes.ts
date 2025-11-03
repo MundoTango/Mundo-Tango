@@ -592,8 +592,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/groups/:id", async (req: Request, res: Response) => {
     try {
-      const id = parseInt(req.params.id);
-      const group = await storage.getGroupById(id);
+      const param = req.params.id;
+      let group: any;
+      
+      // Check if param is a number or a slug
+      if (/^\d+$/.test(param)) {
+        // It's a numeric ID
+        group = await storage.getGroupById(parseInt(param));
+      } else {
+        // It's a slug
+        group = await storage.getGroupBySlug(param);
+      }
       
       if (!group) {
         return res.status(404).json({ message: "Group not found" });

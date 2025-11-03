@@ -318,6 +318,7 @@ export interface IStorage {
   
   createGroup(group: InsertGroup): Promise<SelectGroup>;
   getGroupById(id: number): Promise<SelectGroup | undefined>;
+  getGroupBySlug(slug: string): Promise<SelectGroup | undefined>;
   getGroups(params: { search?: string; limit?: number; offset?: number }): Promise<SelectGroup[]>;
   
   // Search methods for @mentions autocomplete
@@ -1637,6 +1638,11 @@ export class DbStorage implements IStorage {
 
   async getGroupById(id: number): Promise<SelectGroup | undefined> {
     const result = await db.select().from(groups).where(eq(groups.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getGroupBySlug(slug: string): Promise<SelectGroup | undefined> {
+    const result = await db.select().from(groups).where(eq(groups.slug, slug)).limit(1);
     return result[0];
   }
 
