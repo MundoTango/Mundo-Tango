@@ -20,7 +20,7 @@ export function VisualEditorOverlay({ isOpen, onClose }: VisualEditorOverlayProp
   const currentPagePath = window.location.pathname;
 
   // Get current page code
-  const { data: pageInfo } = useQuery({
+  const { data: pageInfo } = useQuery<{ code?: string }>({
     queryKey: ['/api/visual-editor/page-info', currentPagePath],
     enabled: isOpen
   });
