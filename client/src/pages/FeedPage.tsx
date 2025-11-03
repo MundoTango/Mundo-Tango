@@ -9,7 +9,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Heart, MessageCircle, Share2, Image as ImageIcon, Globe, Users, Lock, X, Loader2, MoreVertical, Pencil, Trash2, ChevronDown, Music2, Plane, Sparkles, GraduationCap, PartyPopper, Star, Home, Utensils, ShoppingBag, Wrench } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Heart, MessageCircle, Share2, Image as ImageIcon, Globe, Users, Lock, X, Loader2, MoreVertical, Pencil, Trash2, ChevronDown, Music2, Plane, Sparkles, GraduationCap, PartyPopper, Star, Home, Utensils, ShoppingBag, Wrench, Video, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
@@ -74,9 +77,14 @@ export default function FeedPage() {
   
   // Recommendations state
   const [showRecommendations, setShowRecommendations] = useState(false);
-  const [recommendations, setRecommendations] = useState<Array<{category: string; name: string; id?: number}>>([]);
+  const [recommendations, setRecommendations] = useState<Array<{category: string; name: string; location?: string; id?: number}>>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [showRecommendationDialog, setShowRecommendationDialog] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [recName, setRecName] = useState("");
+  const [recCity, setRecCity] = useState("");
+  const [recCountry, setRecCountry] = useState("");
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -201,7 +209,7 @@ export default function FeedPage() {
   }, [content]);
 
   // Recommendations handlers
-  const addRecommendation = (category: string, name: string, id?: number) => {
+  const openRecommendationDialog = (category: string) => {
     if (recommendations.length >= 3) {
       toast({
         title: "Maximum reached",
@@ -210,9 +218,38 @@ export default function FeedPage() {
       });
       return;
     }
-    setRecommendations(prev => [...prev, { category, name, id }]);
-    setSearchQuery("");
-    setSearchResults([]);
+    setSelectedCategory(category);
+    setShowRecommendationDialog(true);
+  };
+
+  const addRecommendation = () => {
+    if (!recName.trim()) {
+      toast({
+        title: "Name required",
+        description: "Please enter a name for this recommendation",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const location = recCity && recCountry ? `${recCity}, ${recCountry}` : (recCity || recCountry || undefined);
+    
+    setRecommendations(prev => [...prev, { 
+      category: selectedCategory!, 
+      name: recName.trim(),
+      location
+    }]);
+    
+    setShowRecommendationDialog(false);
+    setRecName("");
+    setRecCity("");
+    setRecCountry("");
+    setSelectedCategory(null);
+    
+    toast({
+      title: "Recommendation added",
+      description: `${recName} has been added to your post`,
+    });
   };
 
   const removeRecommendation = (index: number) => {
@@ -400,7 +437,15 @@ export default function FeedPage() {
                         data-testid={`recommendation-badge-${index}`}
                       >
                         <Icon className={`h-3 w-3 ${category?.color || 'text-primary'}`} />
-                        <span className="text-sm font-medium">{rec.name}</span>
+                        <div className="flex flex-col gap-0.5">
+                          <span className="text-sm font-medium">{rec.name}</span>
+                          {rec.location && (
+                            <span className="text-xs text-muted-foreground flex items-center gap-1">
+                              <MapPin className="h-3 w-3" />
+                              {rec.location}
+                            </span>
+                          )}
+                        </div>
                         <span className="text-xs text-muted-foreground">({category?.label})</span>
                         <Button
                           type="button"
@@ -431,7 +476,7 @@ export default function FeedPage() {
                           type="button"
                           variant="outline"
                           size="sm"
-                          onClick={() => addRecommendation(category.id, `${category.label} Name`)}
+                          onClick={() => openRecommendationDialog(category.id)}
                           className="justify-start gap-2 hover-elevate active-elevate-2"
                           data-testid={`button-category-${category.id}`}
                         >
@@ -571,6 +616,71 @@ export default function FeedPage() {
         
         <FeedRightSidebar />
       </div>
+
+      {/* Recommendation Dialog */}
+      <Dialog open={showRecommendationDialog} onOpenChange={setShowRecommendationDialog}>
+        <DialogContent data-testid="dialog-recommendation">
+          <DialogHeader>
+            <DialogTitle>Add Recommendation</DialogTitle>
+            <DialogDescription>
+              Recommend a {RECOMMENDATION_CATEGORIES.find(c => c.id === selectedCategory)?.label.toLowerCase()} and specify its location.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="rec-name">Name *</Label>
+              <Input
+                id="rec-name"
+                placeholder={`Enter ${RECOMMENDATION_CATEGORIES.find(c => c.id === selectedCategory)?.label.toLowerCase()} name`}
+                value={recName}
+                onChange={(e) => setRecName(e.target.value)}
+                data-testid="input-rec-name"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="rec-city">City</Label>
+              <Input
+                id="rec-city"
+                placeholder="e.g., Buenos Aires"
+                value={recCity}
+                onChange={(e) => setRecCity(e.target.value)}
+                data-testid="input-rec-city"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="rec-country">Country</Label>
+              <Input
+                id="rec-country"
+                placeholder="e.g., Argentina"
+                value={recCountry}
+                onChange={(e) => setRecCountry(e.target.value)}
+                data-testid="input-rec-country"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowRecommendationDialog(false);
+                setRecName("");
+                setRecCity("");
+                setRecCountry("");
+                setSelectedCategory(null);
+              }}
+              data-testid="button-cancel-rec"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={addRecommendation}
+              data-testid="button-add-rec"
+            >
+              Add Recommendation
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </SelfHealingErrorBoundary>
   );
 }
