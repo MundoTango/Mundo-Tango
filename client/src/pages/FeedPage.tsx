@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { usePosts, useCreatePost, useToggleLike, useComments, useCreateComment, useUpdateComment, useDeleteComment } from "@/hooks/usePosts";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card } from "@/components/ui/card";
@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Heart, MessageCircle, Share2, Image as ImageIcon, Globe, Users, Lock, X, Loader2, MoreVertical, Pencil, Trash2, ChevronDown, Music2, Plane, Sparkles, GraduationCap, PartyPopper } from "lucide-react";
+import { Heart, MessageCircle, Share2, Image as ImageIcon, Globe, Users, Lock, X, Loader2, MoreVertical, Pencil, Trash2, ChevronDown, Music2, Plane, Sparkles, GraduationCap, PartyPopper, Star, Home, Utensils, ShoppingBag, Wrench } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
@@ -19,6 +19,7 @@ import { FeedLeftSidebar } from "@/components/FeedLeftSidebar";
 import { FeedRightSidebar } from "@/components/FeedRightSidebar";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { apiRequest } from "@/lib/queryClient";
 
 type Post = {
   id: number;
@@ -50,6 +51,15 @@ const TANGO_TAGS = [
   { name: "Fashion", icon: "👗", color: "bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-800" },
 ];
 
+const RECOMMENDATION_CATEGORIES = [
+  { id: "venue", label: "Venue", Icon: Home, color: "text-primary" },
+  { id: "teacher", label: "Teacher", Icon: GraduationCap, color: "text-purple-600 dark:text-purple-400" },
+  { id: "accommodation", label: "Accommodation", Icon: Home, color: "text-blue-600 dark:text-blue-400" },
+  { id: "restaurant", label: "Restaurant", Icon: Utensils, color: "text-orange-600 dark:text-orange-400" },
+  { id: "shop", label: "Shop", Icon: ShoppingBag, color: "text-pink-600 dark:text-pink-400" },
+  { id: "service", label: "Service", Icon: Wrench, color: "text-green-600 dark:text-green-400" },
+];
+
 export default function FeedPage() {
   const [content, setContent] = useState("");
   const [visibility, setVisibility] = useState<"public" | "friends" | "private">("public");
@@ -57,7 +67,22 @@ export default function FeedPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  
+  // @mentions autocomplete state
+  const [showMentions, setShowMentions] = useState(false);
+  const [mentionQuery, setMentionQuery] = useState("");
+  const [mentionResults, setMentionResults] = useState<any[]>([]);
+  const [selectedMentionIndex, setSelectedMentionIndex] = useState(0);
+  const [mentions, setMentions] = useState<any[]>([]);
+  
+  // Recommendations state
+  const [showRecommendations, setShowRecommendations] = useState(false);
+  const [recommendations, setRecommendations] = useState<Array<{category: string; name: string; id?: number}>>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { user } = useAuth();
   const { 
     data, 
@@ -117,6 +142,82 @@ export default function FeedPage() {
         ? prev.filter(t => t !== tagName)
         : [...prev, tagName]
     );
+  };
+
+  // @mentions autocomplete handlers
+  const handleContentChange = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newContent = e.target.value;
+    setContent(newContent);
+
+    // Check for @ mention trigger
+    const cursorPos = e.target.selectionStart;
+    const textBeforeCursor = newContent.slice(0, cursorPos);
+    const lastAtSymbol = textBeforeCursor.lastIndexOf('@');
+
+    if (lastAtSymbol !== -1) {
+      const textAfterAt = textBeforeCursor.slice(lastAtSymbol + 1);
+      if (!textAfterAt.includes(' ') && textAfterAt.length >= 0) {
+        setMentionQuery(textAfterAt);
+        setShowMentions(true);
+        
+        // Search for mentions
+        if (textAfterAt.length > 0) {
+          try {
+            const results = await apiRequest(`/api/mentions/search?query=${encodeURIComponent(textAfterAt)}`);
+            setMentionResults(results || []);
+          } catch (error) {
+            console.error('Failed to search mentions:', error);
+          }
+        } else {
+          setMentionResults([]);
+        }
+      } else {
+        setShowMentions(false);
+      }
+    } else {
+      setShowMentions(false);
+    }
+  };
+
+  const selectMention = useCallback((mention: any) => {
+    if (!textareaRef.current) return;
+    
+    const cursorPos = textareaRef.current.selectionStart;
+    const textBeforeCursor = content.slice(0, cursorPos);
+    const textAfterCursor = content.slice(cursorPos);
+    const lastAtSymbol = textBeforeCursor.lastIndexOf('@');
+    
+    const newContent = textBeforeCursor.slice(0, lastAtSymbol) + `@${mention.username} ` + textAfterCursor;
+    setContent(newContent);
+    setMentions(prev => [...prev, mention]);
+    setShowMentions(false);
+    setMentionQuery('');
+    
+    // Focus back on textarea
+    setTimeout(() => {
+      textareaRef.current?.focus();
+      const newPos = lastAtSymbol + mention.username.length + 2;
+      textareaRef.current?.setSelectionRange(newPos, newPos);
+    }, 0);
+  }, [content]);
+
+  // Recommendations handlers
+  const addRecommendation = (category: string, name: string, id?: number) => {
+    if (recommendations.length >= 3) {
+      toast({
+        title: "Maximum reached",
+        description: "You can add up to 3 recommendations per post",
+        variant: "destructive",
+      });
+      return;
+    }
+    setRecommendations(prev => [...prev, { category, name, id }]);
+    setSearchQuery("");
+    setSearchResults([]);
+  };
+
+  const removeRecommendation = (index: number) => {
+    setRecommendations(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleCreatePost = async (e: React.FormEvent) => {
@@ -184,13 +285,49 @@ export default function FeedPage() {
 
         <Card className="p-6">
           <form onSubmit={handleCreatePost} className="space-y-4">
-            <Textarea
-              placeholder="What's on your mind?"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="min-h-24 resize-none border-0 text-base focus-visible:ring-0"
-              data-testid="input-post-content"
-            />
+            <div className="relative">
+              <Textarea
+                ref={textareaRef}
+                placeholder="What's on your mind? Try @mentioning someone or adding a recommendation..."
+                value={content}
+                onChange={handleContentChange}
+                className="min-h-24 resize-none border-0 text-base focus-visible:ring-0"
+                data-testid="input-post-content"
+              />
+              
+              {/* @mentions autocomplete dropdown */}
+              {showMentions && mentionResults.length > 0 && (
+                <Card className="absolute z-50 mt-1 w-full max-h-60 overflow-y-auto" data-testid="mentions-dropdown">
+                  <div className="p-2">
+                    {mentionResults.map((mention, index) => (
+                      <button
+                        key={`${mention.type}-${mention.id}`}
+                        type="button"
+                        onClick={() => selectMention(mention)}
+                        className={`w-full flex items-center gap-3 p-2 rounded hover-elevate active-elevate-2 text-left ${
+                          index === selectedMentionIndex ? 'bg-accent' : ''
+                        }`}
+                        data-testid={`mention-option-${mention.username}`}
+                      >
+                        {mention.avatar && (
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={mention.avatar} />
+                            <AvatarFallback>{mention.name?.[0] || 'U'}</AvatarFallback>
+                          </Avatar>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-sm truncate">{mention.name}</div>
+                          <div className="text-xs text-muted-foreground truncate">@{mention.username}</div>
+                        </div>
+                        <Badge variant="outline" className="text-xs">
+                          {mention.type}
+                        </Badge>
+                      </button>
+                    ))}
+                  </div>
+                </Card>
+              )}
+            </div>
             
             {imagePreview && (
               <div className="relative" data-testid="image-preview-container">
@@ -234,6 +371,87 @@ export default function FeedPage() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Recommendations Section */}
+            <div className="space-y-3" data-testid="recommendations-section">
+              <div className="flex items-center justify-between gap-2">
+                <label className="text-sm font-medium text-muted-foreground">
+                  Recommend places or people (up to 3)
+                </label>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setShowRecommendations(!showRecommendations)}
+                  className="hover-elevate active-elevate-2"
+                  data-testid="button-toggle-recommendations"
+                >
+                  <Star className="h-4 w-4 mr-2" />
+                  {showRecommendations ? 'Hide' : 'Add Recommendation'}
+                </Button>
+              </div>
+
+              {/* Selected Recommendations Display */}
+              {recommendations.length > 0 && (
+                <div className="flex flex-wrap gap-2" data-testid="selected-recommendations">
+                  {recommendations.map((rec, index) => {
+                    const category = RECOMMENDATION_CATEGORIES.find(c => c.id === rec.category);
+                    const Icon = category?.Icon || Star;
+                    return (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="pl-3 pr-2 py-1.5 gap-2 hover-elevate"
+                        data-testid={`recommendation-badge-${index}`}
+                      >
+                        <Icon className={`h-3 w-3 ${category?.color || 'text-primary'}`} />
+                        <span className="text-sm font-medium">{rec.name}</span>
+                        <span className="text-xs text-muted-foreground">({category?.label})</span>
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => removeRecommendation(index)}
+                          className="h-4 w-4 p-0 hover-elevate active-elevate-2"
+                          data-testid={`button-remove-recommendation-${index}`}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </Badge>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Recommendations Panel */}
+              {showRecommendations && recommendations.length < 3 && (
+                <Card className="p-4 space-y-3" data-testid="recommendations-panel">
+                  <div className="text-sm font-medium">Select a category:</div>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {RECOMMENDATION_CATEGORIES.map((category) => {
+                      const Icon = category.Icon;
+                      return (
+                        <Button
+                          key={category.id}
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => addRecommendation(category.id, `${category.label} Name`)}
+                          className="justify-start gap-2 hover-elevate active-elevate-2"
+                          data-testid={`button-category-${category.id}`}
+                        >
+                          <Icon className={`h-4 w-4 ${category.color}`} />
+                          <span>{category.label}</span>
+                        </Button>
+                      );
+                    })}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {recommendations.length}/3 recommendations added
+                  </div>
+                </Card>
+              )}
             </div>
 
             <div className="flex items-center justify-between gap-4 flex-wrap">
