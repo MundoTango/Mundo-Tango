@@ -53,30 +53,34 @@ export function GlobalTopbar() {
           {/* Messages */}
           <Link href="/messages">
             <Button variant="ghost" size="icon" className="relative" data-testid="button-messages">
-              <MessageSquare className="h-5 w-5" />
-              {unreadMessages > 0 && (
-                <Badge 
-                  className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
-                  data-testid="badge-messages-count"
-                >
-                  {unreadMessages}
-                </Badge>
-              )}
+              <span className="relative flex items-center justify-center">
+                <MessageSquare className="h-5 w-5" />
+                {unreadMessages > 0 && (
+                  <Badge 
+                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                    data-testid="badge-messages-count"
+                  >
+                    {unreadMessages}
+                  </Badge>
+                )}
+              </span>
             </Button>
           </Link>
 
           {/* E103 - Notifications */}
           <Link href="/notifications">
             <Button variant="ghost" size="icon" className="relative" data-testid="button-notifications">
-              <Bell className="h-5 w-5" />
-              {unreadNotifications > 0 && (
-                <Badge 
-                  className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
-                  data-testid="badge-notifications-count"
-                >
-                  {unreadNotifications}
-                </Badge>
-              )}
+              <span className="relative flex items-center justify-center">
+                <Bell className="h-5 w-5" />
+                {unreadNotifications > 0 && (
+                  <Badge 
+                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                    data-testid="badge-notifications-count"
+                  >
+                    {unreadNotifications}
+                  </Badge>
+                )}
+              </span>
             </Button>
           </Link>
 
