@@ -27,7 +27,7 @@ import syncRoutes from "./routes/sync-routes";
 import selfHealingRoutes from "./routes/self-healing-routes";
 import agentHealthRoutes from "./routes/agent-health-routes";
 import predictiveContextRoutes from "./routes/predictive-context-routes";
-import { authenticateToken, AuthRequest } from "./middleware/auth";
+import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
   insertPostSchema, 
@@ -36,7 +36,17 @@ import {
   insertEventRsvpSchema,
   insertGroupSchema,
   insertChatMessageSchema,
+  savedPosts,
+  posts,
+  agentHealth,
 } from "@shared/schema";
+import { 
+  esaAgents,
+  agentTasks,
+  agentCommunications
+} from "@shared/platform-schema";
+import { db } from "@shared/db";
+import { eq, and, or, desc } from "drizzle-orm";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { cityscapeService } from "./services/cityscape-service";
@@ -879,6 +889,440 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(activity);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch activity" });
+    }
+  });
+
+  // ============================================================================
+  // TRACK 6: NEW API ROUTES FOR 8 PAGES
+  // ============================================================================
+
+  // 1. MEMORIES API (GET, POST)
+  // Uses media table for personal memories
+  app.get("/api/memories", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { limit = "20", offset = "0", filter = "all" } = req.query;
+      const userId = req.userId!;
+      
+      let params: any = {
+        type: filter === "all" ? undefined : filter === "photos" ? "image" : filter,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string)
+      };
+      
+      const memories = await storage.getUserMedia(userId, params);
+      res.json({ memories, total: memories.length });
+    } catch (error) {
+      console.error("Get memories error:", error);
+      res.status(500).json({ message: "Failed to fetch memories" });
+    }
+  });
+
+  app.post("/api/memories", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const memory = await storage.createMedia({
+        ...req.body,
+        userId: req.userId!
+      });
+      res.status(201).json(memory);
+    } catch (error) {
+      console.error("Create memory error:", error);
+      res.status(500).json({ message: "Failed to create memory" });
+    }
+  });
+
+  // 2. RECOMMENDATIONS API (GET)
+  // Returns personalized recommendations based on user preferences
+  app.get("/api/recommendations", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { type = "events", limit = "10" } = req.query;
+      const userId = req.userId!;
+      
+      let recommendations: any[] = [];
+      const limitNum = parseInt(limit as string);
+      
+      // Use existing recommendation algorithms based on type
+      switch (type) {
+        case "events":
+          const events = await storage.getEvents({ limit: limitNum, offset: 0 });
+          recommendations = events.map(e => ({ ...e, recommendationType: "event" }));
+          break;
+        case "people":
+          const suggestions = await storage.getFriendSuggestions(userId);
+          recommendations = suggestions.slice(0, limitNum).map((s: any) => ({ ...s, recommendationType: "person" }));
+          break;
+        case "venues":
+          const venues = await storage.getVenues({ limit: limitNum, offset: 0 });
+          recommendations = venues.map(v => ({ ...v, recommendationType: "venue" }));
+          break;
+        case "content":
+          const posts = await storage.getPosts({ limit: limitNum, offset: 0 });
+          recommendations = posts.map(p => ({ ...p, recommendationType: "content" }));
+          break;
+        default:
+          recommendations = [];
+      }
+      
+      res.json({ recommendations, type, count: recommendations.length });
+    } catch (error) {
+      console.error("Get recommendations error:", error);
+      res.status(500).json({ message: "Failed to fetch recommendations" });
+    }
+  });
+
+  // 3. COMMUNITY MAP API (GET)
+  // Returns global community data with city markers and member counts
+  app.get("/api/community-map", async (req: Request, res: Response) => {
+    try {
+      const { region } = req.query;
+      
+      let communities: any[];
+      if (region) {
+        communities = await storage.searchCommunities(region as string, 100);
+      } else {
+        const groups = await storage.getGroups({ search: "", limit: 100, offset: 0 });
+        communities = groups.filter((g: any) => g.groupType === "city");
+      }
+      
+      // Get active events per city
+      const events = await storage.getEvents({ limit: 100, offset: 0 });
+      
+      const communityData = communities.map(community => {
+        const cityEvents = events.filter((e: any) => 
+          e.city?.toLowerCase() === community.city?.toLowerCase()
+        );
+        
+        return {
+          id: community.id,
+          name: community.name,
+          city: community.city,
+          country: community.country,
+          memberCount: community.memberCount || 0,
+          activeEvents: cityEvents.length,
+          coverPhoto: community.coverPhoto,
+          coordinates: {
+            lat: 0, // Would need geocoding service
+            lng: 0
+          }
+        };
+      });
+      
+      res.json({ communities: communityData, total: communityData.length });
+    } catch (error) {
+      console.error("Get community map error:", error);
+      res.status(500).json({ message: "Failed to fetch community map data" });
+    }
+  });
+
+  // 4. INVITATIONS API (GET, POST, PUT)
+  // For role invitations (e.g., admin, volunteer, team member invitations)
+  app.get("/api/invitations", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.userId!;
+      
+      // Get friend requests as invitations (can be extended for role-based invitations)
+      const invitations = await storage.getFriendRequests(userId);
+      
+      res.json({ invitations, total: invitations.length });
+    } catch (error) {
+      console.error("Get invitations error:", error);
+      res.status(500).json({ message: "Failed to fetch invitations" });
+    }
+  });
+
+  app.post("/api/invitations", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { receiverId, message, invitationType = "friend" } = req.body;
+      
+      if (!receiverId) {
+        return res.status(400).json({ message: "receiverId is required" });
+      }
+      
+      const invitation = await storage.sendFriendRequest({
+        senderId: req.userId!,
+        receiverId,
+        senderMessage: message || "",
+        status: "pending"
+      });
+      
+      res.status(201).json(invitation);
+    } catch (error) {
+      console.error("Create invitation error:", error);
+      res.status(500).json({ message: "Failed to create invitation" });
+    }
+  });
+
+  app.put("/api/invitations/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const invitationId = parseInt(req.params.id);
+      const { action } = req.body; // "accept" or "decline"
+      
+      if (!action || !["accept", "decline"].includes(action)) {
+        return res.status(400).json({ message: "action must be 'accept' or 'decline'" });
+      }
+      
+      if (action === "accept") {
+        await storage.acceptFriendRequest(invitationId);
+      } else {
+        await storage.declineFriendRequest(invitationId);
+      }
+      
+      res.json({ message: `Invitation ${action}ed successfully` });
+    } catch (error) {
+      console.error("Update invitation error:", error);
+      res.status(500).json({ message: "Failed to update invitation" });
+    }
+  });
+
+  // 5. FAVORITES API (GET, POST, DELETE)
+  // For bookmarked content (posts, events, people, venues)
+  app.get("/api/favorites", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { category = "all" } = req.query;
+      const userId = req.userId!;
+      
+      // For now, returns saved posts (can be extended for other content types)
+      const savedPostsData = await db
+        .select({
+          id: savedPosts.id,
+          postId: savedPosts.postId,
+          createdAt: savedPosts.createdAt,
+          post: posts
+        })
+        .from(savedPosts)
+        .leftJoin(posts, eq(savedPosts.postId, posts.id))
+        .where(eq(savedPosts.userId, userId))
+        .orderBy(desc(savedPosts.createdAt));
+      
+      const favorites = savedPostsData.map(sp => ({
+        ...sp.post,
+        favoriteId: sp.id,
+        favoritedAt: sp.createdAt,
+        category: "post"
+      }));
+      
+      res.json({ favorites, total: favorites.length });
+    } catch (error) {
+      console.error("Get favorites error:", error);
+      res.status(500).json({ message: "Failed to fetch favorites" });
+    }
+  });
+
+  app.post("/api/favorites", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { contentType, contentId } = req.body;
+      
+      if (!contentType || !contentId) {
+        return res.status(400).json({ message: "contentType and contentId are required" });
+      }
+      
+      // For posts
+      if (contentType === "post") {
+        await storage.savePost(contentId, req.userId!);
+      }
+      
+      res.status(201).json({ message: "Added to favorites" });
+    } catch (error) {
+      console.error("Add favorite error:", error);
+      res.status(500).json({ message: "Failed to add favorite" });
+    }
+  });
+
+  app.delete("/api/favorites/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const favoriteId = parseInt(req.params.id);
+      const { contentType = "post" } = req.query;
+      
+      if (contentType === "post") {
+        // Get the saved post to find postId
+        const savedPost = await db
+          .select()
+          .from(savedPosts)
+          .where(and(eq(savedPosts.id, favoriteId), eq(savedPosts.userId, req.userId!)))
+          .limit(1);
+        
+        if (savedPost[0]) {
+          await storage.unsavePost(savedPost[0].postId, req.userId!);
+        }
+      }
+      
+      res.status(204).send();
+    } catch (error) {
+      console.error("Remove favorite error:", error);
+      res.status(500).json({ message: "Failed to remove favorite" });
+    }
+  });
+
+  // 6. ESA FRAMEWORK STATUS API (GET) - Admin only
+  // Returns ESA framework overview with 105 agents, health metrics, certification levels
+  app.get("/api/platform/esa", authenticateToken, requireRoleLevel(7), async (req: AuthRequest, res: Response) => {
+    try {
+      // Get all ESA agents
+      const agents = await db
+        .select()
+        .from(esaAgents)
+        .orderBy(esaAgents.agentCode);
+      
+      // Get agent health metrics
+      const healthMetrics = await db
+        .select()
+        .from(agentHealth)
+        .orderBy(desc(agentHealth.lastCheckAt));
+      
+      // Calculate summary metrics
+      const totalAgents = agents.length;
+      const certifiedAgents = agents.filter(a => a.certificationLevel && a.certificationLevel > 0).length;
+      const activeAgents = agents.filter(a => a.status === "active").length;
+      
+      const healthByStatus = {
+        healthy: healthMetrics.filter(h => h.status === "healthy").length,
+        degraded: healthMetrics.filter(h => h.status === "degraded").length,
+        failing: healthMetrics.filter(h => h.status === "failing").length,
+        offline: healthMetrics.filter(h => h.status === "offline").length
+      };
+      
+      res.json({
+        framework: "ESA",
+        totalAgents,
+        activeAgents,
+        certifiedAgents,
+        healthMetrics: healthByStatus,
+        agents: agents.map(a => ({
+          agentCode: a.agentCode,
+          agentName: a.agentName,
+          agentType: a.agentType,
+          status: a.status,
+          certificationLevel: a.certificationLevel,
+          tasksCompleted: a.tasksCompleted,
+          lastActiveAt: a.lastActiveAt
+        }))
+      });
+    } catch (error) {
+      console.error("Get ESA framework error:", error);
+      res.status(500).json({ message: "Failed to fetch ESA framework status" });
+    }
+  });
+
+  // 7. ESA TASKS API (GET, POST, PUT) - Admin only
+  app.get("/api/platform/esa/tasks", authenticateToken, requireRoleLevel(7), async (req: AuthRequest, res: Response) => {
+    try {
+      const { agentId, status, limit = "50" } = req.query;
+      
+      let query = db.select().from(agentTasks);
+      const conditions = [];
+      
+      if (agentId) {
+        conditions.push(eq(agentTasks.agentId, parseInt(agentId as string)));
+      }
+      if (status) {
+        conditions.push(eq(agentTasks.status, status as string));
+      }
+      
+      if (conditions.length > 0) {
+        query = query.where(and(...conditions)) as any;
+      }
+      
+      const tasks = await query
+        .orderBy(desc(agentTasks.createdAt))
+        .limit(parseInt(limit as string));
+      
+      res.json({ tasks, total: tasks.length });
+    } catch (error) {
+      console.error("Get ESA tasks error:", error);
+      res.status(500).json({ message: "Failed to fetch ESA tasks" });
+    }
+  });
+
+  app.post("/api/platform/esa/tasks", authenticateToken, requireRoleLevel(7), async (req: AuthRequest, res: Response) => {
+    try {
+      const { agentId, taskType, title, description, priority = "medium" } = req.body;
+      
+      if (!agentId || !taskType || !title) {
+        return res.status(400).json({ message: "agentId, taskType, and title are required" });
+      }
+      
+      const task = await db.insert(agentTasks).values({
+        agentId,
+        taskType,
+        title,
+        description,
+        priority,
+        status: "pending"
+      }).returning();
+      
+      res.status(201).json(task[0]);
+    } catch (error) {
+      console.error("Create ESA task error:", error);
+      res.status(500).json({ message: "Failed to create ESA task" });
+    }
+  });
+
+  app.put("/api/platform/esa/tasks/:id", authenticateToken, requireRoleLevel(7), async (req: AuthRequest, res: Response) => {
+    try {
+      const taskId = parseInt(req.params.id);
+      const { status, result, errorMessage } = req.body;
+      
+      const updateData: any = { updatedAt: new Date() };
+      if (status) updateData.status = status;
+      if (result) updateData.result = result;
+      if (errorMessage) updateData.errorMessage = errorMessage;
+      
+      if (status === "completed") {
+        updateData.completedAt = new Date();
+      }
+      if (status === "in_progress" && !req.body.startedAt) {
+        updateData.startedAt = new Date();
+      }
+      
+      const task = await db
+        .update(agentTasks)
+        .set(updateData)
+        .where(eq(agentTasks.id, taskId))
+        .returning();
+      
+      if (!task[0]) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+      
+      res.json(task[0]);
+    } catch (error) {
+      console.error("Update ESA task error:", error);
+      res.status(500).json({ message: "Failed to update ESA task" });
+    }
+  });
+
+  // 8. ESA COMMUNICATIONS API (GET) - Admin only
+  app.get("/api/platform/esa/communications", authenticateToken, requireRoleLevel(7), async (req: AuthRequest, res: Response) => {
+    try {
+      const { agentId, messageType, limit = "50" } = req.query;
+      
+      let query = db.select().from(agentCommunications);
+      const conditions = [];
+      
+      if (agentId) {
+        const agentIdNum = parseInt(agentId as string);
+        conditions.push(
+          or(
+            eq(agentCommunications.fromAgentId, agentIdNum),
+            eq(agentCommunications.toAgentId, agentIdNum)
+          )!
+        );
+      }
+      if (messageType) {
+        conditions.push(eq(agentCommunications.communicationType, messageType as string));
+      }
+      
+      if (conditions.length > 0) {
+        query = query.where(and(...conditions)) as any;
+      }
+      
+      const communications = await query
+        .orderBy(desc(agentCommunications.createdAt))
+        .limit(parseInt(limit as string));
+      
+      res.json({ communications, total: communications.length });
+    } catch (error) {
+      console.error("Get ESA communications error:", error);
+      res.status(500).json({ message: "Failed to fetch ESA communications" });
     }
   });
 

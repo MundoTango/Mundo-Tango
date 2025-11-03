@@ -52,6 +52,11 @@ import {
   lifeCeoMilestones,
   lifeCeoRecommendations,
   h2acMessages,
+  memories,
+  recommendations,
+  roleInvitations,
+  favorites,
+  communityStats,
   type SelectUser,
   type InsertUser,
   type SelectRefreshToken,
@@ -86,6 +91,16 @@ import {
   type InsertChatMessage,
   type SelectNotification,
   type InsertNotification,
+  type SelectMemory,
+  type InsertMemory,
+  type SelectRecommendation,
+  type InsertRecommendation,
+  type SelectRoleInvitation,
+  type InsertRoleInvitation,
+  type SelectFavorite,
+  type InsertFavorite,
+  type SelectCommunityStats,
+  type InsertCommunityStats,
 } from "@shared/schema";
 
 // Platform independence tables
@@ -344,6 +359,38 @@ export interface IStorage {
   getModerationQueue(): Promise<any[]>;
   getRecentAdminActivity(): Promise<any[]>;
   markAllNotificationsAsRead(userId: number): Promise<void>;
+  
+  // Track 7: Memories
+  createMemory(memory: InsertMemory): Promise<SelectMemory>;
+  getMemoryById(id: number): Promise<SelectMemory | undefined>;
+  getUserMemories(userId: number, params?: { type?: string; limit?: number; offset?: number }): Promise<SelectMemory[]>;
+  updateMemory(id: number, data: Partial<SelectMemory>): Promise<SelectMemory | undefined>;
+  deleteMemory(id: number): Promise<void>;
+  
+  // Track 7: Recommendations
+  createRecommendation(recommendation: InsertRecommendation): Promise<SelectRecommendation>;
+  getUserRecommendations(userId: number, params?: { targetType?: string; status?: string; limit?: number }): Promise<SelectRecommendation[]>;
+  updateRecommendationStatus(id: number, status: string): Promise<SelectRecommendation | undefined>;
+  deleteRecommendation(id: number): Promise<void>;
+  
+  // Track 7: Role Invitations
+  createRoleInvitation(invitation: InsertRoleInvitation): Promise<SelectRoleInvitation>;
+  getRoleInvitationById(id: number): Promise<SelectRoleInvitation | undefined>;
+  getUserRoleInvitations(userId: number, params?: { status?: string; role?: string }): Promise<SelectRoleInvitation[]>;
+  updateRoleInvitationStatus(id: number, status: string): Promise<SelectRoleInvitation | undefined>;
+  deleteRoleInvitation(id: number): Promise<void>;
+  
+  // Track 7: Favorites
+  createFavorite(favorite: InsertFavorite): Promise<SelectFavorite>;
+  getUserFavorites(userId: number, params?: { targetType?: string; limit?: number; offset?: number }): Promise<SelectFavorite[]>;
+  deleteFavorite(userId: number, targetType: string, targetId: number): Promise<void>;
+  isFavorited(userId: number, targetType: string, targetId: number): Promise<boolean>;
+  
+  // Track 7: Community Stats
+  createCommunityStats(stats: InsertCommunityStats): Promise<SelectCommunityStats>;
+  getCommunityStatsByCity(city: string, country: string): Promise<SelectCommunityStats | undefined>;
+  getAllCommunityStats(params?: { limit?: number; offset?: number }): Promise<SelectCommunityStats[]>;
+  updateCommunityStats(id: number, data: Partial<SelectCommunityStats>): Promise<SelectCommunityStats | undefined>;
   
   // Platform Independence: Deployments
   createDeployment(deployment: InsertDeployment): Promise<Deployment>;
@@ -2412,6 +2459,239 @@ export class DbStorage implements IStorage {
         )
       )
       .orderBy(desc(lifeCeoRecommendations.createdAt));
+  }
+
+  // ========================================================================
+  // TRACK 7: MEMORIES METHODS
+  // ========================================================================
+
+  async createMemory(memory: InsertMemory): Promise<SelectMemory> {
+    const result = await db.insert(memories).values(memory).returning();
+    return result[0];
+  }
+
+  async getMemoryById(id: number): Promise<SelectMemory | undefined> {
+    const result = await db.select().from(memories).where(eq(memories.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getUserMemories(userId: number, params?: { type?: string; limit?: number; offset?: number }): Promise<SelectMemory[]> {
+    const { type, limit = 50, offset = 0 } = params || {};
+    
+    let query = db.select().from(memories).where(eq(memories.userId, userId));
+    
+    if (type) {
+      query = query.where(and(eq(memories.userId, userId), eq(memories.type, type)));
+    }
+    
+    const result = await query
+      .orderBy(desc(memories.date))
+      .limit(limit)
+      .offset(offset);
+    
+    return result;
+  }
+
+  async updateMemory(id: number, data: Partial<SelectMemory>): Promise<SelectMemory | undefined> {
+    const result = await db
+      .update(memories)
+      .set(data)
+      .where(eq(memories.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deleteMemory(id: number): Promise<void> {
+    await db.delete(memories).where(eq(memories.id, id));
+  }
+
+  // ========================================================================
+  // TRACK 7: RECOMMENDATIONS METHODS
+  // ========================================================================
+
+  async createRecommendation(recommendation: InsertRecommendation): Promise<SelectRecommendation> {
+    const result = await db.insert(recommendations).values(recommendation).returning();
+    return result[0];
+  }
+
+  async getUserRecommendations(userId: number, params?: { targetType?: string; status?: string; limit?: number }): Promise<SelectRecommendation[]> {
+    const { targetType, status = 'pending', limit = 20 } = params || {};
+    
+    let conditions = [eq(recommendations.userId, userId)];
+    
+    if (status) {
+      conditions.push(eq(recommendations.status, status));
+    }
+    
+    if (targetType) {
+      conditions.push(eq(recommendations.targetType, targetType));
+    }
+    
+    const result = await db.select()
+      .from(recommendations)
+      .where(and(...conditions))
+      .orderBy(desc(recommendations.score))
+      .limit(limit);
+    
+    return result;
+  }
+
+  async updateRecommendationStatus(id: number, status: string): Promise<SelectRecommendation | undefined> {
+    const result = await db
+      .update(recommendations)
+      .set({ status })
+      .where(eq(recommendations.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deleteRecommendation(id: number): Promise<void> {
+    await db.delete(recommendations).where(eq(recommendations.id, id));
+  }
+
+  // ========================================================================
+  // TRACK 7: ROLE INVITATIONS METHODS
+  // ========================================================================
+
+  async createRoleInvitation(invitation: InsertRoleInvitation): Promise<SelectRoleInvitation> {
+    const result = await db.insert(roleInvitations).values(invitation).returning();
+    return result[0];
+  }
+
+  async getRoleInvitationById(id: number): Promise<SelectRoleInvitation | undefined> {
+    const result = await db.select().from(roleInvitations).where(eq(roleInvitations.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getUserRoleInvitations(userId: number, params?: { status?: string; role?: string }): Promise<SelectRoleInvitation[]> {
+    const { status, role } = params || {};
+    
+    let conditions = [eq(roleInvitations.inviteeId, userId)];
+    
+    if (status) {
+      conditions.push(eq(roleInvitations.status, status));
+    }
+    
+    if (role) {
+      conditions.push(eq(roleInvitations.role, role));
+    }
+    
+    const result = await db.select()
+      .from(roleInvitations)
+      .where(and(...conditions))
+      .orderBy(desc(roleInvitations.createdAt));
+    
+    return result;
+  }
+
+  async updateRoleInvitationStatus(id: number, status: string): Promise<SelectRoleInvitation | undefined> {
+    const result = await db
+      .update(roleInvitations)
+      .set({ status, respondedAt: new Date() })
+      .where(eq(roleInvitations.id, id))
+      .returning();
+    return result[0];
+  }
+
+  async deleteRoleInvitation(id: number): Promise<void> {
+    await db.delete(roleInvitations).where(eq(roleInvitations.id, id));
+  }
+
+  // ========================================================================
+  // TRACK 7: FAVORITES METHODS
+  // ========================================================================
+
+  async createFavorite(favorite: InsertFavorite): Promise<SelectFavorite> {
+    const result = await db.insert(favorites).values(favorite).returning();
+    return result[0];
+  }
+
+  async getUserFavorites(userId: number, params?: { targetType?: string; limit?: number; offset?: number }): Promise<SelectFavorite[]> {
+    const { targetType, limit = 50, offset = 0 } = params || {};
+    
+    let conditions = [eq(favorites.userId, userId)];
+    
+    if (targetType) {
+      conditions.push(eq(favorites.targetType, targetType));
+    }
+    
+    const result = await db.select()
+      .from(favorites)
+      .where(and(...conditions))
+      .orderBy(desc(favorites.createdAt))
+      .limit(limit)
+      .offset(offset);
+    
+    return result;
+  }
+
+  async deleteFavorite(userId: number, targetType: string, targetId: number): Promise<void> {
+    await db.delete(favorites).where(
+      and(
+        eq(favorites.userId, userId),
+        eq(favorites.targetType, targetType),
+        eq(favorites.targetId, targetId)
+      )
+    );
+  }
+
+  async isFavorited(userId: number, targetType: string, targetId: number): Promise<boolean> {
+    const result = await db.select()
+      .from(favorites)
+      .where(
+        and(
+          eq(favorites.userId, userId),
+          eq(favorites.targetType, targetType),
+          eq(favorites.targetId, targetId)
+        )
+      )
+      .limit(1);
+    
+    return result.length > 0;
+  }
+
+  // ========================================================================
+  // TRACK 7: COMMUNITY STATS METHODS
+  // ========================================================================
+
+  async createCommunityStats(stats: InsertCommunityStats): Promise<SelectCommunityStats> {
+    const result = await db.insert(communityStats).values(stats).returning();
+    return result[0];
+  }
+
+  async getCommunityStatsByCity(city: string, country: string): Promise<SelectCommunityStats | undefined> {
+    const result = await db.select()
+      .from(communityStats)
+      .where(
+        and(
+          eq(communityStats.city, city),
+          eq(communityStats.country, country)
+        )
+      )
+      .limit(1);
+    
+    return result[0];
+  }
+
+  async getAllCommunityStats(params?: { limit?: number; offset?: number }): Promise<SelectCommunityStats[]> {
+    const { limit = 100, offset = 0 } = params || {};
+    
+    const result = await db.select()
+      .from(communityStats)
+      .orderBy(desc(communityStats.memberCount))
+      .limit(limit)
+      .offset(offset);
+    
+    return result;
+  }
+
+  async updateCommunityStats(id: number, data: Partial<SelectCommunityStats>): Promise<SelectCommunityStats | undefined> {
+    const result = await db
+      .update(communityStats)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(communityStats.id, id))
+      .returning();
+    return result[0];
   }
 }
 

@@ -10,6 +10,8 @@ import {
   serial,
   index,
   uniqueIndex,
+  real,
+  unique,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -2100,6 +2102,92 @@ export const checkoutSessions = pgTable("checkout_sessions", {
 }));
 
 // ============================================================================
+// TRACK 7: NEW FEATURES - MEMORIES, RECOMMENDATIONS, ROLE INVITATIONS, FAVORITES, COMMUNITY STATS
+// ============================================================================
+
+// Memories - User memories with photos, milestones, and stories
+export const memories = pgTable("memories", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content"),
+  type: varchar("type", { length: 50 }).notNull(),
+  mediaUrls: text("media_urls").array(),
+  date: timestamp("date").notNull(),
+  location: varchar("location", { length: 255 }),
+  visibility: varchar("visibility", { length: 20 }).default("private"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("memories_user_idx").on(table.userId),
+  typeIdx: index("memories_type_idx").on(table.type),
+  dateIdx: index("memories_date_idx").on(table.date),
+  visibilityIdx: index("memories_visibility_idx").on(table.visibility),
+}));
+
+// Recommendations - AI-generated recommendations for users
+export const recommendations = pgTable("recommendations", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  targetType: varchar("target_type", { length: 50 }).notNull(),
+  targetId: integer("target_id").notNull(),
+  score: real("score").notNull(),
+  reason: text("reason"),
+  status: varchar("status", { length: 20 }).default("pending"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("recommendations_user_idx").on(table.userId),
+  targetIdx: index("recommendations_target_idx").on(table.targetType, table.targetId),
+  statusIdx: index("recommendations_status_idx").on(table.status),
+  scoreIdx: index("recommendations_score_idx").on(table.score),
+}));
+
+// Role Invitations - Invite users to become teachers, organizers, venue owners, moderators
+export const roleInvitations = pgTable("role_invitations", {
+  id: serial("id").primaryKey(),
+  inviterId: integer("inviter_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  inviteeId: integer("invitee_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  role: varchar("role", { length: 50 }).notNull(),
+  message: text("message"),
+  status: varchar("status", { length: 20 }).default("pending"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  respondedAt: timestamp("responded_at"),
+}, (table) => ({
+  inviterIdx: index("role_invitations_inviter_idx").on(table.inviterId),
+  inviteeIdx: index("role_invitations_invitee_idx").on(table.inviteeId),
+  statusIdx: index("role_invitations_status_idx").on(table.status),
+  roleIdx: index("role_invitations_role_idx").on(table.role),
+}));
+
+// Favorites - User favorites for events, users, venues, posts
+export const favorites = pgTable("favorites", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  targetType: varchar("target_type", { length: 50 }).notNull(),
+  targetId: integer("target_id").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("favorites_user_idx").on(table.userId),
+  targetIdx: index("favorites_target_idx").on(table.targetType, table.targetId),
+  uniqueFavorite: uniqueIndex("unique_favorite").on(table.userId, table.targetType, table.targetId),
+}));
+
+// Community Stats - Aggregate statistics for communities by city
+export const communityStats = pgTable("community_stats", {
+  id: serial("id").primaryKey(),
+  city: varchar("city", { length: 255 }).notNull(),
+  country: varchar("country", { length: 100 }).notNull(),
+  memberCount: integer("member_count").default(0).notNull(),
+  activeEventsCount: integer("active_events_count").default(0).notNull(),
+  latitude: real("latitude").notNull(),
+  longitude: real("longitude").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  cityIdx: index("community_stats_city_idx").on(table.city),
+  countryIdx: index("community_stats_country_idx").on(table.country),
+  uniqueCityCountry: uniqueIndex("unique_city_country").on(table.city, table.country),
+}));
+
+// ============================================================================
 // ZOD SCHEMAS & TYPES - RBAC, FEATURE FLAGS, PRICING
 // ============================================================================
 
@@ -2162,6 +2250,35 @@ export type SelectUpgradeEvent = typeof upgradeEvents.$inferSelect;
 export const insertCheckoutSessionSchema = createInsertSchema(checkoutSessions).omit({ id: true, createdAt: true });
 export type InsertCheckoutSession = z.infer<typeof insertCheckoutSessionSchema>;
 export type SelectCheckoutSession = typeof checkoutSessions.$inferSelect;
+
+// ============================================================================
+// ZOD SCHEMAS & TYPES - TRACK 7 NEW FEATURES
+// ============================================================================
+
+// Memories
+export const insertMemorySchema = createInsertSchema(memories).omit({ id: true, createdAt: true });
+export type InsertMemory = z.infer<typeof insertMemorySchema>;
+export type SelectMemory = typeof memories.$inferSelect;
+
+// Recommendations
+export const insertRecommendationSchema = createInsertSchema(recommendations).omit({ id: true, createdAt: true });
+export type InsertRecommendation = z.infer<typeof insertRecommendationSchema>;
+export type SelectRecommendation = typeof recommendations.$inferSelect;
+
+// Role Invitations
+export const insertRoleInvitationSchema = createInsertSchema(roleInvitations).omit({ id: true, createdAt: true, respondedAt: true });
+export type InsertRoleInvitation = z.infer<typeof insertRoleInvitationSchema>;
+export type SelectRoleInvitation = typeof roleInvitations.$inferSelect;
+
+// Favorites
+export const insertFavoriteSchema = createInsertSchema(favorites).omit({ id: true, createdAt: true });
+export type InsertFavorite = z.infer<typeof insertFavoriteSchema>;
+export type SelectFavorite = typeof favorites.$inferSelect;
+
+// Community Stats
+export const insertCommunityStatsSchema = createInsertSchema(communityStats).omit({ id: true, updatedAt: true });
+export type InsertCommunityStats = z.infer<typeof insertCommunityStatsSchema>;
+export type SelectCommunityStats = typeof communityStats.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)

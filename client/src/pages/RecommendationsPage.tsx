@@ -56,7 +56,12 @@ export default function RecommendationsPage() {
     queryKey: ["/api/recommendations"],
   });
 
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<{
+    newToday: number;
+    avgScore: number;
+    actedOn: number;
+    saved: number;
+  }>({
     queryKey: ["/api/recommendations/stats"],
   });
 

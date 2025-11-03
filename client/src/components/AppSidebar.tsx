@@ -19,6 +19,11 @@ import {
   Bot,
   Bookmark,
   Shield,
+  Sparkles,
+  Globe,
+  Star,
+  ListChecks,
+  Network,
 } from "lucide-react";
 import { useLocation } from "wouter";
 import {
@@ -38,52 +43,67 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { PredictiveLink } from "@/components/PredictiveLink";
 
-// Core Social Hub
+// Core Social Hub (4 items)
 const socialItems = [
-  { title: "Memories", url: "/", icon: Home },
+  { title: "Memories", url: "/memories", icon: Home },
   { title: "Feed", url: "/feed", icon: Rss },
   { title: "Profile", url: "/profile", icon: UserCircle },
   { title: "Discover", url: "/discover", icon: Compass },
 ];
 
-// Community & Connections
+// Community & Connections (6 items)
 const communityItems = [
   { title: "Friends", url: "/friends-list", icon: UserPlus },
+  { title: "Recommendations", url: "/recommendations", icon: Sparkles },
+  { title: "Invitations", url: "/invitations", icon: UserPlus },
   { title: "Notifications", url: "/notifications", icon: Bell },
   { title: "Groups", url: "/groups", icon: Users },
   { title: "Messages", url: "/messages", icon: MessageSquare },
 ];
 
-// Events & Calendar
+// Events & Calendar (2 items)
 const eventsItems = [
   { title: "Events", url: "/events", icon: Calendar },
   { title: "Calendar", url: "/calendar", icon: Calendar },
 ];
 
-// Tango Resources
+// Tango Resources (3 items)
 const tangoItems = [
   { title: "Teachers", url: "/teachers", icon: GraduationCap },
   { title: "Venues", url: "/venues", icon: MapPin },
   { title: "Tutorials", url: "/tutorials", icon: PlayCircle },
 ];
 
-// AI & Tools
+// Resources (1 item)
+const resourcesItems = [
+  { title: "Community Map", url: "/community-world-map", icon: Globe },
+];
+
+// AI & Tools (3 items)
 const toolsItems = [
   { title: "Life CEO", url: "/life-ceo", icon: Brain },
   { title: "Mr Blue AI", url: "/mr-blue-chat", icon: Bot },
   { title: "Marketplace", url: "/marketplace", icon: ShoppingBag },
 ];
 
-// Personal
+// Personal (3 items)
 const personalItems = [
   { title: "Saved Posts", url: "/saved-posts", icon: Bookmark },
+  { title: "Favorites", url: "/favorites", icon: Star },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
-// Admin (role-based)
+// Admin (2 items - role-based)
 const adminItems = [
   { title: "Admin", url: "/admin", icon: Shield },
   { title: "Platform", url: "/platform", icon: Server },
+];
+
+// ESA Framework (3 items - God/Super Admin only)
+const esaItems = [
+  { title: "ESA Framework", url: "/platform/esa", icon: Brain },
+  { title: "ESA Tasks", url: "/platform/esa/tasks", icon: ListChecks },
+  { title: "ESA Comms", url: "/platform/esa/communications", icon: Network },
 ];
 
 export function AppSidebar() {
@@ -97,6 +117,8 @@ export function AppSidebar() {
 
   // Check if user is admin (role === 'admin' or 'god')
   const isAdmin = user?.role === 'admin' || user?.role === 'god';
+  // Check if user is God/Super Admin (only 'god' role for ESA access)
+  const isGodAdmin = user?.role === 'god';
 
   return (
     <Sidebar>
@@ -199,6 +221,29 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {/* Resources */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Resources</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {resourcesItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton 
+                    asChild 
+                    data-active={location === item.url}
+                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                  >
+                    <PredictiveLink to={item.url}>
+                      <item.icon className="h-5 w-5" />
+                      <span>{item.title}</span>
+                    </PredictiveLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
         {/* AI & Tools */}
         <SidebarGroup>
           <SidebarGroupLabel>AI & Tools</SidebarGroupLabel>
@@ -271,6 +316,31 @@ export function AppSidebar() {
               </SidebarGroupContent>
             </SidebarGroup>
           </>
+        )}
+
+        {/* ESA Framework (God/Super Admin only) */}
+        {isGodAdmin && (
+          <SidebarGroup>
+            <SidebarGroupLabel>ESA Framework</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {esaItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton 
+                      asChild 
+                      data-active={location === item.url}
+                      data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                    >
+                      <PredictiveLink to={item.url}>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.title}</span>
+                      </PredictiveLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
         )}
       </SidebarContent>
 

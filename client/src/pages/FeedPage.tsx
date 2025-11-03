@@ -129,7 +129,6 @@ export default function FeedPage() {
       await createPost.mutateAsync({
         content: content.trim(),
         visibility: visibility,
-        tags: selectedTags,
       });
 
       setContent("");

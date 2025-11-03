@@ -36,7 +36,13 @@ export default function CommunityWorldMapPage() {
     queryKey: ["/api/community/locations"],
   });
 
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<{
+    totalCities: number;
+    countries: number;
+    totalMembers: number;
+    activeEvents: number;
+    totalVenues: number;
+  }>({
     queryKey: ["/api/community/stats"],
   });
 

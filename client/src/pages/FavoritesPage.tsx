@@ -56,7 +56,9 @@ export default function FavoritesPage() {
     queryKey: ["/api/favorites"],
   });
 
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<{
+    total: number;
+  }>({
     queryKey: ["/api/favorites/stats"],
   });
 
@@ -287,11 +289,11 @@ export default function FavoritesPage() {
                 )}
               </TabsContent>
 
-              {(['events', 'people', 'venues', 'content'] as const).map((type) => (
-                <TabsContent key={type} value={type} className="space-y-6 mt-8">
+              {(['event', 'person', 'venue', 'content'] as const).map((type) => (
+                <TabsContent key={type} value={type === 'event' ? 'events' : type === 'person' ? 'people' : type === 'venue' ? 'venues' : 'content'} className="space-y-6 mt-8">
                   {favoritesByType[type].length > 0 ? (
                     <div className="space-y-6">
-                      {favoritesByType[type].map((favorite) => (
+                      {favoritesByType[type].map((favorite: Favorite) => (
                         <FavoriteCard key={favorite.id} favorite={favorite} />
                       ))}
                     </div>

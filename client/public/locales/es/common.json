@@ -1,0 +1,39 @@
+{
+  "buttons": {
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "register": "Registrarse",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "submit": "Enviar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "search": "Buscar",
+    "getStarted": "Comenzar",
+    "joinNow": "Únete Ahora"
+  },
+  "labels": {
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "username": "Nombre de usuario",
+    "name": "Nombre",
+    "location": "Ubicación",
+    "language": "Idioma",
+    "settings": "Configuración"
+  },
+  "messages": {
+    "loading": "Cargando...",
+    "success": "¡Éxito!",
+    "welcome": "Bienvenido a Mundo Tango",
+    "noResults": "No se encontraron resultados"
+  },
+  "common": {
+    "yes": "Sí",
+    "no": "No",
+    "all": "Todos"
+  }
+}

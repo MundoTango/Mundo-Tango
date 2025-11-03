@@ -1,0 +1,84 @@
+{
+  "auth": {
+    "invalidCredentials": "Invalid email or password",
+    "emailRequired": "Email is required",
+    "passwordRequired": "Password is required",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "emailInvalid": "Please enter a valid email address",
+    "userNotFound": "User not found",
+    "emailAlreadyExists": "This email is already registered",
+    "usernameAlreadyExists": "This username is already taken",
+    "sessionExpired": "Your session has expired. Please login again",
+    "unauthorized": "You are not authorized to perform this action",
+    "loginRequired": "Please login to continue",
+    "tokenExpired": "Your session token has expired",
+    "invalidToken": "Invalid authentication token"
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalidEmail": "Invalid email format",
+    "invalidPhone": "Invalid phone number",
+    "invalidDate": "Invalid date format",
+    "invalidUrl": "Invalid URL format",
+    "tooShort": "Value is too short",
+    "tooLong": "Value is too long",
+    "invalidFormat": "Invalid format",
+    "numberRequired": "Must be a number",
+    "positiveNumber": "Must be a positive number"
+  },
+  "network": {
+    "connectionError": "Connection error. Please check your internet connection",
+    "timeout": "Request timeout. Please try again",
+    "serverError": "Server error. Please try again later",
+    "notFound": "Resource not found",
+    "forbidden": "Access forbidden",
+    "badRequest": "Bad request. Please check your input",
+    "rateLimitExceeded": "Too many requests. Please try again later"
+  },
+  "form": {
+    "saveFailed": "Failed to save. Please try again",
+    "uploadFailed": "File upload failed",
+    "deleteFailed": "Failed to delete. Please try again",
+    "updateFailed": "Failed to update. Please try again",
+    "invalidFile": "Invalid file format",
+    "fileTooLarge": "File size is too large",
+    "requiredFields": "Please fill in all required fields"
+  },
+  "general": {
+    "somethingWrong": "Something went wrong. Please try again",
+    "pageNotFound": "Page not found",
+    "accessDenied": "Access denied",
+    "featureUnavailable": "This feature is currently unavailable",
+    "maintenanceMode": "The system is under maintenance. Please try again later",
+    "unknownError": "An unknown error occurred"
+  },
+  "posts": {
+    "createFailed": "Failed to create post",
+    "updateFailed": "Failed to update post",
+    "deleteFailed": "Failed to delete post",
+    "loadFailed": "Failed to load posts",
+    "commentFailed": "Failed to post comment",
+    "likeFailed": "Failed to like post"
+  },
+  "events": {
+    "loadFailed": "Failed to load events",
+    "bookingFailed": "Failed to book event",
+    "cancelFailed": "Failed to cancel booking",
+    "eventFull": "This event is fully booked",
+    "eventPast": "This event has already passed",
+    "alreadyBooked": "You have already booked this event"
+  },
+  "messages": {
+    "sendFailed": "Failed to send message",
+    "loadFailed": "Failed to load messages",
+    "deleteFailed": "Failed to delete message",
+    "connectionLost": "Connection lost. Trying to reconnect..."
+  },
+  "friends": {
+    "requestFailed": "Failed to send friend request",
+    "acceptFailed": "Failed to accept friend request",
+    "removeFailed": "Failed to remove friend",
+    "blockFailed": "Failed to block user",
+    "alreadyFriends": "You are already friends with this user"
+  }
+}

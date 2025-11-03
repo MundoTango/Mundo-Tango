@@ -65,7 +65,12 @@ export default function InvitationsPage() {
     queryKey: ["/api/invitations"],
   });
 
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<{
+    pending: number;
+    accepted: number;
+    declined: number;
+    activeRoles: number;
+  }>({
     queryKey: ["/api/invitations/stats"],
   });
 

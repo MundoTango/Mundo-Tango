@@ -1,0 +1,30 @@
+{
+  "social": {
+    "title": "Social",
+    "memories": "Souvenirs",
+    "feed": "Fil",
+    "profile": "Profil",
+    "discover": "Découvrir"
+  },
+  "community": {
+    "title": "Communauté",
+    "friends": "Amis",
+    "messages": "Messages",
+    "notifications": "Notifications"
+  },
+  "events": {
+    "title": "Événements",
+    "events": "Événements",
+    "calendar": "Calendrier"
+  },
+  "tango": {
+    "title": "Ressources Tango",
+    "teachers": "Professeurs",
+    "venues": "Lieux",
+    "tutorials": "Tutoriels"
+  },
+  "personal": {
+    "title": "Personnel",
+    "settings": "Paramètres"
+  }
+}

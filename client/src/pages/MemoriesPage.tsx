@@ -51,7 +51,12 @@ export default function MemoriesPage() {
     queryKey: ["/api/memories"],
   });
 
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<{
+    totalMemories: number;
+    eventsAttended: number;
+    milestones: number;
+    thisYear: number;
+  }>({
     queryKey: ["/api/memories/stats"],
   });
 

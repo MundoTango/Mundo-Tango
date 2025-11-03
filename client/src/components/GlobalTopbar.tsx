@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Bell, User, Moon, Sun, Globe, MessageSquare } from "lucide-react";
+import { Bell, User, Moon, Sun, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/hooks/use-theme";
 import { SearchBar } from "./SearchBar";
+import { LanguageSelectorButton } from "./LanguageSelector";
 
 export function GlobalTopbar() {
   const { user, logout } = useAuth();
@@ -37,19 +38,7 @@ export function GlobalTopbar() {
         {/* Right side actions */}
         <div className="flex items-center gap-2">
           {/* E106 - Language Switcher */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" data-testid="button-language">
-                <Globe className="h-5 w-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem data-testid="menu-item-english">🇺🇸 English</DropdownMenuItem>
-              <DropdownMenuItem data-testid="menu-item-spanish">🇪🇸 Español</DropdownMenuItem>
-              <DropdownMenuItem data-testid="menu-item-portuguese">🇧🇷 Português</DropdownMenuItem>
-              <DropdownMenuItem data-testid="menu-item-french">🇫🇷 Français</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <LanguageSelectorButton />
 
           {/* E105 - Theme Toggle */}
           <Button
