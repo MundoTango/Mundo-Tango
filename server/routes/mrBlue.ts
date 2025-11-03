@@ -1,13 +1,14 @@
-import type { Express, Request, Response } from "express";
+import { Router, type Request, Response } from "express";
 import Groq from "groq-sdk";
+
+const router = Router();
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY || '',
 });
 
-export function registerMrBlueRoutes(app: Express) {
-  // Mr. Blue Chat
-  app.post("/api/mrblue/chat", async (req: Request, res: Response) => {
+// Mr. Blue Chat
+router.post("/chat", async (req: Request, res: Response) => {
     try {
       const { message, pageContext } = req.body;
 
@@ -56,18 +57,19 @@ Be helpful, concise, and friendly. Provide specific actions when possible.`;
     }
   });
 
-  // Breadcrumb tracking
-  app.post("/api/breadcrumbs", async (req: Request, res: Response) => {
-    try {
-      const breadcrumb = req.body;
-      
-      // Store in database (optional - can implement later)
-      // For now, just acknowledge receipt
-      
-      res.json({ success: true });
-    } catch (error) {
-      console.error('[Breadcrumbs] Tracking error:', error);
-      res.status(500).json({ success: false });
-    }
-  });
-}
+// Breadcrumb tracking
+router.post("/breadcrumbs", async (req: Request, res: Response) => {
+  try {
+    const breadcrumb = req.body;
+    
+    // Store in database (optional - can implement later)
+    // For now, just acknowledge receipt
+    
+    res.json({ success: true });
+  } catch (error) {
+    console.error('[Breadcrumbs] Tracking error:', error);
+    res.status(500).json({ success: false });
+  }
+});
+
+export default router;

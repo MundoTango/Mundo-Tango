@@ -19,6 +19,7 @@ import { createBookmarkRoutes } from "./routes/bookmark-routes";
 import avatarRoutes from "./routes/avatarRoutes";
 import videoRoutes from "./routes/videoRoutes";
 import mrblueVideoRoutes from "./routes/mrblue-video-routes";
+import mrBlueRoutes from "./routes/mrBlue";
 import rbacRoutes from "./routes/rbac-routes";
 import featureFlagsRoutes from "./routes/feature-flags-routes";
 import pricingRoutes from "./routes/pricing-routes";
@@ -122,6 +123,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/avatar", avatarRoutes);
   app.use("/api/videos", videoRoutes);
   app.use("/api/mrblue", mrblueVideoRoutes);
+  app.use("/api/mrblue", mrBlueRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(createPostBodySchema), async (req: AuthRequest, res: Response) => {
     try {
