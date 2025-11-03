@@ -53,34 +53,30 @@ export function GlobalTopbar() {
           {/* Messages */}
           <Link href="/messages">
             <Button variant="ghost" size="icon" className="relative" data-testid="button-messages">
-              <>
-                <MessageSquare className="h-5 w-5" />
-                {unreadMessages > 0 && (
-                  <Badge 
-                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
-                    data-testid="badge-messages-count"
-                  >
-                    {unreadMessages}
-                  </Badge>
-                )}
-              </>
+              <MessageSquare className="h-5 w-5" />
+              {unreadMessages > 0 && (
+                <Badge 
+                  className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                  data-testid="badge-messages-count"
+                >
+                  {unreadMessages}
+                </Badge>
+              )}
             </Button>
           </Link>
 
           {/* E103 - Notifications */}
           <Link href="/notifications">
             <Button variant="ghost" size="icon" className="relative" data-testid="button-notifications">
-              <>
-                <Bell className="h-5 w-5" />
-                {unreadNotifications > 0 && (
-                  <Badge 
-                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
-                    data-testid="badge-notifications-count"
-                  >
-                    {unreadNotifications}
-                  </Badge>
-                )}
-              </>
+              <Bell className="h-5 w-5" />
+              {unreadNotifications > 0 && (
+                <Badge 
+                  className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                  data-testid="badge-notifications-count"
+                >
+                  {unreadNotifications}
+                </Badge>
+              )}
             </Button>
           </Link>
 
@@ -100,14 +96,12 @@ export function GlobalTopbar() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full" data-testid="button-user-menu">
-                <>
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={user?.profileImage || undefined} />
-                    <AvatarFallback>
-                      {user?.name?.charAt(0) || user?.username?.charAt(0) || <User className="h-4 w-4" />}
-                    </AvatarFallback>
-                  </Avatar>
-                </>
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={user?.profileImage || undefined} />
+                  <AvatarFallback>
+                    {user?.name?.charAt(0) || user?.username?.charAt(0) || <User className="h-4 w-4" />}
+                  </AvatarFallback>
+                </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
