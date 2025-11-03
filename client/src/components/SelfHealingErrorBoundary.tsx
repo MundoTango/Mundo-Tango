@@ -128,7 +128,7 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
     if (this.recoveryAttempts > this.maxRecoveryAttempts) {
       console.error(`[Self-Healing] ⛔ Max recovery attempts (${this.maxRecoveryAttempts}) exceeded. Showing error UI.`);
       console.error('[Self-Healing] 🔍 This error requires manual intervention or code fix.');
-      console.error('[Self-Healing] 🧹 Clear localStorage and hard refresh to reset.');
+      console.error('[Self-Healing] 📡 ESCALATING TO ESA FRAMEWORK - Requesting agent assistance...');
       
       // Log to backend but don't attempt recovery
       logger.error('Self-Healing Boundary max attempts exceeded', error, {
@@ -137,6 +137,9 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
         errorCount: this.state.errorCount,
         recoveryAttempts: this.recoveryAttempts,
       });
+      
+      // ESA ESCALATION: Create task for colleague agents and manager
+      this.escalateToESA(error, errorInfo, pageName);
       
       this.setState({ errorInfo });
       // Show error UI - don't attempt auto-recovery
@@ -333,6 +336,49 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
     this.handleManualReset();
     window.location.href = fallbackRoute;
   };
+
+  async escalateToESA(error: Error, errorInfo: React.ErrorInfo, pageName: string) {
+    console.log('[ESA Escalation] 🚀 Creating task for Debug Agent and Manager...');
+    
+    try {
+      const response = await fetch('/api/platform/esa/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          taskType: 'fix_bug',
+          title: `ESCALATED: Self-Healing Failed on ${pageName}`,
+          description: `Auto-recovery exhausted after ${this.recoveryAttempts} attempts.\n\nError: ${error.message}\n\nStack: ${error.stack}\n\nComponent Stack: ${errorInfo.componentStack?.substring(0, 500)}`,
+          priority: 'critical',
+          agentCode: 'DEBUG-001', // Debug Agent
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('[ESA Escalation] ✅ Task created successfully:', data);
+        console.log(`[ESA Escalation] 🤖 ${data.message} - Task #${data.task.id}`);
+        
+        // Also notify manager via agent communications
+        await fetch('/api/platform/esa/communications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messageType: 'escalation',
+            subject: `Critical: Self-Healing Failure on ${pageName}`,
+            message: `Task #${data.task.id} created. Error recovery failed after ${this.recoveryAttempts} attempts. Requires immediate attention.`,
+            priority: 'urgent',
+            taskId: data.task.id,
+          }),
+        });
+        
+        console.log('[ESA Escalation] 📨 Manager notified via ESA Communications');
+      } else {
+        console.error('[ESA Escalation] ❌ Failed to create task:', await response.text());
+      }
+    } catch (escalationError) {
+      console.error('[ESA Escalation] ❌ Escalation system unavailable:', escalationError);
+    }
+  }
 
   handleReportBug = async () => {
     const { pageName = 'Unknown Page' } = this.props;

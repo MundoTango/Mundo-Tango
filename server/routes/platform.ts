@@ -181,6 +181,51 @@ router.get("/esa/tasks/stats", async (req: AuthRequest, res: Response) => {
   }
 });
 
+// POST /api/platform/esa/tasks - Create new agent task (ESA ESCALATION ENDPOINT)
+router.post("/esa/tasks", async (req: AuthRequest, res: Response) => {
+  try {
+    const { 
+      taskType, 
+      title, 
+      description, 
+      priority = 'high', 
+      agentCode = 'DEBUG-001' // Default to Debug Agent
+    } = req.body;
+
+    // Find agent by code
+    const agent = await db
+      .select()
+      .from(esaAgents)
+      .where(eq(esaAgents.agentCode, agentCode))
+      .limit(1);
+
+    if (!agent.length) {
+      return res.status(404).json({ error: `Agent ${agentCode} not found` });
+    }
+
+    // Create task
+    const task = await db.insert(agentTasks).values({
+      agentId: agent[0].id,
+      taskType,
+      title,
+      description,
+      priority,
+      status: 'pending',
+    }).returning();
+
+    console.log(`[ESA Escalation] Created task #${task[0].id} for agent ${agentCode}: ${title}`);
+
+    res.json({
+      success: true,
+      task: task[0],
+      message: `Task escalated to ${agent[0].agentName}`,
+    });
+  } catch (error: any) {
+    console.error('[ESA Escalation] Failed to create task:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // ============================================================================
 // AGENT COMMUNICATIONS ROUTES
 // ============================================================================
