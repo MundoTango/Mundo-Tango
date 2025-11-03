@@ -26,6 +26,16 @@ The project utilizes a modular and agent-driven development approach, employing 
 - **Testing Expansion**: Generated 95 new E2E tests across 8 test files (memories.spec.ts, community-map.spec.ts, recommendations.spec.ts, invitations.spec.ts, favorites.spec.ts, esa-framework.spec.ts, esa-tasks.spec.ts, esa-communications.spec.ts)
 - **Zero LSP Errors**: Fixed all 22 TypeScript errors across 6 new pages
 
+**Critical Bug Fixes (November 2025)**:
+- **React.Children.only Error Fixed**: Resolved sidebar navigation crash caused by SidebarMenuButton `asChild` prop receiving multiple children (icon + span). Fixed all 9 sidebar sections (27 navigation items) by wrapping PredictiveLink children in fragments
+- **Mr Blue AI Integration**: Enhanced SelfHealingErrorBoundary "Report Issue" button with AI-powered bug analysis
+  - Created `/api/v1/report-bug` endpoint using Groq SDK (llama-3.3-70b-versatile)
+  - Automated root cause analysis with fix suggestions for simple bugs
+  - Displays AI analysis in alert dialog with clipboard backup
+  - Future enhancement: Auto-apply simple fixes without human intervention
+- **Login Flow Stabilized**: Verified complete authentication → navigation → error recovery workflow
+- **E2E Test Added**: Created `login-error-recovery.spec.ts` with 8 tests covering login, sidebar navigation (all 27 items), God admin ESA access, mobile responsiveness
+
 **Design System Consolidation**:
 - Theme consolidated from tri-theme system to single **MT Ocean** theme across all 142 pages
 - Typography unified to 400-600 font weights (removed 800-900)
