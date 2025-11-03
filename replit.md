@@ -18,6 +18,21 @@ The project utilizes a modular and agent-driven development approach, employing 
 #### UI/UX Decisions
 The platform features a unified **MT Ocean theme** (turquoise #14b8a6, 400-600 font weights, 16px radius, glassmorphic effects) across all 142 pages. The design system uses a 3-layer approach (Primitive → Semantic → Component) for theme customization via CSS variables. It incorporates a tango-inspired color palette, dark mode support, glassmorphic effects, Tailwind CSS + shadcn/ui components, responsive design, and Inter font family typography. The layout is a three-column feed with a left sidebar for user profiles, a main content area, and a right sidebar for events, suggestions, and AI access. The frontend is built with React, TypeScript, Wouter for routing, and React Query for state management, prioritizing dark mode optimization, video-first design, and global accessibility.
 
+**Navigation Architecture (Updated November 2025):**
+The platform implements a two-layout system optimized for design flexibility:
+
+1. **AppLayout** (Main User Pages - 104 pages):
+   - GlobalTopbar (always visible): Logo, Search, Language, Theme Toggle, Favorites, Messages, Notifications, Settings, Help, User Menu
+   - AppSidebar: 8 categorized sections (Social, Community, Events, Tango Resources, Resources, AI & Tools, Personal, Admin Access)
+   - Components: `AppLayout.tsx`, `AppSidebar.tsx`, `GlobalTopbar.tsx`
+
+2. **AdminLayout** (Admin Pages - 38 pages):
+   - GlobalTopbar (same as above - ensures consistency)
+   - AdminSidebar: 8 admin categories (Dashboard, User Management, Content & System, Platform, Business, Development, ESA Framework, Settings)
+   - Components: `AdminLayout.tsx`, `AdminSidebar.tsx`
+   
+All navigation components use design tokens (CSS variables) exclusively for colors, spacing, and typography - enabling complete visual redesign without code changes. Test IDs are present on all interactive elements for Playwright automation.
+
 #### Technical Implementations
 The backend uses Node.js with Express and TypeScript. Authentication is JWT-based with httpOnly cookies. PostgreSQL with Drizzle ORM serves as the database. Real-time capabilities are provided by Supabase Realtime and a WebSocket notification system. Key features include an 8-tier RBAC system, a dynamic feature flag system with Redis, and integrated dynamic pricing management via Stripe. Social features include pagination, optimistic updates, CRUD operations, and an advanced friendship system with algorithms for closeness scoring and mutual friends detection. Post actions include like, comment, share, bookmark, report, edit with history tracking, and post analytics. AI integration includes Talent Match AI and MrBlueChat using Groq SDK for streaming AI responses. Automation is managed by BullMQ with 39 functions across 6 dedicated workers. A total of 50 production-ready algorithms are categorized into Social, Event, Matching Engine, and Platform Intelligence suites. A visual editor system enables drag-and-drop page building with real-time preview and JSX code export. Agent health monitoring and predictive context services are implemented for system stability.
 
