@@ -48,9 +48,23 @@ const agents = [
   { id: "A16", name: "Impact.Agent", icon: CheckCircle2, description: "Purpose & contribution", route: "/life-ceo/impact" },
 ];
 
+interface Goal {
+  id: number;
+  title: string;
+  description: string;
+  progress: number;
+  targetDate: string;
+}
+
+interface Task {
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
 export default function LifeCEODashboard() {
-  const { data: goals = [] } = useQuery({ queryKey: ["/api/life-ceo/goals"] });
-  const { data: tasks = [] } = useQuery({ queryKey: ["/api/life-ceo/tasks"] });
+  const { data: goals = [] } = useQuery<Goal[]>({ queryKey: ["/api/life-ceo/goals"] });
+  const { data: tasks = [] } = useQuery<Task[]>({ queryKey: ["/api/life-ceo/tasks"] });
 
   return (
     <SelfHealingErrorBoundary pageName="LifeCEODashboard" fallbackRoute="/feed">
@@ -62,7 +76,7 @@ export default function LifeCEODashboard() {
       <div className="mb-8">
         <h2 className="text-2xl font-semibold mb-4">Active Goals</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {goals.slice(0, 4).map((goal: any) => (
+          {goals.slice(0, 4).map((goal) => (
             <Card key={goal.id}>
               <CardHeader>
                 <CardTitle>{goal.title}</CardTitle>
