@@ -2653,6 +2653,200 @@ export type InsertCheckoutSession = z.infer<typeof insertCheckoutSessionSchema>;
 export type SelectCheckoutSession = typeof checkoutSessions.$inferSelect;
 
 // ============================================================================
+// AGENT INTELLIGENCE NETWORK (Mr. Blue + Visual Editor)
+// ============================================================================
+
+// Breadcrumbs - User action tracking (30 clicks or 7 days)
+export const breadcrumbs = pgTable("breadcrumbs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  sessionId: varchar("session_id", { length: 255 }).notNull(),
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+  
+  // Page context
+  page: varchar("page", { length: 500 }).notNull(),
+  pageTitle: varchar("page_title", { length: 255 }),
+  referrer: varchar("referrer", { length: 500 }),
+  
+  // Action context
+  action: varchar("action", { length: 50 }).notNull(), // 'click', 'view', 'input', 'submit', 'error', 'navigation'
+  target: varchar("target", { length: 500 }),
+  targetId: varchar("target_id", { length: 255 }),
+  value: jsonb("value"),
+  
+  // User context
+  userJourney: varchar("user_journey", { length: 50 }),
+  userRole: varchar("user_role", { length: 50 }),
+  userIntent: varchar("user_intent", { length: 255 }),
+  
+  // Outcome
+  success: boolean("success").default(true),
+  error: text("error"),
+  duration: integer("duration"), // milliseconds
+  
+  // ML predictions
+  prediction: varchar("prediction", { length: 255 }),
+  confidence: real("confidence"),
+  patternId: varchar("pattern_id", { length: 100 }),
+  
+  createdAt: timestamp("created_at").notNull().defaultNow()
+}, (table) => ({
+  userIdx: index("idx_breadcrumbs_user").on(table.userId),
+  sessionIdx: index("idx_breadcrumbs_session").on(table.sessionId),
+  timestampIdx: index("idx_breadcrumbs_timestamp").on(table.timestamp),
+  actionIdx: index("idx_breadcrumbs_action").on(table.action)
+}));
+
+// Failed Actions - Error tracking and recovery
+export const failedActions = pgTable("failed_actions", {
+  id: serial("id").primaryKey(),
+  breadcrumbId: integer("breadcrumb_id").references(() => breadcrumbs.id),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  sessionId: varchar("session_id", { length: 255 }).notNull(),
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+  
+  // Failure details
+  failureType: varchar("failure_type", { length: 50 }).notNull(), // '404', 'api_error', 'validation', etc.
+  statusCode: integer("status_code"),
+  errorDetails: jsonb("error_details").notNull(),
+  
+  // Recovery
+  recoveryAttempted: boolean("recovery_attempted").default(false),
+  recoverySuccessful: boolean("recovery_successful").default(false),
+  retries: integer("retries").default(0),
+  
+  // Resolution
+  resolved: boolean("resolved").default(false),
+  resolvedAt: timestamp("resolved_at"),
+  resolvedBy: integer("resolved_by").references(() => users.id),
+  
+  createdAt: timestamp("created_at").notNull().defaultNow()
+}, (table) => ({
+  userIdx: index("idx_failed_actions_user").on(table.userId),
+  failureTypeIdx: index("idx_failed_actions_type").on(table.failureType),
+  resolvedIdx: index("idx_failed_actions_resolved").on(table.resolved)
+}));
+
+// Visual Edits - Visual Editor change tracking
+export const visualEdits = pgTable("visual_edits", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  sessionId: varchar("session_id", { length: 255 }).notNull(),
+  
+  // Page context
+  page: varchar("page", { length: 500 }).notNull(),
+  componentId: varchar("component_id", { length: 255 }).notNull(),
+  
+  // Change details
+  changeType: varchar("change_type", { length: 50 }).notNull(), // 'text', 'style', 'layout', 'size'
+  before: jsonb("before"),
+  after: jsonb("after"),
+  
+  // Code generation
+  generatedCode: text("generated_code"),
+  aiModel: varchar("ai_model", { length: 50 }),
+  
+  // Git info
+  gitBranch: varchar("git_branch", { length: 255 }),
+  commitHash: varchar("commit_hash", { length: 255 }),
+  
+  // Deployment
+  previewUrl: varchar("preview_url", { length: 500 }),
+  deployedToProduction: boolean("deployed_to_production").default(false),
+  deployedAt: timestamp("deployed_at"),
+  
+  createdAt: timestamp("created_at").notNull().defaultNow()
+}, (table) => ({
+  userIdx: index("idx_visual_edits_user").on(table.userId),
+  pageIdx: index("idx_visual_edits_page").on(table.page),
+  deployedIdx: index("idx_visual_edits_deployed").on(table.deployedToProduction)
+}));
+
+// Agent Memories - What agents learn
+export const agentMemories = pgTable("agent_memories", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull(),
+  memoryType: varchar("memory_type", { length: 50 }).notNull(),
+  content: text("content").notNull(),
+  metadata: jsonb("metadata"),
+  confidence: real("confidence"),  // 0-1 (how confident agent is)
+  context: jsonb("context"),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+}, (table) => ({
+  agentIdx: index("idx_agent_memories_agent").on(table.agentId),
+  typeIdx: index("idx_agent_memories_type").on(table.memoryType),
+  confidenceIdx: index("idx_agent_memories_confidence").on(table.confidence)
+}));
+
+// Agent Knowledge - Semantic knowledge base
+export const agentKnowledge = pgTable("agent_knowledge", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull(),
+  topic: varchar("topic", { length: 255 }).notNull(),
+  content: text("content").notNull(),
+  confidence: real("confidence"),
+  sourceMemoryId: integer("source_memory_id").references(() => agentMemories.id),
+  tags: text("tags").array(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+}, (table) => ({
+  agentIdx: index("idx_agent_knowledge_agent").on(table.agentId),
+  topicIdx: index("idx_agent_knowledge_topic").on(table.topic),
+  tagsIdx: index("idx_agent_knowledge_tags").on(table.tags)
+}));
+
+// Agent Communications - Agent-to-agent messages
+export const agentCommunications = pgTable("agent_communications", {
+  id: serial("id").primaryKey(),
+  fromAgent: varchar("from_agent", { length: 100 }).notNull(),
+  toAgent: varchar("to_agent", { length: 100 }).notNull(),
+  messageType: varchar("message_type", { length: 50 }).notNull(),
+  message: text("message").notNull(),
+  metadata: jsonb("metadata"),
+  isRead: boolean("is_read").default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+}, (table) => ({
+  fromIdx: index("idx_agent_comms_from").on(table.fromAgent),
+  toIdx: index("idx_agent_comms_to").on(table.toAgent),
+  typeIdx: index("idx_agent_comms_type").on(table.messageType),
+  readIdx: index("idx_agent_comms_read").on(table.isRead)
+}));
+
+// Agent Collaborations - Multi-agent teamwork
+export const agentCollaborations = pgTable("agent_collaborations", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull(),
+  collaboratorId: varchar("collaborator_id", { length: 100 }).notNull(),
+  issue: text("issue").notNull(),
+  status: varchar("status", { length: 50 }).notNull(), // 'pending', 'in_progress', 'resolved'
+  resolution: text("resolution"),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  resolvedAt: timestamp("resolved_at")
+}, (table) => ({
+  agentIdx: index("idx_agent_collab_agent").on(table.agentId),
+  collaboratorIdx: index("idx_agent_collab_collaborator").on(table.collaboratorId),
+  statusIdx: index("idx_agent_collab_status").on(table.status)
+}));
+
+// Agent Self Tests - Self-testing results
+export const agentSelfTests = pgTable("agent_self_tests", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull(),
+  testType: varchar("test_type", { length: 50 }).notNull(),
+  testName: varchar("test_name", { length: 255 }).notNull(),
+  passed: boolean("passed").notNull(),
+  score: real("score"),
+  errorDetails: jsonb("error_details"),
+  executionTime: integer("execution_time"), // milliseconds
+  createdAt: timestamp("created_at").notNull().defaultNow()
+}, (table) => ({
+  agentIdx: index("idx_agent_tests_agent").on(table.agentId),
+  typeIdx: index("idx_agent_tests_type").on(table.testType),
+  passedIdx: index("idx_agent_tests_passed").on(table.passed)
+}));
+
+// ============================================================================
 // ZOD SCHEMAS & TYPES - TRACK 7 NEW FEATURES
 // ============================================================================
 
@@ -2680,6 +2874,50 @@ export type SelectFavorite = typeof favorites.$inferSelect;
 export const insertCommunityStatsSchema = createInsertSchema(communityStats).omit({ id: true, updatedAt: true });
 export type InsertCommunityStats = z.infer<typeof insertCommunityStatsSchema>;
 export type SelectCommunityStats = typeof communityStats.$inferSelect;
+
+// ============================================================================
+// ZOD SCHEMAS & TYPES - AGENT INTELLIGENCE NETWORK
+// ============================================================================
+
+// Breadcrumbs
+export const insertBreadcrumbSchema = createInsertSchema(breadcrumbs).omit({ id: true, timestamp: true, createdAt: true });
+export type InsertBreadcrumb = z.infer<typeof insertBreadcrumbSchema>;
+export type SelectBreadcrumb = typeof breadcrumbs.$inferSelect;
+
+// Failed Actions
+export const insertFailedActionSchema = createInsertSchema(failedActions).omit({ id: true, timestamp: true, createdAt: true, resolvedAt: true });
+export type InsertFailedAction = z.infer<typeof insertFailedActionSchema>;
+export type SelectFailedAction = typeof failedActions.$inferSelect;
+
+// Visual Edits
+export const insertVisualEditSchema = createInsertSchema(visualEdits).omit({ id: true, createdAt: true, deployedAt: true });
+export type InsertVisualEdit = z.infer<typeof insertVisualEditSchema>;
+export type SelectVisualEdit = typeof visualEdits.$inferSelect;
+
+// Agent Memories
+export const insertAgentMemorySchema = createInsertSchema(agentMemories).omit({ id: true, createdAt: true });
+export type InsertAgentMemory = z.infer<typeof insertAgentMemorySchema>;
+export type SelectAgentMemory = typeof agentMemories.$inferSelect;
+
+// Agent Knowledge
+export const insertAgentKnowledgeSchema = createInsertSchema(agentKnowledge).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertAgentKnowledge = z.infer<typeof insertAgentKnowledgeSchema>;
+export type SelectAgentKnowledge = typeof agentKnowledge.$inferSelect;
+
+// Agent Communications
+export const insertAgentCommunicationSchema = createInsertSchema(agentCommunications).omit({ id: true, createdAt: true });
+export type InsertAgentCommunication = z.infer<typeof insertAgentCommunicationSchema>;
+export type SelectAgentCommunication = typeof agentCommunications.$inferSelect;
+
+// Agent Collaborations
+export const insertAgentCollaborationSchema = createInsertSchema(agentCollaborations).omit({ id: true, createdAt: true, resolvedAt: true });
+export type InsertAgentCollaboration = z.infer<typeof insertAgentCollaborationSchema>;
+export type SelectAgentCollaboration = typeof agentCollaborations.$inferSelect;
+
+// Agent Self Tests
+export const insertAgentSelfTestSchema = createInsertSchema(agentSelfTests).omit({ id: true, createdAt: true });
+export type InsertAgentSelfTest = z.infer<typeof insertAgentSelfTestSchema>;
+export type SelectAgentSelfTest = typeof agentSelfTests.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
