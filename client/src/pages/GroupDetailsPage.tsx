@@ -15,13 +15,13 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 
 export default function GroupDetailsPage() {
   const [, params] = useRoute("/groups/:id");
-  const groupId = params?.id ? parseInt(params.id) : 0;
+  const groupIdOrSlug = params?.id || "";
   const { toast } = useToast();
 
   const { data: group, isLoading } = useQuery<SelectGroup>({
-    queryKey: ["/api/groups", groupId],
+    queryKey: ["/api/groups", groupIdOrSlug],
     queryFn: async () => {
-      const res = await fetch(`/api/groups/${groupId}`, { credentials: "include" });
+      const res = await fetch(`/api/groups/${groupIdOrSlug}`, { credentials: "include" });
       if (!res.ok) throw new Error("Failed to fetch group");
       return res.json();
     },
@@ -29,11 +29,11 @@ export default function GroupDetailsPage() {
 
   const joinGroup = useMutation({
     mutationFn: async () => {
-      const res = await apiRequest("POST", `/api/groups/${groupId}/join`);
+      const res = await apiRequest("POST", `/api/groups/${group?.id || groupIdOrSlug}/join`);
       return res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/groups", groupId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/groups", groupIdOrSlug] });
       toast({
         title: "Joined group!",
         description: "You are now a member of this group.",
@@ -90,10 +90,10 @@ export default function GroupDetailsPage() {
       />
       <div className="max-w-4xl mx-auto p-6 space-y-6">
       <Card className="overflow-hidden">
-        {group.coverPhoto && (
+        {group.coverImage && (
           <div className="h-48 w-full overflow-hidden">
             <img
-              src={group.coverPhoto}
+              src={group.coverImage}
               alt={group.name}
               className="w-full h-full object-cover"
             />
@@ -102,10 +102,10 @@ export default function GroupDetailsPage() {
         <CardHeader>
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="flex items-start gap-4 flex-1">
-              {group.avatar && (
+              {group.imageUrl && (
                 <Avatar className="h-16 w-16">
-                  <AvatarImage src={group.avatar} />
-                  <AvatarFallback>{group.name.charAt(0)}</AvatarFallback>
+                  <AvatarImage src={group.imageUrl} />
+                  <AvatarFallback>{group.name?.charAt(0) || 'G'}</AvatarFallback>
                 </Avatar>
               )}
               <div className="flex-1">
@@ -117,10 +117,10 @@ export default function GroupDetailsPage() {
                     <Users className="h-4 w-4" />
                     {group.memberCount || 0} members
                   </span>
-                  {group.location && (
+                  {(group.city || group.country) && (
                     <span className="flex items-center gap-1">
                       <MapPin className="h-4 w-4" />
-                      {group.location}
+                      {[group.city, group.country].filter(Boolean).join(', ')}
                     </span>
                   )}
                 </CardDescription>
@@ -174,19 +174,19 @@ export default function GroupDetailsPage() {
             <CardContent className="space-y-4">
               <div>
                 <h3 className="font-medium mb-1">Group Type</h3>
-                <p className="text-muted-foreground">{group.groupType}</p>
+                <p className="text-muted-foreground">{group.type}</p>
               </div>
-              {group.category && (
+              {group.emoji && (
                 <div>
-                  <h3 className="font-medium mb-1">Category</h3>
-                  <p className="text-muted-foreground">{group.category}</p>
+                  <h3 className="font-medium mb-1">Emoji</h3>
+                  <p className="text-2xl">{group.emoji}</p>
                 </div>
               )}
-              {group.rules && (
+              {group.description && (
                 <div>
-                  <h3 className="font-medium mb-1">Group Rules</h3>
+                  <h3 className="font-medium mb-1">Description</h3>
                   <p className="text-muted-foreground whitespace-pre-wrap">
-                    {group.rules}
+                    {group.description}
                   </p>
                 </div>
               )}
