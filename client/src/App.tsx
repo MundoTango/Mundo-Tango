@@ -16,6 +16,7 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { MrBlueWidget } from "./components/MrBlueWidget";
 import { GlobalMrBlue } from "./components/mrblue/GlobalMrBlue";
 import { ChatSidePanel } from "./components/mrblue/ChatSidePanel";
+import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
 import { LoadingFallback } from "./components/LoadingFallback";
 
 // Core Pages (loaded immediately for fast initial render)
@@ -809,6 +810,7 @@ function App() {
                   </Suspense>
                   <GlobalMrBlue />
                   <ChatSidePanel />
+                  <MrBlueFloatingButton />
                 </TooltipProvider>
               </MrBlueProvider>
             </PredictiveContextProvider>
