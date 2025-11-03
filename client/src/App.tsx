@@ -10,6 +10,7 @@ import { MrBlueProvider } from "./contexts/MrBlueContext";
 import { PredictiveContextProvider } from "./providers/PredictiveContextProvider";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AppLayout } from "./components/AppLayout";
+import { AdminLayout } from "./components/AdminLayout";
 import { GlobalTopbar } from "./components/GlobalTopbar";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { MrBlueWidget } from "./components/MrBlueWidget";
@@ -228,8 +229,21 @@ function Router() {
       <Route path="/life-ceo/sleep" component={SleepAgentPage} />
       <Route path="/life-ceo/stress" component={StressAgentPage} />
       <Route path="/life-ceo/relationship" component={RelationshipAgentPage} />
-      <Route path="/admin/talent-pipeline" component={TalentPipelinePage} />
-      <Route path="/admin/task-board" component={TaskBoardPage} />
+      <Route path="/admin/talent-pipeline">
+        <ProtectedRoute>
+          <AdminLayout>
+            <TalentPipelinePage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/task-board">
+        <ProtectedRoute>
+          <AdminLayout>
+            <TaskBoardPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
       <Route path="/login" component={LoginPage} />
       <Route path="/register" component={RegisterPage} />
       
@@ -421,73 +435,73 @@ function Router() {
 
       <Route path="/platform">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <PlatformPage />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
       <Route path="/platform/secrets">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <SecretsPage />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
       <Route path="/platform/git">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <GitRepositoryPage />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
       <Route path="/platform/monitoring">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <MonitoringPage />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
       <Route path="/platform/analytics">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <AnalyticsPage />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
       <Route path="/platform/esa">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <ESADashboardPage />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
       <Route path="/platform/esa/tasks">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <ESATasksPage />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
       <Route path="/platform/esa/communications">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <ESACommunicationsPage />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
       <Route path="/platform/esa/communications">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <AgentCommunicationsPage />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
@@ -572,65 +586,65 @@ function Router() {
       
       <Route path="/admin/dashboard">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <AdminDashboardPage />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
       <Route path="/admin/moderation">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <ContentModerationPage />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
       <Route path="/admin/reports">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <UserReportsPage />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
       <Route path="/admin/pricing-manager">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <PricingManagerPage />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
       <Route path="/admin/self-healing">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <SelfHealingPage />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
       <Route path="/admin/project-tracker">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <ProjectTrackerPage />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
       <Route path="/admin/agent-health">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <AgentHealthDashboard />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
       <Route path="/admin/users">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <AdminUsersPage />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
@@ -755,9 +769,9 @@ function Router() {
 
       <Route path="/admin/visual-editor">
         <ProtectedRoute>
-          <AppLayout>
+          <AdminLayout>
             <VisualEditorPage />
-          </AppLayout>
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 
