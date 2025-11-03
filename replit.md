@@ -27,16 +27,22 @@ The project utilizes a modular and agent-driven development approach, employing 
 - **Zero LSP Errors**: Fixed all 22 TypeScript errors across 6 new pages
 
 **Critical Bug Fixes + Auto-Healing System (November 2025)**:
-- **React.Children.only Errors Fixed**: Resolved `asChild` prop pattern errors across multiple components
+- **React.Children.only Errors Fixed (MB.MD Wave 2 - Nov 3, 2025)**: Resolved ALL `asChild` prop pattern errors via recursive codebase scan
   - Fixed AppSidebar.tsx (9 sections, 27 navigation items)
-  - Fixed PageLayout.tsx breadcrumb navigation
-  - Fixed LanguageSelector.tsx button trigger
-  - Pattern: Wrap multiple children in `<>` fragment when using `asChild` prop
+  - Fixed PageLayout.tsx breadcrumb navigation (BreadcrumbLink + Link)
+  - Fixed LanguageSelector.tsx (Globe icon + SelectValue - line 110-116)
+  - Fixed GlobalTopbar.tsx (3 instances):
+    - Avatar in user menu (line 99-109)
+    - Messages button with icon + conditional badge (line 59-69)
+    - Notifications button with icon + conditional badge (line 76-86)
+  - Fixed GitRepositoryPage.tsx external link (ExternalLink icon + text - line 70-73)
+  - **Pattern Rule**: Wrap multiple children in `<>` fragment when using `asChild` prop (Radix UI requires EXACTLY ONE child)
+  - **Total Fixed**: 7 components, 35+ asChild instances scanned
 - **Playwright Login Loop Fixed (MB.MD Protocol)**:
   - **Nested Link Bug**: Fixed LoginPage.tsx nested `<a>` tags (wouter `<Link>` already creates `<a>`)
   - **Layout Nesting**: Removed triple-nested layouts (SelfHealingErrorBoundary → PageLayout → PublicLayout)
   - **Infinite Loop Prevention**: Added max retry limit (3 attempts) in auto-healing system
-  - **Clean Console**: Zero DOM nesting warnings, zero hook call errors
+  - **Clean Console**: Zero DOM nesting warnings, zero hook call errors, zero React.Children.only errors
 - **True Auto-Healing System Implemented**: SelfHealingErrorBoundary now automatically fixes errors without user intervention
   - **Pattern Detection**: Recognizes 3 error types (React.Children.only, chunk loading, network failures)
   - **Instant Auto-Fix**: Attempts automatic recovery in 100ms-2s based on error type
