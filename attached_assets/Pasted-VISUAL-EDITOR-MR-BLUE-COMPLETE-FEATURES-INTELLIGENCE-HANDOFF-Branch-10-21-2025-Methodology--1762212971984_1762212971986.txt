@@ -1,0 +1,3342 @@
+VISUAL EDITOR + MR. BLUE - COMPLETE FEATURES & INTELLIGENCE HANDOFF
+Branch: 10-21-2025
+Methodology: MB.MD (Simultaneously, Recursively, Critically)
+Date: November 3, 2025
+Purpose: Complete zero-knowledge handoff of ALL Visual Editor and Mr. Blue features
+
+🎯 EXECUTIVE SUMMARY
+This document contains EVERYTHING you need to know about the Visual Editor (Agent #78) and Mr. Blue Intelligence System (Agents #73-80) built in the 10-21-2025 branch.
+
+What This System Does
+Visual Editor: Figma-like page editing tool that lets Super Admins modify any page without writing code. Click elements to select them, drag to reposition, edit properties, and let AI generate production-ready React/Tailwind code.
+
+Mr. Blue: Context-aware AI companion (like Replit Agent) that understands what page you're on, tracks recent actions, monitors for errors, and helps you edit conversationally through chat.
+
+Together: You can chat with Mr. Blue to edit pages ("make this button bigger") and Mr. Blue orchestrates the Visual Editor + AI code generation + Git deployment workflow.
+
+📊 TABLE OF CONTENTS
+Visual Editor Features
+Mr. Blue Intelligence System
+Integration & Workflows
+Technical Implementation
+Database Schema
+API Endpoints
+Security & Access Control
+File Structure
+UI/UX Design System
+1. VISUAL EDITOR FEATURES
+1.1 Overview
+The Visual Editor is a Replit-style visual page editing system that enables Super Admins to modify any page without writing code.
+
+Access: Add ?edit=true to any page URL
+
+Example: /memories?edit=true
+Example: /groups?edit=true
+Example: /profile/username?edit=true
+1.2 Core Features
+╔════════════════════════════════════════════════════════════╗
+║  VISUAL EDITOR CAPABILITIES                                ║
+╠════════════════════════════════════════════════════════════╣
+║                                                            ║
+║  ✅ Click-to-Select Any Element                            ║
+║     └─ Click any element with data-testid to select       ║
+║     └─ Purple outline on hover                            ║
+║     └─ Solid purple border when selected                  ║
+║     └─ Element inspector shows component details          ║
+║                                                            ║
+║  ✅ Drag & Drop Repositioning (Figma-like)                 ║
+║     └─ Drag selected elements to new positions            ║
+║     └─ Real-time position tracking                        ║
+║     └─ Alignment guides & snap-to-grid                    ║
+║     └─ No manual X/Y coordinates needed                   ║
+║                                                            ║
+║  ✅ Edit Controls (4 Tabs)                                 ║
+║     ├─ Position Tab: X, Y, alignment (center, left, right)║
+║     ├─ Size Tab: Width, height, aspect ratio lock         ║
+║     ├─ Style Tab: Colors, fonts, borders, shadows         ║
+║     └─ Text Tab: Content, alignment, line height          ║
+║                                                            ║
+║  ✅ AI Code Generation (OpenAI GPT-4o)                     ║
+║     └─ Converts visual changes → React/Tailwind code      ║
+║     └─ Shows before/after code diff                       ║
+║     └─ Explains what changed                              ║
+║     └─ Identifies affected files                          ║
+║                                                            ║
+║  ✅ Git Automation Workflow                                ║
+║     └─ Creates branch: visual-edit-{timestamp}            ║
+║     └─ Automatic file backups (.backup files)             ║
+║     └─ Commits with descriptive messages                  ║
+║     └─ Pushes to remote repository                        ║
+║     └─ Creates GitHub Pull Request                        ║
+║                                                            ║
+║  ✅ Deployment Pipeline                                    ║
+║     ├─ Preview: Shareable staging URL (24-hour validity)  ║
+║     └─ Production: Auto-merge if Playwright tests pass    ║
+║                                                            ║
+║  ✅ Safety & Quality                                       ║
+║     ├─ Automatic backups before changes                   ║
+║     ├─ Full undo/redo history                             ║
+║     ├─ Test gates before production merge                 ║
+║     └─ Complete Git rollback capability                   ║
+║                                                            ║
+╚════════════════════════════════════════════════════════════╝
+
+1.3 User Interface Layout
+Split-Pane Design:
+
+┌─────────────────────────────────────────────────────────────┐
+│ Visual Editor                    [Fullscreen] [Exit]        │
+├────────────────────────────┬────────────────────────────────┤
+│  LIVE PREVIEW (60%)        │  MR. BLUE AI CHAT (40%)        │
+│                            │                                │
+│  [Memories Page Preview]   │  💬 Chat with Mr. Blue         │
+│                            │                                │
+│  • Click any element       │  "What can I help you with?"   │
+│  • Drag to reposition      │                                │
+│  • See changes instantly   │  • Ask design questions        │
+│                            │  • Get AI suggestions          │
+│  [Edit Controls Panel]     │  • View recent edits           │
+│  ├─ Position               │  • See learning insights       │
+│  ├─ Size                   │  • Conversational editing      │
+│  ├─ Style                  │                                │
+│  └─ Text                   │  [Recent Edits]                │
+│                            │  • Button color changed        │
+│  [Generate Code] [Preview] │  • Heading text updated        │
+│                            │                                │
+└────────────────────────────┴────────────────────────────────┘
+
+1.4 Component Architecture
+VisualEditorOverlay (Main Container)
+│
+├── ComponentSelector
+│   └─ Detects all elements with data-testid
+│   └─ Highlights on hover (purple outline)
+│   └─ Selects on click (solid purple border)
+│   └─ Shows element inspector
+│
+├── DragDropHandler
+│   └─ Enables visual repositioning
+│   └─ Tracks position changes in real-time
+│   └─ Shows alignment guides
+│   └─ Integrates with VisualEditorTracker
+│
+├── EditControls (Tabbed Interface)
+│   │
+│   ├─ PositionTab
+│   │   └─ X position (number input)
+│   │   └─ Y position (number input)
+│   │   └─ Quick actions: Center, Align Left, Align Right
+│   │
+│   ├─ SizeTab
+│   │   └─ Width (px, %, rem, auto)
+│   │   └─ Height (px, %, rem, auto)
+│   │   └─ Aspect ratio lock (checkbox)
+│   │
+│   ├─ StyleTab
+│   │   └─ Background color (color picker)
+│   │   └─ Text color (color picker)
+│   │   └─ Border (width, style, color, radius)
+│   │   └─ Padding (top, right, bottom, left)
+│   │   └─ Margin (top, right, bottom, left)
+│   │   └─ Font size, Font weight
+│   │   └─ Shadow (box-shadow controls)
+│   │
+│   └─ TextTab
+│       └─ Text content (textarea)
+│       └─ Font family (select dropdown)
+│       └─ Text align (left, center, right, justify)
+│       └─ Line height (slider)
+│
+├── VisualEditorTracker
+│   └─ Tracks all changes in real-time
+│   └─ Maintains change history (undo/redo)
+│   └─ Serializes changes for AI generation
+│   └─ Stores draft sessions in localStorage
+│
+└── MrBlueVisualChat (Right Panel)
+    └─ AI assistant chat interface
+    └─ Context-aware suggestions
+    └─ Recent edits display
+    └─ Learning insights panel
+    └─ Conversational editing support
+
+1.5 Supported Edit Types
+✅ V1 - Currently Implemented:
+
+Text Content:
+
+Headings (h1, h2, h3, h4, h5, h6)
+Paragraphs and body text
+Button labels
+Link text
+Form labels and placeholders
+List items
+Layout & Positioning:
+
+X/Y coordinates (absolute, relative, fixed)
+Flexbox properties (justify, align)
+Grid layout
+Margin (spacing outside)
+Padding (spacing inside)
+Styling:
+
+Colors (text, background, border)
+Typography (font family, size, weight, line-height)
+Borders (width, style, color, radius)
+Shadows (box-shadow, text-shadow)
+Opacity and visibility
+Size:
+
+Width (px, %, rem, vw, auto)
+Height (px, %, rem, vh, auto)
+Min/max width and height
+Aspect ratio preservation
+🔄 V2 - Roadmap (Future):
+
+Structural Changes:
+
+Add new sections/components
+Remove elements
+Duplicate components
+Insert pre-built blocks
+Reorder elements
+Responsive Design:
+
+Mobile/tablet/desktop views
+Breakpoint-specific editing
+Hide/show on different screen sizes
+Global Updates:
+
+Theme variable changes
+Pattern-based updates (all buttons, all headings, etc.)
+Component library integration
+1.6 AI Code Generation Workflow
+Step-by-Step Process:
+
+User Makes Visual Changes
+
+Click, drag, edit properties in UI
+VisualEditorTracker records all changes
+Click "Generate Code" Button
+
+Serializes all tracked changes
+Sends to backend API
+OpenAI GPT-4o Processes
+
+const completion = await openai.chat.completions.create({
+  model: 'gpt-4o',
+  messages: [
+    {
+      role: 'system',
+      content: 'You are an expert React/Tailwind developer. Convert visual changes to production-ready code.'
+    },
+    {
+      role: 'user',
+      content: `Visual changes: ${JSON.stringify(changes)}\n\nCurrent file content: ${fileContent}`
+    }
+  ],
+  response_format: { type: 'json_object' }
+});
+
+AI Returns:
+
+{
+  "updatedCode": "// New React/Tailwind code",
+  "explanation": "Changed button color from blue to teal and increased padding...",
+  "affectedFiles": ["client/src/pages/MemoriesPage.tsx"],
+  "changes": [
+    {
+      "type": "style",
+      "element": "button-create-memory",
+      "before": "bg-blue-600 px-4 py-2",
+      "after": "bg-teal-600 px-6 py-3"
+    }
+  ]
+}
+
+Code Preview Shown
+
+Before/after diff displayed
+Explanation of changes
+User can review before applying
+User Confirms
+
+Code is written to files
+Automatic backup created (.backup extension)
+Git commit with descriptive message
+1.7 Git Automation Details
+Branch Creation:
+
+# Automatic branch naming
+visual-edit-{timestamp}
+# Example: visual-edit-2025-11-03-14-30-45
+
+File Operations:
+
+// 1. Create backup
+await fs.copyFile(
+  'client/src/pages/MemoriesPage.tsx',
+  'client/src/pages/MemoriesPage.tsx.backup'
+);
+// 2. Write new code
+await fs.writeFile(
+  'client/src/pages/MemoriesPage.tsx',
+  updatedCode
+);
+// 3. Git add
+exec('git add client/src/pages/MemoriesPage.tsx');
+// 4. Git commit
+exec('git commit -m "Visual edit: Update button styling on Memories page"');
+// 5. Git push
+exec('git push origin visual-edit-2025-11-03-14-30-45');
+
+GitHub PR Creation:
+
+// Using GitHub API
+await octokit.pulls.create({
+  owner: 'mundotango',
+  repo: 'platform',
+  title: 'Visual Edit: Memories Page Updates',
+  body: `
+## Visual Editor Changes
+**Modified by**: [Super Admin Name]
+**Page**: /memories
+**Changes**:
+- Updated button styling (button-create-memory)
+- Changed colors from blue to teal
+- Increased padding for better UX
+**Files Modified**:
+- client/src/pages/MemoriesPage.tsx
+**Preview URL**: https://preview.mundotango.com/visual-edit-2025-11-03
+**Tests**: Will run automatically on PR
+  `,
+  head: 'visual-edit-2025-11-03-14-30-45',
+  base: 'main'
+});
+
+1.8 Deployment Pipeline
+Preview Deployment (Staging):
+
+1. Push code to feature branch
+2. Trigger preview build (Replit deployment)
+3. Generate shareable URL: https://preview.mundotango.com/{branch-name}
+4. URL valid for 24 hours
+5. Share with stakeholders for review
+
+Production Deployment:
+
+1. Playwright tests run on GitHub PR
+2. If all tests pass:
+   a. Auto-merge PR to main branch
+   b. Production deployment triggered
+   c. Changes go live
+3. If any tests fail:
+   a. PR blocked from merging
+   b. Super admin notified
+   c. Manual review required
+
+1.9 Safety Features
+Automatic Backups:
+
+Every file modification creates .backup copy
+Backups stored with timestamp
+Easy rollback if needed
+Undo/Redo System:
+
+Complete change history tracked
+Undo: Ctrl/Cmd + Z
+Redo: Ctrl/Cmd + Shift + Z
+Up to 50 actions stored
+Test Gates:
+
+Playwright tests must pass before production
+Visual regression tests (screenshot comparison)
+Accessibility tests (WCAG compliance)
+Performance tests (Lighthouse scores)
+Git Rollback:
+
+All changes in Git history
+Can revert any commit
+Can checkout previous versions
+Full audit trail
+2. MR. BLUE INTELLIGENCE SYSTEM
+2.1 Overview
+Mr. Blue (Agents #73-80) is the universal AI companion that provides context-aware support throughout the platform. Think of it as "Replit Agent" integrated into Mundo Tango.
+
+2.2 Agent Roles (Agents #73-80)
+╔════════════════════════════════════════════════════════════╗
+║  MR. BLUE AGENT TEAM                                       ║
+╠════════════════════════════════════════════════════════════╣
+║                                                            ║
+║  Agent #73: Mr. Blue Avatar                                ║
+║  ├─ 3D humanoid avatar (React Three Fiber)                 ║
+║  ├─ Voice + text chat interface (Web Speech API)           ║
+║  ├─ Lip-sync with TTS output                               ║
+║  └─ Visual Editor activation trigger                       ║
+║                                                            ║
+║  Agent #74: Interactive Tour Guide                         ║
+║  ├─ Page-specific tours and walkthroughs                   ║
+║  ├─ Feature discovery assistance                           ║
+║  ├─ Contextual tooltips                                    ║
+║  └─ First-visit onboarding                                 ║
+║                                                            ║
+║  Agent #75: Subscription Manager                           ║
+║  ├─ Billing and subscription guidance                      ║
+║  ├─ Payment issue resolution                               ║
+║  ├─ Tier comparison and recommendations                    ║
+║  └─ Usage tracking and limits                              ║
+║                                                            ║
+║  Agent #76: Replit Architecture Expert                     ║
+║  ├─ Code modification patterns                             ║
+║  ├─ Safe sandbox for preview deployments                   ║
+║  ├─ Best practices enforcement                             ║
+║  └─ Performance optimization suggestions                   ║
+║                                                            ║
+║  Agent #77: Context Provider & Support Specialist          ║
+║  ├─ Current page context awareness                         ║
+║  ├─ Recent action history tracking (breadcrumbs)           ║
+║  ├─ Proactive assistance on errors                         ║
+║  └─ User intent classification                             ║
+║                                                            ║
+║  Agent #78: Visual Page Editor                             ║
+║  ├─ Figma-like editing capabilities                        ║
+║  ├─ AI code generation orchestration                       ║
+║  ├─ Git workflow automation                                ║
+║  └─ Component change tracking                              ║
+║                                                            ║
+║  Agent #79: Quality Validator & Builder                    ║
+║  ├─ Pre-work quality gates (Principle 5)                   ║
+║  ├─ Build orchestration                                    ║
+║  ├─ Test execution and validation                          ║
+║  └─ Post-deployment monitoring                             ║
+║                                                            ║
+║  Agent #80: Learning Coordinator                           ║
+║  ├─ Pattern recognition across all 114 agents              ║
+║  ├─ Knowledge distribution and sharing                     ║
+║  ├─ ML model training and updates                          ║
+║  └─ Cross-agent learning synthesis                         ║
+║                                                            ║
+╚════════════════════════════════════════════════════════════╝
+
+2.3 Context Awareness System
+What Mr. Blue Knows at All Times:
+
+interface MrBlueContext {
+  // 1. Current Page
+  currentPage: string;           // "/memories", "/groups", etc.
+  pageTitle: string;             // "Memories", "Groups"
+  pagePurpose: string;           // "Social feed for sharing moments"
+  pageElements: Element[];        // All elements with data-testid
+  selectedElement?: Element;      // Currently selected in Visual Editor
+  
+  // 2. Recent Activity (Breadcrumbs)
+  last30Clicks: Breadcrumb[];     // 30 most recent clicks
+  last7Days: Breadcrumb[];        // All activity past week
+  recentErrors: FailedAction[];   // Last 3 errors/failures
+  
+  // 3. User Context
+  userId: number;
+  userName: string;
+  userRole: string;               // "super_admin", "user", "pro"
+  userIntent: string;             // AI-predicted: "exploring", "creating", etc.
+  userJourney: string;            // "J01", "J02", etc. (1-15)
+  
+  // 4. Session Context
+  sessionId: string;
+  sessionStartTime: Date;
+  pagesVisited: string[];         // Pages in current session
+  actionsPerformed: number;       // Total actions this session
+  
+  // 5. Visual Editor Context (if active)
+  visualEditorActive: boolean;
+  selectedComponent?: {
+    testId: string;
+    tagName: string;
+    textContent: string;
+    className: string;
+    filePath: string;
+    lineNumber: number;
+  };
+  recentEdits: VisualEdit[];      // Recent Visual Editor changes
+  
+  // 6. Patterns & Predictions
+  detectedPatterns: UserPattern[];
+  predictedNextActions: Prediction[];
+  confidence: number;             // 0-1 (prediction confidence)
+  
+  // 7. Active Agents
+  activeAgents: string[];         // Agents currently active on page
+  agentRecommendations: string[]; // Agent suggestions
+}
+
+Example Context on Memories Page:
+
+{
+  "currentPage": "/memories",
+  "pageTitle": "Memories",
+  "pagePurpose": "Social feed for sharing tango memories and moments",
+  "activeAgents": ["Agent #2 (Social Feed)", "Agent #73 (Mr. Blue)", "Algorithm A1"],
+  "last30Clicks": [
+    {
+      "action": "click",
+      "target": "button-create-memory",
+      "timestamp": "2025-11-03T14:25:00Z",
+      "success": true
+    },
+    {
+      "action": "click",
+      "target": "button-upload-photo",
+      "timestamp": "2025-11-03T14:25:15Z",
+      "success": true
+    }
+  ],
+  "userIntent": "creating",
+  "predictedNextActions": [
+    { "action": "add-caption", "probability": 0.85 },
+    { "action": "tag-friends", "probability": 0.72 },
+    { "action": "share-to-feed", "probability": 0.68 }
+  ]
+}
+
+2.4 Breadcrumb Tracking System
+Industry Standard: 30 Clicks or 7 Days (whichever comes first)
+
+Why These Limits?:
+
+30 clicks: Enough for ML pattern detection
+7 days: Captures weekly behavior patterns
+Storage: ~15KB per user (30 clicks × 500 bytes)
+ML Training: Minimum 30 actions needed for accurate predictions
+Data Structure:
+
+interface Breadcrumb {
+  // Unique Identifiers
+  id: string;
+  userId: number;
+  sessionId: string;
+  timestamp: Date;
+  
+  // Page Context
+  page: string;                   // Current page URL
+  pageTitle: string;             // Page title
+  referrer: string;              // Previous page
+  
+  // Action Context
+  action: 'click' | 'view' | 'input' | 'submit' | 'error' | 'navigation';
+  target: string;                // Element clicked/interacted
+  targetId?: string;             // data-testid or element ID
+  value?: any;                   // Input value, form data
+  
+  // User Context
+  userJourney: string;           // J1-J15 journey
+  userRole: string;              // Role at time of action
+  userIntent?: string;           // AI-predicted intent
+  
+  // Outcome
+  success: boolean;              // Did action succeed?
+  error?: string;                // Error message if failed
+  duration?: number;             // Time spent on page/action (ms)
+  
+  // ML Predictions
+  prediction?: string;           // AI prediction for next action
+  confidence?: number;           // Prediction confidence (0-1)
+  patternId?: string;            // Detected pattern ID
+}
+
+What Gets Tracked:
+
+Page Navigation: Every page view
+
+{
+  action: 'navigation',
+  page: '/memories',
+  pageTitle: 'Memories',
+  referrer: '/feed',
+  timestamp: Date.now()
+}
+
+Click Events: All interactive elements with data-testid
+
+{
+  action: 'click',
+  target: 'button-create-memory',
+  targetId: 'button-create-memory',
+  page: '/memories',
+  success: true
+}
+
+Form Submissions: All form submits
+
+{
+  action: 'submit',
+  target: 'form-create-memory',
+  value: { caption: '...', photos: [...] },
+  success: true
+}
+
+Input Changes: Debounced input tracking (1s delay)
+
+{
+  action: 'input',
+  target: 'input-search',
+  value: 'tango events',
+  page: '/events'
+}
+
+API Errors: Automatic 400/500 error tracking
+
+{
+  action: 'error',
+  target: '/api/memories',
+  error: '403 Forbidden: Insufficient permissions',
+  success: false
+}
+
+404 Errors: Page not found tracking
+
+{
+  action: 'error',
+  target: '/invalid-page',
+  error: '404 Not Found',
+  success: false
+}
+
+2.5 Failed Action Monitoring
+Types of Failures Tracked:
+
+404 Errors: Page not found
+API Errors: 400, 401, 403, 500 series
+Form Validation Errors: Client-side + server-side
+Permission Errors: Unauthorized actions
+Network Errors: Timeout, connection failed
+UI Errors: React error boundaries
+User Frustration: Rapid clicks, back button spam, rage quit
+Failed Action Data Structure:
+
+interface FailedAction extends Breadcrumb {
+  failureType: '404' | 'api_error' | 'validation' | 'permission' | 'network' | 'ui_error' | 'frustration';
+  statusCode?: number;
+  errorDetails: {
+    message: string;
+    stack?: string;
+    userMessage?: string;  // User-friendly error message
+  };
+  recovery?: {
+    attempted: boolean;
+    successful: boolean;
+    retries: number;
+  };
+}
+
+Proactive Assistance Examples:
+
+Example 1: 403 Permission Error
+
+// User tries to create event but gets 403
+onApiError(error) {
+  if (error.status === 403) {
+    showMrBlue({
+      message: "You need special permissions to create events. Would you like me to:",
+      actions: [
+        "Request permission from admin",
+        "View events instead",
+        "Contact support"
+      ],
+      context: {
+        failedAction: 'create-event',
+        userIntent: 'organize-event',
+        suggestedPath: '/events/request-permission'
+      }
+    });
+  }
+}
+
+Example 2: Form Validation Error
+
+// User submits form with missing required fields
+onFormError(errors) {
+  showMrBlue({
+    message: "I noticed some required fields are missing:",
+    actions: errors.map(e => `Fix: ${e.field}`),
+    context: {
+      failedAction: 'form-submit',
+      formId: 'create-event-form',
+      missingFields: errors.map(e => e.field)
+    }
+  });
+}
+
+Example 3: Network Timeout
+
+// API call times out
+onNetworkError(error) {
+  showMrBlue({
+    message: "Your connection seems slow. I can:",
+    actions: [
+      "Retry the request",
+      "Save your work locally",
+      "Continue offline"
+    ],
+    context: {
+      failedAction: 'api-request',
+      endpoint: error.url,
+      retryable: true
+    }
+  });
+}
+
+2.6 ML Pattern Recognition
+ML Models Implemented:
+
+1. Next-Action Prediction (LSTM)
+
+// Input: Last 10 breadcrumbs
+// Output: Top 3 predicted actions with probabilities
+// Technology: TensorFlow.js
+// Accuracy Target: 70%+ for top-3 predictions
+const model = tf.sequential({
+  layers: [
+    tf.layers.lstm({ units: 128, inputShape: [10, featureCount] }),
+    tf.layers.dropout({ rate: 0.2 }),
+    tf.layers.dense({ units: 64, activation: 'relu' }),
+    tf.layers.dense({ units: actionCount, activation: 'softmax' })
+  ]
+});
+// Example prediction
+{
+  predictions: [
+    { action: 'add-caption', probability: 0.85 },
+    { action: 'tag-friends', probability: 0.72 },
+    { action: 'share-to-feed', probability: 0.68 }
+  ]
+}
+
+2. User Intent Classification
+
+// Intents detected:
+const intents = [
+  'exploring',      // Browsing, discovering
+  'searching',      // Looking for something specific
+  'creating',       // Making content (post, event, etc.)
+  'socializing',    // Engaging with friends
+  'managing',       // Settings, profile updates
+  'learning',       // Reading docs, tutorials
+  'troubleshooting' // Fixing something, getting help
+];
+// Used for: Context-aware Mr Blue suggestions
+
+3. Pattern Detection
+
+interface UserPattern {
+  patternId: string;
+  userId: number;
+  journey: string;            // J1-J15
+  
+  // Common action sequences
+  commonSequences: {
+    actions: string[];        // ['view-events', 'create-event', 'invite-friends']
+    frequency: number;        // How often this sequence occurs
+    successRate: number;      // % of times sequence completes successfully
+  }[];
+  
+  // Time-based patterns
+  timePatterns: {
+    dayOfWeek: number;        // 0-6 (Sun-Sat)
+    hourOfDay: number;        // 0-23
+    avgSessionLength: number; // minutes
+    peakActivityTime: string; // "9am-11am weekdays"
+  };
+  
+  // Feature preferences
+  preferredFeatures: string[];  // ['events', 'groups', 'map']
+  avoidedFeatures: string[];    // ['video-calls', 'streaming']
+  expertiseLevel: 'beginner' | 'intermediate' | 'expert';
+  
+  // Predicted next actions
+  nextActions: {
+    action: string;
+    probability: number;      // 0-1
+    context: string[];        // When this action is likely
+  }[];
+}
+
+2.7 Cross-Page Context Preservation
+How Context Persists Across Navigation:
+
+// 1. Store context on page unload
+window.addEventListener('beforeunload', () => {
+  localStorage.setItem('mrBlue:context', JSON.stringify({
+    lastPage: window.location.pathname,
+    lastAction: lastBreadcrumb,
+    userIntent: currentIntent,
+    timestamp: Date.now()
+  }));
+});
+// 2. Restore context on new page load
+useEffect(() => {
+  const savedContext = localStorage.getItem('mrBlue:context');
+  if (savedContext) {
+    const context = JSON.parse(savedContext);
+    
+    // Mr Blue knows user came from another page
+    mrBlue.setContext({
+      previousPage: context.lastPage,
+      previousAction: context.lastAction,
+      continuedIntent: context.userIntent
+    });
+    
+    // Can provide contextual suggestions
+    if (context.userIntent === 'creating') {
+      mrBlue.suggest("Want to continue creating your event?");
+    }
+  }
+}, []);
+
+Context Storage:
+
+interface UserContext {
+  userId: number;
+  sessionId: string;
+  
+  // Current State
+  currentPage: string;
+  currentIntent: string;
+  currentJourney: string;        // J1-J15
+  
+  // Recent History (from breadcrumbs)
+  recentPages: string[];         // Last 5 pages
+  recentActions: Breadcrumb[];   // Last 10 actions
+  recentErrors: FailedAction[];  // Last 3 errors
+  
+  // User Preferences (persistent)
+  preferences: {
+    language: string;
+    theme: 'light' | 'dark';
+    viewMode: string;            // 'list' | 'grid' | 'map'
+    filters: Record<string, any>;
+  };
+  
+  // Progress Tracking
+  onboarding: {
+    completed: boolean;
+    currentStep: number;
+    skippedSteps: number[];
+  };
+  
+  // Feature Discovery
+  discoveredFeatures: string[];
+  undiscoveredFeatures: string[];
+  
+  // Mr. Blue Interaction Stats
+  mrBlueInteractions: {
+    totalInteractions: number;
+    helpfulCount: number;         // User clicked "helpful"
+    dismissedCount: number;       // User dismissed suggestions
+    lastInteraction: Date;
+  };
+}
+
+2.8 Learning Coordination (Agent #80)
+Agent #80's Role:
+
+Collect learnings from all 114 agents
+Identify patterns across the entire platform
+Distribute knowledge to relevant agents
+Train and update ML models
+Coordinate agent collaboration
+Learning Collection:
+
+class LearningCoordinator {
+  async collectAgentLearnings() {
+    // Gather from all agents
+    const learnings = await Promise.all([
+      agent73.getLearnings(),  // Mr. Blue Avatar
+      agent74.getLearnings(),  // Tour Guide
+      agent75.getLearnings(),  // Subscription Manager
+      // ... all 114 agents
+    ]);
+    
+    // Synthesize insights
+    const insights = this.synthesizeLearnings(learnings);
+    
+    // Distribute to relevant agents
+    await this.distributeKnowledge(insights);
+    
+    // Update ML models
+    await this.trainModels(learnings);
+  }
+  
+  synthesizeLearnings(learnings) {
+    // Find common patterns
+    const patterns = this.detectPatterns(learnings);
+    
+    // Identify best practices
+    const bestPractices = this.identifyBestPractices(learnings);
+    
+    // Spot potential issues
+    const issues = this.identifyIssues(learnings);
+    
+    return { patterns, bestPractices, issues };
+  }
+  
+  async distributeKnowledge(insights) {
+    // Share relevant insights with each agent
+    for (const agent of allAgents) {
+      const relevantInsights = this.filterRelevant(insights, agent);
+      await agent.receiveKnowledge(relevantInsights);
+    }
+  }
+}
+
+2.9 COMPLETE PLATFORM INTELLIGENCE (Beyond Visual Editor)
+Mr. Blue's intelligence extends FAR beyond Visual Editor integration. This section documents ALL capabilities across the entire platform.
+
+2.9.1 ACCESS TO ALL 88+ PLATFORM PAGES
+Mr. Blue has universal access to every page on the platform, not just pages in Visual Editor mode. This enables comprehensive support anywhere.
+
+Complete Page Registry:
+
+// From client/src/config/routes.ts (1024 lines)
+export const ALL_PAGES = {
+  // Authentication (4 pages)
+  auth: ['/login', '/register', '/forgot-password', '/reset-password'],
+  
+  // User Management (10 pages)
+  user: ['/profile/:username?', '/settings', '/account-delete', '/onboarding', 
+         '/resume', '/public-resume/:username', '/public-profile/:username', 
+         '/profile-switcher', '/favorites', '/role-invitations'],
+  
+  // Events (4 pages)
+  events: ['/events', '/event/:id', '/teacher', '/organizer'],
+  
+  // Housing (7 pages)
+  housing: ['/housing', '/host-dashboard', '/host-onboarding', '/guest-onboarding',
+            '/host-bookings', '/my-bookings', '/listing/:id', '/host-calendar'],
+  
+  // Social (9 pages)
+  social: ['/recommendations', '/friends', '/friendship/:id', '/messages', 
+           '/groups', '/group/:id', '/community', '/community-map', 
+           '/create-community'],
+  
+  // Community Features (5 pages)
+  community: ['/tango-communities', '/tango-stories', '/live-streaming', 
+              '/gamification', '/search'],
+  
+  // Billing (7 pages)
+  billing: ['/subscribe', '/pricing', '/billing', '/checkout', 
+            '/payment-methods', '/invoices', '/subscription'],
+  
+  // Admin Pages (19 pages)
+  admin: ['/admin/dashboard', '/admin/users', '/admin/moderation', 
+          '/admin/analytics', '/admin/center', '/admin/promo-codes',
+          '/admin/subscription-analytics', '/admin/agent-metrics',
+          '/admin/projects', '/admin/epics', '/admin/stories',
+          '/admin/epic/:id', '/admin/story/:id', '/admin/sprints',
+          '/admin/esa-mind', '/admin/mr-blue', '/admin/tenant-management',
+          '/admin/agent-learnings', '/admin/deployment-config'],
+  
+  // Advanced Admin (10 pages)
+  advancedAdmin: ['/admin/agent-collaboration', '/admin/multi-ai',
+                  '/admin/multi-ai-analytics', '/admin/ui-sub-agents',
+                  '/admin/health-monitor', '/admin/page-state-monitor',
+                  '/admin/auto-fix', '/admin/performance', '/admin/agent-coordination',
+                  '/finops'],
+  
+  // Dashboards & Monitoring (10 pages)
+  dashboards: ['/analytics', '/agent-framework', '/project-tracker',
+               '/live-stats', '/hierarchy', '/life-ceo', '/life-ceo-performance',
+               '/monitoring', '/monitoring-test', '/media-upload-test'],
+  
+  // Support & Compliance (5 pages)
+  support: ['/feature-navigation', '/database-security', '/help', 
+            '/code-of-conduct', '/privacy-analytics'],
+  
+  // App Features (6 pages)
+  features: ['/travel-planner', '/mobile-app', '/notifications', 
+             '/error-boundary', '/agent-learning', '/agent-intelligence',
+             '/agent/:id', '/marketing'],
+  
+  // Core App (2 pages)
+  core: ['/', '/memories'],
+  
+  // Debug Pages (4 pages)
+  debug: ['/_debug/memories', '/_debug/memories-test', '/_debug/posting',
+          '/_debug/modern-memories']
+};
+// Total: 88+ pages
+const totalPages = Object.values(ALL_PAGES).flat().length; // 88+
+
+Mr. Blue's Page-Specific Context:
+
+interface PageContext {
+  // Page Identity
+  route: string;              // '/memories', '/events', etc.
+  category: string;           // 'social', 'admin', 'housing', etc.
+  pageTitle: string;          // "Memories", "Events", etc.
+  pagePurpose: string;        // Description of what page does
+  
+  // Page Capabilities
+  interactiveElements: Element[];  // All data-testid elements
+  availableActions: Action[];      // What users can do here
+  requiredPermissions: string[];   // Role requirements
+  
+  // Page Agents
+  primaryAgent: string;       // e.g., "Agent #73 (Mr. Blue)"
+  supportingAgents: string[]; // e.g., ["Agent #2 (Social Feed)", "Algorithm A1"]
+  
+  // User Journey Context
+  journeyPhase: string;       // Which of 15 journeys user is on
+  entryPoint: string;         // How user arrived at this page
+  exitOptions: string[];      // Where user can go next
+  
+  // Integration Points
+  connectedFeatures: string[]; // Other features this page connects to
+  dataFlows: DataFlow[];       // API calls, database operations
+}
+
+Example: Mr. Blue on Memories Page
+
+{
+  "route": "/memories",
+  "category": "social",
+  "pageTitle": "Memories",
+  "pagePurpose": "Social feed for sharing tango memories and moments",
+  "interactiveElements": [
+    "button-create-memory",
+    "button-upload-photo",
+    "button-add-caption",
+    "button-tag-friends",
+    "button-share-to-feed"
+  ],
+  "availableActions": [
+    "create_memory",
+    "upload_media",
+    "tag_users",
+    "like_memory",
+    "comment_on_memory"
+  ],
+  "requiredPermissions": ["authenticated"],
+  "primaryAgent": "Agent #73 (Mr. Blue Avatar)",
+  "supportingAgents": [
+    "Agent #24 (Social Features)",
+    "Agent #13 (File Management)",
+    "Algorithm A1 (Feed Algorithm)"
+  ],
+  "journeyPhase": "J02 (Community Engagement)",
+  "entryPoint": "navigation_menu",
+  "exitOptions": ["/events", "/groups", "/friends", "/profile"],
+  "connectedFeatures": ["social_feed", "media_upload", "friend_tagging"]
+}
+
+Example: Mr. Blue on Admin ESA Mind Page
+
+{
+  "route": "/admin/esa-mind",
+  "category": "admin",
+  "pageTitle": "ESA Mind - Intelligence Dashboard",
+  "pagePurpose": "Context-aware intelligence dashboard for ESA Framework (105 Agents, 61 Layers)",
+  "interactiveElements": [
+    "view-agent-status",
+    "view-layer-health",
+    "view-system-intelligence",
+    "view-agent-collaboration",
+    "view-learning-insights"
+  ],
+  "availableActions": [
+    "view_agent_status",
+    "monitor_layer_health",
+    "analyze_agent_collaboration",
+    "review_learning_data"
+  ],
+  "requiredPermissions": ["super_admin"],
+  "primaryAgent": "Agent #0 (ESA Orchestrator)",
+  "supportingAgents": [
+    "Agent #73-80 (Mr. Blue Team)",
+    "Agent #68 (Pattern Learning)",
+    "Agent #80 (Learning Coordinator)"
+  ],
+  "journeyPhase": "J15 (Platform Administration)",
+  "entryPoint": "admin_menu",
+  "exitOptions": ["/admin/dashboard", "/admin/agent-metrics", "/admin/multi-ai"],
+  "connectedFeatures": ["agent_intelligence_network", "esa_framework", "learning_coordination"]
+}
+
+2.9.2 ORCHESTRATION OF ALL 115 AGENTS
+Mr. Blue doesn't just know about agents - Mr. Blue ORCHESTRATES all 115 agents across the platform.
+
+Complete Agent Ecosystem:
+
+interface AgentEcosystem {
+  // ESA Framework Agents (105 total)
+  esaAgents: {
+    ceo: 'Agent #0 (ESA Orchestrator)',
+    
+    // Division Chiefs (6)
+    chiefs: [
+      'Chief #1 (Foundation Division - Layers 1-10)',
+      'Chief #2 (Core Division - Layers 11-20)',
+      'Chief #3 (Business Division - Layers 21-30)',
+      'Chief #4 (Intelligence Division - Layers 31-46)',
+      'Chief #5 (Platform Division - Layers 47-56)',
+      'Chief #6 (Extended Division - Layers 57-61)'
+    ],
+    
+    // Core Domain Agents (9)
+    domains: [
+      'Domain #1 (Infrastructure Orchestrator)',
+      'Domain #2 (Frontend Coordinator)',
+      'Domain #3 (Background Processor)',
+      'Domain #4 (Real-time Communications)',
+      'Domain #5 (Business Logic Manager)',
+      'Domain #6 (Search & Analytics)',
+      'Domain #7 (Life CEO Core)',
+      'Domain #8 (Platform Enhancement)',
+      'Domain #9 (Master Control)'
+    ],
+    
+    // Layer Agents (61)
+    layers: [
+      'Agent #1 (Database Architecture)',
+      'Agent #2 (API Structure)',
+      // ... all 61 layers
+      'Agent #61 (Supabase Expertise)'
+    ],
+    
+    // Expert Agents (7)
+    experts: [
+      'Agent #10-16 (Specialized Experts)'
+    ]
+  },
+  
+  // Life CEO Agents (16)
+  lifeCeoAgents: [
+    'life-ceo (Central Coordinator)',
+    'business', 'finance', 'health',
+    'relationships', 'learning', 'creative',
+    'network', 'global-mobility', 'security',
+    'emergency', 'memory', 'voice',
+    'data', 'workflow', 'legal'
+  ],
+  
+  // Mr. Blue Team (8)
+  mrBlueAgents: [
+    'Agent #73 (Mr. Blue Avatar)',
+    'Agent #74 (Interactive Tour Guide)',
+    'Agent #75 (Subscription Manager)',
+    'Agent #76 (Replit Architecture Expert)',
+    'Agent #77 (Context Provider)',
+    'Agent #78 (Visual Page Editor)',
+    'Agent #79 (Quality Validator)',
+    'Agent #80 (Learning Coordinator)'
+  ],
+  
+  // Component Agents (30+)
+  componentAgents: [
+    'Page Agents (P1-P88+ for each page)',
+    'Algorithm Agents (A1-Ax)',
+    'Service Agents (Backend services)',
+    'Feature Agents (Complex features)'
+  ],
+  
+  // Total: 115 agents (105 ESA + 8 Mr. Blue + 16 Life CEO + component agents)
+  totalAgents: 115
+}
+
+Agent Orchestration Workflow:
+
+class MrBlueOrchestrator {
+  // When user asks: "Create a new event management feature"
+  async orchestrateFeatureBuild(request: string) {
+    // Step 1: Parse request with AI
+    const analysis = await this.analyzeRequest(request);
+    
+    // Step 2: Identify required agents
+    const requiredAgents = this.identifyRequiredAgents(analysis);
+    // Returns: [
+    //   'Agent #1 (Database)' → Create events table,
+    //   'Agent #2 (API)' → Build event endpoints,
+    //   'Agent #8 (Frontend)' → Create event UI components,
+    //   'Agent #23 (Event Management)' → Business logic,
+    //   'Agent #78 (Visual Editor)' → Visual design tool
+    // ]
+    
+    // Step 3: Check with Agent #64 (Documentation Specialist)
+    const existingComponents = await agent64.checkForDuplicates(analysis);
+    if (existingComponents.length > 0) {
+      return {
+        status: 'reuse_existing',
+        message: 'Found existing event system. Extend instead of rebuild?',
+        components: existingComponents
+      };
+    }
+    
+    // Step 4: Create parallel build plan
+    const buildPlan = this.createParallelPlan(requiredAgents);
+    // Returns:
+    // {
+    //   track1: [Agent #1 + Agent #2] → Database + API (parallel),
+    //   track2: [Agent #8 + Agent #23] → Frontend + Logic (parallel),
+    //   track3: [Agent #78] → Visual Editor integration
+    // }
+    
+    // Step 5: Execute in parallel (ESA Principle 1)
+    const results = await Promise.all([
+      this.executeBuildTrack(buildPlan.track1),
+      this.executeBuildTrack(buildPlan.track2),
+      this.executeBuildTrack(buildPlan.track3)
+    ]);
+    
+    // Step 6: Quality Validation (Agent #79)
+    const validationResults = await agent79.validate(results);
+    
+    // Step 7: Learning Coordination (Agent #80)
+    await agent80.collectLearnings(results);
+    
+    return {
+      status: 'success',
+      agentsUsed: requiredAgents,
+      buildResults: results,
+      validationScore: validationResults.score
+    };
+  }
+  
+  // Agent selection algorithm
+  identifyRequiredAgents(analysis) {
+    const agents = [];
+    
+    // Database changes needed?
+    if (analysis.requiresDatabase) {
+      agents.push('Agent #1 (Database Architecture)');
+    }
+    
+    // API endpoints needed?
+    if (analysis.requiresAPI) {
+      agents.push('Agent #2 (API Structure)');
+    }
+    
+    // Frontend UI needed?
+    if (analysis.requiresFrontend) {
+      agents.push('Agent #8 (Client Framework)');
+      agents.push('Agent #9 (UI Framework)');
+    }
+    
+    // Business logic?
+    if (analysis.requiresBusinessLogic) {
+      const businessAgent = this.selectBusinessAgent(analysis.domain);
+      agents.push(businessAgent);
+    }
+    
+    // Real-time features?
+    if (analysis.requiresRealtime) {
+      agents.push('Agent #11 (Real-time Features)');
+    }
+    
+    // AI/ML features?
+    if (analysis.requiresAI) {
+      agents.push('Agent #31 (Core AI Infrastructure)');
+      agents.push('Agent #35 (AI Agent Management)');
+    }
+    
+    // Always include Mr. Blue coordination
+    agents.push('Agent #73 (Mr. Blue Avatar)');
+    agents.push('Agent #80 (Learning Coordinator)');
+    
+    return agents;
+  }
+}
+
+Real-World Orchestration Example:
+
+User Request: "Build a housing marketplace feature"
+
+Mr. Blue's Orchestration:
+
+{
+  "request": "Build a housing marketplace feature",
+  "analysis": {
+    "requiresDatabase": true,
+    "requiresAPI": true,
+    "requiresFrontend": true,
+    "requiresBusinessLogic": true,
+    "requiresPayments": true,
+    "requiresSearch": true,
+    "requiresMap": true
+  },
+  "selectedAgents": [
+    "Agent #1 (Database) → Create listings, bookings, reviews tables",
+    "Agent #2 (API) → Build CRUD endpoints for housing",
+    "Agent #8 (Frontend) → Housing marketplace UI",
+    "Agent #9 (UI) → Listing cards, filters, search",
+    "Agent #28 (Marketplace) → Business logic for housing",
+    "Agent #29 (Booking System) → Reservation management",
+    "Agent #17 (Payment Processing) → Stripe integration",
+    "Agent #15 (Search & Discovery) → Search/filter listings",
+    "Agent #41 (Vision Processing) → Photo uploads",
+    "Agent #78 (Visual Editor) → Admin can edit housing pages",
+    "Agent #79 (Quality Validator) → Pre-work quality gates",
+    "Agent #80 (Learning Coordinator) → Collect insights"
+  ],
+  "parallelBuildPlan": {
+    "track1_database_api": [
+      "Agent #1 creates schema",
+      "Agent #2 builds API routes",
+      "(Sequential within track, parallel with other tracks)"
+    ],
+    "track2_frontend": [
+      "Agent #8 creates page structure",
+      "Agent #9 builds UI components",
+      "(Parallel with track1)"
+    ],
+    "track3_features": [
+      "Agent #28 implements marketplace logic",
+      "Agent #29 builds booking system",
+      "Agent #17 integrates payments",
+      "(Parallel with track1 and track2)"
+    ],
+    "track4_enhancement": [
+      "Agent #15 adds search",
+      "Agent #41 handles images",
+      "Agent #78 enables visual editing",
+      "(Parallel with all other tracks)"
+    ]
+  },
+  "estimatedTime": "2-3 days (with parallel execution)",
+  "estimatedTimeSequential": "8-10 days (without parallelism)"
+}
+
+2.9.3 MCP (MODEL CONTEXT PROTOCOL) INTEGRATION
+Mr. Blue uses MCP (Model Context Protocol) via Playwright integration for advanced browser automation and testing coordination.
+
+What is MCP?:
+
+Model Context Protocol = standardized way for AI models to interact with tools, APIs, and resources
+Found in: node_modules/playwright/lib/mcp/ (Playwright's MCP SDK)
+Purpose: Enable Mr. Blue to coordinate Playwright tests, browser automation, and quality validation
+MCP Architecture:
+
+// From node_modules/playwright/lib/mcp/
+interface MCPIntegration {
+  // Core MCP Components
+  server: {
+    path: 'node_modules/playwright/lib/mcp/sdk/server.js',
+    purpose: 'MCP server for handling tool requests'
+  },
+  
+  bundle: {
+    path: 'node_modules/playwright/lib/mcp/sdk/bundle.js',
+    purpose: 'Bundled MCP SDK for client-side integration'
+  },
+  
+  tools: {
+    path: 'node_modules/playwright/lib/mcp/sdk/tool.js',
+    purpose: 'Tool interface for MCP commands'
+  },
+  
+  backends: {
+    browser: 'node_modules/playwright/lib/mcp/browser/browserServerBackend.js',
+    proxy: 'node_modules/playwright/lib/mcp/sdk/proxyBackend.js',
+    test: 'node_modules/playwright/lib/mcp/test/browserBackend.js'
+  }
+}
+
+How Mr. Blue Uses MCP:
+
+1. Visual Editor Testing (Agent #78 + MCP):
+
+// When user makes visual changes, Agent #78 uses MCP to test them
+class VisualEditorMCPIntegration {
+  async testVisualChanges(changes: VisualEdit[]) {
+    // Step 1: Use MCP to launch Playwright browser
+    const mcpBrowser = await mcp.launchBrowser({
+      context: 'visual-editor-test',
+      headless: false  // Show browser for visual verification
+    });
+    
+    // Step 2: Navigate to page with changes
+    const page = await mcpBrowser.newPage();
+    await page.goto(`http://localhost:5000${changes[0].page}`);
+    
+    // Step 3: Verify visual changes applied correctly
+    const element = await page.locator(`[data-testid="${changes[0].componentId}"]`);
+    const actualStyles = await element.evaluate(el => getComputedStyle(el));
+    
+    // Step 4: Take screenshot for visual regression
+    const screenshot = await page.screenshot({ fullPage: true });
+    
+    // Step 5: Run accessibility tests via MCP
+    const accessibilityResults = await mcp.runAccessibilityAudit(page);
+    
+    // Step 6: Return test results
+    return {
+      visualMatch: this.compareStyles(changes[0].after, actualStyles),
+      screenshot,
+      accessibility: accessibilityResults,
+      passed: true
+    };
+  }
+}
+
+2. Quality Validation (Agent #79 + MCP):
+
+// Agent #79 uses MCP for comprehensive quality gates
+class QualityValidatorMCP {
+  async runQualityGates(deployment: Deployment) {
+    // Use MCP to orchestrate multiple test types
+    const results = await Promise.all([
+      // Functional tests
+      mcp.runTests({
+        type: 'functional',
+        suite: 'playwright/tests/**/*.spec.ts',
+        browser: ['chromium', 'firefox', 'webkit']
+      }),
+      
+      // Visual regression tests
+      mcp.runTests({
+        type: 'visual',
+        suite: 'playwright/tests/visual/**/*.spec.ts',
+        compareScreenshots: true
+      }),
+      
+      // Accessibility tests
+      mcp.runTests({
+        type: 'accessibility',
+        tool: 'axe-core',
+        standard: 'WCAG 2.1 AA'
+      }),
+      
+      // Performance tests
+      mcp.runTests({
+        type: 'performance',
+        tool: 'lighthouse',
+        thresholds: {
+          performance: 90,
+          accessibility: 95,
+          bestPractices: 90,
+          seo: 90
+        }
+      })
+    ]);
+    
+    // Aggregate results
+    return {
+      functional: results[0].passed,
+      visual: results[1].passed,
+      accessibility: results[2].passed,
+      performance: results[3].passed,
+      allPassed: results.every(r => r.passed)
+    };
+  }
+}
+
+3. Browser Context Management (Agent #77 + MCP):
+
+// Agent #77 uses MCP to track user context across browser sessions
+class ContextProviderMCP {
+  async trackUserBehavior(userId: number) {
+    // Use MCP to monitor real user sessions
+    const mcpContext = await mcp.createContext({
+      userId,
+      tracking: {
+        clicks: true,
+        navigation: true,
+        errors: true,
+        performance: true
+      }
+    });
+    
+    // MCP captures all user interactions
+    mcpContext.on('click', (event) => {
+      this.trackBreadcrumb({
+        action: 'click',
+        target: event.target,
+        timestamp: Date.now()
+      });
+    });
+    
+    mcpContext.on('error', (error) => {
+      this.trackFailedAction({
+        failureType: 'ui_error',
+        errorDetails: error,
+        timestamp: Date.now()
+      });
+    });
+    
+    mcpContext.on('navigation', (navigation) => {
+      this.updatePageContext({
+        page: navigation.url,
+        timestamp: Date.now()
+      });
+    });
+  }
+}
+
+MCP Benefits for Mr. Blue:
+
+Automated Testing: MCP handles browser automation for Agent #78 (Visual Editor) and Agent #79 (Quality Validator)
+Cross-Browser Validation: Test changes in Chromium, Firefox, and WebKit simultaneously
+Visual Regression: Compare screenshots before/after visual edits
+Accessibility Audits: Run axe-core and WCAG compliance checks
+Performance Monitoring: Lighthouse audits via MCP
+User Behavior Tracking: Monitor real user sessions for breadcrumb tracking
+2.9.4 AGENT-TO-AGENT COMMUNICATION NETWORK
+All 115 agents can communicate with each other through the Agent Intelligence Network.
+
+Communication Architecture:
+
+// Database: agentCommunications table
+export const agentCommunications = pgTable("agent_communications", {
+  id: serial("id").primaryKey(),
+  fromAgent: varchar("from_agent", { length: 100 }).notNull(),
+  toAgent: varchar("to_agent", { length: 100 }).notNull(),
+  messageType: varchar("message_type", { length: 50 }).notNull(),
+  message: text("message").notNull(),
+  metadata: jsonb("metadata"),
+  isRead: boolean("is_read").default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+// Types of messages
+type MessageType =
+  | 'help_request'        // Ask another agent for help
+  | 'knowledge_share'     // Share learned insights
+  | 'escalation'          // Escalate issue to higher agent
+  | 'broadcast'           // Send to multiple agents
+  | 'collaboration'       // Request collaboration
+  | 'status_update'       // Report current status
+  | 'error_report'        // Report error or failure
+  | 'success_report';     // Report successful completion
+
+Communication Patterns:
+
+Pattern 1: Peer-to-Peer Help Request
+
+// Agent #8 (Frontend) asks Agent #2 (API) for help
+await agentCommunicate({
+  from: 'Agent #8 (Client Framework)',
+  to: 'Agent #2 (API Structure)',
+  type: 'help_request',
+  message: 'Need API endpoint for new housing feature. What schema should I expect?',
+  metadata: {
+    feature: 'housing-marketplace',
+    priority: 'high',
+    context: {
+      currentTask: 'Building housing listing component',
+      blockedOn: 'API schema definition'
+    }
+  }
+});
+// Agent #2 responds
+await agentCommunicate({
+  from: 'Agent #2 (API Structure)',
+  to: 'Agent #8 (Client Framework)',
+  type: 'help_request',
+  message: 'Housing API schema: { id, title, price, location, photos[], host }',
+  metadata: {
+    endpoint: '/api/housing/listings',
+    method: 'GET',
+    responseExample: { /* ... */ }
+  }
+});
+
+Pattern 2: Knowledge Broadcasting
+
+// Agent #80 (Learning Coordinator) broadcasts insights to all agents
+await agentBroadcast({
+  from: 'Agent #80 (Learning Coordinator)',
+  to: 'ALL_AGENTS',
+  type: 'knowledge_share',
+  message: 'New pattern detected: Users prefer grid view for housing listings (75% vs 25% list view)',
+  metadata: {
+    pattern: 'user_preference',
+    data: {
+      feature: 'housing',
+      gridView: 75,
+      listView: 25
+    },
+    recommendation: 'Default to grid view for housing pages'
+  }
+});
+// Relevant agents receive and apply
+// Agent #28 (Marketplace) updates default view
+// Agent #8 (Frontend) adjusts UI components
+
+Pattern 3: Escalation Chain
+
+// Agent #23 (Event Management) escalates complex issue
+await agentEscalate({
+  from: 'Agent #23 (Event Management)',
+  to: 'Chief #3 (Business Division)',
+  type: 'escalation',
+  message: 'Complex event booking conflict: User wants to book overlapping events',
+  metadata: {
+    issue: 'booking_conflict',
+    priority: 'medium',
+    context: {
+      userId: 123,
+      event1: 'Tango Workshop A (3pm-5pm)',
+      event2: 'Tango Workshop B (4pm-6pm)',
+      overlap: '4pm-5pm'
+    },
+    suggestedSolutions: [
+      'Allow overlapping bookings with warning',
+      'Block overlapping bookings entirely',
+      'Suggest alternative time slots'
+    ]
+  }
+});
+// Chief #3 analyzes and decides
+await agentCommunicate({
+  from: 'Chief #3 (Business Division)',
+  to: 'Agent #23 (Event Management)',
+  type: 'escalation',
+  message: 'Allow with warning. Most users manage their own schedules.',
+  metadata: {
+    decision: 'allow_with_warning',
+    implementation: 'Show prominent warning dialog before booking'
+  }
+});
+
+Pattern 4: Multi-Agent Collaboration
+
+// Database: agentCollaborations table
+export const agentCollaborations = pgTable("agent_collaborations", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull(),
+  collaboratorId: varchar("collaborator_id", { length: 100 }).notNull(),
+  issue: text("issue").notNull(),
+  status: varchar("status", { length: 50 }).notNull(), // 'pending', 'in_progress', 'resolved'
+  resolution: text("resolution"),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  resolvedAt: timestamp("resolved_at")
+});
+// Agent #1 (Database) + Agent #2 (API) + Agent #8 (Frontend) collaborate
+const collaboration = await createCollaboration({
+  agents: [
+    'Agent #1 (Database Architecture)',
+    'Agent #2 (API Structure)',
+    'Agent #8 (Client Framework)'
+  ],
+  issue: 'Build new messaging system with real-time updates',
+  plan: {
+    agent1: 'Create messages table with WebSocket support',
+    agent2: 'Build Socket.io API endpoints',
+    agent8: 'Create real-time messaging UI'
+  },
+  coordination: {
+    type: 'parallel',
+    dependencies: {
+      agent2: ['agent1'],  // API depends on database
+      agent8: ['agent2']   // Frontend depends on API
+    }
+  }
+});
+// Agents work in coordinated parallel sequence
+// Agent #1 completes → Notifies Agent #2 → Agent #2 starts
+// Agent #2 completes → Notifies Agent #8 → Agent #8 starts
+
+API Endpoints for Agent Communication:
+
+// POST /api/agent-intelligence/messages
+// Send message from one agent to another
+// GET /api/agent-intelligence/messages/:agentId
+// Get all messages for a specific agent
+// POST /api/agent-intelligence/collaborate
+// Request collaboration between agents
+// GET /api/agent-intelligence/collaborations/:agentId
+// Get active collaborations for an agent
+// POST /api/agent-intelligence/broadcast
+// Broadcast message to multiple agents
+// GET /api/agent-intelligence/communications
+// Get all agent communications (admin only)
+
+2.9.5 PLATFORM-WIDE LEARNING COORDINATION
+Agent #80 (Learning Coordinator) orchestrates learning across ALL 115 agents, not just within Mr. Blue team.
+
+Learning Cycle:
+
+┌─────────────────────────────────────────────────────────┐
+│                 AGENT #80 LEARNING CYCLE                │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  1. COLLECT (from all 115 agents)                      │
+│     ├─ Agent memories (what they learned)              │
+│     ├─ Agent self-tests (what they can do)             │
+│     ├─ Agent collaborations (how they helped)          │
+│     └─ User patterns (what users do)                   │
+│                                                         │
+│  2. ANALYZE (pattern recognition)                      │
+│     ├─ Identify common user paths                      │
+│     ├─ Detect inefficiencies                           │
+│     ├─ Recognize best practices                        │
+│     └─ Spot potential issues                           │
+│                                                         │
+│  3. SYNTHESIZE (create insights)                       │
+│     ├─ Generate recommendations                        │
+│     ├─ Predict future needs                            │
+│     ├─ Optimize workflows                              │
+│     └─ Suggest improvements                            │
+│                                                         │
+│  4. DISTRIBUTE (share knowledge)                       │
+│     ├─ Broadcast to all agents                         │
+│     ├─ Update ML models                                │
+│     ├─ Modify agent behaviors                          │
+│     └─ Implement optimizations                         │
+│                                                         │
+│  5. VALIDATE (test improvements)                       │
+│     ├─ A/B testing new behaviors                       │
+│     ├─ Monitor user satisfaction                       │
+│     ├─ Track performance metrics                       │
+│     └─ Rollback if needed                              │
+│                                                         │
+│  6. REPEAT (continuous learning)                       │
+│     └─ Every 24 hours or on-demand                     │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+
+Learning Database Schema:
+
+// agentMemories: Store what agents learn
+export const agentMemories = pgTable("agent_memories", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull(),
+  memoryType: varchar("memory_type", { length: 50 }).notNull(),
+  content: text("content").notNull(),
+  metadata: jsonb("metadata"),
+  confidence: real("confidence"),  // 0-1 (how confident agent is)
+  context: jsonb("context"),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+// agentKnowledge: Semantic knowledge base
+export const agentKnowledge = pgTable("agent_knowledge", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull(),
+  topic: varchar("topic", { length: 255 }).notNull(),
+  content: text("content").notNull(),
+  embedding: vector("embedding", { dimensions: 1536 }),  // LanceDB vector
+  confidence: real("confidence"),
+  sourceMemoryId: integer("source_memory_id").references(() => agentMemories.id),
+  tags: text("tags").array(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+// agentLearningSessions: Track learning cycles
+export const agentLearningSessions = pgTable("agent_learning_sessions", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull(),
+  sessionType: varchar("session_type", { length: 50 }).notNull(),
+  startTime: timestamp("start_time").notNull(),
+  endTime: timestamp("end_time"),
+  outcomes: jsonb("outcomes"),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+Real-World Learning Example:
+
+Scenario: Users struggle with event creation workflow
+
+Agent #80's Learning Process:
+
+// 1. COLLECT
+const learnings = {
+  // Agent #23 (Event Management) reports
+  agent23: {
+    memory: 'Users abandon event creation form at "Add Location" step',
+    confidence: 0.85,
+    data: {
+      abandonmentRate: 0.45,  // 45% drop-off
+      avgTimeAtStep: 180,     // 3 minutes stuck
+      commonErrors: ['Invalid address', 'Map not loading']
+    }
+  },
+  
+  // Agent #68 (Pattern Learning) detects
+  agent68: {
+    pattern: 'Users search for venue name instead of entering address',
+    frequency: 0.72,  // 72% of users
+    suggestion: 'Add venue search/autocomplete'
+  },
+  
+  // Agent #77 (Context Provider) observes
+  agent77: {
+    breadcrumbs: [
+      { action: 'type', target: 'input-location', value: 'La Viruta' },
+      { action: 'error', error: 'Please enter a valid address' },
+      { action: 'abandon', page: '/events/create' }
+    ],
+    userFrustration: true
+  }
+};
+// 2. ANALYZE
+const analysis = agent80.analyze(learnings);
+// Returns: {
+//   issue: 'Location input expects address but users want venue search',
+//   impact: 'high',  // 45% abandonment
+//   affectedAgents: ['Agent #23 (Events)', 'Agent #15 (Search)'],
+//   suggestedFix: 'Add venue autocomplete with Nominatim API'
+// }
+// 3. SYNTHESIZE
+const recommendation = {
+  fix: 'Implement venue search autocomplete',
+  implementation: {
+    frontend: 'Add ComboBox with venue search',
+    api: 'Use Nominatim API for venue lookup',
+    database: 'Cache popular venues',
+    agents: [
+      'Agent #8 (Frontend) → Build autocomplete UI',
+      'Agent #2 (API) → Add /api/venues/search endpoint',
+      'Agent #15 (Search) → Integrate Nominatim',
+      'Agent #23 (Events) → Update event creation logic'
+    ]
+  },
+  expectedImpact: 'Reduce abandonment from 45% to <10%'
+};
+// 4. DISTRIBUTE
+await agent80.broadcast({
+  to: ['Agent #8', 'Agent #2', 'Agent #15', 'Agent #23'],
+  message: recommendation,
+  priority: 'high',
+  deadline: '2 days'
+});
+// Agents build the fix in parallel
+await agent80.orchestrate({
+  track1: 'Agent #8 builds autocomplete UI',
+  track2: 'Agent #2 + #15 build search API',
+  track3: 'Agent #23 updates event logic'
+});
+// 5. VALIDATE
+const results = await agent80.validateImprovement({
+  metric: 'event_creation_abandonment',
+  before: 0.45,
+  after: 0.08,  // 8% abandonment (47% improvement!)
+  duration: '7 days'
+});
+// 6. LEARN
+await agent80.recordLearning({
+  lesson: 'Users prefer venue search over manual address entry',
+  context: 'event_creation',
+  solution: 'autocomplete_with_popular_venues',
+  effectiveness: 0.47,  // 47% improvement
+  applyTo: ['all_location_inputs']  // Apply pattern elsewhere
+});
+
+Learning Distribution:
+
+// Agent #80 shares this learning with other location-based features
+await agent80.broadcast({
+  to: ['Agent #28 (Marketplace)', 'Agent #29 (Housing)', 'Agent #22 (Groups)'],
+  message: {
+    pattern: 'users_prefer_venue_search',
+    implementation: 'autocomplete_with_nominatim',
+    effectiveness: 0.47,
+    recommendation: 'Apply to all address inputs'
+  }
+});
+// Agents automatically implement in their features
+// Agent #28 adds venue search to marketplace listings
+// Agent #29 adds it to housing location input
+// Agent #22 adds it to group location selection
+
+2.9.6 COMPLETE AGENT INTELLIGENCE NETWORK ARCHITECTURE
+The Agent Intelligence Network enables all 115 agents to autonomously learn, test, collaborate, and improve.
+
+9 Database Tables:
+
+// 1. agentMemories - What agents learn
+// 2. agentKnowledge - Semantic knowledge base (with vector embeddings)
+// 3. agentSelfTests - Self-testing results
+// 4. componentAgents - Registry of component agents
+// 5. agentCommunications - Agent-to-agent messages
+// 6. agentCollaborations - Peer collaboration tracking
+// 7. agentEscalations - Issues escalated to higher agents
+// 8. agentLearningSessions - Learning cycle tracking
+// 9. agentChangeBroadcasts - Platform-wide change notifications
+
+20 API Endpoints:
+
+// Memory Operations
+POST   /api/agent-intelligence/memories
+GET    /api/agent-intelligence/memories/:agentId
+GET    /api/agent-intelligence/memories/search
+// Self-Testing
+POST   /api/agent-intelligence/tests/execute
+GET    /api/agent-intelligence/tests/results/:agentId
+GET    /api/agent-intelligence/tests/recent
+GET    /api/agent-intelligence/stats
+// Collaboration
+POST   /api/agent-intelligence/collaborate
+GET    /api/agent-intelligence/collaborations/:agentId
+GET    /api/agent-intelligence/collaborations/recent
+PATCH  /api/agent-intelligence/collaborations/:id/resolve
+// Communication
+POST   /api/agent-intelligence/messages
+GET    /api/agent-intelligence/messages/:agentId
+GET    /api/agent-intelligence/communications
+PATCH  /api/agent-intelligence/messages/:id/read
+// Escalation
+POST   /api/agent-intelligence/escalate
+GET    /api/agent-intelligence/escalations/:agentId
+PATCH  /api/agent-intelligence/escalations/:id/resolve
+// System
+GET    /api/agent-intelligence/activities
+POST   /api/agent-intelligence/broadcast
+GET    /api/agent-intelligence/agents/:id/health
+
+7 Core Services:
+
+// Track A: Learning & Memory
+1. AgentMemoryService (350 lines)
+   - Store/retrieve memories
+   - Semantic search with LanceDB
+   - Confidence tracking
+2. AgentSelfTestFramework (400 lines)
+   - Execute capability tests
+   - Health score calculation
+   - Auto-test scheduling
+// Track B: Collaboration & Escalation
+3. AgentCollaborationService (320 lines)
+   - Peer-to-peer help requests
+   - Collaboration tracking
+   - Resolution logging
+4. AgentEscalationService (280 lines)
+   - Smart escalation to higher agents
+   - Priority queue management
+   - Resolution tracking
+// Track C: Mr. Blue Coordination
+5. MrBlueCoordinator (350 lines)
+   - Central orchestration hub
+   - Broadcast change notifications
+   - Multi-agent task coordination
+6. ChangeBroadcastService (200 lines)
+   - Push updates to affected agents
+   - Track propagation status
+   - Retry mechanisms
+// Track D: Base Infrastructure
+7. ComponentAgent (200 lines)
+   - Base class for all component agents
+   - Standard capabilities interface
+   - Health monitoring
+
+Intelligence Dashboard (/admin/agent-intelligence):
+
+Real-time Updates: Auto-refresh every 3 seconds
+5 Interactive Tabs:
+Overview - Recent agent activity feed
+Communications - Agent-to-agent messages
+Tests - Self-test results with pass/fail status
+Collaborations - Peer collaboration tracking
+Learning - Knowledge base and capabilities
+Stats Dashboard:
+Total Agents (active/learning breakdown)
+Self-Tests (pass rate, total tests)
+Communications (unread count)
+Health Score (system-wide average)
+Agent Autonomous Intelligence Cycle:
+
+Every agent (all 115) follows this cycle:
+1. LEARN     → Store experiences in memory
+2. SELF-TEST → Validate capabilities
+3. ANALYZE   → Review test results
+4. COLLABORATE → Ask peers if needed
+5. BUILD     → Apply improvements
+6. TEST      → Verify improvements
+7. REPORT    → Log results & health
+8. REPEAT    → Continuous cycle
+
+3. INTEGRATION & WORKFLOWS
+3.1 Visual Editor + Mr. Blue Chat Layout
+Split-Pane Interface:
+
+Left 60%: Live preview iframe with editable elements
+Right 40%: Mr. Blue AI chat panel
+Mr. Blue's Awareness in Visual Editor:
+
+// Mr. Blue knows in real-time:
+{
+  currentPage: "/memories",
+  visualEditorActive: true,
+  selectedElement: {
+    testId: "button-create-memory",
+    tagName: "BUTTON",
+    textContent: "Create Memory",
+    className: "bg-blue-600 text-white px-4 py-2 rounded-lg",
+    filePath: "client/src/pages/MemoriesPage.tsx",
+    lineNumber: 45,
+    props: {
+      onClick: "handleCreateMemory",
+      disabled: false
+    }
+  },
+  recentEdits: [
+    {
+      timestamp: "2025-11-03T10:45:00Z",
+      change: "Changed button color from blue-600 to teal-600",
+      component: "button-create-memory",
+      type: "style"
+    },
+    {
+      timestamp: "2025-11-03T10:46:30Z",
+      change: "Increased padding from px-4 py-2 to px-6 py-3",
+      component: "button-create-memory",
+      type: "size"
+    }
+  ],
+  userIntent: "designing",  // AI-detected intent
+  suggestedActions: [
+    "Make text larger for better readability",
+    "Add icon to button for visual clarity",
+    "Ensure color contrast meets WCAG AA standards"
+  ]
+}
+
+3.2 Conversational Editing Workflow
+Like Replit Agent - You Can Chat to Edit Pages
+
+Example Conversation 1:
+
+USER: "Make this button more prominent"
+MR. BLUE: "I'll make the 'Create Memory' button stand out more. I recommend:
+- Increase size to 'lg' (px-6 py-3)
+- Use high-contrast color (teal-600)
+- Add subtle shadow for depth
+- Make font weight bold
+Should I apply these changes?"
+USER: "Yes"
+MR. BLUE: "Great! Making changes now...
+✅ Updated button styling
+✅ Generated code with GPT-4o
+✅ Created Git branch: visual-edit-2025-11-03
+✅ Preview URL ready: https://preview.mundotango.com/visual-edit-2025-11-03
+Want me to deploy to production?"
+
+Example Conversation 2:
+
+USER: "The heading looks too small on mobile"
+MR. BLUE: "I see you're looking at the 'Welcome to Memories' heading. 
+Currently it's text-3xl on all screens.
+I can make it responsive:
+- Mobile: text-2xl
+- Tablet: text-3xl
+- Desktop: text-4xl
+Should I update it?"
+USER: "Yes, and make it centered"
+MR. BLUE: "Perfect! Changes:
+1. Responsive text sizing
+2. Text alignment: center
+3. Added mobile optimization
+Applying now... Done! ✅
+Preview: https://preview.mundotango.com/visual-edit-2025-11-03
+The heading now scales beautifully across all devices."
+
+Example Conversation 3:
+
+USER: "Can you help me redesign this whole section?"
+MR. BLUE: "Absolutely! I'm looking at the 'Create Memory' section.
+Current layout:
+- Button at top
+- Form below
+- Images at bottom
+I can suggest:
+A) Modern card layout with centered form
+B) Two-column layout (form left, preview right)
+C) Step-by-step wizard with progress indicator
+Which direction interests you?"
+USER: "Option B sounds good"
+MR. BLUE: "Great choice! Two-column layout coming up.
+Changes I'll make:
+1. Split into flexbox grid (50/50)
+2. Form on left with better spacing
+3. Live preview on right
+4. Add upload area with drag-drop
+5. Mobile: Stack vertically
+This is a bigger change. I'll create a preview first.
+Generating code... Done! ✅
+Preview URL: https://preview.mundotango.com/visual-edit-2025-11-03
+Check it out and let me know what you think!"
+
+3.3 Save → Confirm → Build Orchestration
+Complete Workflow:
+
+┌─────────────────────────────────────────────────────────┐
+│  USER: Makes changes in Visual Editor                  │
+└──────────────┬──────────────────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────────────────────┐
+│  VISUAL EDITOR TRACKER: Records all changes             │
+│  • Text edits                                           │
+│  • Style changes                                        │
+│  • Layout modifications                                 │
+└──────────────┬──────────────────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────────────────────┐
+│  MR. BLUE: Summarizes changes                           │
+│  "You changed:                                          │
+│   - Button color (blue → teal)                          │
+│   - Button size (increased padding)                     │
+│   - Added shadow for depth"                             │
+└──────────────┬──────────────────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────────────────────┐
+│  USER: Confirms "Yes, apply these changes"              │
+└──────────────┬──────────────────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────────────────────┐
+│  AGENT #79 (Quality Validator): Pre-work checks         │
+│  ✓ All required data-testid present                     │
+│  ✓ No accessibility violations                          │
+│  ✓ Color contrast meets WCAG AA                         │
+│  ✓ Responsive design maintained                         │
+└──────────────┬──────────────────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────────────────────┐
+│  AGENT #78 (Visual Editor): Generate code               │
+│  • Sends changes to OpenAI GPT-4o                       │
+│  • Receives production-ready React/Tailwind code        │
+│  • Shows code preview to user                           │
+└──────────────┬──────────────────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────────────────────┐
+│  AGENT #76 (Replit Architecture): Apply code            │
+│  • Create Git branch                                    │
+│  • Backup original files                                │
+│  • Write new code                                       │
+│  • Commit with descriptive message                      │
+│  • Push to remote                                       │
+└──────────────┬──────────────────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────────────────────┐
+│  PREVIEW DEPLOYMENT:                                    │
+│  • Build staging version                                │
+│  • Generate shareable URL (24-hour validity)            │
+│  • Run automated tests                                  │
+└──────────────┬──────────────────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────────────────────┐
+│  MR. BLUE: Shares preview link                          │
+│  "Preview ready! https://preview.mundotango.com/..."    │
+│  "All tests passed ✅"                                   │
+│  "Ready to deploy to production?"                       │
+└──────────────┬──────────────────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────────────────────┐
+│  USER: Confirms "Yes, deploy to production"             │
+└──────────────┬──────────────────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────────────────────┐
+│  GITHUB PR CREATION:                                    │
+│  • Create pull request                                  │
+│  • Run Playwright tests                                 │
+│  • If all pass: Auto-merge                              │
+│  • If any fail: Block & notify                          │
+└──────────────┬──────────────────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────────────────────┐
+│  PRODUCTION DEPLOYMENT:                                 │
+│  • Merge to main branch                                 │
+│  • Trigger production build                             │
+│  • Deploy to live platform                              │
+└──────────────┬──────────────────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────────────────────────┐
+│  MR. BLUE: Confirms deployment                          │
+│  "✅ Changes live on production!"                        │
+│  "Users will see the new design immediately."           │
+│                                                         │
+│  AGENT #80: Records learning                            │
+│  • Pattern: User prefers teal buttons                   │
+│  • Share with other components                          │
+│  • Update design system recommendations                 │
+└─────────────────────────────────────────────────────────┘
+
+4. TECHNICAL IMPLEMENTATION
+4.1 Files & Components
+Visual Editor Files:
+
+client/src/components/visual-editor/
+├── VisualEditorOverlay.tsx         # Main container
+├── ComponentSelector.tsx           # Click-to-select logic
+├── DragDropHandler.tsx             # Drag & drop UX
+├── EditControls.tsx                # 4-tab edit panel
+│   ├── PositionTab.tsx
+│   ├── SizeTab.tsx
+│   ├── StyleTab.tsx
+│   └── TextTab.tsx
+├── VisualEditorTracker.ts          # Change tracking
+├── CodePreview.tsx                 # Before/after code diff
+└── MrBlueVisualChat.tsx            # AI chat panel
+
+Mr. Blue Files:
+
+client/src/components/mrBlue/
+├── MrBlueChat.tsx                  # Main chat interface
+├── MrBlueAvatar.tsx                # 3D avatar (React Three Fiber)
+├── MrBlueFloatingButton.tsx        # Floating AI button
+└── MrBlueTour.tsx                  # Interactive tours
+client/src/lib/mrBlue/
+├── breadcrumbTracker.ts            # Breadcrumb tracking
+├── failedActionMonitor.ts          # Error monitoring
+├── mlPatternRecognition.ts         # ML models
+├── contextPreservation.ts          # Cross-page context
+└── learningCoordinator.ts          # Agent #80 logic
+
+Backend Files:
+
+server/routes/
+├── visualEditor.ts                 # Visual Editor API
+├── mrBlueRoutes.ts                 # Mr. Blue API
+├── breadcrumbRoutes.ts             # Breadcrumb tracking API
+└── learningRoutes.ts               # ML learning API
+server/services/
+├── gitService.ts                   # Git automation
+├── aiCodeGenerator.ts              # OpenAI integration
+├── deploymentService.ts            # Preview/prod deployment
+└── mlTrainingService.ts            # ML model training
+
+5. DATABASE SCHEMA
+Breadcrumbs Table:
+
+export const breadcrumbs = pgTable("breadcrumbs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  sessionId: varchar("session_id", { length: 255 }).notNull(),
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+  
+  // Page context
+  page: varchar("page", { length: 500 }).notNull(),
+  pageTitle: varchar("page_title", { length: 255 }),
+  referrer: varchar("referrer", { length: 500 }),
+  
+  // Action context
+  action: varchar("action", { length: 50 }).notNull(), // 'click', 'view', 'input', 'submit', 'error', 'navigation'
+  target: varchar("target", { length: 500 }),
+  targetId: varchar("target_id", { length: 255 }),
+  value: jsonb("value"),
+  
+  // User context
+  userJourney: varchar("user_journey", { length: 50 }),
+  userRole: varchar("user_role", { length: 50 }),
+  userIntent: varchar("user_intent", { length: 255 }),
+  
+  // Outcome
+  success: boolean("success").default(true),
+  error: text("error"),
+  duration: integer("duration"), // milliseconds
+  
+  // ML predictions
+  prediction: varchar("prediction", { length: 255 }),
+  confidence: real("confidence"),
+  patternId: varchar("pattern_id", { length: 100 }),
+  
+  createdAt: timestamp("created_at").notNull().defaultNow()
+}, (table) => ({
+  idxUserId: index("idx_breadcrumbs_user").on(table.userId),
+  idxSession: index("idx_breadcrumbs_session").on(table.sessionId),
+  idxTimestamp: index("idx_breadcrumbs_timestamp").on(table.timestamp),
+  idxAction: index("idx_breadcrumbs_action").on(table.action)
+}));
+
+Failed Actions Table:
+
+export const failedActions = pgTable("failed_actions", {
+  id: serial("id").primaryKey(),
+  breadcrumbId: integer("breadcrumb_id").references(() => breadcrumbs.id),
+  userId: integer("user_id").notNull().references(() => users.id),
+  sessionId: varchar("session_id", { length: 255 }).notNull(),
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+  
+  // Failure details
+  failureType: varchar("failure_type", { length: 50 }).notNull(), // '404', 'api_error', 'validation', etc.
+  statusCode: integer("status_code"),
+  errorDetails: jsonb("error_details").notNull(),
+  
+  // Recovery
+  recoveryAttempted: boolean("recovery_attempted").default(false),
+  recoverySuccessful: boolean("recovery_successful").default(false),
+  retries: integer("retries").default(0),
+  
+  // Resolution
+  resolved: boolean("resolved").default(false),
+  resolvedAt: timestamp("resolved_at"),
+  resolvedBy: integer("resolved_by").references(() => users.id),
+  
+  createdAt: timestamp("created_at").notNull().defaultNow()
+}, (table) => ({
+  idxUserId: index("idx_failed_actions_user").on(table.userId),
+  idxFailureType: index("idx_failed_actions_type").on(table.failureType),
+  idxResolved: index("idx_failed_actions_resolved").on(table.resolved)
+}));
+
+User Patterns Table:
+
+export const userPatterns = pgTable("user_patterns", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  patternId: varchar("pattern_id", { length: 100 }).notNull(),
+  journey: varchar("journey", { length: 50 }),
+  
+  // Pattern data
+  commonSequences: jsonb("common_sequences").notNull(),
+  timePatterns: jsonb("time_patterns"),
+  preferredFeatures: jsonb("preferred_features"),
+  avoidedFeatures: jsonb("avoided_features"),
+  expertiseLevel: varchar("expertise_level", { length: 50 }),
+  
+  // Predictions
+  nextActions: jsonb("next_actions"),
+  
+  // Metadata
+  confidence: real("confidence"),
+  sampleSize: integer("sample_size"),
+  lastUpdated: timestamp("last_updated").notNull().defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+}, (table) => ({
+  idxUserId: index("idx_user_patterns_user").on(table.userId),
+  idxJourney: index("idx_user_patterns_journey").on(table.journey)
+}));
+
+Visual Edits Table:
+
+export const visualEdits = pgTable("visual_edits", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  sessionId: varchar("session_id", { length: 255 }).notNull(),
+  
+  // Page context
+  page: varchar("page", { length: 500 }).notNull(),
+  componentId: varchar("component_id", { length: 255 }).notNull(),
+  
+  // Change details
+  changeType: varchar("change_type", { length: 50 }).notNull(), // 'text', 'style', 'layout', 'size'
+  before: jsonb("before"),
+  after: jsonb("after"),
+  
+  // Code generation
+  generatedCode: text("generated_code"),
+  aiModel: varchar("ai_model", { length: 50 }),
+  
+  // Git info
+  gitBranch: varchar("git_branch", { length: 255 }),
+  commitHash: varchar("commit_hash", { length: 255 }),
+  
+  // Deployment
+  previewUrl: varchar("preview_url", { length: 500 }),
+  deployedToProduction: boolean("deployed_to_production").default(false),
+  deployedAt: timestamp("deployed_at"),
+  
+  createdAt: timestamp("created_at").notNull().defaultNow()
+}, (table) => ({
+  idxUserId: index("idx_visual_edits_user").on(table.userId),
+  idxPage: index("idx_visual_edits_page").on(table.page),
+  idxDeployed: index("idx_visual_edits_deployed").on(table.deployedToProduction)
+}));
+
+6. API ENDPOINTS
+Visual Editor APIs:
+
+// Get file content for editing
+GET /api/visual-editor/file-content
+Query: { filePath: string }
+Response: { content: string, language: string }
+// Generate code from visual changes
+POST /api/visual-editor/generate-code
+Body: { changes: VisualEdit[], currentCode: string }
+Response: { updatedCode: string, explanation: string, affectedFiles: string[] }
+// Save changes to Git
+POST /api/visual-editor/save
+Body: { filePath: string, newCode: string, message: string }
+Response: { branch: string, commitHash: string }
+// Deploy preview
+POST /api/visual-editor/preview
+Body: { branch: string }
+Response: { previewUrl: string, expiresAt: Date }
+// Deploy to production
+POST /api/visual-editor/deploy
+Body: { branch: string }
+Response: { prUrl: string, mergeStatus: string }
+
+Mr. Blue APIs:
+
+// Chat with Mr. Blue
+POST /api/mrblue/chat
+Body: { message: string, pageContext: PageContext }
+Response: { response: string, suggestions: string[], actions: Action[] }
+// Get page context
+GET /api/mrblue/context
+Response: { page: string, elements: Element[], breadcrumbs: Breadcrumb[] }
+// Track breadcrumb
+POST /api/breadcrumbs
+Body: Breadcrumb
+Response: { id: string, success: boolean }
+// Get user breadcrumbs
+GET /api/breadcrumbs
+Query: { userId: number, limit: number }
+Response: { breadcrumbs: Breadcrumb[] }
+// Log failed action
+POST /api/failed-actions
+Body: FailedAction
+Response: { id: string, assistance: MrBlueAssistance }
+// Get ML predictions
+GET /api/ml/predictions
+Query: { userId: number }
+Response: { nextActions: Prediction[], confidence: number }
+
+7. SECURITY & ACCESS CONTROL
+Visual Editor Access:
+
+// Only Super Admins can access
+if (user?.role !== 'super_admin') {
+  return null; // Hide Visual Editor
+}
+// File access restricted to client/src
+const clientSrcPath = path.resolve(process.cwd(), 'client/src');
+if (!fullPath.startsWith(clientSrcPath)) {
+  throw new Error('Access denied: Can only read files from client/src');
+}
+// Git operations validated
+const branchName = description.replace(/[^a-z0-9-]/gi, '-');
+
+Mr. Blue Access:
+
+All users can access Mr. Blue chat
+Context data scoped to user's own actions
+No cross-user data leakage
+Breadcrumbs and patterns are user-specific
+8. FILE STRUCTURE
+mundo-tango-platform/
+├── client/
+│   └── src/
+│       ├── components/
+│       │   ├── visual-editor/
+│       │   │   ├── VisualEditorOverlay.tsx
+│       │   │   ├── ComponentSelector.tsx
+│       │   │   ├── DragDropHandler.tsx
+│       │   │   ├── EditControls.tsx
+│       │   │   ├── VisualEditorTracker.ts
+│       │   │   └── MrBlueVisualChat.tsx
+│       │   │
+│       │   └── mrBlue/
+│       │       ├── MrBlueChat.tsx
+│       │       ├── MrBlueAvatar.tsx
+│       │       ├── MrBlueFloatingButton.tsx
+│       │       └── MrBlueTour.tsx
+│       │
+│       └── lib/
+│           └── mrBlue/
+│               ├── breadcrumbTracker.ts
+│               ├── failedActionMonitor.ts
+│               ├── mlPatternRecognition.ts
+│               ├── contextPreservation.ts
+│               └── learningCoordinator.ts
+│
+├── server/
+│   ├── routes/
+│   │   ├── visualEditor.ts
+│   │   ├── mrBlueRoutes.ts
+│   │   ├── breadcrumbRoutes.ts
+│   │   └── learningRoutes.ts
+│   │
+│   └── services/
+│       ├── gitService.ts
+│       ├── aiCodeGenerator.ts
+│       ├── deploymentService.ts
+│       └── mlTrainingService.ts
+│
+├── shared/
+│   └── schema.ts          # Database schema (Drizzle ORM)
+│
+└── docs/
+    ├── visual-editor/
+    │   └── USER_GUIDE.md
+    │
+    └── mr-blue/
+        └── INTELLIGENCE_ARCHITECTURE.md
+
+9. UI/UX DESIGN SYSTEM
+9.1 MT Ocean Theme Overview
+The Visual Editor and Mr. Blue interfaces use the MT Ocean Design System (Aurora Tide), a comprehensive design language featuring:
+
+Color Palette: Turquoise-to-Deep-Blue ocean gradients (#40E0D0 → #0047AB)
+Glassmorphism: Frosted glass effects with backdrop blur
+Animation System: GSAP & Framer Motion compatible transitions
+Accessibility: WCAG 2.1 AA compliant, supports dark mode, reduced motion, high contrast
+Responsive: Mobile-first design with breakpoints for all devices
+Design Token Files:
+
+client/src/styles/design-tokens.css - 829 lines of design system variables
+client/src/index.css - Animation keyframes, utility classes, custom styles
+9.2 Color System
+Primary Ocean Colors
+Turquoise (Accent) - #40E0D0 to #00CED1:
+
+--ocean-seafoam-50:  hsl(177, 70%, 95%)  /* #E6FFFE - Lightest */
+--ocean-seafoam-100: hsl(177, 70%, 88%)  /* #CCFFF9 */
+--ocean-seafoam-200: hsl(177, 72%, 78%)  /* #99F5F0 */
+--ocean-seafoam-300: hsl(177, 75%, 68%)  /* #66EBE6 */
+--ocean-seafoam-400: hsl(177, 72%, 56%)  /* #40E0D0 - PRIMARY TURQUOISE */
+--ocean-seafoam-500: hsl(180, 100%, 41%) /* #00CED1 - Dark Turquoise */
+--ocean-seafoam-600: hsl(180, 100%, 35%) /* #00B3B5 */
+
+Blue (Mid-tone) - #1E90FF Dodger Blue:
+
+--ocean-cyan-50:  hsl(210, 100%, 96%) /* #E6F3FF */
+--ocean-cyan-100: hsl(210, 100%, 90%) /* #CCE7FF */
+--ocean-cyan-200: hsl(210, 100%, 78%) /* #80CFFF */
+--ocean-cyan-300: hsl(210, 100%, 68%) /* #5CBFFF */
+--ocean-cyan-400: hsl(210, 100%, 56%) /* #1E90FF - DODGER BLUE */
+--ocean-cyan-500: hsl(210, 100%, 46%) /* #0077EB - Mid Blue */
+
+Deep Blue - #0047AB Cobalt Blue:
+
+--ocean-teal-50:  hsl(218, 100%, 96%) /* #E6EDFF */
+--ocean-teal-100: hsl(218, 100%, 88%) /* #CCDBFF */
+--ocean-teal-200: hsl(218, 100%, 75%) /* #80B3FF */
+--ocean-teal-300: hsl(218, 100%, 62%) /* #3D8AFF */
+--ocean-teal-400: hsl(218, 100%, 50%) /* #0066FF */
+--ocean-teal-500: hsl(218, 100%, 34%) /* #0047AB - COBALT BLUE */
+--ocean-teal-600: hsl(218, 100%, 28%) /* #003A8F */
+--ocean-teal-700: hsl(218, 100%, 22%) /* #002D70 */
+--ocean-teal-800: hsl(218, 100%, 16%) /* #002052 - Deep Blue */
+--ocean-teal-900: hsl(218, 100%, 10%) /* #001333 - Navy */
+
+Semantic Colors
+--color-primary:        var(--ocean-seafoam-400) /* Turquoise accent */
+--color-primary-hover:  var(--ocean-seafoam-500) /* Darker turquoise */
+--color-primary-light:  var(--ocean-seafoam-100) /* Light turquoise bg */
+--color-primary-dark:   var(--ocean-teal-500)    /* Cobalt blue */
+--color-success:  hsl(158, 64%, 52%) /* #22C55E - Ocean green */
+--color-warning:  hsl(38, 92%, 50%)  /* #F59E0B - Amber */
+--color-error:    hsl(0, 84%, 60%)   /* #EF4444 - Coral red */
+--color-info:     var(--ocean-cyan-400) /* Cyan for info */
+
+Light Mode Backgrounds
+--bg-primary:    hsl(210, 33%, 98%) /* Very light gray-blue main */
+--bg-secondary:  hsl(195, 60%, 92%) /* Soft light blue */
+--bg-tertiary:   hsl(210, 20%, 95%) /* Light gray */
+--bg-elevated:   hsl(0, 0%, 100%)   /* Pure white for cards */
+
+Dark Mode Backgrounds
+.dark {
+  --bg-primary:    hsl(218, 70%, 10%) /* #0a1929 - Deep blue */
+  --bg-secondary:  hsl(218, 50%, 14%) /* #1a2332 - Blue-gray */
+  --bg-tertiary:   hsl(218, 40%, 18%) /* Lighter panel */
+  --bg-elevated:   hsl(218, 45%, 16%) /* Cards, modals */
+  
+  --color-primary: var(--ocean-seafoam-300) /* Brighter for dark mode */
+}
+
+Ocean Gradients
+/* Light Mode */
+--bg-ocean-gradient: linear-gradient(180deg, 
+  var(--ocean-teal-500) 0%, 
+  var(--ocean-teal-700) 50%, 
+  var(--ocean-teal-800) 100%)
+--bg-ocean-gradient-soft: linear-gradient(135deg, 
+  var(--ocean-seafoam-50) 0%, 
+  var(--ocean-cyan-50) 100%)
+--bg-ocean-card: linear-gradient(135deg, 
+  var(--ocean-teal-600) 0%, 
+  var(--ocean-teal-700) 100%)
+/* Dark Mode */
+.dark {
+  --bg-ocean-gradient: linear-gradient(180deg, 
+    hsl(218, 90%, 8%) 0%, 
+    hsl(218, 95%, 6%) 100%)
+}
+
+9.3 Typography
+Font Sizes
+--text-xs:   0.75rem    /* 12px */
+--text-sm:   0.875rem   /* 14px */
+--text-base: 1rem       /* 16px */
+--text-lg:   1.125rem   /* 18px */
+--text-xl:   1.25rem    /* 20px */
+--text-2xl:  1.5rem     /* 24px */
+--text-3xl:  1.875rem   /* 30px */
+--text-4xl:  2.25rem    /* 36px */
+
+Font Weights
+--font-weight-normal:    400
+--font-weight-medium:    500
+--font-weight-semibold:  600
+--font-weight-bold:      700
+
+Line Heights
+--line-height-tight:    1.25
+--line-height-snug:     1.375
+--line-height-normal:   1.5
+--line-height-relaxed:  1.625
+
+9.4 Spacing System
+4px Base Increment:
+
+--space-0:  0
+--space-1:  0.25rem   /* 4px */
+--space-2:  0.5rem    /* 8px */
+--space-3:  0.75rem   /* 12px */
+--space-4:  1rem      /* 16px */
+--space-5:  1.25rem   /* 20px */
+--space-6:  1.5rem    /* 24px */
+--space-8:  2rem      /* 32px */
+--space-10: 2.5rem    /* 40px */
+--space-12: 3rem      /* 48px */
+--space-16: 4rem      /* 64px */
+--space-20: 5rem      /* 80px */
+
+9.5 Shadows & Elevation
+Ocean-Themed Shadows (Cobalt Blue tint)
+--shadow-xs:  0 1px 2px 0 hsl(218 100% 34% / 0.05)
+--shadow-sm:  0 1px 3px 0 hsl(218 100% 34% / 0.1), 
+              0 1px 2px -1px hsl(218 100% 34% / 0.1)
+--shadow-md:  0 4px 6px -1px hsl(218 100% 34% / 0.1), 
+              0 2px 4px -2px hsl(218 100% 34% / 0.1)
+--shadow-lg:  0 10px 15px -3px hsl(218 100% 34% / 0.1), 
+              0 4px 6px -4px hsl(218 100% 34% / 0.1)
+--shadow-xl:  0 20px 25px -5px hsl(218 100% 34% / 0.1), 
+              0 8px 10px -6px hsl(218 100% 34% / 0.1)
+--shadow-2xl: 0 25px 50px -12px hsl(218 100% 34% / 0.25)
+
+Glow Effects (Turquoise accent)
+--glow-seafoam: 0 0 20px hsl(177 72% 56% / 0.3)
+--glow-seafoam-strong: 
+  0 0 30px hsl(177 72% 56% / 0.5), 
+  0 0 60px hsl(177 72% 56% / 0.2)
+/* Dark Mode - Brighter */
+.dark {
+  --glow-seafoam: 0 0 20px hsl(177 72% 56% / 0.4)
+  --glow-seafoam-strong: 
+    0 0 30px hsl(177 72% 56% / 0.6), 
+    0 0 60px hsl(177 72% 56% / 0.3)
+}
+
+9.6 Glassmorphism System
+Light Mode Glass
+--glass-bg:          hsl(195 60% 92% / 0.9)   /* Soft light blue */
+--glass-bg-elevated: hsl(195 60% 94% / 0.95)  /* Lighter blue */
+--glass-border:      hsl(186 72% 42% / 0.2)   /* Soft turquoise */
+--glass-blur:        18px
+--glass-shadow:      0 18px 45px 0 hsl(214 80% 6% / 0.08)
+
+Dark Mode Glass
+.dark {
+  --glass-bg:          hsla(215, 52%, 18%, 0.85) /* Deep navy */
+  --glass-bg-elevated: hsla(215, 52%, 20%, 0.9)  /* Lighter navy */
+  --glass-border:      hsla(186, 72%, 60%, 0.25) /* Bright turquoise */
+  --glass-blur:        18px
+  --glass-shadow:      0 18px 45px hsla(214, 80%, 6%, 0.45)
+}
+
+Glass Depth Layers
+/* Light Mode */
+--glass-depth-1: hsl(0 0% 100% / 0.6)   /* Subtle */
+--glass-depth-2: hsl(0 0% 100% / 0.7)   /* Medium */
+--glass-depth-3: hsl(0 0% 100% / 0.8)   /* Strong */
+--glass-depth-4: hsl(0 0% 100% / 0.9)   /* Very strong */
+/* Dark Mode */
+.dark {
+  --glass-depth-1: hsl(218 50% 14% / 0.5)   /* Subtle dark glass */
+  --glass-depth-2: hsl(218 50% 14% / 0.7)   /* Medium dark glass */
+  --glass-depth-3: hsl(218 45% 16% / 0.8)   /* Strong dark glass */
+  --glass-depth-4: hsl(218 45% 16% / 0.9)   /* Very strong dark glass */
+}
+
+Usage Example
+<div className="glass-card rounded-xl p-6">
+  {/* Automatically applies glassmorphic effects */}
+  <p className="text-ocean-primary">Content</p>
+</div>
+<div className="glass-card-elevated rounded-2xl p-8">
+  {/* Elevated variant with stronger glass effect */}
+  <p>Elevated content</p>
+</div>
+
+9.7 Animation System
+Easing Curves (GSAP & Framer Motion compatible)
+--ease-smooth:      cubic-bezier(0.4, 0, 0.2, 1)        /* Material Design */
+--ease-bounce:      cubic-bezier(0.34, 1.56, 0.64, 1)   /* Playful bounce */
+--ease-elastic:     cubic-bezier(0.68, -0.55, 0.265, 1.55) /* Elastic spring */
+--ease-anticipate:  cubic-bezier(0.36, 0, 0.66, -0.56)  /* Anticipation */
+--ease-in-out:      cubic-bezier(0.645, 0.045, 0.355, 1) /* Smooth in-out */
+--ease-swift:       cubic-bezier(0.25, 0.46, 0.45, 0.94) /* Swift movement */
+
+Duration Scale
+--duration-instant:  100ms  /* Instant feedback */
+--duration-fast:     150ms  /* Quick transitions */
+--duration-base:     200ms  /* Standard duration */
+--duration-moderate: 300ms  /* Moderate animations */
+--duration-slow:     400ms  /* Deliberate animations */
+--duration-slower:   600ms  /* Very deliberate */
+
+Animation Delays (for staggered effects)
+--delay-stagger-sm: 50ms   /* Small stagger between items */
+--delay-stagger-md: 100ms  /* Medium stagger */
+--delay-stagger-lg: 150ms  /* Large stagger */
+
+Micro-interaction Scales
+--scale-press:  0.95  /* Button press */
+--scale-hover:  1.02  /* Subtle hover */
+--scale-active: 1.05  /* Active emphasis */
+--scale-pop:    1.1   /* Pop effect */
+
+Custom Keyframe Animations
+1. Icon Entrance (Staggered with spring physics):
+
+@keyframes iconEntrance {
+  0%   { opacity: 0; transform: translateY(20px) scale(0.8); }
+  50%  { opacity: 1; transform: translateY(-5px) scale(1.05); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+2. Glassmorphic Fade In:
+
+@keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in forwards;
+}
+
+3. Float Animation (for background orbs):
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(30px, -30px) scale(1.1); }
+  66%      { transform: translate(-20px, 20px) scale(0.9); }
+}
+
+4. Shimmer Effect:
+
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.animate-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+9.8 Visual Editor UI Components
+9.8.1 Visual Editor Overlay
+Component: VisualEditorOverlay.tsx
+
+Layout:
+
+┌─────────────────────────────────────────────────────────────┐
+│ Visual Editor                    [Fullscreen] [Exit]        │ ← Header Bar
+├────────────────────────────┬────────────────────────────────┤
+│  LIVE PREVIEW (60%)        │  MR. BLUE AI CHAT (40%)        │
+│                            │                                │
+│  [Page Preview]            │  💬 Chat Interface             │
+│  • Purple outline on hover │  • Context-aware suggestions   │
+│  • Solid border when       │  • Real-time AI assistance     │
+│    selected                │  • Recent edits history        │
+│                            │                                │
+│  [Edit Controls Panel]     │  [Recent Edits]                │
+│  ├─ Position Tab           │  • Button color changed        │
+│  ├─ Size Tab               │  • Heading text updated        │
+│  ├─ Style Tab              │  • Layout adjusted             │
+│  └─ Text Tab               │                                │
+│                            │  [Suggestions]                 │
+│  [Generate Code] [Preview] │  • Make heading bold           │
+│                            │  • Increase button padding     │
+└────────────────────────────┴────────────────────────────────┘
+
+Visual Styling:
+
+Background: bg-primary (light gray-blue)
+Header Bar: bg-ocean-gradient with turquoise accent
+Divider: 1px border with --border-accent (soft turquoise)
+Glass Effect: glass-card class on all panels
+Interactive States:
+
+// Element Hover State
+<div 
+  className="outline-2 outline-dashed outline-purple-500/50 
+             hover:outline-purple-500 transition-all duration-200"
+/>
+// Selected Element
+<div 
+  className="outline-4 outline-solid outline-purple-600 
+             shadow-lg shadow-purple-500/30"
+/>
+// Dragging Element
+<div 
+  className="opacity-70 scale-105 cursor-move 
+             shadow-2xl shadow-purple-600/40"
+/>
+
+9.8.2 Edit Controls Panel
+Tabs Design:
+
+// Tab Navigation
+<div className="flex gap-2 p-4 bg-elevated border-b border-primary">
+  <TabButton active={tab === 'position'}>
+    <Move className="w-4 h-4 mr-2" />
+    Position
+  </TabButton>
+  <TabButton active={tab === 'size'}>
+    <Maximize className="w-4 h-4 mr-2" />
+    Size
+  </TabButton>
+  <TabButton active={tab === 'style'}>
+    <Palette className="w-4 h-4 mr-2" />
+    Style
+  </TabButton>
+  <TabButton active={tab === 'text'}>
+    <Type className="w-4 h-4 mr-2" />
+    Text
+  </TabButton>
+</div>
+
+Tab Button Styling:
+
+.tab-button {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  transition: all var(--duration-fast) var(--ease-smooth);
+  
+  /* Inactive State */
+  background: transparent;
+  color: var(--text-secondary);
+  
+  /* Active State */
+  &.active {
+    background: var(--color-primary);
+    color: white;
+    box-shadow: var(--glow-seafoam);
+  }
+  
+  /* Hover State */
+  &:hover:not(.active) {
+    background: var(--hover-overlay);
+    color: var(--text-primary);
+  }
+}
+
+Input Controls:
+
+// Position Inputs
+<div className="grid grid-cols-2 gap-4 p-4">
+  <Input 
+    label="X Position" 
+    type="number"
+    className="glass-card p-3 rounded-lg"
+  />
+  <Input 
+    label="Y Position" 
+    type="number"
+    className="glass-card p-3 rounded-lg"
+  />
+</div>
+// Color Picker
+<ColorPicker 
+  value={color}
+  onChange={setColor}
+  className="glass-card-elevated p-4 rounded-xl"
+/>
+
+9.8.3 Element Inspector
+Component Display:
+
+<div className="glass-card p-4 rounded-lg space-y-3">
+  <div className="flex items-center justify-between">
+    <span className="text-sm text-ocean-secondary">Component</span>
+    <code className="text-xs bg-ocean-card px-2 py-1 rounded">
+      {componentName}
+    </code>
+  </div>
+  
+  <div className="flex items-center justify-between">
+    <span className="text-sm text-ocean-secondary">Test ID</span>
+    <code className="text-xs bg-ocean-card px-2 py-1 rounded">
+      {testId}
+    </code>
+  </div>
+  
+  <div className="flex items-center justify-between">
+    <span className="text-sm text-ocean-secondary">File Path</span>
+    <span className="text-xs text-ocean-muted truncate max-w-[200px]">
+      {filePath}
+    </span>
+  </div>
+</div>
+
+9.9 Mr. Blue UI Components
+9.9.1 Mr. Blue Floating Button
+Always-visible FAB (Floating Action Button):
+
+<button 
+  className="
+    fixed bottom-6 right-6 z-50
+    w-16 h-16 rounded-full
+    bg-ocean-gradient
+    shadow-2xl shadow-ocean-teal-500/30
+    flex items-center justify-center
+    transition-all duration-300 ease-bounce
+    hover:scale-110 hover:shadow-ocean-teal-500/50
+    active:scale-95
+    glow-seafoam-strong
+  "
+  data-testid="button-mr-blue-open"
+>
+  <Bot className="w-8 h-8 text-white animate-pulse" />
+</button>
+
+Pulse Animation:
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.7; }
+}
+
+9.9.2 Mr. Blue Chat Interface
+Chat Window Design:
+
+<div className="
+  fixed bottom-24 right-6 
+  w-96 h-[600px]
+  glass-card-elevated
+  rounded-2xl
+  shadow-2xl
+  flex flex-col
+  z-40
+  animate-fade-in
+">
+  {/* Header */}
+  <div className="
+    bg-ocean-gradient p-4
+    rounded-t-2xl
+    flex items-center justify-between
+  ">
+    <div className="flex items-center gap-3">
+      <div className="w-10 h-10 rounded-full bg-white/20 
+                      flex items-center justify-center">
+        <Bot className="w-6 h-6 text-white" />
+      </div>
+      <div>
+        <h3 className="text-white font-semibold">Mr. Blue</h3>
+        <p className="text-white/70 text-xs">AI Assistant</p>
+      </div>
+    </div>
+    <button className="text-white/80 hover:text-white">
+      <X className="w-5 h-5" />
+    </button>
+  </div>
+  
+  {/* Messages Area */}
+  <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    {messages.map(msg => (
+      <MessageBubble key={msg.id} {...msg} />
+    ))}
+  </div>
+  
+  {/* Input Area */}
+  <div className="p-4 border-t border-primary">
+    <textarea 
+      className="
+        w-full p-3 rounded-lg
+        glass-depth-2
+        border border-primary
+        focus:border-primary focus:ring-2 focus:ring-primary/20
+        resize-none
+      "
+      placeholder="Ask Mr. Blue anything..."
+    />
+  </div>
+</div>
+
+9.9.3 Message Bubble Styling
+User Message:
+
+<div className="flex justify-end">
+  <div className="
+    bg-ocean-gradient
+    text-white
+    px-4 py-3
+    rounded-2xl rounded-tr-sm
+    max-w-[80%]
+    shadow-md
+  ">
+    {message.content}
+  </div>
+</div>
+
+AI Message:
+
+<div className="flex justify-start">
+  <div className="
+    glass-card
+    text-primary
+    px-4 py-3
+    rounded-2xl rounded-tl-sm
+    max-w-[80%]
+    border border-primary/20
+  ">
+    {message.content}
+  </div>
+</div>
+
+9.9.4 3D Avatar Display
+React Three Fiber Implementation:
+
+<Canvas className="w-full h-64 rounded-xl overflow-hidden">
+  <ambientLight intensity={0.5} />
+  <pointLight position={[10, 10, 10]} />
+  <MrBlueAvatar 
+    animation="idle"
+    className="animate-float"
+  />
+</Canvas>
+
+Avatar Styling:
+
+Background: Ocean gradient with subtle animation
+Lighting: Ambient + point lights for depth
+Animation: Idle breathing, blinking, lip-sync when speaking
+9.10 Border Radius System
+--radius-none: 0
+--radius-sm:   0.25rem   /* 4px */
+--radius-md:   0.375rem  /* 6px */
+--radius-lg:   0.5rem    /* 8px */
+--radius-xl:   0.75rem   /* 12px */
+--radius-2xl:  1rem      /* 16px */
+--radius-3xl:  1.5rem    /* 24px */
+--radius-full: 9999px    /* Fully rounded */
+
+9.11 Z-Index Layers
+--z-base:            0
+--z-dropdown:        1000
+--z-sticky:          1020
+--z-fixed:           1030
+--z-modal-backdrop:  1040
+--z-modal:           1050
+--z-popover:         1060
+--z-tooltip:         1070
+
+Usage in Visual Editor:
+
+Page Preview: z-base (0)
+Element Outlines: z-dropdown (1000)
+Edit Controls: z-sticky (1020)
+Mr. Blue Chat: z-fixed (1030)
+Mr. Blue FAB: z-modal (1050)
+9.12 Accessibility Features
+Reduced Motion Support
+Automatically disables animations for users who prefer reduced motion:
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+Reduced Transparency Support
+Removes glassmorphic effects for users who need higher opacity:
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-bg: hsl(0 0% 100% / 0.95);  /* Near-solid background */
+    --glass-blur: 0px;  /* No blur */
+  }
+}
+
+High Contrast Mode
+Increases border contrast for better visibility:
+
+@media (prefers-contrast: high) {
+  :root {
+    --border-primary: hsl(210, 16%, 80%);
+    --border-secondary: hsl(210, 14%, 70%);
+    --glass-border: hsl(177, 72%, 56% / 0.4);  /* Stronger borders */
+  }
+}
+
+WCAG 2.1 AA Compliance
+All color combinations meet WCAG 2.1 AA standards:
+
+Text on light backgrounds: 4.5:1 minimum contrast ratio
+Text on dark backgrounds: 4.5:1 minimum contrast ratio
+Interactive elements: Clearly distinguishable states (hover, focus, active)
+Focus indicators: Visible 2px outline on all interactive elements
+9.13 Responsive Design
+Breakpoints
+/* Mobile First */
+sm:  640px   /* Small devices */
+md:  768px   /* Tablets */
+lg:  1024px  /* Laptops */
+xl:  1280px  /* Desktops */
+2xl: 1536px  /* Large desktops */
+
+Visual Editor Responsive Behavior
+Desktop (>1024px):
+
+Split-pane layout: 60% preview, 40% Mr. Blue chat
+Full edit controls panel visible
+Drag & drop enabled
+Tablet (768px - 1024px):
+
+Split-pane layout: 50% preview, 50% chat
+Collapsed edit controls with expandable panels
+Mobile (<768px):
+
+Tabbed interface: Preview OR Chat (toggle)
+Simplified edit controls (bottom sheet)
+Tap to select (no drag & drop)
+// Example responsive layout
+<div className="
+  grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[60%_40%]
+  gap-4 md:gap-6
+">
+  <div className="order-1 md:order-1">Preview</div>
+  <div className="order-2 md:order-2">Chat</div>
+</div>
+
+9.14 Interactive States
+Button States
+// Primary Button
+<button className="
+  px-6 py-3 rounded-lg
+  bg-ocean-gradient
+  text-white font-semibold
+  
+  /* Hover */
+  hover:shadow-lg hover:scale-105
+  hover:glow-seafoam
+  
+  /* Active */
+  active:scale-95
+  
+  /* Focus */
+  focus:outline-none focus:ring-2 
+  focus:ring-primary focus:ring-offset-2
+  
+  /* Disabled */
+  disabled:opacity-50 disabled:cursor-not-allowed
+  disabled:hover:scale-100
+  
+  /* Transition */
+  transition-all duration-200 ease-smooth
+">
+  Submit
+</button>
+
+Input States
+<input className="
+  px-4 py-2 rounded-lg
+  glass-card
+  border border-primary/20
+  
+  /* Focus */
+  focus:border-primary focus:ring-2 
+  focus:ring-primary/30
+  
+  /* Error */
+  aria-invalid:border-error 
+  aria-invalid:ring-error/30
+  
+  /* Disabled */
+  disabled:bg-disabled-bg 
+  disabled:text-disabled-text
+  
+  /* Transition */
+  transition-all duration-150
+"/>
+
+Card States
+<div className="
+  glass-card p-6 rounded-xl
+  
+  /* Hover */
+  hover:shadow-lg 
+  hover:scale-[1.02]
+  hover:border-primary/40
+  
+  /* Active/Selected */
+  aria-selected:border-primary 
+  aria-selected:ring-2 
+  aria-selected:ring-primary/20
+  
+  /* Transition */
+  transition-all duration-300 ease-smooth
+">
+  Card Content
+</div>
+
+9.15 Utility Classes
+/* Ocean Gradient Backgrounds */
+.bg-ocean-gradient  { background: var(--bg-ocean-gradient); }
+.bg-ocean-card      { background: var(--bg-ocean-card); }
+.bg-ocean-soft      { background: var(--bg-ocean-gradient-soft); }
+/* Text Colors */
+.text-ocean          { color: var(--text-ocean-primary); }
+.text-ocean-secondary{ color: var(--text-ocean-secondary); }
+.text-ocean-muted    { color: var(--text-ocean-muted); }
+.text-seafoam        { color: var(--ocean-seafoam-400); }
+/* Borders */
+.border-ocean-divider { border-color: hsl(0 0% 100% / 0.1); }
+.border-primary       { border-color: var(--ocean-seafoam-400); }
+/* Glow Effects */
+.glow-seafoam        { box-shadow: var(--glow-seafoam); }
+.glow-seafoam-strong { box-shadow: var(--glow-seafoam-strong); }
+/* Glass Effects */
+.glass-card          { /* See 9.6 Glassmorphism */ }
+.glass-card-elevated { /* Elevated glass variant */ }
+.glass-depth-1       { /* Subtle glass */ }
+.glass-depth-2       { /* Medium glass */ }
+.glass-depth-3       { /* Strong glass */ }
+.glass-depth-4       { /* Very strong glass */ }
+/* Hover States */
+.hover-ocean-accent:hover {
+  background-color: var(--sidebar-hover-bg);
+  color: var(--ocean-seafoam-300);
+}
+
+9.16 Component Examples
+Visual Editor Button Group
+<div className="flex gap-2 p-4 glass-card rounded-xl">
+  <button className="
+    px-4 py-2 rounded-lg
+    bg-ocean-gradient text-white
+    hover:shadow-lg hover:scale-105
+    active:scale-95
+    transition-all duration-200
+    glow-seafoam
+  ">
+    Generate Code
+  </button>
+  
+  <button className="
+    px-4 py-2 rounded-lg
+    glass-depth-2 border border-primary/30
+    text-primary
+    hover:border-primary hover:bg-hover-overlay
+    active:scale-95
+    transition-all duration-200
+  ">
+    Preview
+  </button>
+  
+  <button className="
+    px-4 py-2 rounded-lg
+    glass-depth-1 border border-border-secondary
+    text-secondary
+    hover:bg-hover-overlay
+    active:scale-95
+    transition-all duration-200
+  ">
+    Cancel
+  </button>
+</div>
+
+Mr. Blue Suggestion Card
+<div className="
+  glass-card p-4 rounded-lg
+  border border-primary/20
+  hover:border-primary/40
+  hover:shadow-md
+  transition-all duration-300
+  cursor-pointer
+">
+  <div className="flex items-start gap-3">
+    <Lightbulb className="w-5 h-5 text-seafoam flex-shrink-0 mt-0.5" />
+    <div>
+      <h4 className="font-medium text-primary mb-1">Suggestion</h4>
+      <p className="text-sm text-secondary">
+        Make the heading bold to improve visual hierarchy
+      </p>
+    </div>
+  </div>
+</div>
+
+Code Diff Display
+<div className="glass-card-elevated p-6 rounded-xl space-y-4">
+  <div className="flex items-center justify-between">
+    <h3 className="font-semibold text-lg text-primary">Code Changes</h3>
+    <span className="text-xs text-ocean-secondary">memories.tsx</span>
+  </div>
+  
+  <div className="space-y-2">
+    {/* Removed line */}
+    <div className="
+      bg-error/10 border-l-4 border-error
+      px-3 py-2 rounded-r font-mono text-sm
+    ">
+      <span className="text-error">- </span>
+      <span className="text-error/80">className="text-base"</span>
+    </div>
+    
+    {/* Added line */}
+    <div className="
+      bg-success/10 border-l-4 border-success
+      px-3 py-2 rounded-r font-mono text-sm
+    ">
+      <span className="text-success">+ </span>
+      <span className="text-success/80">className="text-lg font-bold"</span>
+    </div>
+  </div>
+</div>
+
+9.17 Design Tokens File Reference
+Complete design system: client/src/styles/design-tokens.css (829 lines)
+
+Sections:
+
+MT Ocean Core Colors (Turquoise, Blue, Deep Blue palettes)
+Semantic Colors (Primary, Success, Warning, Error, Info)
+Spacing System (4px base increment, --space-0 to --space-20)
+Typography Scale (Font sizes, weights, line heights)
+Shadows (Ocean-themed with Cobalt Blue tint)
+Border Radius (--radius-none to --radius-full)
+Z-Index Layers (--z-base to --z-tooltip)
+Transitions & Easing (GSAP/Framer Motion compatible)
+Sidebar & Topbar Specific Variables
+Neutrals (for content areas)
+Aurora Tide Light Mode Tokens
+Aurora Tide Dark Mode Tokens
+Accessibility Overrides (reduced motion, transparency, high contrast)
+Utility Classes (gradients, text, borders, glass, glow, hover)
+Aurora Tide Glassmorphic System
+Aurora Tide Animation System
+Key Features:
+
+✅ Full dark mode support
+✅ WCAG 2.1 AA compliant
+✅ Accessibility media queries
+✅ Responsive breakpoints
+✅ Animation system
+✅ Glassmorphic effects
+✅ Ocean-themed gradients
+✅ HANDOFF COMPLETE
+This document contains EVERYTHING built for Visual Editor and Mr. Blue in the 10-21-2025 branch, including COMPLETE UI/UX design system documentation. Any developer or AI agent can use this to understand the entire system architecture, features, AND visual design specifications.
+
+What's Included:
+
+✅ Visual Editor Features & Workflows
+✅ Mr. Blue Intelligence System
+✅ Complete Database Schema
+✅ All API Endpoints
+✅ Security & Access Control
+✅ COMPLETE MT Ocean Design System
+✅ All UI Components with Styling
+✅ Animation & Interaction Specifications
+✅ Accessibility Features
+✅ Responsive Design Guidelines
+Next Steps: Create Playwright tests to validate all features documented above.
+
+Generated: November 3, 2025
+Methodology: MB.MD (Simultaneously, Recursively, Critically)
+Status: ✅ COMPLETE - ZERO-KNOWLEDGE HANDOFF WITH UI/UX READY
