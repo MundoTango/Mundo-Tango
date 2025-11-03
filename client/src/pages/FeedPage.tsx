@@ -66,6 +66,8 @@ export default function FeedPage() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   
   // @mentions autocomplete state
@@ -87,6 +89,7 @@ export default function FeedPage() {
   const [recCountry, setRecCountry] = useState("");
   
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { user } = useAuth();
   const { 
@@ -133,12 +136,47 @@ export default function FeedPage() {
     reader.readAsDataURL(file);
   };
 
+  const handleVideoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('video/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select a video file",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (file.size > 50 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please select a video smaller than 50MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSelectedVideo(file);
+    const url = URL.createObjectURL(file);
+    setVideoPreview(url);
+  };
+
   const handleRemoveImage = () => {
     setSelectedFile(null);
     setImagePreview(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  const handleRemoveVideo = () => {
+    if (videoPreview) {
+      URL.revokeObjectURL(videoPreview);
+    }
+    setSelectedVideo(null);
+    setVideoPreview(null);
   };
 
   const toggleTag = (tagName: string) => {
@@ -263,15 +301,39 @@ export default function FeedPage() {
     setIsUploading(true);
 
     try {
-      await createPost.mutateAsync({
+      const postData: any = {
         content: content.trim(),
         visibility: visibility,
-      });
+      };
+
+      if (imagePreview) {
+        postData.imageUrl = imagePreview;
+      }
+
+      if (videoPreview && selectedVideo) {
+        postData.videoUrl = videoPreview;
+      }
+
+      if (recommendations.length > 0) {
+        postData.recommendations = recommendations.map(rec => ({
+          ...rec,
+          location: rec.location || null
+        }));
+      }
+
+      if (mentions.length > 0) {
+        postData.mentions = mentions.map(m => m.id);
+      }
+
+      await createPost.mutateAsync(postData);
 
       setContent("");
       setVisibility("public");
       setSelectedTags([]);
+      setRecommendations([]);
+      setMentions([]);
       handleRemoveImage();
+      handleRemoveVideo();
       toast({
         title: "Post created!",
         description: "Your post has been shared with the community.",
@@ -375,6 +437,27 @@ export default function FeedPage() {
                   onClick={handleRemoveImage}
                   className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm hover-elevate active-elevate-2"
                   data-testid="button-remove-image"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+
+            {videoPreview && (
+              <div className="relative" data-testid="video-preview-container">
+                <video
+                  src={videoPreview}
+                  controls
+                  className="rounded-lg w-full max-h-96"
+                  data-testid="video-preview"
+                />
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  onClick={handleRemoveVideo}
+                  className="absolute top-2 right-2 bg-background/80 backdrop-blur-sm hover-elevate active-elevate-2"
+                  data-testid="button-remove-video"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -512,6 +595,24 @@ export default function FeedPage() {
                   data-testid="button-upload-image"
                 >
                   <ImageIcon className="h-5 w-5" />
+                </Button>
+                <input
+                  ref={videoInputRef}
+                  type="file"
+                  accept="video/*"
+                  onChange={handleVideoSelect}
+                  className="hidden"
+                  data-testid="input-video"
+                />
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => videoInputRef.current?.click()}
+                  className="hover-elevate active-elevate-2"
+                  data-testid="button-upload-video"
+                >
+                  <Video className="h-5 w-5" />
                 </Button>
                 <Select value={visibility} onValueChange={(value: any) => setVisibility(value)}>
                   <SelectTrigger className="w-36 hover-elevate" data-testid="select-visibility">
