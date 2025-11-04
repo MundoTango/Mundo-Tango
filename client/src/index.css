@@ -78,6 +78,22 @@
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
+  /* ========== VIBRANT TAG COLORS (Tango-Inspired) ========== */
+  --tag-milonga: 0 85% 60%;        /* Red */
+  --tag-practica: 25 95% 58%;      /* Orange */
+  --tag-performance: 45 95% 55%;   /* Yellow/Gold */
+  --tag-workshop: 142 70% 45%;     /* Green */
+  --tag-festival: 270 70% 60%;     /* Purple */
+  --tag-travel: 210 100% 56%;      /* Blue */
+  --tag-music: 330 80% 55%;        /* Pink */
+  --tag-fashion: 177 72% 50%;      /* Teal/Turquoise */
+
+  /* Gradient Backgrounds */
+  --gradient-memories-start: 177 40% 96%;
+  --gradient-memories-end: 195 35% 93%;
+  --gradient-hero-start: 177 50% 92%;
+  --gradient-hero-end: 210 45% 88%;
+
   /* Automatically computed borders - intensity can be controlled by the user by the --opaque-button-border-intensity setting */
 
   /* Fallback for older browsers */
@@ -173,6 +189,22 @@
   --shadow-lg: 0px 10px 15px -3px hsl(0 0% 0% / 0.30), 0px 4px 6px -4px hsl(0 0% 0% / 0.20);
   --shadow-xl: 0px 20px 25px -5px hsl(0 0% 0% / 0.35), 0px 8px 10px -6px hsl(0 0% 0% / 0.25);
   --shadow-2xl: 0px 25px 50px -12px hsl(0 0% 0% / 0.40);
+
+  /* Dark Mode Vibrant Tags */
+  --tag-milonga: 0 75% 65%;
+  --tag-practica: 25 85% 62%;
+  --tag-performance: 45 90% 62%;
+  --tag-workshop: 142 60% 55%;
+  --tag-festival: 270 65% 65%;
+  --tag-travel: 210 90% 62%;
+  --tag-music: 330 70% 62%;
+  --tag-fashion: 177 72% 60%;
+
+  /* Dark Mode Gradients */
+  --gradient-memories-start: 218 32% 10%;
+  --gradient-memories-end: 218 28% 14%;
+  --gradient-hero-start: 218 35% 12%;
+  --gradient-hero-end: 210 30% 16%;
 
   /* Fallback for older browsers */
   --sidebar-primary-border: hsl(var(--sidebar-primary));
@@ -370,6 +402,34 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /* Vibrant Gradient Backgrounds */
+  .gradient-memories {
+    background: linear-gradient(135deg, hsl(var(--gradient-memories-start)) 0%, hsl(var(--gradient-memories-end)) 100%);
+  }
+
+  .gradient-hero {
+    background: linear-gradient(135deg, hsl(var(--gradient-hero-start)) 0%, hsl(var(--gradient-hero-end)) 100%);
+  }
+
+  /* Enhanced Card Shadows */
+  .card-elevated {
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 5px 15px -5px rgba(0, 0, 0, 0.05);
+  }
+
+  .dark .card-elevated {
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3), 0 5px 15px -5px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Decorative Stars */
+  .decorative-stars::before,
+  .decorative-stars::after {
+    content: "✨";
+    display: inline-block;
+    margin: 0 0.5rem;
+    opacity: 0.6;
+    font-size: 0.875em;
   }
 
   /* ========== DESIGN TOKEN SYSTEM ========== */

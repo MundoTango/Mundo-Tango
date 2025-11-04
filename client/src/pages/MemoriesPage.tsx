@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TagPill, type TagType } from "@/components/ui/tag-pill";
 import { 
   Heart, 
   Calendar, 
@@ -14,7 +15,8 @@ import {
   Music, 
   Star,
   TrendingUp,
-  Plus 
+  Plus,
+  Sparkles
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { SEO } from "@/components/SEO";
@@ -69,18 +71,18 @@ export default function MemoriesPage() {
           title="My Tango Memories"
           description="Your personal timeline of tango milestones, moments, and memories from around the world."
         />
-        <div className="flex min-h-screen bg-background">
+        <div className="flex min-h-screen gradient-memories">
           <FeedLeftSidebar />
           
           <main className="flex-1 max-w-3xl p-6 space-y-6">
-            {/* Header */}
+            {/* Header with Decorative Stars */}
             <div className="flex items-center justify-between gap-4">
               <div>
-                <h1 className="text-3xl font-bold text-foreground" data-testid="text-page-title">
-                  My Tango Journey
+                <h1 className="text-3xl font-bold text-foreground decorative-stars" data-testid="text-page-title">
+                  Memories
                 </h1>
                 <p className="text-muted-foreground text-sm mt-1">
-                  Your personal timeline of milestones and memories
+                  Share your tango moments, connect with dancers, and create lasting memories together
                 </p>
               </div>
               <Button 
@@ -93,33 +95,45 @@ export default function MemoriesPage() {
               </Button>
             </div>
 
-            {/* Quick Stats */}
+            {/* Vibrant Tag Pills */}
+            <div className="flex flex-wrap gap-2">
+              <TagPill type="milonga">Milonga</TagPill>
+              <TagPill type="practica">Práctica</TagPill>
+              <TagPill type="performance">Performance</TagPill>
+              <TagPill type="workshop">Workshop</TagPill>
+              <TagPill type="festival">Festival</TagPill>
+              <TagPill type="travel">Travel</TagPill>
+              <TagPill type="music">Music</TagPill>
+              <TagPill type="fashion">Fashion</TagPill>
+            </div>
+
+            {/* Quick Stats with Enhanced Shadows */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card className="hover-elevate">
+              <Card className="card-elevated hover-elevate">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Memories</CardTitle>
                   <Camera className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold" data-testid="text-total-memories">
+                  <div className="text-2xl font-bold text-primary" data-testid="text-total-memories">
                     {stats?.totalMemories || 0}
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="hover-elevate">
+              <Card className="card-elevated hover-elevate">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Events Attended</CardTitle>
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold" data-testid="text-events-attended">
+                  <div className="text-2xl font-bold text-secondary" data-testid="text-events-attended">
                     {stats?.eventsAttended || 0}
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="hover-elevate">
+              <Card className="card-elevated hover-elevate">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Milestones</CardTitle>
                   <Award className="h-4 w-4 text-muted-foreground" />
