@@ -25,7 +25,7 @@ All navigation components use design tokens for complete visual redesign flexibi
 
 #### Technical Implementations
 
-**Backend Architecture:** Node.js with Express and TypeScript, PostgreSQL with Drizzle ORM, JWT-based authentication, and real-time capabilities via Supabase Realtime and WebSockets.
+**Backend Architecture:** Node.js with Express and TypeScript, PostgreSQL with Drizzle ORM, JWT-based authentication (tokens stored in localStorage, sent via Authorization header), and real-time capabilities via Supabase Realtime and WebSockets. All protected routes use `authenticateToken` middleware requiring `Bearer ${token}` header.
 
 **Key Systems:**
 -   **8-Tier RBAC System** (god, super\_admin, admin, moderator, teacher, premium, user, guest).
@@ -37,8 +37,8 @@ All navigation components use design tokens for complete visual redesign flexibi
 -   **Post System:** Like, comment, share, bookmark, report, edit with history, analytics.
 
 **AI Integration:**
--   **Mr. Blue AI Assistant:** Context-aware conversational intelligence using Groq SDK (llama-3.1-8b-instant), breadcrumb tracking, and predictive assistance.
--   **Visual Editor System:** Figma-like page editing with AI code generation (OpenAI GPT-4o), real-time preview, JSX export, and Git automation. Accessible via `?edit=true` for super\_admin.
+-   **Mr. Blue AI Assistant:** Context-aware conversational intelligence using Groq SDK (llama-3.1-8b-instant), breadcrumb tracking, and predictive assistance. UI controls hidden via `?hideControls=true` parameter in iframe contexts.
+-   **Visual Editor System:** Figma-like page editing with AI code generation (OpenAI GPT-4o), real-time preview, JSX export, and Git automation. Accessible at `/admin/visual-editor` for super\_admin. Uses `apiRequest()` helper for JWT-authenticated API calls. iframe preview uses postMessage API for cross-origin component selection.
 -   **Talent Match AI:** Advanced matching algorithms for dancers/teachers.
 
 **Automation & Workers:** BullMQ queue management with 39 functions across 6 dedicated workers, powered by Redis-based job processing. Includes 50 production-ready algorithms.
