@@ -35,18 +35,6 @@ export default function VisualEditorPage() {
     queryKey: ['/api/auth/me']
   });
 
-  // Don't render until user is loaded
-  if (userLoading || !user) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading Visual Editor...</p>
-        </div>
-      </div>
-    );
-  }
-
   // Listen for messages from iframe
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -226,6 +214,18 @@ export default function VisualEditorPage() {
       setIsSaving(false);
     }
   };
+
+  // Show loading screen while user is being fetched
+  if (userLoading || !user) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading Visual Editor...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
