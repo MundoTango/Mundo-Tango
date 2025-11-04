@@ -43,10 +43,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 
-// Core Social Hub (4 items)
+// Core Social Hub (3 items)
 const socialItems = [
   { title: "Memories", url: "/memories", icon: Home },
-  { title: "Feed", url: "/feed", icon: Rss },
   { title: "Profile", url: "/profile", icon: UserCircle },
   { title: "Discover", url: "/discover", icon: Compass },
 ];
