@@ -191,7 +191,8 @@ const ReportUserPage = lazy(() => import("@/pages/ReportUserPage"));
 const ReportContentPage = lazy(() => import("@/pages/ReportContentPage"));
 
 // Visual Editor
-const VisualEditorPage = lazy(() => import("@/pages/VisualEditorPage"));
+// Visual Editor is now accessed via ?edit=true on any page
+// const VisualEditorPage = lazy(() => import("@/pages/VisualEditorPage"));
 
 function Router() {
   return (
@@ -772,7 +773,15 @@ function Router() {
       <Route path="/admin/visual-editor">
         <ProtectedRoute>
           <AdminLayout>
-            <VisualEditorPage />
+            <div className="p-8">
+              <h1 className="text-2xl font-bold mb-4">Visual Editor</h1>
+              <p className="text-muted-foreground mb-6">
+                The Visual Editor is now accessible on any page by adding <code className="bg-muted px-2 py-1 rounded">?edit=true</code> to the URL.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Example: <code className="bg-muted px-2 py-1 rounded">/memories?edit=true</code>
+              </p>
+            </div>
           </AdminLayout>
         </ProtectedRoute>
       </Route>
