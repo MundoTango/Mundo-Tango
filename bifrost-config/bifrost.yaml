@@ -1,0 +1,132 @@
+# Bifrost AI Gateway Configuration
+# Mundo Tango Platform - MB.MD Protocol Implementation
+# Date: November 4, 2025
+
+# Provider Configuration
+providers:
+  # Primary OpenAI for GPT-4o (Visual Editor, Self-Healing, Whisper)
+  - name: openai-primary
+    type: openai
+    apiKey: ${OPENAI_API_KEY}
+    models:
+      - gpt-4o
+      - gpt-4o-mini
+      - gpt-4o-realtime-preview-2024-10-01
+      - whisper-1
+      - tts-1
+      - tts-1-hd
+    config:
+      organization: null
+      timeout: 30000
+
+  # Primary Groq for Mr. Blue Chat (llama-3.1-8b-instant)
+  - name: groq-primary
+    type: groq
+    apiKey: ${GROQ_API_KEY}
+    models:
+      - llama-3.1-8b-instant
+      - llama-3.1-70b-versatile
+    config:
+      timeout: 15000
+
+  # Backup Anthropic (Claude) for failover
+  - name: anthropic-backup
+    type: anthropic
+    apiKey: ${ANTHROPIC_API_KEY}
+    models:
+      - claude-3-5-sonnet-20241022
+      - claude-3-opus-20240229
+    config:
+      timeout: 30000
+
+# Automatic Failover Configuration
+fallbacks:
+  # GPT-4o failover chain
+  gpt-4o:
+    - openai-primary/gpt-4o
+    - anthropic-backup/claude-3-5-sonnet-20241022  # Fallback if OpenAI fails
+  
+  # GPT-4o-mini failover (for less critical tasks)
+  gpt-4o-mini:
+    - openai-primary/gpt-4o-mini
+    - groq-primary/llama-3.1-8b-instant  # Cheaper fallback
+  
+  # Mr. Blue chat failover
+  llama-3.1-8b-instant:
+    - groq-primary/llama-3.1-8b-instant
+    - openai-primary/gpt-4o-mini  # Fallback if Groq rate limits
+
+# Semantic Caching Configuration
+caching:
+  enabled: true
+  provider: memory  # Start with in-memory, upgrade to Redis later
+  config:
+    similarity_threshold: 0.95  # 95% semantic similarity = cache hit
+    ttl: 3600  # Cache TTL: 1 hour
+    max_tokens: 4000  # Cache responses up to 4k tokens
+    exclude_models:
+      - gpt-4o-realtime-preview-2024-10-01  # Don't cache voice conversations
+      - whisper-1  # Don't cache transcriptions
+      - tts-1  # Don't cache TTS
+      - tts-1-hd
+
+# Load Balancing Configuration
+loadBalancing:
+  strategy: adaptive  # adaptive, round-robin, weighted, least-latency
+  config:
+    healthCheck: true
+    healthCheckInterval: 60000  # 60 seconds
+    maxRetries: 3
+
+# Budget Management
+budgets:
+  - name: daily-ai-budget
+    limit: 50  # $50/day max spend
+    scope: global
+    period: daily
+    alert_threshold: 0.8  # Alert at 80% usage
+  
+  - name: per-user-monthly
+    limit: 10  # $10/user/month
+    scope: user
+    period: monthly
+
+# Observability
+observability:
+  logging:
+    enabled: true
+    level: info  # debug, info, warn, error
+    format: json
+  
+  metrics:
+    enabled: true
+    prometheus:
+      enabled: true
+      port: 9090
+      path: /metrics
+  
+  tracing:
+    enabled: false  # Enable later with OpenTelemetry
+
+# Security
+security:
+  rateLimit:
+    enabled: true
+    requestsPerMinute: 100
+    requestsPerHour: 1000
+  
+  apiKeys:
+    enabled: false  # Using existing API keys for now
+  
+  cors:
+    enabled: true
+    allowedOrigins:
+      - http://localhost:5000
+      - https://*.replit.dev
+      - https://*.replit.app
+
+# Server Configuration
+server:
+  port: 8080
+  host: 0.0.0.0
+  timeout: 60000  # 60 second timeout
