@@ -1946,5 +1946,148 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ============================================================================
+  // HOUSING SYSTEM ROUTES (Wave 8D)
+  // ============================================================================
+
+  // Get Housing Listings (with filtering)
+  app.get("/api/housing/listings", async (req: Request, res: Response) => {
+    try {
+      const params = {
+        city: req.query.city as string,
+        country: req.query.country as string,
+        hostId: req.query.hostId ? parseInt(req.query.hostId as string) : undefined,
+        status: req.query.status as string,
+        propertyTypes: req.query.propertyTypes ? JSON.parse(req.query.propertyTypes as string) : undefined,
+        minPrice: req.query.minPrice ? parseFloat(req.query.minPrice as string) : undefined,
+        maxPrice: req.query.maxPrice ? parseFloat(req.query.maxPrice as string) : undefined,
+        bedrooms: req.query.bedrooms ? parseInt(req.query.bedrooms as string) : undefined,
+        bathrooms: req.query.bathrooms ? parseInt(req.query.bathrooms as string) : undefined,
+        maxGuests: req.query.maxGuests ? parseInt(req.query.maxGuests as string) : undefined,
+        amenities: req.query.amenities ? JSON.parse(req.query.amenities as string) : undefined,
+        friendsOnly: req.query.friendsOnly === 'true',
+        limit: req.query.limit ? parseInt(req.query.limit as string) : 20,
+        offset: req.query.offset ? parseInt(req.query.offset as string) : 0,
+      };
+      
+      const listings = await storage.getHousingListings(params);
+      res.json(listings);
+    } catch (error) {
+      console.error("Get housing listings error:", error);
+      res.status(500).json({ message: "Failed to fetch housing listings" });
+    }
+  });
+
+  // Get Housing Listing by ID
+  app.get("/api/housing/listings/:id", async (req: Request, res: Response) => {
+    try {
+      const listing = await storage.getHousingListingById(parseInt(req.params.id));
+      if (!listing) {
+        return res.status(404).json({ message: "Housing listing not found" });
+      }
+      res.json(listing);
+    } catch (error) {
+      console.error("Get housing listing error:", error);
+      res.status(500).json({ message: "Failed to fetch housing listing" });
+    }
+  });
+
+  // Create Housing Listing
+  app.post("/api/housing/listings", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const listing = await storage.createHousingListing({
+        hostId: req.user!.id,
+        ...req.body,
+      });
+      res.status(201).json(listing);
+    } catch (error) {
+      console.error("Create housing listing error:", error);
+      res.status(500).json({ message: "Failed to create housing listing" });
+    }
+  });
+
+  // Update Housing Listing
+  app.put("/api/housing/listings/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const listing = await storage.updateHousingListing(parseInt(req.params.id), req.body);
+      if (!listing) {
+        return res.status(404).json({ message: "Housing listing not found" });
+      }
+      res.json(listing);
+    } catch (error) {
+      console.error("Update housing listing error:", error);
+      res.status(500).json({ message: "Failed to update housing listing" });
+    }
+  });
+
+  // Delete Housing Listing
+  app.delete("/api/housing/listings/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteHousingListing(parseInt(req.params.id));
+      res.status(204).send();
+    } catch (error) {
+      console.error("Delete housing listing error:", error);
+      res.status(500).json({ message: "Failed to delete housing listing" });
+    }
+  });
+
+  // Get Housing Bookings
+  app.get("/api/housing/bookings", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const params = {
+        listingId: req.query.listingId ? parseInt(req.query.listingId as string) : undefined,
+        guestId: req.query.guestId ? parseInt(req.query.guestId as string) : undefined,
+        status: req.query.status as string,
+        limit: req.query.limit ? parseInt(req.query.limit as string) : 20,
+        offset: req.query.offset ? parseInt(req.query.offset as string) : 0,
+      };
+      
+      const bookings = await storage.getHousingBookings(params);
+      res.json(bookings);
+    } catch (error) {
+      console.error("Get housing bookings error:", error);
+      res.status(500).json({ message: "Failed to fetch housing bookings" });
+    }
+  });
+
+  // Create Housing Booking
+  app.post("/api/housing/bookings", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const booking = await storage.createHousingBooking({
+        guestId: req.user!.id,
+        ...req.body,
+      });
+      res.status(201).json(booking);
+    } catch (error) {
+      console.error("Create housing booking error:", error);
+      res.status(500).json({ message: "Failed to create housing booking" });
+    }
+  });
+
+  // Update Housing Booking
+  app.put("/api/housing/bookings/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const booking = await storage.updateHousingBooking(parseInt(req.params.id), req.body);
+      if (!booking) {
+        return res.status(404).json({ message: "Housing booking not found" });
+      }
+      res.json(booking);
+    } catch (error) {
+      console.error("Update housing booking error:", error);
+      res.status(500).json({ message: "Failed to update housing booking" });
+    }
+  });
+
+  // Delete Housing Booking
+  app.delete("/api/housing/bookings/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteHousingBooking(parseInt(req.params.id));
+      res.status(204).send();
+    } catch (error) {
+      console.error("Delete housing booking error:", error);
+      res.status(500).json({ message: "Failed to delete housing booking" });
+    }
+  });
+
   return httpServer;
 }
