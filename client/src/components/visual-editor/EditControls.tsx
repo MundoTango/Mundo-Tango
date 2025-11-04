@@ -21,7 +21,7 @@ interface EditControlsProps {
 
 export interface ComponentUpdates {
   type: 'position' | 'size' | 'style' | 'text';
-  changes: Record<string, any>;
+  changes: Record<string, { before?: any; after: any }>;
 }
 
 export function EditControls({ component, onClose, onChange }: EditControlsProps) {
@@ -34,28 +34,38 @@ export function EditControls({ component, onClose, onChange }: EditControlsProps
   const handlePositionChange = () => {
     onChange({
       type: 'position',
-      changes: { left: position.x, top: position.y }
+      changes: { 
+        left: { after: `${position.x}px` },
+        top: { after: `${position.y}px` }
+      }
     });
   };
 
   const handleSizeChange = () => {
     onChange({
       type: 'size',
-      changes: { width: size.width, height: size.height }
+      changes: { 
+        width: { after: `${size.width}px` },
+        height: { after: `${size.height}px` }
+      }
     });
   };
 
   const handleTextChange = () => {
     onChange({
       type: 'text',
-      changes: { text: textContent }
+      changes: { 
+        textContent: { after: textContent }
+      }
     });
   };
 
   const handleStyleChange = (property: string, value: string) => {
     onChange({
       type: 'style',
-      changes: { [property]: value }
+      changes: { 
+        [property]: { after: value }
+      }
     });
   };
 

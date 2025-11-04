@@ -18,7 +18,7 @@ import { GlobalMrBlue } from "./components/mrblue/GlobalMrBlue";
 import { ChatSidePanel } from "./components/mrblue/ChatSidePanel";
 import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
 import { LoadingFallback } from "./components/LoadingFallback";
-import { VisualEditorOverlay } from "./components/visual-editor/VisualEditorOverlay";
+import { VisualEditorSplitPane } from "./components/visual-editor/VisualEditorSplitPane";
 
 // Core Pages (loaded immediately for fast initial render)
 import NotFound from "@/pages/not-found";
@@ -821,7 +821,7 @@ function App() {
                   <GlobalMrBlue />
                   <ChatSidePanel />
                   <MrBlueFloatingButton />
-                  <VisualEditorOverlay 
+                  <VisualEditorSplitPane 
                     isOpen={isVisualEditorOpen} 
                     onClose={() => setIsVisualEditorOpen(false)} 
                   />
