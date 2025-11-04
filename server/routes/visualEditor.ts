@@ -122,6 +122,52 @@ router.post("/generate", async (req: Request, res: Response) => {
   }
 });
 
+// Apply instant change (for live preview)
+router.post("/apply-change", async (req: Request, res: Response) => {
+  try {
+    const { change, pagePath } = req.body;
+
+    if (!change) {
+      return res.status(400).json({
+        success: false,
+        message: 'Change object is required'
+      });
+    }
+
+    // This endpoint just validates the change
+    // Actual DOM update happens in iframe via postMessage
+    res.json({
+      success: true,
+      message: 'Change validated',
+      change
+    });
+  } catch (error: any) {
+    console.error('[VisualEditor] Apply change error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to apply change'
+    });
+  }
+});
+
+// Undo last change
+router.post("/undo", async (req: Request, res: Response) => {
+  try {
+    // Undo is handled client-side in iframe
+    // This endpoint just acknowledges the request
+    res.json({
+      success: true,
+      message: 'Undo triggered'
+    });
+  } catch (error: any) {
+    console.error('[VisualEditor] Undo error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to undo'
+    });
+  }
+});
+
 // Save and commit changes
 router.post("/save", async (req: Request, res: Response) => {
   try {

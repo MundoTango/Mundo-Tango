@@ -8,6 +8,7 @@ export const IFRAME_SELECTION_SCRIPT = `
 (function() {
   let hoveredElement = null;
   let selectedElement = null;
+  let undoStack = [];
 
   // Hide floating Mr. Blue buttons inside iframe
   function hideMrBlueButtons() {
@@ -31,6 +32,95 @@ export const IFRAME_SELECTION_SCRIPT = `
   // Hide on load and periodically
   hideMrBlueButtons();
   setInterval(hideMrBlueButtons, 500);
+
+  // ============================================================================
+  // INSTANT DOM UPDATE COMMANDS
+  // ============================================================================
+  function applyChange(change) {
+    if (!selectedElement) {
+      console.warn('[VisualEditor] No element selected');
+      return;
+    }
+
+    // Save state for undo
+    const previousState = {
+      element: selectedElement,
+      style: selectedElement.style.cssText,
+      className: selectedElement.className,
+      innerHTML: selectedElement.innerHTML
+    };
+    undoStack.push(previousState);
+
+    // Apply change
+    switch (change.type) {
+      case 'style':
+        if (change.property && change.value) {
+          selectedElement.style[change.property] = change.value;
+          console.log('[VisualEditor] Applied style:', change.property, '=', change.value);
+        }
+        break;
+
+      case 'position':
+        const rect = selectedElement.getBoundingClientRect();
+        selectedElement.style.transform = \`translate(\${change.x || 0}px, \${change.y || 0}px)\`;
+        console.log('[VisualEditor] Applied position:', change.x, change.y);
+        break;
+
+      case 'text':
+        selectedElement.textContent = change.value;
+        console.log('[VisualEditor] Applied text:', change.value);
+        break;
+
+      case 'class':
+        if (change.add) {
+          selectedElement.classList.add(change.add);
+        }
+        if (change.remove) {
+          selectedElement.classList.remove(change.remove);
+        }
+        console.log('[VisualEditor] Applied class change');
+        break;
+
+      case 'delete':
+        selectedElement.remove();
+        selectedElement = null;
+        console.log('[VisualEditor] Deleted element');
+        break;
+
+      default:
+        console.warn('[VisualEditor] Unknown change type:', change.type);
+    }
+
+    // Notify parent of success
+    window.parent.postMessage({
+      type: 'IFRAME_CHANGE_APPLIED',
+      change
+    }, '*');
+  }
+
+  // Undo last change
+  function undoLastChange() {
+    if (undoStack.length === 0) {
+      console.log('[VisualEditor] Nothing to undo');
+      return;
+    }
+
+    const previousState = undoStack.pop();
+    if (previousState.element && document.body.contains(previousState.element)) {
+      previousState.element.style.cssText = previousState.style;
+      previousState.element.className = previousState.className;
+      console.log('[VisualEditor] Undo successful');
+    }
+  }
+
+  // Listen for commands from parent
+  window.addEventListener('message', function(event) {
+    if (event.data.type === 'APPLY_CHANGE') {
+      applyChange(event.data.change);
+    } else if (event.data.type === 'UNDO_CHANGE') {
+      undoLastChange();
+    }
+  });
 
   function handleMouseMove(e) {
     const target = e.target;
@@ -156,4 +246,33 @@ export function injectSelectionScript(iframe: HTMLIFrameElement): void {
   } catch (error) {
     console.error('[VisualEditor] Failed to inject script:', error);
   }
+}
+
+/**
+ * Apply instant DOM change to iframe
+ */
+export function applyInstantChange(iframe: HTMLIFrameElement, change: any): void {
+  if (!iframe.contentWindow) {
+    console.warn('[VisualEditor] Cannot access iframe window');
+    return;
+  }
+
+  iframe.contentWindow.postMessage({
+    type: 'APPLY_CHANGE',
+    change
+  }, '*');
+}
+
+/**
+ * Undo last change in iframe
+ */
+export function undoLastChange(iframe: HTMLIFrameElement): void {
+  if (!iframe.contentWindow) {
+    console.warn('[VisualEditor] Cannot access iframe window');
+    return;
+  }
+
+  iframe.contentWindow.postMessage({
+    type: 'UNDO_CHANGE'
+  }, '*');
 }
