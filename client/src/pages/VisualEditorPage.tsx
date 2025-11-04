@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { SEO } from "@/components/SEO";
-import { Code, Save, GitBranch, Key, Rocket, Database, Terminal, ExternalLink, MessageSquare } from "lucide-react";
+import { Code, Save, GitBranch, Key, Rocket, Database, Terminal, ExternalLink, MessageSquare, Bug } from "lucide-react";
 import { MrBlueVoiceInterface } from "@/components/MrBlueVoiceInterface";
+import { VisualEditorDebug } from "@/components/visual-editor/VisualEditorDebug";
 import { type SelectedComponent } from "@/components/visual-editor/ComponentSelector";
 import { EditControls } from "@/components/visual-editor/EditControls";
 import { visualEditorTracker } from "@/lib/visualEditorTracker";
@@ -376,6 +377,10 @@ export default function VisualEditorPage() {
                     <Terminal className="h-4 w-4" />
                     Console
                   </TabsTrigger>
+                  <TabsTrigger value="debug" className="gap-2" data-testid="tab-debug">
+                    <Bug className="h-4 w-4" />
+                    Debug
+                  </TabsTrigger>
                 </TabsList>
 
                 {/* Mr. Blue Chat Tab - Voice + Streaming AI */}
@@ -512,6 +517,15 @@ export default function VisualEditorPage() {
                       </div>
                     </div>
                   </div>
+                </TabsContent>
+
+                {/* Debug Tab */}
+                <TabsContent value="debug" className="flex-1 m-0 overflow-hidden p-4">
+                  <VisualEditorDebug 
+                    iframeRef={iframeRef}
+                    iframeReady={iframeReady}
+                    selectedComponent={selectedComponent}
+                  />
                 </TabsContent>
               </Tabs>
             </div>
