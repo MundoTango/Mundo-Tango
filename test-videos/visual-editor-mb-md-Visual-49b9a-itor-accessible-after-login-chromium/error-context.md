@@ -38,7 +38,7 @@
             - img
           - link "LOGIN" [ref=e27] [cursor=pointer]:
             - /url: /login
-            - button "LOGIN" [ref=e28]
+            - button "LOGIN" [active] [ref=e28]
     - main [ref=e29]:
       - generic [ref=e33]:
         - generic [ref=e35]:
@@ -46,10 +46,12 @@
             - text: Email
             - textbox "Email" [ref=e37]:
               - /placeholder: your@email.com
+              - text: admin@mundotango.life
           - generic [ref=e38]:
             - text: Password
             - textbox "Password" [ref=e39]:
               - /placeholder: ••••••••
+              - text: admin123
           - button "Log In" [ref=e40] [cursor=pointer]
           - link "Forgot password?" [ref=e41] [cursor=pointer]:
             - /url: /password-reset
