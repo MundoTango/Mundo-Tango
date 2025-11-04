@@ -1,133 +1,66 @@
 # Page snapshot
 
 ```yaml
-- generic [ref=e2]:
-  - region "Notifications (F8)":
-    - list
-  - generic [ref=e3]:
-    - banner [ref=e4]:
-      - generic [ref=e5]:
-        - link "MT Mundo Tango" [ref=e6] [cursor=pointer]:
-          - /url: /
-          - generic [ref=e7]:
-            - generic [ref=e9]: MT
-            - generic [ref=e10]: Mundo Tango
-        - navigation [ref=e11]:
-          - link "Home" [ref=e12] [cursor=pointer]:
-            - /url: /
-            - button "Home" [ref=e13]
-          - link "About" [ref=e14] [cursor=pointer]:
-            - /url: /about
-            - button "About" [ref=e15]
-          - link "Pricing" [ref=e16] [cursor=pointer]:
-            - /url: /pricing
-            - button "Pricing" [ref=e17]
-          - link "FAQ" [ref=e18] [cursor=pointer]:
-            - /url: /faq
-            - button "FAQ" [ref=e19]
-          - link "Contact" [ref=e20] [cursor=pointer]:
-            - /url: /contact
-            - button "Contact" [ref=e21]
-          - link "Dance Styles" [ref=e22] [cursor=pointer]:
-            - /url: /dance-styles
-            - button "Dance Styles" [ref=e23]
-        - generic [ref=e24]:
-          - button [ref=e25] [cursor=pointer]:
+- generic:
+  - generic:
+    - region "Notifications (F8)":
+      - list
+    - generic [ref=e1]:
+      - generic [ref=e2]:
+        - generic [ref=e3]:
+          - heading "Visual Editor" [level=2] [ref=e4]
+          - combobox [ref=e5]:
+            - option "Homepage" [selected]
+            - option "Memories"
+            - option "Feed"
+            - option "Events"
+            - option "Groups"
+            - option "Teachers"
+        - generic [ref=e6]:
+          - button "Open Page" [ref=e7] [cursor=pointer]:
             - img
-          - button [ref=e26] [cursor=pointer]:
+            - text: Open Page
+          - button "Generate Code" [disabled]:
             - img
-          - link "LOGIN" [ref=e27] [cursor=pointer]:
-            - /url: /login
-            - button "LOGIN" [active] [ref=e28]
-    - main [ref=e29]:
-      - generic [ref=e33]:
-        - generic [ref=e35]:
-          - generic [ref=e36]:
-            - text: Email
-            - textbox "Email" [ref=e37]:
-              - /placeholder: your@email.com
-              - text: admin@mundotango.life
-          - generic [ref=e38]:
-            - text: Password
-            - textbox "Password" [ref=e39]:
-              - /placeholder: ••••••••
-              - text: admin123
-          - button "Log In" [ref=e40] [cursor=pointer]
-          - link "Forgot password?" [ref=e41] [cursor=pointer]:
-            - /url: /password-reset
-        - paragraph [ref=e42]:
-          - text: Don't have an account?
-          - link "Sign up" [ref=e43] [cursor=pointer]:
-            - /url: /register
-    - contentinfo [ref=e44]:
-      - generic [ref=e45]:
-        - generic [ref=e46]:
-          - generic [ref=e47]:
-            - generic [ref=e48]:
-              - generic [ref=e50]: MT
-              - generic [ref=e51]: Mundo Tango
-            - paragraph [ref=e52]: Connecting the global tango community
-          - generic [ref=e53]:
-            - heading "Platform" [level=3] [ref=e54]
-            - list [ref=e55]:
-              - listitem [ref=e56]:
-                - link "About" [ref=e57] [cursor=pointer]:
-                  - /url: /about
-              - listitem [ref=e58]:
-                - link "Pricing" [ref=e59] [cursor=pointer]:
-                  - /url: /pricing
-              - listitem [ref=e60]:
-                - link "FAQ" [ref=e61] [cursor=pointer]:
-                  - /url: /faq
-              - listitem [ref=e62]:
-                - link "Contact" [ref=e63] [cursor=pointer]:
-                  - /url: /contact
-          - generic [ref=e64]:
-            - heading "Resources" [level=3] [ref=e65]
-            - list [ref=e66]:
-              - listitem [ref=e67]:
-                - link "Dance Styles" [ref=e68] [cursor=pointer]:
-                  - /url: /dance-styles
-              - listitem [ref=e69]:
-                - link "Blog" [ref=e70] [cursor=pointer]:
-                  - /url: /blog
-              - listitem [ref=e71]:
-                - link "Community Guidelines" [ref=e72] [cursor=pointer]:
-                  - /url: /community-guidelines
-              - listitem [ref=e73]:
-                - link "Help Center" [ref=e74] [cursor=pointer]:
-                  - /url: /help
-          - generic [ref=e75]:
-            - heading "Legal" [level=3] [ref=e76]
-            - list [ref=e77]:
-              - listitem [ref=e78]:
-                - link "Privacy Policy" [ref=e79] [cursor=pointer]:
-                  - /url: /privacy
-              - listitem [ref=e80]:
-                - link "Terms of Service" [ref=e81] [cursor=pointer]:
-                  - /url: /terms
-            - generic [ref=e82]:
-              - link [ref=e83] [cursor=pointer]:
-                - /url: https://facebook.com
-                - img [ref=e84]
-              - link [ref=e86] [cursor=pointer]:
-                - /url: https://twitter.com
-                - img [ref=e87]
-              - link [ref=e89] [cursor=pointer]:
-                - /url: https://instagram.com
-                - img [ref=e90]
-              - link [ref=e93] [cursor=pointer]:
-                - /url: https://youtube.com
-                - img [ref=e94]
-        - generic [ref=e97]:
-          - paragraph [ref=e98]:
-            - text: Made with
-            - img [ref=e99]
-            - text: for the global tango community
-          - paragraph [ref=e101]: © 2025 Mundo Tango. All rights reserved.
-  - button "Ask Mr. Blue" [ref=e103] [cursor=pointer]:
-    - img
-    - text: Ask Mr. Blue
-  - button [ref=e104] [cursor=pointer]:
-    - img
+            - text: Generate Code
+          - button "Save & Commit" [disabled]:
+            - img
+            - text: Save & Commit
+      - generic [ref=e8]:
+        - generic [ref=e11]:
+          - iframe [ref=e12]:
+            
+          - paragraph [ref=e14]:
+            - strong [ref=e15]: Live MT Platform
+            - text: "- Click elements to select"
+        - separator [ref=e16]:
+          - img [ref=e18]
+        - generic [ref=e27]:
+          - tablist [ref=e28]:
+            - tab "Mr. Blue" [ref=e29] [cursor=pointer]:
+              - img [ref=e30]
+              - text: Mr. Blue
+            - tab "Git" [active] [selected] [ref=e32] [cursor=pointer]:
+              - img [ref=e33]
+              - text: Git
+            - tab "Secrets" [ref=e37] [cursor=pointer]:
+              - img [ref=e38]
+              - text: Secrets
+            - tab "Deploy" [ref=e42] [cursor=pointer]:
+              - img [ref=e43]
+              - text: Deploy
+            - tab "Database" [ref=e48] [cursor=pointer]:
+              - img [ref=e49]
+              - text: Database
+            - tab "Console" [ref=e53] [cursor=pointer]:
+              - img [ref=e54]
+              - text: Console
+          - tabpanel "Git" [ref=e56]:
+            - generic [ref=e57]:
+              - generic [ref=e58]:
+                - heading "Pending Commits" [level=3] [ref=e59]
+                - generic [ref=e60]: 0 changes tracked
+              - generic [ref=e61]:
+                - paragraph [ref=e62]: Changes will be committed when you click "Save & Commit"
+                - paragraph [ref=e63]: No changes yet
 ```

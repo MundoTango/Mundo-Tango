@@ -4,16 +4,24 @@ test.describe('Visual Editor - Full Functionality Tests', () => {
   test.beforeEach(async ({ page }) => {
     // Login as admin
     await page.goto('/login');
+    await page.waitForLoadState('networkidle');
+    
     await page.fill('[data-testid="input-email"]', 'admin@mundotango.life');
     await page.fill('[data-testid="input-password"]', 'admin123');
-    await page.click('[data-testid="button-login"]');
     
-    // Wait for redirect to /feed
-    await page.waitForURL('/feed', { timeout: 10000 });
+    // Press Enter to submit form and wait for navigation
+    await Promise.all([
+      page.waitForURL('**/feed', { timeout: 15000 }),
+      page.locator('[data-testid="input-password"]').press('Enter')
+    ]);
+    
+    console.log('✅ Logged in successfully, now at:', page.url());
     
     // Navigate to Visual Editor
     await page.goto('/admin/visual-editor');
-    await page.waitForTimeout(2000);
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(3000);
+    console.log('📍 Visual Editor loaded');
   });
 
   test('should load Visual Editor with all tabs', async ({ page }) => {
