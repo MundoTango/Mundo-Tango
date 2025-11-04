@@ -810,9 +810,23 @@ function App() {
 
   useEffect(() => {
     // Check for ?edit=true in URL to open Visual Editor
-    const params = new URLSearchParams(window.location.search);
-    const editMode = params.get('edit') === 'true';
-    setIsVisualEditorOpen(editMode);
+    const checkEditMode = () => {
+      const params = new URLSearchParams(window.location.search);
+      const editMode = params.get('edit') === 'true';
+      setIsVisualEditorOpen(editMode);
+    };
+
+    // Check on mount and URL changes
+    checkEditMode();
+    window.addEventListener('popstate', checkEditMode);
+    
+    // Also check on any navigation
+    const interval = setInterval(checkEditMode, 500);
+
+    return () => {
+      window.removeEventListener('popstate', checkEditMode);
+      clearInterval(interval);
+    };
   }, []);
 
   return (
