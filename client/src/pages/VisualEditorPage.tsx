@@ -128,6 +128,7 @@ export default function VisualEditorPage() {
       const response = await fetch('/api/visual-editor/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           prompt,
           pagePath: previewUrl,
@@ -166,6 +167,7 @@ export default function VisualEditorPage() {
       const response = await fetch('/api/visual-editor/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           pagePath: previewUrl,
           edits: allEdits,

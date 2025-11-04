@@ -9,6 +9,29 @@ export const IFRAME_SELECTION_SCRIPT = `
   let hoveredElement = null;
   let selectedElement = null;
 
+  // Hide floating Mr. Blue buttons inside iframe
+  function hideMrBlueButtons() {
+    const selectors = [
+      '[data-testid="global-mr-blue"]',
+      '[data-testid="button-ask-mr-blue"]',
+      '[data-testid="button-mr-blue"]',
+      '[data-testid="button-mr-blue-open"]'
+    ];
+    
+    selectors.forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(el => {
+        if (el) {
+          el.style.display = 'none';
+        }
+      });
+    });
+  }
+
+  // Hide on load and periodically
+  hideMrBlueButtons();
+  setInterval(hideMrBlueButtons, 500);
+
   function handleMouseMove(e) {
     const target = e.target;
     
@@ -73,7 +96,7 @@ export const IFRAME_SELECTION_SCRIPT = `
     type: 'IFRAME_SCRIPT_READY'
   }, '*');
 
-  console.log('[VisualEditor] Selection script injected');
+  console.log('[VisualEditor] Selection script injected + Mr. Blue buttons hidden');
 })();
 `;
 

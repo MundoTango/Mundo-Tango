@@ -7,7 +7,7 @@ import { useMrBlue } from '@/contexts/MrBlueContext';
 /**
  * Pages where Mr. Blue button should be hidden
  */
-const HIDDEN_PAGES = ['/mr-blue-chat'];
+const HIDDEN_PAGES = ['/mr-blue-chat', '/admin/visual-editor'];
 
 /**
  * GlobalMrBlue - Simple button to open AI chat
