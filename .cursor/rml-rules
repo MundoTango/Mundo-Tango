@@ -1,0 +1,58 @@
+# RML Bug Detection Rules for AI Agents
+
+## When to Run RML
+
+Run RML (`rml --markdown`) in these scenarios:
+1. After implementing new features
+2. Before completing a task
+3. After making changes to multiple files
+4. When fixing bugs
+5. Before suggesting deployment
+
+## How to Use RML
+
+```bash
+# Check all changed files
+export PATH="/home/runner/.rml/bin:$PATH" && rml --markdown
+
+# Check specific files
+export PATH="/home/runner/.rml/bin:$PATH" && rml file1.ts file2.tsx --markdown
+
+# Compare branches
+export PATH="/home/runner/.rml/bin:$PATH" && rml --from main --to feature-branch --markdown
+```
+
+## RML Capabilities
+
+RML catches:
+- External library misuse (Stripe, Supabase, React, etc.)
+- Breaking changes in the codebase
+- Type errors and logic bugs
+- Security vulnerabilities
+- API misuse
+- Component interaction bugs
+
+## Integration Workflow
+
+1. **Implement feature** → Write code
+2. **Run RML** → Check for bugs with `rml --markdown`
+3. **Fix issues** → Address RML findings
+4. **Re-run RML** → Verify fixes
+5. **Complete task** → When RML shows no issues
+
+## Example Usage
+
+```bash
+# After modifying authentication code
+export PATH="/home/runner/.rml/bin:$PATH" && rml server/routes.ts server/auth.ts --markdown
+
+# After adding new components
+export PATH="/home/runner/.rml/bin:$PATH" && rml client/src/components/*.tsx --markdown
+```
+
+## Notes
+
+- RML has zero data retention policy
+- Always use `--markdown` flag for LLM-friendly output
+- RML understands the entire codebase context
+- Run before suggesting production deployments

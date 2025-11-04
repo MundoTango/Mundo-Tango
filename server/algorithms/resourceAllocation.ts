@@ -231,7 +231,7 @@ export function calculateCacheAllocation(
   
   for (const cacheType of cacheTypes) {
     const weight = weights[cacheType] || weights['other'];
-    const sizeM B = availableForCache * weight;
+    const sizeMB = availableForCache * weight;
     allocation.set(cacheType, sizeMB);
   }
   
