@@ -122,22 +122,48 @@ Try: "Make that button bigger" or "Change this to blue"`;
     setIsLoading(true);
 
     try {
-      // Build context-aware prompt
-      let contextualPrompt = textToSend;
-      
-      if (contextInfo.selectedElement) {
-        contextualPrompt = `USER REQUEST: ${textToSend}\n\nCONTEXT:\n- Page: ${contextInfo.page}\n- Selected element: ${contextInfo.selectedElement.tagName} (testId: ${contextInfo.selectedElement.testId || 'none'})\n- Element class: ${contextInfo.selectedElement.className}\n- Element text: ${contextInfo.selectedElement.text}\n- Total edits so far: ${contextInfo.editsCount}`;
+      // Build full context for Mr. Blue
+      const context = {
+        currentPage: contextInfo.page,
+        selectedElement: contextInfo.selectedElement ? {
+          tagName: contextInfo.selectedElement.tagName,
+          testId: contextInfo.selectedElement.testId,
+          className: contextInfo.selectedElement.className,
+          text: contextInfo.selectedElement.text
+        } : null,
+        editsCount: contextInfo.editsCount,
+        recentEdits: contextInfo.recentEdits.map(edit => edit.description)
+      };
+
+      // Call REAL AI chat API endpoint
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch('/api/mrblue/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          message: textToSend,
+          context: JSON.stringify(context),
+          conversationHistory: messages.slice(-10).map(m => ({
+            role: m.role,
+            content: m.content
+          }))
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get AI response');
       }
 
-      // Call code generation with context
-      const result = await onGenerateCode(contextualPrompt);
-
-      const responseText = `✅ Got it! I've generated the code for your request. The changes are ready to preview.`;
+      const data = await response.json();
+      const aiResponse = data.response || data.message || "I'm here to help!";
       
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: responseText,
+        content: aiResponse,
         timestamp: new Date()
       };
 
@@ -145,7 +171,7 @@ Try: "Make that button bigger" or "Change this to blue"`;
 
       // Auto-speak response if enabled
       if (autoSpeak) {
-        speak(responseText);
+        speak(aiResponse);
       }
     } catch (error: any) {
       const errorResponse = `❌ I had trouble with that. ${error.message || 'Please try again.'}`;
