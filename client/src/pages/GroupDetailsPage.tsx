@@ -5,13 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, MapPin } from "lucide-react";
+import { Users, MapPin, Settings as SettingsIcon } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { SelectGroup } from "@shared/schema";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { GroupPostFeed } from "@/components/groups/GroupPostFeed";
+import { GroupMembersList } from "@/components/groups/GroupMembersList";
+import { GroupInviteSystem } from "@/components/groups/GroupInviteSystem";
+import { GroupSettingsPanel } from "@/components/groups/GroupSettingsPanel";
 
 export default function GroupDetailsPage() {
   const [, params] = useRoute("/groups/:id");
@@ -186,24 +190,42 @@ export default function GroupDetailsPage() {
           <TabsTrigger value="members" className="flex-1">
             Members
           </TabsTrigger>
+          <TabsTrigger value="invites" className="flex-1">
+            Invites
+          </TabsTrigger>
           <TabsTrigger value="about" className="flex-1">
             About
           </TabsTrigger>
+          {membershipData?.isMember && (
+            <TabsTrigger value="settings" className="flex-1">
+              <SettingsIcon className="h-4 w-4 mr-2" />
+              Settings
+            </TabsTrigger>
+          )}
         </TabsList>
+        
         <TabsContent value="discussion" className="mt-6">
-          <Card>
-            <CardContent className="pt-6 text-center text-muted-foreground">
-              No discussions yet. Start the conversation!
-            </CardContent>
-          </Card>
+          <GroupPostFeed 
+            groupId={group.id} 
+            canPost={membershipData?.isMember || false}
+            canModerate={membershipData?.isMember || false}
+          />
         </TabsContent>
+
         <TabsContent value="members" className="mt-6">
-          <Card>
-            <CardContent className="pt-6 text-center text-muted-foreground">
-              {group.memberCount || 0} members
-            </CardContent>
-          </Card>
+          <GroupMembersList 
+            groupId={group.id}
+            canModerate={membershipData?.isMember || false}
+          />
         </TabsContent>
+
+        <TabsContent value="invites" className="mt-6">
+          <GroupInviteSystem 
+            groupId={group.id}
+            canInvite={membershipData?.isMember || false}
+          />
+        </TabsContent>
+
         <TabsContent value="about" className="mt-6">
           <Card>
             <CardHeader>
@@ -231,6 +253,15 @@ export default function GroupDetailsPage() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {membershipData?.isMember && (
+          <TabsContent value="settings" className="mt-6">
+            <GroupSettingsPanel 
+              group={group}
+              canManage={membershipData?.isMember || false}
+            />
+          </TabsContent>
+        )}
       </Tabs>
       </div>
       </>
