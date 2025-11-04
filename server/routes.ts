@@ -24,6 +24,7 @@ import mrBlueEnhancedRoutes from "./routes/mr-blue-enhanced";
 import visualEditorRoutes from "./routes/visualEditor";
 import whisperRoutes from "./routes/whisper";
 import openaiRealtimeRoutes from "./routes/openai-realtime";
+import realtimeVoiceRoutes, { initRealtimeVoiceWebSocket } from "./routes/realtimeVoice";
 import rbacRoutes from "./routes/rbac-routes";
 import featureFlagsRoutes from "./routes/feature-flags-routes";
 import pricingRoutes from "./routes/pricing-routes";
@@ -131,6 +132,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use(mrBlueEnhancedRoutes); // Enhanced Mr. Blue with troubleshooting KB
   app.use("/api/visual-editor", authenticateToken, visualEditorRoutes);
   app.use("/api/whisper", authenticateToken, whisperRoutes);
+  app.use("/api/realtime", authenticateToken, realtimeVoiceRoutes);
   app.use("/api/openai-realtime", authenticateToken, openaiRealtimeRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(createPostBodySchema), async (req: AuthRequest, res: Response) => {
@@ -1404,6 +1406,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   wsNotificationService.initialize(httpServer);
   console.log("[WebSocket] Notification service initialized on /ws/notifications");
+
+  // Initialize Realtime Voice WebSocket
+  initRealtimeVoiceWebSocket(httpServer);
+  console.log("[WebSocket] Realtime Voice service initialized on /ws/realtime");
 
   // ============================================================================
   // GROUPS - COMPREHENSIVE API ROUTES

@@ -1,5 +1,6 @@
 import { Router, type Request, Response } from "express";
 import Groq from "groq-sdk";
+import { streamingService } from "../services/streamingService";
 
 const router = Router();
 
@@ -97,6 +98,92 @@ Be friendly, context-aware, and ready to help with Visual Editor tasks!`;
     }
   });
 
+// Streaming chat with work progress (SSE)
+router.post("/stream", async (req: Request, res: Response) => {
+  try {
+    const { message, context, mode } = req.body;
+
+    if (!message || !message.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Message is required"
+      });
+    }
+
+    // Initialize SSE
+    streamingService.initSSE(res);
+
+    // Detect if this is an editing request
+    const isEditRequest = detectEditRequest(message);
+
+    if (isEditRequest && mode === 'visual_editor') {
+      // Stream visual edit workflow
+      await streamingService.streamVisualEdit(res, {
+        prompt: message,
+        elementId: context?.selectedElement?.id,
+        currentPage: context?.currentPage,
+        
+        // Callback to apply instant changes
+        onApplyChange: async (change) => {
+          // This would trigger iframe DOM update
+          streamingService.send(res, {
+            type: 'progress',
+            message: `Applying ${change.type} change...`,
+            data: { change }
+          });
+        },
+        
+        // Callback for code generation
+        onGenerateCode: async (code) => {
+          streamingService.send(res, {
+            type: 'code',
+            code,
+            message: 'Code generated!'
+          });
+        }
+      });
+    } else {
+      // Regular chat - stream AI response
+      streamingService.send(res, {
+        type: 'progress',
+        status: 'analyzing',
+        message: '🤔 Thinking...'
+      });
+
+      // Get AI response
+      const messages: any[] = [
+        { role: "system", content: "You are Mr. Blue, a helpful AI assistant for Mundo Tango." },
+        { role: "user", content: message }
+      ];
+
+      const completion = await groq.chat.completions.create({
+        messages,
+        model: "llama-3.1-8b-instant",
+        temperature: 0.7,
+        max_tokens: 300,
+      });
+
+      const response = completion.choices[0]?.message?.content || 
+        "I'm sorry, I couldn't process that request.";
+
+      streamingService.send(res, {
+        type: 'completion',
+        status: 'done',
+        message: response
+      });
+
+      res.end();
+    }
+  } catch (error: any) {
+    console.error('[MrBlue] Stream error:', error);
+    streamingService.send(res, {
+      type: 'error',
+      message: error.message || 'Failed to process request'
+    });
+    res.end();
+  }
+});
+
 // Breadcrumb tracking
 router.post("/breadcrumbs", async (req: Request, res: Response) => {
   try {
@@ -111,5 +198,20 @@ router.post("/breadcrumbs", async (req: Request, res: Response) => {
     res.status(500).json({ success: false });
   }
 });
+
+/**
+ * Detect if message is an editing request
+ */
+function detectEditRequest(message: string): boolean {
+  const editKeywords = [
+    'make', 'change', 'update', 'edit', 'modify',
+    'color', 'blue', 'red', 'green', 'style',
+    'move', 'resize', 'bigger', 'smaller',
+    'left', 'right', 'center'
+  ];
+
+  const lower = message.toLowerCase();
+  return editKeywords.some(keyword => lower.includes(keyword));
+}
 
 export default router;
