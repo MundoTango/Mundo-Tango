@@ -5,7 +5,7 @@
  */
 
 import { useState } from "react";
-import { Move, Maximize, Palette, Type, X } from "lucide-react";
+import { Move, Maximize, Palette, Type, X, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,14 +17,15 @@ interface EditControlsProps {
   component: SelectedComponent | null;
   onClose: () => void;
   onChange: (updates: ComponentUpdates) => void;
+  onDelete?: () => void;
 }
 
 export interface ComponentUpdates {
-  type: 'position' | 'size' | 'style' | 'text';
+  type: 'position' | 'size' | 'style' | 'text' | 'delete';
   changes: Record<string, { before?: any; after: any }>;
 }
 
-export function EditControls({ component, onClose, onChange }: EditControlsProps) {
+export function EditControls({ component, onClose, onChange, onDelete }: EditControlsProps) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [size, setSize] = useState({ width: 0, height: 0 });
   const [textContent, setTextContent] = useState('');
@@ -69,6 +70,17 @@ export function EditControls({ component, onClose, onChange }: EditControlsProps
     });
   };
 
+  const handleDelete = () => {
+    onChange({
+      type: 'delete',
+      changes: {
+        display: { before: component.element.style.display || 'block', after: 'none' }
+      }
+    });
+    if (onDelete) onDelete();
+    onClose();
+  };
+
   return (
     <div 
       className="fixed right-6 top-20 w-80 glass-card rounded-xl shadow-2xl z-50"
@@ -81,14 +93,25 @@ export function EditControls({ component, onClose, onChange }: EditControlsProps
           <h3 className="font-semibold text-sm">Edit Component</h3>
           <p className="text-xs text-muted-foreground">{component.tagName}</p>
         </div>
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={onClose}
-          data-testid="button-close-edit-controls"
-        >
-          <X className="h-4 w-4" />
-        </Button>
+        <div className="flex gap-1">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={handleDelete}
+            data-testid="button-delete-element"
+            title="Delete element"
+          >
+            <Trash2 className="h-4 w-4 text-destructive" />
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={onClose}
+            data-testid="button-close-edit-controls"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       {/* Tabs */}
