@@ -83,12 +83,18 @@ export function useWhisperVoice(): UseWhisperVoiceReturn {
           
           console.log('[WhisperVoice] Audio recorded, size:', audioBlob.size);
 
+          // Get auth token from localStorage
+          const token = localStorage.getItem('token');
+
           // Send to Whisper API
           const formData = new FormData();
           formData.append('audio', audioBlob, 'recording.webm');
 
           const response = await fetch('/api/whisper/transcribe', {
             method: 'POST',
+            headers: {
+              'Authorization': token ? `Bearer ${token}` : ''
+            },
             body: formData
           });
 
@@ -124,11 +130,15 @@ export function useWhisperVoice(): UseWhisperVoiceReturn {
 
       console.log('[WhisperVoice] Generating speech:', text.substring(0, 50));
 
+      // Get auth token from localStorage
+      const token = localStorage.getItem('token');
+
       // Request TTS from OpenAI
       const response = await fetch('/api/whisper/text-to-speech', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
         },
         body: JSON.stringify({ text, voice })
       });
