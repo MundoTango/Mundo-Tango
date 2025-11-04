@@ -136,23 +136,50 @@ router.post("/save", async (req: Request, res: Response) => {
       });
     }
 
-    // Create branch name
-    const branchName = sessionId || `visual-edit-${Date.now()}`;
-
-    // Get affected files from edits
-    const affectedFiles = new Set<string>();
+    // Get file path
     const filePath = mapPagePathToFile(pagePath || '/');
-    if (filePath) {
-      affectedFiles.add(filePath);
+    if (!filePath) {
+      return res.status(404).json({
+        success: false,
+        message: 'Page file not found'
+      });
+    }
+
+    // Read current file content
+    const currentCode = await gitService.getFileContent(filePath);
+    if (!currentCode) {
+      return res.status(404).json({
+        success: false,
+        message: 'Failed to read current file'
+      });
+    }
+
+    // Generate updated code using AI
+    const editDescriptions = edits.map((e: any) => e.description).join('\n');
+    const prompt = `Apply these visual edits to the code:\n\n${editDescriptions}`;
+
+    const aiResult = await aiCodeGenerator.generateCode({
+      prompt,
+      pagePath: pagePath || '/',
+      currentCode,
+      componentId: null,
+      changeType: 'multiple_edits'
+    });
+
+    if (!aiResult.success) {
+      return res.status(500).json({
+        success: false,
+        message: aiResult.error || 'Failed to generate updated code'
+      });
     }
 
     // Create commit message
     const commitMessage = `Visual Editor: ${edits.length} changes to ${pagePath || 'homepage'}\n\n${edits.map((e: any, i: number) => `${i + 1}. ${e.description}`).join('\n')}`;
 
-    // Save to Git (using first file as primary)
+    // Save to Git with updated code
     const result = await gitService.commitChanges({
-      filePath: Array.from(affectedFiles)[0] || 'client/src/pages/HomePage.tsx',
-      content: '', // Content will be updated by AI
+      filePath,
+      content: aiResult.code || currentCode,
       commitMessage,
       createPR: false
     });
@@ -167,8 +194,9 @@ router.post("/save", async (req: Request, res: Response) => {
     res.json({
       success: true,
       commitId: result.commitHash,
-      branch: branchName,
-      message: 'Changes committed successfully. Ready for review.'
+      branch: result.branchName,
+      message: 'Changes committed successfully. Code updated and saved.',
+      editsApplied: edits.length
     });
   } catch (error: any) {
     console.error('[VisualEditor] Save error:', error);
