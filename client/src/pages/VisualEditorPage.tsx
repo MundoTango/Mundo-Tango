@@ -14,6 +14,7 @@ import { EditControls } from "@/components/visual-editor/EditControls";
 import { visualEditorTracker } from "@/lib/visualEditorTracker";
 import { useToast } from "@/hooks/use-toast";
 import { injectSelectionScript } from "@/lib/iframeInjector";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function VisualEditorPage() {
   const [selectedComponent, setSelectedComponent] = useState<SelectedComponent | null>(null);
@@ -125,16 +126,11 @@ export default function VisualEditorPage() {
     try {
       const allEdits = visualEditorTracker.getAllEdits();
       
-      const response = await fetch('/api/visual-editor/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          prompt,
-          pagePath: previewUrl,
-          edits: allEdits,
-          selectedElement: selectedComponent?.element.getAttribute('data-testid')
-        })
+      const response = await apiRequest('POST', '/api/visual-editor/generate', {
+        prompt,
+        pagePath: previewUrl,
+        edits: allEdits,
+        selectedElement: selectedComponent?.element.getAttribute('data-testid')
       });
 
       const data = await response.json();
@@ -164,15 +160,10 @@ export default function VisualEditorPage() {
     try {
       const allEdits = visualEditorTracker.getAllEdits();
       
-      const response = await fetch('/api/visual-editor/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          pagePath: previewUrl,
-          edits: allEdits,
-          sessionId: `visual-edit-${Date.now()}`
-        })
+      const response = await apiRequest('POST', '/api/visual-editor/save', {
+        pagePath: previewUrl,
+        edits: allEdits,
+        sessionId: `visual-edit-${Date.now()}`
       });
 
       const data = await response.json();
