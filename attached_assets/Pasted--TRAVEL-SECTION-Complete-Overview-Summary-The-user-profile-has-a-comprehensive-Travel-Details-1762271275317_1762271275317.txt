@@ -1,0 +1,194 @@
+🌍 TRAVEL SECTION - Complete Overview
+📋 Summary
+The user profile has a comprehensive Travel Details system that allows users to track their tango-related travels (festivals, marathons, workshops) and share their journey with the community!
+
+✨ Key Features
+1. Travel Tracking Capabilities
+Event Types Supported:
+
+🎉 Festival - Tango festivals
+🏃 Marathon - Tango marathons
+📚 Workshop - Tango workshops
+🎤 Conference - Tango conferences
+🏖️ Vacation - Tango vacations
+🏆 Competition - Tango competitions
+🎭 Performance - Tango performances
+2. Travel Status System
+Users can track travel at different stages:
+
+Status	Color	Description
+Considering	Yellow	Thinking about this trip
+Planned	Blue	Trip confirmed & scheduled
+Working	Purple	Actively preparing/organizing
+Ongoing	Green	Currently at this event
+Completed	Gray	Past travel
+Cancelled	Red	Trip was cancelled
+3. Travel Information Fields
+Each travel detail includes:
+
+✅ Event Name (optional) - "Buenos Aires Tango Festival 2025"
+✅ Event Type - Festival, Marathon, Workshop, etc.
+✅ City (required) - "Buenos Aires"
+✅ Country (optional) - "Argentina"
+✅ Start Date (required)
+✅ End Date (required)
+✅ Status - considering, planned, ongoing, completed, cancelled
+✅ Notes (optional) - Personal notes about the trip
+✅ Privacy - Public or Private
+
+🎨 User Interface
+Main Display
+Header with globe icon 🌍 and "Add Travel" button
+Two Sections:
+Upcoming & Ongoing - Shows planned and current travels (sorted by date)
+Past Travels - Shows completed travels (reverse chronological)
+Travel Cards
+Each travel card displays:
+
+🎉 Event icon (based on type)
+Event name & location
+📅 Dates with calendar icons
+💬 Notes (truncated to 2 lines)
+🏷️ Status badge (color-coded)
+🔒 Privacy indicator (if private)
+✏️ Edit/Delete buttons (for own profile)
+Empty State
+Globe icon
+Friendly message
+"Add Your First Travel" button
+🗄️ Database Schema
+CREATE TABLE travel_details (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  event_name VARCHAR(255),
+  event_type VARCHAR(50),
+  city VARCHAR(255) NOT NULL,
+  country VARCHAR(255),
+  start_date TIMESTAMP NOT NULL,
+  end_date TIMESTAMP NOT NULL,
+  status ENUM('planned', 'ongoing', 'completed', 'cancelled') DEFAULT 'planned',
+  notes TEXT,
+  is_public BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+🔧 Components
+Location: client/src/components/profile/
+
+TravelDetailsComponent.tsx (400 lines)
+
+Main container component
+Fetches and displays travel data
+Handles sorting (upcoming vs past)
+Delete functionality
+AddTravelDetailModal.tsx
+
+Modal form to add new travel
+Date pickers
+Event type selector
+Privacy toggle
+Form validation
+EditTravelDetailModal.tsx
+
+Edit existing travel details
+Pre-populated form
+Update mutation
+TravelCard (nested in TravelDetailsComponent)
+
+Individual travel display card
+Status badges
+Edit/delete actions
+🔌 API Routes
+Backend: server/routes/travelRoutes.ts
+
+GET    /api/user/travel-details          // Get own travel details
+GET    /api/user/travel-details/:userId  // Get public travels of another user
+POST   /api/user/travel-details          // Add new travel
+PUT    /api/user/travel-details/:id      // Update travel
+DELETE /api/user/travel-details/:id      // Delete travel
+
+💡 Smart Features
+1. Privacy Control
+Users can mark travels as Public or Private
+Other users only see public travels
+Own profile shows all travels
+2. Smart Sorting
+Upcoming/Ongoing: Sorted by start date (ascending) - soonest first
+Past Travels: Sorted by start date (descending) - most recent first
+3. Visual Status System
+Color-coded status badges
+Event type emojis
+Dark mode support
+4. Responsive Design
+Glassmorphic cards
+MT Ocean Theme gradient buttons (turquoise to cyan)
+Hover effects
+Mobile-friendly
+🎯 Use Cases
+For Tango Dancers:
+
+✅ Track upcoming tango events worldwide
+✅ Share travel plans with the community
+✅ Remember past festivals and workshops attended
+✅ See where other dancers are traveling
+✅ Connect with dancers going to same events
+Example Travel Entry:
+
+🎉 Buenos Aires Tango Festival
+📍 Buenos Aires, Argentina
+📅 March 15, 2025 → March 22, 2025
+🏷️ Status: Planned
+💬 "Can't wait! First time in BsAs. Looking for dance partners!"
+🌍 Public
+
+🚀 Integration Points
+Related Features:
+
+User Journeys (userJourneys table in schema) - Tracks overall tango journey
+Followed Cities (userFollowedCities table) - Cities where users dance
+Events System - Link travels to actual events
+Social Dancing Cities - Favorite cities for social dancing
+Tango Roles - "Tango Traveler" role in profile
+📊 Additional Travel Data in Schema
+Found in shared/schema.ts:
+
+// User Followed Cities
+userFollowedCities {
+  socialDancingCities: text[]     // Cities for social dancing
+  recentWorkshopCities: text[]    // Recent workshop locations
+  favouriteDancingCities: text[]  // Favorite tango cities
+}
+// User Journeys
+userJourneys {
+  journey_type: 'travel'           // Journey type
+  // ... journey tracking data
+}
+
+✅ What's Implemented
+✅ Full CRUD operations (Create, Read, Update, Delete)
+✅ Public/Private privacy controls
+✅ Status workflow (6 states)
+✅ Event type categorization (8 types)
+✅ Date range tracking
+✅ Notes/comments
+✅ Responsive UI with MT Ocean Theme
+✅ Dark mode support
+✅ Own profile vs other user profiles
+✅ Internationalization support (i18n ready)
+✅ React Query caching & optimistic updates
+✅ Toast notifications
+✅ Confirmation dialogs
+🎨 Visual Design
+Colors & Theme:
+
+Gradient buttons: from-turquoise-400 to-cyan-500
+Status badges: Custom colors per status
+Glassmorphic cards
+Beautiful hover effects
+Icons: Lucide React (Calendar, MapPin, Globe, Edit2, Trash2, Plus)
+Dark Mode:
+
+All colors have dark mode variants
+Proper contrast ratios
+Consistent with MT Ocean Theme

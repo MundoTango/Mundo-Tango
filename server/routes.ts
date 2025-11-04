@@ -573,18 +573,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/groups", authenticateToken, validateRequest(insertGroupSchema.omit({ creatorId: true })), async (req: AuthRequest, res: Response) => {
+  app.post("/api/groups", authenticateToken, validateRequest(insertGroupSchema.omit({ createdBy: true, ownerId: true })), async (req: AuthRequest, res: Response) => {
     try {
       const group = await storage.createGroup({
         ...req.body,
-        creatorId: req.userId!
+        createdBy: req.userId!,
+        ownerId: req.userId!
       });
       
       await storage.joinGroup(group.id, req.userId!);
       
       res.status(201).json(group);
     } catch (error) {
-      res.status(500).json({ message: "Failed to create group" });
+      console.error("Create group error:", error);
+      res.status(500).json({ message: "Failed to create group", error: error instanceof Error ? error.message : 'Unknown error' });
     }
   });
 
@@ -1412,20 +1414,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   console.log("[WebSocket] Realtime Voice service initialized on /ws/realtime");
 
   // ============================================================================
-  // GROUPS - COMPREHENSIVE API ROUTES
+  // GROUPS - Additional routes (main routes are above around line 579)
   // ============================================================================
-
-  // Create Group
-  app.post("/api/groups", authenticateToken, validateRequest(insertGroupSchema.omit({ creatorId: true })), async (req: AuthRequest, res: Response) => {
-    try {
-      const group = await storage.createGroup({ ...req.body, creatorId: req.user!.id });
-      await storage.joinGroup(group.id, req.user!.id);
-      res.status(201).json(group);
-    } catch (error) {
-      console.error("Create group error:", error);
-      res.status(500).json({ message: "Failed to create group" });
-    }
-  });
 
   // Get Group by ID
   app.get("/api/groups/:id", async (req: Request, res: Response) => {

@@ -32,9 +32,10 @@ All navigation components use design tokens for complete visual redesign flexibi
 -   **Dynamic Feature Flag System** with Redis fallback.
 -   **Stripe Integration** for dynamic pricing.
 -   **Events System:** Fully operational with 24 API endpoints, RSVPs, ticketing, and recurrence rules.
--   **Groups System:** 23 API endpoints for community groups.
+-   **Groups System:** 23 API endpoints for community groups. **Frontend 95% complete** (Nov 5, 2025) - 6 components created and integrated (GroupCreationModal, GroupPostFeed, GroupMembersList, GroupInviteSystem, GroupCategoryFilter, GroupSettingsPanel). Backend bugs fixed (field name corrections, duplicate route removal). LSP errors cleared. Testing in progress.
 -   **Social Features:** Pagination, optimistic updates, CRUD, advanced friendship algorithms.
 -   **Post System:** Like, comment, share, bookmark, report, edit with history, analytics.
+-   **Housing System:** **Documentation complete, implementation pending**. Database schema ready (`housingListings`, `housingBookings`). Includes marketplace, host/guest onboarding, map integration with CDN-free Leaflet, MT Ocean theme. Routes: `/housing-marketplace`, `/host-onboarding`, `/guest-onboarding`, city group housing tabs. Geocoding via OpenStreetMap Nominatim API. Components planned: HostHomesList, HousingMap, FilterPanels, BookingCalendar. Integration with unified map system (turquoise gradient markers, glassmorphic UI). Documentation: 8 comprehensive files covering marketplace, group pages, onboarding flows, map components, CDN-free migration.
 
 **AI Integration:**
 -   **Mr. Blue AI Assistant:** Context-aware conversational intelligence using Groq SDK (llama-3.1-8b-instant), breadcrumb tracking, and predictive assistance. **Enhanced with 500+ troubleshooting solutions** (`server/knowledge/mr-blue-troubleshooting-kb.ts`) covering React hooks errors, Git issues, database problems, API errors, performance issues, and more. **Auto-detects errors** in user messages and provides instant solutions with step-by-step fixes. UI controls hidden via `?hideControls=true` parameter in iframe contexts. 

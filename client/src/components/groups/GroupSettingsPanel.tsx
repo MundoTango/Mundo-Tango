@@ -73,7 +73,7 @@ export function GroupSettingsPanel({ group, canManage = false }: GroupSettingsPa
     defaultValues: {
       name: group.name,
       description: group.description,
-      longDescription: group.longDescription || "",
+      longDescription: group.longDescription || undefined,
       visibility: group.visibility || "public",
       joinApproval: group.joinApproval || "open",
       whoCanPost: group.whoCanPost || "members",
