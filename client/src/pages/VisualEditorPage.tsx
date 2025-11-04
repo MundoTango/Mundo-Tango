@@ -13,6 +13,7 @@ import { type SelectedComponent } from "@/components/visual-editor/ComponentSele
 import { EditControls } from "@/components/visual-editor/EditControls";
 import { visualEditorTracker } from "@/lib/visualEditorTracker";
 import { useToast } from "@/hooks/use-toast";
+import { injectSelectionScript } from "@/lib/iframeInjector";
 
 export default function VisualEditorPage() {
   const [selectedComponent, setSelectedComponent] = useState<SelectedComponent | null>(null);
@@ -21,82 +22,68 @@ export default function VisualEditorPage() {
   const [previewUrl, setPreviewUrl] = useState("/");
   const [iframeReady, setIframeReady] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const selectedElementRef = useRef<any>(null);
   const { toast } = useToast();
 
-  // Setup iframe component selection
+  // Listen for messages from iframe
   useEffect(() => {
-    if (!iframeRef.current || !iframeReady) return;
-
-    const iframe = iframeRef.current;
-    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-    if (!iframeDoc) return;
-
-    let hoveredElement: HTMLElement | null = null;
-    let selectedElement: HTMLElement | null = null;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      
-      // Remove previous hover
-      if (hoveredElement && hoveredElement !== selectedElement) {
-        hoveredElement.style.outline = '';
+    const handleMessage = (event: MessageEvent) => {
+      // Security: Verify origin (in production, check against allowed origins)
+      if (event.data?.type === 'IFRAME_SCRIPT_READY') {
+        console.log('[VisualEditor] Iframe script ready');
+        setIframeReady(true);
       }
 
-      // Add hover to new element
-      if (target !== selectedElement && target.tagName !== 'HTML' && target.tagName !== 'BODY') {
-        target.style.outline = '2px dashed rgba(147, 51, 234, 0.5)';
-        hoveredElement = target;
-      }
-    };
+      if (event.data?.type === 'IFRAME_ELEMENT_SELECTED') {
+        const componentData = event.data.component;
+        
+        // Create a proxy element for EditControls
+        const proxyElement = {
+          id: componentData.id,
+          tagName: componentData.tagName,
+          className: componentData.className,
+          textContent: componentData.text,
+          getAttribute: (attr: string) => {
+            if (attr === 'data-testid') return componentData.testId;
+            return null;
+          },
+          getBoundingClientRect: () => componentData.rect,
+          style: {} // Placeholder - actual style changes will be sent via postMessage
+        } as unknown as HTMLElement;
 
-    const handleClick = (e: MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      const target = e.target as HTMLElement;
-      
-      // Remove previous selection
-      if (selectedElement) {
-        selectedElement.style.outline = '';
-      }
-
-      // Select new element
-      if (target.tagName !== 'HTML' && target.tagName !== 'BODY') {
-        target.style.outline = '3px solid rgb(147, 51, 234)';
-        selectedElement = target;
-
-        // Extract component info
         const component: SelectedComponent = {
-          element: target,
-          id: target.id || `element-${Date.now()}`,
-          tagName: target.tagName.toLowerCase(),
-          className: target.className || '',
-          text: target.textContent?.substring(0, 100) || '',
-          rect: target.getBoundingClientRect()
+          element: proxyElement,
+          id: componentData.id,
+          tagName: componentData.tagName,
+          className: componentData.className,
+          text: componentData.text,
+          rect: componentData.rect as DOMRect
         };
 
+        selectedElementRef.current = componentData;
         setSelectedComponent(component);
         
         toast({
           title: "Component Selected",
-          description: `${component.tagName} - ${target.getAttribute('data-testid') || 'No test ID'}`,
+          description: `${component.tagName} - ${componentData.testId || 'No test ID'}`,
           duration: 2000
         });
       }
     };
 
-    iframeDoc.addEventListener('mousemove', handleMouseMove);
-    iframeDoc.addEventListener('click', handleClick, true);
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [toast]);
 
-    return () => {
-      iframeDoc.removeEventListener('mousemove', handleMouseMove);
-      iframeDoc.removeEventListener('click', handleClick, true);
-      
-      // Cleanup outlines
-      if (hoveredElement) hoveredElement.style.outline = '';
-      if (selectedElement) selectedElement.style.outline = '';
-    };
-  }, [iframeReady, toast]);
+  // Inject selection script when iframe loads
+  const handleIframeLoad = () => {
+    if (iframeRef.current) {
+      // Small delay to ensure iframe is fully loaded
+      setTimeout(() => {
+        injectSelectionScript(iframeRef.current!);
+      }, 100);
+    }
+  };
 
   const handleComponentChange = (updates: any) => {
     if (!selectedComponent) return;
@@ -109,12 +96,14 @@ export default function VisualEditorPage() {
       description: `Updated ${updates.type} for ${selectedComponent.tagName}`
     });
 
-    // Apply changes to iframe content
-    Object.entries(updates.changes).forEach(([key, value]: [string, any]) => {
-      if (selectedComponent.element.style) {
-        (selectedComponent.element.style as any)[key] = value.after || value;
-      }
-    });
+    // Send style changes to iframe via postMessage
+    if (iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage({
+        type: 'APPLY_STYLE_CHANGES',
+        elementId: selectedComponent.id,
+        changes: updates.changes
+      }, '*');
+    }
   };
 
   const handleGenerateCode = async (prompt: string) => {
@@ -213,6 +202,7 @@ export default function VisualEditorPage() {
               onChange={(e) => {
                 setPreviewUrl(e.target.value);
                 setIframeReady(false);
+                setSelectedComponent(null);
               }}
               data-testid="select-preview-page"
             >
@@ -276,7 +266,7 @@ export default function VisualEditorPage() {
                 className="w-full h-full border-0 bg-white"
                 title="Live Preview"
                 data-testid="preview-iframe"
-                onLoad={() => setIframeReady(true)}
+                onLoad={handleIframeLoad}
               />
 
               {selectedComponent && (
@@ -299,7 +289,7 @@ export default function VisualEditorPage() {
               {iframeReady && (
                 <div className="absolute top-4 left-4 glass-card rounded-lg p-3 max-w-xs">
                   <p className="text-xs text-muted-foreground">
-                    <strong>Live MT Platform</strong> - Click elements to select, purple outlines show selection
+                    <strong>Live MT Platform</strong> - Click elements to select
                   </p>
                 </div>
               )}
