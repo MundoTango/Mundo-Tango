@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { SEO } from "@/components/SEO";
 import { Code, Save, GitBranch, Key, Rocket, Database, Terminal, ExternalLink, MessageSquare } from "lucide-react";
-import { MrBlueRealtimeChat } from "@/components/visual-editor/MrBlueRealtimeChat";
+import { MrBlueWhisperChat } from "@/components/visual-editor/MrBlueWhisperChat";
 import { type SelectedComponent } from "@/components/visual-editor/ComponentSelector";
 import { EditControls } from "@/components/visual-editor/EditControls";
 import { visualEditorTracker } from "@/lib/visualEditorTracker";
@@ -347,16 +347,23 @@ export default function VisualEditorPage() {
                   </TabsTrigger>
                 </TabsList>
 
-                {/* Mr. Blue Chat Tab - OpenAI Realtime API (ChatGPT Voice Mode) */}
+                {/* Mr. Blue Chat Tab - Whisper Audio Conversation */}
                 <TabsContent value="mrblue" className="flex-1 m-0 overflow-hidden">
-                  <MrBlueRealtimeChat 
+                  <MrBlueWhisperChat 
                     currentPage={previewUrl}
-                    selectedElement={selectedComponent ? {
-                      tagName: selectedComponent.tagName,
+                    selectedElement={selectedComponent?.element.getAttribute('data-testid') || null}
+                    onGenerateCode={handleGenerateCode}
+                    contextInfo={{
+                      page: previewUrl,
+                      selectedElement: selectedComponent ? {
+                        tagName: selectedComponent.tagName,
                       testId: selectedComponent.element.getAttribute('data-testid'),
-                      className: selectedComponent.className,
-                      text: selectedComponent.text
-                    } : undefined}
+                        className: selectedComponent.className,
+                        text: selectedComponent.text
+                      } : null,
+                      editsCount: visualEditorTracker.getAllEdits().length,
+                      recentEdits: visualEditorTracker.getRecentEdits(5)
+                    }}
                   />
                 </TabsContent>
 
