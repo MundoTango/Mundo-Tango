@@ -209,11 +209,13 @@ export const IFRAME_SELECTION_SCRIPT = `
 
 export function injectSelectionScript(iframe: HTMLIFrameElement): void {
   try {
-    // Wait for iframe to be fully loaded
+    // Strategy 1: Direct document injection
     const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
     
     if (!iframeDoc) {
       console.warn('[VisualEditor] Cannot access iframe document - may be cross-origin');
+      console.warn('[VisualEditor] Attempting postMessage fallback...');
+      usePostMessageInjection(iframe);
       return;
     }
 
@@ -225,27 +227,70 @@ export function injectSelectionScript(iframe: HTMLIFrameElement): void {
 
     // Wait for DOM to be ready
     const injectWhenReady = () => {
-      const script = iframeDoc.createElement('script');
-      script.textContent = IFRAME_SELECTION_SCRIPT;
-      script.setAttribute('data-visual-editor-script', 'true');
-      
-      // Inject into iframe head or body
-      const target = iframeDoc.head || iframeDoc.body || iframeDoc.documentElement;
-      if (target) {
-        target.appendChild(script);
-        console.log('[VisualEditor] Script injected successfully');
+      try {
+        const script = iframeDoc.createElement('script');
+        script.textContent = IFRAME_SELECTION_SCRIPT;
+        script.setAttribute('data-visual-editor-script', 'true');
+        script.setAttribute('type', 'text/javascript');
+        
+        // Inject into iframe head or body
+        const target = iframeDoc.head || iframeDoc.body || iframeDoc.documentElement;
+        if (target) {
+          target.appendChild(script);
+          console.log('[VisualEditor] ✅ Script injected successfully into', target.tagName);
+          
+          // Force execution check
+          setTimeout(() => {
+            const exists = iframeDoc.querySelector('[data-visual-editor-script="true"]');
+            console.log('[VisualEditor] Script element exists after injection:', !!exists);
+          }, 100);
+        } else {
+          console.error('[VisualEditor] ❌ No valid target for script injection');
+        }
+      } catch (err) {
+        console.error('[VisualEditor] ❌ Injection failed:', err);
+        usePostMessageInjection(iframe);
       }
     };
 
-    // Inject immediately if DOM is ready, otherwise wait
-    if (iframeDoc.readyState === 'complete' || iframeDoc.readyState === 'interactive') {
+    // Multiple injection attempts
+    if (iframeDoc.readyState === 'complete') {
+      console.log('[VisualEditor] DOM is complete, injecting now');
+      injectWhenReady();
+    } else if (iframeDoc.readyState === 'interactive') {
+      console.log('[VisualEditor] DOM is interactive, injecting now');
       injectWhenReady();
     } else {
+      console.log('[VisualEditor] DOM not ready, waiting for DOMContentLoaded');
       iframeDoc.addEventListener('DOMContentLoaded', injectWhenReady);
+      // Fallback timeout
+      setTimeout(injectWhenReady, 500);
     }
   } catch (error) {
-    console.error('[VisualEditor] Failed to inject script:', error);
+    console.error('[VisualEditor] ❌ Fatal injection error:', error);
+    usePostMessageInjection(iframe);
   }
+}
+
+/**
+ * Fallback: Use postMessage to inject script
+ * Works even with cross-origin restrictions
+ */
+function usePostMessageInjection(iframe: HTMLIFrameElement): void {
+  console.log('[VisualEditor] Using postMessage injection strategy');
+  
+  if (!iframe.contentWindow) {
+    console.error('[VisualEditor] No contentWindow available');
+    return;
+  }
+
+  // Send script via postMessage
+  iframe.contentWindow.postMessage({
+    type: 'INJECT_SELECTION_SCRIPT',
+    script: IFRAME_SELECTION_SCRIPT
+  }, '*');
+  
+  console.log('[VisualEditor] Script sent via postMessage');
 }
 
 /**

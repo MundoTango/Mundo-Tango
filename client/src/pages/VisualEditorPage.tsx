@@ -30,9 +30,21 @@ export default function VisualEditorPage() {
   const { toast } = useToast();
 
   // Get current user info
-  const { data: user } = useQuery<{ id: number; role: string }>({
+  const { data: user, isLoading: userLoading } = useQuery<{ id: number; role: string }>({
     queryKey: ['/api/auth/me']
   });
+
+  // Don't render until user is loaded
+  if (userLoading || !user) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading Visual Editor...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Listen for messages from iframe
   useEffect(() => {
