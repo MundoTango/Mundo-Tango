@@ -1,15 +1,18 @@
 /**
  * Mr. Blue Visual Chat
  * Right-side chat panel for conversational editing (40% width)
+ * WITH VOICE INPUT + TTS OUTPUT
  */
 
 import { useState, useEffect, useRef } from "react";
-import { Send, Sparkles, History, Lightbulb } from "lucide-react";
+import { Send, Sparkles, History, Lightbulb, Mic, MicOff, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { visualEditorTracker, type VisualEdit } from "@/lib/visualEditorTracker";
+import { useVoiceInput } from "@/hooks/useVoiceInput";
+import { useTextToSpeech } from "@/hooks/useTextToSpeech";
+import { MrBlueAvatar } from "./MrBlueAvatar";
 
 interface Message {
   id: string;
@@ -40,7 +43,32 @@ export function MrBlueVisualChat({
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [recentEdits, setRecentEdits] = useState<VisualEdit[]>([]);
+  const [ttsEnabled, setTtsEnabled] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Voice hooks
+  const { 
+    isListening, 
+    isSupported: voiceSupported, 
+    transcript, 
+    startListening, 
+    stopListening,
+    resetTranscript 
+  } = useVoiceInput();
+
+  const {
+    speak,
+    stop: stopSpeaking,
+    isSpeaking,
+    isSupported: ttsSupported
+  } = useTextToSpeech();
+
+  // Update input with voice transcript
+  useEffect(() => {
+    if (transcript) {
+      setInput(transcript);
+    }
+  }, [transcript]);
 
   useEffect(() => {
     const updateEdits = () => {
@@ -71,29 +99,44 @@ export function MrBlueVisualChat({
 
     setMessages(prev => [...prev, userMessage]);
     setInput("");
+    resetTranscript();
+    stopListening();
     setIsLoading(true);
 
     try {
       // Call code generation with user's prompt
       await onGenerateCode(input);
 
+      const response = "I've generated the code for your changes. Check the preview panel to see the updates!";
+      
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: "I've generated the code for your changes. Check the preview panel to see the updates!",
+        content: response,
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, assistantMessage]);
+
+      // Speak the response if TTS is enabled
+      if (ttsEnabled && ttsSupported) {
+        speak(response);
+      }
     } catch (error) {
+      const errorResponse = "I had trouble generating that code. Could you try rephrasing your request?";
+      
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: "I had trouble generating that code. Could you try rephrasing your request?",
+        content: errorResponse,
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, errorMessage]);
+
+      if (ttsEnabled && ttsSupported) {
+        speak(errorResponse);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -106,17 +149,54 @@ export function MrBlueVisualChat({
     }
   };
 
+  const toggleVoiceInput = () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  };
+
+  const toggleTTS = () => {
+    if (isSpeaking) {
+      stopSpeaking();
+    }
+    setTtsEnabled(!ttsEnabled);
+  };
+
   return (
     <div className="flex flex-col h-full bg-card border-l border-ocean-divider">
       {/* Header */}
       <div className="p-4 border-b border-ocean-divider">
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary" />
-          <h3 className="font-semibold">Mr. Blue - Visual Editor</h3>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <MrBlueAvatar isSpeaking={isSpeaking} isListening={isListening} />
+            <div>
+              <h3 className="font-semibold">Mr. Blue - Visual Editor</h3>
+              <p className="text-xs text-muted-foreground">
+                {isListening ? 'Listening...' : isSpeaking ? 'Speaking...' : 'Talk naturally to edit'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-1">
+            {ttsSupported && (
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={toggleTTS}
+                data-testid="button-toggle-tts"
+                title={ttsEnabled ? "Disable voice output" : "Enable voice output"}
+              >
+                {ttsEnabled ? (
+                  <Volume2 className="h-4 w-4" />
+                ) : (
+                  <VolumeX className="h-4 w-4" />
+                )}
+              </Button>
+            )}
+          </div>
         </div>
-        <p className="text-xs text-muted-foreground mt-1">
-          Talk naturally to edit: "Make this button bigger"
-        </p>
       </div>
 
       {/* Messages */}
@@ -129,11 +209,9 @@ export function MrBlueVisualChat({
               data-testid={`message-${message.role}`}
             >
               {message.role === 'assistant' && (
-                <Avatar className="h-8 w-8 bg-primary">
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    <Sparkles className="h-4 w-4" />
-                  </AvatarFallback>
-                </Avatar>
+                <div className="flex-shrink-0">
+                  <MrBlueAvatar isSpeaking={false} isListening={false} />
+                </div>
               )}
               
               <div
@@ -148,22 +226,14 @@ export function MrBlueVisualChat({
                   {message.timestamp.toLocaleTimeString()}
                 </span>
               </div>
-
-              {message.role === 'user' && (
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback>You</AvatarFallback>
-                </Avatar>
-              )}
             </div>
           ))}
 
           {isLoading && (
             <div className="flex gap-3 justify-start">
-              <Avatar className="h-8 w-8 bg-primary">
-                <AvatarFallback className="bg-primary text-primary-foreground">
-                  <Sparkles className="h-4 w-4" />
-                </AvatarFallback>
-              </Avatar>
+              <div className="flex-shrink-0">
+                <MrBlueAvatar isSpeaking={false} isListening={false} />
+              </div>
               <div className="bg-muted rounded-lg p-3">
                 <div className="flex gap-1">
                   <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
@@ -230,20 +300,43 @@ export function MrBlueVisualChat({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ask me to make changes..."
+            placeholder={isListening ? "Listening..." : "Ask me to make changes..."}
             className="resize-none"
             rows={2}
             data-testid="input-mr-blue-visual-chat"
           />
-          <Button
-            onClick={sendMessage}
-            disabled={!input.trim() || isLoading}
-            size="icon"
-            data-testid="button-send-visual-chat"
-          >
-            <Send className="h-4 w-4" />
-          </Button>
+          <div className="flex flex-col gap-2">
+            {voiceSupported && (
+              <Button
+                onClick={toggleVoiceInput}
+                variant={isListening ? "default" : "ghost"}
+                size="icon"
+                data-testid="button-voice-input"
+                title={isListening ? "Stop listening" : "Start voice input"}
+              >
+                {isListening ? (
+                  <MicOff className="h-4 w-4" />
+                ) : (
+                  <Mic className="h-4 w-4" />
+                )}
+              </Button>
+            )}
+            <Button
+              onClick={sendMessage}
+              disabled={!input.trim() || isLoading}
+              size="icon"
+              data-testid="button-send-visual-chat"
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
+        
+        {!voiceSupported && !ttsSupported && (
+          <p className="text-xs text-muted-foreground mt-2">
+            Voice features not supported in this browser
+          </p>
+        )}
       </div>
     </div>
   );
