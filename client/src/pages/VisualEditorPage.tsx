@@ -36,6 +36,19 @@ export default function VisualEditorPage() {
         setIframeReady(true);
       }
 
+      if (event.data?.type === 'IFRAME_NAVIGATE') {
+        // Command+Click navigation - like Replit
+        const url = event.data.url;
+        console.log('[VisualEditor] Navigating to:', url);
+        setPreviewUrl(url);
+        
+        toast({
+          title: "Navigated",
+          description: `Now viewing: ${url}`,
+          duration: 2000
+        });
+      }
+
       if (event.data?.type === 'IFRAME_ELEMENT_SELECTED') {
         const componentData = event.data.component;
         

@@ -48,10 +48,27 @@ export const IFRAME_SELECTION_SCRIPT = `
   }
 
   function handleClick(e) {
+    const target = e.target;
+    
+    // COMMAND+CLICK (or CTRL+CLICK) NAVIGATION - Like Replit
+    if ((e.metaKey || e.ctrlKey) && target.tagName === 'A') {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const href = target.getAttribute('href');
+      if (href && href.startsWith('/')) {
+        // Send navigation request to parent
+        window.parent.postMessage({
+          type: 'IFRAME_NAVIGATE',
+          url: href
+        }, '*');
+        return;
+      }
+    }
+
+    // REGULAR CLICK - Element selection
     e.preventDefault();
     e.stopPropagation();
-
-    const target = e.target;
     
     // Remove previous selection
     if (selectedElement) {
