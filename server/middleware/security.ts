@@ -92,8 +92,8 @@ export const securityHeadersMiddleware = (req: Request, res: Response, next: Nex
   // Referrer policy
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   
-  // Permissions policy
-  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  // Permissions policy - Allow microphone for voice input in Visual Editor
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(self), camera=()');
   
   // HSTS (HTTP Strict Transport Security) - only in production
   if (process.env.NODE_ENV === 'production') {
