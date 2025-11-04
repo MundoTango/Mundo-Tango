@@ -1,8 +1,10 @@
 import { Router } from "express";
 import Groq from "groq-sdk";
 
+// Bifrost AI Gateway integration - MB.MD Protocol Implementation
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY
+  apiKey: process.env.GROQ_API_KEY,
+  baseURL: process.env.BIFROST_BASE_URL || undefined,
 });
 
 export function createAIChatRoutes() {

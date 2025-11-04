@@ -4,7 +4,11 @@ import { resumeParser } from "./services/resume-parser";
 import { detectSkillSignals, matchVolunteerToTasks, generateClarifierQuestions } from "./algorithms/signal-detection";
 import Groq from "groq-sdk";
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+// Bifrost AI Gateway integration - MB.MD Protocol Implementation
+const groq = new Groq({ 
+  apiKey: process.env.GROQ_API_KEY,
+  baseURL: process.env.BIFROST_BASE_URL || undefined,
+});
 
 export function createTalentMatchRoutes(storage: IStorage) {
   const router = Router();
