@@ -1,6 +1,6 @@
 /**
- * Mr. Blue Visual Chat
- * Right-side chat panel for conversational editing (40% width)
+ * Mr. Blue Visual Chat - CONTEXT-AWARE EDITION
+ * Right-side chat panel for conversational editing with full app context
  * WITH VOICE INPUT + TTS OUTPUT
  */
 
@@ -21,31 +21,78 @@ interface Message {
   timestamp: Date;
 }
 
+interface SelectedElementInfo {
+  tagName: string;
+  testId: string | null;
+  className: string;
+  text: string;
+}
+
+interface ContextInfo {
+  page: string;
+  selectedElement: SelectedElementInfo | null;
+  editsCount: number;
+  recentEdits: VisualEdit[];
+}
+
 interface MrBlueVisualChatProps {
   currentPage: string;
   selectedElement: string | null;
-  onGenerateCode: (prompt: string) => Promise<void>;
+  onGenerateCode: (prompt: string) => Promise<any>;
+  contextInfo: ContextInfo;
 }
 
 export function MrBlueVisualChat({ 
   currentPage, 
   selectedElement,
-  onGenerateCode 
+  onGenerateCode,
+  contextInfo 
 }: MrBlueVisualChatProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: `Hi! I'm Mr. Blue, your visual editing assistant. I can see you're working on **${currentPage}**. I can help you make changes by:\n\n• Clicking elements and adjusting properties\n• Or just tell me what you want to change!`,
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [recentEdits, setRecentEdits] = useState<VisualEdit[]>([]);
-  const [ttsEnabled, setTtsEnabled] = useState(false); // Start disabled, user can enable
+  const [ttsEnabled, setTtsEnabled] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const hasSpokenGreeting = useRef(false);
+
+  // Initialize greeting with context
+  useEffect(() => {
+    const greetingContent = `Hi! I'm Mr. Blue, your visual editing assistant. I can see you're working on **${currentPage}**.
+
+**I have full context awareness:**
+• Current page: ${currentPage}
+• Selected element: ${contextInfo.selectedElement ? `${contextInfo.selectedElement.tagName} (${contextInfo.selectedElement.testId || 'no ID'})` : 'None'}
+• Total edits: ${contextInfo.editsCount}
+
+**What I can help with:**
+• Move, edit, resize, delete elements
+• Change colors, fonts, spacing
+• Add/modify content and styling
+• Generate production-ready code
+
+Just tell me what you want to change!`;
+
+    setMessages([{
+      id: '1',
+      role: 'assistant',
+      content: greetingContent,
+      timestamp: new Date()
+    }]);
+  }, [currentPage]);
+
+  // Update context message when selection changes
+  useEffect(() => {
+    if (contextInfo.selectedElement) {
+      const contextUpdate: Message = {
+        id: `context-${Date.now()}`,
+        role: 'assistant',
+        content: `✨ **Element selected!**\n\n**${contextInfo.selectedElement.tagName}** ${contextInfo.selectedElement.testId ? `(${contextInfo.selectedElement.testId})` : ''}\n\nWhat would you like to do with this element?`,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, contextUpdate]);
+    }
+  }, [contextInfo.selectedElement?.testId]);
 
   // Voice hooks
   const { 
@@ -64,10 +111,10 @@ export function MrBlueVisualChat({
     isSupported: ttsSupported
   } = useTextToSpeech();
 
-  // Speak greeting message when TTS is first enabled
+  // Speak greeting when TTS first enabled
   useEffect(() => {
     if (ttsEnabled && ttsSupported && !hasSpokenGreeting.current && messages.length > 0) {
-      const greeting = "Hi! I'm Mr. Blue. Click the microphone to use voice commands, or type your request below.";
+      const greeting = "Hi! I'm Mr. Blue. I have full context of your page and can help you make changes. Click the microphone to use voice commands, or type your request below.";
       speak(greeting);
       hasSpokenGreeting.current = true;
     }
@@ -79,17 +126,6 @@ export function MrBlueVisualChat({
       setInput(transcript);
     }
   }, [transcript]);
-
-  useEffect(() => {
-    const updateEdits = () => {
-      setRecentEdits(visualEditorTracker.getRecentEdits(5));
-    };
-    
-    visualEditorTracker.addListener(updateEdits);
-    updateEdits();
-
-    return () => visualEditorTracker.removeListener(updateEdits);
-  }, []);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -108,16 +144,24 @@ export function MrBlueVisualChat({
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const originalInput = input;
     setInput("");
     resetTranscript();
     stopListening();
     setIsLoading(true);
 
     try {
-      // Call code generation with user's prompt
-      await onGenerateCode(input);
+      // Build context-aware prompt
+      let contextualPrompt = originalInput;
+      
+      if (contextInfo.selectedElement) {
+        contextualPrompt = `USER REQUEST: ${originalInput}\n\nCONTEXT:\n- Page: ${contextInfo.page}\n- Selected element: ${contextInfo.selectedElement.tagName} (testId: ${contextInfo.selectedElement.testId || 'none'})\n- Element class: ${contextInfo.selectedElement.className}\n- Element text: ${contextInfo.selectedElement.text}\n- Total edits so far: ${contextInfo.editsCount}`;
+      }
 
-      const response = "I've generated the code for your changes. Check the preview panel to see the updates!";
+      // Call code generation with context
+      const result = await onGenerateCode(contextualPrompt);
+
+      const response = `✅ **Code generated successfully!**\n\n${result.explanation || 'I\'ve analyzed your request and generated the necessary code changes.'}\n\nYou can preview the changes in the live preview panel.`;
       
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -128,12 +172,11 @@ export function MrBlueVisualChat({
 
       setMessages(prev => [...prev, assistantMessage]);
 
-      // Speak the response if TTS is enabled
       if (ttsEnabled && ttsSupported) {
-        speak(response);
+        speak("Code generated successfully! Check the preview panel to see your changes.");
       }
-    } catch (error) {
-      const errorResponse = "I had trouble generating that code. Could you try rephrasing your request?";
+    } catch (error: any) {
+      const errorResponse = `❌ **I had trouble with that request.**\n\n${error.message || 'Could you try rephrasing? Make sure to describe what you want to change clearly.'}\n\n**Tips:**\n• Be specific (e.g., "Make the title larger" instead of "Change it")\n• Select an element first for better context\n• Try simpler requests if it's complex`;
       
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -145,7 +188,7 @@ export function MrBlueVisualChat({
       setMessages(prev => [...prev, errorMessage]);
 
       if (ttsEnabled && ttsSupported) {
-        speak(errorResponse);
+        speak("I had trouble with that request. Please try rephrasing it.");
       }
     } finally {
       setIsLoading(false);
@@ -175,7 +218,7 @@ export function MrBlueVisualChat({
   };
 
   return (
-    <div className="flex flex-col h-full bg-card border-l border-ocean-divider">
+    <div className="flex flex-col h-full bg-card">
       {/* Header */}
       <div className="p-4 border-b border-ocean-divider">
         <div className="flex items-center justify-between gap-2">
@@ -184,7 +227,7 @@ export function MrBlueVisualChat({
             <div>
               <h3 className="font-semibold">Mr. Blue - Visual Editor</h3>
               <p className="text-xs text-muted-foreground">
-                {isListening ? 'Listening...' : isSpeaking ? 'Speaking...' : 'Talk naturally to edit'}
+                {isListening ? 'Listening...' : isSpeaking ? 'Speaking...' : 'Context-aware editing assistant'}
               </p>
             </div>
           </div>
@@ -206,6 +249,18 @@ export function MrBlueVisualChat({
               </Button>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Context Display */}
+      <div className="p-3 bg-muted/30 border-b border-ocean-divider">
+        <div className="flex items-center gap-2 text-xs">
+          <Sparkles className="h-3 w-3 text-primary" />
+          <span className="font-medium">Context:</span>
+          <span className="text-muted-foreground">
+            {currentPage} • {contextInfo.editsCount} edits
+            {contextInfo.selectedElement && ` • Selected: ${contextInfo.selectedElement.tagName}`}
+          </span>
         </div>
       </div>
 
@@ -257,14 +312,14 @@ export function MrBlueVisualChat({
       </ScrollArea>
 
       {/* Recent Edits */}
-      {recentEdits.length > 0 && (
+      {contextInfo.recentEdits.length > 0 && (
         <div className="p-3 border-t border-ocean-divider bg-muted/30">
           <div className="flex items-center gap-2 mb-2">
             <History className="h-4 w-4 text-muted-foreground" />
             <span className="text-xs font-medium text-muted-foreground">Recent Edits</span>
           </div>
           <div className="space-y-1">
-            {recentEdits.map(edit => (
+            {contextInfo.recentEdits.map(edit => (
               <div key={edit.id} className="text-xs text-muted-foreground truncate">
                 • {edit.description}
               </div>
@@ -274,30 +329,40 @@ export function MrBlueVisualChat({
       )}
 
       {/* Suggestions */}
-      {selectedElement && (
+      {contextInfo.selectedElement && (
         <div className="p-3 border-t border-ocean-divider bg-muted/30">
           <div className="flex items-center gap-2 mb-2">
             <Lightbulb className="h-4 w-4 text-muted-foreground" />
-            <span className="text-xs font-medium text-muted-foreground">Suggestions</span>
+            <span className="text-xs font-medium text-muted-foreground">Quick Actions</span>
           </div>
           <div className="space-y-1">
             <button 
               className="text-xs text-primary hover:underline block"
-              onClick={() => setInput("Make this element larger")}
+              onClick={() => setInput("Make this element larger and more prominent")}
+              data-testid="suggestion-make-larger"
             >
               • Make this larger
             </button>
             <button 
               className="text-xs text-primary hover:underline block"
-              onClick={() => setInput("Change the color to turquoise")}
+              onClick={() => setInput("Change the color to ocean blue")}
+              data-testid="suggestion-change-color"
             >
-              • Change color to turquoise
+              • Change color to ocean blue
             </button>
             <button 
               className="text-xs text-primary hover:underline block"
-              onClick={() => setInput("Center this element")}
+              onClick={() => setInput("Center this element horizontally")}
+              data-testid="suggestion-center"
             >
               • Center this element
+            </button>
+            <button 
+              className="text-xs text-primary hover:underline block"
+              onClick={() => setInput("Delete this element")}
+              data-testid="suggestion-delete"
+            >
+              • Delete this element
             </button>
           </div>
         </div>

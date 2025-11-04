@@ -1,13 +1,14 @@
 /**
  * Visual Editor - Replit-style Development Environment
- * Complete development hub with live preview, Mr. Blue AI, and dev tools
+ * Complete development hub with resizable panes, live preview, Mr. Blue AI, and dev tools
  */
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { SEO } from "@/components/SEO";
-import { Code, Save, GitBranch, Key, Rocket, Database, Terminal, ExternalLink } from "lucide-react";
+import { Code, Save, GitBranch, Key, Rocket, Database, Terminal, ExternalLink, MessageSquare } from "lucide-react";
 import { MrBlueVisualChat } from "@/components/visual-editor/MrBlueVisualChat";
 import { type SelectedComponent } from "@/components/visual-editor/ComponentSelector";
 import { EditControls } from "@/components/visual-editor/EditControls";
@@ -22,6 +23,7 @@ export default function VisualEditorPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("/");
   const [iframeReady, setIframeReady] = useState(false);
+  const [activeTab, setActiveTab] = useState("mrblue");
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const selectedElementRef = useRef<any>(null);
   const { toast } = useToast();
@@ -29,7 +31,6 @@ export default function VisualEditorPage() {
   // Listen for messages from iframe
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      // Security: Verify origin (in production, check against allowed origins)
       if (event.data?.type === 'IFRAME_SCRIPT_READY') {
         console.log('[VisualEditor] Iframe script ready');
         setIframeReady(true);
@@ -38,7 +39,6 @@ export default function VisualEditorPage() {
       if (event.data?.type === 'IFRAME_ELEMENT_SELECTED') {
         const componentData = event.data.component;
         
-        // Create a proxy element for EditControls
         const proxyElement = {
           id: componentData.id,
           tagName: componentData.tagName,
@@ -49,7 +49,7 @@ export default function VisualEditorPage() {
             return null;
           },
           getBoundingClientRect: () => componentData.rect,
-          style: {} // Placeholder - actual style changes will be sent via postMessage
+          style: {}
         } as unknown as HTMLElement;
 
         const component: SelectedComponent = {
@@ -81,11 +81,9 @@ export default function VisualEditorPage() {
     if (iframeRef.current) {
       console.log('[VisualEditor] Iframe loaded, attempting script injection');
       
-      // Try immediate injection for same-origin iframes
       try {
         injectSelectionScript(iframeRef.current);
         
-        // Fallback: Set ready after short delay if no message received
         setTimeout(() => {
           if (!iframeReady) {
             console.log('[VisualEditor] Fallback: Setting iframe ready');
@@ -94,7 +92,6 @@ export default function VisualEditorPage() {
         }, 1000);
       } catch (error) {
         console.error('[VisualEditor] Script injection failed:', error);
-        // Still set ready to show preview
         setIframeReady(true);
       }
     }
@@ -111,7 +108,6 @@ export default function VisualEditorPage() {
       description: `Updated ${updates.type} for ${selectedComponent.tagName}`
     });
 
-    // Send style changes to iframe via postMessage
     if (iframeRef.current?.contentWindow) {
       iframeRef.current.contentWindow.postMessage({
         type: 'APPLY_STYLE_CHANGES',
@@ -126,13 +122,20 @@ export default function VisualEditorPage() {
     try {
       const allEdits = visualEditorTracker.getAllEdits();
       
-      const response = await apiRequest('POST', '/api/visual-editor/generate', {
+      const contextInfo = {
         prompt,
         pagePath: previewUrl,
         edits: allEdits,
-        selectedElement: selectedComponent?.element.getAttribute('data-testid')
-      });
-
+        selectedElement: selectedComponent ? {
+          testId: selectedComponent.element.getAttribute('data-testid'),
+          tagName: selectedComponent.tagName,
+          className: selectedComponent.className,
+          text: selectedComponent.text
+        } : null,
+        totalEdits: allEdits.length
+      };
+      
+      const response = await apiRequest('POST', '/api/visual-editor/generate', contextInfo);
       const data = await response.json();
 
       if (data.success) {
@@ -141,6 +144,7 @@ export default function VisualEditorPage() {
           description: data.explanation || "AI analyzed changes and generated code",
           duration: 3000
         });
+        return data;
       } else {
         throw new Error(data.message);
       }
@@ -150,6 +154,7 @@ export default function VisualEditorPage() {
         title: "Generation Failed",
         description: error.message
       });
+      throw error;
     } finally {
       setIsGenerating(false);
     }
@@ -175,7 +180,6 @@ export default function VisualEditorPage() {
           duration: 5000
         });
         
-        // Clear tracker after successful save
         visualEditorTracker.clear();
       } else {
         throw new Error(data.message);
@@ -261,115 +265,208 @@ export default function VisualEditorPage() {
           </div>
         </div>
 
-        {/* Main Content: Split Pane */}
-        <div className="flex-1 flex overflow-hidden">
-          {/* LEFT: Live Preview (60%) + Dev Tools */}
-          <div className="w-[60%] border-r border-ocean-divider flex flex-col" data-visual-editor="preview-panel">
-            {/* Preview Iframe */}
-            <div className="flex-1 relative bg-muted/30">
-              <iframe
-                ref={iframeRef}
-                src={`${previewUrl}${previewUrl.includes('?') ? '&' : '?'}hideControls=true`}
-                className="w-full h-full border-0 bg-white"
-                title="Live Preview"
-                data-testid="preview-iframe"
-                onLoad={handleIframeLoad}
-              />
-
-              {selectedComponent && (
-                <EditControls
-                  component={selectedComponent}
-                  onClose={() => setSelectedComponent(null)}
-                  onChange={handleComponentChange}
+        {/* Resizable Main Content */}
+        <ResizablePanelGroup direction="horizontal" className="flex-1">
+          {/* LEFT: Live Preview Panel (default 60%) */}
+          <ResizablePanel defaultSize={60} minSize={30}>
+            <div className="h-full flex flex-col" data-visual-editor="preview-panel">
+              <div className="flex-1 relative bg-muted/30">
+                <iframe
+                  ref={iframeRef}
+                  src={`${previewUrl}${previewUrl.includes('?') ? '&' : '?'}hideControls=true`}
+                  className="w-full h-full border-0 bg-white"
+                  title="Live Preview"
+                  data-testid="preview-iframe"
+                  onLoad={handleIframeLoad}
                 />
-              )}
 
-              {!iframeReady && (
-                <div className="absolute inset-0 flex items-center justify-center bg-muted/50">
-                  <div className="glass-card rounded-lg p-6 text-center">
-                    <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                    <p className="text-sm text-muted-foreground">Loading preview...</p>
+                {selectedComponent && (
+                  <EditControls
+                    component={selectedComponent}
+                    onClose={() => setSelectedComponent(null)}
+                    onChange={handleComponentChange}
+                  />
+                )}
+
+                {!iframeReady && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-muted/50">
+                    <div className="glass-card rounded-lg p-6 text-center">
+                      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+                      <p className="text-sm text-muted-foreground">Loading preview...</p>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {iframeReady && (
-                <div className="absolute top-4 left-4 glass-card rounded-lg p-3 max-w-xs">
-                  <p className="text-xs text-muted-foreground">
-                    <strong>Live MT Platform</strong> - Click elements to select
-                  </p>
-                </div>
-              )}
+                {iframeReady && (
+                  <div className="absolute top-4 left-4 glass-card rounded-lg p-3 max-w-xs">
+                    <p className="text-xs text-muted-foreground">
+                      <strong>Live MT Platform</strong> - Click elements to select
+                    </p>
+                    {selectedComponent && (
+                      <p className="text-xs text-primary mt-1">
+                        Selected: {selectedComponent.tagName}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
+          </ResizablePanel>
 
-            {/* Dev Tools Tabs */}
-            <div className="h-64 border-t border-ocean-divider bg-card" data-visual-editor="dev-tools">
-              <Tabs defaultValue="git" className="h-full flex flex-col">
+          <ResizableHandle withHandle />
+
+          {/* RIGHT: Dev Tools + Mr. Blue Panel (default 40%) */}
+          <ResizablePanel defaultSize={40} minSize={25}>
+            <div className="h-full flex flex-col bg-card" data-visual-editor="tools-panel">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+                {/* Tabs at TOP */}
                 <TabsList className="w-full justify-start rounded-none border-b border-ocean-divider">
-                  <TabsTrigger value="git" className="gap-2">
+                  <TabsTrigger value="mrblue" className="gap-2" data-testid="tab-mr-blue">
+                    <MessageSquare className="h-4 w-4" />
+                    Mr. Blue
+                  </TabsTrigger>
+                  <TabsTrigger value="git" className="gap-2" data-testid="tab-git">
                     <GitBranch className="h-4 w-4" />
                     Git
                   </TabsTrigger>
-                  <TabsTrigger value="secrets" className="gap-2">
+                  <TabsTrigger value="secrets" className="gap-2" data-testid="tab-secrets">
                     <Key className="h-4 w-4" />
                     Secrets
                   </TabsTrigger>
-                  <TabsTrigger value="deploy" className="gap-2">
+                  <TabsTrigger value="deploy" className="gap-2" data-testid="tab-deploy">
                     <Rocket className="h-4 w-4" />
-                    Deployments
+                    Deploy
                   </TabsTrigger>
-                  <TabsTrigger value="database" className="gap-2">
+                  <TabsTrigger value="database" className="gap-2" data-testid="tab-database">
                     <Database className="h-4 w-4" />
                     Database
                   </TabsTrigger>
-                  <TabsTrigger value="console" className="gap-2">
+                  <TabsTrigger value="console" className="gap-2" data-testid="tab-console">
                     <Terminal className="h-4 w-4" />
                     Console
                   </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="git" className="flex-1 p-4 overflow-auto">
-                  <div className="space-y-3">
-                    <h3 className="font-medium">Pending Commits</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Changes will be committed when you click "Save & Commit"
-                    </p>
-                    <div className="glass-card p-3 rounded-md">
-                      <p className="text-sm font-mono">
+                {/* Mr. Blue Chat Tab - Context-Aware */}
+                <TabsContent value="mrblue" className="flex-1 m-0 overflow-hidden">
+                  <MrBlueVisualChat 
+                    currentPage={previewUrl}
+                    selectedElement={selectedComponent?.element.getAttribute('data-testid') || null}
+                    onGenerateCode={handleGenerateCode}
+                    contextInfo={{
+                      page: previewUrl,
+                      selectedElement: selectedComponent ? {
+                        tagName: selectedComponent.tagName,
+                        testId: selectedComponent.element.getAttribute('data-testid'),
+                        className: selectedComponent.className,
+                        text: selectedComponent.text
+                      } : null,
+                      editsCount: visualEditorTracker.getAllEdits().length,
+                      recentEdits: visualEditorTracker.getRecentEdits(5)
+                    }}
+                  />
+                </TabsContent>
+
+                {/* Git Tab */}
+                <TabsContent value="git" className="flex-1 m-0 p-4">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold">Pending Commits</h3>
+                      <span className="text-xs text-muted-foreground">
                         {visualEditorTracker.getAllEdits().length} changes tracked
+                      </span>
+                    </div>
+                    
+                    <div className="bg-muted/30 rounded-lg p-4">
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Changes will be committed when you click "Save & Commit"
                       </p>
+                      
+                      {visualEditorTracker.getAllEdits().length > 0 ? (
+                        <div className="space-y-2 mt-3">
+                          {visualEditorTracker.getAllEdits().map((edit, idx) => (
+                            <div key={idx} className="text-xs text-muted-foreground border-l-2 border-primary pl-2">
+                              {edit.description}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-xs text-muted-foreground italic">No changes yet</p>
+                      )}
                     </div>
                   </div>
                 </TabsContent>
 
-                <TabsContent value="secrets" className="flex-1 p-4 overflow-auto">
-                  <p className="text-sm text-muted-foreground">Secrets management interface</p>
+                {/* Secrets Tab */}
+                <TabsContent value="secrets" className="flex-1 m-0 p-4">
+                  <div className="space-y-4">
+                    <h3 className="font-semibold">Environment Secrets</h3>
+                    <div className="bg-muted/30 rounded-lg p-4">
+                      <p className="text-sm text-muted-foreground">
+                        Manage API keys and secrets for your application
+                      </p>
+                      <Button variant="outline" size="sm" className="mt-3">
+                        <Key className="h-3 w-3 mr-2" />
+                        Manage Secrets
+                      </Button>
+                    </div>
+                  </div>
                 </TabsContent>
 
-                <TabsContent value="deploy" className="flex-1 p-4 overflow-auto">
-                  <p className="text-sm text-muted-foreground">Deployment hub interface</p>
+                {/* Deploy Tab */}
+                <TabsContent value="deploy" className="flex-1 m-0 p-4">
+                  <div className="space-y-4">
+                    <h3 className="font-semibold">Deployments</h3>
+                    <div className="bg-muted/30 rounded-lg p-4">
+                      <p className="text-sm text-muted-foreground">
+                        Preview and publish your changes to production
+                      </p>
+                      <Button variant="outline" size="sm" className="mt-3">
+                        <Rocket className="h-3 w-3 mr-2" />
+                        Deploy to Production
+                      </Button>
+                    </div>
+                  </div>
                 </TabsContent>
 
-                <TabsContent value="database" className="flex-1 p-4 overflow-auto">
-                  <p className="text-sm text-muted-foreground">Database management interface</p>
+                {/* Database Tab */}
+                <TabsContent value="database" className="flex-1 m-0 p-4">
+                  <div className="space-y-4">
+                    <h3 className="font-semibold">Database</h3>
+                    <div className="bg-muted/30 rounded-lg p-4">
+                      <p className="text-sm text-muted-foreground">
+                        View and manage your database schema
+                      </p>
+                      <Button variant="outline" size="sm" className="mt-3">
+                        <Database className="h-3 w-3 mr-2" />
+                        Open Database
+                      </Button>
+                    </div>
+                  </div>
                 </TabsContent>
 
-                <TabsContent value="console" className="flex-1 p-4 overflow-auto font-mono text-xs">
-                  <p className="text-muted-foreground">Console output will appear here</p>
+                {/* Console Tab */}
+                <TabsContent value="console" className="flex-1 m-0 p-4 font-mono text-xs">
+                  <div className="space-y-2">
+                    <h3 className="font-semibold font-sans">Console Output</h3>
+                    <div className="bg-black text-green-400 rounded-lg p-3 h-96 overflow-auto">
+                      <div>[Visual Editor] Ready</div>
+                      <div>[Preview] {previewUrl}</div>
+                      {selectedComponent && (
+                        <div className="text-yellow-400">
+                          [Selected] {selectedComponent.tagName} - {selectedComponent.element.getAttribute('data-testid')}
+                        </div>
+                      )}
+                      <div className="text-muted-foreground mt-2">
+                        Waiting for logs...
+                      </div>
+                    </div>
+                  </div>
                 </TabsContent>
               </Tabs>
             </div>
-          </div>
-
-          {/* RIGHT: Mr. Blue AI Chat (40%) */}
-          <div className="w-[40%]" data-visual-editor="chat-panel">
-            <MrBlueVisualChat
-              currentPage={previewUrl}
-              selectedElement={selectedComponent?.element.getAttribute('data-testid') || null}
-              onGenerateCode={handleGenerateCode}
-            />
-          </div>
-        </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
     </>
   );
