@@ -9,13 +9,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { SEO } from "@/components/SEO";
 import { Code, Save, GitBranch, Key, Rocket, Database, Terminal, ExternalLink, MessageSquare } from "lucide-react";
-import { MrBlueWhisperChat } from "@/components/visual-editor/MrBlueWhisperChat";
+import { MrBlueVoiceInterface } from "@/components/MrBlueVoiceInterface";
 import { type SelectedComponent } from "@/components/visual-editor/ComponentSelector";
 import { EditControls } from "@/components/visual-editor/EditControls";
 import { visualEditorTracker } from "@/lib/visualEditorTracker";
 import { useToast } from "@/hooks/use-toast";
-import { injectSelectionScript } from "@/lib/iframeInjector";
+import { injectSelectionScript, applyInstantChange } from "@/lib/iframeInjector";
 import { apiRequest } from "@/lib/queryClient";
+import { useQuery } from "@tanstack/react-query";
 
 export default function VisualEditorPage() {
   const [selectedComponent, setSelectedComponent] = useState<SelectedComponent | null>(null);
@@ -27,6 +28,11 @@ export default function VisualEditorPage() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const selectedElementRef = useRef<any>(null);
   const { toast } = useToast();
+
+  // Get current user info
+  const { data: user } = useQuery<{ id: number; role: string }>({
+    queryKey: ['/api/auth/me']
+  });
 
   // Listen for messages from iframe
   useEffect(() => {
@@ -360,24 +366,43 @@ export default function VisualEditorPage() {
                   </TabsTrigger>
                 </TabsList>
 
-                {/* Mr. Blue Chat Tab - Whisper Audio Conversation */}
-                <TabsContent value="mrblue" className="flex-1 m-0 overflow-hidden">
-                  <MrBlueWhisperChat 
-                    currentPage={previewUrl}
-                    selectedElement={selectedComponent?.element.getAttribute('data-testid') || null}
-                    onGenerateCode={handleGenerateCode}
-                    contextInfo={{
-                      page: previewUrl,
-                      selectedElement: selectedComponent ? {
-                        tagName: selectedComponent.tagName,
-                      testId: selectedComponent.element.getAttribute('data-testid'),
-                        className: selectedComponent.className,
-                        text: selectedComponent.text
-                      } : null,
-                      editsCount: visualEditorTracker.getAllEdits().length,
-                      recentEdits: visualEditorTracker.getRecentEdits(5)
-                    }}
-                  />
+                {/* Mr. Blue Chat Tab - Voice + Streaming AI */}
+                <TabsContent value="mrblue" className="flex-1 m-0 overflow-hidden p-4">
+                  {user && (
+                    <MrBlueVoiceInterface 
+                      userId={user.id}
+                      role={user.role}
+                      mode="visual_editor"
+                      page={previewUrl}
+                      context={{
+                        currentPage: previewUrl,
+                        selectedElement: selectedComponent ? {
+                          id: selectedComponent.id,
+                          tagName: selectedComponent.tagName,
+                          testId: selectedComponent.element.getAttribute('data-testid'),
+                          className: selectedComponent.className,
+                          text: selectedComponent.text
+                        } : null,
+                        editsCount: visualEditorTracker.getAllEdits().length,
+                        recentEdits: visualEditorTracker.getRecentEdits(5)
+                      }}
+                      className="h-full"
+                      onApplyChange={(change) => {
+                        // Apply instant DOM change via iframe
+                        if (iframeRef.current) {
+                          applyInstantChange(iframeRef.current, change);
+                        }
+                      }}
+                      onCodeGenerated={(code) => {
+                        // Handle generated code
+                        toast({
+                          title: "Code Generated",
+                          description: "Code has been generated and is ready to save",
+                          duration: 3000
+                        });
+                      }}
+                    />
+                  )}
                 </TabsContent>
 
                 {/* Git Tab */}

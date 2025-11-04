@@ -208,8 +208,8 @@ router.post("/save", async (req: Request, res: Response) => {
       prompt,
       pagePath: pagePath || '/',
       currentCode,
-      componentId: null,
-      changeType: 'multiple_edits'
+      componentId: undefined,
+      changeType: 'full'
     });
 
     if (!aiResult.success) {
