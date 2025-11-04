@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { SEO } from "@/components/SEO";
 import { Code, Save, GitBranch, Key, Rocket, Database, Terminal, ExternalLink, MessageSquare } from "lucide-react";
-import { MrBlueVisualChat } from "@/components/visual-editor/MrBlueVisualChat";
+import { MrBlueWhisperChat } from "@/components/visual-editor/MrBlueWhisperChat";
 import { type SelectedComponent } from "@/components/visual-editor/ComponentSelector";
 import { EditControls } from "@/components/visual-editor/EditControls";
 import { visualEditorTracker } from "@/lib/visualEditorTracker";
@@ -347,9 +347,9 @@ export default function VisualEditorPage() {
                   </TabsTrigger>
                 </TabsList>
 
-                {/* Mr. Blue Chat Tab - Context-Aware */}
+                {/* Mr. Blue Chat Tab - Whisper Audio Conversation */}
                 <TabsContent value="mrblue" className="flex-1 m-0 overflow-hidden">
-                  <MrBlueVisualChat 
+                  <MrBlueWhisperChat 
                     currentPage={previewUrl}
                     selectedElement={selectedComponent?.element.getAttribute('data-testid') || null}
                     onGenerateCode={handleGenerateCode}

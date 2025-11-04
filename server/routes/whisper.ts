@@ -5,7 +5,7 @@
 
 import { Router, type Request, Response } from "express";
 import { OpenAI } from "openai";
-import multer from "multer";
+import multer, { type FileFilterCallback } from "multer";
 import fs from "fs";
 import path from "path";
 
@@ -15,7 +15,7 @@ const router = Router();
 const upload = multer({
   dest: '/tmp/audio-uploads/',
   limits: { fileSize: 25 * 1024 * 1024 }, // 25MB limit
-  fileFilter: (req, file, cb) => {
+  fileFilter: (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
     const allowedMimes = [
       'audio/mpeg',
       'audio/mp3',
