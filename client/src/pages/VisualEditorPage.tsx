@@ -3,14 +3,13 @@
  * Complete development hub with live preview, Mr. Blue AI, and dev tools
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SEO } from "@/components/SEO";
-import { Code, Save, GitBranch, Key, Rocket, Database, Terminal } from "lucide-react";
+import { Code, Save, GitBranch, Key, Rocket, Database, Terminal, ExternalLink } from "lucide-react";
 import { MrBlueVisualChat } from "@/components/visual-editor/MrBlueVisualChat";
-import { ComponentSelector, type SelectedComponent } from "@/components/visual-editor/ComponentSelector";
-import { DragDropHandler } from "@/components/visual-editor/DragDropHandler";
+import { type SelectedComponent } from "@/components/visual-editor/ComponentSelector";
 import { EditControls } from "@/components/visual-editor/EditControls";
 import { visualEditorTracker } from "@/lib/visualEditorTracker";
 import { useToast } from "@/hooks/use-toast";
@@ -20,18 +19,84 @@ export default function VisualEditorPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("/");
+  const [iframeReady, setIframeReady] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const { toast } = useToast();
 
-  const handleComponentSelect = (component: SelectedComponent | null) => {
-    setSelectedComponent(component);
-    if (component) {
-      toast({
-        title: "Component Selected",
-        description: `${component.tagName} - ${component.element.getAttribute('data-testid') || 'No test ID'}`,
-        duration: 2000
-      });
-    }
-  };
+  // Setup iframe component selection
+  useEffect(() => {
+    if (!iframeRef.current || !iframeReady) return;
+
+    const iframe = iframeRef.current;
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!iframeDoc) return;
+
+    let hoveredElement: HTMLElement | null = null;
+    let selectedElement: HTMLElement | null = null;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      
+      // Remove previous hover
+      if (hoveredElement && hoveredElement !== selectedElement) {
+        hoveredElement.style.outline = '';
+      }
+
+      // Add hover to new element
+      if (target !== selectedElement && target.tagName !== 'HTML' && target.tagName !== 'BODY') {
+        target.style.outline = '2px dashed rgba(147, 51, 234, 0.5)';
+        hoveredElement = target;
+      }
+    };
+
+    const handleClick = (e: MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const target = e.target as HTMLElement;
+      
+      // Remove previous selection
+      if (selectedElement) {
+        selectedElement.style.outline = '';
+      }
+
+      // Select new element
+      if (target.tagName !== 'HTML' && target.tagName !== 'BODY') {
+        target.style.outline = '3px solid rgb(147, 51, 234)';
+        selectedElement = target;
+
+        // Extract component info
+        const component: SelectedComponent = {
+          element: target,
+          id: target.id || `element-${Date.now()}`,
+          tagName: target.tagName.toLowerCase(),
+          className: target.className || '',
+          text: target.textContent?.substring(0, 100) || '',
+          rect: target.getBoundingClientRect()
+        };
+
+        setSelectedComponent(component);
+        
+        toast({
+          title: "Component Selected",
+          description: `${component.tagName} - ${target.getAttribute('data-testid') || 'No test ID'}`,
+          duration: 2000
+        });
+      }
+    };
+
+    iframeDoc.addEventListener('mousemove', handleMouseMove);
+    iframeDoc.addEventListener('click', handleClick, true);
+
+    return () => {
+      iframeDoc.removeEventListener('mousemove', handleMouseMove);
+      iframeDoc.removeEventListener('click', handleClick, true);
+      
+      // Cleanup outlines
+      if (hoveredElement) hoveredElement.style.outline = '';
+      if (selectedElement) selectedElement.style.outline = '';
+    };
+  }, [iframeReady, toast]);
 
   const handleComponentChange = (updates: any) => {
     if (!selectedComponent) return;
@@ -137,12 +202,27 @@ export default function VisualEditorPage() {
         description="Replit-style visual development environment for Mundo Tango"
       />
 
-      <div className="fixed inset-0 bg-background flex flex-col">
+      <div className="fixed inset-0 bg-background flex flex-col" data-visual-editor="root">
         {/* Top Toolbar */}
-        <div className="h-14 border-b border-ocean-divider bg-card flex items-center justify-between px-4">
+        <div className="h-14 border-b border-ocean-divider bg-card flex items-center justify-between px-4" data-visual-editor="toolbar">
           <div className="flex items-center gap-4">
             <h2 className="font-semibold">Visual Editor</h2>
-            <span className="text-sm text-muted-foreground">{previewUrl}</span>
+            <select 
+              className="text-sm bg-muted border border-ocean-divider rounded px-2 py-1"
+              value={previewUrl}
+              onChange={(e) => {
+                setPreviewUrl(e.target.value);
+                setIframeReady(false);
+              }}
+              data-testid="select-preview-page"
+            >
+              <option value="/">Homepage</option>
+              <option value="/memories">Memories</option>
+              <option value="/feed">Feed</option>
+              <option value="/events">Events</option>
+              <option value="/groups">Groups</option>
+              <option value="/teachers">Teachers</option>
+            </select>
             {isGenerating && (
               <div className="flex items-center gap-2 text-primary">
                 <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
@@ -152,6 +232,15 @@ export default function VisualEditorPage() {
           </div>
           
           <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => window.open(previewUrl, '_blank')}
+              data-testid="button-open-in-new-tab"
+            >
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Open Page
+            </Button>
             <Button
               size="sm"
               variant="ghost"
@@ -178,36 +267,16 @@ export default function VisualEditorPage() {
         {/* Main Content: Split Pane */}
         <div className="flex-1 flex overflow-hidden">
           {/* LEFT: Live Preview (60%) + Dev Tools */}
-          <div className="w-[60%] border-r border-ocean-divider flex flex-col">
+          <div className="w-[60%] border-r border-ocean-divider flex flex-col" data-visual-editor="preview-panel">
             {/* Preview Iframe */}
             <div className="flex-1 relative bg-muted/30">
               <iframe
+                ref={iframeRef}
                 src={previewUrl}
-                className="w-full h-full border-0"
+                className="w-full h-full border-0 bg-white"
                 title="Live Preview"
                 data-testid="preview-iframe"
-              />
-              
-              <ComponentSelector
-                enabled={true}
-                onSelect={handleComponentSelect}
-              />
-              
-              <DragDropHandler
-                enabled={true}
-                selectedElement={selectedComponent?.element || null}
-                onDragEnd={(element, position) => {
-                  visualEditorTracker.track({
-                    elementId: element.id,
-                    elementTestId: element.getAttribute('data-testid') || '',
-                    changeType: 'position',
-                    changes: {
-                      left: { before: 0, after: position.x },
-                      top: { before: 0, after: position.y }
-                    },
-                    description: `Moved to (${position.x}, ${position.y})`
-                  });
-                }}
+                onLoad={() => setIframeReady(true)}
               />
 
               {selectedComponent && (
@@ -218,15 +287,26 @@ export default function VisualEditorPage() {
                 />
               )}
 
-              <div className="absolute top-4 left-4 glass-card rounded-lg p-3 max-w-xs">
-                <p className="text-xs text-muted-foreground">
-                  <strong>Live MT Platform</strong> - Click elements to select, drag to reposition
-                </p>
-              </div>
+              {!iframeReady && (
+                <div className="absolute inset-0 flex items-center justify-center bg-muted/50">
+                  <div className="glass-card rounded-lg p-6 text-center">
+                    <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+                    <p className="text-sm text-muted-foreground">Loading preview...</p>
+                  </div>
+                </div>
+              )}
+
+              {iframeReady && (
+                <div className="absolute top-4 left-4 glass-card rounded-lg p-3 max-w-xs">
+                  <p className="text-xs text-muted-foreground">
+                    <strong>Live MT Platform</strong> - Click elements to select, purple outlines show selection
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Dev Tools Tabs */}
-            <div className="h-64 border-t border-ocean-divider bg-card">
+            <div className="h-64 border-t border-ocean-divider bg-card" data-visual-editor="dev-tools">
               <Tabs defaultValue="git" className="h-full flex flex-col">
                 <TabsList className="w-full justify-start rounded-none border-b border-ocean-divider">
                   <TabsTrigger value="git" className="gap-2">
@@ -285,7 +365,7 @@ export default function VisualEditorPage() {
           </div>
 
           {/* RIGHT: Mr. Blue AI Chat (40%) */}
-          <div className="w-[40%]">
+          <div className="w-[40%]" data-visual-editor="chat-panel">
             <MrBlueVisualChat
               currentPage={previewUrl}
               selectedElement={selectedComponent?.element.getAttribute('data-testid') || null}
