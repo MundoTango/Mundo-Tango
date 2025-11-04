@@ -141,43 +141,77 @@ Type or use voice - I'm ready to chat!`;
         recentEdits: contextInfo.recentEdits.map(edit => edit.description)
       };
 
-      // Call REAL AI chat API endpoint
-      const token = localStorage.getItem('accessToken');
-      const response = await fetch('/api/mrblue/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          message: textToSend,
-          context: JSON.stringify(context),
-          conversationHistory: messages.slice(-10).map(m => ({
-            role: m.role,
-            content: m.content
-          }))
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to get AI response');
-      }
-
-      const data = await response.json();
-      const aiResponse = data.response || data.message || "I'm here to help!";
+      // Detect if this is a code editing request
+      const editingKeywords = [
+        'change', 'make', 'edit', 'update', 'modify', 'set', 'add', 'remove', 
+        'delete', 'create', 'move', 'resize', 'color', 'style', 'bigger', 
+        'smaller', 'blue', 'red', 'bold', 'center', 'hide', 'show'
+      ];
       
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: aiResponse,
-        timestamp: new Date()
-      };
+      const isEditRequest = editingKeywords.some(keyword => 
+        textToSend.toLowerCase().includes(keyword)
+      );
 
-      setMessages(prev => [...prev, assistantMessage]);
+      if (isEditRequest && onGenerateCode) {
+        // Code editing request - call code generator
+        try {
+          const result = await onGenerateCode(textToSend);
+          
+          const aiResponse = `✅ **Code Generated!**\n\nI've analyzed your request and generated the code changes. The preview should update momentarily.\n\nYou can save these changes using the "Save & Commit" button when ready!`;
+          
+          const assistantMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            role: 'assistant',
+            content: aiResponse,
+            timestamp: new Date()
+          };
 
-      // Auto-speak response if enabled
-      if (autoSpeak) {
-        speak(aiResponse);
+          setMessages(prev => [...prev, assistantMessage]);
+
+          if (autoSpeak) {
+            speak("Code generated! Check the preview for your changes.");
+          }
+        } catch (error: any) {
+          throw error;
+        }
+      } else {
+        // Conversational request - use AI chat
+        const token = localStorage.getItem('accessToken');
+        const response = await fetch('/api/mrblue/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            message: textToSend,
+            context: JSON.stringify(context),
+            conversationHistory: messages.slice(-10).map(m => ({
+              role: m.role,
+              content: m.content
+            }))
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to get AI response');
+        }
+
+        const data = await response.json();
+        const aiResponse = data.response || data.message || "I'm here to help!";
+        
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: aiResponse,
+          timestamp: new Date()
+        };
+
+        setMessages(prev => [...prev, assistantMessage]);
+
+        if (autoSpeak) {
+          speak(aiResponse);
+        }
       }
     } catch (error: any) {
       const errorResponse = `❌ I had trouble with that. ${error.message || 'Please try again.'}`;
