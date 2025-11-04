@@ -6,6 +6,14 @@ import { MrBlueChat } from "./MrBlueChat";
 export function MrBlueFloatingButton() {
   const [isOpen, setIsOpen] = useState(false);
 
+  // Hide if URL has hideControls=true (for iframe embedding)
+  const urlParams = new URLSearchParams(window.location.search);
+  const hideControls = urlParams.get('hideControls') === 'true';
+  
+  if (hideControls) {
+    return null;
+  }
+
   return (
     <>
       {/* Floating Button */}

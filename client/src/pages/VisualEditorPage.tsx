@@ -278,7 +278,7 @@ export default function VisualEditorPage() {
             <div className="flex-1 relative bg-muted/30">
               <iframe
                 ref={iframeRef}
-                src={previewUrl}
+                src={`${previewUrl}${previewUrl.includes('?') ? '&' : '?'}hideControls=true`}
                 className="w-full h-full border-0 bg-white"
                 title="Live Preview"
                 data-testid="preview-iframe"

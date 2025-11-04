@@ -19,6 +19,10 @@ export function GlobalTopbar() {
   
   // Check if user has admin access
   const hasAdminAccess = user?.role && ['god', 'super_admin', 'admin', 'moderator'].includes(user.role);
+  
+  // Hide Mr. Blue button if URL has hideControls=true (for iframe embedding)
+  const urlParams = new URLSearchParams(window.location.search);
+  const hideControls = urlParams.get('hideControls') === 'true';
 
   return (
     <header className="glass-topbar sticky top-0 z-50 w-full" data-testid="global-topbar">
@@ -95,16 +99,18 @@ export function GlobalTopbar() {
           </Link>
 
           {/* E107 - Mr Blue AI */}
-          <Link href="/mr-blue">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="ocean-gradient text-white"
-              data-testid="button-mr-blue"
-            >
-              <MessageSquare className="h-5 w-5" />
-            </Button>
-          </Link>
+          {!hideControls && (
+            <Link href="/mr-blue">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="ocean-gradient text-white"
+                data-testid="button-mr-blue"
+              >
+                <MessageSquare className="h-5 w-5" />
+              </Button>
+            </Link>
+          )}
 
           {/* Settings */}
           <Link href="/settings">

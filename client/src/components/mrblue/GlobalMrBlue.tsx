@@ -24,7 +24,11 @@ export function GlobalMrBlue() {
   // Hide on pages where button isn't needed
   const shouldHide = HIDDEN_PAGES.some(page => location.startsWith(page));
   
-  if (shouldHide) {
+  // Also hide if URL has hideControls=true (for iframe embedding)
+  const urlParams = new URLSearchParams(window.location.search);
+  const hideControls = urlParams.get('hideControls') === 'true';
+  
+  if (shouldHide || hideControls) {
     return null;
   }
 

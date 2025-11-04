@@ -33,6 +33,10 @@ export function TopNavigationBar() {
 
   const unreadNotifications = 3; // TODO: Get from API
   const unreadMessages = 5; // TODO: Get from API
+  
+  // Hide Mr. Blue button if URL has hideControls=true (for iframe embedding)
+  const urlParams = new URLSearchParams(window.location.search);
+  const hideControls = urlParams.get('hideControls') === 'true';
 
   return (
     <header className="glass-topbar sticky top-0 z-50 w-full" data-testid="esa-topbar">
@@ -109,16 +113,18 @@ export function TopNavigationBar() {
           </Link>
 
           {/* Mr Blue AI */}
-          <Link href="/mr-blue-chat">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="ocean-gradient text-white"
-              data-testid="button-mr-blue"
-            >
-              <MessageSquare className="h-5 w-5" />
-            </Button>
-          </Link>
+          {!hideControls && (
+            <Link href="/mr-blue-chat">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="ocean-gradient text-white"
+                data-testid="button-mr-blue"
+              >
+                <MessageSquare className="h-5 w-5" />
+              </Button>
+            </Link>
+          )}
 
           {/* Settings */}
           <Link href="/settings">
