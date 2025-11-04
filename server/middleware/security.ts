@@ -16,7 +16,7 @@ export const cspMiddleware = (req: Request, res: Response, next: NextFunction) =
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: https: blob:",
     "connect-src 'self' https://*.supabase.co https://api.stripe.com https://api.groq.com wss://*.supabase.co",
-    "frame-src https://js.stripe.com https://hooks.stripe.com",
+    "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
