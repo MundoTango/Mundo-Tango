@@ -773,14 +773,64 @@ function Router() {
       <Route path="/admin/visual-editor">
         <ProtectedRoute>
           <AdminLayout>
-            <div className="p-8">
-              <h1 className="text-2xl font-bold mb-4">Visual Editor</h1>
-              <p className="text-muted-foreground mb-6">
-                The Visual Editor is now accessible on any page by adding <code className="bg-muted px-2 py-1 rounded">?edit=true</code> to the URL.
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Example: <code className="bg-muted px-2 py-1 rounded">/memories?edit=true</code>
-              </p>
+            <div className="p-8 max-w-3xl">
+              <h1 className="text-2xl font-bold mb-4">Visual Editor - Split-Pane Interface</h1>
+              
+              <div className="glass-card p-6 mb-6 border border-primary/20">
+                <h2 className="text-lg font-semibold mb-3">🎨 How to Access the Visual Editor</h2>
+                <p className="text-muted-foreground mb-4">
+                  Add <code className="bg-muted px-2 py-1 rounded">?edit=true</code> to any page URL to open the split-pane editor.
+                </p>
+                
+                <div className="grid gap-3 mb-4">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-mono bg-muted px-2 py-1 rounded">/?edit=true</span>
+                    <span className="text-muted-foreground">- Edit Home page</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-mono bg-muted px-2 py-1 rounded">/memories?edit=true</span>
+                    <span className="text-muted-foreground">- Edit Memories page</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-mono bg-muted px-2 py-1 rounded">/feed?edit=true</span>
+                    <span className="text-muted-foreground">- Edit Feed page</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-3 pt-4 border-t border-ocean-divider">
+                  <a href="/?edit=true" className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+                    Try on Home Page
+                  </a>
+                  <a href="/memories?edit=true" className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+                    Try on Memories
+                  </a>
+                  <a href="/feed?edit=true" className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+                    Try on Feed
+                  </a>
+                </div>
+              </div>
+
+              <div className="bg-muted/50 rounded-lg p-6">
+                <h3 className="font-semibold mb-3">What You'll See:</h3>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <div className="flex gap-2">
+                    <span className="text-primary">•</span>
+                    <span><strong>LEFT (60%):</strong> Live preview of your actual MT site with click-to-select elements</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="text-primary">•</span>
+                    <span><strong>RIGHT (40%):</strong> Mr. Blue AI chat for conversational editing</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="text-primary">•</span>
+                    <span><strong>Edit Controls:</strong> 4-tab interface (Position/Size/Style/Text)</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="text-primary">•</span>
+                    <span><strong>Code Generation:</strong> AI generates React/Tailwind code from your visual changes</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </AdminLayout>
         </ProtectedRoute>
