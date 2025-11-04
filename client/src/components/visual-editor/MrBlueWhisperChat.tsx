@@ -68,14 +68,20 @@ export function MrBlueWhisperChat({
 
   // Initialize greeting
   useEffect(() => {
-    const greetingContent = `Hi! I'm Mr. Blue with full audio conversation powered by Whisper. Click the microphone and speak naturally - I'll transcribe and respond with voice!
+    const greetingContent = `👋 Hi! I'm Mr. Blue - your **real AI assistant** powered by Groq's LLM.
 
-**Current Context:**
-• Page: ${currentPage}
-• Selected: ${contextInfo.selectedElement ? contextInfo.selectedElement.tagName : 'None'}
-• Edits: ${contextInfo.editsCount}
+I'm fully context-aware of your Visual Editor session:
 
-Try: "Make that button bigger" or "Change this to blue"`;
+📍 **Current Page:** ${currentPage}
+🎯 **Selected Element:** ${contextInfo.selectedElement ? contextInfo.selectedElement.tagName : 'None'}
+✏️ **Total Edits:** ${contextInfo.editsCount}
+
+**I can help you:**
+• Answer questions: "What page am I on?"
+• Make edits: "Change that button to blue"
+• Get context: "What element do I have selected?"
+
+Type or use voice - I'm ready to chat!`;
 
     setMessages([{
       id: '1',
