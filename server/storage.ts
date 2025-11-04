@@ -120,6 +120,12 @@ import {
   type InsertFavorite,
   type SelectCommunityStats,
   type InsertCommunityStats,
+  housingListings,
+  housingBookings,
+  type SelectHousingListing,
+  type InsertHousingListing,
+  type SelectHousingBooking,
+  type InsertHousingBooking,
 } from "@shared/schema";
 
 // Platform independence tables
@@ -447,6 +453,19 @@ export interface IStorage {
   createCustomDomain(domain: any): Promise<any>;
   getCustomDomains(userId: number): Promise<any[]>;
   updateCustomDomain(id: number, userId: number, data: any): Promise<any | null>;
+  
+  // Housing System (Wave 8D)
+  createHousingListing(listing: InsertHousingListing): Promise<SelectHousingListing>;
+  getHousingListingById(id: number): Promise<SelectHousingListing | undefined>;
+  getHousingListings(params: { city?: string; country?: string; hostId?: number; status?: string; propertyTypes?: string[]; minPrice?: number; maxPrice?: number; bedrooms?: number; bathrooms?: number; maxGuests?: number; amenities?: string[]; friendsOnly?: boolean; limit?: number; offset?: number }): Promise<SelectHousingListing[]>;
+  updateHousingListing(id: number, data: Partial<SelectHousingListing>): Promise<SelectHousingListing | undefined>;
+  deleteHousingListing(id: number): Promise<void>;
+  
+  createHousingBooking(booking: InsertHousingBooking): Promise<SelectHousingBooking>;
+  getHousingBookingById(id: number): Promise<SelectHousingBooking | undefined>;
+  getHousingBookings(params: { listingId?: number; guestId?: number; status?: string; limit?: number; offset?: number }): Promise<SelectHousingBooking[]>;
+  updateHousingBooking(id: number, data: Partial<SelectHousingBooking>): Promise<SelectHousingBooking | undefined>;
+  deleteHousingBooking(id: number): Promise<void>;
   deleteCustomDomain(id: number, userId: number): Promise<boolean>;
   
   // Platform Independence: Analytics Events (TIER 2.2)
@@ -3217,6 +3236,171 @@ export class DbStorage implements IStorage {
       .orderBy(asc(events.startDate))
       .limit(limit)
       .offset(offset);
+  }
+
+  // ============================================================================
+  // HOUSING SYSTEM (Wave 8D)
+  // ============================================================================
+
+  async createHousingListing(listing: InsertHousingListing): Promise<SelectHousingListing> {
+    const [result] = await db.insert(housingListings).values(listing).returning();
+    return result;
+  }
+
+  async getHousingListingById(id: number): Promise<SelectHousingListing | undefined> {
+    const result = await db.select().from(housingListings).where(eq(housingListings.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getHousingListings(params: {
+    city?: string;
+    country?: string;
+    hostId?: number;
+    status?: string;
+    propertyTypes?: string[];
+    minPrice?: number;
+    maxPrice?: number;
+    bedrooms?: number;
+    bathrooms?: number;
+    maxGuests?: number;
+    amenities?: string[];
+    friendsOnly?: boolean;
+    limit?: number;
+    offset?: number;
+  }): Promise<SelectHousingListing[]> {
+    const {
+      city,
+      country,
+      hostId,
+      status = 'active',
+      propertyTypes,
+      minPrice,
+      maxPrice,
+      bedrooms,
+      bathrooms,
+      maxGuests,
+      amenities,
+      limit = 20,
+      offset = 0,
+    } = params;
+
+    let conditions: any[] = [eq(housingListings.status, status)];
+
+    if (city) {
+      conditions.push(ilike(housingListings.city, `%${city}%`));
+    }
+
+    if (country) {
+      conditions.push(ilike(housingListings.country, `%${country}%`));
+    }
+
+    if (hostId) {
+      conditions.push(eq(housingListings.hostId, hostId));
+    }
+
+    if (propertyTypes && propertyTypes.length > 0) {
+      conditions.push(inArray(housingListings.propertyType, propertyTypes));
+    }
+
+    if (minPrice !== undefined) {
+      conditions.push(gte(housingListings.pricePerNight, minPrice * 100)); // Convert to cents
+    }
+
+    if (maxPrice !== undefined) {
+      conditions.push(lte(housingListings.pricePerNight, maxPrice * 100)); // Convert to cents
+    }
+
+    if (bedrooms !== undefined && bedrooms > 0) {
+      conditions.push(gte(housingListings.bedrooms, bedrooms));
+    }
+
+    if (bathrooms !== undefined && bathrooms > 0) {
+      conditions.push(gte(housingListings.bathrooms, bathrooms));
+    }
+
+    if (maxGuests !== undefined && maxGuests > 0) {
+      conditions.push(gte(housingListings.maxGuests, maxGuests));
+    }
+
+    // TODO: Implement amenities filtering (requires array overlap check)
+    // if (amenities && amenities.length > 0) {
+    //   conditions.push(sql`${housingListings.amenities} @> ${amenities}`);
+    // }
+
+    return await db
+      .select()
+      .from(housingListings)
+      .where(and(...conditions))
+      .orderBy(desc(housingListings.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async updateHousingListing(id: number, data: Partial<SelectHousingListing>): Promise<SelectHousingListing | undefined> {
+    const [result] = await db.update(housingListings).set(data).where(eq(housingListings.id, id)).returning();
+    return result;
+  }
+
+  async deleteHousingListing(id: number): Promise<void> {
+    await db.delete(housingListings).where(eq(housingListings.id, id));
+  }
+
+  async createHousingBooking(booking: InsertHousingBooking): Promise<SelectHousingBooking> {
+    const [result] = await db.insert(housingBookings).values(booking).returning();
+    return result;
+  }
+
+  async getHousingBookingById(id: number): Promise<SelectHousingBooking | undefined> {
+    const result = await db.select().from(housingBookings).where(eq(housingBookings.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getHousingBookings(params: {
+    listingId?: number;
+    guestId?: number;
+    status?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<SelectHousingBooking[]> {
+    const { listingId, guestId, status, limit = 20, offset = 0 } = params;
+
+    let conditions: any[] = [];
+
+    if (listingId) {
+      conditions.push(eq(housingBookings.listingId, listingId));
+    }
+
+    if (guestId) {
+      conditions.push(eq(housingBookings.guestId, guestId));
+    }
+
+    if (status) {
+      conditions.push(eq(housingBookings.status, status));
+    }
+
+    const query = db.select().from(housingBookings);
+
+    if (conditions.length > 0) {
+      return await query
+        .where(and(...conditions))
+        .orderBy(desc(housingBookings.createdAt))
+        .limit(limit)
+        .offset(offset);
+    }
+
+    return await query
+      .orderBy(desc(housingBookings.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async updateHousingBooking(id: number, data: Partial<SelectHousingBooking>): Promise<SelectHousingBooking | undefined> {
+    const [result] = await db.update(housingBookings).set(data).where(eq(housingBookings.id, id)).returning();
+    return result;
+  }
+
+  async deleteHousingBooking(id: number): Promise<void> {
+    await db.delete(housingBookings).where(eq(housingBookings.id, id));
   }
 }
 
