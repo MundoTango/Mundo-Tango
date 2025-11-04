@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { lazy, Suspense, useState, useEffect } from "react";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -796,6 +796,7 @@ function Router() {
 
 function App() {
   const [isVisualEditorOpen, setIsVisualEditorOpen] = useState(false);
+  const [location] = useLocation();
 
   useEffect(() => {
     // Check for ?edit=true in URL to open Visual Editor
@@ -818,6 +819,8 @@ function App() {
     };
   }, []);
 
+  const isOnVisualEditorPage = location === '/admin/visual-editor';
+
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
@@ -832,7 +835,7 @@ function App() {
                   </Suspense>
                   <GlobalMrBlue />
                   <ChatSidePanel />
-                  <MrBlueFloatingButton />
+                  {!isOnVisualEditorPage && <MrBlueFloatingButton />}
                   <VisualEditorSplitPane 
                     isOpen={isVisualEditorOpen} 
                     onClose={() => setIsVisualEditorOpen(false)} 

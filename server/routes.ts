@@ -125,7 +125,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/videos", videoRoutes);
   app.use("/api/mrblue", mrblueVideoRoutes);
   app.use("/api/mrblue", mrBlueRoutes);
-  app.use("/api/visual-editor", visualEditorRoutes);
+  app.use("/api/visual-editor", authenticateToken, visualEditorRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(createPostBodySchema), async (req: AuthRequest, res: Response) => {
     try {
