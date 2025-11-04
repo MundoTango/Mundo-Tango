@@ -43,8 +43,9 @@ export function MrBlueVisualChat({
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [recentEdits, setRecentEdits] = useState<VisualEdit[]>([]);
-  const [ttsEnabled, setTtsEnabled] = useState(true);
+  const [ttsEnabled, setTtsEnabled] = useState(false); // Start disabled, user can enable
   const scrollRef = useRef<HTMLDivElement>(null);
+  const hasSpokenGreeting = useRef(false);
 
   // Voice hooks
   const { 
@@ -62,6 +63,15 @@ export function MrBlueVisualChat({
     isSpeaking,
     isSupported: ttsSupported
   } = useTextToSpeech();
+
+  // Speak greeting message when TTS is first enabled
+  useEffect(() => {
+    if (ttsEnabled && ttsSupported && !hasSpokenGreeting.current && messages.length > 0) {
+      const greeting = "Hi! I'm Mr. Blue. Click the microphone to use voice commands, or type your request below.";
+      speak(greeting);
+      hasSpokenGreeting.current = true;
+    }
+  }, [ttsEnabled, ttsSupported, messages.length, speak]);
 
   // Update input with voice transcript
   useEffect(() => {

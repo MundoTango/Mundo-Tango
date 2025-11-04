@@ -79,26 +79,41 @@ export const IFRAME_SELECTION_SCRIPT = `
 
 export function injectSelectionScript(iframe: HTMLIFrameElement): void {
   try {
+    // Wait for iframe to be fully loaded
     const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
     
     if (!iframeDoc) {
-      console.warn('[VisualEditor] Cannot access iframe document');
+      console.warn('[VisualEditor] Cannot access iframe document - may be cross-origin');
       return;
     }
 
-    // Create and inject script
-    const script = iframeDoc.createElement('script');
-    script.textContent = IFRAME_SELECTION_SCRIPT;
-    script.setAttribute('data-visual-editor-script', 'true');
-    
-    // Inject into iframe head or body
-    (iframeDoc.head || iframeDoc.body).appendChild(script);
-    
-    console.log('[VisualEditor] Script injected successfully');
+    // Check if already injected
+    if (iframeDoc.querySelector('[data-visual-editor-script="true"]')) {
+      console.log('[VisualEditor] Script already injected');
+      return;
+    }
+
+    // Wait for DOM to be ready
+    const injectWhenReady = () => {
+      const script = iframeDoc.createElement('script');
+      script.textContent = IFRAME_SELECTION_SCRIPT;
+      script.setAttribute('data-visual-editor-script', 'true');
+      
+      // Inject into iframe head or body
+      const target = iframeDoc.head || iframeDoc.body || iframeDoc.documentElement;
+      if (target) {
+        target.appendChild(script);
+        console.log('[VisualEditor] Script injected successfully');
+      }
+    };
+
+    // Inject immediately if DOM is ready, otherwise wait
+    if (iframeDoc.readyState === 'complete' || iframeDoc.readyState === 'interactive') {
+      injectWhenReady();
+    } else {
+      iframeDoc.addEventListener('DOMContentLoaded', injectWhenReady);
+    }
   } catch (error) {
     console.error('[VisualEditor] Failed to inject script:', error);
-    
-    // Fallback: Try using iframe.contentWindow.postMessage
-    // This won't work for selection but prevents crashes
   }
 }

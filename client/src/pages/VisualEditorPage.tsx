@@ -78,10 +78,24 @@ export default function VisualEditorPage() {
   // Inject selection script when iframe loads
   const handleIframeLoad = () => {
     if (iframeRef.current) {
-      // Small delay to ensure iframe is fully loaded
-      setTimeout(() => {
-        injectSelectionScript(iframeRef.current!);
-      }, 100);
+      console.log('[VisualEditor] Iframe loaded, attempting script injection');
+      
+      // Try immediate injection for same-origin iframes
+      try {
+        injectSelectionScript(iframeRef.current);
+        
+        // Fallback: Set ready after short delay if no message received
+        setTimeout(() => {
+          if (!iframeReady) {
+            console.log('[VisualEditor] Fallback: Setting iframe ready');
+            setIframeReady(true);
+          }
+        }, 1000);
+      } catch (error) {
+        console.error('[VisualEditor] Script injection failed:', error);
+        // Still set ready to show preview
+        setIframeReady(true);
+      }
     }
   };
 
