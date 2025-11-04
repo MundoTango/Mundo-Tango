@@ -7,8 +7,10 @@
 import WebSocket from 'ws';
 import { OpenAI } from 'openai';
 
+// Bifrost AI Gateway integration - MB.MD Protocol Implementation
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
+  baseURL: process.env.BIFROST_BASE_URL || undefined,
 });
 
 export interface RealtimeSession {

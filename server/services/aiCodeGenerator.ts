@@ -6,8 +6,15 @@
 
 import OpenAI from 'openai';
 
+// Bifrost AI Gateway integration - MB.MD Protocol Implementation
+// Set BIFROST_BASE_URL to enable unified AI gateway with:
+// - Automatic failover (OpenAI → Anthropic → Bedrock)
+// - Semantic caching (60-80% cost savings)
+// - Load balancing across multiple API keys
+// - Budget management and observability
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || '',
+  baseURL: process.env.BIFROST_BASE_URL || undefined, // e.g., 'http://localhost:8080/v1'
 });
 
 export interface CodeGenerationRequest {

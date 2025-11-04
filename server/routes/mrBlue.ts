@@ -4,8 +4,11 @@ import { streamingService } from "../services/streamingService";
 
 const router = Router();
 
+// Bifrost AI Gateway integration - MB.MD Protocol Implementation
+// Groq SDK supports baseURL for routing through Bifrost gateway
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY || '',
+  baseURL: process.env.BIFROST_BASE_URL || undefined,
 });
 
 // Mr. Blue Chat
