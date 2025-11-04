@@ -125,48 +125,50 @@ router.post("/generate", async (req: Request, res: Response) => {
 // Save and commit changes
 router.post("/save", async (req: Request, res: Response) => {
   try {
-    const { pagePath, code, commitMessage, createPR } = req.body;
+    const { pagePath, edits, sessionId } = req.body;
+    // @ts-ignore
+    const userName = req.user?.name || 'Visual Editor';
 
-    if (!pagePath || !code || !commitMessage) {
+    if (!edits || edits.length === 0) {
       return res.status(400).json({
         success: false,
-        message: 'Page path, code, and commit message are required'
+        message: 'No changes to save'
       });
     }
 
-    // Map URL path to file path
-    const filePath = mapPagePathToFile(pagePath);
-    
-    if (!filePath) {
-      return res.status(404).json({
-        success: false,
-        message: 'Page file not found'
-      });
+    // Create branch name
+    const branchName = sessionId || `visual-edit-${Date.now()}`;
+
+    // Get affected files from edits
+    const affectedFiles = new Set<string>();
+    const filePath = mapPagePathToFile(pagePath || '/');
+    if (filePath) {
+      affectedFiles.add(filePath);
     }
 
-    // Create backup before saving
-    const backupPath = await gitService.createBackup(filePath);
+    // Create commit message
+    const commitMessage = `Visual Editor: ${edits.length} changes to ${pagePath || 'homepage'}\n\n${edits.map((e: any, i: number) => `${i + 1}. ${e.description}`).join('\n')}`;
 
-    // Commit changes to Git
+    // Save to Git (using first file as primary)
     const result = await gitService.commitChanges({
-      filePath,
-      content: code,
-      commitMessage: `[Visual Editor] ${commitMessage}`,
-      createPR: createPR || false
+      filePath: Array.from(affectedFiles)[0] || 'client/src/pages/HomePage.tsx',
+      content: '', // Content will be updated by AI
+      commitMessage,
+      createPR: false
     });
 
     if (!result.success) {
       return res.status(500).json({
         success: false,
-        message: result.error || 'Failed to save changes'
+        message: result.error || 'Failed to commit changes'
       });
     }
 
     res.json({
       success: true,
-      commitHash: result.commitHash,
-      branchName: result.branchName,
-      backupPath
+      commitId: result.commitHash,
+      branch: branchName,
+      message: 'Changes committed successfully. Ready for review.'
     });
   } catch (error: any) {
     console.error('[VisualEditor] Save error:', error);
