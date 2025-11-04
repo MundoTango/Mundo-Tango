@@ -13,9 +13,7 @@ export default defineConfig({
   ],
   
   use: {
-    baseURL: process.env.REPL_SLUG 
-      ? `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`
-      : 'http://localhost:5000',
+    baseURL: 'http://localhost:5000',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: {
