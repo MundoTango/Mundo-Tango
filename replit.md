@@ -37,8 +37,8 @@ All navigation components use design tokens for complete visual redesign flexibi
 -   **Post System:** Like, comment, share, bookmark, report, edit with history, analytics.
 
 **AI Integration:**
--   **Mr. Blue AI Assistant:** Context-aware conversational intelligence using Groq SDK (llama-3.1-8b-instant), breadcrumb tracking, and predictive assistance. UI controls hidden via `?hideControls=true` parameter in iframe contexts.
--   **Visual Editor System:** Figma-like page editing with AI code generation (OpenAI GPT-4o), real-time preview, JSX export, and Git automation. Accessible at `/admin/visual-editor` for super\_admin. Uses `apiRequest()` helper for JWT-authenticated API calls. iframe preview uses postMessage API for cross-origin component selection.
+-   **Mr. Blue AI Assistant:** Context-aware conversational intelligence using Groq SDK (llama-3.1-8b-instant), breadcrumb tracking, and predictive assistance. UI controls hidden via `?hideControls=true` parameter in iframe contexts. Integrated into Visual Editor with voice input/output, displaying contextInfo (selected element, current page, edit count, recent changes).
+-   **Visual Editor System (Replit-style):** Production-ready development environment with resizable panes (60% preview / 40% tools), live MT page preview in iframe, tabbed interface (Mr. Blue, Git, Secrets, Deploy, Database, Console) at top of right panel. Element selection via postMessage API with visual EditControls (Position, Size, Style, Text, Delete). Context-aware Mr. Blue provides conversational editing, quick actions, and TTS support. AI code generation with OpenAI GPT-4o. Git integration tracks edits and creates commits. Accessible at `/admin/visual-editor` for super\_admin.
 -   **Talent Match AI:** Advanced matching algorithms for dancers/teachers.
 
 **Automation & Workers:** BullMQ queue management with 39 functions across 6 dedicated workers, powered by Redis-based job processing. Includes 50 production-ready algorithms.
@@ -54,6 +54,8 @@ All navigation components use design tokens for complete visual redesign flexibi
 **Production Infrastructure:** Docker MCP Gateway, robust security (CSP, rate limiting, security headers, CORS), performance optimizations (compression, caching), PostgreSQL with compound indexes and automated backups, GitHub Actions for CI/CD, monitoring endpoints, and GitHub/Jira synchronization.
 
 **Database Schema (Key Tables):** Includes tables for users, posts, comments, likes, friendships, events, groups, messages, notifications, communities, visual editor changes, Mr. Blue contexts, breadcrumbs, and agent-related data.
+
+**Testing Infrastructure:** Comprehensive Playwright test suites for Visual Editor covering UI structure, element selection, context awareness, Mr. Blue AI, editing controls, and complete workflows. Tests designed for parallel execution with 5 dedicated test files (`visual-editor-*.spec.ts`).
 
 ### External Dependencies
 
