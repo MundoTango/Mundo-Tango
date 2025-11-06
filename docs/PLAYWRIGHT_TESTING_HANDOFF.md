@@ -1,10 +1,11 @@
 # 🎭 PLAYWRIGHT TESTING HANDOFF
 ## Complete Guide to E2E Testing in Mundo Tango
 
-**Date:** November 5, 2025  
+**Date:** November 6, 2025  
 **Methodology:** MB.MD Protocol (Simultaneously, Recursively, Critically)  
 **Status:** Production-Ready Testing Infrastructure  
-**Test Coverage:** 39+ test files, 100+ test cases
+**Test Coverage:** 39+ test files, 150+ test cases  
+**Standard Test Suites:** 7 comprehensive test categories
 
 ---
 
@@ -40,10 +41,19 @@
 19. [Video & Screenshots](#video--screenshots)
 20. [Trace Viewer](#trace-viewer)
 
-### PART 6: CI/CD & DEPLOYMENT
-21. [CI/CD Integration](#cicd-integration)
-22. [Test Reports](#test-reports)
-23. [Performance Considerations](#performance-considerations)
+### PART 6: STANDARD TEST SUITES
+21. [Comprehensive Platform Tests](#comprehensive-platform-tests)
+22. [Performance Tests](#performance-tests)
+23. [Security & Auth Tests](#security--auth-tests)
+24. [Design System Tests](#design-system-tests)
+25. [Customer Journey Tests](#customer-journey-tests)
+26. [ESA Framework Tests](#esa-framework-tests)
+27. [Feature-Specific Tests](#feature-specific-tests)
+
+### PART 7: CI/CD & DEPLOYMENT
+28. [CI/CD Integration](#cicd-integration)
+29. [Test Reports](#test-reports)
+30. [Performance Considerations](#performance-considerations)
 
 ---
 
@@ -1566,7 +1576,964 @@ npx playwright show-trace test-results/traces/trace.zip
 
 ---
 
-# PART 6: CI/CD & DEPLOYMENT
+# PART 6: STANDARD TEST SUITES
+
+---
+
+## COMPREHENSIVE PLATFORM TESTS
+
+**File:** `tests/e2e/comprehensive-platform-test-suite.spec.ts`  
+**Purpose:** Test all 58+ pages across the entire platform  
+**Coverage:** Public, Authenticated, Admin, Error pages
+
+### What It Tests
+
+**Complete Platform Coverage:**
+- ✅ 9 Public pages (marketing, pricing, about, contact, etc.)
+- ✅ 35+ Authenticated pages (feed, events, groups, housing, etc.)
+- ✅ 14+ Admin pages (dashboard, users, moderation, etc.)
+- ✅ Error pages (404, 403, 500)
+
+---
+
+### Key Features
+
+**1. Self-Healing Locators:**
+```typescript
+import { SelfHealingLocator } from './helpers/self-healing-locator';
+
+const selfHealing = new SelfHealingLocator();
+
+// Automatically adapts if selectors change
+const button = await selfHealing.find(page, {
+  primary: '[data-testid="button-submit"]',
+  fallback: ['button:has-text("Submit")', '.submit-btn']
+});
+```
+
+**2. Mr. Blue Reporter:**
+```typescript
+import { MrBlueReporter } from './helpers/mr-blue-reporter';
+
+const reporter = new MrBlueReporter();
+
+await reporter.reportSuccess({
+  pageId: 'P01',
+  pageName: 'Marketing Home',
+  agent: 'Marketing Agent',
+  route: '/',
+  testType: 'page-load',
+  userRole: 'public'
+});
+```
+
+**3. Performance Assertions:**
+```typescript
+async function assertPerformance(page: Page, pageId: string, threshold: number = 3000) {
+  const loadTime = await measurePageLoad(page);
+  expect(loadTime).toBeLessThan(threshold);
+  
+  await reporter.reportMetric({
+    pageId,
+    metric: 'Page Load Time',
+    value: loadTime,
+    threshold,
+    passed: loadTime < threshold,
+    unit: 'ms'
+  });
+}
+```
+
+---
+
+### Test Structure
+
+**Public Pages (9 tests):**
+```typescript
+test.describe('PUBLIC PAGES (9 tests)', () => {
+  test('P01: Marketing Home loads correctly');
+  test('P02: Pricing page loads correctly');
+  test('P03: About page loads correctly');
+  test('P04: Contact page loads correctly');
+  test('P05: Marketing Prototype loads correctly');
+  test('P06: Teachers Directory loads correctly');
+  test('P07: Dance Styles loads correctly');
+  test('P08: FAQ page loads correctly');
+  test('P09: Login page loads correctly');
+});
+```
+
+**Authenticated Pages (35+ tests):**
+```typescript
+test.describe('AUTHENTICATED PAGES (35+ tests)', () => {
+  test.beforeEach(async ({ page }) => {
+    // Login as admin
+    await loginAsAdmin(page);
+  });
+
+  test('A01: Feed page loads correctly');
+  test('A02: Events page loads correctly');
+  test('A03: Groups page loads correctly');
+  test('A04: Housing Marketplace loads correctly');
+  test('A05: Messages page loads correctly');
+  test('A06: Notifications page loads correctly');
+  test('A07: Profile page loads correctly');
+  test('A08: Friends page loads correctly');
+  // ... 27+ more authenticated pages
+});
+```
+
+**Admin Pages (14+ tests):**
+```typescript
+test.describe('ADMIN PAGES (14+ tests)', () => {
+  test.beforeEach(async ({ page }) => {
+    await loginAsAdmin(page);
+  });
+
+  test('ADMIN01: Admin Dashboard loads correctly');
+  test('ADMIN02: User Management loads correctly');
+  test('ADMIN03: Content Moderation loads correctly');
+  test('ADMIN04: Visual Editor loads correctly');
+  test('ADMIN05: System Monitoring loads correctly');
+  // ... 9+ more admin pages
+});
+```
+
+---
+
+### How to Run
+
+**Run all comprehensive tests:**
+```bash
+npx playwright test tests/e2e/comprehensive-platform-test-suite.spec.ts
+```
+
+**Run specific category:**
+```bash
+npx playwright test -g "PUBLIC PAGES"
+npx playwright test -g "AUTHENTICATED PAGES"
+npx playwright test -g "ADMIN PAGES"
+```
+
+**Run with reporting:**
+```bash
+npx playwright test tests/e2e/comprehensive-platform-test-suite.spec.ts --reporter=html
+```
+
+---
+
+### Expected Output
+
+```
+Running 58 tests using 1 worker
+
+PUBLIC PAGES (9 tests)
+  ✓ P01: Marketing Home loads correctly (1.2s)
+  ✓ P02: Pricing page loads correctly (0.9s)
+  ✓ P03: About page loads correctly (0.8s)
+  ...
+
+AUTHENTICATED PAGES (35 tests)
+  ✓ A01: Feed page loads correctly (1.5s)
+  ✓ A02: Events page loads correctly (1.3s)
+  ✓ A03: Groups page loads correctly (1.4s)
+  ...
+
+ADMIN PAGES (14 tests)
+  ✓ ADMIN01: Admin Dashboard loads correctly (1.6s)
+  ✓ ADMIN02: User Management loads correctly (1.4s)
+  ...
+
+  58 passed (85s)
+```
+
+---
+
+## PERFORMANCE TESTS
+
+**File:** `tests/deployment/performance-page-load.spec.ts`  
+**Purpose:** Validate page load times  
+**Critical:** Ensures fast user experience
+
+### Performance Targets
+
+**Landing/Login Pages:**
+- Target: < 3 seconds
+- Measured: DOM Content Loaded
+
+**Authenticated Pages:**
+- Target: < 5 seconds
+- Includes: Initial data fetch
+
+**API Responses:**
+- Target: < 500ms
+- Measured: Response time
+
+---
+
+### Test Cases
+
+**1. Landing Page Performance:**
+```typescript
+test('Landing page should load in <3 seconds', async ({ page }) => {
+  const startTime = Date.now();
+  
+  await page.goto('/');
+  await page.waitForLoadState('domcontentloaded');
+  
+  const loadTime = Date.now() - startTime;
+  console.log(`📊 Landing page loaded in: ${loadTime}ms`);
+
+  expect(loadTime).toBeLessThan(3000);
+});
+```
+
+**2. Login Page Performance:**
+```typescript
+test('Login page should load in <3 seconds', async ({ page }) => {
+  const startTime = Date.now();
+  
+  await page.goto('/login');
+  await page.waitForLoadState('domcontentloaded');
+  
+  const loadTime = Date.now() - startTime;
+  console.log(`📊 Login page loaded in: ${loadTime}ms`);
+
+  expect(loadTime).toBeLessThan(3000);
+});
+```
+
+**3. Authenticated Page Performance:**
+```typescript
+test('Feed page should load in <5 seconds (authenticated)', async ({ page }) => {
+  // Login first
+  await loginAsAdmin(page);
+
+  // Measure feed load time
+  const startTime = Date.now();
+  await page.goto('/feed');
+  await page.waitForLoadState('domcontentloaded');
+  
+  const loadTime = Date.now() - startTime;
+  console.log(`📊 Feed page loaded in: ${loadTime}ms`);
+
+  expect(loadTime).toBeLessThan(5000);
+});
+```
+
+**4. DOM Size Check:**
+```typescript
+test('Should not have excessive DOM size', async ({ page }) => {
+  await page.goto('/');
+  
+  const domSize = await page.evaluate(() => {
+    return document.querySelectorAll('*').length;
+  });
+
+  console.log(`📊 DOM elements: ${domSize}`);
+  expect(domSize).toBeLessThan(2000); // Performance threshold
+});
+```
+
+**5. Critical CSS Inline:**
+```typescript
+test('Should load critical CSS inline', async ({ page }) => {
+  await page.goto('/');
+  
+  const hasInlineStyles = await page.evaluate(() => {
+    const styleTag = document.querySelector('style');
+    return styleTag !== null && styleTag.textContent && styleTag.textContent.length > 100;
+  });
+
+  expect(hasInlineStyles).toBe(true);
+});
+```
+
+---
+
+### How to Run
+
+```bash
+# Run all performance tests
+npx playwright test tests/deployment/performance-page-load.spec.ts
+
+# With console output
+npx playwright test tests/deployment/performance-page-load.spec.ts --reporter=line
+
+# Specific test
+npx playwright test -g "Landing page should load"
+```
+
+---
+
+### Performance Metrics
+
+**Good Performance:**
+```
+📊 Landing page loaded in: 1200ms ✅
+📊 Login page loaded in: 1100ms ✅
+📊 Feed page loaded in: 2800ms ✅
+📊 DOM elements: 1250 ✅
+```
+
+**Poor Performance:**
+```
+📊 Landing page loaded in: 4500ms ❌
+📊 Feed page loaded in: 8200ms ❌
+📊 DOM elements: 3500 ❌
+```
+
+---
+
+## SECURITY & AUTH TESTS
+
+**File:** `tests/deployment/security-auth.spec.ts`  
+**Purpose:** Validate authentication and authorization  
+**Critical:** Prevents unauthorized access and data breaches
+
+### What It Tests
+
+**Authentication:**
+- ✅ Protected routes require login
+- ✅ Valid credentials allow access
+- ✅ Invalid credentials are rejected
+- ✅ Session persists after refresh
+- ✅ Logout clears session
+
+**Authorization:**
+- ✅ Admin routes require admin role
+- ✅ Regular users cannot access admin
+- ✅ God user has full access
+
+---
+
+### Test Cases
+
+**1. Block Unauthenticated Access:**
+```typescript
+test('should block unauthenticated access to /feed', async ({ page }) => {
+  await page.goto('/feed');
+
+  // Should redirect to login
+  const url = page.url();
+  expect(url.includes('/login') || url.includes('/register')).toBe(true);
+});
+
+test('should block unauthenticated access to /admin', async ({ page }) => {
+  await page.goto('/admin');
+
+  // Should redirect to login
+  const url = page.url();
+  expect(url.includes('/login') || url.includes('/register')).toBe(true);
+});
+```
+
+**2. Valid Login:**
+```typescript
+test('should successfully login with valid credentials', async ({ page }) => {
+  await page.goto('/login');
+
+  await page.fill('[data-testid="input-username"]', 'admin');
+  await page.fill('[data-testid="input-password"]', 'MundoTango2025!Admin');
+  await page.click('[data-testid="button-login"]');
+
+  // Wait for redirect
+  await page.waitForURL(/\/(feed|home|dashboard)/, { timeout: 10000 });
+
+  // Verify logged in
+  const url = page.url();
+  expect(url).toMatch(/\/(feed|home|dashboard)/);
+});
+```
+
+**3. Invalid Login:**
+```typescript
+test('should reject invalid login credentials', async ({ page }) => {
+  await page.goto('/login');
+
+  await page.fill('[data-testid="input-username"]', 'admin');
+  await page.fill('[data-testid="input-password"]', 'WrongPassword123!');
+  await page.click('[data-testid="button-login"]');
+
+  await page.waitForTimeout(2000);
+
+  // Should still be on login page
+  const url = page.url();
+  expect(url).toContain('/login');
+});
+```
+
+**4. Session Persistence:**
+```typescript
+test('should maintain session after page refresh', async ({ page }) => {
+  // Login
+  await loginAsAdmin(page);
+
+  // Refresh page
+  await page.reload();
+
+  // Should still be logged in
+  const url = page.url();
+  expect(url).not.toContain('/login');
+  expect(url).toMatch(/\/(feed|home|dashboard)/);
+});
+```
+
+**5. Logout:**
+```typescript
+test('should logout and clear session', async ({ page }) => {
+  // Login
+  await loginAsAdmin(page);
+
+  // Logout
+  await page.click('[data-testid="button-logout"]');
+  await page.waitForTimeout(2000);
+
+  // Try to access protected route
+  await page.goto('/feed');
+  
+  // Should redirect to login
+  const url = page.url();
+  expect(url).toContain('/login');
+});
+```
+
+**6. Authorization - Admin Access:**
+```typescript
+test('should allow god user to access admin routes', async ({ page }) => {
+  await loginAsAdmin(page);
+  await page.goto('/admin');
+
+  const url = page.url();
+  expect(url).toContain('/admin');
+});
+
+test('should prevent non-admin from accessing admin routes', async ({ page }) => {
+  // Unauthenticated attempt
+  await page.goto('/admin/users');
+
+  const url = page.url();
+  expect(url.includes('/login') || url.includes('/403')).toBe(true);
+});
+```
+
+---
+
+### How to Run
+
+```bash
+# Run all security tests
+npx playwright test tests/deployment/security-auth.spec.ts
+
+# Run authentication tests only
+npx playwright test -g "Authentication Security"
+
+# Run authorization tests only
+npx playwright test -g "Authorization Security"
+```
+
+---
+
+## DESIGN SYSTEM TESTS
+
+**File:** `tests/visual/design-system.spec.ts`  
+**Purpose:** Validate themes and visual consistency  
+**Themes:** Bold Minimaximalist + MT Ocean
+
+### What It Tests
+
+**Theme Detection:**
+- ✅ Marketing pages use Bold Minimaximalist
+- ✅ Platform pages use MT Ocean
+- ✅ Theme switching works correctly
+
+**CSS Variables:**
+- ✅ Colors match design system
+- ✅ Typography is correct
+- ✅ Border radius is consistent
+- ✅ Transitions are smooth
+
+---
+
+### Test Cases
+
+**1. Theme Detection:**
+```typescript
+test.describe('Theme Detection', () => {
+  test('Marketing page uses Bold Minimaximalist theme', async ({ page }) => {
+    await page.goto('/marketing-prototype-enhanced');
+    
+    const theme = await page.getAttribute('html', 'data-theme');
+    expect(theme).toBe('bold-minimaximalist');
+  });
+
+  test('Platform page uses MT Ocean theme', async ({ page }) => {
+    await page.goto('/');
+    
+    const theme = await page.getAttribute('html', 'data-theme');
+    expect(theme).toBe('mt-ocean');
+  });
+});
+```
+
+**2. Bold Minimaximalist CSS Variables:**
+```typescript
+test.describe('Bold Minimaximalist CSS Variables', () => {
+  test('Primary color is burgundy #b91c3b', async ({ page }) => {
+    await page.goto('/marketing-prototype-enhanced');
+    
+    const primaryColor = await page.evaluate(() => 
+      getComputedStyle(document.documentElement)
+        .getPropertyValue('--color-primary').trim()
+    );
+    
+    expect(primaryColor).toBe('#b91c3b');
+  });
+
+  test('Heading font weight is 800', async ({ page }) => {
+    const headingWeight = await page.evaluate(() => 
+      getComputedStyle(document.documentElement)
+        .getPropertyValue('--font-weight-heading').trim()
+    );
+    
+    expect(headingWeight).toBe('800');
+  });
+
+  test('Card border radius is 6px', async ({ page }) => {
+    const cardRadius = await page.evaluate(() => 
+      getComputedStyle(document.documentElement)
+        .getPropertyValue('--radius-card').trim()
+    );
+    
+    expect(cardRadius).toBe('0.375rem'); // 6px
+  });
+});
+```
+
+**3. MT Ocean CSS Variables:**
+```typescript
+test.describe('MT Ocean CSS Variables', () => {
+  test('Primary color is turquoise #14b8a6', async ({ page }) => {
+    await page.goto('/');
+    
+    const primaryColor = await page.evaluate(() => 
+      getComputedStyle(document.documentElement)
+        .getPropertyValue('--color-primary').trim()
+    );
+    
+    expect(primaryColor).toBe('#14b8a6');
+  });
+
+  test('Card border radius is 16px', async ({ page }) => {
+    const cardRadius = await page.evaluate(() => 
+      getComputedStyle(document.documentElement)
+        .getPropertyValue('--radius-card').trim()
+    );
+    
+    expect(cardRadius).toBe('1rem'); // 16px
+  });
+
+  test('Transition speed is 300ms', async ({ page }) => {
+    const transitionSpeed = await page.evaluate(() => 
+      getComputedStyle(document.documentElement)
+        .getPropertyValue('--transition-speed').trim()
+    );
+    
+    expect(transitionSpeed).toBe('300ms');
+  });
+});
+```
+
+---
+
+### How to Run
+
+```bash
+# Run all design system tests
+npx playwright test tests/visual/design-system.spec.ts
+
+# Run theme detection only
+npx playwright test -g "Theme Detection"
+
+# Run specific theme tests
+npx playwright test -g "Bold Minimaximalist"
+npx playwright test -g "MT Ocean"
+```
+
+---
+
+## CUSTOMER JOURNEY TESTS
+
+**File:** `tests/e2e/customer-journey-tests.spec.ts`  
+**Purpose:** Test complete user flows end-to-end  
+**Coverage:** Registration → Onboarding → Core Features
+
+### What It Tests
+
+**Complete User Journeys:**
+- ✅ New user registration
+- ✅ Onboarding flow
+- ✅ Profile setup
+- ✅ First post creation
+- ✅ Event discovery
+- ✅ Social engagement
+- ✅ Housing search
+
+---
+
+### Test Structure
+
+```typescript
+test.describe('Customer Journey: New User', () => {
+  test('Journey 1: Register → Onboard → Create First Post', async ({ page }) => {
+    // 1. Register
+    await page.goto('/register');
+    await page.fill('[data-testid="input-username"]', 'newdancer123');
+    await page.fill('[data-testid="input-email"]', 'newdancer@example.com');
+    await page.fill('[data-testid="input-password"]', 'SecurePass123!');
+    await page.click('[data-testid="button-register"]');
+
+    // 2. Verify redirect to onboarding
+    await page.waitForURL('**/onboarding');
+    
+    // 3. Complete onboarding
+    await page.fill('[data-testid="input-bio"]', 'New to tango!');
+    await page.click('[data-testid="button-next"]');
+    
+    // 4. Select dance role
+    await page.click('[data-testid="checkbox-leader"]');
+    await page.click('[data-testid="button-next"]');
+    
+    // 5. Select experience level
+    await page.click('[data-testid="radio-beginner"]');
+    await page.click('[data-testid="button-finish"]');
+    
+    // 6. Redirected to feed
+    await page.waitForURL('**/feed');
+    
+    // 7. Create first post
+    await page.fill('[data-testid="textarea-post"]', 'My first tango post!');
+    await page.click('[data-testid="button-post"]');
+    
+    // 8. Verify post appears
+    await expect(page.getByText('My first tango post!')).toBeVisible();
+  });
+});
+```
+
+---
+
+### Journey Examples
+
+**Journey 2: Discover and RSVP to Event**
+```typescript
+test('Journey 2: Browse Events → View Details → RSVP', async ({ page }) => {
+  await loginAsUser(page);
+  
+  // Browse events
+  await page.goto('/events');
+  await expect(page.getByTestId('event-list')).toBeVisible();
+  
+  // Click first event
+  await page.click('[data-testid^="event-"]');
+  await page.waitForURL('**/events/**');
+  
+  // RSVP
+  await page.click('[data-testid="button-rsvp"]');
+  await expect(page.getByText('RSVP confirmed')).toBeVisible();
+  
+  // Verify in calendar
+  await page.goto('/calendar');
+  await expect(page.getByText('Upcoming Events')).toBeVisible();
+});
+```
+
+**Journey 3: Connect with Dancers**
+```typescript
+test('Journey 3: Find Dancers → Send Friend Request → Chat', async ({ page }) => {
+  await loginAsUser(page);
+  
+  // Search dancers
+  await page.goto('/discover');
+  await page.fill('[data-testid="input-search"]', 'tango');
+  
+  // View profile
+  await page.click('[data-testid^="user-card-"]');
+  
+  // Send friend request
+  await page.click('[data-testid="button-add-friend"]');
+  await expect(page.getByText('Friend request sent')).toBeVisible();
+  
+  // Start chat (if friends)
+  await page.click('[data-testid="button-message"]');
+  await page.waitForURL('**/messages/**');
+  
+  // Send message
+  await page.fill('[data-testid="input-message"]', 'Hello!');
+  await page.click('[data-testid="button-send"]');
+  await expect(page.getByText('Hello!')).toBeVisible();
+});
+```
+
+---
+
+### How to Run
+
+```bash
+# Run all customer journey tests
+npx playwright test tests/e2e/customer-journey-tests.spec.ts
+
+# Run specific journey
+npx playwright test -g "Journey 1"
+
+# Video proof mode
+npx playwright test tests/e2e/customer-journey-video-proof.spec.ts --headed
+```
+
+---
+
+## ESA FRAMEWORK TESTS
+
+**Files:**
+- `tests/e2e/esa-framework.spec.ts` - Framework tests
+- `tests/e2e/esa-tasks.spec.ts` - Task management
+- `tests/e2e/esa-communications.spec.ts` - Agent communication
+
+**Purpose:** Test Expert Specialized Agents (ESA) system  
+**Coverage:** 115 agents, task orchestration, health monitoring
+
+### What It Tests
+
+**Agent Framework:**
+- ✅ Agent registration and discovery
+- ✅ Task assignment and completion
+- ✅ Inter-agent communication
+- ✅ Health monitoring
+- ✅ Self-healing capabilities
+
+---
+
+### Test Cases
+
+**1. Agent Framework:**
+```typescript
+test.describe('ESA Framework', () => {
+  test('should load agents table', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto('/admin/esa-agents');
+    
+    await expect(page.getByTestId('table-agents')).toBeVisible();
+    await expect(page.getByText('115 agents')).toBeVisible();
+  });
+
+  test('should display agent health metrics', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto('/admin/esa-monitoring');
+    
+    await expect(page.getByTestId('metric-active-agents')).toBeVisible();
+    await expect(page.getByTestId('metric-tasks-completed')).toBeVisible();
+  });
+});
+```
+
+**2. Task Management:**
+```typescript
+test.describe('ESA Tasks', () => {
+  test('should create new task', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto('/admin/esa-tasks');
+    
+    await page.click('[data-testid="button-create-task"]');
+    await page.fill('[data-testid="input-task-name"]', 'Test Task');
+    await page.click('[data-testid="button-save"]');
+    
+    await expect(page.getByText('Test Task')).toBeVisible();
+  });
+
+  test('should assign task to agent', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto('/admin/esa-tasks');
+    
+    await page.click('[data-testid="button-assign-task"]');
+    await page.selectOption('[data-testid="select-agent"]', 'marketing-agent');
+    await page.click('[data-testid="button-confirm"]');
+    
+    await expect(page.getByText('Task assigned')).toBeVisible();
+  });
+});
+```
+
+**3. Agent Communications:**
+```typescript
+test.describe('ESA Communications', () => {
+  test('should show agent message log', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto('/admin/esa-communications');
+    
+    await expect(page.getByTestId('message-log')).toBeVisible();
+  });
+
+  test('should send message between agents', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto('/admin/esa-communications');
+    
+    await page.click('[data-testid="button-new-message"]');
+    await page.selectOption('[data-testid="select-from-agent"]', 'coordinator');
+    await page.selectOption('[data-testid="select-to-agent"]', 'social-agent');
+    await page.fill('[data-testid="input-message"]', 'Test message');
+    await page.click('[data-testid="button-send"]');
+    
+    await expect(page.getByText('Message sent')).toBeVisible();
+  });
+});
+```
+
+---
+
+### How to Run
+
+```bash
+# Run all ESA tests
+npx playwright test tests/e2e/esa-*.spec.ts
+
+# Run framework tests
+npx playwright test tests/e2e/esa-framework.spec.ts
+
+# Run task tests
+npx playwright test tests/e2e/esa-tasks.spec.ts
+
+# Run communication tests
+npx playwright test tests/e2e/esa-communications.spec.ts
+```
+
+---
+
+## FEATURE-SPECIFIC TESTS
+
+### Additional Standard Tests
+
+**1. Community Map Test:**
+```bash
+tests/e2e/community-map.spec.ts
+```
+- Tests map rendering
+- Location markers
+- Filter functionality
+- User clustering
+
+**2. Favorites Test:**
+```bash
+tests/e2e/favorites.spec.ts
+```
+- Add to favorites
+- Remove from favorites
+- View favorites list
+- Filter favorites
+
+**3. Invitations Test:**
+```bash
+tests/e2e/invitations.spec.ts
+```
+- Send invitation
+- Accept invitation
+- Decline invitation
+- View pending invitations
+
+**4. Recommendations Test:**
+```bash
+tests/e2e/recommendations.spec.ts
+```
+- AI-powered recommendations
+- Recommendation accuracy
+- Personalization
+- Recommendation refresh
+
+**5. Memories Test:**
+```bash
+tests/e2e/memories.spec.ts
+```
+- Create memory
+- View memory timeline
+- Share memories
+- Memory privacy settings
+
+**6. Theme Validation Test:**
+```bash
+tests/e2e/theme-validation.spec.ts
+```
+- Light/dark theme toggle
+- Theme persistence
+- CSS variable validation
+- Visual consistency
+
+**7. Login Error Recovery Test:**
+```bash
+tests/e2e/login-error-recovery.spec.ts
+```
+- Invalid credentials handling
+- Network error recovery
+- Session timeout handling
+- Password reset flow
+
+---
+
+### How to Run All Standard Tests
+
+**Run all standard test suites:**
+```bash
+# All E2E tests
+npx playwright test tests/e2e/
+
+# All deployment tests
+npx playwright test tests/deployment/
+
+# All visual tests
+npx playwright test tests/visual/
+
+# Everything
+npx playwright test
+```
+
+**Run by category:**
+```bash
+# Comprehensive platform
+npx playwright test comprehensive-platform
+
+# Performance
+npx playwright test performance
+
+# Security
+npx playwright test security
+
+# Design system
+npx playwright test design-system
+
+# Customer journey
+npx playwright test customer-journey
+
+# ESA framework
+npx playwright test esa-
+```
+
+---
+
+### Test Suite Summary
+
+| Test Suite | File | Tests | Purpose |
+|------------|------|-------|---------|
+| **Comprehensive Platform** | comprehensive-platform-test-suite.spec.ts | 58+ | All pages |
+| **Performance** | performance-page-load.spec.ts | 8 | Load times |
+| **Security** | security-auth.spec.ts | 10+ | Auth/authz |
+| **Design System** | design-system.spec.ts | 30+ | Themes |
+| **Customer Journey** | customer-journey-tests.spec.ts | 10+ | User flows |
+| **ESA Framework** | esa-*.spec.ts | 15+ | Agents |
+| **Feature Tests** | Various | 30+ | Specific features |
+
+**Total Standard Tests:** 150+ test cases
+
+---
+
+# PART 7: CI/CD & DEPLOYMENT
 
 ---
 
