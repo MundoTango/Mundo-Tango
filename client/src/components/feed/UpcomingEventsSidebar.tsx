@@ -277,15 +277,15 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Link href={`/events/${event.id}`}>
-                  <Card 
-                    className="p-3 hover-elevate cursor-pointer group"
-                    data-testid={`event-card-${event.id}`}
-                  >
-                    <div className="flex gap-3">
-                      {/* Event Image or Date Badge */}
+                <Card 
+                  className="p-3 hover-elevate group"
+                  data-testid={`event-card-${event.id}`}
+                >
+                  <div className="flex gap-3">
+                    {/* Event Image or Date Badge */}
+                    <Link href={`/events/${event.id}`} className="flex-shrink-0">
                       {event.imageUrl ? (
-                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden cursor-pointer">
                           <img 
                             src={event.imageUrl} 
                             alt={event.title}
@@ -294,7 +294,7 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                         </div>
                       ) : (
                         <div 
-                          className="w-16 h-16 rounded-lg flex flex-col items-center justify-center text-white flex-shrink-0"
+                          className="w-16 h-16 rounded-lg flex flex-col items-center justify-center text-white cursor-pointer"
                           style={{
                             background: 'linear-gradient(135deg, #40E0D0, #1E90FF)',
                           }}
@@ -307,12 +307,15 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                           </div>
                         </div>
                       )}
+                    </Link>
 
-                      {/* Event Info */}
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-sm truncate group-hover:text-cyan-500 transition-colors">
+                    {/* Event Info */}
+                    <div className="flex-1 min-w-0">
+                      <Link href={`/events/${event.id}`}>
+                        <h4 className="font-semibold text-sm truncate hover:text-cyan-500 transition-colors cursor-pointer">
                           {event.title}
                         </h4>
+                      </Link>
                         
                         <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
                           <Clock className="w-3 h-3" />
@@ -417,7 +420,6 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                       </div>
                     </div>
                   </Card>
-                </Link>
               </motion.div>
             );
           })

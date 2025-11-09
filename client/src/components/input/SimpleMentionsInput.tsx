@@ -11,6 +11,7 @@ interface MentionUser {
   profileImage?: string | null;
   type?: string;
   displayType?: string;
+  displayName?: string;
 }
 
 interface SimpleMentionsInputProps {
@@ -58,7 +59,7 @@ export function SimpleMentionsInput({
       const searchUsers = async () => {
         try {
           const response = await fetch(
-            `/api/user/mention-search?q=${encodeURIComponent(mentionSearchQuery)}`,
+            `/api/mention-search?query=${encodeURIComponent(mentionSearchQuery)}`,
             {
               headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
@@ -66,8 +67,18 @@ export function SimpleMentionsInput({
             }
           );
           if (response.ok) {
-            const users = await response.json();
-            setMentionUsers(users);
+            const results = await response.json();
+            // Map the results to MentionUser format
+            const mappedUsers = results.map((r: any) => ({
+              id: r.id,
+              name: r.name,
+              username: r.username,
+              profileImage: r.avatar,
+              type: r.type,
+              displayType: r.type === 'professional-group' ? 'Professional Group' : r.type === 'city-group' ? 'City Group' : r.type,
+              displayName: r.name,
+            }));
+            setMentionUsers(mappedUsers);
           }
         } catch (error) {
           console.error('Failed to search users:', error);
@@ -185,7 +196,7 @@ export function SimpleMentionsInput({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute z-[100] mt-2 w-full"
+            className="absolute z-[9999] mt-2 w-full"
           >
             <Card 
               className="p-2 max-h-64 overflow-y-auto shadow-xl"
