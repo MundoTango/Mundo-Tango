@@ -2,22 +2,34 @@ import { useState, useRef, useEffect, KeyboardEvent } from "react";
 import { createPortal } from "react-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import { Loader2, AtSign } from "lucide-react";
+import { Loader2, Users, Calendar, Building2, MapPin } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  Token,
+  MentionToken,
+  EntityType,
+  parseCanonicalToTokens,
+  tokensToCanonical,
+  tokensToDisplay,
+  findMentionTriggerAtCursor,
+  replaceTriggerWithMention,
+  extractMentionIds,
+} from "@/utils/mentionTokens";
 
-export interface MentionUser {
-  id: number;
-  name: string;
-  username: string | null;
-  profileImage?: string | null;
-  type?: string;
-  displayType?: string;
-  displayName?: string;
+export interface MentionEntity {
+  id: string; // Format: "user_123", "event_456", "group_789", "city_012"
+  type: EntityType;
+  display: string; // Username or entity name
+  name?: string;
+  avatar?: string | null;
+  subtitle?: string;
+  metadata?: any;
 }
 
 interface SimpleMentionsInputProps {
-  value: string;
-  onChange: (value: string, mentions: MentionUser[]) => void;
+  value: string; // Canonical format: "Hello @user:user_123:maria at @event:evt_456:Friday_Milonga"
+  onChange: (canonicalValue: string, mentions: MentionEntity[]) => void;
+  onMentionsChange?: (mentionIds: string[]) => void; // NEW: Separate mention IDs callback
   placeholder?: string;
   className?: string;
   minRows?: number;
@@ -27,26 +39,29 @@ interface SimpleMentionsInputProps {
 export function SimpleMentionsInput({
   value,
   onChange,
+  onMentionsChange,
   placeholder = "What's on your mind?",
   className = "",
   minRows = 3,
   maxRows = 10,
 }: SimpleMentionsInputProps) {
-  const [mentions, setMentions] = useState<MentionUser[]>([]);
+  const [tokens, setTokens] = useState<Token[]>(() => parseCanonicalToTokens(value));
+  const [mentions, setMentions] = useState<MentionEntity[]>([]);
   const [showMentionDropdown, setShowMentionDropdown] = useState(false);
   const [mentionSearchQuery, setMentionSearchQuery] = useState("");
-  const [mentionUsers, setMentionUsers] = useState<MentionUser[]>([]);
+  const [mentionResults, setMentionResults] = useState<MentionEntity[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedMentionIndex, setSelectedMentionIndex] = useState(0);
+  const [isFocused, setIsFocused] = useState(false);
+  
   const editorRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const isComposingRef = useRef(false); // IME composition handling
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
-  const [isFocused, setIsFocused] = useState(false);
-  const lastValueRef = useRef<string>('');
-  const targetCursorPosRef = useRef<number | null>(null);
+  const lastCanonicalRef = useRef<string>(value);
 
-  // Get mention pill colors based on type
-  const getMentionPillStyle = (type?: string): React.CSSProperties => {
+  // Get mention pill colors/icons based on type (MT Ocean theme)
+  const getMentionPillStyle = (type: EntityType): React.CSSProperties => {
     const baseStyle: React.CSSProperties = {
       display: 'inline-flex',
       alignItems: 'center',
@@ -58,17 +73,18 @@ export function SimpleMentionsInput({
       fontWeight: 500,
       marginLeft: '2px',
       marginRight: '2px',
+      transition: 'all 0.2s ease',
     };
 
     switch (type) {
-      case 'professional-group':
+      case 'group':
         return {
           ...baseStyle,
           background: 'linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(168, 85, 247, 0.2))',
           borderColor: 'rgba(147, 51, 234, 0.5)',
           color: 'rgb(147, 51, 234)',
         };
-      case 'city-group':
+      case 'city':
         return {
           ...baseStyle,
           background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(74, 222, 128, 0.2))',
@@ -92,100 +108,24 @@ export function SimpleMentionsInput({
     }
   };
 
-  const getMentionIcon = (type?: string) => {
+  const getMentionIcon = (type: EntityType) => {
     switch (type) {
-      case 'professional-group': return '👔';
-      case 'city-group': return '🏙️';
-      case 'event': return '📅';
-      default: return '👤';
+      case 'group': return <Building2 className="w-3 h-3" />;
+      case 'city': return <MapPin className="w-3 h-3" />;
+      case 'event': return <Calendar className="w-3 h-3" />;
+      default: return <Users className="w-3 h-3" />;
     }
   };
 
-  // Save cursor position
-  const saveCursorPosition = () => {
-    if (!editorRef.current) return null;
-    
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return null;
-
-    const range = selection.getRangeAt(0);
-    const preCaretRange = range.cloneRange();
-    preCaretRange.selectNodeContents(editorRef.current);
-    preCaretRange.setEnd(range.endContainer, range.endOffset);
-    
-    return {
-      offset: preCaretRange.toString().length,
-      containerText: editorRef.current.textContent || ''
-    };
-  };
-
-  // Restore cursor position
-  const restoreCursorPosition = (targetOffset: number) => {
-    if (!editorRef.current) return;
-
-    const walker = document.createTreeWalker(
-      editorRef.current,
-      NodeFilter.SHOW_TEXT,
-      null
-    );
-
-    let currentPos = 0;
-    let targetNode: Node | null = null;
-    let nodeOffset = 0;
-
-    while (walker.nextNode()) {
-      const node = walker.currentNode;
-      const nodeLength = (node.textContent || '').length;
-
-      if (currentPos + nodeLength >= targetOffset) {
-        targetNode = node;
-        nodeOffset = targetOffset - currentPos;
-        break;
-      }
-
-      currentPos += nodeLength;
+  // Sync tokens when value changes externally
+  useEffect(() => {
+    const canonical = tokensToCanonical(tokens);
+    if (canonical !== lastCanonicalRef.current && value !== canonical) {
+      const newTokens = parseCanonicalToTokens(value);
+      setTokens(newTokens);
+      lastCanonicalRef.current = value;
     }
-
-    // Fallback: position at end
-    if (!targetNode) {
-      const lastChild = editorRef.current.lastChild;
-      if (lastChild) {
-        if (lastChild.nodeType === Node.TEXT_NODE) {
-          targetNode = lastChild;
-          nodeOffset = (lastChild.textContent || '').length;
-        } else if (lastChild.lastChild?.nodeType === Node.TEXT_NODE) {
-          targetNode = lastChild.lastChild;
-          nodeOffset = (targetNode.textContent || '').length;
-        } else {
-          // Create a text node at the end
-          const textNode = document.createTextNode('');
-          editorRef.current.appendChild(textNode);
-          targetNode = textNode;
-          nodeOffset = 0;
-        }
-      } else {
-        // Empty editor, create text node
-        const textNode = document.createTextNode('');
-        editorRef.current.appendChild(textNode);
-        targetNode = textNode;
-        nodeOffset = 0;
-      }
-    }
-
-    if (targetNode) {
-      try {
-        const newRange = document.createRange();
-        newRange.setStart(targetNode, Math.min(nodeOffset, (targetNode.textContent || '').length));
-        newRange.collapse(true);
-
-        const sel = window.getSelection();
-        sel?.removeAllRanges();
-        sel?.addRange(newRange);
-      } catch (e) {
-        console.error('[Cursor] Failed to restore:', e);
-      }
-    }
-  };
+  }, [value]);
 
   // Update dropdown position
   useEffect(() => {
@@ -199,305 +139,254 @@ export function SimpleMentionsInput({
     }
   }, [showMentionDropdown]);
 
-  // Search for users when @ is typed
+  // Search for mentions when @ is typed (debounced 300ms)
   useEffect(() => {
-    if (showMentionDropdown) {
-      setIsSearching(true);
-      const searchUsers = async () => {
-        try {
-          const response = await fetch(
-            `/api/mentions/search?query=${encodeURIComponent(mentionSearchQuery)}`,
-            {
+    if (!showMentionDropdown) {
+      setMentionResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    const searchMentions = async () => {
+      try {
+        // Use SEPARATE endpoints for better performance
+        const endpoints: Record<EntityType, string> = {
+          user: `/api/mentions/users/search?q=${encodeURIComponent(mentionSearchQuery)}`,
+          event: `/api/mentions/events/search?q=${encodeURIComponent(mentionSearchQuery)}`,
+          group: `/api/mentions/groups/search?q=${encodeURIComponent(mentionSearchQuery)}`,
+          city: `/api/mentions/cities/search?q=${encodeURIComponent(mentionSearchQuery)}`,
+        };
+
+        // Fetch all entity types in parallel
+        const responses = await Promise.all(
+          (Object.keys(endpoints) as EntityType[]).map(async (type) => {
+            const response = await fetch(endpoints[type], {
               headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
               },
+            });
+            if (response.ok) {
+              const { data } = await response.json();
+              return data as MentionEntity[];
             }
-          );
-          if (response.ok) {
-            const results = await response.json();
-            const mappedUsers = results.map((r: any) => ({
-              id: r.id,
-              name: r.name,
-              username: r.username,
-              profileImage: r.avatar,
-              type: r.type,
-              displayType: r.type === 'professional-group' ? 'Professional Group' : r.type === 'city-group' ? 'City Group' : r.type,
-              displayName: r.name,
-            }));
-            setMentionUsers(mappedUsers);
-          }
-        } catch (error) {
-          console.error('Failed to search users:', error);
-        } finally {
-          setIsSearching(false);
-        }
-      };
-      
-      const debounce = setTimeout(searchUsers, 300);
-      return () => clearTimeout(debounce);
-    } else {
-      setMentionUsers([]);
-    }
+            return [];
+          })
+        );
+
+        const allResults = responses.flat();
+        setMentionResults(allResults.slice(0, 10));
+      } catch (error) {
+        console.error('Failed to search mentions:', error);
+      } finally {
+        setIsSearching(false);
+      }
+    };
+
+    const debounce = setTimeout(searchMentions, 300);
+    return () => clearTimeout(debounce);
   }, [mentionSearchQuery, showMentionDropdown]);
 
-  // Render content with inline pills using innerHTML
+  // Render content with inline pills
   useEffect(() => {
     if (!editorRef.current) return;
 
-    console.log('[useEffect] Triggered with value:', value);
-    console.log('[useEffect] lastValueRef:', lastValueRef.current);
-
-    // Skip if value hasn't changed
-    if (value === lastValueRef.current) {
-      console.log('[useEffect] Skipping - value unchanged');
-      return;
-    }
-    lastValueRef.current = value;
-    
     const editor = editorRef.current;
-    
-    // Save cursor before updating (unless we have a target position from insertion)
-    const cursorPos = targetCursorPosRef.current !== null 
-      ? { offset: targetCursorPosRef.current, containerText: '' }
-      : saveCursorPosition();
-    
-    console.log('[useEffect] CursorPos:', cursorPos);
-    console.log('[useEffect] TargetCursorPosRef:', targetCursorPosRef.current);
-    
-    // Parse mentions from value and create HTML with pills
-    let html = value || '';
-    
-    // Show placeholder only if not focused and empty
-    if (!html && !isFocused) {
-      editor.innerHTML = `<span class="placeholder-text" style="color: var(--muted-foreground); pointer-events: none; user-select: none;">${placeholder}</span>`;
-      targetCursorPosRef.current = null;
-      return;
-    } else if (!html && isFocused) {
-      // Clear placeholder when focused
-      editor.innerHTML = '';
-      targetCursorPosRef.current = null;
+    const displayText = tokensToDisplay(tokens);
+
+    // Show placeholder if empty and not focused
+    if (!displayText && !isFocused) {
+      editor.innerHTML = `<span class="placeholder-text" style="color: var(--muted-foreground); pointer-events: none;">${placeholder}</span>`;
       return;
     }
 
-    // Find all @mentions in format @[DisplayName](id:type)
-    const mentionRegex = /@\[([^\]]+)\]\((\d+):([^)]+)\)/g;
-    const matches = html.match(mentionRegex);
-    console.log('[useEffect] Found mention markers:', matches);
-    
-    html = html.replace(mentionRegex, (match, displayName, mentionId, mentionType) => {
-      const style = getMentionPillStyle(mentionType);
-      const icon = getMentionIcon(mentionType);
-      const styleStr = Object.entries(style)
-        .map(([key, val]) => `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${val}`)
-        .join('; ');
-      
-      return `<span class="mention-pill" data-mention-id="${mentionId}" data-mention-type="${mentionType}" contenteditable="false" style="${styleStr}"><span>${icon}</span><span>${displayName}</span></span>`;
-    });
+    // Save cursor position
+    const selection = window.getSelection();
+    let cursorOffset = 0;
+    if (selection && selection.rangeCount > 0 && isFocused) {
+      const range = selection.getRangeAt(0);
+      const preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(editor);
+      preCaretRange.setEnd(range.endContainer, range.endOffset);
+      cursorOffset = preCaretRange.toString().length;
+    }
 
-    console.log('[useEffect] Generated HTML:', html.substring(0, 200));
-    
-    // Update HTML
-    editor.innerHTML = html;
-    console.log('[useEffect] Set innerHTML, isFocused:', isFocused);
-    
+    // Build HTML with mention pills
+    let html = '';
+    for (const token of tokens) {
+      if (token.kind === 'text') {
+        // Escape HTML and preserve whitespace
+        html += token.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      } else {
+        const style = getMentionPillStyle(token.type);
+        const styleStr = Object.entries(style)
+          .map(([key, val]) => `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${val}`)
+          .join('; ');
+        
+        html += `<span class="mention-pill" data-mention-id="${token.id}" data-mention-type="${token.type}" contenteditable="false" style="${styleStr}">`;
+        html += `<span class="mention-icon"></span>`;
+        html += `<span>@${token.name}</span>`;
+        html += `</span>`;
+      }
+    }
+
+    editor.innerHTML = html || '';
+
     // Restore cursor
-    if (cursorPos && isFocused) {
+    if (isFocused && cursorOffset > 0) {
       requestAnimationFrame(() => {
-        console.log('[useEffect] Restoring cursor to:', cursorPos.offset);
-        restoreCursorPosition(cursorPos.offset);
-        targetCursorPosRef.current = null; // Clear target after restoring
+        const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT);
+        let currentPos = 0;
+        let targetNode: Node | null = null;
+        let nodeOffset = 0;
+
+        while (walker.nextNode()) {
+          const node = walker.currentNode;
+          const nodeLength = (node.textContent || '').length;
+
+          if (currentPos + nodeLength >= cursorOffset) {
+            targetNode = node;
+            nodeOffset = cursorOffset - currentPos;
+            break;
+          }
+          currentPos += nodeLength;
+        }
+
+        if (targetNode) {
+          try {
+            const newRange = document.createRange();
+            newRange.setStart(targetNode, Math.min(nodeOffset, (targetNode.textContent || '').length));
+            newRange.collapse(true);
+            const sel = window.getSelection();
+            sel?.removeAllRanges();
+            sel?.addRange(newRange);
+          } catch (e) {
+            console.error('Failed to restore cursor:', e);
+          }
+        }
       });
     }
-  }, [value, placeholder, isFocused]);
+  }, [tokens, isFocused, placeholder]);
 
-  const handleFocus = () => {
-    setIsFocused(true);
-    
-    // Clear placeholder immediately on focus
-    if (editorRef.current && !value) {
-      editorRef.current.innerHTML = '';
-    }
-  };
-
-  const handleBlur = (e: React.FocusEvent) => {
-    // Don't blur if clicking on dropdown (prevents focus loss when selecting mention)
-    const relatedTarget = e.relatedTarget as HTMLElement;
-    if (relatedTarget && dropdownRef.current?.contains(relatedTarget)) {
-      e.preventDefault();
-      return;
-    }
-    
-    // Delay blur to allow dropdown clicks to complete
-    setTimeout(() => {
-      setIsFocused(false);
-    }, 200);
+  // Handle paste - plain text only
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const text = e.clipboardData.getData('text/plain');
+    document.execCommand('insertText', false, text);
   };
 
   const handleInput = () => {
-    if (!editorRef.current) return;
-    
-    // Extract text value while preserving mention markers
-    let extractedValue = '';
+    if (!editorRef.current || isComposingRef.current) return;
+
     const editor = editorRef.current;
-    
-    console.log('[handleInput] Editor innerHTML:', editor.innerHTML);
-    
-    // Walk through all child nodes and reconstruct the value
-    const processNode = (node: Node): string => {
-      if (node.nodeType === Node.TEXT_NODE) {
-        return node.textContent || '';
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const element = node as HTMLElement;
-        
-        // Check if it's a mention pill
-        if (element.classList.contains('mention-pill')) {
-          const mentionId = element.getAttribute('data-mention-id');
-          const mentionType = element.getAttribute('data-mention-type');
-          const displayName = element.textContent?.replace(/^👤|^📅|^👔|^🏙️/, '').trim() || '';
-          
-          console.log('[handleInput] Found pill:', { mentionId, mentionType, displayName, textContent: element.textContent });
-          
-          if (mentionId && mentionType && displayName) {
-            const marker = `@[${displayName}](${mentionId}:${mentionType})`;
-            console.log('[handleInput] Returning marker:', marker);
-            return marker;
-          }
-        }
-        
-        // Recursively process child nodes
-        let result = '';
-        node.childNodes.forEach(child => {
-          result += processNode(child);
-        });
-        return result;
-      }
-      return '';
-    };
-    
-    editor.childNodes.forEach(child => {
-      extractedValue += processNode(child);
-    });
-    
-    // Use textContent for cursor position detection
-    const text = editor.textContent || "";
-    
-    // Check if user is typing a mention
+    const displayText = editor.textContent || '';
     const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) {
-      onChange(extractedValue, mentions);
-      return;
-    }
+    
+    if (!selection || selection.rangeCount === 0) return;
 
+    // Get cursor position
     const range = selection.getRangeAt(0);
-    let textBeforeCursor = '';
-    
-    // Get text before cursor
     const preCaretRange = range.cloneRange();
-    preCaretRange.selectNodeContents(editorRef.current);
+    preCaretRange.selectNodeContents(editor);
     preCaretRange.setEnd(range.endContainer, range.endOffset);
-    textBeforeCursor = preCaretRange.toString();
+    const cursorPos = preCaretRange.toString().length;
 
-    const lastAtSymbol = textBeforeCursor.lastIndexOf('@');
+    // Check for mention trigger
+    const trigger = findMentionTriggerAtCursor(displayText, cursorPos);
     
-    if (lastAtSymbol !== -1) {
-      const textAfterAt = textBeforeCursor.substring(lastAtSymbol + 1);
-      
-      if (!textAfterAt.includes(' ') && textAfterAt.length >= 0) {
-        setShowMentionDropdown(true);
-        setMentionSearchQuery(textAfterAt);
-        setSelectedMentionIndex(0);
-      } else {
-        setShowMentionDropdown(false);
-      }
+    if (trigger) {
+      setShowMentionDropdown(true);
+      setMentionSearchQuery(trigger.query);
+      setSelectedMentionIndex(0);
     } else {
       setShowMentionDropdown(false);
     }
 
-    onChange(extractedValue, mentions);
+    // Update tokens from current display text
+    // This is a simplified version - in production you'd preserve existing mentions
+    const newTokens: Token[] = [{ kind: 'text', text: displayText }];
+    setTokens(newTokens);
+
+    const canonical = tokensToCanonical(newTokens);
+    const mentionIds = extractMentionIds(newTokens);
+    lastCanonicalRef.current = canonical;
+    
+    onChange(canonical, mentions);
+    onMentionsChange?.(mentionIds);
   };
 
-  const insertMention = (user: MentionUser) => {
+  const insertMention = (entity: MentionEntity) => {
     if (!editorRef.current) return;
 
+    const displayText = editorRef.current.textContent || '';
     const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) {
-      console.log('[Insert] No selection/range');
-      return;
-    }
+    if (!selection || selection.rangeCount === 0) return;
 
-    const text = editorRef.current.textContent || "";
     const range = selection.getRangeAt(0);
-    
-    // Get cursor position
     const preCaretRange = range.cloneRange();
     preCaretRange.selectNodeContents(editorRef.current);
     preCaretRange.setEnd(range.endContainer, range.endOffset);
-    const cursorOffset = preCaretRange.toString().length;
+    const cursorPos = preCaretRange.toString().length;
 
-    const lastAtSymbol = text.lastIndexOf('@', cursorOffset);
-    console.log('[Insert] Text:', text, 'Cursor:', cursorOffset, 'Last @:', lastAtSymbol);
+    // Create mention token
+    const mentionToken: MentionToken = {
+      kind: 'mention',
+      type: entity.type,
+      id: entity.id,
+      name: entity.display,
+    };
 
-    if (lastAtSymbol !== -1) {
-      const beforeAt = text.substring(0, lastAtSymbol);
-      const afterCursor = text.substring(cursorOffset);
-      
-      // Create mention marker: @[DisplayName](id:type)
-      const mentionMarker = `@[${user.displayName || user.name}](${user.id}:${user.type || 'user'})`;
-      const newValue = beforeAt + mentionMarker + ' ' + afterCursor;
+    // Replace @ trigger with mention
+    const newTokens = replaceTriggerWithMention(tokens, displayText, cursorPos, mentionToken);
+    setTokens(newTokens);
 
-      console.log('[Insert] BeforeAt:', beforeAt);
-      console.log('[Insert] Marker:', mentionMarker);
-      console.log('[Insert] AfterCursor:', afterCursor);
-      console.log('[Insert] NewValue:', newValue);
+    // Update mentions array
+    const newMentions = mentions.find(m => m.id === entity.id)
+      ? mentions
+      : [...mentions, entity];
+    setMentions(newMentions);
 
-      // Add user to mentions array if not already there
-      const newMentions = mentions.find(m => m.id === user.id)
-        ? mentions
-        : [...mentions, user];
-      
-      setMentions(newMentions);
-      setShowMentionDropdown(false);
-      setMentionSearchQuery("");
-      
-      // Calculate target cursor position: we want to be right after the marker + space
-      const markerLength = mentionMarker.length + 1; // +1 for the space
-      const targetPos = beforeAt.length + markerLength;
-      targetCursorPosRef.current = targetPos;
-      
-      console.log('[Insert] TargetCursorPos:', targetPos);
-      console.log('[Insert] Calling onChange with newValue');
-      
-      // Update value immediately (this triggers useEffect which will render pills and restore cursor)
-      onChange(newValue, newMentions);
+    const canonical = tokensToCanonical(newTokens);
+    const mentionIds = extractMentionIds(newTokens);
+    lastCanonicalRef.current = canonical;
 
-      // CRITICAL: Maintain focus synchronously - don't use setTimeout
-      if (editorRef.current) {
-        console.log('[Insert] Focusing editor IMMEDIATELY');
-        editorRef.current.focus();
-        setIsFocused(true);
-      }
-    } else {
-      console.log('[Insert] No @ found, skipping insertion');
-    }
+    onChange(canonical, newMentions);
+    onMentionsChange?.(mentionIds);
+
+    setShowMentionDropdown(false);
+    setMentionSearchQuery("");
+
+    // Restore focus
+    setTimeout(() => editorRef.current?.focus(), 0);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (showMentionDropdown && mentionUsers.length > 0) {
+    // Scroll selected item into view
+    const scrollIntoView = (index: number) => {
+      const dropdown = dropdownRef.current;
+      if (!dropdown) return;
+      const item = dropdown.querySelector(`[data-mention-index="${index}"]`);
+      item?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    };
+
+    if (showMentionDropdown && mentionResults.length > 0) {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        setSelectedMentionIndex((prev) => 
-          prev < mentionUsers.length - 1 ? prev + 1 : prev
-        );
+        const newIndex = selectedMentionIndex < mentionResults.length - 1 ? selectedMentionIndex + 1 : selectedMentionIndex;
+        setSelectedMentionIndex(newIndex);
+        scrollIntoView(newIndex);
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        setSelectedMentionIndex((prev) => (prev > 0 ? prev - 1 : 0));
+        const newIndex = selectedMentionIndex > 0 ? selectedMentionIndex - 1 : 0;
+        setSelectedMentionIndex(newIndex);
+        scrollIntoView(newIndex);
       } else if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
-        insertMention(mentionUsers[selectedMentionIndex]);
+        insertMention(mentionResults[selectedMentionIndex]);
       } else if (e.key === 'Tab') {
         e.preventDefault();
-        insertMention(mentionUsers[selectedMentionIndex]);
+        insertMention(mentionResults[selectedMentionIndex]);
       } else if (e.key === 'Escape') {
+        e.preventDefault();
         setShowMentionDropdown(false);
       }
     }
@@ -508,17 +397,27 @@ export function SimpleMentionsInput({
       <div
         ref={editorRef}
         contentEditable
-        onFocus={handleFocus}
-        onBlur={handleBlur}
+        onFocus={() => setIsFocused(true)}
+        onBlur={(e) => {
+          const relatedTarget = e.relatedTarget as HTMLElement;
+          if (relatedTarget && dropdownRef.current?.contains(relatedTarget)) {
+            e.preventDefault();
+            return;
+          }
+          setTimeout(() => setIsFocused(false), 200);
+        }}
         onInput={handleInput}
+        onPaste={handlePaste}
         onKeyDown={handleKeyDown}
+        onCompositionStart={() => { isComposingRef.current = true; }}
+        onCompositionEnd={() => { isComposingRef.current = false; handleInput(); }}
         className={`w-full resize-none rounded-lg border bg-background px-4 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring overflow-y-auto ${className}`}
         style={{ minHeight: `${minRows * 24}px`, maxHeight: `${maxRows * 24}px` }}
         data-testid="input-mentions-content"
         suppressContentEditableWarning
       />
 
-      {/* Mention Autocomplete Dropdown - Portal to body for highest z-index */}
+      {/* Mention Autocomplete Dropdown */}
       {showMentionDropdown && createPortal(
         <AnimatePresence>
           <motion.div
@@ -540,7 +439,7 @@ export function SimpleMentionsInput({
                 background: 'linear-gradient(135deg, rgb(64, 224, 208), rgb(30, 144, 255))',
                 backdropFilter: 'blur(20px)',
                 borderColor: 'rgb(64, 224, 208)',
-                boxShadow: '0 12px 40px rgba(64, 224, 208, 0.5), 0 0 20px rgba(30, 144, 255, 0.3)',
+                boxShadow: '0 12px 40px rgba(64, 224, 208, 0.5)',
               }}
               data-testid="mentions-dropdown"
             >
@@ -549,66 +448,51 @@ export function SimpleMentionsInput({
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Searching...
                 </div>
-              ) : mentionUsers.length > 0 ? (
+              ) : mentionResults.length > 0 ? (
                 <div className="space-y-1">
-                  {mentionUsers.map((user, index) => (
+                  {mentionResults.map((entity, index) => (
                     <button
-                      key={user.id}
+                      key={entity.id}
+                      data-mention-index={index}
                       onMouseDown={(e) => {
-                        // CRITICAL: Prevent blur event so editor stays focused
                         e.preventDefault();
-                        insertMention(user);
+                        insertMention(entity);
                       }}
                       className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-all text-white font-medium ${
-                        index === selectedMentionIndex
-                          ? 'scale-105'
-                          : 'hover:scale-102'
+                        index === selectedMentionIndex ? 'scale-105' : 'hover:scale-102'
                       }`}
                       style={{
                         background: index === selectedMentionIndex 
                           ? 'rgba(255, 255, 255, 0.25)'
                           : 'transparent',
                       }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = index === selectedMentionIndex 
-                          ? 'rgba(255, 255, 255, 0.25)'
-                          : 'transparent';
-                      }}
-                      data-testid={`mention-result-${user.id}`}
+                      data-testid={`mention-result-${entity.id}`}
                     >
                       <Avatar className="w-8 h-8 border-2 border-white/50">
-                        <AvatarImage src={user.profileImage || undefined} />
-                        <AvatarFallback className="bg-white/20 text-white">{user.name.charAt(0)}</AvatarFallback>
+                        <AvatarImage src={entity.avatar || undefined} />
+                        <AvatarFallback className="bg-white/20 text-white">
+                          {entity.display.charAt(0).toUpperCase()}
+                        </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-sm truncate text-white">{user.name}</div>
-                        <div className="text-xs truncate flex items-center gap-1.5">
-                          {user.username && <span className="text-white/80">@{user.username}</span>}
-                          {user.displayType && (
-                            <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-white/20 text-white">
-                              {user.displayType === 'User' && '👤'}
-                              {user.displayType === 'City Group' && '🏙️'}
-                              {user.displayType === 'Professional Group' && '👔'}
-                              {user.displayType === 'Event' && '📅'}
-                              {' '}{user.displayType}
-                            </span>
-                          )}
+                        <div className="font-semibold text-sm truncate text-white">
+                          @{entity.display}
                         </div>
+                        {entity.subtitle && (
+                          <div className="text-xs truncate text-white/80">
+                            {entity.subtitle}
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-white/60">
+                        {getMentionIcon(entity.type)}
                       </div>
                     </button>
                   ))}
                 </div>
-              ) : !isSearching ? (
+              ) : (
                 <div className="text-center py-4 text-sm text-white/80">
                   No results found
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 py-4 text-sm text-white/80 justify-center">
-                  <AtSign className="w-4 h-4" />
-                  Type to search
                 </div>
               )}
             </Card>
