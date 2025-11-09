@@ -24,7 +24,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       {/* Sidebar and content below topbar */}
       <div className="flex w-full h-full pt-16">
         <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-        <main className="flex-1 overflow-y-auto">
+        <main 
+          className="w-full overflow-y-auto transition-all duration-300 ease-in-out"
+          style={{
+            marginLeft: sidebarOpen ? '256px' : '0',
+          }}
+        >
           {children}
         </main>
       </div>
