@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { SimpleMentionsInput, type MentionUser } from "@/components/input/SimpleMentionsInput";
+import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 import { 
   MapPin, Hash, Camera, Sparkles, Globe, Users, Lock, 
   Send, Loader2, X, DollarSign, Star, MapPinned,
@@ -74,6 +76,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
   // Content state
   const [content, setContent] = useState(existingPost?.content || "");
   const [richContent, setRichContent] = useState(existingPost?.richContent || "");
+  const [mentions, setMentions] = useState<MentionUser[]>(existingPost?.mentions || []);
   
   // Media state
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
@@ -94,6 +97,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
   const [recommendationType, setRecommendationType] = useState(existingPost?.recommendationType || "");
   const [priceRange, setPriceRange] = useState(existingPost?.priceRange || "");
   const [location, setLocation] = useState(existingPost?.location || "");
+  const [coordinates, setCoordinates] = useState<{lat: number; lng: number} | null>(existingPost?.coordinates || null);
   
   // AI Enhancement
   const [isEnhancing, setIsEnhancing] = useState(false);
@@ -305,13 +309,15 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
         </div>
       </div>
 
-      {/* Main Textarea */}
-      <Textarea
-        ref={textareaRef}
+      {/* Main Content Input with @Mentions */}
+      <SimpleMentionsInput
         value={content}
-        onChange={(e) => setContent(e.target.value)}
+        onChange={(newContent, newMentions) => {
+          setContent(newContent);
+          setMentions(newMentions);
+        }}
         placeholder="What's on your mind? Try @mentioning someone or adding a recommendation..."
-        className="min-h-[120px] mb-4 resize-none border-0 focus-visible:ring-0 text-base bg-transparent"
+        className="min-h-[120px] mb-4"
         data-testid="input-post-content"
       />
 
@@ -451,13 +457,17 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
               </div>
             </div>
 
-            {/* Location Input (simplified - full Google Maps integration would go here) */}
+            {/* Location Picker with OpenStreetMap */}
             <div>
               <Label className="text-xs mb-1.5 block">Location</Label>
-              <Input
+              <UnifiedLocationPicker
                 value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="Enter location name..."
+                coordinates={coordinates}
+                onChange={(newLocation, newCoords) => {
+                  setLocation(newLocation);
+                  setCoordinates(newCoords);
+                }}
+                placeholder="Search for a location..."
                 data-testid="input-recommendation-location"
               />
             </div>

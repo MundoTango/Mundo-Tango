@@ -25,6 +25,8 @@ import { queryClient } from "@/lib/queryClient";
 import { SmartPostFeed } from "@/components/feed/SmartPostFeed";
 import { UpcomingEventsSidebar } from "@/components/feed/UpcomingEventsSidebar";
 import { ConnectionStatusBadge } from "@/components/feed/ConnectionStatusBadge";
+import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
+import { Link } from "wouter";
 
 type Post = {
   id: number;
@@ -90,8 +92,8 @@ export default function FeedPage() {
   const [showRecommendationDialog, setShowRecommendationDialog] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [recName, setRecName] = useState("");
-  const [recCity, setRecCity] = useState("");
-  const [recCountry, setRecCountry] = useState("");
+  const [recLocation, setRecLocation] = useState("");
+  const [recCoordinates, setRecCoordinates] = useState<{lat: number; lng: number} | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -487,23 +489,16 @@ export default function FeedPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="rec-city">City</Label>
-              <Input
-                id="rec-city"
-                placeholder="e.g., Buenos Aires"
-                value={recCity}
-                onChange={(e) => setRecCity(e.target.value)}
-                data-testid="input-rec-city"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="rec-country">Country</Label>
-              <Input
-                id="rec-country"
-                placeholder="e.g., Argentina"
-                value={recCountry}
-                onChange={(e) => setRecCountry(e.target.value)}
-                data-testid="input-rec-country"
+              <Label htmlFor="rec-location">Location</Label>
+              <UnifiedLocationPicker
+                value={recLocation}
+                coordinates={recCoordinates}
+                onChange={(location, coords) => {
+                  setRecLocation(location);
+                  setRecCoordinates(coords);
+                }}
+                placeholder="Search for a location..."
+                data-testid="input-rec-location"
               />
             </div>
           </div>
@@ -513,8 +508,8 @@ export default function FeedPage() {
               onClick={() => {
                 setShowRecommendationDialog(false);
                 setRecName("");
-                setRecCity("");
-                setRecCountry("");
+                setRecLocation("");
+                setRecCoordinates(null);
                 setSelectedCategory(null);
               }}
               data-testid="button-cancel-rec"
@@ -541,6 +536,32 @@ function PostCard({ post }: { post: Post }) {
   const { data: comments, isLoading: commentsLoading } = useComments(post.id);
   const createComment = useCreateComment();
   const { toast } = useToast();
+  
+  // Parse @mentions from content if exists
+  const mentions = (post as any).mentions || [];
+  
+  // Render content with clickable @mentions
+  const renderContentWithMentions = (content: string) => {
+    if (mentions.length === 0) return content;
+    
+    const parts = content.split(/(@[\w]+)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith('@')) {
+        const username = part.substring(1);
+        const mention = mentions.find((m: any) => m.username === username);
+        if (mention) {
+          return (
+            <Link key={index} href={`/profile/${username}`}>
+              <span className="text-cyan-500 hover:underline font-medium cursor-pointer">
+                {part}
+              </span>
+            </Link>
+          );
+        }
+      }
+      return <span key={index}>{part}</span>;
+    });
+  };
 
   const handleLike = async () => {
     try {
@@ -593,10 +614,37 @@ function PostCard({ post }: { post: Post }) {
                 · {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
               </span>
             )}
+            {(post as any).isRecommendation && (
+              <Badge 
+                className="ml-auto"
+                style={{
+                  background: 'linear-gradient(90deg, rgba(251, 191, 36, 0.9), rgba(251, 146, 60, 0.9))',
+                  color: 'white',
+                  borderColor: 'transparent'
+                }}
+                data-testid={`badge-hidden-gem-${post.id}`}
+              >
+                <MapPin className="w-3 h-3 mr-1" />
+                Hidden Gem
+              </Badge>
+            )}
           </div>
-          <p className="text-foreground whitespace-pre-wrap" data-testid={`text-post-content-${post.id}`}>
-            {post.content}
+          <p className="text-foreground whitespace-pre-wrap mb-2" data-testid={`text-post-content-${post.id}`}>
+            {renderContentWithMentions(post.content)}
           </p>
+          
+          {/* Location Display */}
+          {(post as any).location && (
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2">
+              <MapPin className="w-4 h-4 text-cyan-500" />
+              <span>{(post as any).location}</span>
+              {(post as any).priceRange && (
+                <Badge variant="secondary" className="ml-2 text-xs">
+                  {(post as any).priceRange}
+                </Badge>
+              )}
+            </div>
+          )}
           {post.imageUrl && (
             <img
               src={post.imageUrl}
