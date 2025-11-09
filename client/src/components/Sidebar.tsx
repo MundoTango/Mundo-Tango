@@ -147,11 +147,10 @@ export default function Sidebar() {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 z-40 h-full w-64
+          fixed lg:static top-0 left-0 z-40 h-full w-64
           transform transition-transform duration-300 ease-in-out
-          border-r flex flex-col
-          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-          lg:translate-x-0
+          border-r flex flex-col flex-shrink-0
+          ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
         style={{
           background: 'linear-gradient(180deg, rgba(64, 224, 208, 0.08) 0%, rgba(30, 144, 255, 0.05) 100%)',
