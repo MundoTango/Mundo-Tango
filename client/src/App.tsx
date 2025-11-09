@@ -199,7 +199,7 @@ function Router() {
       <Route path="/">
         <ProtectedRoute>
           <AppLayout>
-            <FeedPage />
+            <MemoriesPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
