@@ -59,8 +59,7 @@ export function SimpleMentionsInput({
   const isComposingRef = useRef(false); // IME composition handling
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const lastCanonicalRef = useRef<string>(value);
-  const shouldRenderRef = useRef(true); // Control DOM rendering
-  const isInputtingRef = useRef(false); // Track if user is typing
+  const isUpdatingRef = useRef(false); // Prevent render loops
 
   // Get mention pill colors/icons based on type (MT Ocean theme)
   const getMentionPillStyle = (type: EntityType): React.CSSProperties => {
@@ -188,14 +187,9 @@ export function SimpleMentionsInput({
     return () => clearTimeout(debounce);
   }, [mentionSearchQuery, showMentionDropdown]);
 
-  // Render content with inline pills (only when needed)
+  // Render content with inline pills
   useEffect(() => {
-    if (!editorRef.current) return;
-    
-    // Skip render if user is just typing (DOM is already correct)
-    if (isInputtingRef.current && shouldRenderRef.current === false) {
-      return;
-    }
+    if (!editorRef.current || isUpdatingRef.current) return;
 
     const editor = editorRef.current;
     const displayText = tokensToDisplay(tokens);
@@ -204,17 +198,6 @@ export function SimpleMentionsInput({
     if (!displayText && !isFocused) {
       editor.innerHTML = `<span class="placeholder-text" style="color: var(--muted-foreground); pointer-events: none;">${placeholder}</span>`;
       return;
-    }
-
-    // Save cursor position
-    const selection = window.getSelection();
-    let cursorOffset = 0;
-    if (selection && selection.rangeCount > 0 && isFocused) {
-      const range = selection.getRangeAt(0);
-      const preCaretRange = range.cloneRange();
-      preCaretRange.selectNodeContents(editor);
-      preCaretRange.setEnd(range.endContainer, range.endOffset);
-      cursorOffset = preCaretRange.toString().length;
     }
 
     // Build HTML with mention pills
@@ -236,63 +219,87 @@ export function SimpleMentionsInput({
       }
     }
 
-    editor.innerHTML = html || '';
-
-    // Restore cursor (only when we programmatically changed the DOM)
-    if (shouldRenderRef.current && isFocused && cursorOffset > 0) {
-      requestAnimationFrame(() => {
-        const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
-        let currentPos = 0;
-        let targetNode: Node | null = null;
-        let nodeOffset = 0;
-
-        while (walker.nextNode()) {
-          const node = walker.currentNode;
-          
-          if (node.nodeType === Node.TEXT_NODE) {
-            const nodeLength = (node.textContent || '').length;
-            if (currentPos + nodeLength >= cursorOffset) {
-              targetNode = node;
-              nodeOffset = cursorOffset - currentPos;
-              break;
-            }
-            currentPos += nodeLength;
-          } else if (node.nodeType === Node.ELEMENT_NODE) {
-            const element = node as HTMLElement;
-            if (element.classList.contains('mention-pill')) {
-              const pillLength = (element.textContent || '').length;
-              if (currentPos + pillLength >= cursorOffset) {
-                // Position cursor after the pill
-                targetNode = element.nextSibling || element.parentNode?.lastChild || null;
-                nodeOffset = 0;
-                break;
-              }
-              currentPos += pillLength;
-            }
-          }
+    // Only update if content actually changed
+    if (editor.innerHTML !== html) {
+      const selection = window.getSelection();
+      let cursorOffset = 0;
+      
+      // Save cursor position if focused
+      if (selection && selection.rangeCount > 0 && isFocused) {
+        try {
+          const range = selection.getRangeAt(0);
+          const preCaretRange = range.cloneRange();
+          preCaretRange.selectNodeContents(editor);
+          preCaretRange.setEnd(range.endContainer, range.endOffset);
+          cursorOffset = preCaretRange.toString().length;
+        } catch (e) {
+          // Ignore cursor save errors
         }
+      }
 
-        if (targetNode) {
+      editor.innerHTML = html || '';
+
+      // Restore cursor after DOM update
+      if (isFocused && cursorOffset > 0 && html) {
+        requestAnimationFrame(() => {
           try {
-            const newRange = document.createRange();
-            if (targetNode.nodeType === Node.TEXT_NODE) {
-              newRange.setStart(targetNode, Math.min(nodeOffset, (targetNode.textContent || '').length));
-            } else {
-              newRange.setStartAfter(targetNode);
-            }
-            newRange.collapse(true);
+            const range = document.createRange();
             const sel = window.getSelection();
-            sel?.removeAllRanges();
-            sel?.addRange(newRange);
+            let charCount = 0;
+            let found = false;
+
+            const findPosition = (node: Node): boolean => {
+              if (node.nodeType === Node.TEXT_NODE) {
+                const textLength = (node.textContent || '').length;
+                if (charCount + textLength >= cursorOffset) {
+                  range.setStart(node, Math.min(cursorOffset - charCount, textLength));
+                  range.collapse(true);
+                  found = true;
+                  return true;
+                }
+                charCount += textLength;
+              } else if (node.nodeType === Node.ELEMENT_NODE) {
+                const element = node as HTMLElement;
+                if (element.classList?.contains('mention-pill')) {
+                  const textLength = (element.textContent || '').length;
+                  if (charCount + textLength >= cursorOffset) {
+                    // Place cursor after pill
+                    if (element.nextSibling) {
+                      if (element.nextSibling.nodeType === Node.TEXT_NODE) {
+                        range.setStart(element.nextSibling, 0);
+                      } else {
+                        range.setStartAfter(element);
+                      }
+                    } else {
+                      range.setStartAfter(element);
+                    }
+                    range.collapse(true);
+                    found = true;
+                    return true;
+                  }
+                  charCount += textLength;
+                  return false;
+                }
+                // Recursively search child nodes
+                for (const child of Array.from(element.childNodes)) {
+                  if (findPosition(child)) return true;
+                }
+              }
+              return false;
+            };
+
+            findPosition(editor);
+
+            if (found && sel) {
+              sel.removeAllRanges();
+              sel.addRange(range);
+            }
           } catch (e) {
-            console.error('Failed to restore cursor:', e);
+            console.error('Cursor restore error:', e);
           }
-        }
-      });
+        });
+      }
     }
-    
-    // Reset render flag
-    shouldRenderRef.current = false;
   }, [tokens, isFocused, placeholder]);
 
   // Handle paste - plain text only
@@ -346,14 +353,17 @@ export function SimpleMentionsInput({
   };
 
   const handleInput = () => {
-    if (!editorRef.current || isComposingRef.current) return;
+    if (!editorRef.current || isComposingRef.current || isUpdatingRef.current) return;
 
-    isInputtingRef.current = true; // Mark that user is typing
+    isUpdatingRef.current = true;
     const editor = editorRef.current;
     const displayText = editor.textContent || '';
     const selection = window.getSelection();
     
-    if (!selection || selection.rangeCount === 0) return;
+    if (!selection || selection.rangeCount === 0) {
+      isUpdatingRef.current = false;
+      return;
+    }
 
     // Get cursor position
     const range = selection.getRangeAt(0);
@@ -384,7 +394,9 @@ export function SimpleMentionsInput({
     onChange(canonical, mentions);
     onMentionsChange?.(mentionIds);
     
-    isInputtingRef.current = false;
+    setTimeout(() => {
+      isUpdatingRef.current = false;
+    }, 0);
   };
 
   const insertMention = (entity: MentionEntity) => {
@@ -410,7 +422,6 @@ export function SimpleMentionsInput({
 
     // Replace @ trigger with mention
     const newTokens = replaceTriggerWithMention(tokens, displayText, cursorPos, mentionToken);
-    shouldRenderRef.current = true; // Force re-render for mention insertion
     setTokens(newTokens);
 
     // Update mentions array
