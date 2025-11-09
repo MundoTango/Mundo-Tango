@@ -22,6 +22,9 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { apiRequest } from "@/lib/queryClient";
 import { PostCreator } from "@/components/universal/PostCreator";
 import { queryClient } from "@/lib/queryClient";
+import { SmartPostFeed } from "@/components/feed/SmartPostFeed";
+import { UpcomingEventsSidebar } from "@/components/feed/UpcomingEventsSidebar";
+import { ConnectionStatusBadge } from "@/components/feed/ConnectionStatusBadge";
 
 type Post = {
   id: number;
@@ -355,11 +358,18 @@ export default function FeedPage() {
   return (
     <SelfHealingErrorBoundary pageName="Feed" fallbackRoute="/feed">
       <SEO
-        title="Home Feed"
-        description="Connect with the tango community. Share your dance moments, discover events, and engage with fellow tango enthusiasts from around the world."
+        title="Memory Feed - Mundo Tango"
+        description="Connect with the global tango community. Share memories, discover events, and engage with fellow dancers from around the world."
       />
-      <div className="flex min-h-screen bg-background">
-        <main className="flex-1 max-w-3xl mx-auto p-6 space-y-6">
+      <div className="flex gap-6 p-6 max-w-7xl mx-auto">
+        {/* Main Feed Column */}
+        <div className="flex-1 max-w-3xl space-y-6">
+          {/* Connection Status Badge */}
+          <div className="flex justify-end">
+            <ConnectionStatusBadge />
+          </div>
+
+          {/* New Posts Banner */}
           {newPostsAvailable && (
             <Card className="p-4 bg-primary/10 border-primary" data-testid="banner-new-posts">
               <div className="flex items-center justify-between gap-4">
@@ -378,74 +388,82 @@ export default function FeedPage() {
             </Card>
           )}
 
-        <PostCreator
-          onPostCreated={() => {
-            queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
-            toast({
-              title: "🎉 Memory shared!",
-              description: "Your memory has been posted to the community.",
-            });
-          }}
-          context={{ type: 'feed' }}
-        />
+          {/* Post Creator */}
+          <PostCreator
+            onPostCreated={() => {
+              queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
+              toast({
+                title: "🎉 Memory shared!",
+                description: "Your memory has been posted to the community.",
+              });
+            }}
+            context={{ type: 'feed' }}
+          />
 
-        <div className="space-y-4">
-          {isLoading ? (
-            <>
-              {[1, 2, 3].map((i) => (
-                <Card key={i} className="p-6">
-                  <div className="flex items-start gap-4">
-                    <Skeleton className="h-12 w-12 rounded-full" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-20 w-full" />
+          {/* Smart Post Feed with Search & Filters */}
+          <SmartPostFeed posts={allPosts}>
+            <div className="space-y-4">
+              {isLoading ? (
+                <>
+                  {[1, 2, 3].map((i) => (
+                    <Card key={i} className="p-6">
+                      <div className="flex items-start gap-4">
+                        <Skeleton className="h-12 w-12 rounded-full" />
+                        <div className="flex-1 space-y-2">
+                          <Skeleton className="h-4 w-32" />
+                          <Skeleton className="h-20 w-full" />
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </>
+              ) : allPosts.length > 0 ? (
+                <>
+                  {allPosts.map((post) => (
+                    <PostCard key={post.id} post={post} />
+                  ))}
+                  
+                  {hasNextPage && (
+                    <div className="flex justify-center pt-4" data-testid="section-load-more">
+                      <Button
+                        onClick={() => fetchNextPage()}
+                        disabled={isFetchingNextPage}
+                        variant="outline"
+                        size="lg"
+                        className="hover-elevate active-elevate-2"
+                        data-testid="button-load-more"
+                      >
+                        {isFetchingNextPage ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Loading...
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown className="h-4 w-4 mr-2" />
+                            Load More
+                          </>
+                        )}
+                      </Button>
                     </div>
+                  )}
+                </>
+              ) : (
+                <Card className="p-6">
+                  <div className="text-center text-muted-foreground" data-testid="text-empty-state">
+                    No posts yet. Share your tango journey!
                   </div>
                 </Card>
-              ))}
-            </>
-          ) : allPosts.length > 0 ? (
-            <>
-              {allPosts.map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
-              
-              {hasNextPage && (
-                <div className="flex justify-center pt-4" data-testid="section-load-more">
-                  <Button
-                    onClick={() => fetchNextPage()}
-                    disabled={isFetchingNextPage}
-                    variant="outline"
-                    size="lg"
-                    className="hover-elevate active-elevate-2"
-                    data-testid="button-load-more"
-                  >
-                    {isFetchingNextPage ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Loading...
-                      </>
-                    ) : (
-                      <>
-                        <ChevronDown className="h-4 w-4 mr-2" />
-                        Load More
-                      </>
-                    )}
-                  </Button>
-                </div>
               )}
-            </>
-          ) : (
-            <Card className="p-6">
-              <div className="text-center text-muted-foreground" data-testid="text-empty-state">
-                No posts yet. Share your tango journey!
-              </div>
-            </Card>
-          )}
+            </div>
+          </SmartPostFeed>
         </div>
-        </main>
-        
-        <FeedRightSidebar />
+
+        {/* Right Sidebar */}
+        <aside className="hidden lg:block w-80 space-y-6 sticky top-20 h-fit">
+          <UpcomingEventsSidebar />
+          <FeedRightSidebar />
+        </aside>
       </div>
 
       {/* Recommendation Dialog */}
