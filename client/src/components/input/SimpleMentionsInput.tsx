@@ -59,6 +59,8 @@ export function SimpleMentionsInput({
   const isComposingRef = useRef(false); // IME composition handling
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const lastCanonicalRef = useRef<string>(value);
+  const shouldRenderRef = useRef(true); // Control DOM rendering
+  const isInputtingRef = useRef(false); // Track if user is typing
 
   // Get mention pill colors/icons based on type (MT Ocean theme)
   const getMentionPillStyle = (type: EntityType): React.CSSProperties => {
@@ -186,9 +188,14 @@ export function SimpleMentionsInput({
     return () => clearTimeout(debounce);
   }, [mentionSearchQuery, showMentionDropdown]);
 
-  // Render content with inline pills
+  // Render content with inline pills (only when needed)
   useEffect(() => {
     if (!editorRef.current) return;
+    
+    // Skip render if user is just typing (DOM is already correct)
+    if (isInputtingRef.current && shouldRenderRef.current === false) {
+      return;
+    }
 
     const editor = editorRef.current;
     const displayText = tokensToDisplay(tokens);
@@ -215,7 +222,7 @@ export function SimpleMentionsInput({
     for (const token of tokens) {
       if (token.kind === 'text') {
         // Escape HTML and preserve whitespace
-        html += token.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        html += token.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
       } else {
         const style = getMentionPillStyle(token.type);
         const styleStr = Object.entries(style)
@@ -231,30 +238,48 @@ export function SimpleMentionsInput({
 
     editor.innerHTML = html || '';
 
-    // Restore cursor
-    if (isFocused && cursorOffset > 0) {
+    // Restore cursor (only when we programmatically changed the DOM)
+    if (shouldRenderRef.current && isFocused && cursorOffset > 0) {
       requestAnimationFrame(() => {
-        const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT);
+        const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
         let currentPos = 0;
         let targetNode: Node | null = null;
         let nodeOffset = 0;
 
         while (walker.nextNode()) {
           const node = walker.currentNode;
-          const nodeLength = (node.textContent || '').length;
-
-          if (currentPos + nodeLength >= cursorOffset) {
-            targetNode = node;
-            nodeOffset = cursorOffset - currentPos;
-            break;
+          
+          if (node.nodeType === Node.TEXT_NODE) {
+            const nodeLength = (node.textContent || '').length;
+            if (currentPos + nodeLength >= cursorOffset) {
+              targetNode = node;
+              nodeOffset = cursorOffset - currentPos;
+              break;
+            }
+            currentPos += nodeLength;
+          } else if (node.nodeType === Node.ELEMENT_NODE) {
+            const element = node as HTMLElement;
+            if (element.classList.contains('mention-pill')) {
+              const pillLength = (element.textContent || '').length;
+              if (currentPos + pillLength >= cursorOffset) {
+                // Position cursor after the pill
+                targetNode = element.nextSibling || element.parentNode?.lastChild || null;
+                nodeOffset = 0;
+                break;
+              }
+              currentPos += pillLength;
+            }
           }
-          currentPos += nodeLength;
         }
 
         if (targetNode) {
           try {
             const newRange = document.createRange();
-            newRange.setStart(targetNode, Math.min(nodeOffset, (targetNode.textContent || '').length));
+            if (targetNode.nodeType === Node.TEXT_NODE) {
+              newRange.setStart(targetNode, Math.min(nodeOffset, (targetNode.textContent || '').length));
+            } else {
+              newRange.setStartAfter(targetNode);
+            }
             newRange.collapse(true);
             const sel = window.getSelection();
             sel?.removeAllRanges();
@@ -265,6 +290,9 @@ export function SimpleMentionsInput({
         }
       });
     }
+    
+    // Reset render flag
+    shouldRenderRef.current = false;
   }, [tokens, isFocused, placeholder]);
 
   // Handle paste - plain text only
@@ -274,9 +302,53 @@ export function SimpleMentionsInput({
     document.execCommand('insertText', false, text);
   };
 
+  // Extract tokens from DOM (preserves mentions)
+  const extractTokensFromDOM = (): Token[] => {
+    if (!editorRef.current) return [];
+    
+    const newTokens: Token[] = [];
+    const traverseNode = (node: Node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent || '';
+        if (text) {
+          const lastToken = newTokens[newTokens.length - 1];
+          if (lastToken && lastToken.kind === 'text') {
+            lastToken.text += text;
+          } else {
+            newTokens.push({ kind: 'text', text });
+          }
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const element = node as HTMLElement;
+        
+        // Extract mention pills
+        if (element.classList.contains('mention-pill')) {
+          const type = element.getAttribute('data-mention-type') as EntityType || 'user';
+          const id = element.getAttribute('data-mention-id') || '';
+          const name = element.textContent?.replace('@', '') || '';
+          newTokens.push({ kind: 'mention', type, id, name });
+        } else if (element.tagName === 'BR') {
+          const lastToken = newTokens[newTokens.length - 1];
+          if (lastToken && lastToken.kind === 'text') {
+            lastToken.text += '\n';
+          } else {
+            newTokens.push({ kind: 'text', text: '\n' });
+          }
+        } else {
+          // Recursively traverse children
+          Array.from(element.childNodes).forEach(traverseNode);
+        }
+      }
+    };
+    
+    Array.from(editorRef.current.childNodes).forEach(traverseNode);
+    return newTokens;
+  };
+
   const handleInput = () => {
     if (!editorRef.current || isComposingRef.current) return;
 
+    isInputtingRef.current = true; // Mark that user is typing
     const editor = editorRef.current;
     const displayText = editor.textContent || '';
     const selection = window.getSelection();
@@ -301,9 +373,8 @@ export function SimpleMentionsInput({
       setShowMentionDropdown(false);
     }
 
-    // Update tokens from current display text
-    // This is a simplified version - in production you'd preserve existing mentions
-    const newTokens: Token[] = [{ kind: 'text', text: displayText }];
+    // Extract tokens from DOM (preserves mentions!)
+    const newTokens = extractTokensFromDOM();
     setTokens(newTokens);
 
     const canonical = tokensToCanonical(newTokens);
@@ -312,6 +383,8 @@ export function SimpleMentionsInput({
     
     onChange(canonical, mentions);
     onMentionsChange?.(mentionIds);
+    
+    isInputtingRef.current = false;
   };
 
   const insertMention = (entity: MentionEntity) => {
@@ -337,6 +410,7 @@ export function SimpleMentionsInput({
 
     // Replace @ trigger with mention
     const newTokens = replaceTriggerWithMention(tokens, displayText, cursorPos, mentionToken);
+    shouldRenderRef.current = true; // Force re-render for mention insertion
     setTokens(newTokens);
 
     // Update mentions array
@@ -356,7 +430,7 @@ export function SimpleMentionsInput({
     setMentionSearchQuery("");
 
     // Restore focus
-    setTimeout(() => editorRef.current?.focus(), 0);
+    setTimeout(() => editorRef.current?.focus(), 50);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
