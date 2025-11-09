@@ -161,18 +161,21 @@ export default function UnifiedTopBar({
 
   return (
     <header 
-      className={cn(
-        "sticky top-0 z-50 w-full border-b backdrop-blur-xl",
-        theme === 'light' 
-          ? "bg-white/95 border-gray-200" 
-          : "bg-slate-900/95 border-slate-800"
-      )}
+      className="sticky top-0 z-50 w-full border-b"
+      style={{
+        background: 'rgba(255, 255, 255, 0.85)',
+        backdropFilter: 'blur(16px)',
+        borderColor: 'rgba(64, 224, 208, 0.2)',
+      }}
       data-testid="unified-topbar"
     >
-      {/* Dark mode ocean overlay */}
-      {theme === 'dark' && (
-        <div className="absolute inset-0 overlay-ocean pointer-events-none" />
-      )}
+      {/* Ocean gradient overlay */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-40"
+        style={{
+          background: 'linear-gradient(90deg, rgba(64, 224, 208, 0.05) 0%, rgba(30, 144, 255, 0.03) 100%)',
+        }}
+      />
 
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4 relative z-10">
         {/* Left Section - Menu & Brand */}
@@ -183,20 +186,33 @@ export default function UnifiedTopBar({
               variant="ghost" 
               size="icon" 
               onClick={onMenuToggle}
-              className="lg:block"
+              className="lg:block hover:bg-turquoise-50/50"
               data-testid="button-menu-toggle"
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-5 w-5" style={{ color: '#1E90FF' }} />
             </Button>
           )}
           
           {/* Brand logo */}
           <Link href="/">
             <div className="flex items-center gap-2 cursor-pointer" data-testid="link-logo">
-              <div className="w-10 h-10 rounded-xl bg-brand-icon flex items-center justify-center">
+              <div 
+                className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md"
+                style={{
+                  background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)',
+                }}
+              >
                 <span className="text-white font-bold text-lg">MT</span>
               </div>
-              <span className="text-brand-gradient text-xl font-bold hidden sm:block">
+              <span 
+                className="text-xl font-bold hidden sm:block"
+                style={{
+                  background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 50%, #0047AB 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
                 Mundo Tango
               </span>
             </div>
@@ -205,9 +221,19 @@ export default function UnifiedTopBar({
 
         {/* Center Section - Global Search */}
         <div className="flex-1 max-w-2xl mx-4 hidden md:block" ref={searchRef}>
-          <div className="relative rounded-full overflow-hidden bg-gray-100 dark:bg-slate-800">
+          <div 
+            className="relative rounded-full overflow-hidden border"
+            style={{
+              background: 'rgba(255, 255, 255, 0.7)',
+              backdropFilter: 'blur(8px)',
+              borderColor: 'rgba(64, 224, 208, 0.25)',
+            }}
+          >
             {/* Search icon */}
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search 
+              className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5" 
+              style={{ color: '#64748B' }}
+            />
             
             {/* Search input */}
             <input
@@ -215,7 +241,8 @@ export default function UnifiedTopBar({
               value={searchQuery}
               onChange={handleSearchChange}
               placeholder={t('navigation.search')}
-              className="w-full pl-12 pr-4 py-2.5 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-ocean-seafoam-400/50 rounded-full"
+              className="w-full pl-12 pr-4 py-2.5 bg-transparent text-sm focus:outline-none rounded-full"
+              style={{ color: '#1E40AF' }}
               data-testid="input-search"
             />
           </div>

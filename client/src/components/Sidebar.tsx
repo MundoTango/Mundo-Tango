@@ -265,20 +265,36 @@ export default function Sidebar() {
             {sidebarRoutes.map((item) => (
               <Link key={item.link} href={item.link}>
                 <div
-                  className={`
-                    group flex items-center gap-3 py-2.5 px-3 rounded-lg 
-                    transition-all cursor-pointer
-                    ${isActive(item.link) 
-                      ? 'active-ocean border-l-3 border-seafoam' 
-                      : 'text-gray-600 dark:text-ocean-secondary hover-ocean-light'
-                    }
-                  `}
+                  className="group flex items-center gap-3 py-2.5 px-3 rounded-lg transition-all cursor-pointer border"
+                  style={{
+                    background: isActive(item.link) 
+                      ? 'rgba(64, 224, 208, 0.15)' 
+                      : 'transparent',
+                    borderColor: isActive(item.link)
+                      ? 'rgba(64, 224, 208, 0.3)'
+                      : 'transparent',
+                    color: isActive(item.link)
+                      ? '#1E90FF'
+                      : '#64748B',
+                  }}
                   onClick={() => {
                     if (window.innerWidth < 1024) {
                       setIsOpen(false);
                     }
                   }}
                   data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                  onMouseEnter={(e) => {
+                    if (!isActive(item.link)) {
+                      e.currentTarget.style.background = 'rgba(64, 224, 208, 0.08)';
+                      e.currentTarget.style.borderColor = 'rgba(64, 224, 208, 0.15)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive(item.link)) {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.borderColor = 'transparent';
+                    }
+                  }}
                 >
                   {/* Icon with hover scale */}
                   <div className="transition-transform group-hover:scale-110">
@@ -296,7 +312,10 @@ export default function Sidebar() {
 
           {/* Global Statistics */}
           <div className="pt-4">
-            <div className="text-xs font-semibold text-gray-500 dark:text-ocean-muted uppercase tracking-wide mb-3 px-3">
+            <div 
+              className="text-xs font-semibold uppercase tracking-wide mb-3 px-3"
+              style={{ color: '#64748B' }}
+            >
               {t('community.globalStatistics')}
             </div>
             
@@ -304,21 +323,45 @@ export default function Sidebar() {
               {globalStats.map((item, index) => (
                 <button 
                   key={index}
-                  className="p-3 rounded-lg bg-stat-card hover:scale-105 transition-transform border border-stat-border text-left"
+                  className="p-3 rounded-lg hover:scale-105 transition-all border text-left shadow-sm"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.5)',
+                    backdropFilter: 'blur(8px)',
+                    borderColor: 'rgba(64, 224, 208, 0.2)',
+                  }}
                   data-testid={`stat-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
                 >
                   {/* Icon */}
-                  <div className="w-7 h-7 rounded-lg bg-stat-icon flex items-center justify-center mb-2">
-                    <item.icon className="w-4 h-4 text-seafoam" />
+                  <div 
+                    className="w-7 h-7 rounded-lg flex items-center justify-center mb-2"
+                    style={{
+                      background: 'rgba(64, 224, 208, 0.15)',
+                    }}
+                  >
+                    <item.icon 
+                      className="w-4 h-4" 
+                      style={{ color: '#1E90FF' }}
+                    />
                   </div>
                   
                   {/* Title */}
-                  <div className="text-xs text-gray-600 dark:text-ocean-muted mb-1">
+                  <div 
+                    className="text-xs mb-1"
+                    style={{ color: '#64748B' }}
+                  >
                     {item.title}
                   </div>
                   
                   {/* Count */}
-                  <div className="text-lg font-bold text-seafoam">
+                  <div 
+                    className="text-lg font-bold"
+                    style={{
+                      background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}
+                  >
                     {item.count}
                   </div>
                 </button>
