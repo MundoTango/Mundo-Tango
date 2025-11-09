@@ -41,6 +41,7 @@ export function SimpleMentionsInput({
   const editorRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const [isFocused, setIsFocused] = useState(false);
 
   // Get mention pill colors based on type
   const getMentionPillStyle = (type?: string): React.CSSProperties => {
@@ -161,8 +162,13 @@ export function SimpleMentionsInput({
     // Parse mentions from value and create HTML with pills
     let html = value || '';
     
-    if (!html) {
-      editor.innerHTML = `<span style="color: var(--muted-foreground); pointer-events: none;">${placeholder}</span>`;
+    // Show placeholder only if not focused and empty
+    if (!html && !isFocused) {
+      editor.innerHTML = `<span class="placeholder-text" style="color: var(--muted-foreground); pointer-events: none; user-select: none;">${placeholder}</span>`;
+      return;
+    } else if (!html && isFocused) {
+      // Clear placeholder when focused
+      editor.innerHTML = '';
       return;
     }
 
@@ -200,7 +206,20 @@ export function SimpleMentionsInput({
         }
       }
     }
-  }, [value, placeholder]);
+  }, [value, placeholder, isFocused]);
+
+  const handleFocus = () => {
+    setIsFocused(true);
+    
+    // Clear placeholder immediately on focus
+    if (editorRef.current && !value) {
+      editorRef.current.innerHTML = '';
+    }
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
 
   const handleInput = () => {
     if (!editorRef.current) return;
@@ -310,6 +329,8 @@ export function SimpleMentionsInput({
       <div
         ref={editorRef}
         contentEditable
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         onInput={handleInput}
         onKeyDown={handleKeyDown}
         className={`w-full resize-none rounded-lg border bg-background px-4 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring overflow-y-auto ${className}`}
