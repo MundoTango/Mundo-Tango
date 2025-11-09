@@ -18,11 +18,6 @@ import {
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-interface SidebarProps {
-  isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
-}
-
 // Format statistics numbers with locale support
 const formatStatNumber = (value: number | undefined, defaultValue: string, locale: string) => {
   if (!value && value !== 0) return defaultValue;
@@ -54,16 +49,17 @@ function RoleEmojiDisplay({ tangoRoles, leaderLevel, followerLevel }: any) {
   );
 }
 
-export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
+export default function Sidebar() {
+  const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
   const { t, i18n } = useTranslation();
   const { user, profile } = useAuth();
 
   // Fetch global statistics
   const { data: statsData } = useQuery({
-    queryKey: ['/api/admin/stats'],
+    queryKey: ['/api/community/global-stats'],
     queryFn: async () => {
-      const response = await fetch('/api/admin/stats', {
+      const response = await fetch('/api/community/global-stats', {
         credentials: 'include'
       });
       if (!response.ok) throw new Error('Failed to fetch stats');
@@ -72,7 +68,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     refetchInterval: 60000, // Refresh every minute
   });
 
-  const stats = statsData?.data;
+  const stats = statsData;
 
   // Navigation routes (8 items as per handoff)
   const sidebarRoutes = [

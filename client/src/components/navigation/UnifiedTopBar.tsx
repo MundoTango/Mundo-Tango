@@ -141,54 +141,8 @@ export default function UnifiedTopBar({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // WebSocket for real-time updates
-  useEffect(() => {
-    if (!user) return;
-
-    // Import socket.io-client dynamically if available
-    const connectWebSocket = async () => {
-      try {
-        const { io } = await import('socket.io-client');
-        
-        const socket = io({
-          path: '/ws',
-          transports: ['websocket', 'polling'],
-          withCredentials: true
-        });
-
-        socket.on('connect', () => {
-          console.log('🔌 WebSocket connected');
-          socket.emit('authenticate', { userId: user.id });
-        });
-
-        // Listen for notifications
-        socket.on('notification', () => {
-          queryClient.invalidateQueries({ queryKey: ['/api/notifications/count'] });
-        });
-
-        // Listen for new messages
-        socket.on('new-message', () => {
-          queryClient.invalidateQueries({ queryKey: ['/api/messages/unread-count'] });
-        });
-
-        // Listen for count updates
-        socket.on('counts-update', (data: any) => {
-          if (data.notifications !== undefined) {
-            queryClient.setQueryData(['/api/notifications/count'], { count: data.notifications });
-          }
-          if (data.messages !== undefined) {
-            queryClient.setQueryData(['/api/messages/unread-count'], { count: data.messages });
-          }
-        });
-
-        return () => socket.disconnect();
-      } catch (error) {
-        console.log('WebSocket not available, using polling only');
-      }
-    };
-
-    connectWebSocket();
-  }, [user, queryClient]);
+  // Note: Real-time updates via polling (refetchInterval in queries above)
+  // WebSocket could be added later with native WebSocket API if needed
 
   // Handle search input change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
