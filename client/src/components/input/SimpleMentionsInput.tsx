@@ -217,8 +217,17 @@ export function SimpleMentionsInput({
     }
   };
 
-  const handleBlur = () => {
-    setIsFocused(false);
+  const handleBlur = (e: React.FocusEvent) => {
+    // Don't blur if clicking on dropdown (prevents focus loss when selecting mention)
+    const relatedTarget = e.relatedTarget as HTMLElement;
+    if (relatedTarget && dropdownRef.current?.contains(relatedTarget)) {
+      return;
+    }
+    
+    // Delay blur to allow dropdown clicks to complete
+    setTimeout(() => {
+      setIsFocused(false);
+    }, 200);
   };
 
   const handleInput = () => {
@@ -341,49 +350,71 @@ export function SimpleMentionsInput({
       setShowMentionDropdown(false);
       setMentionSearchQuery("");
 
-      // Position cursor after the mention + space
+      // CRITICAL: Keep focus and position cursor after mention
       setTimeout(() => {
         if (!editorRef.current) return;
         
+        // Force focus back to editor
         editorRef.current.focus();
+        setIsFocused(true);
         
-        // Calculate the position after the inserted mention marker + space
-        const newCursorPos = beforeAt.length + mentionMarker.length + 1; // +1 for space
-        
-        // Find the text node and set cursor position
-        const walker = document.createTreeWalker(
-          editorRef.current,
-          NodeFilter.SHOW_TEXT,
-          null
-        );
-        
-        let currentPos = 0;
-        let targetNode: Node | null = null;
-        let targetOffset = 0;
-        
-        while (walker.nextNode()) {
-          const node = walker.currentNode;
-          const nodeLength = (node.textContent || '').length;
+        // Wait for DOM update, then position cursor
+        requestAnimationFrame(() => {
+          if (!editorRef.current) return;
           
-          if (currentPos + nodeLength >= newCursorPos) {
-            targetNode = node;
-            targetOffset = newCursorPos - currentPos;
-            break;
+          // Find all text nodes to calculate cursor position
+          const walker = document.createTreeWalker(
+            editorRef.current,
+            NodeFilter.SHOW_TEXT,
+            null
+          );
+          
+          const allText = editorRef.current.textContent || '';
+          const targetPos = beforeAt.length + (user.displayName || user.name).length + 1; // After pill + space
+          
+          let currentPos = 0;
+          let targetNode: Node | null = null;
+          let targetOffset = 0;
+          
+          while (walker.nextNode()) {
+            const node = walker.currentNode;
+            const nodeLength = (node.textContent || '').length;
+            
+            if (currentPos + nodeLength >= targetPos) {
+              targetNode = node;
+              targetOffset = targetPos - currentPos;
+              break;
+            }
+            
+            currentPos += nodeLength;
           }
           
-          currentPos += nodeLength;
-        }
-        
-        if (targetNode) {
-          const newRange = document.createRange();
-          newRange.setStart(targetNode, Math.min(targetOffset, (targetNode.textContent || '').length));
-          newRange.collapse(true);
+          // Position cursor at end if we can't find exact position
+          if (!targetNode && editorRef.current.lastChild) {
+            targetNode = editorRef.current.lastChild;
+            if (targetNode.nodeType === Node.TEXT_NODE) {
+              targetOffset = (targetNode.textContent || '').length;
+            } else if (targetNode.lastChild?.nodeType === Node.TEXT_NODE) {
+              targetNode = targetNode.lastChild;
+              targetOffset = (targetNode.textContent || '').length;
+            }
+          }
           
-          const sel = window.getSelection();
-          sel?.removeAllRanges();
-          sel?.addRange(newRange);
-        }
-      }, 50); // Increased timeout to ensure DOM is updated
+          if (targetNode) {
+            try {
+              const newRange = document.createRange();
+              newRange.setStart(targetNode, Math.min(targetOffset, (targetNode.textContent || '').length));
+              newRange.collapse(true);
+              
+              const sel = window.getSelection();
+              sel?.removeAllRanges();
+              sel?.addRange(newRange);
+            } catch (e) {
+              console.error('[Cursor] Failed to position:', e);
+            }
+          }
+        });
+      }, 100);
     }
   };
 
@@ -460,7 +491,11 @@ export function SimpleMentionsInput({
                   {mentionUsers.map((user, index) => (
                     <button
                       key={user.id}
-                      onClick={() => insertMention(user)}
+                      onMouseDown={(e) => {
+                        // CRITICAL: Prevent blur event so editor stays focused
+                        e.preventDefault();
+                        insertMention(user);
+                      }}
                       className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-all text-white font-medium ${
                         index === selectedMentionIndex
                           ? 'scale-105'
