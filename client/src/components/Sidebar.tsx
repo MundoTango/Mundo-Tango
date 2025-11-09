@@ -49,11 +49,20 @@ function RoleEmojiDisplay({ tangoRoles, leaderLevel, followerLevel }: any) {
   );
 }
 
-export default function Sidebar() {
-  const [isOpen, setIsOpen] = useState(false);
+interface SidebarProps {
+  isOpen?: boolean;
+  setIsOpen?: (open: boolean) => void;
+}
+
+export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSetIsOpen }: SidebarProps = {}) {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
   const [location] = useLocation();
   const { t, i18n } = useTranslation();
   const { user, profile } = useAuth();
+
+  // Use external state if provided, otherwise use internal
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
+  const setIsOpen = externalSetIsOpen || setInternalIsOpen;
 
   // Fetch global statistics
   const { data: statsData } = useQuery({
@@ -159,38 +168,15 @@ export default function Sidebar() {
         }}
         data-testid="sidebar"
       >
-        {/* Header */}
+        {/* Header - Mobile close button only */}
         <div 
-          className="h-16 flex justify-between items-center px-4 border-b"
+          className="h-16 flex justify-end items-center px-4 border-b lg:hidden"
           style={{ borderColor: 'rgba(64, 224, 208, 0.15)' }}
         >
-          {/* MT Logo */}
-          <div 
-            className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white shadow-lg"
-            style={{
-              background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)',
-            }}
-          >
-            MT
-          </div>
-          
-          {/* Title */}
-          <div 
-            className="text-lg font-bold"
-            style={{
-              background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 50%, #0047AB 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
-          >
-            Mundo Tango
-          </div>
-          
           {/* Close button (mobile only) */}
           <button
             onClick={() => setIsOpen(false)}
-            className="lg:hidden p-1 rounded-lg hover:bg-gray-100/10 transition-colors"
+            className="p-2 rounded-lg hover:bg-gray-100/10 transition-colors"
             data-testid="button-sidebar-close"
             style={{ color: '#40E0D0' }}
           >
@@ -199,7 +185,7 @@ export default function Sidebar() {
         </div>
 
         {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-4">
+        <div className="flex-1 overflow-y-auto px-3 py-4 lg:pt-6 space-y-4">
           {/* User Profile Card */}
           <Link href={`/profile/${user?.username || username}`}>
             <div 
