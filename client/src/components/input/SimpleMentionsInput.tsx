@@ -224,12 +224,49 @@ export function SimpleMentionsInput({
   const handleInput = () => {
     if (!editorRef.current) return;
     
-    const text = editorRef.current.textContent || "";
+    // Extract text value while preserving mention markers
+    let extractedValue = '';
+    const editor = editorRef.current;
+    
+    // Walk through all child nodes and reconstruct the value
+    const processNode = (node: Node): string => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        return node.textContent || '';
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const element = node as HTMLElement;
+        
+        // Check if it's a mention pill
+        if (element.classList.contains('mention-pill')) {
+          const mentionId = element.getAttribute('data-mention-id');
+          const mentionType = element.getAttribute('data-mention-type');
+          const displayName = element.textContent?.replace(/^👤|^📅|^👔|^🏙️/, '').trim() || '';
+          
+          if (mentionId && mentionType && displayName) {
+            return `@[${displayName}](${mentionId}:${mentionType})`;
+          }
+        }
+        
+        // Recursively process child nodes
+        let result = '';
+        node.childNodes.forEach(child => {
+          result += processNode(child);
+        });
+        return result;
+      }
+      return '';
+    };
+    
+    editor.childNodes.forEach(child => {
+      extractedValue += processNode(child);
+    });
+    
+    // Use textContent for cursor position detection
+    const text = editor.textContent || "";
     
     // Check if user is typing a mention
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) {
-      onChange(text, mentions);
+      onChange(extractedValue, mentions);
       return;
     }
 
@@ -266,7 +303,7 @@ export function SimpleMentionsInput({
       setShowMentionDropdown(false);
     }
 
-    onChange(text, mentions);
+    onChange(extractedValue, mentions);
   };
 
   const insertMention = (user: MentionUser) => {
@@ -304,10 +341,49 @@ export function SimpleMentionsInput({
       setShowMentionDropdown(false);
       setMentionSearchQuery("");
 
-      // Focus back
+      // Position cursor after the mention + space
       setTimeout(() => {
-        editorRef.current?.focus();
-      }, 0);
+        if (!editorRef.current) return;
+        
+        editorRef.current.focus();
+        
+        // Calculate the position after the inserted mention marker + space
+        const newCursorPos = beforeAt.length + mentionMarker.length + 1; // +1 for space
+        
+        // Find the text node and set cursor position
+        const walker = document.createTreeWalker(
+          editorRef.current,
+          NodeFilter.SHOW_TEXT,
+          null
+        );
+        
+        let currentPos = 0;
+        let targetNode: Node | null = null;
+        let targetOffset = 0;
+        
+        while (walker.nextNode()) {
+          const node = walker.currentNode;
+          const nodeLength = (node.textContent || '').length;
+          
+          if (currentPos + nodeLength >= newCursorPos) {
+            targetNode = node;
+            targetOffset = newCursorPos - currentPos;
+            break;
+          }
+          
+          currentPos += nodeLength;
+        }
+        
+        if (targetNode) {
+          const newRange = document.createRange();
+          newRange.setStart(targetNode, Math.min(targetOffset, (targetNode.textContent || '').length));
+          newRange.collapse(true);
+          
+          const sel = window.getSelection();
+          sel?.removeAllRanges();
+          sel?.addRange(newRange);
+        }
+      }, 50); // Increased timeout to ensure DOM is updated
     }
   };
 

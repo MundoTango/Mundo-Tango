@@ -1,0 +1,1213 @@
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_monitoring/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/session_result/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+MundoTango:1 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+MundoTango:1 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+MundoTango:1 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+bc3f23dfc7cd896f.js:2 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+bc3f23dfc7cd896f.js:2 Download the Apollo DevTools for a better development experience: https://chrome.google.com/webstore/detail/apollo-client-developer-t/jdkknkkbebbapilgoeccciglkfbmbnfm
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723798042&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723798042&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2027&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ content loaded
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723798153&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+index.59b2ae62.js:3 Content Script: Initializing
+bc3f23dfc7cd896f.js:2 [LaunchDarkly] LaunchDarkly client initialized
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723798900&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2027&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723798947&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723798987&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ [Intervention] Slow network is detected. See https://www.chromestatus.com/feature/5636954674692096 for more details. Fallback font will be used while loading: https://replit.com/public/fonts/replit-icons.woff
+cdn.segment.com/next-integrations/actions/tiktok-pixel/1526190d7b84ef9800b4.js:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2 Failed to create PluginFactory Object
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2 Failed to load Remote Plugin Error: Failed to load https://cdn.segment.com/next-integrations/actions/tiktok-pixel/1526190d7b84ef9800b4.js
+    at o.onerror (load-script.ts:53:24)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723801151&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2027&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723801171&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723801172&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ stallwart: failed ping 1
+ stallwart: failed ping 2
+ stallwart: failed ping 3
+ stallwart: failed ping 4
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'ambient-light-sensor'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'battery'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'execution-while-not-rendered'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'execution-while-out-of-viewport'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'layout-animations'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'legacy-image-formats'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'navigation-override'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'oversized-images'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'publickey-credentials'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'speaker-selection'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'unoptimized-images'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'unsized-media'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'pointer-lock'.
+z @ ed1e693c96a75807.js:2
+ Allow attribute will take precedence over 'allowfullscreen'.
+z @ ed1e693c96a75807.js:2
+ Allow attribute will take precedence over 'allowpaymentrequest'.
+z @ ed1e693c96a75807.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723807297&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2027&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723807297&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2027&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+ stallwart: failed ping 1
+ stallwart: failed ping 2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723807297&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723807297&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723807298&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723807298&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+ stallwart: failed ping 3
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723811072&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723811967&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+web-client-content-script.js:2 Uncaught TypeError: Failed to execute 'observe' on 'MutationObserver': parameter 1 is not of type 'Node'.
+    at HTMLIFrameElement.<anonymous> (web-client-content-script.js:2:1434139)
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723813983&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723818488&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723818488&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723825525&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723826112&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723827836&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723828122&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723828343&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723829752&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723830332&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723830346&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723832337&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723832648&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723832648&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=505&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723834851&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723834851&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723836845&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723836845&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=505&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723857683&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1506&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723858253&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1506&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723860259&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1506&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723864764&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1506&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723864764&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1506&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723878320&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2006&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723878946&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2006&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723881033&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2006&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723885545&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2006&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762723885545&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2006&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ bc3f23dfc7cd896f.js:2
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ed1e693c96a75807.js:2 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+z @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+z @ ed1e693c96a75807.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar2j3%3A:32 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2j3%3A:32 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2j3%3A:32 Unrecognized feature: 'battery'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2j3%3A:32 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2j3%3A:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2j3%3A:32 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2j3%3A:32 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2j3%3A:32 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2j3%3A:32 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2j3%3A:32 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2j3%3A:32 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2j3%3A:32 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2j3%3A:32 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2j3%3A:32 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2j3%3A:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+client:536 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/?token=Vg9TFZCHN-NV' failed: 
+setupWebSocket @ client:536
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=Vg9TFZCHN-NV' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+workspace_iframe.html?initialPath=%2F&id=%3Ar2j3%3A:142 Refused to load the script 'https://replit.com/public/js/beacon.js' because it violates the following Content Security Policy directive: "script-src-elem 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net".
+
+onIframeLoad @ workspace_iframe.html?initialPath=%2F&id=%3Ar2j3%3A:142
+injected.js:27 i18next::backendConnector: loaded namespace errors for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace common for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace pages for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace navigation for language en Object
+injected.js:27 i18next: languageChanged en
+injected.js:27 i18next: initialized Object
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+UpcomingEventsSidebar.tsx:165 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+(anonymous) @ UpcomingEventsSidebar.tsx:165
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762724117994&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762724118508&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762724120510&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762724125021&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762724125021&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+bc3f23dfc7cd896f.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762724195043&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2007&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ bc3f23dfc7cd896f.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+r._notifyVisibilityChanged @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+bc3f23dfc7cd896f.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762724195629&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2007&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ bc3f23dfc7cd896f.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+r._notifyVisibilityChanged @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+bc3f23dfc7cd896f.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762724197635&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2007&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ bc3f23dfc7cd896f.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+r._notifyVisibilityChanged @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 Warning: Encountered two children with the same key, `1`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=YW-wngFJJsUbGfzp1MlED:1781:55)
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+printWarning @ chunk-276SZO74.js?v=6777f4db:521
+error @ chunk-276SZO74.js?v=6777f4db:505
+warnOnInvalidKey @ chunk-276SZO74.js?v=6777f4db:10219
+reconcileChildrenArray @ chunk-276SZO74.js?v=6777f4db:10235
+reconcileChildFibers2 @ chunk-276SZO74.js?v=6777f4db:10559
+reconcileChildren @ chunk-276SZO74.js?v=6777f4db:14292
+updateHostComponent @ chunk-276SZO74.js?v=6777f4db:14807
+beginWork @ chunk-276SZO74.js?v=6777f4db:15935
+beginWork$1 @ chunk-276SZO74.js?v=6777f4db:19753
+performUnitOfWork @ chunk-276SZO74.js?v=6777f4db:19198
+workLoopSync @ chunk-276SZO74.js?v=6777f4db:19137
+renderRootSync @ chunk-276SZO74.js?v=6777f4db:19116
+performConcurrentWorkOnRoot @ chunk-276SZO74.js?v=6777f4db:18678
+workLoop @ chunk-276SZO74.js?v=6777f4db:197
+flushWork @ chunk-276SZO74.js?v=6777f4db:176
+performWorkUntilDeadline @ chunk-276SZO74.js?v=6777f4db:384
+injected.js:27 Warning: Encountered two children with the same key, `4`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=YW-wngFJJsUbGfzp1MlED:1781:55)
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+printWarning @ chunk-276SZO74.js?v=6777f4db:521
+error @ chunk-276SZO74.js?v=6777f4db:505
+warnOnInvalidKey @ chunk-276SZO74.js?v=6777f4db:10219
+reconcileChildrenArray @ chunk-276SZO74.js?v=6777f4db:10235
+reconcileChildFibers2 @ chunk-276SZO74.js?v=6777f4db:10559
+reconcileChildren @ chunk-276SZO74.js?v=6777f4db:14292
+updateHostComponent @ chunk-276SZO74.js?v=6777f4db:14807
+beginWork @ chunk-276SZO74.js?v=6777f4db:15935
+beginWork$1 @ chunk-276SZO74.js?v=6777f4db:19753
+performUnitOfWork @ chunk-276SZO74.js?v=6777f4db:19198
+workLoopSync @ chunk-276SZO74.js?v=6777f4db:19137
+renderRootSync @ chunk-276SZO74.js?v=6777f4db:19116
+performConcurrentWorkOnRoot @ chunk-276SZO74.js?v=6777f4db:18678
+workLoop @ chunk-276SZO74.js?v=6777f4db:197
+flushWork @ chunk-276SZO74.js?v=6777f4db:176
+performWorkUntilDeadline @ chunk-276SZO74.js?v=6777f4db:384
+injected.js:27 Warning: Encountered two children with the same key, `2`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=YW-wngFJJsUbGfzp1MlED:1781:55)
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+printWarning @ chunk-276SZO74.js?v=6777f4db:521
+error @ chunk-276SZO74.js?v=6777f4db:505
+warnOnInvalidKey @ chunk-276SZO74.js?v=6777f4db:10219
+reconcileChildrenArray @ chunk-276SZO74.js?v=6777f4db:10235
+reconcileChildFibers2 @ chunk-276SZO74.js?v=6777f4db:10559
+reconcileChildren @ chunk-276SZO74.js?v=6777f4db:14292
+updateHostComponent @ chunk-276SZO74.js?v=6777f4db:14807
+beginWork @ chunk-276SZO74.js?v=6777f4db:15935
+beginWork$1 @ chunk-276SZO74.js?v=6777f4db:19753
+performUnitOfWork @ chunk-276SZO74.js?v=6777f4db:19198
+workLoopSync @ chunk-276SZO74.js?v=6777f4db:19137
+renderRootSync @ chunk-276SZO74.js?v=6777f4db:19116
+performConcurrentWorkOnRoot @ chunk-276SZO74.js?v=6777f4db:18678
+workLoop @ chunk-276SZO74.js?v=6777f4db:197
+flushWork @ chunk-276SZO74.js?v=6777f4db:176
+performWorkUntilDeadline @ chunk-276SZO74.js?v=6777f4db:384
+injected.js:27 Warning: Encountered two children with the same key, `2`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=YW-wngFJJsUbGfzp1MlED:1781:55)
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+printWarning @ chunk-276SZO74.js?v=6777f4db:521
+error @ chunk-276SZO74.js?v=6777f4db:505
+warnOnInvalidKey @ chunk-276SZO74.js?v=6777f4db:10219
+reconcileChildrenArray @ chunk-276SZO74.js?v=6777f4db:10235
+reconcileChildFibers2 @ chunk-276SZO74.js?v=6777f4db:10559
+reconcileChildren @ chunk-276SZO74.js?v=6777f4db:14292
+updateHostComponent @ chunk-276SZO74.js?v=6777f4db:14807
+beginWork @ chunk-276SZO74.js?v=6777f4db:15935
+beginWork$1 @ chunk-276SZO74.js?v=6777f4db:19753
+performUnitOfWork @ chunk-276SZO74.js?v=6777f4db:19198
+workLoopSync @ chunk-276SZO74.js?v=6777f4db:19137
+renderRootSync @ chunk-276SZO74.js?v=6777f4db:19116
+performSyncWorkOnRoot @ chunk-276SZO74.js?v=6777f4db:18874
+flushSyncCallbacks @ chunk-276SZO74.js?v=6777f4db:9119
+(anonymous) @ chunk-276SZO74.js?v=6777f4db:18627
+bc3f23dfc7cd896f.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762724202140&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2007&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ bc3f23dfc7cd896f.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762724202140&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2007&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ bc3f23dfc7cd896f.js:2
+value @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 Warning: Encountered two children with the same key, `1`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=YW-wngFJJsUbGfzp1MlED:1781:55)
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+printWarning @ chunk-276SZO74.js?v=6777f4db:521
+error @ chunk-276SZO74.js?v=6777f4db:505
+warnOnInvalidKey @ chunk-276SZO74.js?v=6777f4db:10219
+reconcileChildrenArray @ chunk-276SZO74.js?v=6777f4db:10235
+reconcileChildFibers2 @ chunk-276SZO74.js?v=6777f4db:10559
+reconcileChildren @ chunk-276SZO74.js?v=6777f4db:14292
+updateHostComponent @ chunk-276SZO74.js?v=6777f4db:14807
+beginWork @ chunk-276SZO74.js?v=6777f4db:15935
+beginWork$1 @ chunk-276SZO74.js?v=6777f4db:19753
+performUnitOfWork @ chunk-276SZO74.js?v=6777f4db:19198
+workLoopSync @ chunk-276SZO74.js?v=6777f4db:19137
+renderRootSync @ chunk-276SZO74.js?v=6777f4db:19116
+performConcurrentWorkOnRoot @ chunk-276SZO74.js?v=6777f4db:18678
+workLoop @ chunk-276SZO74.js?v=6777f4db:197
+flushWork @ chunk-276SZO74.js?v=6777f4db:176
+performWorkUntilDeadline @ chunk-276SZO74.js?v=6777f4db:384
+injected.js:27 Warning: Encountered two children with the same key, `4`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=YW-wngFJJsUbGfzp1MlED:1781:55)
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+printWarning @ chunk-276SZO74.js?v=6777f4db:521
+error @ chunk-276SZO74.js?v=6777f4db:505
+warnOnInvalidKey @ chunk-276SZO74.js?v=6777f4db:10219
+reconcileChildrenArray @ chunk-276SZO74.js?v=6777f4db:10235
+reconcileChildFibers2 @ chunk-276SZO74.js?v=6777f4db:10559
+reconcileChildren @ chunk-276SZO74.js?v=6777f4db:14292
+updateHostComponent @ chunk-276SZO74.js?v=6777f4db:14807
+beginWork @ chunk-276SZO74.js?v=6777f4db:15935
+beginWork$1 @ chunk-276SZO74.js?v=6777f4db:19753
+performUnitOfWork @ chunk-276SZO74.js?v=6777f4db:19198
+workLoopSync @ chunk-276SZO74.js?v=6777f4db:19137
+renderRootSync @ chunk-276SZO74.js?v=6777f4db:19116
+performConcurrentWorkOnRoot @ chunk-276SZO74.js?v=6777f4db:18678
+workLoop @ chunk-276SZO74.js?v=6777f4db:197
+flushWork @ chunk-276SZO74.js?v=6777f4db:176
+performWorkUntilDeadline @ chunk-276SZO74.js?v=6777f4db:384
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
