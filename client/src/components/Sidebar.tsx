@@ -81,7 +81,7 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
 
   // Navigation routes (8 items as per handoff)
   const sidebarRoutes = [
-    { icon: Heart, title: t('navigation.memories'), link: "/memories" },
+    { icon: Heart, title: t('navigation.memories'), link: "/" },
     { icon: UsersRound, title: t('navigation.tangoCommunity'), link: "/community-world-map" },
     { icon: UserCheck, title: t('navigation.friends'), link: "/friends-list" },
     { icon: MessageCircle, title: t('navigation.messages'), link: "/messages" },
@@ -131,12 +131,18 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
     return () => window.removeEventListener("resize", handleResize);
   }, [setIsOpen]);
 
+  // Scroll sidebar to top when it opens
+  useEffect(() => {
+    if (isOpen) {
+      const sidebarContent = document.querySelector('[data-testid="sidebar"] .overflow-y-auto');
+      if (sidebarContent) {
+        sidebarContent.scrollTop = 0;
+      }
+    }
+  }, [isOpen]);
+
   // Check if route is active
-  const isActive = (path: string) => {
-    // Special case: "/" is the Memories feed
-    if (path === '/memories' && location === '/') return true;
-    return location === path;
-  };
+  const isActive = (path: string) => location === path;
 
   // Use profile data for display
   const displayName = profile?.name || user?.email?.split('@')[0] || "User";
