@@ -453,23 +453,23 @@ export function SimpleMentionsInput({
       setShowMentionDropdown(false);
       setMentionSearchQuery("");
       
-      // Calculate target cursor position: beforeAt + pill display name + space
-      const targetPos = beforeAt.length + (user.displayName || user.name).length + 1;
+      // Calculate target cursor position: we want to be right after the marker + space
+      const markerLength = mentionMarker.length + 1; // +1 for the space
+      const targetPos = beforeAt.length + markerLength;
       targetCursorPosRef.current = targetPos;
       
       console.log('[Insert] TargetCursorPos:', targetPos);
       console.log('[Insert] Calling onChange with newValue');
       
-      // Update value (this triggers useEffect which will render pills and restore cursor)
+      // Update value immediately (this triggers useEffect which will render pills and restore cursor)
       onChange(newValue, newMentions);
 
-      // CRITICAL: Maintain focus after insertion
-      setTimeout(() => {
-        if (!editorRef.current) return;
-        console.log('[Insert] Focusing editor');
+      // CRITICAL: Maintain focus synchronously - don't use setTimeout
+      if (editorRef.current) {
+        console.log('[Insert] Focusing editor IMMEDIATELY');
         editorRef.current.focus();
         setIsFocused(true);
-      }, 50);
+      }
     } else {
       console.log('[Insert] No @ found, skipping insertion');
     }

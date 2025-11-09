@@ -1,0 +1,1192 @@
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_monitoring/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/session_result/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+MundoTango:1 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+MundoTango:1 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+MundoTango:1 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+ 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+ Download the Apollo DevTools for a better development experience: https://chrome.google.com/webstore/detail/apollo-client-developer-t/jdkknkkbebbapilgoeccciglkfbmbnfm
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727139087&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727139087&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2012&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ content loaded
+ Content Script: Initializing
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727139209&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ [LaunchDarkly] LaunchDarkly client initialized
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727139705&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2012&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727139795&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727140207&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ [Intervention] Slow network is detected. See https://www.chromestatus.com/feature/5636954674692096 for more details. Fallback font will be used while loading: https://replit.com/public/fonts/replit-icons.woff
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'ambient-light-sensor'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'battery'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'execution-while-not-rendered'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'execution-while-out-of-viewport'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'layout-animations'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'legacy-image-formats'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'navigation-override'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'oversized-images'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'publickey-credentials'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'speaker-selection'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'unoptimized-images'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'unsized-media'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'pointer-lock'.
+z @ ed1e693c96a75807.js:2
+ Allow attribute will take precedence over 'allowfullscreen'.
+z @ ed1e693c96a75807.js:2
+ Allow attribute will take precedence over 'allowpaymentrequest'.
+z @ ed1e693c96a75807.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727141867&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2012&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727141891&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'battery'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727142237&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+cdn.segment.com/next-integrations/actions/tiktok-pixel/1526190d7b84ef9800b4.js:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ Failed to create PluginFactory Object
+(anonymous) @ bc3f23dfc7cd896f.js:2
+ Failed to load Remote Plugin 
+(anonymous) @ bc3f23dfc7cd896f.js:2
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/?token=daJSA8i8otxe' failed: 
+setupWebSocket @ client:536
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=daJSA8i8otxe' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+injected.js:27 i18next::backendConnector: loaded namespace common for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace navigation for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace errors for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace pages for language en Object
+injected.js:27 i18next: languageChanged en
+injected.js:27 i18next: initialized Object
+ Refused to load the script 'https://replit.com/public/js/beacon.js' because it violates the following Content Security Policy directive: "script-src-elem 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net".
+
+onIframeLoad @ workspace_iframe.htm…2F&id=%3Ar4a%3A:142
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727146395&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2012&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727146395&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2012&gz=1. TypeError: Failed to fetch 
+(anonymous) @ bc3f23dfc7cd896f.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727146411&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727146411&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1. TypeError: Failed to fetch 
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727146760&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727146760&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+injected.js:27 [useEffect] Triggered with value: 
+injected.js:27 [useEffect] lastValueRef: 
+injected.js:27 [useEffect] Skipping - value unchanged
+web-client-content-script.js:2 Uncaught TypeError: Failed to execute 'observe' on 'MutationObserver': parameter 1 is not of type 'Node'.
+    at HTMLIFrameElement.<anonymous> (web-client-content-script.js:2:1434139)
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:36
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+(anonymous) @ UpcomingEventsSidebar.tsx:148
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+injected.js:27 [useEffect] Triggered with value: 
+injected.js:27 [useEffect] lastValueRef: 
+injected.js:27 [useEffect] Skipping - value unchanged
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727148446&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727148959&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+injected.js:27 [useEffect] Triggered with value: @
+injected.js:27 [useEffect] lastValueRef: 
+injected.js:27 [useEffect] CursorPos: Object
+injected.js:27 [useEffect] TargetCursorPosRef: null
+injected.js:27 [useEffect] Found mention markers: null
+injected.js:27 [useEffect] Generated HTML: @
+injected.js:27 [useEffect] Set innerHTML, isFocused: true
+injected.js:27 [useEffect] Restoring cursor to: 1
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+injected.js:27 Warning: Encountered two children with the same key, `1`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 Warning: Encountered two children with the same key, `4`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 [Insert] Text: @ Cursor: 1 Last @: 0
+injected.js:27 [Insert] BeforeAt: 
+injected.js:27 [Insert] Marker: @[Amélie Laurent](3:user)
+injected.js:27 [Insert] AfterCursor: 
+injected.js:27 [Insert] NewValue: @[Amélie Laurent](3:user) 
+injected.js:27 [Insert] TargetCursorPos: 15
+injected.js:27 [Insert] Calling onChange with newValue
+injected.js:27 [useEffect] Triggered with value: @[Amélie Laurent](3:user) 
+injected.js:27 [useEffect] lastValueRef: @
+injected.js:27 [useEffect] CursorPos: Object
+injected.js:27 [useEffect] TargetCursorPosRef: 15
+injected.js:27 [useEffect] Found mention markers: Array(1)
+injected.js:27 [useEffect] Generated HTML: <span class="mention-pill" data-mention-id="3" data-mention-type="user" contenteditable="false" style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; bor
+injected.js:27 [useEffect] Set innerHTML, isFocused: true
+injected.js:27 [useEffect] Restoring cursor to: 15
+injected.js:27 [Insert] Focusing editor
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727150964&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727155468&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727155468&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=2&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727158223&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+injected.js:27 [useEffect] Triggered with value: @[Amélie Laurent](3:user) 
+injected.js:27 [useEffect] lastValueRef: @[Amélie Laurent](3:user) 
+injected.js:27 [useEffect] Skipping - value unchanged
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727158759&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727160803&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727165306&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727165306&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=505&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 [useEffect] Triggered with value: @[Amélie Laurent](3:user) 
+injected.js:27 [useEffect] lastValueRef: @[Amélie Laurent](3:user) 
+injected.js:27 [useEffect] Skipping - value unchanged
+injected.js:27 [useEffect] Triggered with value: @[Amélie Laurent](3:user)@
+injected.js:27 [useEffect] lastValueRef: @[Amélie Laurent](3:user) 
+injected.js:27 [useEffect] CursorPos: Object
+injected.js:27 [useEffect] TargetCursorPosRef: null
+injected.js:27 [useEffect] Found mention markers: Array(1)
+injected.js:27 [useEffect] Generated HTML: <span class="mention-pill" data-mention-id="3" data-mention-type="user" contenteditable="false" style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; bor
+injected.js:27 [useEffect] Set innerHTML, isFocused: true
+injected.js:27 [useEffect] Restoring cursor to: 17
+injected.js:27 Warning: Encountered two children with the same key, `1`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 Warning: Encountered two children with the same key, `4`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 Warning: Encountered two children with the same key, `1`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 Warning: Encountered two children with the same key, `4`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 Warning: Encountered two children with the same key, `1`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 Warning: Encountered two children with the same key, `4`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 [Insert] Text: 👤Amélie Laurent@ Cursor: 17 Last @: 16
+injected.js:27 [Insert] BeforeAt: 👤Amélie Laurent
+injected.js:27 [Insert] Marker: @[Barcelona](11:professional-group)
+injected.js:27 [Insert] AfterCursor: 
+injected.js:27 [Insert] NewValue: 👤Amélie Laurent@[Barcelona](11:professional-group) 
+injected.js:27 [Insert] TargetCursorPos: 26
+injected.js:27 [Insert] Calling onChange with newValue
+injected.js:27 [useEffect] Triggered with value: 👤Amélie Laurent@[Barcelona](11:professional-group) 
+injected.js:27 [useEffect] lastValueRef: @[Amélie Laurent](3:user)@
+injected.js:27 [useEffect] CursorPos: Object
+injected.js:27 [useEffect] TargetCursorPosRef: 26
+injected.js:27 [useEffect] Found mention markers: Array(1)
+injected.js:27 [useEffect] Generated HTML: 👤Amélie Laurent<span class="mention-pill" data-mention-id="11" data-mention-type="professional-group" contenteditable="false" style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 
+injected.js:27 [useEffect] Set innerHTML, isFocused: true
+injected.js:27 [useEffect] Restoring cursor to: 26
+injected.js:27 [Insert] Focusing editor
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727178217&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1005&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+injected.js:27 [useEffect] Triggered with value: 👤Amélie Laurent@[Barcelona](11:professional-group) 
+injected.js:27 [useEffect] lastValueRef: 👤Amélie Laurent@[Barcelona](11:professional-group) 
+injected.js:27 [useEffect] Skipping - value unchanged
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727178742&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1005&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727180744&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1005&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727185250&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1005&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727185250&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1005&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 [useEffect] Triggered with value: 👤Amélie Laurent@[Barcelona](11:professional-group) 
+injected.js:27 [useEffect] lastValueRef: 👤Amélie Laurent@[Barcelona](11:professional-group) 
+injected.js:27 [useEffect] Skipping - value unchanged
+injected.js:27 [useEffect] Triggered with value: 👤Amélie Laurent@[Barcelona](11:professional-group)@
+injected.js:27 [useEffect] lastValueRef: 👤Amélie Laurent@[Barcelona](11:professional-group) 
+injected.js:27 [useEffect] CursorPos: Object
+injected.js:27 [useEffect] TargetCursorPosRef: null
+injected.js:27 [useEffect] Found mention markers: Array(1)
+injected.js:27 [useEffect] Generated HTML: 👤Amélie Laurent<span class="mention-pill" data-mention-id="11" data-mention-type="professional-group" contenteditable="false" style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 
+injected.js:27 [useEffect] Set innerHTML, isFocused: true
+injected.js:27 [useEffect] Restoring cursor to: 28
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 Warning: Encountered two children with the same key, `1`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 Warning: Encountered two children with the same key, `4`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 Warning: Encountered two children with the same key, `1`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 Warning: Encountered two children with the same key, `4`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 Warning: Encountered two children with the same key, `1`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 Warning: Encountered two children with the same key, `4`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 Warning: Encountered two children with the same key, `1`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 Warning: Encountered two children with the same key, `4`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 Warning: Encountered two children with the same key, `1`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 Warning: Encountered two children with the same key, `4`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 Warning: Encountered two children with the same key, `1`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 Warning: Encountered two children with the same key, `4`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:6536:40)
+    at PresenceChild (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7742:24)
+    at AnimatePresence (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=6777f4db:7800:26)
+    at div
+    at SimpleMentionsInput (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/input/SimpleMentionsInput.tsx:25:3)
+    at div
+    at _c (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ui/card.tsx:20:11)
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:74:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:68:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:21:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=6777f4db:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3RXG37ZK.js?v=6777f4db:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=6777f4db:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:71:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=6777f4db:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=gBbskFCcu3Ftyw4fltiKf:1781:55)
+(anonymous) @ injected.js:27
+injected.js:27 [Insert] Text: 👤Amélie Laurent👔Barcelona@ Cursor: 28 Last @: 27
+injected.js:27 [Insert] BeforeAt: 👤Amélie Laurent👔Barcelona
+injected.js:27 [Insert] Marker: @[Barcelona Milonga Night](4:event)
+injected.js:27 [Insert] AfterCursor: 
+injected.js:27 [Insert] NewValue: 👤Amélie Laurent👔Barcelona@[Barcelona Milonga Night](4:event) 
+injected.js:27 [Insert] TargetCursorPos: 51
+injected.js:27 [Insert] Calling onChange with newValue
+injected.js:27 [useEffect] Triggered with value: 👤Amélie Laurent👔Barcelona@[Barcelona Milonga Night](4:event) 
+injected.js:27 [useEffect] lastValueRef: 👤Amélie Laurent@[Barcelona](11:professional-group)@
+injected.js:27 [useEffect] CursorPos: Object
+injected.js:27 [useEffect] TargetCursorPosRef: 51
+injected.js:27 [useEffect] Found mention markers: Array(1)
+injected.js:27 [useEffect] Generated HTML: 👤Amélie Laurent👔Barcelona<span class="mention-pill" data-mention-id="4" data-mention-type="event" contenteditable="false" style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px
+injected.js:27 [useEffect] Set innerHTML, isFocused: true
+injected.js:27 [useEffect] Restoring cursor to: 51
+injected.js:27 [Insert] Focusing editor
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727194497&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+injected.js:27 [useEffect] Triggered with value: 👤Amélie Laurent👔Barcelona@[Barcelona Milonga Night](4:event) 
+injected.js:27 [useEffect] lastValueRef: 👤Amélie Laurent👔Barcelona@[Barcelona Milonga Night](4:event) 
+injected.js:27 [useEffect] Skipping - value unchanged
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727195020&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727197025&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727201532&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762727201532&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1505&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…c/components/navigation/UnifiedTopBar.tsx:107:35)`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:69
+onError @ @tanstack_react-query.js?v=6777f4db:867
+reject @ @tanstack_react-query.js?v=6777f4db:465
+(anonymous) @ @tanstack_react-query.js?v=6777f4db:508
+Promise.catch
+run @ @tanstack_react-query.js?v=6777f4db:498
+(anonymous) @ @tanstack_react-query.js?v=6777f4db:519
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…c/components/navigation/UnifiedTopBar.tsx:122:35)`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:69
+onError @ @tanstack_react-query.js?v=6777f4db:867
+reject @ @tanstack_react-query.js?v=6777f4db:465
+(anonymous) @ @tanstack_react-query.js?v=6777f4db:508
+Promise.catch
+run @ @tanstack_react-query.js?v=6777f4db:498
+(anonymous) @ @tanstack_react-query.js?v=6777f4db:519
