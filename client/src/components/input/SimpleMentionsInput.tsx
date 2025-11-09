@@ -43,7 +43,7 @@ export function SimpleMentionsInput({
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const [isFocused, setIsFocused] = useState(false);
   const lastValueRef = useRef<string>('');
-  const skipNextRenderRef = useRef(false);
+  const targetCursorPosRef = useRef<number | null>(null);
 
   // Get mention pill colors based on type
   const getMentionPillStyle = (type?: string): React.CSSProperties => {
@@ -243,21 +243,26 @@ export function SimpleMentionsInput({
   // Render content with inline pills using innerHTML
   useEffect(() => {
     if (!editorRef.current) return;
-    
-    // Skip if we just inserted a mention (cursor positioning in progress)
-    if (skipNextRenderRef.current) {
-      skipNextRenderRef.current = false;
-      return;
-    }
+
+    console.log('[useEffect] Triggered with value:', value);
+    console.log('[useEffect] lastValueRef:', lastValueRef.current);
 
     // Skip if value hasn't changed
-    if (value === lastValueRef.current) return;
+    if (value === lastValueRef.current) {
+      console.log('[useEffect] Skipping - value unchanged');
+      return;
+    }
     lastValueRef.current = value;
     
     const editor = editorRef.current;
     
-    // Save cursor before updating
-    const cursorPos = saveCursorPosition();
+    // Save cursor before updating (unless we have a target position from insertion)
+    const cursorPos = targetCursorPosRef.current !== null 
+      ? { offset: targetCursorPosRef.current, containerText: '' }
+      : saveCursorPosition();
+    
+    console.log('[useEffect] CursorPos:', cursorPos);
+    console.log('[useEffect] TargetCursorPosRef:', targetCursorPosRef.current);
     
     // Parse mentions from value and create HTML with pills
     let html = value || '';
@@ -265,15 +270,20 @@ export function SimpleMentionsInput({
     // Show placeholder only if not focused and empty
     if (!html && !isFocused) {
       editor.innerHTML = `<span class="placeholder-text" style="color: var(--muted-foreground); pointer-events: none; user-select: none;">${placeholder}</span>`;
+      targetCursorPosRef.current = null;
       return;
     } else if (!html && isFocused) {
       // Clear placeholder when focused
       editor.innerHTML = '';
+      targetCursorPosRef.current = null;
       return;
     }
 
     // Find all @mentions in format @[DisplayName](id:type)
     const mentionRegex = /@\[([^\]]+)\]\((\d+):([^)]+)\)/g;
+    const matches = html.match(mentionRegex);
+    console.log('[useEffect] Found mention markers:', matches);
+    
     html = html.replace(mentionRegex, (match, displayName, mentionId, mentionType) => {
       const style = getMentionPillStyle(mentionType);
       const icon = getMentionIcon(mentionType);
@@ -284,13 +294,18 @@ export function SimpleMentionsInput({
       return `<span class="mention-pill" data-mention-id="${mentionId}" data-mention-type="${mentionType}" contenteditable="false" style="${styleStr}"><span>${icon}</span><span>${displayName}</span></span>`;
     });
 
+    console.log('[useEffect] Generated HTML:', html.substring(0, 200));
+    
     // Update HTML
     editor.innerHTML = html;
+    console.log('[useEffect] Set innerHTML, isFocused:', isFocused);
     
     // Restore cursor
     if (cursorPos && isFocused) {
       requestAnimationFrame(() => {
+        console.log('[useEffect] Restoring cursor to:', cursorPos.offset);
         restoreCursorPosition(cursorPos.offset);
+        targetCursorPosRef.current = null; // Clear target after restoring
       });
     }
   }, [value, placeholder, isFocused]);
@@ -399,7 +414,10 @@ export function SimpleMentionsInput({
     if (!editorRef.current) return;
 
     const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return;
+    if (!selection || selection.rangeCount === 0) {
+      console.log('[Insert] No selection/range');
+      return;
+    }
 
     const text = editorRef.current.textContent || "";
     const range = selection.getRangeAt(0);
@@ -411,6 +429,7 @@ export function SimpleMentionsInput({
     const cursorOffset = preCaretRange.toString().length;
 
     const lastAtSymbol = text.lastIndexOf('@', cursorOffset);
+    console.log('[Insert] Text:', text, 'Cursor:', cursorOffset, 'Last @:', lastAtSymbol);
 
     if (lastAtSymbol !== -1) {
       const beforeAt = text.substring(0, lastAtSymbol);
@@ -419,6 +438,11 @@ export function SimpleMentionsInput({
       // Create mention marker: @[DisplayName](id:type)
       const mentionMarker = `@[${user.displayName || user.name}](${user.id}:${user.type || 'user'})`;
       const newValue = beforeAt + mentionMarker + ' ' + afterCursor;
+
+      console.log('[Insert] BeforeAt:', beforeAt);
+      console.log('[Insert] Marker:', mentionMarker);
+      console.log('[Insert] AfterCursor:', afterCursor);
+      console.log('[Insert] NewValue:', newValue);
 
       // Add user to mentions array if not already there
       const newMentions = mentions.find(m => m.id === user.id)
@@ -429,28 +453,25 @@ export function SimpleMentionsInput({
       setShowMentionDropdown(false);
       setMentionSearchQuery("");
       
-      // Skip next render to prevent cursor jumping
-      skipNextRenderRef.current = true;
+      // Calculate target cursor position: beforeAt + pill display name + space
+      const targetPos = beforeAt.length + (user.displayName || user.name).length + 1;
+      targetCursorPosRef.current = targetPos;
       
-      // Update value immediately
+      console.log('[Insert] TargetCursorPos:', targetPos);
+      console.log('[Insert] Calling onChange with newValue');
+      
+      // Update value (this triggers useEffect which will render pills and restore cursor)
       onChange(newValue, newMentions);
 
-      // CRITICAL: Position cursor AFTER the pill and space, maintain focus
+      // CRITICAL: Maintain focus after insertion
       setTimeout(() => {
         if (!editorRef.current) return;
-        
-        // Force focus
+        console.log('[Insert] Focusing editor');
         editorRef.current.focus();
         setIsFocused(true);
-        
-        // Calculate target position: beforeAt + pill display name + space
-        const targetPos = beforeAt.length + (user.displayName || user.name).length + 1;
-        
-        // Position cursor
-        requestAnimationFrame(() => {
-          restoreCursorPosition(targetPos);
-        });
       }, 50);
+    } else {
+      console.log('[Insert] No @ found, skipping insertion');
     }
   };
 
