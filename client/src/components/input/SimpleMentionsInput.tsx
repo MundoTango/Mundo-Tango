@@ -42,6 +42,8 @@ export function SimpleMentionsInput({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const [isFocused, setIsFocused] = useState(false);
+  const lastValueRef = useRef<string>('');
+  const skipNextRenderRef = useRef(false);
 
   // Get mention pill colors based on type
   const getMentionPillStyle = (type?: string): React.CSSProperties => {
@@ -96,6 +98,92 @@ export function SimpleMentionsInput({
       case 'city-group': return '🏙️';
       case 'event': return '📅';
       default: return '👤';
+    }
+  };
+
+  // Save cursor position
+  const saveCursorPosition = () => {
+    if (!editorRef.current) return null;
+    
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return null;
+
+    const range = selection.getRangeAt(0);
+    const preCaretRange = range.cloneRange();
+    preCaretRange.selectNodeContents(editorRef.current);
+    preCaretRange.setEnd(range.endContainer, range.endOffset);
+    
+    return {
+      offset: preCaretRange.toString().length,
+      containerText: editorRef.current.textContent || ''
+    };
+  };
+
+  // Restore cursor position
+  const restoreCursorPosition = (targetOffset: number) => {
+    if (!editorRef.current) return;
+
+    const walker = document.createTreeWalker(
+      editorRef.current,
+      NodeFilter.SHOW_TEXT,
+      null
+    );
+
+    let currentPos = 0;
+    let targetNode: Node | null = null;
+    let nodeOffset = 0;
+
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      const nodeLength = (node.textContent || '').length;
+
+      if (currentPos + nodeLength >= targetOffset) {
+        targetNode = node;
+        nodeOffset = targetOffset - currentPos;
+        break;
+      }
+
+      currentPos += nodeLength;
+    }
+
+    // Fallback: position at end
+    if (!targetNode) {
+      const lastChild = editorRef.current.lastChild;
+      if (lastChild) {
+        if (lastChild.nodeType === Node.TEXT_NODE) {
+          targetNode = lastChild;
+          nodeOffset = (lastChild.textContent || '').length;
+        } else if (lastChild.lastChild?.nodeType === Node.TEXT_NODE) {
+          targetNode = lastChild.lastChild;
+          nodeOffset = (targetNode.textContent || '').length;
+        } else {
+          // Create a text node at the end
+          const textNode = document.createTextNode('');
+          editorRef.current.appendChild(textNode);
+          targetNode = textNode;
+          nodeOffset = 0;
+        }
+      } else {
+        // Empty editor, create text node
+        const textNode = document.createTextNode('');
+        editorRef.current.appendChild(textNode);
+        targetNode = textNode;
+        nodeOffset = 0;
+      }
+    }
+
+    if (targetNode) {
+      try {
+        const newRange = document.createRange();
+        newRange.setStart(targetNode, Math.min(nodeOffset, (targetNode.textContent || '').length));
+        newRange.collapse(true);
+
+        const sel = window.getSelection();
+        sel?.removeAllRanges();
+        sel?.addRange(newRange);
+      } catch (e) {
+        console.error('[Cursor] Failed to restore:', e);
+      }
     }
   };
 
@@ -156,8 +244,20 @@ export function SimpleMentionsInput({
   useEffect(() => {
     if (!editorRef.current) return;
     
+    // Skip if we just inserted a mention (cursor positioning in progress)
+    if (skipNextRenderRef.current) {
+      skipNextRenderRef.current = false;
+      return;
+    }
+
+    // Skip if value hasn't changed
+    if (value === lastValueRef.current) return;
+    lastValueRef.current = value;
+    
     const editor = editorRef.current;
-    const currentHTML = editor.innerHTML;
+    
+    // Save cursor before updating
+    const cursorPos = saveCursorPosition();
     
     // Parse mentions from value and create HTML with pills
     let html = value || '';
@@ -184,27 +284,14 @@ export function SimpleMentionsInput({
       return `<span class="mention-pill" data-mention-id="${mentionId}" data-mention-type="${mentionType}" contenteditable="false" style="${styleStr}"><span>${icon}</span><span>${displayName}</span></span>`;
     });
 
-    // Only update if different to avoid cursor issues
-    if (currentHTML !== html) {
-      const selection = window.getSelection();
-      const range = selection && selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
-      const cursorOffset = range ? range.startOffset : 0;
-      
-      editor.innerHTML = html;
-      
-      // Restore cursor position
-      if (range && editor.firstChild) {
-        try {
-          const newRange = document.createRange();
-          const textNode = editor.firstChild;
-          newRange.setStart(textNode, Math.min(cursorOffset, (textNode.textContent || '').length));
-          newRange.collapse(true);
-          selection?.removeAllRanges();
-          selection?.addRange(newRange);
-        } catch (e) {
-          // Cursor restoration failed, no big deal
-        }
-      }
+    // Update HTML
+    editor.innerHTML = html;
+    
+    // Restore cursor
+    if (cursorPos && isFocused) {
+      requestAnimationFrame(() => {
+        restoreCursorPosition(cursorPos.offset);
+      });
     }
   }, [value, placeholder, isFocused]);
 
@@ -221,6 +308,7 @@ export function SimpleMentionsInput({
     // Don't blur if clicking on dropdown (prevents focus loss when selecting mention)
     const relatedTarget = e.relatedTarget as HTMLElement;
     if (relatedTarget && dropdownRef.current?.contains(relatedTarget)) {
+      e.preventDefault();
       return;
     }
     
@@ -290,25 +378,17 @@ export function SimpleMentionsInput({
 
     const lastAtSymbol = textBeforeCursor.lastIndexOf('@');
     
-    console.log('[Mention Debug] Text before cursor:', textBeforeCursor);
-    console.log('[Mention Debug] Last @ position:', lastAtSymbol);
-    
     if (lastAtSymbol !== -1) {
       const textAfterAt = textBeforeCursor.substring(lastAtSymbol + 1);
-      console.log('[Mention Debug] Text after @:', textAfterAt);
-      console.log('[Mention Debug] Has space?:', textAfterAt.includes(' '));
       
       if (!textAfterAt.includes(' ') && textAfterAt.length >= 0) {
-        console.log('[Mention Debug] ✅ Showing dropdown, search query:', textAfterAt);
         setShowMentionDropdown(true);
         setMentionSearchQuery(textAfterAt);
         setSelectedMentionIndex(0);
       } else {
-        console.log('[Mention Debug] ❌ Hiding dropdown (has space)');
         setShowMentionDropdown(false);
       }
     } else {
-      console.log('[Mention Debug] ❌ No @ found');
       setShowMentionDropdown(false);
     }
 
@@ -346,75 +426,31 @@ export function SimpleMentionsInput({
         : [...mentions, user];
       
       setMentions(newMentions);
-      onChange(newValue, newMentions);
       setShowMentionDropdown(false);
       setMentionSearchQuery("");
+      
+      // Skip next render to prevent cursor jumping
+      skipNextRenderRef.current = true;
+      
+      // Update value immediately
+      onChange(newValue, newMentions);
 
-      // CRITICAL: Keep focus and position cursor after mention
+      // CRITICAL: Position cursor AFTER the pill and space, maintain focus
       setTimeout(() => {
         if (!editorRef.current) return;
         
-        // Force focus back to editor
+        // Force focus
         editorRef.current.focus();
         setIsFocused(true);
         
-        // Wait for DOM update, then position cursor
+        // Calculate target position: beforeAt + pill display name + space
+        const targetPos = beforeAt.length + (user.displayName || user.name).length + 1;
+        
+        // Position cursor
         requestAnimationFrame(() => {
-          if (!editorRef.current) return;
-          
-          // Find all text nodes to calculate cursor position
-          const walker = document.createTreeWalker(
-            editorRef.current,
-            NodeFilter.SHOW_TEXT,
-            null
-          );
-          
-          const allText = editorRef.current.textContent || '';
-          const targetPos = beforeAt.length + (user.displayName || user.name).length + 1; // After pill + space
-          
-          let currentPos = 0;
-          let targetNode: Node | null = null;
-          let targetOffset = 0;
-          
-          while (walker.nextNode()) {
-            const node = walker.currentNode;
-            const nodeLength = (node.textContent || '').length;
-            
-            if (currentPos + nodeLength >= targetPos) {
-              targetNode = node;
-              targetOffset = targetPos - currentPos;
-              break;
-            }
-            
-            currentPos += nodeLength;
-          }
-          
-          // Position cursor at end if we can't find exact position
-          if (!targetNode && editorRef.current.lastChild) {
-            targetNode = editorRef.current.lastChild;
-            if (targetNode.nodeType === Node.TEXT_NODE) {
-              targetOffset = (targetNode.textContent || '').length;
-            } else if (targetNode.lastChild?.nodeType === Node.TEXT_NODE) {
-              targetNode = targetNode.lastChild;
-              targetOffset = (targetNode.textContent || '').length;
-            }
-          }
-          
-          if (targetNode) {
-            try {
-              const newRange = document.createRange();
-              newRange.setStart(targetNode, Math.min(targetOffset, (targetNode.textContent || '').length));
-              newRange.collapse(true);
-              
-              const sel = window.getSelection();
-              sel?.removeAllRanges();
-              sel?.addRange(newRange);
-            } catch (e) {
-              console.error('[Cursor] Failed to position:', e);
-            }
-          }
+          restoreCursorPosition(targetPos);
         });
-      }, 100);
+      }, 50);
     }
   };
 
