@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { SimpleMentionsInput, type MentionUser } from "@/components/input/SimpleMentionsInput";
+import { SimpleMentionsInput, type MentionEntity } from "@/components/input/SimpleMentionsInput";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 import { 
   MapPin, Hash, Camera, Sparkles, Globe, Users, Lock, 
@@ -76,7 +76,8 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
   // Content state
   const [content, setContent] = useState(existingPost?.content || "");
   const [richContent, setRichContent] = useState(existingPost?.richContent || "");
-  const [mentions, setMentions] = useState<MentionUser[]>(existingPost?.mentions || []);
+  const [mentions, setMentions] = useState<MentionEntity[]>(existingPost?.mentions || []);
+  const [mentionIds, setMentionIds] = useState<string[]>([]);
   
   // Media state
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
@@ -97,7 +98,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
   const [recommendationType, setRecommendationType] = useState(existingPost?.recommendationType || "");
   const [priceRange, setPriceRange] = useState(existingPost?.priceRange || "");
   const [location, setLocation] = useState(existingPost?.location || "");
-  const [coordinates, setCoordinates] = useState<{lat: number; lng: number} | null>(existingPost?.coordinates || null);
+  const [coordinates, setCoordinates] = useState<{lat: number; lng: number} | undefined>(existingPost?.coordinates || undefined);
   
   // AI Enhancement
   const [isEnhancing, setIsEnhancing] = useState(false);
@@ -216,11 +217,10 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       
       // Build post data object
       const postData: any = {
-        content: finalContent,
+        content: finalContent, // Canonical format with @user:user_123:maria
         visibility,
         tags: selectedTags,
-        // Send only USER IDs for mention notifications (groups are parsed from content)
-        mentions: mentions.filter(m => m.type === 'user').map(m => m.id),
+        mentions: mentionIds, // Array of IDs: ["user_123", "event_456", "group_789"]
       };
       
       if (isRecommendation && location) {
@@ -330,6 +330,9 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
         onChange={(newContent, newMentions) => {
           setContent(newContent);
           setMentions(newMentions);
+        }}
+        onMentionsChange={(ids) => {
+          setMentionIds(ids);
         }}
         placeholder="What's on your mind? Try @mentioning someone or adding a recommendation..."
         className="min-h-[120px] mb-4"

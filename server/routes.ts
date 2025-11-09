@@ -148,44 +148,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId: req.userId!
       });
 
-      // Parse mentions from post content
-      const mentionRegex = /@\[([^\]]+)\]\((\d+):([^)]+)\)/g;
-      const mentionedGroups: Array<{ id: number; type: string; name: string }> = [];
-      let match;
-      
-      while ((match = mentionRegex.exec(req.body.content || '')) !== null) {
-        const [, displayName, mentionId, mentionType] = match;
+      // NEW: Handle canonical mention format @user:user_123:maria
+      const mentionIds = req.body.mentions || [];
+      const mentionedGroups: Array<{ id: number; type: string }> = [];
+      const mentionedUsers: number[] = [];
+
+      // Parse mention IDs to extract user IDs and group IDs
+      for (const mentionId of mentionIds) {
+        if (typeof mentionId !== 'string') continue;
         
-        if (mentionType === 'city-group' || mentionType === 'professional-group') {
-          mentionedGroups.push({
-            id: parseInt(mentionId),
-            type: mentionType,
-            name: displayName
-          });
+        if (mentionId.startsWith('user_')) {
+          // Extract numeric user ID from "user_123" format
+          const userId = parseInt(mentionId.replace('user_', ''));
+          if (!isNaN(userId) && userId !== req.userId) {
+            mentionedUsers.push(userId);
+          }
+        } else if (mentionId.startsWith('group_')) {
+          const groupId = parseInt(mentionId.replace('group_', ''));
+          if (!isNaN(groupId)) {
+            mentionedGroups.push({ id: groupId, type: 'professional-group' });
+          }
+        } else if (mentionId.startsWith('city_')) {
+          const cityId = parseInt(mentionId.replace('city_', ''));
+          if (!isNaN(cityId)) {
+            mentionedGroups.push({ id: cityId, type: 'city-group' });
+          }
         }
       }
 
-      // Send mention notifications
-      if (req.body.mentions && Array.isArray(req.body.mentions)) {
-        for (const mentionedUserId of req.body.mentions) {
-          if (mentionedUserId !== req.userId) {
-            await storage.createNotification({
-              userId: mentionedUserId,
-              type: 'mention',
-              title: 'You were mentioned',
-              message: `Someone mentioned you in a post`,
-              data: JSON.stringify({ postId: post.id, relatedType: 'post' }),
-              actionUrl: `/feed#post-${post.id}`,
-              isRead: false
-            });
-            
-            wsNotificationService.sendNotification(mentionedUserId, {
-              type: 'mention',
-              title: 'You were mentioned',
-              message: `Someone mentioned you in a post`,
-              postId: post.id
-            });
-          }
+      // Send mention notifications to users
+      const author = await storage.getUserById(req.userId!);
+      for (const mentionedUserId of mentionedUsers) {
+        try {
+          await storage.createNotification({
+            userId: mentionedUserId,
+            type: 'mention',
+            title: 'You were mentioned',
+            message: `${author?.name || 'Someone'} mentioned you in a post`,
+            data: JSON.stringify({ postId: post.id, relatedType: 'post' }),
+            actionUrl: `/feed#post-${post.id}`,
+            isRead: false
+          });
+          
+          // Real-time Socket.io notification
+          wsNotificationService.sendNotification(mentionedUserId, {
+            type: 'mention',
+            title: 'You were mentioned',
+            message: `${author?.name || 'Someone'} mentioned you in a post`,
+            postId: post.id,
+            authorName: author?.name,
+            authorAvatar: author?.profileImage,
+          });
+        } catch (error) {
+          console.error(`Failed to send notification to user ${mentionedUserId}:`, error);
         }
       }
 
