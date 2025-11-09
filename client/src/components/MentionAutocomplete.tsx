@@ -39,6 +39,20 @@ export function MentionAutocomplete({
   // Search for mention options
   const { data: mentionOptions = [] } = useQuery<MentionOption[]>({
     queryKey: ["/api/mentions/search", mentionQuery, mentionType],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      params.append('query', mentionQuery);
+      if (mentionType) params.append('type', mentionType);
+      
+      const response = await fetch(`/api/mentions/search?${params.toString()}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+      
+      if (!response.ok) throw new Error('Failed to fetch mentions');
+      return response.json();
+    },
     enabled: open && mentionQuery.length > 0,
   });
 
