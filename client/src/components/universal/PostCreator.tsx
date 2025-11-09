@@ -215,7 +215,8 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
         content: showEnhancement && enhancedContent ? enhancedContent : content,
         visibility,
         tags: selectedTags,
-        mentions: mentions.map(m => JSON.stringify({ id: m.id, type: m.type, displayName: m.displayName })), // Full mention objects as JSON strings
+        // Send only USER IDs for mention notifications (groups are parsed from content)
+        mentions: mentions.filter(m => m.type === 'user').map(m => m.id),
       };
       
       if (isRecommendation && location) {
