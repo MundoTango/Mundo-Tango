@@ -148,6 +148,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId: req.userId!
       });
 
+      // Parse mentions from post content
+      const mentionRegex = /@\[([^\]]+)\]\((\d+):([^)]+)\)/g;
+      const mentionedGroups: Array<{ id: number; type: string; name: string }> = [];
+      let match;
+      
+      while ((match = mentionRegex.exec(req.body.content || '')) !== null) {
+        const [, displayName, mentionId, mentionType] = match;
+        
+        if (mentionType === 'city-group' || mentionType === 'professional-group') {
+          mentionedGroups.push({
+            id: parseInt(mentionId),
+            type: mentionType,
+            name: displayName
+          });
+        }
+      }
+
       // Send mention notifications
       if (req.body.mentions && Array.isArray(req.body.mentions)) {
         for (const mentionedUserId of req.body.mentions) {
@@ -172,6 +189,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
+      // Auto-post to mentioned groups
+      if (mentionedGroups.length > 0) {
+        const user = await storage.getUserById(req.userId!);
+        const userCity = user?.city || post.location;
+        
+        for (const group of mentionedGroups) {
+          try {
+            // Determine if user is a resident or visitor
+            let postType = 'visitor';
+            
+            if (group.type === 'city-group') {
+              // For city groups, check if user's city matches the group city
+              const groupData = await storage.getGroupById(group.id);
+              if (groupData && userCity) {
+                const cityMatch = userCity.toLowerCase().includes(groupData.city?.toLowerCase() || '') ||
+                                 (groupData.city?.toLowerCase() || '').includes(userCity.toLowerCase());
+                postType = cityMatch ? 'resident' : 'visitor';
+              }
+            } else {
+              // For professional groups, consider members as residents
+              const isMember = await storage.isGroupMember(group.id, req.userId!);
+              postType = isMember ? 'resident' : 'visitor';
+            }
+            
+            // Create group post
+            await storage.createGroupPost({
+              groupId: group.id,
+              authorId: req.userId!,
+              content: req.body.content,
+              mediaUrls: req.body.imageUrls || [],
+              mediaType: req.body.imageUrls && req.body.imageUrls.length > 0 ? 'image' : undefined,
+              postType: postType,
+              isApproved: true, // Auto-approve posts from mentions
+            });
+            
+            console.log(`[Auto-Post] ✅ Posted to ${group.type} "${group.name}" as ${postType}`);
+          } catch (error) {
+            console.error(`[Auto-Post] Failed to post to group ${group.id}:`, error);
+          }
+        }
+      }
+
       if (post.location) {
         const cityName = cityscapeService.parseCityFromLocation(post.location);
         
@@ -189,9 +248,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const newCityCommunity = await storage.createGroup({
               name: cityName,
               description: `The official ${cityName} tango community. Connect with dancers, teachers, and events in your city.`,
-              groupType: "city",
+              type: "city",
               creatorId: req.userId!,
-              coverPhoto: cityscapePhoto?.url || "",
+              coverImage: cityscapePhoto?.url || "",
               city: cityName,
             });
 
