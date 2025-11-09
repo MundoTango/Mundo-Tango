@@ -156,7 +156,7 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
       {/* Sidebar */}
       <aside
         className={`
-          fixed lg:static top-0 left-0 z-40 h-full w-64
+          fixed lg:static top-0 left-0 z-30 h-full w-64
           transform transition-transform duration-300 ease-in-out
           border-r flex flex-col flex-shrink-0
           ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}

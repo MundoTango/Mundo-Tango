@@ -161,7 +161,7 @@ export default function UnifiedTopBar({
 
   return (
     <header 
-      className="sticky top-0 z-50 w-full border-b"
+      className="fixed top-0 left-0 right-0 z-50 w-full border-b"
       style={{
         background: 'rgba(255, 255, 255, 0.85)',
         backdropFilter: 'blur(16px)',
