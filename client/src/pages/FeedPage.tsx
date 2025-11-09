@@ -532,6 +532,7 @@ export default function FeedPage() {
 }
 
 function PostCard({ post }: { post: Post }) {
+  const { user } = useAuth();
   const [showComments, setShowComments] = useState(false);
   const [commentContent, setCommentContent] = useState("");
   const toggleLike = useToggleLike(post.id);
