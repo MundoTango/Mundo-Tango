@@ -48,6 +48,7 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
   const [isLoading, setIsLoading] = useState(true);
   const [realtimeRsvps, setRealtimeRsvps] = useState<Record<number, number>>({});
   const [userRsvps, setUserRsvps] = useState<Set<number>>(new Set());
+  const [rsvpStatuses, setRsvpStatuses] = useState<Record<number, string>>({});
 
   // Fetch events
   useEffect(() => {
@@ -67,6 +68,11 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
       if (response.ok) {
         const data = await response.json();
         setUserRsvps(new Set(data.map((rsvp: any) => rsvp.eventId)));
+        const statuses: Record<number, string> = {};
+        data.forEach((rsvp: any) => {
+          statuses[rsvp.eventId] = rsvp.status;
+        });
+        setRsvpStatuses(statuses);
       }
     } catch (error) {
       console.error('Failed to fetch user RSVPs:', error);
@@ -192,6 +198,7 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
 
       if (response.ok) {
         setUserRsvps(prev => new Set(prev).add(eventId));
+        setRsvpStatuses(prev => ({ ...prev, [eventId]: status }));
         if (status === 'going') {
           setRealtimeRsvps(prev => ({
             ...prev,
@@ -351,9 +358,25 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                             {rsvpCount} going
                           </Badge>
                           
-                          {!userRsvps.has(event.id) && (
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                              {userRsvps.has(event.id) ? (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-6 text-xs px-2"
+                                  style={{
+                                    borderColor: rsvpStatuses[event.id] === 'going' ? '#10B981' : rsvpStatuses[event.id] === 'maybe' ? '#F59E0B' : '#8B5CF6',
+                                    color: rsvpStatuses[event.id] === 'going' ? '#10B981' : rsvpStatuses[event.id] === 'maybe' ? '#F59E0B' : '#8B5CF6',
+                                  }}
+                                  data-testid={`button-rsvp-status-${event.id}`}
+                                >
+                                  {rsvpStatuses[event.id] === 'going' && <Check className="w-3 h-3 mr-1" />}
+                                  {rsvpStatuses[event.id] === 'maybe' && <HelpCircle className="w-3 h-3 mr-1" />}
+                                  {rsvpStatuses[event.id] === 'interested' && <Sparkles className="w-3 h-3 mr-1" />}
+                                  {rsvpStatuses[event.id] === 'going' ? 'Going' : rsvpStatuses[event.id] === 'maybe' ? 'Maybe' : 'Interested'}
+                                </Button>
+                              ) : (
                                 <Button
                                   size="sm"
                                   variant="outline"
@@ -366,7 +389,8 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                                 >
                                   RSVP
                                 </Button>
-                              </DropdownMenuTrigger>
+                              )}
+                            </DropdownMenuTrigger>
                               <DropdownMenuContent 
                                 align="end"
                                 className="w-40"
@@ -414,8 +438,7 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                                   <span>Interested</span>
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
-                            </DropdownMenu>
-                          )}
+                          </DropdownMenu>
                         </motion.div>
                       </div>
                     </div>

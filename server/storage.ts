@@ -3194,7 +3194,7 @@ export class DbStorage implements IStorage {
       .orderBy(asc(eventRsvps.createdAt));
   }
 
-  async searchEvents(params: { 
+  async searchEventsAdvanced(params: { 
     query?: string;
     eventType?: string;
     city?: string;
