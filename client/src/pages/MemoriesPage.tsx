@@ -1,298 +1,148 @@
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Skeleton } from "@/components/ui/skeleton";
-import { TagPill, type TagType } from "@/components/ui/tag-pill";
-import { 
-  Heart, 
-  Calendar, 
-  MapPin, 
-  Award, 
-  Camera, 
-  Music, 
-  Star,
-  TrendingUp,
-  Plus,
-  Sparkles
-} from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { Sparkles } from "lucide-react";
 import { SEO } from "@/components/SEO";
-import { FeedLeftSidebar } from "@/components/FeedLeftSidebar";
-import { FeedRightSidebar } from "@/components/FeedRightSidebar";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-
-interface Memory {
-  id: number;
-  userId: number;
-  title: string;
-  description: string;
-  type: 'milestone' | 'event' | 'photo' | 'achievement';
-  imageUrl?: string | null;
-  date: string;
-  location?: string | null;
-  tags?: string[];
-}
-
-const memoryTypeIcons = {
-  milestone: Award,
-  event: Calendar,
-  photo: Camera,
-  achievement: Star,
-};
-
-const memoryTypeColors = {
-  milestone: 'bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800',
-  event: 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800',
-  photo: 'bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800',
-  achievement: 'bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800',
-};
+import PostCreator from "@/components/universal/PostCreator";
+import SmartPostFeed from "@/components/moments/SmartPostFeed";
+import UpcomingEventsSidebar from "@/components/esa/UpcomingEventsSidebar";
 
 export default function MemoriesPage() {
-  const { data: memories = [], isLoading } = useQuery<Memory[]>({
-    queryKey: ["/api/memories"],
-  });
-
-  const { data: stats } = useQuery<{
-    totalMemories: number;
-    eventsAttended: number;
-    milestones: number;
-    thisYear: number;
-  }>({
-    queryKey: ["/api/memories/stats"],
-  });
-
   return (
     <SelfHealingErrorBoundary pageName="Memories" fallbackRoute="/feed">
       <>
         <SEO
-          title="My Tango Memories"
-          description="Your personal timeline of tango milestones, moments, and memories from around the world."
+          title="Memories - Share Your Tango Journey"
+          description="Share your tango moments, connect with dancers worldwide, and create lasting memories together."
         />
-        <div className="flex min-h-screen gradient-memories">
-          <FeedLeftSidebar />
-          
-          <main className="flex-1 max-w-3xl p-6 space-y-6">
-            {/* Header with Decorative Stars */}
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <h1 className="text-3xl font-bold text-foreground decorative-stars" data-testid="text-page-title">
-                  Memories
-                </h1>
-                <p className="text-muted-foreground text-sm mt-1">
-                  Share your tango moments, connect with dancers, and create lasting memories together
-                </p>
+        
+        <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom, rgba(64, 224, 208, 0.03) 0%, rgba(30, 144, 255, 0.03) 100%)' }}>
+          <div className="max-w-7xl mx-auto px-4 py-6">
+            {/* Header */}
+            <div 
+              className="rounded-xl border p-6 mb-6"
+              style={{
+                background: 'rgba(255, 255, 255, 0.8)',
+                backdropFilter: 'blur(16px)',
+                borderColor: 'rgba(64, 224, 208, 0.2)',
+              }}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 
+                    className="text-4xl font-bold mb-2"
+                    style={{
+                      background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                    }}
+                    data-testid="text-page-title"
+                  >
+                    Memories
+                  </h1>
+                  <p className="text-muted-foreground">
+                    Share your tango journey with the global community
+                  </p>
+                </div>
+                
+                <div 
+                  className="px-4 py-2 rounded-full flex items-center gap-2 animate-pulse"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.1) 0%, rgba(30, 144, 255, 0.1) 100%)',
+                    border: '1px solid rgba(64, 224, 208, 0.3)',
+                  }}
+                >
+                  <div 
+                    className="w-2 h-2 rounded-full animate-pulse"
+                    style={{ background: '#10B981' }}
+                  />
+                  <span className="text-sm font-medium">LIVE</span>
+                </div>
               </div>
-              <Button 
-                size="default"
-                className="gap-2"
-                data-testid="button-create-memory"
-              >
-                <Plus className="h-4 w-4" />
-                Add Memory
-              </Button>
             </div>
 
-            {/* Vibrant Tag Pills */}
-            <div className="flex flex-wrap gap-2">
-              <TagPill type="milonga">Milonga</TagPill>
-              <TagPill type="practica">Práctica</TagPill>
-              <TagPill type="performance">Performance</TagPill>
-              <TagPill type="workshop">Workshop</TagPill>
-              <TagPill type="festival">Festival</TagPill>
-              <TagPill type="travel">Travel</TagPill>
-              <TagPill type="music">Music</TagPill>
-              <TagPill type="fashion">Fashion</TagPill>
+            {/* Main Content - 3 Column Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* Left Sidebar - Hidden on mobile */}
+              <div className="hidden lg:block lg:col-span-3">
+                <div 
+                  className="rounded-xl border p-6 sticky top-20"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.7)',
+                    backdropFilter: 'blur(12px)',
+                    borderColor: 'rgba(64, 224, 208, 0.2)',
+                  }}
+                >
+                  <div className="flex items-center gap-2 mb-4">
+                    <Sparkles className="w-5 h-5" style={{ color: '#A855F7' }} />
+                    <h3 className="font-semibold">Quick Tips</h3>
+                  </div>
+                  <div className="space-y-3 text-sm text-muted-foreground">
+                    <div className="flex items-start gap-2">
+                      <span className="font-bold text-lg" style={{ color: '#40E0D0' }}>🗺️</span>
+                      <div>
+                        <strong>Hidden Gems</strong> - Share your favorite tango spots
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="font-bold text-lg" style={{ color: '#40E0D0' }}>#</span>
+                      <div>
+                        <strong>Tags</strong> - Categorize your memories
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="font-bold text-lg">📷</span>
+                      <div>
+                        <strong>Media</strong> - Upload up to 30 files
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="font-bold text-lg">✨</span>
+                      <div>
+                        <strong>AI Enhance</strong> - Improve your posts
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Feed */}
+              <div className="lg:col-span-6 space-y-6">
+                {/* Post Creator */}
+                <PostCreator 
+                  context={{ type: 'memory' }}
+                  onPostCreated={() => {
+                    // Refresh feed on new post
+                  }}
+                />
+
+                {/* Smart Feed */}
+                <SmartPostFeed 
+                  context={{ type: 'feed' }}
+                  showSearch={true}
+                  showFilters={true}
+                />
+              </div>
+
+              {/* Right Sidebar - Hidden on mobile */}
+              <div className="hidden lg:block lg:col-span-3">
+                <div className="sticky top-20">
+                  <UpcomingEventsSidebar />
+                </div>
+              </div>
             </div>
-
-            {/* Quick Stats with Enhanced Shadows */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card className="card-elevated hover-elevate">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Memories</CardTitle>
-                  <Camera className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-primary" data-testid="text-total-memories">
-                    {stats?.totalMemories || 0}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="card-elevated hover-elevate">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Events Attended</CardTitle>
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-secondary" data-testid="text-events-attended">
-                    {stats?.eventsAttended || 0}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="card-elevated hover-elevate">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Milestones</CardTitle>
-                  <Award className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold" data-testid="text-milestones">
-                    {stats?.milestones || 0}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="hover-elevate">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">This Year</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold" data-testid="text-this-year">
-                    {stats?.thisYear || 0}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Tabs for different views */}
-            <Tabs defaultValue="timeline" className="w-full">
-              <TabsList className="grid w-full max-w-md grid-cols-3">
-                <TabsTrigger value="timeline" data-testid="tab-timeline">Timeline</TabsTrigger>
-                <TabsTrigger value="albums" data-testid="tab-albums">Albums</TabsTrigger>
-                <TabsTrigger value="milestones" data-testid="tab-milestones">Milestones</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="timeline" className="space-y-6 mt-8">
-                {isLoading ? (
-                  <div className="space-y-4">
-                    {[1, 2, 3].map((i) => (
-                      <Card key={i}>
-                        <CardHeader>
-                          <Skeleton className="h-6 w-1/3" />
-                          <Skeleton className="h-4 w-1/4 mt-2" />
-                        </CardHeader>
-                        <CardContent>
-                          <Skeleton className="h-48 w-full" />
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                ) : memories.length > 0 ? (
-                  <div className="space-y-6">
-                    {memories.map((memory) => {
-                      const Icon = memoryTypeIcons[memory.type];
-                      return (
-                        <Card key={memory.id} className="overflow-hidden hover-elevate" data-testid={`memory-${memory.id}`}>
-                          <div className="flex flex-col md:flex-row">
-                            {memory.imageUrl && (
-                              <div className="md:w-1/3 h-64 md:h-auto relative overflow-hidden">
-                                <img
-                                  src={memory.imageUrl}
-                                  alt={memory.title}
-                                  className="absolute inset-0 w-full h-full object-cover"
-                                  data-testid={`img-memory-${memory.id}`}
-                                />
-                              </div>
-                            )}
-                            <div className="flex-1">
-                              <CardHeader>
-                                <div className="flex items-start justify-between gap-4">
-                                  <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <Badge className={memoryTypeColors[memory.type]}>
-                                        <Icon className="h-3 w-3 mr-1" />
-                                        {memory.type}
-                                      </Badge>
-                                      <span className="text-sm text-muted-foreground">
-                                        {formatDistanceToNow(new Date(memory.date), { addSuffix: true })}
-                                      </span>
-                                    </div>
-                                    <CardTitle className="text-2xl" data-testid={`text-memory-title-${memory.id}`}>
-                                      {memory.title}
-                                    </CardTitle>
-                                    {memory.location && (
-                                      <div className="flex items-center gap-1 text-sm text-muted-foreground mt-2">
-                                        <MapPin className="h-4 w-4" />
-                                        {memory.location}
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              </CardHeader>
-                              <CardContent>
-                                <p className="text-muted-foreground mb-4">
-                                  {memory.description}
-                                </p>
-                                {memory.tags && memory.tags.length > 0 && (
-                                  <div className="flex flex-wrap gap-2">
-                                    {memory.tags.map((tag, idx) => (
-                                      <Badge 
-                                        key={idx} 
-                                        variant="outline"
-                                        className="text-xs"
-                                        data-testid={`badge-tag-${tag}`}
-                                      >
-                                        {tag}
-                                      </Badge>
-                                    ))}
-                                  </div>
-                                )}
-                              </CardContent>
-                            </div>
-                          </div>
-                        </Card>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <Card>
-                    <CardContent className="py-16 text-center">
-                      <Camera className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
-                      <h3 className="text-xl font-semibold mb-2">No memories yet</h3>
-                      <p className="text-muted-foreground mb-6">
-                        Start documenting your tango journey by adding your first memory
-                      </p>
-                      <Button data-testid="button-add-first-memory">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Your First Memory
-                      </Button>
-                    </CardContent>
-                  </Card>
-                )}
-              </TabsContent>
-
-              <TabsContent value="albums" className="mt-8">
-                <Card>
-                  <CardContent className="py-16 text-center">
-                    <Camera className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
-                    <h3 className="text-xl font-semibold mb-2">Photo Albums</h3>
-                    <p className="text-muted-foreground">
-                      Organize your memories into beautiful photo albums
-                    </p>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="milestones" className="mt-8">
-                <Card>
-                  <CardContent className="py-16 text-center">
-                    <Award className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
-                    <h3 className="text-xl font-semibold mb-2">Milestone Moments</h3>
-                    <p className="text-muted-foreground">
-                      Celebrate your achievements and special moments
-                    </p>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </main>
-          
-          <FeedRightSidebar />
+          </div>
         </div>
+
+        {/* Floating AI Assistant Button (Future: MrBlue) */}
+        <button
+          className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 z-50"
+          style={{
+            background: 'linear-gradient(135deg, #A855F7 0%, #EC4899 100%)',
+            boxShadow: '0 4px 20px rgba(168, 85, 247, 0.4)',
+          }}
+          title="AI Assistant"
+        >
+          <Sparkles className="w-6 h-6 text-white" />
+        </button>
       </>
     </SelfHealingErrorBoundary>
   );
