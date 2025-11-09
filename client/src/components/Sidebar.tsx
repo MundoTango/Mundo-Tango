@@ -149,33 +149,53 @@ export default function Sidebar() {
         className={`
           fixed top-0 left-0 z-40 h-full w-64
           transform transition-transform duration-300 ease-in-out
-          bg-white dark:bg-ocean-gradient
-          border-r border-gray-200 dark:border-transparent
-          flex flex-col
+          border-r flex flex-col
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0
         `}
+        style={{
+          background: 'linear-gradient(180deg, rgba(64, 224, 208, 0.08) 0%, rgba(30, 144, 255, 0.05) 100%)',
+          backdropFilter: 'blur(12px)',
+          borderColor: 'rgba(64, 224, 208, 0.2)',
+        }}
         data-testid="sidebar"
       >
         {/* Header */}
-        <div className="h-16 flex justify-between items-center px-4 border-b border-gray-200 dark:border-white/10">
+        <div 
+          className="h-16 flex justify-between items-center px-4 border-b"
+          style={{ borderColor: 'rgba(64, 224, 208, 0.15)' }}
+        >
           {/* MT Logo */}
-          <div className="w-10 h-10 rounded-xl bg-brand-icon flex items-center justify-center font-bold text-ocean-deep">
+          <div 
+            className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white shadow-lg"
+            style={{
+              background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)',
+            }}
+          >
             MT
           </div>
           
           {/* Title */}
-          <div className="text-lg font-bold text-gray-800 dark:text-ocean">
+          <div 
+            className="text-lg font-bold"
+            style={{
+              background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 50%, #0047AB 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
             Mundo Tango
           </div>
           
           {/* Close button (mobile only) */}
           <button
             onClick={() => setIsOpen(false)}
-            className="lg:hidden p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-ocean-hover"
+            className="lg:hidden p-1 rounded-lg hover:bg-gray-100/10 transition-colors"
             data-testid="button-sidebar-close"
+            style={{ color: '#40E0D0' }}
           >
-            <X className="w-5 h-5 text-gray-600 dark:text-ocean" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -183,10 +203,23 @@ export default function Sidebar() {
         <div className="flex-1 overflow-y-auto px-3 py-4 space-y-4">
           {/* User Profile Card */}
           <Link href={`/profile/${user?.username || username}`}>
-            <div className="p-3 rounded-xl bg-profile-card hover:scale-[1.02] transition-transform cursor-pointer border border-profile-border" data-testid="sidebar-profile-card">
+            <div 
+              className="p-3 rounded-xl hover:scale-[1.02] transition-all cursor-pointer border shadow-sm"
+              style={{
+                background: 'rgba(255, 255, 255, 0.6)',
+                backdropFilter: 'blur(8px)',
+                borderColor: 'rgba(64, 224, 208, 0.25)',
+              }}
+              data-testid="sidebar-profile-card"
+            >
               <div className="flex items-center gap-3 mb-2">
                 {/* Avatar */}
-                <div className="w-12 h-12 rounded-full bg-brand-gradient flex items-center justify-center text-white font-bold">
+                <div 
+                  className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold shadow-md"
+                  style={{
+                    background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)',
+                  }}
+                >
                   {avatarUrl ? (
                     <Avatar className="w-12 h-12">
                       <AvatarImage src={avatarUrl} />
@@ -199,10 +232,16 @@ export default function Sidebar() {
                 
                 <div className="flex-1 min-w-0">
                   {/* User Info */}
-                  <div className="text-sm font-semibold text-gray-800 dark:text-ocean truncate">
+                  <div 
+                    className="text-sm font-semibold truncate"
+                    style={{ color: '#1E40AF' }}
+                  >
                     {displayName}
                   </div>
-                  <div className="text-xs text-gray-600 dark:text-ocean-muted truncate">
+                  <div 
+                    className="text-xs truncate"
+                    style={{ color: '#64748B' }}
+                  >
                     @{username}
                   </div>
                 </div>

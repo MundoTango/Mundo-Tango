@@ -107,6 +107,31 @@
     "online": "Online",
     "offline": "Offline",
     "available": "Available",
-    "unavailable": "Unavailable"
+    "unavailable": "Unavailable",
+    "admin": "Admin"
+  },
+  "navigation": {
+    "memories": "Memories",
+    "tangoCommunity": "Tango Community",
+    "friends": "Friends",
+    "messages": "Messages",
+    "groups": "Groups",
+    "events": "Events",
+    "recommendations": "Recommendations",
+    "roleInvitations": "Role Invitations",
+    "search": "Search...",
+    "profile": "Profile",
+    "settings": "Settings",
+    "billing": "Billing",
+    "adminAccess": "Admin Access",
+    "logout": "Logout"
+  },
+  "community": {
+    "globalDancers": "Global Dancers",
+    "activeEvents": "Active Events",
+    "communities": "Communities",
+    "yourCity": "Your City",
+    "globalStatistics": "Global Statistics",
+    "globalCommunity": "Global Community"
   }
 }
