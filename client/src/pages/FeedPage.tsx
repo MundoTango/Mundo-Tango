@@ -557,32 +557,60 @@ function PostCard({ post }: { post: Post }) {
         });
         
         if (mention && mention.name) {
-          // Determine color and icon based on type
-          let bgColor = 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20';
-          let textColor = 'text-blue-600 dark:text-blue-400';
-          let borderColor = 'border-blue-300 dark:border-blue-600';
+          // MT Ocean themed colors based on type
+          let pillStyle: React.CSSProperties = {};
           let icon = '👤';
+          let displayType = '';
           
           if (mention.type === 'group') {
-            bgColor = 'bg-gradient-to-r from-purple-500/20 to-pink-500/20';
-            textColor = 'text-purple-600 dark:text-purple-400';
-            borderColor = 'border-purple-300 dark:border-purple-600';
-            icon = mention.displayType === 'Professional Group' ? '👔' : '🏙️';
+            // City Group (green) or Professional Group (purple)
+            if (mention.displayType === 'Professional Group') {
+              pillStyle = {
+                background: 'linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(168, 85, 247, 0.2))',
+                borderColor: 'rgba(147, 51, 234, 0.5)',
+                color: 'rgb(147, 51, 234)',
+              };
+              icon = '👔';
+              displayType = 'Pro';
+            } else {
+              pillStyle = {
+                background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(74, 222, 128, 0.2))',
+                borderColor: 'rgba(34, 197, 94, 0.5)',
+                color: 'rgb(34, 197, 94)',
+              };
+              icon = '🏙️';
+              displayType = 'City';
+            }
           } else if (mention.type === 'event') {
-            bgColor = 'bg-gradient-to-r from-amber-500/20 to-orange-500/20';
-            textColor = 'text-amber-600 dark:text-amber-400';
-            borderColor = 'border-amber-300 dark:border-amber-600';
+            // Event (blue)
+            pillStyle = {
+              background: 'linear-gradient(135deg, rgba(30, 144, 255, 0.2), rgba(59, 130, 246, 0.2))',
+              borderColor: 'rgba(30, 144, 255, 0.5)',
+              color: 'rgb(30, 144, 255)',
+            };
             icon = '📅';
+            displayType = 'Event';
+          } else {
+            // User (cyan - MT Ocean default)
+            pillStyle = {
+              background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.2), rgba(34, 211, 238, 0.2))',
+              borderColor: 'rgba(64, 224, 208, 0.5)',
+              color: 'rgb(64, 224, 208)',
+            };
+            icon = '👤';
+            displayType = 'User';
           }
           
           return (
             <Link key={index} href={`/profile/${username}`}>
-              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border ${bgColor} ${textColor} ${borderColor} font-medium text-sm hover:scale-105 transition-transform cursor-pointer`}>
-                <span>{icon}</span>
+              <span 
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border font-semibold text-xs hover:scale-105 transition-all cursor-pointer shadow-sm"
+                style={pillStyle}
+                data-testid={`mention-pill-${mention.id}`}
+              >
+                <span className="text-sm">{icon}</span>
                 <span>{mention.name}</span>
-                {mention.displayType && (
-                  <span className="text-xs opacity-70">({mention.displayType})</span>
-                )}
+                <span className="opacity-60 text-[10px]">({displayType})</span>
               </span>
             </Link>
           );

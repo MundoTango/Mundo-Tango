@@ -185,7 +185,7 @@ export function SimpleMentionsInput({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute z-50 mt-2 w-full"
+            className="absolute z-[100] mt-2 w-full"
           >
             <Card 
               className="p-2 max-h-64 overflow-y-auto shadow-xl"

@@ -569,6 +569,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/events/my-rsvps", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const rsvps = await storage.getUserRsvps(req.userId!);
+      res.json(rsvps);
+    } catch (error) {
+      console.error("Get user RSVPs error:", error);
+      res.status(500).json({ message: "Failed to fetch user RSVPs" });
+    }
+  });
+
   app.get("/api/events/:id/attendees", async (req: Request, res: Response) => {
     try {
       const eventId = parseInt(req.params.id);

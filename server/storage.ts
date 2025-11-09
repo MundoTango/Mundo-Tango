@@ -339,6 +339,7 @@ export interface IStorage {
   createEventRsvp(rsvp: InsertEventRsvp): Promise<SelectEventRsvp | undefined>;
   getEventRsvps(eventId: number): Promise<SelectEventRsvp[]>;
   getUserEventRsvp(eventId: number, userId: number): Promise<SelectEventRsvp | undefined>;
+  getUserRsvps(userId: number): Promise<SelectEventRsvp[]>;
   updateEventRsvp(eventId: number, userId: number, status: string): Promise<SelectEventRsvp | undefined>;
   
   createGroup(group: InsertGroup): Promise<SelectGroup>;
@@ -1729,6 +1730,13 @@ export class DbStorage implements IStorage {
       .where(and(eq(eventRsvps.eventId, eventId), eq(eventRsvps.userId, userId)))
       .limit(1);
     return result[0];
+  }
+
+  async getUserRsvps(userId: number): Promise<SelectEventRsvp[]> {
+    return await db
+      .select()
+      .from(eventRsvps)
+      .where(eq(eventRsvps.userId, userId));
   }
 
   async updateEventRsvp(eventId: number, userId: number, status: string): Promise<SelectEventRsvp | undefined> {
