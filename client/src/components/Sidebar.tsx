@@ -132,7 +132,11 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
   }, [setIsOpen]);
 
   // Check if route is active
-  const isActive = (path: string) => location === path;
+  const isActive = (path: string) => {
+    // Special case: "/" is the Memories feed
+    if (path === '/memories' && location === '/') return true;
+    return location === path;
+  };
 
   // Use profile data for display
   const displayName = profile?.name || user?.email?.split('@')[0] || "User";
@@ -247,35 +251,50 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
 
           {/* Navigation Menu */}
           <div className="space-y-1">
-            {sidebarRoutes.map((item) => (
-              <Link key={item.link} href={item.link}>
+            {sidebarRoutes.map((item) => {
+              const active = isActive(item.link);
+              
+              return (
                 <div
+                  key={item.link}
                   className="group flex items-center gap-3 py-2.5 px-3 rounded-lg transition-all cursor-pointer border"
                   style={{
-                    background: isActive(item.link) 
+                    background: active 
                       ? 'rgba(64, 224, 208, 0.15)' 
                       : 'transparent',
-                    borderColor: isActive(item.link)
+                    borderColor: active
                       ? 'rgba(64, 224, 208, 0.3)'
                       : 'transparent',
-                    color: isActive(item.link)
+                    color: active
                       ? '#1E90FF'
                       : '#64748B',
                   }}
-                  onClick={() => {
+                  onClick={(e) => {
+                    // Prevent navigation if already on this page
+                    if (active) {
+                      e.preventDefault();
+                      // Just close sidebar on mobile
+                      if (window.innerWidth < 1024) {
+                        setIsOpen(false);
+                      }
+                      return;
+                    }
+                    // Navigate to the page
+                    window.location.href = item.link;
+                    // Close sidebar on mobile after navigation
                     if (window.innerWidth < 1024) {
                       setIsOpen(false);
                     }
                   }}
                   data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
                   onMouseEnter={(e) => {
-                    if (!isActive(item.link)) {
+                    if (!active) {
                       e.currentTarget.style.background = 'rgba(64, 224, 208, 0.08)';
                       e.currentTarget.style.borderColor = 'rgba(64, 224, 208, 0.15)';
                     }
                   }}
                   onMouseLeave={(e) => {
-                    if (!isActive(item.link)) {
+                    if (!active) {
                       e.currentTarget.style.background = 'transparent';
                       e.currentTarget.style.borderColor = 'transparent';
                     }
@@ -291,8 +310,8 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
                     {item.title}
                   </div>
                 </div>
-              </Link>
-            ))}
+              );
+            })}
           </div>
 
           {/* Global Statistics */}
