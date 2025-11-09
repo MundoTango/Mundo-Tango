@@ -244,16 +244,25 @@ export function SimpleMentionsInput({
 
     const lastAtSymbol = textBeforeCursor.lastIndexOf('@');
     
+    console.log('[Mention Debug] Text before cursor:', textBeforeCursor);
+    console.log('[Mention Debug] Last @ position:', lastAtSymbol);
+    
     if (lastAtSymbol !== -1) {
       const textAfterAt = textBeforeCursor.substring(lastAtSymbol + 1);
+      console.log('[Mention Debug] Text after @:', textAfterAt);
+      console.log('[Mention Debug] Has space?:', textAfterAt.includes(' '));
+      
       if (!textAfterAt.includes(' ') && textAfterAt.length >= 0) {
+        console.log('[Mention Debug] ✅ Showing dropdown, search query:', textAfterAt);
         setShowMentionDropdown(true);
         setMentionSearchQuery(textAfterAt);
         setSelectedMentionIndex(0);
       } else {
+        console.log('[Mention Debug] ❌ Hiding dropdown (has space)');
         setShowMentionDropdown(false);
       }
     } else {
+      console.log('[Mention Debug] ❌ No @ found');
       setShowMentionDropdown(false);
     }
 
