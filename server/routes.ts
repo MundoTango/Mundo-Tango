@@ -276,7 +276,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      res.status(201).json(post);
+      // Fetch the full post with user data populated (including role)
+      const fullPost = await storage.getPostById(post.id);
+      res.status(201).json(fullPost);
     } catch (error) {
       console.error("[POST /api/posts] Error:", error);
       res.status(500).json({ message: "Failed to create post" });

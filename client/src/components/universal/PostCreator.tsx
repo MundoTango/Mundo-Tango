@@ -254,6 +254,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       // Reset form
       setContent("");
       setMentions([]);
+      setMentionIds([]);
       setMediaFiles([]);
       setMediaPreviews([]);
       setSelectedTags([]);

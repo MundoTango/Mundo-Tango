@@ -710,8 +710,18 @@ function PostCard({ post }: { post: Post }) {
         </Avatar>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2 flex-wrap">
-            <span className="font-semibold text-foreground" data-testid={`text-post-author-${post.id}`}>
+            <span className="font-semibold text-foreground flex items-center gap-1" data-testid={`text-post-author-${post.id}`}>
               {post.user?.name || post.user?.username || "Unknown User"}
+              {(post.user as any)?.role && (
+                <span className="text-base" title={(post.user as any).role}>
+                  {(post.user as any).role === 'god' ? '👑' : 
+                   (post.user as any).role === 'super_admin' ? '⚡' :
+                   (post.user as any).role === 'admin' ? '🛡️' :
+                   (post.user as any).role === 'moderator' ? '🔧' :
+                   (post.user as any).role === 'teacher' ? '🎓' :
+                   (post.user as any).role === 'premium' ? '⭐' : null}
+                </span>
+              )}
             </span>
             <span className="text-sm text-muted-foreground" data-testid={`text-post-username-${post.id}`}>
               @{post.user?.username || "user"}
