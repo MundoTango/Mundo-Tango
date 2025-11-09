@@ -1,13 +1,149 @@
 import { Router } from "express";
 import { authenticateToken } from "../middleware/auth";
 import { storage } from "../storage";
-import { eq, ilike, or, and } from "drizzle-orm";
-import { users, events, groups, communities } from "@shared/schema";
+import { eq, ilike, or, and, sql } from "drizzle-orm";
+import { users, events, groups, communities, posts } from "@shared/schema";
+import { notificationService } from "../services/notification-service";
 
 const router = Router();
 
 /**
- * MENTION SEARCH API
+ * SEPARATE ENDPOINT: Search Users for Mentions
+ * GET /api/mentions/users/search?q={query}
+ */
+router.get("/users/search", authenticateToken, async (req, res) => {
+  try {
+    const { q = "" } = req.query;
+    const searchQuery = String(q).toLowerCase();
+    const limit = 10;
+
+    const searchedUsers = await storage.searchUsers(searchQuery, limit);
+    const results = searchedUsers.map((user: any) => ({
+      id: `user_${user.id}`,
+      type: "user" as const,
+      display: user.username,
+      name: user.name || user.username,
+      username: user.username,
+      avatar: user.profileImage,
+      subtitle: user.bio || `@${user.username}`,
+      metadata: { status: user.status || "offline" },
+    }));
+
+    res.json({ data: results });
+  } catch (error: any) {
+    console.error("User search error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * SEPARATE ENDPOINT: Search Events for Mentions
+ * GET /api/mentions/events/search?q={query}
+ */
+router.get("/events/search", authenticateToken, async (req, res) => {
+  try {
+    const { q = "" } = req.query;
+    const searchQuery = String(q).toLowerCase();
+    const limit = 10;
+
+    const searchedEvents = await storage.searchEvents(searchQuery, limit);
+    const results = searchedEvents.map((event: any) => ({
+      id: `event_${event.id}`,
+      type: "event" as const,
+      display: event.title,
+      avatar: event.imageUrl,
+      subtitle: `${event.city || "Global"} • ${new Date(event.startDate).toLocaleDateString()}`,
+      metadata: { venue: event.location, eventType: event.eventType },
+    }));
+
+    res.json({ data: results });
+  } catch (error: any) {
+    console.error("Event search error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * SEPARATE ENDPOINT: Search Groups for Mentions
+ * GET /api/mentions/groups/search?q={query}
+ */
+router.get("/groups/search", authenticateToken, async (req, res) => {
+  try {
+    const { q = "" } = req.query;
+    const searchQuery = String(q).toLowerCase();
+    const limit = 10;
+
+    const searchedGroups = await storage.searchGroups(searchQuery, limit);
+    const results = searchedGroups.map((group: any) => ({
+      id: `group_${group.id}`,
+      type: "group" as const,
+      display: group.name,
+      avatar: group.avatar,
+      subtitle: `${group.memberCount} members • ${group.category || "General"}`,
+      metadata: { groupType: "professional" },
+    }));
+
+    res.json({ data: results });
+  } catch (error: any) {
+    console.error("Group search error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * SEPARATE ENDPOINT: Search Cities for Mentions
+ * GET /api/mentions/cities/search?q={query}
+ */
+router.get("/cities/search", authenticateToken, async (req, res) => {
+  try {
+    const { q = "" } = req.query;
+    const searchQuery = String(q).toLowerCase();
+    const limit = 10;
+
+    const searchedCommunities = await storage.searchCommunities(searchQuery, limit);
+    const results = searchedCommunities.map((community: any) => ({
+      id: `city_${community.id}`,
+      type: "city" as const,
+      display: community.name,
+      avatar: community.coverPhotoUrl,
+      subtitle: `${community.cityName} • ${community.memberCount || 0} members`,
+      metadata: { country: community.country },
+    }));
+
+    res.json({ data: results });
+  } catch (error: any) {
+    console.error("City search error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET POSTS WHERE USER IS MENTIONED
+ * GET /api/mentions/user/:userId/posts
+ */
+router.get("/user/:userId/posts", authenticateToken, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const mentionId = `user_${userId}`;
+
+    const db = storage.db;
+    const mentionedPosts = await db
+      .select()
+      .from(posts)
+      .where(sql`${mentionId} = ANY(${posts.mentions})`)
+      .orderBy(sql`${posts.createdAt} DESC`)
+      .limit(50);
+
+    res.json({ posts: mentionedPosts });
+  } catch (error: any) {
+    console.error("Mentioned posts error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * UNIFIED ENDPOINT (BACKWARD COMPATIBLE): Search All Entities
+ * GET /api/mentions/search?query={query}&type={type}
  * Searches across @people, @events, @professional-groups, @city-groups
  */
 router.get("/search", authenticateToken, async (req, res) => {

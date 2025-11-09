@@ -522,7 +522,7 @@ export const posts = pgTable("posts", {
   imageUrl: text("image_url"),
   videoUrl: text("video_url"),
   mediaEmbeds: jsonb("media_embeds"),
-  mentions: text("mentions").array(),
+  mentions: text("mentions").array().default(sql`ARRAY[]::text[]`),
   hashtags: text("hashtags").array(),
   tags: text("tags").array(),
   location: text("location"),
@@ -540,6 +540,7 @@ export const posts = pgTable("posts", {
   userIdx: index("posts_user_idx").on(table.userId),
   eventIdx: index("posts_event_idx").on(table.eventId),
   createdAtIdx: index("posts_created_at_idx").on(table.createdAt),
+  mentionsIdx: index("posts_mentions_idx").using("gin", table.mentions),
 }));
 
 export const postLikes = pgTable("post_likes", {
