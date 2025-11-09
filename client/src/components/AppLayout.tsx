@@ -1,9 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import UnifiedTopBar from "./navigation/UnifiedTopBar";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
+  // Start with sidebar open on desktop, closed on mobile
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    // Auto-open on desktop
+    if (window.innerWidth >= 1024) {
+      setSidebarOpen(true);
+    }
+  }, []);
 
   return (
     <div className="relative flex h-screen w-full bg-background">

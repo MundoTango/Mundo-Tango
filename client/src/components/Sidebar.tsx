@@ -159,7 +159,7 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
           fixed lg:static top-0 left-0 z-30 h-full w-64
           transform transition-transform duration-300 ease-in-out
           border-r flex flex-col flex-shrink-0
-          ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
         style={{
           background: 'linear-gradient(180deg, rgba(64, 224, 208, 0.08) 0%, rgba(30, 144, 255, 0.05) 100%)',
