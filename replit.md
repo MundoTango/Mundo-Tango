@@ -21,6 +21,16 @@ The platform features a unified **MT Ocean theme** across 142 pages, incorporati
 The navigation system uses two main layouts:
 1.  **AppLayout** (104 main user pages) with a GlobalTopbar and AppSidebar.
 2.  **AdminLayout** (38 admin pages) with a consistent GlobalTopbar and AdminSidebar.
+3.  **DashboardLayout** (Nov 9, 2025) - New unified navigation wrapper combining Sidebar + UnifiedTopBar with MT Ocean theme, responsive design, and real-time features. Located at `client/src/layouts/DashboardLayout.tsx`.
+
+**Global Navigation System (Nov 9, 2025):**
+- **Sidebar Component** (`client/src/components/Sidebar.tsx`) - 306 lines with user profile card, 8 navigation items (Memories, Tango Community, Friends, Messages, Groups, Events, Recommendations, Role Invitations), 4 real-time global statistics, MT Ocean theme glassmorphic design, responsive collapse (mobile overlay, desktop fixed), active route highlighting, and footer branding.
+- **UnifiedTopBar Component** (`client/src/components/navigation/UnifiedTopBar.tsx`) - 600+ lines with global search (4-column results: Posts/Events/People/Groups), real-time notifications with WebSocket + pulse animation, real-time messages with badges, favorites quick access, theme toggle (light/dark with localStorage persistence), language selector (68 languages with flags), user dropdown menu (Profile, Settings, Billing, Admin Access, Logout), sticky positioning with backdrop blur glassmorphic effect.
+- **Design Tokens** - Comprehensive CSS variables in `client/src/index.css` for Ocean theme (turquoise gradient, seafoam accents, glassmorphic effects, profile cards, stat cards, hover states, active states).
+- **Real-time Features** - WebSocket connections for notifications/messages (30s polling fallback), global stats updates (60s polling), pulse animations for new activity.
+- **Internationalization** - Full i18next support for 68 languages with regional grouping and flag icons.
+- **Testing** - Comprehensive Playwright test suite (`tests/e2e/navigation-system.spec.ts`) covering sidebar visibility, topbar functionality, search, theme toggle, language selector, responsive behavior, accessibility, and MT Ocean theme styling.
+
 All navigation components use design tokens for complete visual redesign flexibility, and all interactive elements include Test IDs for Playwright automation.
 
 #### Technical Implementations
