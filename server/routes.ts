@@ -33,6 +33,7 @@ import syncRoutes from "./routes/sync-routes";
 import selfHealingRoutes from "./routes/self-healing-routes";
 import agentHealthRoutes from "./routes/agent-health-routes";
 import predictiveContextRoutes from "./routes/predictive-context-routes";
+import aiEnhanceRoutes from "./routes/ai-enhance";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
@@ -134,6 +135,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/whisper", authenticateToken, whisperRoutes);
   app.use("/api/realtime", authenticateToken, realtimeVoiceRoutes);
   app.use("/api/openai-realtime", authenticateToken, openaiRealtimeRoutes);
+  app.use("/api/ai", aiEnhanceRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(createPostBodySchema), async (req: AuthRequest, res: Response) => {
     try {

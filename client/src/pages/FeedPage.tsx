@@ -20,6 +20,8 @@ import { SEO } from "@/components/SEO";
 import { FeedRightSidebar } from "@/components/FeedRightSidebar";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { apiRequest } from "@/lib/queryClient";
+import { PostCreator } from "@/components/universal/PostCreator";
+import { queryClient } from "@/lib/queryClient";
 
 type Post = {
   id: number;
