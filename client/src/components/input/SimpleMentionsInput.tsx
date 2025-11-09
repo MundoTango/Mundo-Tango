@@ -175,6 +175,45 @@ export function SimpleMentionsInput({
     }
   };
 
+  // Get mention pill colors based on type
+  const getMentionPillStyle = (type?: string) => {
+    switch (type) {
+      case 'professional-group':
+        return {
+          background: 'linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(168, 85, 247, 0.2))',
+          borderColor: 'rgba(147, 51, 234, 0.5)',
+          color: 'rgb(147, 51, 234)',
+        };
+      case 'city-group':
+        return {
+          background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(74, 222, 128, 0.2))',
+          borderColor: 'rgba(34, 197, 94, 0.5)',
+          color: 'rgb(34, 197, 94)',
+        };
+      case 'event':
+        return {
+          background: 'linear-gradient(135deg, rgba(30, 144, 255, 0.2), rgba(59, 130, 246, 0.2))',
+          borderColor: 'rgba(30, 144, 255, 0.5)',
+          color: 'rgb(30, 144, 255)',
+        };
+      default: // user
+        return {
+          background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.2), rgba(34, 211, 238, 0.2))',
+          borderColor: 'rgba(64, 224, 208, 0.5)',
+          color: 'rgb(64, 224, 208)',
+        };
+    }
+  };
+
+  const getMentionIcon = (type?: string) => {
+    switch (type) {
+      case 'professional-group': return '👔';
+      case 'city-group': return '🏙️';
+      case 'event': return '📅';
+      default: return '👤';
+    }
+  };
+
   return (
     <div className="relative">
       <textarea
@@ -188,6 +227,27 @@ export function SimpleMentionsInput({
         data-testid="input-mentions-content"
       />
 
+      {/* Mention Pills Display */}
+      {mentions.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          {mentions.map((mention) => {
+            const pillStyle = getMentionPillStyle(mention.type);
+            const icon = getMentionIcon(mention.type);
+            return (
+              <div
+                key={mention.id}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium"
+                style={pillStyle}
+                data-testid={`mention-pill-${mention.id}`}
+              >
+                <span>{icon}</span>
+                <span>@{mention.username || mention.name}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       {/* Mention Autocomplete Dropdown */}
       <AnimatePresence>
         {showMentionDropdown && (
@@ -196,7 +256,7 @@ export function SimpleMentionsInput({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute z-[9999] mt-2 w-full"
+            className="absolute z-[99999] mt-2 w-full left-0"
           >
             <Card 
               className="p-2 max-h-64 overflow-y-auto shadow-xl"
