@@ -53,7 +53,7 @@ export function UnifiedLocationPicker({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Search locations using OpenStreetMap Nominatim API (free, no API key required)
+  // Search locations using server-side proxy (prevents CSP issues)
   useEffect(() => {
     if (searchQuery.trim().length < 3) {
       setResults([]);
@@ -64,16 +64,7 @@ export function UnifiedLocationPicker({
       setIsSearching(true);
       try {
         const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?` +
-          `q=${encodeURIComponent(searchQuery)}&` +
-          `format=json&` +
-          `addressdetails=1&` +
-          `limit=5`,
-          {
-            headers: {
-              'User-Agent': 'MundoTango/1.0',
-            },
-          }
+          `/api/locations/search?q=${encodeURIComponent(searchQuery)}`
         );
 
         if (response.ok) {

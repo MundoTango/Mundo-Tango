@@ -51,7 +51,7 @@ export function SimpleMentionsInput({
 
   // Search for users when @ is typed
   useEffect(() => {
-    if (showMentionDropdown && mentionSearchQuery) {
+    if (showMentionDropdown) {
       setIsSearching(true);
       const searchUsers = async () => {
         try {
@@ -210,7 +210,7 @@ export function SimpleMentionsInput({
                           ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20'
                           : 'hover:bg-muted/50'
                       }`}
-                      data-testid={`mention-user-${user.id}`}
+                      data-testid={`mention-result-${user.id}`}
                     >
                       <Avatar className="w-8 h-8">
                         <AvatarImage src={user.profileImage || undefined} />
@@ -223,7 +223,7 @@ export function SimpleMentionsInput({
                     </button>
                   ))}
                 </div>
-              ) : mentionSearchQuery ? (
+              ) : !isSearching ? (
                 <div className="text-center py-4 text-sm text-muted-foreground">
                   No users found
                 </div>
