@@ -3,10 +3,16 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, MapPin, Users, Star, TrendingUp, Clock, ExternalLink } from "lucide-react";
+import { Calendar, MapPin, Users, Star, TrendingUp, Clock, ExternalLink, Check, HelpCircle, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { formatDistanceToNow, format } from "date-fns";
 import { Link } from "wouter";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Event {
   id: number;
@@ -173,7 +179,7 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
     return realtimeRsvps[eventId] ?? baseCount;
   };
 
-  const handleRsvp = async (eventId: number) => {
+  const handleRsvp = async (eventId: number, status: 'going' | 'maybe' | 'interested') => {
     try {
       const response = await fetch(`/api/events/${eventId}/rsvp`, {
         method: "POST",
@@ -181,15 +187,17 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
-        body: JSON.stringify({ status: "going" }),
+        body: JSON.stringify({ status }),
       });
 
       if (response.ok) {
         setUserRsvps(prev => new Set(prev).add(eventId));
-        setRealtimeRsvps(prev => ({
-          ...prev,
-          [eventId]: (prev[eventId] || events.find(e => e.id === eventId)?.rsvpCount || 0) + 1,
-        }));
+        if (status === 'going') {
+          setRealtimeRsvps(prev => ({
+            ...prev,
+            [eventId]: (prev[eventId] || events.find(e => e.id === eventId)?.rsvpCount || 0) + 1,
+          }));
+        }
       }
     } catch (error) {
       console.error("Failed to RSVP:", error);
@@ -341,23 +349,69 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                           </Badge>
                           
                           {!userRsvps.has(event.id) && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="h-6 text-xs px-2"
-                              style={{
-                                borderColor: '#40E0D0',
-                                color: '#40E0D0'
-                              }}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleRsvp(event.id);
-                              }}
-                              data-testid={`button-rsvp-${event.id}`}
-                            >
-                              RSVP
-                            </Button>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-6 text-xs px-2"
+                                  style={{
+                                    borderColor: '#40E0D0',
+                                    color: '#40E0D0'
+                                  }}
+                                  data-testid={`button-rsvp-${event.id}`}
+                                >
+                                  RSVP
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent 
+                                align="end"
+                                className="w-40"
+                                style={{
+                                  background: 'linear-gradient(180deg, rgba(64, 224, 208, 0.15) 0%, rgba(30, 144, 255, 0.12) 100%)',
+                                  backdropFilter: 'blur(12px)',
+                                  borderColor: 'rgba(64, 224, 208, 0.3)',
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <DropdownMenuItem
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleRsvp(event.id, 'going');
+                                  }}
+                                  className="cursor-pointer"
+                                  data-testid={`rsvp-going-${event.id}`}
+                                >
+                                  <Check className="w-4 h-4 mr-2" style={{ color: '#10B981' }} />
+                                  <span>Going</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleRsvp(event.id, 'maybe');
+                                  }}
+                                  className="cursor-pointer"
+                                  data-testid={`rsvp-maybe-${event.id}`}
+                                >
+                                  <HelpCircle className="w-4 h-4 mr-2" style={{ color: '#F59E0B' }} />
+                                  <span>Maybe</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleRsvp(event.id, 'interested');
+                                  }}
+                                  className="cursor-pointer"
+                                  data-testid={`rsvp-interested-${event.id}`}
+                                >
+                                  <Sparkles className="w-4 h-4 mr-2" style={{ color: '#8B5CF6' }} />
+                                  <span>Interested</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           )}
                         </motion.div>
                       </div>

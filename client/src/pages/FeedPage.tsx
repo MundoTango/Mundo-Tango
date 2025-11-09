@@ -540,8 +540,14 @@ function PostCard({ post }: { post: Post }) {
   const createComment = useCreateComment();
   const { toast } = useToast();
   
-  // Parse @mentions from content if exists
-  const mentions = (post as any).mentions || [];
+  // Parse @mentions from content if exists (they're stored as JSON strings)
+  const mentions = ((post as any).mentions || []).map((m: string) => {
+    try {
+      return typeof m === 'string' ? JSON.parse(m) : m;
+    } catch {
+      return null;
+    }
+  }).filter(Boolean);
   
   // Render content with clickable @mentions as colored pills
   const renderContentWithMentions = (content: string) => {
@@ -552,11 +558,12 @@ function PostCard({ post }: { post: Post }) {
       if (part.startsWith('@')) {
         const username = part.substring(1);
         const mention = mentions.find((m: any) => {
-          if (!m) return false;
-          return m.username === username || (m.name && m.name.replace(/\s+/g, '-') === username);
+          if (!m || !m.displayName) return false;
+          const normalizedDisplayName = m.displayName.toLowerCase().replace(/\s+/g, '-');
+          return normalizedDisplayName === username.toLowerCase();
         });
         
-        if (mention && mention.name) {
+        if (mention && mention.displayName) {
           // MT Ocean themed colors based on type
           let pillStyle: React.CSSProperties = {};
           let icon = '👤';
@@ -609,7 +616,7 @@ function PostCard({ post }: { post: Post }) {
                 data-testid={`mention-pill-${mention.id}`}
               >
                 <span className="text-sm">{icon}</span>
-                <span>{mention.name}</span>
+                <span>{mention.displayName}</span>
                 <span className="opacity-60 text-[10px]">({displayType})</span>
               </span>
             </Link>

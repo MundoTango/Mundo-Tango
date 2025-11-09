@@ -222,11 +222,11 @@ export default function UnifiedTopBar({
         {/* Center Section - Global Search */}
         <div className="flex-1 max-w-2xl mx-4 hidden md:block" ref={searchRef}>
           <div 
-            className="relative rounded-full overflow-hidden border"
+            className="relative rounded-full overflow-hidden border shadow-sm"
             style={{
-              background: 'rgba(255, 255, 255, 0.7)',
-              backdropFilter: 'blur(8px)',
-              borderColor: 'rgba(64, 224, 208, 0.25)',
+              background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.18) 0%, rgba(30, 144, 255, 0.15) 100%)',
+              backdropFilter: 'blur(16px)',
+              borderColor: 'rgba(64, 224, 208, 0.4)',
             }}
           >
             {/* Search icon */}
