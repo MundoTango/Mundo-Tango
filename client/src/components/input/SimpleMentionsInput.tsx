@@ -59,7 +59,7 @@ export function SimpleMentionsInput({
       const searchUsers = async () => {
         try {
           const response = await fetch(
-            `/api/mention-search?query=${encodeURIComponent(mentionSearchQuery)}`,
+            `/api/mentions/search?query=${encodeURIComponent(mentionSearchQuery)}`,
             {
               headers: {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
