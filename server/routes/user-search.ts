@@ -110,7 +110,7 @@ router.get('/global-search', authenticateToken, async (req, res) => {
   }
 });
 
-// User mention autocomplete endpoint
+// User mention autocomplete endpoint - supports users, groups, and events
 router.get('/mention-search', authenticateToken, async (req, res) => {
   try {
     const query = req.query.q as string;
@@ -121,12 +121,14 @@ router.get('/mention-search', authenticateToken, async (req, res) => {
 
     const searchTerm = `%${query.trim()}%`;
 
-    const mentionResults = await db
+    // Search users
+    const userResults = await db
       .select({
         id: users.id,
         name: users.name,
         username: users.username,
         profileImage: users.profileImage,
+        type: sql<string>`'user'`,
       })
       .from(users)
       .where(
@@ -135,12 +137,55 @@ router.get('/mention-search', authenticateToken, async (req, res) => {
           ilike(users.username, searchTerm)
         )
       )
-      .limit(10);
+      .limit(5);
 
-    res.json(mentionResults);
+    // Search groups (city groups and pro groups)
+    const groupResults = await db
+      .select({
+        id: groups.id,
+        name: groups.name,
+        username: sql<string>`NULL`,
+        profileImage: groups.imageUrl,
+        type: sql<string>`CASE WHEN ${groups.type} = 'city' THEN 'city_group' WHEN ${groups.type} = 'professional' THEN 'pro_group' ELSE 'group' END`,
+      })
+      .from(groups)
+      .where(
+        or(
+          ilike(groups.name, searchTerm),
+          ilike(groups.description, searchTerm)
+        )
+      )
+      .limit(5);
+
+    // Search events
+    const eventResults = await db
+      .select({
+        id: events.id,
+        name: events.title,
+        username: sql<string>`NULL`,
+        profileImage: events.imageUrl,
+        type: sql<string>`'event'`,
+      })
+      .from(events)
+      .where(
+        or(
+          ilike(events.title, searchTerm),
+          ilike(events.description, searchTerm)
+        )
+      )
+      .limit(5);
+
+    // Combine all results
+    const allResults = [
+      ...userResults.map(r => ({ ...r, name: r.name, displayType: 'User' })),
+      ...groupResults.map(r => ({ ...r, displayType: r.type === 'city_group' ? 'City Group' : r.type === 'pro_group' ? 'Pro Group' : 'Group' })),
+      ...eventResults.map(r => ({ ...r, displayType: 'Event' }))
+    ];
+
+    res.json(allResults);
   } catch (error) {
     console.error('Mention search error:', error);
-    res.status(500).json({ error: 'Failed to search users' });
+    res.status(500).json({ error: 'Failed to search mentions' });
   }
 });
 

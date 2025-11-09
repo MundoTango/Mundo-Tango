@@ -7,8 +7,10 @@ import { motion, AnimatePresence } from "framer-motion";
 interface MentionUser {
   id: number;
   name: string;
-  username: string;
+  username: string | null;
   profileImage?: string | null;
+  type?: string;
+  displayType?: string;
 }
 
 interface SimpleMentionsInputProps {
@@ -119,7 +121,7 @@ export function SimpleMentionsInput({
     
     if (lastAtSymbol !== -1) {
       const beforeAt = value.substring(0, lastAtSymbol);
-      const mentionText = `@${user.username} `;
+      const mentionText = user.username ? `@${user.username} ` : `@${user.name.replace(/\s+/g, '-')} `;
       const newValue = beforeAt + mentionText + textAfterCursor;
       const newCursorPos = beforeAt.length + mentionText.length;
 
@@ -218,7 +220,12 @@ export function SimpleMentionsInput({
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <div className="font-medium text-sm truncate">{user.name}</div>
-                        <div className="text-xs text-muted-foreground truncate">@{user.username}</div>
+                        <div className="text-xs text-muted-foreground truncate flex items-center gap-1">
+                          {user.username && <span>@{user.username}</span>}
+                          {user.displayType && (
+                            <span className="text-cyan-500">• {user.displayType}</span>
+                          )}
+                        </div>
                       </div>
                     </button>
                   ))}
