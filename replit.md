@@ -43,10 +43,10 @@ All navigation components use design tokens for complete visual redesign flexibi
 -   **8-Tier RBAC System** (god, super\_admin, admin, moderator, teacher, premium, user, guest).
 -   **Dynamic Feature Flag System** with Redis fallback.
 -   **Stripe Integration** for dynamic pricing.
--   **Events System:** Fully operational with 24 API endpoints, RSVPs, ticketing, and recurrence rules.
+-   **Events System:** Fully operational with 24 API endpoints, RSVPs, ticketing, and recurrence rules. **RSVP Enhancement (Nov 9, 2025):** Replaced single RSVP button with dropdown menu (Going/Maybe/Interested options), added `guest_names` column to event_rsvps table, fixed route ordering (specific routes before parameterized).
 -   **Groups System:** 23 API endpoints for community groups. **Frontend 95% complete** (Nov 5, 2025) - 6 components created and integrated (GroupCreationModal, GroupPostFeed, GroupMembersList, GroupInviteSystem, GroupCategoryFilter, GroupSettingsPanel). Backend bugs fixed (field name corrections, duplicate route removal). LSP errors cleared. Testing in progress.
 -   **Social Features:** Pagination, optimistic updates, CRUD, advanced friendship algorithms.
--   **Post System:** Like, comment, share, bookmark, report, edit with history, analytics.
+-   **Post System:** Like, comment, share, bookmark, report, edit with history, analytics. **@Mention Pills (Nov 9, 2025):** Full implementation with JSON-stringified mention objects stored in database (id, type, displayName). PostCreator sends complete mention data, FeedPage parses and renders colored pills with MT Ocean gradients - User (cyan), Event (blue), City (green), Professional Group (purple).
 -   **Housing System:** **Documentation complete, implementation pending**. Database schema ready (`housingListings`, `housingBookings`). Includes marketplace, host/guest onboarding, map integration with CDN-free Leaflet, MT Ocean theme. Routes: `/housing-marketplace`, `/host-onboarding`, `/guest-onboarding`, city group housing tabs. Geocoding via OpenStreetMap Nominatim API. Components planned: HostHomesList, HousingMap, FilterPanels, BookingCalendar. Integration with unified map system (turquoise gradient markers, glassmorphic UI). Documentation: 8 comprehensive files covering marketplace, group pages, onboarding flows, map components, CDN-free migration.
 
 **AI Integration:**
