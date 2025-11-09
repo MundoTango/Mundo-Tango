@@ -190,10 +190,10 @@ export function SimpleMentionsInput({
             <Card 
               className="p-2 max-h-64 overflow-y-auto shadow-xl"
               style={{
-                background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.95), rgba(30, 144, 255, 0.9))',
+                background: 'linear-gradient(135deg, rgb(64, 224, 208), rgb(30, 144, 255))',
                 backdropFilter: 'blur(20px)',
-                borderColor: 'rgba(64, 224, 208, 0.6)',
-                boxShadow: '0 8px 32px rgba(64, 224, 208, 0.3)',
+                borderColor: 'rgb(64, 224, 208)',
+                boxShadow: '0 12px 40px rgba(64, 224, 208, 0.5), 0 0 20px rgba(30, 144, 255, 0.3)',
               }}
               data-testid="mentions-dropdown"
             >

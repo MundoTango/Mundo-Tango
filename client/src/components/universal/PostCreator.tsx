@@ -210,32 +210,36 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
     setUploadProgress(0);
 
     try {
-      const formData = new FormData();
-      formData.append('content', showEnhancement && enhancedContent ? enhancedContent : content);
-      formData.append('visibility', visibility);
-      formData.append('tags', JSON.stringify(selectedTags));
+      // Build post data object
+      const postData: any = {
+        content: showEnhancement && enhancedContent ? enhancedContent : content,
+        visibility,
+        tags: selectedTags,
+        mentions: mentions.map(m => m.id), // Array of user IDs
+      };
       
-      if (isRecommendation) {
-        formData.append('isRecommendation', 'true');
-        formData.append('recommendationType', recommendationType);
-        formData.append('priceRange', priceRange);
-        formData.append('location', location);
+      if (isRecommendation && location) {
+        postData.location = location;
+        if (recommendationType) postData.postType = recommendationType;
+        if (priceRange) postData.richContent = { priceRange };
+        if (coordinates) postData.coordinates = coordinates;
       }
 
-      // Add media files
-      mediaFiles.forEach((file, index) => {
-        formData.append('media', file);
-      });
-
+      // Send as JSON (media upload will be handled separately later)
       const response = await fetch('/api/posts', {
         method: editMode ? 'PATCH' : 'POST',
         headers: {
+          'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         },
-        body: formData,
+        body: JSON.stringify(postData),
       });
 
-      if (!response.ok) throw new Error('Post failed');
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Post creation failed:', errorData);
+        throw new Error('Post failed');
+      }
 
       toast({
         title: "🎉 Memory shared!",
@@ -244,14 +248,20 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
 
       // Reset form
       setContent("");
+      setMentions([]);
       setMediaFiles([]);
       setMediaPreviews([]);
       setSelectedTags([]);
       setIsRecommendation(false);
+      setLocation("");
+      setCoordinates(null);
+      setRecommendationType("");
+      setPriceRange("");
       setShowTags(false);
       setShowRecommendations(false);
       setShowVisibility(false);
       setShowEnhancement(false);
+      setEnhancedContent("");
 
       if (onPostCreated) onPostCreated();
 

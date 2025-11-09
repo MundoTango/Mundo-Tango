@@ -627,9 +627,12 @@ function PostCard({ post }: { post: Post }) {
     <Card 
       className="p-6 hover-elevate" 
       style={{
-        background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.05), rgba(30, 144, 255, 0.03))',
-        backdropFilter: 'blur(8px)',
-        borderColor: 'rgba(64, 224, 208, 0.2)',
+        background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.15), rgba(30, 144, 255, 0.12), rgba(100, 180, 255, 0.08))',
+        backdropFilter: 'blur(12px)',
+        borderWidth: '2px',
+        borderStyle: 'solid',
+        borderImage: 'linear-gradient(135deg, rgba(64, 224, 208, 0.4), rgba(30, 144, 255, 0.3)) 1',
+        boxShadow: '0 4px 16px rgba(64, 224, 208, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
       }}
       data-testid={`card-post-${post.id}`}
     >
