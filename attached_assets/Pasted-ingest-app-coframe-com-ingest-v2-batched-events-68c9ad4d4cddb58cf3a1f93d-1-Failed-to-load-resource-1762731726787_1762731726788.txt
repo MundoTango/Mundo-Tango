@@ -1,0 +1,419 @@
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_monitoring/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/session_result/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+MundoTango:1 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+MundoTango:1 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+MundoTango:1 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+cdn.segment.com/next-integrations/actions/tiktok-pixel/1526190d7b84ef9800b4.js:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2 Failed to create PluginFactory Object
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2 Failed to load Remote Plugin Error: Failed to load https://cdn.segment.com/next-integrations/actions/tiktok-pixel/1526190d7b84ef9800b4.js
+    at o.onerror (load-script.ts:53:24)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+bc3f23dfc7cd896f.js:2 Download the Apollo DevTools for a better development experience: https://chrome.google.com/webstore/detail/apollo-client-developer-t/jdkknkkbebbapilgoeccciglkfbmbnfm
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730758808&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730758808&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1044&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+index.js:1 content loaded
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730758932&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=5&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+index.59b2ae62.js:3 Content Script: Initializing
+bc3f23dfc7cd896f.js:2 [LaunchDarkly] LaunchDarkly client initialized
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730759485&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1044&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730759542&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=5&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730759639&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+dafb77fab994065f.js:2 [Intervention] Slow network is detected. See https://www.chromestatus.com/feature/5636954674692096 for more details. Fallback font will be used while loading: https://replit.com/public/fonts/replit-icons.woff
+ed1e693c96a75807.js:2 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+z @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'ambient-light-sensor'.
+z @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'battery'.
+z @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'execution-while-not-rendered'.
+z @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'execution-while-out-of-viewport'.
+z @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'layout-animations'.
+z @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'legacy-image-formats'.
+z @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'navigation-override'.
+z @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'oversized-images'.
+z @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'publickey-credentials'.
+z @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'speaker-selection'.
+z @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'unoptimized-images'.
+z @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'unsized-media'.
+z @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Unrecognized feature: 'pointer-lock'.
+z @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Allow attribute will take precedence over 'allowfullscreen'.
+z @ ed1e693c96a75807.js:2
+ed1e693c96a75807.js:2 Allow attribute will take precedence over 'allowpaymentrequest'.
+z @ ed1e693c96a75807.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730761564&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1044&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730761635&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=5&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730761650&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'battery'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+client:536 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/?token=W5zLB5E5Pns-' failed: 
+setupWebSocket @ client:536
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=W5zLB5E5Pns-' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+injected.js:27 i18next::backendConnector: loaded namespace common for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace errors for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace pages for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace navigation for language en Object
+injected.js:27 i18next: languageChanged en
+injected.js:27 i18next: initialized Object
+workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:142 Refused to load the script 'https://replit.com/public/js/beacon.js' because it violates the following Content Security Policy directive: "script-src-elem 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net".
+
+onIframeLoad @ workspace_iframe.html?initialPath=%2F&id=%3Ar4a%3A:142
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730766066&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1044&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730766066&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1044&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730766149&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=5&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730766149&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=5&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730766214&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730766214&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+web-client-content-script.js:2 Uncaught TypeError: Failed to execute 'observe' on 'MutationObserver': parameter 1 is not of type 'Node'.
+    at HTMLIFrameElement.<anonymous> (web-client-content-script.js:2:1434139)
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+UpcomingEventsSidebar.tsx:165 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+(anonymous) @ UpcomingEventsSidebar.tsx:165
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730768749&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=41&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730769254&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=41&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730771106&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730771259&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=41&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730771628&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730773632&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730775765&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=41&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730775765&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=41&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ bc3f23dfc7cd896f.js:2
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730778135&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+bc3f23dfc7cd896f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730778135&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at bc3f23dfc7cd896f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (4206b4cada407286.js:2:7302)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ bc3f23dfc7cd896f.js:2
+bc3f23dfc7cd896f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ bc3f23dfc7cd896f.js:2
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730782443&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=507&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730782979&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=507&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730784565&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730784566&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+bc3f23dfc7cd896f.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730786024&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=507&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ bc3f23dfc7cd896f.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+bc3f23dfc7cd896f.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730786026&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ bc3f23dfc7cd896f.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+bc3f23dfc7cd896f.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730786026&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ bc3f23dfc7cd896f.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+bc3f23dfc7cd896f.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730788056&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ bc3f23dfc7cd896f.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+bc3f23dfc7cd896f.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730788058&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ bc3f23dfc7cd896f.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+ConnectionStatusBadge.tsx:29 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:29
+bc3f23dfc7cd896f.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1762730788699&sid=4173c523-b3f1-4572-93c3-597fef43e430&ec=1&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ bc3f23dfc7cd896f.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 4206b4cada407286.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+t @ 92790bc2ef649c16.js:2
+o @ bc3f23dfc7cd896f.js:2

@@ -53,6 +53,7 @@ export function SimpleMentionsInput({
   const [isSearching, setIsSearching] = useState(false);
   const [selectedMentionIndex, setSelectedMentionIndex] = useState(0);
   const [isFocused, setIsFocused] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
   
   const editorRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -148,6 +149,7 @@ export function SimpleMentionsInput({
     }
 
     setIsSearching(true);
+    setSearchError(null);
     const searchMentions = async () => {
       try {
         // Use SEPARATE endpoints for better performance
@@ -166,6 +168,12 @@ export function SimpleMentionsInput({
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
               },
             });
+            
+            // Check for auth errors
+            if (response.status === 401) {
+              throw new Error('Session expired. Please refresh the page.');
+            }
+            
             if (response.ok) {
               const { data } = await response.json();
               return data as MentionEntity[];
@@ -178,6 +186,8 @@ export function SimpleMentionsInput({
         setMentionResults(allResults.slice(0, 10));
       } catch (error) {
         console.error('Failed to search mentions:', error);
+        setSearchError(error instanceof Error ? error.message : 'Search failed');
+        setMentionResults([]);
       } finally {
         setIsSearching(false);
       }
@@ -528,7 +538,12 @@ export function SimpleMentionsInput({
               }}
               data-testid="mentions-dropdown"
             >
-              {isSearching ? (
+              {searchError ? (
+                <div className="text-center py-4 text-sm">
+                  <div className="text-red-100 font-semibold mb-1">{searchError}</div>
+                  <div className="text-white/60 text-xs">Try refreshing the page</div>
+                </div>
+              ) : isSearching ? (
                 <div className="flex items-center justify-center py-4 text-white">
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Searching...
