@@ -1,8 +1,8 @@
 /**
  * A2: Content Recommendation Agent - Feed Ranking Algorithm
  * 
- * Personalizes post ordering using recency, engagement, and relevance
- * Implements time decay, engagement scoring, and diversity filtering
+ * Personalizes post ordering using recency, engagement, relevance, and mentions
+ * Implements time decay, engagement scoring, mention boosting, and diversity filtering
  */
 
 export interface FeedRanking {
@@ -11,6 +11,7 @@ export interface FeedRanking {
   recency: number;
   engagement: number;
   relevance: number;
+  mentionBoost: number;
 }
 
 interface Post {
@@ -21,6 +22,7 @@ interface Post {
   commentsCount?: number;
   sharesCount?: number;
   content?: string;
+  mentions?: string[]; // Array of mention IDs: ["user_123", "event_456", ...]
 }
 
 interface UserInterests {
@@ -88,8 +90,26 @@ function calculateRelevanceScore(post: Post, userInterests: UserInterests): numb
 }
 
 /**
+ * Calculate mention boost score
+ * Posts with @mentions get boosted visibility (+3 points per mention, max 10 mentions)
+ * Encourages social connections and network effects
+ */
+function calculateMentionScore(post: Post): number {
+  if (!post.mentions || post.mentions.length === 0) {
+    return 0;
+  }
+  
+  // +3 points per mention, capped at 10 mentions (30 points max)
+  const mentionCount = Math.min(post.mentions.length, 10);
+  const rawScore = mentionCount * 3;
+  
+  // Normalize to 0-1 scale (30 max = 1.0)
+  return Math.min(1, rawScore / 30);
+}
+
+/**
  * Calculate final feed score for a post
- * Combines recency, engagement, and relevance with weights
+ * Combines recency, engagement, relevance, and mention boost with weights
  */
 export function calculateFeedScore(
   post: Post, 
@@ -98,23 +118,27 @@ export function calculateFeedScore(
   const recency = calculateRecencyScore(post.createdAt);
   const engagement = calculateEngagementScore(post);
   const relevance = calculateRelevanceScore(post, userInterests);
+  const mentionBoost = calculateMentionScore(post);
   
   // Weighted combination (configurable weights)
-  const RECENCY_WEIGHT = 0.3;
-  const ENGAGEMENT_WEIGHT = 0.4;
-  const RELEVANCE_WEIGHT = 0.3;
+  const RECENCY_WEIGHT = 0.25;
+  const ENGAGEMENT_WEIGHT = 0.35;
+  const RELEVANCE_WEIGHT = 0.25;
+  const MENTION_WEIGHT = 0.15; // Mentions boost visibility
   
   const score = 
     (RECENCY_WEIGHT * recency) +
     (ENGAGEMENT_WEIGHT * engagement) +
-    (RELEVANCE_WEIGHT * relevance);
+    (RELEVANCE_WEIGHT * relevance) +
+    (MENTION_WEIGHT * mentionBoost);
   
   return {
     postId: post.id,
     score,
     recency,
     engagement,
-    relevance
+    relevance,
+    mentionBoost
   };
 }
 
