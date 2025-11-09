@@ -35,7 +35,9 @@ All navigation components use design tokens for complete visual redesign flexibi
 
 #### Technical Implementations
 
-**Backend Architecture:** Node.js with Express and TypeScript, PostgreSQL with Drizzle ORM, JWT-based authentication (tokens stored in localStorage, sent via Authorization header), and real-time capabilities via Supabase Realtime and WebSockets. All protected routes use `authenticateToken` middleware requiring `Bearer ${token}` header.
+**Backend Architecture:** Node.js with Express and TypeScript, PostgreSQL with Drizzle ORM, JWT-based authentication (tokens stored in localStorage as `accessToken`, sent via Authorization header), and real-time capabilities via Supabase Realtime and WebSockets. All protected routes use `authenticateToken` middleware requiring `Bearer ${token}` header.
+
+**Critical Auth Fix (Nov 9, 2025):** Fixed localStorage key mismatch that was causing 401 Unauthorized errors across 5 components. AuthContext stores token as `localStorage.setItem('accessToken', ...)` but components were reading `localStorage.getItem('token')`. Updated all components to use correct `'accessToken'` key: PostCreator (2 instances), SimpleMentionsInput, UpcomingEventsSidebar (2 instances), PostReactions (2 instances), PostActions (3 instances). All API requests now succeed with proper authentication.
 
 **Key Systems:**
 -   **8-Tier RBAC System** (god, super\_admin, admin, moderator, teacher, premium, user, guest).
