@@ -37,7 +37,7 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
       const response = await fetch(`/api/posts/${postId}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       });
       return await response.json();
@@ -65,7 +65,7 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
         body: JSON.stringify({ content: editedContent }),
       });
@@ -94,7 +94,7 @@ export function PostActions({ postId, postContent, isOwnPost }: PostActionsProps
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
         body: JSON.stringify({ reason: reportReason }),
       });

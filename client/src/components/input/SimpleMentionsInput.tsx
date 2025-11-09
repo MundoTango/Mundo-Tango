@@ -61,7 +61,7 @@ export function SimpleMentionsInput({
             `/api/user/mention-search?q=${encodeURIComponent(mentionSearchQuery)}`,
             {
               headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
               },
             }
           );

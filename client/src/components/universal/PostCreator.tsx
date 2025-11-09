@@ -169,7 +169,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         },
         body: JSON.stringify({ content, context: context.type }),
       });
@@ -230,7 +230,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       const response = await fetch('/api/posts', {
         method: editMode ? 'PATCH' : 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         },
         body: formData,
       });

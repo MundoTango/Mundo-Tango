@@ -36,7 +36,7 @@ export function PostReactions({ postId, initialReactions = {}, userReaction }: P
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
         body: JSON.stringify({ reactionType }),
       });
@@ -62,7 +62,7 @@ export function PostReactions({ postId, initialReactions = {}, userReaction }: P
       const response = await fetch(`/api/posts/${postId}/react`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       });
       return await response.json();
