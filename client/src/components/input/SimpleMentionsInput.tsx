@@ -208,11 +208,24 @@ export function SimpleMentionsInput({
                     <button
                       key={user.id}
                       onClick={() => insertMention(user)}
-                      className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-colors ${
+                      className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-all text-white font-medium ${
                         index === selectedMentionIndex
-                          ? 'bg-white/30 text-white'
-                          : 'hover:bg-white/20 text-white'
+                          ? 'scale-105'
+                          : 'hover:scale-102'
                       }`}
+                      style={{
+                        background: index === selectedMentionIndex 
+                          ? 'rgba(255, 255, 255, 0.25)'
+                          : 'transparent',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = index === selectedMentionIndex 
+                          ? 'rgba(255, 255, 255, 0.25)'
+                          : 'transparent';
+                      }}
                       data-testid={`mention-result-${user.id}`}
                     >
                       <Avatar className="w-8 h-8 border-2 border-white/50">
