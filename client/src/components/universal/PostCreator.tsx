@@ -211,7 +211,7 @@ export default function PostCreator({ context = { type: 'feed' }, onPostCreated 
 
   return (
     <div 
-      className="rounded-xl border p-6 space-y-4"
+      className="rounded-xl border p-6 space-y-4 animate-in fade-in slide-in-from-top-4 duration-500"
       style={{
         background: 'rgba(255, 255, 255, 0.7)',
         backdropFilter: 'blur(12px)',
@@ -405,12 +405,13 @@ export default function PostCreator({ context = { type: 'feed' }, onPostCreated 
           {/* Hidden Gems Button */}
           <button
             onClick={() => setShowRecommendations(!showRecommendations)}
-            className="p-2.5 rounded-lg transition-all hover:scale-110"
+            className="p-2.5 rounded-lg transition-all hover:scale-110 animate-in fade-in zoom-in duration-300"
             style={{
               background: showRecommendations
                 ? 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)'
                 : 'rgba(251, 191, 36, 0.1)',
               color: showRecommendations ? 'white' : '#F59E0B',
+              animationDelay: '0ms',
             }}
             title="Hidden Gems - Share your favorite places"
             data-testid="button-hidden-gems"
@@ -421,12 +422,13 @@ export default function PostCreator({ context = { type: 'feed' }, onPostCreated 
           {/* Tags Button */}
           <button
             onClick={() => setShowTags(!showTags)}
-            className="p-2.5 rounded-lg transition-all hover:scale-110"
+            className="p-2.5 rounded-lg transition-all hover:scale-110 animate-in fade-in zoom-in duration-300"
             style={{
               background: showTags
                 ? 'linear-gradient(135deg, #40E0D0 0%, #06B6D4 100%)'
                 : 'rgba(64, 224, 208, 0.1)',
               color: showTags ? 'white' : '#40E0D0',
+              animationDelay: '100ms',
             }}
             title="Add Tags - Categorize your memory"
             data-testid="button-tags"
@@ -437,12 +439,13 @@ export default function PostCreator({ context = { type: 'feed' }, onPostCreated 
           {/* Camera Button */}
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="p-2.5 rounded-lg transition-all hover:scale-110"
+            className="p-2.5 rounded-lg transition-all hover:scale-110 animate-in fade-in zoom-in duration-300"
             style={{
               background: mediaFiles.length > 0
                 ? 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)'
                 : 'rgba(139, 92, 246, 0.1)',
               color: mediaFiles.length > 0 ? 'white' : '#8B5CF6',
+              animationDelay: '200ms',
             }}
             title="Upload Media - Share photos & videos"
             data-testid="button-camera"
@@ -452,10 +455,11 @@ export default function PostCreator({ context = { type: 'feed' }, onPostCreated 
 
           {/* AI Enhancement Button (Placeholder) */}
           <button
-            className="p-2.5 rounded-lg transition-all hover:scale-110"
+            className="p-2.5 rounded-lg transition-all hover:scale-110 animate-in fade-in zoom-in duration-300"
             style={{
               background: 'rgba(168, 85, 247, 0.1)',
               color: '#A855F7',
+              animationDelay: '300ms',
             }}
             title="AI Enhance - Improve your content"
             data-testid="button-ai-enhance"
@@ -466,12 +470,13 @@ export default function PostCreator({ context = { type: 'feed' }, onPostCreated 
           {/* Visibility Button */}
           <button
             onClick={() => setShowVisibility(!showVisibility)}
-            className="p-2.5 rounded-lg transition-all hover:scale-110"
+            className="p-2.5 rounded-lg transition-all hover:scale-110 animate-in fade-in zoom-in duration-300"
             style={{
               background: showVisibility
                 ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
                 : 'rgba(16, 185, 129, 0.1)',
               color: showVisibility ? 'white' : '#10B981',
+              animationDelay: '400ms',
             }}
             title="Visibility - Who can see this"
             data-testid="button-visibility"
@@ -486,12 +491,14 @@ export default function PostCreator({ context = { type: 'feed' }, onPostCreated 
         <Button
           onClick={handleSubmit}
           disabled={!canPost}
-          className="px-6 relative overflow-hidden"
+          className="px-6 relative overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300"
           style={{
             background: canPost
               ? 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)'
               : 'rgba(100, 116, 139, 0.3)',
             color: 'white',
+            animationDelay: '500ms',
+            boxShadow: canPost ? '0 0 20px rgba(64, 224, 208, 0.4)' : 'none',
           }}
           data-testid="button-share-memory"
         >
