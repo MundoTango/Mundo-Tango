@@ -166,36 +166,21 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 z-30 h-full w-64
+          fixed top-16 left-0 z-30 w-64
           transform transition-transform duration-300 ease-in-out
           border-r flex flex-col flex-shrink-0
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
         style={{
+          height: 'calc(100vh - 4rem)',
           background: 'linear-gradient(180deg, rgba(64, 224, 208, 0.08) 0%, rgba(30, 144, 255, 0.05) 100%)',
           backdropFilter: 'blur(12px)',
           borderColor: 'rgba(64, 224, 208, 0.2)',
         }}
         data-testid="sidebar"
       >
-        {/* Header - Mobile close button only */}
-        <div 
-          className="h-16 flex justify-end items-center px-4 border-b lg:hidden"
-          style={{ borderColor: 'rgba(64, 224, 208, 0.15)' }}
-        >
-          {/* Close button (mobile only) */}
-          <button
-            onClick={() => setIsOpen(false)}
-            className="p-2 rounded-lg hover:bg-gray-100/10 transition-colors"
-            data-testid="button-sidebar-close"
-            style={{ color: '#40E0D0' }}
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
         {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 lg:pt-6 space-y-4">
+        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-4">
           {/* User Profile Card */}
           <Link href={`/profile/${user?.username || username}`}>
             <div 
