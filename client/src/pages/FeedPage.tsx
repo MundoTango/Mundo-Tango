@@ -543,20 +543,44 @@ function PostCard({ post }: { post: Post }) {
   // Parse @mentions from content if exists
   const mentions = (post as any).mentions || [];
   
-  // Render content with clickable @mentions
+  // Render content with clickable @mentions as colored pills
   const renderContentWithMentions = (content: string) => {
     if (mentions.length === 0) return content;
     
-    const parts = content.split(/(@[\w]+)/g);
+    const parts = content.split(/(@[\w-]+)/g);
     return parts.map((part, index) => {
       if (part.startsWith('@')) {
         const username = part.substring(1);
-        const mention = mentions.find((m: any) => m.username === username);
+        const mention = mentions.find((m: any) => 
+          m.username === username || m.name.replace(/\s+/g, '-') === username
+        );
         if (mention) {
+          // Determine color and icon based on type
+          let bgColor = 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20';
+          let textColor = 'text-blue-600 dark:text-blue-400';
+          let borderColor = 'border-blue-300 dark:border-blue-600';
+          let icon = '👤';
+          
+          if (mention.type === 'group') {
+            bgColor = 'bg-gradient-to-r from-purple-500/20 to-pink-500/20';
+            textColor = 'text-purple-600 dark:text-purple-400';
+            borderColor = 'border-purple-300 dark:border-purple-600';
+            icon = mention.displayType === 'Professional Group' ? '👔' : '🏙️';
+          } else if (mention.type === 'event') {
+            bgColor = 'bg-gradient-to-r from-amber-500/20 to-orange-500/20';
+            textColor = 'text-amber-600 dark:text-amber-400';
+            borderColor = 'border-amber-300 dark:border-amber-600';
+            icon = '📅';
+          }
+          
           return (
             <Link key={index} href={`/profile/${username}`}>
-              <span className="text-cyan-500 hover:underline font-medium cursor-pointer">
-                {part}
+              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border ${bgColor} ${textColor} ${borderColor} font-medium text-sm hover:scale-105 transition-transform cursor-pointer`}>
+                <span>{icon}</span>
+                <span>{mention.name}</span>
+                {mention.displayType && (
+                  <span className="text-xs opacity-70">({mention.displayType})</span>
+                )}
               </span>
             </Link>
           );
@@ -598,7 +622,15 @@ function PostCard({ post }: { post: Post }) {
   };
 
   return (
-    <Card className="p-6 hover-elevate" data-testid={`card-post-${post.id}`}>
+    <Card 
+      className="p-6 hover-elevate" 
+      style={{
+        background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.05), rgba(30, 144, 255, 0.03))',
+        backdropFilter: 'blur(8px)',
+        borderColor: 'rgba(64, 224, 208, 0.2)',
+      }}
+      data-testid={`card-post-${post.id}`}
+    >
       <div className="flex items-start gap-4">
         <Avatar data-testid={`avatar-${post.id}`}>
           <AvatarImage src={post.user?.profileImage || undefined} />

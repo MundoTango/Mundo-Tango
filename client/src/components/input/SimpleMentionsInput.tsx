@@ -188,16 +188,17 @@ export function SimpleMentionsInput({
             className="absolute z-50 mt-2 w-full"
           >
             <Card 
-              className="p-2 max-h-64 overflow-y-auto"
+              className="p-2 max-h-64 overflow-y-auto shadow-xl"
               style={{
-                background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.08), rgba(30, 144, 255, 0.05))',
-                backdropFilter: 'blur(12px)',
-                borderColor: 'rgba(64, 224, 208, 0.3)',
+                background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.95), rgba(30, 144, 255, 0.9))',
+                backdropFilter: 'blur(20px)',
+                borderColor: 'rgba(64, 224, 208, 0.6)',
+                boxShadow: '0 8px 32px rgba(64, 224, 208, 0.3)',
               }}
               data-testid="mentions-dropdown"
             >
               {isSearching ? (
-                <div className="flex items-center justify-center py-4 text-muted-foreground">
+                <div className="flex items-center justify-center py-4 text-white">
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Searching...
                 </div>
@@ -209,21 +210,27 @@ export function SimpleMentionsInput({
                       onClick={() => insertMention(user)}
                       className={`w-full flex items-center gap-3 p-2 rounded-lg text-left transition-colors ${
                         index === selectedMentionIndex
-                          ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20'
-                          : 'hover:bg-muted/50'
+                          ? 'bg-white/30 text-white'
+                          : 'hover:bg-white/20 text-white'
                       }`}
                       data-testid={`mention-result-${user.id}`}
                     >
-                      <Avatar className="w-8 h-8">
+                      <Avatar className="w-8 h-8 border-2 border-white/50">
                         <AvatarImage src={user.profileImage || undefined} />
-                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback className="bg-white/20 text-white">{user.name.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <div className="font-medium text-sm truncate">{user.name}</div>
-                        <div className="text-xs text-muted-foreground truncate flex items-center gap-1">
-                          {user.username && <span>@{user.username}</span>}
+                        <div className="font-semibold text-sm truncate text-white">{user.name}</div>
+                        <div className="text-xs truncate flex items-center gap-1.5">
+                          {user.username && <span className="text-white/80">@{user.username}</span>}
                           {user.displayType && (
-                            <span className="text-cyan-500">• {user.displayType}</span>
+                            <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-white/20 text-white">
+                              {user.displayType === 'User' && '👤'}
+                              {user.displayType === 'City Group' && '🏙️'}
+                              {user.displayType === 'Professional Group' && '👔'}
+                              {user.displayType === 'Event' && '📅'}
+                              {' '}{user.displayType}
+                            </span>
                           )}
                         </div>
                       </div>
@@ -231,11 +238,11 @@ export function SimpleMentionsInput({
                   ))}
                 </div>
               ) : !isSearching ? (
-                <div className="text-center py-4 text-sm text-muted-foreground">
+                <div className="text-center py-4 text-sm text-white/80">
                   No users found
                 </div>
               ) : (
-                <div className="flex items-center gap-2 py-4 text-sm text-muted-foreground justify-center">
+                <div className="flex items-center gap-2 py-4 text-sm text-white/80 justify-center">
                   <AtSign className="w-4 h-4" />
                   Type to search users
                 </div>

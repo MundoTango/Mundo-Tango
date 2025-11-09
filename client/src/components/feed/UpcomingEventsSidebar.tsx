@@ -46,7 +46,26 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
   // Fetch events
   useEffect(() => {
     fetchEvents();
+    fetchUserRsvps();
   }, [selectedCategory]);
+
+  // Fetch user's existing RSVPs
+  const fetchUserRsvps = async () => {
+    try {
+      const response = await fetch('/api/events/my-rsvps', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setUserRsvps(new Set(data.map((rsvp: any) => rsvp.eventId)));
+      }
+    } catch (error) {
+      console.error('Failed to fetch user RSVPs:', error);
+    }
+  };
 
   const fetchEvents = async () => {
     setIsLoading(true);
