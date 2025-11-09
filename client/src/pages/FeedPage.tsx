@@ -545,16 +545,18 @@ function PostCard({ post }: { post: Post }) {
   
   // Render content with clickable @mentions as colored pills
   const renderContentWithMentions = (content: string) => {
-    if (mentions.length === 0) return content;
+    if (!mentions || mentions.length === 0) return content;
     
     const parts = content.split(/(@[\w-]+)/g);
     return parts.map((part, index) => {
       if (part.startsWith('@')) {
         const username = part.substring(1);
-        const mention = mentions.find((m: any) => 
-          m.username === username || m.name.replace(/\s+/g, '-') === username
-        );
-        if (mention) {
+        const mention = mentions.find((m: any) => {
+          if (!m) return false;
+          return m.username === username || (m.name && m.name.replace(/\s+/g, '-') === username);
+        });
+        
+        if (mention && mention.name) {
           // Determine color and icon based on type
           let bgColor = 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20';
           let textColor = 'text-blue-600 dark:text-blue-400';
