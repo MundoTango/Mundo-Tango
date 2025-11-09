@@ -210,9 +210,13 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
     setUploadProgress(0);
 
     try {
+      const finalContent = showEnhancement && enhancedContent ? enhancedContent : content;
+      console.log('[PostCreator] Submitting post with content:', finalContent);
+      console.log('[PostCreator] Mentions:', mentions);
+      
       // Build post data object
       const postData: any = {
-        content: showEnhancement && enhancedContent ? enhancedContent : content,
+        content: finalContent,
         visibility,
         tags: selectedTags,
         // Send only USER IDs for mention notifications (groups are parsed from content)

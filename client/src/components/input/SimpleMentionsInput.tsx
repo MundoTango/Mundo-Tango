@@ -340,6 +340,8 @@ export function SimpleMentionsInput({
     let extractedValue = '';
     const editor = editorRef.current;
     
+    console.log('[handleInput] Editor innerHTML:', editor.innerHTML);
+    
     // Walk through all child nodes and reconstruct the value
     const processNode = (node: Node): string => {
       if (node.nodeType === Node.TEXT_NODE) {
@@ -353,8 +355,12 @@ export function SimpleMentionsInput({
           const mentionType = element.getAttribute('data-mention-type');
           const displayName = element.textContent?.replace(/^👤|^📅|^👔|^🏙️/, '').trim() || '';
           
+          console.log('[handleInput] Found pill:', { mentionId, mentionType, displayName, textContent: element.textContent });
+          
           if (mentionId && mentionType && displayName) {
-            return `@[${displayName}](${mentionId}:${mentionType})`;
+            const marker = `@[${displayName}](${mentionId}:${mentionType})`;
+            console.log('[handleInput] Returning marker:', marker);
+            return marker;
           }
         }
         
