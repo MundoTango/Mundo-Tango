@@ -13,6 +13,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Heart, MessageCircle, Share2, Image as ImageIcon, Globe, Users, Lock, X, Loader2, MoreVertical, Pencil, Trash2, ChevronDown, Music2, Plane, Sparkles, GraduationCap, PartyPopper, Star, Home, Utensils, ShoppingBag, Wrench, Video, MapPin } from "lucide-react";
+import { PostReactions } from "@/components/feed/PostReactions";
+import { PostActions } from "@/components/feed/PostActions";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
@@ -656,39 +658,38 @@ function PostCard({ post }: { post: Post }) {
         </div>
       </div>
       
-      <div className="flex gap-6 mt-4 pt-4 border-t flex-wrap">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleLike}
-          disabled={toggleLike.isPending || toggleLike.isLikeLoading}
-          className="hover-elevate active-elevate-2"
-          data-testid={`button-like-${post.id}`}
-        >
-          <Heart className={`h-4 w-4 mr-2 ${toggleLike.isLiked ? 'fill-current text-red-500' : ''}`} />
-          <span data-testid={`text-like-count-${post.id}`}>
-            {post.likes || 0}
-          </span>
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setShowComments(!showComments)}
-          className="hover-elevate active-elevate-2"
-          data-testid={`button-comment-${post.id}`}
-        >
-          <MessageCircle className="h-4 w-4 mr-2" />
-          <span data-testid={`text-comment-count-${post.id}`}>{comments?.length || 0}</span>
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="hover-elevate active-elevate-2"
-          data-testid={`button-share-${post.id}`}
-        >
-          <Share2 className="h-4 w-4 mr-2" />
-          Share
-        </Button>
+      <div className="flex items-center justify-between mt-4 pt-4 border-t flex-wrap gap-4">
+        <div className="flex gap-4 flex-wrap">
+          <PostReactions
+            postId={post.id}
+            initialReactions={{}}
+            userReaction={null}
+          />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowComments(!showComments)}
+            className="hover-elevate active-elevate-2"
+            data-testid={`button-comment-${post.id}`}
+          >
+            <MessageCircle className="h-4 w-4 mr-2" />
+            <span data-testid={`text-comment-count-${post.id}`}>{comments?.length || 0}</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="hover-elevate active-elevate-2"
+            data-testid={`button-share-${post.id}`}
+          >
+            <Share2 className="h-4 w-4 mr-2" />
+            Share
+          </Button>
+        </div>
+        <PostActions
+          postId={post.id}
+          postContent={post.content}
+          isOwnPost={post.userId === user?.id}
+        />
       </div>
 
       {showComments && (

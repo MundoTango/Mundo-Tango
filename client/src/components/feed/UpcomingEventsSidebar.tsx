@@ -30,7 +30,7 @@ interface UpcomingEventsSidebarProps {
 }
 
 const PRIORITY_CATEGORIES = [
-  { id: "featured", label: "Featured", icon: Star, color: "from-amber-500 to-orange-500" },
+  { id: "my-events", label: "My Events", icon: Star, color: "from-amber-500 to-orange-500" },
   { id: "trending", label: "Trending", icon: TrendingUp, color: "from-pink-500 to-rose-500" },
   { id: "nearby", label: "Nearby", icon: MapPin, color: "from-cyan-500 to-blue-500" },
   { id: "upcoming", label: "Upcoming", icon: Clock, color: "from-purple-500 to-indigo-500" },
@@ -38,9 +38,10 @@ const PRIORITY_CATEGORIES = [
 
 export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps) {
   const [events, setEvents] = useState<Event[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState("featured");
+  const [selectedCategory, setSelectedCategory] = useState("my-events");
   const [isLoading, setIsLoading] = useState(true);
   const [realtimeRsvps, setRealtimeRsvps] = useState<Record<number, number>>({});
+  const [userRsvps, setUserRsvps] = useState<Set<number>>(new Set());
 
   // Fetch events
   useEffect(() => {
@@ -151,6 +152,29 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
 
   const getRsvpCount = (eventId: number, baseCount: number) => {
     return realtimeRsvps[eventId] ?? baseCount;
+  };
+
+  const handleRsvp = async (eventId: number) => {
+    try {
+      const response = await fetch(`/api/events/${eventId}/rsvp`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ status: "going" }),
+      });
+
+      if (response.ok) {
+        setUserRsvps(prev => new Set(prev).add(eventId));
+        setRealtimeRsvps(prev => ({
+          ...prev,
+          [eventId]: (prev[eventId] || events.find(e => e.id === eventId)?.rsvpCount || 0) + 1,
+        }));
+      }
+    } catch (error) {
+      console.error("Failed to RSVP:", error);
+    }
   };
 
   return (
@@ -275,9 +299,9 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                           </div>
                         )}
 
-                        {/* RSVP Counter with Real-time Pulse */}
+                        {/* RSVP Counter with Real-time Pulse and Button */}
                         <motion.div 
-                          className="flex items-center gap-1 mt-1.5"
+                          className="flex items-center gap-2 mt-1.5"
                           animate={isPulsingRsvp ? {
                             scale: [1, 1.1, 1],
                           } : {}}
@@ -296,6 +320,26 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                             <Users className="w-3 h-3" />
                             {rsvpCount} going
                           </Badge>
+                          
+                          {!userRsvps.has(event.id) && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-6 text-xs px-2"
+                              style={{
+                                borderColor: '#40E0D0',
+                                color: '#40E0D0'
+                              }}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleRsvp(event.id);
+                              }}
+                              data-testid={`button-rsvp-${event.id}`}
+                            >
+                              RSVP
+                            </Button>
+                          )}
                         </motion.div>
                       </div>
                     </div>
