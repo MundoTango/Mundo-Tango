@@ -2502,17 +2502,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 4. POST /api/travel/trips - Create new travel plan
   app.post("/api/travel/trips", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const validation = insertTravelPlanSchema.safeParse({
-        ...req.body,
-        userId: req.user!.id
-      });
+      const { city, country, startDate, endDate, tripDuration, budget, interests, travelStyle, status, notes } = req.body;
       
-      if (!validation.success) {
-        return res.status(400).json({ message: "Invalid travel plan data", errors: validation.error });
+      if (!city || !startDate || !endDate || !tripDuration) {
+        return res.status(400).json({ message: "Missing required fields: city, startDate, endDate, tripDuration" });
       }
 
       const [trip] = await db.insert(travelPlans)
-        .values(validation.data)
+        .values({
+          userId: req.user!.id,
+          city,
+          country: country || "",
+          startDate: new Date(startDate),
+          endDate: new Date(endDate),
+          tripDuration,
+          budget: budget || "",
+          interests: interests || [],
+          travelStyle: travelStyle || "",
+          status: status || "planning",
+          notes: notes || ""
+        })
         .returning();
       res.status(201).json(trip);
     } catch (error) {

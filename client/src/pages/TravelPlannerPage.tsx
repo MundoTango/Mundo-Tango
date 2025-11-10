@@ -34,10 +34,14 @@ interface TravelDestination {
 interface TravelPlan {
   id: number;
   userId: number;
-  destination: string;
+  city: string;
+  country?: string;
   startDate: string;
   endDate: string;
-  budget: number;
+  tripDuration: number;
+  budget: string;
+  interests?: string[];
+  travelStyle?: string;
   status: string;
   notes?: string;
 }
@@ -65,8 +69,8 @@ export default function TravelPlannerPage() {
   });
 
   const createTripMutation = useMutation({
-    mutationFn: async (data: Partial<TravelPlan>) => {
-      return await apiRequest("POST", "/api/travel/trips", { body: data });
+    mutationFn: async (data: any) => {
+      return await apiRequest("POST", "/api/travel/trips", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/travel/trips"] });
@@ -87,11 +91,17 @@ export default function TravelPlannerPage() {
 
   const handleCreateTrip = (e: React.FormEvent) => {
     e.preventDefault();
+    const start = new Date(tripData.startDate);
+    const end = new Date(tripData.endDate);
+    const duration = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    
     createTripMutation.mutate({
-      destination: tripData.destination,
+      city: tripData.destination,
+      country: "",
       startDate: tripData.startDate,
       endDate: tripData.endDate,
-      budget: parseInt(tripData.budget) || 0,
+      tripDuration: duration,
+      budget: tripData.budget,
       status: "planning"
     });
   };
@@ -186,9 +196,9 @@ export default function TravelPlannerPage() {
                         <CardHeader>
                           <div className="flex items-start justify-between">
                             <div>
-                              <CardTitle>{trip.destination}</CardTitle>
+                              <CardTitle>{trip.city}{trip.country ? `, ${trip.country}` : ""}</CardTitle>
                               <p className="text-sm text-muted-foreground mt-1">
-                                {new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}
+                                {new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()} ({trip.tripDuration} days)
                               </p>
                             </div>
                             <Badge variant={trip.status === "confirmed" ? "default" : "secondary"}>
@@ -199,7 +209,7 @@ export default function TravelPlannerPage() {
                         <CardContent>
                           <div className="flex items-center justify-between">
                             <span className="text-sm text-muted-foreground">
-                              Budget: ${trip.budget.toLocaleString()}
+                              Budget: ${trip.budget || "0"}
                             </span>
                             <Button size="sm" variant="outline" data-testid={`button-edit-${trip.id}`}>
                               Edit Plan

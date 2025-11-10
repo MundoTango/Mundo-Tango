@@ -3297,14 +3297,17 @@ export const banAppealslogs = pgTable("ban_appeals", {
 export const travelPlans = pgTable("travel_plans", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
-  title: varchar("title", { length: 255 }).notNull(),
-  description: text("description"),
+  cityId: integer("city_id"),
+  city: varchar("city", { length: 255 }).notNull(),
+  country: varchar("country", { length: 255 }),
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date").notNull(),
-  destinations: jsonb("destinations").notNull(),
-  budget: numeric("budget", { precision: 10, scale: 2 }),
+  tripDuration: integer("trip_duration").notNull(),
+  budget: varchar("budget", { length: 255 }),
+  interests: text("interests").array().default(sql`'{}'::text[]`),
+  travelStyle: varchar("travel_style", { length: 255 }),
   status: varchar("status", { length: 50 }).default('planning'),
-  isPublic: boolean("is_public").default(false),
+  notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 }, (table) => ({
