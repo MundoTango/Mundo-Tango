@@ -16,6 +16,9 @@ export async function enrichPostContentWithGroupTypes(content: string): Promise<
   const oldFormatRegex = /@group:(?!(?:professional|city):)(group_\d+):([^@]*?)(?=\s*(?:@|$))/g;
   const matches = Array.from(content.matchAll(oldFormatRegex));
   
+  console.log('[ENRICH] Checking content:', content.substring(0, 200));
+  console.log('[ENRICH] Found matches:', matches.length);
+  
   if (matches.length === 0) {
     return content; // Already in new format or no groups
   }
@@ -43,8 +46,10 @@ export async function enrichPostContentWithGroupTypes(content: string): Promise<
     const [fullMatch, groupId, name] = match;
     const groupType = groupTypeMap.get(groupId) || 'city';
     const newFormat = `@group:${groupType}:${groupId}:${name}`;
+    console.log(`[ENRICH] Converting: ${fullMatch} -> ${newFormat}`);
     enrichedContent = enrichedContent.replace(fullMatch, newFormat);
   }
 
+  console.log('[ENRICH] Result:', enrichedContent.substring(0, 200));
   return enrichedContent;
 }
