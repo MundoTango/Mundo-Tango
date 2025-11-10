@@ -3516,16 +3516,6 @@ export const insertContactSubmissionSchema = createInsertSchema(contactSubmissio
 export type InsertContactSubmission = z.infer<typeof insertContactSubmissionSchema>;
 export type SelectContactSubmission = typeof contactSubmissions.$inferSelect;
 
-// Travel Plans
-export const insertTravelPlanSchema = createInsertSchema(travelPlans).omit({ id: true, createdAt: true, updatedAt: true });
-export type InsertTravelPlan = z.infer<typeof insertTravelPlanSchema>;
-export type SelectTravelPlan = typeof travelPlans.$inferSelect;
-
-// Travel Plan Items
-export const insertTravelPlanItemSchema = createInsertSchema(travelPlanItems).omit({ id: true, createdAt: true });
-export type InsertTravelPlanItem = z.infer<typeof insertTravelPlanItemSchema>;
-export type SelectTravelPlanItem = typeof travelPlanItems.$inferSelect;
-
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================

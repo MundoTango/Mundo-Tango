@@ -65,6 +65,13 @@ import {
   commentLikes,
   postComments,
   agentHealth,
+  users,
+  events,
+  travelPlans,
+  travelPlanItems,
+  contactSubmissions,
+  insertTravelPlanSchema,
+  insertContactSubmissionSchema,
 } from "@shared/schema";
 import { 
   esaAgents,
@@ -72,7 +79,7 @@ import {
   agentCommunications
 } from "@shared/platform-schema";
 import { db } from "@shared/db";
-import { eq, and, or, desc } from "drizzle-orm";
+import { eq, and, or, desc, sql, isNotNull, gte } from "drizzle-orm";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { cityscapeService } from "./services/cityscape-service";
@@ -2396,6 +2403,251 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Delete housing booking error:", error);
       res.status(500).json({ message: "Failed to delete housing booking" });
+    }
+  });
+
+  // ============================================================================
+  // PHASE H: COMMUNITY MAP, TRAVEL PLANNER, CONTACT FORM (10 endpoints)
+  // ============================================================================
+
+  // 1. GET /api/community/locations - Get all community locations with stats
+  app.get("/api/community/locations", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const locations = await db.select({
+        id: users.id,
+        city: users.city,
+        country: users.country,
+        memberCount: sql<number>`count(distinct ${users.id})::int`,
+        activeEvents: sql<number>`count(distinct ${events.id})::int`,
+        venues: sql<number>`0`,
+        isActive: sql<boolean>`true`,
+      })
+      .from(users)
+      .leftJoin(events, eq(events.userId, users.id))
+      .where(and(
+        isNotNull(users.city),
+        isNotNull(users.country),
+        eq(users.isActive, true)
+      ))
+      .groupBy(users.city, users.country, users.id);
+
+      const groupedLocations = locations.reduce((acc: any[], loc) => {
+        const key = `${loc.city}-${loc.country}`;
+        const existing = acc.find(l => `${l.city}-${l.country}` === key);
+        if (existing) {
+          existing.memberCount += 1;
+          existing.activeEvents += loc.activeEvents;
+        } else {
+          acc.push({
+            id: loc.id,
+            city: loc.city,
+            country: loc.country,
+            coordinates: { lat: 0, lng: 0 },
+            memberCount: 1,
+            activeEvents: loc.activeEvents,
+            venues: 0,
+            isActive: true
+          });
+        }
+        return acc;
+      }, []);
+
+      res.json(groupedLocations);
+    } catch (error) {
+      console.error("Get community locations error:", error);
+      res.status(500).json({ message: "Failed to fetch community locations" });
+    }
+  });
+
+  // 2. GET /api/community/stats - Get global community statistics
+  app.get("/api/community/stats", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const stats = await db.select({
+        totalMembers: sql<number>`count(distinct ${users.id})::int`,
+        countries: sql<number>`count(distinct ${users.country})::int`,
+        cities: sql<number>`count(distinct ${users.city})::int`,
+        activeEvents: sql<number>`count(distinct ${events.id})::int`,
+      })
+      .from(users)
+      .leftJoin(events, eq(events.userId, users.id))
+      .where(eq(users.isActive, true));
+
+      res.json({
+        totalCities: stats[0]?.cities || 0,
+        countries: stats[0]?.countries || 0,
+        totalMembers: stats[0]?.totalMembers || 0,
+        activeEvents: stats[0]?.activeEvents || 0,
+        totalVenues: 0
+      });
+    } catch (error) {
+      console.error("Get community stats error:", error);
+      res.status(500).json({ message: "Failed to fetch community stats" });
+    }
+  });
+
+  // 3. GET /api/travel/trips - Get user's travel plans
+  app.get("/api/travel/trips", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const trips = await db.select()
+        .from(travelPlans)
+        .where(eq(travelPlans.userId, req.user!.id))
+        .orderBy(desc(travelPlans.createdAt));
+      res.json(trips);
+    } catch (error) {
+      console.error("Get travel trips error:", error);
+      res.status(500).json({ message: "Failed to fetch travel trips" });
+    }
+  });
+
+  // 4. POST /api/travel/trips - Create new travel plan
+  app.post("/api/travel/trips", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const validation = insertTravelPlanSchema.safeParse({
+        ...req.body,
+        userId: req.user!.id
+      });
+      
+      if (!validation.success) {
+        return res.status(400).json({ message: "Invalid travel plan data", errors: validation.error });
+      }
+
+      const [trip] = await db.insert(travelPlans)
+        .values(validation.data)
+        .returning();
+      res.status(201).json(trip);
+    } catch (error) {
+      console.error("Create travel trip error:", error);
+      res.status(500).json({ message: "Failed to create travel trip" });
+    }
+  });
+
+  // 5. GET /api/travel/trips/:id - Get travel plan details
+  app.get("/api/travel/trips/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const [trip] = await db.select()
+        .from(travelPlans)
+        .where(and(
+          eq(travelPlans.id, parseInt(req.params.id)),
+          eq(travelPlans.userId, req.user!.id)
+        ));
+
+      if (!trip) {
+        return res.status(404).json({ message: "Travel trip not found" });
+      }
+
+      const items = await db.select()
+        .from(travelPlanItems)
+        .where(eq(travelPlanItems.travelPlanId, trip.id));
+
+      res.json({ ...trip, items });
+    } catch (error) {
+      console.error("Get travel trip details error:", error);
+      res.status(500).json({ message: "Failed to fetch travel trip details" });
+    }
+  });
+
+  // 6. PATCH /api/travel/trips/:id - Update travel plan
+  app.patch("/api/travel/trips/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const [trip] = await db.update(travelPlans)
+        .set({ ...req.body, updatedAt: new Date() })
+        .where(and(
+          eq(travelPlans.id, parseInt(req.params.id)),
+          eq(travelPlans.userId, req.user!.id)
+        ))
+        .returning();
+
+      if (!trip) {
+        return res.status(404).json({ message: "Travel trip not found" });
+      }
+
+      res.json(trip);
+    } catch (error) {
+      console.error("Update travel trip error:", error);
+      res.status(500).json({ message: "Failed to update travel trip" });
+    }
+  });
+
+  // 7. DELETE /api/travel/trips/:id - Delete travel plan
+  app.delete("/api/travel/trips/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await db.delete(travelPlans)
+        .where(and(
+          eq(travelPlans.id, parseInt(req.params.id)),
+          eq(travelPlans.userId, req.user!.id)
+        ));
+      res.status(204).send();
+    } catch (error) {
+      console.error("Delete travel trip error:", error);
+      res.status(500).json({ message: "Failed to delete travel trip" });
+    }
+  });
+
+  // 8. GET /api/travel/destinations - Get suggested destinations (mock data for now)
+  app.get("/api/travel/destinations", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const destinations = [
+        { id: 1, name: "Buenos Aires, Argentina", description: "The birthplace of tango", image: "", popularity: 95 },
+        { id: 2, name: "Montevideo, Uruguay", description: "Traditional milongas and festivals", image: "", popularity: 85 },
+        { id: 3, name: "Paris, France", description: "European tango capital", image: "", popularity: 80 },
+        { id: 4, name: "Istanbul, Turkey", description: "Growing tango scene", image: "", popularity: 70 },
+        { id: 5, name: "Barcelona, Spain", description: "Vibrant tango community", image: "", popularity: 75 }
+      ];
+      res.json(destinations);
+    } catch (error) {
+      console.error("Get destinations error:", error);
+      res.status(500).json({ message: "Failed to fetch destinations" });
+    }
+  });
+
+  // 9. GET /api/travel/packages - Get travel packages based on events
+  app.get("/api/travel/packages", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const packages = await db.select({
+        id: events.id,
+        title: events.title,
+        location: events.location,
+        startDate: events.startDate,
+        endDate: events.endDate,
+        description: events.description,
+        price: events.price,
+        category: events.category
+      })
+      .from(events)
+      .where(and(
+        eq(events.eventType, "festival"),
+        gte(events.startDate, new Date())
+      ))
+      .orderBy(events.startDate)
+      .limit(10);
+
+      res.json(packages);
+    } catch (error) {
+      console.error("Get travel packages error:", error);
+      res.status(500).json({ message: "Failed to fetch travel packages" });
+    }
+  });
+
+  // 10. POST /api/contact - Submit contact form
+  app.post("/api/contact", async (req: Request, res: Response) => {
+    try {
+      const validation = insertContactSubmissionSchema.safeParse(req.body);
+      
+      if (!validation.success) {
+        return res.status(400).json({ message: "Invalid contact form data", errors: validation.error });
+      }
+
+      const [submission] = await db.insert(contactSubmissions)
+        .values(validation.data)
+        .returning();
+
+      res.status(201).json({ 
+        message: "Contact form submitted successfully", 
+        id: submission.id 
+      });
+    } catch (error) {
+      console.error("Submit contact form error:", error);
+      res.status(500).json({ message: "Failed to submit contact form" });
     }
   });
 
