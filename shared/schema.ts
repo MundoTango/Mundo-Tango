@@ -2866,6 +2866,179 @@ export const agentSelfTests = pgTable("agent_self_tests", {
 }));
 
 // ============================================================================
+// PROFESSIONAL PROFILES SYSTEM (PART 6-2)
+// ============================================================================
+
+export const professionalExperiences = pgTable("professional_experiences", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  experienceType: varchar("experience_type", { length: 100 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  organization: varchar("organization", { length: 255 }),
+  location: varchar("location", { length: 255 }),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date"),
+  isCurrent: boolean("is_current").default(false),
+  description: text("description"),
+  achievements: text("achievements").array(),
+  skills: varchar("skills", { length: 100 }).array(),
+  isVerified: boolean("is_verified").default(false),
+  verifiedBy: integer("verified_by").references(() => users.id),
+  verifiedAt: timestamp("verified_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("idx_prof_exp_user").on(table.userId),
+  typeIdx: index("idx_prof_exp_type").on(table.experienceType),
+}));
+
+export const portfolioItems = pgTable("portfolio_items", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  itemType: varchar("item_type", { length: 100 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  mediaUrl: varchar("media_url", { length: 512 }),
+  mediaType: varchar("media_type", { length: 50 }),
+  thumbnailUrl: varchar("thumbnail_url", { length: 512 }),
+  eventDate: timestamp("event_date"),
+  venue: varchar("venue", { length: 255 }),
+  city: varchar("city", { length: 100 }),
+  country: varchar("country", { length: 100 }),
+  tags: varchar("tags", { length: 100 }).array(),
+  category: varchar("category", { length: 100 }),
+  isPublic: boolean("is_public").default(true),
+  isFeatured: boolean("is_featured").default(false),
+  viewCount: integer("view_count").default(0),
+  likeCount: integer("like_count").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("idx_portfolio_user").on(table.userId),
+  typeIdx: index("idx_portfolio_type").on(table.itemType),
+}));
+
+export const certifications = pgTable("certifications", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  issuingOrganization: varchar("issuing_organization", { length: 255 }).notNull(),
+  issueDate: timestamp("issue_date").notNull(),
+  expiryDate: timestamp("expiry_date"),
+  doesNotExpire: boolean("does_not_expire").default(false),
+  credentialId: varchar("credential_id", { length: 255 }),
+  credentialUrl: varchar("credential_url", { length: 512 }),
+  isVerified: boolean("is_verified").default(false),
+  verifiedBy: integer("verified_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  userIdx: index("idx_cert_user").on(table.userId),
+}));
+
+// ============================================================================
+// GAMIFICATION & ACHIEVEMENTS
+// ============================================================================
+
+export const achievements = pgTable("achievements", {
+  id: serial("id").primaryKey(),
+  slug: varchar("slug", { length: 100 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  category: varchar("category", { length: 100 }).notNull(),
+  iconUrl: varchar("icon_url", { length: 512 }),
+  pointsValue: integer("points_value").notNull(),
+  rarity: varchar("rarity", { length: 50 }).notNull(),
+  requirementType: varchar("requirement_type", { length: 100 }).notNull(),
+  requirementValue: integer("requirement_value").notNull(),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  slugIdx: index("idx_achievement_slug").on(table.slug),
+  categoryIdx: index("idx_achievement_category").on(table.category),
+}));
+
+export const userAchievements = pgTable("user_achievements", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  achievementId: integer("achievement_id").references(() => achievements.id, { onDelete: 'cascade' }).notNull(),
+  progress: integer("progress").default(0),
+  progressMax: integer("progress_max").notNull(),
+  isCompleted: boolean("is_completed").default(false),
+  isDisplayed: boolean("is_displayed").default(true),
+  displayOrder: integer("display_order"),
+  earnedAt: timestamp("earned_at"),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  uniqueUserAchievement: unique().on(table.userId, table.achievementId),
+  userIdx: index("idx_user_ach_user").on(table.userId),
+  completedIdx: index("idx_user_ach_completed").on(table.isCompleted),
+}));
+
+export const userPoints = pgTable("user_points", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  totalPoints: integer("total_points").default(0),
+  socialPoints: integer("social_points").default(0),
+  eventPoints: integer("event_points").default(0),
+  contributionPoints: integer("contribution_points").default(0),
+  achievementPoints: integer("achievement_points").default(0),
+  level: integer("level").default(1),
+  levelProgress: integer("level_progress").default(0),
+  nextLevelThreshold: integer("next_level_threshold").default(100),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("idx_user_points_user").on(table.userId),
+  levelIdx: index("idx_user_points_level").on(table.level),
+}));
+
+// ============================================================================
+// STORIES SYSTEM (Instagram-style)
+// ============================================================================
+
+export const stories = pgTable("stories", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  type: varchar("type", { length: 50 }).notNull(),
+  mediaUrl: varchar("media_url", { length: 512 }).notNull(),
+  mediaType: varchar("media_type", { length: 50 }).notNull(),
+  thumbnailUrl: varchar("thumbnail_url", { length: 512 }),
+  caption: text("caption"),
+  duration: integer("duration").default(5),
+  backgroundColor: varchar("background_color", { length: 50 }),
+  fontFamily: varchar("font_family", { length: 100 }),
+  textColor: varchar("text_color", { length: 50 }),
+  viewCount: integer("view_count").default(0),
+  isActive: boolean("is_active").default(true),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  userIdx: index("idx_stories_user").on(table.userId),
+  activeIdx: index("idx_stories_active").on(table.isActive),
+  expiresIdx: index("idx_stories_expires").on(table.expiresAt),
+}));
+
+export const storyViews = pgTable("story_views", {
+  id: serial("id").primaryKey(),
+  storyId: integer("story_id").references(() => stories.id, { onDelete: 'cascade' }).notNull(),
+  viewerId: integer("viewer_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  uniqueView: unique().on(table.storyId, table.viewerId),
+  storyIdx: index("idx_story_views_story").on(table.storyId),
+  viewerIdx: index("idx_story_views_viewer").on(table.viewerId),
+}));
+
+export const storyReactions = pgTable("story_reactions", {
+  id: serial("id").primaryKey(),
+  storyId: integer("story_id").references(() => stories.id, { onDelete: 'cascade' }).notNull(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  reactionType: varchar("reaction_type", { length: 50 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  storyIdx: index("idx_story_reactions_story").on(table.storyId),
+  userIdx: index("idx_story_reactions_user").on(table.userId),
+}));
+// ============================================================================
 // ZOD SCHEMAS & TYPES - TRACK 7 NEW FEATURES
 // ============================================================================
 
@@ -2937,6 +3110,276 @@ export type SelectAgentCollaboration = typeof agentCollaborations.$inferSelect;
 export const insertAgentSelfTestSchema = createInsertSchema(agentSelfTests).omit({ id: true, createdAt: true });
 export type InsertAgentSelfTest = z.infer<typeof insertAgentSelfTestSchema>;
 export type SelectAgentSelfTest = typeof agentSelfTests.$inferSelect;
+
+
+
+
+// ============================================================================
+// ADMIN & MODERATION SYSTEM (PART 3-1, 30)
+// ============================================================================
+
+export const contentReports = pgTable("content_reports", {
+  id: serial("id").primaryKey(),
+  reporterId: integer("reporter_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  contentType: varchar("content_type", { length: 50 }).notNull(),
+  contentId: integer("content_id").notNull(),
+  reportType: varchar("report_type", { length: 100 }).notNull(),
+  description: text("description"),
+  status: varchar("status", { length: 50 }).default('pending'),
+  reviewedBy: integer("reviewed_by").references(() => users.id),
+  reviewedAt: timestamp("reviewed_at"),
+  resolution: text("resolution"),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  reporterIdx: index("idx_content_reports_reporter").on(table.reporterId),
+  statusIdx: index("idx_content_reports_status").on(table.status),
+  contentIdx: index("idx_content_reports_content").on(table.contentType, table.contentId),
+}));
+
+export const auditLogs = pgTable("audit_logs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  action: varchar("action", { length: 255 }).notNull(),
+  resourceType: varchar("resource_type", { length: 100 }),
+  resourceId: varchar("resource_id", { length: 255 }),
+  ipAddress: varchar("ip_address", { length: 45 }),
+  userAgent: text("user_agent"),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  userIdx: index("idx_audit_logs_user").on(table.userId),
+  actionIdx: index("idx_audit_logs_action").on(table.action),
+  createdIdx: index("idx_audit_logs_created").on(table.createdAt),
+}));
+
+export const suspensionLogs = pgTable("suspension_logs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  suspendedBy: integer("suspended_by").references(() => users.id).notNull(),
+  reason: text("reason").notNull(),
+  duration: integer("duration"),
+  startsAt: timestamp("starts_at").notNull(),
+  endsAt: timestamp("ends_at"),
+  isPermanent: boolean("is_permanent").default(false),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  userIdx: index("idx_suspension_logs_user").on(table.userId),
+  activeIdx: index("idx_suspension_logs_active").on(table.endsAt),
+}));
+
+export const banAppealslogs = pgTable("ban_appeals", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  suspensionLogId: integer("suspension_log_id").references(() => suspensionLogs.id),
+  appealText: text("appeal_text").notNull(),
+  status: varchar("status", { length: 50 }).default('pending'),
+  reviewedBy: integer("reviewed_by").references(() => users.id),
+  reviewedAt: timestamp("reviewed_at"),
+  resolution: text("resolution"),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  userIdx: index("idx_ban_appeals_user").on(table.userId),
+  statusIdx: index("idx_ban_appeals_status").on(table.status),
+}));
+
+export const travelPlans = pgTable("travel_plans", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  destinations: jsonb("destinations").notNull(),
+  budget: numeric("budget", { precision: 10, scale: 2 }),
+  status: varchar("status", { length: 50 }).default('planning'),
+  isPublic: boolean("is_public").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("idx_travel_plans_user").on(table.userId),
+  statusIdx: index("idx_travel_plans_status").on(table.status),
+}));
+
+export const travelPlanItems = pgTable("travel_plan_items", {
+  id: serial("id").primaryKey(),
+  travelPlanId: integer("travel_plan_id").references(() => travelPlans.id, { onDelete: 'cascade' }).notNull(),
+  type: varchar("type", { length: 50 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  date: timestamp("date"),
+  location: varchar("location", { length: 255 }),
+  cost: numeric("cost", { precision: 10, scale: 2 }),
+  bookingUrl: varchar("booking_url", { length: 512 }),
+  isBooked: boolean("is_booked").default(false),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  planIdx: index("idx_travel_items_plan").on(table.travelPlanId),
+  typeIdx: index("idx_travel_items_type").on(table.type),
+}));
+
+export const talentProfiles = pgTable("talent_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  profileType: varchar("profile_type", { length: 50 }).notNull(),
+  skills: varchar("skills", { length: 100 }).array(),
+  availability: varchar("availability", { length: 50 }),
+  hourlyRate: numeric("hourly_rate", { precision: 10, scale: 2 }),
+  experienceYears: integer("experience_years"),
+  portfolio: jsonb("portfolio"),
+  isActive: boolean("is_active").default(true),
+  verificationStatus: varchar("verification_status", { length: 50 }).default('pending'),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("idx_talent_profiles_user").on(table.userId),
+  typeIdx: index("idx_talent_profiles_type").on(table.profileType),
+  activeIdx: index("idx_talent_profiles_active").on(table.isActive),
+}));
+
+export const talentMatches = pgTable("talent_matches", {
+  id: serial("id").primaryKey(),
+  seekerId: integer("seeker_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  talentId: integer("talent_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  matchScore: real("match_score").notNull(),
+  matchReason: text("match_reason"),
+  status: varchar("status", { length: 50 }).default('suggested'),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  seekerIdx: index("idx_talent_matches_seeker").on(table.seekerId),
+  talentIdx: index("idx_talent_matches_talent").on(table.talentId),
+  scoreIdx: index("idx_talent_matches_score").on(table.matchScore),
+}));
+
+export const newsletterCampaigns = pgTable("newsletter_campaigns", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  subject: varchar("subject", { length: 255 }).notNull(),
+  content: text("content").notNull(),
+  status: varchar("status", { length: 50 }).default('draft'),
+  scheduledAt: timestamp("scheduled_at"),
+  sentAt: timestamp("sent_at"),
+  recipientCount: integer("recipient_count").default(0),
+  openRate: real("open_rate"),
+  clickRate: real("click_rate"),
+  createdBy: integer("created_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  statusIdx: index("idx_newsletter_campaigns_status").on(table.status),
+  scheduledIdx: index("idx_newsletter_campaigns_scheduled").on(table.scheduledAt),
+}));
+
+export const newsletterSends = pgTable("newsletter_sends", {
+  id: serial("id").primaryKey(),
+  campaignId: integer("campaign_id").references(() => newsletterCampaigns.id, { onDelete: 'cascade' }).notNull(),
+  subscriberId: integer("subscriber_id").references(() => newsletterSubscriptions.id, { onDelete: 'cascade' }).notNull(),
+  status: varchar("status", { length: 50 }).default('sent'),
+  openedAt: timestamp("opened_at"),
+  clickedAt: timestamp("clicked_at"),
+  sentAt: timestamp("sent_at").defaultNow()
+}, (table) => ({
+  campaignIdx: index("idx_newsletter_sends_campaign").on(table.campaignId),
+  subscriberIdx: index("idx_newsletter_sends_subscriber").on(table.subscriberId),
+  statusIdx: index("idx_newsletter_sends_status").on(table.status),
+}));
+
+// ============================================================================
+// ZOD SCHEMAS & TYPES - NEW TABLES
+// ============================================================================
+
+// Professional Experiences
+export const insertProfessionalExperienceSchema = createInsertSchema(professionalExperiences).omit({ id: true, createdAt: true, updatedAt: true, verifiedAt: true });
+export type InsertProfessionalExperience = z.infer<typeof insertProfessionalExperienceSchema>;
+export type SelectProfessionalExperience = typeof professionalExperiences.$inferSelect;
+
+// Portfolio Items
+export const insertPortfolioItemSchema = createInsertSchema(portfolioItems).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertPortfolioItem = z.infer<typeof insertPortfolioItemSchema>;
+export type SelectPortfolioItem = typeof portfolioItems.$inferSelect;
+
+// Certifications
+export const insertCertificationSchema = createInsertSchema(certifications).omit({ id: true, createdAt: true });
+export type InsertCertification = z.infer<typeof insertCertificationSchema>;
+export type SelectCertification = typeof certifications.$inferSelect;
+
+// Achievements
+export const insertAchievementSchema = createInsertSchema(achievements).omit({ id: true, createdAt: true });
+export type InsertAchievement = z.infer<typeof insertAchievementSchema>;
+export type SelectAchievement = typeof achievements.$inferSelect;
+
+// User Achievements
+export const insertUserAchievementSchema = createInsertSchema(userAchievements).omit({ id: true, createdAt: true, earnedAt: true });
+export type InsertUserAchievement = z.infer<typeof insertUserAchievementSchema>;
+export type SelectUserAchievement = typeof userAchievements.$inferSelect;
+
+// User Points
+export const insertUserPointsSchema = createInsertSchema(userPoints).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertUserPoints = z.infer<typeof insertUserPointsSchema>;
+export type SelectUserPoints = typeof userPoints.$inferSelect;
+
+// Stories
+export const insertStorySchema = createInsertSchema(stories).omit({ id: true, createdAt: true });
+export type InsertStory = z.infer<typeof insertStorySchema>;
+export type SelectStory = typeof stories.$inferSelect;
+
+// Story Views
+export const insertStoryViewSchema = createInsertSchema(storyViews).omit({ id: true, createdAt: true });
+export type InsertStoryView = z.infer<typeof insertStoryViewSchema>;
+export type SelectStoryView = typeof storyViews.$inferSelect;
+
+// Story Reactions
+export const insertStoryReactionSchema = createInsertSchema(storyReactions).omit({ id: true, createdAt: true });
+export type InsertStoryReaction = z.infer<typeof insertStoryReactionSchema>;
+export type SelectStoryReaction = typeof storyReactions.$inferSelect;
+
+// Content Reports
+export const insertContentReportSchema = createInsertSchema(contentReports).omit({ id: true, createdAt: true, reviewedAt: true });
+export type InsertContentReport = z.infer<typeof insertContentReportSchema>;
+export type SelectContentReport = typeof contentReports.$inferSelect;
+
+// Audit Logs
+export const insertAuditLogSchema = createInsertSchema(auditLogs).omit({ id: true, createdAt: true });
+export type InsertAuditLog = z.infer<typeof insertAuditLogSchema>;
+export type SelectAuditLog = typeof auditLogs.$inferSelect;
+
+// Suspension Logs
+export const insertSuspensionLogSchema = createInsertSchema(suspensionLogs).omit({ id: true, createdAt: true });
+export type InsertSuspensionLog = z.infer<typeof insertSuspensionLogSchema>;
+export type SelectSuspensionLog = typeof suspensionLogs.$inferSelect;
+
+// Ban Appeals
+export const insertBanAppealSchema = createInsertSchema(banAppealslogs).omit({ id: true, createdAt: true, reviewedAt: true });
+export type InsertBanAppeal = z.infer<typeof insertBanAppealSchema>;
+export type SelectBanAppeal = typeof banAppealslogs.$inferSelect;
+
+// Travel Plans
+export const insertTravelPlanSchema = createInsertSchema(travelPlans).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertTravelPlan = z.infer<typeof insertTravelPlanSchema>;
+export type SelectTravelPlan = typeof travelPlans.$inferSelect;
+
+// Travel Plan Items
+export const insertTravelPlanItemSchema = createInsertSchema(travelPlanItems).omit({ id: true, createdAt: true });
+export type InsertTravelPlanItem = z.infer<typeof insertTravelPlanItemSchema>;
+export type SelectTravelPlanItem = typeof travelPlanItems.$inferSelect;
+
+// Talent Profiles
+export const insertTalentProfileSchema = createInsertSchema(talentProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertTalentProfile = z.infer<typeof insertTalentProfileSchema>;
+export type SelectTalentProfile = typeof talentProfiles.$inferSelect;
+
+// Talent Matches
+export const insertTalentMatchSchema = createInsertSchema(talentMatches).omit({ id: true, createdAt: true });
+export type InsertTalentMatch = z.infer<typeof insertTalentMatchSchema>;
+export type SelectTalentMatch = typeof talentMatches.$inferSelect;
+
+// Newsletter Campaigns
+export const insertNewsletterCampaignSchema = createInsertSchema(newsletterCampaigns).omit({ id: true, createdAt: true, sentAt: true });
+export type InsertNewsletterCampaign = z.infer<typeof insertNewsletterCampaignSchema>;
+export type SelectNewsletterCampaign = typeof newsletterCampaigns.$inferSelect;
+
+// Newsletter Sends
+export const insertNewsletterSendSchema = createInsertSchema(newsletterSends).omit({ id: true, sentAt: true, openedAt: true, clickedAt: true });
+export type InsertNewsletterSend = z.infer<typeof insertNewsletterSendSchema>;
+export type SelectNewsletterSend = typeof newsletterSends.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
