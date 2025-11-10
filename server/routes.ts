@@ -39,6 +39,7 @@ import locationSearchRoutes from "./routes/location-search";
 import housingRoutes from "./routes/housing-routes";
 import livestreamRoutes from "./routes/livestream-routes";
 import marketplaceRoutes from "./routes/marketplace-routes";
+import subscriptionRoutes from "./routes/subscription-routes";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
@@ -153,6 +154,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/housing", housingRoutes);
   app.use("/api/livestreams", livestreamRoutes);
   app.use("/api/marketplace", marketplaceRoutes);
+  app.use("/api/subscriptions", subscriptionRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(createPostBodySchema), async (req: AuthRequest, res: Response) => {
     try {
