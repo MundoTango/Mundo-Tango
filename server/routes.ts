@@ -47,6 +47,11 @@ import {
   insertChatMessageSchema,
   savedPosts,
   posts,
+  reactions,
+  postShares,
+  postReports,
+  commentLikes,
+  postComments,
   agentHealth,
 } from "@shared/schema";
 import { 
@@ -392,6 +397,150 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ liked: false });
     } catch (error) {
       res.status(500).json({ message: "Failed to unlike post" });
+    }
+  });
+
+  // REACTIONS - 13 reaction types
+  app.post("/api/posts/:id/react", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const postId = parseInt(req.params.id);
+      const { reactionType } = req.body;
+      
+      if (!reactionType) {
+        return res.status(400).json({ message: "Reaction type is required" });
+      }
+
+      await db.transaction(async (tx) => {
+        // Remove any existing reaction
+        await tx.delete(reactions).where(
+          and(
+            eq(reactions.postId, postId),
+            eq(reactions.userId, req.userId!)
+          )
+        );
+
+        // Add new reaction if not removing
+        if (reactionType !== '') {
+          await tx.insert(reactions).values({
+            postId,
+            userId: req.userId!,
+            reactionType,
+          });
+
+          // Send notification to post author
+          const post = await storage.getPostById(postId);
+          if (post && post.userId !== req.userId) {
+            await storage.createNotification({
+              userId: post.userId,
+              type: 'reaction',
+              title: 'New reaction',
+              message: `Someone reacted ${reactionType} to your post`,
+              data: JSON.stringify({ postId }),
+              actionUrl: `/feed#post-${postId}`,
+              isRead: false
+            });
+          }
+        }
+      });
+
+      res.json({ reacted: reactionType !== '' });
+    } catch (error) {
+      console.error('React to post error:', error);
+      res.status(500).json({ message: "Failed to react to post" });
+    }
+  });
+
+  // SHARE - 3 share types: timeline, comment, link
+  app.post("/api/posts/:id/share", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const postId = parseInt(req.params.id);
+      const { shareType, comment } = req.body;
+      
+      if (!shareType || !['timeline', 'comment', 'link'].includes(shareType)) {
+        return res.status(400).json({ message: "Valid share type is required" });
+      }
+
+      if (shareType !== 'link') {
+        await db.insert(postShares).values({
+          postId,
+          userId: req.userId!,
+          shareType,
+          comment: comment || null,
+        });
+
+        // Send notification to post author
+        const post = await storage.getPostById(postId);
+        if (post && post.userId !== req.userId) {
+          await storage.createNotification({
+            userId: post.userId,
+            type: 'share',
+            title: 'Post shared',
+            message: `Someone shared your post${comment ? ' with a comment' : ''}`,
+            data: JSON.stringify({ postId }),
+            actionUrl: `/feed#post-${postId}`,
+            isRead: false
+          });
+        }
+      }
+
+      res.json({ shared: true });
+    } catch (error) {
+      console.error('Share post error:', error);
+      res.status(500).json({ message: "Failed to share post" });
+    }
+  });
+
+  // COMMENT LIKES
+  app.post("/api/comments/:id/like", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const commentId = parseInt(req.params.id);
+      
+      await db.transaction(async (tx) => {
+        // Check if already liked
+        const existing = await tx.select().from(commentLikes)
+          .where(and(
+            eq(commentLikes.commentId, commentId),
+            eq(commentLikes.userId, req.userId!)
+          ))
+          .limit(1);
+
+        if (existing.length === 0) {
+          // Add like
+          await tx.insert(commentLikes).values({
+            commentId,
+            userId: req.userId!,
+          });
+
+          // Send notification to comment author
+          const comment = await tx.select().from(postComments)
+            .where(eq(postComments.id, commentId))
+            .limit(1);
+          
+          if (comment[0] && comment[0].userId !== req.userId) {
+            await storage.createNotification({
+              userId: comment[0].userId,
+              type: 'comment_like',
+              title: 'Comment liked',
+              message: 'Someone liked your comment',
+              data: JSON.stringify({ commentId }),
+              isRead: false
+            });
+          }
+        } else {
+          // Remove like
+          await tx.delete(commentLikes).where(
+            and(
+              eq(commentLikes.commentId, commentId),
+              eq(commentLikes.userId, req.userId!)
+            )
+          );
+        }
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Like comment error:', error);
+      res.status(500).json({ message: "Failed to like comment" });
     }
   });
 

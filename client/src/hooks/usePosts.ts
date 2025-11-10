@@ -194,9 +194,10 @@ export function useComments(postId: number | string) {
 
 export function useCreateComment() {
   return useMutation({
-    mutationFn: async (data: { postId: number; content: string }) => {
+    mutationFn: async (data: { postId: number; content: string; parentId?: number | null }) => {
       const res = await apiRequest("POST", `/api/posts/${data.postId}/comments`, {
         content: data.content,
+        parentId: data.parentId || null,
       });
       return await res.json();
     },

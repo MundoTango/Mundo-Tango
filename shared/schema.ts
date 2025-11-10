@@ -1713,11 +1713,25 @@ export const postShares = pgTable("post_shares", {
   postId: integer("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   shareType: varchar("share_type").notNull(),
+  comment: text("comment"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 }, (table) => ({
   postIdx: index("post_shares_post_idx").on(table.postId),
   userIdx: index("post_shares_user_idx").on(table.userId),
   uniqueShare: uniqueIndex("unique_post_share").on(table.postId, table.userId, table.shareType),
+}));
+
+// Post Reactions (13 reaction types: Love, Passion, Joy, Tango-specific, Support, Sad)
+export const reactions = pgTable("reactions", {
+  id: serial("id").primaryKey(),
+  postId: integer("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  reactionType: varchar("reaction_type").notNull(), // love, passion, fire, tango, celebrate, brilliant, support, hug, sad, cry, thinking, shock, angry
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  postIdx: index("reactions_post_idx").on(table.postId),
+  userIdx: index("reactions_user_idx").on(table.userId),
+  uniqueReaction: uniqueIndex("unique_post_reaction").on(table.postId, table.userId),
 }));
 
 // Zod Schemas for New Tables
@@ -1748,6 +1762,10 @@ export type SelectModerationQueue = typeof moderationQueue.$inferSelect;
 export const insertPostShareSchema = createInsertSchema(postShares).omit({ id: true, createdAt: true });
 export type InsertPostShare = z.infer<typeof insertPostShareSchema>;
 export type SelectPostShare = typeof postShares.$inferSelect;
+
+export const insertReactionSchema = createInsertSchema(reactions).omit({ id: true, createdAt: true });
+export type InsertReaction = z.infer<typeof insertReactionSchema>;
+export type SelectReaction = typeof reactions.$inferSelect;
 
 // Life CEO System
 export const insertLifeCeoDomainSchema = createInsertSchema(lifeCeoDomains).omit({ id: true, createdAt: true });
