@@ -9,7 +9,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 
 export default function LiveStreamPage() {
   const { data: streams, isLoading } = useQuery({
-    queryKey: ["/api/live-streams"],
+    queryKey: ["/api/livestreams"],
   });
 
   return (

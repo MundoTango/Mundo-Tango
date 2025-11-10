@@ -13,7 +13,7 @@ export default function MarketplacePage() {
   const [activeTab, setActiveTab] = useState("all");
 
   const { data: items, isLoading } = useQuery({
-    queryKey: ["/api/marketplace", activeTab],
+    queryKey: ["/api/marketplace/items", activeTab],
   });
 
   return (

@@ -154,7 +154,7 @@ const MusicLibraryPage = lazy(() => import("@/pages/MusicLibraryPage"));
 const TravelPlannerPage = lazy(() => import("@/pages/TravelPlannerPage"));
 const HostHomesPage = lazy(() => import("@/pages/HostHomesPage"));
 
-// Commerce
+// Commerce & Subscriptions
 const MarketplacePage = lazy(() => import("@/pages/MarketplacePage"));
 const MarketplaceItemPage = lazy(() => import("@/pages/MarketplaceItemPage"));
 const CheckoutPage = lazy(() => import("@/pages/CheckoutPage"));
@@ -163,6 +163,8 @@ const PaymentSuccessPage = lazy(() => import("@/pages/PaymentSuccessPage"));
 const PaymentFailedPage = lazy(() => import("@/pages/PaymentFailedPage"));
 const BookingConfirmationPage = lazy(() => import("@/pages/BookingConfirmationPage"));
 const PricingPage = lazy(() => import("@/pages/PricingPage"));
+const SubscriptionsPage = lazy(() => import("@/pages/SubscriptionsPage"));
+const ManageSubscriptionPage = lazy(() => import("@/pages/ManageSubscriptionPage"));
 
 // Content & Info
 const BlogPage = lazy(() => import("@/pages/BlogPage"));
@@ -539,6 +541,22 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <BillingPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/subscriptions">
+        <ProtectedRoute>
+          <AppLayout>
+            <SubscriptionsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/subscriptions/manage">
+        <ProtectedRoute>
+          <AppLayout>
+            <ManageSubscriptionPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
