@@ -3385,5 +3385,12 @@ export type SelectNewsletterSend = typeof newsletterSends.$inferSelect;
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
+// ============================================================================
+// HOUSING MARKETPLACE SYSTEM (PART 15)
+
+// ============================================================================
+// PLATFORM INDEPENDENCE SCHEMA (PATH 2)
+// ============================================================================
+
 // Export all platform tables from platform-schema.ts so Drizzle can see them
 export * from "./platform-schema";
