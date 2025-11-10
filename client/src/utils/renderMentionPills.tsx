@@ -93,18 +93,20 @@ export function renderMentionPills(content: string): React.ReactNode {
         </span>
       ));
     } else {
-      // Render mention as MT Ocean-themed pill
+      // Render mention as MT Ocean-themed pill with auto spacing
       return (
-        <span
-          key={`mention-${index}`}
-          style={getMentionPillStyle(token.type)}
-          className="mention-pill hover:scale-105 active:scale-95"
-          data-mention-id={token.id}
-          data-mention-type={token.type}
-          title={`${token.type}: ${token.name}`}
-        >
-          {getMentionIcon(token.type)}
-          <span>@{token.name}</span>
+        <span key={`mention-wrapper-${index}`}>
+          <span
+            style={getMentionPillStyle(token.type)}
+            className="mention-pill hover:scale-105 active:scale-95"
+            data-mention-id={token.id}
+            data-mention-type={token.type}
+            title={`${token.type}: ${token.name}`}
+          >
+            {getMentionIcon(token.type)}
+            <span>@{token.name.replace(/_/g, ' ')}</span>
+          </span>
+          {' '}
         </span>
       );
     }

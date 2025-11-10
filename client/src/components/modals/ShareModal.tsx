@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Facebook, Twitter, Link, MessageCircle, Mail } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Facebook, Twitter, Link, MessageCircle, Mail, Share } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 
 interface ShareModalProps {
   open: boolean;
@@ -13,6 +17,40 @@ interface ShareModalProps {
 export function ShareModal({ open, onOpenChange, postId, postTitle }: ShareModalProps) {
   const { toast } = useToast();
   const shareUrl = `${window.location.origin}/posts/${postId}`;
+  const [shareComment, setShareComment] = useState("");
+  const [isSharing, setIsSharing] = useState(false);
+
+  const handleShareToWall = async () => {
+    setIsSharing(true);
+    try {
+      await apiRequest({
+        url: `/api/posts/${postId}/share`,
+        method: "POST",
+        data: {
+          shareType: 'timeline',
+          comment: shareComment || undefined,
+        },
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+
+      toast({
+        title: "Shared to your wall!",
+        description: "Post has been shared to your timeline",
+      });
+      
+      setShareComment("");
+      onOpenChange(false);
+    } catch (error) {
+      toast({
+        title: "Share failed",
+        description: "Could not share post. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSharing(false);
+    }
+  };
 
   const handleCopyLink = async () => {
     try {
@@ -65,6 +103,31 @@ export function ShareModal({ open, onOpenChange, postId, postTitle }: ShareModal
         </DialogHeader>
 
         <div className="space-y-3 mt-4">
+          {/* Share to My Wall - Primary Action */}
+          <div className="space-y-2 pb-3 border-b">
+            <Textarea
+              placeholder="Add a comment (optional)..."
+              value={shareComment}
+              onChange={(e) => setShareComment(e.target.value)}
+              className="min-h-[80px]"
+              data-testid="textarea-share-comment"
+            />
+            <Button
+              className="w-full justify-start gap-3"
+              style={{
+                background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.9), rgba(30, 144, 255, 0.9))',
+                color: 'white',
+                border: '1px solid rgba(64, 224, 208, 0.5)',
+              }}
+              onClick={handleShareToWall}
+              disabled={isSharing}
+              data-testid="button-share-to-wall"
+            >
+              <Share className="w-5 h-5" />
+              {isSharing ? "Sharing..." : "Share to My Wall"}
+            </Button>
+          </div>
+
           <Button
             variant="outline"
             className="w-full justify-start gap-3"

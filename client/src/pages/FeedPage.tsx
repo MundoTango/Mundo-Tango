@@ -21,14 +21,14 @@ import { formatDistanceToNow } from "date-fns";
 import { SEO } from "@/components/SEO";
 import { FeedRightSidebar } from "@/components/FeedRightSidebar";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { PostCreator } from "@/components/universal/PostCreator";
-import { queryClient } from "@/lib/queryClient";
 import { SmartPostFeed } from "@/components/feed/SmartPostFeed";
 import { UpcomingEventsSidebar } from "@/components/feed/UpcomingEventsSidebar";
 import { ConnectionStatusBadge } from "@/components/feed/ConnectionStatusBadge";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 import { PostItem } from "@/components/feed/PostItem";
+import { EditPostDialog } from "@/components/modals/EditPostDialog";
 import { Link } from "wouter";
 
 type Post = {
@@ -94,6 +94,11 @@ export default function FeedPage() {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [showRecommendationDialog, setShowRecommendationDialog] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  
+  // Edit/Delete state
+  const [editingPostId, setEditingPostId] = useState<number | null>(null);
+  const [editingPostContent, setEditingPostContent] = useState("");
+  const [deletingPostId, setDeletingPostId] = useState<number | null>(null);
   const [recName, setRecName] = useState("");
   const [recLocation, setRecLocation] = useState("");
   const [recCoordinates, setRecCoordinates] = useState<{lat: number; lng: number} | null>(null);
@@ -423,7 +428,20 @@ export default function FeedPage() {
               ) : allPosts.length > 0 ? (
                 <>
                   {allPosts.map((post) => (
-                    <PostItem key={post.id} post={post} />
+                    <PostItem 
+                      key={post.id} 
+                      post={post}
+                      onEdit={(postId) => {
+                        const postToEdit = allPosts.find(p => p.id === postId);
+                        if (postToEdit) {
+                          setEditingPostId(postId);
+                          setEditingPostContent(postToEdit.content);
+                        }
+                      }}
+                      onDelete={(postId) => {
+                        setDeletingPostId(postId);
+                      }}
+                    />
                   ))}
                   
                   {hasNextPage && (
@@ -526,6 +544,56 @@ export default function FeedPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Edit Post Dialog */}
+      <EditPostDialog
+        open={editingPostId !== null}
+        onOpenChange={(open) => !open && setEditingPostId(null)}
+        postId={editingPostId || 0}
+        initialContent={editingPostContent}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deletingPostId !== null} onOpenChange={(open) => !open && setDeletingPostId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Post</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this post? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                if (deletingPostId) {
+                  try {
+                    await apiRequest({
+                      url: `/api/posts/${deletingPostId}`,
+                      method: "DELETE",
+                    });
+                    queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
+                    toast({
+                      title: "Post deleted",
+                      description: "Your post has been deleted",
+                    });
+                  } catch (error) {
+                    toast({
+                      title: "Delete failed",
+                      description: "Could not delete post",
+                      variant: "destructive",
+                    });
+                  }
+                  setDeletingPostId(null);
+                }
+              }}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </SelfHealingErrorBoundary>
   );
 }
