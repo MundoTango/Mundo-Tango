@@ -583,6 +583,14 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/live-stream/:id">
+        <ProtectedRoute>
+          <AppLayout>
+            <LiveStreamPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/workshops">
         <ProtectedRoute>
           <AppLayout>

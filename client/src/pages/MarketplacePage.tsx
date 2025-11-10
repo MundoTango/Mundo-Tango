@@ -12,8 +12,13 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 export default function MarketplacePage() {
   const [activeTab, setActiveTab] = useState("all");
 
+  // Build proper query URL with category filter
+  const queryUrl = activeTab === "all" 
+    ? "/api/marketplace/items" 
+    : `/api/marketplace/items?category=${activeTab}`;
+
   const { data: items, isLoading } = useQuery({
-    queryKey: ["/api/marketplace/items", activeTab],
+    queryKey: [queryUrl],
   });
 
   return (

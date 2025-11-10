@@ -60,8 +60,7 @@ export default function SubscriptionsPage() {
           : now.setFullYear(now.getFullYear() + 1)
       );
 
-      return await apiRequest("/api/subscriptions", {
-        method: "POST",
+      return await apiRequest("POST", "/api/subscriptions", {
         body: JSON.stringify({
           planId,
           billingInterval,
