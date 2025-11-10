@@ -33,7 +33,7 @@ The system includes complete i18n integration and real-time features with 30s po
 -   **Events System:** Fully operational with 24 API endpoints, RSVPs, ticketing, and recurrence rules, including a new dropdown menu for RSVP options.
 -   **Groups System:** 23 API endpoints for community groups with 95% frontend completion.
 -   **Social Features:** Pagination, optimistic updates, CRUD, advanced friendship algorithms.
--   **Post System:** Like, comment, share, bookmark, report, edit with history, analytics, and a complete @Mention system using `@[DisplayName](id:type)` format with interactive, MT Ocean-themed pills for users, events, cities, and professional groups.
+-   **Post System:** Complete post interactions with 13 reaction types (Love, Passion, Joy, Tango-specific, Support, Sad), shares, reports, saves, and threaded comments with real-time Socket.io notifications. Features a complete @Mention system using canonical token format `@user:user_123:maria_rodriguez` (database storage), parsed into interactive MT Ocean-themed pills displaying `@maria_rodriguez` for users, events, groups, and cities. Includes feed algorithm boost (+3 points per mention, max 10), post editing with history, and comprehensive analytics.
 -   **Housing System:** Documentation complete, implementation pending, with a database schema ready for marketplace and booking features, map integration, and an MT Ocean theme.
 
 **AI Integration:**
