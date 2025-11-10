@@ -1153,6 +1153,75 @@ export const workshops = pgTable("workshops", {
   dateIdx: index("workshops_date_idx").on(table.date),
 }));
 
+// Workshop Enrollments
+export const workshopEnrollments = pgTable("workshop_enrollments", {
+  id: serial("id").primaryKey(),
+  workshopId: integer("workshop_id").notNull().references(() => workshops.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  status: varchar("status").default("enrolled").notNull(),
+  enrolledAt: timestamp("enrolled_at").defaultNow(),
+}, (table) => ({
+  workshopIdx: index("workshop_enrollments_workshop_idx").on(table.workshopId),
+  userIdx: index("workshop_enrollments_user_idx").on(table.userId),
+  unique: index("workshop_enrollments_unique_idx").on(table.workshopId, table.userId),
+}));
+
+// Music Library
+export const musicLibrary = pgTable("music_library", {
+  id: serial("id").primaryKey(),
+  title: varchar("title").notNull(),
+  artist: varchar("artist").notNull(),
+  album: varchar("album"),
+  genre: varchar("genre"),
+  year: integer("year"),
+  duration: integer("duration"),
+  url: text("url"),
+  coverImage: text("cover_image"),
+  bpm: integer("bpm"),
+  mood: varchar("mood"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  artistIdx: index("music_artist_idx").on(table.artist),
+  genreIdx: index("music_genre_idx").on(table.genre),
+}));
+
+// Music Playlists
+export const playlists = pgTable("playlists", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name").notNull(),
+  description: text("description"),
+  isPublic: boolean("is_public").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("playlists_user_idx").on(table.userId),
+}));
+
+// Playlist Songs
+export const playlistSongs = pgTable("playlist_songs", {
+  id: serial("id").primaryKey(),
+  playlistId: integer("playlist_id").notNull().references(() => playlists.id, { onDelete: "cascade" }),
+  songId: integer("song_id").notNull().references(() => musicLibrary.id, { onDelete: "cascade" }),
+  position: integer("position").default(0),
+  addedAt: timestamp("added_at").defaultNow(),
+}, (table) => ({
+  playlistIdx: index("playlist_songs_playlist_idx").on(table.playlistId),
+  songIdx: index("playlist_songs_song_idx").on(table.songId),
+}));
+
+// Music Favorites
+export const musicFavorites = pgTable("music_favorites", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  songId: integer("song_id").notNull().references(() => musicLibrary.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("music_favorites_user_idx").on(table.userId),
+  songIdx: index("music_favorites_song_idx").on(table.songId),
+  unique: index("music_favorites_unique_idx").on(table.userId, table.songId),
+}));
+
 // Reviews
 export const reviews = pgTable("reviews", {
   id: serial("id").primaryKey(),
@@ -1398,6 +1467,26 @@ export type SelectTeacher = typeof teachers.$inferSelect;
 export const insertVenueSchema = createInsertSchema(venues).omit({ id: true, createdAt: true });
 export type InsertVenue = z.infer<typeof insertVenueSchema>;
 export type SelectVenue = typeof venues.$inferSelect;
+
+export const insertWorkshopEnrollmentSchema = createInsertSchema(workshopEnrollments).omit({ id: true, enrolledAt: true });
+export type InsertWorkshopEnrollment = z.infer<typeof insertWorkshopEnrollmentSchema>;
+export type SelectWorkshopEnrollment = typeof workshopEnrollments.$inferSelect;
+
+export const insertMusicSchema = createInsertSchema(musicLibrary).omit({ id: true, createdAt: true });
+export type InsertMusic = z.infer<typeof insertMusicSchema>;
+export type SelectMusic = typeof musicLibrary.$inferSelect;
+
+export const insertPlaylistSchema = createInsertSchema(playlists).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertPlaylist = z.infer<typeof insertPlaylistSchema>;
+export type SelectPlaylist = typeof playlists.$inferSelect;
+
+export const insertPlaylistSongSchema = createInsertSchema(playlistSongs).omit({ id: true, addedAt: true });
+export type InsertPlaylistSong = z.infer<typeof insertPlaylistSongSchema>;
+export type SelectPlaylistSong = typeof playlistSongs.$inferSelect;
+
+export const insertMusicFavoriteSchema = createInsertSchema(musicFavorites).omit({ id: true, createdAt: true });
+export type InsertMusicFavorite = z.infer<typeof insertMusicFavoriteSchema>;
+export type SelectMusicFavorite = typeof musicFavorites.$inferSelect;
 
 export const insertTutorialSchema = createInsertSchema(tutorials).omit({ id: true, createdAt: true });
 export type InsertTutorial = z.infer<typeof insertTutorialSchema>;

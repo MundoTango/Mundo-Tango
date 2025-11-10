@@ -44,6 +44,10 @@ import reviewRoutes from "./routes/review-routes";
 import mediaRoutes from "./routes/media-routes";
 import leaderboardRoutes from "./routes/leaderboard-routes";
 import blogRoutes from "./routes/blog-routes";
+import teacherRoutes from "./routes/teacher-routes";
+import venueRoutes from "./routes/venue-routes";
+import workshopRoutes from "./routes/workshop-routes";
+import musicRoutes from "./routes/music-routes";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
@@ -165,6 +169,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/media", mediaRoutes);
   app.use("/api/leaderboard", leaderboardRoutes);
   app.use("/api/blog", blogRoutes);
+  
+  // Phase E: Professional Tools Routes
+  app.use("/api/teachers", teacherRoutes);
+  app.use("/api/venues", venueRoutes);
+  app.use("/api/workshops", workshopRoutes);
+  app.use("/api/music", musicRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(createPostBodySchema), async (req: AuthRequest, res: Response) => {
     try {
