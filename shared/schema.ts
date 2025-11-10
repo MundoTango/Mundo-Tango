@@ -3332,6 +3332,35 @@ export const travelPlanItems = pgTable("travel_plan_items", {
   typeIdx: index("idx_travel_items_type").on(table.type),
 }));
 
+// Venue Recommendations System (PART 1-14)
+export const venueRecommendations = pgTable("venue_recommendations", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  category: varchar("category", { length: 100 }).notNull(), // 'restaurant', 'cafe', 'hotel', 'venue'
+  cuisine: varchar("cuisine", { length: 100 }), // 'Italian', 'Chinese', etc.
+  address: text("address").notNull(),
+  city: varchar("city", { length: 255 }).notNull(),
+  country: varchar("country", { length: 255 }),
+  latitude: varchar("latitude", { length: 50 }),
+  longitude: varchar("longitude", { length: 50 }),
+  rating: real("rating"), // 1-5 stars
+  priceLevel: varchar("price_level", { length: 10 }), // '$', '$$', '$$$', '$$$$'
+  description: text("description"),
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  website: varchar("website", { length: 512 }),
+  imageUrl: text("image_url"),
+  isVerified: boolean("is_verified").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("idx_venue_recommendations_user").on(table.userId),
+  categoryIdx: index("idx_venue_recommendations_category").on(table.category),
+  cuisineIdx: index("idx_venue_recommendations_cuisine").on(table.cuisine),
+  cityIdx: index("idx_venue_recommendations_city").on(table.city),
+  ratingIdx: index("idx_venue_recommendations_rating").on(table.rating),
+}));
+
 export const talentProfiles = pgTable("talent_profiles", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
@@ -3518,6 +3547,11 @@ export type SelectNewsletterSend = typeof newsletterSends.$inferSelect;
 export const insertContactSubmissionSchema = createInsertSchema(contactSubmissions).omit({ id: true, createdAt: true, respondedAt: true });
 export type InsertContactSubmission = z.infer<typeof insertContactSubmissionSchema>;
 export type SelectContactSubmission = typeof contactSubmissions.$inferSelect;
+
+// Venue Recommendations
+export const insertVenueRecommendationSchema = createInsertSchema(venueRecommendations).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertVenueRecommendation = z.infer<typeof insertVenueRecommendationSchema>;
+export type SelectVenueRecommendation = typeof venueRecommendations.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)

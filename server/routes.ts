@@ -70,8 +70,13 @@ import {
   travelPlans,
   travelPlanItems,
   contactSubmissions,
+  stories,
+  storyViews,
+  venueRecommendations,
   insertTravelPlanSchema,
   insertContactSubmissionSchema,
+  insertStorySchema,
+  insertVenueRecommendationSchema,
 } from "@shared/schema";
 import { 
   esaAgents,
@@ -2657,6 +2662,262 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Submit contact form error:", error);
       res.status(500).json({ message: "Failed to submit contact form" });
+    }
+  });
+
+  // ============================================================================
+  // STORIES SYSTEM APIs (PART 1-11) - 6 endpoints
+  // ============================================================================
+
+  // 1. POST /api/stories - Create a new story
+  app.post("/api/stories", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const expiresAt = new Date();
+      expiresAt.setHours(expiresAt.getHours() + 24); // 24 hours from now
+
+      const [story] = await db.insert(stories)
+        .values({
+          userId: req.user!.id,
+          mediaUrl: req.body.mediaUrl,
+          mediaType: req.body.mediaType,
+          caption: req.body.caption || null,
+          expiresAt,
+          type: req.body.type || 'media', // Default type
+          isActive: true
+        })
+        .returning();
+
+      res.status(201).json(story);
+    } catch (error) {
+      console.error("Create story error:", error);
+      res.status(500).json({ message: "Failed to create story" });
+    }
+  });
+
+  // 2. GET /api/stories - Get all active stories (not expired)
+  app.get("/api/stories", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const activeStories = await db.select()
+        .from(stories)
+        .where(and(
+          gte(stories.expiresAt, new Date()),
+          eq(stories.isActive, true)
+        ))
+        .orderBy(desc(stories.createdAt));
+
+      res.json(activeStories);
+    } catch (error) {
+      console.error("Get stories error:", error);
+      res.status(500).json({ message: "Failed to fetch stories" });
+    }
+  });
+
+  // 3. GET /api/stories/:id - Get story by ID
+  app.get("/api/stories/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const storyId = parseInt(req.params.id);
+      
+      const [story] = await db.select()
+        .from(stories)
+        .where(eq(stories.id, storyId));
+
+      if (!story) {
+        return res.status(404).json({ message: "Story not found" });
+      }
+
+      res.json(story);
+    } catch (error) {
+      console.error("Get story error:", error);
+      res.status(500).json({ message: "Failed to fetch story" });
+    }
+  });
+
+  // 4. DELETE /api/stories/:id - Delete story
+  app.delete("/api/stories/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const storyId = parseInt(req.params.id);
+      
+      const [story] = await db.select()
+        .from(stories)
+        .where(eq(stories.id, storyId));
+
+      if (!story) {
+        return res.status(404).json({ message: "Story not found" });
+      }
+
+      if (story.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Not authorized to delete this story" });
+      }
+
+      await db.delete(stories).where(eq(stories.id, storyId));
+
+      res.json({ message: "Story deleted successfully" });
+    } catch (error) {
+      console.error("Delete story error:", error);
+      res.status(500).json({ message: "Failed to delete story" });
+    }
+  });
+
+  // 5. POST /api/stories/:id/view - Track story view
+  app.post("/api/stories/:id/view", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const storyId = parseInt(req.params.id);
+      
+      // Check if user already viewed this story
+      const existingView = await db.select()
+        .from(storyViews)
+        .where(and(
+          eq(storyViews.storyId, storyId),
+          eq(storyViews.userId, req.user!.id)
+        ));
+
+      if (existingView.length === 0) {
+        // Record new view
+        await db.insert(storyViews).values({
+          storyId,
+          userId: req.user!.id
+        });
+
+        // Increment view count
+        await db.update(stories)
+          .set({ viewCount: sql`${stories.viewCount} + 1` })
+          .where(eq(stories.id, storyId));
+      }
+
+      res.json({ message: "View recorded" });
+    } catch (error) {
+      console.error("Track story view error:", error);
+      res.status(500).json({ message: "Failed to track view" });
+    }
+  });
+
+  // 6. GET /api/stories/:id/viewers - Get story viewers
+  app.get("/api/stories/:id/viewers", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const storyId = parseInt(req.params.id);
+      
+      const viewers = await db.select({
+        id: users.id,
+        name: users.name,
+        profilePicture: users.profilePicture,
+        viewedAt: storyViews.viewedAt
+      })
+      .from(storyViews)
+      .innerJoin(users, eq(storyViews.userId, users.id))
+      .where(eq(storyViews.storyId, storyId))
+      .orderBy(desc(storyViews.viewedAt));
+
+      res.json(viewers);
+    } catch (error) {
+      console.error("Get story viewers error:", error);
+      res.status(500).json({ message: "Failed to fetch viewers" });
+    }
+  });
+
+  // ============================================================================
+  // VENUE RECOMMENDATIONS APIs (PART 1-14) - 4 endpoints
+  // ============================================================================
+
+  // 7. GET /api/venue-recommendations - Get all venue recommendations with filters
+  app.get("/api/venue-recommendations", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { category, cuisine, city, priceLevel, minRating } = req.query;
+
+      let query = db.select().from(venueRecommendations);
+      const conditions = [];
+
+      if (category) conditions.push(eq(venueRecommendations.category, category as string));
+      if (cuisine) conditions.push(eq(venueRecommendations.cuisine, cuisine as string));
+      if (city) conditions.push(eq(venueRecommendations.city, city as string));
+      if (priceLevel) conditions.push(eq(venueRecommendations.priceLevel, priceLevel as string));
+      if (minRating) conditions.push(gte(venueRecommendations.rating, parseFloat(minRating as string)));
+
+      const recommendations = conditions.length > 0
+        ? await query.where(and(...conditions)).orderBy(desc(venueRecommendations.rating))
+        : await query.orderBy(desc(venueRecommendations.rating));
+
+      res.json(recommendations);
+    } catch (error) {
+      console.error("Get venue recommendations error:", error);
+      res.status(500).json({ message: "Failed to fetch venue recommendations" });
+    }
+  });
+
+  // 8. POST /api/venue-recommendations - Create venue recommendation
+  app.post("/api/venue-recommendations", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const validation = insertVenueRecommendationSchema.safeParse({
+        ...req.body,
+        userId: req.user!.id
+      });
+
+      if (!validation.success) {
+        return res.status(400).json({ message: "Invalid venue recommendation data", errors: validation.error });
+      }
+
+      const [recommendation] = await db.insert(venueRecommendations)
+        .values(validation.data)
+        .returning();
+
+      res.status(201).json(recommendation);
+    } catch (error) {
+      console.error("Create venue recommendation error:", error);
+      res.status(500).json({ message: "Failed to create venue recommendation" });
+    }
+  });
+
+  // 9. PATCH /api/venue-recommendations/:id - Update venue recommendation
+  app.patch("/api/venue-recommendations/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      const [existing] = await db.select()
+        .from(venueRecommendations)
+        .where(eq(venueRecommendations.id, id));
+
+      if (!existing) {
+        return res.status(404).json({ message: "Venue recommendation not found" });
+      }
+
+      if (existing.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Not authorized to update this recommendation" });
+      }
+
+      const [updated] = await db.update(venueRecommendations)
+        .set({ ...req.body, updatedAt: new Date() })
+        .where(eq(venueRecommendations.id, id))
+        .returning();
+
+      res.json(updated);
+    } catch (error) {
+      console.error("Update venue recommendation error:", error);
+      res.status(500).json({ message: "Failed to update venue recommendation" });
+    }
+  });
+
+  // 10. DELETE /api/venue-recommendations/:id - Delete venue recommendation
+  app.delete("/api/venue-recommendations/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      
+      const [existing] = await db.select()
+        .from(venueRecommendations)
+        .where(eq(venueRecommendations.id, id));
+
+      if (!existing) {
+        return res.status(404).json({ message: "Venue recommendation not found" });
+      }
+
+      if (existing.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Not authorized to delete this recommendation" });
+      }
+
+      await db.delete(venueRecommendations).where(eq(venueRecommendations.id, id));
+
+      res.json({ message: "Venue recommendation deleted successfully" });
+    } catch (error) {
+      console.error("Delete venue recommendation error:", error);
+      res.status(500).json({ message: "Failed to delete venue recommendation" });
     }
   });
 
