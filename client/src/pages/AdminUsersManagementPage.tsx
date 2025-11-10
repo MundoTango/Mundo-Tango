@@ -42,14 +42,14 @@ interface UsersResponse {
 
 export default function AdminUsersManagementPage() {
   const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [deleteAction, setDeleteAction] = useState<"delete" | "ban" | null>(null);
   const { toast } = useToast();
 
   const { data: usersData, isLoading } = useQuery<UsersResponse>({
-    queryKey: ["/api/admin/users", { page, search, role: roleFilter }],
+    queryKey: ["/api/admin/users", { page, search, role: roleFilter === "all" ? "" : roleFilter }],
   });
 
   const updateUserMutation = useMutation({
@@ -113,7 +113,7 @@ export default function AdminUsersManagementPage() {
                 <SelectValue placeholder="Filter by role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Roles</SelectItem>
+                <SelectItem value="all">All Roles</SelectItem>
                 <SelectItem value="god">God</SelectItem>
                 <SelectItem value="super_admin">Super Admin</SelectItem>
                 <SelectItem value="admin">Admin</SelectItem>
