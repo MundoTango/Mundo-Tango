@@ -40,3 +40,53 @@ tmp/
 # Reports
 performance-audit.json
 dependency-report.json
+
+# === PROJECT BLOAT PREVENTION ===
+# Cache directories (can grow to GB sizes)
+.cache/
+*.cache
+.vite/
+.webpack/
+node_modules/.vite/
+
+# Playwright artifacts (prevent browser binaries in repo)
+.cache/ms-playwright/
+trace.zip
+video.webm
+
+# Bun cache (regenerable)
+.cache/.bun/install/
+
+# TypeScript cache
+.cache/typescript/
+*.tsbuildinfo
+
+# Test artifacts (regenerable)
+test-results/
+playwright-report/
+test-videos/*.webm
+test-videos/*.mp4
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Large media files (use Git LFS if needed)
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+*.flv
+
+# Database dumps and backups
+*.dump
+*.sql.gz
+*.sql.bak
+*.db.backup
+
+# System/IDE
+.local/
+.DS_Store
