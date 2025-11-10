@@ -290,6 +290,15 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      {/* Alias for shorter URL */}
+      <Route path="/community-map">
+        <ProtectedRoute>
+          <AppLayout>
+            <CommunityWorldMapPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/invitations">
         <ProtectedRoute>
           <AppLayout>
