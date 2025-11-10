@@ -101,7 +101,7 @@ export default function FeedPage() {
   const [deletingPostId, setDeletingPostId] = useState<number | null>(null);
   const [recName, setRecName] = useState("");
   const [recLocation, setRecLocation] = useState("");
-  const [recCoordinates, setRecCoordinates] = useState<{lat: number; lng: number} | null>(null);
+  const [recCoordinates, setRecCoordinates] = useState<{lat: number; lng: number} | undefined>(undefined);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -294,7 +294,7 @@ export default function FeedPage() {
     setShowRecommendationDialog(false);
     setRecName("");
     setRecLocation("");
-    setRecCoordinates(null);
+    setRecCoordinates(undefined);
     setSelectedCategory(null);
     
     toast({
@@ -528,7 +528,7 @@ export default function FeedPage() {
                 setShowRecommendationDialog(false);
                 setRecName("");
                 setRecLocation("");
-                setRecCoordinates(null);
+                setRecCoordinates(undefined);
                 setSelectedCategory(null);
               }}
               data-testid="button-cancel-rec"
@@ -568,10 +568,7 @@ export default function FeedPage() {
               onClick={async () => {
                 if (deletingPostId) {
                   try {
-                    await apiRequest({
-                      url: `/api/posts/${deletingPostId}`,
-                      method: "DELETE",
-                    });
+                    await apiRequest("DELETE", `/api/posts/${deletingPostId}`);
                     queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
                     toast({
                       title: "Post deleted",
