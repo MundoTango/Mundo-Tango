@@ -39,7 +39,9 @@ export function parseCanonicalToTokens(canonical: string): Token[] {
   if (!canonical) return [];
   
   const tokens: Token[] = [];
-  const regex = /@(user|event|group|city):([^:]+):([^\s]+)/g;
+  // Match @type:id:name where name can include spaces but stops before next @ or end of string
+  // Uses trimEnd to remove trailing whitespace from name
+  const regex = /@(user|event|group|city):([^:]+):([^@]*?)(?=\s*(?:@|$))/g;
   let lastIndex = 0;
   let match: RegExpExecArray | null;
   
@@ -50,13 +52,13 @@ export function parseCanonicalToTokens(canonical: string): Token[] {
       tokens.push({ kind: 'text', text });
     }
     
-    // Add mention token
+    // Add mention token with trimmed name
     const [, type, id, name] = match;
     tokens.push({
       kind: 'mention',
       type: type as EntityType,
       id,
-      name
+      name: name.trim() // Remove any trailing whitespace
     });
     
     lastIndex = regex.lastIndex;
