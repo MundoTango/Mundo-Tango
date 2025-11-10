@@ -28,6 +28,7 @@ import { SmartPostFeed } from "@/components/feed/SmartPostFeed";
 import { UpcomingEventsSidebar } from "@/components/feed/UpcomingEventsSidebar";
 import { ConnectionStatusBadge } from "@/components/feed/ConnectionStatusBadge";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
+import { PostItem } from "@/components/feed/PostItem";
 import { Link } from "wouter";
 
 type Post = {
@@ -422,7 +423,7 @@ export default function FeedPage() {
               ) : allPosts.length > 0 ? (
                 <>
                   {allPosts.map((post) => (
-                    <PostCard key={post.id} post={post} />
+                    <PostItem key={post.id} post={post} />
                   ))}
                   
                   {hasNextPage && (
