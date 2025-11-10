@@ -5,7 +5,7 @@
 
 import { Router, Response } from "express";
 import { db } from "@shared/db";
-import { users, posts, reports, events } from "@shared/schema";
+import { users, posts, postReports, events } from "@shared/schema";
 import { eq, desc, like, or, and, gte, count, sql } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { storage } from "../storage";
@@ -178,17 +178,16 @@ router.get("/content/flagged", authenticateToken, requireAdmin, async (req, res:
     const { status = "pending" } = req.query;
 
     const flaggedReports = await db.select({
-      id: reports.id,
-      reporterId: reports.reporterId,
-      contentType: reports.contentType,
-      contentId: reports.contentId,
-      reason: reports.reason,
-      status: reports.status,
-      createdAt: reports.createdAt,
+      id: postReports.id,
+      reporterId: postReports.reporterId,
+      postId: postReports.postId,
+      reason: postReports.reason,
+      status: postReports.status,
+      createdAt: postReports.createdAt,
     })
-      .from(reports)
-      .where(eq(reports.status, status as string))
-      .orderBy(desc(reports.createdAt))
+      .from(postReports)
+      .where(eq(postReports.status, status as string))
+      .orderBy(desc(postReports.createdAt))
       .limit(50);
 
     res.json(flaggedReports);
@@ -212,15 +211,10 @@ router.post("/content/:contentId/moderate", authenticateToken, requireAdmin, asy
       await db.delete(posts).where(eq(posts.id, parseInt(contentId)));
     }
 
-    // Update report status
-    await db.update(reports)
-      .set({ status: "resolved", resolvedAt: new Date() })
-      .where(
-        and(
-          eq(reports.contentId, parseInt(contentId)),
-          eq(reports.contentType, contentType)
-        )
-      );
+    // Update report status to resolved
+    await db.update(postReports)
+      .set({ status: "resolved" })
+      .where(eq(postReports.postId, parseInt(contentId)));
 
     res.json({ success: true, contentId, action });
   } catch (error: any) {
@@ -293,6 +287,206 @@ router.get("/reports/analytics", authenticateToken, requireAdmin, async (req, re
     });
   } catch (error: any) {
     console.error("Error fetching analytics:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/analytics/user-growth
+ * User growth over time
+ */
+router.get("/analytics/user-growth", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const { timeframe = "30d" } = req.query;
+    const days = parseInt(timeframe as string) || 30;
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    const growth = await db.select({
+      date: sql<string>`DATE(${users.createdAt})`,
+      count: count(),
+    })
+      .from(users)
+      .where(gte(users.createdAt, startDate))
+      .groupBy(sql`DATE(${users.createdAt})`)
+      .orderBy(sql`DATE(${users.createdAt})`);
+
+    res.json(growth);
+  } catch (error: any) {
+    console.error("Error fetching user growth:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/analytics/engagement
+ * Platform engagement metrics
+ */
+router.get("/analytics/engagement", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const { timeframe = "7d" } = req.query;
+    const days = parseInt(timeframe as string) || 7;
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    const totalPosts = await db.select({ count: count() })
+      .from(posts)
+      .where(gte(posts.createdAt, startDate));
+
+    const activeUsers = await db.select({
+      count: sql<number>`COUNT(DISTINCT ${posts.userId})`,
+    })
+      .from(posts)
+      .where(gte(posts.createdAt, startDate));
+
+    res.json({
+      totalPosts: totalPosts[0]?.count || 0,
+      activeUsers: activeUsers[0]?.count || 0,
+      timeframe,
+    });
+  } catch (error: any) {
+    console.error("Error fetching engagement:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/analytics/retention
+ * User retention metrics
+ */
+router.get("/analytics/retention", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const totalUsers = await db.select({ count: count() }).from(users);
+
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const activeUsers = await db.select({
+      count: sql<number>`COUNT(DISTINCT ${posts.userId})`,
+    })
+      .from(posts)
+      .where(gte(posts.createdAt, thirtyDaysAgo));
+
+    const total = totalUsers[0]?.count || 1;
+    const active = activeUsers[0]?.count || 0;
+    const retentionRate = ((active / total) * 100).toFixed(2);
+
+    res.json({
+      totalUsers: total,
+      activeUsers: active,
+      retentionRate: parseFloat(retentionRate),
+    });
+  } catch (error: any) {
+    console.error("Error fetching retention:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/analytics/content-performance
+ * Top performing content
+ */
+router.get("/analytics/content-performance", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const { limit = "10" } = req.query;
+
+    const topPosts = await db.select({
+      id: posts.id,
+      content: posts.content,
+      userId: posts.userId,
+      likesCount: posts.likesCount,
+      commentsCount: posts.commentsCount,
+      sharesCount: posts.sharesCount,
+      createdAt: posts.createdAt,
+    })
+      .from(posts)
+      .orderBy(desc(posts.likesCount))
+      .limit(parseInt(limit as string));
+
+    res.json(topPosts);
+  } catch (error: any) {
+    console.error("Error fetching content performance:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/analytics/demographics
+ * User demographics
+ */
+router.get("/analytics/demographics", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const byCity = await db.select({
+      city: users.city,
+      count: count(),
+    })
+      .from(users)
+      .where(sql`${users.city} IS NOT NULL`)
+      .groupBy(users.city)
+      .orderBy(desc(count()))
+      .limit(10);
+
+    const totalUsers = await db.select({ count: count() }).from(users);
+
+    res.json({
+      totalUsers: totalUsers[0]?.count || 0,
+      topCities: byCity,
+    });
+  } catch (error: any) {
+    console.error("Error fetching demographics:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/analytics/events-metrics
+ * Event participation metrics
+ */
+router.get("/analytics/events-metrics", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const { timeframe = "30d" } = req.query;
+    const days = parseInt(timeframe as string) || 30;
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    const totalEvents = await db.select({ count: count() })
+      .from(events)
+      .where(gte(events.createdAt, startDate));
+
+    res.json({
+      totalEvents: totalEvents[0]?.count || 0,
+      timeframe,
+    });
+  } catch (error: any) {
+    console.error("Error fetching events metrics:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/analytics/realtime
+ * Real-time activity
+ */
+router.get("/analytics/realtime", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const lastHour = new Date();
+    lastHour.setHours(lastHour.getHours() - 1);
+
+    const recentPosts = await db.select({ count: count() })
+      .from(posts)
+      .where(gte(posts.createdAt, lastHour));
+
+    const recentEvents = await db.select({ count: count() })
+      .from(events)
+      .where(gte(events.createdAt, lastHour));
+
+    res.json({
+      postsLastHour: recentPosts[0]?.count || 0,
+      eventsLastHour: recentEvents[0]?.count || 0,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error: any) {
+    console.error("Error fetching realtime:", error);
     res.status(500).json({ error: error.message });
   }
 });
