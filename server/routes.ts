@@ -302,6 +302,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       res.json(posts);
     } catch (error) {
+      console.error("[GET /api/posts] Error fetching posts:", error);
       res.status(500).json({ message: "Failed to fetch posts" });
     }
   });
