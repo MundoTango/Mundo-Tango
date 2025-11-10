@@ -210,6 +210,13 @@ export interface IStorage {
   getConnectionDegree(userId1: number, userId2: number): Promise<number | null>;
   snoozeFriendRequest(requestId: number, days: number): Promise<void>;
   removeFriend(userId: number, friendId: number): Promise<void>;
+  getFriendshipStats(userId: number, friendId: number): Promise<{
+    daysSinceFriendship: number;
+    closenessScore: number;
+    sharedEvents: number;
+    sharedGroups: number;
+    lastInteraction: string | null;
+  } | null>;
   
   // Communities
   getCommunityByCity(cityName: string): Promise<any | undefined>;
@@ -1232,6 +1239,70 @@ export class DbStorage implements IStorage {
         and(eq(friendRequests.senderId, friendId), eq(friendRequests.receiverId, userId))
       )
     );
+  }
+
+  async getFriendshipStats(userId: number, friendId: number): Promise<{
+    daysSinceFriendship: number;
+    closenessScore: number;
+    sharedEvents: number;
+    sharedGroups: number;
+    lastInteraction: string | null;
+  } | null> {
+    // Get friendship record (bidirectional, either userId-friendId or friendId-userId)
+    const friendship = await db.select()
+      .from(friendships)
+      .where(
+        or(
+          and(eq(friendships.userId, userId), eq(friendships.friendId, friendId)),
+          and(eq(friendships.userId, friendId), eq(friendships.friendId, userId))
+        )
+      )
+      .limit(1);
+
+    if (friendship.length === 0) {
+      return null;
+    }
+
+    const friendshipData = friendship[0];
+    
+    // Calculate days since friendship
+    const createdAt = new Date(friendshipData.createdAt);
+    const now = new Date();
+    const daysSinceFriendship = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+
+    // Get shared events (events both users RSVPed to)
+    const userEvents = await db.select({ eventId: eventRsvps.eventId })
+      .from(eventRsvps)
+      .where(eq(eventRsvps.userId, userId));
+    
+    const friendEvents = await db.select({ eventId: eventRsvps.eventId })
+      .from(eventRsvps)
+      .where(eq(eventRsvps.userId, friendId));
+    
+    const userEventIds = userEvents.map(e => e.eventId);
+    const friendEventIds = friendEvents.map(e => e.eventId);
+    const sharedEventIds = userEventIds.filter(id => friendEventIds.includes(id));
+
+    // Get shared groups (groups both users are members of)
+    const userGroups = await db.select({ groupId: groupMembers.groupId })
+      .from(groupMembers)
+      .where(eq(groupMembers.userId, userId));
+    
+    const friendGroups = await db.select({ groupId: groupMembers.groupId })
+      .from(groupMembers)
+      .where(eq(groupMembers.userId, friendId));
+    
+    const userGroupIds = userGroups.map(g => g.groupId);
+    const friendGroupIds = friendGroups.map(g => g.groupId);
+    const sharedGroupIds = userGroupIds.filter(id => friendGroupIds.includes(id));
+
+    return {
+      daysSinceFriendship,
+      closenessScore: friendshipData.closenessScore || 0,
+      sharedEvents: sharedEventIds.length,
+      sharedGroups: sharedGroupIds.length,
+      lastInteraction: friendshipData.lastInteractionAt ? friendshipData.lastInteractionAt.toISOString() : null,
+    };
   }
 
   async deleteNotification(notificationId: number): Promise<void> {

@@ -1099,6 +1099,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/friends/mutual/:userId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const mutualFriends = await storage.getMutualFriends(req.userId!, userId);
+      res.json(mutualFriends);
+    } catch (error) {
+      console.error("[GET /api/friends/mutual/:userId] Error:", error);
+      res.status(500).json({ message: "Failed to fetch mutual friends" });
+    }
+  });
+
+  app.get("/api/friends/friendship/:friendId/stats", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const friendId = parseInt(req.params.friendId);
+      const stats = await storage.getFriendshipStats(req.userId!, friendId);
+      
+      if (!stats) {
+        return res.status(404).json({ message: "Friendship not found" });
+      }
+      
+      res.json(stats);
+    } catch (error) {
+      console.error("[GET /api/friends/friendship/:friendId/stats] Error:", error);
+      res.status(500).json({ message: "Failed to fetch friendship stats" });
+    }
+  });
+
   app.patch("/api/notifications/:id/read", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const notificationId = parseInt(req.params.id);
