@@ -14,7 +14,23 @@ import {
   Mail,
   X,
   Sparkles,
-  MapPin
+  MapPin,
+  Image,
+  Bookmark,
+  GraduationCap,
+  Building2,
+  Dumbbell,
+  ShoppingBag,
+  Home,
+  Radio,
+  Music,
+  BookOpen,
+  MessageSquare,
+  Trophy,
+  CreditCard,
+  Plane,
+  Phone,
+  MapPinned
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -79,16 +95,53 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
 
   const stats = statsData;
 
-  // Navigation routes (8 items as per handoff)
-  const sidebarRoutes = [
+  // Main Navigation (Core Features)
+  const mainRoutes = [
     { icon: Heart, title: t('navigation.memories'), link: "/" },
     { icon: UsersRound, title: t('navigation.tangoCommunity'), link: "/community-world-map" },
-    { icon: UserCheck, title: t('navigation.friends'), link: "/friends-list" },
-    { icon: MessageCircle, title: t('navigation.messages'), link: "/messages" },
     { icon: Network, title: t('navigation.groups'), link: "/groups" },
     { icon: Calendar, title: t('navigation.events'), link: "/events" },
-    { icon: Star, title: t('navigation.recommendations'), link: "/recommendations" },
+    { icon: MessageCircle, title: t('navigation.messages'), link: "/messages" },
+    { icon: UserCheck, title: t('navigation.friends'), link: "/friends-list" },
+  ];
+
+  // Discover Section
+  const discoverRoutes = [
+    { icon: Star, title: "Stories", link: "/stories" },
+    { icon: Image, title: "Media Gallery", link: "/media" },
+    { icon: Bookmark, title: "Saved Posts", link: "/saved" },
+  ];
+
+  // Professional Services
+  const professionalRoutes = [
+    { icon: GraduationCap, title: "Teachers", link: "/teachers" },
+    { icon: Building2, title: "Venues", link: "/venues" },
+    { icon: Dumbbell, title: "Workshops", link: "/workshops" },
+    { icon: MapPinned, title: "Venue Recommendations", link: "/venue-recommendations" },
+  ];
+
+  // Marketplace & Services
+  const marketplaceRoutes = [
+    { icon: ShoppingBag, title: "Marketplace", link: "/marketplace" },
+    { icon: Home, title: "Housing", link: "/host-homes" },
+    { icon: Radio, title: "Live Streams", link: "/live-streams" },
+  ];
+
+  // Resources & Community
+  const resourceRoutes = [
+    { icon: Music, title: "Music Library", link: "/music" },
+    { icon: BookOpen, title: "Blog", link: "/blog" },
+    { icon: MessageSquare, title: "Reviews", link: "/reviews" },
+    { icon: Trophy, title: "Leaderboard", link: "/leaderboard" },
+  ];
+
+  // Account & Support
+  const accountRoutes = [
+    { icon: CreditCard, title: "Subscriptions", link: "/subscriptions" },
+    { icon: Plane, title: "Travel Planner", link: "/travel-planner" },
+    { icon: Phone, title: "Contact", link: "/contact" },
     { icon: Mail, title: t('navigation.roleInvitations'), link: "/invitations" },
+    { icon: Star, title: t('navigation.recommendations'), link: "/recommendations" },
   ];
 
   // Global statistics (4 stats)
@@ -240,9 +293,9 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
             </div>
           </Link>
 
-          {/* Navigation Menu */}
-          <div className="space-y-1">
-            {sidebarRoutes.map((item) => {
+          {/* Helper function to render nav items */}
+          {(() => {
+            const renderNavItem = (item: any) => {
               const active = isActive(item.link);
               
               return (
@@ -261,18 +314,14 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
                       : '#64748B',
                   }}
                   onClick={(e) => {
-                    // Prevent navigation if already on this page
                     if (active) {
                       e.preventDefault();
-                      // Just close sidebar on mobile
                       if (window.innerWidth < 1024) {
                         setIsOpen(false);
                       }
                       return;
                     }
-                    // Navigate to the page
                     window.location.href = item.link;
-                    // Close sidebar on mobile after navigation
                     if (window.innerWidth < 1024) {
                       setIsOpen(false);
                     }
@@ -291,19 +340,52 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
                     }
                   }}
                 >
-                  {/* Icon with hover scale */}
                   <div className="transition-transform group-hover:scale-110">
                     <item.icon className="w-5 h-5" />
                   </div>
-                  
-                  {/* Title */}
                   <div className="text-sm font-medium">
                     {item.title}
                   </div>
                 </div>
               );
-            })}
-          </div>
+            };
+
+            const renderSection = (title: string, routes: any[]) => (
+              <div key={title} className="space-y-1">
+                {title && (
+                  <div 
+                    className="text-xs font-semibold uppercase tracking-wide px-3 pt-3 pb-1"
+                    style={{ color: '#64748B' }}
+                  >
+                    {title}
+                  </div>
+                )}
+                {routes.map(renderNavItem)}
+              </div>
+            );
+
+            return (
+              <>
+                {/* Main Navigation */}
+                {renderSection("", mainRoutes)}
+                
+                {/* Discover */}
+                {renderSection("Discover", discoverRoutes)}
+                
+                {/* Professional Services */}
+                {renderSection("Professional", professionalRoutes)}
+                
+                {/* Marketplace & Services */}
+                {renderSection("Marketplace", marketplaceRoutes)}
+                
+                {/* Resources & Community */}
+                {renderSection("Resources", resourceRoutes)}
+                
+                {/* Account & Support */}
+                {renderSection("Account", accountRoutes)}
+              </>
+            );
+          })()}
 
           {/* Global Statistics */}
           <div className="pt-4">
