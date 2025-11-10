@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +22,7 @@ import {
 } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { CommunityMapWithLayers } from "@/components/map/CommunityMapWithLayers";
 import { useState, useEffect, useMemo } from "react";
 
 // Fix Leaflet default marker icon
@@ -53,41 +53,6 @@ interface MapLayer {
   icon: any;
 }
 
-// Custom MT Ocean marker icon
-const createCustomIcon = (count: number, color: string = '#40E0D0') => {
-  return L.divIcon({
-    className: 'custom-marker',
-    html: `
-      <div style="
-        background: linear-gradient(135deg, ${color} 0%, #1E90FF 100%);
-        border: 3px solid white;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        color: white;
-        font-size: 12px;
-        box-shadow: 0 4px 12px rgba(64, 224, 208, 0.4);
-        transition: transform 0.2s;
-      ">
-        ${count}
-      </div>
-    `,
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-  });
-};
-
-function MapUpdater({ center }: { center: [number, number] }) {
-  const map = useMap();
-  useEffect(() => {
-    map.setView(center, map.getZoom());
-  }, [center, map]);
-  return null;
-}
 
 export default function CommunityWorldMapPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -421,62 +386,19 @@ export default function CommunityWorldMapPage() {
               <Card className="lg:col-span-2 overflow-hidden">
                 <CardHeader>
                   <CardTitle>Interactive Map</CardTitle>
-                  <CardDescription>Click on markers to explore communities</CardDescription>
+                  <CardDescription>
+                    Toggle layers to filter markers by type. Color-coded: 🔴 Events, 🔵 Housing, 🟡 Venues
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="w-full h-[600px]" data-testid="map-container">
-                    <MapContainer
+                    <CommunityMapWithLayers
+                      locations={sortedLocations}
+                      layers={layers}
                       center={mapCenter}
                       zoom={mapZoom}
-                      style={{ height: '100%', width: '100%' }}
-                      className="rounded-b-lg"
-                    >
-                      <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                      />
-                      <MapUpdater center={mapCenter} />
-                      {sortedLocations.map((location) => (
-                        <Marker
-                          key={location.id}
-                          position={[location.coordinates.lat, location.coordinates.lng]}
-                          icon={createCustomIcon(location.memberCount)}
-                          eventHandlers={{
-                            click: () => handleCityClick(location)
-                          }}
-                        >
-                          <Popup>
-                            <div className="p-2">
-                              <h3 className="font-bold text-lg mb-2">{location.city}, {location.country}</h3>
-                              <div className="space-y-1 text-sm">
-                                <div className="flex items-center gap-2">
-                                  <Users className="h-4 w-4" />
-                                  <span>{location.memberCount} members</span>
-                                </div>
-                                {layers.find(l => l.id === 'events')?.enabled && (
-                                  <div className="flex items-center gap-2">
-                                    <Calendar className="h-4 w-4" />
-                                    <span>{location.activeEvents} events</span>
-                                  </div>
-                                )}
-                                {layers.find(l => l.id === 'housing')?.enabled && (
-                                  <div className="flex items-center gap-2">
-                                    <Home className="h-4 w-4" />
-                                    <span>{location.housing} housing</span>
-                                  </div>
-                                )}
-                                {layers.find(l => l.id === 'recommendations')?.enabled && (
-                                  <div className="flex items-center gap-2">
-                                    <Building2 className="h-4 w-4" />
-                                    <span>{location.venues} venues</span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </Popup>
-                        </Marker>
-                      ))}
-                    </MapContainer>
+                      onCityClick={handleCityClick}
+                    />
                   </div>
                 </CardContent>
               </Card>
