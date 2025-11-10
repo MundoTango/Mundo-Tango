@@ -183,6 +183,7 @@ const MediaGalleryPage = lazy(() => import("@/pages/MediaGalleryPage"));
 const LeaderboardPage = lazy(() => import("@/pages/LeaderboardPage"));
 const FAQPage = lazy(() => import("@/pages/FAQPage"));
 const HelpPage = lazy(() => import("@/pages/HelpPage"));
+const HelpCenterPage = lazy(() => import("@/pages/HelpCenterPage"));
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
 const StoriesPage = lazy(() => import("@/pages/StoriesPage"));
 const VenueRecommendationsPage = lazy(() => import("@/pages/VenueRecommendationsPage"));
