@@ -598,7 +598,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       res.status(201).json(comment);
     } catch (error) {
-      res.status(500).json({ message: "Failed to create comment" });
+      console.error("Create comment error:", error);
+      res.status(500).json({ message: "Failed to create comment", error: error instanceof Error ? error.message : String(error) });
     }
   });
 

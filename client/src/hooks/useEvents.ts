@@ -156,7 +156,17 @@ export function useMyRSVPs() {
   return useQuery<RSVP[]>({
     queryKey: ["/api/events/my-rsvps"],
     queryFn: async () => {
-      const res = await fetch('/api/events/my-rsvps');
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      
+      const res = await fetch('/api/events/my-rsvps', {
+        headers,
+        credentials: "include",
+      });
       if (!res.ok) throw new Error('Failed to fetch my RSVPs');
       return await res.json();
     },
