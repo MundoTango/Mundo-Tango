@@ -3303,6 +3303,35 @@ export const userReports = pgTable("user_reports", {
   severityIdx: index("idx_user_reports_severity").on(table.severity),
 }));
 
+// Role Requests (professional role upgrade requests: teacher, DJ, organizer)
+export const roleRequests = pgTable("role_requests", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  requestedRole: varchar("requested_role", { length: 50 }).notNull(), // teacher, dj, organizer
+  currentRole: varchar("current_role", { length: 50 }).notNull(),
+  experience: text("experience").notNull(), // Years of experience description
+  credentials: jsonb("credentials"), // Certifications, links to work, references
+  bio: text("bio"), // Professional bio
+  specialties: text("specialties").array(), // Teaching styles, music genres, event types
+  city: varchar("city", { length: 255 }),
+  country: varchar("country", { length: 255 }),
+  website: text("website"),
+  socialLinks: jsonb("social_links"), // Instagram, YouTube, etc.
+  whyRequest: text("why_request").notNull(), // Why they want this role
+  status: varchar("status", { length: 50 }).default('pending').notNull(), // pending, under_review, approved, rejected
+  reviewedBy: integer("reviewed_by").references(() => users.id),
+  reviewedAt: timestamp("reviewed_at"),
+  adminNotes: text("admin_notes"),
+  rejectionReason: text("rejection_reason"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("idx_role_requests_user").on(table.userId),
+  statusIdx: index("idx_role_requests_status").on(table.status),
+  requestedRoleIdx: index("idx_role_requests_requested_role").on(table.requestedRole),
+  createdAtIdx: index("idx_role_requests_created_at").on(table.createdAt),
+}));
+
 export const banAppealslogs = pgTable("ban_appeals", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
@@ -3526,6 +3555,11 @@ export type SelectContentReport = typeof contentReports.$inferSelect;
 export const insertUserReportSchema = createInsertSchema(userReports).omit({ id: true, createdAt: true, updatedAt: true, reviewedAt: true });
 export type InsertUserReport = z.infer<typeof insertUserReportSchema>;
 export type SelectUserReport = typeof userReports.$inferSelect;
+
+// Role Requests
+export const insertRoleRequestSchema = createInsertSchema(roleRequests).omit({ id: true, createdAt: true, updatedAt: true, reviewedAt: true });
+export type InsertRoleRequest = z.infer<typeof insertRoleRequestSchema>;
+export type SelectRoleRequest = typeof roleRequests.$inferSelect;
 
 // Audit Logs
 export const insertAuditLogSchema = createInsertSchema(auditLogs).omit({ id: true, createdAt: true });

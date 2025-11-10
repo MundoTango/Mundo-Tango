@@ -5,7 +5,7 @@
 
 import { Router, Response } from "express";
 import { db } from "@shared/db";
-import { users, posts, postReports, events, userReports } from "@shared/schema";
+import { users, posts, postReports, events, userReports, roleRequests } from "@shared/schema";
 import { eq, desc, like, or, and, gte, count, sql } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { storage } from "../storage";
@@ -635,6 +635,169 @@ router.post("/user-reports/:reportId/dismiss", authenticateToken, requireAdmin, 
     res.json({ success: true, report: updated });
   } catch (error: any) {
     console.error("Error dismissing user report:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/role-requests
+ * Get all professional role requests with filters
+ */
+router.get("/role-requests", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const { status, requestedRole } = req.query;
+
+    let query = db
+      .select({
+        id: roleRequests.id,
+        userId: roleRequests.userId,
+        requestedRole: roleRequests.requestedRole,
+        currentRole: roleRequests.currentRole,
+        experience: roleRequests.experience,
+        credentials: roleRequests.credentials,
+        bio: roleRequests.bio,
+        specialties: roleRequests.specialties,
+        city: roleRequests.city,
+        country: roleRequests.country,
+        website: roleRequests.website,
+        socialLinks: roleRequests.socialLinks,
+        whyRequest: roleRequests.whyRequest,
+        status: roleRequests.status,
+        reviewedBy: roleRequests.reviewedBy,
+        reviewedAt: roleRequests.reviewedAt,
+        adminNotes: roleRequests.adminNotes,
+        rejectionReason: roleRequests.rejectionReason,
+        createdAt: roleRequests.createdAt,
+      })
+      .from(roleRequests)
+      .$dynamic();
+
+    // Add status filter
+    if (status && status !== "all") {
+      query = query.where(eq(roleRequests.status, status as string));
+    }
+
+    // Add role filter
+    if (requestedRole && requestedRole !== "all") {
+      query = query.where(eq(roleRequests.requestedRole, requestedRole as string));
+    }
+
+    const requests = await query.orderBy(desc(roleRequests.createdAt));
+
+    // Enrich with user data
+    const enrichedRequests = await Promise.all(
+      requests.map(async (request) => {
+        const [user] = await db
+          .select({
+            id: users.id,
+            name: users.name,
+            username: users.username,
+            email: users.email,
+            profileImage: users.profileImage,
+          })
+          .from(users)
+          .where(eq(users.id, request.userId));
+
+        return {
+          ...request,
+          user,
+        };
+      })
+    );
+
+    res.json(enrichedRequests);
+  } catch (error: any) {
+    console.error("Error fetching role requests:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/admin/role-requests/:requestId/approve
+ * Approve a role request and update user role
+ */
+router.post("/role-requests/:requestId/approve", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { requestId } = req.params;
+    const { adminNotes } = req.body;
+
+    // Get the request
+    const [request] = await db
+      .select()
+      .from(roleRequests)
+      .where(eq(roleRequests.id, parseInt(requestId)));
+
+    if (!request) {
+      return res.status(404).json({ error: "Request not found" });
+    }
+
+    // Update request status
+    await db
+      .update(roleRequests)
+      .set({
+        status: "approved",
+        adminNotes,
+        reviewedBy: req.user!.id,
+        reviewedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(roleRequests.id, parseInt(requestId)));
+
+    // Update user role based on requested role
+    // Map requested role to actual user role
+    const roleMapping: Record<string, string> = {
+      teacher: "teacher",
+      dj: "premium", // DJs get premium role
+      organizer: "premium", // Organizers get premium role
+    };
+
+    const newRole = roleMapping[request.requestedRole] || request.requestedRole;
+
+    await db
+      .update(users)
+      .set({ role: newRole, updatedAt: new Date() })
+      .where(eq(users.id, request.userId));
+
+    res.json({ success: true, message: "Role request approved and user role updated" });
+  } catch (error: any) {
+    console.error("Error approving role request:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/admin/role-requests/:requestId/reject
+ * Reject a role request
+ */
+router.post("/role-requests/:requestId/reject", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { requestId } = req.params;
+    const { adminNotes, rejectionReason } = req.body;
+
+    if (!rejectionReason) {
+      return res.status(400).json({ error: "Rejection reason is required" });
+    }
+
+    const [updated] = await db
+      .update(roleRequests)
+      .set({
+        status: "rejected",
+        adminNotes,
+        rejectionReason,
+        reviewedBy: req.user!.id,
+        reviewedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(roleRequests.id, parseInt(requestId)))
+      .returning();
+
+    if (!updated) {
+      return res.status(404).json({ error: "Request not found" });
+    }
+
+    res.json({ success: true, request: updated });
+  } catch (error: any) {
+    console.error("Error rejecting role request:", error);
     res.status(500).json({ error: error.message });
   }
 });
