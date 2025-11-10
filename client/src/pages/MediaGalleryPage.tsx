@@ -10,8 +10,9 @@ export default function MediaGalleryPage() {
   const [activeTab, setActiveTab] = useState("all");
 
   const queryType = activeTab === "all" ? "" : activeTab === "photos" ? "photo" : "video";
+  const queryUrl = queryType ? `/api/media?type=${queryType}` : "/api/media";
   const { data: media, isLoading } = useQuery({
-    queryKey: ["/api/media", queryType],
+    queryKey: [queryUrl],
   });
 
   return (
