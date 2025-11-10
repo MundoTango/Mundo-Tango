@@ -88,6 +88,7 @@ const TaskBoardPage = lazy(() => import("@/pages/admin/TaskBoardPage"));
 const PricingManagerPage = lazy(() => import("@/pages/admin/PricingManagerPage"));
 const SelfHealingPage = lazy(() => import("@/pages/admin/SelfHealingPage"));
 const ProjectTrackerPage = lazy(() => import("@/pages/admin/ProjectTrackerPage"));
+const UserReportsPage = lazy(() => import("@/pages/admin/UserReportsPage"));
 const AgentHealthDashboard = lazy(() => import("@/pages/admin/AgentHealthDashboard"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
 const AdminUsersPage = lazy(() => import("@/pages/AdminUsersPage"));
@@ -95,7 +96,6 @@ const AdminUsersManagementPage = lazy(() => import("@/pages/AdminUsersManagement
 const AdminModerationPage = lazy(() => import("@/pages/AdminModerationPage"));
 const AdminAnalyticsPage = lazy(() => import("@/pages/AdminAnalyticsPage"));
 const ContentModerationPage = lazy(() => import("@/pages/ContentModerationPage"));
-const UserReportsPage = lazy(() => import("@/pages/UserReportsPage"));
 const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
 const PlatformPage = lazy(() => import("@/pages/Platform"));
 const SecretsPage = lazy(() => import("@/pages/SecretsPage"));
@@ -666,7 +666,7 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
-      <Route path="/admin/reports">
+      <Route path="/admin/user-reports">
         <ProtectedRoute>
           <AdminLayout>
             <UserReportsPage />

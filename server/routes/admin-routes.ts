@@ -5,7 +5,7 @@
 
 import { Router, Response } from "express";
 import { db } from "@shared/db";
-import { users, posts, postReports, events } from "@shared/schema";
+import { users, posts, postReports, events, userReports } from "@shared/schema";
 import { eq, desc, like, or, and, gte, count, sql } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { storage } from "../storage";
@@ -132,7 +132,7 @@ router.patch("/users/:userId", authenticateToken, requireAdmin, async (req, res:
     const { role, verified } = req.body;
 
     const updated = await db.update(users)
-      .set({ role, verified, updatedAt: new Date() })
+      .set({ role, isVerified: verified, updatedAt: new Date() })
       .where(eq(users.id, parseInt(userId)))
       .returning();
 
@@ -487,6 +487,154 @@ router.get("/analytics/realtime", authenticateToken, requireAdmin, async (req, r
     });
   } catch (error: any) {
     console.error("Error fetching realtime:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/admin/user-reports
+ * Get all user reports with filters
+ */
+router.get("/user-reports", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const { status, severity } = req.query;
+
+    let query = db
+      .select({
+        id: userReports.id,
+        reporterId: userReports.reporterId,
+        reportedUserId: userReports.reportedUserId,
+        reportType: userReports.reportType,
+        description: userReports.description,
+        evidence: userReports.evidence,
+        status: userReports.status,
+        severity: userReports.severity,
+        reviewedBy: userReports.reviewedBy,
+        reviewedAt: userReports.reviewedAt,
+        adminNotes: userReports.adminNotes,
+        action: userReports.action,
+        actionDetails: userReports.actionDetails,
+        createdAt: userReports.createdAt,
+      })
+      .from(userReports)
+      .$dynamic();
+
+    // Add status filter
+    if (status && status !== "all") {
+      query = query.where(eq(userReports.status, status as string));
+    }
+
+    // Add severity filter
+    if (severity && severity !== "all") {
+      query = query.where(eq(userReports.severity, severity as string));
+    }
+
+    const reports = await query.orderBy(desc(userReports.createdAt));
+
+    // Enrich with user data
+    const enrichedReports = await Promise.all(
+      reports.map(async (report) => {
+        const [reporter] = await db
+          .select({
+            id: users.id,
+            name: users.name,
+            username: users.username,
+            profileImage: users.profileImage,
+          })
+          .from(users)
+          .where(eq(users.id, report.reporterId));
+
+        const [reportedUser] = await db
+          .select({
+            id: users.id,
+            name: users.name,
+            username: users.username,
+            profileImage: users.profileImage,
+            email: users.email,
+          })
+          .from(users)
+          .where(eq(users.id, report.reportedUserId));
+
+        return {
+          ...report,
+          reporter,
+          reportedUser,
+        };
+      })
+    );
+
+    res.json(enrichedReports);
+  } catch (error: any) {
+    console.error("Error fetching user reports:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/admin/user-reports/:reportId/resolve
+ * Resolve a user report with action
+ */
+router.post("/user-reports/:reportId/resolve", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { reportId } = req.params;
+    const { action, adminNotes } = req.body;
+
+    if (!action) {
+      return res.status(400).json({ error: "Action is required" });
+    }
+
+    const [updated] = await db
+      .update(userReports)
+      .set({
+        status: "resolved",
+        action,
+        adminNotes,
+        reviewedBy: req.user!.id,
+        reviewedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(userReports.id, parseInt(reportId)))
+      .returning();
+
+    if (!updated) {
+      return res.status(404).json({ error: "Report not found" });
+    }
+
+    res.json({ success: true, report: updated });
+  } catch (error: any) {
+    console.error("Error resolving user report:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/admin/user-reports/:reportId/dismiss
+ * Dismiss a user report
+ */
+router.post("/user-reports/:reportId/dismiss", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { reportId } = req.params;
+    const { adminNotes } = req.body;
+
+    const [updated] = await db
+      .update(userReports)
+      .set({
+        status: "dismissed",
+        adminNotes,
+        reviewedBy: req.user!.id,
+        reviewedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(userReports.id, parseInt(reportId)))
+      .returning();
+
+    if (!updated) {
+      return res.status(404).json({ error: "Report not found" });
+    }
+
+    res.json({ success: true, report: updated });
+  } catch (error: any) {
+    console.error("Error dismissing user report:", error);
     res.status(500).json({ error: error.message });
   }
 });

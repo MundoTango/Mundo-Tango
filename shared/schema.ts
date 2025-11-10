@@ -3279,6 +3279,30 @@ export const suspensionLogs = pgTable("suspension_logs", {
   activeIdx: index("idx_suspension_logs_active").on(table.endsAt),
 }));
 
+// User Reports (user-to-user reporting system)
+export const userReports = pgTable("user_reports", {
+  id: serial("id").primaryKey(),
+  reporterId: integer("reporter_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  reportedUserId: integer("reported_user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  reportType: varchar("report_type", { length: 100 }).notNull(), // harassment, spam, inappropriate_content, impersonation, scam, violence, hate_speech, other
+  description: text("description").notNull(),
+  evidence: jsonb("evidence"), // Screenshots, URLs, etc.
+  status: varchar("status", { length: 50 }).default('pending').notNull(), // pending, under_review, resolved, dismissed
+  severity: varchar("severity", { length: 50 }).default('medium'), // low, medium, high, critical
+  reviewedBy: integer("reviewed_by").references(() => users.id),
+  reviewedAt: timestamp("reviewed_at"),
+  adminNotes: text("admin_notes"),
+  action: varchar("action", { length: 50 }), // no_action, warning, suspension, ban
+  actionDetails: text("action_details"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  reporterIdx: index("idx_user_reports_reporter").on(table.reporterId),
+  reportedUserIdx: index("idx_user_reports_reported_user").on(table.reportedUserId),
+  statusIdx: index("idx_user_reports_status").on(table.status),
+  severityIdx: index("idx_user_reports_severity").on(table.severity),
+}));
+
 export const banAppealslogs = pgTable("ban_appeals", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
@@ -3497,6 +3521,11 @@ export type SelectStoryReaction = typeof storyReactions.$inferSelect;
 export const insertContentReportSchema = createInsertSchema(contentReports).omit({ id: true, createdAt: true, reviewedAt: true });
 export type InsertContentReport = z.infer<typeof insertContentReportSchema>;
 export type SelectContentReport = typeof contentReports.$inferSelect;
+
+// User Reports
+export const insertUserReportSchema = createInsertSchema(userReports).omit({ id: true, createdAt: true, updatedAt: true, reviewedAt: true });
+export type InsertUserReport = z.infer<typeof insertUserReportSchema>;
+export type SelectUserReport = typeof userReports.$inferSelect;
 
 // Audit Logs
 export const insertAuditLogSchema = createInsertSchema(auditLogs).omit({ id: true, createdAt: true });
