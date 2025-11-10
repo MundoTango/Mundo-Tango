@@ -1,25 +1,28 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Image, Video, Heart, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PageLayout } from "@/components/PageLayout";
-import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function MediaGalleryPage() {
   const [activeTab, setActiveTab] = useState("all");
 
+  const queryType = activeTab === "all" ? "" : activeTab === "photos" ? "photo" : "video";
   const { data: media, isLoading } = useQuery({
-    queryKey: ["/api/media", activeTab],
+    queryKey: ["/api/media", queryType],
   });
 
   return (
-    <SelfHealingErrorBoundary pageName="Media Gallery" fallbackRoute="/feed">
-      <PageLayout title="Media Gallery" showBreadcrumbs>
-<div className="min-h-screen bg-background py-8 px-4">
-      <div className="container mx-auto max-w-6xl">
-        
+    <AppLayout>
+      <div className="container max-w-6xl mx-auto p-6 space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Media Gallery</h1>
+          <p className="text-muted-foreground">
+            Explore photos and videos from the tango community
+          </p>
+        </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-6">
@@ -77,8 +80,6 @@ export default function MediaGalleryPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
-    </PageLayout>
-    </SelfHealingErrorBoundary>
+    </AppLayout>
   );
 }

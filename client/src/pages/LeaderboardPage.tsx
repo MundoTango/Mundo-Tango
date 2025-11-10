@@ -1,26 +1,33 @@
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AppLayout } from "@/components/AppLayout";
+import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, Award, Star } from "lucide-react";
 import { useState } from "react";
-import { PageLayout } from "@/components/PageLayout";
-import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function LeaderboardPage() {
   const [activeTab, setActiveTab] = useState("points");
 
   const { data: leaderboard, isLoading } = useQuery({
-    queryKey: ["/api/leaderboard", activeTab],
+    queryKey: ["/api/leaderboard"],
+    queryFn: async () => {
+      const res = await fetch(`/api/leaderboard?type=${activeTab}`);
+      if (!res.ok) throw new Error("Failed to fetch leaderboard");
+      return res.json();
+    },
   });
 
   return (
-    <SelfHealingErrorBoundary pageName="Leaderboard" fallbackRoute="/feed">
-      <PageLayout title="Community Leaderboard" showBreadcrumbs>
-<div className="min-h-screen bg-background py-8 px-4">
-      <div className="container mx-auto max-w-4xl">
-        
+    <AppLayout>
+      <div className="container max-w-4xl mx-auto p-6 space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Community Leaderboard</h1>
+          <p className="text-muted-foreground">
+            Top contributors in the tango community
+          </p>
+        </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="mb-6 w-full">
@@ -92,8 +99,6 @@ export default function LeaderboardPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
-    </PageLayout>
-    </SelfHealingErrorBoundary>
+    </AppLayout>
   );
 }

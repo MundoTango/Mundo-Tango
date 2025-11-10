@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -7,22 +8,28 @@ import { Input } from "@/components/ui/input";
 import { BookOpen, Calendar, Clock, Search } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
-import { PageLayout } from "@/components/PageLayout";
-import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 
 export default function BlogPage() {
   const [searchQuery, setSearchQuery] = useState("");
   
   const { data: posts, isLoading } = useQuery({
-    queryKey: ["/api/blog", searchQuery],
+    queryKey: ["/api/blog"],
+    queryFn: async () => {
+      const res = await fetch(`/api/blog${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ""}`);
+      if (!res.ok) throw new Error("Failed to fetch blog posts");
+      return res.json();
+    },
   });
 
   return (
-    <PageLayout title="Tango Blog" showBreadcrumbs>
-<SelfHealingErrorBoundary pageName="Tango Blog" fallbackRoute="/">
-<div className="min-h-screen bg-background py-8 px-4">
-      <div className="container mx-auto max-w-6xl">
-        
+    <AppLayout>
+      <div className="container max-w-6xl mx-auto p-6 space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Tango Blog</h1>
+          <p className="text-muted-foreground">
+            Stories, tips, and insights from the tango world
+          </p>
+        </div>
 
         <div className="mb-6">
           <div className="relative max-w-md">
@@ -113,7 +120,6 @@ export default function BlogPage() {
           </Card>
         )}
       </div>
-    </div>
-    </SelfHealingErrorBoundary>
-    </PageLayout>);
+    </AppLayout>
+  );
 }

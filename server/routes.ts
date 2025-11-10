@@ -41,6 +41,9 @@ import livestreamRoutes from "./routes/livestream-routes";
 import marketplaceRoutes from "./routes/marketplace-routes";
 import subscriptionRoutes from "./routes/subscription-routes";
 import reviewRoutes from "./routes/review-routes";
+import mediaRoutes from "./routes/media-routes";
+import leaderboardRoutes from "./routes/leaderboard-routes";
+import blogRoutes from "./routes/blog-routes";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
@@ -159,6 +162,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Phase D: Community & Engagement Systems
   app.use("/api/reviews", reviewRoutes);
+  app.use("/api/media", mediaRoutes);
+  app.use("/api/leaderboard", leaderboardRoutes);
+  app.use("/api/blog", blogRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(createPostBodySchema), async (req: AuthRequest, res: Response) => {
     try {
