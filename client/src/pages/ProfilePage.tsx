@@ -1,14 +1,16 @@
 import { useRoute, Link } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Settings, UserPlus, UserMinus } from "lucide-react";
+import { MapPin, Settings, UserPlus, UserMinus, UserCheck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 interface User {
   id: number;
@@ -37,6 +39,7 @@ interface Post {
 export default function ProfilePage() {
   const [, params] = useRoute("/profile/:id");
   const { user: currentUser } = useAuth();
+  const { toast } = useToast();
   
   const profileId = params?.id ? parseInt(params.id) : currentUser?.id;
 
@@ -60,7 +63,70 @@ export default function ProfilePage() {
     enabled: !!profileId,
   });
 
+  // Fetch friends to check if already friends
+  const { data: friends = [] } = useQuery<any[]>({
+    queryKey: ['/api/friends'],
+    enabled: !!(currentUser && profileId && currentUser.id !== profileId),
+  });
+
+  // Fetch friend requests to check if pending
+  const { data: friendRequests = [] } = useQuery<any[]>({
+    queryKey: ['/api/friends/requests'],
+    enabled: !!(currentUser && profileId && currentUser.id !== profileId),
+  });
+
   const isOwnProfile = currentUser?.id === profileId;
+  
+  // Check friendship status
+  const isFriend = friends.some((f: any) => f.id === profileId);
+  const hasPendingRequest = friendRequests.some(
+    (r: any) => r.receiverId === profileId && r.status === 'pending'
+  );
+
+  // Send friend request mutation
+  const sendFriendRequestMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest('POST', `/api/friends/request/${profileId}`);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
+      await queryClient.refetchQueries({ queryKey: ['/api/friends/requests'] });
+      toast({
+        title: "Friend request sent!",
+        description: `Request sent to ${user?.name}`,
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Failed to send request",
+        description: error.message || "Something went wrong",
+      });
+    },
+  });
+
+  // Remove friend mutation
+  const removeFriendMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest('DELETE', `/api/friends/${profileId}`);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['/api/friends'] });
+      await queryClient.refetchQueries({ queryKey: ['/api/friends'] });
+      await queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
+      toast({
+        title: "Friend removed",
+        description: `Removed ${user?.name} from friends`,
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Failed to remove friend",
+        description: error.message || "Something went wrong",
+      });
+    },
+  });
 
   if (userLoading || !user) {
     return (
@@ -134,10 +200,33 @@ export default function ProfilePage() {
                         Edit Profile
                       </Link>
                     </Button>
+                  ) : isFriend ? (
+                    <Button 
+                      variant="secondary"
+                      onClick={() => removeFriendMutation.mutate()}
+                      disabled={removeFriendMutation.isPending}
+                      data-testid={`button-remove-friend-${profileId}`}
+                    >
+                      <UserMinus className="h-4 w-4 mr-2" />
+                      {removeFriendMutation.isPending ? 'Removing...' : 'Remove Friend'}
+                    </Button>
+                  ) : hasPendingRequest ? (
+                    <Button 
+                      variant="secondary"
+                      disabled
+                      data-testid="button-request-pending"
+                    >
+                      <UserCheck className="h-4 w-4 mr-2" />
+                      Request Sent
+                    </Button>
                   ) : (
-                    <Button data-testid="button-follow">
+                    <Button 
+                      onClick={() => sendFriendRequestMutation.mutate()}
+                      disabled={sendFriendRequestMutation.isPending}
+                      data-testid={`button-add-friend-${profileId}`}
+                    >
                       <UserPlus className="h-4 w-4 mr-2" />
-                      Follow
+                      {sendFriendRequestMutation.isPending ? 'Sending...' : 'Add Friend'}
                     </Button>
                   )}
                 </div>
