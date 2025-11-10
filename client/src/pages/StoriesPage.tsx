@@ -69,10 +69,18 @@ export default function StoriesPage() {
   });
 
   const handleCreateStory = () => {
-    if (!newStory.mediaUrl) {
-      toast({ title: "Please provide a media URL", variant: "destructive" });
+    // Only require mediaUrl for image/video types, not for text
+    if ((newStory.mediaType === "image" || newStory.mediaType === "video") && !newStory.mediaUrl) {
+      toast({ title: "Please provide a media URL for image/video stories", variant: "destructive" });
       return;
     }
+    
+    // For text stories, caption should have content
+    if (newStory.mediaType === "text" && !newStory.caption) {
+      toast({ title: "Please provide content for your text story", variant: "destructive" });
+      return;
+    }
+    
     createStoryMutation.mutate(newStory);
   };
 

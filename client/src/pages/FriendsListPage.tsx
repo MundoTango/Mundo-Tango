@@ -71,7 +71,7 @@ export default function FriendsListPage() {
   });
 
   const sendRequestMutation = useMutation({
-    mutationFn: (data: any) => apiRequest(`/api/friends/request/${data.receiverId}`, "POST", data),
+    mutationFn: (data: any) => apiRequest("POST", `/api/friends/request/${data.receiverId}`, data),
     onSuccess: () => {
       toast({ title: "✨ Friend request sent!" });
       setShowRequestDialog(false);
@@ -86,7 +86,7 @@ export default function FriendsListPage() {
   });
 
   const acceptRequestMutation = useMutation({
-    mutationFn: (requestId: number) => apiRequest(`/api/friends/requests/${requestId}/accept`, "POST"),
+    mutationFn: (requestId: number) => apiRequest("POST", `/api/friends/requests/${requestId}/accept`),
     onSuccess: () => {
       toast({ title: "🎉 Friend request accepted!" });
       queryClient.invalidateQueries({ queryKey: ["/api/friends"] });
@@ -98,7 +98,7 @@ export default function FriendsListPage() {
   });
 
   const rejectRequestMutation = useMutation({
-    mutationFn: (requestId: number) => apiRequest(`/api/friends/requests/${requestId}/reject`, "POST"),
+    mutationFn: (requestId: number) => apiRequest("POST", `/api/friends/requests/${requestId}/reject`),
     onSuccess: () => {
       toast({ title: "Request declined" });
       queryClient.invalidateQueries({ queryKey: ["/api/friends/requests"] });
@@ -109,7 +109,7 @@ export default function FriendsListPage() {
   });
 
   const removeFriendMutation = useMutation({
-    mutationFn: (friendId: number) => apiRequest(`/api/friends/${friendId}`, "DELETE"),
+    mutationFn: (friendId: number) => apiRequest("DELETE", `/api/friends/${friendId}`),
     onSuccess: () => {
       toast({ title: "Friend removed" });
       queryClient.invalidateQueries({ queryKey: ["/api/friends"] });
