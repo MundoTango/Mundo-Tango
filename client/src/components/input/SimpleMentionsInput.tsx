@@ -63,7 +63,7 @@ export function SimpleMentionsInput({
   const isUpdatingRef = useRef(false); // Prevent render loops
 
   // Get mention pill colors/icons based on type (MT Ocean theme)
-  const getMentionPillStyle = (type: EntityType): React.CSSProperties => {
+  const getMentionPillStyle = (type: EntityType, isHovered: boolean = false, groupType?: string): React.CSSProperties => {
     const baseStyle: React.CSSProperties = {
       display: 'inline-flex',
       alignItems: 'center',
@@ -80,6 +80,15 @@ export function SimpleMentionsInput({
 
     switch (type) {
       case 'group':
+        // Professional groups get orange/amber gradient, regular groups get purple
+        if (groupType === 'professional') {
+          return {
+            ...baseStyle,
+            background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(251, 191, 36, 0.2))',
+            borderColor: 'rgba(251, 146, 60, 0.5)',
+            color: 'rgb(251, 146, 60)',
+          };
+        }
         return {
           ...baseStyle,
           background: 'linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(168, 85, 247, 0.2))',
@@ -269,7 +278,7 @@ export function SimpleMentionsInput({
         // Escape HTML and preserve whitespace
         html += token.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
       } else {
-        const style = getMentionPillStyle(token.type);
+        const style = getMentionPillStyle(token.type, false, token.groupType);
         const styleStr = Object.entries(style)
           .map(([key, val]) => `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: ${val}`)
           .join('; ');
@@ -477,12 +486,13 @@ export function SimpleMentionsInput({
     preCaretRange.setEnd(range.endContainer, range.endOffset);
     const cursorPos = preCaretRange.toString().length;
 
-    // Create mention token
+    // Create mention token with groupType if it's a group
     const mentionToken: MentionToken = {
       kind: 'mention',
       type: entity.type,
       id: entity.id,
       name: entity.display,
+      groupType: entity.type === 'group' ? entity.metadata?.groupType : undefined,
     };
 
     // Replace @ trigger with mention

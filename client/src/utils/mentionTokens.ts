@@ -21,27 +21,33 @@ export interface MentionToken {
   type: EntityType;
   id: string;
   name: string;
+  groupType?: string; // Optional: 'professional' | 'city' for groups
 }
 
 /**
  * Parse canonical format string into token array
  * 
+ * Supports two formats:
+ * 1. Standard: @type:id:name
+ * 2. Group with type: @group:groupType:id:name
+ * 
  * Example:
- * Input: "Dancing with @user:user_123:maria_rodriguez at @event:evt_456:Friday_Milonga"
+ * Input: "Dancing with @user:user_123:maria rodriguez at @group:professional:group_1:Buenos Aires Tango Community"
  * Output: [
  *   { kind: 'text', text: 'Dancing with ' },
- *   { kind: 'mention', type: 'user', id: 'user_123', name: 'maria_rodriguez' },
+ *   { kind: 'mention', type: 'user', id: 'user_123', name: 'maria rodriguez' },
  *   { kind: 'text', text: ' at ' },
- *   { kind: 'mention', type: 'event', id: 'evt_456', name: 'Friday_Milonga' }
+ *   { kind: 'mention', type: 'group', id: 'group_1', name: 'Buenos Aires Tango Community', groupType: 'professional' }
  * ]
  */
 export function parseCanonicalToTokens(canonical: string): Token[] {
   if (!canonical) return [];
   
   const tokens: Token[] = [];
-  // Match @type:id:name where name can include spaces but stops before next @ or end of string
-  // Uses trimEnd to remove trailing whitespace from name
-  const regex = /@(user|event|group|city):([^:]+):([^@]*?)(?=\s*(?:@|$))/g;
+  // Match both formats:
+  // 1. @group:professional:group_1:name (new format with groupType)
+  // 2. @type:id:name (standard format)
+  const regex = /@(user|event|group|city):(?:(professional|city):)?([^:]+):([^@]*?)(?=\s*(?:@|$))/g;
   let lastIndex = 0;
   let match: RegExpExecArray | null;
   
@@ -53,13 +59,20 @@ export function parseCanonicalToTokens(canonical: string): Token[] {
     }
     
     // Add mention token with trimmed name
-    const [, type, id, name] = match;
-    tokens.push({
+    const [, type, groupType, id, name] = match;
+    const token: MentionToken = {
       kind: 'mention',
       type: type as EntityType,
       id,
-      name: name.trim() // Remove any trailing whitespace
-    });
+      name: name.trim(), // Remove any trailing whitespace
+    };
+    
+    // Add groupType if present (for groups)
+    if (type === 'group' && groupType) {
+      token.groupType = groupType;
+    }
+    
+    tokens.push(token);
     
     lastIndex = regex.lastIndex;
   }
@@ -76,18 +89,26 @@ export function parseCanonicalToTokens(canonical: string): Token[] {
 /**
  * Convert token array to canonical format (for database storage)
  * 
+ * Outputs:
+ * - Groups with type: @group:professional:group_1:name or @group:city:group_1:name
+ * - Others: @type:id:name
+ * 
  * Example:
  * Input: [
  *   { kind: 'text', text: 'Dancing with ' },
- *   { kind: 'mention', type: 'user', id: 'user_123', name: 'maria_rodriguez' }
+ *   { kind: 'mention', type: 'group', id: 'group_1', name: 'Buenos Aires Tango Community', groupType: 'professional' }
  * ]
- * Output: "Dancing with @user:user_123:maria_rodriguez"
+ * Output: "Dancing with @group:professional:group_1:Buenos Aires Tango Community"
  */
 export function tokensToCanonical(tokens: Token[]): string {
   return tokens.map(token => {
     if (token.kind === 'text') {
       return token.text;
     } else {
+      // For groups, include groupType in canonical format
+      if (token.type === 'group' && token.groupType) {
+        return `@${token.type}:${token.groupType}:${token.id}:${token.name}`;
+      }
       return `@${token.type}:${token.id}:${token.name}`;
     }
   }).join('');

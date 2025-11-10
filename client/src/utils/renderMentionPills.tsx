@@ -28,7 +28,7 @@ const getMentionPath = (type: EntityType, id: string): string => {
 };
 
 // MT Ocean theme pill styles
-const getMentionPillStyle = (type: EntityType, isHovered: boolean = false): React.CSSProperties => {
+const getMentionPillStyle = (type: EntityType, isHovered: boolean = false, groupType?: string): React.CSSProperties => {
   const baseStyle: React.CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
@@ -48,6 +48,17 @@ const getMentionPillStyle = (type: EntityType, isHovered: boolean = false): Reac
 
   switch (type) {
     case 'group':
+      // Professional groups get orange/amber gradient, regular groups get purple
+      if (groupType === 'professional') {
+        return {
+          ...baseStyle,
+          background: isHovered 
+            ? 'linear-gradient(135deg, rgba(251, 146, 60, 0.3), rgba(251, 191, 36, 0.3))'
+            : 'linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(251, 191, 36, 0.2))',
+          borderColor: isHovered ? 'rgba(251, 146, 60, 0.7)' : 'rgba(251, 146, 60, 0.5)',
+          color: 'rgb(251, 146, 60)',
+        };
+      }
       return {
         ...baseStyle,
         background: isHovered 
@@ -103,11 +114,13 @@ const getMentionIcon = (type: EntityType) => {
 function ClickableMentionPill({ 
   type, 
   id, 
-  name 
+  name,
+  groupType
 }: { 
   type: EntityType; 
   id: string; 
-  name: string; 
+  name: string;
+  groupType?: string;
 }) {
   const [isHovered, setIsHovered] = React.useState(false);
   const path = getMentionPath(type, id);
@@ -122,7 +135,7 @@ function ClickableMentionPill({
       onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      style={getMentionPillStyle(type, isHovered)}
+      style={getMentionPillStyle(type, isHovered, groupType)}
       className="mention-pill"
       data-mention-id={id}
       data-mention-type={type}
@@ -178,7 +191,8 @@ export function renderMentionPills(content: string): React.ReactNode {
           <ClickableMentionPill 
             type={token.type} 
             id={token.id} 
-            name={token.name} 
+            name={token.name}
+            groupType={token.groupType}
           />
           {' '}
         </span>

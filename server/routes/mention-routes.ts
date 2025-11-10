@@ -81,7 +81,7 @@ router.get("/groups/search", authenticateToken, async (req, res) => {
       display: group.name,
       avatar: group.avatar,
       subtitle: `${group.memberCount} members • ${group.category || "General"}`,
-      metadata: { groupType: "professional" },
+      metadata: { groupType: group.type || "city" }, // Include actual group type from DB
     }));
 
     res.json({ data: results });
