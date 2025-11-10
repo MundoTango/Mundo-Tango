@@ -37,6 +37,8 @@ import aiEnhanceRoutes from "./routes/ai-enhance";
 import userSearchRoutes from "./routes/user-search";
 import locationSearchRoutes from "./routes/location-search";
 import housingRoutes from "./routes/housing-routes";
+import livestreamRoutes from "./routes/livestream-routes";
+import marketplaceRoutes from "./routes/marketplace-routes";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
@@ -149,6 +151,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Phase B: New feature routes
   app.use("/api/housing", housingRoutes);
+  app.use("/api/livestreams", livestreamRoutes);
+  app.use("/api/marketplace", marketplaceRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(createPostBodySchema), async (req: AuthRequest, res: Response) => {
     try {

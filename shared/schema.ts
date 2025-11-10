@@ -2078,6 +2078,31 @@ export const housingBookings = pgTable("housing_bookings", {
   statusIdx: index("housing_bookings_status_idx").on(table.status),
 }));
 
+// Housing Reviews
+export const housingReviews = pgTable("housing_reviews", {
+  id: serial("id").primaryKey(),
+  listingId: integer("listing_id").notNull().references(() => housingListings.id, { onDelete: "cascade" }),
+  reviewerId: integer("reviewer_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  rating: integer("rating").notNull(),
+  review: text("review"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  listingIdx: index("housing_reviews_listing_idx").on(table.listingId),
+  reviewerIdx: index("housing_reviews_reviewer_idx").on(table.reviewerId),
+}));
+
+// Housing Favorites
+export const housingFavorites = pgTable("housing_favorites", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  listingId: integer("listing_id").notNull().references(() => housingListings.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("housing_favorites_user_idx").on(table.userId),
+  listingIdx: index("housing_favorites_listing_idx").on(table.listingId),
+  unique: index("housing_favorites_unique_idx").on(table.userId, table.listingId),
+}));
+
 // Marketplace Items
 export const marketplaceItems = pgTable("marketplace_items", {
   id: serial("id").primaryKey(),
