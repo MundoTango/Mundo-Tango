@@ -2,7 +2,8 @@
 
 Mundo Tango is a production-ready social platform designed to connect the global tango community. It offers social networking, event management, talent matching, and AI-powered personal assistance. The platform aims to be the leading digital hub for the tango ecosystem, with market potential in premium services, event monetization, and targeted advertising, and ambitions for international scaling. It utilizes a lean architecture philosophy with optimized npm packages for efficiency and security.
 
-**Current Completion:** ~47% (93 API endpoints, 25-30 pages, 80-90 database tables)
+**Current Completion:** ~52% (113 API endpoints, 29 pages, 80-90 database tables)
+**Recent Achievement:** Phase D Complete - Reviews, Media Gallery, Leaderboard, Blog (20 APIs, 718 lines)
 **Roadmap:** See `.agent-memory/roadmap-to-100.md` for detailed completion plan
 **Optimizations:** See `.agent-memory/mb-md-optimizations.md` for efficiency patterns
 
@@ -42,6 +43,10 @@ The system includes complete i18n integration and real-time features with 30s po
 -   **Live Streaming System:** ✅ **PRODUCTION-READY** - 11 API endpoints for live broadcasts, viewer management, scheduled streams, and registration system. Frontend: 114 lines with LiveStreamPage + detail route.
 -   **Marketplace System:** ✅ **PRODUCTION-READY** - 8 API endpoints for item listings, category browsing, status management, and seller dashboards. Frontend: 118 lines with MarketplacePage + category filtering.
 -   **Subscription System:** ✅ **PRODUCTION-READY** - 7 API endpoints integrated with Stripe for tier management, billing intervals, cancellation/reactivation, and subscription history. Frontend: 775 lines (SubscriptionsPage + ManageSubscriptionPage).
+-   **Reviews System:** ✅ **PRODUCTION-READY** - 8 API endpoints for polymorphic reviews (teachers, venues, events, housing), rating aggregation, helpful voting, and statistics. Frontend: 392 lines with CRUD forms, filtering, and star ratings.
+-   **Media Gallery:** ✅ **PRODUCTION-READY** - 4 API endpoints for photo/video management, uploads, likes, and album organization. Frontend: 89 lines with tabbed photo/video filtering.
+-   **Leaderboard System:** ✅ **PRODUCTION-READY** - 1 API endpoint with 3 leaderboard types (points, events attended, contributions), aggregating user rankings. Frontend: 108 lines with tabs and medal badges for top 3.
+-   **Blog System:** ✅ **PRODUCTION-READY** - 5 API endpoints for blog posts (CRUD, search, slugs), publishing workflow, and read-time calculation. Frontend: 129 lines with search and article cards.
 
 **AI Integration:**
 -   **Bifrost AI Gateway:** Production-ready unified AI gateway providing automatic failover, semantic caching, and load balancing across 12+ providers (OpenAI, Groq, Anthropic).
