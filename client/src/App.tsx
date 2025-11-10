@@ -617,6 +617,14 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/media">
+        <ProtectedRoute>
+          <AppLayout>
+            <MediaGalleryPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/leaderboard">
         <ProtectedRoute>
           <AppLayout>
