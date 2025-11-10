@@ -62,22 +62,21 @@ export default function VenueRecommendationsPage() {
     imageUrl: ''
   });
 
-  // Build query string from filters
-  const queryString = Object.entries(filters)
-    .filter(([_, value]) => value !== '')
-    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-    .join('&');
+  // Build query URL with filters
+  const queryParams = new URLSearchParams();
+  if (filters.category) queryParams.append('category', filters.category);
+  if (filters.cuisine) queryParams.append('cuisine', filters.cuisine);
+  if (filters.city) queryParams.append('city', filters.city);
+  if (filters.priceLevel) queryParams.append('priceLevel', filters.priceLevel);
+  if (filters.minRating) queryParams.append('minRating', filters.minRating);
+  
+  const queryString = queryParams.toString();
+  const queryKey = queryString 
+    ? `/api/venue-recommendations?${queryString}`
+    : '/api/venue-recommendations';
 
   const { data: venues = [], isLoading } = useQuery<VenueRecommendation[]>({
-    queryKey: ["/api/venue-recommendations", queryString],
-    queryFn: async () => {
-      const url = queryString 
-        ? `/api/venue-recommendations?${queryString}`
-        : '/api/venue-recommendations';
-      const response = await fetch(url, { credentials: 'include' });
-      if (!response.ok) throw new Error('Failed to fetch venues');
-      return response.json();
-    }
+    queryKey: [queryKey],
   });
 
   const createVenueMutation = useMutation({
@@ -376,12 +375,12 @@ export default function VenueRecommendationsPage() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <Select value={filters.category} onValueChange={(val) => setFilters({ ...filters, category: val })}>
+                <Select value={filters.category ||"all"} onValueChange={(val) => setFilters({ ...filters, category: val === 'all' ? '' : val })}>
                   <SelectTrigger data-testid="filter-category">
                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Categories</SelectItem>
+                    <SelectItem value="all">All Categories</SelectItem>
                     <SelectItem value="restaurant">Restaurant</SelectItem>
                     <SelectItem value="cafe">Café</SelectItem>
                     <SelectItem value="bar">Bar</SelectItem>
@@ -404,12 +403,12 @@ export default function VenueRecommendationsPage() {
                   data-testid="filter-city"
                 />
 
-                <Select value={filters.priceLevel} onValueChange={(val) => setFilters({ ...filters, priceLevel: val })}>
+                <Select value={filters.priceLevel || "all"} onValueChange={(val) => setFilters({ ...filters, priceLevel: val === 'all' ? '' : val })}>
                   <SelectTrigger data-testid="filter-price">
                     <SelectValue placeholder="All Prices" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Prices</SelectItem>
+                    <SelectItem value="all">All Prices</SelectItem>
                     <SelectItem value="$">$</SelectItem>
                     <SelectItem value="$$">$$</SelectItem>
                     <SelectItem value="$$$">$$$</SelectItem>
