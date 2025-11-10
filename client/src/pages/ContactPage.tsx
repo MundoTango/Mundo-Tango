@@ -9,8 +9,12 @@ import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ContactPage() {
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -18,9 +22,29 @@ export default function ContactPage() {
     message: ""
   });
 
+  const submitContactMutation = useMutation({
+    mutationFn: async (data: typeof formData) => {
+      return await apiRequest("POST", "/api/contact", { body: data });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Message sent!",
+        description: "We'll get back to you within 24-48 hours.",
+      });
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    },
+    onError: (error: Error) => {
+      toast({
+        variant: "destructive",
+        title: "Failed to send message",
+        description: error.message || "Please try again later.",
+      });
+    }
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Contact form submitted:", formData);
+    submitContactMutation.mutate(formData);
   };
 
   return (
@@ -90,9 +114,14 @@ export default function ContactPage() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" data-testid="button-submit">
+                  <Button 
+                    type="submit" 
+                    className="w-full" 
+                    data-testid="button-submit"
+                    disabled={submitContactMutation.isPending}
+                  >
                     <Mail className="h-4 w-4 mr-2" />
-                    Send Message
+                    {submitContactMutation.isPending ? "Sending..." : "Send Message"}
                   </Button>
                 </form>
               </CardContent>
