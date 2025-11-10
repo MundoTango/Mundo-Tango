@@ -8,6 +8,14 @@ Mundo Tango is a production-ready social platform designed to connect the global
 **Roadmap:** See `.agent-memory/roadmap-to-100.md` for detailed completion plan
 **Optimizations:** See `.agent-memory/mb-md-optimizations.md` for efficiency patterns
 
+### Project Size Management
+**Status:** ✅ Optimized (1.9GB / 5GB threshold)
+- **Investigation:** Complete size audit identified bloat sources (see `.agent-memory/project-size-investigation.md`)
+- **Cleanup:** Automated script removed 1.5GB of cache files (Playwright browsers, Bun cache, TypeScript cache)
+- **Prevention:** Enhanced `.gitignore` with comprehensive bloat prevention rules
+- **Monitoring:** Monthly cleanup routine documented in `docs/project-size-management.md`
+- **Target:** Maintain <2GB for optimal Agent performance (well below 5GB Replit threshold)
+
 ### User Preferences
 
 **Methodology:** MB.MD Protocol
