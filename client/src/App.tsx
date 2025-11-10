@@ -520,7 +520,13 @@ function Router() {
 
       <Route path="/video-lessons" component={VideoLessonsPage} />
       <Route path="/video-lessons/:id" component={TutorialDetailPage} />
-      <Route path="/host-homes" component={HostHomesPage} />
+      <Route path="/host-homes">
+        <ProtectedRoute>
+          <AppLayout>
+            <HostHomesPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
       <Route path="/travel-planner" component={TravelPlannerPage} />
       <Route path="/blog" component={BlogPage} />
       <Route path="/blog/:slug" component={BlogPage} />

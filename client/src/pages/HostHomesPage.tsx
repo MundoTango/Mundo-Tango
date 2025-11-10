@@ -120,10 +120,34 @@ function HostHomesPageContent() {
     houseRules: '',
   });
 
-  // Fetch listings with filters
-  const { data: homes, isLoading } = useQuery<SelectHousingListing[]>({
-    queryKey: ["/api/housing/listings", filters],
+  // Fetch listings with filters - build query params properly
+  const buildQueryParams = () => {
+    const params = new URLSearchParams();
+    if (filters.city) params.append('city', filters.city);
+    if (filters.country) params.append('country', filters.country);
+    if (filters.propertyTypes.length > 0) {
+      filters.propertyTypes.forEach(type => params.append('propertyType', type));
+    }
+    if (filters.minPrice > 0) params.append('minPrice', filters.minPrice.toString());
+    if (filters.maxPrice < 500) params.append('maxPrice', filters.maxPrice.toString());
+    if (filters.bedrooms > 0) params.append('bedrooms', filters.bedrooms.toString());
+    if (filters.bathrooms > 0) params.append('bathrooms', filters.bathrooms.toString());
+    if (filters.maxGuests > 1) params.append('maxGuests', filters.maxGuests.toString());
+    if (filters.amenities.length > 0) {
+      filters.amenities.forEach(amenity => params.append('amenities', amenity));
+    }
+    const queryString = params.toString();
+    return queryString ? `?${queryString}` : '';
+  };
+
+  const queryUrl = `/api/housing/listings${buildQueryParams()}`;
+  
+  const { data: apiResponse, isLoading } = useQuery<Array<{listing: SelectHousingListing, host: any}>>({
+    queryKey: [queryUrl],
   });
+
+  // Extract listings from nested API response {listing: {...}, host: {...}}
+  const homes = apiResponse?.map(item => item.listing) || [];
 
   // Create listing mutation
   const createListingMutation = useMutation({
