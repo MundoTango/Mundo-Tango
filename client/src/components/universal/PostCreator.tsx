@@ -260,7 +260,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       setSelectedTags([]);
       setIsRecommendation(false);
       setLocation("");
-      setCoordinates(null);
+      setCoordinates(undefined);
       setRecommendationType("");
       setPriceRange("");
       setShowTags(false);

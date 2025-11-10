@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SelectGroupPost } from "@shared/schema";
 import { formatDistanceToNow } from "date-fns";
+import { renderMentionPills } from "@/utils/renderMentionPills";
 
 interface GroupPostCardProps {
   post: SelectGroupPost;
@@ -103,8 +104,8 @@ export function GroupPostCard({
           </h4>
         )}
         
-        <div className="prose prose-sm max-w-none" data-testid={`text-post-content-${post.id}`}>
-          {post.content}
+        <div className="prose prose-sm max-w-none whitespace-pre-wrap" data-testid={`text-post-content-${post.id}`}>
+          {renderMentionPills(post.content)}
         </div>
         
         {post.mediaUrls && post.mediaUrls.length > 0 && (

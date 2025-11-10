@@ -20,6 +20,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import type { SelectGroupPost } from "@shared/schema";
+import { renderMentionPills } from "@/utils/renderMentionPills";
 const postFormSchema = z.object({
   content: z.string().min(1, "Post content is required"),
   title: z.string().optional(),
@@ -261,7 +262,7 @@ export function GroupPostFeed({ groupId, canPost = false, canModerate = false }:
                 </CardHeader>
                 <CardContent>
                   {post.title && <h3 className="font-semibold mb-2">{post.title}</h3>}
-                  <p className="whitespace-pre-wrap">{post.content}</p>
+                  <div className="whitespace-pre-wrap">{renderMentionPills(post.content)}</div>
                 </CardContent>
                 <CardFooter className="flex items-center gap-4">
                   <Button variant="ghost" size="sm" className="gap-1" data-testid={`button-like-${post.id}`}>
