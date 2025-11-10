@@ -11,6 +11,7 @@ import { useState } from "react";
 
 export default function BlogPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   
   const { data: posts, isLoading } = useQuery({
     queryKey: ["/api/blog"],
@@ -31,7 +32,7 @@ export default function BlogPage() {
           </p>
         </div>
 
-        <div className="mb-6">
+        <div className="space-y-4 mb-6">
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
@@ -43,13 +44,30 @@ export default function BlogPage() {
               data-testid="input-search"
             />
           </div>
+
+          {/* Category Filters */}
+          <div className="flex flex-wrap gap-2">
+            {["all", "techniques", "history", "culture", "events", "interviews"].map((category) => (
+              <Button
+                key={category}
+                variant={categoryFilter === category ? "default" : "outline"}
+                onClick={() => setCategoryFilter(category)}
+                size="sm"
+                data-testid={`filter-category-${category}`}
+              >
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </Button>
+            ))}
+          </div>
         </div>
 
         {isLoading ? (
           <div className="text-center py-12">Loading articles...</div>
         ) : posts && Array.isArray(posts) && posts.length > 0 ? (
           <div className="space-y-6">
-            {posts.map((post: any) => (
+            {posts
+              .filter((post: any) => categoryFilter === "all" || post.category === categoryFilter)
+              .map((post: any) => (
               <Card key={post.id} className="hover-elevate" data-testid={`post-${post.id}`}>
                 <div className="grid md:grid-cols-3 gap-6">
                   {post.image && (

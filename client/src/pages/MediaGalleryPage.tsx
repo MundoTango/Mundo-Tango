@@ -3,11 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Image, Video, Heart, MessageCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Image, Video, Heart, MessageCircle, Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function MediaGalleryPage() {
   const [activeTab, setActiveTab] = useState("all");
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const queryType = activeTab === "all" ? "" : activeTab === "photos" ? "photo" : "video";
   const queryUrl = queryType ? `/api/media?type=${queryType}` : "/api/media";
@@ -18,11 +20,17 @@ export default function MediaGalleryPage() {
   return (
     <AppLayout>
       <div className="container max-w-6xl mx-auto p-6 space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Media Gallery</h1>
-          <p className="text-muted-foreground">
-            Explore photos and videos from the tango community
-          </p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Media Gallery</h1>
+            <p className="text-muted-foreground">
+              Explore photos and videos from the tango community
+            </p>
+          </div>
+          <Button data-testid="button-upload-media">
+            <Upload className="h-4 w-4 mr-2" />
+            Upload
+          </Button>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -42,6 +50,7 @@ export default function MediaGalleryPage() {
                     key={item.id}
                     className="overflow-hidden hover-elevate cursor-pointer"
                     data-testid={`media-${item.id}`}
+                    onClick={() => setLightboxIndex(media.indexOf(item))}
                   >
                     <div className="relative aspect-square bg-muted">
                       <img
@@ -80,6 +89,45 @@ export default function MediaGalleryPage() {
             )}
           </TabsContent>
         </Tabs>
+
+        {/* Lightbox */}
+        {lightboxIndex !== null && media && media[lightboxIndex] && (
+          <Dialog open={true} onOpenChange={() => setLightboxIndex(null)}>
+            <DialogContent className="max-w-4xl p-0">
+              <div className="relative">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-2 right-2 z-10"
+                  onClick={() => setLightboxIndex(null)}
+                  data-testid="button-close-lightbox"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+                {media[lightboxIndex].type === "video" ? (
+                  <video 
+                    src={media[lightboxIndex].url} 
+                    controls 
+                    className="w-full"
+                    data-testid="lightbox-video"
+                  />
+                ) : (
+                  <img 
+                    src={media[lightboxIndex].url} 
+                    alt={media[lightboxIndex].caption}
+                    className="w-full"
+                    data-testid="lightbox-image"
+                  />
+                )}
+                <div className="p-4">
+                  {media[lightboxIndex].caption && (
+                    <p className="text-sm">{media[lightboxIndex].caption}</p>
+                  )}
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </AppLayout>
   );

@@ -1,16 +1,35 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Star, Clock, Phone, Globe } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MapPin, Star, Clock, Phone, Globe, Search } from "lucide-react";
 import { Link } from "wouter";
 import { AppLayout } from "@/components/AppLayout";
 
 export default function VenuesPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [cityFilter, setCityFilter] = useState("");
+  const [venueTypeFilter, setVenueTypeFilter] = useState("all");
+
   const { data: venues, isLoading } = useQuery({
     queryKey: ["/api/venues"],
   });
+
+  // Filter venues
+  const filteredVenues = venues && Array.isArray(venues) 
+    ? venues.filter((venue: any) => {
+        const matchesSearch = !searchQuery || 
+          venue.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          venue.address?.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesCity = !cityFilter || venue.city?.toLowerCase().includes(cityFilter.toLowerCase());
+        const matchesType = venueTypeFilter === "all" || venue.type === venueTypeFilter;
+        return matchesSearch && matchesCity && matchesType;
+      })
+    : [];
 
   return (
     <AppLayout>
@@ -22,14 +41,47 @@ export default function VenuesPage() {
             Discover tango venues and milongas around the world
           </p>
         </div>
-        
+
+        {/* Search and Filters */}
+        <div className="space-y-4 mb-6">
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search venues..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+                data-testid="input-search-venues"
+              />
+            </div>
+            <Input
+              placeholder="Filter by city..."
+              value={cityFilter}
+              onChange={(e) => setCityFilter(e.target.value)}
+              data-testid="input-filter-city"
+            />
+            <Select value={venueTypeFilter} onValueChange={setVenueTypeFilter}>
+              <SelectTrigger data-testid="select-venue-type">
+                <SelectValue placeholder="Venue Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="milonga">Milonga</SelectItem>
+                <SelectItem value="dance_hall">Dance Hall</SelectItem>
+                <SelectItem value="club">Club</SelectItem>
+                <SelectItem value="studio">Studio</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
 
         {/* Venues Grid */}
         {isLoading ? (
           <div className="text-center py-12">Loading venues...</div>
-        ) : venues && Array.isArray(venues) && venues.length > 0 ? (
+        ) : filteredVenues && filteredVenues.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2">
-            {venues.map((venue: any) => (
+            {filteredVenues.map((venue: any) => (
               <Card key={venue.id} className="hover-elevate" data-testid={`venue-card-${venue.id}`}>
                 <CardHeader>
                   <div className="flex items-start justify-between">

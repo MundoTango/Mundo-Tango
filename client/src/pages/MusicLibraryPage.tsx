@@ -5,16 +5,30 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Music, Play, Heart, Download, Search } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Music, Play, Heart, Download, Search, Pause, SkipBack, SkipForward, Volume2 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 
 export default function MusicLibraryPage() {
   const [activeTab, setActiveTab] = useState("tango");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentlyPlaying, setCurrentlyPlaying] = useState<any>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playbackProgress, setPlaybackProgress] = useState(35); // Mock progress %
 
   const { data: tracks, isLoading } = useQuery({
     queryKey: ["/api/music", activeTab, searchQuery],
   });
+
+  const handlePlayTrack = (track: any) => {
+    if (currentlyPlaying?.id === track.id) {
+      setIsPlaying(!isPlaying);
+    } else {
+      setCurrentlyPlaying(track);
+      setIsPlaying(true);
+      setPlaybackProgress(0);
+    }
+  };
 
   return (
     <AppLayout>
@@ -59,8 +73,17 @@ export default function MusicLibraryPage() {
                   <Card key={track.id} className="hover-elevate" data-testid={`track-${track.id}`}>
                     <CardContent className="py-4">
                       <div className="flex items-center gap-4">
-                        <Button size="icon" variant="ghost" data-testid={`button-play-${track.id}`}>
-                          <Play className="h-5 w-5" />
+                        <Button 
+                          size="icon" 
+                          variant="ghost" 
+                          onClick={() => handlePlayTrack(track)}
+                          data-testid={`button-play-${track.id}`}
+                        >
+                          {currentlyPlaying?.id === track.id && isPlaying ? (
+                            <Pause className="h-5 w-5" />
+                          ) : (
+                            <Play className="h-5 w-5" />
+                          )}
                         </Button>
 
                         <div className="flex-1 min-w-0">
@@ -97,6 +120,68 @@ export default function MusicLibraryPage() {
             )}
           </TabsContent>
         </Tabs>
+
+        {/* Sticky Audio Player */}
+        {currentlyPlaying && (
+          <div className="fixed bottom-0 left-0 right-0 bg-card border-t shadow-lg z-50">
+            <div className="container mx-auto max-w-6xl">
+              <div className="flex items-center gap-4 p-4">
+                {/* Track Info */}
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="h-12 w-12 bg-muted rounded flex items-center justify-center flex-shrink-0">
+                    <Music className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-medium truncate" data-testid="player-track-title">{currentlyPlaying.title}</p>
+                    <p className="text-sm text-muted-foreground truncate">
+                      {currentlyPlaying.artist}
+                      {currentlyPlaying.orchestra && ` • ${currentlyPlaying.orchestra}`}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Player Controls */}
+                <div className="flex flex-col items-center gap-2 flex-1">
+                  <div className="flex items-center gap-2">
+                    <Button size="icon" variant="ghost" data-testid="button-prev-track">
+                      <SkipBack className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      size="icon" 
+                      onClick={() => setIsPlaying(!isPlaying)}
+                      data-testid="button-play-pause"
+                    >
+                      {isPlaying ? (
+                        <Pause className="h-5 w-5" />
+                      ) : (
+                        <Play className="h-5 w-5" />
+                      )}
+                    </Button>
+                    <Button size="icon" variant="ghost" data-testid="button-next-track">
+                      <SkipForward className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="flex items-center gap-2 w-full max-w-md">
+                    <span className="text-xs text-muted-foreground">1:23</span>
+                    <Progress value={playbackProgress} className="flex-1" />
+                    <span className="text-xs text-muted-foreground">3:24</span>
+                  </div>
+                </div>
+
+                {/* Volume & Actions */}
+                <div className="flex items-center gap-2 flex-1 justify-end">
+                  <Button size="icon" variant="ghost" data-testid="button-like-player">
+                    <Heart className="h-4 w-4" />
+                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Volume2 className="h-4 w-4 text-muted-foreground" />
+                    <Progress value={75} className="w-24" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
     </AppLayout>

@@ -17,7 +17,17 @@ export default function LiveStreamPage() {
       <PageLayout title="Live Streams" showBreadcrumbs>
 <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
-        
+        {/* Header with Create Button */}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-3xl font-bold">Live Streams</h1>
+            <p className="text-muted-foreground">Watch live tango performances and classes</p>
+          </div>
+          <Button data-testid="button-create-stream">
+            <Radio className="h-4 w-4 mr-2" />
+            Create Stream
+          </Button>
+        </div>
 
         {isLoading ? (
           <div className="text-center py-12">Loading streams...</div>

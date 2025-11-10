@@ -107,6 +107,21 @@ export default function ReviewsPage() {
     ? reviews 
     : reviews.filter((r: ReviewWithUser) => r.targetType === filterType);
 
+  // Calculate statistics
+  const stats = {
+    totalReviews: reviews.length,
+    averageRating: reviews.length > 0 
+      ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+      : "0.0",
+    ratingDistribution: [5, 4, 3, 2, 1].map(rating => ({
+      rating,
+      count: reviews.filter(r => r.rating === rating).length,
+      percentage: reviews.length > 0 
+        ? Math.round((reviews.filter(r => r.rating === rating).length / reviews.length) * 100)
+        : 0
+    }))
+  };
+
   const onSubmit = (data: ReviewFormData) => {
     createMutation.mutate(data);
   };
@@ -287,6 +302,53 @@ export default function ReviewsPage() {
               </Form>
             </DialogContent>
           </Dialog>
+        </div>
+
+        {/* Statistics Dashboard */}
+        <div className="grid gap-4 md:grid-cols-3">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Total Reviews</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold">{stats.totalReviews}</div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Average Rating</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-2">
+                <div className="text-3xl font-bold">{stats.averageRating}</div>
+                <Star className="h-6 w-6 fill-yellow-400 text-yellow-400" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-muted-foreground">Rating Distribution</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {stats.ratingDistribution.map(({ rating, count, percentage }) => (
+                <div key={rating} className="flex items-center gap-2 text-sm">
+                  <div className="flex items-center gap-1 w-12">
+                    <span>{rating}</span>
+                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                  </div>
+                  <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-primary" 
+                      style={{ width: `${percentage}%` }}
+                    />
+                  </div>
+                  <span className="w-12 text-right text-muted-foreground">{count}</span>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
         </div>
 
         {/* Filters */}
