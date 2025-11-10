@@ -61,37 +61,39 @@ export default function LiveStreamPage() {
               <h2 className="text-2xl font-bold mb-4 mt-8">Upcoming Streams</h2>
               <div className="space-y-4">
                 {streams.filter((s: any) => !s.isLive).map((stream: any) => (
-                  <Card key={stream.id} className="hover-elevate" data-testid={`stream-upcoming-${stream.id}`}>
-                    <div className="grid md:grid-cols-4 gap-4">
-                      <div className="aspect-video md:aspect-square bg-muted overflow-hidden">
-                        <img src={stream.thumbnail} alt={stream.title} className="object-cover w-full h-full" />
-                      </div>
-                      <div className="md:col-span-3 p-4">
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <h3 className="font-semibold text-lg">{stream.title}</h3>
-                            <p className="text-sm text-muted-foreground">{stream.host}</p>
-                          </div>
-                          <Badge variant="outline">Scheduled</Badge>
+                  <Link key={stream.id} href={`/live-stream/${stream.id}`}>
+                    <Card className="hover-elevate cursor-pointer" data-testid={`stream-upcoming-${stream.id}`}>
+                      <div className="grid md:grid-cols-4 gap-4">
+                        <div className="aspect-video md:aspect-square bg-muted overflow-hidden">
+                          <img src={stream.thumbnail} alt={stream.title} className="object-cover w-full h-full" />
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-                          <div className="flex items-center gap-1">
-                            <Calendar className="h-4 w-4" />
-                            {stream.scheduledDate}
-                          </div>
-                          {stream.registrations && (
-                            <div className="flex items-center gap-1">
-                              <Users className="h-4 w-4" />
-                              {stream.registrations} registered
+                        <div className="md:col-span-3 p-4">
+                          <div className="flex items-start justify-between mb-2">
+                            <div>
+                              <h3 className="font-semibold text-lg">{stream.title}</h3>
+                              <p className="text-sm text-muted-foreground">{stream.host}</p>
                             </div>
-                          )}
+                            <Badge variant="outline">Scheduled</Badge>
+                          </div>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+                            <div className="flex items-center gap-1">
+                              <Calendar className="h-4 w-4" />
+                              {stream.scheduledDate}
+                            </div>
+                            {stream.registrations && (
+                              <div className="flex items-center gap-1">
+                                <Users className="h-4 w-4" />
+                                {stream.registrations} registered
+                              </div>
+                            )}
+                          </div>
+                          <Button variant="outline" size="sm" data-testid={`button-remind-${stream.id}`} onClick={(e) => e.preventDefault()}>
+                            Set Reminder
+                          </Button>
                         </div>
-                        <Button variant="outline" size="sm" data-testid={`button-remind-${stream.id}`}>
-                          Set Reminder
-                        </Button>
                       </div>
-                    </div>
-                  </Card>
+                    </Card>
+                  </Link>
                 ))}
               </div>
             </div>

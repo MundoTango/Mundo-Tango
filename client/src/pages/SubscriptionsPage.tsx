@@ -54,19 +54,19 @@ export default function SubscriptionsPage() {
   const subscribeMutation = useMutation({
     mutationFn: async ({ planId }: { planId: string }) => {
       const now = new Date();
-      const periodEnd = new Date(
-        billingInterval === "monthly"
-          ? now.setMonth(now.getMonth() + 1)
-          : now.setFullYear(now.getFullYear() + 1)
-      );
+      const periodEnd = new Date(now);
+      
+      if (billingInterval === "monthly") {
+        periodEnd.setMonth(periodEnd.getMonth() + 1);
+      } else {
+        periodEnd.setFullYear(periodEnd.getFullYear() + 1);
+      }
 
       return await apiRequest("POST", "/api/subscriptions", {
-        body: JSON.stringify({
-          planId,
-          billingInterval,
-          currentPeriodStart: new Date().toISOString(),
-          currentPeriodEnd: periodEnd.toISOString(),
-        }),
+        planId,
+        billingInterval,
+        currentPeriodStart: now.toISOString(),
+        currentPeriodEnd: periodEnd.toISOString(),
       });
     },
     onSuccess: () => {
