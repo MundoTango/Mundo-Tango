@@ -129,8 +129,10 @@ const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
 const UserSettingsPage = lazy(() => import("@/pages/UserSettingsPage"));
 const EmailPreferencesPage = lazy(() => import("@/pages/EmailPreferencesPage"));
 const NotificationSettingsPage = lazy(() => import("@/pages/NotificationSettingsPage"));
+const NotificationPreferencesPage = lazy(() => import("@/pages/NotificationPreferencesPage"));
 const PrivacySettingsPage = lazy(() => import("@/pages/PrivacySettingsPage"));
 const AccountSettingsPage = lazy(() => import("@/pages/AccountSettingsPage"));
+const AdminUserDetailPage = lazy(() => import("@/pages/admin/AdminUserDetailPage"));
 const ProfileEditPage = lazy(() => import("@/pages/ProfileEditPage"));
 const ActivityLogPage = lazy(() => import("@/pages/ActivityLogPage"));
 const SavedPostsPage = lazy(() => import("@/pages/SavedPostsPage"));
@@ -407,6 +409,22 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <NotificationsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/settings/notifications">
+        <ProtectedRoute>
+          <AppLayout>
+            <NotificationPreferencesPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/help">
+        <ProtectedRoute>
+          <AppLayout>
+            <HelpCenterPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -746,6 +764,14 @@ function Router() {
         <ProtectedRoute>
           <AdminLayout>
             <AdminUsersPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/users/:id">
+        <ProtectedRoute>
+          <AdminLayout>
+            <AdminUserDetailPage />
           </AdminLayout>
         </ProtectedRoute>
       </Route>

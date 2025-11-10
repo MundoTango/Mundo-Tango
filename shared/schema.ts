@@ -75,6 +75,9 @@ export const users = pgTable("users", {
 }, (table) => ({
   emailIdx: index("users_email_idx").on(table.email),
   usernameIdx: index("users_username_idx").on(table.username),
+  cityCountryIdx: index("users_city_country_idx").on(table.city, table.country),
+  activeIdx: index("users_active_idx").on(table.isActive),
+  citiesIdx: index("users_cities_idx").on(table.city, table.country, table.isActive),
 }));
 
 // ============================================================================
@@ -207,6 +210,8 @@ export const events = pgTable("events", {
   organizerIdx: index("events_organizer_idx").on(table.organizerId),
   groupIdx: index("events_group_idx").on(table.groupId),
   slugIdx: index("events_slug_idx").on(table.slug),
+  cityCountryIdx: index("events_city_country_idx").on(table.city, table.country),
+  userStartDateIdx: index("events_user_start_date_idx").on(table.userId, table.startDate),
 }));
 
 export const eventRsvps = pgTable("event_rsvps", {
