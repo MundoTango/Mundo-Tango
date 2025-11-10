@@ -3394,6 +3394,24 @@ export const newsletterSends = pgTable("newsletter_sends", {
   statusIdx: index("idx_newsletter_sends_status").on(table.status),
 }));
 
+export const contactSubmissions = pgTable("contact_submissions", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  subject: varchar("subject", { length: 255 }).notNull(),
+  message: text("message").notNull(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'set null' }),
+  status: varchar("status", { length: 50 }).default('new'),
+  respondedAt: timestamp("responded_at"),
+  respondedBy: integer("responded_by").references(() => users.id),
+  response: text("response"),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  emailIdx: index("idx_contact_submissions_email").on(table.email),
+  statusIdx: index("idx_contact_submissions_status").on(table.status),
+  createdIdx: index("idx_contact_submissions_created").on(table.createdAt),
+}));
+
 // ============================================================================
 // ZOD SCHEMAS & TYPES - NEW TABLES
 // ============================================================================
@@ -3492,6 +3510,21 @@ export type SelectNewsletterCampaign = typeof newsletterCampaigns.$inferSelect;
 export const insertNewsletterSendSchema = createInsertSchema(newsletterSends).omit({ id: true, sentAt: true, openedAt: true, clickedAt: true });
 export type InsertNewsletterSend = z.infer<typeof insertNewsletterSendSchema>;
 export type SelectNewsletterSend = typeof newsletterSends.$inferSelect;
+
+// Contact Submissions
+export const insertContactSubmissionSchema = createInsertSchema(contactSubmissions).omit({ id: true, createdAt: true, respondedAt: true });
+export type InsertContactSubmission = z.infer<typeof insertContactSubmissionSchema>;
+export type SelectContactSubmission = typeof contactSubmissions.$inferSelect;
+
+// Travel Plans
+export const insertTravelPlanSchema = createInsertSchema(travelPlans).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertTravelPlan = z.infer<typeof insertTravelPlanSchema>;
+export type SelectTravelPlan = typeof travelPlans.$inferSelect;
+
+// Travel Plan Items
+export const insertTravelPlanItemSchema = createInsertSchema(travelPlanItems).omit({ id: true, createdAt: true });
+export type InsertTravelPlanItem = z.infer<typeof insertTravelPlanItemSchema>;
+export type SelectTravelPlanItem = typeof travelPlanItems.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
