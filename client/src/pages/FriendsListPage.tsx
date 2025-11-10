@@ -10,11 +10,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Users, UserPlus, Clock, Search, Heart, Star, TrendingUp, Upload, X, Image as ImageIcon } from "lucide-react";
+import { Users, UserPlus, Clock, Search, Heart, Star, TrendingUp, Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { uploadMediaFiles } from "@/lib/mediaUpload";
 
 interface Friend {
   id: number;
@@ -52,6 +53,7 @@ export default function FriendsListPage() {
   });
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -178,21 +180,40 @@ export default function FriendsListPage() {
   const submitRequest = async () => {
     if (!selectedUser) return;
     
-    // Convert files to data URLs for transmission
-    // In a production app, you'd upload to cloud storage and get URLs
-    const mediaUrls: string[] = [];
+    setIsUploading(true);
+    let mediaUrls: string[] = [];
     
-    // For now, we'll send empty mediaUrls array
-    // TODO: Implement file upload to storage service
-    
-    sendRequestMutation.mutate({
-      receiverId: selectedUser.id,
-      senderMessage: requestData.message,
-      didWeDance: requestData.didWeDance,
-      danceLocation: requestData.didWeDance ? requestData.danceLocation : null,
-      danceStory: requestData.didWeDance ? requestData.danceStory : null,
-      mediaUrls: mediaUrls,
-    });
+    try {
+      // Upload files to cloud storage (Cloudinary) if any are selected
+      if (uploadedFiles.length > 0) {
+        const uploadResults = await uploadMediaFiles(uploadedFiles);
+        mediaUrls = uploadResults.map(result => result.url);
+        
+        toast({
+          title: `✅ ${uploadResults.length} file${uploadResults.length > 1 ? 's' : ''} uploaded`,
+          description: "Sending friend request...",
+        });
+      }
+      
+      // Send friend request with uploaded media URLs
+      sendRequestMutation.mutate({
+        receiverId: selectedUser.id,
+        senderMessage: requestData.message,
+        didWeDance: requestData.didWeDance,
+        danceLocation: requestData.didWeDance ? requestData.danceLocation : null,
+        danceStory: requestData.didWeDance ? requestData.danceStory : null,
+        mediaUrls: mediaUrls,
+      });
+    } catch (error) {
+      console.error('Media upload failed:', error);
+      toast({
+        title: "Upload failed",
+        description: "Could not upload media files. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const filteredFriends = friends.filter(
@@ -594,11 +615,18 @@ export default function FriendsListPage() {
               </Button>
               <Button
                 onClick={submitRequest}
-                disabled={!requestData.message || sendRequestMutation.isPending}
+                disabled={!requestData.message || sendRequestMutation.isPending || isUploading}
                 className="bg-gradient-to-r from-cyan-500 to-blue-600"
                 data-testid="button-submit-friend-request"
               >
-                Send Request
+                {isUploading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  "Send Request"
+                )}
               </Button>
             </div>
           </div>
