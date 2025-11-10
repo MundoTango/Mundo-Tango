@@ -183,12 +183,21 @@ export function replaceTriggerWithMention(
       if (tokenStart <= trigger.start && tokenEnd >= cursorPos) {
         // Split text token around trigger
         const before = token.text.substring(0, trigger.start - tokenStart);
-        const after = token.text.substring(cursorPos - tokenStart);
+        let after = token.text.substring(cursorPos - tokenStart);
         
         if (before) {
           newTokens.push({ kind: 'text', text: before });
         }
         newTokens.push(mention);
+        
+        // Add space after mention if not already present
+        if (after && !after.startsWith(' ')) {
+          after = ' ' + after;
+        } else if (!after) {
+          // If no text after, add a space for proper spacing
+          after = ' ';
+        }
+        
         if (after) {
           newTokens.push({ kind: 'text', text: after });
         }
