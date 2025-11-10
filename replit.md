@@ -2,6 +2,10 @@
 
 Mundo Tango is a production-ready social platform designed to connect the global tango community. It offers social networking, event management, talent matching, and AI-powered personal assistance. The platform aims to be the leading digital hub for the tango ecosystem, with market potential in premium services, event monetization, and targeted advertising, and ambitions for international scaling. It utilizes a lean architecture philosophy with optimized npm packages for efficiency and security.
 
+**Current Completion:** ~47% (93 API endpoints, 25-30 pages, 80-90 database tables)
+**Roadmap:** See `.agent-memory/roadmap-to-100.md` for detailed completion plan
+**Optimizations:** See `.agent-memory/mb-md-optimizations.md` for efficiency patterns
+
 ### User Preferences
 
 **Methodology:** MB.MD Protocol

@@ -40,6 +40,7 @@ import housingRoutes from "./routes/housing-routes";
 import livestreamRoutes from "./routes/livestream-routes";
 import marketplaceRoutes from "./routes/marketplace-routes";
 import subscriptionRoutes from "./routes/subscription-routes";
+import reviewRoutes from "./routes/review-routes";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
@@ -155,6 +156,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/livestreams", livestreamRoutes);
   app.use("/api/marketplace", marketplaceRoutes);
   app.use("/api/subscriptions", subscriptionRoutes);
+  
+  // Phase D: Community & Engagement Systems
+  app.use("/api/reviews", reviewRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(createPostBodySchema), async (req: AuthRequest, res: Response) => {
     try {
