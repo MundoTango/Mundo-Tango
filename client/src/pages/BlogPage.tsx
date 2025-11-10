@@ -52,17 +52,16 @@ export default function BlogPage() {
             {posts.map((post: any) => (
               <Card key={post.id} className="hover-elevate" data-testid={`post-${post.id}`}>
                 <div className="grid md:grid-cols-3 gap-6">
-                  {post.coverImage && (
+                  {post.image && (
                     <div className="aspect-video md:aspect-square bg-muted overflow-hidden">
-                      <img src={post.coverImage} alt={post.title} className="object-cover w-full h-full" />
+                      <img src={post.image} alt={post.title} className="object-cover w-full h-full" />
                     </div>
                   )}
                   
-                  <div className={post.coverImage ? "md:col-span-2" : "md:col-span-3"}>
+                  <div className={post.image ? "md:col-span-2" : "md:col-span-3"}>
                     <CardHeader>
                       <div className="flex items-center gap-2 mb-2">
-                        {post.category && <Badge variant="secondary">{post.category}</Badge>}
-                        {post.featured && <Badge variant="default">Featured</Badge>}
+                        {post.published && <Badge variant="secondary">Published</Badge>}
                       </div>
                       <Link href={`/blog/${post.slug || post.id}`}>
                         <CardTitle className="text-2xl hover:underline cursor-pointer">
@@ -81,21 +80,21 @@ export default function BlogPage() {
                           <div className="flex items-center gap-2">
                             <Avatar className="h-6 w-6">
                               <AvatarImage src={post.author.avatar} />
-                              <AvatarFallback>{post.author.name[0]}</AvatarFallback>
+                              <AvatarFallback>{post.author.name?.[0] || "?"}</AvatarFallback>
                             </Avatar>
                             <span>{post.author.name}</span>
                           </div>
                         )}
-                        {post.publishedAt && (
+                        {post.createdAt && (
                           <div className="flex items-center gap-1">
                             <Calendar className="h-4 w-4" />
-                            {new Date(post.publishedAt).toLocaleDateString()}
+                            {new Date(post.createdAt).toLocaleDateString()}
                           </div>
                         )}
-                        {post.readTime && (
+                        {post.views !== undefined && (
                           <div className="flex items-center gap-1">
                             <Clock className="h-4 w-4" />
-                            {post.readTime} min read
+                            {post.views} views
                           </div>
                         )}
                       </div>

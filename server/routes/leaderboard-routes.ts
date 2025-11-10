@@ -17,14 +17,14 @@ router.get("/", async (req, res: Response) => {
         name: users.name,
         username: users.username,
         avatar: users.profileImage,
-        location: users.location,
+        location: users.city,
         verified: sql<boolean>`${users.isVerified}`,
-        score: sql<number>`COALESCE(SUM(${userPoints.points}), 0)::int`,
+        score: sql<number>`COALESCE(MAX(${userPoints.totalPoints}), 0)::int`,
       })
       .from(users)
       .leftJoin(userPoints, eq(users.id, userPoints.userId))
       .groupBy(users.id)
-      .orderBy(desc(sql`COALESCE(SUM(${userPoints.points}), 0)`))
+      .orderBy(desc(sql`COALESCE(MAX(${userPoints.totalPoints}), 0)`))
       .limit(100);
 
       res.json(result);
@@ -35,7 +35,7 @@ router.get("/", async (req, res: Response) => {
         name: users.name,
         username: users.username,
         avatar: users.profileImage,
-        location: users.location,
+        location: users.city,
         verified: sql<boolean>`${users.isVerified}`,
         score: sql<number>`COUNT(${eventRsvps.id})::int`,
       })
@@ -56,7 +56,7 @@ router.get("/", async (req, res: Response) => {
         name: users.name,
         username: users.username,
         avatar: users.profileImage,
-        location: users.location,
+        location: users.city,
         verified: sql<boolean>`${users.isVerified}`,
         score: sql<number>`COUNT(${posts.id})::int`,
       })

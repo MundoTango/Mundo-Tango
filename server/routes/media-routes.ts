@@ -21,7 +21,7 @@ router.get("/", async (req, res: Response) => {
       },
     })
     .from(media)
-    .leftJoin(users, eq(media.uploadedBy, users.id))
+    .leftJoin(users, eq(media.userId, users.id))
     .orderBy(desc(media.createdAt));
 
     if (type) {
@@ -44,21 +44,20 @@ router.get("/", async (req, res: Response) => {
 router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { type, url, thumbnailUrl, caption, albumId } = req.body;
+    const { type, url, thumbnail, caption } = req.body;
 
     if (!type || !url) {
       return res.status(400).json({ message: "Type and URL are required" });
     }
 
     const result = await db.insert(media).values({
+      userId,
       type,
       url,
-      thumbnailUrl,
-      caption,
-      albumId: albumId || null,
-      uploadedBy: userId,
+      thumbnail: thumbnail || null,
+      caption: caption || null,
       likes: 0,
-      views: 0,
+      comments: 0,
     }).returning();
 
     res.status(201).json(result[0]);
@@ -86,7 +85,7 @@ router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response)
 
     const existing: any = existingResult[0];
 
-    if (existing.uploadedBy !== userId) {
+    if (existing.userId !== userId) {
       return res.status(403).json({ message: "Not authorized to delete this media" });
     }
 

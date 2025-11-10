@@ -11,7 +11,7 @@ router.get("/", async (req, res: Response) => {
   try {
     const { search } = req.query;
 
-    let query = db.select({
+    let baseQuery = db.select({
       post: blogPosts,
       author: {
         id: users.id,
@@ -22,17 +22,21 @@ router.get("/", async (req, res: Response) => {
     })
     .from(blogPosts)
     .leftJoin(users, eq(blogPosts.authorId, users.id))
-    .where(eq(blogPosts.status, "published"))
-    .orderBy(desc(blogPosts.publishedAt));
+    .orderBy(desc(blogPosts.createdAt))
+    .$dynamic();
 
+    let conditions = [eq(blogPosts.published, true)];
+    
     if (search && typeof search === "string") {
-      query = query.where(
+      conditions.push(
         or(
           ilike(blogPosts.title, `%${search}%`),
           ilike(blogPosts.content, `%${search}%`)
-        )
-      ) as any;
+        ) as any
+      );
     }
+
+    const query = baseQuery.where(and(...conditions));
 
     const result = await query;
 
@@ -85,7 +89,7 @@ router.get("/:slug", async (req, res: Response) => {
 router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const { title, slug, content, excerpt, coverImage, category, status, tags } = req.body;
+    const { title, slug, content, excerpt, image, published } = req.body;
 
     if (!title || !content) {
       return res.status(400).json({ message: "Title and content are required" });
@@ -94,16 +98,12 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
     const result = await db.insert(blogPosts).values({
       authorId: userId,
       title,
-      slug: slug || title.toLowerCase().replace(/\s+/g, "-"),
+      slug: slug || title.toLowerCase().replace(/\s+/g, "-").substring(0, 255),
       content,
-      excerpt,
-      coverImage,
-      category,
-      status: status || "draft",
-      tags: tags || [],
-      publishedAt: status === "published" ? new Date() : null,
+      excerpt: excerpt || null,
+      image: image || null,
+      published: published || false,
       views: 0,
-      readTime: Math.ceil(content.split(" ").length / 200), // ~200 words per minute
     }).returning();
 
     res.status(201).json(result[0]);
@@ -118,7 +118,7 @@ router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) 
   try {
     const userId = req.userId!;
     const { id } = req.params;
-    const { title, content, excerpt, coverImage, category, status, tags } = req.body;
+    const { title, content, excerpt, image, published } = req.body;
 
     // Check ownership
     const existingResult = await db.select()
@@ -136,22 +136,12 @@ router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) 
       return res.status(403).json({ message: "Not authorized to update this post" });
     }
 
-    const updateData: any = {};
+    const updateData: any = { updatedAt: new Date() };
     if (title !== undefined) updateData.title = title;
-    if (content !== undefined) {
-      updateData.content = content;
-      updateData.readTime = Math.ceil(content.split(" ").length / 200);
-    }
+    if (content !== undefined) updateData.content = content;
     if (excerpt !== undefined) updateData.excerpt = excerpt;
-    if (coverImage !== undefined) updateData.coverImage = coverImage;
-    if (category !== undefined) updateData.category = category;
-    if (status !== undefined) {
-      updateData.status = status;
-      if (status === "published" && !existing.publishedAt) {
-        updateData.publishedAt = new Date();
-      }
-    }
-    if (tags !== undefined) updateData.tags = tags;
+    if (image !== undefined) updateData.image = image;
+    if (published !== undefined) updateData.published = published;
 
     const result = await db.update(blogPosts)
       .set(updateData)
