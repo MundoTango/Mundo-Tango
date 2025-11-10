@@ -12,7 +12,7 @@ import { useState } from "react";
 export default function TeachersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   
-  const { data: teachers, isLoading } = useQuery({
+  const { data: teachers, isLoading } = useQuery<any[]>({
     queryKey: ["/api/teachers"],
   });
 
@@ -20,7 +20,7 @@ export default function TeachersPage() {
     searchTerm === "" ||
     teacher.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     teacher.bio?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ) || [];
 
   return (
     <AppLayout>
