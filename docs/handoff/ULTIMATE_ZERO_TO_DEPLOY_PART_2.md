@@ -1,7 +1,712 @@
+# ULTIMATE ZERO-TO-DEPLOY COMPLETE HANDOFF - PART 2
+## ENTERPRISE FEATURES & IMPLEMENTATION STATUS GUIDE
+
+---
+
+## 📖 HOW TO USE THIS DOCUMENT
+
+### For the New AI Agent Building This Platform
+
+**CRITICAL UNDERSTANDING:**
+- **Part 1** (75,032 lines) = Core features you should build FIRST (90-95% already implemented)
+- **Part 2** (This document, 74,213 lines) = Enterprise scaling features to build LATER
+- **This document contains both**:
+  1. ✅ **Getting Started Guide** - What's already built, what needs completion
+  2. 📋 **Enterprise Roadmap** - Advanced features for scaling (Parts 136-21000+)
+
+### Document Structure
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  SECTION 0: GETTING STARTED (READ THIS FIRST)          │
+│  - What you're inheriting                               │
+│  - Implementation status overview                       │
+│  - What to build NOW vs LATER                          │
+│  - Environment setup checklist                          │
+└─────────────────────────────────────────────────────────┘
+         ↓
+┌─────────────────────────────────────────────────────────┐
+│  SECTION A: IMPLEMENTATION STATUS MATRIX                │
+│  - Frontend: 95 pages, 465 components                   │
+│  - Backend: 148 routes, 169 services                    │
+│  - Database: 198 tables (5,797 lines)                   │
+│  - AI Agents: 97 files                                  │
+│  - Complete coverage breakdown                          │
+└─────────────────────────────────────────────────────────┘
+         ↓
+┌─────────────────────────────────────────────────────────┐
+│  SECTION B: BUILD PRIORITY GUIDE                        │
+│  🔴 URGENT - Must build before production (3-4 weeks)  │
+│  ⚠️ HIGH - Should build soon (1-2 months)              │
+│  📋 MEDIUM - Part 2 enterprise features (6-12 months)  │
+└─────────────────────────────────────────────────────────┘
+         ↓
+┌─────────────────────────────────────────────────────────┐
+│  PARTS 136-21000+: ENTERPRISE FEATURES ROADMAP          │
+│  (All advanced features with status tags)               │
+│  - Elasticsearch, Kubernetes, Service Mesh              │
+│  - WebRTC, ML Pipelines, Data Warehouses               │
+│  - GraphQL, CRM Integration, Mobile Apps                │
+│  - And 80+ more enterprise systems                      │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Status Tag Legend
+- ✅ **IMPLEMENTED** - Code exists in repo and working
+- ⚠️ **PARTIAL** - Some implementation, needs completion
+- 📋 **ROADMAP** - Documented for future, not yet built
+- 🔴 **URGENT** - Must build before production launch
+
+---
+
+# 🚀 SECTION 0: GETTING STARTED GUIDE
+
+## What You're Inheriting
+
+Congratulations! You're taking over a **nearly production-ready platform** that's ~85% complete. Here's exactly what you have:
+
+### Platform Overview
+- **Name**: MundoTango.life
+- **Purpose**: Life CEO & Multi-Community Platform
+- **Stage**: MVP 85% complete, needs production hardening
+- **Documentation**: 150,025 lines across 3 parts
+- **Codebase**: 95 pages, 148 routes, 169 services, 97 AI agents
+
+### What's Already Built ✅
+
+#### Core Infrastructure (95% Complete)
+- ✅ **Database**: PostgreSQL with 198 tables (5,797-line schema in `shared/schema.ts`)
+- ✅ **Backend**: Node.js + Express + TypeScript (148 API routes)
+- ✅ **Frontend**: React + Vite + TailwindCSS (95 pages, 465 components)
+- ✅ **Authentication**: JWT, sessions, OAuth, MFA, RBAC
+- ✅ **Real-time**: Socket.io + WebSockets for live features
+
+#### Business Features (90% Complete)
+- ✅ **Payment System**: Stripe fully integrated (100% complete)
+  - Subscriptions, billing, invoices, webhooks
+  - Files: `server/services/paymentService.ts`, `client/src/pages/billing.tsx`
+  
+- ✅ **Events System**: Create, manage, RSVP, calendar
+  - Files: `client/src/pages/EnhancedEvents.tsx`, `server/routes/eventsRoutes.ts`
+  
+- ✅ **Groups & Communities**: City, professional, custom groups
+  - Files: `client/src/pages/groups.tsx`, `server/routes/groupRoutes.ts`
+  
+- ✅ **Housing Marketplace**: Listings, bookings, host dashboard
+  - Files: `client/src/pages/housing-marketplace.tsx`
+  
+- ✅ **Messaging System**: Real-time chat, notifications
+  - Files: `client/src/pages/Messages.tsx`, `server/services/socketService.ts`
+  
+- ✅ **User Profiles**: Complete profile management
+  - Files: `client/src/pages/profile.tsx`, `server/routes/userRoutes.ts`
+  
+- ✅ **Community Map**: Interactive multi-layer map
+  - Files: `client/src/pages/community-world-map.tsx`
+  
+- ✅ **Social Feed**: Posts, likes, comments, shares
+  - Files: `client/src/pages/enhanced-timeline.tsx`
+
+#### AI/ML Systems (70% Complete)
+- ✅ **Multi-AI Orchestration**: OpenAI, Anthropic, Groq, Gemini, OpenRouter
+- ✅ **97 AI Agents**: In `server/agents/` and `server/esa-agents/`
+- ✅ **Agent Services**: Memory, learning, context, performance tracking
+- ⚠️ **Advanced ML**: Basic implementation, enterprise features in Part 2
+
+#### Admin & Management (85% Complete)
+- ✅ **Admin Center**: User management, content moderation
+- ✅ **Analytics Dashboards**: User metrics, platform stats
+- ✅ **Monitoring**: Basic Prometheus, partial Sentry
+- ⚠️ **Full Observability**: Needs completion (see Priority Guide)
+
+### What Needs Completion ⚠️
+
+#### Critical for Production (3-4 weeks)
+1. **Testing Infrastructure** (40% → 90%)
+   - ❌ Comprehensive E2E tests
+   - ❌ Integration tests for all API endpoints
+   - ❌ Security penetration testing
+   - ❌ Load/performance testing
+   - ⚠️ Basic unit tests exist
+
+2. **Security Hardening** (75% → 95%)
+   - ❌ Rate limiting on all endpoints
+   - ⚠️ CSRF protection (partial)
+   - ⚠️ Input validation (needs completion)
+   - ❌ Security audit and fixes
+
+3. **Performance Optimization** (70% → 90%)
+   - ❌ Database indexes on key columns
+   - ⚠️ Code splitting (partial)
+   - ⚠️ Caching strategy (Redis partial)
+   - ❌ Image optimization
+
+4. **Error Monitoring** (60% → 95%)
+   - ⚠️ Sentry integration (partial)
+   - ❌ Complete error tracking
+   - ❌ Alert configuration
+   - ❌ Error dashboards
+
+5. **Backup & Recovery** (30% → 90%)
+   - ❌ Automated database backups
+   - ❌ Disaster recovery procedures
+   - ❌ Backup testing
+
+### Part 2 Features (Enterprise Roadmap)
+
+**Important**: The remaining 90+ sections in this document (Parts 136-21000+) are **enterprise scaling features**. These are documented as complete code examples but **NOT yet implemented** in the codebase.
+
+**Don't build these until**:
+- ✅ Core platform is production-ready
+- ✅ You have real user traffic
+- ✅ You need the specific feature for scaling
+
+Examples of Part 2 features:
+- 📋 Elasticsearch (advanced search)
+- 📋 Kubernetes (container orchestration)
+- 📋 Istio (service mesh)
+- 📋 WebRTC (video conferencing)
+- 📋 GraphQL API layer
+- 📋 ML pipelines & AutoML
+- 📋 Data warehouses & BI
+- 📋 CRM integrations
+- 📋 And 80+ more...
+
+---
+
+# 📊 SECTION A: IMPLEMENTATION STATUS MATRIX
+
+## Complete Coverage Breakdown
+
+### Frontend Implementation (95 Pages)
+
+| Category | Pages | Key Files | Status | Coverage |
+|----------|-------|-----------|--------|----------|
+| **Admin** | 12 | AdminCenter.tsx, AdminMonitoring.tsx | ✅ Implemented | 90% |
+| **Auth** | 4 | Login, Register, PasswordReset | ✅ Implemented | 100% |
+| **Community** | 8 | community.tsx, community-world-map.tsx | ✅ Implemented | 95% |
+| **Events** | 6 | EnhancedEvents.tsx, event-detail.tsx | ✅ Implemented | 90% |
+| **Groups** | 5 | groups.tsx, GroupDetailPage.tsx | ✅ Implemented | 95% |
+| **Housing** | 4 | housing-marketplace.tsx, HostDashboard.tsx | ✅ Implemented | 85% |
+| **Messaging** | 3 | Messages.tsx, messages.tsx | ✅ Implemented | 90% |
+| **Payments** | 6 | billing.tsx, Subscribe.tsx, Checkout.tsx | ✅ Implemented | 100% |
+| **Profiles** | 5 | profile.tsx, PublicProfilePage.tsx | ✅ Implemented | 95% |
+| **AI/Agents** | 8 | AgentFrameworkDashboard.tsx | ✅ Implemented | 75% |
+| **Other** | 34 | Analytics, Timeline, Map, etc. | ✅ Implemented | 85% |
+
+**Total Frontend**: 95 pages + 465 components
+
+### Backend Implementation (148 Routes, 169 Services)
+
+| Category | Routes | Services | Key Files | Status | Coverage |
+|----------|--------|----------|-----------|--------|----------|
+| **Auth** | 8 | 12 | authRoutes.ts, authService.ts | ✅ Complete | 100% |
+| **Users** | 12 | 8 | userRoutes.ts, userService.ts | ✅ Complete | 95% |
+| **Events** | 15 | 6 | eventsRoutes.ts, eventService.ts | ✅ Complete | 90% |
+| **Groups** | 14 | 5 | groupRoutes.ts, groupService.ts | ✅ Complete | 95% |
+| **Payments** | 10 | 8 | paymentRoutes.ts, paymentService.ts | ✅ Complete | 100% |
+| **AI/Agents** | 18 | 25 | agent-manager.ts, aiContextService.ts | ⚠️ Partial | 70% |
+| **Messaging** | 12 | 7 | messageRoutes.ts, socketService.ts | ✅ Complete | 90% |
+| **Housing** | 10 | 4 | housingRoutes.ts | ✅ Complete | 85% |
+| **Admin** | 16 | 18 | adminRoutes.ts, adminService.ts | ✅ Complete | 85% |
+| **Infrastructure** | 33 | 76 | Various monitoring, logging, utils | ⚠️ Partial | 75% |
+
+**Total Backend**: 148 routes + 169 services
+
+### Database Schema (198 Tables)
+
+**Status**: ✅ Complete for core features (5,797 lines in `shared/schema.ts`)
+
+**Sample Tables** (First 30 of 198):
+1. sessions, agents, users, roles
+2. events, eventRsvps, eventCategories
+3. groups, groupMembers, groupInvitations
+4. posts, postLikes, postComments, postShares
+5. hostHomes, housingBookings
+6. messages, messageReactions, messageThreads
+7. notifications, userNotificationSettings
+8. payments, subscriptions, invoices
+9. userPoints, achievements, challenges
+10. And 168 more tables...
+
+### AI Agent Systems (97 Files)
+
+**Directories**:
+- `server/agents/` - 56 layer-based agents
+- `server/esa-agents/` - 41 ESA framework agents
+
+**Implemented Services**:
+- ✅ `agentMemoryService.ts` - Agent memory management
+- ✅ `agentLearningCapture.ts` - Learning capture system
+- ✅ `aiContextService.ts` - Context awareness
+- ✅ `aiVectorService.ts` - Vector database operations
+- ✅ `agent-manager.ts` - Agent orchestration
+- ✅ `agent-performance.ts` - Performance tracking
+- ✅ `cross-agent-learning.ts` - Inter-agent learning
+- ✅ `predictive-analytics.ts` - ML predictions
+- ⚠️ Full 114-agent ESA system (partial implementation)
+
+### External Integrations (23 Environment Variables)
+
+**Fully Integrated** ✅:
+1. **Database**: PostgreSQL (Neon) - `DATABASE_URL`
+2. **AI Providers**: 
+   - OpenAI - `OPENAI_API_KEY`
+   - Anthropic - `ANTHROPIC_API_KEY`
+   - Groq - `GROQ_API_KEY`
+   - Gemini - `GEMINI_API_KEY`
+   - OpenRouter - `OPENROUTER_API_KEY`
+3. **Payments**: Stripe - `STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`
+4. **Media**: Cloudinary - `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
+5. **Email**: Resend - `RESEND_API_KEY`
+6. **Real-time**: Socket.io (built-in)
+7. **Session**: Session secret - `SESSION_SECRET`
+
+**Partially Integrated** ⚠️:
+1. **Error Monitoring**: Sentry - `SENTRY_DSN` (40% complete)
+2. **Caching**: Redis (60% complete)
+3. **Job Queue**: BullMQ (30% complete)
+
+**NOT Integrated** (Part 2 Roadmap) 📋:
+- Elasticsearch, Kubernetes, RabbitMQ, Kafka, Temporal.io
+- GraphQL, Datadog, Prometheus (full), ArgoCD
+- Salesforce, HubSpot, Twilio
+
+### Dependencies (140 Total Packages)
+
+**Production**: 101 packages
+**Dev**: 39 packages
+
+**Key Dependencies**:
+- Core: express, react, vite, typescript
+- Database: drizzle-orm, postgres
+- AI: openai, @anthropic-ai/sdk, lancedb
+- Payments: stripe
+- UI: tailwindcss, @radix-ui/*, lucide-react
+- Real-time: socket.io, socket.io-client
+
+### Git Repository Status (19 Branches)
+
+**Current Branch**: `main` ✅
+**Production Branch**: `production-restore-oct14`
+
+**Branch Status**:
+- ✅ All major work merged to `main`
+- ✅ No critical unmerged features
+- ⚠️ Multiple conflict branches (can be cleaned up)
+- ✅ Production restore point available
+
+---
+
+# 🎯 SECTION B: BUILD PRIORITY GUIDE
+
+## 🔴 URGENT: Must Build Before Production (3-4 Weeks)
+
+### Priority 1: Testing Infrastructure
+**Why**: Can't deploy to production without comprehensive tests  
+**Status**: 40% → 90% needed  
+**Effort**: 1-2 weeks
+
+**Tasks**:
+1. ❌ **E2E Tests** - Playwright tests for all user journeys
+   - Auth flow (login, register, password reset)
+   - Events creation and RSVP
+   - Payment checkout
+   - Housing booking
+   - Messaging
+   - Profile management
+
+2. ❌ **Integration Tests** - API endpoint testing
+   - All 148 API routes
+   - Database operations
+   - External service mocking
+   - Error scenarios
+
+3. ❌ **Security Tests**
+   - OWASP Top 10 vulnerabilities
+   - Penetration testing
+   - Authentication bypasses
+   - SQL injection attempts
+   - XSS vulnerabilities
+
+4. ❌ **Performance Tests**
+   - Load testing (k6)
+   - Stress testing
+   - Database query performance
+   - API response times
+
+**Files to Create**:
+- `tests/e2e/auth.spec.ts`
+- `tests/e2e/events.spec.ts`
+- `tests/e2e/payments.spec.ts`
+- `tests/integration/api/*.test.ts`
+- `tests/performance/load-tests.js`
+
+### Priority 2: Security Hardening
+**Why**: Critical for protecting user data  
+**Status**: 75% → 95% needed  
+**Effort**: 1 week
+
+**Tasks**:
+1. ❌ **Rate Limiting** - All endpoints
+   ```typescript
+   // Add to all routes
+   import rateLimit from 'express-rate-limit';
+   
+   const limiter = rateLimit({
+     windowMs: 15 * 60 * 1000, // 15 minutes
+     max: 100 // limit each IP to 100 requests per windowMs
+   });
+   ```
+
+2. ⚠️ **CSRF Protection** - Complete implementation
+3. ⚠️ **Input Validation** - Zod validation on all inputs
+4. ❌ **Security Audit** - Run npm audit, fix vulnerabilities
+5. ❌ **Headers Security** - helmet.js configuration
+
+**Files to Update**:
+- `server/middleware/rateLimiting.ts` (create)
+- `server/middleware/security.ts` (enhance)
+- All route files (add validation)
+
+### Priority 3: Performance Optimization
+**Why**: Ensure fast load times and scalability  
+**Status**: 70% → 90% needed  
+**Effort**: 1 week
+
+**Tasks**:
+1. ❌ **Database Indexes**
+   ```sql
+   CREATE INDEX idx_posts_user_id ON posts(user_id);
+   CREATE INDEX idx_events_date ON events(event_date);
+   CREATE INDEX idx_messages_thread ON messages(thread_id);
+   ```
+
+2. ⚠️ **Code Splitting** - React.lazy for all pages
+3. ⚠️ **Image Optimization** - Sharp, lazy loading
+4. ❌ **API Response Caching** - Redis for frequent queries
+5. ❌ **Database Query Optimization** - Analyze slow queries
+
+### Priority 4: Error Monitoring
+**Why**: Need to catch and fix production errors  
+**Status**: 60% → 95% needed  
+**Effort**: 3-5 days
+
+**Tasks**:
+1. ⚠️ **Complete Sentry Setup**
+   - Error tracking on all pages
+   - Backend error capture
+   - Source maps for debugging
+   - Alert configuration
+
+2. ❌ **Logging Infrastructure**
+   - Structured logging (winston)
+   - Log levels (error, warn, info, debug)
+   - Log aggregation
+
+3. ❌ **Alert Configuration**
+   - Critical error alerts
+   - Performance degradation alerts
+   - Downtime alerts
+
+### Priority 5: Backup & Recovery
+**Why**: Protect against data loss  
+**Status**: 30% → 90% needed  
+**Effort**: 2-3 days
+
+**Tasks**:
+1. ❌ **Automated Database Backups**
+   - Daily full backups
+   - Hourly incremental backups
+   - Backup retention policy
+   - Backup testing procedure
+
+2. ❌ **Disaster Recovery Plan**
+   - Recovery procedures
+   - RTO/RPO definitions
+   - Failover strategies
+
+---
+
+## ⚠️ HIGH PRIORITY: Should Build Soon (1-2 Months)
+
+### 1. CI/CD Pipeline
+- GitHub Actions workflows
+- Automated testing on PR
+- Automated deployment
+- Rollback procedures
+
+### 2. Complete Monitoring
+- Full Prometheus setup
+- Grafana dashboards
+- Distributed tracing
+- APM integration
+
+### 3. Advanced Caching
+- Redis cluster setup
+- Cache warming strategies
+- Cache invalidation patterns
+- Distributed cache
+
+### 4. Background Jobs
+- Complete BullMQ setup
+- Job monitoring
+- Failed job retry logic
+- Job queues for emails, notifications
+
+### 5. API Documentation
+- OpenAPI/Swagger docs
+- Postman collections
+- API versioning
+- Rate limit documentation
+
+---
+
+## 📋 PART 2 FEATURES: Enterprise Roadmap (6-12+ Months)
+
+**IMPORTANT**: The features below (Parts 136-21000+) are documented with complete code examples but **NOT yet implemented**. Build these incrementally as your platform scales and requires them.
+
+### When to Build Part 2 Features
+
+**Elasticsearch** (Parts 151-160):
+- ✅ Build when: You have 10K+ posts/events and search is slow
+- ❌ Don't build if: PostgreSQL full-text search works fine
+
+**Kubernetes** (Parts 221-235):
+- ✅ Build when: You need auto-scaling for 100K+ concurrent users
+- ❌ Don't build if: Single server handles your traffic
+
+**WebRTC** (Parts 161-170):
+- ✅ Build when: Users request video calls/conferencing
+- ❌ Don't build if: Messaging system meets needs
+
+**GraphQL** (Parts 326-340):
+- ✅ Build when: Mobile apps need flexible data fetching
+- ❌ Don't build if: REST API serves all clients well
+
+**ML Pipelines** (Parts 191-205):
+- ✅ Build when: You need advanced recommendations/predictions
+- ❌ Don't build if: Basic AI integration works fine
+
+**Service Mesh (Istio)** (Parts 236-250):
+- ✅ Build when: You have 20+ microservices
+- ❌ Don't build if: Monolith architecture works
+
+### Part 2 Features by Category
+
+#### Infrastructure & DevOps
+- 📋 Kubernetes (Parts 221-235)
+- 📋 Istio Service Mesh (Parts 236-250)
+- 📋 Infrastructure as Code (Parts 901-930)
+- 📋 GitOps with ArgoCD
+- 📋 Multi-region deployment
+
+#### Advanced Search & Data
+- 📋 Elasticsearch (Parts 151-160, 591-620)
+- 📋 Data Warehouse (Parts 476-500)
+- 📋 ETL Pipelines (Parts 1201-1250)
+- 📋 Business Intelligence
+
+#### Real-time & Communication
+- 📋 WebRTC Video (Parts 161-170)
+- 📋 Live Streaming (Parts 3001-3250)
+- 📋 Advanced Websockets (Parts 6801-7100)
+- 📋 Webhooks System (Parts 711-740)
+
+#### AI & Machine Learning
+- 📋 ML Pipelines (Parts 191-205)
+- 📋 AutoML
+- 📋 Advanced NLP
+- 📋 Recommendation Engine V2
+
+#### APIs & Integration
+- 📋 GraphQL Layer (Parts 326-340)
+- 📋 API Gateway (Parts 621-650)
+- 📋 CRM Integration (Parts 501-520)
+- 📋 Enterprise SSO (Parts 561-590)
+
+#### Mobile & Multi-platform
+- 📋 Native Mobile Apps (Parts 531-560)
+- 📋 PWA Advanced Features
+- 📋 Offline-first Architecture
+
+#### Compliance & Security
+- 📋 GDPR Automation (Part 2)
+- 📋 SOC 2 Compliance (Part 2)
+- 📋 Zero Trust Architecture (Part 2)
+- 📋 Advanced RBAC (Parts 251-265)
+
+---
+
+# 💡 EFFICIENCY & OPTIMIZATION GUIDE
+
+## How to Work Faster & Smarter
+
+### 1. Parallel Execution Strategy
+
+**Instead of building sequentially**:
+```
+❌ Step 1: Build database schema
+❌ Step 2: Build API routes
+❌ Step 3: Build frontend
+❌ Step 4: Build tests
+(Takes 4 hours)
+```
+
+**Build simultaneously**:
+```
+✅ All at once:
+   - Database schema (shared/schema.ts)
+   - API routes (server/routes/*.ts)
+   - Frontend pages (client/src/pages/*.tsx)
+   - Tests (tests/e2e/*.spec.ts)
+(Takes 1 hour)
+```
+
+### 2. Memory Optimization
+
+**Use file references instead of reading entire files**:
+```typescript
+// ❌ BAD: Loading entire file into memory
+const allCode = await readFile('huge-file.ts');
+analyzeCode(allCode);
+
+// ✅ GOOD: Process in chunks
+const stream = createReadStream('huge-file.ts');
+stream.on('data', chunk => processChunk(chunk));
+```
+
+**Leverage grep for searching**:
+```bash
+# ✅ Fast: Find specific code
+grep -r "export function" server/services/
+
+# ❌ Slow: Read every file
+for file in server/services/*.ts; do cat $file; done
+```
+
+### 3. Batch Operations
+
+**Group related tool calls**:
+```typescript
+// ✅ GOOD: Batch file operations
+await Promise.all([
+  writeFile('schema.ts', schemaContent),
+  writeFile('routes.ts', routesContent),
+  writeFile('component.tsx', componentContent)
+]);
+
+// ❌ BAD: Sequential operations
+await writeFile('schema.ts', schemaContent);
+await writeFile('routes.ts', routesContent);
+await writeFile('component.tsx', componentContent);
+```
+
+### 4. Smart Code Generation
+
+**Generate complete features, not fragments**:
+```typescript
+// ✅ GOOD: Complete feature in one go
+generateFeature({
+  name: 'Events',
+  includes: ['schema', 'routes', 'services', 'components', 'tests']
+});
+
+// ❌ BAD: Piece by piece
+generateSchema('Events');
+generateRoutes('Events');
+generateServices('Events');
+// ...more steps
+```
+
+### 5. Leverage Existing Patterns
+
+**Don't reinvent the wheel**:
+```typescript
+// ✅ GOOD: Copy pattern from existing feature
+const newFeature = clonePattern('events', 'workshops');
+
+// ❌ BAD: Write from scratch
+const newFeature = writeEverythingManually();
+```
+
+### 6. Use Task Lists Effectively
+
+**Break down work into parallel tasks**:
+```markdown
+## Phase 1: Testing (Parallel)
+- [ ] Write auth E2E tests
+- [ ] Write events E2E tests  
+- [ ] Write payments E2E tests
+- [ ] Write integration tests
+- [ ] Run all tests
+
+(All can be done simultaneously)
+```
+
+### 7. Cache Common Patterns
+
+**Reuse code patterns**:
+```typescript
+// Store common patterns
+const apiRoutePattern = `
+export const ${name}Routes = (storage: IStorage) => {
+  router.get('/api/${name}', async (req, res) => {
+    // ...pattern...
+  });
+};
+`;
+
+// Reuse for multiple features
+generateRoute('events', apiRoutePattern);
+generateRoute('groups', apiRoutePattern);
+```
+
+---
+
+# 🎯 QUICK START CHECKLIST
+
+Before you start building, complete this checklist:
+
+## Environment Setup
+- [ ] Read Part 1 documentation (ULTIMATE_ZERO_TO_DEPLOY_COMPLETE.md)
+- [ ] Read this document (ULTIMATE_ZERO_TO_DEPLOY_PART_2.md) sections 0-B
+- [ ] Check all 23 environment variables in `.env.example`
+- [ ] Verify database connection (DATABASE_URL)
+- [ ] Test API keys (OpenAI, Stripe, etc.)
+
+## Codebase Understanding
+- [ ] Review `shared/schema.ts` (198 tables)
+- [ ] Browse `server/routes/` (148 routes)
+- [ ] Browse `client/src/pages/` (95 pages)
+- [ ] Check git branches (`git branch -a`)
+- [ ] Review package.json dependencies
+
+## Priority Tasks
+- [ ] Create comprehensive task list (using write_task_list tool)
+- [ ] Focus on 🔴 URGENT items first
+- [ ] Build tests as you build features
+- [ ] Validate each feature before moving on
+
+## Best Practices
+- [ ] Use MB.MD methodology (Simultaneously, Recursively, Critically)
+- [ ] Build complete features (schema + API + frontend + tests)
+- [ ] No placeholders or TODOs
+- [ ] Production-ready code only
+- [ ] Security-first mindset
+
+---
+
+**Now proceed to the Enterprise Features below (Parts 136-21000+)**
+
+**Remember**: These are documented for future scaling, not immediate implementation.
+
+---
+
 # ULTIMATE ZERO-TO-DEPLOY COMPLETE HANDOFF - PART 2 (51-100%)
 
 **Document Version:** 2.0.0  
-**Created:** November 10, 2025  
+**Created:** January 10, 2025  
 **Part 2 Coverage:** Lines 75,033 → 150,000 (Advanced Features & Enterprise Scale)  
 **Domain:** mundotango.life  
 **Platform:** Life CEO & Multi-Community Tango Platform  
@@ -241,22 +946,22 @@ export class TalentMatchService {
         eq(esaAgents.status, 'active'),
         sql`${esaAgents.currentLoad} < ${esaAgents.maxCapacity}`
       ));
-
+    
     const matches: AgentMatch[] = [];
-
+    
     for (const agent of availableAgents) {
       const score = this.calculateMatchScore(criteria, agent);
       const reasons = this.getMatchReasons(criteria, agent, score);
-
+      
       matches.push({ agent, score, reasons });
     }
-
+    
     // Sort by score descending
     matches.sort((a, b) => b.score - a.score);
-
+    
     return matches.slice(0, maxMatches);
   }
-
+  
   /**
    * Calculate match score (0-100)
    */
@@ -265,38 +970,38 @@ export class TalentMatchService {
     agent: typeof esaAgents.$inferSelect
   ): number {
     let score = 0;
-
+    
     // 1. Skills match (40 points max)
     const skillsScore = this.calculateSkillsMatch(
       criteria.skills,
       agent.capabilities
     );
     score += skillsScore * 0.4;
-
+    
     // 2. Experience match (30 points max)
     const experienceScore = this.calculateExperienceMatch(
       criteria.experience,
       agent.expertise
     );
     score += experienceScore * 0.3;
-
+    
     // 3. Availability score (20 points max)
     const availabilityScore = this.calculateAvailabilityScore(
       agent.currentLoad || 0,
       agent.maxCapacity || 10
     );
     score += availabilityScore * 0.2;
-
+    
     // 4. Preference match (10 points max)
     const preferenceScore = this.calculatePreferenceMatch(
       criteria.preferences,
       agent
     );
     score += preferenceScore * 0.1;
-
+    
     return Math.round(score);
   }
-
+  
   /**
    * Calculate skills overlap (0-100)
    */
@@ -305,18 +1010,18 @@ export class TalentMatchService {
     agentCapabilities: string[]
   ): number {
     if (requiredSkills.length === 0) return 50; // Neutral score
-
+    
     const matchingSkills = requiredSkills.filter(skill =>
       agentCapabilities.some(cap => 
         cap.toLowerCase().includes(skill.toLowerCase()) ||
         skill.toLowerCase().includes(cap.toLowerCase())
       )
     );
-
+    
     const matchPercentage = (matchingSkills.length / requiredSkills.length) * 100;
     return Math.min(matchPercentage, 100);
   }
-
+  
   /**
    * Calculate experience level match (0-100)
    */
@@ -325,23 +1030,23 @@ export class TalentMatchService {
     agentExpertise: any
   ): number {
     let score = 50; // Base score
-
+    
     // Match experience areas
     const areaMatches = humanExperience.areas.filter(area =>
       [...agentExpertise.primary, ...agentExpertise.secondary]
         .some(exp => exp.toLowerCase().includes(area.toLowerCase()))
     );
-
+    
     score += (areaMatches.length / humanExperience.areas.length) * 30;
-
+    
     // Bonus for specializations match
     if (agentExpertise.specializations?.length > 0) {
       score += 20;
     }
-
+    
     return Math.min(score, 100);
   }
-
+  
   /**
    * Calculate agent availability (0-100)
    */
@@ -350,7 +1055,7 @@ export class TalentMatchService {
     maxCapacity: number
   ): number {
     const utilizationRate = currentLoad / maxCapacity;
-
+    
     // Prefer agents at 30-70% capacity (sweet spot)
     if (utilizationRate >= 0.3 && utilizationRate <= 0.7) {
       return 100;
@@ -362,7 +1067,7 @@ export class TalentMatchService {
       return Math.max(0, 100 - (utilizationRate * 100));
     }
   }
-
+  
   /**
    * Calculate preference match (0-100)
    */
@@ -371,9 +1076,9 @@ export class TalentMatchService {
     agent: typeof esaAgents.$inferSelect
   ): number {
     if (!preferences) return 50; // Neutral
-
+    
     let score = 50;
-
+    
     // Preferred agent types
     if (preferences.preferredAgentTypes?.length > 0) {
       const isPreferred = preferences.preferredAgentTypes.some(type =>
@@ -381,10 +1086,10 @@ export class TalentMatchService {
       );
       score += isPreferred ? 50 : -20;
     }
-
+    
     return Math.max(0, Math.min(score, 100));
   }
-
+  
   /**
    * Get human-readable match reasons
    */
@@ -394,7 +1099,7 @@ export class TalentMatchService {
     score: number
   ): string[] {
     const reasons: string[] = [];
-
+    
     // Skills
     const matchingSkills = criteria.skills.filter(skill =>
       agent.capabilities.some(cap => 
@@ -404,12 +1109,12 @@ export class TalentMatchService {
     if (matchingSkills.length > 0) {
       reasons.push(`Matches ${matchingSkills.length}/${criteria.skills.length} required skills`);
     }
-
+    
     // Experience
     if (agent.expertise.primary.length > 0) {
       reasons.push(`Expert in: ${agent.expertise.primary.slice(0, 3).join(', ')}`);
     }
-
+    
     // Availability
     const utilizationRate = (agent.currentLoad || 0) / (agent.maxCapacity || 10);
     if (utilizationRate < 0.5) {
@@ -417,17 +1122,17 @@ export class TalentMatchService {
     } else if (utilizationRate > 0.8) {
       reasons.push('High demand (may have limited availability)');
     }
-
+    
     // Overall score
     if (score >= 80) {
       reasons.push('🌟 Excellent match');
     } else if (score >= 60) {
       reasons.push('✓ Good match');
     }
-
+    
     return reasons;
   }
-
+  
   /**
    * Assign agent to talent
    */
@@ -441,16 +1146,16 @@ export class TalentMatchService {
       .from(talentProfiles)
       .where(eq(talentProfiles.id, talentProfileId))
       .limit(1);
-
+    
     const agent = await db.select()
       .from(esaAgents)
       .where(eq(esaAgents.id, agentId))
       .limit(1);
-
+    
     if (!talent[0] || !agent[0]) {
       throw new Error('Talent or agent not found');
     }
-
+    
     const matchScore = this.calculateMatchScore(
       {
         skills: talent[0].skills as string[],
@@ -459,7 +1164,7 @@ export class TalentMatchService {
       },
       agent[0]
     );
-
+    
     // Create assignment
     const [assignment] = await db.insert(talentAgentAssignments).values({
       talentProfileId,
@@ -468,17 +1173,17 @@ export class TalentMatchService {
       isPrimary,
       lastInteraction: new Date()
     }).returning();
-
+    
     // Update agent load
     await db.update(esaAgents)
       .set({
         currentLoad: sql`${esaAgents.currentLoad} + 1`
       })
       .where(eq(esaAgents.id, agentId));
-
+    
     return assignment;
   }
-
+  
   /**
    * Get all agents assigned to a talent
    */
@@ -516,24 +1221,24 @@ export class MrBlueUpgradeService {
       .from(talentProfiles)
       .where(eq(talentProfiles.userId, userId))
       .limit(1);
-
+    
     if (talent.length === 0) {
       return { upgraded: false, reason: 'No talent profile found' };
     }
-
+    
     // Check if already upgraded
     const existing = await db.select()
       .from(mrBlueUpgrades)
       .where(eq(mrBlueUpgrades.userId, userId))
       .limit(1);
-
+    
     if (existing.length > 0 && existing[0].isUpgraded) {
       return { upgraded: true, reason: 'Already upgraded' };
     }
-
+    
     // Perform upgrade
     const upgradeLevel = this.determineUpgradeLevel(talent[0]);
-
+    
     const [upgrade] = await db.insert(mrBlueUpgrades).values({
       userId,
       isUpgraded: true,
@@ -548,17 +1253,17 @@ export class MrBlueUpgradeService {
       },
       upgradedAt: new Date()
     }).returning();
-
+    
     // Auto-assign primary agents
     await this.autoAssignPrimaryAgents(talent[0].id);
-
+    
     return {
       upgraded: true,
       level: upgradeLevel,
       capabilities: upgrade.capabilities
     };
   }
-
+  
   /**
    * Determine upgrade level based on talent profile
    */
@@ -566,7 +1271,7 @@ export class MrBlueUpgradeService {
     talent: typeof talentProfiles.$inferSelect
   ): 'standard' | 'pro' | 'enterprise' {
     const experience = talent.experience as any;
-
+    
     if (experience.level === 'expert' || experience.years >= 10) {
       return 'enterprise';
     } else if (experience.level === 'senior' || experience.years >= 5) {
@@ -575,7 +1280,7 @@ export class MrBlueUpgradeService {
       return 'standard';
     }
   }
-
+  
   /**
    * Auto-assign primary agents based on talent skills
    */
@@ -584,9 +1289,9 @@ export class MrBlueUpgradeService {
       .from(talentProfiles)
       .where(eq(talentProfiles.id, talentProfileId))
       .limit(1);
-
+    
     if (!talent[0]) return;
-
+    
     // Get top 3 agent matches
     const matches = await TalentMatchService.matchTalentToAgents(
       talentProfileId,
@@ -597,7 +1302,7 @@ export class MrBlueUpgradeService {
       },
       3
     );
-
+    
     // Assign top match as primary
     if (matches.length > 0) {
       await TalentMatchService.assignAgentToTalent(
@@ -605,7 +1310,7 @@ export class MrBlueUpgradeService {
         matches[0].agent.id,
         true // isPrimary
       );
-
+      
       // Assign others as secondary
       for (let i = 1; i < matches.length; i++) {
         await TalentMatchService.assignAgentToTalent(
@@ -616,7 +1321,7 @@ export class MrBlueUpgradeService {
       }
     }
   }
-
+  
   /**
    * Get Mr Blue capabilities for user
    */
@@ -625,7 +1330,7 @@ export class MrBlueUpgradeService {
       .from(mrBlueUpgrades)
       .where(eq(mrBlueUpgrades.userId, userId))
       .limit(1);
-
+    
     if (!upgrade[0] || !upgrade[0].isUpgraded) {
       return {
         isUpgraded: false,
@@ -640,7 +1345,7 @@ export class MrBlueUpgradeService {
         }
       };
     }
-
+    
     return {
       isUpgraded: true,
       level: upgrade[0].upgradeLevel,
@@ -687,14 +1392,14 @@ async function processAgentResponse(conversationId: number, messageId: number): 
       .where(eq(h2acMessages.conversationId, conversationId))
       .orderBy(h2acMessages.createdAt)
       .limit(10);
-
+    
     // Generate AI response
     const aiResponse = await AIService.generateResponse({
       conversationId,
       messages,
       context: 'h2ac_conversation'
     });
-
+    
     // Save AI message
     const [aiMessage] = await db.insert(h2acMessages).values({
       conversationId,
@@ -704,7 +1409,7 @@ async function processAgentResponse(conversationId: number, messageId: number): 
       messageType: 'text',
       metadata: { model: aiResponse.model }
     }).returning();
-
+    
     // Send real-time update
     await emitToConversation({
       conversationId,
@@ -734,15 +1439,15 @@ router.post('/api/h2ac/talent-profile', requireAuth, async (req, res) => {
         preferredAgentTypes: z.array(z.string()).optional()
       }).optional()
     });
-
+    
     const data = schema.parse(req.body);
-
+    
     // Check if profile exists
     const existing = await db.select()
       .from(talentProfiles)
       .where(eq(talentProfiles.userId, req.user!.id))
       .limit(1);
-
+    
     let profile;
     if (existing.length > 0) {
       // Update existing
@@ -760,10 +1465,10 @@ router.post('/api/h2ac/talent-profile', requireAuth, async (req, res) => {
         ...data
       }).returning();
     }
-
+    
     // Trigger Mr Blue upgrade
     const upgradeResult = await MrBlueUpgradeService.detectAndUpgradeMrBlue(req.user!.id);
-
+    
     res.json({
       success: true,
       data: {
@@ -786,14 +1491,14 @@ router.get('/api/h2ac/talent-profile', requireAuth, async (req, res) => {
       .from(talentProfiles)
       .where(eq(talentProfiles.userId, req.user!.id))
       .limit(1);
-
+    
     if (profile.length === 0) {
       return res.status(404).json({
         success: false,
         error: 'Talent profile not found'
       });
     }
-
+    
     res.json({
       success: true,
       data: profile[0]
@@ -813,14 +1518,14 @@ router.get('/api/h2ac/recommended-agents', requireAuth, async (req, res) => {
       .from(talentProfiles)
       .where(eq(talentProfiles.userId, req.user!.id))
       .limit(1);
-
+    
     if (profile.length === 0) {
       return res.status(404).json({
         success: false,
         error: 'Create a talent profile first'
       });
     }
-
+    
     const matches = await TalentMatchService.matchTalentToAgents(
       profile[0].id,
       {
@@ -830,7 +1535,7 @@ router.get('/api/h2ac/recommended-agents', requireAuth, async (req, res) => {
       },
       10
     );
-
+    
     res.json({
       success: true,
       data: matches
@@ -850,27 +1555,27 @@ router.post('/api/h2ac/assign-agent', requireAuth, async (req, res) => {
       agentId: z.number(),
       isPrimary: z.boolean().default(false)
     });
-
+    
     const { agentId, isPrimary } = schema.parse(req.body);
-
+    
     const profile = await db.select()
       .from(talentProfiles)
       .where(eq(talentProfiles.userId, req.user!.id))
       .limit(1);
-
+    
     if (profile.length === 0) {
       return res.status(404).json({
         success: false,
         error: 'Talent profile not found'
       });
     }
-
+    
     const assignment = await TalentMatchService.assignAgentToTalent(
       profile[0].id,
       agentId,
       isPrimary
     );
-
+    
     res.json({
       success: true,
       data: assignment
@@ -890,16 +1595,16 @@ router.get('/api/h2ac/my-agents', requireAuth, async (req, res) => {
       .from(talentProfiles)
       .where(eq(talentProfiles.userId, req.user!.id))
       .limit(1);
-
+    
     if (profile.length === 0) {
       return res.json({
         success: true,
         data: []
       });
     }
-
+    
     const agents = await TalentMatchService.getTalentAgents(profile[0].id);
-
+    
     res.json({
       success: true,
       data: agents
@@ -916,25 +1621,25 @@ router.get('/api/h2ac/my-agents', requireAuth, async (req, res) => {
 router.get('/api/h2ac/agents', requireAuth, async (req, res) => {
   try {
     const { category, layer, search } = req.query;
-
+    
     const conditions = [];
-
+    
     if (category) {
       conditions.push(eq(esaAgents.category, category as string));
     }
-
+    
     if (layer) {
       conditions.push(eq(esaAgents.layer, parseInt(layer as string)));
     }
-
+    
     let query = db.select().from(esaAgents);
-
+    
     if (conditions.length > 0) {
       query = query.where(and(...conditions)) as any;
     }
-
+    
     let agents = await query;
-
+    
     // Search filter
     if (search) {
       const searchTerm = (search as string).toLowerCase();
@@ -944,7 +1649,7 @@ router.get('/api/h2ac/agents', requireAuth, async (req, res) => {
         agent.capabilities.some((cap: string) => cap.toLowerCase().includes(searchTerm))
       );
     }
-
+    
     res.json({
       success: true,
       data: agents
@@ -970,22 +1675,22 @@ router.post('/api/h2ac/conversations', requireAuth, async (req, res) => {
         relatedFiles: z.array(z.string()).optional()
       }).optional()
     });
-
+    
     const { agentId, title, context } = schema.parse(req.body);
-
+    
     // Get talent profile
     const profile = await db.select()
       .from(talentProfiles)
       .where(eq(talentProfiles.userId, req.user!.id))
       .limit(1);
-
+    
     if (profile.length === 0) {
       return res.status(404).json({
         success: false,
         error: 'Talent profile not found'
       });
     }
-
+    
     // Get or create assignment
     let assignment = await db.select()
       .from(talentAgentAssignments)
@@ -994,7 +1699,7 @@ router.post('/api/h2ac/conversations', requireAuth, async (req, res) => {
         eq(talentAgentAssignments.agentId, agentId)
       ))
       .limit(1);
-
+    
     if (assignment.length === 0) {
       // Auto-assign
       const newAssignment = await TalentMatchService.assignAgentToTalent(
@@ -1004,17 +1709,17 @@ router.post('/api/h2ac/conversations', requireAuth, async (req, res) => {
       );
       assignment = [newAssignment];
     }
-
+    
     // Create conversation
     const conversationId = `h2ac_${assignment[0].id}_${Date.now()}`;
-
+    
     const [conversation] = await db.insert(h2acConversations).values({
       assignmentId: assignment[0].id,
       conversationId,
       title: title || 'New Conversation',
       context: context || {}
     }).returning();
-
+    
     res.json({
       success: true,
       data: conversation
@@ -1034,14 +1739,14 @@ router.get('/api/h2ac/conversations', requireAuth, async (req, res) => {
       .from(talentProfiles)
       .where(eq(talentProfiles.userId, req.user!.id))
       .limit(1);
-
+    
     if (profile.length === 0) {
       return res.json({
         success: true,
         data: []
       });
     }
-
+    
     const conversations = await db.select({
       conversation: h2acConversations,
       agent: esaAgents,
@@ -1052,7 +1757,7 @@ router.get('/api/h2ac/conversations', requireAuth, async (req, res) => {
     .innerJoin(esaAgents, eq(talentAgentAssignments.agentId, esaAgents.id))
     .where(eq(talentAgentAssignments.talentProfileId, profile[0].id))
     .orderBy(desc(h2acConversations.lastMessageAt));
-
+    
     res.json({
       success: true,
       data: conversations
@@ -1090,7 +1795,7 @@ export async function initWebSocketServer(httpServer: HTTPServer): Promise<void>
     logger.warn('WebSocket server already initialized');
     return;
   }
-
+  
   webSocketServerInstance = new SocketIOServer(httpServer, {
     cors: {
       origin: process.env.FRONTEND_URL || 'http://localhost:3000',
@@ -1099,14 +1804,14 @@ export async function initWebSocketServer(httpServer: HTTPServer): Promise<void>
     pingTimeout: 60000,
     pingInterval: 25000
   });
-
+  
   // Redis adapter for horizontal scaling
   const pubClient = createClient({ url: process.env.REDIS_URL });
   const subClient = pubClient.duplicate();
-
+  
   await Promise.all([pubClient.connect(), subClient.connect()]);
   webSocketServerInstance.adapter(createAdapter(pubClient, subClient));
-
+  
   logger.info('✅ WebSocket server initialized');
 }
 
@@ -1131,7 +1836,7 @@ export async function emitToConversation(params: {
     logger.warn('WebSocket not available - message not sent in real-time', params);
     return;
   }
-
+  
   webSocketServerInstance.to(`conversation:${params.conversationId}`).emit(params.event, params.data);
 }
 
@@ -1147,7 +1852,7 @@ export async function emitToUser(params: {
     logger.warn('WebSocket not available - notification not sent in real-time', params);
     return;
   }
-
+  
   webSocketServerInstance.to(`user:${params.userId}`).emit(params.event, params.data);
 }
 
@@ -1159,7 +1864,7 @@ export async function broadcastEvent(event: string, data: any): Promise<void> {
     logger.warn('WebSocket not available - broadcast skipped', { event });
     return;
   }
-
+  
   webSocketServerInstance.emit(event, data);
 }
 ```
@@ -1203,9 +1908,9 @@ router.post('/api/h2ac/messages', requireAuth, async (req, res) => {
         taskId: z.string().optional()
       }).optional()
     });
-
+    
     const data = schema.parse(req.body);
-
+    
     // Verify conversation access
     const conversation = await db.select()
       .from(h2acConversations)
@@ -1216,14 +1921,14 @@ router.post('/api/h2ac/messages', requireAuth, async (req, res) => {
         eq(talentProfiles.userId, req.user!.id)
       ))
       .limit(1);
-
+    
     if (conversation.length === 0) {
       return res.status(404).json({
         success: false,
         error: 'Conversation not found'
       });
     }
-
+    
     // Create message
     const [message] = await db.insert(h2acMessages).values({
       conversationId: data.conversationId,
@@ -1234,24 +1939,24 @@ router.post('/api/h2ac/messages', requireAuth, async (req, res) => {
       attachments: data.attachments || [],
       metadata: data.metadata || {}
     }).returning();
-
+    
     // Update conversation last message time
     await db.update(h2acConversations)
       .set({ lastMessageAt: new Date() })
       .where(eq(h2acConversations.id, data.conversationId));
-
+    
     // Send real-time update using WebSocket helper
     await emitToConversation({
       conversationId: data.conversationId,
       event: 'new_message',
       data: message
     });
-
+    
     // Trigger AI agent response (async - don't wait)
     processAgentResponse(data.conversationId, message.id).catch(err => 
       logger.error('Agent response failed:', err)
     );
-
+    
     res.json({
       success: true,
       data: message
@@ -1269,7 +1974,7 @@ router.get('/api/h2ac/conversations/:id/messages', requireAuth, async (req, res)
   try {
     const conversationId = parseInt(req.params.id);
     const { limit = 50, offset = 0 } = req.query;
-
+    
     // Verify access
     const conversation = await db.select()
       .from(h2acConversations)
@@ -1280,21 +1985,21 @@ router.get('/api/h2ac/conversations/:id/messages', requireAuth, async (req, res)
         eq(talentProfiles.userId, req.user!.id)
       ))
       .limit(1);
-
+    
     if (conversation.length === 0) {
       return res.status(404).json({
         success: false,
         error: 'Conversation not found'
       });
     }
-
+    
     const messages = await db.select()
       .from(h2acMessages)
       .where(eq(h2acMessages.conversationId, conversationId))
       .orderBy(desc(h2acMessages.createdAt))
       .limit(parseInt(limit as string))
       .offset(parseInt(offset as string));
-
+    
     res.json({
       success: true,
       data: messages.reverse() // Oldest first
@@ -1311,7 +2016,7 @@ router.get('/api/h2ac/conversations/:id/messages', requireAuth, async (req, res)
 router.get('/api/h2ac/mr-blue-status', requireAuth, async (req, res) => {
   try {
     const capabilities = await MrBlueUpgradeService.getUserCapabilities(req.user!.id);
-
+    
     res.json({
       success: true,
       data: capabilities
@@ -1373,7 +2078,7 @@ export function AgentDirectory() {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [layerFilter, setLayerFilter] = useState<string>('all');
   const [showRecommended, setShowRecommended] = useState(false);
-
+  
   // Get all agents
   const { data: agentsData, isLoading: agentsLoading } = useQuery({
     queryKey: ['/api/h2ac/agents', categoryFilter, layerFilter, searchTerm],
@@ -1385,20 +2090,20 @@ export function AgentDirectory() {
       }
     })
   });
-
+  
   // Get recommended agents
   const { data: recommendedData } = useQuery({
     queryKey: ['/api/h2ac/recommended-agents'],
     queryFn: () => apiRequest('/api/h2ac/recommended-agents'),
     enabled: showRecommended
   });
-
+  
   // Get my assigned agents
   const { data: myAgentsData } = useQuery({
     queryKey: ['/api/h2ac/my-agents'],
     queryFn: () => apiRequest('/api/h2ac/my-agents')
   });
-
+  
   // Assign agent mutation
   const assignAgentMutation = useMutation({
     mutationFn: (data: { agentId: number; isPrimary: boolean }) =>
@@ -1421,24 +2126,24 @@ export function AgentDirectory() {
       });
     }
   });
-
+  
   const agents = showRecommended 
     ? (recommendedData?.data || [])
     : (agentsData?.data || []);
-
+  
   const myAgentIds = new Set(
     myAgentsData?.data?.map((a: any) => a.agent.id) || []
   );
-
+  
   const isAssigned = (agentId: number) => myAgentIds.has(agentId);
-
+  
   const getUtilizationColor = (load: number, capacity: number) => {
     const rate = load / capacity;
     if (rate < 0.5) return 'text-green-600';
     if (rate < 0.8) return 'text-yellow-600';
     return 'text-red-600';
   };
-
+  
   return (
     <div className="container mx-auto p-6">
       <div className="mb-8">
@@ -1452,7 +2157,7 @@ export function AgentDirectory() {
               Connect with AI agents from the ESA Framework (114 agents across 61 layers)
             </p>
           </div>
-
+          
           <Button
             onClick={() => setShowRecommended(!showRecommended)}
             variant={showRecommended ? 'default' : 'outline'}
@@ -1461,7 +2166,7 @@ export function AgentDirectory() {
             {showRecommended ? 'All Agents' : 'Recommended for Me'}
           </Button>
         </div>
-
+        
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative">
@@ -1473,7 +2178,7 @@ export function AgentDirectory() {
               className="pl-10"
             />
           </div>
-
+          
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
             <SelectTrigger>
               <SelectValue placeholder="Category" />
@@ -1488,7 +2193,7 @@ export function AgentDirectory() {
               <SelectItem value="Security">Security</SelectItem>
             </SelectContent>
           </Select>
-
+          
           <Select value={layerFilter} onValueChange={setLayerFilter}>
             <SelectTrigger>
               <SelectValue placeholder="Layer" />
@@ -1502,7 +2207,7 @@ export function AgentDirectory() {
               ))}
             </SelectContent>
           </Select>
-
+          
           <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-md">
             <Filter className="h-4 w-4 text-gray-600" />
             <span className="text-sm text-gray-600">
@@ -1511,7 +2216,7 @@ export function AgentDirectory() {
           </div>
         </div>
       </div>
-
+      
       {/* Agent Cards */}
       {agentsLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1533,7 +2238,7 @@ export function AgentDirectory() {
             const agent = showRecommended ? item.agent : item;
             const matchScore = showRecommended ? item.score : null;
             const matchReasons = showRecommended ? item.reasons : null;
-
+            
             return (
               <Card 
                 key={agent.id} 
@@ -1559,7 +2264,7 @@ export function AgentDirectory() {
                       </Badge>
                     )}
                   </div>
-
+                  
                   <div className="flex gap-2 mt-2">
                     <Badge variant="outline">{agent.category}</Badge>
                     <Badge 
@@ -1570,10 +2275,10 @@ export function AgentDirectory() {
                     </Badge>
                   </div>
                 </CardHeader>
-
+                
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-3">{agent.description}</p>
-
+                  
                   <div className="mb-3">
                     <p className="text-xs font-semibold text-gray-700 mb-1">Primary Expertise:</p>
                     <div className="flex flex-wrap gap-1">
@@ -1584,7 +2289,7 @@ export function AgentDirectory() {
                       ))}
                     </div>
                   </div>
-
+                  
                   {matchReasons && (
                     <div className="bg-blue-50 p-2 rounded-md">
                       <p className="text-xs font-semibold text-blue-900 mb-1">Why this match:</p>
@@ -1596,7 +2301,7 @@ export function AgentDirectory() {
                     </div>
                   )}
                 </CardContent>
-
+                
                 <CardFooter className="flex gap-2">
                   {isAssigned(agent.id) ? (
                     <>
@@ -1628,7 +2333,7 @@ export function AgentDirectory() {
           })}
         </div>
       )}
-
+      
       {!agentsLoading && agents.length === 0 && (
         <div className="text-center py-12">
           <Brain className="h-16 w-16 text-gray-300 mx-auto mb-4" />
@@ -1693,14 +2398,14 @@ export function AgentChatInterface({ conversationId, agentName, agentAvatar }: A
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Socket | null>(null);
-
+  
   // Get messages
   const { data: messagesData, isLoading } = useQuery({
     queryKey: ['/api/h2ac/conversations', conversationId, 'messages'],
     queryFn: () => apiRequest(`/api/h2ac/conversations/${conversationId}/messages`),
     refetchInterval: 5000 // Poll every 5 seconds
   });
-
+  
   // Send message mutation
   const sendMessageMutation = useMutation({
     mutationFn: (data: any) =>
@@ -1724,7 +2429,7 @@ export function AgentChatInterface({ conversationId, agentName, agentAvatar }: A
       });
     }
   });
-
+  
   // Socket.IO for real-time updates
   useEffect(() => {
     const socket = io(import.meta.env.VITE_API_URL || '', {
@@ -1732,40 +2437,40 @@ export function AgentChatInterface({ conversationId, agentName, agentAvatar }: A
         token: localStorage.getItem('token')
       }
     });
-
+    
     socketRef.current = socket;
-
+    
     socket.emit('join-h2ac-conversation', conversationId);
-
+    
     socket.on('h2ac:message', (newMessage: Message) => {
       queryClient.invalidateQueries({ 
         queryKey: ['/api/h2ac/conversations', conversationId, 'messages'] 
       });
       scrollToBottom();
     });
-
+    
     socket.on('h2ac:typing', ({ isTyping: typing }: { isTyping: boolean }) => {
       setIsTyping(typing);
     });
-
+    
     return () => {
       socket.emit('leave-h2ac-conversation', conversationId);
       socket.disconnect();
     };
   }, [conversationId]);
-
+  
   // Scroll to bottom on new messages
   useEffect(() => {
     scrollToBottom();
   }, [messagesData]);
-
+  
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-
+  
   const handleSend = () => {
     if (!message.trim()) return;
-
+    
     sendMessageMutation.mutate({
       conversationId,
       message: message.trim(),
@@ -1773,16 +2478,16 @@ export function AgentChatInterface({ conversationId, agentName, agentAvatar }: A
       metadata: messageType === 'code' ? { codeLanguage: 'typescript' } : {}
     });
   };
-
+  
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
   };
-
+  
   const messages = messagesData?.data || [];
-
+  
   return (
     <Card className="h-[600px] flex flex-col">
       <CardHeader className="border-b">
@@ -1805,7 +2510,7 @@ export function AgentChatInterface({ conversationId, agentName, agentAvatar }: A
           </Badge>
         </div>
       </CardHeader>
-
+      
       <CardContent className="flex-1 p-0 flex flex-col">
         {/* Messages Area */}
         <ScrollArea className="flex-1 p-4">
@@ -1844,7 +2549,7 @@ export function AgentChatInterface({ conversationId, agentName, agentAvatar }: A
                       </AvatarFallback>
                     )}
                   </Avatar>
-
+                  
                   <div className={`flex-1 max-w-[70%] ${
                     msg.senderType === 'human' ? 'items-end' : ''
                   }`}>
@@ -1857,7 +2562,7 @@ export function AgentChatInterface({ conversationId, agentName, agentAvatar }: A
                         {formatDistanceToNow(new Date(msg.createdAt), { addSuffix: true })}
                       </span>
                     </div>
-
+                    
                     <div className={`rounded-lg p-3 ${
                       msg.senderType === 'human'
                         ? 'bg-blue-600 text-white'
@@ -1876,7 +2581,7 @@ export function AgentChatInterface({ conversationId, agentName, agentAvatar }: A
                       ) : (
                         <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
                       )}
-
+                      
                       {msg.attachments && msg.attachments.length > 0 && (
                         <div className="mt-2 space-y-1">
                           {msg.attachments.map((file: any, i: number) => (
@@ -1888,7 +2593,7 @@ export function AgentChatInterface({ conversationId, agentName, agentAvatar }: A
                         </div>
                       )}
                     </div>
-
+                    
                     {msg.isRead && msg.senderType === 'human' && (
                       <div className="flex items-center gap-1 mt-1 text-xs text-gray-500">
                         <CheckCircle2 className="h-3 w-3" />
@@ -1898,7 +2603,7 @@ export function AgentChatInterface({ conversationId, agentName, agentAvatar }: A
                   </div>
                 </div>
               ))}
-
+              
               {isTyping && (
                 <div className="flex gap-3">
                   <Avatar className="h-8 w-8">
@@ -1916,12 +2621,12 @@ export function AgentChatInterface({ conversationId, agentName, agentAvatar }: A
                   </div>
                 </div>
               )}
-
+              
               <div ref={messagesEndRef} />
             </div>
           )}
         </ScrollArea>
-
+        
         {/* Input Area */}
         <div className="border-t p-4">
           <div className="flex items-center gap-2 mb-2">
@@ -1941,7 +2646,7 @@ export function AgentChatInterface({ conversationId, agentName, agentAvatar }: A
               Code
             </Button>
           </div>
-
+          
           <div className="flex gap-2">
             {messageType === 'code' ? (
               <Textarea
@@ -1961,7 +2666,7 @@ export function AgentChatInterface({ conversationId, agentName, agentAvatar }: A
                 className="flex-1"
               />
             )}
-
+            
             <Button
               onClick={handleSend}
               disabled={!message.trim() || sendMessageMutation.isPending}
@@ -1970,7 +2675,7 @@ export function AgentChatInterface({ conversationId, agentName, agentAvatar }: A
               <Send className="h-4 w-4" />
             </Button>
           </div>
-
+          
           <p className="text-xs text-gray-500 mt-2">
             Press Enter to send, Shift+Enter for new line
           </p>
@@ -2008,12 +2713,12 @@ export function MrBlueUpgradeDashboard() {
     queryKey: ['/api/h2ac/mr-blue-status'],
     queryFn: () => apiRequest('/api/h2ac/mr-blue-status')
   });
-
+  
   const { data: myAgentsData } = useQuery({
     queryKey: ['/api/h2ac/my-agents'],
     queryFn: () => apiRequest('/api/h2ac/my-agents')
   });
-
+  
   if (isLoading) {
     return (
       <div className="animate-pulse">
@@ -2021,18 +2726,18 @@ export function MrBlueUpgradeDashboard() {
       </div>
     );
   }
-
+  
   const status = statusData?.data;
   const myAgents = myAgentsData?.data || [];
-
+  
   const upgradeIcons = {
     standard: Zap,
     pro: Crown,
     enterprise: Shield
   };
-
+  
   const UpgradeIcon = upgradeIcons[status?.level as keyof typeof upgradeIcons] || Sparkles;
-
+  
   const capabilities = [
     {
       name: 'Agent Communication',
@@ -2071,11 +2776,11 @@ export function MrBlueUpgradeDashboard() {
       description: 'Get AI-powered agent recommendations'
     }
   ];
-
+  
   const enabledCount = Object.values(status?.capabilities || {}).filter(Boolean).length;
   const totalCount = capabilities.length;
   const upgradeProgress = (enabledCount / totalCount) * 100;
-
+  
   return (
     <div className="space-y-6">
       {/* Status Card */}
@@ -2103,7 +2808,7 @@ export function MrBlueUpgradeDashboard() {
                 </CardDescription>
               </div>
             </div>
-
+            
             {!status?.isUpgraded && (
               <Link href="/profile/talent">
                 <Button>
@@ -2114,7 +2819,7 @@ export function MrBlueUpgradeDashboard() {
             )}
           </div>
         </CardHeader>
-
+        
         <CardContent>
           <div className="space-y-4">
             <div>
@@ -2124,12 +2829,12 @@ export function MrBlueUpgradeDashboard() {
               </div>
               <Progress value={upgradeProgress} className="h-2" />
             </div>
-
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {capabilities.map((capability) => {
                 const Icon = capability.icon;
                 const isEnabled = status?.capabilities?.[capability.key as keyof typeof status.capabilities];
-
+                
                 return (
                   <div
                     key={capability.key}
@@ -2162,7 +2867,7 @@ export function MrBlueUpgradeDashboard() {
           </div>
         </CardContent>
       </Card>
-
+      
       {/* Assigned Agents */}
       {status?.isUpgraded && myAgents.length > 0 && (
         <Card>
@@ -2188,14 +2893,14 @@ export function MrBlueUpgradeDashboard() {
                         <Badge variant="default">Primary</Badge>
                       )}
                     </div>
-
+                    
                     <div className="flex items-center gap-2 mb-3">
                       <Badge variant="outline">{agent.category}</Badge>
                       <Badge variant="secondary">
                         {assignment.matchScore}% match
                       </Badge>
                     </div>
-
+                    
                     <Link href={`/h2ac/agents/${agent.id}`}>
                       <Button className="w-full" size="sm">
                         <MessageSquare className="h-4 w-4 mr-2" />
@@ -2209,7 +2914,7 @@ export function MrBlueUpgradeDashboard() {
           </CardContent>
         </Card>
       )}
-
+      
       {/* Upgrade Levels Info */}
       <Card>
         <CardHeader>
@@ -2232,7 +2937,7 @@ export function MrBlueUpgradeDashboard() {
                 </p>
               </div>
             </div>
-
+            
             <div className="flex items-start gap-3 p-3 border rounded-lg">
               <Crown className="h-5 w-5 text-blue-600 mt-0.5" />
               <div>
@@ -2245,7 +2950,7 @@ export function MrBlueUpgradeDashboard() {
                 </p>
               </div>
             </div>
-
+            
             <div className="flex items-start gap-3 p-3 border rounded-lg">
               <Shield className="h-5 w-5 text-purple-600 mt-0.5" />
               <div>
@@ -2279,14 +2984,14 @@ import { verifyToken } from '../middleware/auth';
 
 export function setupH2ACSocket(io: Server) {
   const h2acNamespace = io.of('/h2ac');
-
+  
   h2acNamespace.use(async (socket, next) => {
     try {
       const token = socket.handshake.auth.token;
       if (!token) {
         return next(new Error('Authentication required'));
       }
-
+      
       const decoded = await verifyToken(token);
       socket.data.userId = decoded.userId;
       next();
@@ -2294,13 +2999,13 @@ export function setupH2ACSocket(io: Server) {
       next(new Error('Invalid token'));
     }
   });
-
+  
   h2acNamespace.on('connection', (socket: Socket) => {
     console.log(`H2AC connection: User ${socket.data.userId}`);
-
+    
     // Join user's personal room
     socket.join(`user:${socket.data.userId}`);
-
+    
     // Join H2AC conversation
     socket.on('join-h2ac-conversation', async (conversationId: number) => {
       try {
@@ -2309,9 +3014,9 @@ export function setupH2ACSocket(io: Server) {
           .from(talentProfiles)
           .where(eq(talentProfiles.userId, socket.data.userId))
           .limit(1);
-
+        
         if (!profile[0]) return;
-
+        
         const conversation = await db.select()
           .from(h2acConversations)
           .innerJoin(talentAgentAssignments, eq(h2acConversations.assignmentId, talentAgentAssignments.id))
@@ -2320,7 +3025,7 @@ export function setupH2ACSocket(io: Server) {
             eq(talentAgentAssignments.talentProfileId, profile[0].id)
           ))
           .limit(1);
-
+        
         if (conversation.length > 0) {
           socket.join(`conversation:${conversationId}`);
           console.log(`User ${socket.data.userId} joined conversation ${conversationId}`);
@@ -2329,13 +3034,13 @@ export function setupH2ACSocket(io: Server) {
         console.error('Error joining conversation:', error);
       }
     });
-
+    
     // Leave H2AC conversation
     socket.on('leave-h2ac-conversation', (conversationId: number) => {
       socket.leave(`conversation:${conversationId}`);
       console.log(`User ${socket.data.userId} left conversation ${conversationId}`);
     });
-
+    
     // Typing indicator
     socket.on('h2ac:typing-start', (conversationId: number) => {
       socket.to(`conversation:${conversationId}`).emit('h2ac:typing', {
@@ -2343,14 +3048,14 @@ export function setupH2ACSocket(io: Server) {
         isTyping: true
       });
     });
-
+    
     socket.on('h2ac:typing-stop', (conversationId: number) => {
       socket.to(`conversation:${conversationId}`).emit('h2ac:typing', {
         userId: socket.data.userId,
         isTyping: false
       });
     });
-
+    
     // New message event (broadcasted by server after message created)
     socket.on('h2ac:message-sent', (data: { conversationId: number; messageId: number }) => {
       // Broadcast to all users in the conversation
@@ -2359,21 +3064,21 @@ export function setupH2ACSocket(io: Server) {
         messageId: data.messageId
       });
     });
-
+    
     // Agent status update
     socket.on('h2ac:agent-status', async (agentId: number) => {
       // Get agent's current assignments
       const assignments = await db.select()
         .from(talentAgentAssignments)
         .where(eq(talentAgentAssignments.agentId, agentId));
-
+      
       // Broadcast to all users assigned to this agent
       for (const assignment of assignments) {
         const profile = await db.select()
           .from(talentProfiles)
           .where(eq(talentProfiles.id, assignment.talentProfileId))
           .limit(1);
-
+        
         if (profile[0]) {
           h2acNamespace.to(`user:${profile[0].userId}`).emit('h2ac:agent-status-update', {
             agentId,
@@ -2382,12 +3087,12 @@ export function setupH2ACSocket(io: Server) {
         }
       }
     });
-
+    
     socket.on('disconnect', () => {
       console.log(`H2AC disconnection: User ${socket.data.userId}`);
     });
   });
-
+  
   return h2acNamespace;
 }
 
@@ -2413,15 +3118,15 @@ export async function sendAgentResponse(
     messageType,
     metadata: {}
   }).returning();
-
+  
   // Update conversation last message time
   await db.update(h2acConversations)
     .set({ lastMessageAt: new Date() })
     .where(eq(h2acConversations.id, conversationId));
-
+  
   // Broadcast to conversation
   io.of('/h2ac').to(`conversation:${conversationId}`).emit('h2ac:message', agentMessage);
-
+  
   return agentMessage;
 }
 ```
@@ -2590,7 +3295,7 @@ const ESA_AGENTS: AgentSeed[] = [
     description: "Tracks errors, manages logging, and ensures system reliability",
     maxCapacity: 10
   },
-
+  
   // Layer 2: Social & Community Agents (Agents 11-25)
   {
     agentNumber: 11,
@@ -2735,7 +3440,7 @@ const ESA_AGENTS: AgentSeed[] = [
 
   // Continue with remaining 94 agents across 61 layers...
   // (Agents 21-114 covering AI, ML, Testing, DevOps, Mobile, Analytics, etc.)
-
+  
   // Layer 3: AI & Machine Learning Agents (Agents 21-35)
   {
     agentNumber: 21,
@@ -2807,14 +3512,14 @@ const ESA_AGENTS: AgentSeed[] = [
     description: "Powers AI-driven recommendations for users",
     maxCapacity: 10
   }
-
+  
   // Add remaining 89 agents...
   // This seed file would contain all 114 agents
 ];
 
 export async function seedESAAgents() {
   console.log('🌱 Seeding ESA Framework agents...');
-
+  
   for (const agentData of ESA_AGENTS) {
     try {
       await db.insert(esaAgents).values({
@@ -2822,13 +3527,13 @@ export async function seedESAAgents() {
         status: 'active',
         currentLoad: 0
       }).onConflictDoNothing();
-
+      
       console.log(`✓ Agent #${agentData.agentNumber}: ${agentData.name}`);
     } catch (error) {
       console.error(`✗ Failed to seed agent #${agentData.agentNumber}:`, error);
     }
   }
-
+  
   console.log('✅ ESA agents seeded successfully!');
 }
 
@@ -2897,7 +3602,7 @@ export class MultiAIService {
   private openai: OpenAI;
   private anthropic: Anthropic;
   private gemini: GoogleGenerativeAI;
-
+  
   // Cost per 1M tokens (in USD)
   private static readonly PRICING = {
     'gpt-4o': { input: 2.50, output: 10.00 },
@@ -2909,36 +3614,36 @@ export class MultiAIService {
     'gemini-1.5-pro': { input: 1.25, output: 5.00 },
     'gemini-1.5-flash': { input: 0.075, output: 0.30 }
   };
-
+  
   constructor() {
     this.openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY
     });
-
+    
     this.anthropic = new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY
     });
-
+    
     this.gemini = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY || '');
   }
-
+  
   /**
    * Main routing function - selects optimal AI provider
    */
   async route(request: AIRequest): Promise<AIResponse> {
     const startTime = Date.now();
-
+    
     // Determine best provider based on task type and priority
     const provider = this.selectProvider(request);
-
+    
     logger.info('AI routing decision', {
       taskType: request.taskType,
       priority: request.priority,
       selectedProvider: provider
     });
-
+    
     let response: AIResponse;
-
+    
     try {
       switch (provider) {
         case 'openai':
@@ -2956,21 +3661,21 @@ export class MultiAIService {
         default:
           throw new Error(`Unknown provider: ${provider}`);
       }
-
+      
       response.latency = Date.now() - startTime;
-
+      
       // Log for analytics
       this.logAIUsage(response);
-
+      
       return response;
     } catch (error: any) {
       logger.error('AI provider error', { provider, error: error.message });
-
+      
       // Fallback strategy
       return this.handleFailure(request, provider, error);
     }
   }
-
+  
   /**
    * Select optimal AI provider based on task requirements
    */
@@ -2979,22 +3684,22 @@ export class MultiAIService {
     if (request.priority === 'realtime') {
       return 'groq';
     }
-
+    
     // Vision tasks → OpenAI or Gemini
     if (request.taskType === 'vision') {
       return request.images && request.images.length > 5 ? 'gemini' : 'openai';
     }
-
+    
     // Code analysis/review → Claude (best reasoning)
     if (request.taskType === 'code' || request.taskType === 'analysis') {
       return 'claude';
     }
-
+    
     // Translation → Gemini (cost-effective multilingual)
     if (request.taskType === 'translation') {
       return 'gemini';
     }
-
+    
     // General tasks → Consider cost vs quality
     if (request.priority === 'low') {
       return 'groq'; // Most cost-effective
@@ -3004,29 +3709,29 @@ export class MultiAIService {
       return 'openai'; // Balanced
     }
   }
-
+  
   /**
    * Call OpenAI GPT-4o
    */
   private async callOpenAI(request: AIRequest): Promise<AIResponse> {
     const model = request.priority === 'low' ? 'gpt-4o-mini' : 'gpt-4o';
-
+    
     const messages: any[] = [];
-
+    
     if (request.systemPrompt) {
       messages.push({
         role: 'system',
         content: request.systemPrompt
       });
     }
-
+    
     if (request.context && request.context.length > 0) {
       messages.push({
         role: 'system',
         content: `Context:\n${request.context.join('\n')}`
       });
     }
-
+    
     // Handle vision if images provided
     if (request.images && request.images.length > 0) {
       messages.push({
@@ -3045,21 +3750,21 @@ export class MultiAIService {
         content: request.prompt
       });
     }
-
+    
     const completion = await this.openai.chat.completions.create({
       model,
       messages,
       max_tokens: request.maxTokens || 2000,
       temperature: request.temperature || 0.7
     });
-
+    
     const usage = completion.usage!;
     const cost = this.calculateCost(
       model,
       usage.prompt_tokens,
       usage.completion_tokens
     );
-
+    
     return {
       content: completion.choices[0].message.content || '',
       provider: 'openai',
@@ -3073,7 +3778,7 @@ export class MultiAIService {
       latency: 0 // Set by caller
     };
   }
-
+  
   /**
    * Call Claude (Anthropic)
    */
@@ -3083,17 +3788,17 @@ export class MultiAIService {
       : request.priority === 'high'
       ? 'claude-3-opus-20240229'
       : 'claude-3-sonnet-20240229';
-
+    
     const systemParts: string[] = [];
-
+    
     if (request.systemPrompt) {
       systemParts.push(request.systemPrompt);
     }
-
+    
     if (request.context && request.context.length > 0) {
       systemParts.push(`Context:\n${request.context.join('\n')}`);
     }
-
+    
     const message = await this.anthropic.messages.create({
       model,
       max_tokens: request.maxTokens || 4000,
@@ -3106,18 +3811,18 @@ export class MultiAIService {
         }
       ]
     });
-
+    
     const content = message.content[0].type === 'text' 
       ? message.content[0].text 
       : '';
-
+    
     const usage = message.usage;
     const cost = this.calculateCost(
       model,
       usage.input_tokens,
       usage.output_tokens
     );
-
+    
     return {
       content,
       provider: 'claude',
@@ -3131,7 +3836,7 @@ export class MultiAIService {
       latency: 0
     };
   }
-
+  
   /**
    * Call Groq (Ultra-fast inference)
    */
@@ -3141,44 +3846,44 @@ export class MultiAIService {
       apiKey: process.env.GROQ_API_KEY,
       baseURL: 'https://api.groq.com/openai/v1'
     });
-
+    
     const model = 'llama-3.1-70b-versatile';
-
+    
     const messages: any[] = [];
-
+    
     if (request.systemPrompt) {
       messages.push({
         role: 'system',
         content: request.systemPrompt
       });
     }
-
+    
     if (request.context && request.context.length > 0) {
       messages.push({
         role: 'system',
         content: `Context:\n${request.context.join('\n')}`
       });
     }
-
+    
     messages.push({
       role: 'user',
       content: request.prompt
     });
-
+    
     const completion = await groq.chat.completions.create({
       model,
       messages,
       max_tokens: request.maxTokens || 2000,
       temperature: request.temperature || 0.7
     });
-
+    
     const usage = completion.usage!;
     const cost = this.calculateCost(
       model,
       usage.prompt_tokens,
       usage.completion_tokens
     );
-
+    
     return {
       content: completion.choices[0].message.content || '',
       provider: 'groq',
@@ -3192,7 +3897,7 @@ export class MultiAIService {
       latency: 0
     };
   }
-
+  
   /**
    * Call Google Gemini
    */
@@ -3200,11 +3905,11 @@ export class MultiAIService {
     const model = request.priority === 'low' 
       ? 'gemini-1.5-flash'
       : 'gemini-1.5-pro';
-
+    
     const geminiModel = this.gemini.getGenerativeModel({ model });
-
+    
     const parts: any[] = [{ text: request.prompt }];
-
+    
     // Add images if provided
     if (request.images && request.images.length > 0) {
       for (const img of request.images) {
@@ -3216,7 +3921,7 @@ export class MultiAIService {
         });
       }
     }
-
+    
     const result = await geminiModel.generateContent({
       contents: [{ role: 'user', parts }],
       generationConfig: {
@@ -3224,16 +3929,16 @@ export class MultiAIService {
         temperature: request.temperature || 0.7
       }
     });
-
+    
     const response = result.response;
     const content = response.text();
-
+    
     // Estimate token usage (Gemini doesn't provide exact counts)
     const promptTokens = Math.ceil(request.prompt.length / 4);
     const completionTokens = Math.ceil(content.length / 4);
-
+    
     const cost = this.calculateCost(model, promptTokens, completionTokens);
-
+    
     return {
       content,
       provider: 'gemini',
@@ -3247,23 +3952,23 @@ export class MultiAIService {
       latency: 0
     };
   }
-
+  
   /**
    * Calculate cost in USD
    */
   private calculateCost(model: string, promptTokens: number, completionTokens: number): number {
     const pricing = MultiAIService.PRICING[model as keyof typeof MultiAIService.PRICING];
-
+    
     if (!pricing) {
       return 0;
     }
-
+    
     const promptCost = (promptTokens / 1_000_000) * pricing.input;
     const completionCost = (completionTokens / 1_000_000) * pricing.output;
-
+    
     return promptCost + completionCost;
   }
-
+  
   /**
    * Handle provider failure with fallback
    */
@@ -3276,24 +3981,24 @@ export class MultiAIService {
       failedProvider,
       error: error.message
     });
-
+    
     // Fallback chain
     const fallbacks: Array<'openai' | 'claude' | 'groq' | 'gemini'> = 
       ['openai', 'groq', 'gemini', 'claude']
         .filter(p => p !== failedProvider) as any;
-
+    
     for (const provider of fallbacks) {
       try {
         logger.info('Trying fallback provider', { provider });
-
+        
         // Temporarily override provider selection
         const originalSelect = this.selectProvider.bind(this);
         this.selectProvider = () => provider;
-
+        
         const response = await this.route(request);
-
+        
         this.selectProvider = originalSelect;
-
+        
         return response;
       } catch (fallbackError: any) {
         logger.error('Fallback provider also failed', {
@@ -3303,10 +4008,10 @@ export class MultiAIService {
         continue;
       }
     }
-
+    
     throw new Error('All AI providers failed');
   }
-
+  
   /**
    * Log AI usage for analytics
    */
@@ -3318,7 +4023,7 @@ export class MultiAIService {
       cost: response.cost,
       latency: response.latency
     });
-
+    
     // Store usage in database
     await db.insert(aiUsageLogs).values({
       userId,
@@ -3328,7 +4033,7 @@ export class MultiAIService {
       createdAt: new Date()
     });
   }
-
+  
   /**
    * Streaming response (for chat)
    */
@@ -3341,15 +4046,15 @@ export class MultiAIService {
       apiKey: process.env.GROQ_API_KEY,
       baseURL: 'https://api.groq.com/openai/v1'
     });
-
+    
     const messages: any[] = [];
-
+    
     if (request.systemPrompt) {
       messages.push({ role: 'system', content: request.systemPrompt });
     }
-
+    
     messages.push({ role: 'user', content: request.prompt });
-
+    
     const stream = await groq.chat.completions.create({
       model: 'llama-3.1-70b-versatile',
       messages,
@@ -3357,11 +4062,11 @@ export class MultiAIService {
       temperature: request.temperature || 0.7,
       stream: true
     });
-
+    
     let fullContent = '';
     let promptTokens = 0;
     let completionTokens = 0;
-
+    
     for await (const chunk of stream) {
       const content = chunk.choices[0]?.delta?.content || '';
       if (content) {
@@ -3369,11 +4074,11 @@ export class MultiAIService {
         onChunk(content);
       }
     }
-
+    
     // Estimate tokens
     promptTokens = Math.ceil(request.prompt.length / 4);
     completionTokens = Math.ceil(fullContent.length / 4);
-
+    
     return {
       content: fullContent,
       provider: 'groq',
@@ -3460,11 +4165,11 @@ router.post('/api/ai/complete', requireAuth, async (req, res) => {
       images: z.array(z.string()).optional(),
       context: z.array(z.string()).optional()
     });
-
+    
     const request = schema.parse(req.body);
-
+    
     const response = await multiAI.route(request);
-
+    
     res.json({
       success: true,
       data: response
@@ -3485,18 +4190,18 @@ router.post('/api/ai/stream', requireAuth, async (req, res) => {
       taskType: z.enum(['general', 'code', 'analysis', 'chat', 'vision', 'translation']),
       systemPrompt: z.string().optional()
     });
-
+    
     const request = schema.parse(req.body);
-
+    
     // Set up SSE
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
-
+    
     const response = await multiAI.stream(request, (chunk) => {
       res.write(`data: ${JSON.stringify({ chunk })}\n\n`);
     });
-
+    
     res.write(`data: ${JSON.stringify({ done: true, response })}\n\n`);
     res.end();
   } catch (error: any) {
@@ -3511,9 +4216,9 @@ router.post('/api/ai/stream', requireAuth, async (req, res) => {
 router.get('/api/ai/usage', requireAuth, async (req, res) => {
   try {
     const { startDate, endDate, provider } = req.query;
-
+    
     const logs = await db.select().from(aiUsageLogs).where(eq(aiUsageLogs.userId, userId));
-
+    
     res.json({
       success: true,
       data: {
@@ -3565,7 +4270,7 @@ export const SUPPORTED_LANGUAGES = {
   'uk': { name: 'Ukrainian', nativeName: 'Українська', rtl: false },
   'el': { name: 'Greek', nativeName: 'Ελληνικά', rtl: false },
   'tr': { name: 'Turkish', nativeName: 'Türkçe', rtl: false },
-
+  
   // Asian Languages
   'zh': { name: 'Chinese (Simplified)', nativeName: '简体中文', rtl: false },
   'zh-TW': { name: 'Chinese (Traditional)', nativeName: '繁體中文', rtl: false },
@@ -3582,24 +4287,24 @@ export const SUPPORTED_LANGUAGES = {
   'te': { name: 'Telugu', nativeName: 'తెలుగు', rtl: false },
   'mr': { name: 'Marathi', nativeName: 'मराठी', rtl: false },
   'ur': { name: 'Urdu', nativeName: 'اردو', rtl: true },
-
+  
   // Middle Eastern Languages (RTL)
   'ar': { name: 'Arabic', nativeName: 'العربية', rtl: true },
   'he': { name: 'Hebrew', nativeName: 'עברית', rtl: true },
   'fa': { name: 'Persian', nativeName: 'فارسی', rtl: true },
-
+  
   // African Languages
   'sw': { name: 'Swahili', nativeName: 'Kiswahili', rtl: false },
   'am': { name: 'Amharic', nativeName: 'አማርኛ', rtl: false },
   'zu': { name: 'Zulu', nativeName: 'isiZulu', rtl: false },
-
+  
   // Latin American Spanish variants
   'es-MX': { name: 'Spanish (Mexico)', nativeName: 'Español (México)', rtl: false },
   'es-AR': { name: 'Spanish (Argentina)', nativeName: 'Español (Argentina)', rtl: false },
-
+  
   // Portuguese variants
   'pt-BR': { name: 'Portuguese (Brazil)', nativeName: 'Português (Brasil)', rtl: false },
-
+  
   // Additional European
   'bg': { name: 'Bulgarian', nativeName: 'Български', rtl: false },
   'hr': { name: 'Croatian', nativeName: 'Hrvatski', rtl: false },
@@ -3613,22 +4318,22 @@ export const SUPPORTED_LANGUAGES = {
   'ga': { name: 'Irish', nativeName: 'Gaeilge', rtl: false },
   'cy': { name: 'Welsh', nativeName: 'Cymraeg', rtl: false },
   'mt': { name: 'Maltese', nativeName: 'Malti', rtl: false },
-
+  
   // Additional Asian
   'km': { name: 'Khmer', nativeName: 'ខ្មែរ', rtl: false },
   'lo': { name: 'Lao', nativeName: 'ລາວ', rtl: false },
   'my': { name: 'Burmese', nativeName: 'မြန်မာ', rtl: false },
   'ne': { name: 'Nepali', nativeName: 'नेपाली', rtl: false },
   'si': { name: 'Sinhala', nativeName: 'සිංහල', rtl: false },
-
+  
   // Additional Middle Eastern
   'ku': { name: 'Kurdish', nativeName: 'کوردی', rtl: true },
   'ps': { name: 'Pashto', nativeName: 'پښتو', rtl: true },
-
+  
   // Pacific
   'mi': { name: 'Maori', nativeName: 'Māori', rtl: false },
   'sm': { name: 'Samoan', nativeName: 'Gagana Samoa', rtl: false },
-
+  
   // Additional
   'ka': { name: 'Georgian', nativeName: 'ქართული', rtl: false },
   'hy': { name: 'Armenian', nativeName: 'Հայերեն', rtl: false },
@@ -3672,42 +4377,42 @@ interface TranslationKey {
 export class TranslationService {
   private openai: OpenAI;
   private translationsDir = path.join(process.cwd(), 'public', 'locales');
-
+  
   constructor() {
     this.openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY
     });
   }
-
+  
   /**
    * Generate translations for all languages from English source
    */
   async generateAllTranslations() {
     console.log('🌍 Generating translations for 68 languages...');
-
+    
     // Read English source (base language)
     const enTranslations = await this.readTranslationFile('en');
-
+    
     const languages = Object.keys(SUPPORTED_LANGUAGES).filter(lang => lang !== 'en');
-
+    
     // Generate in batches to avoid rate limits
     const batchSize = 5;
     for (let i = 0; i < languages.length; i += batchSize) {
       const batch = languages.slice(i, i + batchSize);
-
+      
       await Promise.all(
         batch.map(lang => this.translateLanguage(lang as LanguageCode, enTranslations))
       );
-
+      
       console.log(`✓ Completed batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(languages.length / batchSize)}`);
-
+      
       // Small delay between batches
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
-
+    
     console.log('✅ All translations generated!');
   }
-
+  
   /**
    * Translate to a specific language
    */
@@ -3716,33 +4421,33 @@ export class TranslationService {
     sourceTranslations: Record<string, any>
   ) {
     const langInfo = SUPPORTED_LANGUAGES[targetLang];
-
+    
     console.log(`Translating to ${langInfo.name} (${langInfo.nativeName})...`);
-
+    
     // Flatten nested translations
     const flatTranslations = this.flattenObject(sourceTranslations);
-
+    
     // Split into chunks (OpenAI has context limits)
     const chunks = this.chunkObject(flatTranslations, 100);
     const translatedChunks: Record<string, string>[] = [];
-
+    
     for (const chunk of chunks) {
       const translated = await this.translateChunk(chunk, targetLang, langInfo);
       translatedChunks.push(translated);
     }
-
+    
     // Merge chunks
     const flatTranslated = Object.assign({}, ...translatedChunks);
-
+    
     // Unflatten back to nested structure
     const nestedTranslations = this.unflattenObject(flatTranslated);
-
+    
     // Write to file
     await this.writeTranslationFile(targetLang, nestedTranslations);
-
+    
     console.log(`✓ ${langInfo.name} complete`);
   }
-
+  
   /**
    * Translate a chunk using OpenAI
    */
@@ -3781,73 +4486,73 @@ Return translated JSON:`;
       temperature: 0.3, // Lower temperature for consistency
       response_format: { type: 'json_object' }
     });
-
+    
     const translated = JSON.parse(completion.choices[0].message.content || '{}');
     return translated;
   }
-
+  
   /**
    * Flatten nested object for easier translation
    */
   private flattenObject(obj: any, prefix = ''): Record<string, string> {
     const flat: Record<string, string> = {};
-
+    
     for (const [key, value] of Object.entries(obj)) {
       const fullKey = prefix ? `${prefix}.${key}` : key;
-
+      
       if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
         Object.assign(flat, this.flattenObject(value, fullKey));
       } else {
         flat[fullKey] = String(value);
       }
     }
-
+    
     return flat;
   }
-
+  
   /**
    * Unflatten object back to nested structure
    */
   private unflattenObject(flat: Record<string, string>): Record<string, any> {
     const nested: Record<string, any> = {};
-
+    
     for (const [key, value] of Object.entries(flat)) {
       const parts = key.split('.');
       let current = nested;
-
+      
       for (let i = 0; i < parts.length - 1; i++) {
         if (!current[parts[i]]) {
           current[parts[i]] = {};
         }
         current = current[parts[i]];
       }
-
+      
       current[parts[parts.length - 1]] = value;
     }
-
+    
     return nested;
   }
-
+  
   /**
    * Chunk object into smaller parts
    */
   private chunkObject(obj: Record<string, string>, size: number): Record<string, string>[] {
     const entries = Object.entries(obj);
     const chunks: Record<string, string>[] = [];
-
+    
     for (let i = 0; i < entries.length; i += size) {
       chunks.push(Object.fromEntries(entries.slice(i, i + size)));
     }
-
+    
     return chunks;
   }
-
+  
   /**
    * Read translation file
    */
   private async readTranslationFile(lang: string): Promise<Record<string, any>> {
     const filePath = path.join(this.translationsDir, lang, 'translation.json');
-
+    
     try {
       const content = await fs.readFile(filePath, 'utf-8');
       return JSON.parse(content);
@@ -3856,43 +4561,43 @@ Return translated JSON:`;
       return {};
     }
   }
-
+  
   /**
    * Write translation file
    */
   private async writeTranslationFile(lang: string, translations: Record<string, any>) {
     const langDir = path.join(this.translationsDir, lang);
     const filePath = path.join(langDir, 'translation.json');
-
+    
     // Create directory if it doesn't exist
     await fs.mkdir(langDir, { recursive: true });
-
+    
     // Write formatted JSON
     await fs.writeFile(filePath, JSON.stringify(translations, null, 2), 'utf-8');
   }
-
+  
   /**
    * Get translation completion percentage
    */
   async getTranslationStats() {
     const stats: Record<string, { total: number; translated: number; percentage: number }> = {};
-
+    
     const enTranslations = await this.readTranslationFile('en');
     const enKeys = Object.keys(this.flattenObject(enTranslations));
     const totalKeys = enKeys.length;
-
+    
     for (const lang of Object.keys(SUPPORTED_LANGUAGES)) {
       const translations = await this.readTranslationFile(lang);
       const keys = Object.keys(this.flattenObject(translations));
       const translatedKeys = keys.length;
-
+      
       stats[lang] = {
         total: totalKeys,
         translated: translatedKeys,
         percentage: Math.round((translatedKeys / totalKeys) * 100)
       };
     }
-
+    
     return stats;
   }
 }
@@ -3915,15 +4620,15 @@ i18n
   .init({
     fallbackLng: DEFAULT_LANGUAGE,
     supportedLngs: Object.keys(SUPPORTED_LANGUAGES),
-
+    
     // Language fallback chain
     load: 'languageOnly', // 'en-US' -> 'en'
-
+    
     // Backend configuration
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json'
     },
-
+    
     // Detection options
     detection: {
       order: ['querystring', 'cookie', 'localStorage', 'navigator'],
@@ -3932,7 +4637,7 @@ i18n
       lookupCookie: 'i18next',
       lookupLocalStorage: 'i18nextLng'
     },
-
+    
     // Interpolation
     interpolation: {
       escapeValue: false, // React already escapes
@@ -3944,21 +4649,21 @@ i18n
         if (format === 'capitalize') {
           return value.charAt(0).toUpperCase() + value.slice(1);
         }
-
+        
         // Date formatting
         if (value instanceof Date) {
           return new Intl.DateTimeFormat(lng).format(value);
         }
-
+        
         // Number formatting
         if (typeof value === 'number') {
           return new Intl.NumberFormat(lng).format(value);
         }
-
+        
         return value;
       }
     },
-
+    
     // React specific
     react: {
       useSuspense: true,
@@ -3968,10 +4673,10 @@ i18n
       transSupportBasicHtmlNodes: true,
       transKeepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p']
     },
-
+    
     // Debugging
     debug: process.env.NODE_ENV === 'development',
-
+    
     // Namespaces
     ns: ['translation', 'common', 'errors'],
     defaultNS: 'translation'
@@ -4001,27 +4706,27 @@ import { Input } from '@/components/ui/input';
 export function LanguageSwitcher() {
   const { i18n } = useTranslation();
   const [search, setSearch] = useState('');
-
+  
   const currentLang = i18n.language || 'en';
   const currentLangInfo = SUPPORTED_LANGUAGES[currentLang as LanguageCode];
-
+  
   // Filter languages by search
   const filteredLanguages = Object.entries(SUPPORTED_LANGUAGES).filter(([code, info]) =>
     info.name.toLowerCase().includes(search.toLowerCase()) ||
     info.nativeName.toLowerCase().includes(search.toLowerCase()) ||
     code.toLowerCase().includes(search.toLowerCase())
   );
-
+  
   const changeLanguage = async (lng: string) => {
     await i18n.changeLanguage(lng);
-
+    
     // Update HTML lang and dir attributes
     document.documentElement.lang = lng;
     document.documentElement.dir = SUPPORTED_LANGUAGES[lng as LanguageCode]?.rtl ? 'rtl' : 'ltr';
-
+    
     setSearch('');
   };
-
+  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -4030,7 +4735,7 @@ export function LanguageSwitcher() {
           {currentLangInfo?.nativeName || 'Language'}
         </Button>
       </DropdownMenuTrigger>
-
+      
       <DropdownMenuContent align="end" className="w-64 max-h-96 overflow-y-auto">
         <div className="p-2 sticky top-0 bg-white z-10 border-b">
           <Input
@@ -4040,7 +4745,7 @@ export function LanguageSwitcher() {
             className="h-8"
           />
         </div>
-
+        
         <div className="py-1">
           {filteredLanguages.map(([code, info]) => (
             <DropdownMenuItem
@@ -4058,7 +4763,7 @@ export function LanguageSwitcher() {
             </DropdownMenuItem>
           ))}
         </div>
-
+        
         {filteredLanguages.length === 0 && (
           <div className="p-4 text-center text-sm text-gray-500">
             No languages found
@@ -4230,30 +4935,30 @@ interface NotificationPayload {
 export class PushNotificationService {
   private static instance: PushNotificationService;
   private deviceToken: string | null = null;
-
+  
   private constructor() {}
-
+  
   static getInstance(): PushNotificationService {
     if (!PushNotificationService.instance) {
       PushNotificationService.instance = new PushNotificationService();
     }
     return PushNotificationService.instance;
   }
-
+  
   /**
    * Initialize push notifications
    */
   async initialize() {
     const info = await Device.getInfo();
-
+    
     if (info.platform === 'web') {
       console.log('Push notifications not supported on web');
       return;
     }
-
+    
     // Request permission
     const permission = await CapacitorPush.requestPermissions();
-
+    
     if (permission.receive === 'granted') {
       await CapacitorPush.register();
       this.setupListeners();
@@ -4261,7 +4966,7 @@ export class PushNotificationService {
       console.warn('Push notification permission denied');
     }
   }
-
+  
   /**
    * Setup event listeners
    */
@@ -4270,40 +4975,40 @@ export class PushNotificationService {
     CapacitorPush.addListener('registration', async (token) => {
       console.log('Push registration success:', token.value);
       this.deviceToken = token.value;
-
+      
       // Send token to backend
       await this.registerToken(token.value);
     });
-
+    
     // Registration error
     CapacitorPush.addListener('registrationError', (error) => {
       console.error('Push registration error:', error);
     });
-
+    
     // Notification received (app in foreground)
     CapacitorPush.addListener('pushNotificationReceived', (notification) => {
       console.log('Push notification received:', notification);
-
+      
       // Show local notification
       this.showLocalNotification(notification);
     });
-
+    
     // Notification tapped (app in background)
     CapacitorPush.addListener('pushNotificationActionPerformed', (notification) => {
       console.log('Push notification action performed:', notification);
-
+      
       // Handle notification action
       this.handleNotificationAction(notification);
     });
   }
-
+  
   /**
    * Register device token with backend
    */
   private async registerToken(token: string) {
     try {
       const info = await Device.getInfo();
-
+      
       await apiRequest('/api/push/register', {
         method: 'POST',
         body: {
@@ -4313,19 +5018,19 @@ export class PushNotificationService {
           osVersion: info.osVersion
         }
       });
-
+      
       console.log('Device token registered successfully');
     } catch (error) {
       console.error('Failed to register device token:', error);
     }
   }
-
+  
   /**
    * Show local notification
    */
   private async showLocalNotification(notification: any) {
     const { LocalNotifications } = await import('@capacitor/local-notifications');
-
+    
     await LocalNotifications.schedule({
       notifications: [
         {
@@ -4343,13 +5048,13 @@ export class PushNotificationService {
       ]
     });
   }
-
+  
   /**
    * Handle notification action
    */
   private handleNotificationAction(notification: any) {
     const data = notification.notification.data;
-
+    
     // Navigate based on notification type
     if (data?.type === 'message') {
       window.location.href = `/messages/${data.conversationId}`;
@@ -4359,7 +5064,7 @@ export class PushNotificationService {
       window.location.href = `/h2ac/conversations/${data.conversationId}`;
     }
   }
-
+  
   /**
    * Get device token
    */
@@ -4393,11 +5098,11 @@ export class BiometricAuthService {
     biometryType: BiometryType;
   }> {
     const info = await Device.getInfo();
-
+    
     if (info.platform === 'web') {
       return { isAvailable: false, biometryType: BiometryType.NONE };
     }
-
+    
     try {
       const result = await NativeBiometric.isAvailable();
       return {
@@ -4408,7 +5113,7 @@ export class BiometricAuthService {
       return { isAvailable: false, biometryType: BiometryType.NONE };
     }
   }
-
+  
   /**
    * Verify user with biometrics
    */
@@ -4420,14 +5125,14 @@ export class BiometricAuthService {
         subtitle: 'Use your fingerprint or face',
         description: 'Verify your identity to access Mundo Tango'
       });
-
+      
       return result.verified;
     } catch (error) {
       console.error('Biometric verification failed:', error);
       return false;
     }
   }
-
+  
   /**
    * Save credentials with biometric protection
    */
@@ -4438,14 +5143,14 @@ export class BiometricAuthService {
         password,
         server: 'mundotango.life'
       });
-
+      
       return true;
     } catch (error) {
       console.error('Failed to save credentials:', error);
       return false;
     }
   }
-
+  
   /**
    * Get saved credentials
    */
@@ -4454,7 +5159,7 @@ export class BiometricAuthService {
       const credentials = await NativeBiometric.getCredentials({
         server: 'mundotango.life'
       });
-
+      
       return {
         username: credentials.username,
         password: credentials.password
@@ -4464,7 +5169,7 @@ export class BiometricAuthService {
       return null;
     }
   }
-
+  
   /**
    * Delete saved credentials
    */
@@ -4473,14 +5178,14 @@ export class BiometricAuthService {
       await NativeBiometric.deleteCredentials({
         server: 'mundotango.life'
       });
-
+      
       return true;
     } catch (error) {
       console.error('Failed to delete credentials:', error);
       return false;
     }
   }
-
+  
   /**
    * Get biometry type name
    */
@@ -4523,14 +5228,14 @@ export class CameraService {
         source: CameraSource.Camera,
         saveToGallery: true
       });
-
+      
       return photo.webPath || null;
     } catch (error) {
       console.error('Failed to take photo:', error);
       return null;
     }
   }
-
+  
   /**
    * Pick image from gallery
    */
@@ -4542,14 +5247,14 @@ export class CameraService {
         resultType: CameraResultType.Uri,
         source: CameraSource.Photos
       });
-
+      
       return photo.webPath || null;
     } catch (error) {
       console.error('Failed to pick image:', error);
       return null;
     }
   }
-
+  
   /**
    * Pick multiple images
    */
@@ -4559,14 +5264,14 @@ export class CameraService {
         quality: 90,
         limit
       });
-
+      
       return photos.photos.map(p => p.webPath).filter((p): p is string => !!p);
     } catch (error) {
       console.error('Failed to pick multiple images:', error);
       return [];
     }
   }
-
+  
   /**
    * Convert image to base64
    */
@@ -4574,7 +5279,7 @@ export class CameraService {
     try {
       const response = await fetch(webPath);
       const blob = await response.blob();
-
+      
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result as string);
@@ -4586,7 +5291,7 @@ export class CameraService {
       return null;
     }
   }
-
+  
   /**
    * Save photo to device
    */
@@ -4597,7 +5302,7 @@ export class CameraService {
         data: base64Data,
         directory: Directory.Documents
       });
-
+      
       return true;
     } catch (error) {
       console.error('Failed to save photo:', error);
@@ -4633,7 +5338,7 @@ export class GeolocationService {
         timeout: 10000,
         maximumAge: 0
       });
-
+      
       return {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
@@ -4647,7 +5352,7 @@ export class GeolocationService {
       return null;
     }
   }
-
+  
   /**
    * Watch position changes
    */
@@ -4666,7 +5371,7 @@ export class GeolocationService {
           errorCallback?.(error);
           return;
         }
-
+        
         if (position) {
           callback({
             latitude: position.coords.latitude,
@@ -4679,17 +5384,17 @@ export class GeolocationService {
         }
       }
     );
-
+    
     return watchId;
   }
-
+  
   /**
    * Stop watching position
    */
   static async clearWatch(watchId: string): Promise<void> {
     await Geolocation.clearWatch({ id: watchId });
   }
-
+  
   /**
    * Check permissions
    */
@@ -4697,7 +5402,7 @@ export class GeolocationService {
     const permission = await Geolocation.checkPermissions();
     return permission.location;
   }
-
+  
   /**
    * Request permissions
    */
@@ -4705,7 +5410,7 @@ export class GeolocationService {
     const permission = await Geolocation.requestPermissions();
     return permission.location === 'granted' ? 'granted' : 'denied';
   }
-
+  
   /**
    * Calculate distance between two points (in kilometers)
    */
@@ -4716,18 +5421,18 @@ export class GeolocationService {
     const R = 6371; // Earth's radius in km
     const dLat = this.toRadians(coord2.latitude - coord1.latitude);
     const dLon = this.toRadians(coord2.longitude - coord1.longitude);
-
+    
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(this.toRadians(coord1.latitude)) *
       Math.cos(this.toRadians(coord2.latitude)) *
       Math.sin(dLon / 2) *
       Math.sin(dLon / 2);
-
+    
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   }
-
+  
   private static toRadians(degrees: number): number {
     return degrees * (Math.PI / 180);
   }
@@ -4749,7 +5454,7 @@ interface CacheEntry<T> {
 
 export class OfflineStorageService {
   private static readonly KEY_PREFIX = 'offline_';
-
+  
   /**
    * Set item in offline storage
    */
@@ -4759,56 +5464,56 @@ export class OfflineStorageService {
       timestamp: Date.now(),
       ttl
     };
-
+    
     await Storage.set({
       key: this.KEY_PREFIX + key,
       value: JSON.stringify(entry)
     });
   }
-
+  
   /**
    * Get item from offline storage
    */
   static async get<T>(key: string): Promise<T | null> {
     const result = await Storage.get({ key: this.KEY_PREFIX + key });
-
+    
     if (!result.value) {
       return null;
     }
-
+    
     try {
       const entry: CacheEntry<T> = JSON.parse(result.value);
-
+      
       // Check if expired
       if (Date.now() - entry.timestamp > entry.ttl) {
         await this.remove(key);
         return null;
       }
-
+      
       return entry.data;
     } catch (error) {
       console.error('Failed to parse offline storage entry:', error);
       return null;
     }
   }
-
+  
   /**
    * Remove item from offline storage
    */
   static async remove(key: string): Promise<void> {
     await Storage.remove({ key: this.KEY_PREFIX + key });
   }
-
+  
   /**
    * Clear all offline storage
    */
   static async clear(): Promise<void> {
     const keys = await Storage.keys();
     const offlineKeys = keys.keys.filter(k => k.startsWith(this.KEY_PREFIX));
-
+    
     await Promise.all(offlineKeys.map(key => Storage.remove({ key })));
   }
-
+  
   /**
    * Check network status
    */
@@ -4816,7 +5521,7 @@ export class OfflineStorageService {
     const status = await Network.getStatus();
     return status.connected;
   }
-
+  
   /**
    * Watch network status
    */
@@ -4825,7 +5530,7 @@ export class OfflineStorageService {
       callback(status.connected);
     });
   }
-
+  
   /**
    * Sync data when online
    */
@@ -4835,7 +5540,7 @@ export class OfflineStorageService {
     cacheDuration: number = 24 * 60 * 60 * 1000
   ): Promise<T> {
     const isOnline = await this.isOnline();
-
+    
     if (isOnline) {
       // Fetch fresh data
       try {
@@ -4870,7 +5575,7 @@ export function useAppLifecycle() {
     // App state change listener
     const stateListener = App.addListener('appStateChange', (state: AppState) => {
       console.log('App state changed:', state.isActive ? 'active' : 'background');
-
+      
       if (state.isActive) {
         // App came to foreground
         handleAppActive();
@@ -4879,7 +5584,7 @@ export function useAppLifecycle() {
         handleAppBackground();
       }
     });
-
+    
     // Back button listener (Android)
     const backButtonListener = App.addListener('backButton', ({ canGoBack }) => {
       if (!canGoBack) {
@@ -4888,30 +5593,30 @@ export function useAppLifecycle() {
         window.history.back();
       }
     });
-
+    
     // URL open listener (deep linking)
     const urlListener = App.addListener('appUrlOpen', (data) => {
       console.log('App opened with URL:', data.url);
       handleDeepLink(data.url);
     });
-
+    
     return () => {
       stateListener.remove();
       backButtonListener.remove();
       urlListener.remove();
     };
   }, []);
-
+  
   const handleAppActive = () => {
     // Refresh data, check for new notifications, etc.
     window.dispatchEvent(new CustomEvent('app-active'));
   };
-
+  
   const handleAppBackground = () => {
     // Save state, pause tasks, etc.
     window.dispatchEvent(new CustomEvent('app-background'));
   };
-
+  
   const handleDeepLink = (url: string) => {
     // Parse URL and navigate
     // Example: mundotango://events/123
@@ -5227,7 +5932,7 @@ services:
       - "9300:9300"
     networks:
       - mundotango-network
-
+  
   kibana:
     image: docker.elastic.co/kibana/kibana:8.11.0
     container_name: mundotango-kibana
@@ -5272,7 +5977,7 @@ interface SearchQuery {
 
 export class ElasticsearchService {
   private client: Client;
-
+  
   constructor() {
     this.client = new Client({
       node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200',
@@ -5282,34 +5987,34 @@ export class ElasticsearchService {
       } : undefined
     });
   }
-
+  
   /**
    * Initialize indices
    */
   async initializeIndices() {
     logger.info('Initializing Elasticsearch indices...');
-
+    
     const indices = [
       this.getEventsIndexConfig(),
       this.getUsersIndexConfig(),
       this.getProductsIndexConfig(),
       this.getPostsIndexConfig()
     ];
-
+    
     for (const config of indices) {
       await this.createIndex(config);
     }
-
+    
     logger.info('Elasticsearch indices initialized');
   }
-
+  
   /**
    * Create index with mappings
    */
   private async createIndex(config: IndexConfig) {
     try {
       const exists = await this.client.indices.exists({ index: config.index });
-
+      
       if (!exists) {
         await this.client.indices.create({
           index: config.index,
@@ -5340,7 +6045,7 @@ export class ElasticsearchService {
             }
           }
         });
-
+        
         logger.info(`Created index: ${config.index}`);
       } else {
         logger.info(`Index already exists: ${config.index}`);
@@ -5350,7 +6055,7 @@ export class ElasticsearchService {
       throw error;
     }
   }
-
+  
   /**
    * Events index configuration
    */
@@ -5400,7 +6105,7 @@ export class ElasticsearchService {
       }
     };
   }
-
+  
   /**
    * Users index configuration
    */
@@ -5436,7 +6141,7 @@ export class ElasticsearchService {
       }
     };
   }
-
+  
   /**
    * Products index configuration
    */
@@ -5478,7 +6183,7 @@ export class ElasticsearchService {
       }
     };
   }
-
+  
   /**
    * Posts index configuration
    */
@@ -5507,7 +6212,7 @@ export class ElasticsearchService {
       }
     };
   }
-
+  
   /**
    * Index a document
    */
@@ -5519,14 +6224,14 @@ export class ElasticsearchService {
         body: document,
         refresh: 'wait_for'
       });
-
+      
       logger.debug(`Indexed document ${id} in ${index}`);
     } catch (error: any) {
       logger.error(`Failed to index document ${id} in ${index}:`, error);
       throw error;
     }
   }
-
+  
   /**
    * Update a document
    */
@@ -5540,14 +6245,14 @@ export class ElasticsearchService {
         },
         refresh: 'wait_for'
       });
-
+      
       logger.debug(`Updated document ${id} in ${index}`);
     } catch (error: any) {
       logger.error(`Failed to update document ${id} in ${index}:`, error);
       throw error;
     }
   }
-
+  
   /**
    * Delete a document
    */
@@ -5558,14 +6263,14 @@ export class ElasticsearchService {
         id: String(id),
         refresh: 'wait_for'
       });
-
+      
       logger.debug(`Deleted document ${id} from ${index}`);
     } catch (error: any) {
       logger.error(`Failed to delete document ${id} from ${index}:`, error);
       throw error;
     }
   }
-
+  
   /**
    * Advanced search with filters, facets, and aggregations
    */
@@ -5581,7 +6286,7 @@ export class ElasticsearchService {
         from: query.from || 0,
         size: query.size || 20
       };
-
+      
       // Full-text search
       if (query.query) {
         searchBody.query.bool.must.push({
@@ -5595,7 +6300,7 @@ export class ElasticsearchService {
       } else {
         searchBody.query.bool.must.push({ match_all: {} });
       }
-
+      
       // Apply filters
       if (query.filters) {
         for (const [field, value] of Object.entries(query.filters)) {
@@ -5619,18 +6324,18 @@ export class ElasticsearchService {
           }
         }
       }
-
+      
       // Sorting
       if (query.sort) {
         searchBody.sort = query.sort;
       }
-
+      
       // Execute search
       const result = await this.client.search({
         index,
         body: searchBody
       });
-
+      
       return {
         total: (result.hits.total as any).value,
         hits: result.hits.hits.map(hit => ({
@@ -5644,7 +6349,7 @@ export class ElasticsearchService {
       throw error;
     }
   }
-
+  
   /**
    * Autocomplete suggestions
    */
@@ -5665,7 +6370,7 @@ export class ElasticsearchService {
           size
         }
       });
-
+      
       return result.hits.hits.map(hit => ({
         id: parseInt(hit._id!),
         text: (hit._source as any)[field]
@@ -5675,7 +6380,7 @@ export class ElasticsearchService {
       throw error;
     }
   }
-
+  
   /**
    * Get aggregations (facets)
    */
@@ -5689,14 +6394,14 @@ export class ElasticsearchService {
           size: 0
         }
       });
-
+      
       return result.aggregations;
     } catch (error: any) {
       logger.error(`Aggregations failed for ${index}:`, error);
       throw error;
     }
   }
-
+  
   /**
    * Get search fields for each index
    */
@@ -5707,7 +6412,7 @@ export class ElasticsearchService {
       products: ['name^3', 'description^2', 'brand', 'category'],
       posts: ['content^2', 'authorName', 'tags']
     };
-
+    
     return fieldsMap[index] || ['*'];
   }
 }
@@ -5736,11 +6441,11 @@ router.get('/api/search', async (req, res) => {
       size: z.coerce.number().max(100).default(20),
       filters: z.string().optional()
     });
-
+    
     const { q, type, from, size, filters } = schema.parse(req.query);
-
+    
     const parsedFilters = filters ? JSON.parse(filters) : undefined;
-
+    
     if (type === 'all') {
       // Search across all indices
       const [events, users, products, posts] = await Promise.all([
@@ -5749,7 +6454,7 @@ router.get('/api/search', async (req, res) => {
         elasticsearchService.search('products', { query: q, from: 0, size: 5, filters: parsedFilters }),
         elasticsearchService.search('posts', { query: q, from: 0, size: 5 })
       ]);
-
+      
       res.json({
         success: true,
         data: {
@@ -5767,7 +6472,7 @@ router.get('/api/search', async (req, res) => {
         size,
         filters: parsedFilters
       });
-
+      
       res.json({
         success: true,
         data: results
@@ -5789,11 +6494,11 @@ router.get('/api/search/autocomplete', async (req, res) => {
       type: z.enum(['events', 'users', 'products']),
       field: z.string()
     });
-
+    
     const { q, type, field } = schema.parse(req.query);
-
+    
     const suggestions = await elasticsearchService.autocomplete(type, field, q);
-
+    
     res.json({
       success: true,
       data: suggestions
@@ -5810,9 +6515,9 @@ router.get('/api/search/autocomplete', async (req, res) => {
 router.get('/api/search/facets/:type', async (req, res) => {
   try {
     const { type } = req.params;
-
+    
     const aggregations: Record<string, any> = {};
-
+    
     if (type === 'events') {
       aggregations.categories = { terms: { field: 'category', size: 20 } };
       aggregations.cities = { terms: { field: 'city', size: 50 } };
@@ -5842,9 +6547,9 @@ router.get('/api/search/facets/:type', async (req, res) => {
         }
       };
     }
-
+    
     const facets = await elasticsearchService.getAggregations(type, aggregations);
-
+    
     res.json({
       success: true,
       data: facets
@@ -5893,30 +6598,30 @@ export class WebRTCSignalingService {
   private io: SocketServer;
   private peers: Map<string, Peer> = new Map();
   private rooms: Map<string, CallSession> = new Map();
-
+  
   constructor(io: SocketServer) {
     this.io = io;
     this.initializeHandlers();
   }
-
+  
   private initializeHandlers() {
     this.io.on('connection', (socket) => {
       logger.info(`WebRTC client connected: ${socket.id}`);
-
+      
       // Join room
       socket.on('join-room', async (data: { roomId: string; userId: number }) => {
         const { roomId, userId } = data;
-
+        
         socket.join(roomId);
-
+        
         const peer: Peer = {
           userId,
           socketId: socket.id,
           roomId
         };
-
+        
         this.peers.set(socket.id, peer);
-
+        
         // Initialize room if it doesn't exist
         if (!this.rooms.has(roomId)) {
           this.rooms.set(roomId, {
@@ -5925,17 +6630,17 @@ export class WebRTCSignalingService {
             startedAt: new Date()
           });
         }
-
+        
         const room = this.rooms.get(roomId)!;
         room.participants.push(peer);
-
+        
         // Notify existing participants
         socket.to(roomId).emit('user-joined', {
           userId,
           socketId: socket.id,
           participantCount: room.participants.length
         });
-
+        
         // Send existing participants to new user
         const existingPeers = room.participants
           .filter(p => p.socketId !== socket.id)
@@ -5944,12 +6649,12 @@ export class WebRTCSignalingService {
             socketId: p.socketId,
             isScreenSharing: p.isScreenSharing
           }));
-
+        
         socket.emit('existing-peers', { peers: existingPeers });
-
+        
         logger.info(`User ${userId} joined room ${roomId}`);
       });
-
+      
       // WebRTC signaling: offer
       socket.on('offer', (data: { to: string; offer: RTCSessionDescriptionInit }) => {
         const { to, offer } = data;
@@ -5958,7 +6663,7 @@ export class WebRTCSignalingService {
           offer
         });
       });
-
+      
       // WebRTC signaling: answer
       socket.on('answer', (data: { to: string; answer: RTCSessionDescriptionInit }) => {
         const { to, answer } = data;
@@ -5967,7 +6672,7 @@ export class WebRTCSignalingService {
           answer
         });
       });
-
+      
       // WebRTC signaling: ICE candidate
       socket.on('ice-candidate', (data: { to: string; candidate: RTCIceCandidateInit }) => {
         const { to, candidate } = data;
@@ -5976,13 +6681,13 @@ export class WebRTCSignalingService {
           candidate
         });
       });
-
+      
       // Toggle screen sharing
       socket.on('toggle-screen-share', (data: { enabled: boolean }) => {
         const peer = this.peers.get(socket.id);
         if (peer) {
           peer.isScreenSharing = data.enabled;
-
+          
           socket.to(peer.roomId).emit('screen-share-toggle', {
             socketId: socket.id,
             userId: peer.userId,
@@ -5990,7 +6695,7 @@ export class WebRTCSignalingService {
           });
         }
       });
-
+      
       // Mute/unmute audio
       socket.on('toggle-audio', (data: { enabled: boolean }) => {
         const peer = this.peers.get(socket.id);
@@ -6002,7 +6707,7 @@ export class WebRTCSignalingService {
           });
         }
       });
-
+      
       // Toggle video
       socket.on('toggle-video', (data: { enabled: boolean }) => {
         const peer = this.peers.get(socket.id);
@@ -6014,12 +6719,12 @@ export class WebRTCSignalingService {
           });
         }
       });
-
+      
       // Leave room
       socket.on('leave-room', () => {
         this.handlePeerDisconnect(socket.id);
       });
-
+      
       // Disconnect
       socket.on('disconnect', () => {
         logger.info(`WebRTC client disconnected: ${socket.id}`);
@@ -6027,42 +6732,42 @@ export class WebRTCSignalingService {
       });
     });
   }
-
+  
   private handlePeerDisconnect(socketId: string) {
     const peer = this.peers.get(socketId);
-
+    
     if (peer) {
       const room = this.rooms.get(peer.roomId);
-
+      
       if (room) {
         // Remove peer from room
         room.participants = room.participants.filter(p => p.socketId !== socketId);
-
+        
         // Notify others
         this.io.to(peer.roomId).emit('user-left', {
           userId: peer.userId,
           socketId,
           participantCount: room.participants.length
         });
-
+        
         // Clean up empty room
         if (room.participants.length === 0) {
           this.rooms.delete(peer.roomId);
           logger.info(`Room ${peer.roomId} closed`);
         }
       }
-
+      
       this.peers.delete(socketId);
     }
   }
-
+  
   /**
    * Get active rooms
    */
   getActiveRooms(): CallSession[] {
     return Array.from(this.rooms.values());
   }
-
+  
   /**
    * Get room participants
    */
@@ -6104,11 +6809,11 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
-
+  
   const localStreamRef = useRef<MediaStream | null>(null);
   const screenStreamRef = useRef<MediaStream | null>(null);
   const peersRef = useRef<Map<string, Peer>>(new Map());
-
+  
   // ICE servers configuration
   const iceServers: RTCConfiguration = {
     iceServers: [
@@ -6121,7 +6826,7 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
       }
     ]
   };
-
+  
   /**
    * Initialize local media stream
    */
@@ -6135,34 +6840,34 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
           autoGainControl: true
         }
       });
-
+      
       localStreamRef.current = stream;
       setLocalStream(stream);
-
+      
       return stream;
     } catch (error) {
       console.error('Failed to get user media:', error);
       throw error;
     }
   }, []);
-
+  
   /**
    * Create peer connection
    */
   const createPeerConnection = useCallback((socketId: string): RTCPeerConnection => {
     const pc = new RTCPeerConnection(iceServers);
-
+    
     // Add local tracks
     if (localStreamRef.current) {
       localStreamRef.current.getTracks().forEach(track => {
         pc.addTrack(track, localStreamRef.current!);
       });
     }
-
+    
     // Handle incoming tracks
     pc.ontrack = (event) => {
       const [remoteStream] = event.streams;
-
+      
       setPeers(prev => {
         const updated = new Map(prev);
         const peer = updated.get(socketId);
@@ -6173,7 +6878,7 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
         return updated;
       });
     };
-
+    
     // Handle ICE candidates
     pc.onicecandidate = (event) => {
       if (event.candidate && socket) {
@@ -6183,10 +6888,10 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
         });
       }
     };
-
+    
     return pc;
   }, [socket, iceServers]);
-
+  
   /**
    * Initialize socket connection
    */
@@ -6194,76 +6899,76 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
     const newSocket = io(process.env.VITE_WS_URL || 'http://localhost:3000', {
       transports: ['websocket']
     });
-
+    
     setSocket(newSocket);
-
+    
     return () => {
       newSocket.close();
     };
   }, []);
-
+  
   /**
    * Setup socket event handlers
    */
   useEffect(() => {
     if (!socket) return;
-
+    
     // Join room
     socket.emit('join-room', { roomId, userId });
-
+    
     // Handle existing peers
     socket.on('existing-peers', async ({ peers: existingPeers }) => {
       for (const peer of existingPeers) {
         const pc = createPeerConnection(peer.socketId);
-
+        
         // Create offer
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);
-
+        
         socket.emit('offer', {
           to: peer.socketId,
           offer
         });
-
+        
         const newPeer: Peer = {
           userId: peer.userId,
           socketId: peer.socketId,
           peerConnection: pc,
           isScreenSharing: peer.isScreenSharing
         };
-
+        
         peersRef.current.set(peer.socketId, newPeer);
         setPeers(new Map(peersRef.current));
         onPeerJoined?.(newPeer);
       }
     });
-
+    
     // Handle new user joined
     socket.on('user-joined', ({ userId: newUserId, socketId: newSocketId }) => {
       const newPeer: Peer = {
         userId: newUserId,
         socketId: newSocketId
       };
-
+      
       peersRef.current.set(newSocketId, newPeer);
       setPeers(new Map(peersRef.current));
       onPeerJoined?.(newPeer);
     });
-
+    
     // Handle offer
     socket.on('offer', async ({ from, offer }) => {
       const pc = createPeerConnection(from);
-
+      
       await pc.setRemoteDescription(new RTCSessionDescription(offer));
-
+      
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
-
+      
       socket.emit('answer', {
         to: from,
         answer
       });
-
+      
       const peer = peersRef.current.get(from);
       if (peer) {
         peer.peerConnection = pc;
@@ -6271,7 +6976,7 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
         setPeers(new Map(peersRef.current));
       }
     });
-
+    
     // Handle answer
     socket.on('answer', async ({ from, answer }) => {
       const peer = peersRef.current.get(from);
@@ -6279,7 +6984,7 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
         await peer.peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
       }
     });
-
+    
     // Handle ICE candidate
     socket.on('ice-candidate', async ({ from, candidate }) => {
       const peer = peersRef.current.get(from);
@@ -6287,7 +6992,7 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
         await peer.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
       }
     });
-
+    
     // Handle user left
     socket.on('user-left', ({ socketId }) => {
       const peer = peersRef.current.get(socketId);
@@ -6298,7 +7003,7 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
         onPeerLeft?.(socketId);
       }
     });
-
+    
     // Handle screen share toggle
     socket.on('screen-share-toggle', ({ socketId, enabled }) => {
       setPeers(prev => {
@@ -6311,7 +7016,7 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
         return updated;
       });
     });
-
+    
     return () => {
       socket.off('existing-peers');
       socket.off('user-joined');
@@ -6322,7 +7027,7 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
       socket.off('screen-share-toggle');
     };
   }, [socket, roomId, userId, createPeerConnection, onPeerJoined, onPeerLeft]);
-
+  
   /**
    * Toggle audio
    */
@@ -6332,12 +7037,12 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
       if (audioTrack) {
         audioTrack.enabled = !audioTrack.enabled;
         setIsAudioEnabled(audioTrack.enabled);
-
+        
         socket?.emit('toggle-audio', { enabled: audioTrack.enabled });
       }
     }
   }, [socket]);
-
+  
   /**
    * Toggle video
    */
@@ -6347,12 +7052,12 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
       if (videoTrack) {
         videoTrack.enabled = !videoTrack.enabled;
         setIsVideoEnabled(videoTrack.enabled);
-
+        
         socket?.emit('toggle-video', { enabled: videoTrack.enabled });
       }
     }
   }, [socket]);
-
+  
   /**
    * Toggle screen sharing
    */
@@ -6363,22 +7068,22 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
         screenStreamRef.current.getTracks().forEach(track => track.stop());
         screenStreamRef.current = null;
       }
-
+      
       // Replace with camera
       if (localStreamRef.current) {
         const videoTrack = localStreamRef.current.getVideoTracks()[0];
-
+        
         peersRef.current.forEach(peer => {
           const sender = peer.peerConnection
             ?.getSenders()
             .find(s => s.track?.kind === 'video');
-
+          
           if (sender && videoTrack) {
             sender.replaceTrack(videoTrack);
           }
         });
       }
-
+      
       setIsScreenSharing(false);
       socket?.emit('toggle-screen-share', { enabled: false });
     } else {
@@ -6388,26 +7093,26 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
           video: { cursor: 'always' },
           audio: false
         });
-
+        
         screenStreamRef.current = screenStream;
         const screenTrack = screenStream.getVideoTracks()[0];
-
+        
         // Replace video track in all peer connections
         peersRef.current.forEach(peer => {
           const sender = peer.peerConnection
             ?.getSenders()
             .find(s => s.track?.kind === 'video');
-
+          
           if (sender) {
             sender.replaceTrack(screenTrack);
           }
         });
-
+        
         // Handle screen share stop (user clicks browser's stop sharing button)
         screenTrack.onended = () => {
           toggleScreenShare();
         };
-
+        
         setIsScreenSharing(true);
         socket?.emit('toggle-screen-share', { enabled: true });
       } catch (error) {
@@ -6415,7 +7120,7 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
       }
     }
   }, [isScreenSharing, socket]);
-
+  
   /**
    * Leave room
    */
@@ -6423,15 +7128,15 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
     // Stop local streams
     localStreamRef.current?.getTracks().forEach(track => track.stop());
     screenStreamRef.current?.getTracks().forEach(track => track.stop());
-
+    
     // Close all peer connections
     peersRef.current.forEach(peer => {
       peer.peerConnection?.close();
     });
-
+    
     // Leave room
     socket?.emit('leave-room');
-
+    
     // Clean up
     setLocalStream(null);
     setPeers(new Map());
@@ -6439,16 +7144,16 @@ export function useWebRTC({ roomId, userId, onPeerJoined, onPeerLeft }: UseWebRT
     screenStreamRef.current = null;
     peersRef.current.clear();
   }, [socket]);
-
+  
   // Initialize on mount
   useEffect(() => {
     initializeLocalStream();
-
+    
     return () => {
       leaveRoom();
     };
   }, []);
-
+  
   return {
     localStream,
     peers: Array.from(peers.values()),
@@ -6480,7 +7185,7 @@ interface VideoCallProps {
 
 export function VideoCall({ roomId, userId, onLeave }: VideoCallProps) {
   const localVideoRef = useRef<HTMLVideoElement>(null);
-
+  
   const {
     localStream,
     peers,
@@ -6492,19 +7197,19 @@ export function VideoCall({ roomId, userId, onLeave }: VideoCallProps) {
     toggleScreenShare,
     leaveRoom
   } = useWebRTC({ roomId, userId });
-
+  
   // Set local video stream
   useEffect(() => {
     if (localVideoRef.current && localStream) {
       localVideoRef.current.srcObject = localStream;
     }
   }, [localStream]);
-
+  
   const handleLeave = () => {
     leaveRoom();
     onLeave();
   };
-
+  
   return (
     <div className="fixed inset-0 bg-gray-900 flex flex-col">
       {/* Video Grid */}
@@ -6522,13 +7227,13 @@ export function VideoCall({ roomId, userId, onLeave }: VideoCallProps) {
             You {isScreenSharing && '(Sharing)'}
           </div>
         </div>
-
+        
         {/* Remote videos */}
         {peers.map(peer => (
           <PeerVideo key={peer.socketId} peer={peer} />
         ))}
       </div>
-
+      
       {/* Controls */}
       <div className="bg-gray-800 p-4 flex items-center justify-center gap-4">
         <Button
@@ -6539,7 +7244,7 @@ export function VideoCall({ roomId, userId, onLeave }: VideoCallProps) {
         >
           {isAudioEnabled ? <Mic /> : <MicOff />}
         </Button>
-
+        
         <Button
           onClick={toggleVideo}
           variant={isVideoEnabled ? 'default' : 'destructive'}
@@ -6548,7 +7253,7 @@ export function VideoCall({ roomId, userId, onLeave }: VideoCallProps) {
         >
           {isVideoEnabled ? <Video /> : <VideoOff />}
         </Button>
-
+        
         <Button
           onClick={toggleScreenShare}
           variant={isScreenSharing ? 'default' : 'outline'}
@@ -6557,7 +7262,7 @@ export function VideoCall({ roomId, userId, onLeave }: VideoCallProps) {
         >
           <Monitor />
         </Button>
-
+        
         <Button
           onClick={handleLeave}
           variant="destructive"
@@ -6573,13 +7278,13 @@ export function VideoCall({ roomId, userId, onLeave }: VideoCallProps) {
 
 function PeerVideo({ peer }: { peer: any }) {
   const videoRef = useRef<HTMLVideoElement>(null);
-
+  
   useEffect(() => {
     if (videoRef.current && peer.stream) {
       videoRef.current.srcObject = peer.stream;
     }
   }, [peer.stream]);
-
+  
   return (
     <div className="relative bg-gray-800 rounded-lg overflow-hidden">
       <video
@@ -6668,38 +7373,38 @@ export async function tenantIsolation(req: Request, res: Response, next: NextFun
     // Get tenant from subdomain or custom domain
     const host = req.get('host') || '';
     const subdomain = host.split('.')[0];
-
+    
     let tenant;
-
+    
     // Check custom domain first
     tenant = await db.query.tenants.findFirst({
       where: eq(tenants.domain, host)
     });
-
+    
     // Fall back to subdomain
     if (!tenant && subdomain) {
       tenant = await db.query.tenants.findFirst({
         where: eq(tenants.slug, subdomain)
       });
     }
-
+    
     if (!tenant) {
       return res.status(404).json({
         success: false,
         error: 'Tenant not found'
       });
     }
-
+    
     if (tenant.status !== 'active') {
       return res.status(403).json({
         success: false,
         error: 'Tenant is not active'
       });
     }
-
+    
     // Attach tenant to request
     req.tenant = tenant;
-
+    
     next();
   } catch (error: any) {
     res.status(500).json({
@@ -6719,12 +7424,12 @@ import { tenants } from '@shared/schema/tenants';
 
 export class SAMLService {
   private samlConfig: any;
-
+  
   constructor(tenant: typeof tenants.$inferSelect) {
     if (!tenant.ssoConfig) {
       throw new Error('SSO not configured for tenant');
     }
-
+    
     this.samlConfig = {
       callbackUrl: `https://${tenant.domain || tenant.slug + '.mundotango.life'}/auth/saml/callback`,
       entryPoint: tenant.ssoConfig.singleSignOnUrl,
@@ -6733,7 +7438,7 @@ export class SAMLService {
       identifierFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'
     };
   }
-
+  
   /**
    * Generate SAML login URL
    */
@@ -6741,7 +7446,7 @@ export class SAMLService {
     const saml = new SAML(this.samlConfig);
     return await saml.getAuthorizeUrlAsync('', '', {});
   }
-
+  
   /**
    * Validate SAML response
    */
@@ -6753,7 +7458,7 @@ export class SAMLService {
   }> {
     const saml = new SAML(this.samlConfig);
     const { profile } = await saml.validatePostResponseAsync(body);
-
+    
     return {
       email: profile.email || profile.nameID,
       firstName: profile.firstName || profile.givenName,
@@ -6781,14 +7486,14 @@ interface LDAPConfig {
 export class LDAPService {
   private client: ldap.Client;
   private config: LDAPConfig;
-
+  
   constructor(config: LDAPConfig) {
     this.config = config;
     this.client = ldap.createClient({
       url: config.url
     });
   }
-
+  
   /**
    * Authenticate user via LDAP
    */
@@ -6807,7 +7512,7 @@ export class LDAPService {
         if (bindErr) {
           return reject(bindErr);
         }
-
+        
         // Search for user
         const searchFilter = this.config.searchFilter || `(uid=${username})`;
         const opts = {
@@ -6815,29 +7520,29 @@ export class LDAPService {
           scope: 'sub',
           attributes: ['dn', 'cn', 'mail', 'memberOf', 'displayName']
         };
-
+        
         this.client.search(this.config.searchBase, opts, (searchErr, searchRes) => {
           if (searchErr) {
             return reject(searchErr);
           }
-
+          
           let userEntry: any = null;
-
+          
           searchRes.on('searchEntry', (entry) => {
             userEntry = entry.object;
           });
-
+          
           searchRes.on('end', () => {
             if (!userEntry) {
               return resolve({ success: false });
             }
-
+            
             // Try to bind as user
             this.client.bind(userEntry.dn, password, (authErr) => {
               if (authErr) {
                 return resolve({ success: false });
               }
-
+              
               resolve({
                 success: true,
                 user: {
@@ -6851,7 +7556,7 @@ export class LDAPService {
               });
             });
           });
-
+          
           searchRes.on('error', (err) => {
             reject(err);
           });
@@ -6859,7 +7564,7 @@ export class LDAPService {
       });
     });
   }
-
+  
   /**
    * Close connection
    */
@@ -6896,13 +7601,13 @@ export class BrandingService {
       domain: tenant.domain || `${tenant.slug}.mundotango.life`
     };
   }
-
+  
   /**
    * Generate custom CSS for tenant
    */
   static generateCustomCSS(tenant: typeof tenants.$inferSelect): string {
     const branding = this.getTenantBranding(tenant);
-
+    
     return `
       :root {
         --brand-primary: ${branding.colors.primary};
@@ -6910,19 +7615,19 @@ export class BrandingService {
         --brand-accent: ${branding.colors.accent};
         --brand-font: ${branding.typography.fontFamily};
       }
-
+      
       body {
         font-family: var(--brand-font);
       }
-
+      
       .btn-primary {
         background-color: var(--brand-primary);
       }
-
+      
       .text-primary {
         color: var(--brand-primary);
       }
-
+      
       ${branding.customCss}
     `;
   }
@@ -6955,7 +7660,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - letsencrypt:/letsencrypt
-
+  
   # US East (Primary)
   app-us-east:
     build: .
@@ -6966,7 +7671,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.us-east.rule=Host(`us-east.mundotango.life`)"
-
+  
   db-us-east:
     image: postgres:15-alpine
     environment:
@@ -6975,12 +7680,12 @@ services:
       POSTGRES_PASSWORD: pass
     volumes:
       - db-us-east-data:/var/lib/postgresql/data
-
+  
   redis-us-east:
     image: redis:7-alpine
     volumes:
       - redis-us-east-data:/data
-
+  
   # EU West (Secondary)
   app-eu-west:
     build: .
@@ -6991,7 +7696,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.eu-west.rule=Host(`eu-west.mundotango.life`)"
-
+  
   db-eu-west:
     image: postgres:15-alpine
     environment:
@@ -7000,12 +7705,12 @@ services:
       POSTGRES_PASSWORD: pass
     volumes:
       - db-eu-west-data:/var/lib/postgresql/data
-
+  
   redis-eu-west:
     image: redis:7-alpine
     volumes:
       - redis-eu-west-data:/data
-
+  
   # Asia Pacific (Tertiary)
   app-asia-pacific:
     build: .
@@ -7016,7 +7721,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.asia-pacific.rule=Host(`asia.mundotango.life`)"
-
+  
   db-asia-pacific:
     image: postgres:15-alpine
     environment:
@@ -7025,7 +7730,7 @@ services:
       POSTGRES_PASSWORD: pass
     volumes:
       - db-asia-pacific-data:/var/lib/postgresql/data
-
+  
   redis-asia-pacific:
     image: redis:7-alpine
     volumes:
@@ -7123,7 +7828,7 @@ services:
     networks:
       - monitoring
     restart: unless-stopped
-
+  
   # Grafana - Visualization
   grafana:
     image: grafana/grafana:latest
@@ -7144,7 +7849,7 @@ services:
     restart: unless-stopped
     depends_on:
       - prometheus
-
+  
   # Jaeger - Distributed Tracing
   jaeger:
     image: jaegertracing/all-in-one:latest
@@ -7165,7 +7870,7 @@ services:
     networks:
       - monitoring
     restart: unless-stopped
-
+  
   # Loki - Log Aggregation
   loki:
     image: grafana/loki:latest
@@ -7178,7 +7883,7 @@ services:
     networks:
       - monitoring
     restart: unless-stopped
-
+  
   # Promtail - Log Shipper
   promtail:
     image: grafana/promtail:latest
@@ -7190,7 +7895,7 @@ services:
     networks:
       - monitoring
     restart: unless-stopped
-
+  
   # Node Exporter - Host Metrics
   node-exporter:
     image: prom/node-exporter:latest
@@ -7209,7 +7914,7 @@ services:
     networks:
       - monitoring
     restart: unless-stopped
-
+  
   # cAdvisor - Container Metrics
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
@@ -7225,7 +7930,7 @@ services:
     networks:
       - monitoring
     restart: unless-stopped
-
+  
   # AlertManager - Alert Management
   alertmanager:
     image: prom/alertmanager:latest
@@ -7281,33 +7986,33 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
-
+  
   # Node Exporter
   - job_name: 'node'
     static_configs:
       - targets: ['node-exporter:9100']
-
+  
   # cAdvisor
   - job_name: 'cadvisor'
     static_configs:
       - targets: ['cadvisor:8080']
-
+  
   # Application metrics
   - job_name: 'mundotango-api'
     static_configs:
       - targets: ['app:3000']
     metrics_path: '/metrics'
-
+  
   # PostgreSQL
   - job_name: 'postgres'
     static_configs:
       - targets: ['postgres-exporter:9187']
-
+  
   # Redis
   - job_name: 'redis'
     static_configs:
       - targets: ['redis-exporter:9121']
-
+  
   # Elasticsearch
   - job_name: 'elasticsearch'
     static_configs:
@@ -7324,17 +8029,17 @@ import { Request, Response } from 'express';
 export class MetricsService {
   private static instance: MetricsService;
   private register: promClient.Registry;
-
+  
   // Counters
   private httpRequestTotal: promClient.Counter;
   private httpRequestDuration: promClient.Histogram;
   private httpRequestErrors: promClient.Counter;
-
+  
   // Gauges
   private activeConnections: promClient.Gauge;
   private databaseConnections: promClient.Gauge;
   private cacheHitRate: promClient.Gauge;
-
+  
   // Business Metrics
   private userRegistrations: promClient.Counter;
   private eventCreations: promClient.Counter;
@@ -7342,13 +8047,13 @@ export class MetricsService {
   private transactionValue: promClient.Counter;
   private aiRequests: promClient.Counter;
   private aiCost: promClient.Counter;
-
+  
   private constructor() {
     this.register = new promClient.Registry();
-
+    
     // Add default metrics (CPU, memory, etc.)
     promClient.collectDefaultMetrics({ register: this.register });
-
+    
     // HTTP Request Total
     this.httpRequestTotal = new promClient.Counter({
       name: 'http_requests_total',
@@ -7356,7 +8061,7 @@ export class MetricsService {
       labelNames: ['method', 'route', 'status_code'],
       registers: [this.register]
     });
-
+    
     // HTTP Request Duration
     this.httpRequestDuration = new promClient.Histogram({
       name: 'http_request_duration_seconds',
@@ -7365,7 +8070,7 @@ export class MetricsService {
       buckets: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5, 10],
       registers: [this.register]
     });
-
+    
     // HTTP Request Errors
     this.httpRequestErrors = new promClient.Counter({
       name: 'http_request_errors_total',
@@ -7373,14 +8078,14 @@ export class MetricsService {
       labelNames: ['method', 'route', 'error_type'],
       registers: [this.register]
     });
-
+    
     // Active Connections
     this.activeConnections = new promClient.Gauge({
       name: 'active_connections',
       help: 'Number of active WebSocket connections',
       registers: [this.register]
     });
-
+    
     // Database Connections
     this.databaseConnections = new promClient.Gauge({
       name: 'database_connections',
@@ -7388,14 +8093,14 @@ export class MetricsService {
       labelNames: ['state'], // idle, active, waiting
       registers: [this.register]
     });
-
+    
     // Cache Hit Rate
     this.cacheHitRate = new promClient.Gauge({
       name: 'cache_hit_rate',
       help: 'Cache hit rate percentage',
       registers: [this.register]
     });
-
+    
     // User Registrations
     this.userRegistrations = new promClient.Counter({
       name: 'user_registrations_total',
@@ -7403,7 +8108,7 @@ export class MetricsService {
       labelNames: ['source'], // web, mobile, api
       registers: [this.register]
     });
-
+    
     // Event Creations
     this.eventCreations = new promClient.Counter({
       name: 'event_creations_total',
@@ -7411,7 +8116,7 @@ export class MetricsService {
       labelNames: ['category'],
       registers: [this.register]
     });
-
+    
     // Transactions
     this.transactions = new promClient.Counter({
       name: 'transactions_total',
@@ -7419,7 +8124,7 @@ export class MetricsService {
       labelNames: ['type', 'status'], // type: purchase, booking; status: success, failed
       registers: [this.register]
     });
-
+    
     // Transaction Value
     this.transactionValue = new promClient.Counter({
       name: 'transaction_value_total',
@@ -7427,7 +8132,7 @@ export class MetricsService {
       labelNames: ['type'],
       registers: [this.register]
     });
-
+    
     // AI Requests
     this.aiRequests = new promClient.Counter({
       name: 'ai_requests_total',
@@ -7435,7 +8140,7 @@ export class MetricsService {
       labelNames: ['provider', 'model', 'task_type'],
       registers: [this.register]
     });
-
+    
     // AI Cost
     this.aiCost = new promClient.Counter({
       name: 'ai_cost_total',
@@ -7444,14 +8149,14 @@ export class MetricsService {
       registers: [this.register]
     });
   }
-
+  
   static getInstance(): MetricsService {
     if (!MetricsService.instance) {
       MetricsService.instance = new MetricsService();
     }
     return MetricsService.instance;
   }
-
+  
   /**
    * Record HTTP request
    */
@@ -7459,21 +8164,21 @@ export class MetricsService {
     this.httpRequestTotal.inc({ method, route, status_code: statusCode });
     this.httpRequestDuration.observe({ method, route, status_code: statusCode }, duration);
   }
-
+  
   /**
    * Record HTTP error
    */
   recordHttpError(method: string, route: string, errorType: string) {
     this.httpRequestErrors.inc({ method, route, error_type: errorType });
   }
-
+  
   /**
    * Set active connections
    */
   setActiveConnections(count: number) {
     this.activeConnections.set(count);
   }
-
+  
   /**
    * Set database connections
    */
@@ -7482,28 +8187,28 @@ export class MetricsService {
     this.databaseConnections.set({ state: 'active' }, active);
     this.databaseConnections.set({ state: 'waiting' }, waiting);
   }
-
+  
   /**
    * Set cache hit rate
    */
   setCacheHitRate(rate: number) {
     this.cacheHitRate.set(rate);
   }
-
+  
   /**
    * Record user registration
    */
   recordUserRegistration(source: string) {
     this.userRegistrations.inc({ source });
   }
-
+  
   /**
    * Record event creation
    */
   recordEventCreation(category: string) {
     this.eventCreations.inc({ category });
   }
-
+  
   /**
    * Record transaction
    */
@@ -7513,7 +8218,7 @@ export class MetricsService {
       this.transactionValue.inc({ type }, value);
     }
   }
-
+  
   /**
    * Record AI request
    */
@@ -7521,14 +8226,14 @@ export class MetricsService {
     this.aiRequests.inc({ provider, model, task_type: taskType });
     this.aiCost.inc({ provider, model }, cost);
   }
-
+  
   /**
    * Get metrics for Prometheus
    */
   async getMetrics(): Promise<string> {
     return this.register.metrics();
   }
-
+  
   /**
    * Get registry
    */
@@ -7550,24 +8255,24 @@ import { metricsService } from '../services/MetricsService';
 
 export function metricsMiddleware(req: Request, res: Response, next: NextFunction) {
   const start = Date.now();
-
+  
   // Capture response
   res.on('finish', () => {
     const duration = (Date.now() - start) / 1000; // Convert to seconds
-
+    
     const route = req.route?.path || req.path;
     const method = req.method;
     const statusCode = res.statusCode;
-
+    
     metricsService.recordHttpRequest(method, route, statusCode, duration);
-
+    
     // Record errors
     if (statusCode >= 400) {
       const errorType = statusCode >= 500 ? 'server_error' : 'client_error';
       metricsService.recordHttpError(method, route, errorType);
     }
   });
-
+  
   next();
 }
 
@@ -7598,7 +8303,7 @@ import { trace, context, SpanStatusCode } from '@opentelemetry/api';
 
 export class TracingService {
   private static provider: NodeTracerProvider;
-
+  
   static initialize() {
     // Create provider
     this.provider = new NodeTracerProvider({
@@ -7608,18 +8313,18 @@ export class TracingService {
         [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: process.env.NODE_ENV || 'development'
       })
     });
-
+    
     // Configure Jaeger exporter
     const jaegerExporter = new JaegerExporter({
       endpoint: process.env.JAEGER_ENDPOINT || 'http://localhost:14268/api/traces'
     });
-
+    
     // Add span processor
     this.provider.addSpanProcessor(new BatchSpanProcessor(jaegerExporter));
-
+    
     // Register provider
     this.provider.register();
-
+    
     // Register instrumentations
     registerInstrumentations({
       instrumentations: [
@@ -7629,10 +8334,10 @@ export class TracingService {
         new RedisInstrumentation()
       ]
     });
-
+    
     console.log('✅ OpenTelemetry tracing initialized');
   }
-
+  
   /**
    * Create a span
    */
@@ -7640,7 +8345,7 @@ export class TracingService {
     const tracer = trace.getTracer('mundotango-api');
     return tracer.startSpan(name, { attributes });
   }
-
+  
   /**
    * Record exception in span
    */
@@ -7648,7 +8353,7 @@ export class TracingService {
     span.recordException(error);
     span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
   }
-
+  
   /**
    * Get current context
    */
@@ -7667,7 +8372,7 @@ import { StatsD } from 'hot-shots';
 
 export class DatadogService {
   private static statsd: StatsD;
-
+  
   static initialize() {
     // Initialize Datadog tracer
     tracer.init({
@@ -7680,7 +8385,7 @@ export class DatadogService {
       profiling: true,
       appsec: true
     });
-
+    
     // Initialize StatsD client for custom metrics
     this.statsd = new StatsD({
       host: process.env.DATADOG_AGENT_HOST || 'localhost',
@@ -7691,45 +8396,45 @@ export class DatadogService {
         service: 'mundotango-api'
       }
     });
-
+    
     console.log('✅ Datadog APM initialized');
   }
-
+  
   /**
    * Increment counter
    */
   static increment(metric: string, value: number = 1, tags?: string[]) {
     this.statsd.increment(metric, value, tags);
   }
-
+  
   /**
    * Record gauge
    */
   static gauge(metric: string, value: number, tags?: string[]) {
     this.statsd.gauge(metric, value, tags);
   }
-
+  
   /**
    * Record histogram
    */
   static histogram(metric: string, value: number, tags?: string[]) {
     this.statsd.histogram(metric, value, tags);
   }
-
+  
   /**
    * Record timing
    */
   static timing(metric: string, value: number, tags?: string[]) {
     this.statsd.timing(metric, value, tags);
   }
-
+  
   /**
    * Record distribution
    */
   static distribution(metric: string, value: number, tags?: string[]) {
     this.statsd.distribution(metric, value, tags);
   }
-
+  
   /**
    * Set service check
    */
@@ -7757,7 +8462,7 @@ groups:
         annotations:
           summary: "High error rate detected"
           description: "Error rate is {{ $value | humanizePercentage }} for {{ $labels.route }}"
-
+      
       # Critical error rate
       - alert: CriticalErrorRate
         expr: |
@@ -7768,7 +8473,7 @@ groups:
         annotations:
           summary: "Critical error rate detected"
           description: "Error rate is {{ $value | humanizePercentage }} for {{ $labels.route }}"
-
+      
       # Slow response time
       - alert: SlowResponseTime
         expr: |
@@ -7779,7 +8484,7 @@ groups:
         annotations:
           summary: "Slow API response time"
           description: "95th percentile response time is {{ $value }}s for {{ $labels.route }}"
-
+      
       # Database connection pool exhausted
       - alert: DatabaseConnectionPoolExhausted
         expr: |
@@ -7790,7 +8495,7 @@ groups:
         annotations:
           summary: "Database connection pool exhausted"
           description: "{{ $value }} connections are waiting"
-
+      
       # Low cache hit rate
       - alert: LowCacheHitRate
         expr: |
@@ -7801,7 +8506,7 @@ groups:
         annotations:
           summary: "Low cache hit rate"
           description: "Cache hit rate is {{ $value | humanizePercentage }}"
-
+      
       # High AI cost
       - alert: HighAICost
         expr: |
@@ -7843,7 +8548,7 @@ services:
     command: mlflow server --host 0.0.0.0 --port 5000
     networks:
       - ml-network
-
+  
   # Feast - Feature Store
   feast:
     image: feastdev/feature-server:latest
@@ -7855,7 +8560,7 @@ services:
     command: feast serve -h 0.0.0.0 -p 6566
     networks:
       - ml-network
-
+  
   # TensorFlow Serving
   tf-serving:
     image: tensorflow/serving:latest
@@ -7870,7 +8575,7 @@ services:
     command: --model_base_path=/models/recommendation --rest_api_port=8501
     networks:
       - ml-network
-
+  
   # Ray - Distributed ML
   ray-head:
     image: rayproject/ray:latest
@@ -7883,7 +8588,7 @@ services:
     networks:
       - ml-network
     shm_size: 2gb
-
+  
   # Jupyter - ML Development
   jupyter:
     image: jupyter/tensorflow-notebook:latest
@@ -7916,7 +8621,7 @@ interface UserFeatures {
   accountAge: number;
   profileCompleteness: number;
   isVerified: boolean;
-
+  
   // Engagement features
   totalEvents: number;
   totalPosts: number;
@@ -7924,22 +8629,22 @@ interface UserFeatures {
   totalLikes: number;
   avgSessionDuration: number;
   lastActiveHours: number;
-
+  
   // Social features
   followerCount: number;
   followingCount: number;
   networkDensity: number;
-
+  
   // Behavioral features
   peakActivityHour: number;
   preferredCategories: string[];
   avgEventRating: number;
   attendanceRate: number;
-
+  
   // Temporal features
   dayOfWeek: number;
   hourOfDay: number;
-
+  
   // Computed features
   engagementScore: number;
   influenceScore: number;
@@ -7952,35 +8657,35 @@ export class FeatureEngineering {
    */
   static async extractUserFeatures(userId: number): Promise<UserFeatures> {
     const now = new Date();
-
+    
     // Get user data
     const user = await db.query.users.findFirst({
       where: eq(users.id, userId)
     });
-
+    
     if (!user) {
       throw new Error('User not found');
     }
-
+    
     // Account age in days
     const accountAge = Math.floor(
       (now.getTime() - user.createdAt.getTime()) / (1000 * 60 * 60 * 24)
     );
-
+    
     // Profile completeness (0-1)
     const profileCompleteness = this.calculateProfileCompleteness(user);
-
+    
     // Activity counts
     const [eventCount] = await db
       .select({ count: sql<number>`count(*)` })
       .from(events)
       .where(eq(events.organizerId, userId));
-
+    
     const [postCount] = await db
       .select({ count: sql<number>`count(*)` })
       .from(posts)
       .where(eq(posts.authorId, userId));
-
+    
     // Engagement metrics
     const activityLogs = await db.query.userActivityLogs.findMany({
       where: and(
@@ -7989,25 +8694,25 @@ export class FeatureEngineering {
       ),
       limit: 1000
     });
-
+    
     const avgSessionDuration = this.calculateAvgSessionDuration(activityLogs);
     const lastActiveHours = this.calculateLastActiveHours(user.lastSeen);
     const peakActivityHour = this.calculatePeakActivityHour(activityLogs);
-
+    
     // Social metrics
     const followerCount = user.followerCount || 0;
     const followingCount = user.followingCount || 0;
     const networkDensity = followingCount > 0 ? followerCount / followingCount : 0;
-
+    
     // Behavioral metrics
     const preferredCategories = await this.extractPreferredCategories(userId);
     const avgEventRating = await this.calculateAvgEventRating(userId);
     const attendanceRate = await this.calculateAttendanceRate(userId);
-
+    
     // Temporal features
     const dayOfWeek = now.getDay();
     const hourOfDay = now.getHours();
-
+    
     // Computed scores
     const engagementScore = this.calculateEngagementScore({
       totalEvents: eventCount?.count || 0,
@@ -8015,19 +8720,19 @@ export class FeatureEngineering {
       avgSessionDuration,
       followerCount
     });
-
+    
     const influenceScore = this.calculateInfluenceScore({
       followerCount,
       networkDensity,
       isVerified: user.isVerified || false
     });
-
+    
     const retentionRisk = this.calculateRetentionRisk({
       lastActiveHours,
       accountAge,
       engagementScore
     });
-
+    
     return {
       userId,
       accountAge,
@@ -8053,7 +8758,7 @@ export class FeatureEngineering {
       retentionRisk
     };
   }
-
+  
   private static calculateProfileCompleteness(user: any): number {
     const fields = [
       user.displayName,
@@ -8064,31 +8769,31 @@ export class FeatureEngineering {
       user.languages,
       user.interests
     ];
-
+    
     const filledFields = fields.filter(f => f && (Array.isArray(f) ? f.length > 0 : true)).length;
     return filledFields / fields.length;
   }
-
+  
   private static calculateAvgSessionDuration(logs: any[]): number {
     if (logs.length === 0) return 0;
-
+    
     // Group by session and calculate durations
     const sessions = this.groupIntoSessions(logs);
     const totalDuration = sessions.reduce((sum, session) => sum + session.duration, 0);
-
+    
     return sessions.length > 0 ? totalDuration / sessions.length : 0;
   }
-
+  
   private static groupIntoSessions(logs: any[]): Array<{ duration: number }> {
     const sessions: Array<{ duration: number }> = [];
     let currentSession: any[] = [];
-
+    
     for (let i = 0; i < logs.length; i++) {
       if (i === 0) {
         currentSession.push(logs[i]);
       } else {
         const timeDiff = logs[i].createdAt.getTime() - logs[i - 1].createdAt.getTime();
-
+        
         if (timeDiff < 30 * 60 * 1000) { // 30 minutes
           currentSession.push(logs[i]);
         } else {
@@ -8102,44 +8807,44 @@ export class FeatureEngineering {
         }
       }
     }
-
+    
     return sessions;
   }
-
+  
   private static calculateLastActiveHours(lastSeen?: Date): number {
     if (!lastSeen) return 9999;
     return (Date.now() - lastSeen.getTime()) / (1000 * 60 * 60);
   }
-
+  
   private static calculatePeakActivityHour(logs: any[]): number {
     const hourCounts = new Array(24).fill(0);
-
+    
     logs.forEach(log => {
       const hour = log.createdAt.getHours();
       hourCounts[hour]++;
     });
-
+    
     return hourCounts.indexOf(Math.max(...hourCounts));
   }
-
+  
   private static async extractPreferredCategories(userId: number): Promise<string[]> {
     const interactions = await db.select().from(eventAttendees).where(eq(eventAttendees.userId, userId));
     return interactions.length * 10;
     return [];
   }
-
+  
   private static async calculateAvgEventRating(userId: number): Promise<number> {
     const reviews = await db.select().from(eventReviews).where(eq(eventReviews.eventId, eventId));
     return reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
     return 0;
   }
-
+  
   private static async calculateAttendanceRate(userId: number): Promise<number> {
     const rsvps = await db.select().from(eventAttendees).where(eq(eventAttendees.eventId, eventId));
     return (rsvps.filter(r => r.attended).length / rsvps.length) * 100;
     return 0;
   }
-
+  
   private static calculateEngagementScore(params: {
     totalEvents: number;
     totalPosts: number;
@@ -8152,14 +8857,14 @@ export class FeatureEngineering {
       sessionDuration: 0.3,
       followers: 0.2
     };
-
+    
     const normalized = {
       events: Math.min(params.totalEvents / 50, 1),
       posts: Math.min(params.totalPosts / 100, 1),
       sessionDuration: Math.min(params.avgSessionDuration / 30, 1),
       followers: Math.min(params.followerCount / 500, 1)
     };
-
+    
     return (
       normalized.events * weights.events +
       normalized.posts * weights.posts +
@@ -8167,7 +8872,7 @@ export class FeatureEngineering {
       normalized.followers * weights.followers
     );
   }
-
+  
   private static calculateInfluenceScore(params: {
     followerCount: number;
     networkDensity: number;
@@ -8176,10 +8881,10 @@ export class FeatureEngineering {
     const base = Math.log10(params.followerCount + 1) / 4; // Max log10(10000) = 4
     const density = params.networkDensity * 0.2;
     const verified = params.isVerified ? 0.2 : 0;
-
+    
     return Math.min(base + density + verified, 1);
   }
-
+  
   private static calculateRetentionRisk(params: {
     lastActiveHours: number;
     accountAge: number;
@@ -8187,13 +8892,13 @@ export class FeatureEngineering {
   }): number {
     // Risk increases with inactivity
     const inactivityRisk = Math.min(params.lastActiveHours / (7 * 24), 1);
-
+    
     // Risk decreases with engagement
     const engagementFactor = 1 - params.engagementScore;
-
+    
     // New users have higher risk
     const newUserFactor = params.accountAge < 30 ? 0.3 : 0;
-
+    
     return Math.min(
       (inactivityRisk * 0.5 + engagementFactor * 0.3 + newUserFactor),
       1
@@ -8223,7 +8928,7 @@ export class RecommendationEngine {
   private model?: tf.LayersModel;
   private userEmbeddings: Map<number, number[]> = new Map();
   private itemEmbeddings: Map<number, number[]> = new Map();
-
+  
   /**
    * Load trained model
    */
@@ -8235,13 +8940,13 @@ export class RecommendationEngine {
       console.warn('⚠️  Recommendation model not found, using fallback');
     }
   }
-
+  
   /**
    * Generate event recommendations for user
    */
   async recommendEvents(userId: number, limit: number = 10): Promise<RecommendationScore[]> {
     // Hybrid approach: Collaborative filtering + Content-based + Deep learning
-
+    
     const [
       collaborativeRecs,
       contentBasedRecs,
@@ -8253,7 +8958,7 @@ export class RecommendationEngine {
       this.deepLearningRecommendations(userId, limit * 2),
       this.popularityBasedRecommendations(userId, limit)
     ]);
-
+    
     // Merge and rank
     const merged = this.mergeRecommendations([
       { recs: collaborativeRecs, weight: 0.35 },
@@ -8261,20 +8966,20 @@ export class RecommendationEngine {
       { recs: deepLearningRecs, weight: 0.25 },
       { recs: popularRecs, weight: 0.10 }
     ]);
-
+    
     return merged.slice(0, limit);
   }
-
+  
   /**
    * Collaborative filtering (user-user similarity)
    */
   private async collaborativeFiltering(userId: number, limit: number): Promise<RecommendationScore[]> {
     // Find similar users based on event attendance patterns
     const similarUsers = await this.findSimilarUsers(userId, 50);
-
+    
     // Get events attended by similar users but not by current user
     const userEvents = await this.getUserAttendedEvents(userId);
-
+    
     const candidateEvents = await db.query.events.findMany({
       where: and(
         notInArray(events.id, userEvents),
@@ -8285,19 +8990,19 @@ export class RecommendationEngine {
       ),
       limit: limit * 2
     });
-
+    
     // Score based on how many similar users attended
     const scores: RecommendationScore[] = [];
-
+    
     for (const event of candidateEvents) {
       const attendeeCount = similarUsers.filter(u => 
         const attendance = await db.query.eventAttendees.findFirst({ where: and(eq(eventAttendees.userId, userId), eq(eventAttendees.eventId, event.id)) });
         if (!attendance) return null;
         true
       ).length;
-
+      
       const score = attendeeCount / similarUsers.length;
-
+      
       scores.push({
         itemId: event.id,
         score,
@@ -8305,19 +9010,19 @@ export class RecommendationEngine {
         reason: ['Users similar to you attended this event']
       });
     }
-
+    
     return scores.sort((a, b) => b.score - a.score).slice(0, limit);
   }
-
+  
   /**
    * Content-based filtering (item similarity)
    */
   private async contentBasedFiltering(userId: number, limit: number): Promise<RecommendationScore[]> {
     // Get user's preferred event categories and attributes
     const userPreferences = await this.getUserPreferences(userId);
-
+    
     const userEvents = await this.getUserAttendedEvents(userId);
-
+    
     // Find events matching user preferences
     const candidateEvents = await db.query.events.findMany({
       where: and(
@@ -8326,41 +9031,41 @@ export class RecommendationEngine {
       ),
       limit: limit * 3
     });
-
+    
     const scores: RecommendationScore[] = [];
-
+    
     for (const event of candidateEvents) {
       let score = 0;
       const reasons: string[] = [];
-
+      
       // Category match
       if (userPreferences.categories.includes(event.category)) {
         score += 0.4;
         reasons.push(`Matches your interest in ${event.category}`);
       }
-
+      
       // Location match
       if (event.city === userPreferences.preferredCity) {
         score += 0.3;
         reasons.push('In your city');
       }
-
+      
       // Price range match
       if (event.price >= userPreferences.minPrice && event.price <= userPreferences.maxPrice) {
         score += 0.2;
         reasons.push('Within your price range');
       }
-
+      
       // Tags match
       const tagOverlap = event.tags?.filter(tag => 
         userPreferences.tags.includes(tag)
       ).length || 0;
-
+      
       if (tagOverlap > 0) {
         score += 0.1 * Math.min(tagOverlap / 3, 1);
         reasons.push(`Matches ${tagOverlap} of your interests`);
       }
-
+      
       if (score > 0) {
         scores.push({
           itemId: event.id,
@@ -8370,10 +9075,10 @@ export class RecommendationEngine {
         });
       }
     }
-
+    
     return scores.sort((a, b) => b.score - a.score).slice(0, limit);
   }
-
+  
   /**
    * Deep learning recommendations (neural network)
    */
@@ -8381,10 +9086,10 @@ export class RecommendationEngine {
     if (!this.model) {
       return [];
     }
-
+    
     // Extract user features
     const userFeatures = await FeatureEngineering.extractUserFeatures(userId);
-
+    
     // Get candidate events
     const userEvents = await this.getUserAttendedEvents(userId);
     const candidateEvents = await db.query.events.findMany({
@@ -8394,21 +9099,21 @@ export class RecommendationEngine {
       ),
       limit: limit * 5
     });
-
+    
     const scores: RecommendationScore[] = [];
-
+    
     for (const event of candidateEvents) {
       // Create feature vector
       const features = this.createFeatureVector(userFeatures, event);
-
+      
       // Predict score using model
       const input = tf.tensor2d([features]);
       const prediction = this.model.predict(input) as tf.Tensor;
       const score = (await prediction.data())[0];
-
+      
       input.dispose();
       prediction.dispose();
-
+      
       scores.push({
         itemId: event.id,
         score,
@@ -8416,16 +9121,16 @@ export class RecommendationEngine {
         reason: ['AI-powered personalized recommendation']
       });
     }
-
+    
     return scores.sort((a, b) => b.score - a.score).slice(0, limit);
   }
-
+  
   /**
    * Popularity-based recommendations (fallback)
    */
   private async popularityBasedRecommendations(userId: number, limit: number): Promise<RecommendationScore[]> {
     const userEvents = await this.getUserAttendedEvents(userId);
-
+    
     const popularEvents = await db.query.events.findMany({
       where: and(
         notInArray(events.id, userEvents),
@@ -8434,7 +9139,7 @@ export class RecommendationEngine {
       orderBy: sql`${events.attendeeCount} DESC`,
       limit
     });
-
+    
     return popularEvents.map((event, index) => ({
       itemId: event.id,
       score: 1 - (index / limit),
@@ -8442,7 +9147,7 @@ export class RecommendationEngine {
       reason: ['Popular event in your area']
     }));
   }
-
+  
   /**
    * Find similar users using cosine similarity
    */
@@ -8450,7 +9155,7 @@ export class RecommendationEngine {
     return await db.select().from(events).where(eq(events.city, userCity)).limit(10);
     return [];
   }
-
+  
   /**
    * Get events user has attended
    */
@@ -8459,7 +9164,7 @@ export class RecommendationEngine {
     return rsvps.length;
     return [];
   }
-
+  
   /**
    * Get user preferences
    */
@@ -8480,7 +9185,7 @@ export class RecommendationEngine {
       tags: []
     };
   }
-
+  
   /**
    * Create feature vector for model input
    */
@@ -8494,7 +9199,7 @@ export class RecommendationEngine {
       // ... more features
     ];
   }
-
+  
   /**
    * Merge recommendations from multiple sources
    */
@@ -8506,11 +9211,11 @@ export class RecommendationEngine {
       confidence: number;
       reasons: Set<string>;
     }>();
-
+    
     for (const { recs, weight } of sources) {
       for (const rec of recs) {
         const existing = scoreMap.get(rec.itemId);
-
+        
         if (existing) {
           existing.totalScore += rec.score * weight;
           existing.confidence = Math.max(existing.confidence, rec.confidence);
@@ -8524,9 +9229,9 @@ export class RecommendationEngine {
         }
       }
     }
-
+    
     const merged: RecommendationScore[] = [];
-
+    
     for (const [itemId, data] of scoreMap.entries()) {
       merged.push({
         itemId,
@@ -8535,7 +9240,7 @@ export class RecommendationEngine {
         reason: Array.from(data.reasons)
       });
     }
-
+    
     return merged.sort((a, b) => b.score - a.score);
   }
 }
@@ -8594,7 +9299,7 @@ export class SecurityConfig {
         policy: 'strict-origin-when-cross-origin'
       }
     }));
-
+    
     // Rate limiting
     const limiter = rateLimit({
       windowMs: 15 * 60 * 1000, // 15 minutes
@@ -8609,26 +9314,26 @@ export class SecurityConfig {
         });
       }
     });
-
+    
     app.use('/api/', limiter);
-
+    
     // Stricter rate limiting for auth endpoints
     const authLimiter = rateLimit({
       windowMs: 15 * 60 * 1000,
       max: 5,
       skipSuccessfulRequests: true
     });
-
+    
     app.use('/api/auth/login', authLimiter);
     app.use('/api/auth/register', authLimiter);
     app.use('/api/auth/reset-password', authLimiter);
-
+    
     // Sanitize data
     app.use(mongoSanitize());
-
+    
     // Prevent HTTP parameter pollution
     app.use(hpp());
-
+    
     // CORS configuration
     app.use((req, res, next) => {
       const allowedOrigins = [
@@ -8636,20 +9341,20 @@ export class SecurityConfig {
         'https://www.mundotango.life',
         'https://app.mundotango.life'
       ];
-
+      
       const origin = req.headers.origin;
       if (origin && allowedOrigins.includes(origin)) {
         res.setHeader('Access-Control-Allow-Origin', origin);
       }
-
+      
       res.setHeader('Access-Control-Allow-Credentials', 'true');
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
       res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-CSRF-Token');
-
+      
       if (req.method === 'OPTIONS') {
         return res.sendStatus(200);
       }
-
+      
       next();
     });
   }
@@ -8684,7 +9389,7 @@ interface ConsentRecord {
 
 export class GDPRService {
   private s3Client: S3Client;
-
+  
   constructor() {
     this.s3Client = new S3Client({
       region: process.env.AWS_REGION!,
@@ -8694,13 +9399,13 @@ export class GDPRService {
       }
     });
   }
-
+  
   /**
    * Export all user data (GDPR Article 20 - Right to Data Portability)
    */
   async exportUserData(request: DataExportRequest): Promise<string> {
     const { userId, format, includeMedia } = request;
-
+    
     // Create export request record
     const [exportRecord] = await db.insert(userDataExports).values({
       userId,
@@ -8708,17 +9413,17 @@ export class GDPRService {
       status: 'processing',
       requestedAt: new Date()
     }).returning();
-
+    
     try {
       // Gather all user data
       const userData = await this.gatherUserData(userId);
-
+      
       // Create export file
       const exportPath = await this.createExportFile(userId, userData, format, includeMedia);
-
+      
       // Upload to S3
       const s3Url = await this.uploadToS3(exportPath, `exports/${userId}/${exportRecord.id}.zip`);
-
+      
       // Update export record
       await db.update(userDataExports)
         .set({
@@ -8728,12 +9433,12 @@ export class GDPRService {
           expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
         })
         .where(eq(userDataExports.id, exportRecord.id));
-
+      
       // Send email notification
       await this.sendExportReadyEmail(userId, s3Url);
-
+      
       return s3Url;
-
+      
     } catch (error) {
       await db.update(userDataExports)
         .set({
@@ -8741,11 +9446,11 @@ export class GDPRService {
           error: error instanceof Error ? error.message : 'Unknown error'
         })
         .where(eq(userDataExports.id, exportRecord.id));
-
+      
       throw error;
     }
   }
-
+  
   /**
    * Gather all user data from database
    */
@@ -8765,7 +9470,7 @@ export class GDPRService {
       db.query.events.findMany({ where: eq(users.id, userId) }),
       // ... more queries
     ]);
-
+    
     return {
       profile: user,
       posts,
@@ -8778,7 +9483,7 @@ export class GDPRService {
       exportedAt: new Date().toISOString()
     };
   }
-
+  
   /**
    * Create export file in requested format
    */
@@ -8790,13 +9495,13 @@ export class GDPRService {
   ): Promise<string> {
     const exportDir = `/tmp/exports/${userId}`;
     const exportPath = `${exportDir}/export.zip`;
-
+    
     // Create archive
     const output = createWriteStream(exportPath);
     const archive = archiver('zip', { zlib: { level: 9 } });
-
+    
     archive.pipe(output);
-
+    
     // Add data file
     if (format === 'json') {
       archive.append(JSON.stringify(data, null, 2), { name: 'data.json' });
@@ -8809,18 +9514,18 @@ export class GDPRService {
       const xml = this.convertToXML(data);
       archive.append(xml, { name: 'data.xml' });
     }
-
+    
     // Add media files if requested
     if (includeMedia) {
       const files = await db.select().from(userFiles).where(eq(userFiles.userId, userId));
       data.files = files;
     }
-
+    
     await archive.finalize();
-
+    
     return exportPath;
   }
-
+  
   /**
    * Delete user account and all associated data (GDPR Article 17 - Right to Erasure)
    */
@@ -8832,11 +9537,11 @@ export class GDPRService {
       requestedAt: new Date(),
       status: 'pending'
     }).returning();
-
+    
     try {
       // Anonymize or delete data in compliance with retention policies
       await this.anonymizeUserData(userId);
-
+      
       // Mark deletion complete
       await db.update(userDeletionRequests)
         .set({
@@ -8844,7 +9549,7 @@ export class GDPRService {
           completedAt: new Date()
         })
         .where(eq(userDeletionRequests.id, deletionRequest.id));
-
+      
     } catch (error) {
       await db.update(userDeletionRequests)
         .set({
@@ -8852,11 +9557,11 @@ export class GDPRService {
           error: error instanceof Error ? error.message : 'Unknown error'
         })
         .where(eq(userDeletionRequests.id, deletionRequest.id));
-
+      
       throw error;
     }
   }
-
+  
   /**
    * Anonymize user data (retain for legal/analytics but remove PII)
    */
@@ -8878,12 +9583,12 @@ export class GDPRService {
         country: users.country
       })
       .where(eq(users.id, userId));
-
+    
     // Delete sensitive data
     await db.delete(messages).where(eq(messages.senderId, userId));
       await db.delete(posts).where(and(eq(posts.userId, userId), eq(posts.visibility, "private")));
   }
-
+  
   /**
    * Record user consent (GDPR Article 7 - Conditions for consent)
    */
@@ -8897,7 +9602,7 @@ export class GDPRService {
       userAgent: consent.userAgent
     });
   }
-
+  
   /**
    * Get user consent status
    */
@@ -8906,18 +9611,18 @@ export class GDPRService {
       where: eq(consentRecords.userId, userId),
       orderBy: (records, { desc }) => [desc(records.timestamp)]
     });
-
+    
     const status: Record<string, boolean> = {};
-
+    
     for (const consent of consents) {
       if (!(consent.consentType in status)) {
         status[consent.consentType] = consent.granted;
       }
     }
-
+    
     return status;
   }
-
+  
   /**
    * Rectify user data (GDPR Article 16 - Right to rectification)
    */
@@ -8928,40 +9633,40 @@ export class GDPRService {
         updatedAt: new Date()
       })
       .where(eq(users.id, userId));
-
+    
     // Log rectification for audit trail
     await this.logDataRectification(userId, updates);
   }
-
+  
   // Helper methods
   private async uploadToS3(filePath: string, key: string): Promise<string> {
     const fileStream = createReadStream(filePath);
-
+    
     await this.s3Client.send(new PutObjectCommand({
       Bucket: process.env.S3_BUCKET!,
       Key: key,
       Body: fileStream
     }));
-
+    
     return `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${key}`;
   }
-
+  
   private async sendExportReadyEmail(userId: number, downloadUrl: string): Promise<void> {
     await EmailService.send({ to: user.email, subject: "Data Export Ready", html: `Your data export is ready: ${url}` });
   }
-
+  
   private convertToCSV(data: any): string {
     const csv = this.convertToCSV(data);
       return csv;
     return '';
   }
-
+  
   private convertToXML(data: any): string {
     const xml = this.convertToXML(data);
       return xml;
     return '';
   }
-
+  
   private async logDataRectification(userId: number, updates: any): Promise<void> {
     await AuditService.log({ userId, action: AuditAction.DELETE, resourceType: "user_data", resourceId: userId });
   }
@@ -8997,7 +9702,7 @@ export class SOC2Compliance {
       timestamp: new Date()
     });
   }
-
+  
   /**
    * CC6.2 - System Operations (Change Management)
    */
@@ -9018,7 +9723,7 @@ export class SOC2Compliance {
       timestamp: new Date()
     });
   }
-
+  
   /**
    * CC7.2 - Security Incident Detection and Response
    */
@@ -9038,17 +9743,17 @@ export class SOC2Compliance {
       detectedAt: new Date(),
       status: 'investigating'
     });
-
+    
     // Alert security team
     await this.alertSecurityTeam(incident);
   }
-
+  
   /**
    * CC6.3 - User Access Reviews (Quarterly)
    */
   async conductAccessReview(): Promise<void> {
     const allUsers = await db.query.users.findMany();
-
+    
     for (const user of allUsers) {
       await db.insert(accessReviews).values({
         userId: user.id,
@@ -9059,7 +9764,7 @@ export class SOC2Compliance {
       });
     }
   }
-
+  
   /**
    * CC8.1 - Change Management
    */
@@ -9081,7 +9786,7 @@ export class SOC2Compliance {
       timestamp: new Date()
     });
   }
-
+  
   private async alertSecurityTeam(incident: any): Promise<void> {
     await this.sendPagerDutyAlert(alert);
       await this.sendSlackAlert(alert);
@@ -9108,16 +9813,16 @@ export class PenetrationTesting {
       "admin'--",
       "' OR 1=1--"
     ];
-
+    
     const vulnerabilities: string[] = [];
-
+    
     for (const payload of payloads) {
       try {
         const response = await axios.post('http://localhost:3000/api/auth/login', {
           email: payload,
           password: 'test'
         });
-
+        
         if (response.status === 200) {
           vulnerabilities.push(`SQL Injection vulnerability detected with payload: ${payload}`);
         }
@@ -9125,13 +9830,13 @@ export class PenetrationTesting {
         // Expected to fail
       }
     }
-
+    
     return {
       vulnerable: vulnerabilities.length > 0,
       details: vulnerabilities
     };
   }
-
+  
   /**
    * XSS (Cross-Site Scripting) Test
    */
@@ -9142,9 +9847,9 @@ export class PenetrationTesting {
       "<svg onload=alert('XSS')>",
       "javascript:alert('XSS')"
     ];
-
+    
     const vulnerabilities: string[] = [];
-
+    
     for (const payload of payloads) {
       try {
         const response = await axios.post('http://localhost:3000/api/posts', {
@@ -9152,7 +9857,7 @@ export class PenetrationTesting {
         }, {
           headers: { Authorization: 'Bearer test-token' }
         });
-
+        
         if (response.data.content.includes('<script>') || 
             response.data.content.includes('onerror=')) {
           vulnerabilities.push(`XSS vulnerability detected with payload: ${payload}`);
@@ -9161,19 +9866,19 @@ export class PenetrationTesting {
         // Expected to fail
       }
     }
-
+    
     return {
       vulnerable: vulnerabilities.length > 0,
       details: vulnerabilities
     };
   }
-
+  
   /**
    * CSRF (Cross-Site Request Forgery) Test
    */
   async testCSRF(): Promise<{ vulnerable: boolean; details: string[] }> {
     const vulnerabilities: string[] = [];
-
+    
     try {
       // Attempt state-changing operation without CSRF token
       const response = await axios.post('http://localhost:3000/api/users/delete', {
@@ -9181,38 +9886,38 @@ export class PenetrationTesting {
       }, {
         headers: { Authorization: 'Bearer test-token' }
       });
-
+      
       if (response.status === 200) {
         vulnerabilities.push('CSRF vulnerability: State-changing operation allowed without CSRF token');
       }
     } catch (error) {
       // Expected to fail
     }
-
+    
     return {
       vulnerable: vulnerabilities.length > 0,
       details: vulnerabilities
     };
   }
-
+  
   /**
    * Authentication Bypass Test
    */
   async testAuthBypass(): Promise<{ vulnerable: boolean; details: string[] }> {
     const vulnerabilities: string[] = [];
-
+    
     const tests = [
       { name: 'No token', headers: {} },
       { name: 'Invalid token', headers: { Authorization: 'Bearer invalid' } },
       { name: 'Expired token', headers: { Authorization: 'Bearer expired' } }
     ];
-
+    
     for (const test of tests) {
       try {
         const response = await axios.get('http://localhost:3000/api/users/profile', {
           headers: test.headers
         });
-
+        
         if (response.status === 200) {
           vulnerabilities.push(`Auth bypass vulnerability: ${test.name}`);
         }
@@ -9220,13 +9925,13 @@ export class PenetrationTesting {
         // Expected to fail
       }
     }
-
+    
     return {
       vulnerable: vulnerabilities.length > 0,
       details: vulnerabilities
     };
   }
-
+  
   /**
    * Run complete penetration test suite
    */
@@ -9246,18 +9951,18 @@ export class PenetrationTesting {
       this.testCSRF(),
       this.testAuthBypass()
     ]);
-
+    
     const tests = [
       { name: 'SQL Injection', ...sqlInjection },
       { name: 'XSS', ...xss },
       { name: 'CSRF', ...csrf },
       { name: 'Auth Bypass', ...authBypass }
     ];
-
+    
     const totalVulnerabilities = tests.reduce((sum, test) => 
       sum + (test.vulnerable ? 1 : 0), 0
     );
-
+    
     return {
       summary: totalVulnerabilities === 0 
         ? 'No vulnerabilities detected' 
@@ -9287,7 +9992,7 @@ interface ThreatSignal {
 export class ThreatDetection {
   private suspiciousIPs: Map<string, number> = new Map();
   private loginAttempts: Map<string, number[]> = new Map();
-
+  
   /**
    * Detect brute force attacks
    */
@@ -9295,13 +10000,13 @@ export class ThreatDetection {
     const key = `${ipAddress}:${userId || 'unknown'}`;
     const attempts = this.loginAttempts.get(key) || [];
     const now = Date.now();
-
+    
     // Remove attempts older than 15 minutes
     const recentAttempts = attempts.filter(time => now - time < 15 * 60 * 1000);
     recentAttempts.push(now);
-
+    
     this.loginAttempts.set(key, recentAttempts);
-
+    
     // Alert if more than 5 attempts in 15 minutes
     if (recentAttempts.length > 5) {
       await this.logThreat({
@@ -9314,13 +10019,13 @@ export class ThreatDetection {
           timeWindow: '15min'
         }
       });
-
+      
       return true;
     }
-
+    
     return false;
   }
-
+  
   /**
    * Detect credential stuffing
    */
@@ -9333,9 +10038,9 @@ export class ThreatDetection {
         gte(auditLogs.timestamp, new Date(Date.now() - 60 * 60 * 1000))
       )
     });
-
+    
     const uniqueUsers = new Set(recentLogs.map(log => log.userId)).size;
-
+    
     if (uniqueUsers > 10) {
       await this.logThreat({
         type: 'credential_stuffing',
@@ -9346,13 +10051,13 @@ export class ThreatDetection {
           attempts: recentLogs.length
         }
       });
-
+      
       return true;
     }
-
+    
     return false;
   }
-
+  
   /**
    * Detect web scraping
    */
@@ -9364,7 +10069,7 @@ export class ThreatDetection {
         gte(auditLogs.timestamp, new Date(Date.now() - 60 * 1000))
       )
     });
-
+    
     if (recentRequests.length > 60) { // More than 1 req/sec
       await this.logThreat({
         type: 'scraping',
@@ -9375,13 +10080,13 @@ export class ThreatDetection {
           userAgent
         }
       });
-
+      
       return true;
     }
-
+    
     return false;
   }
-
+  
   /**
    * Detect suspicious patterns
    */
@@ -9397,10 +10102,10 @@ export class ThreatDetection {
     if (isAnomalous.score > 0.8) {
       await this.handleAnomaly(requestFeatures);
     }
-
+    
     return false;
   }
-
+  
   /**
    * Log threat
    */
@@ -9413,13 +10118,13 @@ export class ThreatDetection {
       metadata: signal.metadata,
       detectedAt: new Date()
     });
-
+    
     // Auto-block if severity > 7
     if (signal.severity > 7) {
       await this.blockIP(signal.ipAddress, signal.type);
     }
   }
-
+  
   /**
    * Block suspicious IP
    */
@@ -9948,7 +10653,7 @@ data:
     PORT=3000
     RATE_LIMIT_WINDOW_MS=900000
     RATE_LIMIT_MAX=100
-
+  
   nginx.conf: |
     worker_processes auto;
     events {
@@ -9959,11 +10664,11 @@ data:
         least_conn;
         server mundotango-api:80 max_fails=3 fail_timeout=30s;
       }
-
+      
       server {
         listen 80;
         server_name mundotango.life;
-
+        
         location / {
           proxy_pass http://api;
           proxy_set_header Host $host;
@@ -10621,20 +11326,20 @@ app.get('/metrics', async (req, res) => {
 app.get('/users/:id', async (req, res) => {
   const span = TracingService.startSpan('get-user');
   const start = Date.now();
-
+  
   try {
     // Business logic
     const user = await getUserById(parseInt(req.params.id));
-
+    
     metrics.recordHttpRequest('GET', '/users/:id', 200, Date.now() - start);
     span.end();
-
+    
     res.json(user);
   } catch (error) {
     metrics.recordHttpRequest('GET', '/users/:id', 500, Date.now() - start);
     TracingService.recordException(span, error as Error);
     span.end();
-
+    
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -10642,19 +11347,19 @@ app.get('/users/:id', async (req, res) => {
 app.post('/users', async (req, res) => {
   const span = TracingService.startSpan('create-user');
   const start = Date.now();
-
+  
   try {
     const user = await createUser(req.body);
-
+    
     metrics.recordHttpRequest('POST', '/users', 201, Date.now() - start);
     span.end();
-
+    
     res.status(201).json(user);
   } catch (error) {
     metrics.recordHttpRequest('POST', '/users', 500, Date.now() - start);
     TracingService.recordException(span, error as Error);
     span.end();
-
+    
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -10700,10 +11405,10 @@ app.get('/ready', async (req, res) => {
 app.get('/events/:id', async (req, res) => {
   const span = TracingService.startSpan('get-event');
   const start = Date.now();
-
+  
   try {
     const event = await getEventById(parseInt(req.params.id));
-
+    
     // Enrich with user data from user-service
     if (event.organizerId) {
       const userResponse = await axios.get(
@@ -10711,16 +11416,16 @@ app.get('/events/:id', async (req, res) => {
       );
       event.organizer = userResponse.data;
     }
-
+    
     metrics.recordHttpRequest('GET', '/events/:id', 200, Date.now() - start);
     span.end();
-
+    
     res.json(event);
   } catch (error) {
     metrics.recordHttpRequest('GET', '/events/:id', 500, Date.now() - start);
     TracingService.recordException(span, error as Error);
     span.end();
-
+    
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -10728,31 +11433,31 @@ app.get('/events/:id', async (req, res) => {
 app.post('/events', async (req, res) => {
   const span = TracingService.startSpan('create-event');
   const start = Date.now();
-
+  
   try {
     // Validate organizer exists
     const userResponse = await axios.get(
       `http://user-service/users/${req.body.organizerId}`
     );
-
+    
     if (!userResponse.data) {
       return res.status(400).json({ error: 'Organizer not found' });
     }
-
+    
     const event = await createEvent(req.body);
-
+    
     // Publish event created message
     await publishMessage('event.created', event);
-
+    
     metrics.recordHttpRequest('POST', '/events', 201, Date.now() - start);
     span.end();
-
+    
     res.status(201).json(event);
   } catch (error) {
     metrics.recordHttpRequest('POST', '/events', 500, Date.now() - start);
     TracingService.recordException(span, error as Error);
     span.end();
-
+    
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -10812,14 +11517,14 @@ app.use('/api/payments', createProxyMiddleware({
 app.get('/api/dashboard', async (req, res) => {
   try {
     const userId = req.query.userId;
-
+    
     // Fetch data from multiple services in parallel
     const [user, events, messages] = await Promise.all([
       axios.get(`${services.users}/users/${userId}`),
       axios.get(`${services.events}/events?organizerId=${userId}`),
       axios.get(`${services.messaging}/messages?userId=${userId}&limit=10`)
     ]);
-
+    
     res.json({
       user: user.data,
       events: events.data,
@@ -10844,12 +11549,12 @@ import axios from 'axios';
 export class ServiceMeshMonitor {
   private kialiUrl: string;
   private jaegerUrl: string;
-
+  
   constructor() {
     this.kialiUrl = process.env.KIALI_URL || 'http://kiali.istio-system:20001';
     this.jaegerUrl = process.env.JAEGER_URL || 'http://jaeger-query.istio-system:16686';
   }
-
+  
   /**
    * Get service graph from Kiali
    */
@@ -10861,10 +11566,10 @@ export class ServiceMeshMonitor {
         duration: '10m'
       }
     });
-
+    
     return response.data;
   }
-
+  
   /**
    * Get distributed traces from Jaeger
    */
@@ -10875,10 +11580,10 @@ export class ServiceMeshMonitor {
         limit
       }
     });
-
+    
     return response.data;
   }
-
+  
   /**
    * Get service health metrics
    */
@@ -10886,10 +11591,10 @@ export class ServiceMeshMonitor {
     const response = await axios.get(
       `${this.kialiUrl}/api/namespaces/${namespace}/services/${service}/health`
     );
-
+    
     return response.data;
   }
-
+  
   /**
    * Get request rates
    */
@@ -10903,7 +11608,7 @@ export class ServiceMeshMonitor {
         }
       }
     );
-
+    
     return response.data;
   }
 }
@@ -11061,7 +11766,7 @@ export class RBACService {
    */
   async hasPermission(context: PermissionContext): Promise<boolean> {
     const { userId, resource, action, resourceId, attributes = {} } = context;
-
+    
     // Get user's roles
     const userRoleRecords = await db.query.userRoles.findMany({
       where: and(
@@ -11083,14 +11788,14 @@ export class RBACService {
         }
       }
     });
-
+    
     // Check role-based permissions
     for (const userRole of userRoleRecords) {
       const rolePerms = userRole.role.rolePermissions;
-
+      
       for (const rolePerm of rolePerms) {
         const perm = rolePerm.permission;
-
+        
         if (perm.resource === resource && perm.action === action) {
           // Check if permission conditions are met
           if (perm.conditions) {
@@ -11099,10 +11804,10 @@ export class RBACService {
               resourceId,
               ...attributes
             });
-
+            
             if (!conditionsMet) continue;
           }
-
+          
           // Check role permission overrides
           if (rolePerm.conditions) {
             const overridesMet = this.evaluateConditions(rolePerm.conditions, {
@@ -11110,17 +11815,17 @@ export class RBACService {
               resourceId,
               ...attributes
             });
-
+            
             if (!overridesMet) continue;
           }
-
+          
           if (rolePerm.granted) {
             return true;
           }
         }
       }
     }
-
+    
     // Check policy-based permissions (ABAC)
     const policies = await db.query.permissionPolicies.findMany({
       where: and(
@@ -11130,47 +11835,47 @@ export class RBACService {
       ),
       orderBy: (policies, { desc }) => [desc(policies.priority)]
     });
-
+    
     for (const policy of policies) {
       const conditionsMet = this.evaluateConditions(policy.conditions, {
         userId,
         resourceId,
         ...attributes
       });
-
+      
       if (conditionsMet) {
         return policy.effect === 'allow';
       }
     }
-
+    
     return false;
   }
-
+  
   /**
    * Evaluate permission conditions (ABAC)
    */
   private evaluateConditions(conditions: any, context: any): boolean {
     if (!conditions) return true;
-
+    
     // Support for various condition types
     if (conditions.all) {
       return conditions.all.every((cond: any) => this.evaluateCondition(cond, context));
     }
-
+    
     if (conditions.any) {
       return conditions.any.some((cond: any) => this.evaluateCondition(cond, context));
     }
-
+    
     return this.evaluateCondition(conditions, context);
   }
-
+  
   /**
    * Evaluate single condition
    */
   private evaluateCondition(condition: any, context: any): boolean {
     const { field, operator, value } = condition;
     const contextValue = this.getNestedValue(context, field);
-
+    
     switch (operator) {
       case 'equals':
         return contextValue === value;
@@ -11200,14 +11905,14 @@ export class RBACService {
         return false;
     }
   }
-
+  
   /**
    * Get nested value from object
    */
   private getNestedValue(obj: any, path: string): any {
     return path.split('.').reduce((current, key) => current?.[key], obj);
   }
-
+  
   /**
    * Assign role to user
    */
@@ -11219,7 +11924,7 @@ export class RBACService {
     grantedBy: number;
   }): Promise<void> {
     const { userId, roleId, scope, expiresAt, grantedBy } = params;
-
+    
     // Check if role assignment already exists
     const existing = await db.query.userRoles.findFirst({
       where: and(
@@ -11228,11 +11933,11 @@ export class RBACService {
         eq(userRoles.scope, scope || null)
       )
     });
-
+    
     if (existing) {
       throw new Error('Role already assigned to user');
     }
-
+    
     // Create role assignment
     await db.insert(userRoles).values({
       userId,
@@ -11241,7 +11946,7 @@ export class RBACService {
       expiresAt,
       grantedBy
     });
-
+    
     // Audit log
     await this.logPermissionChange({
       userId: grantedBy,
@@ -11251,7 +11956,7 @@ export class RBACService {
       changes: { roleId, scope, expiresAt }
     });
   }
-
+  
   /**
    * Revoke role from user
    */
@@ -11262,7 +11967,7 @@ export class RBACService {
     revokedBy: number;
   }): Promise<void> {
     const { userId, roleId, scope, revokedBy } = params;
-
+    
     await db.delete(userRoles).where(
       and(
         eq(userRoles.userId, userId),
@@ -11270,7 +11975,7 @@ export class RBACService {
         eq(userRoles.scope, scope || null)
       )
     );
-
+    
     // Audit log
     await this.logPermissionChange({
       userId: revokedBy,
@@ -11280,7 +11985,7 @@ export class RBACService {
       changes: { roleId, scope }
     });
   }
-
+  
   /**
    * Create custom role
    */
@@ -11293,7 +11998,7 @@ export class RBACService {
     createdBy: number;
   }): Promise<number> {
     const { name, displayName, description, parentRoleId, permissionIds, createdBy } = params;
-
+    
     // Calculate hierarchy level
     let level = 0;
     if (parentRoleId) {
@@ -11302,7 +12007,7 @@ export class RBACService {
       });
       level = (parentRole?.level || 0) + 1;
     }
-
+    
     // Create role
     const [role] = await db.insert(roles).values({
       name,
@@ -11313,7 +12018,7 @@ export class RBACService {
       parentRoleId,
       level
     }).returning();
-
+    
     // Assign permissions to role
     if (permissionIds.length > 0) {
       await db.insert(rolePermissions).values(
@@ -11324,7 +12029,7 @@ export class RBACService {
         }))
       );
     }
-
+    
     // Audit log
     await this.logPermissionChange({
       userId: createdBy,
@@ -11333,10 +12038,10 @@ export class RBACService {
       resourceId: role.id,
       changes: { name, displayName, permissionIds }
     });
-
+    
     return role.id;
   }
-
+  
   /**
    * Update role permissions
    */
@@ -11346,10 +12051,10 @@ export class RBACService {
     updatedBy: number;
   }): Promise<void> {
     const { roleId, permissionIds, updatedBy } = params;
-
+    
     // Delete existing permissions
     await db.delete(rolePermissions).where(eq(rolePermissions.roleId, roleId));
-
+    
     // Add new permissions
     if (permissionIds.length > 0) {
       await db.insert(rolePermissions).values(
@@ -11360,7 +12065,7 @@ export class RBACService {
         }))
       );
     }
-
+    
     // Audit log
     await this.logPermissionChange({
       userId: updatedBy,
@@ -11370,7 +12075,7 @@ export class RBACService {
       changes: { permissionIds }
     });
   }
-
+  
   /**
    * Get user's effective permissions
    */
@@ -11399,18 +12104,18 @@ export class RBACService {
         }
       }
     });
-
+    
     const permissionsMap = new Map<string, any>();
-
+    
     for (const userRole of userRoleRecords) {
       const rolePerms = userRole.role.rolePermissions;
-
+      
       for (const rolePerm of rolePerms) {
         if (!rolePerm.granted) continue;
-
+        
         const perm = rolePerm.permission;
         const key = `${perm.resource}:${perm.action}`;
-
+        
         if (!permissionsMap.has(key)) {
           permissionsMap.set(key, {
             resource: perm.resource,
@@ -11420,25 +12125,25 @@ export class RBACService {
         }
       }
     }
-
+    
     return Array.from(permissionsMap.values());
   }
-
+  
   /**
    * Build CASL ability for user
    */
   async buildAbility(userId: number) {
     const permissions = await this.getUserPermissions(userId);
-
+    
     const { can, cannot, build } = new AbilityBuilder(defineAbility);
-
+    
     for (const perm of permissions) {
       can(perm.action, perm.resource, perm.conditions);
     }
-
+    
     return build();
   }
-
+  
   /**
    * Log permission changes
    */
@@ -11477,11 +12182,11 @@ const rbacService = new RBACService();
 export function requirePermission(resource: string, action: string) {
   return async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user?.id;
-
+    
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-
+    
     const hasPermission = await rbacService.hasPermission({
       userId,
       resource,
@@ -11492,14 +12197,14 @@ export function requirePermission(resource: string, action: string) {
         ...req.query
       }
     });
-
+    
     if (!hasPermission) {
       return res.status(403).json({
         error: 'Forbidden',
         message: `You don't have permission to ${action} ${resource}`
       });
     }
-
+    
     next();
   };
 }
@@ -11510,11 +12215,11 @@ export function requirePermission(resource: string, action: string) {
 export function requireAnyPermission(permissions: Array<{ resource: string; action: string }>) {
   return async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user?.id;
-
+    
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-
+    
     const checks = await Promise.all(
       permissions.map(perm => 
         rbacService.hasPermission({
@@ -11524,13 +12229,13 @@ export function requireAnyPermission(permissions: Array<{ resource: string; acti
         })
       )
     );
-
+    
     const hasAnyPermission = checks.some(check => check);
-
+    
     if (!hasAnyPermission) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-
+    
     next();
   };
 }
@@ -11541,16 +12246,16 @@ export function requireAnyPermission(permissions: Array<{ resource: string; acti
 export function requireRole(roleName: string) {
   return async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user?.id;
-
+    
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-
+    
     const userRoles = await db.query.userRoles.findMany({
       where: eq(userRoles.userId, userId)
     });
     const hasRole = userRoles.some(r => r.role === requiredRole);
-
+    
     next();
   };
 }
@@ -11571,25 +12276,25 @@ export async function seedRBAC() {
     { name: 'user:read', resource: 'users', action: 'read', displayName: 'View User' },
     { name: 'user:update', resource: 'users', action: 'update', displayName: 'Update User' },
     { name: 'user:delete', resource: 'users', action: 'delete', displayName: 'Delete User' },
-
+    
     // Event permissions
     { name: 'event:create', resource: 'events', action: 'create', displayName: 'Create Event' },
     { name: 'event:read', resource: 'events', action: 'read', displayName: 'View Event' },
     { name: 'event:update', resource: 'events', action: 'update', displayName: 'Update Event' },
     { name: 'event:delete', resource: 'events', action: 'delete', displayName: 'Delete Event' },
-
+    
     // Post permissions
     { name: 'post:create', resource: 'posts', action: 'create', displayName: 'Create Post' },
     { name: 'post:read', resource: 'posts', action: 'read', displayName: 'View Post' },
     { name: 'post:update', resource: 'posts', action: 'update', displayName: 'Update Post' },
     { name: 'post:delete', resource: 'posts', action: 'delete', displayName: 'Delete Post' },
-
+    
     // Admin permissions
     { name: 'admin:access', resource: 'admin', action: 'access', displayName: 'Access Admin Panel' },
     { name: 'role:manage', resource: 'roles', action: 'manage', displayName: 'Manage Roles' },
     { name: 'permission:manage', resource: 'permissions', action: 'manage', displayName: 'Manage Permissions' }
   ]).returning();
-
+  
   // Create roles
   const adminRole = await db.insert(roles).values({
     name: 'admin',
@@ -11599,7 +12304,7 @@ export async function seedRBAC() {
     isSystem: true,
     level: 0
   }).returning();
-
+  
   const moderatorRole = await db.insert(roles).values({
     name: 'moderator',
     displayName: 'Moderator',
@@ -11609,7 +12314,7 @@ export async function seedRBAC() {
     level: 1,
     parentRoleId: adminRole[0].id
   }).returning();
-
+  
   const userRole = await db.insert(roles).values({
     name: 'user',
     displayName: 'User',
@@ -11618,7 +12323,7 @@ export async function seedRBAC() {
     isSystem: true,
     level: 2
   }).returning();
-
+  
   // Assign all permissions to admin
   await db.insert(rolePermissions).values(
     perms.map(perm => ({
@@ -11627,12 +12332,12 @@ export async function seedRBAC() {
       granted: true
     }))
   );
-
+  
   // Assign specific permissions to moderator
   const modPerms = perms.filter(p => 
     p.resource === 'posts' || p.resource === 'events'
   );
-
+  
   await db.insert(rolePermissions).values(
     modPerms.map(perm => ({
       roleId: moderatorRole[0].id,
@@ -11640,12 +12345,12 @@ export async function seedRBAC() {
       granted: true
     }))
   );
-
+  
   // Assign basic permissions to user
   const basicPerms = perms.filter(p => 
     p.action === 'read' || (p.action === 'create' && p.resource !== 'users')
   );
-
+  
   await db.insert(rolePermissions).values(
     basicPerms.map(perm => ({
       roleId: userRole[0].id,
@@ -11653,7 +12358,7 @@ export async function seedRBAC() {
       granted: true
     }))
   );
-
+  
   console.log('✅ RBAC seeded successfully');
 }
 ```
@@ -11676,44 +12381,44 @@ import { pgTable, serial, varchar, text, timestamp, jsonb, integer, boolean } fr
 export const auditLogs = pgTable('audit_logs', {
   id: serial('id').primaryKey(),
   timestamp: timestamp('timestamp').notNull().defaultNow(),
-
+  
   // Actor information
   userId: integer('user_id'),
   actorType: varchar('actor_type', { length: 50 }).notNull(), // user, system, api, cron
   actorId: varchar('actor_id', { length: 255 }),
   actorEmail: varchar('actor_email', { length: 255 }),
   actorName: varchar('actor_name', { length: 255 }),
-
+  
   // Action details
   action: varchar('action', { length: 100 }).notNull(), // create, update, delete, login, etc.
   resource: varchar('resource', { length: 100 }).notNull(), // users, events, posts, etc.
   resourceId: varchar('resource_id', { length: 255 }),
-
+  
   // Change tracking
   changeType: varchar('change_type', { length: 50 }), // insert, update, delete
   oldValues: jsonb('old_values'),
   newValues: jsonb('new_values'),
   diff: jsonb('diff'), // Computed differences
-
+  
   // Request context
   ipAddress: varchar('ip_address', { length: 45 }),
   userAgent: text('user_agent'),
   requestId: varchar('request_id', { length: 100 }),
   sessionId: varchar('session_id', { length: 100 }),
-
+  
   // Result
   success: boolean('success').notNull().default(true),
   errorMessage: text('error_message'),
   statusCode: integer('status_code'),
-
+  
   // Additional metadata
   metadata: jsonb('metadata'),
   tags: jsonb('tags'), // For categorization
-
+  
   // Compliance
   dataClassification: varchar('data_classification', { length: 50 }), // public, internal, confidential, restricted
   retentionPolicy: varchar('retention_policy', { length: 50 }).default('standard'), // standard, extended, permanent
-
+  
   // Immutability
   checksum: varchar('checksum', { length: 64 }) // SHA-256 hash for tamper detection
 });
@@ -11777,7 +12482,7 @@ export class AuditService {
     const diff = entry.oldValues && entry.newValues
       ? this.calculateDiff(entry.oldValues, entry.newValues)
       : null;
-
+    
     // Prepare audit log entry
     const logEntry = {
       userId: entry.userId,
@@ -11805,17 +12510,17 @@ export class AuditService {
       retentionPolicy: this.determineRetentionPolicy(entry),
       checksum: '' // Will be set below
     };
-
+    
     // Calculate checksum for immutability
     logEntry.checksum = this.calculateChecksum(logEntry);
-
+    
     // Insert into database
     await db.insert(auditLogs).values(logEntry);
-
+    
     // Async tasks (don't await)
     this.processAuditLog(logEntry).catch(console.error);
   }
-
+  
   /**
    * Log user action
    */
@@ -11837,7 +12542,7 @@ export class AuditService {
       metadata
     }, req);
   }
-
+  
   /**
    * Log data change
    */
@@ -11862,7 +12567,7 @@ export class AuditService {
       success: true
     }, req);
   }
-
+  
   /**
    * Log authentication event
    */
@@ -11884,7 +12589,7 @@ export class AuditService {
       dataClassification: 'confidential'
     }, req);
   }
-
+  
   /**
    * Log security event
    */
@@ -11904,7 +12609,7 @@ export class AuditService {
       dataClassification: 'confidential'
     }, req);
   }
-
+  
   /**
    * Log API request
    */
@@ -11926,7 +12631,7 @@ export class AuditService {
       metadata: { method, path, duration }
     }, req);
   }
-
+  
   /**
    * Query audit logs
    */
@@ -11941,39 +12646,39 @@ export class AuditService {
     offset?: number;
   }) {
     let query = db.select().from(auditLogs);
-
+    
     if (filters.userId) {
       query = query.where(eq(auditLogs.userId, filters.userId));
     }
-
+    
     if (filters.resource) {
       query = query.where(eq(auditLogs.resource, filters.resource));
     }
-
+    
     if (filters.action) {
       query = query.where(eq(auditLogs.action, filters.action));
     }
-
+    
     if (filters.startDate) {
       query = query.where(gte(auditLogs.timestamp, filters.startDate));
     }
-
+    
     if (filters.endDate) {
       query = query.where(lte(auditLogs.timestamp, filters.endDate));
     }
-
+    
     if (filters.success !== undefined) {
       query = query.where(eq(auditLogs.success, filters.success));
     }
-
+    
     query = query
       .orderBy(desc(auditLogs.timestamp))
       .limit(filters.limit || 100)
       .offset(filters.offset || 0);
-
+    
     return await query;
   }
-
+  
   /**
    * Get user activity timeline
    */
@@ -11984,7 +12689,7 @@ export class AuditService {
       limit
     });
   }
-
+  
   /**
    * Get resource history
    */
@@ -11997,7 +12702,7 @@ export class AuditService {
       orderBy: (logs, { asc }) => [asc(logs.timestamp)]
     });
   }
-
+  
   /**
    * Verify log integrity
    */
@@ -12005,23 +12710,23 @@ export class AuditService {
     const log = await db.query.auditLogs.findFirst({
       where: eq(auditLogs.id, logId)
     });
-
+    
     if (!log) return false;
-
+    
     const storedChecksum = log.checksum;
     const calculatedChecksum = this.calculateChecksum({ ...log, checksum: '' });
-
+    
     return storedChecksum === calculatedChecksum;
   }
-
+  
   // Private helper methods
-
+  
   /**
    * Calculate diff between old and new values
    */
   private static calculateDiff(oldValues: any, newValues: any): any {
     const diff: any = {};
-
+    
     for (const key in newValues) {
       if (oldValues[key] !== newValues[key]) {
         diff[key] = {
@@ -12030,10 +12735,10 @@ export class AuditService {
         };
       }
     }
-
+    
     return diff;
   }
-
+  
   /**
    * Calculate checksum for tamper detection
    */
@@ -12041,7 +12746,7 @@ export class AuditService {
     const data = JSON.stringify(entry);
     return createHash('sha256').update(data).digest('hex');
   }
-
+  
   /**
    * Determine retention policy based on entry
    */
@@ -12050,21 +12755,21 @@ export class AuditService {
     if (entry.tags?.includes('security') || entry.resource === 'authentication') {
       return 'extended';
     }
-
+    
     // Confidential data: extended retention
     if (entry.dataClassification === 'confidential' || entry.dataClassification === 'restricted') {
       return 'extended';
     }
-
+    
     // Failed operations: extended retention
     if (!entry.success) {
       return 'extended';
     }
-
+    
     // Default: standard retention
     return 'standard';
   }
-
+  
   /**
    * Process audit log asynchronously
    */
@@ -12086,12 +12791,12 @@ import { AuditService } from '../services/AuditService';
 
 export function auditMiddleware(req: Request, res: Response, next: NextFunction) {
   const start = Date.now();
-
+  
   // Capture response
   res.on('finish', async () => {
     const duration = Date.now() - start;
     const userId = req.user?.id;
-
+    
     // Only log mutations and important reads
     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) || 
         req.path.includes('/admin/')) {
@@ -12105,7 +12810,7 @@ export function auditMiddleware(req: Request, res: Response, next: NextFunction)
       );
     }
   });
-
+  
   next();
 }
 ```
@@ -12211,7 +12916,7 @@ export async function cleanupOldAuditLogs() {
     extended: 365, // 1 year
     permanent: null // Never delete
   };
-
+  
   // Delete standard retention logs older than 90 days
   await db.delete(auditLogs).where(
     and(
@@ -12219,7 +12924,7 @@ export async function cleanupOldAuditLogs() {
       sql`${auditLogs.timestamp} < NOW() - INTERVAL '90 days'`
     )
   );
-
+  
   // Archive extended retention logs older than 1 year
   const oldExtendedLogs = await db.select().from(auditLogs).where(
     and(
@@ -12227,11 +12932,11 @@ export async function cleanupOldAuditLogs() {
       sql`${auditLogs.timestamp} < NOW() - INTERVAL '365 days'`
     )
   );
-
+  
   // Export to S3 for archival
   if (oldExtendedLogs.length > 0) {
     await archiveToS3(oldExtendedLogs);
-
+    
     // Delete after archival
     await db.delete(auditLogs).where(
       and(
@@ -12240,7 +12945,7 @@ export async function cleanupOldAuditLogs() {
       )
     );
   }
-
+  
   console.log(`✅ Audit log cleanup complete`);
 }
 
@@ -12267,11 +12972,11 @@ export function AuditDashboard() {
   const { data: auditLogs } = useQuery({
     queryKey: ['/api/admin/audit-logs'],
   });
-
+  
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Audit Logs</h1>
-
+      
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader>
@@ -12281,7 +12986,7 @@ export function AuditDashboard() {
             <div className="text-3xl font-bold">{auditLogs?.total || 0}</div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>Failed Actions</CardTitle>
@@ -12292,7 +12997,7 @@ export function AuditDashboard() {
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>Security Events</CardTitle>
@@ -12303,7 +13008,7 @@ export function AuditDashboard() {
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>Active Users</CardTitle>
@@ -12313,7 +13018,7 @@ export function AuditDashboard() {
           </CardContent>
         </Card>
       </div>
-
+      
       <Card>
         <CardHeader>
           <CardTitle>Recent Activity</CardTitle>
@@ -12381,7 +13086,7 @@ services:
       - "17000:17000"
     networks:
       - redis-cluster
-
+  
   redis-node-2:
     image: redis:7-alpine
     command: redis-server /usr/local/etc/redis/redis.conf
@@ -12393,7 +13098,7 @@ services:
       - "17001:17001"
     networks:
       - redis-cluster
-
+  
   redis-node-3:
     image: redis:7-alpine
     command: redis-server /usr/local/etc/redis/redis.conf
@@ -12405,7 +13110,7 @@ services:
       - "17002:17002"
     networks:
       - redis-cluster
-
+  
   redis-node-4:
     image: redis:7-alpine
     command: redis-server /usr/local/etc/redis/redis.conf
@@ -12417,7 +13122,7 @@ services:
       - "17003:17003"
     networks:
       - redis-cluster
-
+  
   redis-node-5:
     image: redis:7-alpine
     command: redis-server /usr/local/etc/redis/redis.conf
@@ -12429,7 +13134,7 @@ services:
       - "17004:17004"
     networks:
       - redis-cluster
-
+  
   redis-node-6:
     image: redis:7-alpine
     command: redis-server /usr/local/etc/redis/redis.conf
@@ -12441,7 +13146,7 @@ services:
       - "17005:17005"
     networks:
       - redis-cluster
-
+  
   redis-cluster-init:
     image: redis:7-alpine
     command: >
@@ -12507,7 +13212,7 @@ export class CacheService {
   private static redis: Redis;
   private static redisCluster: Redis.Cluster;
   private static memoryCache: LRUCache<string, any>;
-
+  
   /**
    * Initialize cache clients
    */
@@ -12525,14 +13230,14 @@ export class CacheService {
         password: process.env.REDIS_PASSWORD
       }
     });
-
+    
     // Standalone Redis (for pub/sub)
     this.redis = new Redis({
       host: process.env.REDIS_HOST || 'localhost',
       port: parseInt(process.env.REDIS_PORT || '6379'),
       password: process.env.REDIS_PASSWORD
     });
-
+    
     // In-memory L1 cache
     this.memoryCache = new LRUCache({
       max: 500, // Max items
@@ -12540,10 +13245,10 @@ export class CacheService {
       sizeCalculation: (value) => JSON.stringify(value).length,
       ttl: 1000 * 60 * 5 // 5 minutes
     });
-
+    
     console.log('✅ Cache service initialized');
   }
-
+  
   /**
    * Get from cache (multi-layer)
    */
@@ -12553,37 +13258,37 @@ export class CacheService {
     if (memoryValue !== undefined) {
       return memoryValue as T;
     }
-
+    
     // L2: Redis
     const redisValue = await this.redisCluster.get(key);
     if (redisValue) {
       const parsed = JSON.parse(redisValue);
-
+      
       // Populate L1 cache
       this.memoryCache.set(key, parsed);
-
+      
       return parsed as T;
     }
-
+    
     return null;
   }
-
+  
   /**
    * Set in cache (multi-layer)
    */
   static async set(key: string, value: any, options: CacheOptions = {}): Promise<void> {
     const serialized = JSON.stringify(value);
-
+    
     // Set in Redis
     if (options.ttl) {
       await this.redisCluster.setex(key, options.ttl, serialized);
     } else {
       await this.redisCluster.set(key, serialized);
     }
-
+    
     // Set in memory cache
     this.memoryCache.set(key, value);
-
+    
     // Store tags for invalidation
     if (options.tags) {
       for (const tag of options.tags) {
@@ -12591,7 +13296,7 @@ export class CacheService {
       }
     }
   }
-
+  
   /**
    * Delete from cache
    */
@@ -12599,56 +13304,56 @@ export class CacheService {
     await this.redisCluster.del(key);
     this.memoryCache.delete(key);
   }
-
+  
   /**
    * Invalidate by tag
    */
   static async invalidateTag(tag: string): Promise<void> {
     const keys = await this.redisCluster.smembers(`tag:${tag}`);
-
+    
     if (keys.length > 0) {
       // Delete from Redis
       await this.redisCluster.del(...keys);
-
+      
       // Delete from memory cache
       for (const key of keys) {
         this.memoryCache.delete(key);
       }
-
+      
       // Remove tag set
       await this.redisCluster.del(`tag:${tag}`);
     }
   }
-
+  
   /**
    * Invalidate by pattern
    */
   static async invalidatePattern(pattern: string): Promise<void> {
     const keys: string[] = [];
-
+    
     // Scan for matching keys
     const stream = this.redisCluster.scanStream({
       match: pattern,
       count: 100
     });
-
+    
     stream.on('data', (resultKeys) => {
       keys.push(...resultKeys);
     });
-
+    
     await new Promise((resolve) => {
       stream.on('end', resolve);
     });
-
+    
     if (keys.length > 0) {
       await this.redisCluster.del(...keys);
-
+      
       for (const key of keys) {
         this.memoryCache.delete(key);
       }
     }
   }
-
+  
   /**
    * Cache-aside pattern (lazy loading)
    */
@@ -12662,16 +13367,16 @@ export class CacheService {
     if (cached !== null) {
       return cached;
     }
-
+    
     // Fetch fresh data
     const fresh = await fetcher();
-
+    
     // Store in cache
     await this.set(key, fresh, options);
-
+    
     return fresh;
   }
-
+  
   /**
    * Write-through cache pattern
    */
@@ -12683,11 +13388,11 @@ export class CacheService {
   ): Promise<void> {
     // Write to database first
     await persister(value);
-
+    
     // Then update cache
     await this.set(key, value, options);
   }
-
+  
   /**
    * Distributed lock
    */
@@ -12702,17 +13407,17 @@ export class CacheService {
       ttl,
       'NX'
     );
-
+    
     return result === 'OK';
   }
-
+  
   /**
    * Release lock
    */
   static async releaseLock(lockKey: string): Promise<void> {
     await this.redisCluster.del(`lock:${lockKey}`);
   }
-
+  
   /**
    * Cache warming
    */
@@ -12726,21 +13431,21 @@ export class CacheService {
       })
     );
   }
-
+  
   /**
    * Increment counter
    */
   static async increment(key: string, amount: number = 1): Promise<number> {
     return await this.redisCluster.incrby(key, amount);
   }
-
+  
   /**
    * Decrement counter
    */
   static async decrement(key: string, amount: number = 1): Promise<number> {
     return await this.redisCluster.decrby(key, amount);
   }
-
+  
   /**
    * Add to sorted set
    */
@@ -12751,7 +13456,7 @@ export class CacheService {
   ): Promise<void> {
     await this.redisCluster.zadd(key, score, member);
   }
-
+  
   /**
    * Get from sorted set
    */
@@ -12762,7 +13467,7 @@ export class CacheService {
   ): Promise<string[]> {
     return await this.redisCluster.zrange(key, start, end);
   }
-
+  
   /**
    * Cache statistics
    */
@@ -12774,7 +13479,7 @@ export class CacheService {
   }> {
     const info = await this.redisCluster.info('stats');
     const keyCount = await this.redisCluster.dbsize();
-
+    
     // Parse info
     const stats: any = {};
     info.split('\r\n').forEach(line => {
@@ -12783,11 +13488,11 @@ export class CacheService {
         stats[key] = value;
       }
     });
-
+    
     const hits = parseInt(stats.keyspace_hits || '0');
     const misses = parseInt(stats.keyspace_misses || '0');
     const total = hits + misses;
-
+    
     return {
       memoryUsage: parseInt(stats.used_memory || '0'),
       hitRate: total > 0 ? hits / total : 0,
@@ -12816,7 +13521,7 @@ export class CacheInvalidationService {
       CacheService.invalidatePattern(`user:${userId}:*`)
     ]);
   }
-
+  
   /**
    * Invalidate event-related caches
    */
@@ -12828,7 +13533,7 @@ export class CacheInvalidationService {
       CacheService.invalidateTag('upcoming-events')
     ]);
   }
-
+  
   /**
    * Invalidate post-related caches
    */
@@ -12839,7 +13544,7 @@ export class CacheInvalidationService {
       CacheService.invalidateTag('feed')
     ]);
   }
-
+  
   /**
    * Invalidate on user action
    */
@@ -12847,14 +13552,14 @@ export class CacheInvalidationService {
     await this.invalidateUser(userId);
     await CacheService.invalidateTag(`user-${userId}`);
   }
-
+  
   /**
    * Invalidate on event update
    */
   static async onEventUpdate(eventId: number): Promise<void> {
     await this.invalidateEvent(eventId);
   }
-
+  
   /**
    * Invalidate on post creation
    */
@@ -12878,14 +13583,14 @@ import { desc, gte } from 'drizzle-orm';
 
 export async function warmCaches() {
   console.log('🔥 Starting cache warming...');
-
+  
   // Warm popular events
   const upcomingEvents = await db.query.events.findMany({
     where: gte(events.startTime, new Date()),
     orderBy: [desc(events.attendeeCount)],
     limit: 50
   });
-
+  
   for (const event of upcomingEvents) {
     await CacheService.set(
       `event:${event.id}`,
@@ -12893,13 +13598,13 @@ export async function warmCaches() {
       { ttl: 3600, tags: ['events', 'upcoming-events'] }
     );
   }
-
+  
   // Warm popular posts
   const popularPosts = await db.query.posts.findMany({
     orderBy: [desc(posts.likeCount)],
     limit: 100
   });
-
+  
   for (const post of popularPosts) {
     await CacheService.set(
       `post:${post.id}`,
@@ -12907,13 +13612,13 @@ export async function warmCaches() {
       { ttl: 1800, tags: ['posts'] }
     );
   }
-
+  
   // Warm active users
   const activeUsers = await db.query.users.findMany({
     where: gte(users.lastSeen, new Date(Date.now() - 24 * 60 * 60 * 1000)),
     limit: 500
   });
-
+  
   for (const user of activeUsers) {
     await CacheService.set(
       `user:${user.id}`,
@@ -12921,7 +13626,7 @@ export async function warmCaches() {
       { ttl: 900, tags: ['users'] }
     );
   }
-
+  
   console.log('✅ Cache warming complete');
 }
 ```
@@ -12942,25 +13647,25 @@ export function httpCache(ttl: number = 60) {
     if (req.method !== 'GET') {
       return next();
     }
-
+    
     const cacheKey = `http:${req.path}:${JSON.stringify(req.query)}`;
-
+    
     // Try to get from cache
     const cached = await CacheService.get(cacheKey);
-
+    
     if (cached) {
       return res.json(cached);
     }
-
+    
     // Store original send method
     const originalSend = res.json.bind(res);
-
+    
     // Override send to cache response
     res.json = function(data: any) {
       CacheService.set(cacheKey, data, { ttl }).catch(console.error);
       return originalSend(data);
     };
-
+    
     next();
   };
 }
@@ -12993,7 +13698,7 @@ export class CachingPatterns {
   ): Promise<T> {
     return await CacheService.getOrSet(key, fetcher, { ttl });
   }
-
+  
   /**
    * Write-through cache
    */
@@ -13005,7 +13710,7 @@ export class CachingPatterns {
   ): Promise<void> {
     await CacheService.setAndPersist(key, value, persister, { ttl });
   }
-
+  
   /**
    * Write-behind (write-back) cache
    */
@@ -13017,11 +13722,11 @@ export class CachingPatterns {
   ): Promise<void> {
     // Update cache immediately
     await CacheService.set(key, value, { ttl });
-
+    
     // Persist asynchronously (fire and forget)
     persister(value).catch(console.error);
   }
-
+  
   /**
    * Cache stampede prevention (dog-pile effect)
    */
@@ -13031,24 +13736,24 @@ export class CachingPatterns {
     ttl: number = 3600
   ): Promise<T> {
     const lockKey = `${key}:lock`;
-
+    
     // Try to get from cache
     const cached = await CacheService.get<T>(key);
     if (cached !== null) {
       return cached;
     }
-
+    
     // Try to acquire lock
     const acquired = await CacheService.acquireLock(lockKey, 30);
-
+    
     if (acquired) {
       try {
         // Fetch fresh data
         const fresh = await fetcher();
-
+        
         // Store in cache
         await CacheService.set(key, fresh, { ttl });
-
+        
         return fresh;
       } finally {
         // Release lock
@@ -13057,18 +13762,18 @@ export class CachingPatterns {
     } else {
       // Wait for lock holder to populate cache
       await new Promise(resolve => setTimeout(resolve, 100));
-
+      
       // Try again
       const updated = await CacheService.get<T>(key);
       if (updated !== null) {
         return updated;
       }
-
+      
       // Fallback: fetch without lock
       return await fetcher();
     }
   }
-
+  
   /**
    * Probabilistic early expiration
    */
@@ -13079,22 +13784,22 @@ export class CachingPatterns {
     delta: number = 60
   ): Promise<T> {
     const cached = await CacheService.get<T>(key);
-
+    
     if (cached !== null) {
       // Calculate probability of early refresh
       const xfetch = delta * Math.log(Math.random());
       const ttlRemaining = await CacheService.redis.ttl(key);
-
+      
       if (ttlRemaining > 0 && ttlRemaining < -xfetch) {
         // Refresh in background
         fetcher().then(fresh => {
           CacheService.set(key, fresh, { ttl });
         }).catch(console.error);
       }
-
+      
       return cached;
     }
-
+    
     // Cache miss: fetch and store
     const fresh = await fetcher();
     await CacheService.set(key, fresh, { ttl });
@@ -13140,7 +13845,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-
+  
   # Kafka
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -13155,7 +13860,7 @@ services:
       - zookeeper-logs:/var/lib/zookeeper/log
     networks:
       - messaging
-
+  
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: mundotango-kafka
@@ -13178,7 +13883,7 @@ services:
       - kafka-data:/var/lib/kafka/data
     networks:
       - messaging
-
+  
   # Kafka UI
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -13229,7 +13934,7 @@ export class RabbitMQService {
   private static connection: Connection;
   private static channel: Channel;
   private static consumers: Map<string, boolean> = new Map();
-
+  
   /**
    * Initialize RabbitMQ connection
    */
@@ -13242,55 +13947,55 @@ export class RabbitMQService {
       password: process.env.RABBITMQ_PASSWORD,
       vhost: process.env.RABBITMQ_VHOST || 'mundotango'
     });
-
+    
     this.channel = await this.connection.createChannel();
-
+    
     // Set prefetch for fair dispatch
     await this.channel.prefetch(1);
-
+    
     console.log('✅ RabbitMQ connected');
-
+    
     // Setup exchanges and queues
     await this.setupInfrastructure();
   }
-
+  
   /**
    * Setup exchanges and queues
    */
   private static async setupInfrastructure() {
     // Dead letter exchange
     await this.channel.assertExchange('dlx', 'direct', { durable: true });
-
+    
     // Dead letter queue
     await this.channel.assertQueue('dead_letter_queue', { durable: true });
     await this.channel.bindQueue('dead_letter_queue', 'dlx', '#');
-
+    
     // Default exchange
     await this.channel.assertExchange('mundotango', 'topic', { durable: true });
-
+    
     // Task queues
     await this.createQueue('email_queue', {
       durable: true,
       deadLetterExchange: 'dlx',
       messageTtl: 3600000 // 1 hour
     });
-
+    
     await this.createQueue('notification_queue', {
       durable: true,
       deadLetterExchange: 'dlx'
     });
-
+    
     await this.createQueue('image_processing_queue', {
       durable: true,
       deadLetterExchange: 'dlx',
       maxLength: 1000
     });
-
+    
     await this.createQueue('analytics_queue', {
       durable: true
     });
   }
-
+  
   /**
    * Create queue
    */
@@ -13298,23 +14003,23 @@ export class RabbitMQService {
     const queueOptions: any = {
       durable: options.durable !== false
     };
-
+    
     if (options.deadLetterExchange) {
       queueOptions.deadLetterExchange = options.deadLetterExchange;
       queueOptions.deadLetterRoutingKey = options.deadLetterRoutingKey || name;
     }
-
+    
     if (options.messageTtl) {
       queueOptions.messageTtl = options.messageTtl;
     }
-
+    
     if (options.maxLength) {
       queueOptions.maxLength = options.maxLength;
     }
-
+    
     await this.channel.assertQueue(name, queueOptions);
   }
-
+  
   /**
    * Send message to queue
    */
@@ -13324,22 +14029,22 @@ export class RabbitMQService {
     options: MessageOptions = {}
   ): Promise<boolean> {
     const content = Buffer.from(JSON.stringify(message));
-
+    
     const sendOptions: any = {
       persistent: options.persistent !== false
     };
-
+    
     if (options.priority !== undefined) {
       sendOptions.priority = options.priority;
     }
-
+    
     if (options.expiration) {
       sendOptions.expiration = options.expiration;
     }
-
+    
     return this.channel.sendToQueue(queue, content, sendOptions);
   }
-
+  
   /**
    * Publish message to exchange
    */
@@ -13350,14 +14055,14 @@ export class RabbitMQService {
     options: MessageOptions = {}
   ): Promise<boolean> {
     const content = Buffer.from(JSON.stringify(message));
-
+    
     const publishOptions: any = {
       persistent: options.persistent !== false
     };
-
+    
     return this.channel.publish(exchange, routingKey, content, publishOptions);
   }
-
+  
   /**
    * Consume messages from queue
    */
@@ -13370,40 +14075,40 @@ export class RabbitMQService {
       console.warn(`Consumer already exists for queue: ${queue}`);
       return;
     }
-
+    
     if (options.prefetch) {
       await this.channel.prefetch(options.prefetch);
     }
-
+    
     await this.channel.consume(
       queue,
       async (msg: ConsumeMessage | null) => {
         if (!msg) return;
-
+        
         try {
           const content = JSON.parse(msg.content.toString());
-
+          
           // Process message
           await handler(content);
-
+          
           // Acknowledge message
           if (!options.noAck) {
             this.channel.ack(msg);
           }
         } catch (error) {
           console.error(`Error processing message from ${queue}:`, error);
-
+          
           // Reject and requeue (or send to DLQ)
           this.channel.nack(msg, false, false);
         }
       },
       { noAck: options.noAck || false }
     );
-
+    
     this.consumers.set(queue, true);
     console.log(`✅ Consumer started for queue: ${queue}`);
   }
-
+  
   /**
    * Schedule delayed message
    */
@@ -13414,32 +14119,32 @@ export class RabbitMQService {
   ): Promise<void> {
     // Create delay queue
     const delayQueue = `${queue}_delay_${delayMs}`;
-
+    
     await this.channel.assertQueue(delayQueue, {
       durable: true,
       deadLetterExchange: '',
       deadLetterRoutingKey: queue,
       messageTtl: delayMs
     });
-
+    
     // Send to delay queue
     await this.sendToQueue(delayQueue, message);
   }
-
+  
   /**
    * Get queue stats
    */
   static async getQueueStats(queue: string) {
     return await this.channel.checkQueue(queue);
   }
-
+  
   /**
    * Purge queue
    */
   static async purgeQueue(queue: string) {
     await this.channel.purgeQueue(queue);
   }
-
+  
   /**
    * Close connection
    */
@@ -13460,7 +14165,7 @@ export class KafkaService {
   private static kafka: Kafka;
   private static producer: Producer;
   private static consumers: Map<string, Consumer> = new Map();
-
+  
   /**
    * Initialize Kafka
    */
@@ -13474,17 +14179,17 @@ export class KafkaService {
         multiplier: 2
       }
     });
-
+    
     this.producer = this.kafka.producer({
       allowAutoTopicCreation: true,
       transactionTimeout: 30000
     });
-
+    
     await this.producer.connect();
-
+    
     console.log('✅ Kafka connected');
   }
-
+  
   /**
    * Produce message
    */
@@ -13500,7 +14205,7 @@ export class KafkaService {
       ]
     });
   }
-
+  
   /**
    * Produce batch
    */
@@ -13514,7 +14219,7 @@ export class KafkaService {
       }))
     });
   }
-
+  
   /**
    * Consume messages
    */
@@ -13528,10 +14233,10 @@ export class KafkaService {
       sessionTimeout: 30000,
       heartbeatInterval: 3000
     });
-
+    
     await consumer.connect();
     await consumer.subscribe({ topic, fromBeginning: false });
-
+    
     await consumer.run({
       eachMessage: async ({ topic, partition, message }: EachMessagePayload) => {
         try {
@@ -13548,11 +14253,11 @@ export class KafkaService {
         }
       }
     });
-
+    
     this.consumers.set(groupId, consumer);
     console.log(`✅ Kafka consumer started: ${groupId} -> ${topic}`);
   }
-
+  
   /**
    * Consume with retry
    */
@@ -13564,14 +14269,14 @@ export class KafkaService {
   ) {
     await this.consume(topic, groupId, async (message) => {
       let attempts = 0;
-
+      
       while (attempts < maxRetries) {
         try {
           await handler(message);
           return;
         } catch (error) {
           attempts++;
-
+          
           if (attempts >= maxRetries) {
             console.error(`Max retries exceeded for message:`, message);
             // Send to dead letter topic
@@ -13582,7 +14287,7 @@ export class KafkaService {
             });
             return;
           }
-
+          
           // Exponential backoff
           await new Promise(resolve => 
             setTimeout(resolve, Math.pow(2, attempts) * 1000)
@@ -13591,7 +14296,7 @@ export class KafkaService {
       }
     });
   }
-
+  
   /**
    * Close all consumers and producer
    */
@@ -13599,7 +14304,7 @@ export class KafkaService {
     for (const consumer of this.consumers.values()) {
       await consumer.disconnect();
     }
-
+    
     await this.producer.disconnect();
   }
 }
@@ -13615,9 +14320,9 @@ import { sendEmail } from '../services/EmailService';
 export async function startEmailConsumer() {
   await RabbitMQService.consume('email_queue', async (message) => {
     const { to, subject, template, data } = message;
-
+    
     console.log(`📧 Sending email to ${to}`);
-
+    
     await sendEmail({
       to,
       subject,
@@ -13636,9 +14341,9 @@ import { sendPushNotification } from '../services/PushNotificationService';
 export async function startNotificationConsumer() {
   await RabbitMQService.consume('notification_queue', async (message) => {
     const { userId, title, body, data } = message;
-
+    
     console.log(`🔔 Sending notification to user ${userId}`);
-
+    
     await sendPushNotification({
       userId,
       title,
@@ -13658,13 +14363,13 @@ import { uploadToS3 } from '../services/S3Service';
 export async function startImageProcessingConsumer() {
   await RabbitMQService.consume('image_processing_queue', async (message) => {
     const { imageUrl, userId, sizes } = message;
-
+    
     console.log(`🖼️  Processing image: ${imageUrl}`);
-
+    
     // Download image
     const response = await fetch(imageUrl);
     const buffer = Buffer.from(await response.arrayBuffer());
-
+    
     // Generate thumbnails
     for (const size of sizes) {
       const resized = await sharp(buffer)
@@ -13674,7 +14379,7 @@ export async function startImageProcessingConsumer() {
         })
         .jpeg({ quality: 80 })
         .toBuffer();
-
+      
       // Upload to S3
       const key = `thumbnails/${userId}/${size.name}.jpg`;
       await uploadToS3(key, resized, 'image/jpeg');
@@ -13696,9 +14401,9 @@ export async function startAnalyticsConsumer() {
     'analytics-group',
     async (event) => {
       const { eventName, userId, properties, timestamp } = event;
-
+      
       console.log(`📊 Tracking event: ${eventName}`);
-
+      
       await trackEvent({
         eventName,
         userId,
@@ -13724,7 +14429,7 @@ export async function startEventStreamConsumer() {
       // Process user events
     }
   );
-
+  
   // Post events
   await KafkaService.consume(
     'post.events',
@@ -13734,7 +14439,7 @@ export async function startEventStreamConsumer() {
       // Process post events
     }
   );
-
+  
   // Event events (mundotango events)
   await KafkaService.consume(
     'event.events',
@@ -13766,7 +14471,7 @@ export class QueuePublisher {
   }) {
     await RabbitMQService.sendToQueue('email_queue', params);
   }
-
+  
   /**
    * Queue notification
    */
@@ -13778,7 +14483,7 @@ export class QueuePublisher {
   }) {
     await RabbitMQService.sendToQueue('notification_queue', params);
   }
-
+  
   /**
    * Queue image processing
    */
@@ -13789,14 +14494,14 @@ export class QueuePublisher {
   }) {
     await RabbitMQService.sendToQueue('image_processing_queue', params);
   }
-
+  
   /**
    * Publish event to Kafka
    */
   static async publishEvent(topic: string, event: any, key?: string) {
     await KafkaService.produce(topic, event, key);
   }
-
+  
   /**
    * Publish user event
    */
@@ -13808,7 +14513,7 @@ export class QueuePublisher {
       timestamp: new Date().toISOString()
     }, userId.toString());
   }
-
+  
   /**
    * Publish post event
    */
@@ -13840,14 +14545,14 @@ async function initializeMessaging() {
   // Initialize services
   await RabbitMQService.initialize();
   await KafkaService.initialize();
-
+  
   // Start consumers
   await startEmailConsumer();
   await startNotificationConsumer();
   await startImageProcessingConsumer();
   await startAnalyticsConsumer();
   await startEventStreamConsumer();
-
+  
   console.log('✅ All message consumers started');
 }
 
@@ -13904,7 +14609,7 @@ export function setup() {
   }), {
     headers: { 'Content-Type': 'application/json' }
   });
-
+  
   return { token: loginRes.json('token') };
 }
 
@@ -13913,45 +14618,45 @@ export default function (data) {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${data.token}`
   };
-
+  
   // Test: Get feed
   const feedRes = http.get(`${BASE_URL}/api/posts/feed`, { headers });
-
+  
   check(feedRes, {
     'feed status is 200': (r) => r.status === 200,
     'feed has posts': (r) => r.json('posts').length > 0
   }) || errorRate.add(1);
-
+  
   apiDuration.add(feedRes.timings.duration);
   requestCount.add(1);
-
+  
   sleep(1);
-
+  
   // Test: Get events
   const eventsRes = http.get(`${BASE_URL}/api/events?limit=20`, { headers });
-
+  
   check(eventsRes, {
     'events status is 200': (r) => r.status === 200
   }) || errorRate.add(1);
-
+  
   apiDuration.add(eventsRes.timings.duration);
   requestCount.add(1);
-
+  
   sleep(1);
-
+  
   // Test: Create post
   const createPostRes = http.post(`${BASE_URL}/api/posts`, JSON.stringify({
     content: `Load test post at ${new Date().toISOString()}`,
     visibility: 'public'
   }), { headers });
-
+  
   check(createPostRes, {
     'create post status is 201': (r) => r.status === 201
   }) || errorRate.add(1);
-
+  
   apiDuration.add(createPostRes.timings.duration);
   requestCount.add(1);
-
+  
   sleep(2);
 }
 
@@ -14030,40 +14735,40 @@ import { test, expect } from '@playwright/test';
 test.describe('Authentication Flow', () => {
   test('should login successfully', async ({ page }) => {
     await page.goto('/login');
-
+    
     await page.fill('[data-testid="input-email"]', 'test@mundotango.life');
     await page.fill('[data-testid="input-password"]', 'testpassword');
-
+    
     await page.click('[data-testid="button-login"]');
-
+    
     await expect(page).toHaveURL('/');
     await expect(page.locator('[data-testid="text-username"]')).toBeVisible();
   });
-
+  
   test('should show error on invalid credentials', async ({ page }) => {
     await page.goto('/login');
-
+    
     await page.fill('[data-testid="input-email"]', 'invalid@mundotango.life');
     await page.fill('[data-testid="input-password"]', 'wrongpassword');
-
+    
     await page.click('[data-testid="button-login"]');
-
+    
     await expect(page.locator('[data-testid="error-message"]')).toBeVisible();
   });
-
+  
   test('should logout successfully', async ({ page }) => {
     // Login first
     await page.goto('/login');
     await page.fill('[data-testid="input-email"]', 'test@mundotango.life');
     await page.fill('[data-testid="input-password"]', 'testpassword');
     await page.click('[data-testid="button-login"]');
-
+    
     await expect(page).toHaveURL('/');
-
+    
     // Logout
     await page.click('[data-testid="button-user-menu"]');
     await page.click('[data-testid="button-logout"]');
-
+    
     await expect(page).toHaveURL('/login');
   });
 });
@@ -14082,31 +14787,31 @@ test.describe('Posts Functionality', () => {
     await page.click('[data-testid="button-login"]');
     await expect(page).toHaveURL('/');
   });
-
+  
   test('should create a text post', async ({ page }) => {
     await page.click('[data-testid="button-create-post"]');
-
+    
     await page.fill('[data-testid="textarea-post-content"]', 'This is a test post');
-
+    
     await page.click('[data-testid="button-submit-post"]');
-
+    
     await expect(page.locator('[data-testid="text-post-content"]').first()).toContainText('This is a test post');
   });
-
+  
   test('should like a post', async ({ page }) => {
     const likeButton = page.locator('[data-testid^="button-like-"]').first();
-
+    
     await likeButton.click();
-
+    
     await expect(likeButton).toHaveAttribute('data-liked', 'true');
   });
-
+  
   test('should comment on a post', async ({ page }) => {
     await page.locator('[data-testid^="button-comment-"]').first().click();
-
+    
     await page.fill('[data-testid="input-comment"]', 'Great post!');
     await page.click('[data-testid="button-submit-comment"]');
-
+    
     await expect(page.locator('[data-testid^="text-comment-"]').first()).toContainText('Great post!');
   });
 });
@@ -14198,11 +14903,11 @@ describe('Mundotango API Contract', () => {
     dir: path.resolve(process.cwd(), 'tests/contract/pacts'),
     logLevel: 'info'
   });
-
+  
   beforeAll(() => provider.setup());
   afterEach(() => provider.verify());
   afterAll(() => provider.finalize());
-
+  
   describe('GET /api/posts/feed', () => {
     beforeEach(() => {
       return provider.addInteraction({
@@ -14235,14 +14940,14 @@ describe('Mundotango API Contract', () => {
         }
       });
     });
-
+    
     it('returns posts successfully', async () => {
       const response = await axios.get('http://localhost:8989/api/posts/feed', {
         headers: {
           'Authorization': 'Bearer token123'
         }
       });
-
+      
       expect(response.status).toBe(200);
       expect(response.data.posts).toHaveLength(1);
       expect(response.data.posts[0]).toHaveProperty('id');
@@ -14266,13 +14971,13 @@ export async function runSecurityScan() {
       port: 8080
     }
   });
-
+  
   // Spider the application
   console.log('🕷️  Spidering application...');
   const spiderScanId = await zaproxy.spider.scan({
     url: 'https://mundotango.life'
   });
-
+  
   // Wait for spider to complete
   let spiderProgress = 0;
   while (spiderProgress < 100) {
@@ -14281,14 +14986,14 @@ export async function runSecurityScan() {
     spiderProgress = parseInt(status.status);
     console.log(`Spider progress: ${spiderProgress}%`);
   }
-
+  
   // Active scan
   console.log('🔍 Starting active security scan...');
   const activeScanId = await zaproxy.ascan.scan({
     url: 'https://mundotango.life',
     recurse: true
   });
-
+  
   // Wait for scan to complete
   let scanProgress = 0;
   while (scanProgress < 100) {
@@ -14297,12 +15002,12 @@ export async function runSecurityScan() {
     scanProgress = parseInt(status.status);
     console.log(`Active scan progress: ${scanProgress}%`);
   }
-
+  
   // Get alerts
   const alerts = await zaproxy.core.alerts({
     baseurl: 'https://mundotango.life'
   });
-
+  
   // Generate report
   const report = alerts.map((alert: any) => ({
     risk: alert.risk,
@@ -14311,13 +15016,13 @@ export async function runSecurityScan() {
     solution: alert.solution,
     url: alert.url
   }));
-
+  
   console.log('📊 Security Scan Results:');
   console.log(`Total alerts: ${alerts.length}`);
   console.log(`High risk: ${alerts.filter((a: any) => a.risk === 'High').length}`);
   console.log(`Medium risk: ${alerts.filter((a: any) => a.risk === 'Medium').length}`);
   console.log(`Low risk: ${alerts.filter((a: any) => a.risk === 'Low').length}`);
-
+  
   return report;
 }
 ```
@@ -14331,16 +15036,16 @@ import chromeLauncher from 'chrome-launcher';
 
 export async function runLighthouseAudit(url: string) {
   const chrome = await chromeLauncher.launch({ chromeFlags: ['--headless'] });
-
+  
   const options = {
     logLevel: 'info',
     output: 'json',
     onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
     port: chrome.port
   };
-
+  
   const runnerResult = await lighthouse(url, options);
-
+  
   // Extract scores
   const report = runnerResult!.lhr;
   const scores = {
@@ -14349,15 +15054,15 @@ export async function runLighthouseAudit(url: string) {
     bestPractices: report.categories['best-practices'].score! * 100,
     seo: report.categories.seo.score! * 100
   };
-
+  
   console.log('🚀 Lighthouse Scores:');
   console.log(`Performance: ${scores.performance}`);
   console.log(`Accessibility: ${scores.accessibility}`);
   console.log(`Best Practices: ${scores.bestPractices}`);
   console.log(`SEO: ${scores.seo}`);
-
+  
   await chrome.kill();
-
+  
   return scores;
 }
 ```
@@ -14395,25 +15100,25 @@ import AxeBuilder from '@axe-core/playwright';
 test.describe('Accessibility Tests', () => {
   test('homepage should not have accessibility violations', async ({ page }) => {
     await page.goto('/');
-
+    
     const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
-
+    
     expect(accessibilityScanResults.violations).toEqual([]);
   });
-
+  
   test('login page should not have accessibility violations', async ({ page }) => {
     await page.goto('/login');
-
+    
     const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
-
+    
     expect(accessibilityScanResults.violations).toEqual([]);
   });
-
+  
   test('events page should not have accessibility violations', async ({ page }) => {
     await page.goto('/events');
-
+    
     const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
-
+    
     expect(accessibilityScanResults.violations).toEqual([]);
   });
 });
@@ -14443,7 +15148,7 @@ jobs:
       - run: npm run test:unit
       - run: npm run test:coverage
       - uses: codecov/codecov-action@v3
-
+  
   e2e-tests:
     runs-on: ubuntu-latest
     steps:
@@ -14459,7 +15164,7 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
-
+  
   load-tests:
     runs-on: ubuntu-latest
     steps:
@@ -14469,7 +15174,7 @@ jobs:
           filename: tests/load/api-load-test.js
           cloud: true
           token: ${{ secrets.K6_CLOUD_TOKEN }}
-
+  
   security-scan:
     runs-on: ubuntu-latest
     steps:
@@ -14487,7 +15192,7 @@ jobs:
           scan-ref: '.'
           format: 'sarif'
           output: 'trivy-results.sarif'
-
+  
   visual-regression:
     runs-on: ubuntu-latest
     steps:
@@ -15131,19 +15836,19 @@ export function validateRequest(operationId: string) {
   return (req: Request, res: Response, next: NextFunction) => {
     // Find the operation in OpenAPI spec
     const operation = findOperation(openAPISpec, operationId);
-
+    
     if (!operation) {
       return next();
     }
-
+    
     // Validate request body
     if (operation.requestBody) {
       const schema = (operation.requestBody as any).content['application/json']?.schema;
-
+      
       if (schema) {
         const validate = ajv.compile(schema);
         const valid = validate(req.body);
-
+        
         if (!valid) {
           return res.status(422).json({
             error: 'Validation failed',
@@ -15155,11 +15860,11 @@ export function validateRequest(operationId: string) {
         }
       }
     }
-
+    
     // Validate query parameters
     // Validate path parameters
     // ...
-
+    
     next();
   };
 }
@@ -15214,27 +15919,27 @@ type Query {
   user(id: ID!): User
   users(limit: Int = 20, offset: Int = 0, search: String): UserConnection!
   me: User
-
+  
   # Posts
   post(id: ID!): Post
   posts(limit: Int = 20, offset: Int = 0, filter: PostFilter): PostConnection!
   feed(limit: Int = 20, offset: Int = 0, filter: FeedFilter): PostConnection!
-
+  
   # Events
   event(id: ID!): Event
   events(limit: Int = 20, offset: Int = 0, filter: EventFilter): EventConnection!
   upcomingEvents(city: String, limit: Int = 20): [Event!]!
-
+  
   # Groups
   group(id: ID!): Group
   groups(limit: Int = 20, offset: Int = 0): GroupConnection!
   myGroups: [Group!]!
-
+  
   # Messages
   conversation(id: ID!): Conversation
   conversations(limit: Int = 20): [Conversation!]!
   messages(conversationId: ID!, limit: Int = 50): [Message!]!
-
+  
   # Analytics
   userStats(userId: ID!): UserStats
   platformStats: PlatformStats
@@ -15245,34 +15950,34 @@ type Mutation {
   login(email: String!, password: String!): AuthPayload!
   register(input: RegisterInput!): AuthPayload!
   logout: Boolean!
-
+  
   # Users
   updateProfile(input: UpdateProfileInput!): User!
   uploadProfileImage(file: Upload!): String!
-
+  
   # Posts
   createPost(input: CreatePostInput!): Post!
   updatePost(id: ID!, input: UpdatePostInput!): Post!
   deletePost(id: ID!): Boolean!
   likePost(id: ID!): Post!
   unlikePost(id: ID!): Post!
-
+  
   # Comments
   createComment(input: CreateCommentInput!): Comment!
   deleteComment(id: ID!): Boolean!
-
+  
   # Events
   createEvent(input: CreateEventInput!): Event!
   updateEvent(id: ID!, input: UpdateEventInput!): Event!
   deleteEvent(id: ID!): Boolean!
   attendEvent(id: ID!): Event!
   unattendEvent(id: ID!): Event!
-
+  
   # Groups
   createGroup(input: CreateGroupInput!): Group!
   joinGroup(id: ID!): Group!
   leaveGroup(id: ID!): Boolean!
-
+  
   # Messages
   sendMessage(input: SendMessageInput!): Message!
   markAsRead(conversationId: ID!): Boolean!
@@ -15282,13 +15987,13 @@ type Subscription {
   # Posts
   postCreated: Post!
   postLiked(postId: ID!): Post!
-
+  
   # Messages
   messageReceived(conversationId: ID!): Message!
-
+  
   # Events
   eventUpdated(eventId: ID!): Event!
-
+  
   # Notifications
   notificationReceived: Notification!
 }
@@ -15312,19 +16017,19 @@ type User {
   isFollowing: Boolean!
   isFollower: Boolean!
   isFriend: Boolean!
-
+  
   # Relationships
   posts(limit: Int = 20): PostConnection!
   followers(limit: Int = 20): UserConnection!
   following(limit: Int = 20): UserConnection!
   events(limit: Int = 20): EventConnection!
-
+  
   # Stats
   followerCount: Int!
   followingCount: Int!
   postCount: Int!
   eventCount: Int!
-
+  
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -15335,17 +16040,17 @@ type Post {
   mediaUrls: [String!]!
   visibility: PostVisibility!
   tags: [String!]!
-
+  
   # Relationships
   author: User!
   comments(limit: Int = 20): CommentConnection!
   likes: [User!]!
-
+  
   # Stats
   likeCount: Int!
   commentCount: Int!
   isLiked: Boolean!
-
+  
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -15375,15 +16080,15 @@ type Event {
   price: Float
   currency: String!
   maxAttendees: Int
-
+  
   # Relationships
   organizer: User!
   attendees(limit: Int = 20): UserConnection!
-
+  
   # Stats
   attendeeCount: Int!
   isAttending: Boolean!
-
+  
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -15396,16 +16101,16 @@ type Group {
   city: String
   imageUrl: String
   isPublic: Boolean!
-
+  
   # Relationships
   members(limit: Int = 20): UserConnection!
   posts(limit: Int = 20): PostConnection!
   events(limit: Int = 20): EventConnection!
-
+  
   # Stats
   memberCount: Int!
   isMember: Boolean!
-
+  
   createdAt: DateTime!
 }
 
@@ -15682,9 +16387,9 @@ export async function createApolloServer(app: express.Application, httpServer: h
     server: httpServer,
     path: '/graphql'
   });
-
+  
   const serverCleanup = useServer({ schema }, wsServer);
-
+  
   // Apollo Server
   const apolloServer = new ApolloServer({
     schema,
@@ -15709,9 +16414,9 @@ export async function createApolloServer(app: express.Application, httpServer: h
       };
     }
   });
-
+  
   await apolloServer.start();
-
+  
   // Apply middleware
   app.use(
     '/graphql',
@@ -15720,7 +16425,7 @@ export async function createApolloServer(app: express.Application, httpServer: h
       context: createContext
     })
   );
-
+  
   console.log('✅ GraphQL server ready at /graphql');
 }
 ```
@@ -15743,7 +16448,7 @@ export interface GraphQLContext {
 export async function createContext({ req, res }: { req: Request; res: Response }): Promise<GraphQLContext> {
   // Extract token
   const token = req.headers.authorization?.replace('Bearer ', '');
-
+  
   // Verify user
   let user = null;
   if (token) {
@@ -15753,10 +16458,10 @@ export async function createContext({ req, res }: { req: Request; res: Response 
       // Invalid token
     }
   }
-
+  
   // Create dataloaders
   const dataloaders = createDataLoaders();
-
+  
   return {
     req,
     res,
@@ -15781,34 +16486,34 @@ export function createDataLoaders() {
       const userList = await db.query.users.findMany({
         where: inArray(users.id, userIds as number[])
       });
-
+      
       const userMap = new Map(userList.map(u => [u.id, u]));
       return userIds.map(id => userMap.get(id as number) || null);
     }),
-
+    
     postLoader: new DataLoader(async (postIds: readonly number[]) => {
       const postList = await db.query.posts.findMany({
         where: inArray(posts.id, postIds as number[])
       });
-
+      
       const postMap = new Map(postList.map(p => [p.id, p]));
       return postIds.map(id => postMap.get(id as number) || null);
     }),
-
+    
     eventLoader: new DataLoader(async (eventIds: readonly number[]) => {
       const eventList = await db.query.events.findMany({
         where: inArray(events.id, eventIds as number[])
       });
-
+      
       const eventMap = new Map(eventList.map(e => [e.id, e]));
       return eventIds.map(id => eventMap.get(id as number) || null);
     }),
-
+    
     commentsByPostLoader: new DataLoader(async (postIds: readonly number[]) => {
       const commentList = await db.query.comments.findMany({
         where: inArray(comments.postId, postIds as number[])
       });
-
+      
       const commentMap = new Map<number, any[]>();
       commentList.forEach(comment => {
         if (!commentMap.has(comment.postId)) {
@@ -15816,7 +16521,7 @@ export function createDataLoaders() {
         }
         commentMap.get(comment.postId)!.push(comment);
       });
-
+      
       return postIds.map(id => commentMap.get(id as number) || []);
     })
   };
@@ -15836,26 +16541,26 @@ import { GraphQLDateTime, GraphQLJSON } from 'graphql-scalars';
 export const resolvers = {
   DateTime: GraphQLDateTime,
   JSON: GraphQLJSON,
-
+  
   Query: {
     ...userResolvers.Query,
     ...postResolvers.Query,
     ...eventResolvers.Query,
     ...messageResolvers.Query
   },
-
+  
   Mutation: {
     ...userResolvers.Mutation,
     ...postResolvers.Mutation,
     ...eventResolvers.Mutation,
     ...messageResolvers.Mutation
   },
-
+  
   Subscription: {
     ...postResolvers.Subscription,
     ...messageResolvers.Subscription
   },
-
+  
   User: userResolvers.User,
   Post: postResolvers.Post,
   Event: eventResolvers.Event,
@@ -15875,13 +16580,13 @@ export const userResolvers = {
     user: async (_: any, { id }: { id: number }, context: GraphQLContext) => {
       return await context.dataloaders.userLoader.load(id);
     },
-
+    
     users: async (_: any, { limit = 20, offset = 0, search }: any) => {
       const userList = await db.query.users.findMany({
         limit,
         offset
       });
-
+      
       return {
         edges: userList.map(user => ({
           node: user,
@@ -15896,38 +16601,38 @@ export const userResolvers = {
         totalCount: userList.length
       };
     },
-
+    
     me: async (_: any, __: any, context: GraphQLContext) => {
       if (!context.user) {
         throw new Error('Not authenticated');
       }
-
+      
       return await context.dataloaders.userLoader.load(context.user.id);
     }
   },
-
+  
   Mutation: {
     updateProfile: async (_: any, { input }: any, context: GraphQLContext) => {
       if (!context.user) {
         throw new Error('Not authenticated');
       }
-
+      
       const [updated] = await db.update(users)
         .set(input)
         .where(eq(users.id, context.user.id))
         .returning();
-
+      
       return updated;
     }
   },
-
+  
   User: {
     posts: async (parent: any, { limit = 20 }: any, context: GraphQLContext) => {
       const postList = await db.query.posts.findMany({
         where: eq(posts.authorId, parent.id),
         limit
       });
-
+      
       return {
         edges: postList.map(post => ({
           node: post,
@@ -15942,12 +16647,12 @@ export const userResolvers = {
         totalCount: postList.length
       };
     },
-
+    
     followerCount: async (parent: any) => {
       return null; // Not implemented in this example
       return 0;
     },
-
+    
     followingCount: async (parent: any) => {
       return null; // Not implemented in this example
       return 0;
@@ -16025,7 +16730,7 @@ export async function healthCheck(req: Request, res: Response) {
   try {
     // Check database connection
     await db.execute('SELECT 1');
-
+    
     res.json({
       status: 'healthy',
       timestamp: new Date().toISOString(),
@@ -16044,7 +16749,7 @@ export async function readinessCheck(req: Request, res: Response) {
   try {
     // Check if app is ready to serve traffic
     await db.execute('SELECT 1');
-
+    
     res.json({ status: 'ready' });
   } catch (error) {
     res.status(503).json({ status: 'not ready' });
@@ -16274,22 +16979,22 @@ import { httpRequestDuration, httpRequestTotal } from '../metrics/prometheus';
 
 export function metricsMiddleware(req: Request, res: Response, next: NextFunction) {
   const start = Date.now();
-
+  
   res.on('finish', () => {
     const duration = (Date.now() - start) / 1000;
-
+    
     httpRequestDuration.observe(
       { method: req.method, route: req.route?.path || req.path, status_code: res.statusCode },
       duration
     );
-
+    
     httpRequestTotal.inc({
       method: req.method,
       route: req.route?.path || req.path,
       status_code: res.statusCode
     });
   });
-
+  
   next();
 }
 ```
@@ -16353,7 +17058,7 @@ spec:
       annotations:
         summary: "High error rate detected"
         description: "Error rate is {{ $value }} requests/second"
-
+    
     - alert: HighLatency
       expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1
       for: 5m
@@ -16362,7 +17067,7 @@ spec:
       annotations:
         summary: "High latency detected"
         description: "P95 latency is {{ $value }} seconds"
-
+    
     - alert: LowCacheHitRate
       expr: cache_hit_rate < 0.8
       for: 10m
@@ -16451,7 +17156,7 @@ const router = Router();
 router.get('/posts/:id', async (req, res) => {
   const postId = parseInt(req.params.id);
   const cacheKey = `post:${postId}`;
-
+  
   try {
     // Use read-through cache pattern
     const post = await CachingPatterns.readThrough(
@@ -16463,11 +17168,11 @@ router.get('/posts/:id', async (req, res) => {
       },
       3600 // 1 hour TTL
     );
-
+    
     if (!post) {
       return res.status(404).json({ error: 'Post not found' });
     }
-
+    
     res.json(post);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
@@ -16477,19 +17182,19 @@ router.get('/posts/:id', async (req, res) => {
 // Update post with cache invalidation
 router.put('/posts/:id', async (req, res) => {
   const postId = parseInt(req.params.id);
-
+  
   try {
     // Update in database
     const [updated] = await db.update(posts)
       .set(req.body)
       .where(eq(posts.id, postId))
       .returning();
-
+    
     // Invalidate cache
     await CacheService.delete(`post:${postId}`);
     await CacheService.invalidateTag('posts');
     await CacheService.invalidateTag('feed');
-
+    
     res.json(updated);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
@@ -16565,7 +17270,7 @@ async function getCachedData(key: string, fetcher: () => Promise<any>) {
   if (!ENABLE_CACHE) {
     return await fetcher();
   }
-
+  
   return await CacheService.getOrSet(key, fetcher);
 }
 ```
@@ -16624,7 +17329,7 @@ metadata:
 spec:
   instances: 3
   primaryUpdateStrategy: unsupervised
-
+  
   postgresql:
     parameters:
       max_connections: "500"
@@ -16633,11 +17338,11 @@ spec:
       wal_level: "logical"
       max_wal_senders: "10"
       max_replication_slots: "10"
-
+  
   storage:
     size: 500Gi
     storageClass: fast-ssd
-
+  
   backup:
     barmanObjectStore:
       destinationPath: s3://mundotango-backups/postgres
@@ -16649,7 +17354,7 @@ spec:
           name: aws-credentials
           key: SECRET_ACCESS_KEY
     retentionPolicy: "30d"
-
+  
   # Continuous archiving for point-in-time recovery
   enablePodMonitor: true
 ---
@@ -16682,11 +17387,11 @@ interface RegionConfig {
 export class GlobalDatabaseRouter {
   private regions: Map<string, RegionConfig> = new Map();
   private pools: Map<string, Pool> = new Map();
-
+  
   constructor() {
     this.initializeRegions();
   }
-
+  
   private initializeRegions() {
     // US-East (Primary)
     this.regions.set('us-east-1', {
@@ -16698,7 +17403,7 @@ export class GlobalDatabaseRouter {
       ],
       latencyMs: 0
     });
-
+    
     // EU-West
     this.regions.set('eu-west-1', {
       region: 'eu-west-1',
@@ -16709,7 +17414,7 @@ export class GlobalDatabaseRouter {
       ],
       latencyMs: 80
     });
-
+    
     // AP-Southeast
     this.regions.set('ap-southeast-1', {
       region: 'ap-southeast-1',
@@ -16720,17 +17425,17 @@ export class GlobalDatabaseRouter {
       latencyMs: 150
     });
   }
-
+  
   /**
    * Get database connection for read operation
    * Routes to nearest replica
    */
   async getReadConnection(userRegion: string): Promise<Pool> {
     const region = this.regions.get(userRegion) || this.regions.get('us-east-1')!;
-
+    
     // Round-robin across replicas
     const replica = region.replicas[Math.floor(Math.random() * region.replicas.length)];
-
+    
     if (!this.pools.has(replica)) {
       this.pools.set(replica, new Pool({
         connectionString: replica,
@@ -16739,17 +17444,17 @@ export class GlobalDatabaseRouter {
         connectionTimeoutMillis: 2000
       }));
     }
-
+    
     return this.pools.get(replica)!;
   }
-
+  
   /**
    * Get database connection for write operation
    * Always routes to primary
    */
   async getWriteConnection(): Promise<Pool> {
     const primary = this.regions.get('us-east-1')!.primary;
-
+    
     if (!this.pools.has(primary)) {
       this.pools.set(primary, new Pool({
         connectionString: primary,
@@ -16758,10 +17463,10 @@ export class GlobalDatabaseRouter {
         connectionTimeoutMillis: 2000
       }));
     }
-
+    
     return this.pools.get(primary)!;
   }
-
+  
   /**
    * Execute read query on nearest replica
    */
@@ -16769,7 +17474,7 @@ export class GlobalDatabaseRouter {
     const pool = await this.getReadConnection(userRegion);
     return await pool.query(query, params);
   }
-
+  
   /**
    * Execute write query on primary
    */
@@ -16777,13 +17482,13 @@ export class GlobalDatabaseRouter {
     const pool = await this.getWriteConnection();
     return await pool.query(query, params);
   }
-
+  
   /**
    * Health check for all regions
    */
   async healthCheck(): Promise<Map<string, boolean>> {
     const health = new Map<string, boolean>();
-
+    
     for (const [region, config] of this.regions) {
       try {
         const pool = new Pool({ connectionString: config.primary, connectionTimeoutMillis: 2000 });
@@ -16794,7 +17499,7 @@ export class GlobalDatabaseRouter {
         health.set(region, false);
       }
     }
-
+    
     return health;
   }
 }
@@ -16810,13 +17515,13 @@ import geoip from 'geoip-lite';
 export function geoRoutingMiddleware(req: Request, res: Response, next: NextFunction) {
   const ip = req.ip || req.headers['x-forwarded-for'] as string;
   const geo = geoip.lookup(ip);
-
+  
   // Determine nearest region based on IP
   let region = 'us-east-1'; // Default
-
+  
   if (geo) {
     const { ll } = geo; // [latitude, longitude]
-
+    
     // Simple region assignment based on coordinates
     if (ll[1] > -30 && ll[1] < 60) {
       region = 'eu-west-1'; // Europe
@@ -16824,10 +17529,10 @@ export function geoRoutingMiddleware(req: Request, res: Response, next: NextFunc
       region = 'ap-southeast-1'; // Asia/Pacific
     }
   }
-
+  
   // Attach region to request
   req.userRegion = region;
-
+  
   next();
 }
 
@@ -16850,11 +17555,11 @@ import { CacheService } from './CacheService';
 
 export class DataConsistencyService {
   private dbRouter: GlobalDatabaseRouter;
-
+  
   constructor() {
     this.dbRouter = new GlobalDatabaseRouter();
   }
-
+  
   /**
    * Strongly consistent read (from primary)
    */
@@ -16863,7 +17568,7 @@ export class DataConsistencyService {
     const result = await pool.query(query, params);
     return result.rows[0];
   }
-
+  
   /**
    * Eventually consistent read (from replica)
    * Acceptable for non-critical data
@@ -16872,22 +17577,22 @@ export class DataConsistencyService {
     const result = await this.dbRouter.executeRead(query, params, userRegion);
     return result.rows[0];
   }
-
+  
   /**
    * Write with cache invalidation across regions
    */
   async write(query: string, params: any[], cacheKeys: string[] = []): Promise<any> {
     // Write to primary
     const result = await this.dbRouter.executeWrite(query, params);
-
+    
     // Invalidate cache in all regions
     await Promise.all(
       cacheKeys.map(key => CacheService.delete(key))
     );
-
+    
     return result.rows[0];
   }
-
+  
   /**
    * Distributed transaction across regions
    * (Use sparingly due to performance impact)
@@ -16895,14 +17600,14 @@ export class DataConsistencyService {
   async distributedTransaction(operations: Array<() => Promise<any>>): Promise<void> {
     const pool = await this.dbRouter.getWriteConnection();
     const client = await pool.connect();
-
+    
     try {
       await client.query('BEGIN');
-
+      
       for (const operation of operations) {
         await operation();
       }
-
+      
       await client.query('COMMIT');
     } catch (error) {
       await client.query('ROLLBACK');
@@ -16931,12 +17636,12 @@ import { CostExplorer } from '@aws-sdk/client-cost-explorer';
 export class FinOpsService {
   private cloudwatch: CloudWatch;
   private costExplorer: CostExplorer;
-
+  
   constructor() {
     this.cloudwatch = new CloudWatch({ region: 'us-east-1' });
     this.costExplorer = new CostExplorer({ region: 'us-east-1' });
   }
-
+  
   /**
    * Get current month costs
    */
@@ -16948,9 +17653,9 @@ export class FinOpsService {
     const startDate = new Date();
     startDate.setDate(1);
     startDate.setHours(0, 0, 0, 0);
-
+    
     const endDate = new Date();
-
+    
     const response = await this.costExplorer.getCostAndUsage({
       TimePeriod: {
         Start: startDate.toISOString().split('T')[0],
@@ -16965,9 +17670,9 @@ export class FinOpsService {
         }
       ]
     });
-
+    
     const costs: { service: string; amount: number; unit: string }[] = [];
-
+    
     response.ResultsByTime?.forEach(result => {
       result.Groups?.forEach(group => {
         costs.push({
@@ -16977,10 +17682,10 @@ export class FinOpsService {
         });
       });
     });
-
+    
     return costs;
   }
-
+  
   /**
    * Predict next month costs using ML
    */
@@ -16989,7 +17694,7 @@ export class FinOpsService {
     const endDate = new Date();
     const startDate = new Date();
     startDate.setMonth(startDate.getMonth() - 3);
-
+    
     const response = await this.costExplorer.getCostAndUsage({
       TimePeriod: {
         Start: startDate.toISOString().split('T')[0],
@@ -16998,18 +17703,18 @@ export class FinOpsService {
       Granularity: 'MONTHLY',
       Metrics: ['UnblendedCost']
     });
-
+    
     const costs = response.ResultsByTime?.map(result => 
       parseFloat(result.Total?.UnblendedCost?.Amount || '0')
     ) || [];
-
+    
     // Simple linear regression for prediction
     const avg = costs.reduce((sum, cost) => sum + cost, 0) / costs.length;
     const trend = (costs[costs.length - 1] - costs[0]) / costs.length;
-
+    
     return avg + trend;
   }
-
+  
   /**
    * Check budget alerts
    */
@@ -17026,17 +17731,17 @@ export class FinOpsService {
       { name: 'Storage', limit: 500 },
       { name: 'Networking', limit: 300 }
     ];
-
+    
     const currentCosts = await this.getCurrentMonthCosts();
     const alerts: Array<any> = [];
-
+    
     budgets.forEach(budget => {
       const actual = currentCosts
         .filter(c => c.service.includes(budget.name))
         .reduce((sum, c) => sum + c.amount, 0);
-
+      
       const percentage = (actual / budget.limit) * 100;
-
+      
       if (percentage > 80) {
         alerts.push({
           budgetName: budget.name,
@@ -17047,10 +17752,10 @@ export class FinOpsService {
         });
       }
     });
-
+    
     return alerts;
   }
-
+  
   /**
    * Get cost optimization recommendations
    */
@@ -17077,7 +17782,7 @@ export class FinOpsService {
     }).promise();
     const avgCPU = metrics.Datapoints.reduce((sum, d) => sum + d.Average, 0) / metrics.Datapoints.length;
     if (avgCPU < 20) return 'downsize';
-
+    
     return [
       {
         type: 'rightsizing',
@@ -17116,7 +17821,7 @@ export const CostAllocationTags = {
     Staging: 'staging',
     Development: 'development'
   },
-
+  
   // Team ownership
   Team: {
     Backend: 'backend',
@@ -17124,14 +17829,14 @@ export const CostAllocationTags = {
     DevOps: 'devops',
     DataScience: 'data-science'
   },
-
+  
   // Cost center
   CostCenter: {
     Engineering: 'engineering',
     Marketing: 'marketing',
     Operations: 'operations'
   },
-
+  
   // Application component
   Component: {
     API: 'api',
@@ -17160,12 +17865,12 @@ import { FinOpsService } from './FinOpsService';
 export class CostAwareAutoscaling {
   private finops: FinOpsService;
   private maxMonthlyCost: number;
-
+  
   constructor(maxMonthlyCost: number = 10000) {
     this.finops = new FinOpsService();
     this.maxMonthlyCost = maxMonthlyCost;
   }
-
+  
   /**
    * Check if scaling is allowed based on budget
    */
@@ -17175,34 +17880,34 @@ export class CostAwareAutoscaling {
   }> {
     const currentCosts = await this.finops.getCurrentMonthCosts();
     const totalCost = currentCosts.reduce((sum, c) => sum + c.amount, 0);
-
+    
     // Estimate cost of additional instances
     const costPerInstance = 100; // $100/month per instance
     const additionalCost = requestedInstances * costPerInstance;
-
+    
     const projectedCost = totalCost + additionalCost;
-
+    
     if (projectedCost > this.maxMonthlyCost) {
       return {
         allowed: false,
         reason: `Projected cost $${projectedCost} exceeds budget $${this.maxMonthlyCost}`
       };
     }
-
+    
     return { allowed: true };
   }
-
+  
   /**
    * Scale with cost awareness
    */
   async scaleWithBudget(currentReplicas: number, desiredReplicas: number): Promise<number> {
     const canScale = await this.canScale(desiredReplicas - currentReplicas);
-
+    
     if (!canScale.allowed) {
       console.warn(`⚠️  Scaling denied: ${canScale.reason}`);
       return currentReplicas;
     }
-
+    
     return desiredReplicas;
   }
 }
@@ -17223,19 +17928,19 @@ export function CostDashboard() {
   const { data: costData } = useQuery({
     queryKey: ['/api/admin/finops/current-costs']
   });
-
+  
   const { data: predictions } = useQuery({
     queryKey: ['/api/admin/finops/predictions']
   });
-
+  
   const { data: recommendations } = useQuery({
     queryKey: ['/api/admin/finops/recommendations']
   });
-
+  
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Cost Management</h1>
-
+      
       {/* Cost Summary Cards */}
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
@@ -17248,7 +17953,7 @@ export function CostDashboard() {
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>Predicted Next Month</CardTitle>
@@ -17259,7 +17964,7 @@ export function CostDashboard() {
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>Budget Remaining</CardTitle>
@@ -17270,7 +17975,7 @@ export function CostDashboard() {
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>Potential Savings</CardTitle>
@@ -17282,7 +17987,7 @@ export function CostDashboard() {
           </CardContent>
         </Card>
       </div>
-
+      
       {/* Cost Trend Chart */}
       <Card>
         <CardHeader>
@@ -17302,7 +18007,7 @@ export function CostDashboard() {
           </ResponsiveContainer>
         </CardContent>
       </Card>
-
+      
       {/* Cost by Service */}
       <Card>
         <CardHeader>
@@ -17320,7 +18025,7 @@ export function CostDashboard() {
           </ResponsiveContainer>
         </CardContent>
       </Card>
-
+      
       {/* Optimization Recommendations */}
       <Card>
         <CardHeader>
@@ -17392,11 +18097,11 @@ import { DataClassification, DataRetentionPolicy, DataGovernanceMetadata } from 
 
 export class DataCatalogService {
   private catalog: Map<string, DataGovernanceMetadata> = new Map();
-
+  
   constructor() {
     this.initializeCatalog();
   }
-
+  
   private initializeCatalog() {
     // Users table
     this.catalog.set('users', {
@@ -17408,7 +18113,7 @@ export class DataCatalogService {
       lastAuditDate: new Date('2025-01-01'),
       complianceRequirements: ['GDPR', 'CCPA']
     });
-
+    
     // Posts table
     this.catalog.set('posts', {
       classification: DataClassification.INTERNAL,
@@ -17419,7 +18124,7 @@ export class DataCatalogService {
       lastAuditDate: new Date('2025-01-01'),
       complianceRequirements: ['GDPR']
     });
-
+    
     // Events table
     this.catalog.set('events', {
       classification: DataClassification.PUBLIC,
@@ -17430,7 +18135,7 @@ export class DataCatalogService {
       lastAuditDate: new Date('2025-01-01'),
       complianceRequirements: []
     });
-
+    
     // Audit logs
     this.catalog.set('audit_logs', {
       classification: DataClassification.CONFIDENTIAL,
@@ -17442,14 +18147,14 @@ export class DataCatalogService {
       complianceRequirements: ['SOC 2', 'GDPR']
     });
   }
-
+  
   /**
    * Get data governance metadata for table
    */
   getMetadata(tableName: string): DataGovernanceMetadata | null {
     return this.catalog.get(tableName) || null;
   }
-
+  
   /**
    * Check if data access is compliant
    */
@@ -17459,22 +18164,22 @@ export class DataCatalogService {
     purpose: string
   ): boolean {
     const metadata = this.getMetadata(tableName);
-
+    
     if (!metadata) return false;
-
+    
     // Restricted data requires specific roles
     if (metadata.classification === DataClassification.RESTRICTED) {
       return ['admin', 'compliance_officer'].includes(userRole);
     }
-
+    
     // Confidential data requires justified purpose
     if (metadata.classification === DataClassification.CONFIDENTIAL) {
       return purpose in ['audit', 'compliance', 'business_analytics'];
     }
-
+    
     return true;
   }
-
+  
   /**
    * Get PII fields for a table
    */
@@ -17482,31 +18187,31 @@ export class DataCatalogService {
     const metadata = this.getMetadata(tableName);
     return metadata?.piiFields || [];
   }
-
+  
   /**
    * Mask PII fields in query result
    */
   maskPII(tableName: string, data: any): any {
     const piiFields = this.getPIIFields(tableName);
-
+    
     const masked = { ...data };
-
+    
     piiFields.forEach(field => {
       if (masked[field]) {
         masked[field] = this.maskValue(masked[field]);
       }
     });
-
+    
     return masked;
   }
-
+  
   private maskValue(value: string): string {
     if (value.includes('@')) {
       // Email masking
       const [local, domain] = value.split('@');
       return `${local.substring(0, 2)}***@${domain}`;
     }
-
+    
     // Generic masking
     return value.substring(0, 2) + '***';
   }
@@ -17524,85 +18229,85 @@ import { DataCatalogService } from '../services/DataCatalogService';
 
 export class DataRetentionJob {
   private catalog: DataCatalogService;
-
+  
   constructor() {
     this.catalog = new DataCatalogService();
   }
-
+  
   /**
    * Archive old data based on retention policies
    */
   async archiveOldData() {
     console.log('🗄️  Starting data archival...');
-
+    
     // Archive users (soft delete inactive >7 years)
     await db.update(users)
       .set({ isActive: false, deletedAt: new Date() })
       .where(sql`last_login_at < NOW() - INTERVAL '7 years'`);
-
+    
     // Archive old posts (>1 year)
     const oldPosts = await db.select().from(posts)
       .where(sql`created_at < NOW() - INTERVAL '1 year'`);
-
+    
     if (oldPosts.length > 0) {
       // Export to S3
       await this.exportToArchive('posts', oldPosts);
-
+      
       // Delete from primary database
       await db.delete(posts)
         .where(sql`created_at < NOW() - INTERVAL '1 year'`);
     }
-
+    
     // Archive old audit logs (>90 days for standard retention)
     const oldLogs = await db.select().from(auditLogs)
       .where(sql`
         timestamp < NOW() - INTERVAL '90 days' AND
         retention_policy = 'standard'
       `);
-
+    
     if (oldLogs.length > 0) {
       await this.exportToArchive('audit_logs', oldLogs);
-
+      
       await db.delete(auditLogs)
         .where(sql`
           timestamp < NOW() - INTERVAL '90 days' AND
           retention_policy = 'standard'
         `);
     }
-
+    
     console.log('✅ Data archival complete');
   }
-
+  
   /**
    * Export data to S3 archive
    */
   private async exportToArchive(tableName: string, data: any[]) {
     const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3');
-
+    
     const s3 = new S3Client({ region: 'us-east-1' });
-
+    
     const key = `archive/${tableName}/${new Date().toISOString().split('T')[0]}.json.gz`;
-
+    
     // Compress data
     const zlib = await import('zlib');
     const compressed = zlib.gzipSync(JSON.stringify(data));
-
+    
     await s3.send(new PutObjectCommand({
       Bucket: 'mundotango-archive',
       Key: key,
       Body: compressed,
       StorageClass: 'GLACIER_IR' // Instant Retrieval Glacier
     }));
-
+    
     console.log(`📦 Archived ${data.length} records to ${key}`);
   }
-
+  
   /**
    * Delete data per user request (GDPR/CCPA)
    */
   async deleteUserData(userId: number) {
     console.log(`🗑️  Deleting all data for user ${userId}`);
-
+    
     // Log deletion request
     await db.insert(auditLogs).values({
       userId,
@@ -17612,10 +18317,10 @@ export class DataRetentionJob {
       success: true,
       timestamp: new Date()
     });
-
+    
     // Delete user posts
     await db.delete(posts).where(eq(posts.authorId, userId));
-
+    
     // Anonymize audit logs (keep for compliance)
     await db.update(auditLogs)
       .set({ 
@@ -17624,10 +18329,10 @@ export class DataRetentionJob {
         actorName: 'Deleted User'
       })
       .where(eq(auditLogs.userId, userId));
-
+    
     // Delete user account
     await db.delete(users).where(eq(users.id, userId));
-
+    
     console.log(`✅ User ${userId} data deleted`);
   }
 }
@@ -17651,11 +18356,11 @@ const retentionJob = new DataRetentionJob();
  */
 router.get('/gdpr/export', async (req, res) => {
   const userId = req.user?.id;
-
+  
   if (!userId) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
-
+  
   // Gather all user data
   const userData = await db.query.users.findFirst({
     where: eq(users.id, userId),
@@ -17665,7 +18370,7 @@ router.get('/gdpr/export', async (req, res) => {
       comments: true
     }
   });
-
+  
   res.json({
     message: 'Your personal data',
     data: userData,
@@ -17679,14 +18384,14 @@ router.get('/gdpr/export', async (req, res) => {
  */
 router.post('/gdpr/delete', async (req, res) => {
   const userId = req.user?.id;
-
+  
   if (!userId) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
-
+  
   // Schedule deletion (30-day grace period)
   await retentionJob.deleteUserData(userId);
-
+  
   res.json({
     message: 'Your account has been scheduled for deletion',
     effectiveDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
@@ -17699,18 +18404,18 @@ router.post('/gdpr/delete', async (req, res) => {
  */
 router.put('/gdpr/rectify', async (req, res) => {
   const userId = req.user?.id;
-
+  
   if (!userId) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
-
+  
   const { field, value } = req.body;
-
+  
   // Update user data
   await db.update(users)
     .set({ [field]: value })
     .where(eq(users.id, userId));
-
+  
   res.json({ message: 'Data updated successfully' });
 });
 
@@ -17740,14 +18445,14 @@ backupPolicy:
     storageClass: "GLACIER_IR"
     encryption: true
     crossRegionReplication: true
-
+    
   # File storage backups
   files:
     frequency: "daily"
     retention:
       daily: 90
     versioning: true
-
+    
   # Configuration backups
   configuration:
     frequency: "on-change"
@@ -17767,30 +18472,30 @@ const execAsync = promisify(exec);
 
 export class BackupService {
   private s3: S3Client;
-
+  
   constructor() {
     this.s3 = new S3Client({ region: 'us-east-1' });
   }
-
+  
   /**
    * Create database backup
    */
   async backupDatabase(): Promise<string> {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const filename = `backup-${timestamp}.sql.gz`;
-
+    
     // Create PostgreSQL dump
     const dumpCommand = `
       pg_dump ${process.env.DATABASE_URL} | \
       gzip > /tmp/${filename}
     `;
-
+    
     await execAsync(dumpCommand);
-
+    
     // Upload to S3
     const fs = await import('fs');
     const fileContent = fs.readFileSync(`/tmp/${filename}`);
-
+    
     await this.s3.send(new PutObjectCommand({
       Bucket: 'mundotango-backups',
       Key: `database/${filename}`,
@@ -17798,15 +18503,15 @@ export class BackupService {
       StorageClass: 'GLACIER_IR',
       ServerSideEncryption: 'AES256'
     }));
-
+    
     // Cleanup local file
     fs.unlinkSync(`/tmp/${filename}`);
-
+    
     console.log(`✅ Database backup created: ${filename}`);
-
+    
     return filename;
   }
-
+  
   /**
    * Restore database from backup
    */
@@ -17814,79 +18519,79 @@ export class BackupService {
     // Download from S3
     const { S3Client, GetObjectCommand } = await import('@aws-sdk/client-s3');
     const s3 = new S3Client({ region: 'us-east-1' });
-
+    
     const response = await s3.send(new GetObjectCommand({
       Bucket: 'mundotango-backups',
       Key: `database/${backupFilename}`
     }));
-
+    
     // Save to temp file
     const fs = await import('fs');
     const tempFile = `/tmp/${backupFilename}`;
-
+    
     const stream = response.Body as any;
     const writeStream = fs.createWriteStream(tempFile);
     stream.pipe(writeStream);
-
+    
     await new Promise((resolve, reject) => {
       writeStream.on('finish', resolve);
       writeStream.on('error', reject);
     });
-
+    
     // Restore database
     const restoreCommand = `
       gunzip < ${tempFile} | \
       psql ${process.env.DATABASE_URL}
     `;
-
+    
     await execAsync(restoreCommand);
-
+    
     // Cleanup
     fs.unlinkSync(tempFile);
-
+    
     console.log(`✅ Database restored from: ${backupFilename}`);
   }
-
+  
   /**
    * Point-in-time recovery
    */
   async pointInTimeRecovery(targetTime: Date): Promise<void> {
     console.log(`🔄 Restoring to ${targetTime.toISOString()}`);
-
+    
     // 1. Find nearest backup before target time
     const backupFiles = await this.listBackups();
     const nearestBackup = this.findNearestBackup(backupFiles, targetTime);
-
+    
     if (!nearestBackup) {
       throw new Error('No suitable backup found');
     }
-
+    
     // 2. Restore from base backup
     await this.restoreDatabase(nearestBackup);
-
+    
     // 3. Apply WAL logs up to target time
     const walCommand = `
       pg_waldump ${process.env.WAL_PATH} | \
       psql ${process.env.DATABASE_URL}
     `;
-
+    
     await execAsync(walCommand);
-
+    
     console.log(`✅ Point-in-time recovery complete`);
   }
-
+  
   private async listBackups(): Promise<string[]> {
     const { S3Client, ListObjectsV2Command } = await import('@aws-sdk/client-s3');
     const s3 = new S3Client({ region: 'us-east-1' });
-
+    
     const response = await s3.send(new ListObjectsV2Command({
       Bucket: 'mundotango-backups',
       Prefix: 'database/'
     }));
-
+    
     return response.Contents?.map(obj => obj.Key!.replace('database/', '')) || [];
   }
-
+  
   private findNearestBackup(backups: string[], targetTime: Date): string | null {
     // Parse timestamps from filenames
     const backupTimes = backups.map(filename => {
@@ -17899,15 +18604,15 @@ export class BackupService {
       }
       return null;
     }).filter(b => b !== null);
-
+    
     // Find nearest backup before target time
     const nearest = backupTimes
       .filter(b => b!.time < targetTime)
       .sort((a, b) => b!.time.getTime() - a!.time.getTime())[0];
-
+    
     return nearest?.filename || null;
   }
-
+  
   /**
    * Verify backup integrity
    */
@@ -17915,27 +18620,27 @@ export class BackupService {
     try {
       // Download and test restore in isolated environment
       const testDb = 'test_restore_db';
-
+      
       // Create test database
       await execAsync(`createdb ${testDb}`);
-
+      
       // Restore to test database
       const { S3Client, GetObjectCommand } = await import('@aws-sdk/client-s3');
       const s3 = new S3Client({ region: 'us-east-1' });
-
+      
       const response = await s3.send(new GetObjectCommand({
         Bucket: 'mundotango-backups',
         Key: `database/${backupFilename}`
       }));
-
+      
       // ... restore logic ...
-
+      
       // Verify data integrity
       const { stdout } = await execAsync(`psql ${testDb} -c "SELECT COUNT(*) FROM users;"`);
-
+      
       // Cleanup test database
       await execAsync(`dropdb ${testDb}`);
-
+      
       return true;
     } catch (error) {
       console.error(`❌ Backup verification failed: ${error}`);
@@ -17975,7 +18680,7 @@ export class BackupService {
    # Promote read replica to primary
    kubectl exec -it postgres-replica-0 -n mundotango -- \
      pg_ctl promote -D /var/lib/postgresql/data
-
+   
    # Update connection strings
    kubectl set env deployment/mundotango-api \
      DATABASE_URL=$REPLICA_DATABASE_URL
@@ -17985,7 +18690,7 @@ export class BackupService {
    ```bash
    # Test database connectivity
    kubectl exec -it mundotango-api-xxx -- npm run db:test
-
+   
    # Check API health
    curl https://api.mundotango.life/health
    ```
@@ -18169,7 +18874,7 @@ router.post('/posts',
       ...req.body,
       authorId: req.user.id
     }).returning();
-
+    
     res.status(201).json(post);
   }
 );
@@ -18181,12 +18886,12 @@ router.put('/posts/:id',
     const post = await db.query.posts.findFirst({
       where: eq(posts.id, parseInt(req.params.id))
     });
-
+    
     // Owner can update their own posts
     if (post?.authorId === req.user.id) {
       return next();
     }
-
+    
     // Otherwise check permission
     return requirePermission('posts', 'update')(req, res, next);
   },
@@ -18195,7 +18900,7 @@ router.put('/posts/:id',
       .set(req.body)
       .where(eq(posts.id, parseInt(req.params.id)))
       .returning();
-
+    
     res.json(updated);
   }
 );
@@ -18207,7 +18912,7 @@ router.delete('/posts/:id',
   async (req, res) => {
     await db.delete(posts)
       .where(eq(posts.id, parseInt(req.params.id)));
-
+    
     res.json({ success: true });
   }
 );
@@ -18237,11 +18942,11 @@ export function RoleManagement() {
   const { data: roles } = useQuery({
     queryKey: ['/api/admin/roles'],
   });
-
+  
   const { data: permissions } = useQuery({
     queryKey: ['/api/admin/permissions'],
   });
-
+  
   const updateRolePermissions = useMutation({
     mutationFn: async ({ roleId, permissionIds }: { roleId: number; permissionIds: number[] }) => {
       return await apiRequest('/api/admin/roles/' + roleId + '/permissions', {
@@ -18253,11 +18958,11 @@ export function RoleManagement() {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/roles'] });
     }
   });
-
+  
   return (
     <div className="space-y-6" data-testid="page-role-management">
       <h1 className="text-3xl font-bold" data-testid="text-page-title">Role Management</h1>
-
+      
       {roles?.map((role: any) => (
         <Card key={role.id} data-testid={`card-role-${role.id}`}>
           <CardHeader>
@@ -18276,7 +18981,7 @@ export function RoleManagement() {
               <TableBody>
                 {permissions?.map((permission: any) => {
                   const hasPermission = role.permissions?.some((p: any) => p.id === permission.id);
-
+                  
                   return (
                     <TableRow key={permission.id} data-testid={`row-permission-${permission.id}`}>
                       <TableCell data-testid={`text-permission-name-${permission.id}`}>
@@ -18291,7 +18996,7 @@ export function RoleManagement() {
                             const newPermissions = checked
                               ? [...(role.permissions || []), permission]
                               : role.permissions.filter((p: any) => p.id !== permission.id);
-
+                            
                             updateRolePermissions.mutate({
                               roleId: role.id,
                               permissionIds: newPermissions.map((p: any) => p.id)
@@ -18324,43 +19029,43 @@ import app from '../../server';
 describe('RBAC System', () => {
   let adminToken: string;
   let userToken: string;
-
+  
   beforeAll(async () => {
     // Login as admin
     const adminRes = await request(app)
       .post('/api/auth/login')
       .send({ email: 'admin@mundotango.life', password: 'admin123' });
     adminToken = adminRes.body.token;
-
+    
     // Login as regular user
     const userRes = await request(app)
       .post('/api/auth/login')
       .send({ email: 'user@mundotango.life', password: 'user123' });
     userToken = userRes.body.token;
   });
-
+  
   it('should allow admin to delete posts', async () => {
     const res = await request(app)
       .delete('/api/posts/1')
       .set('Authorization', `Bearer ${adminToken}`);
-
+    
     expect(res.status).toBe(200);
   });
-
+  
   it('should deny regular user from deleting posts', async () => {
     const res = await request(app)
       .delete('/api/posts/1')
       .set('Authorization', `Bearer ${userToken}`);
-
+    
     expect(res.status).toBe(403);
   });
-
+  
   it('should allow user to create posts', async () => {
     const res = await request(app)
       .post('/api/posts')
       .set('Authorization', `Bearer ${userToken}`)
       .send({ content: 'Test post', visibility: 'public' });
-
+    
     expect(res.status).toBe(201);
   });
 });
@@ -18386,23 +19091,23 @@ import { eq } from 'drizzle-orm';
 
 async function migrateToRBAC() {
   console.log('🔄 Migrating to RBAC system...');
-
+  
   // Get all existing users
   const allUsers = await db.query.users.findMany();
-
+  
   // Get role IDs
   const adminRole = await db.query.roles.findFirst({
     where: eq(roles.name, 'admin')
   });
-
+  
   const userRole = await db.query.roles.findFirst({
     where: eq(roles.name, 'user')
   });
-
+  
   // Assign roles based on isAdmin flag
   for (const user of allUsers) {
     const roleId = user.isAdmin ? adminRole!.id : userRole!.id;
-
+    
     await db.insert(userRoles).values({
       userId: user.id,
       roleId,
@@ -18410,7 +19115,7 @@ async function migrateToRBAC() {
       grantedAt: new Date()
     });
   }
-
+  
   console.log(`✅ Migrated ${allUsers.length} users to RBAC`);
 }
 
@@ -18428,12 +19133,12 @@ async function getUserPermissions(userId: number): Promise<Set<string>> {
   if (userPermissionsCache.has(userId)) {
     return userPermissionsCache.get(userId)!;
   }
-
+  
   const permissions = await rbacService.getUserPermissions(userId);
   const permSet = new Set(permissions.map(p => `${p.resource}:${p.action}`));
-
+  
   userPermissionsCache.set(userId, permSet);
-
+  
   return permSet;
 }
 ```
@@ -18491,15 +19196,15 @@ async function initializeMessaging() {
     // Initialize RabbitMQ
     await RabbitMQService.initialize();
     console.log('✅ RabbitMQ initialized');
-
+    
     // Initialize Kafka
     await KafkaService.initialize();
     console.log('✅ Kafka initialized');
-
+    
     // Start consumers
     await startEmailConsumer();
     await startNotificationConsumer();
-
+    
     console.log('✅ All message consumers started');
   } catch (error) {
     console.error('❌ Failed to initialize messaging:', error);
@@ -18536,7 +19241,7 @@ const router = Router();
 router.post('/users', async (req, res) => {
   // Create user synchronously
   const user = await db.insert(users).values(req.body).returning();
-
+  
   // Queue welcome email (async - don't block response)
   await QueuePublisher.queueEmail({
     to: user.email,
@@ -18544,20 +19249,20 @@ router.post('/users', async (req, res) => {
     template: 'welcome',
     data: { name: user.name }
   });
-
+  
   // Queue notification
   await QueuePublisher.queueNotification({
     userId: user.id,
     title: 'Welcome!',
     body: 'Your account has been created successfully'
   });
-
+  
   // Publish user created event to Kafka
   await QueuePublisher.publishUserEvent('user.created', user.id, {
     email: user.email,
     name: user.name
   });
-
+  
   res.status(201).json(user);
 });
 
@@ -18575,7 +19280,7 @@ const router = Router();
 
 router.get('/admin/queues/stats', async (req, res) => {
   const queues = ['email_queue', 'notification_queue', 'image_processing_queue'];
-
+  
   const stats = await Promise.all(
     queues.map(async (queue) => {
       const queueStats = await RabbitMQService.getQueueStats(queue);
@@ -18586,15 +19291,15 @@ router.get('/admin/queues/stats', async (req, res) => {
       };
     })
   );
-
+  
   res.json(stats);
 });
 
 router.post('/admin/queues/:name/purge', async (req, res) => {
   const { name } = req.params;
-
+  
   await RabbitMQService.purgeQueue(name);
-
+  
   res.json({ success: true, message: `Queue ${name} purged` });
 });
 
@@ -18612,7 +19317,7 @@ import { failedJobs } from '@shared/schema';
 export async function startDeadLetterConsumer() {
   await RabbitMQService.consume('dead_letter_queue', async (message) => {
     console.error('❌ Dead letter message:', message);
-
+    
     // Log to database for investigation
     await db.insert(failedJobs).values({
       queue: message.originalQueue,
@@ -18621,7 +19326,7 @@ export async function startDeadLetterConsumer() {
       attempts: message.attempts,
       createdAt: new Date()
     });
-
+    
     // Alert operations team via PagerDuty
     await PagerDutyService.createIncident({
       title: 'High error rate detected',
@@ -18657,26 +19362,26 @@ export async function startEmailConsumerOptimized() {
   const batch: any[] = [];
   const BATCH_SIZE = 10;
   const BATCH_TIMEOUT = 5000; // 5 seconds
-
+  
   let timeoutId: NodeJS.Timeout;
-
+  
   const processBatch = async () => {
     if (batch.length === 0) return;
-
+    
     const emails = [...batch];
     batch.length = 0;
-
+    
     // Send emails in parallel
     await Promise.all(
       emails.map(email => sendEmail(email))
     );
-
+    
     console.log(`📧 Sent batch of ${emails.length} emails`);
   };
-
+  
   await RabbitMQService.consume('email_queue', async (message) => {
     batch.push(message);
-
+    
     // Process batch when full
     if (batch.length >= BATCH_SIZE) {
       clearTimeout(timeoutId);
@@ -18768,7 +19473,7 @@ const httpLink = new HttpLink({
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('auth_token');
-
+  
   return {
     headers: {
       ...headers,
@@ -18835,12 +19540,12 @@ export function UserProfile({ userId }: { userId: string }) {
   const { data, loading, error } = useQuery(GET_USER, {
     variables: { id: userId }
   });
-
+  
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
-
+  
   const user = data.user;
-
+  
   return (
     <div className="space-y-6" data-testid="page-user-profile">
       <Card>
@@ -18858,9 +19563,9 @@ export function UserProfile({ userId }: { userId: string }) {
               </p>
             </div>
           </div>
-
+          
           <p className="mt-4" data-testid="text-user-bio">{user.bio}</p>
-
+          
           <div className="flex gap-6 mt-4">
             <div data-testid="stat-followers">
               <span className="font-bold">{user.followerCount}</span> Followers
@@ -18871,7 +19576,7 @@ export function UserProfile({ userId }: { userId: string }) {
           </div>
         </CardContent>
       </Card>
-
+      
       <h2 className="text-xl font-bold">Recent Posts</h2>
       {user.posts.edges.map(({ node: post }: any) => (
         <Card key={post.id} data-testid={`card-post-${post.id}`}>
@@ -18910,7 +19615,7 @@ const POST_CREATED_SUBSCRIPTION = gql`
 
 export function usePostSubscription() {
   const { data, loading } = useSubscription(POST_CREATED_SUBSCRIPTION);
-
+  
   return { newPost: data?.postCreated, loading };
 }
 ```
@@ -18953,11 +19658,11 @@ import { httpRequestDuration } from '../metrics/prometheus';
 export const metricsPlugin: ApolloServerPlugin = {
   async requestDidStart() {
     const start = Date.now();
-
+    
     return {
       async willSendResponse(requestContext) {
         const duration = (Date.now() - start) / 1000;
-
+        
         httpRequestDuration.observe(
           {
             method: 'POST',
@@ -18982,7 +19687,7 @@ const postsByUserLoader = new DataLoader(async (userIds: readonly number[]) => {
   const posts = await db.query.posts.findMany({
     where: inArray(posts.authorId, userIds as number[])
   });
-
+  
   const grouped = new Map<number, any[]>();
   posts.forEach(post => {
     if (!grouped.has(post.authorId)) {
@@ -18990,7 +19695,7 @@ const postsByUserLoader = new DataLoader(async (userIds: readonly number[]) => {
     }
     grouped.get(post.authorId)!.push(post);
   });
-
+  
   return userIds.map(id => grouped.get(id as number) || []);
 });
 ```
@@ -19072,32 +19777,32 @@ export class EmailService {
   private resend: Resend;
   private ses: SESClient;
   private defaultProvider: EmailProvider;
-
+  
   constructor() {
     // Initialize providers
     this.resend = new Resend(process.env.RESEND_API_KEY);
     sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
     this.ses = new SESClient({ region: 'us-east-1' });
-
+    
     this.defaultProvider = (process.env.EMAIL_PROVIDER as EmailProvider) || EmailProvider.RESEND;
   }
-
+  
   /**
    * Send email with automatic provider selection
    */
   async send(options: EmailOptions): Promise<{ id: string; provider: EmailProvider }> {
     const provider = options.provider || this.defaultProvider;
-
+    
     // Render template if specified
     let html = options.html;
     let text = options.text;
-
+    
     if (options.template) {
       const rendered = await this.renderTemplate(options.template, options.templateData || {});
       html = rendered.html;
       text = rendered.text;
     }
-
+    
     const emailData = {
       to: Array.isArray(options.to) ? options.to : [options.to],
       from: options.from || 'noreply@mundotango.life',
@@ -19107,9 +19812,9 @@ export class EmailService {
       tags: options.tags || [],
       headers: options.headers || {}
     };
-
+    
     let messageId: string;
-
+    
     try {
       // Send via selected provider
       switch (provider) {
@@ -19125,7 +19830,7 @@ export class EmailService {
         default:
           throw new Error(`Unknown provider: ${provider}`);
       }
-
+      
       // Log email
       await this.logEmail({
         to: emailData.to.join(','),
@@ -19136,17 +19841,17 @@ export class EmailService {
         status: 'sent',
         tags: emailData.tags
       });
-
+      
       return { id: messageId, provider };
     } catch (error) {
       console.error(`Failed to send email via ${provider}:`, error);
-
+      
       // Fallback to another provider
       if (provider !== EmailProvider.SES) {
         console.log('Falling back to SES...');
         return this.send({ ...options, provider: EmailProvider.SES });
       }
-
+      
       // Log failure
       await this.logEmail({
         to: emailData.to.join(','),
@@ -19157,11 +19862,11 @@ export class EmailService {
         status: 'failed',
         error: error instanceof Error ? error.message : 'Unknown error'
       });
-
+      
       throw error;
     }
   }
-
+  
   /**
    * Send via Resend
    */
@@ -19174,10 +19879,10 @@ export class EmailService {
       text: data.text,
       tags: data.tags.map((tag: string) => ({ name: tag, value: 'true' }))
     });
-
+    
     return response.data?.id || '';
   }
-
+  
   /**
    * Send via SendGrid
    */
@@ -19190,10 +19895,10 @@ export class EmailService {
       text: data.text,
       categories: data.tags
     });
-
+    
     return response[0].headers['x-message-id'];
   }
-
+  
   /**
    * Send via AWS SES
    */
@@ -19211,11 +19916,11 @@ export class EmailService {
         }
       }
     });
-
+    
     const response = await this.ses.send(command);
     return response.MessageId || '';
   }
-
+  
   /**
    * Render email template
    */
@@ -19227,24 +19932,24 @@ export class EmailService {
     const template = await db.query.emailTemplates.findFirst({
       where: eq(emailTemplates.name, templateName)
     });
-
+    
     if (!template) {
       throw new Error(`Template not found: ${templateName}`);
     }
-
+    
     // Simple template rendering (replace {{variable}} with values)
     let html = template.htmlContent;
     let text = template.textContent || '';
-
+    
     Object.entries(data).forEach(([key, value]) => {
       const regex = new RegExp(`{{\\s*${key}\\s*}}`, 'g');
       html = html.replace(regex, String(value));
       text = text.replace(regex, String(value));
     });
-
+    
     return { html, text };
   }
-
+  
   /**
    * Convert HTML to plain text
    */
@@ -19257,7 +19962,7 @@ export class EmailService {
       .replace(/&gt;/g, '>')
       .trim();
   }
-
+  
   /**
    * Log email to database
    */
@@ -19283,7 +19988,7 @@ export class EmailService {
       sentAt: new Date()
     });
   }
-
+  
   /**
    * Send transactional email
    */
@@ -19299,10 +20004,10 @@ export class EmailService {
       templateData: params.data,
       tags: ['transactional', params.template]
     });
-
+    
     return { id: result.id };
   }
-
+  
   /**
    * Send marketing email
    */
@@ -19315,13 +20020,13 @@ export class EmailService {
   }): Promise<{ sent: number; failed: number }> {
     let sent = 0;
     let failed = 0;
-
+    
     // Send in batches to avoid rate limits
     const BATCH_SIZE = 100;
-
+    
     for (let i = 0; i < params.to.length; i += BATCH_SIZE) {
       const batch = params.to.slice(i, i + BATCH_SIZE);
-
+      
       const results = await Promise.allSettled(
         batch.map(email =>
           this.send({
@@ -19333,7 +20038,7 @@ export class EmailService {
           })
         )
       );
-
+      
       results.forEach(result => {
         if (result.status === 'fulfilled') {
           sent++;
@@ -19341,16 +20046,16 @@ export class EmailService {
           failed++;
         }
       });
-
+      
       // Rate limiting delay
       if (i + BATCH_SIZE < params.to.length) {
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
-
+    
     return { sent, failed };
   }
-
+  
   private getSubjectForTemplate(templateName: string): string {
     const subjects: Record<string, string> = {
       'welcome': 'Welcome to Mundo Tango!',
@@ -19359,7 +20064,7 @@ export class EmailService {
       'event-reminder': 'Upcoming Event Reminder',
       'new-message': 'You Have a New Message'
     };
-
+    
     return subjects[templateName] || 'Notification from Mundo Tango';
   }
 }
@@ -19438,9 +20143,9 @@ export const emailCampaigns = pgTable('email_campaigns', {
     </div>
     <div class="content">
       <p>Hi {{name}},</p>
-
+      
       <p>Thank you for joining Mundo Tango, the global community for tango dancers!</p>
-
+      
       <p>Here's what you can do now:</p>
       <ul>
         <li>Complete your profile</li>
@@ -19448,11 +20153,11 @@ export const emailCampaigns = pgTable('email_campaigns', {
         <li>Connect with other dancers</li>
         <li>Share your tango journey</li>
       </ul>
-
+      
       <p style="text-align: center; margin: 30px 0;">
         <a href="{{profileUrl}}" class="button">Complete Your Profile</a>
       </p>
-
+      
       <p>Happy dancing!</p>
       <p>The Mundo Tango Team</p>
     </div>
@@ -19477,7 +20182,7 @@ const router = Router();
  */
 router.post('/webhooks/email/resend', async (req, res) => {
   const event = req.body;
-
+  
   switch (event.type) {
     case 'email.delivered':
       await db.update(emailLogs)
@@ -19487,7 +20192,7 @@ router.post('/webhooks/email/resend', async (req, res) => {
         })
         .where(eq(emailLogs.messageId, event.data.email_id));
       break;
-
+      
     case 'email.bounced':
       await db.update(emailLogs)
         .set({ 
@@ -19496,20 +20201,20 @@ router.post('/webhooks/email/resend', async (req, res) => {
         })
         .where(eq(emailLogs.messageId, event.data.email_id));
       break;
-
+      
     case 'email.opened':
       await db.update(emailLogs)
         .set({ openedAt: new Date(event.created_at) })
         .where(eq(emailLogs.messageId, event.data.email_id));
       break;
-
+      
     case 'email.clicked':
       await db.update(emailLogs)
         .set({ clickedAt: new Date(event.created_at) })
         .where(eq(emailLogs.messageId, event.data.email_id));
       break;
   }
-
+  
   res.json({ received: true });
 });
 
@@ -19518,10 +20223,10 @@ router.post('/webhooks/email/resend', async (req, res) => {
  */
 router.post('/webhooks/email/sendgrid', async (req, res) => {
   const events = req.body;
-
+  
   for (const event of events) {
     const messageId = event.sg_message_id;
-
+    
     switch (event.event) {
       case 'delivered':
         await db.update(emailLogs)
@@ -19531,7 +20236,7 @@ router.post('/webhooks/email/sendgrid', async (req, res) => {
           })
           .where(eq(emailLogs.messageId, messageId));
         break;
-
+        
       case 'bounce':
       case 'dropped':
         await db.update(emailLogs)
@@ -19541,13 +20246,13 @@ router.post('/webhooks/email/sendgrid', async (req, res) => {
           })
           .where(eq(emailLogs.messageId, messageId));
         break;
-
+        
       case 'open':
         await db.update(emailLogs)
           .set({ openedAt: new Date(event.timestamp * 1000) })
           .where(eq(emailLogs.messageId, messageId));
         break;
-
+        
       case 'click':
         await db.update(emailLogs)
           .set({ clickedAt: new Date(event.timestamp * 1000) })
@@ -19555,7 +20260,7 @@ router.post('/webhooks/email/sendgrid', async (req, res) => {
         break;
     }
   }
-
+  
   res.json({ received: true });
 });
 
@@ -19577,15 +20282,15 @@ export function EmailAnalytics() {
   const { data: stats } = useQuery({
     queryKey: ['/api/admin/email/stats']
   });
-
+  
   const { data: campaigns } = useQuery({
     queryKey: ['/api/admin/email/campaigns']
   });
-
+  
   return (
     <div className="space-y-6" data-testid="page-email-analytics">
       <h1 className="text-3xl font-bold">Email Analytics</h1>
-
+      
       {/* Summary Cards */}
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
@@ -19598,7 +20303,7 @@ export function EmailAnalytics() {
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>Delivery Rate</CardTitle>
@@ -19609,7 +20314,7 @@ export function EmailAnalytics() {
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>Open Rate</CardTitle>
@@ -19620,7 +20325,7 @@ export function EmailAnalytics() {
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>Click Rate</CardTitle>
@@ -19632,7 +20337,7 @@ export function EmailAnalytics() {
           </CardContent>
         </Card>
       </div>
-
+      
       {/* Email Volume Trend */}
       <Card>
         <CardHeader>
@@ -19653,7 +20358,7 @@ export function EmailAnalytics() {
           </ResponsiveContainer>
         </CardContent>
       </Card>
-
+      
       {/* Campaign Performance */}
       <Card>
         <CardHeader>
@@ -19801,7 +20506,7 @@ export class MessagingService {
   private twilioClient: any;
   private twilioPhoneNumber: string;
   private twilioWhatsAppNumber: string;
-
+  
   constructor() {
     this.twilioClient = twilio(
       process.env.TWILIO_ACCOUNT_SID,
@@ -19810,7 +20515,7 @@ export class MessagingService {
     this.twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER!;
     this.twilioWhatsAppNumber = process.env.TWILIO_WHATSAPP_NUMBER!;
   }
-
+  
   /**
    * Send message via optimal channel
    */
@@ -19818,27 +20523,27 @@ export class MessagingService {
     // Check user preferences if userId provided
     if (options.userId) {
       const preferences = await this.getUserPreferences(options.userId);
-
+      
       if (!preferences.smsEnabled && options.channel === MessageChannel.SMS) {
         throw new Error('User has disabled SMS notifications');
       }
-
+      
       if (!preferences.whatsappEnabled && options.channel === MessageChannel.WHATSAPP) {
         throw new Error('User has disabled WhatsApp notifications');
       }
-
+      
       // Use preferred channel if not specified
       if (!options.channel) {
         options.channel = preferences.preferredChannel;
       }
     }
-
+    
     const channel = options.channel || MessageChannel.SMS;
     const provider = options.provider || MessageProvider.TWILIO;
-
+    
     try {
       let sid: string;
-
+      
       switch (channel) {
         case MessageChannel.SMS:
           sid = await this.sendSMS(options.to, options.message, options.mediaUrl);
@@ -19849,7 +20554,7 @@ export class MessagingService {
         default:
           throw new Error(`Unknown channel: ${channel}`);
       }
-
+      
       // Log message
       await this.logMessage({
         to: options.to,
@@ -19861,11 +20566,11 @@ export class MessagingService {
         status: 'sent',
         tags: options.tags || []
       });
-
+      
       return { sid, channel };
     } catch (error) {
       console.error(`Failed to send ${channel} message:`, error);
-
+      
       // Log failure
       await this.logMessage({
         to: options.to,
@@ -19877,11 +20582,11 @@ export class MessagingService {
         status: 'failed',
         error: error instanceof Error ? error.message : 'Unknown error'
       });
-
+      
       throw error;
     }
   }
-
+  
   /**
    * Send SMS via Twilio
    */
@@ -19891,16 +20596,16 @@ export class MessagingService {
       to,
       body: message
     };
-
+    
     if (mediaUrl) {
       messageData.mediaUrl = [mediaUrl];
     }
-
+    
     const result = await this.twilioClient.messages.create(messageData);
-
+    
     return result.sid;
   }
-
+  
   /**
    * Send WhatsApp message via Twilio
    */
@@ -19910,16 +20615,16 @@ export class MessagingService {
       to: `whatsapp:${to}`,
       body: message
     };
-
+    
     if (mediaUrl) {
       messageData.mediaUrl = [mediaUrl];
     }
-
+    
     const result = await this.twilioClient.messages.create(messageData);
-
+    
     return result.sid;
   }
-
+  
   /**
    * Get user messaging preferences
    */
@@ -19931,14 +20636,14 @@ export class MessagingService {
     const preferences = await db.query.messagingPreferences.findFirst({
       where: eq(messagingPreferences.userId, userId)
     });
-
+    
     return preferences || {
       smsEnabled: true,
       whatsappEnabled: false,
       preferredChannel: MessageChannel.SMS
     };
   }
-
+  
   /**
    * Log message to database
    */
@@ -19966,7 +20671,7 @@ export class MessagingService {
       sentAt: new Date()
     });
   }
-
+  
   /**
    * Send bulk SMS campaign
    */
@@ -19977,13 +20682,13 @@ export class MessagingService {
   }): Promise<{ sent: number; failed: number }> {
     let sent = 0;
     let failed = 0;
-
+    
     // Send in batches to respect rate limits
     const BATCH_SIZE = 50;
-
+    
     for (let i = 0; i < params.recipients.length; i += BATCH_SIZE) {
       const batch = params.recipients.slice(i, i + BATCH_SIZE);
-
+      
       const results = await Promise.allSettled(
         batch.map(phoneNumber =>
           this.send({
@@ -19994,7 +20699,7 @@ export class MessagingService {
           })
         )
       );
-
+      
       results.forEach(result => {
         if (result.status === 'fulfilled') {
           sent++;
@@ -20002,16 +20707,16 @@ export class MessagingService {
           failed++;
         }
       });
-
+      
       // Rate limiting delay (1 message per second)
       if (i + BATCH_SIZE < params.recipients.length) {
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
-
+    
     return { sent, failed };
   }
-
+  
   /**
    * Send two-factor authentication code
    */
@@ -20021,17 +20726,17 @@ export class MessagingService {
     channel?: MessageChannel;
   }): Promise<{ sid: string }> {
     const message = `Your Mundo Tango verification code is: ${params.code}. Valid for 10 minutes.`;
-
+    
     const result = await this.send({
       to: params.to,
       message,
       channel: params.channel || MessageChannel.SMS,
       tags: ['2fa', 'security']
     });
-
+    
     return { sid: result.sid };
   }
-
+  
   /**
    * Send event reminder
    */
@@ -20043,14 +20748,14 @@ export class MessagingService {
     eventLocation: string;
   }): Promise<{ sid: string }> {
     const message = `Reminder: ${params.eventName} starts ${params.eventTime.toLocaleString()} at ${params.eventLocation}. See you there! 💃🕺`;
-
+    
     const result = await this.send({
       to: params.phone,
       message,
       userId: params.userId,
       tags: ['event-reminder']
     });
-
+    
     return { sid: result.sid };
   }
 }
@@ -20107,23 +20812,23 @@ const router = Router();
  */
 router.post('/webhooks/messaging/twilio', async (req, res) => {
   const { MessageSid, MessageStatus, ErrorCode, ErrorMessage } = req.body;
-
+  
   const updateData: any = {
     status: MessageStatus
   };
-
+  
   if (MessageStatus === 'delivered') {
     updateData.deliveredAt = new Date();
   }
-
+  
   if (ErrorCode) {
     updateData.error = `${ErrorCode}: ${ErrorMessage}`;
   }
-
+  
   await db.update(messagingLogs)
     .set(updateData)
     .where(eq(messagingLogs.messageSid, MessageSid));
-
+  
   res.sendStatus(200);
 });
 
@@ -20145,11 +20850,11 @@ import { useToast } from '@/hooks/use-toast';
 
 export function MessagingPreferences() {
   const { toast } = useToast();
-
+  
   const { data: preferences, isLoading } = useQuery({
     queryKey: ['/api/user/messaging-preferences']
   });
-
+  
   const updatePreferences = useMutation({
     mutationFn: async (data: any) => {
       return await apiRequest('/api/user/messaging-preferences', {
@@ -20165,13 +20870,13 @@ export function MessagingPreferences() {
       });
     }
   });
-
+  
   if (isLoading) return <div>Loading...</div>;
-
+  
   return (
     <div className="space-y-6" data-testid="page-messaging-preferences">
       <h1 className="text-3xl font-bold">Messaging Preferences</h1>
-
+      
       <Card>
         <CardHeader>
           <CardTitle>Channels</CardTitle>
@@ -20188,7 +20893,7 @@ export function MessagingPreferences() {
               data-testid="switch-sms-enabled"
             />
           </div>
-
+          
           <div className="flex items-center justify-between">
             <Label htmlFor="whatsapp-enabled">WhatsApp Notifications</Label>
             <Switch
@@ -20202,7 +20907,7 @@ export function MessagingPreferences() {
           </div>
         </CardContent>
       </Card>
-
+      
       <Card>
         <CardHeader>
           <CardTitle>Preferred Channel</CardTitle>
@@ -20225,7 +20930,7 @@ export function MessagingPreferences() {
           </RadioGroup>
         </CardContent>
       </Card>
-
+      
       <Card>
         <CardHeader>
           <CardTitle>Notification Types</CardTitle>
@@ -20242,7 +20947,7 @@ export function MessagingPreferences() {
               data-testid="switch-event-reminders"
             />
           </div>
-
+          
           <div className="flex items-center justify-between">
             <Label htmlFor="message-notifications">New Messages</Label>
             <Switch
@@ -20254,7 +20959,7 @@ export function MessagingPreferences() {
               data-testid="switch-message-notifications"
             />
           </div>
-
+          
           <div className="flex items-center justify-between">
             <Label htmlFor="marketing-messages">Marketing Updates</Label>
             <Switch
@@ -20289,21 +20994,21 @@ export class MessagingComplianceService {
     const preferences = await db.query.messagingPreferences.findFirst({
       where: eq(messagingPreferences.userId, userId)
     });
-
+    
     if (!preferences) {
       // Default: allow transactional, block marketing
       return messageType === 'transactional';
     }
-
+    
     // Always allow transactional messages (security, account updates)
     if (messageType === 'transactional') {
       return true;
     }
-
+    
     // Marketing requires explicit opt-in
     return preferences.marketingMessages;
   }
-
+  
   /**
    * Process opt-out request
    */
@@ -20312,9 +21017,9 @@ export class MessagingComplianceService {
     const user = await db.query.users.findFirst({
       where: eq(users.phone, phone)
     });
-
+    
     if (!user) return;
-
+    
     if (optOutType === 'all') {
       await db.update(messagingPreferences)
         .set({
@@ -20328,10 +21033,10 @@ export class MessagingComplianceService {
         .set({ marketingMessages: false })
         .where(eq(messagingPreferences.userId, user.id));
     }
-
+    
     console.log(`✅ Processed opt-out for user ${user.id}`);
   }
-
+  
   /**
    * Generate compliance report
    */
@@ -20347,14 +21052,14 @@ export class MessagingComplianceService {
         lte(messagingLogs.sentAt, endDate)
       )
     });
-
+    
     // Track email opt-outs and complaints
     await db.insert(emailOptOuts).values({
       email,
       reason: 'user_request',
       createdAt: new Date()
     });
-
+    
     return {
       totalSent: messages.length,
       optOuts: 0,
@@ -20503,21 +21208,21 @@ export class FileProcessingService {
   private queue: Queue;
   private s3: S3Client;
   private redisClient: any;
-
+  
   constructor() {
     this.redisClient = createClient({
       url: process.env.REDIS_URL
     });
-
+    
     this.queue = new Queue('file-processing', {
       connection: this.redisClient
     });
-
+    
     this.s3 = new S3Client({ region: 'us-east-1' });
-
+    
     this.startWorker();
   }
-
+  
   /**
    * Queue file processing job
    */
@@ -20529,7 +21234,7 @@ export class FileProcessingService {
         delay: 2000
       }
     });
-
+    
     // Create database record
     await db.insert(fileProcessingJobs).values({
       jobId: job.id!.toString(),
@@ -20541,22 +21246,22 @@ export class FileProcessingService {
       metadata: data.metadata,
       createdAt: new Date()
     });
-
+    
     return { jobId: job.id!.toString() };
   }
-
+  
   /**
    * Start worker to process jobs
    */
   private startWorker() {
     const worker = new Worker('file-processing', async (job: Job) => {
       console.log(`🔨 Processing job ${job.id}: ${job.data.type}`);
-
+      
       try {
         await this.updateJobStatus(job.id!.toString(), 'processing', 0);
-
+        
         let result: any;
-
+        
         switch (job.data.type) {
           case ProcessingJobType.IMAGE_OPTIMIZE:
             result = await this.processImage(job);
@@ -20576,9 +21281,9 @@ export class FileProcessingService {
           default:
             throw new Error(`Unknown job type: ${job.data.type}`);
         }
-
+        
         await this.updateJobStatus(job.id!.toString(), 'completed', 100, result.outputUrl);
-
+        
         return result;
       } catch (error) {
         console.error(`❌ Job ${job.id} failed:`, error);
@@ -20595,25 +21300,25 @@ export class FileProcessingService {
       connection: this.redisClient,
       concurrency: 5 // Process 5 jobs concurrently
     });
-
+    
     worker.on('progress', async (job, progress: number) => {
       await this.updateJobStatus(job.id!.toString(), 'processing', progress);
     });
   }
-
+  
   /**
    * Process image (optimize, resize, format conversion)
    */
   private async processImage(job: Job): Promise<{ outputUrl: string }> {
     const { inputUrl, outputFormat = 'webp', options = {} } = job.data;
-
+    
     // Download image
     const response = await fetch(inputUrl);
     const buffer = Buffer.from(await response.arrayBuffer());
-
+    
     // Process with Sharp
     let image = sharp(buffer);
-
+    
     // Apply transformations
     if (options.width || options.height) {
       image = image.resize({
@@ -20622,16 +21327,16 @@ export class FileProcessingService {
         fit: options.fit || 'cover'
       });
     }
-
+    
     if (options.quality) {
       image = image[outputFormat]({ quality: options.quality });
     }
-
+    
     const processed = await image.toBuffer();
-
+    
     // Update progress
     await job.updateProgress(50);
-
+    
     // Upload to S3
     const outputKey = `processed/${Date.now()}.${outputFormat}`;
     await this.s3.send(new PutObjectCommand({
@@ -20641,30 +21346,30 @@ export class FileProcessingService {
       ContentType: `image/${outputFormat}`,
       CacheControl: 'max-age=31536000'
     }));
-
+    
     const outputUrl = `https://mundotango-files.s3.amazonaws.com/${outputKey}`;
-
+    
     await job.updateProgress(100);
-
+    
     return { outputUrl };
   }
-
+  
   /**
    * Process video (transcode, compress, generate HLS)
    */
   private async processVideo(job: Job): Promise<{ outputUrl: string; variants: string[] }> {
     const { inputUrl, options = {} } = job.data;
-
+    
     const outputKey = `processed/video-${Date.now()}`;
     const tempInput = `/tmp/video-input-${Date.now()}.mp4`;
     const tempOutput = `/tmp/video-output-${Date.now()}.mp4`;
-
+    
     // Download video
     const response = await fetch(inputUrl);
     const buffer = Buffer.from(await response.arrayBuffer());
     const fs = await import('fs');
     fs.writeFileSync(tempInput, buffer);
-
+    
     // Transcode with FFmpeg
     await new Promise((resolve, reject) => {
       ffmpeg(tempInput)
@@ -20683,10 +21388,10 @@ export class FileProcessingService {
         .on('error', reject)
         .save(tempOutput);
     });
-
+    
     // Read processed video
     const processed = fs.readFileSync(tempOutput);
-
+    
     // Upload to S3
     await this.s3.send(new PutObjectCommand({
       Bucket: 'mundotango-files',
@@ -20694,38 +21399,38 @@ export class FileProcessingService {
       Body: processed,
       ContentType: 'video/mp4'
     }));
-
+    
     // Cleanup temp files
     fs.unlinkSync(tempInput);
     fs.unlinkSync(tempOutput);
-
+    
     const outputUrl = `https://mundotango-files.s3.amazonaws.com/${outputKey}.mp4`;
-
+    
     // Generate HLS variants for adaptive streaming
     const hlsVariants = await this.generateHLSPlaylist({
       inputPath: videoPath,
       qualities: ['1080p', '720p', '480p', '360p']
     });
-
+    
     return { outputUrl, variants: [outputUrl] };
   }
-
+  
   /**
    * Process audio (convert format, normalize)
    */
   private async processAudio(job: Job): Promise<{ outputUrl: string }> {
     const { inputUrl, outputFormat = 'mp3', options = {} } = job.data;
-
+    
     const outputKey = `processed/audio-${Date.now()}.${outputFormat}`;
     const tempInput = `/tmp/audio-input-${Date.now()}`;
     const tempOutput = `/tmp/audio-output-${Date.now()}.${outputFormat}`;
-
+    
     // Download audio
     const response = await fetch(inputUrl);
     const buffer = Buffer.from(await response.arrayBuffer());
     const fs = await import('fs');
     fs.writeFileSync(tempInput, buffer);
-
+    
     // Convert with FFmpeg
     await new Promise((resolve, reject) => {
       ffmpeg(tempInput)
@@ -20739,10 +21444,10 @@ export class FileProcessingService {
         .on('error', reject)
         .save(tempOutput);
     });
-
+    
     // Read processed audio
     const processed = fs.readFileSync(tempOutput);
-
+    
     // Upload to S3
     await this.s3.send(new PutObjectCommand({
       Bucket: 'mundotango-files',
@@ -20750,41 +21455,41 @@ export class FileProcessingService {
       Body: processed,
       ContentType: `audio/${outputFormat}`
     }));
-
+    
     // Cleanup
     fs.unlinkSync(tempInput);
     fs.unlinkSync(tempOutput);
-
+    
     const outputUrl = `https://mundotango-files.s3.amazonaws.com/${outputKey}`;
-
+    
     return { outputUrl };
   }
-
+  
   /**
    * Generate PDF document
    */
   private async generatePDF(job: Job): Promise<{ outputUrl: string }> {
     const { options = {} } = job.data;
-
+    
     const doc = new jsPDF();
-
+    
     // Add content
     doc.setFontSize(20);
     doc.text(options.title || 'Document', 20, 20);
-
+    
     doc.setFontSize(12);
     let y = 40;
-
+    
     if (options.content) {
       const lines = doc.splitTextToSize(options.content, 170);
       doc.text(lines, 20, y);
     }
-
+    
     // Generate PDF buffer
     const pdfBuffer = Buffer.from(doc.output('arraybuffer'));
-
+    
     await job.updateProgress(50);
-
+    
     // Upload to S3
     const outputKey = `pdfs/${Date.now()}.pdf`;
     await this.s3.send(new PutObjectCommand({
@@ -20793,33 +21498,33 @@ export class FileProcessingService {
       Body: pdfBuffer,
       ContentType: 'application/pdf'
     }));
-
+    
     const outputUrl = `https://mundotango-files.s3.amazonaws.com/${outputKey}`;
-
+    
     await job.updateProgress(100);
-
+    
     return { outputUrl };
   }
-
+  
   /**
    * Generate thumbnail from video or image
    */
   private async generateThumbnail(job: Job): Promise<{ outputUrl: string }> {
     const { inputUrl, options = {} } = job.data;
-
+    
     const width = options.width || 320;
     const height = options.height || 180;
-
+    
     // For images, use Sharp
     if (inputUrl.match(/\.(jpg|jpeg|png|webp|gif)$/i)) {
       const response = await fetch(inputUrl);
       const buffer = Buffer.from(await response.arrayBuffer());
-
+      
       const thumbnail = await sharp(buffer)
         .resize(width, height, { fit: 'cover' })
         .webp({ quality: 80 })
         .toBuffer();
-
+      
       const outputKey = `thumbnails/${Date.now()}.webp`;
       await this.s3.send(new PutObjectCommand({
         Bucket: 'mundotango-files',
@@ -20827,19 +21532,19 @@ export class FileProcessingService {
         Body: thumbnail,
         ContentType: 'image/webp'
       }));
-
+      
       return { outputUrl: `https://mundotango-files.s3.amazonaws.com/${outputKey}` };
     }
-
+    
     // For videos, extract frame with FFmpeg
     const tempInput = `/tmp/video-${Date.now()}.mp4`;
     const tempOutput = `/tmp/thumb-${Date.now()}.jpg`;
-
+    
     const response = await fetch(inputUrl);
     const buffer = Buffer.from(await response.arrayBuffer());
     const fs = await import('fs');
     fs.writeFileSync(tempInput, buffer);
-
+    
     await new Promise((resolve, reject) => {
       ffmpeg(tempInput)
         .screenshots({
@@ -20850,9 +21555,9 @@ export class FileProcessingService {
         .on('end', resolve)
         .on('error', reject);
     });
-
+    
     const thumbnail = fs.readFileSync(tempOutput);
-
+    
     const outputKey = `thumbnails/${Date.now()}.jpg`;
     await this.s3.send(new PutObjectCommand({
       Bucket: 'mundotango-files',
@@ -20860,14 +21565,14 @@ export class FileProcessingService {
       Body: thumbnail,
       ContentType: 'image/jpeg'
     }));
-
+    
     // Cleanup
     fs.unlinkSync(tempInput);
     fs.unlinkSync(tempOutput);
-
+    
     return { outputUrl: `https://mundotango-files.s3.amazonaws.com/${outputKey}` };
   }
-
+  
   /**
    * Update job status in database
    */
@@ -20883,24 +21588,24 @@ export class FileProcessingService {
       progress,
       updatedAt: new Date()
     };
-
+    
     if (outputUrl) {
       updateData.outputUrl = outputUrl;
     }
-
+    
     if (error) {
       updateData.error = error;
     }
-
+    
     if (status === 'completed') {
       updateData.completedAt = new Date();
     }
-
+    
     await db.update(fileProcessingJobs)
       .set(updateData)
       .where(eq(fileProcessingJobs.jobId, jobId));
   }
-
+  
   /**
    * Get job status
    */
@@ -20962,20 +21667,20 @@ router.post('/files/upload/image',
     if (!req.file) {
       return res.status(400).json({ error: 'No file provided' });
     }
-
+    
     // Upload to S3 first
     const inputKey = `uploads/${Date.now()}-${req.file.originalname}`;
     const s3 = new S3Client({ region: 'us-east-1' });
-
+    
     await s3.send(new PutObjectCommand({
       Bucket: 'mundotango-files',
       Key: inputKey,
       Body: req.file.buffer,
       ContentType: req.file.mimetype
     }));
-
+    
     const inputUrl = `https://mundotango-files.s3.amazonaws.com/${inputKey}`;
-
+    
     // Queue processing job
     const { jobId } = await fileProcessing.queueJob({
       type: ProcessingJobType.IMAGE_OPTIMIZE,
@@ -20987,7 +21692,7 @@ router.post('/files/upload/image',
       },
       userId: req.user.id
     });
-
+    
     res.json({ jobId, inputUrl });
   }
 );
@@ -21002,20 +21707,20 @@ router.post('/files/upload/video',
     if (!req.file) {
       return res.status(400).json({ error: 'No file provided' });
     }
-
+    
     // Upload to S3
     const inputKey = `uploads/${Date.now()}-${req.file.originalname}`;
     const s3 = new S3Client({ region: 'us-east-1' });
-
+    
     await s3.send(new PutObjectCommand({
       Bucket: 'mundotango-files',
       Key: inputKey,
       Body: req.file.buffer,
       ContentType: req.file.mimetype
     }));
-
+    
     const inputUrl = `https://mundotango-files.s3.amazonaws.com/${inputKey}`;
-
+    
     // Queue video transcoding
     const { jobId } = await fileProcessing.queueJob({
       type: ProcessingJobType.VIDEO_TRANSCODE,
@@ -21025,14 +21730,14 @@ router.post('/files/upload/video',
       },
       userId: req.user.id
     });
-
+    
     // Also generate thumbnail
     const { jobId: thumbJobId } = await fileProcessing.queueJob({
       type: ProcessingJobType.THUMBNAIL_GENERATE,
       inputUrl,
       userId: req.user.id
     });
-
+    
     res.json({ jobId, thumbnailJobId: thumbJobId, inputUrl });
   }
 );
@@ -21044,7 +21749,7 @@ router.post('/files/generate/pdf',
   authMiddleware,
   async (req, res) => {
     const { title, content } = req.body;
-
+    
     const { jobId } = await fileProcessing.queueJob({
       type: ProcessingJobType.PDF_GENERATE,
       inputUrl: '', // Not needed for generation
@@ -21054,7 +21759,7 @@ router.post('/files/generate/pdf',
       },
       userId: req.user.id
     });
-
+    
     res.json({ jobId });
   }
 );
@@ -21064,11 +21769,11 @@ router.post('/files/generate/pdf',
  */
 router.get('/files/jobs/:jobId', async (req, res) => {
   const status = await fileProcessing.getJobStatus(req.params.jobId);
-
+  
   if (!status) {
     return res.status(404).json({ error: 'Job not found' });
   }
-
+  
   res.json(status);
 });
 
@@ -21090,27 +21795,27 @@ export function FileUploadWithProgress({ type = 'image' }: { type?: 'image' | 'v
   const [file, setFile] = useState<File | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-
+  
   const { data: jobStatus } = useQuery({
     queryKey: ['/api/files/jobs', jobId],
     enabled: !!jobId,
     refetchInterval: jobStatus?.status === 'processing' ? 1000 : false
   });
-
+  
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
     }
   };
-
+  
   const handleUpload = async () => {
     if (!file) return;
-
+    
     setUploading(true);
-
+    
     const formData = new FormData();
     formData.append('file', file);
-
+    
     try {
       const response = await fetch(`/api/files/upload/${type}`, {
         method: 'POST',
@@ -21119,7 +21824,7 @@ export function FileUploadWithProgress({ type = 'image' }: { type?: 'image' | 'v
         },
         body: formData
       });
-
+      
       const data = await response.json();
       setJobId(data.jobId);
     } catch (error) {
@@ -21128,14 +21833,14 @@ export function FileUploadWithProgress({ type = 'image' }: { type?: 'image' | 'v
       setUploading(false);
     }
   };
-
+  
   return (
     <Card data-testid="card-file-upload">
       <CardContent className="pt-6">
         <div className="space-y-4">
           <div className="border-2 border-dashed rounded-lg p-8 text-center">
             {type === 'image' ? <FileImage className="mx-auto h-12 w-12 text-gray-400" /> : <FileVideo className="mx-auto h-12 w-12 text-gray-400" />}
-
+            
             <input
               type="file"
               accept={type === 'image' ? 'image/*' : 'video/*'}
@@ -21144,14 +21849,14 @@ export function FileUploadWithProgress({ type = 'image' }: { type?: 'image' | 'v
               id="file-input"
               data-testid="input-file"
             />
-
+            
             <label htmlFor="file-input" className="cursor-pointer">
               <div className="mt-2 text-sm text-gray-600">
                 {file ? file.name : `Click to select ${type}`}
               </div>
             </label>
           </div>
-
+          
           <Button
             onClick={handleUpload}
             disabled={!file || uploading}
@@ -21161,15 +21866,15 @@ export function FileUploadWithProgress({ type = 'image' }: { type?: 'image' | 'v
             <Upload className="mr-2 h-4 w-4" />
             {uploading ? 'Uploading...' : 'Upload'}
           </Button>
-
+          
           {jobStatus && (
             <div className="space-y-2" data-testid="div-job-status">
               <div className="text-sm font-medium">
                 Status: {jobStatus.status}
               </div>
-
+              
               <Progress value={jobStatus.progress} data-testid="progress-processing" />
-
+              
               {jobStatus.status === 'completed' && jobStatus.outputUrl && (
                 <div className="mt-4">
                   <a
@@ -21183,7 +21888,7 @@ export function FileUploadWithProgress({ type = 'image' }: { type?: 'image' | 'v
                   </a>
                 </div>
               )}
-
+              
               {jobStatus.error && (
                 <div className="text-red-600 text-sm" data-testid="text-error">
                   Error: {jobStatus.error}
@@ -21306,21 +22011,21 @@ const { sendWelcomeEmail, createDefaultProfile, assignDefaultGroups, scheduleFol
 
 export async function userOnboardingWorkflow(userId: number, email: string): Promise<void> {
   console.log(`Starting onboarding for user ${userId}`);
-
+  
   // Step 1: Send welcome email
   await sendWelcomeEmail(userId, email);
-
+  
   // Step 2: Create default profile (can run in parallel with email)
   await createDefaultProfile(userId);
-
+  
   // Step 3: Assign default groups
   await assignDefaultGroups(userId);
-
+  
   // Step 4: Wait 24 hours, then send follow-up
   await sleep('24 hours');
-
+  
   await scheduleFollowUp(userId);
-
+  
   console.log(`Onboarding complete for user ${userId}`);
 }
 ```
@@ -21334,7 +22039,7 @@ import { eq } from 'drizzle-orm';
 
 export async function sendWelcomeEmail(userId: number, email: string): Promise<void> {
   const emailService = new EmailService();
-
+  
   await emailService.sendTransactional({
     to: email,
     template: 'welcome',
@@ -21343,7 +22048,7 @@ export async function sendWelcomeEmail(userId: number, email: string): Promise<v
       profileUrl: `https://mundotango.life/profile/${userId}`
     }
   });
-
+  
   console.log(`✅ Welcome email sent to user ${userId}`);
 }
 
@@ -21354,7 +22059,7 @@ export async function createDefaultProfile(userId: number): Promise<void> {
     location: '',
     visibility: 'public'
   });
-
+  
   console.log(`✅ Default profile created for user ${userId}`);
 }
 
@@ -21363,21 +22068,21 @@ export async function assignDefaultGroups(userId: number): Promise<void> {
   const user = await db.query.users.findFirst({
     where: eq(users.id, userId)
   });
-
+  
   if (!user?.city) return;
-
+  
   // Find city group
   const cityGroup = await db.query.groups.findFirst({
     where: eq(groups.city, user.city)
   });
-
+  
   if (cityGroup) {
     await db.insert(userGroups).values({
       userId,
       groupId: cityGroup.id,
       role: 'member'
     });
-
+    
     console.log(`✅ Assigned user ${userId} to city group ${cityGroup.id}`);
   }
 }
@@ -21386,11 +22091,11 @@ export async function scheduleFollowUp(userId: number): Promise<void> {
   const user = await db.query.users.findFirst({
     where: eq(users.id, userId)
   });
-
+  
   if (!user) return;
-
+  
   const emailService = new EmailService();
-
+  
   await emailService.sendTransactional({
     to: user.email,
     template: 'onboarding-followup',
@@ -21403,7 +22108,7 @@ export async function scheduleFollowUp(userId: number): Promise<void> {
       }
     }
   });
-
+  
   console.log(`✅ Follow-up email sent to user ${userId}`);
 }
 
@@ -21411,7 +22116,7 @@ async function getUserName(userId: number): Promise<string> {
   const user = await db.query.users.findFirst({
     where: eq(users.id, userId)
   });
-
+  
   return user?.name || 'there';
 }
 ```
@@ -21443,16 +22148,16 @@ interface EventWorkflowInput {
 
 export async function eventProcessingWorkflow(input: EventWorkflowInput): Promise<void> {
   const { eventId, autoApprove } = input;
-
+  
   console.log(`Processing event ${eventId}`);
-
+  
   // Step 1: Validate event data
   const isValid = await validateEvent(eventId);
-
+  
   if (!isValid) {
     throw new Error('Event validation failed');
   }
-
+  
   // Step 2: Approval workflow
   if (autoApprove) {
     await approveEvent(eventId);
@@ -21460,32 +22165,32 @@ export async function eventProcessingWorkflow(input: EventWorkflowInput): Promis
     // Wait for manual approval (human-in-the-loop)
     await condition(() => isEventApproved(eventId), '7 days');
   }
-
+  
   // Step 3: Publish event
   await publishEvent(eventId);
-
+  
   // Step 4: Send notifications to relevant users
   await sendNotifications(eventId);
-
+  
   // Step 5: Monitor registrations
   await processRegistrations(eventId);
-
+  
   // Step 6: Send reminders
   // 1 week before
   await sleep('until-1-week-before-event');
   await sendReminders(eventId, '1-week');
-
+  
   // 1 day before
   await sleep('until-1-day-before-event');
   await sendReminders(eventId, '1-day');
-
+  
   // Step 7: Event occurs
   await sleep('until-event-end');
-
+  
   // Step 8: Close event and generate report
   await closeEvent(eventId);
   await generateReport(eventId);
-
+  
   console.log(`Event ${eventId} processing complete`);
 }
 
@@ -21526,12 +22231,12 @@ export async function paymentSagaWorkflow(input: PaymentWorkflowInput): Promise<
   let inventoryReserved = false;
   let paymentCharged = false;
   let orderCreated = false;
-
+  
   try {
     // Step 1: Reserve inventory
     await reserveInventory(input.items);
     inventoryReserved = true;
-
+    
     // Step 2: Charge payment
     const paymentIntent = await chargePayment({
       userId: input.userId,
@@ -21539,7 +22244,7 @@ export async function paymentSagaWorkflow(input: PaymentWorkflowInput): Promise<
       paymentMethodId: input.paymentMethodId
     });
     paymentCharged = true;
-
+    
     // Step 3: Create order
     const orderId = await createOrder({
       userId: input.userId,
@@ -21548,27 +22253,27 @@ export async function paymentSagaWorkflow(input: PaymentWorkflowInput): Promise<
       paymentIntentId: paymentIntent.id
     });
     orderCreated = true;
-
+    
     // Step 4: Send confirmation
     await sendConfirmation(orderId);
-
+    
     return { orderId };
   } catch (error) {
     console.error('Payment workflow failed, executing compensation:', error);
-
+    
     // Compensation (rollback in reverse order)
     if (orderCreated) {
       await cancelOrder(input.userId);
     }
-
+    
     if (paymentCharged) {
       await refundPayment(input.userId);
     }
-
+    
     if (inventoryReserved) {
       await releaseInventory(input.items);
     }
-
+    
     throw error;
   }
 }
@@ -21596,9 +22301,9 @@ const {
  */
 export async function dailyCleanupWorkflow(): Promise<void> {
   console.log('Running daily cleanup...');
-
+  
   await cleanupOldData();
-
+  
   console.log('Daily cleanup complete');
 }
 
@@ -21607,12 +22312,12 @@ export async function dailyCleanupWorkflow(): Promise<void> {
  */
 export async function dailyReportWorkflow(): Promise<void> {
   console.log('Generating daily report...');
-
+  
   const report = await generateDailyReport();
-
+  
   // Send to admins
   await sendDigest(report);
-
+  
   console.log('Daily report sent');
 }
 
@@ -21621,9 +22326,9 @@ export async function dailyReportWorkflow(): Promise<void> {
  */
 export async function hourlyBackupWorkflow(): Promise<void> {
   console.log('Starting hourly backup...');
-
+  
   await backupDatabase();
-
+  
   console.log('Backup complete');
 }
 
@@ -21645,16 +22350,16 @@ let client: Client | null = null;
 
 export async function getTemporalClient(): Promise<Client> {
   if (client) return client;
-
+  
   const connection = await Connection.connect({
     address: process.env.TEMPORAL_ADDRESS || 'localhost:7233',
   });
-
+  
   client = new Client({
     connection,
     namespace: 'mundotango',
   });
-
+  
   return client;
 }
 
@@ -21667,13 +22372,13 @@ export async function startWorkflow<T>(
   args: any[]
 ): Promise<string> {
   const client = await getTemporalClient();
-
+  
   const handle = await client.workflow.start(workflowType, {
     taskQueue: 'mundotango-tasks',
     workflowId,
     args
   });
-
+  
   return handle.workflowId;
 }
 
@@ -21686,7 +22391,7 @@ export async function signalWorkflow(
   args: any[]
 ): Promise<void> {
   const client = await getTemporalClient();
-
+  
   const handle = client.workflow.getHandle(workflowId);
   await handle.signal(signalName, ...args);
 }
@@ -21699,7 +22404,7 @@ export async function queryWorkflow<T>(
   queryName: string
 ): Promise<T> {
   const client = await getTemporalClient();
-
+  
   const handle = client.workflow.getHandle(workflowId);
   return await handle.query<T>(queryName);
 }
@@ -21709,7 +22414,7 @@ export async function queryWorkflow<T>(
  */
 export async function cancelWorkflow(workflowId: string): Promise<void> {
   const client = await getTemporalClient();
-
+  
   const handle = client.workflow.getHandle(workflowId);
   await handle.cancel();
 }
@@ -21730,9 +22435,9 @@ async function startWorker() {
     taskQueue: 'mundotango-tasks',
     namespace: 'mundotango'
   });
-
+  
   console.log('🚀 Temporal worker started');
-
+  
   await worker.run();
 }
 
@@ -21756,14 +22461,14 @@ const router = Router();
 router.post('/users', async (req, res) => {
   // Create user
   const [user] = await db.insert(users).values(req.body).returning();
-
+  
   // Start onboarding workflow
   const workflowId = await startWorkflow(
     'userOnboardingWorkflow',
     `user-onboarding-${user.id}`,
     [user.id, user.email]
   );
-
+  
   res.status(201).json({
     user,
     onboardingWorkflowId: workflowId
@@ -21781,7 +22486,7 @@ import { getTemporalClient } from './client';
 
 export async function setupSchedules() {
   const client = await getTemporalClient();
-
+  
   // Daily cleanup at 2 AM
   await client.schedule.create({
     scheduleId: 'daily-cleanup',
@@ -21794,7 +22499,7 @@ export async function setupSchedules() {
       taskQueue: 'mundotango-tasks',
     },
   });
-
+  
   // Daily report at 8 AM
   await client.schedule.create({
     scheduleId: 'daily-report',
@@ -21807,7 +22512,7 @@ export async function setupSchedules() {
       taskQueue: 'mundotango-tasks',
     },
   });
-
+  
   // Hourly backup
   await client.schedule.create({
     scheduleId: 'hourly-backup',
@@ -21820,7 +22525,7 @@ export async function setupSchedules() {
       taskQueue: 'mundotango-tasks',
     },
   });
-
+  
   console.log('✅ Temporal schedules configured');
 }
 ```
@@ -21846,17 +22551,17 @@ export function WorkflowMonitoring() {
   const { data: workflows } = useQuery({
     queryKey: ['/api/admin/workflows']
   });
-
+  
   const cancelWorkflow = async (workflowId: string) => {
     await fetch(`/api/admin/workflows/${workflowId}/cancel`, {
       method: 'POST'
     });
   };
-
+  
   return (
     <div className="space-y-6" data-testid="page-workflow-monitoring">
       <h1 className="text-3xl font-bold">Workflow Monitoring</h1>
-
+      
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader>
@@ -21868,7 +22573,7 @@ export function WorkflowMonitoring() {
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>Completed</CardTitle>
@@ -21879,7 +22584,7 @@ export function WorkflowMonitoring() {
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>Failed</CardTitle>
@@ -21890,7 +22595,7 @@ export function WorkflowMonitoring() {
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>Success Rate</CardTitle>
@@ -21902,7 +22607,7 @@ export function WorkflowMonitoring() {
           </CardContent>
         </Card>
       </div>
-
+      
       <Card>
         <CardHeader>
           <CardTitle>Active Workflows</CardTitle>
@@ -22077,11 +22782,11 @@ export interface AnalyticsEvent {
 
 export class AnalyticsService {
   private kafkaProducer: Producer;
-
+  
   constructor(kafkaProducer: Producer) {
     this.kafkaProducer = kafkaProducer;
   }
-
+  
   /**
    * Track analytics event
    */
@@ -22092,7 +22797,7 @@ export class AnalyticsService {
       environment: process.env.NODE_ENV,
       appVersion: process.env.APP_VERSION
     };
-
+    
     // Send to Kafka for real-time processing
     await this.kafkaProducer.send({
       topic: 'analytics-events',
@@ -22103,7 +22808,7 @@ export class AnalyticsService {
         }
       ]
     });
-
+    
     // Also store in PostgreSQL for immediate querying
     await db.insert(analyticsEvents).values({
       event: event.event,
@@ -22114,7 +22819,7 @@ export class AnalyticsService {
       timestamp: enrichedEvent.timestamp
     });
   }
-
+  
   /**
    * Track page view
    */
@@ -22136,7 +22841,7 @@ export class AnalyticsService {
       }
     });
   }
-
+  
   /**
    * Track user action
    */
@@ -22160,7 +22865,7 @@ export class AnalyticsService {
       }
     });
   }
-
+  
   /**
    * Track conversion funnel step
    */
@@ -22249,13 +22954,13 @@ export class ETLService {
    */
   async aggregateDailyMetrics(date: Date): Promise<void> {
     console.log(`📊 Aggregating metrics for ${date.toDateString()}`);
-
+    
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
-
+    
     const endOfDay = new Date(date);
     endOfDay.setHours(23, 59, 59, 999);
-
+    
     // Daily active users
     const dau = await db.execute(sql`
       INSERT INTO daily_metrics (date, metric, value)
@@ -22270,7 +22975,7 @@ export class ETLService {
       ON CONFLICT (date, metric) DO UPDATE
       SET value = EXCLUDED.value
     `);
-
+    
     // Page views
     await db.execute(sql`
       INSERT INTO daily_metrics (date, metric, value)
@@ -22285,7 +22990,7 @@ export class ETLService {
       ON CONFLICT (date, metric) DO UPDATE
       SET value = EXCLUDED.value
     `);
-
+    
     // New users
     await db.execute(sql`
       INSERT INTO daily_metrics (date, metric, value)
@@ -22299,31 +23004,31 @@ export class ETLService {
       ON CONFLICT (date, metric) DO UPDATE
       SET value = EXCLUDED.value
     `);
-
+    
     console.log('✅ Daily metrics aggregated');
   }
-
+  
   /**
    * Calculate user cohorts
    */
   async calculateCohorts(month: Date): Promise<void> {
     console.log(`📊 Calculating cohorts for ${month.toLocaleString('default', { month: 'long', year: 'numeric' })}`);
-
+    
     // Get users who signed up this month
     const cohortUsers = await db.execute(sql`
       SELECT id, created_at
       FROM users
       WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', ${month}::date)
     `);
-
+    
     // Calculate retention for each week
     for (let week = 0; week < 12; week++) {
       const weekStart = new Date(month);
       weekStart.setDate(weekStart.getDate() + (week * 7));
-
+      
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekEnd.getDate() + 7);
-
+      
       const retained = await db.execute(sql`
         SELECT COUNT(DISTINCT ae.user_id) as count
         FROM analytics_events ae
@@ -22334,7 +23039,7 @@ export class ETLService {
         WHERE ae.timestamp >= ${weekStart}
           AND ae.timestamp < ${weekEnd}
       `);
-
+      
       // Store cohort data
       await db.execute(sql`
         INSERT INTO cohort_analytics (
@@ -22354,36 +23059,36 @@ export class ETLService {
             retention_rate = EXCLUDED.retention_rate
       `);
     }
-
+    
     console.log('✅ Cohort analysis complete');
   }
-
+  
   /**
    * Sync to data warehouse
    */
   async syncToWarehouse(): Promise<void> {
     console.log('📤 Syncing to data warehouse...');
-
+    
     // In production, this would use Airbyte or Fivetran
     // For now, export as Parquet files to S3
-
+    
     const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3');
     const s3 = new S3Client({ region: 'us-east-1' });
-
+    
     // Export events
     const events = await db.query.analyticsEvents.findMany({
       where: sql`timestamp >= NOW() - INTERVAL '1 day'`
     });
-
+    
     // Convert to Parquet (using parquetjs library)
     // ... parquet conversion logic ...
-
+    
     await s3.send(new PutObjectCommand({
       Bucket: 'mundotango-data-warehouse',
       Key: `events/${new Date().toISOString().split('T')[0]}.parquet`,
       Body: Buffer.from(JSON.stringify(events)) // Simplified - use Parquet in production
     }));
-
+    
     console.log('✅ Warehouse sync complete');
   }
 }
@@ -22406,7 +23111,7 @@ const router = Router();
 router.get('/analytics/realtime', async (req, res) => {
   const now = new Date();
   const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-
+  
   // Active users (last hour)
   const activeUsers = await db.execute(sql`
     SELECT COUNT(DISTINCT user_id) as count
@@ -22414,7 +23119,7 @@ router.get('/analytics/realtime', async (req, res) => {
     WHERE timestamp >= ${oneHourAgo}
       AND user_id IS NOT NULL
   `);
-
+  
   // Page views (last hour)
   const pageViews = await db.execute(sql`
     SELECT COUNT(*) as count
@@ -22422,7 +23127,7 @@ router.get('/analytics/realtime', async (req, res) => {
     WHERE timestamp >= ${oneHourAgo}
       AND event = 'page_view'
   `);
-
+  
   // Top pages
   const topPages = await db.execute(sql`
     SELECT 
@@ -22435,7 +23140,7 @@ router.get('/analytics/realtime', async (req, res) => {
     ORDER BY views DESC
     LIMIT 10
   `);
-
+  
   res.json({
     activeUsers: (activeUsers.rows[0] as any).count,
     pageViews: (pageViews.rows[0] as any).count,
@@ -22448,7 +23153,7 @@ router.get('/analytics/realtime', async (req, res) => {
  */
 router.get('/analytics/growth', async (req, res) => {
   const { startDate, endDate } = req.query;
-
+  
   const growth = await db.execute(sql`
     SELECT 
       DATE_TRUNC('day', created_at) as date,
@@ -22459,7 +23164,7 @@ router.get('/analytics/growth', async (req, res) => {
     GROUP BY DATE_TRUNC('day', created_at)
     ORDER BY date
   `);
-
+  
   res.json(growth.rows);
 });
 
@@ -22468,18 +23173,18 @@ router.get('/analytics/growth', async (req, res) => {
  */
 router.get('/analytics/funnel/:funnelId', async (req, res) => {
   const { funnelId } = req.params;
-
+  
   const funnel = await db.query.conversionFunnels.findFirst({
     where: eq(conversionFunnels.id, parseInt(funnelId))
   });
-
+  
   if (!funnel) {
     return res.status(404).json({ error: 'Funnel not found' });
   }
-
+  
   const steps = funnel.steps as string[];
   const analytics: any[] = [];
-
+  
   for (let i = 0; i < steps.length; i++) {
     const users = await db.execute(sql`
       SELECT COUNT(DISTINCT user_id) as count
@@ -22488,7 +23193,7 @@ router.get('/analytics/funnel/:funnelId', async (req, res) => {
         AND properties->>'funnel' = ${funnel.name}
         AND properties->>'stepNumber' = ${i.toString()}
     `);
-
+    
     analytics.push({
       step: steps[i],
       stepNumber: i,
@@ -22498,7 +23203,7 @@ router.get('/analytics/funnel/:funnelId', async (req, res) => {
       ).toFixed(2)
     });
   }
-
+  
   res.json({
     funnel: funnel.name,
     steps: analytics
@@ -22525,18 +23230,18 @@ export function AnalyticsDashboard() {
     queryKey: ['/api/analytics/realtime'],
     refetchInterval: 30000 // Refresh every 30 seconds
   });
-
+  
   const { data: growth } = useQuery({
     queryKey: ['/api/analytics/growth', {
       startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
       endDate: new Date().toISOString()
     }]
   });
-
+  
   const { data: funnelData } = useQuery({
     queryKey: ['/api/analytics/funnel', 1] // Signup funnel
   });
-
+  
   return (
     <div className="space-y-6" data-testid="page-analytics-dashboard">
       <div className="flex items-center justify-between">
@@ -22545,7 +23250,7 @@ export function AnalyticsDashboard() {
           Auto-refreshing every 30s
         </div>
       </div>
-
+      
       {/* Real-Time Metrics */}
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
@@ -22558,7 +23263,7 @@ export function AnalyticsDashboard() {
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>Page Views (Last Hour)</CardTitle>
@@ -22569,7 +23274,7 @@ export function AnalyticsDashboard() {
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>Avg. Session Duration</CardTitle>
@@ -22581,7 +23286,7 @@ export function AnalyticsDashboard() {
           </CardContent>
         </Card>
       </div>
-
+      
       {/* User Growth Chart */}
       <Card>
         <CardHeader>
@@ -22600,7 +23305,7 @@ export function AnalyticsDashboard() {
           </ResponsiveContainer>
         </CardContent>
       </Card>
-
+      
       {/* Top Pages */}
       <Card>
         <CardHeader>
@@ -22618,7 +23323,7 @@ export function AnalyticsDashboard() {
           </ResponsiveContainer>
         </CardContent>
       </Card>
-
+      
       {/* Conversion Funnel */}
       <Card>
         <CardHeader>
@@ -22750,12 +23455,12 @@ export interface CRMContact {
 export class CRMService {
   private provider: CRMProvider;
   private accessToken: string;
-
+  
   constructor(provider: CRMProvider) {
     this.provider = provider;
     this.accessToken = this.getAccessToken(provider);
   }
-
+  
   private getAccessToken(provider: CRMProvider): string {
     switch (provider) {
       case CRMProvider.SALESFORCE:
@@ -22766,14 +23471,14 @@ export class CRMService {
         throw new Error(`Unknown provider: ${provider}`);
     }
   }
-
+  
   /**
    * Create or update contact in CRM
    */
   async upsertContact(contact: CRMContact): Promise<{ id: string; created: boolean }> {
     try {
       let result: { id: string; created: boolean };
-
+      
       switch (this.provider) {
         case CRMProvider.SALESFORCE:
           result = await this.upsertSalesforceContact(contact);
@@ -22784,7 +23489,7 @@ export class CRMService {
         default:
           throw new Error(`Unknown provider: ${this.provider}`);
       }
-
+      
       // Log sync
       await this.logSync({
         provider: this.provider,
@@ -22794,11 +23499,11 @@ export class CRMService {
         success: true,
         data: contact
       });
-
+      
       return result;
     } catch (error) {
       console.error(`Failed to upsert contact in ${this.provider}:`, error);
-
+      
       await this.logSync({
         provider: this.provider,
         operation: 'upsert',
@@ -22807,17 +23512,17 @@ export class CRMService {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error'
       });
-
+      
       throw error;
     }
   }
-
+  
   /**
    * Upsert contact in Salesforce
    */
   private async upsertSalesforceContact(contact: CRMContact): Promise<{ id: string; created: boolean }> {
     const instanceUrl = process.env.SALESFORCE_INSTANCE_URL!;
-
+    
     // Search for existing contact
     const searchResponse = await axios.get(`${instanceUrl}/services/data/v57.0/query`, {
       headers: {
@@ -22827,9 +23532,9 @@ export class CRMService {
         q: `SELECT Id FROM Contact WHERE Email = '${contact.email}'`
       }
     });
-
+    
     const existingContact = searchResponse.data.records?.[0];
-
+    
     const contactData = {
       FirstName: contact.firstName,
       LastName: contact.lastName || 'Unknown',
@@ -22838,7 +23543,7 @@ export class CRMService {
       Title: contact.jobTitle,
       Company: contact.company
     };
-
+    
     if (existingContact) {
       // Update existing contact
       await axios.patch(
@@ -22851,7 +23556,7 @@ export class CRMService {
           }
         }
       );
-
+      
       return { id: existingContact.Id, created: false };
     } else {
       // Create new contact
@@ -22865,11 +23570,11 @@ export class CRMService {
           }
         }
       );
-
+      
       return { id: createResponse.data.id, created: true };
     }
   }
-
+  
   /**
    * Upsert contact in HubSpot
    */
@@ -22882,7 +23587,7 @@ export class CRMService {
       company: contact.company,
       jobtitle: contact.jobTitle
     };
-
+    
     // HubSpot automatically upserts based on email
     const response = await axios.post(
       'https://api.hubapi.com/crm/v3/objects/contacts',
@@ -22894,13 +23599,13 @@ export class CRMService {
         }
       }
     );
-
+    
     return {
       id: response.data.id,
       created: response.data.createdAt === response.data.updatedAt
     };
   }
-
+  
   /**
    * Create deal/opportunity
    */
@@ -22920,10 +23625,10 @@ export class CRMService {
         throw new Error(`Unknown provider: ${this.provider}`);
     }
   }
-
+  
   private async createSalesforceDeal(params: any): Promise<{ id: string }> {
     const instanceUrl = process.env.SALESFORCE_INSTANCE_URL!;
-
+    
     const response = await axios.post(
       `${instanceUrl}/services/data/v57.0/sobjects/Opportunity`,
       {
@@ -22940,10 +23645,10 @@ export class CRMService {
         }
       }
     );
-
+    
     return { id: response.data.id };
   }
-
+  
   private async createHubSpotDeal(params: any): Promise<{ id: string }> {
     const response = await axios.post(
       'https://api.hubapi.com/crm/v3/objects/deals',
@@ -22968,10 +23673,10 @@ export class CRMService {
         }
       }
     );
-
+    
     return { id: response.data.id };
   }
-
+  
   /**
    * Sync user to CRM on signup
    */
@@ -22983,7 +23688,7 @@ export class CRMService {
   }): Promise<void> {
     const [firstName, ...lastNameParts] = user.name.split(' ');
     const lastName = lastNameParts.join(' ') || 'Unknown';
-
+    
     const { id: crmContactId } = await this.upsertContact({
       email: user.email,
       firstName,
@@ -22994,7 +23699,7 @@ export class CRMService {
         source: 'mundotango_signup'
       }
     });
-
+    
     // Store CRM mapping
     await db.insert(crmContacts).values({
       userId: user.id,
@@ -23002,10 +23707,10 @@ export class CRMService {
       crmContactId,
       syncedAt: new Date()
     });
-
+    
     console.log(`✅ User ${user.id} synced to ${this.provider} as contact ${crmContactId}`);
   }
-
+  
   /**
    * Pull contacts from CRM
    */
@@ -23019,23 +23724,23 @@ export class CRMService {
         throw new Error(`Unknown provider: ${this.provider}`);
     }
   }
-
+  
   private async pullSalesforceContacts(lastSyncDate?: Date): Promise<CRMContact[]> {
     const instanceUrl = process.env.SALESFORCE_INSTANCE_URL!;
-
+    
     let query = 'SELECT Id, FirstName, LastName, Email, Phone, Title, Company FROM Contact';
-
+    
     if (lastSyncDate) {
       query += ` WHERE LastModifiedDate >= ${lastSyncDate.toISOString()}`;
     }
-
+    
     const response = await axios.get(`${instanceUrl}/services/data/v57.0/query`, {
       headers: {
         'Authorization': `Bearer ${this.accessToken}`
       },
       params: { q: query }
     });
-
+    
     return response.data.records.map((record: any) => ({
       email: record.Email,
       firstName: record.FirstName,
@@ -23045,7 +23750,7 @@ export class CRMService {
       jobTitle: record.Title
     }));
   }
-
+  
   private async pullHubSpotContacts(lastSyncDate?: Date): Promise<CRMContact[]> {
     const response = await axios.get(
       'https://api.hubapi.com/crm/v3/objects/contacts',
@@ -23059,7 +23764,7 @@ export class CRMService {
         }
       }
     );
-
+    
     return response.data.results.map((contact: any) => ({
       email: contact.properties.email,
       firstName: contact.properties.firstname,
@@ -23069,7 +23774,7 @@ export class CRMService {
       jobTitle: contact.properties.jobtitle
     }));
   }
-
+  
   /**
    * Log CRM sync operation
    */
@@ -23139,42 +23844,42 @@ export class CRMSyncJob {
    */
   async syncNewUsersToCRM(): Promise<void> {
     console.log('🔄 Syncing new users to CRM...');
-
+    
     const crm = new CRMService(CRMProvider.HUBSPOT);
-
+    
     // Get users created in last hour without CRM contact
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-
+    
     const newUsers = await db.query.users.findMany({
       where: gte(users.createdAt, oneHourAgo)
     });
-
+    
     for (const user of newUsers) {
       // Check if already synced
       const existing = await db.query.crmContacts.findFirst({
         where: eq(crmContacts.userId, user.id)
       });
-
+      
       if (existing) continue;
-
+      
       try {
         await crm.syncUserToCRM(user);
       } catch (error) {
         console.error(`Failed to sync user ${user.id}:`, error);
       }
     }
-
+    
     console.log(`✅ Synced ${newUsers.length} new users to CRM`);
   }
-
+  
   /**
    * Pull updates from CRM
    */
   async pullCRMUpdates(): Promise<void> {
     console.log('📥 Pulling updates from CRM...');
-
+    
     const crm = new CRMService(CRMProvider.HUBSPOT);
-
+    
     // Get last sync time
     const lastSync = await db.execute(sql`
       SELECT MAX(synced_at) as last_sync
@@ -23183,13 +23888,13 @@ export class CRMSyncJob {
         AND operation = 'pull'
         AND success = true
     `);
-
+    
     const lastSyncDate = (lastSync.rows[0] as any).last_sync;
-
+    
     const contacts = await crm.pullContacts(lastSyncDate);
-
+    
     console.log(`📥 Pulled ${contacts.length} contacts from CRM`);
-
+    
     // Sync CRM changes to local database
     await db.update(users)
       .set({
@@ -23395,18 +24100,18 @@ export class PushNotificationService {
       console.log('Push notifications only available on native platforms');
       return;
     }
-
+    
     // Request permission
     const permission = await PushNotifications.requestPermissions();
-
+    
     if (permission.receive === 'granted') {
       await PushNotifications.register();
     }
-
+    
     // Handle registration
     PushNotifications.addListener('registration', async (token: Token) => {
       console.log('Push registration success, token:', token.value);
-
+      
       // Send token to backend
       await fetch('/api/user/push-token', {
         method: 'POST',
@@ -23417,11 +24122,11 @@ export class PushNotificationService {
         body: JSON.stringify({ token: token.value, platform: Capacitor.getPlatform() })
       });
     });
-
+    
     // Handle push notification received
     PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
       console.log('Push notification received:', notification);
-
+      
       // Show local notification if app is in foreground
       if (Capacitor.getPlatform() === 'ios') {
         // iOS shows automatically
@@ -23430,11 +24135,11 @@ export class PushNotificationService {
         this.showLocalNotification(notification);
       }
     });
-
+    
     // Handle notification action
     PushNotifications.addListener('pushNotificationActionPerformed', (notification: ActionPerformed) => {
       console.log('Push notification action performed:', notification);
-
+      
       // Navigate to relevant screen
       const data = notification.notification.data;
       if (data.eventId) {
@@ -23442,10 +24147,10 @@ export class PushNotificationService {
       }
     });
   }
-
+  
   private static async showLocalNotification(notification: PushNotificationSchema): Promise<void> {
     const { LocalNotifications } = await import('@capacitor/local-notifications');
-
+    
     await LocalNotifications.schedule({
       notifications: [
         {
@@ -23457,7 +24162,7 @@ export class PushNotificationService {
       ]
     });
   }
-
+  
   /**
    * Send push notification via backend
    */
@@ -23490,7 +24195,7 @@ import { eq } from 'drizzle-orm';
 
 export class MobilePushService {
   private static firebaseApp: admin.app.App;
-
+  
   static initialize(): void {
     if (!this.firebaseApp) {
       this.firebaseApp = admin.initializeApp({
@@ -23502,7 +24207,7 @@ export class MobilePushService {
       });
     }
   }
-
+  
   /**
    * Send push notification to user
    */
@@ -23513,16 +24218,16 @@ export class MobilePushService {
     data?: Record<string, any>;
   }): Promise<{ sent: number; failed: number }> {
     this.initialize();
-
+    
     // Get user's push tokens
     const tokens = await db.query.userPushTokens.findMany({
       where: eq(userPushTokens.userId, params.userId)
     });
-
+    
     if (tokens.length === 0) {
       return { sent: 0, failed: 0 };
     }
-
+    
     const message: admin.messaging.MulticastMessage = {
       notification: {
         title: params.title,
@@ -23531,15 +24236,15 @@ export class MobilePushService {
       data: params.data || {},
       tokens: tokens.map(t => t.token)
     };
-
+    
     const response = await admin.messaging().sendMulticast(message);
-
+    
     return {
       sent: response.successCount,
       failed: response.failureCount
     };
   }
-
+  
   /**
    * Save user push token
    */
@@ -23566,10 +24271,10 @@ import { useState } from 'react';
 
 export function useCamera() {
   const [loading, setLoading] = useState(false);
-
+  
   const takePhoto = async (): Promise<string | null> => {
     setLoading(true);
-
+    
     try {
       const image = await Camera.getPhoto({
         quality: 90,
@@ -23577,7 +24282,7 @@ export function useCamera() {
         resultType: CameraResultType.DataUrl,
         source: CameraSource.Camera
       });
-
+      
       return image.dataUrl || null;
     } catch (error) {
       console.error('Error taking photo:', error);
@@ -23586,10 +24291,10 @@ export function useCamera() {
       setLoading(false);
     }
   };
-
+  
   const pickPhoto = async (): Promise<string | null> => {
     setLoading(true);
-
+    
     try {
       const image = await Camera.getPhoto({
         quality: 90,
@@ -23597,7 +24302,7 @@ export function useCamera() {
         resultType: CameraResultType.DataUrl,
         source: CameraSource.Photos
       });
-
+      
       return image.dataUrl || null;
     } catch (error) {
       console.error('Error picking photo:', error);
@@ -23606,7 +24311,7 @@ export function useCamera() {
       setLoading(false);
     }
   };
-
+  
   return { takePhoto, pickPhoto, loading };
 }
 ```
@@ -23626,25 +24331,25 @@ export class GeolocationService {
     try {
       // Request permissions
       const permissions = await Geolocation.requestPermissions();
-
+      
       if (permissions.location !== 'granted') {
         console.log('Location permission denied');
         return null;
       }
-
+      
       // Get position
       const position = await Geolocation.getCurrentPosition({
         enableHighAccuracy: true,
         timeout: 10000
       });
-
+      
       return {
         lat: position.coords.latitude,
         lng: position.coords.longitude
       };
     } catch (error) {
       console.error('Error getting position:', error);
-
+      
       // Fallback to browser geolocation if available
       if (!Capacitor.isNativePlatform() && navigator.geolocation) {
         return new Promise((resolve) => {
@@ -23654,11 +24359,11 @@ export class GeolocationService {
           );
         });
       }
-
+      
       return null;
     }
   }
-
+  
   /**
    * Watch position changes
    */
@@ -23674,10 +24379,10 @@ export class GeolocationService {
         }
       }
     );
-
+    
     return watchId;
   }
-
+  
   static async clearWatch(watchId: string): Promise<void> {
     await Geolocation.clearWatch({ id: watchId });
   }
@@ -23705,7 +24410,7 @@ export class OfflineStorageService {
       localStorage.setItem(key, JSON.stringify(value));
     }
   }
-
+  
   /**
    * Load data
    */
@@ -23718,7 +24423,7 @@ export class OfflineStorageService {
       return value ? JSON.parse(value) : null;
     }
   }
-
+  
   /**
    * Remove data
    */
@@ -23729,7 +24434,7 @@ export class OfflineStorageService {
       localStorage.removeItem(key);
     }
   }
-
+  
   /**
    * Clear all data
    */
@@ -23753,13 +24458,13 @@ import { Capacitor } from '@capacitor/core';
 
 export function useAppState() {
   const [isActive, setIsActive] = useState(true);
-
+  
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
-
+    
     const listener = App.addListener('appStateChange', (state: AppState) => {
       setIsActive(state.isActive);
-
+      
       if (state.isActive) {
         // App came to foreground - refresh data
         console.log('App active - refreshing data');
@@ -23768,12 +24473,12 @@ export function useAppState() {
         console.log('App inactive - saving state');
       }
     });
-
+    
     return () => {
       listener.remove();
     };
   }, []);
-
+  
   return { isActive };
 }
 ```
@@ -23834,7 +24539,7 @@ export function useAppState() {
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
+    
     <application
         android:name=".MainApplication"
         android:label="@string/app_name"
@@ -23843,14 +24548,14 @@ export function useAppState() {
         android:allowBackup="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
             android:theme="@style/AppTheme.NoActionBarLaunch">
-
+            
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -23974,12 +24679,12 @@ export class SAMLService {
       async (profile: any, done: any) => {
         try {
           const email = profile.email || profile.nameID;
-
+          
           // Find or create user
           let user = await db.query.users.findFirst({
             where: eq(users.email, email)
           });
-
+          
           if (!user) {
             // Auto-provision user
             [user] = await db.insert(users).values({
@@ -23990,7 +24695,7 @@ export class SAMLService {
               emailVerified: true
             }).returning();
           }
-
+          
           // Log SSO connection
           await db.insert(ssoConnections).values({
             userId: user.id,
@@ -23999,17 +24704,17 @@ export class SAMLService {
             externalId: profile.nameID,
             lastLoginAt: new Date()
           });
-
+          
           done(null, user);
         } catch (error) {
           done(error);
         }
       }
     );
-
+    
     passport.use('saml', strategy);
   }
-
+  
   /**
    * Generate SAML metadata
    */
@@ -24062,15 +24767,15 @@ export class OAuth2Service {
       async (accessToken, refreshToken, profile, done) => {
         try {
           const email = profile.emails?.[0]?.value;
-
+          
           if (!email) {
             return done(new Error('No email found in Google profile'));
           }
-
+          
           let user = await db.query.users.findFirst({
             where: eq(users.email, email)
           });
-
+          
           if (!user) {
             [user] = await db.insert(users).values({
               email,
@@ -24080,7 +24785,7 @@ export class OAuth2Service {
               emailVerified: true
             }).returning();
           }
-
+          
           await db.insert(ssoConnections).values({
             userId: user.id,
             provider: 'google',
@@ -24096,7 +24801,7 @@ export class OAuth2Service {
               lastLoginAt: new Date()
             }
           });
-
+          
           done(null, user);
         } catch (error) {
           done(error);
@@ -24104,7 +24809,7 @@ export class OAuth2Service {
       }
     ));
   }
-
+  
   /**
    * Configure Azure AD OAuth2
    */
@@ -24119,11 +24824,11 @@ export class OAuth2Service {
       async (accessToken, refreshToken, params, profile, done) => {
         try {
           const email = profile.upn || profile.email;
-
+          
           let user = await db.query.users.findFirst({
             where: eq(users.email, email)
           });
-
+          
           if (!user) {
             [user] = await db.insert(users).values({
               email,
@@ -24132,7 +24837,7 @@ export class OAuth2Service {
               emailVerified: true
             }).returning();
           }
-
+          
           await db.insert(ssoConnections).values({
             userId: user.id,
             provider: 'azure_ad',
@@ -24144,7 +24849,7 @@ export class OAuth2Service {
             target: [ssoConnections.userId, ssoConnections.provider],
             set: { accessToken, refreshToken, lastLoginAt: new Date() }
           });
-
+          
           done(null, user);
         } catch (error) {
           done(error);
@@ -24152,7 +24857,7 @@ export class OAuth2Service {
       }
     ));
   }
-
+  
   /**
    * Configure Okta OAuth2
    */
@@ -24171,13 +24876,13 @@ export class OAuth2Service {
           const response = await fetch(`${process.env.OKTA_DOMAIN}/oauth2/v1/userinfo`, {
             headers: { 'Authorization': `Bearer ${accessToken}` }
           });
-
+          
           const userInfo = await response.json();
-
+          
           let user = await db.query.users.findFirst({
             where: eq(users.email, userInfo.email)
           });
-
+          
           if (!user) {
             [user] = await db.insert(users).values({
               email: userInfo.email,
@@ -24186,7 +24891,7 @@ export class OAuth2Service {
               emailVerified: true
             }).returning();
           }
-
+          
           done(null, user);
         } catch (error) {
           done(error);
@@ -24208,7 +24913,7 @@ import { eq } from 'drizzle-orm';
 
 export class LDAPService {
   private client: ldap.Client;
-
+  
   constructor() {
     this.client = ldap.createClient({
       url: process.env.LDAP_URL || 'ldap://localhost:389',
@@ -24216,29 +24921,29 @@ export class LDAPService {
       connectTimeout: 10000
     });
   }
-
+  
   /**
    * Authenticate user via LDAP
    */
   async authenticate(username: string, password: string): Promise<any> {
     return new Promise((resolve, reject) => {
       const dn = `uid=${username},${process.env.LDAP_BASE_DN}`;
-
+      
       this.client.bind(dn, password, async (err) => {
         if (err) {
           console.error('LDAP bind failed:', err);
           return reject(new Error('Invalid credentials'));
         }
-
+        
         try {
           // Search for user details
           const userInfo = await this.searchUser(username);
-
+          
           // Find or create user in database
           let user = await db.query.users.findFirst({
             where: eq(users.email, userInfo.email)
           });
-
+          
           if (!user) {
             [user] = await db.insert(users).values({
               email: userInfo.email,
@@ -24247,7 +24952,7 @@ export class LDAPService {
               emailVerified: true
             }).returning();
           }
-
+          
           resolve(user);
         } catch (error) {
           reject(error);
@@ -24257,7 +24962,7 @@ export class LDAPService {
       });
     });
   }
-
+  
   /**
    * Search for user in LDAP directory
    */
@@ -24268,25 +24973,25 @@ export class LDAPService {
         scope: 'sub',
         attributes: ['mail', 'cn', 'sn', 'givenName']
       };
-
+      
       this.client.search(process.env.LDAP_BASE_DN!, opts, (err, res) => {
         if (err) {
           return reject(err);
         }
-
+        
         let entry: any = null;
-
+        
         res.on('searchEntry', (e) => {
           entry = e.object;
         });
-
+        
         res.on('error', reject);
-
+        
         res.on('end', () => {
           if (!entry) {
             return reject(new Error('User not found'));
           }
-
+          
           resolve({
             email: entry.mail,
             name: entry.cn,
@@ -24297,7 +25002,7 @@ export class LDAPService {
       });
     });
   }
-
+  
   /**
    * Sync LDAP groups to application roles
    */
@@ -24308,42 +25013,42 @@ export class LDAPService {
         scope: 'sub',
         attributes: ['cn']
       };
-
+      
       this.client.search(process.env.LDAP_GROUPS_DN!, opts, (err, res) => {
         if (err) {
           return reject(err);
         }
-
+        
         const groups: string[] = [];
-
+        
         res.on('searchEntry', (entry) => {
           groups.push(entry.object.cn as string);
         });
-
+        
         res.on('end', async () => {
           // Map LDAP groups to application roles
           const roles = this.mapGroupsToRoles(groups);
-
+          
           // Assign default role to new user
     await db.insert(userRoles).values({
       userId: newUser.id,
       role: 'user',
       createdAt: new Date()
     });
-
+          
           resolve();
         });
       });
     });
   }
-
+  
   private mapGroupsToRoles(groups: string[]): string[] {
     const mapping: Record<string, string> = {
       'admins': 'admin',
       'moderators': 'moderator',
       'users': 'user'
     };
-
+    
     return groups.map(g => mapping[g]).filter(Boolean);
   }
 }
@@ -24390,7 +25095,7 @@ router.post('/auth/saml/callback',
       process.env.JWT_SECRET!,
       { expiresIn: '7d' }
     );
-
+    
     res.redirect(`/?token=${token}`);
   }
 );
@@ -24410,7 +25115,7 @@ router.get('/auth/google/callback',
       process.env.JWT_SECRET!,
       { expiresIn: '7d' }
     );
-
+    
     res.redirect(`/?token=${token}`);
   }
 );
@@ -24430,7 +25135,7 @@ router.get('/auth/azure/callback',
       process.env.JWT_SECRET!,
       { expiresIn: '7d' }
     );
-
+    
     res.redirect(`/?token=${token}`);
   }
 );
@@ -24440,18 +25145,18 @@ router.get('/auth/azure/callback',
  */
 router.post('/auth/ldap', async (req, res) => {
   const { username, password } = req.body;
-
+  
   const ldap = new LDAPService();
-
+  
   try {
     const user = await ldap.authenticate(username, password);
-
+    
     const token = jwt.sign(
       { userId: user.id },
       process.env.JWT_SECRET!,
       { expiresIn: '7d' }
     );
-
+    
     res.json({ token, user });
   } catch (error) {
     res.status(401).json({ error: 'Invalid credentials' });
@@ -24467,7 +25172,7 @@ router.get('/auth/saml/metadata', (req, res) => {
     assertionConsumerServiceUrl: 'https://mundotango.life/auth/saml/callback',
     singleLogoutServiceUrl: 'https://mundotango.life/auth/saml/logout'
   });
-
+  
   res.type('application/xml');
   res.send(metadata);
 });
@@ -24554,7 +25259,7 @@ import { users, events, posts, groups } from '@shared/schema';
 
 export class ElasticsearchService {
   private client: Client;
-
+  
   constructor() {
     this.client = new Client({
       node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200',
@@ -24564,7 +25269,7 @@ export class ElasticsearchService {
       }
     });
   }
-
+  
   /**
    * Initialize indices
    */
@@ -24580,7 +25285,7 @@ export class ElasticsearchService {
         createdAt: { type: 'date' }
       }
     });
-
+    
     await this.createIndex('events', {
       properties: {
         title: { type: 'text', analyzer: 'standard' },
@@ -24594,7 +25299,7 @@ export class ElasticsearchService {
         price: { type: 'float' }
       }
     });
-
+    
     await this.createIndex('posts', {
       properties: {
         content: { type: 'text' },
@@ -24604,7 +25309,7 @@ export class ElasticsearchService {
         createdAt: { type: 'date' }
       }
     });
-
+    
     await this.createIndex('groups', {
       properties: {
         name: { type: 'text' },
@@ -24614,13 +25319,13 @@ export class ElasticsearchService {
         memberCount: { type: 'integer' }
       }
     });
-
+    
     console.log('✅ Elasticsearch indices initialized');
   }
-
+  
   private async createIndex(name: string, mappings: any): Promise<void> {
     const exists = await this.client.indices.exists({ index: name });
-
+    
     if (!exists) {
       await this.client.indices.create({
         index: name,
@@ -24650,7 +25355,7 @@ export class ElasticsearchService {
       });
     }
   }
-
+  
   /**
    * Index a document
    */
@@ -24662,7 +25367,7 @@ export class ElasticsearchService {
       refresh: true
     });
   }
-
+  
   /**
    * Bulk index documents
    */
@@ -24671,10 +25376,10 @@ export class ElasticsearchService {
       { index: { _index: indexName, _id: doc.id.toString() } },
       doc
     ]);
-
+    
     await this.client.bulk({ body, refresh: true });
   }
-
+  
   /**
    * Search with full-text query
    */
@@ -24687,7 +25392,7 @@ export class ElasticsearchService {
     sort?: any[];
   }): Promise<{ hits: any[]; total: number }> {
     const must: any[] = [];
-
+    
     // Full-text search
     if (params.query) {
       must.push({
@@ -24699,7 +25404,7 @@ export class ElasticsearchService {
         }
       });
     }
-
+    
     // Filters
     const filter: any[] = [];
     if (params.filters) {
@@ -24707,7 +25412,7 @@ export class ElasticsearchService {
         filter.push({ term: { [key]: value } });
       });
     }
-
+    
     const response = await this.client.search({
       index: params.index,
       body: {
@@ -24719,7 +25424,7 @@ export class ElasticsearchService {
         sort: params.sort || [{ _score: 'desc' }]
       }
     });
-
+    
     return {
       hits: response.hits.hits.map(hit => ({
         id: parseInt(hit._id),
@@ -24729,7 +25434,7 @@ export class ElasticsearchService {
       total: typeof response.hits.total === 'object' ? response.hits.total.value : response.hits.total
     };
   }
-
+  
   /**
    * Autocomplete suggestions
    */
@@ -24755,10 +25460,10 @@ export class ElasticsearchService {
         }
       }
     });
-
+    
     return response.suggest.suggestions[0].options.map((opt: any) => opt.text);
   }
-
+  
   /**
    * Faceted search
    */
@@ -24768,13 +25473,13 @@ export class ElasticsearchService {
     facets: string[];
   }): Promise<{ hits: any[]; facets: Record<string, any[]> }> {
     const aggs: Record<string, any> = {};
-
+    
     params.facets.forEach(facet => {
       aggs[facet] = {
         terms: { field: facet, size: 10 }
       };
     });
-
+    
     const response = await this.client.search({
       index: params.index,
       body: {
@@ -24787,7 +25492,7 @@ export class ElasticsearchService {
         aggs
       }
     });
-
+    
     const facets: Record<string, any[]> = {};
     params.facets.forEach(facet => {
       facets[facet] = response.aggregations[facet].buckets.map((bucket: any) => ({
@@ -24795,13 +25500,13 @@ export class ElasticsearchService {
         count: bucket.doc_count
       }));
     });
-
+    
     return {
       hits: response.hits.hits.map(hit => hit._source),
       facets
     };
   }
-
+  
   /**
    * Geographic search
    */
@@ -24813,7 +25518,7 @@ export class ElasticsearchService {
     query?: string;
   }): Promise<any[]> {
     const must: any[] = [];
-
+    
     if (params.query) {
       must.push({
         multi_match: {
@@ -24822,7 +25527,7 @@ export class ElasticsearchService {
         }
       });
     }
-
+    
     const response = await this.client.search({
       index: params.index,
       body: {
@@ -24854,13 +25559,13 @@ export class ElasticsearchService {
         ]
       }
     });
-
+    
     return response.hits.hits.map(hit => ({
       ...hit._source,
       distance: hit.sort[0]
     }));
   }
-
+  
   /**
    * Delete document
    */
@@ -24884,17 +25589,17 @@ import { users, events, posts, groups } from '@shared/schema';
 
 export class SearchSyncJob {
   private es: ElasticsearchService;
-
+  
   constructor() {
     this.es = new ElasticsearchService();
   }
-
+  
   /**
    * Full reindex of all data
    */
   async fullReindex(): Promise<void> {
     console.log('🔄 Starting full reindex...');
-
+    
     // Reindex users
     const allUsers = await db.query.users.findMany();
     await this.es.bulkIndex('users', allUsers.map(u => ({
@@ -24907,7 +25612,7 @@ export class SearchSyncJob {
       createdAt: u.createdAt
     })));
     console.log(`✅ Indexed ${allUsers.length} users`);
-
+    
     // Reindex events
     const allEvents = await db.query.events.findMany();
     await this.es.bulkIndex('events', allEvents.map(e => ({
@@ -24926,7 +25631,7 @@ export class SearchSyncJob {
       price: e.price
     })));
     console.log(`✅ Indexed ${allEvents.length} events`);
-
+    
     // Reindex posts
     const allPosts = await db.query.posts.findMany({
       with: { author: true }
@@ -24940,21 +25645,21 @@ export class SearchSyncJob {
       createdAt: p.createdAt
     })));
     console.log(`✅ Indexed ${allPosts.length} posts`);
-
+    
     console.log('✅ Full reindex complete');
   }
-
+  
   /**
    * Incremental sync (last hour)
    */
   async incrementalSync(): Promise<void> {
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-
+    
     // Sync new/updated users
     const updatedUsers = await db.query.users.findMany({
       where: gte(users.updatedAt, oneHourAgo)
     });
-
+    
     for (const user of updatedUsers) {
       await this.es.index('users', user.id, {
         name: user.name,
@@ -24964,7 +25669,7 @@ export class SearchSyncJob {
         country: user.country
       });
     }
-
+    
     console.log(`✅ Synced ${updatedUsers.length} users`);
   }
 }
@@ -24985,10 +25690,10 @@ const es = new ElasticsearchService();
  */
 router.get('/search', async (req, res) => {
   const { q, type, city, from, size } = req.query;
-
+  
   const filters: any = {};
   if (city) filters.city = city;
-
+  
   const results = await es.search({
     index: (type as string) || 'events',
     query: q as string,
@@ -24996,7 +25701,7 @@ router.get('/search', async (req, res) => {
     from: parseInt(from as string) || 0,
     size: parseInt(size as string) || 20
   });
-
+  
   res.json(results);
 });
 
@@ -25005,13 +25710,13 @@ router.get('/search', async (req, res) => {
  */
 router.get('/search/autocomplete', async (req, res) => {
   const { q, type } = req.query;
-
+  
   const suggestions = await es.autocomplete({
     index: (type as string) || 'events',
     field: 'title',
     query: q as string
   });
-
+  
   res.json({ suggestions });
 });
 
@@ -25020,13 +25725,13 @@ router.get('/search/autocomplete', async (req, res) => {
  */
 router.get('/search/events/facets', async (req, res) => {
   const { q } = req.query;
-
+  
   const results = await es.facetedSearch({
     index: 'events',
     query: q as string,
     facets: ['city', 'category']
   });
-
+  
   res.json(results);
 });
 
@@ -25035,7 +25740,7 @@ router.get('/search/events/facets', async (req, res) => {
  */
 router.get('/search/nearby', async (req, res) => {
   const { lat, lng, distance, q } = req.query;
-
+  
   const results = await es.geoSearch({
     index: 'events',
     lat: parseFloat(lat as string),
@@ -25043,7 +25748,7 @@ router.get('/search/nearby', async (req, res) => {
     distance: (distance as string) || '10km',
     query: q as string
   });
-
+  
   res.json(results);
 });
 
@@ -25064,17 +25769,17 @@ import { Badge } from '@/components/ui/badge';
 export function UnifiedSearch() {
   const [query, setQuery] = useState('');
   const [type, setType] = useState<'events' | 'users' | 'posts' | 'groups'>('events');
-
+  
   const { data: results, isLoading } = useQuery({
     queryKey: ['/api/search', { q: query, type }],
     enabled: query.length > 2
   });
-
+  
   const { data: suggestions } = useQuery({
     queryKey: ['/api/search/autocomplete', { q: query, type }],
     enabled: query.length > 1
   });
-
+  
   return (
     <div className="space-y-4" data-testid="component-unified-search">
       <div className="relative">
@@ -25086,7 +25791,7 @@ export function UnifiedSearch() {
           className="pl-10"
           data-testid="input-search"
         />
-
+        
         {/* Autocomplete suggestions */}
         {suggestions && suggestions.suggestions.length > 0 && (
           <div className="absolute w-full mt-1 bg-white rounded-lg shadow-lg z-10">
@@ -25103,7 +25808,7 @@ export function UnifiedSearch() {
           </div>
         )}
       </div>
-
+      
       {/* Type selector */}
       <div className="flex gap-2">
         {['events', 'users', 'posts', 'groups'].map((t) => (
@@ -25118,16 +25823,16 @@ export function UnifiedSearch() {
           </Badge>
         ))}
       </div>
-
+      
       {/* Results */}
       {isLoading && <div>Loading...</div>}
-
+      
       {results && (
         <div className="space-y-4">
           <div className="text-sm text-gray-600">
             {results.total} results found
           </div>
-
+          
           {results.hits.map((hit: any) => (
             <Card key={hit.id} data-testid={`result-${hit.id}`}>
               <CardContent className="pt-6">
@@ -25151,7 +25856,7 @@ export function UnifiedSearch() {
                     </div>
                   </>
                 )}
-
+                
                 {type === 'users' && (
                   <>
                     <h3 className="font-semibold">{hit.name}</h3>
@@ -25233,10 +25938,10 @@ interface RateLimitConfig {
 export class RateLimiterService {
   private redis: Redis;
   private configs: Map<RateLimitTier, RateLimitConfig>;
-
+  
   constructor() {
     this.redis = new Redis(process.env.REDIS_URL!);
-
+    
     this.configs = new Map([
       [RateLimitTier.FREE, { points: 100, duration: 3600, blockDuration: 3600 }],
       [RateLimitTier.BASIC, { points: 1000, duration: 3600 }],
@@ -25244,7 +25949,7 @@ export class RateLimiterService {
       [RateLimitTier.ENTERPRISE, { points: 100000, duration: 3600 }]
     ]);
   }
-
+  
   /**
    * Check and consume rate limit
    */
@@ -25260,7 +25965,7 @@ export class RateLimiterService {
     const config = this.configs.get(params.tier)!;
     const cost = params.cost || 1;
     const key = `ratelimit:${params.tier}:${params.identifier}`;
-
+    
     // Check if blocked
     const blocked = await this.redis.get(`${key}:blocked`);
     if (blocked) {
@@ -25270,45 +25975,45 @@ export class RateLimiterService {
         resetAt: new Date(parseInt(blocked))
       };
     }
-
+    
     // Get current count
     const current = await this.redis.get(key);
     const count = current ? parseInt(current) : 0;
-
+    
     if (count + cost > config.points) {
       // Exceeded limit - block if configured
       if (config.blockDuration) {
         const blockUntil = Date.now() + (config.blockDuration * 1000);
         await this.redis.setex(`${key}:blocked`, config.blockDuration, blockUntil.toString());
       }
-
+      
       return {
         allowed: false,
         remaining: 0,
         resetAt: new Date(Date.now() + (config.duration * 1000))
       };
     }
-
+    
     // Increment counter
     const newCount = count + cost;
-
+    
     if (count === 0) {
       // First request in window
       await this.redis.setex(key, config.duration, newCount.toString());
     } else {
       await this.redis.set(key, newCount.toString(), 'KEEPTTL');
     }
-
+    
     // Get TTL for reset time
     const ttl = await this.redis.ttl(key);
-
+    
     return {
       allowed: true,
       remaining: config.points - newCount,
       resetAt: new Date(Date.now() + (ttl * 1000))
     };
   }
-
+  
   /**
    * Get current rate limit status
    */
@@ -25320,11 +26025,11 @@ export class RateLimiterService {
   }> {
     const config = this.configs.get(tier)!;
     const key = `ratelimit:${tier}:${identifier}`;
-
+    
     const current = await this.redis.get(key);
     const used = current ? parseInt(current) : 0;
     const ttl = await this.redis.ttl(key);
-
+    
     return {
       used,
       limit: config.points,
@@ -25332,7 +26037,7 @@ export class RateLimiterService {
       resetAt: new Date(Date.now() + (ttl * 1000))
     };
   }
-
+  
   /**
    * Reset rate limit for user
    */
@@ -25359,25 +26064,25 @@ export function rateLimitMiddleware(tier: RateLimitTier = RateLimitTier.FREE) {
     const identifier = req.user?.id?.toString() 
       || req.headers['x-api-key'] as string
       || req.ip;
-
+    
     // Check rate limit
     const result = await rateLimiter.consume({
       identifier,
       tier: req.user?.tier || tier
     });
-
+    
     // Set rate limit headers
     res.setHeader('X-RateLimit-Limit', tier === RateLimitTier.FREE ? 100 : 1000);
     res.setHeader('X-RateLimit-Remaining', result.remaining);
     res.setHeader('X-RateLimit-Reset', result.resetAt.toISOString());
-
+    
     if (!result.allowed) {
       return res.status(429).json({
         error: 'Rate limit exceeded',
         retryAfter: result.resetAt
       });
     }
-
+    
     next();
   };
 }
@@ -25404,10 +26109,10 @@ export class APIKeyService {
   }): Promise<{ key: string; id: number }> {
     // Generate secure random key
     const key = `mtl_${crypto.randomBytes(32).toString('hex')}`;
-
+    
     // Hash key for storage
     const keyHash = crypto.createHash('sha256').update(key).digest('hex');
-
+    
     // Save to database
     const [apiKey] = await db.insert(apiKeys).values({
       userId: params.userId,
@@ -25418,33 +26123,33 @@ export class APIKeyService {
       lastUsedAt: null,
       createdAt: new Date()
     }).returning();
-
+    
     return { key, id: apiKey.id };
   }
-
+  
   /**
    * Validate API key
    */
   static async validate(key: string): Promise<any | null> {
     const keyHash = crypto.createHash('sha256').update(key).digest('hex');
-
+    
     const apiKey = await db.query.apiKeys.findFirst({
       where: eq(apiKeys.keyHash, keyHash),
       with: { user: true }
     });
-
+    
     if (!apiKey || !apiKey.enabled) {
       return null;
     }
-
+    
     // Update last used
     await db.update(apiKeys)
       .set({ lastUsedAt: new Date() })
       .where(eq(apiKeys.id, apiKey.id));
-
+    
     return apiKey;
   }
-
+  
   /**
    * Revoke API key
    */
@@ -25453,7 +26158,7 @@ export class APIKeyService {
       .set({ enabled: false })
       .where(eq(apiKeys.id, keyId));
   }
-
+  
   /**
    * List user's API keys
    */
@@ -25505,21 +26210,21 @@ import { apiUsageLogs } from '@shared/api-keys-schema';
 
 export async function apiKeyAuthMiddleware(req: Request, res: Response, next: NextFunction) {
   const apiKey = req.headers['x-api-key'] as string;
-
+  
   if (!apiKey) {
     return res.status(401).json({ error: 'API key required' });
   }
-
+  
   const validKey = await APIKeyService.validate(apiKey);
-
+  
   if (!validKey) {
     return res.status(401).json({ error: 'Invalid API key' });
   }
-
+  
   // Attach API key info to request
   req.apiKey = validKey;
   req.user = validKey.user;
-
+  
   next();
 }
 
@@ -25528,11 +26233,11 @@ export async function apiKeyAuthMiddleware(req: Request, res: Response, next: Ne
  */
 export function apiUsageLogger(req: Request, res: Response, next: NextFunction) {
   const start = Date.now();
-
+  
   res.on('finish', async () => {
     if (req.apiKey) {
       const responseTime = Date.now() - start;
-
+      
       await db.insert(apiUsageLogs).values({
         apiKeyId: req.apiKey.id,
         endpoint: req.path,
@@ -25543,7 +26248,7 @@ export function apiUsageLogger(req: Request, res: Response, next: NextFunction) 
       });
     }
   });
-
+  
   next();
 }
 ```
@@ -25562,15 +26267,15 @@ export function APIUsageDashboard() {
   const { data: apiKeys } = useQuery({
     queryKey: ['/api/developer/api-keys']
   });
-
+  
   const { data: usage } = useQuery({
     queryKey: ['/api/developer/usage']
   });
-
+  
   return (
     <div className="space-y-6" data-testid="page-api-usage">
       <h1 className="text-3xl font-bold">API Usage</h1>
-
+      
       {/* Usage Stats */}
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
@@ -25581,7 +26286,7 @@ export function APIUsageDashboard() {
             <div className="text-3xl font-bold">{usage?.today || 0}</div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>This Month</CardTitle>
@@ -25590,7 +26295,7 @@ export function APIUsageDashboard() {
             <div className="text-3xl font-bold">{usage?.month || 0}</div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>Rate Limit</CardTitle>
@@ -25599,7 +26304,7 @@ export function APIUsageDashboard() {
             <div className="text-3xl font-bold">{usage?.limit || 0}/hr</div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>Remaining</CardTitle>
@@ -25609,7 +26314,7 @@ export function APIUsageDashboard() {
           </CardContent>
         </Card>
       </div>
-
+      
       {/* Usage Chart */}
       <Card>
         <CardHeader>
@@ -25628,7 +26333,7 @@ export function APIUsageDashboard() {
           </ResponsiveContainer>
         </CardContent>
       </Card>
-
+      
       {/* API Keys */}
       <Card>
         <CardHeader>
@@ -25711,11 +26416,11 @@ import crypto from 'crypto';
 
 export class FeatureFlagService {
   private redis: Redis;
-
+  
   constructor() {
     this.redis = new Redis(process.env.REDIS_URL!);
   }
-
+  
   /**
    * Evaluate feature flag for user
    */
@@ -25727,21 +26432,21 @@ export class FeatureFlagService {
     // Check cache first
     const cacheKey = `flag:${params.flagKey}:${params.userId || 'anonymous'}`;
     const cached = await this.redis.get(cacheKey);
-
+    
     if (cached !== null) {
       return cached === '1';
     }
-
+    
     // Get flag configuration
     const flag = await db.query.featureFlags.findFirst({
       where: eq(featureFlags.key, params.flagKey)
     });
-
+    
     if (!flag || !flag.enabled) {
       await this.redis.setex(cacheKey, 60, '0');
       return false;
     }
-
+    
     // Check if user is in override list
     if (params.userId && flag.userOverrides) {
       const overrides = flag.userOverrides as any;
@@ -25754,7 +26459,7 @@ export class FeatureFlagService {
         return false;
       }
     }
-
+    
     // Evaluate targeting rules
     if (flag.targetingRules) {
       const rules = flag.targetingRules as any[];
@@ -25765,7 +26470,7 @@ export class FeatureFlagService {
         }
       }
     }
-
+    
     // Use rollout percentage
     if (params.userId && flag.rolloutPercentage < 100) {
       const bucket = this.hashUser(params.userId, params.flagKey);
@@ -25773,13 +26478,13 @@ export class FeatureFlagService {
       await this.redis.setex(cacheKey, 300, enabled ? '1' : '0');
       return enabled;
     }
-
+    
     // Default to enabled if rollout is 100%
     const enabled = flag.rolloutPercentage === 100;
     await this.redis.setex(cacheKey, 300, enabled ? '1' : '0');
     return enabled;
   }
-
+  
   /**
    * Get variant for A/B test
    */
@@ -25789,11 +26494,11 @@ export class FeatureFlagService {
   }): Promise<string> {
     const cacheKey = `variant:${params.flagKey}:${params.userId}`;
     const cached = await this.redis.get(cacheKey);
-
+    
     if (cached) {
       return cached;
     }
-
+    
     // Check if user already assigned
     const existing = await db.query.featureFlagAssignments.findFirst({
       where: and(
@@ -25801,26 +26506,26 @@ export class FeatureFlagService {
         eq(featureFlagAssignments.userId, params.userId)
       )
     });
-
+    
     if (existing) {
       await this.redis.setex(cacheKey, 3600, existing.variant);
       return existing.variant;
     }
-
+    
     // Get variants
     const variants = await db.query.featureFlagVariants.findMany({
       where: eq(featureFlagVariants.flagKey, params.flagKey)
     });
-
+    
     if (variants.length === 0) {
       return 'control';
     }
-
+    
     // Assign variant based on weighted distribution
     const bucket = this.hashUser(params.userId, params.flagKey);
     let cumulative = 0;
     let selectedVariant = 'control';
-
+    
     for (const variant of variants) {
       cumulative += variant.weight;
       if (bucket < cumulative) {
@@ -25828,7 +26533,7 @@ export class FeatureFlagService {
         break;
       }
     }
-
+    
     // Save assignment
     await db.insert(featureFlagAssignments).values({
       flagKey: params.flagKey,
@@ -25836,11 +26541,11 @@ export class FeatureFlagService {
       variant: selectedVariant,
       assignedAt: new Date()
     });
-
+    
     await this.redis.setex(cacheKey, 3600, selectedVariant);
     return selectedVariant;
   }
-
+  
   /**
    * Hash user ID for consistent bucketing
    */
@@ -25849,17 +26554,17 @@ export class FeatureFlagService {
       .createHash('md5')
       .update(`${userId}:${salt}`)
       .digest('hex');
-
+    
     return parseInt(hash.substring(0, 8), 16) % 100;
   }
-
+  
   /**
    * Evaluate targeting rule
    */
   private evaluateRule(rule: any, context: Record<string, any>): boolean {
     const { field, operator, value } = rule;
     const contextValue = context[field];
-
+    
     switch (operator) {
       case 'equals':
         return contextValue === value;
@@ -25875,7 +26580,7 @@ export class FeatureFlagService {
         return false;
     }
   }
-
+  
   /**
    * Track event for analytics
    */
@@ -25942,23 +26647,23 @@ import { useAuth } from './useAuth';
 
 export function useFeatureFlag(flagKey: string) {
   const { user } = useAuth();
-
+  
   const { data: isEnabled, isLoading } = useQuery({
     queryKey: ['/api/feature-flags/evaluate', flagKey, user?.id],
     enabled: !!flagKey
   });
-
+  
   return { isEnabled: isEnabled?.enabled || false, isLoading };
 }
 
 export function useVariant(flagKey: string) {
   const { user } = useAuth();
-
+  
   const { data, isLoading } = useQuery({
     queryKey: ['/api/feature-flags/variant', flagKey, user?.id],
     enabled: !!user?.id
   });
-
+  
   return { variant: data?.variant || 'control', isLoading };
 }
 ```
@@ -26000,7 +26705,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export class LoggerService {
   private logger: winston.Logger;
-
+  
   constructor() {
     const transports: winston.transport[] = [
       // Console transport for development
@@ -26013,7 +26718,7 @@ export class LoggerService {
           })
         )
       }),
-
+      
       // File transport for all logs
       new winston.transports.File({
         filename: 'logs/combined.log',
@@ -26021,7 +26726,7 @@ export class LoggerService {
         maxsize: 10485760, // 10MB
         maxFiles: 5
       }),
-
+      
       // Separate file for errors
       new winston.transports.File({
         filename: 'logs/error.log',
@@ -26031,7 +26736,7 @@ export class LoggerService {
         maxFiles: 5
       })
     ];
-
+    
     // Add Elasticsearch transport in production
     if (process.env.NODE_ENV === 'production') {
       transports.push(new ElasticsearchTransport({
@@ -26046,7 +26751,7 @@ export class LoggerService {
         index: 'logs'
       }));
     }
-
+    
     this.logger = winston.createLogger({
       level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(
@@ -26061,7 +26766,7 @@ export class LoggerService {
       transports
     });
   }
-
+  
   /**
    * Log with correlation ID
    */
@@ -26071,15 +26776,15 @@ export class LoggerService {
       correlationId: meta?.correlationId || uuidv4()
     });
   }
-
+  
   info(message: string, meta?: any): void {
     this.log('info', message, meta);
   }
-
+  
   warn(message: string, meta?: any): void {
     this.log('warn', message, meta);
   }
-
+  
   error(message: string, error?: Error, meta?: any): void {
     this.log('error', message, {
       ...meta,
@@ -26090,7 +26795,7 @@ export class LoggerService {
       } : undefined
     });
   }
-
+  
   debug(message: string, meta?: any): void {
     this.log('debug', message, meta);
   }
@@ -26111,13 +26816,13 @@ import { logger } from '../services/LoggerService';
 export function requestLogger(req: Request, res: Response, next: NextFunction) {
   const correlationId = (req.headers['x-correlation-id'] as string) || uuidv4();
   const start = Date.now();
-
+  
   // Attach correlation ID to request
   req.correlationId = correlationId;
-
+  
   // Set correlation ID in response header
   res.setHeader('X-Correlation-ID', correlationId);
-
+  
   // Log request
   logger.info('Incoming request', {
     correlationId,
@@ -26127,11 +26832,11 @@ export function requestLogger(req: Request, res: Response, next: NextFunction) {
     userAgent: req.headers['user-agent'],
     userId: req.user?.id
   });
-
+  
   // Log response
   res.on('finish', () => {
     const duration = Date.now() - start;
-
+    
     logger.info('Request completed', {
       correlationId,
       method: req.method,
@@ -26141,7 +26846,7 @@ export function requestLogger(req: Request, res: Response, next: NextFunction) {
       userId: req.user?.id
     });
   });
-
+  
   next();
 }
 
@@ -26175,7 +26880,7 @@ export function errorLogger(
     userId: req.user?.id,
     body: req.body
   });
-
+  
   // Send error response
   res.status(500).json({
     error: 'Internal server error',
@@ -26197,36 +26902,36 @@ import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'
 
 export class TracingService {
   private static provider: NodeTracerProvider;
-
+  
   static initialize(): void {
     const provider = new NodeTracerProvider({
       resource: new Resource({
         [SemanticResourceAttributes.SERVICE_NAME]: 'mundotango-api'
       })
     });
-
+    
     const exporter = new JaegerExporter({
       endpoint: process.env.JAEGER_ENDPOINT || 'http://localhost:14268/api/traces'
     });
-
+    
     provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
     provider.register();
-
+    
     this.provider = provider;
   }
-
+  
   static startSpan(name: string, attributes?: Record<string, any>): Span {
     const tracer = trace.getTracer('mundotango-api');
     return tracer.startSpan(name, { attributes });
   }
-
+  
   static async trace<T>(
     name: string,
     fn: (span: Span) => Promise<T>,
     attributes?: Record<string, any>
   ): Promise<T> {
     const span = this.startSpan(name, attributes);
-
+    
     try {
       const result = await fn(span);
       span.setStatus({ code: 0 }); // OK
@@ -26263,7 +26968,7 @@ import { Queue } from 'bullmq';
 
 export class WebhookService {
   private queue: Queue;
-
+  
   constructor() {
     this.queue = new Queue('webhooks', {
       connection: {
@@ -26272,7 +26977,7 @@ export class WebhookService {
       }
     });
   }
-
+  
   /**
    * Trigger webhook event
    */
@@ -26287,7 +26992,7 @@ export class WebhookService {
         eq(webhookSubscriptions.enabled, true)
       )
     });
-
+    
     // Queue delivery for each subscription
     for (const subscription of subscriptions) {
       await this.queue.add('deliver', {
@@ -26303,7 +27008,7 @@ export class WebhookService {
       });
     }
   }
-
+  
   /**
    * Deliver webhook
    */
@@ -26317,15 +27022,15 @@ export class WebhookService {
       data: params.data,
       timestamp: new Date().toISOString()
     };
-
+    
     // Generate signature
     const signature = this.generateSignature(
       JSON.stringify(payload),
       params.subscription.secret
     );
-
+    
     const deliveryId = crypto.randomUUID();
-
+    
     try {
       const response = await axios.post(params.subscription.url, payload, {
         headers: {
@@ -26336,7 +27041,7 @@ export class WebhookService {
         },
         timeout: 10000
       });
-
+      
       // Log successful delivery
       await this.logDelivery({
         subscriptionId: params.subscription.id,
@@ -26346,7 +27051,7 @@ export class WebhookService {
         statusCode: response.status,
         responseBody: JSON.stringify(response.data)
       });
-
+      
       return { success: true, statusCode: response.status };
     } catch (error: any) {
       // Log failed delivery
@@ -26359,7 +27064,7 @@ export class WebhookService {
         error: error.message,
         responseBody: error.response?.data ? JSON.stringify(error.response.data) : undefined
       });
-
+      
       return {
         success: false,
         statusCode: error.response?.status,
@@ -26367,7 +27072,7 @@ export class WebhookService {
       };
     }
   }
-
+  
   /**
    * Generate HMAC signature
    */
@@ -26377,7 +27082,7 @@ export class WebhookService {
       .update(payload)
       .digest('hex');
   }
-
+  
   /**
    * Verify webhook signature
    */
@@ -26386,13 +27091,13 @@ export class WebhookService {
       .createHmac('sha256', secret)
       .update(payload)
       .digest('hex');
-
+    
     return crypto.timingSafeEqual(
       Buffer.from(signature),
       Buffer.from(expectedSignature)
     );
   }
-
+  
   /**
    * Log webhook delivery
    */
@@ -26496,7 +27201,7 @@ export class OptimizedEventQueries {
       OFFSET ${params.offset || 0}
     `);
   }
-
+  
   /**
    * Search events with full-text search (PostgreSQL tsvector)
    */
@@ -26525,19 +27230,19 @@ export const databaseIndexes = sql`
   CREATE INDEX IF NOT EXISTS idx_events_start_date ON events(start_date);
   CREATE INDEX IF NOT EXISTS idx_events_city ON events(city);
   CREATE INDEX IF NOT EXISTS idx_events_organizer ON events(organizer_id);
-
+  
   -- Full-text search index
   CREATE INDEX IF NOT EXISTS idx_events_search 
     ON events USING gin(to_tsvector('english', title || ' ' || COALESCE(description, '')));
-
+  
   -- User indexes
   CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
   CREATE INDEX IF NOT EXISTS idx_users_city ON users(city);
-
+  
   -- Post indexes
   CREATE INDEX IF NOT EXISTS idx_posts_author ON posts(author_id);
   CREATE INDEX IF NOT EXISTS idx_posts_created ON posts(created_at DESC);
-
+  
   -- Composite indexes
   CREATE INDEX IF NOT EXISTS idx_event_attendees_composite 
     ON event_attendees(event_id, user_id);
@@ -26621,7 +27326,7 @@ interface OptimizedImageProps {
 
 export function OptimizedImage({ src, alt, width, height, className }: OptimizedImageProps) {
   const [imageSrc, setImageSrc] = useState<string>('');
-
+  
   useEffect(() => {
     // Generate srcset for responsive images
     const srcset = [
@@ -26630,10 +27335,10 @@ export function OptimizedImage({ src, alt, width, height, className }: Optimized
       `${src}?w=1200 1200w`,
       `${src}?w=1600 1600w`
     ].join(', ');
-
+    
     setImageSrc(srcset);
   }, [src]);
-
+  
   return (
     <img
       src={src}
@@ -26760,7 +27465,7 @@ export async function safeUserSearch(email: string) {
 export async function unsafeUserSearch(email: string) {
   // ❌ UNSAFE: String concatenation allows SQL injection
   // return await db.execute(sql`SELECT * FROM users WHERE email = '${email}'`);
-
+  
   // ✅ SAFE: Use parameterized query
   return await db.execute(sql`SELECT * FROM users WHERE email = ${email}`);
 }
@@ -26771,11 +27476,11 @@ export async function unsafeUserSearch(email: string) {
 export function validateSQLInput(input: string): boolean {
   // Reject inputs with SQL keywords
   const sqlKeywords = /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|EXECUTE)\b)/i;
-
+  
   if (sqlKeywords.test(input)) {
     throw new Error('Invalid input: SQL keywords detected');
   }
-
+  
   return true;
 }
 ```
@@ -26808,7 +27513,7 @@ export function escapeHTML(text: string): string {
     "'": '&#x27;',
     '/': '&#x2F;'
   };
-
+  
   return text.replace(/[&<>"'/]/g, (char) => map[char]);
 }
 
@@ -26892,7 +27597,7 @@ export function configureSecurityHeaders(app: Express) {
       policy: 'strict-origin-when-cross-origin'
     }
   }));
-
+  
   // Additional custom headers
   app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -26915,29 +27620,29 @@ import { z } from 'zod';
  */
 export const validationSchemas = {
   email: z.string().email().max(255),
-
+  
   password: z.string()
     .min(8, 'Password must be at least 8 characters')
     .regex(/[A-Z]/, 'Password must contain uppercase letter')
     .regex(/[a-z]/, 'Password must contain lowercase letter')
     .regex(/[0-9]/, 'Password must contain number')
     .regex(/[^A-Za-z0-9]/, 'Password must contain special character'),
-
+  
   username: z.string()
     .min(3)
     .max(30)
     .regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain letters, numbers, hyphens, and underscores'),
-
+  
   url: z.string().url().max(2048),
-
+  
   phoneNumber: z.string().regex(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number'),
-
+  
   // Prevent directory traversal
   filename: z.string()
     .max(255)
     .regex(/^[a-zA-Z0-9_-]+\.[a-zA-Z0-9]+$/, 'Invalid filename')
     .refine(name => !name.includes('..'), 'Directory traversal not allowed'),
-
+  
   // SQL-safe search query
   searchQuery: z.string()
     .max(200)
@@ -26974,13 +27679,13 @@ import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-sec
 export class SecretsManager {
   private client: SecretsManagerClient;
   private cache: Map<string, { value: string; expiry: number }> = new Map();
-
+  
   constructor() {
     this.client = new SecretsManagerClient({
       region: process.env.AWS_REGION || 'us-east-1'
     });
   }
-
+  
   /**
    * Get secret from AWS Secrets Manager with caching
    */
@@ -26990,34 +27695,34 @@ export class SecretsManager {
     if (cached && cached.expiry > Date.now()) {
       return cached.value;
     }
-
+    
     try {
       const response = await this.client.send(
         new GetSecretValueCommand({ SecretId: secretName })
       );
-
+      
       const secret = response.SecretString!;
-
+      
       // Cache for 5 minutes
       this.cache.set(secretName, {
         value: secret,
         expiry: Date.now() + 5 * 60 * 1000
       });
-
+      
       return secret;
     } catch (error) {
       console.error(`Failed to retrieve secret ${secretName}:`, error);
       throw error;
     }
   }
-
+  
   /**
    * Rotate secret
    */
   async rotateSecret(secretName: string, newValue: string): Promise<void> {
     // Update in AWS Secrets Manager
     // Implementation depends on your secret rotation strategy
-
+    
     // Clear cache
     this.cache.delete(secretName);
   }
@@ -27139,12 +27844,12 @@ export class PresenceService {
   private io: Server;
   private redis: Redis;
   private readonly PRESENCE_TTL = 300; // 5 minutes
-
+  
   constructor(io: Server) {
     this.io = io;
     this.redis = new Redis(process.env.REDIS_URL!);
   }
-
+  
   /**
    * User connects
    */
@@ -27157,29 +27862,29 @@ export class PresenceService {
       lastSeen: new Date(),
       currentPage: socket.handshake.query.page as string
     };
-
+    
     // Store in Redis
     await this.redis.setex(
       `presence:${user.id}`,
       this.PRESENCE_TTL,
       JSON.stringify(presence)
     );
-
+    
     // Add to online users set
     await this.redis.sadd('online_users', user.id.toString());
-
+    
     // Broadcast to all clients
     this.io.emit('user:online', {
       userId: user.id,
       username: user.name,
       avatar: user.profileImage
     });
-
+    
     // Send current online users to new connection
     const onlineUsers = await this.getOnlineUsers();
     socket.emit('presence:sync', onlineUsers);
   }
-
+  
   /**
    * User disconnects
    */
@@ -27187,70 +27892,70 @@ export class PresenceService {
     // Update last seen
     const presenceKey = `presence:${userId}`;
     const presence = await this.redis.get(presenceKey);
-
+    
     if (presence) {
       const data = JSON.parse(presence);
       data.status = 'offline';
       data.lastSeen = new Date();
-
+      
       await this.redis.setex(presenceKey, this.PRESENCE_TTL, JSON.stringify(data));
     }
-
+    
     // Remove from online users
     await this.redis.srem('online_users', userId.toString());
-
+    
     // Broadcast
     this.io.emit('user:offline', { userId });
   }
-
+  
   /**
    * Update user presence
    */
   async updatePresence(userId: number, updates: Partial<UserPresence>): Promise<void> {
     const presenceKey = `presence:${userId}`;
     const presence = await this.redis.get(presenceKey);
-
+    
     if (presence) {
       const data = { ...JSON.parse(presence), ...updates, lastSeen: new Date() };
       await this.redis.setex(presenceKey, this.PRESENCE_TTL, JSON.stringify(data));
-
+      
       this.io.emit('presence:update', {
         userId,
         ...updates
       });
     }
   }
-
+  
   /**
    * Get online users
    */
   async getOnlineUsers(): Promise<UserPresence[]> {
     const userIds = await this.redis.smembers('online_users');
-
+    
     const presences = await Promise.all(
       userIds.map(id => this.redis.get(`presence:${id}`))
     );
-
+    
     return presences
       .filter(p => p !== null)
       .map(p => JSON.parse(p!));
   }
-
+  
   /**
    * Track user on page
    */
   async trackUserOnPage(userId: number, page: string): Promise<void> {
     await this.updatePresence(userId, { currentPage: page });
-
+    
     // Join room for page
     const sockets = await this.io.fetchSockets();
     const userSocket = sockets.find(s => (s as any).userId === userId);
-
+    
     if (userSocket) {
       userSocket.join(`page:${page}`);
     }
   }
-
+  
   /**
    * Get users on page
    */
@@ -27279,11 +27984,11 @@ interface Operation {
 
 export class CollaborativeEditingService {
   private io: Server;
-
+  
   constructor(io: Server) {
     this.io = io;
   }
-
+  
   /**
    * User joins document editing session
    */
@@ -27292,28 +27997,28 @@ export class CollaborativeEditingService {
     userId: number;
   }): Promise<void> {
     const room = `document:${params.documentId}`;
-
+    
     // Join room
     socket.join(room);
-
+    
     // Get current document state
     const document = await db.query.documents.findFirst({
       where: eq(documents.id, params.documentId)
     });
-
+    
     // Send current state to client
     socket.emit('document:sync', {
       content: document?.content,
       version: document?.version
     });
-
+    
     // Notify others
     socket.to(room).emit('user:joined', {
       userId: params.userId,
       documentId: params.documentId
     });
   }
-
+  
   /**
    * Handle document operation
    */
@@ -27324,16 +28029,16 @@ export class CollaborativeEditingService {
     version: number;
   }): Promise<void> {
     const room = `document:${params.documentId}`;
-
+    
     // Get current document
     const document = await db.query.documents.findFirst({
       where: eq(documents.id, params.documentId)
     });
-
+    
     if (!document) {
       throw new Error('Document not found');
     }
-
+    
     // Check version for conflict resolution
     if (params.version !== document.version) {
       // Transform operation against concurrent operations
@@ -27344,10 +28049,10 @@ export class CollaborativeEditingService {
       );
       params.operation = transformed;
     }
-
+    
     // Apply operation
     const newContent = this.applyOp(document.content, params.operation);
-
+    
     // Save to database
     await db.update(documents)
       .set({
@@ -27357,7 +28062,7 @@ export class CollaborativeEditingService {
         updatedBy: params.userId
       })
       .where(eq(documents.id, params.documentId));
-
+    
     // Log operation
     await db.insert(documentOperations).values({
       documentId: params.documentId,
@@ -27366,7 +28071,7 @@ export class CollaborativeEditingService {
       version: document.version + 1,
       createdAt: new Date()
     });
-
+    
     // Broadcast to all clients in room
     this.io.to(room).emit('operation', {
       operation: params.operation,
@@ -27374,7 +28079,7 @@ export class CollaborativeEditingService {
       userId: params.userId
     });
   }
-
+  
   /**
    * Apply operation to content
    */
@@ -27384,19 +28089,19 @@ export class CollaborativeEditingService {
         return content.slice(0, op.position) + 
                op.text + 
                content.slice(op.position);
-
+      
       case 'delete':
         return content.slice(0, op.position) + 
                content.slice(op.position + (op.length || 0));
-
+      
       case 'retain':
         return content;
-
+      
       default:
         return content;
     }
   }
-
+  
   /**
    * Transform operation (Operational Transformation)
    */
@@ -27413,17 +28118,17 @@ export class CollaborativeEditingService {
       ),
       orderBy: [asc(documentOperations.version)]
     });
-
+    
     let transformed = { ...operation };
-
+    
     // Transform against each concurrent operation
     for (const concurrentOp of operations) {
       transformed = this.transform(transformed, concurrentOp.operation);
     }
-
+    
     return transformed;
   }
-
+  
   /**
    * OT transform function
    */
@@ -27434,16 +28139,16 @@ export class CollaborativeEditingService {
         return { ...op1, position: op1.position + (op2.text?.length || 0) };
       }
     }
-
+    
     if (op1.type === 'delete' && op2.type === 'insert') {
       if (op2.position <= op1.position) {
         return { ...op1, position: op1.position + (op2.text?.length || 0) };
       }
     }
-
+    
     return op1;
   }
-
+  
   /**
    * Show cursor position
    */
@@ -27453,13 +28158,13 @@ export class CollaborativeEditingService {
     position: number;
   }): Promise<void> {
     const room = `document:${params.documentId}`;
-
+    
     this.io.to(room).emit('cursor:move', {
       userId: params.userId,
       position: params.position
     });
   }
-
+  
   /**
    * Show typing indicator
    */
@@ -27469,7 +28174,7 @@ export class CollaborativeEditingService {
     isTyping: boolean;
   }): Promise<void> {
     const room = `document:${params.documentId}`;
-
+    
     this.io.to(room).emit('typing', {
       userId: params.userId,
       isTyping: params.isTyping
@@ -27500,37 +28205,37 @@ export function useCollaboration(documentId: number) {
   const [version, setVersion] = useState(0);
   const [cursors, setCursors] = useState<UserCursor[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
-
+  
   useEffect(() => {
     if (!user) return;
-
+    
     const newSocket = io('wss://mundotango.life', {
       auth: { token: localStorage.getItem('auth_token') }
     });
-
+    
     newSocket.on('connect', () => {
       console.log('Connected to collaboration server');
-
+      
       // Join document
       newSocket.emit('document:join', {
         documentId,
         userId: user.id
       });
     });
-
+    
     // Document sync
     newSocket.on('document:sync', (data: any) => {
       setContent(data.content);
       setVersion(data.version);
     });
-
+    
     // Operation from server
     newSocket.on('operation', (data: any) => {
       // Apply operation locally
       setContent(prev => applyOperation(prev, data.operation));
       setVersion(data.version);
     });
-
+    
     // Cursor updates
     newSocket.on('cursor:move', (data: any) => {
       setCursors(prev => {
@@ -27543,19 +28248,19 @@ export function useCollaboration(documentId: number) {
         }];
       });
     });
-
+    
     // User joined
     newSocket.on('user:joined', (data: any) => {
       setOnlineUsers(prev => [...prev, data]);
     });
-
+    
     setSocket(newSocket);
-
+    
     return () => {
       newSocket.disconnect();
     };
   }, [documentId, user]);
-
+  
   const sendOperation = (operation: any) => {
     if (socket) {
       socket.emit('operation', {
@@ -27566,7 +28271,7 @@ export function useCollaboration(documentId: number) {
       });
     }
   };
-
+  
   const updateCursor = (position: number) => {
     if (socket) {
       socket.emit('cursor:update', {
@@ -27576,7 +28281,7 @@ export function useCollaboration(documentId: number) {
       });
     }
   };
-
+  
   return {
     content,
     cursors,
@@ -27617,11 +28322,11 @@ import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3
 
 export class DocumentService {
   private s3: S3Client;
-
+  
   constructor() {
     this.s3 = new S3Client({ region: 'us-east-1' });
   }
-
+  
   /**
    * Create document
    */
@@ -27642,7 +28347,7 @@ export class DocumentService {
       version: 1,
       createdAt: new Date()
     }).returning();
-
+    
     // Create initial version
     await db.insert(documentVersions).values({
       documentId: document.id,
@@ -27651,10 +28356,10 @@ export class DocumentService {
       createdBy: params.ownerId,
       createdAt: new Date()
     });
-
+    
     return document;
   }
-
+  
   /**
    * Update document (creates new version)
    */
@@ -27666,13 +28371,13 @@ export class DocumentService {
     const document = await db.query.documents.findFirst({
       where: eq(documents.id, params.documentId)
     });
-
+    
     if (!document) {
       throw new Error('Document not found');
     }
-
+    
     const newVersion = document.version + 1;
-
+    
     // Update document
     await db.update(documents)
       .set({
@@ -27682,7 +28387,7 @@ export class DocumentService {
         updatedBy: params.userId
       })
       .where(eq(documents.id, params.documentId));
-
+    
     // Create version
     await db.insert(documentVersions).values({
       documentId: params.documentId,
@@ -27691,10 +28396,10 @@ export class DocumentService {
       createdBy: params.userId,
       createdAt: new Date()
     });
-
+    
     return { ...document, version: newVersion, content: params.content };
   }
-
+  
   /**
    * Get document with version history
    */
@@ -27708,10 +28413,10 @@ export class DocumentService {
         }
       }
     });
-
+    
     return document;
   }
-
+  
   /**
    * Restore document to previous version
    */
@@ -27727,11 +28432,11 @@ export class DocumentService {
         eq(documentVersions.version, params.version)
       )
     });
-
+    
     if (!version) {
       throw new Error('Version not found');
     }
-
+    
     // Update document with version content
     await this.update({
       documentId: params.documentId,
@@ -27739,7 +28444,7 @@ export class DocumentService {
       userId: params.userId
     });
   }
-
+  
   /**
    * Share document with user
    */
@@ -27758,7 +28463,7 @@ export class DocumentService {
       set: { permission: params.permission }
     });
   }
-
+  
   /**
    * Check user permission
    */
@@ -27771,11 +28476,11 @@ export class DocumentService {
     const document = await db.query.documents.findFirst({
       where: eq(documents.id, params.documentId)
     });
-
+    
     if (document?.ownerId === params.userId) {
       return true;
     }
-
+    
     // Check permissions
     const permission = await db.query.documentPermissions.findFirst({
       where: and(
@@ -27783,15 +28488,15 @@ export class DocumentService {
         eq(documentPermissions.userId, params.userId)
       )
     });
-
+    
     if (!permission) {
       return false;
     }
-
+    
     const permissionLevels = { view: 1, edit: 2, admin: 3 };
     return permissionLevels[permission.permission] >= permissionLevels[params.requiredPermission];
   }
-
+  
   /**
    * Upload file attachment
    */
@@ -27802,14 +28507,14 @@ export class DocumentService {
     mimetype: string;
   }): Promise<string> {
     const key = `documents/${params.documentId}/attachments/${Date.now()}-${params.filename}`;
-
+    
     await this.s3.send(new PutObjectCommand({
       Bucket: 'mundotango-documents',
       Key: key,
       Body: params.file,
       ContentType: params.mimetype
     }));
-
+    
     return `https://mundotango-documents.s3.amazonaws.com/${key}`;
   }
 }
@@ -27881,12 +28586,12 @@ vi.mock('../../../server/db');
 
 describe('EventService', () => {
   let eventService: EventService;
-
+  
   beforeEach(() => {
     eventService = new EventService();
     vi.clearAllMocks();
   });
-
+  
   describe('create', () => {
     it('should create event successfully', async () => {
       const mockEvent = {
@@ -27895,38 +28600,38 @@ describe('EventService', () => {
         startDate: new Date(),
         city: 'Buenos Aires'
       };
-
+      
       const mockResult = { id: 1, ...mockEvent };
       vi.mocked(db.insert).mockReturnValue({
         values: vi.fn().mockReturnValue({
           returning: vi.fn().mockResolvedValue([mockResult])
         })
       } as any);
-
+      
       const result = await eventService.create(mockEvent);
-
+      
       expect(result).toEqual(mockResult);
       expect(db.insert).toHaveBeenCalled();
     });
-
+    
     it('should validate required fields', async () => {
       await expect(
         eventService.create({} as any)
       ).rejects.toThrow('Title is required');
     });
   });
-
+  
   describe('search', () => {
     it('should return events matching search query', async () => {
       const mockEvents = [
         { id: 1, title: 'Tango Night', city: 'Buenos Aires' },
         { id: 2, title: 'Milonga Party', city: 'Buenos Aires' }
       ];
-
+      
       vi.mocked(db.query.events.findMany).mockResolvedValue(mockEvents as any);
-
+      
       const results = await eventService.search({ query: 'tango', city: 'Buenos Aires' });
-
+      
       expect(results).toHaveLength(2);
       expect(results[0].title).toContain('Tango');
     });
@@ -27947,7 +28652,7 @@ import { users, events } from '../../../shared/schema';
 describe('Events API', () => {
   let authToken: string;
   let testUserId: number;
-
+  
   beforeAll(async () => {
     // Create test user
     const [user] = await db.insert(users).values({
@@ -27955,9 +28660,9 @@ describe('Events API', () => {
       name: 'Test User',
       password: 'hashed_password'
     }).returning();
-
+    
     testUserId = user.id;
-
+    
     // Login and get token
     const response = await request(app)
       .post('/api/auth/login')
@@ -27965,16 +28670,16 @@ describe('Events API', () => {
         email: 'test@example.com',
         password: 'password123'
       });
-
+    
     authToken = response.body.token;
   });
-
+  
   afterAll(async () => {
     // Cleanup test data
     await db.delete(events).where(eq(events.organizerId, testUserId));
     await db.delete(users).where(eq(users.id, testUserId));
   });
-
+  
   it('POST /api/events - should create event', async () => {
     const eventData = {
       title: 'Integration Test Event',
@@ -27985,26 +28690,26 @@ describe('Events API', () => {
       latitude: -34.6037,
       longitude: -58.3816
     };
-
+    
     const response = await request(app)
       .post('/api/events')
       .set('Authorization', `Bearer ${authToken}`)
       .send(eventData)
       .expect(201);
-
+    
     expect(response.body).toHaveProperty('id');
     expect(response.body.title).toBe(eventData.title);
   });
-
+  
   it('GET /api/events - should return events list', async () => {
     const response = await request(app)
       .get('/api/events')
       .query({ city: 'Buenos Aires' })
       .expect(200);
-
+    
     expect(Array.isArray(response.body)).toBe(true);
   });
-
+  
   it('GET /api/events/:id - should return event details', async () => {
     const [event] = await db.insert(events).values({
       title: 'Test Event',
@@ -28012,15 +28717,15 @@ describe('Events API', () => {
       startDate: new Date(),
       city: 'Buenos Aires'
     }).returning();
-
+    
     const response = await request(app)
       .get(`/api/events/${event.id}`)
       .expect(200);
-
+    
     expect(response.body.id).toBe(event.id);
     expect(response.body.title).toBe('Test Event');
   });
-
+  
   it('PUT /api/events/:id - should update event', async () => {
     const [event] = await db.insert(events).values({
       title: 'Original Title',
@@ -28028,16 +28733,16 @@ describe('Events API', () => {
       startDate: new Date(),
       city: 'Buenos Aires'
     }).returning();
-
+    
     const response = await request(app)
       .put(`/api/events/${event.id}`)
       .set('Authorization', `Bearer ${authToken}`)
       .send({ title: 'Updated Title' })
       .expect(200);
-
+    
     expect(response.body.title).toBe('Updated Title');
   });
-
+  
   it('DELETE /api/events/:id - should delete event', async () => {
     const [event] = await db.insert(events).values({
       title: 'To Delete',
@@ -28045,16 +28750,16 @@ describe('Events API', () => {
       startDate: new Date(),
       city: 'Buenos Aires'
     }).returning();
-
+    
     await request(app)
       .delete(`/api/events/${event.id}`)
       .set('Authorization', `Bearer ${authToken}`)
       .expect(200);
-
+    
     const deleted = await db.query.events.findFirst({
       where: eq(events.id, event.id)
     });
-
+    
     expect(deleted).toBeUndefined();
   });
 });
@@ -28073,62 +28778,62 @@ test.describe('Event Creation Flow', () => {
     await page.fill('[data-testid="input-email"]', 'test@example.com');
     await page.fill('[data-testid="input-password"]', 'password123');
     await page.click('[data-testid="button-login"]');
-
+    
     await expect(page).toHaveURL('/');
   });
-
+  
   test('should create event successfully', async ({ page }) => {
     // Navigate to create event page
     await page.click('[data-testid="link-create-event"]');
     await expect(page).toHaveURL('/events/create');
-
+    
     // Fill form
     await page.fill('[data-testid="input-title"]', 'E2E Test Event');
     await page.fill('[data-testid="textarea-description"]', 'This is a test event created via E2E test');
     await page.fill('[data-testid="input-city"]', 'Buenos Aires');
-
+    
     // Set date
     await page.click('[data-testid="input-start-date"]');
     await page.click('.react-calendar__tile--now');
-
+    
     // Upload image
     await page.setInputFiles('[data-testid="input-image"]', 'tests/fixtures/event-image.jpg');
-
+    
     // Submit form
     await page.click('[data-testid="button-submit"]');
-
+    
     // Verify success
     await expect(page.locator('[data-testid="toast-success"]')).toBeVisible();
     await expect(page).toHaveURL(/\/events\/\d+/);
-
+    
     // Verify event details
     await expect(page.locator('[data-testid="text-event-title"]')).toHaveText('E2E Test Event');
   });
-
+  
   test('should validate required fields', async ({ page }) => {
     await page.goto('/events/create');
-
+    
     // Submit without filling
     await page.click('[data-testid="button-submit"]');
-
+    
     // Check validation errors
     await expect(page.locator('[data-testid="error-title"]')).toBeVisible();
     await expect(page.locator('[data-testid="error-title"]')).toHaveText('Title is required');
   });
-
+  
   test('should show event in list', async ({ page }) => {
     // Create event
     await page.goto('/events/create');
     await page.fill('[data-testid="input-title"]', 'Searchable Event');
     await page.fill('[data-testid="input-city"]', 'Buenos Aires');
     await page.click('[data-testid="button-submit"]');
-
+    
     // Navigate to events list
     await page.goto('/events');
-
+    
     // Search for event
     await page.fill('[data-testid="input-search"]', 'Searchable Event');
-
+    
     // Verify event appears
     await expect(page.locator('text=Searchable Event')).toBeVisible();
   });
@@ -28163,17 +28868,17 @@ export default function () {
     'events status is 200': (r) => r.status === 200,
     'events response time < 500ms': (r) => r.timings.duration < 500,
   });
-
+  
   sleep(1);
-
+  
   // Test GET /api/events/:id
   const eventRes = http.get('https://mundotango.life/api/events/1');
   check(eventRes, {
     'event status is 200': (r) => r.status === 200,
   });
-
+  
   sleep(1);
-
+  
   // Test search
   const searchRes = http.get('https://mundotango.life/api/search?q=tango');
   check(searchRes, {
@@ -28193,26 +28898,26 @@ test.describe('Visual Regression Tests', () => {
   test('homepage should match snapshot', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-
+    
     await expect(page).toHaveScreenshot('homepage.png', {
       fullPage: true,
       threshold: 0.2
     });
   });
-
+  
   test('event details page should match snapshot', async ({ page }) => {
     await page.goto('/events/1');
     await page.waitForLoadState('networkidle');
-
+    
     await expect(page).toHaveScreenshot('event-details.png', {
       fullPage: true
     });
   });
-
+  
   test('mobile view should match snapshot', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto('/');
-
+    
     await expect(page).toHaveScreenshot('mobile-homepage.png');
   });
 });
@@ -28235,24 +28940,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
           cache: 'npm'
-
+      
       - name: Install dependencies
         run: npm ci
-
+      
       - name: Run unit tests
         run: npm run test:unit -- --coverage
-
+      
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         with:
           files: ./coverage/coverage-final.json
-
+  
   integration-tests:
     runs-on: ubuntu-latest
     services:
@@ -28265,58 +28970,58 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
+    
     steps:
       - uses: actions/checkout@v3
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-
+      
       - name: Install dependencies
         run: npm ci
-
+      
       - name: Run migrations
         run: npm run db:push
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
-
+      
       - name: Run integration tests
         run: npm run test:integration
-
+  
   e2e-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-
+      
       - name: Install dependencies
         run: npm ci
-
+      
       - name: Install Playwright
         run: npx playwright install --with-deps
-
+      
       - name: Run E2E tests
         run: npm run test:e2e
-
+      
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: playwright-report
           path: playwright-report/
-
+  
   load-tests:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
-
+      
       - name: Run k6 load tests
         uses: grafana/k6-action@v0.3.0
         with:
@@ -28337,7 +29042,7 @@ Complete infrastructure as code using Terraform, deployment automation, blue-gre
 # File: infrastructure/main.tf
 terraform {
   required_version = ">= 1.0"
-
+  
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -28348,7 +29053,7 @@ terraform {
       version = "~> 2.0"
     }
   }
-
+  
   backend "s3" {
     bucket = "mundotango-terraform-state"
     key    = "production/terraform.tfstate"
@@ -28367,7 +29072,7 @@ resource "aws_vpc" "main" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support   = true
-
+  
   tags = {
     Name        = "mundotango-vpc"
     Environment = var.environment
@@ -28380,9 +29085,9 @@ resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.${count.index + 1}.0/24"
   availability_zone = data.aws_availability_zones.available.names[count.index]
-
+  
   map_public_ip_on_launch = true
-
+  
   tags = {
     Name = "mundotango-public-${count.index + 1}"
   }
@@ -28393,11 +29098,11 @@ resource "aws_eks_cluster" "main" {
   name     = "mundotango-cluster"
   role_arn = aws_iam_role.eks_cluster.arn
   version  = "1.28"
-
+  
   vpc_config {
     subnet_ids = aws_subnet.public[*].id
   }
-
+  
   depends_on = [
     aws_iam_role_policy_attachment.eks_cluster_policy
   ]
@@ -28411,24 +29116,24 @@ resource "aws_db_instance" "main" {
   instance_class    = "db.t3.medium"
   allocated_storage = 100
   storage_type      = "gp3"
-
+  
   db_name  = "mundotango"
   username = var.db_username
   password = var.db_password
-
+  
   vpc_security_group_ids = [aws_security_group.rds.id]
   db_subnet_group_name   = aws_db_subnet_group.main.name
-
+  
   backup_retention_period = 7
   backup_window          = "03:00-04:00"
   maintenance_window     = "sun:04:00-sun:05:00"
-
+  
   multi_az               = true
   skip_final_snapshot    = false
   final_snapshot_identifier = "mundotango-final-snapshot"
-
+  
   enabled_cloudwatch_logs_exports = ["postgresql"]
-
+  
   tags = {
     Name        = "mundotango-database"
     Environment = var.environment
@@ -28446,7 +29151,7 @@ resource "aws_elasticache_cluster" "main" {
   port                 = 6379
   subnet_group_name    = aws_elasticache_subnet_group.main.name
   security_group_ids   = [aws_security_group.redis.id]
-
+  
   tags = {
     Name = "mundotango-redis"
   }
@@ -28455,7 +29160,7 @@ resource "aws_elasticache_cluster" "main" {
 # S3 Buckets
 resource "aws_s3_bucket" "files" {
   bucket = "mundotango-files"
-
+  
   tags = {
     Name = "mundotango-files"
   }
@@ -28463,7 +29168,7 @@ resource "aws_s3_bucket" "files" {
 
 resource "aws_s3_bucket_versioning" "files" {
   bucket = aws_s3_bucket.files.id
-
+  
   versioning_configuration {
     status = "Enabled"
   }
@@ -28472,40 +29177,40 @@ resource "aws_s3_bucket_versioning" "files" {
 # CloudFront Distribution
 resource "aws_cloudfront_distribution" "main" {
   enabled = true
-
+  
   origin {
     domain_name = aws_s3_bucket.files.bucket_regional_domain_name
     origin_id   = "S3-mundotango-files"
-
+    
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.main.cloudfront_access_identity_path
     }
   }
-
+  
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "S3-mundotango-files"
-
+    
     forwarded_values {
       query_string = false
       cookies {
         forward = "none"
       }
     }
-
+    
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
     default_ttl            = 86400
     max_ttl                = 31536000
   }
-
+  
   restrictions {
     geo_restriction {
       restriction_type = "none"
     }
   }
-
+  
   viewer_certificate {
     cloudfront_default_certificate = true
   }
@@ -28749,7 +29454,7 @@ export class SubscriptionService {
       name: params.name,
       description: params.description
     });
-
+    
     // Create price in Stripe
     const price = await stripe.prices.create({
       product: product.id,
@@ -28759,7 +29464,7 @@ export class SubscriptionService {
         interval: params.interval
       }
     });
-
+    
     // Save to database
     const [plan] = await db.insert(subscriptionPlans).values({
       name: params.name,
@@ -28772,10 +29477,10 @@ export class SubscriptionService {
       active: true,
       createdAt: new Date()
     }).returning();
-
+    
     return plan;
   }
-
+  
   /**
    * Subscribe user to plan
    */
@@ -28788,26 +29493,26 @@ export class SubscriptionService {
     const plan = await db.query.subscriptionPlans.findFirst({
       where: eq(subscriptionPlans.id, params.planId)
     });
-
+    
     if (!plan) {
       throw new Error('Plan not found');
     }
-
+    
     // Get or create Stripe customer
     const customer = await this.getOrCreateCustomer(params.userId);
-
+    
     // Attach payment method
     await stripe.paymentMethods.attach(params.paymentMethodId, {
       customer: customer.id
     });
-
+    
     // Set as default payment method
     await stripe.customers.update(customer.id, {
       invoice_settings: {
         default_payment_method: params.paymentMethodId
       }
     });
-
+    
     // Create subscription in Stripe
     const stripeSubscription = await stripe.subscriptions.create({
       customer: customer.id,
@@ -28816,7 +29521,7 @@ export class SubscriptionService {
       payment_settings: { save_default_payment_method: 'on_subscription' },
       expand: ['latest_invoice.payment_intent']
     });
-
+    
     // Save to database
     const [subscription] = await db.insert(subscriptions).values({
       userId: params.userId,
@@ -28829,13 +29534,13 @@ export class SubscriptionService {
       cancelAtPeriodEnd: false,
       createdAt: new Date()
     }).returning();
-
+    
     return {
       subscription,
       clientSecret: (stripeSubscription.latest_invoice as any).payment_intent.client_secret
     };
   }
-
+  
   /**
    * Get or create Stripe customer
    */
@@ -28844,16 +29549,16 @@ export class SubscriptionService {
     const existingSubscription = await db.query.subscriptions.findFirst({
       where: eq(subscriptions.userId, userId)
     });
-
+    
     if (existingSubscription?.stripeCustomerId) {
       return await stripe.customers.retrieve(existingSubscription.stripeCustomerId) as Stripe.Customer;
     }
-
+    
     // Get user details
     const user = await db.query.users.findFirst({
       where: eq(users.id, userId)
     });
-
+    
     // Create new customer
     return await stripe.customers.create({
       email: user!.email,
@@ -28861,7 +29566,7 @@ export class SubscriptionService {
       metadata: { userId: userId.toString() }
     });
   }
-
+  
   /**
    * Cancel subscription
    */
@@ -28872,15 +29577,15 @@ export class SubscriptionService {
     const subscription = await db.query.subscriptions.findFirst({
       where: eq(subscriptions.id, params.subscriptionId)
     });
-
+    
     if (!subscription) {
       throw new Error('Subscription not found');
     }
-
+    
     if (params.immediately) {
       // Cancel immediately
       await stripe.subscriptions.cancel(subscription.stripeSubscriptionId);
-
+      
       await db.update(subscriptions)
         .set({
           status: 'canceled',
@@ -28892,13 +29597,13 @@ export class SubscriptionService {
       await stripe.subscriptions.update(subscription.stripeSubscriptionId, {
         cancel_at_period_end: true
       });
-
+      
       await db.update(subscriptions)
         .set({ cancelAtPeriodEnd: true })
         .where(eq(subscriptions.id, params.subscriptionId));
     }
   }
-
+  
   /**
    * Update subscription plan
    */
@@ -28909,20 +29614,20 @@ export class SubscriptionService {
     const subscription = await db.query.subscriptions.findFirst({
       where: eq(subscriptions.id, params.subscriptionId)
     });
-
+    
     const newPlan = await db.query.subscriptionPlans.findFirst({
       where: eq(subscriptionPlans.id, params.newPlanId)
     });
-
+    
     if (!subscription || !newPlan) {
       throw new Error('Subscription or plan not found');
     }
-
+    
     // Update in Stripe
     const stripeSubscription = await stripe.subscriptions.retrieve(
       subscription.stripeSubscriptionId
     );
-
+    
     await stripe.subscriptions.update(subscription.stripeSubscriptionId, {
       items: [{
         id: stripeSubscription.items.data[0].id,
@@ -28930,13 +29635,13 @@ export class SubscriptionService {
       }],
       proration_behavior: 'create_prorations'
     });
-
+    
     // Update in database
     await db.update(subscriptions)
       .set({ planId: params.newPlanId })
       .where(eq(subscriptions.id, params.subscriptionId));
   }
-
+  
   /**
    * Handle subscription webhook
    */
@@ -28945,21 +29650,21 @@ export class SubscriptionService {
       case 'customer.subscription.updated':
         await this.handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
         break;
-
+      
       case 'customer.subscription.deleted':
         await this.handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
         break;
-
+      
       case 'invoice.paid':
         await this.handleInvoicePaid(event.data.object as Stripe.Invoice);
         break;
-
+      
       case 'invoice.payment_failed':
         await this.handlePaymentFailed(event.data.object as Stripe.Invoice);
         break;
     }
   }
-
+  
   private async handleSubscriptionUpdated(stripeSubscription: Stripe.Subscription): Promise<void> {
     await db.update(subscriptions)
       .set({
@@ -28970,7 +29675,7 @@ export class SubscriptionService {
       })
       .where(eq(subscriptions.stripeSubscriptionId, stripeSubscription.id));
   }
-
+  
   private async handleSubscriptionDeleted(stripeSubscription: Stripe.Subscription): Promise<void> {
     await db.update(subscriptions)
       .set({
@@ -28979,12 +29684,12 @@ export class SubscriptionService {
       })
       .where(eq(subscriptions.stripeSubscriptionId, stripeSubscription.id));
   }
-
+  
   private async handleInvoicePaid(invoice: Stripe.Invoice): Promise<void> {
     const subscription = await db.query.subscriptions.findFirst({
       where: eq(subscriptions.stripeSubscriptionId, invoice.subscription as string)
     });
-
+    
     if (subscription) {
       await db.insert(invoices).values({
         subscriptionId: subscription.id,
@@ -28997,7 +29702,7 @@ export class SubscriptionService {
       });
     }
   }
-
+  
   private async handlePaymentFailed(invoice: Stripe.Invoice): Promise<void> {
     // Send notification to user
     // Update subscription status
@@ -29038,17 +29743,17 @@ export class InvoiceService {
     const customer = await db.query.users.findFirst({
       where: eq(users.id, params.customerId)
     });
-
+    
     if (!customer) {
       throw new Error('Customer not found');
     }
-
+    
     // Calculate total
     const total = params.items.reduce(
       (sum, item) => sum + (item.quantity * item.unitPrice),
       0
     );
-
+    
     // Create invoice
     const [invoice] = await db.insert(invoices).values({
       customerId: params.customerId,
@@ -29057,7 +29762,7 @@ export class InvoiceService {
       dueDate: params.dueDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       createdAt: new Date()
     }).returning();
-
+    
     // Create invoice items
     await db.insert(invoiceItems).values(
       params.items.map(item => ({
@@ -29068,18 +29773,18 @@ export class InvoiceService {
         total: item.quantity * item.unitPrice
       }))
     );
-
+    
     // Generate PDF
     const pdfPath = await this.generatePDF(invoice.id);
-
+    
     // Update invoice with PDF URL
     await db.update(invoices)
       .set({ invoiceUrl: pdfPath })
       .where(eq(invoices.id, invoice.id));
-
+    
     return invoice;
   }
-
+  
   /**
    * Generate invoice PDF
    */
@@ -29091,28 +29796,28 @@ export class InvoiceService {
         items: true
       }
     });
-
+    
     if (!invoice) {
       throw new Error('Invoice not found');
     }
-
+    
     const doc = new PDFDocument({ margin: 50 });
     const filename = `invoice-${invoiceId}.pdf`;
     const filepath = `uploads/invoices/${filename}`;
-
+    
     doc.pipe(fs.createWriteStream(filepath));
-
+    
     // Header
     doc
       .fontSize(20)
       .text('INVOICE', 50, 50);
-
+    
     doc
       .fontSize(10)
       .text(`Invoice #${invoiceId}`, 50, 80)
       .text(`Date: ${invoice.createdAt.toLocaleDateString()}`, 50, 95)
       .text(`Due Date: ${invoice.dueDate.toLocaleDateString()}`, 50, 110);
-
+    
     // Customer details
     doc
       .fontSize(12)
@@ -29120,48 +29825,48 @@ export class InvoiceService {
       .fontSize(10)
       .text(invoice.customer.name, 50, 170)
       .text(invoice.customer.email, 50, 185);
-
+    
     // Items table
     let yPosition = 230;
-
+    
     doc
       .fontSize(10)
       .text('Description', 50, yPosition)
       .text('Qty', 300, yPosition)
       .text('Price', 370, yPosition)
       .text('Total', 450, yPosition);
-
+    
     yPosition += 20;
     doc.moveTo(50, yPosition).lineTo(550, yPosition).stroke();
     yPosition += 10;
-
+    
     invoice.items.forEach(item => {
       doc
         .text(item.description, 50, yPosition)
         .text(item.quantity.toString(), 300, yPosition)
         .text(`$${item.unitPrice.toFixed(2)}`, 370, yPosition)
         .text(`$${item.total.toFixed(2)}`, 450, yPosition);
-
+      
       yPosition += 20;
     });
-
+    
     // Total
     yPosition += 20;
     doc
       .fontSize(12)
       .text('Total:', 370, yPosition)
       .text(`$${invoice.amount.toFixed(2)}`, 450, yPosition);
-
+    
     // Footer
     doc
       .fontSize(8)
       .text('Thank you for your business!', 50, 700, { align: 'center' });
-
+    
     doc.end();
-
+    
     return filepath;
   }
-
+  
   /**
    * Send invoice via email
    */
@@ -29170,15 +29875,15 @@ export class InvoiceService {
       where: eq(invoices.id, invoiceId),
       with: { customer: true }
     });
-
+    
     if (!invoice) {
       throw new Error('Invoice not found');
     }
-
+    
     // Send email with invoice attached
     // Implementation depends on email service
   }
-
+  
   /**
    * Mark invoice as paid
    */
@@ -29189,11 +29894,11 @@ export class InvoiceService {
     const invoice = await db.query.invoices.findFirst({
       where: eq(invoices.id, params.invoiceId)
     });
-
+    
     if (!invoice) {
       throw new Error('Invoice not found');
     }
-
+    
     // Process payment via Stripe
     const paymentIntent = await stripe.paymentIntents.create({
       amount: invoice.amount * 100,
@@ -29201,7 +29906,7 @@ export class InvoiceService {
       payment_method: params.paymentMethodId,
       confirm: true
     });
-
+    
     // Update invoice
     await db.update(invoices)
       .set({
@@ -29239,9 +29944,9 @@ export class PaymentMethodService {
     const subscription = await db.query.subscriptions.findFirst({
       where: eq(subscriptions.userId, params.userId)
     });
-
+    
     let customerId: string;
-
+    
     if (subscription?.stripeCustomerId) {
       customerId = subscription.stripeCustomerId;
     } else {
@@ -29249,23 +29954,23 @@ export class PaymentMethodService {
       const user = await db.query.users.findFirst({
         where: eq(users.id, params.userId)
       });
-
+      
       const customer = await stripe.customers.create({
         email: user!.email,
         name: user!.name
       });
-
+      
       customerId = customer.id;
     }
-
+    
     // Attach payment method
     await stripe.paymentMethods.attach(params.paymentMethodId, {
       customer: customerId
     });
-
+    
     // Get payment method details
     const pm = await stripe.paymentMethods.retrieve(params.paymentMethodId);
-
+    
     // Save to database
     const [paymentMethod] = await db.insert(paymentMethods).values({
       userId: params.userId,
@@ -29278,10 +29983,10 @@ export class PaymentMethodService {
       isDefault: false,
       createdAt: new Date()
     }).returning();
-
+    
     return paymentMethod;
   }
-
+  
   /**
    * Set default payment method
    */
@@ -29293,22 +29998,22 @@ export class PaymentMethodService {
     await db.update(paymentMethods)
       .set({ isDefault: false })
       .where(eq(paymentMethods.userId, params.userId));
-
+    
     // Set new default
     await db.update(paymentMethods)
       .set({ isDefault: true })
       .where(eq(paymentMethods.id, params.paymentMethodId));
-
+    
     // Update in Stripe
     const pm = await db.query.paymentMethods.findFirst({
       where: eq(paymentMethods.id, params.paymentMethodId)
     });
-
+    
     if (pm) {
       const subscription = await db.query.subscriptions.findFirst({
         where: eq(subscriptions.userId, params.userId)
       });
-
+      
       if (subscription?.stripeCustomerId) {
         await stripe.customers.update(subscription.stripeCustomerId, {
           invoice_settings: {
@@ -29318,7 +30023,7 @@ export class PaymentMethodService {
       }
     }
   }
-
+  
   /**
    * Remove payment method
    */
@@ -29326,17 +30031,17 @@ export class PaymentMethodService {
     const pm = await db.query.paymentMethods.findFirst({
       where: eq(paymentMethods.id, paymentMethodId)
     });
-
+    
     if (pm) {
       // Detach from Stripe
       await stripe.paymentMethods.detach(pm.stripePaymentMethodId);
-
+      
       // Delete from database
       await db.delete(paymentMethods)
         .where(eq(paymentMethods.id, paymentMethodId));
     }
   }
-
+  
   /**
    * List user payment methods
    */
@@ -29373,18 +30078,18 @@ export class RefundService {
     const invoice = await db.query.invoices.findFirst({
       where: eq(invoices.id, params.invoiceId)
     });
-
+    
     if (!invoice?.stripePaymentIntentId) {
       throw new Error('Invoice not found or not paid');
     }
-
+    
     // Create refund in Stripe
     const refund = await stripe.refunds.create({
       payment_intent: invoice.stripePaymentIntentId,
       amount: params.amount ? params.amount * 100 : undefined,
       reason: params.reason as any
     });
-
+    
     // Save to database
     const [dbRefund] = await db.insert(refunds).values({
       invoiceId: params.invoiceId,
@@ -29394,17 +30099,17 @@ export class RefundService {
       status: refund.status,
       createdAt: new Date()
     }).returning();
-
+    
     // Update invoice status if fully refunded
     if (refund.amount === invoice.amount * 100) {
       await db.update(invoices)
         .set({ status: 'refunded' })
         .where(eq(invoices.id, params.invoiceId));
     }
-
+    
     return dbRefund;
   }
-
+  
   /**
    * Handle dispute
    */
@@ -29531,15 +30236,15 @@ export function BillingPage() {
   const { data: subscription } = useQuery({
     queryKey: ['/api/billing/subscription']
   });
-
+  
   const { data: plans } = useQuery({
     queryKey: ['/api/billing/plans']
   });
-
+  
   return (
     <div className="space-y-6" data-testid="page-billing">
       <h1 className="text-3xl font-bold">Billing & Subscription</h1>
-
+      
       {/* Current Subscription */}
       {subscription && (
         <Card>
@@ -29556,11 +30261,11 @@ export function BillingPage() {
                 {subscription.status}
               </Badge>
             </div>
-
+            
             <div className="mt-4 text-sm text-gray-600">
               <p>Current period: {new Date(subscription.currentPeriodStart).toLocaleDateString()} - {new Date(subscription.currentPeriodEnd).toLocaleDateString()}</p>
             </div>
-
+            
             <div className="mt-6 flex gap-2">
               <Button variant="outline">Change Plan</Button>
               <Button variant="destructive">Cancel Subscription</Button>
@@ -29568,7 +30273,7 @@ export function BillingPage() {
           </CardContent>
         </Card>
       )}
-
+      
       {/* Available Plans */}
       <div className="grid gap-6 md:grid-cols-3">
         {plans?.map((plan: any) => (
@@ -29580,7 +30285,7 @@ export function BillingPage() {
             </CardHeader>
             <CardContent>
               <p className="mb-4">{plan.description}</p>
-
+              
               <ul className="space-y-2 mb-6">
                 {plan.features.map((feature: string, index: number) => (
                   <li key={index} className="flex items-center gap-2">
@@ -29589,7 +30294,7 @@ export function BillingPage() {
                   </li>
                 ))}
               </ul>
-
+              
               <Button className="w-full" data-testid={`button-subscribe-${plan.id}`}>
                 Subscribe
               </Button>
@@ -29621,7 +30326,7 @@ import path from 'path';
 
 export class OpenAPIGenerator {
   private spec: OpenAPIV3.Document;
-
+  
   constructor() {
     this.spec = {
       openapi: '3.0.0',
@@ -29674,11 +30379,11 @@ export class OpenAPIGenerator {
         { name: 'Billing', description: 'Subscriptions and payments' }
       ]
     };
-
+    
     this.defineSchemas();
     this.definePaths();
   }
-
+  
   /**
    * Define data schemas
    */
@@ -29697,7 +30402,7 @@ export class OpenAPIGenerator {
           createdAt: { type: 'string', format: 'date-time' }
         }
       },
-
+      
       Event: {
         type: 'object',
         required: ['title', 'startDate', 'city'],
@@ -29718,7 +30423,7 @@ export class OpenAPIGenerator {
           createdAt: { type: 'string', format: 'date-time' }
         }
       },
-
+      
       Post: {
         type: 'object',
         required: ['content'],
@@ -29735,7 +30440,7 @@ export class OpenAPIGenerator {
           createdAt: { type: 'string', format: 'date-time' }
         }
       },
-
+      
       SubscriptionPlan: {
         type: 'object',
         properties: {
@@ -29750,7 +30455,7 @@ export class OpenAPIGenerator {
           }
         }
       },
-
+      
       Error: {
         type: 'object',
         required: ['error', 'message'],
@@ -29769,7 +30474,7 @@ export class OpenAPIGenerator {
           }
         }
       },
-
+      
       PaginatedResponse: {
         type: 'object',
         properties: {
@@ -29787,7 +30492,7 @@ export class OpenAPIGenerator {
       }
     };
   }
-
+  
   /**
    * Define API paths
    */
@@ -29839,7 +30544,7 @@ export class OpenAPIGenerator {
           }
         }
       },
-
+      
       '/auth/login': {
         post: {
           tags: ['Authentication'],
@@ -29885,7 +30590,7 @@ export class OpenAPIGenerator {
           }
         }
       },
-
+      
       '/events': {
         get: {
           tags: ['Events'],
@@ -29944,7 +30649,7 @@ export class OpenAPIGenerator {
             }
           }
         },
-
+        
         post: {
           tags: ['Events'],
           summary: 'Create event',
@@ -29992,7 +30697,7 @@ export class OpenAPIGenerator {
           }
         }
       },
-
+      
       '/events/{id}': {
         get: {
           tags: ['Events'],
@@ -30024,7 +30729,7 @@ export class OpenAPIGenerator {
             }
           }
         },
-
+        
         put: {
           tags: ['Events'],
           summary: 'Update event',
@@ -30064,7 +30769,7 @@ export class OpenAPIGenerator {
             }
           }
         },
-
+        
         delete: {
           tags: ['Events'],
           summary: 'Delete event',
@@ -30087,7 +30792,7 @@ export class OpenAPIGenerator {
           }
         }
       },
-
+      
       '/billing/plans': {
         get: {
           tags: ['Billing'],
@@ -30107,7 +30812,7 @@ export class OpenAPIGenerator {
           }
         }
       },
-
+      
       '/billing/subscribe': {
         post: {
           tags: ['Billing'],
@@ -30148,19 +30853,19 @@ export class OpenAPIGenerator {
       }
     };
   }
-
+  
   /**
    * Generate and save OpenAPI spec
    */
   generate(): void {
     const specJson = JSON.stringify(this.spec, null, 2);
-
+    
     // Save JSON
     fs.writeFileSync(
       path.join(process.cwd(), 'docs/api/openapi.json'),
       specJson
     );
-
+    
     // Save YAML
     const yaml = require('js-yaml');
     const specYaml = yaml.dump(this.spec);
@@ -30168,7 +30873,7 @@ export class OpenAPIGenerator {
       path.join(process.cwd(), 'docs/api/openapi.yaml'),
       specYaml
     );
-
+    
     console.log('✅ OpenAPI specification generated');
   }
 }
@@ -30250,16 +30955,16 @@ export class DatabasePartitioning {
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         PRIMARY KEY (id, start_date)
       ) PARTITION BY RANGE (start_date);
-
+      
       -- Create partitions for each month
       CREATE TABLE IF NOT EXISTS events_2024_01 
         PARTITION OF events_partitioned
         FOR VALUES FROM ('2024-01-01') TO ('2024-02-01');
-
+      
       CREATE TABLE IF NOT EXISTS events_2024_02 
         PARTITION OF events_partitioned
         FOR VALUES FROM ('2024-02-01') TO ('2024-03-01');
-
+      
       -- Index on each partition
       CREATE INDEX IF NOT EXISTS idx_events_2024_01_city 
         ON events_2024_01(city);
@@ -30267,19 +30972,19 @@ export class DatabasePartitioning {
         ON events_2024_02(city);
     `);
   }
-
+  
   /**
    * Create partition for new month
    */
   static async createMonthlyPartition(year: number, month: number): Promise<void> {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 1);
-
+    
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS events_${year}_${month.toString().padStart(2, '0')}
         PARTITION OF events_partitioned
         FOR VALUES FROM (${startDate.toISOString()}) TO (${endDate.toISOString()});
-
+      
       CREATE INDEX IF NOT EXISTS idx_events_${year}_${month.toString().padStart(2, '0')}_city
         ON events_${year}_${month.toString().padStart(2, '0')}(city);
     `);
@@ -30297,7 +31002,7 @@ class DatabasePool {
   private primaryPool: Pool;
   private replicaPools: Pool[];
   private currentReplicaIndex: number = 0;
-
+  
   constructor() {
     // Primary database (write operations)
     this.primaryPool = new Pool({
@@ -30305,7 +31010,7 @@ class DatabasePool {
       max: 20,
       idleTimeoutMillis: 30000
     });
-
+    
     // Read replicas (read operations)
     this.replicaPools = [
       new Pool({
@@ -30322,14 +31027,14 @@ class DatabasePool {
       })
     ];
   }
-
+  
   /**
    * Get primary pool for write operations
    */
   getPrimaryPool(): Pool {
     return this.primaryPool;
   }
-
+  
   /**
    * Get replica pool for read operations (round-robin)
    */
@@ -30338,7 +31043,7 @@ class DatabasePool {
     this.currentReplicaIndex = (this.currentReplicaIndex + 1) % this.replicaPools.length;
     return pool;
   }
-
+  
   /**
    * Execute write query
    */
@@ -30350,7 +31055,7 @@ class DatabasePool {
       client.release();
     }
   }
-
+  
   /**
    * Execute read query
    */
@@ -30378,11 +31083,11 @@ import { LRUCache } from 'lru-cache';
 export class MultiLayerCaching {
   private redis: Redis;
   private memoryCache: LRUCache<string, any>;
-
+  
   constructor() {
     // Redis (distributed cache)
     this.redis = new Redis(process.env.REDIS_URL!);
-
+    
     // In-memory cache (L1)
     this.memoryCache = new LRUCache({
       max: 500,
@@ -30390,7 +31095,7 @@ export class MultiLayerCaching {
       updateAgeOnGet: true
     });
   }
-
+  
   /**
    * Get from cache (L1 -> L2 -> Database)
    */
@@ -30400,7 +31105,7 @@ export class MultiLayerCaching {
     if (memCached !== undefined) {
       return memCached;
     }
-
+    
     // Check L2 cache (Redis)
     const redisCached = await this.redis.get(key);
     if (redisCached) {
@@ -30408,27 +31113,27 @@ export class MultiLayerCaching {
       this.memoryCache.set(key, value);
       return value;
     }
-
+    
     // Fetch from database
     const value = await fetcher();
-
+    
     // Store in both caches
     await this.set(key, value, ttl);
-
+    
     return value;
   }
-
+  
   /**
    * Set in both cache layers
    */
   async set(key: string, value: any, ttl: number = 300): Promise<void> {
     // Store in memory
     this.memoryCache.set(key, value);
-
+    
     // Store in Redis
     await this.redis.setex(key, ttl, JSON.stringify(value));
   }
-
+  
   /**
    * Invalidate cache
    */
@@ -30439,14 +31144,14 @@ export class MultiLayerCaching {
         this.memoryCache.delete(key);
       }
     }
-
+    
     // Clear from Redis
     const keys = await this.redis.keys(`${pattern}*`);
     if (keys.length > 0) {
       await this.redis.del(...keys);
     }
   }
-
+  
   /**
    * Cache aside pattern with stale-while-revalidate
    */
@@ -30458,24 +31163,24 @@ export class MultiLayerCaching {
   ): Promise<T> {
     const cached = await this.redis.get(key);
     const ttlRemaining = await this.redis.ttl(key);
-
+    
     if (cached) {
       const value = JSON.parse(cached);
-
+      
       // If cache is stale, trigger background refresh
       if (ttlRemaining < (staleTime - ttl)) {
         this.refreshInBackground(key, fetcher, ttl);
       }
-
+      
       return value;
     }
-
+    
     // Cache miss - fetch immediately
     const value = await fetcher();
     await this.set(key, value, staleTime);
     return value;
   }
-
+  
   private async refreshInBackground<T>(
     key: string,
     fetcher: () => Promise<T>,
@@ -30520,15 +31225,15 @@ export class QueryOptimizer {
       JOIN users u ON e.organizer_id = u.id
       WHERE e.id = ANY(${eventIds})
     `);
-
+    
     const eventMap = new Map();
     events.rows.forEach(event => {
       eventMap.set(event.id, event);
     });
-
+    
     return eventMap;
   }
-
+  
   /**
    * Use materialized views for expensive queries
    */
@@ -30546,11 +31251,11 @@ export class QueryOptimizer {
       GROUP BY e.id
       ORDER BY attendee_count DESC, average_rating DESC
       LIMIT 100;
-
+      
       CREATE UNIQUE INDEX ON popular_events (id);
     `);
   }
-
+  
   /**
    * Refresh materialized view
    */
@@ -30568,7 +31273,7 @@ import { Pool } from 'pg';
 
 export class DatabaseCluster {
   private pools: Map<string, Pool> = new Map();
-
+  
   constructor() {
     // Primary
     this.pools.set('primary', new Pool({
@@ -30581,7 +31286,7 @@ export class DatabaseCluster {
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 2000
     }));
-
+    
     // Replicas
     ['replica1', 'replica2', 'replica3'].forEach((name, index) => {
       this.pools.set(name, new Pool({
@@ -30595,7 +31300,7 @@ export class DatabaseCluster {
       }));
     });
   }
-
+  
   /**
    * Get pool with automatic failover
    */
@@ -30603,11 +31308,11 @@ export class DatabaseCluster {
     if (!preferReplica) {
       return this.pools.get('primary')!;
     }
-
+    
     // Try replicas first
     const replicas = Array.from(this.pools.entries())
       .filter(([name]) => name.startsWith('replica'));
-
+    
     for (const [name, pool] of replicas) {
       try {
         // Test connection
@@ -30618,7 +31323,7 @@ export class DatabaseCluster {
         console.error(`Replica ${name} unavailable, trying next...`);
       }
     }
-
+    
     // Fallback to primary
     return this.pools.get('primary')!;
   }
@@ -30642,11 +31347,11 @@ import { CloudFrontClient, CreateDistributionCommand, InvalidateCommand } from '
 
 export class CDNService {
   private client: CloudFrontClient;
-
+  
   constructor() {
     this.client = new CloudFrontClient({ region: 'us-east-1' });
   }
-
+  
   /**
    * Create CloudFront distribution
    */
@@ -30754,11 +31459,11 @@ export class CDNService {
         PriceClass: 'PriceClass_All'
       }
     });
-
+    
     const response = await this.client.send(command);
     return response.Distribution!.Id;
   }
-
+  
   /**
    * Invalidate CDN cache
    */
@@ -30773,7 +31478,7 @@ export class CDNService {
         }
       }
     });
-
+    
     await this.client.send(command);
     console.log('✅ CDN cache invalidated for paths:', paths);
   }
@@ -30790,11 +31495,11 @@ import fs from 'fs';
 
 export class ImageOptimizationService {
   private s3: S3Client;
-
+  
   constructor() {
     this.s3 = new S3Client({ region: 'us-east-1' });
   }
-
+  
   /**
    * Optimize and resize image
    */
@@ -30804,7 +31509,7 @@ export class ImageOptimizationService {
     sizes: number[];
   }): Promise<string[]> {
     const urls: string[] = [];
-
+    
     for (const format of params.formats) {
       for (const width of params.sizes) {
         const outputBuffer = await sharp(params.inputPath)
@@ -30814,10 +31519,10 @@ export class ImageOptimizationService {
             effort: format === 'avif' ? 4 : undefined
           })
           .toBuffer();
-
+        
         // Upload to S3
         const key = `optimized/${Date.now()}-${width}w.${format}`;
-
+        
         await this.s3.send(new PutObjectCommand({
           Bucket: 'mundotango-cdn',
           Key: key,
@@ -30825,14 +31530,14 @@ export class ImageOptimizationService {
           ContentType: `image/${format}`,
           CacheControl: 'public, max-age=31536000, immutable'
         }));
-
+        
         urls.push(`https://cdn.mundotango.life/${key}`);
       }
     }
-
+    
     return urls;
   }
-
+  
   /**
    * Generate responsive image srcset
    */
@@ -30842,28 +31547,28 @@ export class ImageOptimizationService {
     sources: Array<{ type: string; srcset: string }>;
   }> {
     const sizes = [400, 800, 1200, 1600];
-
+    
     // Generate WebP versions
     const webpUrls = await this.optimize({
       inputPath: imagePath,
       formats: ['webp'],
       sizes
     });
-
+    
     // Generate AVIF versions
     const avifUrls = await this.optimize({
       inputPath: imagePath,
       formats: ['avif'],
       sizes
     });
-
+    
     // Generate JPEG fallback
     const jpegUrls = await this.optimize({
       inputPath: imagePath,
       formats: ['jpeg'],
       sizes
     });
-
+    
     return {
       src: jpegUrls[0],
       srcset: jpegUrls.map((url, i) => `${url} ${sizes[i]}w`).join(', '),
@@ -30893,11 +31598,11 @@ import fs from 'fs';
 
 export class VideoStreamingService {
   private s3: S3Client;
-
+  
   constructor() {
     this.s3 = new S3Client({ region: 'us-east-1' });
   }
-
+  
   /**
    * Convert video to HLS format
    */
@@ -30907,7 +31612,7 @@ export class VideoStreamingService {
   }): Promise<string> {
     return new Promise((resolve, reject) => {
       const outputPath = path.join(params.outputFolder, 'playlist.m3u8');
-
+      
       ffmpeg(params.inputPath)
         .outputOptions([
           '-codec:v libx264',
@@ -30923,7 +31628,7 @@ export class VideoStreamingService {
         .run();
     });
   }
-
+  
   /**
    * Generate multiple quality versions
    */
@@ -30934,13 +31639,13 @@ export class VideoStreamingService {
       { name: '480p', width: 854, height: 480, bitrate: '1400k' },
       { name: '360p', width: 640, height: 360, bitrate: '800k' }
     ];
-
+    
     const playlists: string[] = [];
-
+    
     for (const quality of qualities) {
       const outputFolder = `temp/video/${quality.name}`;
       fs.mkdirSync(outputFolder, { recursive: true });
-
+      
       await new Promise((resolve, reject) => {
         ffmpeg(inputPath)
           .size(`${quality.width}x${quality.height}`)
@@ -30957,24 +31662,24 @@ export class VideoStreamingService {
           .on('error', reject)
           .run();
       });
-
+      
       // Upload to S3
       const playlistUrl = await this.uploadToS3(outputFolder);
       playlists.push(playlistUrl);
     }
-
+    
     // Create master playlist
     const masterPlaylist = this.createMasterPlaylist(playlists);
     return masterPlaylist;
   }
-
+  
   private async uploadToS3(folder: string): Promise<string> {
     const files = fs.readdirSync(folder);
-
+    
     for (const file of files) {
       const filePath = path.join(folder, file);
       const content = fs.readFileSync(filePath);
-
+      
       await this.s3.send(new PutObjectCommand({
         Bucket: 'mundotango-video',
         Key: `videos/${folder}/${file}`,
@@ -30982,10 +31687,10 @@ export class VideoStreamingService {
         ContentType: file.endsWith('.m3u8') ? 'application/x-mpegURL' : 'video/MP2T'
       }));
     }
-
+    
     return `https://video.mundotango.life/videos/${folder}/playlist.m3u8`;
   }
-
+  
   private createMasterPlaylist(playlists: string[]): string[] {
     // Create master m3u8 file
     return playlists;
@@ -31009,14 +31714,14 @@ import consul from 'consul';
 
 export class ServiceRegistry {
   private client: consul.Consul;
-
+  
   constructor() {
     this.client = new consul({
       host: process.env.CONSUL_HOST || 'localhost',
       port: process.env.CONSUL_PORT || '8500'
     });
   }
-
+  
   /**
    * Register service
    */
@@ -31042,10 +31747,10 @@ export class ServiceRegistry {
         interval: params.healthCheck.interval
       } : undefined
     });
-
+    
     console.log(`✅ Service ${params.name} registered with ID ${params.id}`);
   }
-
+  
   /**
    * Deregister service
    */
@@ -31053,7 +31758,7 @@ export class ServiceRegistry {
     await this.client.agent.service.deregister(serviceId);
     console.log(`✅ Service ${serviceId} deregistered`);
   }
-
+  
   /**
    * Discover service instances
    */
@@ -31062,7 +31767,7 @@ export class ServiceRegistry {
       service: serviceName,
       passing: true
     });
-
+    
     return result.map((entry: any) => ({
       id: entry.Service.ID,
       address: entry.Service.Address,
@@ -31070,7 +31775,7 @@ export class ServiceRegistry {
       tags: entry.Service.Tags
     }));
   }
-
+  
   /**
    * Watch service for changes
    */
@@ -31082,17 +31787,17 @@ export class ServiceRegistry {
         passing: true
       }
     });
-
+    
     watcher.on('change', (data: any) => {
       const instances = data.map((entry: any) => ({
         id: entry.Service.ID,
         address: entry.Service.Address,
         port: entry.Service.Port
       }));
-
+      
       callback(instances);
     });
-
+    
     watcher.on('error', (err: Error) => {
       console.error('Service watch error:', err);
     });
@@ -31115,13 +31820,13 @@ export class CircuitBreaker {
   private failureCount: number = 0;
   private successCount: number = 0;
   private nextAttempt: number = Date.now();
-
+  
   constructor(
     private threshold: number = 5,
     private timeout: number = 60000,
     private monitoringPeriod: number = 10000
   ) {}
-
+  
   /**
    * Execute function with circuit breaker
    */
@@ -31130,11 +31835,11 @@ export class CircuitBreaker {
       if (Date.now() < this.nextAttempt) {
         throw new Error('Circuit breaker is OPEN');
       }
-
+      
       this.state = CircuitState.HALF_OPEN;
       console.log('Circuit breaker moving to HALF_OPEN');
     }
-
+    
     try {
       const result = await fn();
       this.onSuccess();
@@ -31144,13 +31849,13 @@ export class CircuitBreaker {
       throw error;
     }
   }
-
+  
   private onSuccess(): void {
     this.failureCount = 0;
-
+    
     if (this.state === CircuitState.HALF_OPEN) {
       this.successCount++;
-
+      
       if (this.successCount >= 2) {
         this.state = CircuitState.CLOSED;
         this.successCount = 0;
@@ -31158,18 +31863,18 @@ export class CircuitBreaker {
       }
     }
   }
-
+  
   private onFailure(): void {
     this.failureCount++;
     this.successCount = 0;
-
+    
     if (this.failureCount >= this.threshold) {
       this.state = CircuitState.OPEN;
       this.nextAttempt = Date.now() + this.timeout;
       console.log(`Circuit breaker OPEN until ${new Date(this.nextAttempt)}`);
     }
   }
-
+  
   getState(): CircuitState {
     return this.state;
   }
@@ -31185,7 +31890,7 @@ import * as protoLoader from '@grpc/proto-loader';
 
 export class GRPCClient {
   private client: any;
-
+  
   constructor(
     protoPath: string,
     serviceName: string,
@@ -31198,15 +31903,15 @@ export class GRPCClient {
       defaults: true,
       oneofs: true
     });
-
+    
     const proto = grpc.loadPackageDefinition(packageDefinition) as any;
-
+    
     this.client = new proto[serviceName](
       serviceUrl,
       grpc.credentials.createInsecure()
     );
   }
-
+  
   /**
    * Call gRPC method
    */
@@ -31221,7 +31926,7 @@ export class GRPCClient {
       });
     });
   }
-
+  
   /**
    * Stream gRPC method
    */
@@ -31244,11 +31949,11 @@ interface SagaStep {
 export class SagaOrchestrator {
   private steps: SagaStep[] = [];
   private executedSteps: SagaStep[] = [];
-
+  
   addStep(step: SagaStep): void {
     this.steps.push(step);
   }
-
+  
   /**
    * Execute saga
    */
@@ -31256,13 +31961,13 @@ export class SagaOrchestrator {
     try {
       for (const step of this.steps) {
         console.log(`Executing step: ${step.name}`);
-
+        
         const result = await step.execute();
         this.executedSteps.push(step);
-
+        
         console.log(`✅ Step ${step.name} completed`);
       }
-
+      
       return { success: true };
     } catch (error) {
       console.error('Saga failed, starting compensation:', error);
@@ -31270,7 +31975,7 @@ export class SagaOrchestrator {
       throw error;
     }
   }
-
+  
   /**
    * Compensate (rollback) executed steps
    */
@@ -31354,7 +32059,7 @@ interface ETLJob {
 export class ETLPipeline {
   private queue: Queue;
   private worker: Worker;
-
+  
   constructor() {
     this.queue = new Queue('etl-jobs', {
       connection: {
@@ -31362,7 +32067,7 @@ export class ETLPipeline {
         port: parseInt(process.env.REDIS_PORT || '6379')
       }
     });
-
+    
     this.worker = new Worker(
       'etl-jobs',
       async (job: Job) => await this.processJob(job),
@@ -31375,7 +32080,7 @@ export class ETLPipeline {
       }
     );
   }
-
+  
   /**
    * Schedule ETL job
    */
@@ -31387,49 +32092,49 @@ export class ETLPipeline {
         delay: 2000
       }
     });
-
+    
     return result.id!;
   }
-
+  
   /**
    * Process ETL job
    */
   private async processJob(job: Job): Promise<void> {
     const { source, destination, transform, batchSize = 1000 } = job.data;
-
+    
     console.log(`Starting ETL job: ${source} -> ${destination}`);
-
+    
     let offset = 0;
     let totalProcessed = 0;
-
+    
     while (true) {
       // Extract
       const sourceData = await this.extract(source, offset, batchSize);
-
+      
       if (sourceData.length === 0) {
         break;
       }
-
+      
       // Transform
       const transformedData = transform
         ? sourceData.map(transform)
         : sourceData;
-
+      
       // Load
       await this.load(destination, transformedData);
-
+      
       totalProcessed += sourceData.length;
       offset += batchSize;
-
+      
       // Update progress
       job.updateProgress((offset / totalProcessed) * 100);
-
+      
       console.log(`Processed ${totalProcessed} records`);
     }
-
+    
     console.log(`✅ ETL job completed: ${totalProcessed} records processed`);
   }
-
+  
   /**
    * Extract data from source
    */
@@ -31439,21 +32144,21 @@ export class ETLPipeline {
     const result = await db.execute(query);
     return result.rows;
   }
-
+  
   /**
    * Load data to destination
    */
   private async load(destination: string, data: any[]): Promise<void> {
     if (data.length === 0) return;
-
+    
     // Bulk insert
     const values = data.map((row, i) => 
       `(${Object.values(row).map(v => `'${v}'`).join(', ')})`
     ).join(', ');
-
+    
     const columns = Object.keys(data[0]).join(', ');
     const query = `INSERT INTO ${destination} (${columns}) VALUES ${values} ON CONFLICT DO NOTHING`;
-
+    
     await db.execute(query);
   }
 }
@@ -31475,79 +32180,79 @@ interface MigrationStep {
 export class DataMigration {
   private steps: MigrationStep[] = [];
   private executedSteps: string[] = [];
-
+  
   /**
    * Add migration step
    */
   addStep(step: MigrationStep): void {
     this.steps.push(step);
   }
-
+  
   /**
    * Execute migration
    */
   async migrate(): Promise<void> {
     console.log('Starting data migration...');
-
+    
     // Create migration tracking table
     await this.createMigrationTable();
-
+    
     // Get executed migrations
     this.executedSteps = await this.getExecutedMigrations();
-
+    
     for (const step of this.steps) {
       if (this.executedSteps.includes(step.name)) {
         console.log(`⏭️  Skipping ${step.name} (already executed)`);
         continue;
       }
-
+      
       try {
         console.log(`▶️  Executing ${step.name}...`);
-
+        
         await step.up();
-
+        
         // Record migration
         await this.recordMigration(step.name);
-
+        
         console.log(`✅ ${step.name} completed`);
       } catch (error) {
         console.error(`❌ ${step.name} failed:`, error);
         throw error;
       }
     }
-
+    
     console.log('✅ All migrations completed');
   }
-
+  
   /**
    * Rollback last migration
    */
   async rollback(): Promise<void> {
     const lastMigration = this.executedSteps[this.executedSteps.length - 1];
-
+    
     if (!lastMigration) {
       console.log('No migrations to rollback');
       return;
     }
-
+    
     const step = this.steps.find(s => s.name === lastMigration);
-
+    
     if (!step) {
       throw new Error(`Migration ${lastMigration} not found`);
     }
-
+    
     console.log(`⏪ Rolling back ${step.name}...`);
-
+    
     await step.down();
-
+    
     // Remove from tracking
     await db.execute(sql`
       DELETE FROM data_migrations WHERE name = ${step.name}
     `);
-
+    
     console.log(`✅ ${step.name} rolled back`);
   }
-
+  
   private async createMigrationTable(): Promise<void> {
     await db.execute(sql`
       CREATE TABLE IF NOT EXISTS data_migrations (
@@ -31557,15 +32262,15 @@ export class DataMigration {
       )
     `);
   }
-
+  
   private async getExecutedMigrations(): Promise<string[]> {
     const result = await db.execute(sql`
       SELECT name FROM data_migrations ORDER BY executed_at ASC
     `);
-
+    
     return result.rows.map((row: any) => row.name);
   }
-
+  
   private async recordMigration(name: string): Promise<void> {
     await db.execute(sql`
       INSERT INTO data_migrations (name) VALUES (${name})
@@ -31625,7 +32330,7 @@ export class DataValidation {
   ): Promise<{ valid: T[]; invalid: Array<{ data: any; errors: z.ZodError }> }> {
     const valid: T[] = [];
     const invalid: Array<{ data: any; errors: z.ZodError }> = [];
-
+    
     for (const item of data) {
       try {
         const validated = schema.parse(item);
@@ -31636,10 +32341,10 @@ export class DataValidation {
         }
       }
     }
-
+    
     return { valid, invalid };
   }
-
+  
   /**
    * Generate validation report
    */
@@ -31649,7 +32354,7 @@ export class DataValidation {
   }): string {
     const total = validation.valid.length + validation.invalid.length;
     const validPercentage = (validation.valid.length / total) * 100;
-
+    
     let report = `
 Data Validation Report
 =====================
@@ -31659,7 +32364,7 @@ Invalid: ${validation.invalid.length}
 
 Invalid Records:
 `;
-
+    
     validation.invalid.forEach(({ data, errors }, index) => {
       report += `\n${index + 1}. Data: ${JSON.stringify(data)}\n`;
       report += `   Errors:\n`;
@@ -31667,7 +32372,7 @@ Invalid Records:
         report += `   - ${err.path.join('.')}: ${err.message}\n`;
       });
     });
-
+    
     return report;
   }
 }
@@ -31714,7 +32419,7 @@ export class AnalyticsService {
       week: 'YYYY-"W"WW',
       month: 'YYYY-MM'
     }[params.interval];
-
+    
     const result = await db.execute(sql`
       SELECT 
         TO_CHAR(created_at, ${intervalFormat}) as period,
@@ -31725,10 +32430,10 @@ export class AnalyticsService {
       GROUP BY period
       ORDER BY period ASC
     `);
-
+    
     return result.rows;
   }
-
+  
   /**
    * Get event attendance metrics
    */
@@ -31752,10 +32457,10 @@ export class AnalyticsService {
       ) ea ON e.id = ea.event_id
       WHERE e.start_date BETWEEN ${params.startDate} AND ${params.endDate}
     `);
-
+    
     return result.rows[0];
   }
-
+  
   /**
    * Get revenue metrics
    */
@@ -31776,10 +32481,10 @@ export class AnalyticsService {
       GROUP BY date
       ORDER BY date ASC
     `);
-
+    
     return result.rows;
   }
-
+  
   /**
    * Get user engagement metrics
    */
@@ -31812,10 +32517,10 @@ export class AnalyticsService {
         COUNT(CASE WHEN last_activity >= NOW() - INTERVAL '30 days' THEN 1 END) as monthly_active_users
       FROM user_activity
     `);
-
+    
     return result.rows[0];
   }
-
+  
   /**
    * Get cohort analysis
    */
@@ -31847,10 +32552,10 @@ export class AnalyticsService {
       GROUP BY cohort_month, activity_month
       ORDER BY cohort_month, activity_month
     `);
-
+    
     return result.rows;
   }
-
+  
   /**
    * Get funnel analysis
    */
@@ -31881,7 +32586,7 @@ export class AnalyticsService {
         ROUND((paying_users::NUMERIC / total_users * 100), 2) as payment_conversion
       FROM funnel
     `);
-
+    
     return result.rows[0];
   }
 }
@@ -31912,59 +32617,59 @@ export class ReportGenerator {
     const doc = new PDFDocument({ margin: 50 });
     const filename = `report-${Date.now()}.pdf`;
     const filepath = `reports/${filename}`;
-
+    
     doc.pipe(fs.createWriteStream(filepath));
-
+    
     // Title
     doc
       .fontSize(24)
       .text(params.title, { align: 'center' })
       .moveDown();
-
+    
     // Date range
     doc
       .fontSize(12)
       .text(`Generated on: ${new Date().toLocaleDateString()}`, { align: 'center' })
       .moveDown(2);
-
+    
     // Summary statistics
     doc
       .fontSize(16)
       .text('Summary Statistics')
       .moveDown();
-
+    
     Object.entries(params.data).forEach(([key, value]) => {
       doc
         .fontSize(12)
         .text(`${key}: ${value}`)
         .moveDown(0.5);
     });
-
+    
     // Charts
     if (params.charts) {
       for (const chartConfig of params.charts) {
         doc.addPage();
-
+        
         // Generate chart image
         const chartImage = await this.generateChart(chartConfig);
-
+        
         doc
           .fontSize(16)
           .text(chartConfig.title)
           .moveDown();
-
+        
         doc.image(chartImage, {
           fit: [500, 300],
           align: 'center'
         });
       }
     }
-
+    
     doc.end();
-
+    
     return filepath;
   }
-
+  
   /**
    * Generate chart image
    */
@@ -31975,7 +32680,7 @@ export class ReportGenerator {
   }): Promise<Buffer> {
     const canvas = createCanvas(800, 400);
     const ctx = canvas.getContext('2d');
-
+    
     new Chart(ctx as any, {
       type: config.type as any,
       data: config.data,
@@ -31989,10 +32694,10 @@ export class ReportGenerator {
         }
       }
     });
-
+    
     return canvas.toBuffer();
   }
-
+  
   /**
    * Export data to CSV
    */
@@ -32000,10 +32705,10 @@ export class ReportGenerator {
     if (data.length === 0) {
       throw new Error('No data to export');
     }
-
+    
     // Get headers
     const headers = Object.keys(data[0]);
-
+    
     // Generate CSV
     const csv = [
       headers.join(','),
@@ -32013,10 +32718,10 @@ export class ReportGenerator {
         ).join(',')
       )
     ].join('\n');
-
+    
     const filepath = `exports/${filename}`;
     fs.writeFileSync(filepath, csv);
-
+    
     return filepath;
   }
 }
@@ -32044,7 +32749,7 @@ interface Widget {
 export function DashboardBuilder() {
   const [widgets, setWidgets] = useState<Widget[]>([]);
   const [editMode, setEditMode] = useState(false);
-
+  
   const addWidget = (type: Widget['type']) => {
     const newWidget: Widget = {
       id: `widget-${Date.now()}`,
@@ -32053,19 +32758,19 @@ export function DashboardBuilder() {
       dataSource: '',
       config: {}
     };
-
+    
     setWidgets([...widgets, newWidget]);
   };
-
+  
   const removeWidget = (id: string) => {
     setWidgets(widgets.filter(w => w.id !== id));
   };
-
+  
   return (
     <div className="space-y-6" data-testid="dashboard-builder">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
-
+        
         <div className="flex gap-2">
           <Button
             variant={editMode ? 'default' : 'outline'}
@@ -32074,7 +32779,7 @@ export function DashboardBuilder() {
           >
             {editMode ? 'Done' : 'Edit'}
           </Button>
-
+          
           {editMode && (
             <>
               <Button onClick={() => addWidget('metric')} data-testid="button-add-metric">
@@ -32090,7 +32795,7 @@ export function DashboardBuilder() {
           )}
         </div>
       </div>
-
+      
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {widgets.map(widget => (
           <WidgetRenderer
@@ -32110,7 +32815,7 @@ function WidgetRenderer({ widget, editMode, onRemove }: any) {
     queryKey: ['/api/analytics', widget.dataSource],
     enabled: !!widget.dataSource && !editMode
   });
-
+  
   return (
     <Card data-testid={`widget-${widget.id}`}>
       <CardHeader>
@@ -32309,20 +33014,20 @@ const stripe = new Stripe(
 // Verify webhook signature
 app.post('/webhooks/stripe', express.raw({ type: 'application/json' }), (req, res) => {
   const sig = req.headers['stripe-signature'];
-
+  
   try {
     const event = stripe.webhooks.constructEvent(
       req.body,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
-
+    
     // Process event
   } catch (err) {
     console.error('Webhook signature verification failed:', err.message);
     return res.sendStatus(400);
   }
-
+  
   res.sendStatus(200);
 });
 ```
@@ -32336,7 +33041,7 @@ try {
     currency: 'usd',
     payment_method: paymentMethodId
   });
-
+  
   console.log('Payment Intent created:', paymentIntent.id);
 } catch (error) {
   console.error('Payment failed:', {
@@ -32367,11 +33072,11 @@ db.execute = async function(...args) {
   const start = Date.now();
   const result = await originalQuery.apply(this, args);
   const duration = Date.now() - start;
-
+  
   if (duration > 100) {
     console.warn(`Slow query (${duration}ms):`, args[0]);
   }
-
+  
   return result;
 };
 ```
@@ -32397,17 +33102,17 @@ CREATE INDEX CONCURRENTLY idx_events_city ON events(city);
 async function getPopularEvents() {
   const cacheKey = 'popular_events';
   const cached = await redis.get(cacheKey);
-
+  
   if (cached) {
     return JSON.parse(cached);
   }
-
+  
   const events = await db.query.events.findMany({
     where: /* ... */,
     orderBy: /* ... */,
     limit: 10
   });
-
+  
   await redis.setex(cacheKey, 300, JSON.stringify(events));
   return events;
 }
@@ -32587,10 +33292,10 @@ SELECT COUNT(*) FROM public.users;
 async function createUser(userData: any) {
   // Write to old database
   const oldUser = await oldDb.insert(users).values(userData);
-
+  
   // Write to new user service database
   const newUser = await userServiceDb.insert(users).values(userData);
-
+  
   return newUser;
 }
 ```
@@ -32601,17 +33306,17 @@ async function createUser(userData: any) {
 async function backfillUserService() {
   const batchSize = 1000;
   let offset = 0;
-
+  
   while (true) {
     const users = await oldDb.query.users.findMany({
       limit: batchSize,
       offset
     });
-
+    
     if (users.length === 0) break;
-
+    
     await userServiceDb.insert(users).values(users);
-
+    
     offset += batchSize;
     console.log(`Migrated ${offset} users`);
   }
@@ -32755,7 +33460,7 @@ app.get('/api/users/:id', (req, res) => {
   res.set('X-API-Deprecated', 'true');
   res.set('X-API-Sunset', '2025-12-31');
   res.set('Link', '</graphql>; rel="alternate"');
-
+  
   // Return data
 });
 ```
@@ -32895,22 +33600,22 @@ async function safeQuery(email: string) {
  */
 async function transferMoney(fromId: number, toId: number, amount: number) {
   const client = await pool.connect();
-
+  
   try {
     await client.query('BEGIN');
-
+    
     // Deduct from sender
     await client.query(
       'UPDATE accounts SET balance = balance - $1 WHERE id = $2',
       [amount, fromId]
     );
-
+    
     // Add to receiver
     await client.query(
       'UPDATE accounts SET balance = balance + $1 WHERE id = $2',
       [amount, toId]
     );
-
+    
     await client.query('COMMIT');
   } catch (error) {
     await client.query('ROLLBACK');
@@ -32987,7 +33692,7 @@ async function analyzeQuery() {
     ORDER BY e.start_date ASC
     LIMIT 20
   `);
-
+  
   console.log(result.rows);
   // Look for: Sequential Scans, high cost, long execution time
 }
@@ -32998,14 +33703,14 @@ async function analyzeQuery() {
 // ❌ BAD: N+1 queries
 async function getEventsWithOrganizers_Bad() {
   const events = await db.query.events.findMany({ limit: 10 });
-
+  
   for (const event of events) {
     // This runs a separate query for EACH event!
     event.organizer = await db.query.users.findFirst({
       where: eq(users.id, event.organizerId)
     });
   }
-
+  
   return events;
 }
 
@@ -33053,16 +33758,16 @@ await db.insert(users).values(users);
 async function getCachedEvents() {
   const cacheKey = 'upcoming_events';
   const cached = await redis.get(cacheKey);
-
+  
   if (cached) {
     return JSON.parse(cached);
   }
-
+  
   const events = await db.query.events.findMany({
     where: gte(events.startDate, new Date()),
     limit: 20
   });
-
+  
   await redis.setex(cacheKey, 300, JSON.stringify(events));
   return events;
 }
@@ -33129,12 +33834,12 @@ router.get('/api/events', async (req, res) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 20;
   const offset = (page - 1) * limit;
-
+  
   const [events, total] = await Promise.all([
     db.query.events.findMany({ limit, offset }),
     db.execute(sql`SELECT COUNT(*) FROM events`)
   ]);
-
+  
   res.json({
     data: events,
     pagination: {
@@ -33193,10 +33898,10 @@ app.use('/api/', limiter);
  */
 app.use((req, res, next) => {
   const start = Date.now();
-
+  
   res.on('finish', () => {
     const duration = Date.now() - start;
-
+    
     console.log({
       method: req.method,
       url: req.url,
@@ -33206,7 +33911,7 @@ app.use((req, res, next) => {
       userAgent: req.headers['user-agent']
     });
   });
-
+  
   next();
 });
 
@@ -33240,7 +33945,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     timestamp: new Date().toISOString(),
     path: req.path
   };
-
+  
   res.status(500).json(errorResponse);
 });
 ```
@@ -33326,14 +34031,14 @@ async function checkPermission(userId: number, resource: string, action: string)
     where: eq(users.id, userId),
     with: { roles: true }
   });
-
+  
   if (!user) return false;
-
+  
   // Check if user has required role
   const hasPermission = user.roles.some(role => 
     role.permissions.includes(`${resource}:${action}`)
   );
-
+  
   return hasPermission;
 }
 
@@ -33341,17 +34046,17 @@ async function checkPermission(userId: number, resource: string, action: string)
 async function requirePermission(resource: string, action: string) {
   return async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user?.id;
-
+    
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-
+    
     const hasPermission = await checkPermission(userId, resource, action);
-
+    
     if (!hasPermission) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-
+    
     next();
   };
 }
@@ -33498,14 +34203,14 @@ const MemoizedEventCard = memo(EventCard, (prevProps, nextProps) => {
  */
 function EventCard({ event }: { event: Event }) {
   const queryClient = useQueryClient();
-
+  
   const prefetchDetails = () => {
     queryClient.prefetchQuery({
       queryKey: ['/api/events', event.id],
       queryFn: () => fetch(`/api/events/${event.id}`).then(r => r.json())
     });
   };
-
+  
   return (
     <Link
       to={`/events/${event.id}`}
@@ -33546,12 +34251,12 @@ import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 function SearchInput() {
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebouncedValue(searchTerm, 300);
-
+  
   const { data: results } = useQuery({
     queryKey: ['/api/search', debouncedSearchTerm],
     enabled: debouncedSearchTerm.length > 2
   });
-
+  
   return (
     <input
       value={searchTerm}
@@ -33765,13 +34470,13 @@ pg_dump $DATABASE_URL | gzip > $BACKUP_FILE.gz
 # Verify backup
 if [ $? -eq 0 ]; then
   echo "Backup created: $BACKUP_FILE.gz"
-
+  
   # Upload to S3
   aws s3 cp $BACKUP_FILE.gz $S3_BUCKET/
-
+  
   # Keep only last 7 days of local backups
   find $BACKUP_DIR -name "*.sql.gz" -mtime +7 -delete
-
+  
   echo "Backup completed successfully"
 else
   echo "Backup failed!"
@@ -34261,11 +34966,11 @@ import os from 'os';
 
 if (cluster.isPrimary) {
   const numCPUs = os.cpus().length;
-
+  
   for (let i = 0; i < numCPUs; i++) {
     cluster.fork();
   }
-
+  
   cluster.on('exit', (worker) => {
     console.log(`Worker ${worker.process.pid} died, starting new worker`);
     cluster.fork();
@@ -34322,13 +35027,13 @@ export function EventsPage() {
     category: '',
     search: ''
   });
-
+  
   // Fetch events
   const { data: events, isLoading } = useQuery<Event[]>({
     queryKey: ['/api/events', filters],
     staleTime: 5 * 60 * 1000
   });
-
+  
   // Attend event mutation
   const attendMutation = useMutation({
     mutationFn: (eventId: number) => 
@@ -34348,7 +35053,7 @@ export function EventsPage() {
       });
     }
   });
-
+  
   return (
     <div className="container mx-auto py-8" data-testid="page-events">
       {/* Header */}
@@ -34358,7 +35063,7 @@ export function EventsPage() {
           Create Event
         </Button>
       </div>
-
+      
       {/* Filters */}
       <div className="grid gap-4 md:grid-cols-3 mb-8">
         <Input
@@ -34367,7 +35072,7 @@ export function EventsPage() {
           onChange={(e) => setFilters({...filters, search: e.target.value})}
           data-testid="input-search"
         />
-
+        
         <Select
           value={filters.city}
           onValueChange={(city) => setFilters({...filters, city})}
@@ -34382,7 +35087,7 @@ export function EventsPage() {
             <SelectItem value="Barcelona">Barcelona</SelectItem>
           </SelectContent>
         </Select>
-
+        
         <Select
           value={filters.category}
           onValueChange={(category) => setFilters({...filters, category})}
@@ -34398,7 +35103,7 @@ export function EventsPage() {
           </SelectContent>
         </Select>
       </div>
-
+      
       {/* Events Grid */}
       {isLoading && (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -34413,13 +35118,13 @@ export function EventsPage() {
           ))}
         </div>
       )}
-
+      
       {events && events.length === 0 && (
         <div className="text-center py-12" data-testid="empty-state">
           <p className="text-gray-500 text-lg">No events found</p>
         </div>
       )}
-
+      
       {events && events.length > 0 && (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {events.map((event) => (
@@ -34431,23 +35136,23 @@ export function EventsPage() {
                 <p className="text-gray-600 mb-4 line-clamp-3">
                   {event.description}
                 </p>
-
+                
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center gap-2 text-sm">
                     <Calendar className="h-4 w-4 text-gray-500" />
                     <span>{new Date(event.startDate).toLocaleDateString()}</span>
                   </div>
-
+                  
                   <div className="flex items-center gap-2 text-sm">
                     <MapPin className="h-4 w-4 text-gray-500" />
                     <span>{event.city}</span>
                   </div>
-
+                  
                   <div className="flex items-center gap-2 text-sm">
                     <Users className="h-4 w-4 text-gray-500" />
                     <span>{event.attendeeCount} attending</span>
                   </div>
-
+                  
                   {event.price > 0 && (
                     <div className="flex items-center gap-2 text-sm">
                       <DollarSign className="h-4 w-4 text-gray-500" />
@@ -34455,7 +35160,7 @@ export function EventsPage() {
                     </div>
                   )}
                 </div>
-
+                
                 <div className="flex gap-2">
                   <Button
                     className="flex-1"
@@ -34465,7 +35170,7 @@ export function EventsPage() {
                   >
                     {attendMutation.isPending ? 'Attending...' : 'Attend Event'}
                   </Button>
-
+                  
                   <Button
                     variant="outline"
                     onClick={() => window.location.href = `/events/${event.id}`}
@@ -34503,32 +35208,32 @@ const router = Router();
 router.get('/events', async (req, res) => {
   try {
     const { city, category, search, page = '1', limit = '20' } = req.query;
-
+    
     const pageNum = parseInt(page as string);
     const limitNum = parseInt(limit as string);
     const offset = (pageNum - 1) * limitNum;
-
+    
     // Build where clause
     const conditions = [];
-
+    
     if (city && city !== 'all') {
       conditions.push(eq(events.city, city as string));
     }
-
+    
     if (category && category !== 'all') {
       conditions.push(eq(events.category, category as string));
     }
-
+    
     if (search) {
       conditions.push(
         sql`to_tsvector('english', ${events.title} || ' ' || ${events.description}) 
             @@ plainto_tsquery('english', ${search})`
       );
     }
-
+    
     // Only future events
     conditions.push(gte(events.startDate, new Date()));
-
+    
     // Query events
     const eventsList = await db
       .select({
@@ -34550,13 +35255,13 @@ router.get('/events', async (req, res) => {
       .orderBy(events.startDate)
       .limit(limitNum)
       .offset(offset);
-
+    
     // Get total count
     const [{ count }] = await db
       .select({ count: sql<number>`count(*)` })
       .from(events)
       .where(and(...conditions));
-
+    
     res.json({
       data: eventsList.map(({ event, organizer, attendeeCount }) => ({
         ...event,
@@ -34582,7 +35287,7 @@ router.get('/events', async (req, res) => {
 router.get('/events/:id', async (req, res) => {
   try {
     const eventId = parseInt(req.params.id);
-
+    
     const result = await db
       .select({
         event: events,
@@ -34602,13 +35307,13 @@ router.get('/events/:id', async (req, res) => {
       .leftJoin(users, eq(events.organizerId, users.id))
       .where(eq(events.id, eventId))
       .limit(1);
-
+    
     if (result.length === 0) {
       return res.status(404).json({ error: 'Event not found' });
     }
-
+    
     const { event, organizer, attendeeCount } = result[0];
-
+    
     res.json({
       ...event,
       organizer,
@@ -34639,13 +35344,13 @@ const createEventSchema = z.object({
 router.post('/events', authMiddleware, async (req, res) => {
   try {
     const validated = createEventSchema.parse(req.body);
-
+    
     const [event] = await db.insert(events).values({
       ...validated,
       organizerId: req.user!.id,
       createdAt: new Date()
     }).returning();
-
+    
     res.status(201).json(event);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -34654,7 +35359,7 @@ router.post('/events', authMiddleware, async (req, res) => {
         details: error.errors
       });
     }
-
+    
     console.error('Error creating event:', error);
     res.status(500).json({ error: 'Failed to create event' });
   }
@@ -34667,16 +35372,16 @@ router.post('/events/:id/attend', authMiddleware, async (req, res) => {
   try {
     const eventId = parseInt(req.params.id);
     const userId = req.user!.id;
-
+    
     // Check if event exists
     const event = await db.query.events.findFirst({
       where: eq(events.id, eventId)
     });
-
+    
     if (!event) {
       return res.status(404).json({ error: 'Event not found' });
     }
-
+    
     // Check if already attending
     const existing = await db.query.eventAttendees.findFirst({
       where: and(
@@ -34684,18 +35389,18 @@ router.post('/events/:id/attend', authMiddleware, async (req, res) => {
         eq(eventAttendees.userId, userId)
       )
     });
-
+    
     if (existing) {
       return res.status(400).json({ error: 'Already attending this event' });
     }
-
+    
     // Add attendance
     await db.insert(eventAttendees).values({
       eventId,
       userId,
       joinedAt: new Date()
     });
-
+    
     res.json({ message: 'Successfully joined event' });
   } catch (error) {
     console.error('Error attending event:', error);
@@ -34710,13 +35415,13 @@ router.delete('/events/:id/attend', authMiddleware, async (req, res) => {
   try {
     const eventId = parseInt(req.params.id);
     const userId = req.user!.id;
-
+    
     await db.delete(eventAttendees)
       .where(and(
         eq(eventAttendees.eventId, eventId),
         eq(eventAttendees.userId, userId)
       ));
-
+    
     res.json({ message: 'Successfully left event' });
   } catch (error) {
     console.error('Error leaving event:', error);
@@ -34742,96 +35447,96 @@ test.describe('Event Management', () => {
     await page.click('[data-testid="button-login"]');
     await expect(page).toHaveURL('/');
   });
-
+  
   test('should display events list', async ({ page }) => {
     await page.goto('/events');
-
+    
     // Check page loaded
     await expect(page.locator('[data-testid="page-events"]')).toBeVisible();
-
+    
     // Check filters are present
     await expect(page.locator('[data-testid="input-search"]')).toBeVisible();
     await expect(page.locator('[data-testid="select-city"]')).toBeVisible();
     await expect(page.locator('[data-testid="select-category"]')).toBeVisible();
-
+    
     // Check events are displayed
     const eventCards = page.locator('[data-testid^="event-card-"]');
     await expect(eventCards.first()).toBeVisible();
   });
-
+  
   test('should filter events by city', async ({ page }) => {
     await page.goto('/events');
-
+    
     // Select city filter
     await page.click('[data-testid="select-city"]');
     await page.click('text=Buenos Aires');
-
+    
     // Wait for filtered results
     await page.waitForTimeout(500);
-
+    
     // Verify events are filtered
     const eventCards = page.locator('[data-testid^="event-card-"]');
     const count = await eventCards.count();
-
+    
     expect(count).toBeGreaterThan(0);
   });
-
+  
   test('should search events', async ({ page }) => {
     await page.goto('/events');
-
+    
     // Search for events
     await page.fill('[data-testid="input-search"]', 'tango');
     await page.waitForTimeout(500);
-
+    
     // Verify search results
     const firstEvent = page.locator('[data-testid^="event-card-"]').first();
     await expect(firstEvent).toContainText(/tango/i);
   });
-
+  
   test('should attend event', async ({ page }) => {
     await page.goto('/events');
-
+    
     // Click attend on first event
     const firstEventAttend = page.locator('[data-testid^="button-attend-"]').first();
     await firstEventAttend.click();
-
+    
     // Verify success toast
     await expect(page.locator('text=Success')).toBeVisible();
     await expect(page.locator('text=You are now attending this event!')).toBeVisible();
   });
-
+  
   test('should create new event', async ({ page }) => {
     await page.goto('/events');
-
+    
     // Click create event
     await page.click('[data-testid="button-create-event"]');
-
+    
     // Fill form
     await page.fill('[data-testid="input-title"]', 'E2E Test Event');
     await page.fill('[data-testid="textarea-description"]', 'Test event description');
     await page.fill('[data-testid="input-city"]', 'Buenos Aires');
-
+    
     // Set date (using date picker)
     await page.click('[data-testid="input-start-date"]');
     // Select tomorrow's date
     await page.click('.react-calendar__tile--now + .react-calendar__tile');
-
+    
     // Submit
     await page.click('[data-testid="button-submit"]');
-
+    
     // Verify created
     await expect(page.locator('text=Event created successfully')).toBeVisible();
   });
-
+  
   test('should view event details', async ({ page }) => {
     await page.goto('/events');
-
+    
     // Click view details on first event
     await page.locator('[data-testid^="button-view-"]').first().click();
-
+    
     // Verify on event details page
     await expect(page).toHaveURL(/\/events\/\d+/);
-
+    
     // Check event details are displayed
     await expect(page.locator('h1')).toBeVisible();
     await expect(page.locator('text=/attending/i')).toBeVisible();
@@ -34869,14 +35574,14 @@ export class AuthService {
     const existing = await db.query.users.findFirst({
       where: eq(users.email, params.email)
     });
-
+    
     if (existing) {
       throw new Error('Email already registered');
     }
-
+    
     // Hash password
     const hashedPassword = await bcrypt.hash(params.password, 12);
-
+    
     // Create user
     const [user] = await db.insert(users).values({
       email: params.email,
@@ -34885,23 +35590,23 @@ export class AuthService {
       emailVerified: false,
       createdAt: new Date()
     }).returning();
-
+    
     // Generate verification token
     const verificationToken = crypto.randomBytes(32).toString('hex');
-
+    
     // Send email verification
     await EmailService.sendVerificationEmail({
       to: user.email,
       token: verificationToken
     });
-
+    
     // Generate JWT
     const token = jwt.sign(
       { userId: user.id },
       process.env.JWT_SECRET!,
       { expiresIn: '7d' }
     );
-
+    
     // Create session
     await db.insert(sessions).values({
       userId: user.id,
@@ -34909,7 +35614,7 @@ export class AuthService {
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       createdAt: new Date()
     });
-
+    
     return {
       user: {
         id: user.id,
@@ -34919,7 +35624,7 @@ export class AuthService {
       token
     };
   }
-
+  
   /**
    * Login user
    */
@@ -34931,25 +35636,25 @@ export class AuthService {
     const user = await db.query.users.findFirst({
       where: eq(users.email, params.email)
     });
-
+    
     if (!user) {
       throw new Error('Invalid credentials');
     }
-
+    
     // Verify password
     const valid = await bcrypt.compare(params.password, user.password);
-
+    
     if (!valid) {
       throw new Error('Invalid credentials');
     }
-
+    
     // Generate JWT
     const token = jwt.sign(
       { userId: user.id },
       process.env.JWT_SECRET!,
       { expiresIn: '7d' }
     );
-
+    
     // Create session
     await db.insert(sessions).values({
       userId: user.id,
@@ -34957,7 +35662,7 @@ export class AuthService {
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       createdAt: new Date()
     });
-
+    
     return {
       user: {
         id: user.id,
@@ -34968,7 +35673,7 @@ export class AuthService {
       token
     };
   }
-
+  
   /**
    * Request password reset
    */
@@ -34976,16 +35681,16 @@ export class AuthService {
     const user = await db.query.users.findFirst({
       where: eq(users.email, email)
     });
-
+    
     if (!user) {
       // Don't reveal if email exists
       return;
     }
-
+    
     // Generate reset token
     const token = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-
+    
     // Save token
     await db.insert(passwordResets).values({
       userId: user.id,
@@ -34994,7 +35699,7 @@ export class AuthService {
       used: false,
       createdAt: new Date()
     });
-
+    
     // Send password reset email
     await EmailService.sendPasswordReset({
       to: user.email,
@@ -35002,7 +35707,7 @@ export class AuthService {
     });
     console.log(`Password reset link: https://mundotango.life/reset-password?token=${token}`);
   }
-
+  
   /**
    * Reset password
    */
@@ -35014,52 +35719,52 @@ export class AuthService {
     const reset = await db.query.passwordResets.findFirst({
       where: eq(passwordResets.token, params.token)
     });
-
+    
     if (!reset || reset.used || reset.expiresAt < new Date()) {
       throw new Error('Invalid or expired token');
     }
-
+    
     // Hash new password
     const hashedPassword = await bcrypt.hash(params.newPassword, 12);
-
+    
     // Update user password
     await db.update(users)
       .set({ password: hashedPassword })
       .where(eq(users.id, reset.userId));
-
+    
     // Mark token as used
     await db.update(passwordResets)
       .set({ used: true })
       .where(eq(passwordResets.id, reset.id));
   }
-
+  
   /**
    * Verify JWT token
    */
   static async verifyToken(token: string): Promise<any> {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: number };
-
+      
       // Check session exists
       const session = await db.query.sessions.findFirst({
         where: eq(sessions.token, token)
       });
-
+      
       if (!session || session.expiresAt < new Date()) {
         throw new Error('Session expired');
       }
-
+      
       // Get user
       const user = await db.query.users.findFirst({
         where: eq(users.id, decoded.userId)
       });
-
+      
       return user;
     } catch (error) {
       throw new Error('Invalid token');
     }
   }
-
+  
   /**
    * Logout
    */
@@ -35156,10 +35861,10 @@ export class PostsService {
       ...params,
       createdAt: new Date()
     }).returning();
-
+    
     return post;
   }
-
+  
   /**
    * Get news feed
    */
@@ -35170,7 +35875,7 @@ export class PostsService {
   }): Promise<any[]> {
     const { userId, page = 1, limit = 20 } = params;
     const offset = (page - 1) * limit;
-
+    
     // Get posts from user and friends
     const feed = await db.execute(sql`
       SELECT 
@@ -35210,10 +35915,10 @@ export class PostsService {
       LIMIT ${limit}
       OFFSET ${offset}
     `);
-
+    
     return feed.rows;
   }
-
+  
   /**
    * Like post
    */
@@ -35228,18 +35933,18 @@ export class PostsService {
         eq(postLikes.userId, params.userId)
       )
     });
-
+    
     if (existing) {
       throw new Error('Already liked');
     }
-
+    
     // Add like
     await db.insert(postLikes).values({
       postId: params.postId,
       userId: params.userId,
       createdAt: new Date()
     });
-
+    
     // Increment like count
     await db.execute(sql`
       UPDATE posts 
@@ -35247,7 +35952,7 @@ export class PostsService {
       WHERE id = ${params.postId}
     `);
   }
-
+  
   /**
    * Unlike post
    */
@@ -35260,7 +35965,7 @@ export class PostsService {
         eq(postLikes.postId, params.postId),
         eq(postLikes.userId, params.userId)
       ));
-
+    
     // Decrement like count
     await db.execute(sql`
       UPDATE posts 
@@ -35268,7 +35973,7 @@ export class PostsService {
       WHERE id = ${params.postId}
     `);
   }
-
+  
   /**
    * Add comment
    */
@@ -35282,17 +35987,17 @@ export class PostsService {
       ...params,
       createdAt: new Date()
     }).returning();
-
+    
     // Increment comment count
     await db.execute(sql`
       UPDATE posts 
       SET comment_count = comment_count + 1 
       WHERE id = ${params.postId}
     `);
-
+    
     return comment;
   }
-
+  
   /**
    * Delete post
    */
@@ -35304,11 +36009,11 @@ export class PostsService {
     const post = await db.query.posts.findFirst({
       where: eq(posts.id, params.postId)
     });
-
+    
     if (!post || post.authorId !== params.userId) {
       throw new Error('Unauthorized');
     }
-
+    
     // Delete post and cascade (likes, comments, shares)
     await db.delete(posts).where(eq(posts.id, params.postId));
   }
@@ -35354,7 +36059,7 @@ interface Post {
 export function NewsFeed() {
   const { toast } = useToast();
   const [newPost, setNewPost] = useState('');
-
+  
   // Infinite scroll query
   const {
     data,
@@ -35369,9 +36074,9 @@ export function NewsFeed() {
       return lastPage.hasMore ? pages.length + 1 : undefined;
     }
   });
-
+  
   const posts = data?.pages.flatMap(page => page.data) ?? [];
-
+  
   // Create post mutation
   const createMutation = useMutation({
     mutationFn: (content: string) =>
@@ -35382,7 +36087,7 @@ export function NewsFeed() {
       toast({ title: 'Post created!' });
     }
   });
-
+  
   // Like mutation
   const likeMutation = useMutation({
     mutationFn: ({ postId, liked }: { postId: number; liked: boolean }) =>
@@ -35393,7 +36098,7 @@ export function NewsFeed() {
       queryClient.invalidateQueries({ queryKey: ['/api/posts/feed'] });
     }
   });
-
+  
   return (
     <div className="max-w-2xl mx-auto space-y-6" data-testid="news-feed">
       {/* Create Post */}
@@ -35415,7 +36120,7 @@ export function NewsFeed() {
           </Button>
         </CardContent>
       </Card>
-
+      
       {/* Posts Feed */}
       {posts.map((post: Post) => (
         <Card key={post.id} data-testid={`post-${post.id}`}>
@@ -35433,10 +36138,10 @@ export function NewsFeed() {
                 </p>
               </div>
             </div>
-
+            
             {/* Post Content */}
             <p className="mb-4">{post.content}</p>
-
+            
             {/* Post Images */}
             {post.images.length > 0 && (
               <div className="grid grid-cols-2 gap-2 mb-4">
@@ -35450,7 +36155,7 @@ export function NewsFeed() {
                 ))}
               </div>
             )}
-
+            
             {/* Post Actions */}
             <div className="flex items-center gap-6 border-t pt-3">
               <Button
@@ -35467,22 +36172,22 @@ export function NewsFeed() {
                 />
                 {post.likeCount}
               </Button>
-
+              
               <Button variant="ghost" size="sm">
                 <MessageCircle className="h-5 w-5 mr-2" />
                 {post.commentCount}
               </Button>
-
+              
               <Button variant="ghost" size="sm">
                 <Share2 className="h-5 w-5 mr-2" />
                 {post.shareCount}
               </Button>
-
+              
               <Button variant="ghost" size="sm" className="ml-auto">
                 <Bookmark className="h-5 w-5" />
               </Button>
             </div>
-
+            
             {/* Recent Comments */}
             {post.recentComments && post.recentComments.length > 0 && (
               <div className="mt-4 space-y-3">
@@ -35503,7 +36208,7 @@ export function NewsFeed() {
           </CardContent>
         </Card>
       ))}
-
+      
       {/* Load More */}
       {hasNextPage && (
         <Button
@@ -35588,11 +36293,11 @@ export class FriendshipsService {
         )
       )
     });
-
+    
     if (existing) {
       throw new Error('Friendship already exists');
     }
-
+    
     const [friendship] = await db.insert(friendships).values({
       userId: params.userId,
       friendId: params.friendId,
@@ -35600,10 +36305,10 @@ export class FriendshipsService {
       initiatedBy: params.userId,
       createdAt: new Date()
     }).returning();
-
+    
     return friendship;
   }
-
+  
   /**
    * Accept friend request
    */
@@ -35619,11 +36324,11 @@ export class FriendshipsService {
         eq(friendships.status, 'pending')
       )
     });
-
+    
     if (!friendship) {
       throw new Error('Friend request not found');
     }
-
+    
     // Update status
     await db.update(friendships)
       .set({
@@ -35632,7 +36337,7 @@ export class FriendshipsService {
       })
       .where(eq(friendships.id, friendship.id));
   }
-
+  
   /**
    * Reject friend request
    */
@@ -35647,7 +36352,7 @@ export class FriendshipsService {
         eq(friendships.status, 'pending')
       ));
   }
-
+  
   /**
    * Remove friend
    */
@@ -35667,7 +36372,7 @@ export class FriendshipsService {
         )
       ));
   }
-
+  
   /**
    * Get friends list
    */
@@ -35691,10 +36396,10 @@ export class FriendshipsService {
         AND f.status = 'accepted'
       ORDER BY f.accepted_at DESC
     `);
-
+    
     return friends.rows;
   }
-
+  
   /**
    * Get friend requests
    */
@@ -35712,10 +36417,10 @@ export class FriendshipsService {
         AND f.status = 'pending'
       ORDER BY f.created_at DESC
     `);
-
+    
     return requests.rows;
   }
-
+  
   /**
    * Generate friend suggestions
    */
@@ -35743,7 +36448,7 @@ export class FriendshipsService {
       ORDER BY mutual_count DESC
       LIMIT 10
     `);
-
+    
     // Insert suggestions
     for (const suggestion of mutualFriends.rows) {
       await db.insert(friendSuggestions).values({
@@ -35849,17 +36554,17 @@ export class ChatService {
         AND cp1.left_at IS NULL
         AND cp2.left_at IS NULL
     `);
-
+    
     if (existing.rows.length > 0) {
       return existing.rows[0];
     }
-
+    
     // Create new conversation
     const [conversation] = await db.insert(conversations).values({
       type: 'direct',
       createdAt: new Date()
     }).returning();
-
+    
     // Add participants
     await db.insert(conversationParticipants).values([
       {
@@ -35873,10 +36578,10 @@ export class ChatService {
         joinedAt: new Date()
       }
     ]);
-
+    
     return conversation;
   }
-
+  
   /**
    * Create group conversation
    */
@@ -35891,7 +36596,7 @@ export class ChatService {
       createdBy: params.createdBy,
       createdAt: new Date()
     }).returning();
-
+    
     // Add participants
     const participants = params.participantIds.map(userId => ({
       conversationId: conversation.id,
@@ -35899,12 +36604,12 @@ export class ChatService {
       role: userId === params.createdBy ? 'admin' : 'member',
       joinedAt: new Date()
     }));
-
+    
     await db.insert(conversationParticipants).values(participants);
-
+    
     return conversation;
   }
-
+  
   /**
    * Send message
    */
@@ -35923,11 +36628,11 @@ export class ChatService {
         eq(conversationParticipants.userId, params.senderId)
       )
     });
-
+    
     if (!participant) {
       throw new Error('Not a participant in this conversation');
     }
-
+    
     // Create message
     const [message] = await db.insert(messages).values({
       conversationId: params.conversationId,
@@ -35938,15 +36643,15 @@ export class ChatService {
       replyToId: params.replyToId,
       createdAt: new Date()
     }).returning();
-
+    
     // Update conversation last message time
     await db.update(conversations)
       .set({ lastMessageAt: new Date() })
       .where(eq(conversations.id, params.conversationId));
-
+    
     return message;
   }
-
+  
   /**
    * Get conversation messages
    */
@@ -35957,7 +36662,7 @@ export class ChatService {
     before?: number;
   }): Promise<any[]> {
     const { conversationId, userId, limit = 50, before } = params;
-
+    
     // Verify user is participant
     const participant = await db.query.conversationParticipants.findFirst({
       where: and(
@@ -35965,11 +36670,11 @@ export class ChatService {
         eq(conversationParticipants.userId, userId)
       )
     });
-
+    
     if (!participant) {
       throw new Error('Not a participant in this conversation');
     }
-
+    
     // Get messages
     const messagesQuery = await db.execute(sql`
       SELECT 
@@ -35992,10 +36697,10 @@ export class ChatService {
       ORDER BY m.created_at DESC
       LIMIT ${limit}
     `);
-
+    
     return messagesQuery.rows.reverse();
   }
-
+  
   /**
    * Mark messages as read
    */
@@ -36010,7 +36715,7 @@ export class ChatService {
         eq(conversationParticipants.userId, params.userId)
       ));
   }
-
+  
   /**
    * Get unread count
    */
@@ -36023,10 +36728,10 @@ export class ChatService {
         AND m.sender_id != ${userId}
         AND (cp.last_read_at IS NULL OR m.created_at > cp.last_read_at)
     `);
-
+    
     return parseInt(result.rows[0].unread_count);
   }
-
+  
   /**
    * Get user conversations
    */
@@ -36076,7 +36781,7 @@ export class ChatService {
         AND cp.left_at IS NULL
       ORDER BY c.last_message_at DESC NULLS LAST
     `);
-
+    
     return conversations.rows;
   }
 }
@@ -36091,36 +36796,36 @@ import { ChatService } from '../services/ChatService';
 
 export function setupChatHandlers(io: Server, socket: Socket) {
   const userId = socket.data.userId;
-
+  
   /**
    * Join conversation room
    */
   socket.on('chat:join', async (conversationId: number) => {
     socket.join(`conversation:${conversationId}`);
-
+    
     // Mark as read
     await ChatService.markAsRead({ conversationId, userId });
-
+    
     // Notify others user is online
     socket.to(`conversation:${conversationId}`).emit('user:online', {
       userId,
       conversationId
     });
   });
-
+  
   /**
    * Leave conversation room
    */
   socket.on('chat:leave', (conversationId: number) => {
     socket.leave(`conversation:${conversationId}`);
-
+    
     // Notify others user is offline
     socket.to(`conversation:${conversationId}`).emit('user:offline', {
       userId,
       conversationId
     });
   });
-
+  
   /**
    * Send message
    */
@@ -36135,10 +36840,10 @@ export function setupChatHandlers(io: Server, socket: Socket) {
         ...data,
         senderId: userId
       });
-
+      
       // Broadcast to conversation
       io.to(`conversation:${data.conversationId}`).emit('chat:message', message);
-
+      
       // Send push notification to offline users
       // Send push notification
     await PushNotificationService.sendToUser({
@@ -36150,7 +36855,7 @@ export function setupChatHandlers(io: Server, socket: Socket) {
       socket.emit('chat:error', { message: error.message });
     }
   });
-
+  
   /**
    * Typing indicator
    */
@@ -36160,7 +36865,7 @@ export function setupChatHandlers(io: Server, socket: Socket) {
       conversationId
     });
   });
-
+  
   /**
    * Stop typing
    */
@@ -36170,7 +36875,7 @@ export function setupChatHandlers(io: Server, socket: Socket) {
       conversationId
     });
   });
-
+  
   /**
    * Message reaction
    */
@@ -36214,24 +36919,24 @@ export function ChatInterface({ conversationId }: { conversationId: number }) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
+  
   // Fetch messages
   const { data: messages } = useQuery<Message[]>({
     queryKey: ['/api/chat/messages', conversationId],
     refetchInterval: 5000 // Poll every 5 seconds as fallback
   });
-
+  
   // Setup socket connection
   useEffect(() => {
     const newSocket = io('wss://mundotango.life', {
       auth: { token: localStorage.getItem('token') }
     });
-
+    
     setSocket(newSocket);
-
+    
     // Join conversation
     newSocket.emit('chat:join', conversationId);
-
+    
     // Listen for messages
     newSocket.on('chat:message', (newMessage: Message) => {
       queryClient.setQueryData(
@@ -36240,47 +36945,47 @@ export function ChatInterface({ conversationId }: { conversationId: number }) {
       );
       scrollToBottom();
     });
-
+    
     // Listen for typing
     newSocket.on('chat:typing', ({ userId }: { userId: number }) => {
       setIsTyping(true);
       setTimeout(() => setIsTyping(false), 3000);
     });
-
+    
     return () => {
       newSocket.emit('chat:leave', conversationId);
       newSocket.close();
     };
   }, [conversationId]);
-
+  
   // Auto-scroll to bottom
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-
+  
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
+  
   // Send message
   const sendMessage = () => {
     if (!message.trim() || !socket) return;
-
+    
     socket.emit('chat:message', {
       conversationId,
       content: message
     });
-
+    
     setMessage('');
   };
-
+  
   // Typing indicator
   const handleTyping = () => {
     if (socket) {
       socket.emit('chat:typing', conversationId);
     }
   };
-
+  
   return (
     <Card className="flex flex-col h-[600px]" data-testid="chat-interface">
       {/* Messages Area */}
@@ -36295,7 +37000,7 @@ export function ChatInterface({ conversationId }: { conversationId: number }) {
               <AvatarImage src={msg.sender.profileImage} />
               <AvatarFallback>{msg.sender.name[0]}</AvatarFallback>
             </Avatar>
-
+            
             <div className="flex-1">
               <div className="flex items-baseline gap-2">
                 <span className="font-semibold text-sm">{msg.sender.name}</span>
@@ -36307,24 +37012,24 @@ export function ChatInterface({ conversationId }: { conversationId: number }) {
             </div>
           </div>
         ))}
-
+        
         {isTyping && (
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <span>Someone is typing</span>
             <span className="animate-pulse">...</span>
           </div>
         )}
-
+        
         <div ref={messagesEndRef} />
       </div>
-
+      
       {/* Input Area */}
       <div className="border-t p-4">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon">
             <Paperclip className="h-5 w-5" />
           </Button>
-
+          
           <Input
             placeholder="Type a message..."
             value={message}
@@ -36339,11 +37044,11 @@ export function ChatInterface({ conversationId }: { conversationId: number }) {
             }}
             data-testid="input-message"
           />
-
+          
           <Button variant="ghost" size="icon">
             <Smile className="h-5 w-5" />
           </Button>
-
+          
           <Button
             onClick={sendMessage}
             disabled={!message.trim()}
@@ -36434,7 +37139,7 @@ export class NotificationService {
         eq(notificationPreferences.type, params.type)
       )
     });
-
+    
     // Create in-app notification
     if (!prefs || prefs.inApp) {
       await db.insert(notifications).values({
@@ -36442,7 +37147,7 @@ export class NotificationService {
         createdAt: new Date()
       });
     }
-
+    
     // Send push notification
     if (!prefs || prefs.push) {
       await this.sendPush(params.userId, {
@@ -36451,7 +37156,7 @@ export class NotificationService {
         data: params.data
       });
     }
-
+    
     // Send email (if enabled)
     if (!prefs || prefs.email) {
       // Send email notification
@@ -36462,7 +37167,7 @@ export class NotificationService {
     });
     }
   }
-
+  
   /**
    * Send push notification
    */
@@ -36473,7 +37178,7 @@ export class NotificationService {
     const subscriptions = await db.query.pushSubscriptions.findMany({
       where: eq(pushSubscriptions.userId, userId)
     });
-
+    
     for (const sub of subscriptions) {
       try {
         await webpush.sendNotification(
@@ -36485,7 +37190,7 @@ export class NotificationService {
         );
       } catch (error) {
         console.error('Push notification failed:', error);
-
+        
         // Remove invalid subscription
         if (error.statusCode === 410) {
           await db.delete(pushSubscriptions)
@@ -36494,7 +37199,7 @@ export class NotificationService {
       }
     }
   }
-
+  
   /**
    * Get user notifications
    */
@@ -36504,7 +37209,7 @@ export class NotificationService {
     unreadOnly?: boolean;
   }): Promise<any[]> {
     const { userId, limit = 20, unreadOnly = false } = params;
-
+    
     const query = db.query.notifications.findMany({
       where: and(
         eq(notifications.userId, userId),
@@ -36513,10 +37218,10 @@ export class NotificationService {
       orderBy: [desc(notifications.createdAt)],
       limit
     });
-
+    
     return await query;
   }
-
+  
   /**
    * Mark as read
    */
@@ -36528,7 +37233,7 @@ export class NotificationService {
       })
       .where(eq(notifications.id, notificationId));
   }
-
+  
   /**
    * Mark all as read
    */
@@ -36636,10 +37341,10 @@ export class AdminService {
           AND ${permission} = ANY(ar.permissions)
       ) as has_permission
     `);
-
+    
     return result.rows[0].has_permission;
   }
-
+  
   /**
    * Get dashboard stats
    */
@@ -36663,7 +37368,7 @@ export class AdminService {
         WHERE expires_at > NOW()
       `)
     ]);
-
+    
     return {
       totalUsers: parseInt(totalUsers.rows[0].count),
       newUsersToday: parseInt(newUsersToday.rows[0].count),
@@ -36673,7 +37378,7 @@ export class AdminService {
       activeUsers: parseInt(activeUsers.rows[0].count)
     };
   }
-
+  
   /**
    * Get user analytics
    */
@@ -36691,10 +37396,10 @@ export class AdminService {
       GROUP BY DATE(created_at)
       ORDER BY date ASC
     `);
-
+    
     return result.rows;
   }
-
+  
   /**
    * Get content reports
    */
@@ -36705,7 +37410,7 @@ export class AdminService {
   }): Promise<any> {
     const { status, page = 1, limit = 20 } = params;
     const offset = (page - 1) * limit;
-
+    
     const reports = await db.execute(sql`
       SELECT 
         cr.*,
@@ -36727,19 +37432,19 @@ export class AdminService {
       LIMIT ${limit}
       OFFSET ${offset}
     `);
-
+    
     const [{ count }] = await db.execute(sql`
       SELECT COUNT(*) as count
       FROM content_reports
       WHERE ${status ? sql`status = ${status}` : sql`1=1`}
     `);
-
+    
     return {
       reports: reports.rows,
       total: parseInt(count.count)
     };
   }
-
+  
   /**
    * Take moderation action
    */
@@ -36754,7 +37459,7 @@ export class AdminService {
     const expiresAt = params.duration 
       ? new Date(Date.now() + params.duration * 24 * 60 * 60 * 1000)
       : null;
-
+    
     // Record action
     await db.insert(moderationActions).values({
       moderatorId: params.moderatorId,
@@ -36766,7 +37471,7 @@ export class AdminService {
       expiresAt,
       createdAt: new Date()
     });
-
+    
     // Execute action
     switch (params.actionType) {
       case 'delete':
@@ -36776,7 +37481,7 @@ export class AdminService {
           WHERE id = ${params.targetId}
         `);
         break;
-
+      
       case 'suspend':
       case 'ban':
         // Suspend/ban user
@@ -36788,7 +37493,7 @@ export class AdminService {
           .where(eq(users.id, params.targetId));
         break;
     }
-
+    
     // Log action
     await this.logAudit({
       userId: params.moderatorId,
@@ -36798,7 +37503,7 @@ export class AdminService {
       changes: { reason: params.reason }
     });
   }
-
+  
   /**
    * Log audit event
    */
@@ -36816,7 +37521,7 @@ export class AdminService {
       createdAt: new Date()
     });
   }
-
+  
   /**
    * Get audit logs
    */
@@ -36826,7 +37531,7 @@ export class AdminService {
     limit?: number;
   }): Promise<any[]> {
     const { userId, resource, limit = 100 } = params;
-
+    
     const logs = await db.execute(sql`
       SELECT 
         al.*,
@@ -36842,7 +37547,7 @@ export class AdminService {
       ORDER BY al.created_at DESC
       LIMIT ${limit}
     `);
-
+    
     return logs.rows;
   }
 }
@@ -36862,16 +37567,16 @@ export function AdminDashboard() {
   const { data: stats } = useQuery({
     queryKey: ['/api/admin/stats']
   });
-
+  
   // Get user growth data
   const { data: userGrowth } = useQuery({
     queryKey: ['/api/admin/analytics/users'],
   });
-
+  
   return (
     <div className="container mx-auto py-8" data-testid="admin-dashboard">
       <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
-
+      
       {/* Stats Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
         <Card>
@@ -36886,7 +37591,7 @@ export function AdminDashboard() {
             </p>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Events</CardTitle>
@@ -36896,7 +37601,7 @@ export function AdminDashboard() {
             <div className="text-2xl font-bold">{stats?.totalEvents.toLocaleString()}</div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Posts</CardTitle>
@@ -36906,7 +37611,7 @@ export function AdminDashboard() {
             <div className="text-2xl font-bold">{stats?.totalPosts.toLocaleString()}</div>
           </CardContent>
         </Card>
-
+        
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Pending Reports</CardTitle>
@@ -36917,7 +37622,7 @@ export function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
-
+      
       {/* User Growth Chart */}
       <Card>
         <CardHeader>
@@ -36960,12 +37665,12 @@ export function ContentModeration() {
   const { toast } = useToast();
   const [selectedReport, setSelectedReport] = useState<any>(null);
   const [resolution, setResolution] = useState('');
-
+  
   // Get pending reports
   const { data: reports } = useQuery({
     queryKey: ['/api/admin/reports', 'pending']
   });
-
+  
   // Moderation action mutation
   const moderateMutation = useMutation({
     mutationFn: (params: {
@@ -36979,18 +37684,18 @@ export function ContentModeration() {
       toast({ title: 'Action completed' });
     }
   });
-
+  
   return (
     <div className="container mx-auto py-8" data-testid="content-moderation">
       <h1 className="text-3xl font-bold mb-8">Content Moderation</h1>
-
+      
       <Tabs defaultValue="pending">
         <TabsList>
           <TabsTrigger value="pending">Pending</TabsTrigger>
           <TabsTrigger value="reviewing">Reviewing</TabsTrigger>
           <TabsTrigger value="resolved">Resolved</TabsTrigger>
         </TabsList>
-
+        
         <TabsContent value="pending">
           <div className="space-y-4">
             {reports?.reports.map((report: any) => (
@@ -37002,18 +37707,18 @@ export function ContentModeration() {
                         <Badge>{report.contentType}</Badge>
                         <Badge variant="outline">{report.reason}</Badge>
                       </div>
-
+                      
                       <p className="text-sm text-gray-600 mb-2">
                         Reported by: {report.reporter.name}
                       </p>
-
+                      
                       <p className="mb-4">{report.description}</p>
-
+                      
                       <p className="text-xs text-gray-500">
                         {new Date(report.createdAt).toLocaleString()}
                       </p>
                     </div>
-
+                    
                     <Button
                       onClick={() => setSelectedReport(report)}
                       data-testid={`button-review-${report.id}`}
@@ -37027,26 +37732,26 @@ export function ContentModeration() {
           </div>
         </TabsContent>
       </Tabs>
-
+      
       {/* Moderation Dialog */}
       <Dialog open={!!selectedReport} onOpenChange={() => setSelectedReport(null)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Take Action</DialogTitle>
           </DialogHeader>
-
+          
           <div className="space-y-4">
             <div>
               <p className="font-semibold">Report Details</p>
               <p className="text-sm">{selectedReport?.description}</p>
             </div>
-
+            
             <Textarea
               placeholder="Resolution notes..."
               value={resolution}
               onChange={(e) => setResolution(e.target.value)}
             />
-
+            
             <div className="flex gap-2">
               <Button
                 variant="destructive"
@@ -37058,7 +37763,7 @@ export function ContentModeration() {
               >
                 Delete Content
               </Button>
-
+              
               <Button
                 variant="outline"
                 onClick={() => moderateMutation.mutate({
@@ -37069,7 +37774,7 @@ export function ContentModeration() {
               >
                 Warn User
               </Button>
-
+              
               <Button
                 variant="outline"
                 onClick={() => moderateMutation.mutate({
@@ -37122,7 +37827,7 @@ export class SearchService {
       refresh: true
     });
   }
-
+  
   /**
    * Search events
    */
@@ -37136,10 +37841,10 @@ export class SearchService {
   }): Promise<any> {
     const { query, city, category, startDate, page = 1, limit = 20 } = params;
     const from = (page - 1) * limit;
-
+    
     // Build query
     const must: any[] = [];
-
+    
     if (query) {
       must.push({
         multi_match: {
@@ -37149,15 +37854,15 @@ export class SearchService {
         }
       });
     }
-
+    
     if (city) {
       must.push({ match: { city } });
     }
-
+    
     if (category) {
       must.push({ match: { category } });
     }
-
+    
     if (startDate) {
       must.push({
         range: {
@@ -37167,7 +37872,7 @@ export class SearchService {
         }
       });
     }
-
+    
     // Execute search
     const result = await es.search({
       index: 'events',
@@ -37187,7 +37892,7 @@ export class SearchService {
         { startDate: 'asc' }
       ]
     });
-
+    
     return {
       hits: result.hits.hits.map(hit => ({
         id: hit._id,
@@ -37199,7 +37904,7 @@ export class SearchService {
       took: result.took
     };
   }
-
+  
   /**
    * Autocomplete search
    */
@@ -37218,10 +37923,10 @@ export class SearchService {
       },
       _source: [params.field]
     });
-
+    
     return result.hits.hits.map((hit: any) => hit._source[params.field]);
   }
-
+  
   /**
    * Get search suggestions
    */
@@ -37245,13 +37950,13 @@ export class SearchService {
         }
       }
     });
-
+    
     return {
       events: result.suggest.event_suggestion[0].options,
       cities: result.suggest.city_suggestion[0].options
     };
   }
-
+  
   /**
    * Reindex all events
    */
@@ -37262,7 +37967,7 @@ export class SearchService {
     } catch (error) {
       // Index might not exist
     }
-
+    
     // Create new index with mappings
     await es.indices.create({
       index: 'events',
@@ -37297,7 +38002,7 @@ export class SearchService {
         }
       }
     });
-
+    
     // Fetch all events from database and index
     // Implementation depends on your database
     console.log('Reindexing complete');
@@ -37351,10 +38056,10 @@ export class RecommendationService {
       ORDER BY popularity_score DESC, e.start_date ASC
       LIMIT ${limit}
     `);
-
+    
     return similarUsers.rows;
   }
-
+  
   /**
    * Content-based recommendations
    */
@@ -37372,15 +38077,15 @@ export class RecommendationService {
       ORDER BY count DESC
       LIMIT 5
     `);
-
+    
     if (preferences.rows.length === 0) {
       return [];
     }
-
+    
     // Get events matching user preferences
     const topCategory = preferences.rows[0].category;
     const topCity = preferences.rows[0].city;
-
+    
     const recommendations = await db.execute(sql`
       SELECT 
         e.*,
@@ -37399,10 +38104,10 @@ export class RecommendationService {
       ORDER BY relevance_score DESC, e.start_date ASC
       LIMIT ${limit}
     `);
-
+    
     return recommendations.rows;
   }
-
+  
   /**
    * Hybrid recommendations (collaborative + content-based)
    */
@@ -37411,17 +38116,17 @@ export class RecommendationService {
       this.getEventRecommendations(userId, limit),
       this.getContentBasedRecommendations(userId, limit)
     ]);
-
+    
     // Merge and deduplicate
     const merged = new Map();
-
+    
     collaborative.forEach((event, index) => {
       merged.set(event.id, {
         ...event,
         score: (limit - index) * 0.6 // Weight collaborative filtering 60%
       });
     });
-
+    
     contentBased.forEach((event, index) => {
       const existing = merged.get(event.id);
       if (existing) {
@@ -37433,13 +38138,13 @@ export class RecommendationService {
         });
       }
     });
-
+    
     // Sort by combined score
     return Array.from(merged.values())
       .sort((a, b) => b.score - a.score)
       .slice(0, limit);
   }
-
+  
   /**
    * Friend recommendations
    */
@@ -37490,10 +38195,10 @@ export class RecommendationService {
       ORDER BY mutual_friends DESC
       LIMIT ${limit}
     `);
-
+    
     return suggestions.rows;
   }
-
+  
   /**
    * Trending events
    */
@@ -37519,7 +38224,7 @@ export class RecommendationService {
       ORDER BY trending_score DESC
       LIMIT ${limit}
     `);
-
+    
     return trending.rows;
   }
 }
@@ -37540,17 +38245,17 @@ export function SearchBar() {
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
   const debouncedQuery = useDebouncedValue(query, 300);
-
+  
   // Autocomplete suggestions
   const { data: suggestions } = useQuery({
     queryKey: ['/api/search/autocomplete', debouncedQuery],
     enabled: debouncedQuery.length > 2
   });
-
+  
   useEffect(() => {
     setOpen(debouncedQuery.length > 2 && suggestions?.length > 0);
   }, [debouncedQuery, suggestions]);
-
+  
   return (
     <div className="relative" data-testid="search-bar">
       <div className="relative">
@@ -37563,13 +38268,13 @@ export function SearchBar() {
           data-testid="input-search"
         />
       </div>
-
+      
       {open && (
         <div className="absolute top-full left-0 right-0 mt-2 bg-white border rounded-lg shadow-lg z-50">
           <Command>
             <CommandList>
               <CommandEmpty>No results found</CommandEmpty>
-
+              
               {suggestions?.events?.length > 0 && (
                 <CommandGroup heading="Events">
                   {suggestions.events.map((event: any) => (
@@ -37585,7 +38290,7 @@ export function SearchBar() {
                   ))}
                 </CommandGroup>
               )}
-
+              
               {suggestions?.cities?.length > 0 && (
                 <CommandGroup heading="Cities">
                   {suggestions.cities.map((city: string, index: number) => (
@@ -37622,18 +38327,18 @@ export function RecommendedEvents() {
   const { data: recommendations, isLoading } = useQuery({
     queryKey: ['/api/recommendations/events']
   });
-
+  
   if (isLoading || !recommendations || recommendations.length === 0) {
     return null;
   }
-
+  
   return (
     <div className="mb-8" data-testid="recommended-events">
       <div className="flex items-center gap-2 mb-4">
         <Sparkles className="h-5 w-5 text-yellow-500" />
         <h2 className="text-2xl font-bold">Recommended for You</h2>
       </div>
-
+      
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {recommendations.map((event: any) => (
           <Card key={event.id} data-testid={`recommended-event-${event.id}`}>
@@ -37698,7 +38403,7 @@ export class FileUploadService {
         cb(null, uniqueName);
       }
     });
-
+    
     return multer({
       storage,
       limits: {
@@ -37708,7 +38413,7 @@ export class FileUploadService {
         const allowedTypes = /jpeg|jpg|png|gif|pdf|doc|docx/;
         const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
         const mimetype = allowedTypes.test(file.mimetype);
-
+        
         if (extname && mimetype) {
           cb(null, true);
         } else {
@@ -37717,7 +38422,7 @@ export class FileUploadService {
       }
     });
   }
-
+  
   /**
    * Upload to S3
    */
@@ -37726,7 +38431,7 @@ export class FileUploadService {
     folder: string;
   }): Promise<string> {
     const key = `${params.folder}/${Date.now()}-${params.file.filename}`;
-
+    
     const command = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET!,
       Key: key,
@@ -37734,15 +38439,15 @@ export class FileUploadService {
       ContentType: params.file.mimetype,
       ACL: 'public-read'
     });
-
+    
     await s3.send(command);
-
+    
     // Delete temp file
     fs.unlinkSync(params.file.path);
-
+    
     return `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${key}`;
   }
-
+  
   /**
    * Generate presigned URL for direct upload
    */
@@ -37752,18 +38457,18 @@ export class FileUploadService {
     folder: string;
   }): Promise<{ url: string; key: string }> {
     const key = `${params.folder}/${Date.now()}-${params.filename}`;
-
+    
     const command = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET!,
       Key: key,
       ContentType: params.contentType
     });
-
+    
     const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-
+    
     return { url, key };
   }
-
+  
   /**
    * Process and optimize image
    */
@@ -37773,22 +38478,22 @@ export class FileUploadService {
   }): Promise<{ original: string; thumbnails: string[] }> {
     const sizes = params.sizes || [300, 600, 1200];
     const thumbnails: string[] = [];
-
+    
     // Upload original
     const originalUrl = await this.uploadToS3({
       file: params.file,
       folder: 'images/original'
     });
-
+    
     // Generate thumbnails
     for (const width of sizes) {
       const thumbnailBuffer = await sharp(params.file.path)
         .resize(width, null, { withoutEnlargement: true })
         .jpeg({ quality: 80 })
         .toBuffer();
-
+      
       const thumbnailKey = `images/thumbnails/${width}/${Date.now()}-${params.file.filename}`;
-
+      
       const command = new PutObjectCommand({
         Bucket: process.env.S3_BUCKET!,
         Key: thumbnailKey,
@@ -37796,29 +38501,29 @@ export class FileUploadService {
         ContentType: 'image/jpeg',
         ACL: 'public-read'
       });
-
+      
       await s3.send(command);
-
+      
       thumbnails.push(`https://${process.env.S3_BUCKET}.s3.amazonaws.com/${thumbnailKey}`);
     }
-
+    
     return {
       original: originalUrl,
       thumbnails
     };
   }
-
+  
   /**
    * Delete file from S3
    */
   static async deleteFromS3(url: string): Promise<void> {
     const key = url.split('.com/')[1];
-
+    
     const command = new DeleteObjectCommand({
       Bucket: process.env.S3_BUCKET!,
       Key: key
     });
-
+    
     await s3.send(command);
   }
 }
@@ -37846,11 +38551,11 @@ router.post('/upload/image',
       if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
       }
-
+      
       const result = await FileUploadService.processImage({
         file: req.file
       });
-
+      
       res.json(result);
     } catch (error) {
       console.error('Upload error:', error);
@@ -37870,12 +38575,12 @@ router.post('/upload/file',
       if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
       }
-
+      
       const url = await FileUploadService.uploadToS3({
         file: req.file,
         folder: 'files'
       });
-
+      
       res.json({ url });
     } catch (error) {
       console.error('Upload error:', error);
@@ -37892,13 +38597,13 @@ router.post('/upload/presigned',
   async (req, res) => {
     try {
       const { filename, contentType } = req.body;
-
+      
       const result = await FileUploadService.generatePresignedUrl({
         filename,
         contentType,
         folder: 'uploads'
       });
-
+      
       res.json(result);
     } catch (error) {
       console.error('Presigned URL error:', error);
@@ -37915,9 +38620,9 @@ router.delete('/upload/:key',
   async (req, res) => {
     try {
       const url = decodeURIComponent(req.params.key);
-
+      
       await FileUploadService.deleteFromS3(url);
-
+      
       res.json({ message: 'File deleted' });
     } catch (error) {
       console.error('Delete error:', error);
@@ -37951,13 +38656,13 @@ export function FileUpload({ onUpload, accept = 'image/*', maxSize = 10 }: FileU
   const [preview, setPreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  
   // Upload mutation
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData();
       formData.append('image', file);
-
+      
       const response = await fetch('/api/upload/image', {
         method: 'POST',
         headers: {
@@ -37965,11 +38670,11 @@ export function FileUpload({ onUpload, accept = 'image/*', maxSize = 10 }: FileU
         },
         body: formData
       });
-
+      
       if (!response.ok) {
         throw new Error('Upload failed');
       }
-
+      
       return response.json();
     },
     onSuccess: (data) => {
@@ -37984,12 +38689,12 @@ export function FileUpload({ onUpload, accept = 'image/*', maxSize = 10 }: FileU
       });
     }
   });
-
+  
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
-
+    
     if (!selectedFile) return;
-
+    
     // Validate size
     if (selectedFile.size > maxSize * 1024 * 1024) {
       toast({
@@ -37999,9 +38704,9 @@ export function FileUpload({ onUpload, accept = 'image/*', maxSize = 10 }: FileU
       });
       return;
     }
-
+    
     setFile(selectedFile);
-
+    
     // Create preview
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -38009,13 +38714,13 @@ export function FileUpload({ onUpload, accept = 'image/*', maxSize = 10 }: FileU
     };
     reader.readAsDataURL(selectedFile);
   };
-
+  
   const handleUpload = () => {
     if (file) {
       uploadMutation.mutate(file);
     }
   };
-
+  
   const handleRemove = () => {
     setFile(null);
     setPreview(null);
@@ -38023,7 +38728,7 @@ export function FileUpload({ onUpload, accept = 'image/*', maxSize = 10 }: FileU
       fileInputRef.current.value = '';
     }
   };
-
+  
   return (
     <div className="space-y-4" data-testid="file-upload">
       <input
@@ -38034,7 +38739,7 @@ export function FileUpload({ onUpload, accept = 'image/*', maxSize = 10 }: FileU
         className="hidden"
         data-testid="input-file"
       />
-
+      
       {!preview && (
         <div
           onClick={() => fileInputRef.current?.click()}
@@ -38046,7 +38751,7 @@ export function FileUpload({ onUpload, accept = 'image/*', maxSize = 10 }: FileU
           <p className="text-sm text-gray-500 mt-2">Maximum size: {maxSize}MB</p>
         </div>
       )}
-
+      
       {preview && (
         <div className="relative">
           <div className="rounded-lg overflow-hidden border">
@@ -38068,7 +38773,7 @@ export function FileUpload({ onUpload, accept = 'image/*', maxSize = 10 }: FileU
               </div>
             )}
           </div>
-
+          
           <Button
             variant="ghost"
             size="icon"
@@ -38080,7 +38785,7 @@ export function FileUpload({ onUpload, accept = 'image/*', maxSize = 10 }: FileU
           </Button>
         </div>
       )}
-
+      
       {file && !uploadMutation.isSuccess && (
         <Button
           onClick={handleUpload}
@@ -38121,20 +38826,20 @@ export class GeolocationService {
         key: process.env.GOOGLE_MAPS_API_KEY
       }
     });
-
+    
     if (response.data.status !== 'OK') {
       throw new Error('Geocoding failed');
     }
-
+    
     const result = response.data.results[0];
-
+    
     return {
       latitude: result.geometry.location.lat,
       longitude: result.geometry.location.lng,
       formattedAddress: result.formatted_address
     };
   }
-
+  
   /**
    * Reverse geocode coordinates
    */
@@ -38148,14 +38853,14 @@ export class GeolocationService {
         key: process.env.GOOGLE_MAPS_API_KEY
       }
     });
-
+    
     if (response.data.status !== 'OK') {
       throw new Error('Reverse geocoding failed');
     }
-
+    
     return response.data.results[0].formatted_address;
   }
-
+  
   /**
    * Calculate distance between coordinates
    */
@@ -38168,24 +38873,24 @@ export class GeolocationService {
     const R = 6371; // Earth's radius in km
     const dLat = this.toRad(lat2 - lat1);
     const dLon = this.toRad(lon2 - lon1);
-
+    
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(this.toRad(lat1)) *
       Math.cos(this.toRad(lat2)) *
       Math.sin(dLon / 2) *
       Math.sin(dLon / 2);
-
+    
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c;
-
+    
     return distance;
   }
-
+  
   private static toRad(degrees: number): number {
     return (degrees * Math.PI) / 180;
   }
-
+  
   /**
    * Find nearby events
    */
@@ -38195,7 +38900,7 @@ export class GeolocationService {
     radius: number; // in km
   }): Promise<any[]> {
     const { latitude, longitude, radius } = params;
-
+    
     // Use PostgreSQL's earth distance
     const result = await db.execute(sql`
       SELECT 
@@ -38213,7 +38918,7 @@ export class GeolocationService {
       ORDER BY distance_km ASC
       LIMIT 20
     `);
-
+    
     return result.rows;
   }
 }
@@ -38253,7 +38958,7 @@ const eventIcon = new Icon({
 export function EventMap({ events, center = [0, 0], zoom = 10 }: EventMapProps) {
   const mapRef = useRef<any>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-
+  
   // Get user's location
   useEffect(() => {
     if (navigator.geolocation) {
@@ -38270,7 +38975,7 @@ export function EventMap({ events, center = [0, 0], zoom = 10 }: EventMapProps) 
       );
     }
   }, []);
-
+  
   // Fit bounds to show all events
   useEffect(() => {
     if (mapRef.current && events.length > 0) {
@@ -38278,7 +38983,7 @@ export function EventMap({ events, center = [0, 0], zoom = 10 }: EventMapProps) 
       mapRef.current.fitBounds(bounds);
     }
   }, [events]);
-
+  
   return (
     <div className="h-[600px] rounded-lg overflow-hidden" data-testid="event-map">
       <MapContainer
@@ -38291,14 +38996,14 @@ export function EventMap({ events, center = [0, 0], zoom = 10 }: EventMapProps) 
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-
+        
         {/* User location marker */}
         {userLocation && (
           <Marker position={userLocation}>
             <Popup>Your Location</Popup>
           </Marker>
         )}
-
+        
         {/* Event markers */}
         {events.map((event) => (
           <Marker
@@ -38353,7 +39058,7 @@ export class ZoomService {
       process.env.ZOOM_API_SECRET!
     );
   }
-
+  
   /**
    * Create Zoom meeting
    */
@@ -38365,7 +39070,7 @@ export class ZoomService {
     password?: string;
   }): Promise<any> {
     const token = this.getToken();
-
+    
     const response = await axios.post(
       'https://api.zoom.us/v2/users/me/meetings',
       {
@@ -38394,16 +39099,16 @@ export class ZoomService {
         }
       }
     );
-
+    
     return response.data;
   }
-
+  
   /**
    * Get meeting details
    */
   static async getMeeting(meetingId: string): Promise<any> {
     const token = this.getToken();
-
+    
     const response = await axios.get(
       `https://api.zoom.us/v2/meetings/${meetingId}`,
       {
@@ -38412,16 +39117,16 @@ export class ZoomService {
         }
       }
     );
-
+    
     return response.data;
   }
-
+  
   /**
    * Delete meeting
    */
   static async deleteMeeting(meetingId: string): Promise<void> {
     const token = this.getToken();
-
+    
     await axios.delete(
       `https://api.zoom.us/v2/meetings/${meetingId}`,
       {
@@ -38431,13 +39136,13 @@ export class ZoomService {
       }
     );
   }
-
+  
   /**
    * Get meeting recordings
    */
   static async getRecordings(meetingId: string): Promise<any> {
     const token = this.getToken();
-
+    
     const response = await axios.get(
       `https://api.zoom.us/v2/meetings/${meetingId}/recordings`,
       {
@@ -38446,7 +39151,7 @@ export class ZoomService {
         }
       }
     );
-
+    
     return response.data;
   }
 }
@@ -38485,13 +39190,13 @@ export class JitsiService {
       sub: process.env.JITSI_DOMAIN,
       room: params.roomName
     };
-
+    
     return jwt.sign(payload, process.env.JITSI_APP_SECRET!, {
       algorithm: 'HS256',
       expiresIn: '2h'
     });
   }
-
+  
   /**
    * Create room configuration
    */
@@ -38573,7 +39278,7 @@ interface VideoConferenceProps {
 export function VideoConference({ roomName, userName, token, onClose }: VideoConferenceProps) {
   const jitsiContainerRef = useRef<HTMLDivElement>(null);
   const jitsiApiRef = useRef<any>(null);
-
+  
   useEffect(() => {
     // Load Jitsi script
     const script = document.createElement('script');
@@ -38581,16 +39286,16 @@ export function VideoConference({ roomName, userName, token, onClose }: VideoCon
     script.async = true;
     script.onload = initializeJitsi;
     document.body.appendChild(script);
-
+    
     return () => {
       jitsiApiRef.current?.dispose();
       document.body.removeChild(script);
     };
   }, []);
-
+  
   const initializeJitsi = () => {
     if (!jitsiContainerRef.current) return;
-
+    
     const options = {
       roomName,
       width: '100%',
@@ -38621,23 +39326,23 @@ export function VideoConference({ roomName, userName, token, onClose }: VideoCon
         displayName: userName
       }
     };
-
+    
     jitsiApiRef.current = new window.JitsiMeetExternalAPI('meet.jit.si', options);
-
+    
     // Event listeners
     jitsiApiRef.current.on('videoConferenceJoined', () => {
       console.log('Joined conference');
     });
-
+    
     jitsiApiRef.current.on('videoConferenceLeft', () => {
       onClose();
     });
-
+    
     jitsiApiRef.current.on('participantJoined', (participant: any) => {
       console.log('Participant joined:', participant);
     });
   };
-
+  
   return (
     <div className="fixed inset-0 bg-black z-50" data-testid="video-conference">
       <div ref={jitsiContainerRef} className="w-full h-full" />
@@ -38669,7 +39374,7 @@ export class LiveStreamService {
     eventId?: number;
   }): Promise<any> {
     const streamKey = this.generateStreamKey();
-
+    
     const [stream] = await db.insert(liveStreams).values({
       userId: params.userId,
       title: params.title,
@@ -38679,10 +39384,10 @@ export class LiveStreamService {
       status: 'created',
       createdAt: new Date()
     }).returning();
-
+    
     return stream;
   }
-
+  
   /**
    * Start stream
    */
@@ -38694,7 +39399,7 @@ export class LiveStreamService {
       })
       .where(eq(liveStreams.id, streamId));
   }
-
+  
   /**
    * End stream
    */
@@ -38706,7 +39411,7 @@ export class LiveStreamService {
       })
       .where(eq(liveStreams.id, streamId));
   }
-
+  
   /**
    * Get stream statistics
    */
@@ -38718,7 +39423,7 @@ export class LiveStreamService {
       peakViewers: 0
     };
   }
-
+  
   private static generateStreamKey(): string {
     return `stream_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
@@ -38834,7 +39539,7 @@ export class TenantService {
         limits: { users: 10, storage: 1000 }
       }
     }).returning();
-
+    
     // Add owner
     await db.insert(tenantUsers).values({
       tenantId: tenant.id,
@@ -38842,10 +39547,10 @@ export class TenantService {
       role: 'owner',
       joinedAt: new Date()
     });
-
+    
     return tenant;
   }
-
+  
   /**
    * Get tenant by domain
    */
@@ -38854,7 +39559,7 @@ export class TenantService {
       where: eq(tenants.domain, domain)
     });
   }
-
+  
   /**
    * Get tenant by slug
    */
@@ -38863,7 +39568,7 @@ export class TenantService {
       where: eq(tenants.slug, slug)
     });
   }
-
+  
   /**
    * Invite user to tenant
    */
@@ -38875,7 +39580,7 @@ export class TenantService {
   }): Promise<string> {
     const token = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
-
+    
     await db.insert(tenantInvitations).values({
       tenantId: params.tenantId,
       email: params.email,
@@ -38885,13 +39590,13 @@ export class TenantService {
       expiresAt,
       createdAt: new Date()
     });
-
+    
     // Send invitation email
     const inviteLink = `https://mundotango.life/accept-invite?token=${token}`;
-
+    
     return inviteLink;
   }
-
+  
   /**
    * Accept invitation
    */
@@ -38902,11 +39607,11 @@ export class TenantService {
     const invitation = await db.query.tenantInvitations.findFirst({
       where: eq(tenantInvitations.token, params.token)
     });
-
+    
     if (!invitation || invitation.expiresAt < new Date()) {
       throw new Error('Invalid or expired invitation');
     }
-
+    
     // Add user to tenant
     await db.insert(tenantUsers).values({
       tenantId: invitation.tenantId,
@@ -38914,13 +39619,13 @@ export class TenantService {
       role: invitation.role,
       joinedAt: new Date()
     });
-
+    
     // Mark invitation as accepted
     await db.update(tenantInvitations)
       .set({ acceptedAt: new Date() })
       .where(eq(tenantInvitations.id, invitation.id));
   }
-
+  
   /**
    * Check user access to tenant
    */
@@ -38931,10 +39636,10 @@ export class TenantService {
         eq(tenantUsers.tenantId, tenantId)
       )
     });
-
+    
     return !!membership;
   }
-
+  
   /**
    * Get user tenants
    */
@@ -38943,7 +39648,7 @@ export class TenantService {
       where: eq(tenantUsers.userId, userId),
       with: { tenant: true }
     });
-
+    
     return memberships.map(m => ({
       ...m.tenant,
       role: m.role
@@ -38963,26 +39668,26 @@ export async function tenantMiddleware(req: Request, res: Response, next: NextFu
   // Extract tenant from subdomain or header
   const host = req.headers.host || '';
   const subdomain = host.split('.')[0];
-
+  
   // Check if custom domain
   let tenant = await TenantService.getByDomain(host);
-
+  
   // Check if subdomain
   if (!tenant && subdomain !== 'www' && subdomain !== 'mundotango') {
     tenant = await TenantService.getBySlug(subdomain);
   }
-
+  
   if (!tenant) {
     return res.status(404).json({ error: 'Tenant not found' });
   }
-
+  
   if (!tenant.active) {
     return res.status(403).json({ error: 'Tenant is inactive' });
   }
-
+  
   // Attach tenant to request
   req.tenant = tenant;
-
+  
   next();
 }
 ```
@@ -39031,34 +39736,34 @@ import path from 'path';
 
 export class TranslationService {
   private static cache: Map<string, any> = new Map();
-
+  
   /**
    * Get translations for locale
    */
   static async getTranslations(locale: string, namespace: string = 'common'): Promise<any> {
     const cacheKey = `${locale}:${namespace}`;
-
+    
     if (this.cache.has(cacheKey)) {
       return this.cache.get(cacheKey);
     }
-
+    
     const items = await db.query.translations.findMany({
       where: and(
         eq(translations.locale, locale),
         eq(translations.namespace, namespace)
       )
     });
-
+    
     const result = items.reduce((acc, item) => {
       acc[item.key] = item.value;
       return acc;
     }, {} as any);
-
+    
     this.cache.set(cacheKey, result);
-
+    
     return result;
   }
-
+  
   /**
    * Add translation
    */
@@ -39078,11 +39783,11 @@ export class TranslationService {
         updatedAt: new Date()
       }
     });
-
+    
     // Clear cache
     this.cache.delete(`${params.locale}:${params.namespace}`);
   }
-
+  
   /**
    * Import translations from JSON
    */
@@ -39093,24 +39798,24 @@ export class TranslationService {
   }): Promise<void> {
     const content = fs.readFileSync(params.filePath, 'utf-8');
     const data = JSON.parse(content);
-
+    
     const flatten = (obj: any, prefix = ''): any => {
       return Object.keys(obj).reduce((acc, key) => {
         const value = obj[key];
         const newKey = prefix ? `${prefix}.${key}` : key;
-
+        
         if (typeof value === 'object' && value !== null) {
           Object.assign(acc, flatten(value, newKey));
         } else {
           acc[newKey] = value;
         }
-
+        
         return acc;
       }, {} as any);
     };
-
+    
     const flattened = flatten(data);
-
+    
     for (const [key, value] of Object.entries(flattened)) {
       await this.addTranslation({
         locale: params.locale,
@@ -39120,7 +39825,7 @@ export class TranslationService {
       });
     }
   }
-
+  
   /**
    * Auto-translate using AI
    */
@@ -39131,13 +39836,13 @@ export class TranslationService {
   }): Promise<void> {
     // Get source translations
     const source = await this.getTranslations(params.sourceLocale, params.namespace);
-
+    
     // For each target locale
     for (const targetLocale of params.targetLocales) {
       for (const [key, value] of Object.entries(source)) {
         // Use AI translation service (OpenAI, Google Translate, etc.)
         const translated = await this.translateText(value as string, targetLocale);
-
+        
         await this.addTranslation({
           locale: targetLocale,
           namespace: params.namespace,
@@ -39147,13 +39852,13 @@ export class TranslationService {
       }
     }
   }
-
+  
   private static async translateText(text: string, targetLocale: string): Promise<string> {
     // Implement AI translation
     // For now, return original text
     return text;
   }
-
+  
   /**
    * Get supported locales
    */
@@ -39180,29 +39885,29 @@ export function useTranslation(namespace: string = 'common') {
   const [locale, setLocale] = useState(() => {
     return localStorage.getItem('locale') || navigator.language.split('-')[0] || 'en';
   });
-
+  
   const { data: translations } = useQuery<TranslationData>({
     queryKey: ['/api/translations', locale, namespace]
   });
-
+  
   const t = (key: string, params?: Record<string, any>): string => {
     let text = translations?.[key] || key;
-
+    
     if (params) {
       Object.entries(params).forEach(([param, value]) => {
         text = text.replace(`{{${param}}}`, String(value));
       });
     }
-
+    
     return text;
   };
-
+  
   const changeLocale = (newLocale: string) => {
     setLocale(newLocale);
     localStorage.setItem('locale', newLocale);
     window.location.reload(); // Reload to apply new locale
   };
-
+  
   return { t, locale, changeLocale };
 }
 
@@ -39229,15 +39934,15 @@ interface Locale {
 
 export function LanguageSelector() {
   const { locale, changeLocale } = useTranslation();
-
+  
   const { data: locales } = useQuery<Locale[]>({
     queryKey: ['/api/locales']
   });
-
+  
   return (
     <div className="flex items-center gap-2" data-testid="language-selector">
       <Globe className="h-4 w-4 text-gray-500" />
-
+      
       <Select value={locale} onValueChange={changeLocale}>
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Select language" />
@@ -39398,10 +40103,10 @@ export class EmailCampaignService {
       variables: params.variables,
       createdAt: new Date()
     }).returning();
-
+    
     return template;
   }
-
+  
   /**
    * Create campaign
    */
@@ -39419,10 +40124,10 @@ export class EmailCampaignService {
       scheduledFor: params.scheduledFor,
       createdAt: new Date()
     }).returning();
-
+    
     return campaign;
   }
-
+  
   /**
    * Send campaign
    */
@@ -39431,19 +40136,19 @@ export class EmailCampaignService {
       where: eq(emailCampaigns.id, campaignId),
       with: { template: true }
     });
-
+    
     if (!campaign) {
       throw new Error('Campaign not found');
     }
-
+    
     // Get subscribers
     const subscribers = await this.getSubscribers(campaign.segmentId);
-
+    
     // Update campaign status
     await db.update(emailCampaigns)
       .set({ status: 'sending', sentAt: new Date() })
       .where(eq(emailCampaigns.id, campaignId));
-
+    
     // Send emails
     for (const subscriber of subscribers) {
       try {
@@ -39453,7 +40158,7 @@ export class EmailCampaignService {
           html: this.replaceVariables(campaign.template.htmlContent, subscriber),
           text: this.replaceVariables(campaign.template.textContent, subscriber)
         });
-
+        
         // Track sent
         await db.insert(campaignSubscribers).values({
           campaignId,
@@ -39463,7 +40168,7 @@ export class EmailCampaignService {
         });
       } catch (error) {
         console.error(`Failed to send to ${subscriber.email}:`, error);
-
+        
         await db.insert(campaignSubscribers).values({
           campaignId,
           subscriberId: subscriber.id,
@@ -39472,13 +40177,13 @@ export class EmailCampaignService {
         });
       }
     }
-
+    
     // Update campaign status
     await db.update(emailCampaigns)
       .set({ status: 'sent', completedAt: new Date() })
       .where(eq(emailCampaigns.id, campaignId));
   }
-
+  
   private static async sendEmail(params: {
     to: string;
     subject: string;
@@ -39493,24 +40198,24 @@ export class EmailCampaignService {
       text: params.text
     });
   }
-
+  
   private static replaceVariables(content: string, subscriber: any): string {
     let result = content;
-
+    
     result = result.replace(/{{name}}/g, subscriber.name || 'there');
     result = result.replace(/{{email}}/g, subscriber.email);
     result = result.replace(/{{unsubscribe_link}}/g, 
       `https://mundotango.life/unsubscribe?token=${subscriber.unsubscribeToken}`
     );
-
+    
     return result;
   }
-
+  
   private static async getSubscribers(segmentId?: number): Promise<any[]> {
     // Implementation to get subscribers based on segment
     return [];
   }
-
+  
   /**
    * Track email open
    */
@@ -39525,7 +40230,7 @@ export class EmailCampaignService {
         eq(campaignSubscribers.subscriberId, params.subscriberId)
       ));
   }
-
+  
   /**
    * Track email click
    */
@@ -39541,7 +40246,7 @@ export class EmailCampaignService {
         eq(campaignSubscribers.subscriberId, params.subscriberId)
       ));
   }
-
+  
   /**
    * Get campaign analytics
    */
@@ -39556,9 +40261,9 @@ export class EmailCampaignService {
       FROM campaign_subscribers
       WHERE campaign_id = ${campaignId}
     `);
-
+    
     const result = stats.rows[0];
-
+    
     return {
       totalSent: parseInt(result.total_sent),
       opened: parseInt(result.opened),
@@ -39601,7 +40306,7 @@ export class SMSService {
       to: params.to
     });
   }
-
+  
   /**
    * Send bulk SMS
    */
@@ -39612,10 +40317,10 @@ export class SMSService {
     const promises = params.recipients.map(to =>
       this.send({ to, message: params.message })
     );
-
+    
     await Promise.all(promises);
   }
-
+  
   /**
    * Send WhatsApp message
    */
@@ -39629,7 +40334,7 @@ export class SMSService {
       to: `whatsapp:${params.to}`
     });
   }
-
+  
   /**
    * Send verification code
    */
@@ -39642,7 +40347,7 @@ export class SMSService {
       message: `Your Mundo Tango verification code is: ${params.code}`
     });
   }
-
+  
   /**
    * Send event reminder
    */
@@ -39652,7 +40357,7 @@ export class SMSService {
     startTime: Date;
   }): Promise<void> {
     const message = `Reminder: ${params.eventTitle} starts at ${params.startTime.toLocaleString()}`;
-
+    
     await this.send({
       to: params.phoneNumber,
       message
@@ -39688,9 +40393,9 @@ export class CalendarService {
   }): Promise<string> {
     const oauth2Client = new google.auth.OAuth2();
     oauth2Client.setCredentials({ access_token: params.accessToken });
-
+    
     const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-
+    
     const response = await calendar.events.insert({
       calendarId: 'primary',
       requestBody: {
@@ -39707,10 +40412,10 @@ export class CalendarService {
         location: params.event.location
       }
     });
-
+    
     return response.data.htmlLink!;
   }
-
+  
   /**
    * Generate iCal file
    */
@@ -39724,7 +40429,7 @@ export class CalendarService {
     };
   }): string {
     const cal = ical({ name: 'Mundo Tango Events' });
-
+    
     cal.createEvent({
       start: params.event.startTime,
       end: params.event.endTime,
@@ -39733,10 +40438,10 @@ export class CalendarService {
       location: params.event.location,
       url: 'https://mundotango.life'
     });
-
+    
     return cal.toString();
   }
-
+  
   /**
    * Get user availability
    */
@@ -39750,7 +40455,7 @@ export class CalendarService {
       where: eq(eventAttendees.userId, params.userId),
       with: { event: true }
     });
-
+    
     // Filter events in date range
     const busySlots = events
       .filter(e => 
@@ -39761,10 +40466,10 @@ export class CalendarService {
         start: e.event.startDate,
         end: e.event.endDate || e.event.startDate
       }));
-
+    
     return busySlots;
   }
-
+  
   /**
    * Schedule meeting
    */
@@ -39776,7 +40481,7 @@ export class CalendarService {
   }): Promise<Date | null> {
     // Find common availability
     const allParticipants = [params.organizerId, ...params.participantIds];
-
+    
     const availabilities = await Promise.all(
       allParticipants.map(userId =>
         this.getAvailability({
@@ -39786,17 +40491,17 @@ export class CalendarService {
         })
       )
     );
-
+    
     // Find first available slot
     const slots = this.findAvailableSlots(
       availabilities,
       params.preferredDate,
       params.duration
     );
-
+    
     return slots[0] || null;
   }
-
+  
   private static findAvailableSlots(
     availabilities: Array<Array<{ start: Date; end: Date }>>,
     startDate: Date,
@@ -39820,33 +40525,33 @@ import { useQuery } from '@tanstack/react-query';
 
 export function EventCalendar() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-
+  
   const { data: events } = useQuery({
     queryKey: ['/api/calendar/events', selectedDate.toISOString()]
   });
-
+  
   const handleAddToCalendar = async (eventId: number) => {
     // Download iCal file
     const response = await fetch(`/api/events/${eventId}/ical`);
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
-
+    
     const a = document.createElement('a');
     a.href = url;
     a.download = 'event.ics';
     a.click();
   };
-
+  
   const handleGoogleCalendar = async (eventId: number) => {
     // Redirect to Google Calendar OAuth
     window.location.href = `/api/calendar/google/authorize?eventId=${eventId}`;
   };
-
+  
   return (
     <div className="space-y-6" data-testid="event-calendar">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Event Calendar</h2>
-
+        
         <div className="flex gap-2">
           <Button variant="outline">
             <CalendarIcon className="mr-2 h-4 w-4" />
@@ -39857,7 +40562,7 @@ export function EventCalendar() {
           </Button>
         </div>
       </div>
-
+      
       <div className="grid gap-6 md:grid-cols-[300px_1fr]">
         <Calendar
           mode="single"
@@ -39865,12 +40570,12 @@ export function EventCalendar() {
           onSelect={(date) => date && setSelectedDate(date)}
           className="rounded-md border"
         />
-
+        
         <div className="space-y-4">
           <h3 className="font-semibold">
             Events on {selectedDate.toLocaleDateString()}
           </h3>
-
+          
           {events?.map((event: any) => (
             <div key={event.id} className="border rounded-lg p-4">
               <h4 className="font-semibold">{event.title}</h4>
@@ -39878,7 +40583,7 @@ export function EventCalendar() {
               <p className="text-sm mt-2">
                 {new Date(event.startDate).toLocaleTimeString()}
               </p>
-
+              
               <div className="flex gap-2 mt-4">
                 <Button
                   size="sm"
@@ -39888,7 +40593,7 @@ export function EventCalendar() {
                   <Download className="mr-2 h-4 w-4" />
                   Download .ics
                 </Button>
-
+                
                 <Button
                   size="sm"
                   variant="outline"
@@ -39985,7 +40690,7 @@ export class RBACService {
       where: eq(userRoles.userId, params.userId),
       with: { role: true }
     });
-
+    
     // Check if any role has the permission
     for (const userRole of userRolesList) {
       if (userRole.role.permissions.includes(params.permission)) {
@@ -39996,17 +40701,17 @@ export class RBACService {
             resource: params.resource.type,
             data: params.resource
           });
-
+          
           if (!allowed) continue;
         }
-
+        
         return true;
       }
     }
-
+    
     return false;
   }
-
+  
   /**
    * Check resource-level policy
    */
@@ -40021,14 +40726,14 @@ export class RBACService {
         eq(resourcePolicies.resource, params.resource)
       )
     });
-
+    
     for (const policy of policies) {
       if (!policy.conditions) continue;
-
+      
       // Evaluate conditions
       const conditionsMet = policy.conditions.every(condition => {
         const fieldValue = params.data[condition.field];
-
+        
         switch (condition.operator) {
           case 'equals':
             return fieldValue === condition.value;
@@ -40046,15 +40751,15 @@ export class RBACService {
             return false;
         }
       });
-
+      
       if (conditionsMet) {
         return policy.effect === 'allow';
       }
     }
-
+    
     return true; // Default allow if no policies match
   }
-
+  
   /**
    * Assign role to user
    */
@@ -40072,7 +40777,7 @@ export class RBACService {
       assignedAt: new Date()
     });
   }
-
+  
   /**
    * Remove role from user
    */
@@ -40086,7 +40791,7 @@ export class RBACService {
         eq(userRoles.roleId, params.roleId)
       ));
   }
-
+  
   /**
    * Get user permissions
    */
@@ -40098,10 +40803,10 @@ export class RBACService {
       WHERE ur.user_id = ${userId}
         AND (ur.expires_at IS NULL OR ur.expires_at > NOW())
     `);
-
+    
     return result.rows.map(row => row.permission);
   }
-
+  
   /**
    * Create role
    */
@@ -40118,10 +40823,10 @@ export class RBACService {
       priority: params.priority || 0,
       createdAt: new Date()
     }).returning();
-
+    
     return role;
   }
-
+  
   /**
    * Update role permissions
    */
@@ -40151,19 +40856,19 @@ export function requirePermission(permission: string, resourceGetter?: (req: Req
     if (!req.user) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-
+    
     const resource = resourceGetter ? resourceGetter(req) : undefined;
-
+    
     const hasPermission = await RBACService.hasPermission({
       userId: req.user.id,
       permission,
       resource
     });
-
+    
     if (!hasPermission) {
       return res.status(403).json({ error: 'Forbidden: Insufficient permissions' });
     }
-
+    
     next();
   };
 }
@@ -40190,13 +40895,13 @@ import jsforce from 'jsforce';
 
 export class SalesforceService {
   private conn: jsforce.Connection;
-
+  
   constructor() {
     this.conn = new jsforce.Connection({
       loginUrl: process.env.SALESFORCE_LOGIN_URL || 'https://login.salesforce.com'
     });
   }
-
+  
   /**
    * Authenticate with Salesforce
    */
@@ -40206,7 +40911,7 @@ export class SalesforceService {
       process.env.SALESFORCE_PASSWORD! + process.env.SALESFORCE_SECURITY_TOKEN!
     );
   }
-
+  
   /**
    * Sync contact to Salesforce
    */
@@ -40218,13 +40923,13 @@ export class SalesforceService {
     city?: string;
   }): Promise<string> {
     await this.authenticate();
-
+    
     // Check if contact exists
     const existing = await this.conn.sobject('Contact')
       .find({ Email: user.email })
       .limit(1)
       .execute();
-
+    
     if (existing.length > 0) {
       // Update existing contact
       await this.conn.sobject('Contact').update({
@@ -40234,7 +40939,7 @@ export class SalesforceService {
         Phone: user.phone,
         MailingCity: user.city
       });
-
+      
       return existing[0].Id;
     } else {
       // Create new contact
@@ -40245,11 +40950,11 @@ export class SalesforceService {
         Phone: user.phone,
         MailingCity: user.city
       });
-
+      
       return result.id;
     }
   }
-
+  
   /**
    * Create opportunity
    */
@@ -40261,7 +40966,7 @@ export class SalesforceService {
     contactId: string;
   }): Promise<string> {
     await this.authenticate();
-
+    
     const result = await this.conn.sobject('Opportunity').create({
       Name: params.name,
       Amount: params.amount,
@@ -40269,24 +40974,24 @@ export class SalesforceService {
       StageName: params.stageName,
       ContactId: params.contactId
     });
-
+    
     return result.id;
   }
-
+  
   /**
    * Get contact details
    */
   async getContact(email: string): Promise<any> {
     await this.authenticate();
-
+    
     const contacts = await this.conn.sobject('Contact')
       .find({ Email: email })
       .limit(1)
       .execute();
-
+    
     return contacts[0] || null;
   }
-
+  
   /**
    * Add note to contact
    */
@@ -40296,7 +41001,7 @@ export class SalesforceService {
     body: string;
   }): Promise<void> {
     await this.authenticate();
-
+    
     await this.conn.sobject('Note').create({
       ParentId: params.contactId,
       Title: params.title,
@@ -40315,11 +41020,11 @@ import axios from 'axios';
 export class HubSpotService {
   private apiKey: string;
   private baseUrl = 'https://api.hubapi.com';
-
+  
   constructor() {
     this.apiKey = process.env.HUBSPOT_API_KEY!;
   }
-
+  
   /**
    * Create or update contact
    */
@@ -40354,14 +41059,14 @@ export class HubSpotService {
           }
         }
       );
-
+      
       return response.data.vid.toString();
     } catch (error) {
       console.error('HubSpot upsert contact error:', error);
       throw error;
     }
   }
-
+  
   /**
    * Get contact by email
    */
@@ -40375,7 +41080,7 @@ export class HubSpotService {
           }
         }
       );
-
+      
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 404) {
@@ -40384,7 +41089,7 @@ export class HubSpotService {
       throw error;
     }
   }
-
+  
   /**
    * Create deal
    */
@@ -40417,10 +41122,10 @@ export class HubSpotService {
         }
       }
     );
-
+    
     return response.data.dealId.toString();
   }
-
+  
   /**
    * Add contact to list
    */
@@ -40441,7 +41146,7 @@ export class HubSpotService {
       }
     );
   }
-
+  
   /**
    * Track event
    */
@@ -40481,12 +41186,12 @@ import { eq } from 'drizzle-orm';
 export class CRMSyncService {
   private salesforce: SalesforceService;
   private hubspot: HubSpotService;
-
+  
   constructor() {
     this.salesforce = new SalesforceService();
     this.hubspot = new HubSpotService();
   }
-
+  
   /**
    * Sync user to all CRMs
    */
@@ -40494,11 +41199,11 @@ export class CRMSyncService {
     const user = await db.query.users.findFirst({
       where: eq(users.id, userId)
     });
-
+    
     if (!user) {
       throw new Error('User not found');
     }
-
+    
     // Sync to Salesforce
     if (process.env.SALESFORCE_ENABLED === 'true') {
       try {
@@ -40509,13 +41214,13 @@ export class CRMSyncService {
           phone: user.phone,
           city: user.city
         });
-
+        
         console.log(`✅ Synced to Salesforce: ${contactId}`);
       } catch (error) {
         console.error('Salesforce sync failed:', error);
       }
     }
-
+    
     // Sync to HubSpot
     if (process.env.HUBSPOT_ENABLED === 'true') {
       try {
@@ -40526,14 +41231,14 @@ export class CRMSyncService {
           phone: user.phone,
           city: user.city
         });
-
+        
         console.log(`✅ Synced to HubSpot: ${contactId}`);
       } catch (error) {
         console.error('HubSpot sync failed:', error);
       }
     }
   }
-
+  
   /**
    * Track event in CRMs
    */
@@ -40550,7 +41255,7 @@ export class CRMSyncService {
         console.error('HubSpot event tracking failed:', error);
       }
     }
-
+    
     // Track in Salesforce (via custom object or task)
     if (process.env.SALESFORCE_ENABLED === 'true') {
       try {
@@ -40598,28 +41303,28 @@ jobs:
   # ========================================
   # CONTINUOUS INTEGRATION
   # ========================================
-
+  
   lint:
     name: Lint & Format Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-
+      
       - name: Install dependencies
         run: npm ci
-
+      
       - name: Run ESLint
         run: npm run lint
-
+      
       - name: Check formatting
         run: npm run format:check
-
+  
   test:
     name: Run Tests
     runs-on: ubuntu-latest
@@ -40636,7 +41341,7 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-
+      
       redis:
         image: redis:7
         options: >-
@@ -40646,110 +41351,110 @@ jobs:
           --health-retries 5
         ports:
           - 6379:6379
-
+    
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-
+      
       - name: Install dependencies
         run: npm ci
-
+      
       - name: Run unit tests
         run: npm run test:unit
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
           REDIS_URL: redis://localhost:6379
-
+      
       - name: Run integration tests
         run: npm run test:integration
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
           REDIS_URL: redis://localhost:6379
-
+      
       - name: Upload coverage
         uses: codecov/codecov-action@v3
         with:
           files: ./coverage/coverage-final.json
           flags: unittests
-
+  
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-
+      
       - name: Install dependencies
         run: npm ci
-
+      
       - name: Install Playwright
         run: npx playwright install --with-deps
-
+      
       - name: Run E2E tests
         run: npm run test:e2e
-
+      
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: playwright-report
           path: playwright-report/
-
+  
   security:
     name: Security Scan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Run npm audit
         run: npm audit --audit-level=high
-
+      
       - name: Run Snyk security scan
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           args: --severity-threshold=high
-
+  
   build:
     name: Build Application
     runs-on: ubuntu-latest
     needs: [lint, test]
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-
+      
       - name: Install dependencies
         run: npm ci
-
+      
       - name: Build application
         run: npm run build
-
+      
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: build
           path: dist/
-
+  
   # ========================================
   # DOCKER BUILD & PUSH
   # ========================================
-
+  
   docker:
     name: Build & Push Docker Image
     runs-on: ubuntu-latest
@@ -40757,17 +41462,17 @@ jobs:
     if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
+      
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.DOCKER_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
+      
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -40778,7 +41483,7 @@ jobs:
             type=sha,prefix={{branch}}-
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-
+      
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
@@ -40788,11 +41493,11 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
+  
   # ========================================
   # CONTINUOUS DEPLOYMENT
   # ========================================
-
+  
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
@@ -40803,31 +41508,31 @@ jobs:
       url: https://staging.mundotango.life
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-
+      
       - name: Deploy to ECS
         run: |
           aws ecs update-service \
             --cluster mundotango-staging \
             --service web \
             --force-new-deployment
-
+      
       - name: Wait for deployment
         run: |
           aws ecs wait services-stable \
             --cluster mundotango-staging \
             --services web
-
+      
       - name: Run smoke tests
         run: |
           curl -f https://staging.mundotango.life/health || exit 1
-
+  
   deploy-production:
     name: Deploy to Production
     runs-on: ubuntu-latest
@@ -40838,40 +41543,40 @@ jobs:
       url: https://mundotango.life
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-
+      
       - name: Deploy to ECS (Blue/Green)
         run: |
           # Update task definition
           TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition mundotango-prod)
           NEW_TASK_DEF=$(echo $TASK_DEFINITION | jq '.taskDefinition | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities)')
-
+          
           # Register new task definition
           NEW_TASK_ARN=$(aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEF" | jq -r '.taskDefinition.taskDefinitionArn')
-
+          
           # Update service
           aws ecs update-service \
             --cluster mundotango-production \
             --service web \
             --task-definition $NEW_TASK_ARN \
             --force-new-deployment
-
+      
       - name: Wait for deployment
         run: |
           aws ecs wait services-stable \
             --cluster mundotango-production \
             --services web
-
+      
       - name: Run smoke tests
         run: |
           curl -f https://mundotango.life/health || exit 1
-
+      
       - name: Notify Slack
         uses: slackapi/slack-github-action@v1
         with:
@@ -40992,7 +41697,7 @@ services:
     restart: unless-stopped
     networks:
       - app-network
-
+  
   # ========================================
   # PostgreSQL Database
   # ========================================
@@ -41014,7 +41719,7 @@ services:
     restart: unless-stopped
     networks:
       - app-network
-
+  
   # ========================================
   # Redis Cache
   # ========================================
@@ -41032,7 +41737,7 @@ services:
     restart: unless-stopped
     networks:
       - app-network
-
+  
   # ========================================
   # Nginx Reverse Proxy
   # ========================================
@@ -41285,32 +41990,32 @@ import promClient from 'prom-client';
 
 export class MetricsService {
   private static registry: promClient.Registry;
-
+  
   // Counters
   private static httpRequestsTotal: promClient.Counter;
   private static httpRequestErrors: promClient.Counter;
   private static databaseQueriesTotal: promClient.Counter;
   private static cacheHits: promClient.Counter;
   private static cacheMisses: promClient.Counter;
-
+  
   // Histograms
   private static httpRequestDuration: promClient.Histogram;
   private static databaseQueryDuration: promClient.Histogram;
-
+  
   // Gauges
   private static activeConnections: promClient.Gauge;
   private static memoryUsage: promClient.Gauge;
   private static cpuUsage: promClient.Gauge;
-
+  
   /**
    * Initialize metrics
    */
   static initialize(): void {
     this.registry = new promClient.Registry();
-
+    
     // Add default metrics (CPU, memory, etc.)
     promClient.collectDefaultMetrics({ register: this.registry });
-
+    
     // HTTP Request Counter
     this.httpRequestsTotal = new promClient.Counter({
       name: 'http_requests_total',
@@ -41318,7 +42023,7 @@ export class MetricsService {
       labelNames: ['method', 'route', 'status_code'],
       registers: [this.registry]
     });
-
+    
     // HTTP Error Counter
     this.httpRequestErrors = new promClient.Counter({
       name: 'http_request_errors_total',
@@ -41326,7 +42031,7 @@ export class MetricsService {
       labelNames: ['method', 'route', 'error_type'],
       registers: [this.registry]
     });
-
+    
     // Database Query Counter
     this.databaseQueriesTotal = new promClient.Counter({
       name: 'database_queries_total',
@@ -41334,7 +42039,7 @@ export class MetricsService {
       labelNames: ['operation', 'table'],
       registers: [this.registry]
     });
-
+    
     // Cache Metrics
     this.cacheHits = new promClient.Counter({
       name: 'cache_hits_total',
@@ -41342,14 +42047,14 @@ export class MetricsService {
       labelNames: ['cache_name'],
       registers: [this.registry]
     });
-
+    
     this.cacheMisses = new promClient.Counter({
       name: 'cache_misses_total',
       help: 'Total number of cache misses',
       labelNames: ['cache_name'],
       registers: [this.registry]
     });
-
+    
     // HTTP Request Duration
     this.httpRequestDuration = new promClient.Histogram({
       name: 'http_request_duration_seconds',
@@ -41358,7 +42063,7 @@ export class MetricsService {
       buckets: [0.1, 0.5, 1, 2, 5, 10],
       registers: [this.registry]
     });
-
+    
     // Database Query Duration
     this.databaseQueryDuration = new promClient.Histogram({
       name: 'database_query_duration_seconds',
@@ -41367,38 +42072,38 @@ export class MetricsService {
       buckets: [0.01, 0.05, 0.1, 0.5, 1, 2],
       registers: [this.registry]
     });
-
+    
     // Active Connections
     this.activeConnections = new promClient.Gauge({
       name: 'active_connections',
       help: 'Number of active connections',
       registers: [this.registry]
     });
-
+    
     // Memory Usage
     this.memoryUsage = new promClient.Gauge({
       name: 'memory_usage_bytes',
       help: 'Memory usage in bytes',
       registers: [this.registry]
     });
-
+    
     // CPU Usage
     this.cpuUsage = new promClient.Gauge({
       name: 'cpu_usage_percent',
       help: 'CPU usage percentage',
       registers: [this.registry]
     });
-
+    
     // Update system metrics every 5 seconds
     setInterval(() => {
       const memUsage = process.memoryUsage();
       this.memoryUsage.set(memUsage.heapUsed);
-
+      
       // CPU usage would need a more sophisticated calculation
       this.cpuUsage.set(process.cpuUsage().user / 1000000);
     }, 5000);
   }
-
+  
   /**
    * Record HTTP request
    */
@@ -41413,7 +42118,7 @@ export class MetricsService {
       route: params.route,
       status_code: params.statusCode
     });
-
+    
     this.httpRequestDuration.observe(
       {
         method: params.method,
@@ -41423,7 +42128,7 @@ export class MetricsService {
       params.duration / 1000
     );
   }
-
+  
   /**
    * Record HTTP error
    */
@@ -41438,7 +42143,7 @@ export class MetricsService {
       error_type: params.errorType
     });
   }
-
+  
   /**
    * Record database query
    */
@@ -41451,7 +42156,7 @@ export class MetricsService {
       operation: params.operation,
       table: params.table
     });
-
+    
     this.databaseQueryDuration.observe(
       {
         operation: params.operation,
@@ -41460,7 +42165,7 @@ export class MetricsService {
       params.duration / 1000
     );
   }
-
+  
   /**
    * Record cache access
    */
@@ -41474,7 +42179,7 @@ export class MetricsService {
       this.cacheMisses.inc({ cache_name: params.cacheName });
     }
   }
-
+  
   /**
    * Get metrics
    */
@@ -41493,10 +42198,10 @@ import { MetricsService } from '../services/MetricsService';
 
 export function metricsMiddleware(req: Request, res: Response, next: NextFunction) {
   const start = Date.now();
-
+  
   res.on('finish', () => {
     const duration = Date.now() - start;
-
+    
     MetricsService.recordHttpRequest({
       method: req.method,
       route: req.route?.path || req.path,
@@ -41504,7 +42209,7 @@ export function metricsMiddleware(req: Request, res: Response, next: NextFunctio
       duration
     });
   });
-
+  
   next();
 }
 ```
@@ -41522,7 +42227,7 @@ import 'winston-daily-rotate-file';
 
 export class LoggerService {
   private static instance: winston.Logger;
-
+  
   /**
    * Initialize logger
    */
@@ -41533,7 +42238,7 @@ export class LoggerService {
       winston.format.splat(),
       winston.format.json()
     );
-
+    
     this.instance = winston.createLogger({
       level: process.env.LOG_LEVEL || 'info',
       format: logFormat,
@@ -41548,16 +42253,16 @@ export class LoggerService {
             winston.format.colorize(),
             winston.format.printf(({ timestamp, level, message, ...metadata }) => {
               let msg = `${timestamp} [${level}]: ${message}`;
-
+              
               if (Object.keys(metadata).length > 0) {
                 msg += ` ${JSON.stringify(metadata)}`;
               }
-
+              
               return msg;
             })
           )
         }),
-
+        
         // Error log file (rotated daily)
         new winston.transports.DailyRotateFile({
           filename: 'logs/error-%DATE%.log',
@@ -41566,7 +42271,7 @@ export class LoggerService {
           maxSize: '20m',
           maxFiles: '14d'
         }),
-
+        
         // Combined log file (rotated daily)
         new winston.transports.DailyRotateFile({
           filename: 'logs/combined-%DATE%.log',
@@ -41582,10 +42287,10 @@ export class LoggerService {
         new winston.transports.File({ filename: 'logs/rejections.log' })
       ]
     });
-
+    
     return this.instance;
   }
-
+  
   /**
    * Get logger instance
    */
@@ -41593,10 +42298,10 @@ export class LoggerService {
     if (!this.instance) {
       this.initialize();
     }
-
+    
     return this.instance;
   }
-
+  
   /**
    * Create child logger with context
    */
@@ -41618,7 +42323,7 @@ import { logger } from '../services/LoggerService';
 
 export function loggingMiddleware(req: Request, res: Response, next: NextFunction) {
   const start = Date.now();
-
+  
   // Log request
   logger.info('Incoming request', {
     method: req.method,
@@ -41627,11 +42332,11 @@ export function loggingMiddleware(req: Request, res: Response, next: NextFunctio
     userAgent: req.get('user-agent'),
     userId: req.user?.id
   });
-
+  
   // Log response
   res.on('finish', () => {
     const duration = Date.now() - start;
-
+    
     const logData = {
       method: req.method,
       url: req.url,
@@ -41639,14 +42344,14 @@ export function loggingMiddleware(req: Request, res: Response, next: NextFunctio
       duration: `${duration}ms`,
       userId: req.user?.id
     };
-
+    
     if (res.statusCode >= 400) {
       logger.error('Request failed', logData);
     } else {
       logger.info('Request completed', logData);
     }
   });
-
+  
   next();
 }
 ```
@@ -41675,7 +42380,7 @@ export const esClient = new Client({
 export async function initializeElasticsearch(): Promise<void> {
   // Create logs index
   const logsIndexExists = await esClient.indices.exists({ index: 'logs' });
-
+  
   if (!logsIndexExists) {
     await esClient.indices.create({
       index: 'logs',
@@ -41698,10 +42403,10 @@ export async function initializeElasticsearch(): Promise<void> {
       }
     });
   }
-
+  
   // Create metrics index
   const metricsIndexExists = await esClient.indices.exists({ index: 'metrics' });
-
+  
   if (!metricsIndexExists) {
     await esClient.indices.create({
       index: 'metrics',
@@ -41730,7 +42435,7 @@ input {
     start_position => "beginning"
     codec => json
   }
-
+  
   tcp {
     port => 5000
     codec => json
@@ -41743,12 +42448,12 @@ filter {
       add_tag => ["error"]
     }
   }
-
+  
   date {
     match => ["timestamp", "ISO8601"]
     target => "@timestamp"
   }
-
+  
   grok {
     match => {
       "message" => "%{GREEDYDATA:log_message}"
@@ -41763,7 +42468,7 @@ output {
     user => "elastic"
     password => "changeme"
   }
-
+  
   if "error" in [tags] {
     email {
       to => "alerts@mundotango.life"
@@ -41794,7 +42499,7 @@ export function initializeNewRelic(): void {
       'express',
       require('express')
     );
-
+    
     console.log('✅ New Relic APM initialized');
   }
 }
@@ -41848,7 +42553,7 @@ export function initializeDatadog(): void {
       analytics: true,
       runtimeMetrics: true
     });
-
+    
     console.log('✅ Datadog APM initialized');
   }
 }
@@ -41858,7 +42563,7 @@ export function initializeDatadog(): void {
  */
 export function createSpan(name: string, callback: () => any): any {
   const span = tracer.startSpan(name);
-
+  
   try {
     const result = callback();
     span.finish();
@@ -41899,7 +42604,7 @@ export class AlertService {
       error: '#ff0000',
       critical: '#8b0000'
     };
-
+    
     await axios.post(process.env.SLACK_WEBHOOK_URL!, {
       attachments: [
         {
@@ -41919,7 +42624,7 @@ export class AlertService {
       ]
     });
   }
-
+  
   /**
    * Send PagerDuty alert
    */
@@ -41943,7 +42648,7 @@ export class AlertService {
       }
     });
   }
-
+  
   /**
    * Send email alert
    */
@@ -41955,7 +42660,7 @@ export class AlertService {
     // Use email service (Resend, SendGrid, etc.)
     logger.info('Email alert sent', params);
   }
-
+  
   /**
    * Trigger alert based on severity
    */
@@ -41966,15 +42671,15 @@ export class AlertService {
     details?: Record<string, any>;
   }): Promise<void> {
     logger.warn('Alert triggered', params);
-
+    
     // Send to Slack
     await this.sendSlackAlert(params);
-
+    
     // Send to PagerDuty for critical alerts
     if (params.severity === 'critical') {
       await this.sendPagerDutyAlert(params);
     }
-
+    
     // Send email for error and critical alerts
     if (params.severity === 'error' || params.severity === 'critical') {
       await this.sendEmailAlert({
@@ -42000,14 +42705,14 @@ Complete monitoring, logging, and APM systems! 📊📈🔍
 # File: terraform/main.tf
 terraform {
   required_version = ">= 1.0"
-
+  
   required_providers {
     aws = {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
   }
-
+  
   backend "s3" {
     bucket = "mundotango-terraform-state"
     key    = "production/terraform.tfstate"
@@ -42019,7 +42724,7 @@ terraform {
 
 provider "aws" {
   region = var.aws_region
-
+  
   default_tags {
     tags = {
       Project     = "MundoTango"
@@ -42036,7 +42741,7 @@ resource "aws_vpc" "main" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support   = true
-
+  
   tags = {
     Name = "mundotango-vpc-${var.environment}"
   }
@@ -42047,9 +42752,9 @@ resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.${count.index + 1}.0/24"
   availability_zone = data.aws_availability_zones.available.names[count.index]
-
+  
   map_public_ip_on_launch = true
-
+  
   tags = {
     Name = "mundotango-public-${count.index + 1}"
   }
@@ -42060,7 +42765,7 @@ resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.${count.index + 10}.0/24"
   availability_zone = data.aws_availability_zones.available.names[count.index]
-
+  
   tags = {
     Name = "mundotango-private-${count.index + 1}"
   }
@@ -42068,7 +42773,7 @@ resource "aws_subnet" "private" {
 
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
-
+  
   tags = {
     Name = "mundotango-igw"
   }
@@ -42076,12 +42781,12 @@ resource "aws_internet_gateway" "main" {
 
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
-
+  
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.main.id
   }
-
+  
   tags = {
     Name = "mundotango-public-rt"
   }
@@ -42100,21 +42805,21 @@ resource "aws_security_group" "alb" {
   name        = "mundotango-alb-sg"
   description = "Security group for ALB"
   vpc_id      = aws_vpc.main.id
-
+  
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
+  
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
+  
   egress {
     from_port   = 0
     to_port     = 0
@@ -42127,14 +42832,14 @@ resource "aws_security_group" "ecs_tasks" {
   name        = "mundotango-ecs-tasks-sg"
   description = "Security group for ECS tasks"
   vpc_id      = aws_vpc.main.id
-
+  
   ingress {
     from_port       = 5000
     to_port         = 5000
     protocol        = "tcp"
     security_groups = [aws_security_group.alb.id]
   }
-
+  
   egress {
     from_port   = 0
     to_port     = 0
@@ -42148,7 +42853,7 @@ resource "aws_security_group" "ecs_tasks" {
 # ========================================
 resource "aws_ecs_cluster" "main" {
   name = "mundotango-${var.environment}"
-
+  
   setting {
     name  = "containerInsights"
     value = "enabled"
@@ -42163,21 +42868,21 @@ resource "aws_ecs_task_definition" "web" {
   memory                  = "1024"
   execution_role_arn      = aws_iam_role.ecs_execution_role.arn
   task_role_arn           = aws_iam_role.ecs_task_role.arn
-
+  
   container_definitions = jsonencode([{
     name  = "web"
     image = "${var.ecr_repository_url}:${var.image_tag}"
-
+    
     portMappings = [{
       containerPort = 5000
       protocol      = "tcp"
     }]
-
+    
     environment = [
       { name = "NODE_ENV", value = var.environment },
       { name = "PORT", value = "5000" }
     ]
-
+    
     secrets = [
       {
         name      = "DATABASE_URL"
@@ -42188,7 +42893,7 @@ resource "aws_ecs_task_definition" "web" {
         valueFrom = aws_ssm_parameter.redis_url.arn
       }
     ]
-
+    
     logConfiguration = {
       logDriver = "awslogs"
       options = {
@@ -42197,7 +42902,7 @@ resource "aws_ecs_task_definition" "web" {
         "awslogs-stream-prefix" = "web"
       }
     }
-
+    
     healthCheck = {
       command     = ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:5000/health || exit 1"]
       interval    = 30
@@ -42214,19 +42919,19 @@ resource "aws_ecs_service" "web" {
   task_definition = aws_ecs_task_definition.web.arn
   desired_count   = var.ecs_task_count
   launch_type     = "FARGATE"
-
+  
   network_configuration {
     subnets          = aws_subnet.private[*].id
     security_groups  = [aws_security_group.ecs_tasks.id]
     assign_public_ip = false
   }
-
+  
   load_balancer {
     target_group_arn = aws_lb_target_group.web.arn
     container_name   = "web"
     container_port   = 5000
   }
-
+  
   depends_on = [aws_lb_listener.https]
 }
 
@@ -42239,7 +42944,7 @@ resource "aws_lb" "main" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
   subnets            = aws_subnet.public[*].id
-
+  
   enable_deletion_protection = true
   enable_http2              = true
 }
@@ -42250,7 +42955,7 @@ resource "aws_lb_target_group" "web" {
   protocol    = "HTTP"
   vpc_id      = aws_vpc.main.id
   target_type = "ip"
-
+  
   health_check {
     path                = "/health"
     healthy_threshold   = 2
@@ -42259,7 +42964,7 @@ resource "aws_lb_target_group" "web" {
     interval            = 30
     matcher             = "200"
   }
-
+  
   deregistration_delay = 30
 }
 
@@ -42267,10 +42972,10 @@ resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.main.arn
   port              = "80"
   protocol          = "HTTP"
-
+  
   default_action {
     type = "redirect"
-
+    
     redirect {
       port        = "443"
       protocol    = "HTTPS"
@@ -42285,7 +42990,7 @@ resource "aws_lb_listener" "https" {
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
   certificate_arn   = aws_acm_certificate.main.arn
-
+  
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.web.arn
@@ -42304,7 +43009,7 @@ resource "aws_security_group" "rds" {
   name        = "mundotango-rds-sg"
   description = "Security group for RDS"
   vpc_id      = aws_vpc.main.id
-
+  
   ingress {
     from_port       = 5432
     to_port         = 5432
@@ -42318,28 +43023,28 @@ resource "aws_db_instance" "main" {
   engine         = "postgres"
   engine_version = "15.3"
   instance_class = var.db_instance_class
-
+  
   allocated_storage     = 100
   max_allocated_storage = 1000
   storage_type          = "gp3"
   storage_encrypted     = true
-
+  
   db_name  = "mundotango"
   username = "dbadmin"
   password = var.db_password
-
+  
   db_subnet_group_name   = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.rds.id]
-
+  
   backup_retention_period = 7
   backup_window          = "03:00-04:00"
   maintenance_window     = "mon:04:00-mon:05:00"
-
+  
   enabled_cloudwatch_logs_exports = ["postgresql", "upgrade"]
-
+  
   skip_final_snapshot = false
   final_snapshot_identifier = "mundotango-final-snapshot-${formatdate("YYYY-MM-DD-hhmm", timestamp())}"
-
+  
   tags = {
     Name = "mundotango-db"
   }
@@ -42357,7 +43062,7 @@ resource "aws_security_group" "redis" {
   name        = "mundotango-redis-sg"
   description = "Security group for Redis"
   vpc_id      = aws_vpc.main.id
-
+  
   ingress {
     from_port       = 6379
     to_port         = 6379
@@ -42374,7 +43079,7 @@ resource "aws_elasticache_cluster" "main" {
   parameter_group_name = "default.redis7"
   engine_version       = "7.0"
   port                 = 6379
-
+  
   subnet_group_name  = aws_elasticache_subnet_group.main.name
   security_group_ids = [aws_security_group.redis.id]
 }
@@ -42457,80 +43162,80 @@ export class BackupService {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const filename = `backup-${timestamp}.sql`;
     const filepath = path.join('/tmp', filename);
-
+    
     try {
       // Create PostgreSQL dump
       await execAsync(
         `pg_dump ${process.env.DATABASE_URL} > ${filepath}`
       );
-
+      
       // Compress backup
       await execAsync(`gzip ${filepath}`);
       const gzFilepath = `${filepath}.gz`;
-
+      
       // Upload to S3
       const fileContent = fs.readFileSync(gzFilepath);
-
+      
       await s3.send(new PutObjectCommand({
         Bucket: process.env.BACKUP_S3_BUCKET!,
         Key: `database/${filename}.gz`,
         Body: fileContent,
         ServerSideEncryption: 'AES256'
       }));
-
+      
       // Clean up
       fs.unlinkSync(gzFilepath);
-
+      
       logger.info('Database backup created', { filename });
-
+      
       return filename;
     } catch (error) {
       logger.error('Database backup failed', { error });
       throw error;
     }
   }
-
+  
   /**
    * Restore database from backup
    */
   static async restoreDatabaseBackup(filename: string): Promise<void> {
     const filepath = path.join('/tmp', filename);
-
+    
     try {
       // Download from S3
       const response = await s3.send(new GetObjectCommand({
         Bucket: process.env.BACKUP_S3_BUCKET!,
         Key: `database/${filename}`
       }));
-
+      
       const fileContent = await response.Body?.transformToByteArray();
       fs.writeFileSync(filepath, Buffer.from(fileContent!));
-
+      
       // Decompress
       await execAsync(`gunzip ${filepath}`);
       const sqlFilepath = filepath.replace('.gz', '');
-
+      
       // Restore to database
       await execAsync(
         `psql ${process.env.DATABASE_URL} < ${sqlFilepath}`
       );
-
+      
       // Clean up
       fs.unlinkSync(sqlFilepath);
-
+      
       logger.info('Database restored', { filename });
     } catch (error) {
       logger.error('Database restore failed', { error });
       throw error;
     }
   }
-
+  
   /**
    * Schedule automatic backups
    */
   static scheduleBackups(): void {
     const cron = require('node-cron');
-
+    
     // Daily backup at 3 AM
     cron.schedule('0 3 * * *', async () => {
       try {
@@ -42540,7 +43245,7 @@ export class BackupService {
         logger.error('Scheduled backup failed', { error });
       }
     });
-
+    
     // Weekly full backup on Sundays at 2 AM
     cron.schedule('0 2 * * 0', async () => {
       try {
@@ -42551,29 +43256,29 @@ export class BackupService {
       }
     });
   }
-
+  
   /**
    * Create full system backup
    */
   static async createFullBackup(): Promise<void> {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-
+    
     // Backup database
     await this.createDatabaseBackup();
-
+    
     // Backup uploaded files
     await this.backupFiles();
-
+    
     // Backup configuration
     await this.backupConfiguration();
-
+    
     logger.info('Full backup completed', { timestamp });
   }
-
+  
   private static async backupFiles(): Promise<void> {
     // Implementation for backing up uploaded files
   }
-
+  
   private static async backupConfiguration(): Promise<void> {
     // Implementation for backing up configuration
   }
@@ -42619,24 +43324,24 @@ export default function () {
   check(res, {
     'homepage status is 200': (r) => r.status === 200,
   }) || errorRate.add(1);
-
+  
   sleep(1);
-
+  
   // Events list
   res = http.get(`${BASE_URL}/api/events`);
   check(res, {
     'events status is 200': (r) => r.status === 200,
     'events response time < 500ms': (r) => r.timings.duration < 500,
   }) || errorRate.add(1);
-
+  
   sleep(1);
-
+  
   // User profile
   res = http.get(`${BASE_URL}/api/users/1`);
   check(res, {
     'profile status is 200': (r) => r.status === 200,
   }) || errorRate.add(1);
-
+  
   sleep(2);
 }
 ```
@@ -42675,7 +43380,7 @@ scenarios:
       - get:
           url: "/api/events/{{ eventId }}"
       - think: 3
-
+  
   - name: "User authentication flow"
     flow:
       - post:
@@ -42707,7 +43412,7 @@ import Vault from 'node-vault';
 
 export class VaultService {
   private vault: any;
-
+  
   constructor() {
     this.vault = Vault({
       apiVersion: 'v1',
@@ -42715,7 +43420,7 @@ export class VaultService {
       token: process.env.VAULT_TOKEN
     });
   }
-
+  
   /**
    * Read secret
    */
@@ -42728,7 +43433,7 @@ export class VaultService {
       throw error;
     }
   }
-
+  
   /**
    * Write secret
    */
@@ -42740,7 +43445,7 @@ export class VaultService {
       throw error;
     }
   }
-
+  
   /**
    * Delete secret
    */
@@ -42752,7 +43457,7 @@ export class VaultService {
       throw error;
     }
   }
-
+  
   /**
    * Generate database credentials
    */
@@ -42771,7 +43476,7 @@ export class VaultService {
       throw error;
     }
   }
-
+  
   /**
    * Encrypt data
    */
@@ -42786,7 +43491,7 @@ export class VaultService {
       throw error;
     }
   }
-
+  
   /**
    * Decrypt data
    */
@@ -42801,7 +43506,7 @@ export class VaultService {
       throw error;
     }
   }
-
+  
   /**
    * Rotate encryption key
    */
@@ -42828,11 +43533,11 @@ const ssm = new SSM({ region: 'us-east-1' });
 
 export class SecretsManager {
   private vaultService: VaultService;
-
+  
   constructor() {
     this.vaultService = new VaultService();
   }
-
+  
   /**
    * Get secret from appropriate source
    */
@@ -42841,7 +43546,7 @@ export class SecretsManager {
     if (process.env[key]) {
       return process.env[key]!;
     }
-
+    
     // Try Vault
     if (process.env.VAULT_ENABLED === 'true') {
       try {
@@ -42851,7 +43556,7 @@ export class SecretsManager {
         console.warn('Failed to read from Vault, falling back to SSM');
       }
     }
-
+    
     // Try AWS SSM Parameter Store
     try {
       const param = await ssm.getParameter({
@@ -42863,7 +43568,7 @@ export class SecretsManager {
       throw new Error(`Secret not found: ${key}`);
     }
   }
-
+  
   /**
    * Set secret
    */
@@ -42883,7 +43588,7 @@ export class SecretsManager {
       });
     }
   }
-
+  
   /**
    * Rotate API keys
    */
@@ -42908,7 +43613,7 @@ export class PayPalService {
   private clientId: string;
   private clientSecret: string;
   private baseUrl: string;
-
+  
   constructor() {
     this.clientId = process.env.PAYPAL_CLIENT_ID!;
     this.clientSecret = process.env.PAYPAL_CLIENT_SECRET!;
@@ -42916,13 +43621,13 @@ export class PayPalService {
       ? 'https://api-m.paypal.com'
       : 'https://api-m.sandbox.paypal.com';
   }
-
+  
   /**
    * Get access token
    */
   private async getAccessToken(): Promise<string> {
     const auth = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
-
+    
     const response = await axios.post(
       `${this.baseUrl}/v1/oauth2/token`,
       'grant_type=client_credentials',
@@ -42933,10 +43638,10 @@ export class PayPalService {
         }
       }
     );
-
+    
     return response.data.access_token;
   }
-
+  
   /**
    * Create order
    */
@@ -42946,7 +43651,7 @@ export class PayPalService {
     description: string;
   }): Promise<string> {
     const accessToken = await this.getAccessToken();
-
+    
     const response = await axios.post(
       `${this.baseUrl}/v2/checkout/orders`,
       {
@@ -42966,16 +43671,16 @@ export class PayPalService {
         }
       }
     );
-
+    
     return response.data.id;
   }
-
+  
   /**
    * Capture payment
    */
   async capturePayment(orderId: string): Promise<any> {
     const accessToken = await this.getAccessToken();
-
+    
     const response = await axios.post(
       `${this.baseUrl}/v2/checkout/orders/${orderId}/capture`,
       {},
@@ -42986,10 +43691,10 @@ export class PayPalService {
         }
       }
     );
-
+    
     return response.data;
   }
-
+  
   /**
    * Create subscription
    */
@@ -42998,7 +43703,7 @@ export class PayPalService {
     customerId: string;
   }): Promise<string> {
     const accessToken = await this.getAccessToken();
-
+    
     const response = await axios.post(
       `${this.baseUrl}/v1/billing/subscriptions`,
       {
@@ -43014,16 +43719,16 @@ export class PayPalService {
         }
       }
     );
-
+    
     return response.data.id;
   }
-
+  
   /**
    * Cancel subscription
    */
   async cancelSubscription(subscriptionId: string): Promise<void> {
     const accessToken = await this.getAccessToken();
-
+    
     await axios.post(
       `${this.baseUrl}/v1/billing/subscriptions/${subscriptionId}/cancel`,
       {
@@ -43037,7 +43742,7 @@ export class PayPalService {
       }
     );
   }
-
+  
   /**
    * Refund payment
    */
@@ -43046,14 +43751,14 @@ export class PayPalService {
     amount?: number;
   }): Promise<any> {
     const accessToken = await this.getAccessToken();
-
+    
     const body = params.amount ? {
       amount: {
         value: params.amount.toFixed(2),
         currency_code: 'USD'
       }
     } : {};
-
+    
     const response = await axios.post(
       `${this.baseUrl}/v2/payments/captures/${params.captureId}/refund`,
       body,
@@ -43064,7 +43769,7 @@ export class PayPalService {
         }
       }
     );
-
+    
     return response.data;
   }
 }
@@ -43082,7 +43787,7 @@ import { Client, Environment } from 'square';
 
 export class SquareService {
   private client: Client;
-
+  
   constructor() {
     this.client = new Client({
       accessToken: process.env.SQUARE_ACCESS_TOKEN,
@@ -43091,7 +43796,7 @@ export class SquareService {
         : Environment.Sandbox
     });
   }
-
+  
   /**
    * Create payment
    */
@@ -43112,10 +43817,10 @@ export class SquareService {
       customerId: params.customerId,
       note: params.note
     });
-
+    
     return response.result.payment;
   }
-
+  
   /**
    * Create customer
    */
@@ -43131,10 +43836,10 @@ export class SquareService {
       familyName: params.familyName,
       phoneNumber: params.phoneNumber
     });
-
+    
     return response.result.customer!.id!;
   }
-
+  
   /**
    * Create subscription
    */
@@ -43149,17 +43854,17 @@ export class SquareService {
       cardId: params.cardId,
       idempotencyKey: `${Date.now()}-${Math.random()}`
     });
-
+    
     return response.result.subscription!.id!;
   }
-
+  
   /**
    * Cancel subscription
    */
   async cancelSubscription(subscriptionId: string): Promise<void> {
     await this.client.subscriptionsApi.cancelSubscription(subscriptionId);
   }
-
+  
   /**
    * Refund payment
    */
@@ -43169,11 +43874,11 @@ export class SquareService {
     reason?: string;
   }): Promise<any> {
     const payment = await this.client.paymentsApi.getPayment(params.paymentId);
-
+    
     const refundAmount = params.amount
       ? BigInt(params.amount * 100)
       : payment.result.payment!.amountMoney!.amount!;
-
+    
     const response = await this.client.refundsApi.refundPayment({
       idempotencyKey: `${Date.now()}-${Math.random()}`,
       amountMoney: {
@@ -43183,7 +43888,7 @@ export class SquareService {
       paymentId: params.paymentId,
       reason: params.reason
     });
-
+    
     return response.result.refund;
   }
 }
@@ -43201,11 +43906,11 @@ import Shippo from 'shippo';
 
 export class ShippoService {
   private shippo: any;
-
+  
   constructor() {
     this.shippo = Shippo(process.env.SHIPPO_API_KEY!);
   }
-
+  
   /**
    * Create shipment
    */
@@ -43238,10 +43943,10 @@ export class ShippoService {
       address_to: params.toAddress,
       parcels: [params.parcel]
     });
-
+    
     return shipment;
   }
-
+  
   /**
    * Get shipping rates
    */
@@ -43249,7 +43954,7 @@ export class ShippoService {
     const shipment = await this.shippo.shipment.retrieve(shipmentId);
     return shipment.rates;
   }
-
+  
   /**
    * Purchase label
    */
@@ -43258,10 +43963,10 @@ export class ShippoService {
       rate: rateId,
       label_file_type: 'PDF'
     });
-
+    
     return transaction;
   }
-
+  
   /**
    * Track shipment
    */
@@ -43273,10 +43978,10 @@ export class ShippoService {
       params.carrier,
       params.trackingNumber
     );
-
+    
     return tracking;
   }
-
+  
   /**
    * Calculate shipping cost
    */
@@ -43309,14 +44014,14 @@ export class ShippoService {
         weight: params.weight
       }
     });
-
+    
     const rates = await this.getShippingRates(shipment.object_id);
-
+    
     // Return cheapest rate
     const cheapestRate = rates.reduce((min, rate) =>
       parseFloat(rate.amount) < parseFloat(min.amount) ? rate : min
     );
-
+    
     return parseFloat(cheapestRate.amount);
   }
 }
@@ -43330,11 +44035,11 @@ import EasyPost from '@easypost/api';
 
 export class EasyPostService {
   private client: EasyPost;
-
+  
   constructor() {
     this.client = new EasyPost(process.env.EASYPOST_API_KEY!);
   }
-
+  
   /**
    * Create shipment
    */
@@ -43348,10 +44053,10 @@ export class EasyPostService {
       to_address: params.toAddress,
       parcel: params.parcel
     });
-
+    
     return shipment;
   }
-
+  
   /**
    * Buy shipping label
    */
@@ -43361,10 +44066,10 @@ export class EasyPostService {
   }): Promise<any> {
     const shipment = await this.client.Shipment.retrieve(params.shipmentId);
     await shipment.buy(params.rateId);
-
+    
     return shipment;
   }
-
+  
   /**
    * Track package
    */
@@ -43372,10 +44077,10 @@ export class EasyPostService {
     const tracker = await this.client.Tracker.create({
       tracking_code: trackingCode
     });
-
+    
     return tracker;
   }
-
+  
   /**
    * Create batch shipments
    */
@@ -43383,7 +44088,7 @@ export class EasyPostService {
     const batch = await this.client.Batch.create({
       shipments
     });
-
+    
     return batch;
   }
 }
@@ -43404,7 +44109,7 @@ import OAuthClient from 'intuit-oauth';
 
 export class QuickBooksService {
   private oauthClient: OAuthClient;
-
+  
   constructor() {
     this.oauthClient = new OAuthClient({
       clientId: process.env.QUICKBOOKS_CLIENT_ID!,
@@ -43413,7 +44118,7 @@ export class QuickBooksService {
       redirectUri: process.env.QUICKBOOKS_REDIRECT_URI!
     });
   }
-
+  
   /**
    * Get authorization URL
    */
@@ -43423,13 +44128,13 @@ export class QuickBooksService {
       state: 'testState'
     });
   }
-
+  
   /**
    * Handle OAuth callback
    */
   async handleCallback(code: string, realmId: string): Promise<void> {
     const authResponse = await this.oauthClient.createToken(code);
-
+    
     // Store tokens securely
     await this.storeTokens(realmId, {
       accessToken: authResponse.token.access_token,
@@ -43437,7 +44142,7 @@ export class QuickBooksService {
       expiresAt: new Date(Date.now() + authResponse.token.expires_in * 1000)
     });
   }
-
+  
   /**
    * Create customer
    */
@@ -43447,16 +44152,16 @@ export class QuickBooksService {
     phone?: string;
   }): Promise<any> {
     const url = `${this.oauthClient.environment}/v3/company/${this.realmId}/customer`;
-
+    
     const response = await this.makeApiCall('POST', url, {
       DisplayName: params.displayName,
       PrimaryEmailAddr: { Address: params.primaryEmail },
       PrimaryPhone: params.phone ? { FreeFormNumber: params.phone } : undefined
     });
-
+    
     return response.Customer;
   }
-
+  
   /**
    * Create invoice
    */
@@ -43469,7 +44174,7 @@ export class QuickBooksService {
     }>;
   }): Promise<any> {
     const url = `${this.oauthClient.environment}/v3/company/${this.realmId}/invoice`;
-
+    
     const response = await this.makeApiCall('POST', url, {
       CustomerRef: { value: params.customerId },
       Line: params.lineItems.map(item => ({
@@ -43482,10 +44187,10 @@ export class QuickBooksService {
         Description: item.description
       }))
     });
-
+    
     return response.Invoice;
   }
-
+  
   /**
    * Record payment
    */
@@ -43495,7 +44200,7 @@ export class QuickBooksService {
     invoiceId: string;
   }): Promise<any> {
     const url = `${this.oauthClient.environment}/v3/company/${this.realmId}/payment`;
-
+    
     const response = await this.makeApiCall('POST', url, {
       CustomerRef: { value: params.customerId },
       TotalAmt: params.amount,
@@ -43507,10 +44212,10 @@ export class QuickBooksService {
         }]
       }]
     });
-
+    
     return response.Payment;
   }
-
+  
   /**
    * Get profit and loss report
    */
@@ -43519,17 +44224,17 @@ export class QuickBooksService {
     endDate: string;
   }): Promise<any> {
     const url = `${this.oauthClient.environment}/v3/company/${this.realmId}/reports/ProfitAndLoss`;
-
+    
     return await this.makeApiCall('GET', url, null, {
       start_date: params.startDate,
       end_date: params.endDate
     });
   }
-
+  
   private async makeApiCall(method: string, url: string, body?: any, params?: any): Promise<any> {
     // Refresh token if expired
     await this.refreshTokenIfNeeded();
-
+    
     const response = await this.oauthClient.makeApiCall({
       method,
       url,
@@ -43540,14 +44245,14 @@ export class QuickBooksService {
       body: body ? JSON.stringify(body) : undefined,
       params
     });
-
+    
     return JSON.parse(response.text());
   }
-
+  
   private async refreshTokenIfNeeded(): Promise<void> {
     // Implementation for token refresh
   }
-
+  
   private async storeTokens(realmId: string, tokens: any): Promise<void> {
     // Store in database or secure storage
   }
@@ -43566,7 +44271,7 @@ import { XeroClient } from 'xero-node';
 
 export class XeroService {
   private xeroClient: XeroClient;
-
+  
   constructor() {
     this.xeroClient = new XeroClient({
       clientId: process.env.XERO_CLIENT_ID!,
@@ -43575,7 +44280,7 @@ export class XeroService {
       scopes: ['accounting.transactions', 'accounting.contacts']
     });
   }
-
+  
   /**
    * Create contact
    */
@@ -43589,15 +44294,15 @@ export class XeroService {
       emailAddress: params.email,
       phones: params.phone ? [{ phoneType: 'DEFAULT', phoneNumber: params.phone }] : []
     };
-
+    
     const response = await this.xeroClient.accountingApi.createContacts(
       this.tenantId,
       { contacts: [contact] }
     );
-
+    
     return response.body.contacts[0];
   }
-
+  
   /**
    * Create invoice
    */
@@ -43622,15 +44327,15 @@ export class XeroService {
       dueDate: params.dueDate.toISOString().split('T')[0],
       status: 'DRAFT'
     };
-
+    
     const response = await this.xeroClient.accountingApi.createInvoices(
       this.tenantId,
       { invoices: [invoice] }
     );
-
+    
     return response.body.invoices[0];
   }
-
+  
   /**
    * Get bank transactions
    */
@@ -43643,7 +44348,7 @@ export class XeroService {
       undefined,
       `Date >= DateTime(${params.startDate.getFullYear()},${params.startDate.getMonth() + 1},${params.startDate.getDate()}) AND Date <= DateTime(${params.endDate.getFullYear()},${params.endDate.getMonth() + 1},${params.endDate.getDate()})`
     );
-
+    
     return response.body.bankTransactions;
   }
 }
@@ -43664,18 +44369,18 @@ export class ZendeskService {
   private email: string;
   private apiToken: string;
   private baseUrl: string;
-
+  
   constructor() {
     this.subdomain = process.env.ZENDESK_SUBDOMAIN!;
     this.email = process.env.ZENDESK_EMAIL!;
     this.apiToken = process.env.ZENDESK_API_TOKEN!;
     this.baseUrl = `https://${this.subdomain}.zendesk.com/api/v2`;
   }
-
+  
   private getAuthHeader(): string {
     return `Basic ${Buffer.from(`${this.email}/token:${this.apiToken}`).toString('base64')}`;
   }
-
+  
   /**
    * Create ticket
    */
@@ -43708,10 +44413,10 @@ export class ZendeskService {
         }
       }
     );
-
+    
     return response.data.ticket;
   }
-
+  
   /**
    * Update ticket
    */
@@ -43722,13 +44427,13 @@ export class ZendeskService {
     priority?: string;
   }): Promise<any> {
     const updateData: any = {};
-
+    
     if (params.status) updateData.status = params.status;
     if (params.priority) updateData.priority = params.priority;
     if (params.comment) {
       updateData.comment = { body: params.comment };
     }
-
+    
     const response = await axios.put(
       `${this.baseUrl}/tickets/${params.ticketId}`,
       { ticket: updateData },
@@ -43739,10 +44444,10 @@ export class ZendeskService {
         }
       }
     );
-
+    
     return response.data.ticket;
   }
-
+  
   /**
    * Get ticket
    */
@@ -43755,10 +44460,10 @@ export class ZendeskService {
         }
       }
     );
-
+    
     return response.data.ticket;
   }
-
+  
   /**
    * Search tickets
    */
@@ -43771,10 +44476,10 @@ export class ZendeskService {
         }
       }
     );
-
+    
     return response.data.results;
   }
-
+  
   /**
    * Create user
    */
@@ -43799,7 +44504,7 @@ export class ZendeskService {
         }
       }
     );
-
+    
     return response.data.user;
   }
 }
@@ -43817,11 +44522,11 @@ import { Client } from '@intercom/messenger-js-sdk';
 
 export class IntercomService {
   private client: any;
-
+  
   constructor() {
     this.client = new Client({ tokenAuth: { token: process.env.INTERCOM_ACCESS_TOKEN! } });
   }
-
+  
   /**
    * Create or update contact
    */
@@ -43839,7 +44544,7 @@ export class IntercomService {
       custom_attributes: params.customAttributes
     });
   }
-
+  
   /**
    * Send message
    */
@@ -43860,7 +44565,7 @@ export class IntercomService {
       }
     });
   }
-
+  
   /**
    * Create conversation
    */
@@ -43876,7 +44581,7 @@ export class IntercomService {
       body: params.body
     });
   }
-
+  
   /**
    * Track event
    */
@@ -43892,7 +44597,7 @@ export class IntercomService {
       metadata: params.metadata
     });
   }
-
+  
   /**
    * Add tag to contact
    */
@@ -43920,7 +44625,7 @@ import { Version3Client } from 'jira.js';
 
 export class JiraService {
   private client: Version3Client;
-
+  
   constructor() {
     this.client = new Version3Client({
       host: process.env.JIRA_HOST!,
@@ -43932,7 +44637,7 @@ export class JiraService {
       }
     });
   }
-
+  
   /**
    * Create issue
    */
@@ -43954,10 +44659,10 @@ export class JiraService {
         assignee: params.assignee ? { name: params.assignee } : undefined
       }
     });
-
+    
     return issue;
   }
-
+  
   /**
    * Update issue
    */
@@ -43968,23 +44673,23 @@ export class JiraService {
     status?: string;
   }): Promise<void> {
     const updateData: any = { fields: {} };
-
+    
     if (params.summary) updateData.fields.summary = params.summary;
     if (params.description) updateData.fields.description = params.description;
-
+    
     await this.client.issues.editIssue({
       issueIdOrKey: params.issueKey,
       ...updateData
     });
-
+    
     if (params.status) {
       // Get transitions
       const transitions = await this.client.issues.getTransitions({
         issueIdOrKey: params.issueKey
       });
-
+      
       const transition = transitions.transitions?.find(t => t.name === params.status);
-
+      
       if (transition) {
         await this.client.issues.doTransition({
           issueIdOrKey: params.issueKey,
@@ -43993,7 +44698,7 @@ export class JiraService {
       }
     }
   }
-
+  
   /**
    * Add comment
    */
@@ -44006,7 +44711,7 @@ export class JiraService {
       body: params.comment
     });
   }
-
+  
   /**
    * Search issues
    */
@@ -44014,10 +44719,10 @@ export class JiraService {
     const result = await this.client.issueSearch.searchForIssuesUsingJql({
       jql
     });
-
+    
     return result.issues || [];
   }
-
+  
   /**
    * Get project
    */
@@ -44183,19 +44888,19 @@ module.exports = {
         'categories:accessibility': ['error', { minScore: 0.95 }],
         'categories:best-practices': ['error', { minScore: 0.9 }],
         'categories:seo': ['error', { minScore: 0.9 }],
-
+        
         // Performance metrics
         'first-contentful-paint': ['error', { maxNumericValue: 2000 }],
         'largest-contentful-paint': ['error', { maxNumericValue: 2500 }],
         'cumulative-layout-shift': ['error', { maxNumericValue: 0.1 }],
         'total-blocking-time': ['error', { maxNumericValue: 300 }],
-
+        
         // Resource metrics
         'uses-optimized-images': 'error',
         'uses-responsive-images': 'error',
         'modern-image-formats': 'warn',
         'efficient-animated-content': 'warn',
-
+        
         // Best practices
         'uses-https': 'error',
         'is-on-https': 'error',
@@ -44242,7 +44947,7 @@ export function sendToAnalytics(metric: any) {
       non_interaction: true
     });
   }
-
+  
   // Send to custom analytics
   fetch('/api/analytics/vitals', {
     method: 'POST',
@@ -44277,67 +44982,67 @@ import AxeBuilder from '@axe-core/playwright';
 test.describe('Accessibility Tests', () => {
   test('Homepage should not have accessibility violations', async ({ page }) => {
     await page.goto('http://localhost:5000/');
-
+    
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
       .analyze();
-
+    
     expect(accessibilityScanResults.violations).toEqual([]);
   });
-
+  
   test('Events page should not have accessibility violations', async ({ page }) => {
     await page.goto('http://localhost:5000/events');
-
+    
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa'])
       .exclude('#third-party-widget')
       .analyze();
-
+    
     expect(accessibilityScanResults.violations).toEqual([]);
   });
-
+  
   test('Forms should be keyboard accessible', async ({ page }) => {
     await page.goto('http://localhost:5000/events/create');
-
+    
     // Tab through form
     await page.keyboard.press('Tab');
     await expect(page.locator('input[name="title"]')).toBeFocused();
-
+    
     await page.keyboard.press('Tab');
     await expect(page.locator('textarea[name="description"]')).toBeFocused();
-
+    
     await page.keyboard.press('Tab');
     await expect(page.locator('input[name="city"]')).toBeFocused();
-
+    
     // Submit with keyboard
     await page.keyboard.press('Tab');
     await page.keyboard.press('Enter');
   });
-
+  
   test('Images should have alt text', async ({ page }) => {
     await page.goto('http://localhost:5000/');
-
+    
     const images = await page.locator('img').all();
-
+    
     for (const img of images) {
       const alt = await img.getAttribute('alt');
       expect(alt).not.toBeNull();
       expect(alt).not.toBe('');
     }
   });
-
+  
   test('Color contrast should meet WCAG AA', async ({ page }) => {
     await page.goto('http://localhost:5000/');
-
+    
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2aa'])
       .disableRules(['duplicate-id'])
       .analyze();
-
+    
     const contrastViolations = accessibilityScanResults.violations.filter(
       v => v.id === 'color-contrast'
     );
-
+    
     expect(contrastViolations).toEqual([]);
   });
 });
@@ -44399,43 +45104,43 @@ interface AccessibleModalProps {
 export function AccessibleModal({ isOpen, onClose, title, children }: AccessibleModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
-
+  
   useEffect(() => {
     if (isOpen) {
       // Store current focus
       previousActiveElement.current = document.activeElement as HTMLElement;
-
+      
       // Focus modal
       modalRef.current?.focus();
-
+      
       // Prevent body scroll
       document.body.style.overflow = 'hidden';
     } else {
       // Restore previous focus
       previousActiveElement.current?.focus();
-
+      
       // Re-enable body scroll
       document.body.style.overflow = '';
     }
-
+    
     return () => {
       document.body.style.overflow = '';
     };
   }, [isOpen]);
-
+  
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
         onClose();
       }
     };
-
+    
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
-
+  
   if (!isOpen) return null;
-
+  
   return createPortal(
     <div
       className="modal-overlay"
@@ -44461,7 +45166,7 @@ export function AccessibleModal({ isOpen, onClose, title, children }: Accessible
             ×
           </button>
         </div>
-
+        
         <div className="modal-body">
           {children}
         </div>
@@ -44530,7 +45235,7 @@ import { useEffect, useRef } from 'react';
 
 export function useAnnounce() {
   const announcerRef = useRef<HTMLDivElement | null>(null);
-
+  
   useEffect(() => {
     // Create live region if it doesn't exist
     if (!announcerRef.current) {
@@ -44542,19 +45247,19 @@ export function useAnnounce() {
       document.body.appendChild(announcer);
       announcerRef.current = announcer;
     }
-
+    
     return () => {
       if (announcerRef.current) {
         document.body.removeChild(announcerRef.current);
       }
     };
   }, []);
-
+  
   const announce = (message: string, priority: 'polite' | 'assertive' = 'polite') => {
     if (announcerRef.current) {
       announcerRef.current.setAttribute('aria-live', priority);
       announcerRef.current.textContent = message;
-
+      
       // Clear after announcement
       setTimeout(() => {
         if (announcerRef.current) {
@@ -44563,7 +45268,7 @@ export function useAnnounce() {
       }, 1000);
     }
   };
-
+  
   return announce;
 }
 
@@ -45336,31 +46041,31 @@ export const resolvers = {
         where: eq(users.id, id)
       });
     },
-
+    
     users: async (_: any, { limit = 20, offset = 0 }: { limit?: number; offset?: number }) => {
       return await db.query.users.findMany({
         limit,
         offset
       });
     },
-
+    
     event: async (_: any, { id }: { id: number }) => {
       return await db.query.events.findFirst({
         where: eq(events.id, id)
       });
     },
-
+    
     events: async (_: any, args: any) => {
       let query = db.query.events.findMany();
-
+      
       if (args.city) {
         query = query.where(eq(events.city, args.city));
       }
-
+      
       return await query;
     }
   },
-
+  
   Mutation: {
     createUser: async (_: any, { name, email, password }: any) => {
       const [user] = await db.insert(users).values({
@@ -45369,10 +46074,10 @@ export const resolvers = {
         password, // Should be hashed
         createdAt: new Date()
       }).returning();
-
+      
       return user;
     },
-
+    
     createEvent: async (_: any, { title, description, startDate, city }: any, context: any) => {
       const [event] = await db.insert(events).values({
         title,
@@ -45382,7 +46087,7 @@ export const resolvers = {
         organizerId: context.user.id,
         createdAt: new Date()
       }).returning();
-
+      
       return event;
     }
   }
@@ -45413,9 +46118,9 @@ export async function createApolloServer() {
       }
     ]
   });
-
+  
   await server.start();
-
+  
   return expressMiddleware(server, {
     context: async ({ req }) => ({
       user: req.user,
@@ -45463,21 +46168,21 @@ self.addEventListener('fetch', (event) => {
         if (response) {
           return response;
         }
-
+        
         return fetch(event.request).then((response) => {
           // Check if valid response
           if (!response || response.status !== 200 || response.type !== 'basic') {
             return response;
           }
-
+          
           // Clone response
           const responseToCache = response.clone();
-
+          
           caches.open(CACHE_NAME)
             .then((cache) => {
               cache.put(event.request, responseToCache);
             });
-
+          
           return response;
         });
       })
@@ -45487,7 +46192,7 @@ self.addEventListener('fetch', (event) => {
 // Activate event - Clean up old caches
 self.addEventListener('activate', (event) => {
   const cacheWhitelist = [CACHE_NAME];
-
+  
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
@@ -45504,7 +46209,7 @@ self.addEventListener('activate', (event) => {
 // Push notification
 self.addEventListener('push', (event) => {
   const data = event.data.json();
-
+  
   const options = {
     body: data.body,
     icon: '/icon-192.png',
@@ -45515,7 +46220,7 @@ self.addEventListener('push', (event) => {
       primaryKey: 1
     }
   };
-
+  
   event.waitUntil(
     self.registration.showNotification(data.title, options)
   );
@@ -45524,7 +46229,7 @@ self.addEventListener('push', (event) => {
 // Notification click
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-
+  
   event.waitUntil(
     clients.openWindow('https://mundotango.life')
   );
@@ -45642,45 +46347,45 @@ interface BeforeInstallPromptEvent extends Event {
 export function usePWAInstall() {
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
-
+  
   useEffect(() => {
     // Check if already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsInstalled(true);
     }
-
+    
     // Listen for install prompt
     const handler = (e: Event) => {
       e.preventDefault();
       setInstallPrompt(e as BeforeInstallPromptEvent);
     };
-
+    
     window.addEventListener('beforeinstallprompt', handler);
-
+    
     // Listen for install success
     window.addEventListener('appinstalled', () => {
       setIsInstalled(true);
       setInstallPrompt(null);
     });
-
+    
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
     };
   }, []);
-
+  
   const promptInstall = async () => {
     if (!installPrompt) return;
-
+    
     installPrompt.prompt();
     const { outcome } = await installPrompt.userChoice;
-
+    
     if (outcome === 'accepted') {
       console.log('PWA installed');
     }
-
+    
     setInstallPrompt(null);
   };
-
+  
   return {
     canInstall: !!installPrompt,
     isInstalled,
@@ -45748,43 +46453,43 @@ export class MobilePushService {
     if (!Capacitor.isNativePlatform()) {
       return;
     }
-
+    
     // Request permission
     const permStatus = await PushNotifications.requestPermissions();
-
+    
     if (permStatus.receive === 'granted') {
       await PushNotifications.register();
     }
-
+    
     // Listen for registration
     await PushNotifications.addListener('registration', (token) => {
       console.log('Push registration success, token:', token.value);
-
+      
       // Send token to server
       this.sendTokenToServer(token.value);
     });
-
+    
     // Listen for registration errors
     await PushNotifications.addListener('registrationError', (error) => {
       console.error('Error on registration:', error);
     });
-
+    
     // Listen for push notifications
     await PushNotifications.addListener('pushNotificationReceived', (notification) => {
       console.log('Push notification received:', notification);
     });
-
+    
     // Listen for notification actions
     await PushNotifications.addListener('pushNotificationActionPerformed', (notification) => {
       console.log('Push notification action performed:', notification);
-
+      
       // Navigate based on notification data
       if (notification.notification.data.eventId) {
         window.location.href = `/events/${notification.notification.data.eventId}`;
       }
     });
   }
-
+  
   private static async sendTokenToServer(token: string): Promise<void> {
     await fetch('/api/push/register', {
       method: 'POST',
@@ -45807,10 +46512,10 @@ import { useState } from 'react';
 
 export function useCamera() {
   const [isLoading, setIsLoading] = useState(false);
-
+  
   const takePhoto = async (): Promise<string | null> => {
     setIsLoading(true);
-
+    
     try {
       const image = await Camera.getPhoto({
         quality: 90,
@@ -45818,7 +46523,7 @@ export function useCamera() {
         resultType: CameraResultType.DataUrl,
         source: CameraSource.Camera
       });
-
+      
       return image.dataUrl || null;
     } catch (error) {
       console.error('Camera error:', error);
@@ -45827,10 +46532,10 @@ export function useCamera() {
       setIsLoading(false);
     }
   };
-
+  
   const pickPhoto = async (): Promise<string | null> => {
     setIsLoading(true);
-
+    
     try {
       const image = await Camera.getPhoto({
         quality: 90,
@@ -45838,7 +46543,7 @@ export function useCamera() {
         resultType: CameraResultType.DataUrl,
         source: CameraSource.Photos
       });
-
+      
       return image.dataUrl || null;
     } catch (error) {
       console.error('Photo picker error:', error);
@@ -45847,7 +46552,7 @@ export function useCamera() {
       setIsLoading(false);
     }
   };
-
+  
   return {
     takePhoto,
     pickPhoto,
@@ -45871,7 +46576,7 @@ import Redis from 'ioredis';
 
 export class RedisClusterService {
   private cluster: Redis.Cluster;
-
+  
   constructor() {
     this.cluster = new Redis.Cluster([
       { host: process.env.REDIS_NODE_1, port: 6379 },
@@ -45887,16 +46592,16 @@ export class RedisClusterService {
         return delay;
       }
     });
-
+    
     this.cluster.on('error', (err) => {
       console.error('Redis Cluster Error:', err);
     });
-
+    
     this.cluster.on('connect', () => {
       console.log('✅ Redis Cluster connected');
     });
   }
-
+  
   /**
    * Get value with caching strategy
    */
@@ -45904,20 +46609,20 @@ export class RedisClusterService {
     const value = await this.cluster.get(key);
     return value ? JSON.parse(value) : null;
   }
-
+  
   /**
    * Set value with TTL
    */
   async set(key: string, value: any, ttl?: number): Promise<void> {
     const serialized = JSON.stringify(value);
-
+    
     if (ttl) {
       await this.cluster.setex(key, ttl, serialized);
     } else {
       await this.cluster.set(key, serialized);
     }
   }
-
+  
   /**
    * Cache-aside pattern
    */
@@ -45929,74 +46634,74 @@ export class RedisClusterService {
     // Try to get from cache
     const cached = await this.get<T>(key);
     if (cached) return cached;
-
+    
     // Fetch from source
     const fresh = await fetcher();
-
+    
     // Store in cache
     await this.set(key, fresh, ttl);
-
+    
     return fresh;
   }
-
+  
   /**
    * Delete key
    */
   async delete(key: string): Promise<void> {
     await this.cluster.del(key);
   }
-
+  
   /**
    * Delete keys by pattern
    */
   async deletePattern(pattern: string): Promise<void> {
     const keys = await this.cluster.keys(pattern);
-
+    
     if (keys.length > 0) {
       await this.cluster.del(...keys);
     }
   }
-
+  
   /**
    * Increment counter
    */
   async increment(key: string, by: number = 1): Promise<number> {
     return await this.cluster.incrby(key, by);
   }
-
+  
   /**
    * Add to sorted set
    */
   async addToSortedSet(key: string, score: number, member: string): Promise<void> {
     await this.cluster.zadd(key, score, member);
   }
-
+  
   /**
    * Get sorted set range
    */
   async getSortedSetRange(key: string, start: number, end: number): Promise<string[]> {
     return await this.cluster.zrange(key, start, end);
   }
-
+  
   /**
    * Pub/Sub - Publish
    */
   async publish(channel: string, message: any): Promise<void> {
     await this.cluster.publish(channel, JSON.stringify(message));
   }
-
+  
   /**
    * Pub/Sub - Subscribe
    */
   subscribe(channel: string, handler: (message: any) => void): void {
     const subscriber = this.cluster.duplicate();
-
+    
     subscriber.subscribe(channel, (err) => {
       if (err) {
         console.error('Failed to subscribe:', err);
       }
     });
-
+    
     subscriber.on('message', (chan, message) => {
       if (chan === channel) {
         handler(JSON.parse(message));
@@ -46025,7 +46730,7 @@ export class CacheStrategyService {
   ): Promise<T> {
     return await redisCluster.getOrSet(key, fetcher, ttl);
   }
-
+  
   /**
    * Write-Through Cache
    */
@@ -46037,11 +46742,11 @@ export class CacheStrategyService {
   ): Promise<void> {
     // Write to database
     await persister();
-
+    
     // Write to cache
     await redisCluster.set(key, value, ttl);
   }
-
+  
   /**
    * Write-Behind Cache (Write-Back)
    */
@@ -46053,7 +46758,7 @@ export class CacheStrategyService {
   ): Promise<void> {
     // Write to cache immediately
     await redisCluster.set(key, value, ttl);
-
+    
     // Queue database write
     setTimeout(async () => {
       try {
@@ -46064,7 +46769,7 @@ export class CacheStrategyService {
       }
     }, 0);
   }
-
+  
   /**
    * Refresh-Ahead Cache
    */
@@ -46075,11 +46780,11 @@ export class CacheStrategyService {
     refreshThreshold: number = 0.8
   ): Promise<T> {
     const cached = await redisCluster.get<{ value: T; cachedAt: number }>(key);
-
+    
     if (cached) {
       const age = Date.now() - cached.cachedAt;
       const maxAge = ttl * 1000;
-
+      
       // If approaching expiration, refresh in background
       if (age > maxAge * refreshThreshold) {
         // Refresh asynchronously
@@ -46088,17 +46793,17 @@ export class CacheStrategyService {
           await redisCluster.set(key, { value: fresh, cachedAt: Date.now() }, ttl);
         }, 0);
       }
-
+      
       return cached.value;
     }
-
+    
     // Not in cache, fetch and store
     const fresh = await fetcher();
     await redisCluster.set(key, { value: fresh, cachedAt: Date.now() }, ttl);
-
+    
     return fresh;
   }
-
+  
   /**
    * Multi-Layer Cache
    */
@@ -46112,42 +46817,42 @@ export class CacheStrategyService {
     const l1Key = `l1:${key}`;
     const l1Cached = await this.getFromMemory<T>(l1Key);
     if (l1Cached) return l1Cached;
-
+    
     // Layer 2: Redis cache (slower, longer TTL)
     const l2Key = `l2:${key}`;
     const l2Cached = await redisCluster.get<T>(l2Key);
-
+    
     if (l2Cached) {
       // Populate L1 cache
       await this.setInMemory(l1Key, l2Cached, l1Ttl);
       return l2Cached;
     }
-
+    
     // Fetch from source
     const fresh = await fetcher();
-
+    
     // Populate both layers
     await this.setInMemory(l1Key, fresh, l1Ttl);
     await redisCluster.set(l2Key, fresh, l2Ttl);
-
+    
     return fresh;
   }
-
+  
   private static memoryCache = new Map<string, { value: any; expiresAt: number }>();
-
+  
   private static async getFromMemory<T>(key: string): Promise<T | null> {
     const cached = this.memoryCache.get(key);
-
+    
     if (!cached) return null;
-
+    
     if (Date.now() > cached.expiresAt) {
       this.memoryCache.delete(key);
       return null;
     }
-
+    
     return cached.value;
   }
-
+  
   private static async setInMemory(key: string, value: any, ttl: number): Promise<void> {
     this.memoryCache.set(key, {
       value,
@@ -46244,17 +46949,17 @@ export const emailWorker = new Worker<EmailJobData>(
   'email',
   async (job: Job<EmailJobData>) => {
     console.log(`Processing email job ${job.id}`);
-
+    
     await EmailService.send({
       to: job.data.to,
       subject: job.data.subject,
       html: job.data.html,
       text: job.data.text
     });
-
+    
     // Update progress
     await job.updateProgress(100);
-
+    
     return { sent: true, timestamp: new Date().toISOString() };
   },
   {
@@ -46298,21 +47003,21 @@ export const imageWorker = new Worker<ImageJobData>(
   'image-processing',
   async (job: Job<ImageJobData>) => {
     const { filePath, sizes, uploadKey } = job.data;
-
+    
     const results = [];
-
+    
     for (let i = 0; i < sizes.length; i++) {
       const width = sizes[i];
-
+      
       // Resize image
       const resized = await sharp(filePath)
         .resize(width, null, { withoutEnlargement: true })
         .jpeg({ quality: 80 })
         .toBuffer();
-
+      
       // Upload to S3
       const key = `${uploadKey}-${width}w.jpg`;
-
+      
       await s3.send(new PutObjectCommand({
         Bucket: process.env.S3_BUCKET!,
         Key: key,
@@ -46320,19 +47025,19 @@ export const imageWorker = new Worker<ImageJobData>(
         ContentType: 'image/jpeg',
         ACL: 'public-read'
       }));
-
+      
       results.push({
         width,
         url: `https://${process.env.S3_BUCKET}.s3.amazonaws.com/${key}`
       });
-
+      
       // Update progress
       await job.updateProgress(((i + 1) / sizes.length) * 100);
     }
-
+    
     // Delete temp file
     fs.unlinkSync(filePath);
-
+    
     return results;
   },
   {
@@ -46439,7 +47144,7 @@ router.get('/stats', async (req, res) => {
     { name: 'image-processing', queue: imageQueue },
     { name: 'notifications', queue: notificationQueue }
   ];
-
+  
   const stats = await Promise.all(
     queues.map(async ({ name, queue }) => {
       const [waiting, active, completed, failed] = await Promise.all([
@@ -46448,7 +47153,7 @@ router.get('/stats', async (req, res) => {
         queue.getCompletedCount(),
         queue.getFailedCount()
       ]);
-
+      
       return {
         name,
         waiting,
@@ -46458,7 +47163,7 @@ router.get('/stats', async (req, res) => {
       };
     })
   );
-
+  
   res.json(stats);
 });
 
@@ -46471,20 +47176,20 @@ router.get('/:queue/jobs', async (req, res) => {
     'image-processing': imageQueue,
     'notifications': notificationQueue
   };
-
+  
   const queue = queueMap[req.params.queue];
-
+  
   if (!queue) {
     return res.status(404).json({ error: 'Queue not found' });
   }
-
+  
   const [waiting, active, completed, failed] = await Promise.all([
     queue.getJobs(['waiting'], 0, 10),
     queue.getJobs(['active'], 0, 10),
     queue.getJobs(['completed'], 0, 10),
     queue.getJobs(['failed'], 0, 10)
   ]);
-
+  
   res.json({
     waiting,
     active,
@@ -46502,21 +47207,21 @@ router.post('/:queue/:jobId/retry', async (req, res) => {
     'image-processing': imageQueue,
     'notifications': notificationQueue
   };
-
+  
   const queue = queueMap[req.params.queue];
-
+  
   if (!queue) {
     return res.status(404).json({ error: 'Queue not found' });
   }
-
+  
   const job = await queue.getJob(req.params.jobId);
-
+  
   if (!job) {
     return res.status(404).json({ error: 'Job not found' });
   }
-
+  
   await job.retry();
-
+  
   res.json({ message: 'Job retried' });
 });
 
@@ -46554,7 +47259,7 @@ export const rateLimiters = {
     duration: 60,
     blockDuration: 60
   }),
-
+  
   // Authentication - 5 attempts per 15 minutes
   auth: new RateLimiterRedis({
     storeClient: redisClient,
@@ -46563,7 +47268,7 @@ export const rateLimiters = {
     duration: 900,
     blockDuration: 1800
   }),
-
+  
   // File upload - 10 uploads per hour
   upload: new RateLimiterRedis({
     storeClient: redisClient,
@@ -46572,7 +47277,7 @@ export const rateLimiters = {
     duration: 3600,
     blockDuration: 3600
   }),
-
+  
   // Search - 30 requests per minute
   search: new RateLimiterRedis({
     storeClient: redisClient,
@@ -46589,18 +47294,18 @@ export const rateLimiters = {
 export function createRateLimiter(limiterName: keyof typeof rateLimiters) {
   return async (req: Request, res: Response, next: NextFunction) => {
     const limiter = rateLimiters[limiterName];
-
+    
     // Use user ID if authenticated, otherwise use IP
     const key = req.user?.id?.toString() || req.ip;
-
+    
     try {
       const rateLimitRes = await limiter.consume(key);
-
+      
       // Add rate limit headers
       res.setHeader('X-RateLimit-Limit', limiter.points);
       res.setHeader('X-RateLimit-Remaining', rateLimitRes.remainingPoints);
       res.setHeader('X-RateLimit-Reset', new Date(Date.now() + rateLimitRes.msBeforeNext).toISOString());
-
+      
       next();
     } catch (rejRes: any) {
       res.status(429).json({
@@ -46618,37 +47323,37 @@ export class SlidingWindowRateLimiter {
   private redis: IORedis;
   private windowSize: number;
   private maxRequests: number;
-
+  
   constructor(windowSize: number, maxRequests: number) {
     this.redis = redisClient;
     this.windowSize = windowSize;
     this.maxRequests = maxRequests;
   }
-
+  
   async isAllowed(key: string): Promise<boolean> {
     const now = Date.now();
     const windowStart = now - this.windowSize * 1000;
-
+    
     const multi = this.redis.multi();
-
+    
     // Remove old entries
     multi.zremrangebyscore(key, 0, windowStart);
-
+    
     // Count requests in window
     multi.zcard(key);
-
+    
     // Add current request
     multi.zadd(key, now, `${now}-${Math.random()}`);
-
+    
     // Set expiration
     multi.expire(key, this.windowSize);
-
+    
     const results = await multi.exec();
-
+    
     if (!results) return false;
-
+    
     const count = results[1][1] as number;
-
+    
     return count < this.maxRequests;
   }
 }
@@ -46660,49 +47365,49 @@ export class LeakyBucketRateLimiter {
   private redis: IORedis;
   private capacity: number;
   private leakRate: number; // requests per second
-
+  
   constructor(capacity: number, leakRate: number) {
     this.redis = redisClient;
     this.capacity = capacity;
     this.leakRate = leakRate;
   }
-
+  
   async tryAcquire(key: string): Promise<boolean> {
     const now = Date.now();
-
+    
     // Get current bucket state
     const state = await this.redis.get(key);
-
+    
     let currentLevel = 0;
     let lastUpdate = now;
-
+    
     if (state) {
       const [level, timestamp] = state.split(':');
       currentLevel = parseInt(level);
       lastUpdate = parseInt(timestamp);
     }
-
+    
     // Calculate leaked amount
     const elapsed = (now - lastUpdate) / 1000;
     const leaked = elapsed * this.leakRate;
-
+    
     currentLevel = Math.max(0, currentLevel - leaked);
-
+    
     // Check if we can add new request
     if (currentLevel >= this.capacity) {
       return false;
     }
-
+    
     // Add request
     currentLevel += 1;
-
+    
     // Save state
     await this.redis.setex(
       key,
       Math.ceil(this.capacity / this.leakRate),
       `${currentLevel}:${now}`
     );
-
+    
     return true;
   }
 }
@@ -46724,18 +47429,18 @@ export async function setupSocketCluster(io: Server) {
   const pubClient = createClient({
     url: process.env.REDIS_URL
   });
-
+  
   const subClient = pubClient.duplicate();
-
+  
   await Promise.all([
     pubClient.connect(),
     subClient.connect()
   ]);
-
+  
   io.adapter(createAdapter(pubClient, subClient));
-
+  
   console.log('✅ Socket.IO cluster adapter configured');
-
+  
   return { pubClient, subClient };
 }
 ```
@@ -46756,46 +47461,46 @@ const numCPUs = os.cpus().length;
 
 if (cluster.isPrimary) {
   console.log(`Primary ${process.pid} is running`);
-
+  
   const httpServer = createServer();
-
+  
   // Setup sticky sessions
   setupMaster(httpServer, {
     loadBalancingMethod: 'least-connection'
   });
-
+  
   // Setup cluster adapter
   setupPrimary();
-
+  
   httpServer.listen(5000);
-
+  
   // Fork workers
   for (let i = 0; i < numCPUs; i++) {
     cluster.fork();
   }
-
+  
   cluster.on('exit', (worker) => {
     console.log(`Worker ${worker.process.pid} died`);
     cluster.fork();
   });
 } else {
   console.log(`Worker ${process.pid} started`);
-
+  
   const app = express();
   const httpServer = createServer(app);
   const io = new Server(httpServer);
-
+  
   // Use cluster adapter
   io.adapter(createAdapter());
-
+  
   // Setup worker
   setupWorker(io);
-
+  
   // Your socket.io logic here
   io.on('connection', (socket) => {
     console.log('User connected');
   });
-
+  
   // Express routes
   app.get('/', (req, res) => {
     res.send('Hello from worker ' + process.pid);
@@ -46811,59 +47516,59 @@ import { Server, Socket } from 'socket.io';
 
 export class RoomManager {
   private io: Server;
-
+  
   constructor(io: Server) {
     this.io = io;
   }
-
+  
   /**
    * Join user to rooms
    */
   async joinRooms(socket: Socket, userId: number): Promise<void> {
     // Join user's personal room
     socket.join(`user:${userId}`);
-
+    
     // Join user's city room
     const user = await this.getUser(userId);
     if (user.city) {
       socket.join(`city:${user.city}`);
     }
-
+    
     // Join user's groups
     const groups = await this.getUserGroups(userId);
     groups.forEach(group => {
       socket.join(`group:${group.id}`);
     });
   }
-
+  
   /**
    * Broadcast to user
    */
   broadcastToUser(userId: number, event: string, data: any): void {
     this.io.to(`user:${userId}`).emit(event, data);
   }
-
+  
   /**
    * Broadcast to city
    */
   broadcastToCity(city: string, event: string, data: any): void {
     this.io.to(`city:${city}`).emit(event, data);
   }
-
+  
   /**
    * Broadcast to group
    */
   broadcastToGroup(groupId: number, event: string, data: any): void {
     this.io.to(`group:${groupId}`).emit(event, data);
   }
-
+  
   /**
    * Broadcast to all users except sender
    */
   broadcastToAllExcept(socketId: string, event: string, data: any): void {
     this.io.except(socketId).emit(event, data);
   }
-
+  
   /**
    * Get room members
    */
@@ -46871,19 +47576,19 @@ export class RoomManager {
     const sockets = await this.io.in(room).fetchSockets();
     return sockets.map(socket => socket.id);
   }
-
+  
   /**
    * Get user's connected sockets
    */
   async getUserSockets(userId: number): Promise<Socket[]> {
     return await this.io.in(`user:${userId}`).fetchSockets();
   }
-
+  
   private async getUser(userId: number): Promise<any> {
     // Implementation to fetch user
     return { city: 'Buenos Aires' };
   }
-
+  
   private async getUserGroups(userId: number): Promise<any[]> {
     // Implementation to fetch user groups
     return [];
@@ -46912,20 +47617,20 @@ const model = {
     const client = await db.query.oauthClients.findFirst({
       where: eq(oauthClients.clientId, clientId)
     });
-
+    
     if (!client) return false;
-
+    
     if (clientSecret && client.clientSecret !== clientSecret) {
       return false;
     }
-
+    
     return {
       id: client.clientId,
       grants: client.grants,
       redirectUris: client.redirectUris
     };
   },
-
+  
   /**
    * Save token
    */
@@ -46939,7 +47644,7 @@ const model = {
       userId: user.id,
       scope: token.scope
     });
-
+    
     return {
       accessToken: token.accessToken,
       accessTokenExpiresAt: token.accessTokenExpiresAt,
@@ -46950,7 +47655,7 @@ const model = {
       scope: token.scope
     };
   },
-
+  
   /**
    * Get access token
    */
@@ -46962,9 +47667,9 @@ const model = {
         user: true
       }
     });
-
+    
     if (!token) return false;
-
+    
     return {
       accessToken: token.accessToken,
       accessTokenExpiresAt: token.accessTokenExpiresAt,
@@ -46973,7 +47678,7 @@ const model = {
       scope: token.scope
     };
   },
-
+  
   /**
    * Save authorization code
    */
@@ -46986,7 +47691,7 @@ const model = {
       userId: user.id,
       scope: code.scope
     });
-
+    
     return {
       authorizationCode: code.authorizationCode,
       expiresAt: code.expiresAt,
@@ -46996,7 +47701,7 @@ const model = {
       scope: code.scope
     };
   },
-
+  
   /**
    * Get authorization code
    */
@@ -47008,9 +47713,9 @@ const model = {
         user: true
       }
     });
-
+    
     if (!code) return false;
-
+    
     return {
       code: code.authorizationCode,
       expiresAt: code.expiresAt,
@@ -47020,27 +47725,27 @@ const model = {
       scope: code.scope
     };
   },
-
+  
   /**
    * Revoke authorization code
    */
   async revokeAuthorizationCode(code: any) {
     await db.delete(oauthAuthorizationCodes)
       .where(eq(oauthAuthorizationCodes.authorizationCode, code.code));
-
+    
     return true;
   },
-
+  
   /**
    * Revoke token
    */
   async revokeToken(token: any) {
     await db.delete(oauthTokens)
       .where(eq(oauthTokens.refreshToken, token.refreshToken));
-
+    
     return true;
   },
-
+  
   /**
    * Get refresh token
    */
@@ -47052,9 +47757,9 @@ const model = {
         user: true
       }
     });
-
+    
     if (!token) return false;
-
+    
     return {
       refreshToken: token.refreshToken,
       refreshTokenExpiresAt: token.refreshTokenExpiresAt,
@@ -47088,7 +47793,7 @@ const router = Router();
 router.get('/authorize', authMiddleware, async (req, res) => {
   const request = new OAuth2Server.Request(req);
   const response = new OAuth2Server.Response(res);
-
+  
   try {
     // Show authorization page to user
     res.render('authorize', {
@@ -47108,14 +47813,14 @@ router.get('/authorize', authMiddleware, async (req, res) => {
 router.post('/authorize', authMiddleware, async (req, res) => {
   const request = new OAuth2Server.Request(req);
   const response = new OAuth2Server.Response(res);
-
+  
   try {
     const code = await oauth.authorize(request, response, {
       authenticateHandler: {
         handle: () => req.user
       }
     });
-
+    
     res.redirect(`${code.redirectUri}?code=${code.authorizationCode}&state=${req.body.state}`);
   } catch (err) {
     res.status(500).json({ error: 'Authorization failed' });
@@ -47128,10 +47833,10 @@ router.post('/authorize', authMiddleware, async (req, res) => {
 router.post('/token', async (req, res) => {
   const request = new OAuth2Server.Request(req);
   const response = new OAuth2Server.Response(res);
-
+  
   try {
     const token = await oauth.token(request, response);
-
+    
     res.json({
       access_token: token.accessToken,
       token_type: 'Bearer',
@@ -47150,7 +47855,7 @@ router.post('/token', async (req, res) => {
 router.post('/revoke', async (req, res) => {
   const request = new OAuth2Server.Request(req);
   const response = new OAuth2Server.Response(res);
-
+  
   try {
     await oauth.revoke(request, response);
     res.json({ success: true });
@@ -47178,12 +47883,12 @@ import { CloudFrontClient, CreateInvalidationCommand, GetDistributionCommand } f
 export class CDNService {
   private client: CloudFrontClient;
   private distributionId: string;
-
+  
   constructor() {
     this.client = new CloudFrontClient({ region: 'us-east-1' });
     this.distributionId = process.env.CLOUDFRONT_DISTRIBUTION_ID!;
   }
-
+  
   /**
    * Invalidate cache paths
    */
@@ -47198,18 +47903,18 @@ export class CDNService {
         }
       }
     });
-
+    
     await this.client.send(command);
     console.log(`✅ Invalidated ${paths.length} paths`);
   }
-
+  
   /**
    * Purge entire cache
    */
   async purgeCache(): Promise<void> {
     await this.invalidatePaths(['/*']);
   }
-
+  
   /**
    * Get distribution statistics
    */
@@ -47217,9 +47922,9 @@ export class CDNService {
     const command = new GetDistributionCommand({
       Id: this.distributionId
     });
-
+    
     const response = await this.client.send(command);
-
+    
     return {
       domainName: response.Distribution?.DomainName,
       status: response.Distribution?.Status,
@@ -47251,13 +47956,13 @@ events {
 http {
     include /etc/nginx/mime.types;
     default_type application/octet-stream;
-
+    
     log_format main '$remote_addr - $remote_user [$time_local] "$request" '
                     '$status $body_bytes_sent "$http_referer" '
                     '"$http_user_agent" "$http_x_forwarded_for"';
-
+    
     access_log /var/log/nginx/access.log main;
-
+    
     # Performance optimizations
     sendfile on;
     tcp_nopush on;
@@ -47265,7 +47970,7 @@ http {
     keepalive_timeout 65;
     types_hash_max_size 2048;
     client_max_body_size 20M;
-
+    
     # Gzip compression
     gzip on;
     gzip_vary on;
@@ -47275,11 +47980,11 @@ http {
                application/json application/javascript application/xml+rss
                application/rss+xml font/truetype font/opentype
                application/vnd.ms-fontobject image/svg+xml;
-
+    
     # Rate limiting
     limit_req_zone $binary_remote_addr zone=api_limit:10m rate=100r/m;
     limit_req_zone $binary_remote_addr zone=auth_limit:10m rate=5r/m;
-
+    
     # Upstream servers
     upstream backend {
         least_conn;
@@ -47288,47 +47993,47 @@ http {
         server backend3:5000 weight=2 max_fails=3 fail_timeout=30s;
         keepalive 32;
     }
-
+    
     # SSL configuration
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_prefer_server_ciphers on;
     ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256;
     ssl_session_cache shared:SSL:10m;
     ssl_session_timeout 10m;
-
+    
     # Main server block
     server {
         listen 80;
         server_name mundotango.life www.mundotango.life;
-
+        
         # Redirect to HTTPS
         return 301 https://$server_name$request_uri;
     }
-
+    
     server {
         listen 443 ssl http2;
         server_name mundotango.life www.mundotango.life;
-
+        
         ssl_certificate /etc/nginx/ssl/cert.pem;
         ssl_certificate_key /etc/nginx/ssl/key.pem;
-
+        
         # Security headers
         add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
         add_header X-Frame-Options "SAMEORIGIN" always;
         add_header X-Content-Type-Options "nosniff" always;
         add_header X-XSS-Protection "1; mode=block" always;
         add_header Referrer-Policy "no-referrer-when-downgrade" always;
-
+        
         # Static files
         location ~* \.(jpg|jpeg|png|gif|ico|css|js|woff|woff2)$ {
             expires 1y;
             add_header Cache-Control "public, immutable";
         }
-
+        
         # API endpoints with rate limiting
         location /api/ {
             limit_req zone=api_limit burst=20 nodelay;
-
+            
             proxy_pass http://backend;
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
@@ -47338,22 +48043,22 @@ http {
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
             proxy_cache_bypass $http_upgrade;
-
+            
             proxy_connect_timeout 60s;
             proxy_send_timeout 60s;
             proxy_read_timeout 60s;
         }
-
+        
         # Auth endpoints with stricter rate limiting
         location /api/auth/ {
             limit_req zone=auth_limit burst=3 nodelay;
-
+            
             proxy_pass http://backend;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         }
-
+        
         # WebSocket support
         location /socket.io/ {
             proxy_pass http://backend;
@@ -47363,7 +48068,7 @@ http {
             proxy_set_header Host $host;
             proxy_cache_bypass $http_upgrade;
         }
-
+        
         # Frontend
         location / {
             root /usr/share/nginx/html;
@@ -47387,7 +48092,7 @@ import { eq, and } from 'drizzle-orm';
 
 export class FeatureFlagService {
   private cache: Map<string, any> = new Map();
-
+  
   /**
    * Check if feature is enabled for user
    */
@@ -47397,13 +48102,13 @@ export class FeatureFlagService {
     context?: Record<string, any>;
   }): Promise<boolean> {
     const { flagKey, userId, context = {} } = params;
-
+    
     // Get flag configuration
     const flag = await this.getFlag(flagKey);
-
+    
     if (!flag) return false;
     if (!flag.enabled) return false;
-
+    
     // Check percentage rollout
     if (flag.rolloutPercentage < 100) {
       const hash = this.hash(flagKey + (userId || ''));
@@ -47411,7 +48116,7 @@ export class FeatureFlagService {
         return false;
       }
     }
-
+    
     // Check user-specific override
     if (userId) {
       const userOverride = await db.query.userFeatureFlags.findFirst({
@@ -47420,20 +48125,20 @@ export class FeatureFlagService {
           eq(userFeatureFlags.userId, userId)
         )
       });
-
+      
       if (userOverride) {
         return userOverride.enabled;
       }
     }
-
+    
     // Check targeting rules
     if (flag.targetingRules) {
       return this.evaluateRules(flag.targetingRules, context);
     }
-
+    
     return true;
   }
-
+  
   /**
    * Get flag configuration
    */
@@ -47442,22 +48147,22 @@ export class FeatureFlagService {
     if (this.cache.has(key)) {
       return this.cache.get(key);
     }
-
+    
     // Fetch from database
     const flag = await db.query.featureFlags.findFirst({
       where: eq(featureFlags.key, key)
     });
-
+    
     if (flag) {
       this.cache.set(key, flag);
-
+      
       // Cache for 5 minutes
       setTimeout(() => this.cache.delete(key), 300000);
     }
-
+    
     return flag;
   }
-
+  
   /**
    * Evaluate targeting rules
    */
@@ -47465,7 +48170,7 @@ export class FeatureFlagService {
     for (const rule of rules) {
       const { attribute, operator, value } = rule;
       const contextValue = context[attribute];
-
+      
       switch (operator) {
         case 'equals':
           if (contextValue !== value) return false;
@@ -47486,10 +48191,10 @@ export class FeatureFlagService {
           return false;
       }
     }
-
+    
     return true;
   }
-
+  
   /**
    * Simple hash function
    */
@@ -47502,7 +48207,7 @@ export class FeatureFlagService {
     }
     return Math.abs(hash);
   }
-
+  
   /**
    * Enable feature for user
    */
@@ -47516,7 +48221,7 @@ export class FeatureFlagService {
       set: { enabled: true }
     });
   }
-
+  
   /**
    * Disable feature for user
    */
@@ -47530,7 +48235,7 @@ export class FeatureFlagService {
       set: { enabled: false }
     });
   }
-
+  
   /**
    * Update rollout percentage
    */
@@ -47538,7 +48243,7 @@ export class FeatureFlagService {
     await db.update(featureFlags)
       .set({ rolloutPercentage: percentage })
       .where(eq(featureFlags.key, flagKey));
-
+    
     // Clear cache
     this.cache.delete(flagKey);
   }
@@ -47566,7 +48271,7 @@ export class ExperimentService {
     userId: number;
   }): Promise<string> {
     const { experimentKey, userId } = params;
-
+    
     // Check if already assigned
     const existing = await db.query.experimentAssignments.findFirst({
       where: and(
@@ -47574,24 +48279,24 @@ export class ExperimentService {
         eq(experimentAssignments.userId, userId)
       )
     });
-
+    
     if (existing) {
       return existing.variantKey;
     }
-
+    
     // Get experiment
     const experiment = await db.query.experiments.findFirst({
       where: eq(experiments.key, experimentKey),
       with: { variants: true }
     });
-
+    
     if (!experiment || !experiment.active) {
       return 'control';
     }
-
+    
     // Assign to variant based on weights
     const variantKey = this.selectVariant(experiment.variants, userId);
-
+    
     // Save assignment
     await db.insert(experimentAssignments).values({
       experimentKey,
@@ -47599,10 +48304,10 @@ export class ExperimentService {
       variantKey,
       assignedAt: new Date()
     });
-
+    
     return variantKey;
   }
-
+  
   /**
    * Track conversion
    */
@@ -47613,7 +48318,7 @@ export class ExperimentService {
     value?: number;
   }): Promise<void> {
     const { experimentKey, userId, metricName, value = 1 } = params;
-
+    
     // Get user's variant
     const assignment = await db.query.experimentAssignments.findFirst({
       where: and(
@@ -47621,9 +48326,9 @@ export class ExperimentService {
         eq(experimentAssignments.userId, userId)
       )
     });
-
+    
     if (!assignment) return;
-
+    
     // Record conversion
     await db.execute(sql`
       INSERT INTO experiment_conversions (
@@ -47633,7 +48338,7 @@ export class ExperimentService {
       )
     `);
   }
-
+  
   /**
    * Get experiment results
    */
@@ -47654,34 +48359,34 @@ export class ExperimentService {
       WHERE ev.experiment_key = ${experimentKey}
       GROUP BY ec.variant_key, ev.name
     `);
-
+    
     return results.rows;
   }
-
+  
   /**
    * Calculate statistical significance
    */
   async calculateSignificance(experimentKey: string): Promise<any> {
     const results = await this.getResults(experimentKey);
-
+    
     if (results.length < 2) return null;
-
+    
     const control = results.find(r => r.variant_key === 'control');
     const treatment = results.find(r => r.variant_key !== 'control');
-
+    
     if (!control || !treatment) return null;
-
+    
     // Z-test for proportions
     const p1 = control.conversion_rate;
     const p2 = treatment.conversion_rate;
     const n1 = control.total_users;
     const n2 = treatment.total_users;
-
+    
     const pPool = (p1 * n1 + p2 * n2) / (n1 + n2);
     const se = Math.sqrt(pPool * (1 - pPool) * (1/n1 + 1/n2));
     const zScore = (p2 - p1) / se;
     const pValue = this.normalCDF(-Math.abs(zScore)) * 2;
-
+    
     return {
       controlConversionRate: p1,
       treatmentConversionRate: p2,
@@ -47691,14 +48396,14 @@ export class ExperimentService {
       isSignificant: pValue < 0.05
     };
   }
-
+  
   /**
    * Select variant based on weights
    */
   private selectVariant(variants: any[], userId: number): string {
     const hash = this.hash(userId.toString());
     const random = (hash % 100) / 100;
-
+    
     let cumulative = 0;
     for (const variant of variants) {
       cumulative += variant.weight;
@@ -47706,10 +48411,10 @@ export class ExperimentService {
         return variant.key;
       }
     }
-
+    
     return variants[0].key;
   }
-
+  
   private hash(str: string): number {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -47719,7 +48424,7 @@ export class ExperimentService {
     }
     return Math.abs(hash);
   }
-
+  
   private normalCDF(x: number): number {
     const t = 1 / (1 + 0.2316419 * Math.abs(x));
     const d = 0.3989423 * Math.exp(-x * x / 2);
@@ -47752,10 +48457,10 @@ export class DataExportService {
     filters?: any;
   }): Promise<string> {
     const { table, fields, filters } = params;
-
+    
     // Fetch data
     let data: any[] = [];
-
+    
     switch (table) {
       case 'users':
         data = await db.query.users.findMany();
@@ -47767,14 +48472,14 @@ export class DataExportService {
         data = await db.query.posts.findMany();
         break;
     }
-
+    
     // Convert to CSV
     const parser = new Parser({ fields });
     const csv = parser.parse(data);
-
+    
     return csv;
   }
-
+  
   /**
    * Export to Excel
    */
@@ -47782,10 +48487,10 @@ export class DataExportService {
     tables: Array<{ name: string; data: any[] }>;
   }): Promise<Buffer> {
     const workbook = new ExcelJS.Workbook();
-
+    
     for (const { name, data } of params.tables) {
       const worksheet = workbook.addWorksheet(name);
-
+      
       if (data.length > 0) {
         // Add headers
         worksheet.columns = Object.keys(data[0]).map(key => ({
@@ -47793,18 +48498,18 @@ export class DataExportService {
           key: key,
           width: 20
         }));
-
+        
         // Add rows
         worksheet.addRows(data);
-
+        
         // Style header
         worksheet.getRow(1).font = { bold: true };
       }
     }
-
+    
     return await workbook.xlsx.writeBuffer() as Buffer;
   }
-
+  
   /**
    * Export to JSON
    */
@@ -47813,9 +48518,9 @@ export class DataExportService {
     filters?: any;
   }): Promise<string> {
     const { table, filters } = params;
-
+    
     let data: any[] = [];
-
+    
     switch (table) {
       case 'users':
         data = await db.query.users.findMany();
@@ -47824,10 +48529,10 @@ export class DataExportService {
         data = await db.query.events.findMany();
         break;
     }
-
+    
     return JSON.stringify(data, null, 2);
   }
-
+  
   /**
    * Import from CSV
    */
@@ -47856,11 +48561,11 @@ import { ECSClient, UpdateServiceCommand, DescribeServicesCommand } from '@aws-s
 
 export class DeploymentService {
   private ecs: ECSClient;
-
+  
   constructor() {
     this.ecs = new ECSClient({ region: 'us-east-1' });
   }
-
+  
   /**
    * Blue-Green deployment
    */
@@ -47870,54 +48575,54 @@ export class DeploymentService {
     newTaskDefinition: string;
   }): Promise<void> {
     const { cluster, service, newTaskDefinition } = params;
-
+    
     // Step 1: Get current service state
     const currentState = await this.ecs.send(new DescribeServicesCommand({
       cluster,
       services: [service]
     }));
-
+    
     const currentTaskDef = currentState.services![0].taskDefinition;
     const desiredCount = currentState.services![0].desiredCount;
-
+    
     console.log('📘 Current (Blue) task:', currentTaskDef);
     console.log('📗 New (Green) task:', newTaskDefinition);
-
+    
     // Step 2: Create green service
     const greenService = `${service}-green`;
-
+    
     await this.ecs.send(new UpdateServiceCommand({
       cluster,
       service: greenService,
       taskDefinition: newTaskDefinition,
       desiredCount
     }));
-
+    
     console.log('✅ Green service deployed');
-
+    
     // Step 3: Wait for green to be healthy
     await this.waitForHealthy(cluster, greenService);
-
+    
     // Step 4: Run smoke tests
     const testsPass = await this.runSmokeTests(greenService);
-
+    
     if (!testsPass) {
       console.log('❌ Smoke tests failed, rolling back');
       await this.rollback(cluster, service, currentTaskDef);
       throw new Error('Smoke tests failed');
     }
-
+    
     // Step 5: Switch traffic to green
     await this.switchTraffic(service, greenService);
-
+    
     console.log('✅ Traffic switched to green');
-
+    
     // Step 6: Decommission blue
     await this.scaleDown(cluster, service);
-
+    
     console.log('✅ Blue-green deployment complete');
   }
-
+  
   /**
    * Canary deployment
    */
@@ -47929,18 +48634,18 @@ export class DeploymentService {
     monitoringDuration: number;
   }): Promise<void> {
     const { cluster, service, newTaskDefinition, canaryPercentage, monitoringDuration } = params;
-
+    
     const currentState = await this.ecs.send(new DescribeServicesCommand({
       cluster,
       services: [service]
     }));
-
+    
     const totalTasks = currentState.services![0].desiredCount || 0;
     const canaryTasks = Math.ceil(totalTasks * (canaryPercentage / 100));
     const stableTasks = totalTasks - canaryTasks;
-
+    
     console.log(`🕯️ Deploying ${canaryPercentage}% canary (${canaryTasks} tasks)`);
-
+    
     // Deploy canary
     const canaryService = `${service}-canary`;
     await this.ecs.send(new UpdateServiceCommand({
@@ -47949,26 +48654,26 @@ export class DeploymentService {
       taskDefinition: newTaskDefinition,
       desiredCount: canaryTasks
     }));
-
+    
     // Scale down stable
     await this.ecs.send(new UpdateServiceCommand({
       cluster,
       service,
       desiredCount: stableTasks
     }));
-
+    
     // Monitor metrics
     console.log(`📊 Monitoring for ${monitoringDuration}s...`);
     await this.sleep(monitoringDuration * 1000);
-
+    
     const metricsHealthy = await this.checkCanaryMetrics(canaryService);
-
+    
     if (!metricsHealthy) {
       console.log('❌ Canary metrics unhealthy, rolling back');
       await this.rollback(cluster, service, currentState.services![0].taskDefinition!);
       throw new Error('Canary deployment failed');
     }
-
+    
     // Promote canary
     console.log('✅ Canary healthy, promoting to 100%');
     await this.ecs.send(new UpdateServiceCommand({
@@ -47977,11 +48682,11 @@ export class DeploymentService {
       taskDefinition: newTaskDefinition,
       desiredCount: totalTasks
     }));
-
+    
     // Remove canary
     await this.scaleDown(cluster, canaryService);
   }
-
+  
   /**
    * Rolling deployment with health checks
    */
@@ -47992,30 +48697,30 @@ export class DeploymentService {
     batchSize: number;
   }): Promise<void> {
     const { cluster, service, newTaskDefinition, batchSize } = params;
-
+    
     const currentState = await this.ecs.send(new DescribeServicesCommand({
       cluster,
       services: [service]
     }));
-
+    
     const totalTasks = currentState.services![0].desiredCount || 0;
     const batches = Math.ceil(totalTasks / batchSize);
-
+    
     console.log(`🔄 Rolling deployment: ${batches} batches of ${batchSize} tasks`);
-
+    
     for (let i = 0; i < batches; i++) {
       console.log(`📦 Deploying batch ${i + 1}/${batches}`);
-
+      
       // Update service
       await this.ecs.send(new UpdateServiceCommand({
         cluster,
         service,
         taskDefinition: newTaskDefinition
       }));
-
+      
       // Wait for batch to be healthy
       await this.waitForHealthy(cluster, service);
-
+      
       // Check metrics
       const metricsOk = await this.checkMetrics(service);
       if (!metricsOk) {
@@ -48023,46 +48728,46 @@ export class DeploymentService {
         await this.rollback(cluster, service, currentState.services![0].taskDefinition!);
         throw new Error('Rolling deployment failed');
       }
-
+      
       console.log(`✅ Batch ${i + 1} healthy`);
     }
-
+    
     console.log('✅ Rolling deployment complete');
   }
-
+  
   private async waitForHealthy(cluster: string, service: string): Promise<void> {
     let attempts = 0;
     const maxAttempts = 60;
-
+    
     while (attempts < maxAttempts) {
       const state = await this.ecs.send(new DescribeServicesCommand({
         cluster,
         services: [service]
       }));
-
+      
       const runningCount = state.services![0].runningCount || 0;
       const desiredCount = state.services![0].desiredCount || 0;
-
+      
       if (runningCount === desiredCount) {
         return;
       }
-
+      
       await this.sleep(5000);
       attempts++;
     }
-
+    
     throw new Error('Service failed to become healthy');
   }
-
+  
   private async runSmokeTests(service: string): Promise<boolean> {
     // Implementation for smoke tests
     return true;
   }
-
+  
   private async switchTraffic(oldService: string, newService: string): Promise<void> {
     // Implementation for traffic switching (ALB target group swap)
   }
-
+  
   private async scaleDown(cluster: string, service: string): Promise<void> {
     await this.ecs.send(new UpdateServiceCommand({
       cluster,
@@ -48070,7 +48775,7 @@ export class DeploymentService {
       desiredCount: 0
     }));
   }
-
+  
   private async rollback(cluster: string, service: string, taskDefinition: string): Promise<void> {
     await this.ecs.send(new UpdateServiceCommand({
       cluster,
@@ -48078,17 +48783,17 @@ export class DeploymentService {
       taskDefinition
     }));
   }
-
+  
   private async checkCanaryMetrics(service: string): Promise<boolean> {
     // Implementation for canary metrics check
     return true;
   }
-
+  
   private async checkMetrics(service: string): Promise<boolean> {
     // Implementation for metrics check
     return true;
   }
-
+  
   private sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
@@ -48115,13 +48820,13 @@ export async function addColumnZeroDowntime() {
     ALTER TABLE users 
     ADD COLUMN new_field VARCHAR(255)
   `);
-
+  
   console.log('✅ Column added (nullable)');
-
+  
   // Step 2: Backfill data in batches
   let offset = 0;
   const batchSize = 1000;
-
+  
   while (true) {
     const result = await db.execute(sql`
       UPDATE users
@@ -48132,24 +48837,24 @@ export async function addColumnZeroDowntime() {
         LIMIT ${batchSize}
       )
     `);
-
+    
     if (result.rowCount === 0) break;
-
+    
     offset += batchSize;
     console.log(`Backfilled ${offset} rows`);
-
+    
     // Sleep to avoid overloading database
     await new Promise(resolve => setTimeout(resolve, 100));
   }
-
+  
   console.log('✅ Backfill complete');
-
+  
   // Step 3: Add NOT NULL constraint
   await db.execute(sql`
     ALTER TABLE users
     ALTER COLUMN new_field SET NOT NULL
   `);
-
+  
   console.log('✅ NOT NULL constraint added');
 }
 
@@ -48161,7 +48866,7 @@ export async function renameTableZeroDowntime() {
   await db.execute(sql`
     CREATE TABLE users_new (LIKE users INCLUDING ALL)
   `);
-
+  
   // Step 2: Set up triggers for dual writes
   await db.execute(sql`
     CREATE OR REPLACE FUNCTION sync_to_new_table()
@@ -48177,20 +48882,20 @@ export async function renameTableZeroDowntime() {
       RETURN NEW;
     END;
     $$ LANGUAGE plpgsql;
-
+    
     CREATE TRIGGER sync_users
     AFTER INSERT OR UPDATE OR DELETE ON users
     FOR EACH ROW EXECUTE FUNCTION sync_to_new_table();
   `);
-
+  
   // Step 3: Copy existing data
   await db.execute(sql`
     INSERT INTO users_new SELECT * FROM users
   `);
-
+  
   // Step 4: Switch application to read from new table
   console.log('⚠️ Deploy application update to read from users_new');
-
+  
   // Step 5: Drop old table and triggers
   await db.execute(sql`
     DROP TRIGGER sync_users ON users;
@@ -48198,7 +48903,7 @@ export async function renameTableZeroDowntime() {
     DROP TABLE users;
     ALTER TABLE users_new RENAME TO users;
   `);
-
+  
   console.log('✅ Table rename complete');
 }
 
@@ -48209,7 +48914,7 @@ export async function createIndexOnline() {
   await db.execute(sql`
     CREATE INDEX CONCURRENTLY idx_users_email ON users(email)
   `);
-
+  
   console.log('✅ Index created without locking table');
 }
 ```
@@ -48237,21 +48942,21 @@ export class DisasterRecoveryService {
   static async fullBackup(): Promise<string> {
     const timestamp = new Date().toISOString();
     const backupId = `full-backup-${timestamp}`;
-
+    
     console.log('🔄 Starting full system backup...');
-
+    
     // 1. Database backup
     await BackupService.createDatabaseBackup();
     console.log('✅ Database backed up');
-
+    
     // 2. File storage backup
     await this.backupFileStorage();
     console.log('✅ File storage backed up');
-
+    
     // 3. Configuration backup
     await this.backupConfiguration();
     console.log('✅ Configuration backed up');
-
+    
     // 4. Create manifest
     await this.createBackupManifest(backupId, {
       timestamp,
@@ -48259,100 +48964,100 @@ export class DisasterRecoveryService {
       files: true,
       config: true
     });
-
+    
     console.log(`✅ Full backup complete: ${backupId}`);
-
+    
     return backupId;
   }
-
+  
   /**
    * Point-in-time recovery
    */
   static async pointInTimeRecover(targetTime: Date): Promise<void> {
     console.log(`🔄 Recovering to ${targetTime.toISOString()}`);
-
+    
     // 1. Find appropriate backup
     const backup = await this.findBackupBeforeTime(targetTime);
-
+    
     if (!backup) {
       throw new Error('No backup found before target time');
     }
-
+    
     // 2. Restore database
     await this.restoreDatabase(backup.databaseFile);
     console.log('✅ Database restored');
-
+    
     // 3. Replay WAL logs to target time
     await this.replayWALLogs(backup.timestamp, targetTime);
     console.log('✅ WAL logs replayed');
-
+    
     // 4. Restore files
     await this.restoreFiles(backup.filesArchive);
     console.log('✅ Files restored');
-
+    
     console.log('✅ Point-in-time recovery complete');
   }
-
+  
   /**
    * Cross-region replication
    */
   static async replicateToRegion(targetRegion: string): Promise<void> {
     const targetS3 = new S3Client({ region: targetRegion });
-
+    
     // List all backups
     const backups = await s3.send(new ListObjectsV2Command({
       Bucket: process.env.BACKUP_S3_BUCKET!,
       Prefix: 'backups/'
     }));
-
+    
     // Copy to target region
     for (const obj of backups.Contents || []) {
       const getCommand = new GetObjectCommand({
         Bucket: process.env.BACKUP_S3_BUCKET!,
         Key: obj.Key
       });
-
+      
       const data = await s3.send(getCommand);
-
+      
       // Upload to target region
       await targetS3.send(new PutObjectCommand({
         Bucket: process.env.BACKUP_S3_BUCKET!,
         Key: obj.Key,
         Body: data.Body
       }));
-
+      
       console.log(`✅ Replicated ${obj.Key} to ${targetRegion}`);
     }
   }
-
+  
   /**
    * Automated recovery testing
    */
   static async testRecovery(): Promise<boolean> {
     console.log('🧪 Testing disaster recovery...');
-
+    
     try {
       // 1. Create test backup
       const backupId = await this.fullBackup();
-
+      
       // 2. Restore to temporary environment
       await this.restoreToTestEnvironment(backupId);
-
+      
       // 3. Run validation tests
       const valid = await this.validateRestoration();
-
+      
       // 4. Cleanup
       await this.cleanupTestEnvironment();
-
+      
       console.log(valid ? '✅ Recovery test passed' : '❌ Recovery test failed');
-
+      
       return valid;
     } catch (error) {
       console.error('❌ Recovery test failed:', error);
       return false;
     }
   }
-
+  
   /**
    * RPO/RTO monitoring
    */
@@ -48364,12 +49069,12 @@ export class DisasterRecoveryService {
     // Get last backup time
     const lastBackup = await this.getLastBackupTime();
     const rpo = Date.now() - lastBackup.getTime();
-
+    
     // Calculate estimated RTO based on last recovery test
     const rto = await this.getEstimatedRTO();
-
+    
     let status: 'healthy' | 'warning' | 'critical' = 'healthy';
-
+    
     // RPO target: 1 hour
     if (rpo > 3600000) {
       status = 'warning';
@@ -48377,61 +49082,61 @@ export class DisasterRecoveryService {
     if (rpo > 7200000) {
       status = 'critical';
     }
-
+    
     return {
       rpo: Math.round(rpo / 60000), // minutes
       rto: Math.round(rto / 60000), // minutes
       status
     };
   }
-
+  
   private static async backupFileStorage(): Promise<void> {
     // Implementation for file storage backup
   }
-
+  
   private static async backupConfiguration(): Promise<void> {
     // Implementation for configuration backup
   }
-
+  
   private static async createBackupManifest(backupId: string, metadata: any): Promise<void> {
     // Implementation for manifest creation
   }
-
+  
   private static async findBackupBeforeTime(targetTime: Date): Promise<any> {
     // Implementation to find appropriate backup
     return null;
   }
-
+  
   private static async restoreDatabase(file: string): Promise<void> {
     // Implementation for database restoration
   }
-
+  
   private static async replayWALLogs(fromTime: Date, toTime: Date): Promise<void> {
     // Implementation for WAL log replay
   }
-
+  
   private static async restoreFiles(archive: string): Promise<void> {
     // Implementation for file restoration
   }
-
+  
   private static async restoreToTestEnvironment(backupId: string): Promise<void> {
     // Implementation for test environment restoration
   }
-
+  
   private static async validateRestoration(): Promise<boolean> {
     // Implementation for restoration validation
     return true;
   }
-
+  
   private static async cleanupTestEnvironment(): Promise<void> {
     // Implementation for test environment cleanup
   }
-
+  
   private static async getLastBackupTime(): Promise<Date> {
     // Implementation to get last backup time
     return new Date();
   }
-
+  
   private static async getEstimatedRTO(): Promise<number> {
     // Implementation to get estimated RTO
     return 1800000; // 30 minutes
@@ -48463,10 +49168,10 @@ export class HealthCheckService {
    */
   static async checkDatabase(): Promise<HealthCheck> {
     const start = Date.now();
-
+    
     try {
       await db.execute(sql`SELECT 1`);
-
+      
       return {
         name: 'database',
         status: 'healthy',
@@ -48480,21 +49185,21 @@ export class HealthCheckService {
       };
     }
   }
-
+  
   /**
    * Check Redis health
    */
   static async checkRedis(): Promise<HealthCheck> {
     const start = Date.now();
-
+    
     try {
       await redisCluster.set('health_check', 'ok', 10);
       const value = await redisCluster.get('health_check');
-
+      
       if (value !== 'ok') {
         throw new Error('Redis read/write test failed');
       }
-
+      
       return {
         name: 'redis',
         status: 'healthy',
@@ -48508,7 +49213,7 @@ export class HealthCheckService {
       };
     }
   }
-
+  
   /**
    * Check external API health
    */
@@ -48518,10 +49223,10 @@ export class HealthCheckService {
       this.checkTwilio(),
       this.checkSendGrid()
     ]);
-
+    
     return checks;
   }
-
+  
   private static async checkStripe(): Promise<HealthCheck> {
     try {
       // Simple Stripe API call
@@ -48537,17 +49242,17 @@ export class HealthCheckService {
       };
     }
   }
-
+  
   private static async checkTwilio(): Promise<HealthCheck> {
     // Implementation
     return { name: 'twilio', status: 'healthy' };
   }
-
+  
   private static async checkSendGrid(): Promise<HealthCheck> {
     // Implementation
     return { name: 'sendgrid', status: 'healthy' };
   }
-
+  
   /**
    * Comprehensive health check
    */
@@ -48560,12 +49265,12 @@ export class HealthCheckService {
       this.checkRedis(),
       ...await this.checkExternalAPIs()
     ]);
-
+    
     const unhealthy = checks.filter(c => c.status === 'unhealthy').length;
     const degraded = checks.filter(c => c.status === 'degraded').length;
-
+    
     let overallStatus: 'healthy' | 'degraded' | 'unhealthy';
-
+    
     if (unhealthy > 0) {
       overallStatus = 'unhealthy';
     } else if (degraded > 0) {
@@ -48573,7 +49278,7 @@ export class HealthCheckService {
     } else {
       overallStatus = 'healthy';
     }
-
+    
     return {
       status: overallStatus,
       checks
@@ -48591,13 +49296,13 @@ export class CircuitBreaker {
   private failureCount = 0;
   private successCount = 0;
   private lastFailureTime: number | null = null;
-
+  
   constructor(
     private threshold: number = 5,
     private timeout: number = 60000,
     private halfOpenAttempts: number = 3
   ) {}
-
+  
   async execute<T>(fn: () => Promise<T>): Promise<T> {
     if (this.state === 'open') {
       if (this.shouldAttemptReset()) {
@@ -48607,7 +49312,7 @@ export class CircuitBreaker {
         throw new Error('Circuit breaker is OPEN');
       }
     }
-
+    
     try {
       const result = await fn();
       this.onSuccess();
@@ -48617,13 +49322,13 @@ export class CircuitBreaker {
       throw error;
     }
   }
-
+  
   private onSuccess(): void {
     this.failureCount = 0;
-
+    
     if (this.state === 'half-open') {
       this.successCount++;
-
+      
       if (this.successCount >= this.halfOpenAttempts) {
         this.state = 'closed';
         this.successCount = 0;
@@ -48631,11 +49336,11 @@ export class CircuitBreaker {
       }
     }
   }
-
+  
   private onFailure(): void {
     this.failureCount++;
     this.lastFailureTime = Date.now();
-
+    
     if (this.state === 'half-open') {
       this.state = 'open';
       this.successCount = 0;
@@ -48645,12 +49350,12 @@ export class CircuitBreaker {
       console.log('🔴 Circuit breaker opened (threshold reached)');
     }
   }
-
+  
   private shouldAttemptReset(): boolean {
     return this.lastFailureTime !== null &&
            Date.now() - this.lastFailureTime >= this.timeout;
   }
-
+  
   getState(): string {
     return this.state;
   }
@@ -48781,21 +49486,21 @@ export class ChaosRunner {
     duration: number;
   }): Promise<void> {
     console.log('💥 Starting pod failure experiment');
-
+    
     const startMetrics = await MetricsService.getMetrics();
-
+    
     // Kill random pod
     await this.kubectl(`delete pod -n ${params.namespace} -l ${params.selector} --grace-period=0 --force`);
-
+    
     // Wait for duration
     await this.sleep(params.duration * 1000);
-
+    
     const endMetrics = await MetricsService.getMetrics();
-
+    
     // Analyze impact
     this.analyzeImpact(startMetrics, endMetrics);
   }
-
+  
   /**
    * Network latency injection
    */
@@ -48805,18 +49510,18 @@ export class ChaosRunner {
     duration: number;
   }): Promise<void> {
     console.log(`📡 Injecting ${params.latency}ms network latency`);
-
+    
     // Use tc (traffic control) to add latency
     await this.exec(`tc qdisc add dev eth0 root netem delay ${params.latency}ms`);
-
+    
     await this.sleep(params.duration * 1000);
-
+    
     // Remove latency
     await this.exec('tc qdisc del dev eth0 root');
-
+    
     console.log('✅ Network latency experiment complete');
   }
-
+  
   /**
    * CPU stress test
    */
@@ -48825,13 +49530,13 @@ export class ChaosRunner {
     duration: number;
   }): Promise<void> {
     console.log(`🔥 Stressing ${params.cores} CPU cores`);
-
+    
     // Use stress-ng to stress CPU
     await this.exec(`stress-ng --cpu ${params.cores} --timeout ${params.duration}s`);
-
+    
     console.log('✅ CPU stress test complete');
   }
-
+  
   /**
    * Memory pressure test
    */
@@ -48840,21 +49545,21 @@ export class ChaosRunner {
     duration: number;
   }): Promise<void> {
     console.log(`💾 Creating ${params.percentage}% memory pressure`);
-
+    
     const totalMem = os.totalmem();
     const targetMem = Math.floor(totalMem * (params.percentage / 100));
-
+    
     // Allocate memory
     const buffer = Buffer.alloc(targetMem);
-
+    
     await this.sleep(params.duration * 1000);
-
+    
     // Release memory
     buffer.fill(0);
-
+    
     console.log('✅ Memory pressure test complete');
   }
-
+  
   /**
    * Database connection exhaustion
    */
@@ -48863,24 +49568,24 @@ export class ChaosRunner {
     duration: number;
   }): Promise<void> {
     console.log(`🗄️ Opening ${params.connections} database connections`);
-
+    
     const connections = [];
-
+    
     for (let i = 0; i < params.connections; i++) {
       const conn = await db.connect();
       connections.push(conn);
     }
-
+    
     await this.sleep(params.duration * 1000);
-
+    
     // Close connections
     for (const conn of connections) {
       await conn.end();
     }
-
+    
     console.log('✅ DB connection exhaustion test complete');
   }
-
+  
   /**
    * Disk I/O stress
    */
@@ -48889,24 +49594,24 @@ export class ChaosRunner {
     duration: number;
   }): Promise<void> {
     console.log(`💿 Stressing disk I/O with ${params.workers} workers`);
-
+    
     await this.exec(`stress-ng --io ${params.workers} --timeout ${params.duration}s`);
-
+    
     console.log('✅ Disk I/O stress test complete');
   }
-
+  
   private static async kubectl(command: string): Promise<void> {
     // Execute kubectl command
   }
-
+  
   private static async exec(command: string): Promise<void> {
     // Execute shell command
   }
-
+  
   private static sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
-
+  
   private static analyzeImpact(before: any, after: any): void {
     console.log('📊 Impact Analysis:');
     console.log('Error rate change:', (after.errorRate - before.errorRate).toFixed(2) + '%');
@@ -49098,30 +49803,30 @@ export const securityMiddleware = helmet({
       upgradeInsecureRequests: []
     }
   },
-
+  
   // HTTP Strict Transport Security
   hsts: {
     maxAge: 31536000,
     includeSubDomains: true,
     preload: true
   },
-
+  
   // X-Frame-Options
   frameguard: {
     action: 'deny'
   },
-
+  
   // X-Content-Type-Options
   noSniff: true,
-
+  
   // X-XSS-Protection
   xssFilter: true,
-
+  
   // Referrer-Policy
   referrerPolicy: {
     policy: 'strict-origin-when-cross-origin'
   },
-
+  
   // Permissions-Policy
   permittedCrossDomainPolicies: {
     permittedPolicies: 'none'
@@ -49134,13 +49839,13 @@ export const securityMiddleware = helmet({
 export function csrfProtection(req: Request, res: Response, next: NextFunction) {
   const token = req.headers['x-csrf-token'];
   const sessionToken = req.session?.csrfToken;
-
+  
   if (req.method !== 'GET' && req.method !== 'HEAD' && req.method !== 'OPTIONS') {
     if (!token || token !== sessionToken) {
       return res.status(403).json({ error: 'Invalid CSRF token' });
     }
   }
-
+  
   next();
 }
 
@@ -49155,11 +49860,11 @@ export function sanitizeInput(req: Request, res: Response, next: NextFunction) {
         .replace(/javascript:/gi, '')
         .replace(/on\w+\s*=/gi, '');
     }
-
+    
     if (Array.isArray(obj)) {
       return obj.map(sanitize);
     }
-
+    
     if (typeof obj === 'object' && obj !== null) {
       const sanitized: any = {};
       for (const key in obj) {
@@ -49167,14 +49872,14 @@ export function sanitizeInput(req: Request, res: Response, next: NextFunction) {
       }
       return sanitized;
     }
-
+    
     return obj;
   };
-
+  
   req.body = sanitize(req.body);
   req.query = sanitize(req.query);
   req.params = sanitize(req.params);
-
+  
   next();
 }
 
@@ -49184,11 +49889,11 @@ export function sanitizeInput(req: Request, res: Response, next: NextFunction) {
 export function ipWhitelist(allowedIPs: string[]) {
   return (req: Request, res: Response, next: NextFunction) => {
     const clientIP = req.ip || req.connection.remoteAddress;
-
+    
     if (!allowedIPs.includes(clientIP!)) {
       return res.status(403).json({ error: 'Access denied' });
     }
-
+    
     next();
   };
 }
@@ -49209,20 +49914,20 @@ export class SafeQueryBuilder {
    */
   static buildWhereClause(conditions: Record<string, any>): any {
     const clauses = [];
-
+    
     for (const [column, value] of Object.entries(conditions)) {
       // Validate column name (alphanumeric + underscore only)
       if (!/^[a-zA-Z0-9_]+$/.test(column)) {
         throw new Error(`Invalid column name: ${column}`);
       }
-
+      
       // Use parameterized query
       clauses.push(sql`${sql.raw(column)} = ${value}`);
     }
-
+    
     return clauses.length > 0 ? sql.join(clauses, sql` AND `) : sql`1=1`;
   }
-
+  
   /**
    * Safe LIKE query
    */
@@ -49230,13 +49935,13 @@ export class SafeQueryBuilder {
     if (!/^[a-zA-Z0-9_]+$/.test(column)) {
       throw new Error(`Invalid column name: ${column}`);
     }
-
+    
     // Escape special characters
     const escaped = value.replace(/[%_]/g, '\\$&');
-
+    
     return sql`${sql.raw(column)} LIKE ${`%${escaped}%`}`;
   }
-
+  
   /**
    * Safe ORDER BY
    */
@@ -49244,11 +49949,11 @@ export class SafeQueryBuilder {
     if (!/^[a-zA-Z0-9_]+$/.test(column)) {
       throw new Error(`Invalid column name: ${column}`);
     }
-
+    
     if (!['ASC', 'DESC'].includes(direction)) {
       throw new Error(`Invalid direction: ${direction}`);
     }
-
+    
     return sql`${sql.raw(column)} ${sql.raw(direction)}`;
   }
 }
@@ -49275,7 +49980,7 @@ export async function paginateWithCursor<T>(params: {
   orderBy: string;
 }): Promise<{ data: T[]; nextCursor: number | null }> {
   const { table, cursor, limit, orderBy } = params;
-
+  
   const query = cursor
     ? sql`
         SELECT * FROM ${sql.raw(table)}
@@ -49288,12 +49993,12 @@ export async function paginateWithCursor<T>(params: {
         ORDER BY ${sql.raw(orderBy)}
         LIMIT ${limit + 1}
       `;
-
+  
   const results = await db.execute(query);
   const hasMore = results.rows.length > limit;
   const data = hasMore ? results.rows.slice(0, -1) : results.rows;
   const nextCursor = hasMore ? data[data.length - 1].id : null;
-
+  
   return { data: data as T[], nextCursor };
 }
 
@@ -49302,41 +50007,41 @@ export async function paginateWithCursor<T>(params: {
  */
 export class DataLoader<K, V> {
   private cache: Map<K, Promise<V>> = new Map();
-
+  
   constructor(
     private batchFn: (keys: K[]) => Promise<V[]>,
     private maxBatchSize: number = 100
   ) {}
-
+  
   async load(key: K): Promise<V> {
     if (this.cache.has(key)) {
       return this.cache.get(key)!;
     }
-
+    
     const promise = this.batchLoad([key]).then(results => results[0]);
     this.cache.set(key, promise);
-
+    
     return promise;
   }
-
+  
   async loadMany(keys: K[]): Promise<V[]> {
     return this.batchLoad(keys);
   }
-
+  
   private async batchLoad(keys: K[]): Promise<V[]> {
     const batches: K[][] = [];
-
+    
     for (let i = 0; i < keys.length; i += this.maxBatchSize) {
       batches.push(keys.slice(i, i + this.maxBatchSize));
     }
-
+    
     const results = await Promise.all(
       batches.map(batch => this.batchFn(batch))
     );
-
+    
     return results.flat();
   }
-
+  
   clear(): void {
     this.cache.clear();
   }
@@ -49365,14 +50070,14 @@ export class CacheWarmer {
    */
   static async warmPopularContent(): Promise<void> {
     console.log('🔥 Warming cache...');
-
+    
     // Get popular events
     const popularEvents = await db.execute(sql`
       SELECT * FROM events
       ORDER BY view_count DESC
       LIMIT 100
     `);
-
+    
     // Cache them
     for (const event of popularEvents.rows) {
       await redisCluster.set(
@@ -49381,20 +50086,20 @@ export class CacheWarmer {
         3600 // 1 hour TTL
       );
     }
-
+    
     console.log('✅ Cache warmed');
   }
-
+  
   /**
    * Predictive caching based on user behavior
    */
   static async predictiveCache(userId: number): Promise<void> {
     // Analyze user's recent activity
     const recentViews = await this.getUserRecentViews(userId);
-
+    
     // Predict next content
     const predictions = await this.predictNextContent(recentViews);
-
+    
     // Pre-cache predictions
     for (const prediction of predictions) {
       await redisCluster.set(
@@ -49404,12 +50109,12 @@ export class CacheWarmer {
       );
     }
   }
-
+  
   private static async getUserRecentViews(userId: number): Promise<any[]> {
     // Implementation
     return [];
   }
-
+  
   private static async predictNextContent(recentViews: any[]): Promise<any[]> {
     // ML-based prediction
     return [];
@@ -49435,55 +50140,55 @@ test.describe('User Journey - Event Discovery to RSVP', () => {
     // Step 1: Navigate to homepage
     await page.goto('https://mundotango.life');
     await expect(page).toHaveTitle(/Mundo Tango/);
-
+    
     // Step 2: Search for events
     await page.click('[data-testid="search-button"]');
     await page.fill('[data-testid="search-input"]', 'tango milonga');
     await page.click('[data-testid="search-submit"]');
-
+    
     // Wait for results
     await page.waitForSelector('[data-testid^="event-card-"]');
-
+    
     // Step 3: Click first event
     await page.click('[data-testid="event-card-1"]');
-
+    
     // Verify event details page
     await expect(page.locator('[data-testid="event-title"]')).toBeVisible();
     await expect(page.locator('[data-testid="event-date"]')).toBeVisible();
-
+    
     // Step 4: RSVP to event
     await page.click('[data-testid="rsvp-button"]');
-
+    
     // Verify success message
     await expect(page.locator('[data-testid="rsvp-success"]')).toBeVisible();
-
+    
     // Step 5: Verify event appears in user's dashboard
     await page.click('[data-testid="nav-my-events"]');
     await expect(page.locator('[data-testid^="my-event-"]')).toHaveCount(1);
   });
-
+  
   test('User profile update flow', async ({ page }) => {
     // Login
     await page.goto('https://mundotango.life/login');
     await page.fill('[data-testid="input-email"]', 'test@example.com');
     await page.fill('[data-testid="input-password"]', 'password123');
     await page.click('[data-testid="button-login"]');
-
+    
     // Navigate to profile
     await page.click('[data-testid="nav-profile"]');
-
+    
     // Update bio
     await page.fill('[data-testid="input-bio"]', 'Passionate tango dancer from Buenos Aires');
-
+    
     // Upload profile picture
     await page.setInputFiles('[data-testid="input-profile-image"]', 'tests/fixtures/profile.jpg');
-
+    
     // Save changes
     await page.click('[data-testid="button-save-profile"]');
-
+    
     // Verify success
     await expect(page.locator('[data-testid="toast-success"]')).toBeVisible();
-
+    
     // Reload and verify persistence
     await page.reload();
     await expect(page.locator('[data-testid="input-bio"]')).toHaveValue(/Buenos Aires/);
@@ -49493,22 +50198,22 @@ test.describe('User Journey - Event Discovery to RSVP', () => {
 test.describe('Payment Flow', () => {
   test('Subscribe to premium plan', async ({ page }) => {
     await page.goto('https://mundotango.life/pricing');
-
+    
     // Select premium plan
     await page.click('[data-testid="button-select-premium"]');
-
+    
     // Fill payment details (test mode)
     const frame = page.frameLocator('[data-testid="stripe-iframe"]');
     await frame.locator('[name="cardnumber"]').fill('4242424242424242');
     await frame.locator('[name="exp-date"]').fill('1225');
     await frame.locator('[name="cvc"]').fill('123');
-
+    
     // Submit payment
     await page.click('[data-testid="button-subscribe"]');
-
+    
     // Verify success
     await expect(page.locator('[data-testid="subscription-active"]')).toBeVisible();
-
+    
     // Verify premium features unlocked
     await page.goto('https://mundotango.life/dashboard');
     await expect(page.locator('[data-testid="premium-badge"]')).toBeVisible();
@@ -49517,17 +50222,17 @@ test.describe('Payment Flow', () => {
 
 test.describe('Mobile Responsiveness', () => {
   test.use({ viewport: { width: 375, height: 667 } });
-
+  
   test('Mobile navigation menu', async ({ page }) => {
     await page.goto('https://mundotango.life');
-
+    
     // Open mobile menu
     await page.click('[data-testid="mobile-menu-button"]');
-
+    
     // Verify menu items
     await expect(page.locator('[data-testid="mobile-nav-events"]')).toBeVisible();
     await expect(page.locator('[data-testid="mobile-nav-messages"]')).toBeVisible();
-
+    
     // Navigate to events
     await page.click('[data-testid="mobile-nav-events"]');
     await expect(page).toHaveURL(/.*events/);
@@ -49537,26 +50242,26 @@ test.describe('Mobile Responsiveness', () => {
 test.describe('Accessibility', () => {
   test('Keyboard navigation', async ({ page }) => {
     await page.goto('https://mundotango.life');
-
+    
     // Tab through navigation
     await page.keyboard.press('Tab');
     await expect(page.locator(':focus')).toHaveAttribute('data-testid', 'nav-home');
-
+    
     await page.keyboard.press('Tab');
     await expect(page.locator(':focus')).toHaveAttribute('data-testid', 'nav-events');
-
+    
     // Enter to navigate
     await page.keyboard.press('Enter');
     await expect(page).toHaveURL(/.*events/);
   });
-
+  
   test('Screen reader support', async ({ page }) => {
     await page.goto('https://mundotango.life');
-
+    
     // Check ARIA labels
     await expect(page.locator('[data-testid="search-button"]')).toHaveAttribute('aria-label', 'Search events');
     await expect(page.locator('[data-testid="nav-profile"]')).toHaveAttribute('aria-label', 'User profile');
-
+    
     // Check heading hierarchy
     const h1 = await page.locator('h1').count();
     expect(h1).toBe(1);
@@ -49578,13 +50283,13 @@ test.describe('Visual Regression Tests', () => {
       threshold: 0.2
     });
   });
-
+  
   test('Event card component', async ({ page }) => {
     await page.goto('https://mundotango.life/events');
     const eventCard = page.locator('[data-testid="event-card-1"]');
     await expect(eventCard).toHaveScreenshot('event-card.png');
   });
-
+  
   test('Dark mode', async ({ page }) => {
     await page.goto('https://mundotango.life');
     await page.click('[data-testid="theme-toggle"]');
@@ -49602,14 +50307,14 @@ import { test } from '@playwright/test';
 test.describe('Performance Tests', () => {
   test('Page load performance', async ({ page }) => {
     const startTime = Date.now();
-
+    
     await page.goto('https://mundotango.life');
-
+    
     const loadTime = Date.now() - startTime;
-
+    
     // Assert load time under 2 seconds
     expect(loadTime).toBeLessThan(2000);
-
+    
     // Check Core Web Vitals
     const vitals = await page.evaluate(() => {
       return new Promise((resolve) => {
@@ -49620,7 +50325,7 @@ test.describe('Performance Tests', () => {
             FID: 0,
             CLS: 0
           };
-
+          
           for (const entry of entries) {
             if (entry.entryType === 'largest-contentful-paint') {
               vitals.LCP = entry.renderTime || entry.loadTime;
@@ -49632,12 +50337,12 @@ test.describe('Performance Tests', () => {
               vitals.CLS += entry.value;
             }
           }
-
+          
           resolve(vitals);
         }).observe({ entryTypes: ['largest-contentful-paint', 'first-input', 'layout-shift'] });
       });
     });
-
+    
     // Assert Core Web Vitals thresholds
     expect(vitals.LCP).toBeLessThan(2500); // 2.5s
     expect(vitals.FID).toBeLessThan(100);  // 100ms
@@ -49678,28 +50383,28 @@ export const options = {
 export default function () {
   // Test 1: Get events list
   const eventsRes = http.get('https://mundotango.life/api/events');
-
+  
   check(eventsRes, {
     'status is 200': (r) => r.status === 200,
     'response time < 500ms': (r) => r.timings.duration < 500,
   }) || errorRate.add(1);
-
+  
   sleep(1);
-
+  
   // Test 2: Get specific event
   const eventId = JSON.parse(eventsRes.body)[0]?.id;
-
+  
   if (eventId) {
     const eventRes = http.get(`https://mundotango.life/api/events/${eventId}`);
-
+    
     check(eventRes, {
       'status is 200': (r) => r.status === 200,
       'has event data': (r) => JSON.parse(r.body).title !== undefined,
     }) || errorRate.add(1);
   }
-
+  
   sleep(2);
-
+  
   // Test 3: Create post (authenticated)
   const token = 'test-token';
   const createPostRes = http.post(
@@ -49715,11 +50420,11 @@ export default function () {
       }
     }
   );
-
+  
   check(createPostRes, {
     'post created': (r) => r.status === 201,
   }) || errorRate.add(1);
-
+  
   sleep(1);
 }
 ```
@@ -49743,7 +50448,7 @@ export const options = {
 
 export default function () {
   const res = http.get('https://mundotango.life/api/events');
-
+  
   check(res, {
     'status is 200': (r) => r.status === 200,
     'no errors during spike': (r) => r.status !== 500,
@@ -49770,7 +50475,7 @@ export const options = {
 
 export default function () {
   const res = http.get('https://mundotango.life');
-
+  
   check(res, {
     'acceptable response time': (r) => r.timings.duration < 2000,
   });
@@ -49793,7 +50498,7 @@ import { db } from '../../server/db';
 describe('API Integration Tests', () => {
   let authToken: string;
   let userId: number;
-
+  
   beforeAll(async () => {
     // Setup test user
     const res = await request(app)
@@ -49803,16 +50508,16 @@ describe('API Integration Tests', () => {
         password: 'password123',
         name: 'Test User'
       });
-
+    
     authToken = res.body.token;
     userId = res.body.user.id;
   });
-
+  
   afterAll(async () => {
     // Cleanup
     await db.delete(users).where(eq(users.id, userId));
   });
-
+  
   describe('Events API', () => {
     it('should create an event', async () => {
       const res = await request(app)
@@ -49824,22 +50529,22 @@ describe('API Integration Tests', () => {
           city: 'Buenos Aires',
           startDate: new Date().toISOString()
         });
-
+      
       expect(res.status).toBe(201);
       expect(res.body.title).toBe('Test Milonga');
       expect(res.body.organizerId).toBe(userId);
     });
-
+    
     it('should get events list', async () => {
       const res = await request(app)
         .get('/api/events')
         .query({ city: 'Buenos Aires' });
-
+      
       expect(res.status).toBe(200);
       expect(Array.isArray(res.body)).toBe(true);
       expect(res.body.length).toBeGreaterThan(0);
     });
-
+    
     it('should update event', async () => {
       // First create event
       const createRes = await request(app)
@@ -49850,9 +50555,9 @@ describe('API Integration Tests', () => {
           city: 'Buenos Aires',
           startDate: new Date().toISOString()
         });
-
+      
       const eventId = createRes.body.id;
-
+      
       // Update event
       const updateRes = await request(app)
         .patch(`/api/events/${eventId}`)
@@ -49860,11 +50565,11 @@ describe('API Integration Tests', () => {
         .send({
           title: 'Updated Title'
         });
-
+      
       expect(updateRes.status).toBe(200);
       expect(updateRes.body.title).toBe('Updated Title');
     });
-
+    
     it('should delete event', async () => {
       // Create event
       const createRes = await request(app)
@@ -49875,22 +50580,22 @@ describe('API Integration Tests', () => {
           city: 'Buenos Aires',
           startDate: new Date().toISOString()
         });
-
+      
       const eventId = createRes.body.id;
-
+      
       // Delete event
       const deleteRes = await request(app)
         .delete(`/api/events/${eventId}`)
         .set('Authorization', `Bearer ${authToken}`);
-
+      
       expect(deleteRes.status).toBe(200);
-
+      
       // Verify deletion
       const getRes = await request(app).get(`/api/events/${eventId}`);
       expect(getRes.status).toBe(404);
     });
   });
-
+  
   describe('Authentication', () => {
     it('should reject invalid credentials', async () => {
       const res = await request(app)
@@ -49899,30 +50604,30 @@ describe('API Integration Tests', () => {
           email: 'test@example.com',
           password: 'wrongpassword'
         });
-
+      
       expect(res.status).toBe(401);
       expect(res.body.error).toBeDefined();
     });
-
+    
     it('should refresh token', async () => {
       const res = await request(app)
         .post('/api/auth/refresh')
         .set('Authorization', `Bearer ${authToken}`);
-
+      
       expect(res.status).toBe(200);
       expect(res.body.token).toBeDefined();
     });
   });
-
+  
   describe('Rate Limiting', () => {
     it('should rate limit after threshold', async () => {
       // Make 100 requests
       const requests = Array(100).fill(null).map(() =>
         request(app).get('/api/events')
       );
-
+      
       await Promise.all(requests);
-
+      
       // Next request should be rate limited
       const res = await request(app).get('/api/events');
       expect(res.status).toBe(429);
@@ -49945,7 +50650,7 @@ describe('Database Integration Tests', () => {
     // Clean up test data
     await db.delete(users).where(eq(users.email, 'dbtest@example.com'));
   });
-
+  
   describe('User Operations', () => {
     it('should create user with proper constraints', async () => {
       const [user] = await db.insert(users).values({
@@ -49953,19 +50658,19 @@ describe('Database Integration Tests', () => {
         name: 'DB Test User',
         password: 'hashed_password'
       }).returning();
-
+      
       expect(user.id).toBeDefined();
       expect(user.email).toBe('dbtest@example.com');
       expect(user.createdAt).toBeInstanceOf(Date);
     });
-
+    
     it('should enforce unique email constraint', async () => {
       await db.insert(users).values({
         email: 'dbtest@example.com',
         name: 'User 1',
         password: 'password'
       });
-
+      
       // Try to insert duplicate
       await expect(
         db.insert(users).values({
@@ -49976,7 +50681,7 @@ describe('Database Integration Tests', () => {
       ).rejects.toThrow();
     });
   });
-
+  
   describe('Transactions', () => {
     it('should rollback on error', async () => {
       try {
@@ -49987,7 +50692,7 @@ describe('Database Integration Tests', () => {
             name: 'Transaction User',
             password: 'password'
           }).returning();
-
+          
           // Insert event
           await tx.insert(events).values({
             title: 'Transaction Event',
@@ -49995,19 +50700,19 @@ describe('Database Integration Tests', () => {
             organizerId: user.id,
             startDate: new Date()
           });
-
+          
           // Force error
           throw new Error('Rollback test');
         });
       } catch (error) {
         // Expected error
       }
-
+      
       // Verify rollback - user should not exist
       const user = await db.query.users.findFirst({
         where: eq(users.email, 'transaction@example.com')
       });
-
+      
       expect(user).toBeUndefined();
     });
   });
@@ -50041,35 +50746,35 @@ export interface DomainEvent {
 
 export class EventBus extends EventEmitter {
   private static instance: EventBus;
-
+  
   private constructor() {
     super();
     this.setupRedisSubscription();
   }
-
+  
   static getInstance(): EventBus {
     if (!EventBus.instance) {
       EventBus.instance = new EventBus();
     }
     return EventBus.instance;
   }
-
+  
   /**
    * Publish event
    */
   async publish(event: DomainEvent): Promise<void> {
     // Emit locally
     this.emit(event.type, event);
-
+    
     // Publish to Redis for cross-service communication
     await redisCluster.publish('domain-events', JSON.stringify(event));
-
+    
     // Store event for event sourcing
     await this.storeEvent(event);
-
+    
     console.log(`📤 Event published: ${event.type}`);
   }
-
+  
   /**
    * Subscribe to event
    */
@@ -50079,13 +50784,13 @@ export class EventBus extends EventEmitter {
         await handler(event);
       } catch (error) {
         console.error(`Error handling event ${eventType}:`, error);
-
+        
         // Publish to dead letter queue
         await this.publishToDeadLetter(event, error);
       }
     });
   }
-
+  
   /**
    * Setup Redis subscription for distributed events
    */
@@ -50094,7 +50799,7 @@ export class EventBus extends EventEmitter {
       this.emit(event.type, event);
     });
   }
-
+  
   /**
    * Store event for event sourcing
    */
@@ -50107,7 +50812,7 @@ export class EventBus extends EventEmitter {
       createdAt: new Date()
     });
   }
-
+  
   /**
    * Publish to dead letter queue
    */
@@ -50131,11 +50836,11 @@ import { EmailService } from '../../services/EmailService';
 export class UserEventHandler {
   static register(): void {
     const eventBus = EventBus.getInstance();
-
+    
     // User registered event
     eventBus.subscribe('user.registered', async (event) => {
       console.log('📧 Sending welcome email');
-
+      
       await EmailService.send({
         to: event.payload.email,
         subject: 'Welcome to Mundo Tango!',
@@ -50144,7 +50849,7 @@ export class UserEventHandler {
           name: event.payload.name
         }
       });
-
+      
       // Create user preferences
       await db.insert(userPreferences).values({
         userId: event.payload.userId,
@@ -50152,28 +50857,28 @@ export class UserEventHandler {
         language: 'en'
       });
     });
-
+    
     // User profile updated event
     eventBus.subscribe('user.profileUpdated', async (event) => {
       console.log('🔄 Updating user search index');
-
+      
       await ElasticsearchService.updateDocument('users', event.aggregateId, {
         name: event.payload.name,
         bio: event.payload.bio,
         city: event.payload.city
       });
     });
-
+    
     // User deleted event
     eventBus.subscribe('user.deleted', async (event) => {
       console.log('🗑️ Cleaning up user data');
-
+      
       // Delete user's posts
       await db.delete(posts).where(eq(posts.userId, event.payload.userId));
-
+      
       // Delete user's events
       await db.delete(events).where(eq(events.organizerId, event.payload.userId));
-
+      
       // Remove from search index
       await ElasticsearchService.deleteDocument('users', event.aggregateId);
     });
@@ -50197,7 +50902,7 @@ export class CreateEventCommandHandler {
   async handle(command: CreateEventCommand): Promise<number> {
     // Validate command
     await this.validate(command);
-
+    
     // Execute business logic
     const [event] = await db.insert(events).values({
       title: command.title,
@@ -50207,7 +50912,7 @@ export class CreateEventCommandHandler {
       organizerId: command.organizerId,
       createdAt: new Date()
     }).returning();
-
+    
     // Publish domain event
     const eventBus = EventBus.getInstance();
     await eventBus.publish({
@@ -50220,15 +50925,15 @@ export class CreateEventCommandHandler {
         correlationId: crypto.randomUUID()
       }
     });
-
+    
     return event.id;
   }
-
+  
   private async validate(command: CreateEventCommand): Promise<void> {
     if (!command.title || command.title.length < 3) {
       throw new Error('Title must be at least 3 characters');
     }
-
+    
     if (command.startDate < new Date()) {
       throw new Error('Start date must be in the future');
     }
@@ -50250,23 +50955,23 @@ export class GetEventsQueryHandler {
   async handle(query: GetEventsQuery): Promise<any[]> {
     // Use read model (could be different DB or cache)
     let q = db.select().from(eventReadModel);
-
+    
     if (query.city) {
       q = q.where(eq(eventReadModel.city, query.city));
     }
-
+    
     if (query.category) {
       q = q.where(eq(eventReadModel.category, query.category));
     }
-
+    
     if (query.startDate) {
       q = q.where(gte(eventReadModel.startDate, query.startDate));
     }
-
+    
     const results = await q
       .limit(query.limit)
       .offset(query.offset);
-
+    
     return results;
   }
 }
@@ -50285,29 +50990,29 @@ import { EventBus } from '../events/EventBus';
 export class BookingSaga {
   private state: 'started' | 'payment-confirmed' | 'seat-reserved' | 'completed' | 'failed' = 'started';
   private compensations: Array<() => Promise<void>> = [];
-
+  
   async execute(params: {
     eventId: number;
     userId: number;
     amount: number;
   }): Promise<void> {
     const eventBus = EventBus.getInstance();
-
+    
     try {
       // Step 1: Reserve seat
       await this.reserveSeat(params.eventId, params.userId);
       this.compensations.push(() => this.cancelReservation(params.eventId, params.userId));
       this.state = 'seat-reserved';
-
+      
       // Step 2: Process payment
       await this.processPayment(params.userId, params.amount);
       this.compensations.push(() => this.refundPayment(params.userId, params.amount));
       this.state = 'payment-confirmed';
-
+      
       // Step 3: Send confirmation
       await this.sendConfirmation(params.userId, params.eventId);
       this.state = 'completed';
-
+      
       // Publish success event
       await eventBus.publish({
         type: 'booking.completed',
@@ -50319,10 +51024,10 @@ export class BookingSaga {
           correlationId: crypto.randomUUID()
         }
       });
-
+      
     } catch (error) {
       console.error('Saga failed, executing compensations:', error);
-
+      
       // Execute compensating transactions in reverse order
       for (const compensation of this.compensations.reverse()) {
         try {
@@ -50331,9 +51036,9 @@ export class BookingSaga {
           console.error('Compensation failed:', compError);
         }
       }
-
+      
       this.state = 'failed';
-
+      
       // Publish failure event
       await eventBus.publish({
         type: 'booking.failed',
@@ -50345,11 +51050,11 @@ export class BookingSaga {
           correlationId: crypto.randomUUID()
         }
       });
-
+      
       throw error;
     }
   }
-
+  
   private async reserveSeat(eventId: number, userId: number): Promise<void> {
     // Reserve seat logic
     await db.insert(eventAttendees).values({
@@ -50359,7 +51064,7 @@ export class BookingSaga {
       reservedAt: new Date()
     });
   }
-
+  
   private async cancelReservation(eventId: number, userId: number): Promise<void> {
     await db.delete(eventAttendees)
       .where(and(
@@ -50367,7 +51072,7 @@ export class BookingSaga {
         eq(eventAttendees.userId, userId)
       ));
   }
-
+  
   private async processPayment(userId: number, amount: number): Promise<void> {
     // Stripe payment processing
     const paymentIntent = await stripe.paymentIntents.create({
@@ -50375,17 +51080,17 @@ export class BookingSaga {
       currency: 'usd',
       metadata: { userId: userId.toString() }
     });
-
+    
     if (paymentIntent.status !== 'succeeded') {
       throw new Error('Payment failed');
     }
   }
-
+  
   private async refundPayment(userId: number, amount: number): Promise<void> {
     // Refund logic
     console.log(`Refunding ${amount} to user ${userId}`);
   }
-
+  
   private async sendConfirmation(userId: number, eventId: number): Promise<void> {
     await EmailService.send({
       to: (await db.query.users.findFirst({ where: eq(users.id, userId) }))!.email,
@@ -50411,11 +51116,11 @@ import httpProxy from 'http-proxy';
 export class APIGateway {
   private proxy = httpProxy.createProxyServer();
   private serviceRegistry: Map<string, string> = new Map();
-
+  
   constructor() {
     this.registerServices();
   }
-
+  
   private registerServices(): void {
     // Register microservices
     this.serviceRegistry.set('users', process.env.USER_SERVICE_URL!);
@@ -50423,7 +51128,7 @@ export class APIGateway {
     this.serviceRegistry.set('messages', process.env.MESSAGE_SERVICE_URL!);
     this.serviceRegistry.set('payments', process.env.PAYMENT_SERVICE_URL!);
   }
-
+  
   /**
    * Route request to appropriate service
    */
@@ -50431,14 +51136,14 @@ export class APIGateway {
     return (req, res, next) => {
       const serviceName = this.extractServiceName(req.path);
       const targetUrl = this.serviceRegistry.get(serviceName);
-
+      
       if (!targetUrl) {
         return res.status(404).json({ error: 'Service not found' });
       }
-
+      
       // Add request correlation ID
       req.headers['x-correlation-id'] = req.headers['x-correlation-id'] || crypto.randomUUID();
-
+      
       // Proxy request
       this.proxy.web(req, res, {
         target: targetUrl,
@@ -50449,20 +51154,20 @@ export class APIGateway {
       });
     };
   }
-
+  
   private extractServiceName(path: string): string {
     const match = path.match(/^\/api\/([^\/]+)/);
     return match ? match[1] : '';
   }
-
+  
   /**
    * Service health check
    */
   async healthCheck(serviceName: string): Promise<boolean> {
     const url = this.serviceRegistry.get(serviceName);
-
+    
     if (!url) return false;
-
+    
     try {
       const response = await fetch(`${url}/health`);
       return response.ok;
@@ -50470,7 +51175,7 @@ export class APIGateway {
       return false;
     }
   }
-
+  
   /**
    * Load balancing across service instances
    */
@@ -50490,14 +51195,14 @@ import { Consul } from 'consul';
 
 export class ServiceDiscovery {
   private consul: Consul;
-
+  
   constructor() {
     this.consul = new Consul({
       host: process.env.CONSUL_HOST || 'localhost',
       port: process.env.CONSUL_PORT || '8500'
     });
   }
-
+  
   /**
    * Register service
    */
@@ -50520,10 +51225,10 @@ export class ServiceDiscovery {
         timeout: '5s'
       }
     });
-
+    
     console.log(`✅ Service registered: ${params.name} (${params.id})`);
   }
-
+  
   /**
    * Deregister service
    */
@@ -50531,7 +51236,7 @@ export class ServiceDiscovery {
     await this.consul.agent.service.deregister(serviceId);
     console.log(`✅ Service deregistered: ${serviceId}`);
   }
-
+  
   /**
    * Discover service instances
    */
@@ -50540,7 +51245,7 @@ export class ServiceDiscovery {
       service: serviceName,
       passing: true
     });
-
+    
     return result.map(entry => ({
       id: entry.Service.ID,
       address: entry.Service.Address,
@@ -50548,7 +51253,7 @@ export class ServiceDiscovery {
       tags: entry.Service.Tags
     }));
   }
-
+  
   /**
    * Watch for service changes
    */
@@ -50560,17 +51265,17 @@ export class ServiceDiscovery {
         passing: true
       }
     });
-
+    
     watcher.on('change', (data) => {
       const services = data.map((entry: any) => ({
         id: entry.Service.ID,
         address: entry.Service.Address,
         port: entry.Service.Port
       }));
-
+      
       callback(services);
     });
-
+    
     watcher.on('error', (err) => {
       console.error('Watch error:', err);
     });
@@ -50597,10 +51302,10 @@ const connection = new IORedis({
 export class CompetingConsumersPattern {
   private queue: Queue;
   private workers: Worker[] = [];
-
+  
   constructor(queueName: string, workerCount: number) {
     this.queue = new Queue(queueName, { connection });
-
+    
     // Create multiple workers for parallel processing
     for (let i = 0; i < workerCount; i++) {
       const worker = new Worker(
@@ -50614,15 +51319,15 @@ export class CompetingConsumersPattern {
           concurrency: 5
         }
       );
-
+      
       this.workers.push(worker);
     }
   }
-
+  
   async addJob(data: any): Promise<void> {
     await this.queue.add('process', data);
   }
-
+  
   private async processJob(data: any): Promise<any> {
     // Job processing logic
     return { success: true };
@@ -50638,23 +51343,23 @@ import { Queue } from 'bullmq';
 
 export class PriorityQueuePattern {
   private queue: Queue;
-
+  
   constructor(queueName: string) {
     this.queue = new Queue(queueName, { connection });
   }
-
+  
   async addCriticalJob(data: any): Promise<void> {
     await this.queue.add('critical', data, {
       priority: 1 // Highest priority
     });
   }
-
+  
   async addNormalJob(data: any): Promise<void> {
     await this.queue.add('normal', data, {
       priority: 5 // Normal priority
     });
   }
-
+  
   async addLowPriorityJob(data: any): Promise<void> {
     await this.queue.add('low', data, {
       priority: 10 // Lowest priority
@@ -50672,15 +51377,15 @@ import { Queue, Worker } from 'bullmq';
 export class DeadLetterQueuePattern {
   private mainQueue: Queue;
   private dlq: Queue;
-
+  
   constructor(queueName: string) {
     this.mainQueue = new Queue(queueName, { connection });
     this.dlq = new Queue(`${queueName}-dlq`, { connection });
-
+    
     this.setupMainWorker();
     this.setupDLQMonitoring();
   }
-
+  
   private setupMainWorker(): void {
     new Worker(
       this.mainQueue.name,
@@ -50697,7 +51402,7 @@ export class DeadLetterQueuePattern {
               failedAt: new Date()
             });
           }
-
+          
           throw error;
         }
       },
@@ -50711,21 +51416,21 @@ export class DeadLetterQueuePattern {
       }
     );
   }
-
+  
   private setupDLQMonitoring(): void {
     // Monitor DLQ and alert on failures
     this.dlq.on('added', async (job) => {
       console.error('❌ Job moved to DLQ:', job.data);
-
+      
       // Send alert
       await this.sendAlert(job.data);
     });
   }
-
+  
   private async processJob(data: any): Promise<void> {
     // Processing logic
   }
-
+  
   private async sendAlert(data: any): Promise<void> {
     // Alert logic (email, Slack, etc.)
   }
@@ -50760,14 +51465,14 @@ export class TenantContextManager {
   static run<T>(context: TenantContext, callback: () => T): T {
     return tenantStorage.run(context, callback);
   }
-
+  
   /**
    * Get current tenant context
    */
   static get(): TenantContext | undefined {
     return tenantStorage.getStore();
   }
-
+  
   /**
    * Require tenant context (throw if not set)
    */
@@ -50786,16 +51491,16 @@ export class TenantContextManager {
 export function tenantMiddleware(req: Request, res: Response, next: NextFunction) {
   // Extract tenant from subdomain, header, or token
   const tenantId = req.subdomains[0] || req.headers['x-tenant-id'] || 'default';
-
+  
   // Load tenant configuration
   const tenant = await db.query.tenants.findFirst({
     where: eq(tenants.id, tenantId)
   });
-
+  
   if (!tenant) {
     return res.status(404).json({ error: 'Tenant not found' });
   }
-
+  
   // Run request in tenant context
   TenantContextManager.run(
     {
@@ -50818,7 +51523,7 @@ export class TenantRepository {
    */
   static async findMany<T>(table: any, where?: any): Promise<T[]> {
     const context = TenantContextManager.require();
-
+    
     return await db.select()
       .from(table)
       .where(and(
@@ -50826,27 +51531,27 @@ export class TenantRepository {
         where
       ));
   }
-
+  
   /**
    * Create with automatic tenant ID
    */
   static async create<T>(table: any, data: any): Promise<T> {
     const context = TenantContextManager.require();
-
+    
     const [result] = await db.insert(table).values({
       ...data,
       tenantId: context.tenantId
     }).returning();
-
+    
     return result as T;
   }
-
+  
   /**
    * Update with tenant validation
    */
   static async update<T>(table: any, id: number, data: any): Promise<T> {
     const context = TenantContextManager.require();
-
+    
     const [result] = await db.update(table)
       .set(data)
       .where(and(
@@ -50854,11 +51559,11 @@ export class TenantRepository {
         eq(table.tenantId, context.tenantId)
       ))
       .returning();
-
+    
     if (!result) {
       throw new Error('Record not found or access denied');
     }
-
+    
     return result as T;
   }
 }
@@ -50877,18 +51582,18 @@ import { ethers } from 'ethers';
 export class Web3Service {
   private provider: ethers.providers.Provider;
   private signer: ethers.Wallet;
-
+  
   constructor() {
     this.provider = new ethers.providers.JsonRpcProvider(
       process.env.ETH_RPC_URL || 'https://mainnet.infura.io/v3/YOUR_KEY'
     );
-
+    
     this.signer = new ethers.Wallet(
       process.env.ETH_PRIVATE_KEY!,
       this.provider
     );
   }
-
+  
   /**
    * Mint NFT ticket for event
    */
@@ -50906,21 +51611,21 @@ export class Web3Service {
       NFT_ABI,
       this.signer
     );
-
+    
     const userWallet = await this.getUserWallet(params.userId);
-
+    
     // Upload metadata to IPFS
     const metadataURI = await this.uploadToIPFS(params.metadata);
-
+    
     // Mint NFT
     const tx = await contract.mint(userWallet, metadataURI);
     await tx.wait();
-
+    
     console.log(`✅ NFT ticket minted: ${tx.hash}`);
-
+    
     return tx.hash;
   }
-
+  
   /**
    * Verify NFT ownership
    */
@@ -50933,12 +51638,12 @@ export class Web3Service {
       NFT_ABI,
       this.provider
     );
-
+    
     const owner = await contract.ownerOf(params.tokenId);
-
+    
     return owner.toLowerCase() === params.userWallet.toLowerCase();
   }
-
+  
   /**
    * Transfer ticket NFT
    */
@@ -50952,25 +51657,25 @@ export class Web3Service {
       NFT_ABI,
       this.signer
     );
-
+    
     const tx = await contract.transferFrom(params.from, params.to, params.tokenId);
     await tx.wait();
-
+    
     return tx.hash;
   }
-
+  
   private async getUserWallet(userId: number): Promise<string> {
     const user = await db.query.users.findFirst({
       where: eq(users.id, userId)
     });
-
+    
     if (!user?.walletAddress) {
       throw new Error('User wallet not found');
     }
-
+    
     return user.walletAddress;
   }
-
+  
   private async uploadToIPFS(metadata: any): Promise<string> {
     // Upload to IPFS (using Pinata, Infura, or similar)
     const response = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
@@ -50981,9 +51686,9 @@ export class Web3Service {
       },
       body: JSON.stringify(metadata)
     });
-
+    
     const data = await response.json();
-
+    
     return `ipfs://${data.IpfsHash}`;
   }
 }
@@ -51009,11 +51714,11 @@ import { Storage } from '@google-cloud/storage';
 export class ModelService {
   private model: tf.LayersModel | null = null;
   private storage: Storage;
-
+  
   constructor() {
     this.storage = new Storage();
   }
-
+  
   /**
    * Load trained model
    */
@@ -51021,18 +51726,18 @@ export class ModelService {
     // Download from cloud storage
     const bucket = this.storage.bucket(process.env.GCS_BUCKET!);
     const file = bucket.file(modelPath);
-
+    
     const [exists] = await file.exists();
     if (!exists) {
       throw new Error('Model not found');
     }
-
+    
     // Load model
     this.model = await tf.loadLayersModel(`gs://${process.env.GCS_BUCKET}/${modelPath}`);
-
+    
     console.log('✅ ML model loaded');
   }
-
+  
   /**
    * Predict user preferences
    */
@@ -51044,39 +51749,39 @@ export class ModelService {
     if (!this.model) {
       throw new Error('Model not loaded');
     }
-
+    
     // Get user features
     const features = await this.getUserFeatures(userId);
-
+    
     // Prepare input tensor
     const inputTensor = tf.tensor2d([features]);
-
+    
     // Make prediction
     const prediction = this.model.predict(inputTensor) as tf.Tensor;
     const predictionData = await prediction.data();
-
+    
     // Process output
     const eventTypes = this.decodeEventTypes(predictionData.slice(0, 10));
     const cities = this.decodeCities(predictionData.slice(10, 20));
     const confidence = predictionData[20];
-
+    
     // Cleanup tensors
     inputTensor.dispose();
     prediction.dispose();
-
+    
     return {
       eventTypes,
       cities,
       confidence
     };
   }
-
+  
   /**
    * Recommend events based on user behavior
    */
   async recommendEvents(userId: number, limit: number = 10): Promise<any[]> {
     const preferences = await this.predictUserPreferences(userId);
-
+    
     // Query events matching preferences
     const events = await db.query.events.findMany({
       where: or(
@@ -51086,10 +51791,10 @@ export class ModelService {
       limit,
       orderBy: desc(events.viewCount)
     });
-
+    
     return events;
   }
-
+  
   /**
    * Train model with new data (batch job)
    */
@@ -51097,7 +51802,7 @@ export class ModelService {
     // Prepare training data
     const xs = tf.tensor2d(trainingData.map(d => d.features));
     const ys = tf.tensor2d(trainingData.map(d => d.labels));
-
+    
     // Define model architecture
     const model = tf.sequential({
       layers: [
@@ -51107,14 +51812,14 @@ export class ModelService {
         tf.layers.dense({ units: 21, activation: 'softmax' })
       ]
     });
-
+    
     // Compile model
     model.compile({
       optimizer: tf.train.adam(0.001),
       loss: 'categoricalCrossentropy',
       metrics: ['accuracy']
     });
-
+    
     // Train
     await model.fit(xs, ys, {
       epochs: 50,
@@ -51126,27 +51831,27 @@ export class ModelService {
         }
       }
     });
-
+    
     // Save model
     await model.save(`gs://${process.env.GCS_BUCKET}/models/latest`);
-
+    
     console.log('✅ Model trained and saved');
-
+    
     // Cleanup
     xs.dispose();
     ys.dispose();
   }
-
+  
   private async getUserFeatures(userId: number): Promise<number[]> {
     // Extract features from user behavior
     const user = await db.query.users.findFirst({
       where: eq(users.id, userId)
     });
-
+    
     const userEvents = await db.query.eventAttendees.findMany({
       where: eq(eventAttendees.userId, userId)
     });
-
+    
     // Feature engineering
     return [
       // User demographics
@@ -51157,7 +51862,7 @@ export class ModelService {
       // ... more features (total 100 features)
     ];
   }
-
+  
   private decodeEventTypes(predictions: Float32Array): string[] {
     const EVENT_TYPES = ['milonga', 'workshop', 'festival', 'practica'];
     const topIndices = Array.from(predictions)
@@ -51165,15 +51870,15 @@ export class ModelService {
       .sort((a, b) => b.val - a.val)
       .slice(0, 3)
       .map(x => x.idx);
-
+    
     return topIndices.map(idx => EVENT_TYPES[idx]);
   }
-
+  
   private decodeCities(predictions: Float32Array): string[] {
     // Similar to decodeEventTypes
     return [];
   }
-
+  
   private encodeCityAsFeature(city: string): number {
     // City encoding logic
     return 0;
@@ -51194,37 +51899,37 @@ import { Server } from 'socket.io';
 export class VideoChatService {
   private io: Server;
   private rooms: Map<string, Set<string>> = new Map();
-
+  
   constructor(io: Server) {
     this.io = io;
     this.setupHandlers();
   }
-
+  
   private setupHandlers(): void {
     this.io.on('connection', (socket) => {
       console.log('User connected:', socket.id);
-
+      
       // Join video room
       socket.on('join-room', (roomId: string) => {
         socket.join(roomId);
-
+        
         if (!this.rooms.has(roomId)) {
           this.rooms.set(roomId, new Set());
         }
-
+        
         this.rooms.get(roomId)!.add(socket.id);
-
+        
         // Notify other users
         socket.to(roomId).emit('user-joined', {
           userId: socket.id,
           participantCount: this.rooms.get(roomId)!.size
         });
-
+        
         // Send existing participants
         const participants = Array.from(this.rooms.get(roomId)!).filter(id => id !== socket.id);
         socket.emit('existing-participants', participants);
       });
-
+      
       // WebRTC signaling
       socket.on('offer', (data: { to: string; offer: RTCSessionDescriptionInit }) => {
         socket.to(data.to).emit('offer', {
@@ -51232,21 +51937,21 @@ export class VideoChatService {
           offer: data.offer
         });
       });
-
+      
       socket.on('answer', (data: { to: string; answer: RTCSessionDescriptionInit }) => {
         socket.to(data.to).emit('answer', {
           from: socket.id,
           answer: data.answer
         });
       });
-
+      
       socket.on('ice-candidate', (data: { to: string; candidate: RTCIceCandidate }) => {
         socket.to(data.to).emit('ice-candidate', {
           from: socket.id,
           candidate: data.candidate
         });
       });
-
+      
       // Mute/unmute
       socket.on('toggle-audio', (roomId: string, isMuted: boolean) => {
         socket.to(roomId).emit('user-audio-toggle', {
@@ -51254,19 +51959,19 @@ export class VideoChatService {
           isMuted
         });
       });
-
+      
       socket.on('toggle-video', (roomId: string, isVideoOff: boolean) => {
         socket.to(roomId).emit('user-video-toggle', {
           userId: socket.id,
           isVideoOff
         });
       });
-
+      
       // Leave room
       socket.on('leave-room', (roomId: string) => {
         this.handleLeaveRoom(socket, roomId);
       });
-
+      
       socket.on('disconnect', () => {
         // Clean up all rooms user was in
         this.rooms.forEach((participants, roomId) => {
@@ -51277,13 +51982,13 @@ export class VideoChatService {
       });
     });
   }
-
+  
   private handleLeaveRoom(socket: any, roomId: string): void {
     const room = this.rooms.get(roomId);
-
+    
     if (room) {
       room.delete(socket.id);
-
+      
       if (room.size === 0) {
         this.rooms.delete(roomId);
       } else {
@@ -51293,7 +51998,7 @@ export class VideoChatService {
         });
       }
     }
-
+    
     socket.leave(roomId);
   }
 }
@@ -51309,63 +52014,63 @@ import * as Y from 'yjs';
 export class DocumentCollaborationService {
   private io: Server;
   private documents: Map<string, Y.Doc> = new Map();
-
+  
   constructor(io: Server) {
     this.io = io;
     this.setupHandlers();
   }
-
+  
   private setupHandlers(): void {
     this.io.on('connection', (socket: Socket) => {
       socket.on('join-document', async (documentId: string) => {
         socket.join(documentId);
-
+        
         // Get or create Y.Doc
         if (!this.documents.has(documentId)) {
           const ydoc = new Y.Doc();
-
+          
           // Load from database
           const saved = await this.loadDocument(documentId);
           if (saved) {
             Y.applyUpdate(ydoc, saved);
           }
-
+          
           this.documents.set(documentId, ydoc);
         }
-
+        
         const ydoc = this.documents.get(documentId)!;
-
+        
         // Send full state to new client
         const state = Y.encodeStateAsUpdate(ydoc);
         socket.emit('document-state', state);
-
+        
         // Handle updates from client
         socket.on('document-update', async (update: Uint8Array) => {
           // Apply update
           Y.applyUpdate(ydoc, update);
-
+          
           // Broadcast to others
           socket.to(documentId).emit('document-update', update);
-
+          
           // Persist to database
           await this.saveDocument(documentId, Y.encodeStateAsUpdate(ydoc));
         });
       });
-
+      
       socket.on('leave-document', (documentId: string) => {
         socket.leave(documentId);
       });
     });
   }
-
+  
   private async loadDocument(documentId: string): Promise<Uint8Array | null> {
     const doc = await db.query.documents.findFirst({
       where: eq(documents.id, documentId)
     });
-
+    
     return doc?.content ? new Uint8Array(doc.content) : null;
   }
-
+  
   private async saveDocument(documentId: string, content: Uint8Array): Promise<void> {
     await db.insert(documents)
       .values({
@@ -51396,7 +52101,7 @@ import { Client } from '@elastic/elasticsearch';
 
 export class ElasticsearchService {
   private client: Client;
-
+  
   constructor() {
     this.client = new Client({
       node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200',
@@ -51406,7 +52111,7 @@ export class ElasticsearchService {
       }
     });
   }
-
+  
   /**
    * Initialize indices
    */
@@ -51435,10 +52140,10 @@ export class ElasticsearchService {
         }
       }
     }, { ignore: [400] }); // Ignore if already exists
-
+    
     console.log('✅ Elasticsearch indices initialized');
   }
-
+  
   /**
    * Index document
    */
@@ -51450,7 +52155,7 @@ export class ElasticsearchService {
       refresh: 'true'
     });
   }
-
+  
   /**
    * Advanced search with filters
    */
@@ -51467,7 +52172,7 @@ export class ElasticsearchService {
   }): Promise<any> {
     const must: any[] = [];
     const filter: any[] = [];
-
+    
     // Full-text search
     if (params.query) {
       must.push({
@@ -51478,21 +52183,21 @@ export class ElasticsearchService {
         }
       });
     }
-
+    
     // City filter
     if (params.filters?.city) {
       filter.push({
         term: { city: params.filters.city }
       });
     }
-
+    
     // Category filter
     if (params.filters?.category) {
       filter.push({
         term: { category: params.filters.category }
       });
     }
-
+    
     // Date range filter
     if (params.filters?.dateRange) {
       filter.push({
@@ -51504,7 +52209,7 @@ export class ElasticsearchService {
         }
       });
     }
-
+    
     // Geo-distance filter
     if (params.filters?.location) {
       filter.push({
@@ -51517,7 +52222,7 @@ export class ElasticsearchService {
         }
       });
     }
-
+    
     const response = await this.client.search({
       index: 'events',
       body: {
@@ -51549,7 +52254,7 @@ export class ElasticsearchService {
         }
       }
     });
-
+    
     return {
       total: response.hits.total,
       results: response.hits.hits.map(hit => ({
@@ -51560,7 +52265,7 @@ export class ElasticsearchService {
       aggregations: response.aggregations
     };
   }
-
+  
   /**
    * Autocomplete suggestions
    */
@@ -51580,7 +52285,7 @@ export class ElasticsearchService {
         }
       }
     });
-
+    
     return response.suggest['title-suggest'][0].options.map((opt: any) => opt.text);
   }
 }
@@ -51698,13 +52403,13 @@ export function setupSwagger(app: Express): void {
     customCss: '.swagger-ui .topbar { display: none }',
     customSiteTitle: 'Mundo Tango API Docs'
   }));
-
+  
   // JSON endpoint
   app.get('/api-docs.json', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.send(swaggerSpec);
   });
-
+  
   console.log('📚 Swagger documentation available at /api-docs');
 }
 ```
@@ -51866,18 +52571,18 @@ export default router;
     }],
     "@typescript-eslint/no-floating-promises": "error",
     "@typescript-eslint/no-misused-promises": "error",
-
+    
     // Best practices
     "no-console": ["warn", { "allow": ["warn", "error"] }],
     "prefer-const": "error",
     "no-var": "error",
     "eqeqeq": ["error", "always"],
     "curly": ["error", "all"],
-
+    
     // Security
     "security/detect-object-injection": "warn",
     "security/detect-non-literal-regexp": "warn",
-
+    
     // Import rules
     "import/order": ["error", {
       "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
@@ -51885,7 +52590,7 @@ export default router;
       "alphabetize": { "order": "asc" }
     }],
     "import/no-duplicates": "error",
-
+    
     // Promise rules
     "promise/always-return": "error",
     "promise/catch-or-return": "error",
@@ -52010,44 +52715,44 @@ const envSchema = z.object({
   // Server
   NODE_ENV: z.enum(['development', 'staging', 'production']).default('development'),
   PORT: z.string().transform(Number).pipe(z.number().min(1).max(65535)).default('5000'),
-
+  
   // Database
   DATABASE_URL: z.string().url(),
   DB_POOL_MIN: z.string().transform(Number).default('2'),
   DB_POOL_MAX: z.string().transform(Number).default('10'),
-
+  
   // Redis
   REDIS_HOST: z.string(),
   REDIS_PORT: z.string().transform(Number),
   REDIS_PASSWORD: z.string().optional(),
-
+  
   // Authentication
   JWT_SECRET: z.string().min(32),
   JWT_EXPIRES_IN: z.string().default('7d'),
   SESSION_SECRET: z.string().min(32),
-
+  
   // External APIs
   STRIPE_SECRET_KEY: z.string().startsWith('sk_'),
   STRIPE_WEBHOOK_SECRET: z.string().startsWith('whsec_'),
   SENDGRID_API_KEY: z.string().startsWith('SG.'),
   TWILIO_ACCOUNT_SID: z.string(),
   TWILIO_AUTH_TOKEN: z.string(),
-
+  
   // AWS
   AWS_ACCESS_KEY_ID: z.string(),
   AWS_SECRET_ACCESS_KEY: z.string(),
   AWS_REGION: z.string().default('us-east-1'),
   S3_BUCKET: z.string(),
-
+  
   // Feature Flags
   ENABLE_WEBHOOKS: z.string().transform(Boolean).default('true'),
   ENABLE_ANALYTICS: z.string().transform(Boolean).default('true'),
   ENABLE_CACHE: z.string().transform(Boolean).default('true'),
-
+  
   // Monitoring
   SENTRY_DSN: z.string().url().optional(),
   DATADOG_API_KEY: z.string().optional(),
-
+  
   // Limits
   MAX_FILE_SIZE_MB: z.string().transform(Number).default('10'),
   RATE_LIMIT_MAX: z.string().transform(Number).default('100'),
@@ -52090,110 +52795,110 @@ import { redisCluster } from './config/redis-cluster';
 export class ProcessLifecycleManager {
   private server: Server;
   private isShuttingDown = false;
-
+  
   constructor(server: Server) {
     this.server = server;
     this.setupSignalHandlers();
   }
-
+  
   private setupSignalHandlers(): void {
     // Graceful shutdown on SIGTERM (Kubernetes, Docker)
     process.on('SIGTERM', () => {
       console.log('📡 SIGTERM received, starting graceful shutdown...');
       this.shutdown();
     });
-
+    
     // Graceful shutdown on SIGINT (Ctrl+C)
     process.on('SIGINT', () => {
       console.log('📡 SIGINT received, starting graceful shutdown...');
       this.shutdown();
     });
-
+    
     // Handle uncaught exceptions
     process.on('uncaughtException', (error) => {
       console.error('❌ Uncaught Exception:', error);
-
+      
       // Log to error monitoring
       this.logError(error);
-
+      
       // Shutdown gracefully
       this.shutdown(1);
     });
-
+    
     // Handle unhandled promise rejections
     process.on('unhandledRejection', (reason, promise) => {
       console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
-
+      
       // Log to error monitoring
       this.logError(reason);
-
+      
       // In production, shutdown on unhandled rejections
       if (process.env.NODE_ENV === 'production') {
         this.shutdown(1);
       }
     });
   }
-
+  
   private async shutdown(exitCode: number = 0): Promise<void> {
     if (this.isShuttingDown) {
       console.log('⏳ Shutdown already in progress...');
       return;
     }
-
+    
     this.isShuttingDown = true;
-
+    
     console.log('🔄 Starting graceful shutdown...');
-
+    
     // 1. Stop accepting new connections
     this.server.close(() => {
       console.log('✅ HTTP server closed');
     });
-
+    
     // 2. Set timeout for shutdown (30 seconds)
     const shutdownTimeout = setTimeout(() => {
       console.error('❌ Shutdown timeout, forcing exit');
       process.exit(1);
     }, 30000);
-
+    
     try {
       // 3. Wait for existing requests to complete
       await this.drainConnections();
       console.log('✅ All connections drained');
-
+      
       // 4. Close database connections
       await db.end();
       console.log('✅ Database connections closed');
-
+      
       // 5. Close Redis connections
       await redisCluster.quit();
       console.log('✅ Redis connections closed');
-
+      
       // 6. Flush metrics
       await this.flushMetrics();
       console.log('✅ Metrics flushed');
-
+      
       // 7. Complete background jobs
       await this.completeBackgroundJobs();
       console.log('✅ Background jobs completed');
-
+      
       clearTimeout(shutdownTimeout);
-
+      
       console.log('✅ Graceful shutdown complete');
       process.exit(exitCode);
-
+      
     } catch (error) {
       console.error('❌ Error during shutdown:', error);
       clearTimeout(shutdownTimeout);
       process.exit(1);
     }
   }
-
+  
   private async drainConnections(): Promise<void> {
     return new Promise((resolve) => {
       // Wait for all active connections to close
       const checkInterval = setInterval(() => {
         const connections = this.server.connections || 0;
-
+        
         if (connections === 0) {
           clearInterval(checkInterval);
           resolve();
@@ -52201,15 +52906,15 @@ export class ProcessLifecycleManager {
       }, 100);
     });
   }
-
+  
   private async flushMetrics(): Promise<void> {
     // Flush metrics to monitoring service
   }
-
+  
   private async completeBackgroundJobs(): Promise<void> {
     // Wait for critical background jobs to complete
   }
-
+  
   private async logError(error: any): Promise<void> {
     // Log to Sentry, DataDog, etc.
     if (process.env.SENTRY_DSN) {
@@ -52233,11 +52938,11 @@ import bcrypt from 'bcrypt';
 
 export async function seedDatabase(): Promise<void> {
   console.log('🌱 Starting database seeding...');
-
+  
   try {
     // 1. Create demo users
     const hashedPassword = await bcrypt.hash('demo123', 10);
-
+    
     const demoUsers = await db.insert(users).values([
       {
         email: 'alice@example.com',
@@ -52264,9 +52969,9 @@ export async function seedDatabase(): Promise<void> {
         profileImage: 'https://i.pravatar.cc/150?img=3'
       }
     ]).returning();
-
+    
     console.log(`✅ Created ${demoUsers.length} demo users`);
-
+    
     // 2. Create demo events
     const demoEvents = await db.insert(events).values([
       {
@@ -52312,9 +53017,9 @@ export async function seedDatabase(): Promise<void> {
         lng: -58.4199
       }
     ]).returning();
-
+    
     console.log(`✅ Created ${demoEvents.length} demo events`);
-
+    
     // 3. Create demo groups
     const demoGroups = await db.insert(groups).values([
       {
@@ -52334,11 +53039,11 @@ export async function seedDatabase(): Promise<void> {
         isPublic: false
       }
     ]).returning();
-
+    
     console.log(`✅ Created ${demoGroups.length} demo groups`);
-
+    
     console.log('✅ Database seeding completed successfully!');
-
+    
   } catch (error) {
     console.error('❌ Error seeding database:', error);
     throw error;
@@ -52387,25 +53092,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-
+      
       - name: Install dependencies
         run: npm ci
-
+      
       - name: Run ESLint
         run: npm run lint
-
+      
       - name: Run Prettier
         run: npm run format:check
-
+      
       - name: TypeScript Type Checking
         run: npm run typecheck
-
+      
       - name: Check for security vulnerabilities
         run: npm audit --audit-level=moderate
 
@@ -52427,7 +53132,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
+      
       redis:
         image: redis:7
         ports:
@@ -52437,34 +53142,34 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
+    
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-
+      
       - name: Install dependencies
         run: npm ci
-
+      
       - name: Run unit tests
         run: npm run test:unit
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
           REDIS_URL: redis://localhost:6379
-
+      
       - name: Run integration tests
         run: npm run test:integration
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
           REDIS_URL: redis://localhost:6379
-
+      
       - name: Generate coverage report
         run: npm run test:coverage
-
+      
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
@@ -52479,22 +53184,22 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-
+      
       - name: Install dependencies
         run: npm ci
-
+      
       - name: Install Playwright
         run: npx playwright install --with-deps
-
+      
       - name: Run E2E tests
         run: npm run test:e2e
-
+      
       - name: Upload Playwright report
         uses: actions/upload-artifact@v3
         if: always()
@@ -52516,17 +53221,17 @@ jobs:
       image-tag: ${{ steps.meta.outputs.tags }}
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
+      
       - name: Log in to Container Registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.DOCKER_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
+      
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -52538,7 +53243,7 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=sha,prefix={{branch}}-
-
+      
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
@@ -52558,19 +53263,19 @@ jobs:
     needs: build
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ needs.build.outputs.image-tag }}
           format: 'sarif'
           output: 'trivy-results.sarif'
-
+      
       - name: Upload Trivy results to GitHub Security
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: 'trivy-results.sarif'
-
+      
       - name: Run Snyk security scan
         uses: snyk/actions/node@master
         env:
@@ -52588,31 +53293,31 @@ jobs:
       url: https://staging.mundotango.life
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-
+      
       - name: Update ECS service
         run: |
           aws ecs update-service \
             --cluster mundotango-staging \
             --service web \
             --force-new-deployment
-
+      
       - name: Wait for deployment
         run: |
           aws ecs wait services-stable \
             --cluster mundotango-staging \
             --services web
-
+      
       - name: Run smoke tests
         run: |
           curl -f https://staging.mundotango.life/health || exit 1
-
+      
       - name: Notify Slack
         uses: 8398a7/action-slack@v3
         with:
@@ -52629,14 +53334,14 @@ jobs:
       url: https://mundotango.life
     steps:
       - uses: actions/checkout@v4
-
+      
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-
+      
       - name: Create deployment
         id: deployment
         run: |
@@ -52648,17 +53353,17 @@ jobs:
             --query 'deploymentId' \
             --output text)
           echo "deployment-id=$DEPLOYMENT_ID" >> $GITHUB_OUTPUT
-
+      
       - name: Wait for deployment
         run: |
           aws deploy wait deployment-successful \
             --deployment-id ${{ steps.deployment.outputs.deployment-id }}
-
+      
       - name: Run production smoke tests
         run: |
           curl -f https://mundotango.life/health || exit 1
           curl -f https://mundotango.life/api/health || exit 1
-
+      
       - name: Create release
         uses: actions/create-release@v1
         env:
@@ -52670,7 +53375,7 @@ jobs:
             Production deployment successful
             - Commit: ${{ github.sha }}
             - Deployment ID: ${{ steps.deployment.outputs.deployment-id }}
-
+      
       - name: Notify team
         uses: 8398a7/action-slack@v3
         with:
@@ -52700,42 +53405,42 @@ export async function up(knex: Knex): Promise<void> {
       table.integer('user_id').references('id').inTable('users').onDelete('CASCADE');
       table.timestamp('created_at').defaultTo(trx.fn.now());
       table.timestamp('updated_at').defaultTo(trx.fn.now());
-
+      
       // Indexes
       table.index('user_id');
       table.index('created_at');
     });
-
+    
     // Add column to existing table (safe)
     await trx.schema.alterTable('users', (table) => {
       table.string('phone_number').nullable();
     });
-
+    
     // Create index concurrently (PostgreSQL specific)
     await trx.raw(`
       CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_users_email_lower 
       ON users (LOWER(email))
     `);
-
+    
     // Backfill data in batches
     const batchSize = 1000;
     let offset = 0;
     let hasMore = true;
-
+    
     while (hasMore) {
       const users = await trx('users')
         .select('id')
         .whereNull('phone_number')
         .limit(batchSize)
         .offset(offset);
-
+      
       if (users.length === 0) {
         hasMore = false;
       } else {
         await trx('users')
           .whereIn('id', users.map(u => u.id))
           .update({ phone_number: '' });
-
+        
         offset += batchSize;
       }
     }
@@ -52746,11 +53451,11 @@ export async function down(knex: Knex): Promise<void> {
   await knex.transaction(async (trx) => {
     // Reverse changes
     await trx.schema.dropTableIfExists('new_feature');
-
+    
     await trx.schema.alterTable('users', (table) => {
       table.dropColumn('phone_number');
     });
-
+    
     await trx.raw('DROP INDEX CONCURRENTLY IF EXISTS idx_users_email_lower');
   });
 }
@@ -52989,7 +53694,7 @@ export function errorHandler(
 ): void {
   // Log error
   console.error('Error:', err);
-
+  
   // Zod validation errors
   if (err instanceof ZodError) {
     return res.status(400).json({
@@ -53000,25 +53705,25 @@ export function errorHandler(
       }))
     });
   }
-
+  
   // Custom app errors
   if (err instanceof AppError) {
     const response: any = {
       error: err.message,
       statusCode: err.statusCode
     };
-
+    
     if (err instanceof ValidationError && err.fields) {
       response.fields = err.fields;
     }
-
+    
     if (err instanceof RateLimitError) {
       res.setHeader('Retry-After', err.retryAfter);
     }
-
+    
     return res.status(err.statusCode).json(response);
   }
-
+  
   // Unknown errors (don't leak details)
   if (process.env.NODE_ENV === 'production') {
     return res.status(500).json({
@@ -53050,15 +53755,15 @@ const {  combine, timestamp, printf, colorize, errors } = winston.format;
 
 const logFormat = printf(({ level, message, timestamp, stack, ...meta }) => {
   let log = `${timestamp} [${level}]: ${message}`;
-
+  
   if (Object.keys(meta).length > 0) {
     log += ` ${JSON.stringify(meta)}`;
   }
-
+  
   if (stack) {
     log += `\n${stack}`;
   }
-
+  
   return log;
 });
 
@@ -53081,7 +53786,7 @@ export const logger = winston.createLogger({
         logFormat
       )
     }),
-
+    
     // Error logs
     new DailyRotateFile({
       filename: 'logs/error-%DATE%.log',
@@ -53091,7 +53796,7 @@ export const logger = winston.createLogger({
       maxFiles: '14d',
       zippedArchive: true
     }),
-
+    
     // Combined logs
     new DailyRotateFile({
       filename: 'logs/combined-%DATE%.log',
@@ -53100,7 +53805,7 @@ export const logger = winston.createLogger({
       maxFiles: '14d',
       zippedArchive: true
     }),
-
+    
     // Audit logs
     new DailyRotateFile({
       filename: 'logs/audit-%DATE%.log',
@@ -53116,7 +53821,7 @@ export const logger = winston.createLogger({
       )
     })
   ],
-
+  
   // Handle exceptions and rejections
   exceptionHandlers: [
     new DailyRotateFile({
@@ -53126,7 +53831,7 @@ export const logger = winston.createLogger({
       maxFiles: '14d'
     })
   ],
-
+  
   rejectionHandlers: [
     new DailyRotateFile({
       filename: 'logs/rejections-%DATE%.log',
@@ -53140,10 +53845,10 @@ export const logger = winston.createLogger({
 // Request logging middleware
 export function requestLogger(req: Request, res: Response, next: NextFunction) {
   const start = Date.now();
-
+  
   res.on('finish', () => {
     const duration = Date.now() - start;
-
+    
     logger.info('HTTP Request', {
       method: req.method,
       url: req.url,
@@ -53154,7 +53859,7 @@ export function requestLogger(req: Request, res: Response, next: NextFunction) {
       userId: req.user?.id
     });
   });
-
+  
   next();
 }
 
@@ -53212,9 +53917,9 @@ export async function setupI18n(app: Express): Promise<void> {
       },
       ns: ['common', 'errors', 'emails', 'notifications']
     });
-
+  
   app.use(middleware.handle(i18next));
-
+  
   console.log('✅ i18n configured');
 }
 ```
@@ -53472,7 +54177,7 @@ export class EmailService {
       pass: process.env.SMTP_PASSWORD
     }
   });
-
+  
   /**
    * Send email
    */
@@ -53491,7 +54196,7 @@ export class EmailService {
       text: params.text
     });
   }
-
+  
   /**
    * Send welcome email
    */
@@ -53501,7 +54206,7 @@ export class EmailService {
     verifyToken: string;
   }): Promise<void> {
     const verifyUrl = `https://mundotango.life/verify?token=${params.verifyToken}`;
-
+    
     await this.send({
       to: params.to,
       subject: 'Welcome to Mundo Tango!',
@@ -53511,7 +54216,7 @@ export class EmailService {
       })
     });
   }
-
+  
   /**
    * Send event reminder
    */
@@ -53536,7 +54241,7 @@ export class EmailService {
       })
     });
   }
-
+  
   /**
    * Send password reset
    */
@@ -53546,7 +54251,7 @@ export class EmailService {
     resetToken: string;
   }): Promise<void> {
     const resetUrl = `https://mundotango.life/reset-password?token=${params.resetToken}`;
-
+    
     await this.send({
       to: params.to,
       subject: 'Password Reset Request',
@@ -53586,7 +54291,7 @@ interface TokenPayload {
 export class JWTService {
   private static SECRET = process.env.JWT_SECRET!;
   private static REFRESH_SECRET = process.env.JWT_REFRESH_SECRET!;
-
+  
   /**
    * Generate access token (15 minutes)
    */
@@ -53597,7 +54302,7 @@ export class JWTService {
       audience: 'mundotango-api'
     });
   }
-
+  
   /**
    * Generate refresh token (7 days)
    */
@@ -53608,7 +54313,7 @@ export class JWTService {
       audience: 'mundotango-api'
     });
   }
-
+  
   /**
    * Verify access token
    */
@@ -53628,7 +54333,7 @@ export class JWTService {
       throw error;
     }
   }
-
+  
   /**
    * Verify refresh token
    */
@@ -53638,7 +54343,7 @@ export class JWTService {
       audience: 'mundotango-api'
     }) as TokenPayload;
   }
-
+  
   /**
    * Decode token without verification
    */
@@ -53652,13 +54357,13 @@ export class JWTService {
  */
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
-
+  
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'No token provided' });
   }
-
+  
   const token = authHeader.substring(7);
-
+  
   try {
     const payload = JWTService.verifyAccessToken(token);
     req.user = payload;
@@ -53673,10 +54378,10 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
  */
 export function optionalAuthMiddleware(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
-
+  
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.substring(7);
-
+    
     try {
       const payload = JWTService.verifyAccessToken(token);
       req.user = payload;
@@ -53684,7 +54389,7 @@ export function optionalAuthMiddleware(req: Request, res: Response, next: NextFu
       // Ignore errors for optional auth
     }
   }
-
+  
   next();
 }
 ```
@@ -53708,21 +54413,21 @@ export enum Permission {
   USER_READ = 'user:read',
   USER_WRITE = 'user:write',
   USER_DELETE = 'user:delete',
-
+  
   // Event permissions
   EVENT_CREATE = 'event:create',
   EVENT_READ = 'event:read',
   EVENT_UPDATE = 'event:update',
   EVENT_DELETE = 'event:delete',
   EVENT_MODERATE = 'event:moderate',
-
+  
   // Group permissions
   GROUP_CREATE = 'group:create',
   GROUP_READ = 'group:read',
   GROUP_UPDATE = 'group:update',
   GROUP_DELETE = 'group:delete',
   GROUP_MODERATE = 'group:moderate',
-
+  
   // Admin permissions
   ADMIN_PANEL = 'admin:panel',
   ADMIN_USERS = 'admin:users',
@@ -53732,7 +54437,7 @@ export enum Permission {
 
 const rolePermissions: Record<Role, Permission[]> = {
   [Role.SUPER_ADMIN]: Object.values(Permission),
-
+  
   [Role.ADMIN]: [
     Permission.USER_READ,
     Permission.USER_WRITE,
@@ -53745,7 +54450,7 @@ const rolePermissions: Record<Role, Permission[]> = {
     Permission.ADMIN_USERS,
     Permission.ADMIN_CONTENT
   ],
-
+  
   [Role.MODERATOR]: [
     Permission.USER_READ,
     Permission.EVENT_READ,
@@ -53754,7 +54459,7 @@ const rolePermissions: Record<Role, Permission[]> = {
     Permission.GROUP_MODERATE,
     Permission.ADMIN_PANEL
   ],
-
+  
   [Role.ORGANIZER]: [
     Permission.USER_READ,
     Permission.EVENT_CREATE,
@@ -53765,7 +54470,7 @@ const rolePermissions: Record<Role, Permission[]> = {
     Permission.GROUP_READ,
     Permission.GROUP_UPDATE
   ],
-
+  
   [Role.USER]: [
     Permission.USER_READ,
     Permission.EVENT_READ,
@@ -53780,14 +54485,14 @@ export class RBACService {
   static hasPermission(role: Role, permission: Permission): boolean {
     return rolePermissions[role]?.includes(permission) || false;
   }
-
+  
   /**
    * Check if user has any of the required permissions
    */
   static hasAnyPermission(role: Role, permissions: Permission[]): boolean {
     return permissions.some(permission => this.hasPermission(role, permission));
   }
-
+  
   /**
    * Check if user has all required permissions
    */
@@ -53804,11 +54509,11 @@ export function requireRole(...allowedRoles: Role[]) {
     if (!req.user) {
       return res.status(401).json({ error: 'Authentication required' });
     }
-
+    
     if (!allowedRoles.includes(req.user.role as Role)) {
       return res.status(403).json({ error: 'Insufficient permissions' });
     }
-
+    
     next();
   };
 }
@@ -53821,13 +54526,13 @@ export function requirePermission(...permissions: Permission[]) {
     if (!req.user) {
       return res.status(401).json({ error: 'Authentication required' });
     }
-
+    
     const userRole = req.user.role as Role;
-
+    
     if (!RBACService.hasAllPermissions(userRole, permissions)) {
       return res.status(403).json({ error: 'Insufficient permissions' });
     }
-
+    
     next();
   };
 }
@@ -53853,20 +54558,20 @@ export class TwoFactorService {
       issuer: 'Mundo Tango',
       length: 32
     });
-
+    
     return {
       secret: secret.base32,
       otpauthUrl: secret.otpauth_url!
     };
   }
-
+  
   /**
    * Generate QR code for secret
    */
   static async generateQRCode(otpauthUrl: string): Promise<string> {
     return await QRCode.toDataURL(otpauthUrl);
   }
-
+  
   /**
    * Verify TOTP token
    */
@@ -53878,18 +54583,18 @@ export class TwoFactorService {
       window: 2 // Allow 2 time steps before/after
     });
   }
-
+  
   /**
    * Generate backup codes
    */
   static generateBackupCodes(count: number = 10): string[] {
     const codes: string[] = [];
-
+    
     for (let i = 0; i < count; i++) {
       const code = Math.random().toString(36).substring(2, 10).toUpperCase();
       codes.push(code);
     }
-
+    
     return codes;
   }
 }
@@ -53901,33 +54606,33 @@ export function require2FA(req: Request, res: Response, next: NextFunction) {
   if (!req.user) {
     return res.status(401).json({ error: 'Authentication required' });
   }
-
+  
   // Check if user has 2FA enabled
   const user = await db.query.users.findFirst({
     where: eq(users.id, req.user.userId)
   });
-
+  
   if (!user.twoFactorEnabled) {
     return next();
   }
-
+  
   // Check if 2FA token provided
   const token = req.headers['x-2fa-token'];
-
+  
   if (!token) {
     return res.status(403).json({
       error: '2FA token required',
       twoFactorRequired: true
     });
   }
-
+  
   // Verify token
   const valid = TwoFactorService.verifyToken(user.twoFactorSecret, token as string);
-
+  
   if (!valid) {
     return res.status(403).json({ error: 'Invalid 2FA token' });
   }
-
+  
   next();
 }
 ```
@@ -54027,9 +54732,9 @@ export class S3UploadService {
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!
     }
   });
-
+  
   private static bucket = process.env.S3_BUCKET!;
-
+  
   /**
    * Upload file to S3
    */
@@ -54040,7 +54745,7 @@ export class S3UploadService {
     acl?: string;
   }): Promise<string> {
     const fileContent = fs.readFileSync(params.filePath);
-
+    
     await this.s3.send(new PutObjectCommand({
       Bucket: this.bucket,
       Key: params.key,
@@ -54048,13 +54753,13 @@ export class S3UploadService {
       ContentType: params.contentType,
       ACL: params.acl || 'public-read'
     }));
-
+    
     // Delete local file after upload
     fs.unlinkSync(params.filePath);
-
+    
     return `https://${this.bucket}.s3.amazonaws.com/${params.key}`;
   }
-
+  
   /**
    * Upload buffer to S3
    */
@@ -54070,10 +54775,10 @@ export class S3UploadService {
       ContentType: params.contentType,
       ACL: 'public-read'
     }));
-
+    
     return `https://${this.bucket}.s3.amazonaws.com/${params.key}`;
   }
-
+  
   /**
    * Delete file from S3
    */
@@ -54083,7 +54788,7 @@ export class S3UploadService {
       Key: key
     }));
   }
-
+  
   /**
    * Generate presigned URL for private files
    */
@@ -54092,10 +54797,10 @@ export class S3UploadService {
       Bucket: this.bucket,
       Key: key
     });
-
+    
     return await getSignedUrl(this.s3, command, { expiresIn });
   }
-
+  
   /**
    * Get presigned URL for upload
    */
@@ -54105,7 +54810,7 @@ export class S3UploadService {
       Key: key,
       ContentType: contentType
     });
-
+    
     return await getSignedUrl(this.s3, command, { expiresIn });
   }
 }
@@ -54134,9 +54839,9 @@ export class ImageProcessor {
       fit: 'inside',
       withoutEnlargement: true
     });
-
+    
     const format = path.extname(params.inputPath).substring(1);
-
+    
     switch (format) {
       case 'jpg':
       case 'jpeg':
@@ -54149,10 +54854,10 @@ export class ImageProcessor {
         pipeline = pipeline.webp({ quality: params.quality || 80 });
         break;
     }
-
+    
     return await pipeline.toBuffer();
   }
-
+  
   /**
    * Generate multiple sizes
    */
@@ -54161,17 +54866,17 @@ export class ImageProcessor {
     sizes: number[];
   }): Promise<Record<number, Buffer>> {
     const results: Record<number, Buffer> = {};
-
+    
     for (const size of params.sizes) {
       results[size] = await this.resize({
         inputPath: params.inputPath,
         width: size
       });
     }
-
+    
     return results;
   }
-
+  
   /**
    * Convert to WebP
    */
@@ -54180,7 +54885,7 @@ export class ImageProcessor {
       .webp({ quality })
       .toBuffer();
   }
-
+  
   /**
    * Generate thumbnail
    */
@@ -54190,7 +54895,7 @@ export class ImageProcessor {
       .jpeg({ quality: 70 })
       .toBuffer();
   }
-
+  
   /**
    * Add watermark
    */
@@ -54271,12 +54976,12 @@ const businessMetrics = {
     name: 'new_users_total',
     help: 'Total number of new user registrations'
   }),
-
+  
   eventCreations: new promClient.Counter({
     name: 'events_created_total',
     help: 'Total number of events created'
   }),
-
+  
   rsvpCount: new promClient.Counter({
     name: 'rsvps_total',
     help: 'Total number of event RSVPs'
@@ -54297,28 +55002,28 @@ Object.values(businessMetrics).forEach(metric => register.registerMetric(metric)
  */
 export function metricsMiddleware(req: Request, res: Response, next: NextFunction) {
   const start = Date.now();
-
+  
   activeConnections.inc();
-
+  
   res.on('finish', () => {
     const duration = (Date.now() - start) / 1000;
     const route = req.route?.path || req.path;
-
+    
     httpRequestDuration.observe({
       method: req.method,
       route,
       status_code: res.statusCode
     }, duration);
-
+    
     httpRequestTotal.inc({
       method: req.method,
       route,
       status_code: res.statusCode
     });
-
+    
     activeConnections.dec();
   });
-
+  
   next();
 }
 
@@ -54377,35 +55082,35 @@ export class DatadogService {
       version: process.env.APP_VERSION || '1.0.0'
     }
   });
-
+  
   /**
    * Increment counter
    */
   static increment(metric: string, tags?: Record<string, string>) {
     this.client.increment(metric, this.formatTags(tags));
   }
-
+  
   /**
    * Track timing
    */
   static timing(metric: string, value: number, tags?: Record<string, string>) {
     this.client.timing(metric, value, this.formatTags(tags));
   }
-
+  
   /**
    * Track gauge
    */
   static gauge(metric: string, value: number, tags?: Record<string, string>) {
     this.client.gauge(metric, value, this.formatTags(tags));
   }
-
+  
   /**
    * Track histogram
    */
   static histogram(metric: string, value: number, tags?: Record<string, string>) {
     this.client.histogram(metric, value, this.formatTags(tags));
   }
-
+  
   private static formatTags(tags?: Record<string, string>): string[] {
     if (!tags) return [];
     return Object.entries(tags).map(([key, value]) => `${key}:${value}`);
@@ -54561,10 +55266,10 @@ router.get('/ready', async (req, res) => {
   try {
     // Check database
     await db.execute(sql`SELECT 1`);
-
+    
     // Check Redis
     await redisCluster.ping();
-
+    
     res.status(200).json({
       status: 'ready',
       timestamp: new Date().toISOString()
@@ -54596,38 +55301,38 @@ router.get('/health/detailed', async (req, res) => {
     redis: 'unknown',
     externalAPIs: 'unknown'
   };
-
+  
   let overallStatus = 'healthy';
-
+  
   // Check database
   try {
     const start = Date.now();
     await db.execute(sql`SELECT 1`);
     const duration = Date.now() - start;
-
+    
     checks.database = duration < 100 ? 'healthy' : 'degraded';
   } catch (error) {
     checks.database = 'unhealthy';
     overallStatus = 'unhealthy';
   }
-
+  
   // Check Redis
   try {
     const start = Date.now();
     await redisCluster.ping();
     const duration = Date.now() - start;
-
+    
     checks.redis = duration < 50 ? 'healthy' : 'degraded';
   } catch (error) {
     checks.redis = 'unhealthy';
     overallStatus = 'degraded';
   }
-
+  
   // Check external APIs
   // ...
-
+  
   const statusCode = overallStatus === 'healthy' ? 200 : overallStatus === 'degraded' ? 200 : 503;
-
+  
   res.status(statusCode).json({
     status: overallStatus,
     checks,
@@ -54903,7 +55608,7 @@ function runHeavyTask(data) {
     const worker = new Worker('./heavy-task.js', {
       workerData: data
     });
-
+    
     worker.on('message', resolve);
     worker.on('error', reject);
   });
@@ -54999,7 +55704,7 @@ import { JWTService } from '../auth/jwt';
 
 export class AdvancedWebSocketServer {
   private io: SocketIOServer;
-
+  
   constructor(httpServer: any) {
     this.io = new SocketIOServer(httpServer, {
       cors: {
@@ -55010,32 +55715,32 @@ export class AdvancedWebSocketServer {
       pingInterval: 25000,
       transports: ['websocket', 'polling']
     });
-
+    
     this.setupRedisAdapter();
     this.setupMiddleware();
     this.setupHandlers();
   }
-
+  
   private async setupRedisAdapter() {
     const pubClient = createClient({ url: process.env.REDIS_URL });
     const subClient = pubClient.duplicate();
-
+    
     await Promise.all([pubClient.connect(), subClient.connect()]);
-
+    
     this.io.adapter(createAdapter(pubClient, subClient));
-
+    
     console.log('✅ Socket.IO Redis adapter configured');
   }
-
+  
   private setupMiddleware() {
     // Authentication middleware
     this.io.use(async (socket, next) => {
       const token = socket.handshake.auth.token;
-
+      
       if (!token) {
         return next(new Error('Authentication required'));
       }
-
+      
       try {
         const payload = JWTService.verifyAccessToken(token);
         socket.data.user = payload;
@@ -55044,38 +55749,38 @@ export class AdvancedWebSocketServer {
         next(new Error('Invalid token'));
       }
     });
-
+    
     // Rate limiting middleware
     this.io.use((socket, next) => {
       const rateLimiter = new Map<string, number>();
       const MAX_EVENTS_PER_SECOND = 10;
-
+      
       socket.use((packet, next) => {
         const now = Date.now();
         const key = socket.id;
         const lastTime = rateLimiter.get(key) || 0;
-
+        
         if (now - lastTime < 1000 / MAX_EVENTS_PER_SECOND) {
           return next(new Error('Rate limit exceeded'));
         }
-
+        
         rateLimiter.set(key, now);
         next();
       });
-
+      
       next();
     });
   }
-
+  
   private setupHandlers() {
     this.io.on('connection', (socket) => {
       const userId = socket.data.user.userId;
-
+      
       console.log(`User connected: ${userId}`);
-
+      
       // Join user to their personal room
       socket.join(`user:${userId}`);
-
+      
       // Typing indicators
       socket.on('typing:start', (data) => {
         socket.to(`conversation:${data.conversationId}`).emit('user:typing', {
@@ -55083,20 +55788,20 @@ export class AdvancedWebSocketServer {
           conversationId: data.conversationId
         });
       });
-
+      
       socket.on('typing:stop', (data) => {
         socket.to(`conversation:${data.conversationId}`).emit('user:stopped-typing', {
           userId,
           conversationId: data.conversationId
         });
       });
-
+      
       // Real-time notifications
       socket.on('notification:read', async (notificationId) => {
         await this.markNotificationRead(userId, notificationId);
         socket.emit('notification:marked-read', notificationId);
       });
-
+      
       // Presence
       socket.on('presence:update', (status) => {
         this.io.emit('user:presence', {
@@ -55105,11 +55810,11 @@ export class AdvancedWebSocketServer {
           timestamp: new Date()
         });
       });
-
+      
       // Disconnect handling
       socket.on('disconnect', () => {
         console.log(`User disconnected: ${userId}`);
-
+        
         this.io.emit('user:presence', {
           userId,
           status: 'offline',
@@ -55118,28 +55823,28 @@ export class AdvancedWebSocketServer {
       });
     });
   }
-
+  
   /**
    * Send notification to user
    */
   sendNotification(userId: number, notification: any) {
     this.io.to(`user:${userId}`).emit('notification', notification);
   }
-
+  
   /**
    * Send message to conversation
    */
   sendMessage(conversationId: number, message: any) {
     this.io.to(`conversation:${conversationId}`).emit('message', message);
   }
-
+  
   /**
    * Broadcast event
    */
   broadcast(event: string, data: any) {
     this.io.emit(event, data);
   }
-
+  
   private async markNotificationRead(userId: number, notificationId: number) {
     await db.update(notifications)
       .set({ read: true })
@@ -55179,9 +55884,9 @@ export class FullTextSearchService {
       groups: [],
       posts: []
     };
-
+    
     const contentTypes = params.filters?.contentType || ['events', 'users', 'groups', 'posts'];
-
+    
     // Search events
     if (contentTypes.includes('events')) {
       results.events = await this.searchEvents({
@@ -55190,7 +55895,7 @@ export class FullTextSearchService {
         limit: params.limit
       });
     }
-
+    
     // Search users
     if (contentTypes.includes('users')) {
       results.users = await this.searchUsers({
@@ -55198,7 +55903,7 @@ export class FullTextSearchService {
         limit: params.limit
       });
     }
-
+    
     // Search groups
     if (contentTypes.includes('groups')) {
       results.groups = await this.searchGroups({
@@ -55206,7 +55911,7 @@ export class FullTextSearchService {
         limit: params.limit
       });
     }
-
+    
     // Search posts
     if (contentTypes.includes('posts')) {
       results.posts = await this.searchPosts({
@@ -55214,10 +55919,10 @@ export class FullTextSearchService {
         limit: params.limit
       });
     }
-
+    
     return results;
   }
-
+  
   private static async searchEvents(params: {
     query: string;
     city?: string;
@@ -55231,14 +55936,14 @@ export class FullTextSearchService {
           ilike(events.description, `%${params.query}%`)
         )
       );
-
+    
     if (params.city) {
       query = query.where(eq(events.city, params.city));
     }
-
+    
     return await query.limit(params.limit || 10);
   }
-
+  
   private static async searchUsers(params: {
     query: string;
     limit?: number;
@@ -55253,7 +55958,7 @@ export class FullTextSearchService {
       )
       .limit(params.limit || 10);
   }
-
+  
   private static async searchGroups(params: {
     query: string;
     limit?: number;
@@ -55268,7 +55973,7 @@ export class FullTextSearchService {
       )
       .limit(params.limit || 10);
   }
-
+  
   private static async searchPosts(params: {
     query: string;
     limit?: number;
@@ -55321,12 +56026,12 @@ export class NotificationService {
     const user = await db.query.users.findFirst({
       where: eq(users.id, params.userId)
     });
-
+    
     if (!user) return;
-
+    
     const preferences = await this.getUserPreferences(params.userId);
     const channels = params.channels || this.getDefaultChannels(params.type, preferences);
-
+    
     // Send through each channel
     const promises = channels.map(channel => {
       switch (channel) {
@@ -55340,10 +56045,10 @@ export class NotificationService {
           return this.sendSMS(user.phoneNumber, params);
       }
     });
-
+    
     await Promise.all(promises);
   }
-
+  
   private static async sendInApp(params: {
     userId: number;
     type: NotificationType;
@@ -55361,11 +56066,11 @@ export class NotificationService {
       read: false,
       createdAt: new Date()
     });
-
+    
     // Send via WebSocket
     // webSocketServer.sendNotification(params.userId, params);
   }
-
+  
   private static async sendEmail(email: string, params: {
     title: string;
     message: string;
@@ -55376,7 +56081,7 @@ export class NotificationService {
       html: params.message
     });
   }
-
+  
   private static async sendPush(userId: number, params: {
     title: string;
     message: string;
@@ -55384,44 +56089,44 @@ export class NotificationService {
     const pushTokens = await db.query.pushTokens.findMany({
       where: eq(pushTokens.userId, userId)
     });
-
+    
     for (const tokenData of pushTokens) {
       // Send push notification (Firebase, OneSignal, etc.)
     }
   }
-
+  
   private static async sendSMS(phoneNumber: string | null, params: {
     message: string;
   }): Promise<void> {
     if (!phoneNumber) return;
-
+    
     // Send SMS via Twilio
     await TwilioService.sendSMS({
       to: phoneNumber,
       message: params.message
     });
   }
-
+  
   private static async getUserPreferences(userId: number): Promise<any> {
     return await db.query.notificationPreferences.findFirst({
       where: eq(notificationPreferences.userId, userId)
     });
   }
-
+  
   private static getDefaultChannels(
     type: NotificationType,
     preferences: any
   ): NotificationChannel[] {
     const channels: NotificationChannel[] = [NotificationChannel.IN_APP];
-
+    
     if (preferences?.emailEnabled) {
       channels.push(NotificationChannel.EMAIL);
     }
-
+    
     if (preferences?.pushEnabled) {
       channels.push(NotificationChannel.PUSH);
     }
-
+    
     return channels;
   }
 }
@@ -55452,11 +56157,11 @@ export class AnalyticsService {
       userAgent: params.userAgent,
       timestamp: new Date()
     });
-
+    
     // Send to external analytics
     await this.sendToMixpanel('page_view', params);
   }
-
+  
   /**
    * Track event
    */
@@ -55471,10 +56176,10 @@ export class AnalyticsService {
       properties: params.properties,
       timestamp: new Date()
     });
-
+    
     await this.sendToMixpanel(params.event, params.properties);
   }
-
+  
   /**
    * Track user action
    */
@@ -55494,14 +56199,14 @@ export class AnalyticsService {
       timestamp: new Date()
     });
   }
-
+  
   /**
    * Get user analytics
    */
   static async getUserAnalytics(userId: number, days: number = 30): Promise<any> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
-
+    
     const [pageViews, events, actions] = await Promise.all([
       db.select()
         .from(pageViews)
@@ -55509,14 +56214,14 @@ export class AnalyticsService {
           eq(pageViews.userId, userId),
           gte(pageViews.timestamp, startDate)
         )),
-
+      
       db.select()
         .from(analyticsEvents)
         .where(and(
           eq(analyticsEvents.userId, userId),
           gte(analyticsEvents.timestamp, startDate)
         )),
-
+      
       db.select()
         .from(userActions)
         .where(and(
@@ -55524,7 +56229,7 @@ export class AnalyticsService {
           gte(userActions.timestamp, startDate)
         ))
     ]);
-
+    
     return {
       pageViews: pageViews.length,
       events: this.groupByEvent(events),
@@ -55532,14 +56237,14 @@ export class AnalyticsService {
       mostVisitedPages: this.getMostVisited(pageViews)
     };
   }
-
+  
   /**
    * Get platform analytics
    */
   static async getPlatformAnalytics(days: number = 30): Promise<any> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
-
+    
     const [
       totalUsers,
       activeUsers,
@@ -55553,7 +56258,7 @@ export class AnalyticsService {
       db.select({ count: sql`COUNT(*)` }).from(posts),
       this.getAvgSessionDuration(startDate)
     ]);
-
+    
     return {
       totalUsers: totalUsers[0].count,
       activeUsers,
@@ -55563,52 +56268,52 @@ export class AnalyticsService {
       growthRate: await this.calculateGrowthRate(days)
     };
   }
-
+  
   private static async sendToMixpanel(event: string, properties: any): Promise<void> {
     if (!process.env.MIXPANEL_TOKEN) return;
-
+    
     // Send to Mixpanel
   }
-
+  
   private static groupByEvent(events: any[]): Record<string, number> {
     return events.reduce((acc, event) => {
       acc[event.event] = (acc[event.event] || 0) + 1;
       return acc;
     }, {});
   }
-
+  
   private static groupByAction(actions: any[]): Record<string, number> {
     return actions.reduce((acc, action) => {
       acc[action.action] = (acc[action.action] || 0) + 1;
       return acc;
     }, {});
   }
-
+  
   private static getMostVisited(pageViews: any[]): Array<{ path: string; count: number }> {
     const grouped = pageViews.reduce((acc, pv) => {
       acc[pv.path] = (acc[pv.path] || 0) + 1;
       return acc;
     }, {});
-
+    
     return Object.entries(grouped)
       .map(([path, count]) => ({ path, count: count as number }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
   }
-
+  
   private static async getActiveUsers(startDate: Date): Promise<number> {
     const result = await db.select({ count: sql`COUNT(DISTINCT user_id)` })
       .from(pageViews)
       .where(gte(pageViews.timestamp, startDate));
-
+    
     return result[0].count;
   }
-
+  
   private static async getAvgSessionDuration(startDate: Date): Promise<number> {
     // Calculate average session duration
     return 0;
   }
-
+  
   private static async calculateGrowthRate(days: number): Promise<number> {
     // Calculate growth rate
     return 0;
@@ -55663,11 +56368,11 @@ export class AuditService {
       userAgent: params.userAgent,
       timestamp: new Date()
     });
-
+    
     // Log to external service
     logger.info('Audit log', params);
   }
-
+  
   /**
    * Get audit trail for resource
    */
@@ -55685,7 +56390,7 @@ export class AuditService {
       .orderBy(desc(auditLogs.timestamp))
       .limit(params.limit || 100);
   }
-
+  
   /**
    * Get user audit trail
    */
@@ -55698,20 +56403,20 @@ export class AuditService {
     let query = db.select()
       .from(auditLogs)
       .where(eq(auditLogs.userId, params.userId));
-
+    
     if (params.startDate) {
       query = query.where(gte(auditLogs.timestamp, params.startDate));
     }
-
+    
     if (params.endDate) {
       query = query.where(lte(auditLogs.timestamp, params.endDate));
     }
-
+    
     return await query
       .orderBy(desc(auditLogs.timestamp))
       .limit(params.limit || 100);
   }
-
+  
   /**
    * Generate compliance report
    */
@@ -55725,7 +56430,7 @@ export class AuditService {
         gte(auditLogs.timestamp, params.startDate),
         lte(auditLogs.timestamp, params.endDate)
       ));
-
+    
     return {
       totalActions: logs.length,
       actionsByType: this.groupByAction(logs),
@@ -55736,20 +56441,20 @@ export class AuditService {
       dataExports: logs.filter(log => log.action === AuditAction.EXPORT)
     };
   }
-
+  
   private static groupByAction(logs: any[]): Record<string, number> {
     return logs.reduce((acc, log) => {
       acc[log.action] = (acc[log.action] || 0) + 1;
       return acc;
     }, {});
   }
-
+  
   private static getUserActivity(logs: any[]): Array<{ userId: number; actions: number }> {
     const grouped = logs.reduce((acc, log) => {
       acc[log.userId] = (acc[log.userId] || 0) + 1;
       return acc;
     }, {});
-
+    
     return Object.entries(grouped)
       .map(([userId, actions]) => ({
         userId: parseInt(userId),
@@ -55793,14 +56498,14 @@ router.get('/dashboard', requireRole(Role.ADMIN, Role.SUPER_ADMIN), async (req, 
  */
 router.get('/users', requirePermission(Permission.ADMIN_USERS), async (req, res) => {
   const { limit = 20, offset = 0, search, role } = req.query;
-
+  
   const users = await AdminService.getUsers({
     limit: parseInt(limit as string),
     offset: parseInt(offset as string),
     search: search as string,
     role: role as string
   });
-
+  
   res.json(users);
 });
 
@@ -55810,9 +56515,9 @@ router.get('/users', requirePermission(Permission.ADMIN_USERS), async (req, res)
 router.patch('/users/:id', requirePermission(Permission.ADMIN_USERS), async (req, res) => {
   const userId = parseInt(req.params.id);
   const updates = req.body;
-
+  
   const user = await AdminService.updateUser(userId, updates);
-
+  
   // Log audit
   await AuditService.log({
     userId: req.user!.userId,
@@ -55821,7 +56526,7 @@ router.patch('/users/:id', requirePermission(Permission.ADMIN_USERS), async (req
     resourceId: userId,
     changes: { after: updates }
   });
-
+  
   res.json(user);
 });
 
@@ -55830,9 +56535,9 @@ router.patch('/users/:id', requirePermission(Permission.ADMIN_USERS), async (req
  */
 router.delete('/users/:id', requirePermission(Permission.USER_DELETE), async (req, res) => {
   const userId = parseInt(req.params.id);
-
+  
   await AdminService.deleteUser(userId);
-
+  
   // Log audit
   await AuditService.log({
     userId: req.user!.userId,
@@ -55840,7 +56545,7 @@ router.delete('/users/:id', requirePermission(Permission.USER_DELETE), async (re
     resourceType: 'user',
     resourceId: userId
   });
-
+  
   res.json({ success: true });
 });
 
@@ -55857,9 +56562,9 @@ router.get('/content/flagged', requirePermission(Permission.ADMIN_CONTENT), asyn
  */
 router.post('/content/:id/approve', requirePermission(Permission.ADMIN_CONTENT), async (req, res) => {
   const contentId = parseInt(req.params.id);
-
+  
   await AdminService.approveContent(contentId);
-
+  
   res.json({ success: true });
 });
 
@@ -55869,9 +56574,9 @@ router.post('/content/:id/approve', requirePermission(Permission.ADMIN_CONTENT),
 router.post('/content/:id/reject', requirePermission(Permission.ADMIN_CONTENT), async (req, res) => {
   const contentId = parseInt(req.params.id);
   const { reason } = req.body;
-
+  
   await AdminService.rejectContent(contentId, reason);
-
+  
   res.json({ success: true });
 });
 
@@ -55880,9 +56585,9 @@ router.post('/content/:id/reject', requirePermission(Permission.ADMIN_CONTENT), 
  */
 router.get('/analytics', requireRole(Role.ADMIN, Role.SUPER_ADMIN), async (req, res) => {
   const { days = 30 } = req.query;
-
+  
   const analytics = await AnalyticsService.getPlatformAnalytics(parseInt(days as string));
-
+  
   res.json(analytics);
 });
 
@@ -55891,7 +56596,7 @@ router.get('/analytics', requireRole(Role.ADMIN, Role.SUPER_ADMIN), async (req, 
  */
 router.get('/audit-logs', requireRole(Role.ADMIN, Role.SUPER_ADMIN), async (req, res) => {
   const { limit = 100, userId, action, startDate, endDate } = req.query;
-
+  
   const logs = await AuditService.getAuditLogs({
     limit: parseInt(limit as string),
     userId: userId ? parseInt(userId as string) : undefined,
@@ -55899,7 +56604,7 @@ router.get('/audit-logs', requireRole(Role.ADMIN, Role.SUPER_ADMIN), async (req,
     startDate: startDate ? new Date(startDate as string) : undefined,
     endDate: endDate ? new Date(endDate as string) : undefined
   });
-
+  
   res.json(logs);
 });
 
@@ -55908,7 +56613,7 @@ router.get('/audit-logs', requireRole(Role.ADMIN, Role.SUPER_ADMIN), async (req,
  */
 router.post('/backup', requireRole(Role.SUPER_ADMIN), async (req, res) => {
   const backupId = await BackupService.createBackup();
-
+  
   res.json({ backupId, success: true });
 });
 
@@ -55917,7 +56622,7 @@ router.post('/backup', requireRole(Role.SUPER_ADMIN), async (req, res) => {
  */
 router.get('/system/health', requireRole(Role.ADMIN, Role.SUPER_ADMIN), async (req, res) => {
   const health = await HealthCheckService.runAllChecks();
-
+  
   res.json(health);
 });
 
@@ -55950,7 +56655,7 @@ export class AdminService {
       this.getFlaggedContentCount(),
       this.getRecentSignups(7)
     ]);
-
+    
     return {
       totalUsers: totalUsers[0].count,
       activeUsers,
@@ -55962,7 +56667,7 @@ export class AdminService {
       serverHealth: await HealthCheckService.runAllChecks()
     };
   }
-
+  
   /**
    * Get users with filtering
    */
@@ -55976,7 +56681,7 @@ export class AdminService {
     total: number;
   }> {
     let query = db.select().from(users);
-
+    
     if (params.search) {
       query = query.where(
         or(
@@ -55985,22 +56690,22 @@ export class AdminService {
         )
       );
     }
-
+    
     if (params.role) {
       query = query.where(eq(users.role, params.role));
     }
-
+    
     const [usersList, totalCount] = await Promise.all([
       query.limit(params.limit).offset(params.offset),
       db.select({ count: sql`COUNT(*)` }).from(users)
     ]);
-
+    
     return {
       users: usersList,
       total: totalCount[0].count
     };
   }
-
+  
   /**
    * Update user
    */
@@ -56012,10 +56717,10 @@ export class AdminService {
       })
       .where(eq(users.id, userId))
       .returning();
-
+    
     return user;
   }
-
+  
   /**
    * Delete user
    */
@@ -56028,7 +56733,7 @@ export class AdminService {
       await tx.delete(users).where(eq(users.id, userId));
     });
   }
-
+  
   /**
    * Get flagged content
    */
@@ -56038,7 +56743,7 @@ export class AdminService {
       .where(eq(contentFlags.status, 'pending'))
       .orderBy(desc(contentFlags.createdAt));
   }
-
+  
   /**
    * Approve content
    */
@@ -56047,7 +56752,7 @@ export class AdminService {
       .set({ status: 'approved', reviewedAt: new Date() })
       .where(eq(contentFlags.id, flagId));
   }
-
+  
   /**
    * Reject content
    */
@@ -56055,9 +56760,9 @@ export class AdminService {
     const flag = await db.query.contentFlags.findFirst({
       where: eq(contentFlags.id, flagId)
     });
-
+    
     if (!flag) return;
-
+    
     // Delete the content based on type
     switch (flag.contentType) {
       case 'post':
@@ -56067,7 +56772,7 @@ export class AdminService {
         await db.delete(comments).where(eq(comments.id, parseInt(flag.contentId)));
         break;
     }
-
+    
     // Update flag
     await db.update(contentFlags)
       .set({
@@ -56077,34 +56782,34 @@ export class AdminService {
       })
       .where(eq(contentFlags.id, flagId));
   }
-
+  
   private static async getActiveUsersCount(): Promise<number> {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
+    
     const result = await db.select({ count: sql`COUNT(DISTINCT user_id)` })
       .from(userSessions)
       .where(gte(userSessions.lastActivity, thirtyDaysAgo));
-
+    
     return result[0].count;
   }
-
+  
   private static async getFlaggedContentCount(): Promise<number> {
     const result = await db.select({ count: sql`COUNT(*)` })
       .from(contentFlags)
       .where(eq(contentFlags.status, 'pending'));
-
+    
     return result[0].count;
   }
-
+  
   private static async getRecentSignups(days: number): Promise<number> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
-
+    
     const result = await db.select({ count: sql`COUNT(*)` })
       .from(users)
       .where(gte(users.createdAt, startDate));
-
+    
     return result[0].count;
   }
 }
@@ -56134,31 +56839,31 @@ export class BackupService {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const filename = `backup-${timestamp}.sql`;
     const filepath = path.join(process.cwd(), 'backups', filename);
-
+    
     // Ensure backup directory exists
     await execAsync(`mkdir -p ${path.dirname(filepath)}`);
-
+    
     // Create backup
     const command = `pg_dump ${process.env.DATABASE_URL} > ${filepath}`;
     await execAsync(command);
-
+    
     // Compress
     await execAsync(`gzip ${filepath}`);
-
+    
     const compressedPath = `${filepath}.gz`;
-
+    
     // Upload to S3
     const s3Key = `backups/database/${filename}.gz`;
     await S3UploadService.upload({
       filePath: compressedPath,
       key: s3Key
     });
-
+    
     console.log(`✅ Database backup created: ${s3Key}`);
-
+    
     return s3Key;
   }
-
+  
   /**
    * Create file storage backup
    */
@@ -56166,33 +56871,33 @@ export class BackupService {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const filename = `files-${timestamp}.tar.gz`;
     const filepath = path.join(process.cwd(), 'backups', filename);
-
+    
     // Create compressed archive
     await execAsync(`tar -czf ${filepath} uploads/`);
-
+    
     // Upload to S3
     const s3Key = `backups/files/${filename}`;
     await S3UploadService.upload({
       filePath: filepath,
       key: s3Key
     });
-
+    
     console.log(`✅ File storage backup created: ${s3Key}`);
-
+    
     return s3Key;
   }
-
+  
   /**
    * Create full system backup
    */
   static async createBackup(): Promise<string> {
     const backupId = `backup-${Date.now()}`;
-
+    
     const [dbBackup, filesBackup] = await Promise.all([
       this.createDatabaseBackup(),
       this.createFileStorageBackup()
     ]);
-
+    
     // Save backup metadata
     await db.insert(backups).values({
       id: backupId,
@@ -56201,10 +56906,10 @@ export class BackupService {
       status: 'completed',
       createdAt: new Date()
     });
-
+    
     return backupId;
   }
-
+  
   /**
    * Restore from backup
    */
@@ -56212,33 +56917,33 @@ export class BackupService {
     const backup = await db.query.backups.findFirst({
       where: eq(backups.id, backupId)
     });
-
+    
     if (!backup) {
       throw new Error('Backup not found');
     }
-
+    
     console.log(`🔄 Starting restore from ${backupId}...`);
-
+    
     // Download database backup
     const dbBackupPath = `/tmp/${path.basename(backup.databaseBackup)}`;
     // Download from S3...
-
+    
     // Restore database
     await execAsync(`gunzip -c ${dbBackupPath} | psql ${process.env.DATABASE_URL}`);
-
+    
     console.log('✅ Database restored');
-
+    
     // Download files backup
     const filesBackupPath = `/tmp/${path.basename(backup.filesBackup)}`;
     // Download from S3...
-
+    
     // Extract files
     await execAsync(`tar -xzf ${filesBackupPath} -C /`);
-
+    
     console.log('✅ Files restored');
     console.log(`✅ Restore from ${backupId} completed`);
   }
-
+  
   /**
    * Schedule automated backups
    */
@@ -56253,30 +56958,30 @@ export class BackupService {
         console.error('❌ Scheduled backup failed:', error);
       }
     });
-
+    
     console.log('✅ Automated backups scheduled');
   }
-
+  
   /**
    * Clean up old backups
    */
   static async cleanupOldBackups(daysToKeep: number = 30): Promise<void> {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - daysToKeep);
-
+    
     const oldBackups = await db.select()
       .from(backups)
       .where(lt(backups.createdAt, cutoffDate));
-
+    
     for (const backup of oldBackups) {
       // Delete from S3
       await S3UploadService.delete(backup.databaseBackup);
       await S3UploadService.delete(backup.filesBackup);
-
+      
       // Delete from database
       await db.delete(backups).where(eq(backups.id, backup.id));
     }
-
+    
     console.log(`✅ Cleaned up ${oldBackups.length} old backups`);
   }
 }
@@ -56311,7 +57016,7 @@ export class ReportService {
         lte(userActions.timestamp, params.endDate)
       ))
       .orderBy(desc(userActions.timestamp));
-
+    
     switch (params.format) {
       case 'excel':
         return await this.generateExcelReport(activities, 'User Activity Report');
@@ -56323,7 +57028,7 @@ export class ReportService {
         throw new Error('Invalid format');
     }
   }
-
+  
   /**
    * Generate financial report
    */
@@ -56339,11 +57044,11 @@ export class ReportService {
         lte(payments.createdAt, params.endDate),
         eq(payments.status, 'succeeded')
       ));
-
+    
     const totalRevenue = transactions.reduce((sum, t) => sum + t.amount, 0);
     const transactionCount = transactions.length;
     const avgTransaction = totalRevenue / transactionCount;
-
+    
     const data = {
       summary: {
         totalRevenue,
@@ -56352,30 +57057,30 @@ export class ReportService {
       },
       transactions
     };
-
+    
     if (params.format === 'excel') {
       return await this.generateFinancialExcel(data);
     } else {
       return await this.generateFinancialPDF(data);
     }
   }
-
+  
   /**
    * Generate analytics report
    */
   static async generateAnalyticsReport(days: number = 30): Promise<string> {
     const analytics = await AnalyticsService.getPlatformAnalytics(days);
-
+    
     // Create workbook
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Platform Analytics');
-
+    
     // Add headers
     worksheet.columns = [
       { header: 'Metric', key: 'metric', width: 30 },
       { header: 'Value', key: 'value', width: 20 }
     ];
-
+    
     // Add data
     worksheet.addRows([
       { metric: 'Total Users', value: analytics.totalUsers },
@@ -56384,7 +57089,7 @@ export class ReportService {
       { metric: 'Total Posts', value: analytics.totalPosts },
       { metric: 'Growth Rate', value: `${analytics.growthRate}%` }
     ]);
-
+    
     // Style
     worksheet.getRow(1).font = { bold: true };
     worksheet.getRow(1).fill = {
@@ -56392,108 +57097,108 @@ export class ReportService {
       pattern: 'solid',
       fgColor: { argb: 'FF0ea5e9' }
     };
-
+    
     // Save
     const filename = `analytics-report-${Date.now()}.xlsx`;
     const filepath = `/tmp/${filename}`;
-
+    
     await workbook.xlsx.writeFile(filepath);
-
+    
     // Upload to S3
     const s3Key = `reports/${filename}`;
     await S3UploadService.upload({
       filePath: filepath,
       key: s3Key
     });
-
+    
     return s3Key;
   }
-
+  
   private static async generateExcelReport(data: any[], title: string): Promise<string> {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet(title);
-
+    
     if (data.length > 0) {
       worksheet.columns = Object.keys(data[0]).map(key => ({
         header: key,
         key: key,
         width: 20
       }));
-
+      
       worksheet.addRows(data);
       worksheet.getRow(1).font = { bold: true };
     }
-
+    
     const filename = `${title.replace(/\s+/g, '-')}-${Date.now()}.xlsx`;
     const filepath = `/tmp/${filename}`;
-
+    
     await workbook.xlsx.writeFile(filepath);
-
+    
     const s3Key = `reports/${filename}`;
     await S3UploadService.upload({
       filePath: filepath,
       key: s3Key
     });
-
+    
     return s3Key;
   }
-
+  
   private static async generatePDFReport(data: any[], title: string): Promise<string> {
     const filename = `${title.replace(/\s+/g, '-')}-${Date.now()}.pdf`;
     const filepath = `/tmp/${filename}`;
-
+    
     const doc = new PDFDocument();
     doc.pipe(fs.createWriteStream(filepath));
-
+    
     // Title
     doc.fontSize(20).text(title, { align: 'center' });
     doc.moveDown();
-
+    
     // Date
     doc.fontSize(10).text(`Generated: ${new Date().toLocaleString()}`);
     doc.moveDown();
-
+    
     // Data
     data.forEach((item, index) => {
       doc.fontSize(12).text(`${index + 1}. ${JSON.stringify(item)}`);
     });
-
+    
     doc.end();
-
+    
     // Upload to S3
     const s3Key = `reports/${filename}`;
     await S3UploadService.upload({
       filePath: filepath,
       key: s3Key
     });
-
+    
     return s3Key;
   }
-
+  
   private static async generateCSVReport(data: any[]): Promise<string> {
     const { Parser } = require('json2csv');
     const parser = new Parser();
     const csv = parser.parse(data);
-
+    
     const filename = `report-${Date.now()}.csv`;
     const filepath = `/tmp/${filename}`;
-
+    
     fs.writeFileSync(filepath, csv);
-
+    
     const s3Key = `reports/${filename}`;
     await S3UploadService.upload({
       filePath: filepath,
       key: s3Key
     });
-
+    
     return s3Key;
   }
-
+  
   private static async generateFinancialExcel(data: any): Promise<string> {
     // Implementation for financial Excel report
     return '';
   }
-
+  
   private static async generateFinancialPDF(data: any): Promise<string> {
     // Implementation for financial PDF report
     return '';
@@ -56565,18 +57270,18 @@ export class ContentModerationService {
     const response = await openai.moderations.create({
       input: text
     });
-
+    
     const result = response.results[0];
     const flaggedCategories: string[] = [];
-
+    
     if (result.categories.hate) flaggedCategories.push('hate');
     if (result.categories.harassment) flaggedCategories.push('harassment');
     if (result.categories.sexual) flaggedCategories.push('sexual');
     if (result.categories.violence) flaggedCategories.push('violence');
     if (result.categories['self-harm']) flaggedCategories.push('self-harm');
-
+    
     const severity = this.calculateSeverity(result.category_scores);
-
+    
     return {
       flagged: result.flagged,
       categories: flaggedCategories,
@@ -56586,7 +57291,7 @@ export class ContentModerationService {
         : undefined
     };
   }
-
+  
   /**
    * Moderate image content
    */
@@ -56597,7 +57302,7 @@ export class ContentModerationService {
   }> {
     // Use AWS Rekognition or similar service
     const rekognition = new AWS.Rekognition();
-
+    
     const response = await rekognition.detectModerationLabels({
       Image: {
         S3Object: {
@@ -56607,16 +57312,16 @@ export class ContentModerationService {
       },
       MinConfidence: 60
     }).promise();
-
+    
     const flaggedLabels = response.ModerationLabels || [];
-
+    
     return {
       flagged: flaggedLabels.length > 0,
       labels: flaggedLabels.map(label => label.Name!),
       confidence: Math.max(...flaggedLabels.map(label => label.Confidence || 0))
     };
   }
-
+  
   /**
    * Moderate user profile
    */
@@ -56627,13 +57332,13 @@ export class ContentModerationService {
     const user = await db.query.users.findFirst({
       where: eq(users.id, userId)
     });
-
+    
     if (!user) {
       throw new Error('User not found');
     }
-
+    
     const issues: string[] = [];
-
+    
     // Check profile text
     if (user.bio) {
       const bioModeration = await this.moderateText(user.bio);
@@ -56641,7 +57346,7 @@ export class ContentModerationService {
         issues.push(`Bio contains inappropriate content: ${bioModeration.categories.join(', ')}`);
       }
     }
-
+    
     // Check profile image
     if (user.profileImage) {
       const imageModeration = await this.moderateImage(user.profileImage);
@@ -56649,13 +57354,13 @@ export class ContentModerationService {
         issues.push(`Profile image flagged: ${imageModeration.labels.join(', ')}`);
       }
     }
-
+    
     return {
       approved: issues.length === 0,
       issues
     };
   }
-
+  
   /**
    * Auto-moderate post
    */
@@ -56663,11 +57368,11 @@ export class ContentModerationService {
     const post = await db.query.posts.findFirst({
       where: eq(posts.id, postId)
     });
-
+    
     if (!post) return;
-
+    
     const moderation = await this.moderateText(post.content);
-
+    
     if (moderation.flagged) {
       if (moderation.severity === 'high') {
         // Auto-remove high severity content
@@ -56677,7 +57382,7 @@ export class ContentModerationService {
             moderationReason: moderation.explanation
           })
           .where(eq(posts.id, postId));
-
+        
         // Notify user
         await NotificationService.send({
           userId: post.userId,
@@ -56699,18 +57404,18 @@ export class ContentModerationService {
       }
     }
   }
-
+  
   /**
    * Calculate severity from scores
    */
   private static calculateSeverity(scores: any): 'low' | 'medium' | 'high' {
     const maxScore = Math.max(...Object.values(scores) as number[]);
-
+    
     if (maxScore > 0.8) return 'high';
     if (maxScore > 0.5) return 'medium';
     return 'low';
   }
-
+  
   /**
    * Review flagged content
    */
@@ -56728,7 +57433,7 @@ export class ContentModerationService {
         reviewedAt: new Date()
       })
       .where(eq(contentFlags.id, params.flagId));
-
+    
     // Log audit
     await AuditService.log({
       userId: params.reviewerId,
@@ -56779,17 +57484,17 @@ export class GamificationService {
       metadata: params.metadata,
       createdAt: new Date()
     });
-
+    
     // Update user's total points
     await db.update(users)
       .set({
         totalPoints: sql`${users.totalPoints} + ${params.points}`
       })
       .where(eq(users.id, params.userId));
-
+    
     // Check for level up
     await this.checkLevelUp(params.userId);
-
+    
     // Send notification
     await NotificationService.send({
       userId: params.userId,
@@ -56799,7 +57504,7 @@ export class GamificationService {
       data: { points: params.points, reason: params.reason }
     });
   }
-
+  
   /**
    * Check and award achievement
    */
@@ -56811,16 +57516,16 @@ export class GamificationService {
         eq(userAchievements.achievementType, type)
       )
     });
-
+    
     if (existing) return;
-
+    
     // Award achievement
     await db.insert(userAchievements).values({
       userId,
       achievementType: type,
       earnedAt: new Date()
     });
-
+    
     // Award bonus points
     const points = this.getAchievementPoints(type);
     await this.awardPoints({
@@ -56829,7 +57534,7 @@ export class GamificationService {
       reason: `Achievement unlocked: ${type}`,
       metadata: { achievement: type }
     });
-
+    
     // Send notification
     await NotificationService.send({
       userId,
@@ -56839,7 +57544,7 @@ export class GamificationService {
       data: { achievement: type, points }
     });
   }
-
+  
   /**
    * Track user action and award points
    */
@@ -56855,9 +57560,9 @@ export class GamificationService {
       'profile_completed': 100,
       'friend_added': 15
     };
-
+    
     const points = pointsMap[params.action] || 0;
-
+    
     if (points > 0) {
       await this.awardPoints({
         userId: params.userId,
@@ -56865,11 +57570,11 @@ export class GamificationService {
         reason: params.action.replace('_', ' ')
       });
     }
-
+    
     // Check for achievements
     await this.checkActionAchievements(params.userId, params.action);
   }
-
+  
   /**
    * Get user's gamification stats
    */
@@ -56883,19 +57588,19 @@ export class GamificationService {
     const user = await db.query.users.findFirst({
       where: eq(users.id, userId)
     });
-
+    
     if (!user) {
       throw new Error('User not found');
     }
-
+    
     const achievements = await db.query.userAchievements.findMany({
       where: eq(userAchievements.userId, userId)
     });
-
+    
     const level = this.calculateLevel(user.totalPoints);
     const rank = await this.getUserRank(userId);
     const nextLevelPoints = this.getPointsForLevel(level + 1) - user.totalPoints;
-
+    
     return {
       totalPoints: user.totalPoints,
       level,
@@ -56904,7 +57609,7 @@ export class GamificationService {
       nextLevelPoints
     };
   }
-
+  
   /**
    * Get leaderboard
    */
@@ -56919,27 +57624,27 @@ export class GamificationService {
       .from(users)
       .orderBy(desc(users.totalPoints))
       .limit(limit);
-
+    
     return leaders.map((leader, index) => ({
       ...leader,
       rank: index + 1
     }));
   }
-
+  
   private static async checkLevelUp(userId: number): Promise<void> {
     const user = await db.query.users.findFirst({
       where: eq(users.id, userId)
     });
-
+    
     if (!user) return;
-
+    
     const newLevel = this.calculateLevel(user.totalPoints);
-
+    
     if (newLevel > user.level) {
       await db.update(users)
         .set({ level: newLevel })
         .where(eq(users.id, userId));
-
+      
       await NotificationService.send({
         userId,
         type: NotificationType.LEVEL_UP,
@@ -56949,15 +57654,15 @@ export class GamificationService {
       });
     }
   }
-
+  
   private static calculateLevel(points: number): number {
     return Math.floor(points / 100) + 1;
   }
-
+  
   private static getPointsForLevel(level: number): number {
     return (level - 1) * 100;
   }
-
+  
   private static getAchievementPoints(type: AchievementType): number {
     const pointsMap: Record<AchievementType, number> = {
       [AchievementType.FIRST_POST]: 50,
@@ -56967,10 +57672,10 @@ export class GamificationService {
       [AchievementType.VETERAN]: 500,
       [AchievementType.INFLUENCER]: 1000
     };
-
+    
     return pointsMap[type] || 0;
   }
-
+  
   private static async getUserRank(userId: number): Promise<number> {
     const result = await db.execute(sql`
       SELECT COUNT(*) + 1 as rank
@@ -56979,31 +57684,31 @@ export class GamificationService {
         SELECT total_points FROM users WHERE id = ${userId}
       )
     `);
-
+    
     return result.rows[0].rank;
   }
-
+  
   private static async checkActionAchievements(userId: number, action: string): Promise<void> {
     // Check for specific achievements based on actions
     if (action === 'post_created') {
       const postCount = await db.select({ count: sql`COUNT(*)` })
         .from(posts)
         .where(eq(posts.userId, userId));
-
+      
       if (postCount[0].count === 1) {
         await this.checkAchievement(userId, AchievementType.FIRST_POST);
       }
     }
-
+    
     if (action === 'event_created') {
       const eventCount = await db.select({ count: sql`COUNT(*)` })
         .from(events)
         .where(eq(events.organizerId, userId));
-
+      
       if (eventCount[0].count === 1) {
         await this.checkAchievement(userId, AchievementType.FIRST_EVENT);
       }
-
+      
       if (eventCount[0].count >= 10) {
         await this.checkAchievement(userId, AchievementType.EVENT_ORGANIZER);
       }
@@ -57026,16 +57731,16 @@ export class ReferralService {
    */
   static async generateReferralCode(userId: number): Promise<string> {
     const code = this.createUniqueCode();
-
+    
     await db.insert(referralCodes).values({
       userId,
       code,
       createdAt: new Date()
     });
-
+    
     return code;
   }
-
+  
   /**
    * Apply referral code on signup
    */
@@ -57047,11 +57752,11 @@ export class ReferralService {
     const referral = await db.query.referralCodes.findFirst({
       where: eq(referralCodes.code, params.referralCode)
     });
-
+    
     if (!referral) {
       throw new Error('Invalid referral code');
     }
-
+    
     // Create referral record
     await db.insert(referrals).values({
       referrerId: referral.userId,
@@ -57060,7 +57765,7 @@ export class ReferralService {
       status: 'pending',
       createdAt: new Date()
     });
-
+    
     // Award points to referrer
     await GamificationService.awardPoints({
       userId: referral.userId,
@@ -57068,7 +57773,7 @@ export class ReferralService {
       reason: 'Referral signup',
       metadata: { referredUserId: params.newUserId }
     });
-
+    
     // Award welcome bonus to new user
     await GamificationService.awardPoints({
       userId: params.newUserId,
@@ -57076,7 +57781,7 @@ export class ReferralService {
       reason: 'Referred by friend',
       metadata: { referrerId: referral.userId }
     });
-
+    
     // Send notifications
     await NotificationService.send({
       userId: referral.userId,
@@ -57086,7 +57791,7 @@ export class ReferralService {
       data: { points: 100 }
     });
   }
-
+  
   /**
    * Track referral conversion
    */
@@ -57097,9 +57802,9 @@ export class ReferralService {
     const referral = await db.query.referrals.findFirst({
       where: eq(referrals.referredUserId, params.referredUserId)
     });
-
+    
     if (!referral) return;
-
+    
     // Update referral status
     await db.update(referrals)
       .set({
@@ -57107,10 +57812,10 @@ export class ReferralService {
         convertedAt: new Date()
       })
       .where(eq(referrals.id, referral.id));
-
+    
     // Award bonus points for conversion
     const bonusPoints = params.conversionType === 'premium_subscription' ? 500 : 200;
-
+    
     await GamificationService.awardPoints({
       userId: referral.referrerId,
       points: bonusPoints,
@@ -57120,7 +57825,7 @@ export class ReferralService {
         conversionType: params.conversionType
       }
     });
-
+    
     await NotificationService.send({
       userId: referral.referrerId,
       type: NotificationType.REFERRAL_CONVERSION,
@@ -57129,7 +57834,7 @@ export class ReferralService {
       data: { points: bonusPoints }
     });
   }
-
+  
   /**
    * Get user's referral stats
    */
@@ -57143,7 +57848,7 @@ export class ReferralService {
     const code = await db.query.referralCodes.findFirst({
       where: eq(referralCodes.userId, userId)
     });
-
+    
     if (!code) {
       const newCode = await this.generateReferralCode(userId);
       return {
@@ -57154,14 +57859,14 @@ export class ReferralService {
         referrals: []
       };
     }
-
+    
     const referrals = await db.query.referrals.findMany({
       where: eq(referrals.referrerId, userId)
     });
-
+    
     const conversions = referrals.filter(r => r.status === 'converted').length;
     const totalPointsEarned = referrals.length * 100 + conversions * 200;
-
+    
     return {
       code: code.code,
       totalReferrals: referrals.length,
@@ -57175,7 +57880,7 @@ export class ReferralService {
       }))
     };
   }
-
+  
   private static createUniqueCode(): string {
     return Math.random().toString(36).substring(2, 10).toUpperCase();
   }
@@ -57220,17 +57925,17 @@ export class FriendService {
         )
       )
     });
-
+    
     if (existing) {
       throw new Error('Friend request already exists');
     }
-
+    
     // Check if already friends
     const friendship = await this.getFriendship(params.fromUserId, params.toUserId);
     if (friendship) {
       throw new Error('Already friends');
     }
-
+    
     // Create friend request
     await db.insert(friendRequests).values({
       fromUserId: params.fromUserId,
@@ -57238,7 +57943,7 @@ export class FriendService {
       status: FriendRequestStatus.PENDING,
       createdAt: new Date()
     });
-
+    
     // Send notification
     await NotificationService.send({
       userId: params.toUserId,
@@ -57247,14 +57952,14 @@ export class FriendService {
       message: 'Someone wants to connect with you!',
       data: { fromUserId: params.fromUserId }
     });
-
+    
     // Track action
     await GamificationService.trackAction({
       userId: params.fromUserId,
       action: 'friend_request_sent'
     });
   }
-
+  
   /**
    * Accept friend request
    */
@@ -57265,11 +57970,11 @@ export class FriendService {
         eq(friendRequests.toUserId, userId)
       )
     });
-
+    
     if (!request) {
       throw new Error('Friend request not found');
     }
-
+    
     // Create friendship
     await db.insert(friendships).values([
       {
@@ -57283,12 +57988,12 @@ export class FriendService {
         createdAt: new Date()
       }
     ]);
-
+    
     // Update request status
     await db.update(friendRequests)
       .set({ status: FriendRequestStatus.ACCEPTED })
       .where(eq(friendRequests.id, requestId));
-
+    
     // Send notification
     await NotificationService.send({
       userId: request.fromUserId,
@@ -57297,19 +58002,19 @@ export class FriendService {
       message: 'Your friend request was accepted!',
       data: { userId: request.toUserId }
     });
-
+    
     // Award points
     await GamificationService.trackAction({
       userId: request.fromUserId,
       action: 'friend_added'
     });
-
+    
     await GamificationService.trackAction({
       userId: request.toUserId,
       action: 'friend_added'
     });
   }
-
+  
   /**
    * Reject friend request
    */
@@ -57321,7 +58026,7 @@ export class FriendService {
         eq(friendRequests.toUserId, userId)
       ));
   }
-
+  
   /**
    * Remove friend
    */
@@ -57338,7 +58043,7 @@ export class FriendService {
         )
       ));
   }
-
+  
   /**
    * Get user's friends
    */
@@ -57346,18 +58051,18 @@ export class FriendService {
     const friendships = await db.select()
       .from(friendships)
       .where(eq(friendships.userId, userId));
-
+    
     const friendIds = friendships.map(f => f.friendId);
-
+    
     if (friendIds.length === 0) {
       return [];
     }
-
+    
     return await db.select()
       .from(users)
       .where(inArray(users.id, friendIds));
   }
-
+  
   /**
    * Get friend requests
    */
@@ -57372,7 +58077,7 @@ export class FriendService {
           eq(friendRequests.toUserId, userId),
           eq(friendRequests.status, FriendRequestStatus.PENDING)
         )),
-
+      
       db.select()
         .from(friendRequests)
         .where(and(
@@ -57380,10 +58085,10 @@ export class FriendService {
           eq(friendRequests.status, FriendRequestStatus.PENDING)
         ))
     ]);
-
+    
     return { received, sent };
   }
-
+  
   /**
    * Get suggested friends
    */
@@ -57391,9 +58096,9 @@ export class FriendService {
     const user = await db.query.users.findFirst({
       where: eq(users.id, userId)
     });
-
+    
     if (!user) return [];
-
+    
     // Get users from same city who are not already friends
     const suggestions = await db.select()
       .from(users)
@@ -57403,10 +58108,10 @@ export class FriendService {
         notInArray(users.id, await this.getFriendIds(userId))
       ))
       .limit(limit);
-
+    
     return suggestions;
   }
-
+  
   private static async getFriendship(userId: number, friendId: number): Promise<any> {
     return await db.query.friendships.findFirst({
       where: and(
@@ -57415,12 +58120,12 @@ export class FriendService {
       )
     });
   }
-
+  
   private static async getFriendIds(userId: number): Promise<number[]> {
     const friendships = await db.select({ friendId: friendships.friendId })
       .from(friendships)
       .where(eq(friendships.userId, userId));
-
+    
     return friendships.map(f => f.friendId);
   }
 }
@@ -57446,10 +58151,10 @@ export class BlockService {
       reason: params.reason,
       createdAt: new Date()
     });
-
+    
     // Remove friendship if exists
     await FriendService.removeFriend(params.blockerId, params.blockedId);
-
+    
     // Remove any pending friend requests
     await db.delete(friendRequests)
       .where(or(
@@ -57463,7 +58168,7 @@ export class BlockService {
         )
       ));
   }
-
+  
   /**
    * Unblock user
    */
@@ -57474,7 +58179,7 @@ export class BlockService {
         eq(blocks.blockedId, blockedId)
       ));
   }
-
+  
   /**
    * Check if user is blocked
    */
@@ -57485,10 +58190,10 @@ export class BlockService {
         eq(blocks.blockedId, userId)
       )
     });
-
+    
     return !!block;
   }
-
+  
   /**
    * Get blocked users
    */
@@ -57496,13 +58201,13 @@ export class BlockService {
     const blocks = await db.select()
       .from(blocks)
       .where(eq(blocks.blockerId, userId));
-
+    
     const blockedIds = blocks.map(b => b.blockedId);
-
+    
     if (blockedIds.length === 0) {
       return [];
     }
-
+    
     return await db.select()
       .from(users)
       .where(inArray(users.id, blockedIds));
@@ -57533,10 +58238,10 @@ export class MessageService {
     if (isBlocked) {
       throw new Error('Cannot send message to this user');
     }
-
+    
     // Get or create conversation
     const conversation = await this.getOrCreateConversation([params.fromUserId, params.toUserId]);
-
+    
     // Create message
     const [message] = await db.insert(messages).values({
       conversationId: conversation.id,
@@ -57545,7 +58250,7 @@ export class MessageService {
       attachments: params.attachments,
       createdAt: new Date()
     }).returning();
-
+    
     // Update conversation's last message
     await db.update(conversations)
       .set({
@@ -57553,7 +58258,7 @@ export class MessageService {
         lastMessageAt: new Date()
       })
       .where(eq(conversations.id, conversation.id));
-
+    
     // Send real-time notification via WebSocket
     // Send real-time update using WebSocket helper
     await emitToConversation({
@@ -57561,7 +58266,7 @@ export class MessageService {
       event: 'new_message',
       data: message
     });
-
+    
     // Send push notification
     await NotificationService.send({
       userId: params.toUserId,
@@ -57573,10 +58278,10 @@ export class MessageService {
         messageId: message.id
       }
     });
-
+    
     return message;
   }
-
+  
   /**
    * Get conversation messages
    */
@@ -57589,14 +58294,14 @@ export class MessageService {
       .from(messages)
       .where(eq(messages.conversationId, params.conversationId))
       .orderBy(desc(messages.createdAt));
-
+    
     if (params.before) {
       query = query.where(lt(messages.id, params.before));
     }
-
+    
     return await query.limit(params.limit || 50);
   }
-
+  
   /**
    * Mark message as read
    */
@@ -57610,7 +58315,7 @@ export class MessageService {
       readAt: new Date()
     }).onConflictDoNothing();
   }
-
+  
   /**
    * Mark conversation as read
    */
@@ -57624,7 +58329,7 @@ export class MessageService {
         eq(messages.conversationId, params.conversationId),
         ne(messages.senderId, params.userId)
       ));
-
+    
     for (const message of messages) {
       await this.markAsRead({
         messageId: message.id,
@@ -57632,7 +58337,7 @@ export class MessageService {
       });
     }
   }
-
+  
   /**
    * Get user's conversations
    */
@@ -57641,25 +58346,25 @@ export class MessageService {
     const userConversations = await db.select()
       .from(conversationParticipants)
       .where(eq(conversationParticipants.userId, userId));
-
+    
     const conversationIds = userConversations.map(c => c.conversationId);
-
+    
     if (conversationIds.length === 0) {
       return [];
     }
-
+    
     // Get full conversation details
     const conversations = await db.select()
       .from(conversations)
       .where(inArray(conversations.id, conversationIds))
       .orderBy(desc(conversations.lastMessageAt));
-
+    
     // Get unread counts for each conversation
     const conversationsWithDetails = await Promise.all(
       conversations.map(async (conv) => {
         const unreadCount = await this.getUnreadCount(conv.id, userId);
         const otherParticipants = await this.getOtherParticipants(conv.id, userId);
-
+        
         return {
           ...conv,
           unreadCount,
@@ -57667,10 +58372,10 @@ export class MessageService {
         };
       })
     );
-
+    
     return conversationsWithDetails;
   }
-
+  
   /**
    * Delete message
    */
@@ -57682,39 +58387,39 @@ export class MessageService {
         eq(messages.senderId, userId)
       )
     });
-
+    
     if (!message) {
       throw new Error('Message not found or unauthorized');
     }
-
+    
     await db.delete(messages).where(eq(messages.id, messageId));
   }
-
+  
   private static async getOrCreateConversation(participantIds: number[]): Promise<any> {
     // Check if conversation exists between these users
     const existingConversations = await db.select()
       .from(conversations)
       .where(eq(conversations.type, 'direct'));
-
+    
     for (const conv of existingConversations) {
       const participants = await db.select()
         .from(conversationParticipants)
         .where(eq(conversationParticipants.conversationId, conv.id));
-
+      
       const participantUserIds = participants.map(p => p.userId).sort();
       const targetIds = [...participantIds].sort();
-
+      
       if (JSON.stringify(participantUserIds) === JSON.stringify(targetIds)) {
         return conv;
       }
     }
-
+    
     // Create new conversation
     const [conversation] = await db.insert(conversations).values({
       type: 'direct',
       createdAt: new Date()
     }).returning();
-
+    
     // Add participants
     await db.insert(conversationParticipants).values(
       participantIds.map(userId => ({
@@ -57723,10 +58428,10 @@ export class MessageService {
         joinedAt: new Date()
       }))
     );
-
+    
     return conversation;
   }
-
+  
   private static async getUnreadCount(conversationId: number, userId: number): Promise<number> {
     const result = await db.execute(sql`
       SELECT COUNT(*) as count
@@ -57736,10 +58441,10 @@ export class MessageService {
         AND m.sender_id != ${userId}
         AND mr.id IS NULL
     `);
-
+    
     return result.rows[0].count;
   }
-
+  
   private static async getOtherParticipants(conversationId: number, userId: number): Promise<any[]> {
     const participants = await db.select()
       .from(conversationParticipants)
@@ -57747,13 +58452,13 @@ export class MessageService {
         eq(conversationParticipants.conversationId, conversationId),
         ne(conversationParticipants.userId, userId)
       ));
-
+    
     const userIds = participants.map(p => p.userId);
-
+    
     if (userIds.length === 0) {
       return [];
     }
-
+    
     return await db.select()
       .from(users)
       .where(inArray(users.id, userIds));
@@ -57778,18 +58483,18 @@ export class CalendarService {
    */
   static async generateUserCalendar(userId: number): Promise<string> {
     const calendar = ical({ name: 'Mundo Tango Events' });
-
+    
     // Get user's events
     const userEvents = await db.select()
       .from(eventAttendees)
       .where(eq(eventAttendees.userId, userId));
-
+    
     const eventIds = userEvents.map(e => e.eventId);
-
+    
     const events = await db.select()
       .from(events)
       .where(inArray(events.id, eventIds));
-
+    
     // Add events to calendar
     events.forEach(event => {
       calendar.createEvent({
@@ -57801,10 +58506,10 @@ export class CalendarService {
         url: `https://mundotango.life/events/${event.id}`
       });
     });
-
+    
     return calendar.toString();
   }
-
+  
   /**
    * Export event to Google Calendar
    */
@@ -57816,16 +58521,16 @@ export class CalendarService {
     const event = await db.query.events.findFirst({
       where: eq(events.id, params.eventId)
     });
-
+    
     if (!event) {
       throw new Error('Event not found');
     }
-
+    
     const oauth2Client = new google.auth.OAuth2();
     oauth2Client.setCredentials({ access_token: params.accessToken });
-
+    
     const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-
+    
     const googleEvent = await calendar.events.insert({
       calendarId: 'primary',
       requestBody: {
@@ -57849,10 +58554,10 @@ export class CalendarService {
         }
       }
     });
-
+    
     return googleEvent.data;
   }
-
+  
   /**
    * Create event reminder
    */
@@ -57867,16 +58572,16 @@ export class CalendarService {
       reminderTime: params.reminderTime,
       createdAt: new Date()
     });
-
+    
     // Schedule reminder notification
     const event = await db.query.events.findFirst({
       where: eq(events.id, params.eventId)
     });
-
+    
     if (event) {
       const reminderDate = new Date(event.startDate);
       reminderDate.setMinutes(reminderDate.getMinutes() - params.reminderTime);
-
+      
       // Schedule using BullMQ
       await notificationQueue.add(
         'event-reminder',
@@ -57926,15 +58631,15 @@ export class StripeService {
         userId: params.userId.toString()
       }
     });
-
+    
     // Save customer ID
     await db.update(users)
       .set({ stripeCustomerId: customer.id })
       .where(eq(users.id, params.userId));
-
+    
     return customer.id;
   }
-
+  
   /**
    * Create payment intent
    */
@@ -57948,13 +58653,13 @@ export class StripeService {
     const user = await db.query.users.findFirst({
       where: eq(users.id, params.userId)
     });
-
+    
     if (!user) {
       throw new Error('User not found');
     }
-
+    
     let customerId = user.stripeCustomerId;
-
+    
     if (!customerId) {
       customerId = await this.createCustomer({
         userId: params.userId,
@@ -57962,7 +58667,7 @@ export class StripeService {
         name: user.name
       });
     }
-
+    
     const paymentIntent = await stripe.paymentIntents.create({
       amount: params.amount,
       currency: params.currency || 'usd',
@@ -57973,7 +58678,7 @@ export class StripeService {
         ...params.metadata
       }
     });
-
+    
     // Save payment record
     await db.insert(payments).values({
       userId: params.userId,
@@ -57983,10 +58688,10 @@ export class StripeService {
       status: 'pending',
       createdAt: new Date()
     });
-
+    
     return paymentIntent;
   }
-
+  
   /**
    * Create subscription
    */
@@ -57998,13 +58703,13 @@ export class StripeService {
     const user = await db.query.users.findFirst({
       where: eq(users.id, params.userId)
     });
-
+    
     if (!user) {
       throw new Error('User not found');
     }
-
+    
     let customerId = user.stripeCustomerId;
-
+    
     if (!customerId) {
       customerId = await this.createCustomer({
         userId: params.userId,
@@ -58012,19 +58717,19 @@ export class StripeService {
         name: user.name
       });
     }
-
+    
     // Attach payment method to customer
     await stripe.paymentMethods.attach(params.paymentMethodId, {
       customer: customerId
     });
-
+    
     // Set as default payment method
     await stripe.customers.update(customerId, {
       invoice_settings: {
         default_payment_method: params.paymentMethodId
       }
     });
-
+    
     // Create subscription
     const subscription = await stripe.subscriptions.create({
       customer: customerId,
@@ -58034,7 +58739,7 @@ export class StripeService {
         userId: params.userId.toString()
       }
     });
-
+    
     // Save subscription record
     await db.insert(subscriptions).values({
       userId: params.userId,
@@ -58045,16 +58750,16 @@ export class StripeService {
       currentPeriodEnd: new Date(subscription.current_period_end * 1000),
       createdAt: new Date()
     });
-
+    
     return subscription;
   }
-
+  
   /**
    * Cancel subscription
    */
   static async cancelSubscription(subscriptionId: string): Promise<void> {
     await stripe.subscriptions.cancel(subscriptionId);
-
+    
     // Update database
     await db.update(subscriptions)
       .set({
@@ -58063,7 +58768,7 @@ export class StripeService {
       })
       .where(eq(subscriptions.stripeSubscriptionId, subscriptionId));
   }
-
+  
   /**
    * Handle webhook event
    */
@@ -58076,35 +58781,35 @@ export class StripeService {
       params.signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
-
+    
     switch (event.type) {
       case 'payment_intent.succeeded':
         await this.handlePaymentSucceeded(event.data.object as Stripe.PaymentIntent);
         break;
-
+      
       case 'payment_intent.payment_failed':
         await this.handlePaymentFailed(event.data.object as Stripe.PaymentIntent);
         break;
-
+      
       case 'customer.subscription.created':
       case 'customer.subscription.updated':
         await this.handleSubscriptionUpdate(event.data.object as Stripe.Subscription);
         break;
-
+      
       case 'customer.subscription.deleted':
         await this.handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
         break;
-
+      
       case 'invoice.payment_succeeded':
         await this.handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice);
         break;
-
+      
       case 'invoice.payment_failed':
         await this.handleInvoicePaymentFailed(event.data.object as Stripe.Invoice);
         break;
     }
   }
-
+  
   private static async handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent): Promise<void> {
     await db.update(payments)
       .set({
@@ -58112,7 +58817,7 @@ export class StripeService {
         paidAt: new Date()
       })
       .where(eq(payments.stripePaymentIntentId, paymentIntent.id));
-
+    
     // Send notification
     const userId = parseInt(paymentIntent.metadata.userId);
     await NotificationService.send({
@@ -58123,12 +58828,12 @@ export class StripeService {
       data: { paymentIntentId: paymentIntent.id }
     });
   }
-
+  
   private static async handlePaymentFailed(paymentIntent: Stripe.PaymentIntent): Promise<void> {
     await db.update(payments)
       .set({ status: 'failed' })
       .where(eq(payments.stripePaymentIntentId, paymentIntent.id));
-
+    
     const userId = parseInt(paymentIntent.metadata.userId);
     await NotificationService.send({
       userId,
@@ -58138,7 +58843,7 @@ export class StripeService {
       data: { paymentIntentId: paymentIntent.id }
     });
   }
-
+  
   private static async handleSubscriptionUpdate(subscription: Stripe.Subscription): Promise<void> {
     await db.update(subscriptions)
       .set({
@@ -58148,7 +58853,7 @@ export class StripeService {
       })
       .where(eq(subscriptions.stripeSubscriptionId, subscription.id));
   }
-
+  
   private static async handleSubscriptionDeleted(subscription: Stripe.Subscription): Promise<void> {
     await db.update(subscriptions)
       .set({
@@ -58157,11 +58862,11 @@ export class StripeService {
       })
       .where(eq(subscriptions.stripeSubscriptionId, subscription.id));
   }
-
+  
   private static async handleInvoicePaymentSucceeded(invoice: Stripe.Invoice): Promise<void> {
     // Log successful subscription payment
   }
-
+  
   private static async handleInvoicePaymentFailed(invoice: Stripe.Invoice): Promise<void> {
     // Notify user of failed subscription payment
     if (invoice.customer_email) {
@@ -58172,7 +58877,7 @@ export class StripeService {
       });
     }
   }
-
+  
   /**
    * Create checkout session
    */
@@ -58185,13 +58890,13 @@ export class StripeService {
     const user = await db.query.users.findFirst({
       where: eq(users.id, params.userId)
     });
-
+    
     if (!user) {
       throw new Error('User not found');
     }
-
+    
     let customerId = user.stripeCustomerId;
-
+    
     if (!customerId) {
       customerId = await this.createCustomer({
         userId: params.userId,
@@ -58199,7 +58904,7 @@ export class StripeService {
         name: user.name
       });
     }
-
+    
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       line_items: [
@@ -58215,10 +58920,10 @@ export class StripeService {
         userId: params.userId.toString()
       }
     });
-
+    
     return session;
   }
-
+  
   /**
    * Get customer portal URL
    */
@@ -58226,16 +58931,16 @@ export class StripeService {
     const user = await db.query.users.findFirst({
       where: eq(users.id, userId)
     });
-
+    
     if (!user?.stripeCustomerId) {
       throw new Error('Customer not found');
     }
-
+    
     const session = await stripe.billingPortal.sessions.create({
       customer: user.stripeCustomerId,
       return_url: returnUrl
     });
-
+    
     return session.url;
   }
 }
@@ -58270,18 +58975,18 @@ export class TwilioService {
       to: params.to
     });
   }
-
+  
   /**
    * Send verification code
    */
   static async sendVerificationCode(phoneNumber: string): Promise<string> {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
-
+    
     await this.sendSMS({
       to: phoneNumber,
       message: `Your Mundo Tango verification code is: ${code}`
     });
-
+    
     // Store code with expiration
     await db.insert(verificationCodes).values({
       phoneNumber,
@@ -58289,10 +58994,10 @@ export class TwilioService {
       expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
       createdAt: new Date()
     });
-
+    
     return code;
   }
-
+  
   /**
    * Verify code
    */
@@ -58304,18 +59009,18 @@ export class TwilioService {
         gt(verificationCodes.expiresAt, new Date())
       )
     });
-
+    
     if (!verification) {
       return false;
     }
-
+    
     // Mark as used
     await db.delete(verificationCodes)
       .where(eq(verificationCodes.id, verification.id));
-
+    
     return true;
   }
-
+  
   /**
    * Send event reminder via SMS
    */
@@ -58331,7 +59036,7 @@ Date: ${params.eventDate.toLocaleDateString()}
 Time: ${params.eventDate.toLocaleTimeString()}
 Location: ${params.eventLocation}
     `.trim();
-
+    
     await this.sendSMS({
       to: params.phoneNumber,
       message
@@ -58374,7 +59079,7 @@ export class PushNotificationService {
         eq(pushTokens.token, params.token)
       )
     });
-
+    
     if (existing) {
       // Update last used
       await db.update(pushTokens)
@@ -58391,14 +59096,14 @@ export class PushNotificationService {
       });
     }
   }
-
+  
   /**
    * Unregister device token
    */
   static async unregisterToken(token: string): Promise<void> {
     await db.delete(pushTokens).where(eq(pushTokens.token, token));
   }
-
+  
   /**
    * Send push notification to user
    */
@@ -58412,11 +59117,11 @@ export class PushNotificationService {
     const tokens = await db.query.pushTokens.findMany({
       where: eq(pushTokens.userId, params.userId)
     });
-
+    
     if (tokens.length === 0) {
       return;
     }
-
+    
     const message: admin.messaging.MulticastMessage = {
       notification: {
         title: params.title,
@@ -58426,26 +59131,26 @@ export class PushNotificationService {
       data: params.data,
       tokens: tokens.map(t => t.token)
     };
-
+    
     const response = await admin.messaging().sendMulticast(message);
-
+    
     // Remove invalid tokens
     if (response.failureCount > 0) {
       const failedTokens: string[] = [];
-
+      
       response.responses.forEach((resp, idx) => {
         if (!resp.success) {
           failedTokens.push(tokens[idx].token);
         }
       });
-
+      
       if (failedTokens.length > 0) {
         await db.delete(pushTokens)
           .where(inArray(pushTokens.token, failedTokens));
       }
     }
   }
-
+  
   /**
    * Send to topic
    */
@@ -58464,7 +59169,7 @@ export class PushNotificationService {
       topic: params.topic
     });
   }
-
+  
   /**
    * Subscribe to topic
    */
@@ -58475,17 +59180,17 @@ export class PushNotificationService {
     const tokens = await db.query.pushTokens.findMany({
       where: eq(pushTokens.userId, params.userId)
     });
-
+    
     if (tokens.length === 0) {
       return;
     }
-
+    
     await admin.messaging().subscribeToTopic(
       tokens.map(t => t.token),
       params.topic
     );
   }
-
+  
   /**
    * Unsubscribe from topic
    */
@@ -58496,11 +59201,11 @@ export class PushNotificationService {
     const tokens = await db.query.pushTokens.findMany({
       where: eq(pushTokens.userId, params.userId)
     });
-
+    
     if (tokens.length === 0) {
       return;
     }
-
+    
     await admin.messaging().unsubscribeFromTopic(
       tokens.map(t => t.token),
       params.topic
@@ -58528,21 +59233,21 @@ export class LocationService {
     lon2: number;
   }): number {
     const R = 6371; // Earth's radius in km
-
+    
     const dLat = this.toRad(params.lat2 - params.lat1);
     const dLon = this.toRad(params.lon2 - params.lon1);
-
+    
     const a = 
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(this.toRad(params.lat1)) * 
       Math.cos(this.toRad(params.lat2)) *
       Math.sin(dLon / 2) * Math.sin(dLon / 2);
-
+    
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
+    
     return R * c;
   }
-
+  
   /**
    * Find nearby events
    */
@@ -58558,7 +59263,7 @@ export class LocationService {
         isNotNull(events.latitude),
         isNotNull(events.longitude)
       ));
-
+    
     // Filter by distance
     const nearbyEvents = events
       .map(event => ({
@@ -58573,10 +59278,10 @@ export class LocationService {
       .filter(event => event.distance <= params.radiusKm)
       .sort((a, b) => a.distance - b.distance)
       .slice(0, params.limit || 20);
-
+    
     return nearbyEvents;
   }
-
+  
   /**
    * Geocode address
    */
@@ -58588,23 +59293,23 @@ export class LocationService {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`
       );
-
+      
       const data = await response.json();
-
+      
       if (data.length > 0) {
         return {
           latitude: parseFloat(data[0].lat),
           longitude: parseFloat(data[0].lon)
         };
       }
-
+      
       return null;
     } catch (error) {
       console.error('Geocoding error:', error);
       return null;
     }
   }
-
+  
   /**
    * Reverse geocode coordinates
    */
@@ -58616,16 +59321,16 @@ export class LocationService {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${params.latitude}&lon=${params.longitude}`
       );
-
+      
       const data = await response.json();
-
+      
       return data.display_name || null;
     } catch (error) {
       console.error('Reverse geocoding error:', error);
       return null;
     }
   }
-
+  
   private static toRad(degrees: number): number {
     return degrees * (Math.PI / 180);
   }
@@ -58663,10 +59368,10 @@ export class VideoProcessingService {
   }> {
     // Get video metadata
     const metadata = await this.getMetadata(params.inputPath);
-
+    
     // Generate thumbnail
     const thumbnail = await this.generateThumbnail(params.inputPath);
-
+    
     // Upload original
     const originalKey = `videos/${params.userId}/${Date.now()}-original.mp4`;
     const originalUrl = await S3UploadService.upload({
@@ -58674,10 +59379,10 @@ export class VideoProcessingService {
       key: originalKey,
       contentType: 'video/mp4'
     });
-
+    
     // Generate variants
     const variants = await this.generateVariants(params.inputPath, params.userId);
-
+    
     return {
       originalUrl,
       variants,
@@ -58685,7 +59390,7 @@ export class VideoProcessingService {
       duration: metadata.duration
     };
   }
-
+  
   /**
    * Get video metadata
    */
@@ -58697,13 +59402,13 @@ export class VideoProcessingService {
       });
     });
   }
-
+  
   /**
    * Generate thumbnail
    */
   private static async generateThumbnail(filepath: string): Promise<string> {
     const outputPath = filepath.replace(/\.\w+$/, '-thumb.jpg');
-
+    
     return new Promise((resolve, reject) => {
       ffmpeg(filepath)
         .screenshots({
@@ -58720,13 +59425,13 @@ export class VideoProcessingService {
             key,
             contentType: 'image/jpeg'
           });
-
+          
           resolve(url);
         })
         .on('error', reject);
     });
   }
-
+  
   /**
    * Generate video variants (different qualities)
    */
@@ -58736,12 +59441,12 @@ export class VideoProcessingService {
       { name: '480p', size: '854x480', bitrate: '1000k' },
       { name: '360p', size: '640x360', bitrate: '500k' }
     ];
-
+    
     const variants: Array<{ quality: string; url: string }> = [];
-
+    
     for (const quality of qualities) {
       const outputPath = filepath.replace(/\.\w+$/, `-${quality.name}.mp4`);
-
+      
       await new Promise<void>((resolve, reject) => {
         ffmpeg(filepath)
           .size(quality.size)
@@ -58753,7 +59458,7 @@ export class VideoProcessingService {
           .on('error', reject)
           .run();
       });
-
+      
       // Upload to S3
       const key = `videos/${userId}/${Date.now()}-${quality.name}.mp4`;
       const url = await S3UploadService.upload({
@@ -58761,22 +59466,22 @@ export class VideoProcessingService {
         key,
         contentType: 'video/mp4'
       });
-
+      
       variants.push({ quality: quality.name, url });
-
+      
       // Delete local file
       fs.unlinkSync(outputPath);
     }
-
+    
     return variants;
   }
-
+  
   /**
    * Extract audio from video
    */
   static async extractAudio(videoPath: string): Promise<string> {
     const audioPath = videoPath.replace(/\.\w+$/, '.mp3');
-
+    
     return new Promise((resolve, reject) => {
       ffmpeg(videoPath)
         .audioCodec('libmp3lame')
@@ -58826,10 +59531,10 @@ export class TranslationService {
         }
       ]
     });
-
+    
     return response.choices[0].message.content || params.text;
   }
-
+  
   /**
    * Auto-translate content
    */
@@ -58840,7 +59545,7 @@ export class TranslationService {
   }): Promise<void> {
     let content: any;
     let textFields: string[];
-
+    
     // Get content based on type
     switch (params.contentType) {
       case 'post':
@@ -58849,14 +59554,14 @@ export class TranslationService {
         });
         textFields = ['content'];
         break;
-
+      
       case 'event':
         content = await db.query.events.findFirst({
           where: eq(events.id, params.contentId)
         });
         textFields = ['title', 'description'];
         break;
-
+      
       case 'group':
         content = await db.query.groups.findFirst({
           where: eq(groups.id, params.contentId)
@@ -58864,13 +59569,13 @@ export class TranslationService {
         textFields = ['name', 'description'];
         break;
     }
-
+    
     if (!content) return;
-
+    
     // Translate to each target language
     for (const targetLang of params.targetLanguages) {
       const translations: Record<string, string> = {};
-
+      
       for (const field of textFields) {
         if (content[field]) {
           translations[field] = await this.translate({
@@ -58880,7 +59585,7 @@ export class TranslationService {
           });
         }
       }
-
+      
       // Save translations
       await db.insert(contentTranslations).values({
         contentType: params.contentType,
@@ -58891,7 +59596,7 @@ export class TranslationService {
       });
     }
   }
-
+  
   /**
    * Get translated content
    */
@@ -58907,7 +59612,7 @@ export class TranslationService {
         eq(contentTranslations.language, params.language)
       )
     });
-
+    
     return translation?.translations || null;
   }
 }
@@ -58933,11 +59638,11 @@ export class ExportService {
     const user = await db.query.users.findFirst({
       where: eq(users.id, userId)
     });
-
+    
     if (!user) {
       throw new Error('User not found');
     }
-
+    
     // Collect all user data
     const [posts, events, groups, messages, payments] = await Promise.all([
       db.select().from(posts).where(eq(posts.userId, userId)),
@@ -58946,7 +59651,7 @@ export class ExportService {
       db.select().from(messages).where(eq(messages.senderId, userId)),
       db.select().from(payments).where(eq(payments.userId, userId))
     ]);
-
+    
     const userData = {
       profile: {
         id: user.id,
@@ -58985,32 +59690,32 @@ export class ExportService {
         createdAt: p.createdAt
       }))
     };
-
+    
     // Create export directory
     const exportDir = `/tmp/export-${userId}-${Date.now()}`;
     fs.mkdirSync(exportDir, { recursive: true });
-
+    
     // Write JSON file
     fs.writeFileSync(
       path.join(exportDir, 'user-data.json'),
       JSON.stringify(userData, null, 2)
     );
-
+    
     // Create ZIP archive
     const zipPath = `${exportDir}.zip`;
     await this.createZipArchive(exportDir, zipPath);
-
+    
     // Upload to S3
     const s3Key = `exports/user-${userId}-${Date.now()}.zip`;
     const url = await S3UploadService.upload({
       filePath: zipPath,
       key: s3Key
     });
-
+    
     // Clean up
     fs.rmSync(exportDir, { recursive: true });
     fs.unlinkSync(zipPath);
-
+    
     // Log export
     await AuditService.log({
       userId,
@@ -59018,10 +59723,10 @@ export class ExportService {
       resourceType: 'user_data',
       resourceId: userId
     });
-
+    
     return url;
   }
-
+  
   /**
    * Export analytics data
    */
@@ -59031,47 +59736,47 @@ export class ExportService {
     format: 'csv' | 'excel';
   }): Promise<string> {
     const analytics = await AnalyticsService.getPlatformAnalytics(30);
-
+    
     if (params.format === 'csv') {
       return await this.exportToCSV(analytics);
     } else {
       return await ReportService.generateAnalyticsReport(30);
     }
   }
-
+  
   private static async createZipArchive(sourceDir: string, outputPath: string): Promise<void> {
     return new Promise((resolve, reject) => {
       const output = fs.createWriteStream(outputPath);
       const archive = archiver('zip', { zlib: { level: 9 } });
-
+      
       output.on('close', resolve);
       archive.on('error', reject);
-
+      
       archive.pipe(output);
       archive.directory(sourceDir, false);
       archive.finalize();
     });
   }
-
+  
   private static async exportToCSV(data: any): Promise<string> {
     // Convert to CSV and upload
     const { Parser } = require('json2csv');
     const parser = new Parser();
     const csv = parser.parse(data);
-
+    
     const filename = `analytics-${Date.now()}.csv`;
     const filepath = `/tmp/${filename}`;
-
+    
     fs.writeFileSync(filepath, csv);
-
+    
     const s3Key = `exports/${filename}`;
     const url = await S3UploadService.upload({
       filePath: filepath,
       key: s3Key
     });
-
+    
     fs.unlinkSync(filepath);
-
+    
     return url;
   }
 }
@@ -59099,7 +59804,7 @@ export class WebhookService {
     secret?: string;
   }): Promise<any> {
     const secret = params.secret || this.generateSecret();
-
+    
     const [webhook] = await db.insert(webhooks).values({
       userId: params.userId,
       url: params.url,
@@ -59108,10 +59813,10 @@ export class WebhookService {
       active: true,
       createdAt: new Date()
     }).returning();
-
+    
     return webhook;
   }
-
+  
   /**
    * Trigger webhook
    */
@@ -59125,7 +59830,7 @@ export class WebhookService {
         eq(webhooks.active, true),
         sql`${webhooks.events} @> ARRAY[${params.event}]::text[]`
       ));
-
+    
     for (const webhook of webhooks) {
       await this.sendWebhook({
         url: webhook.url,
@@ -59136,7 +59841,7 @@ export class WebhookService {
       });
     }
   }
-
+  
   /**
    * Send webhook request
    */
@@ -59152,9 +59857,9 @@ export class WebhookService {
       timestamp: new Date().toISOString(),
       data: params.data
     };
-
+    
     const signature = this.generateSignature(JSON.stringify(payload), params.secret);
-
+    
     try {
       const response = await axios.post(params.url, payload, {
         headers: {
@@ -59164,7 +59869,7 @@ export class WebhookService {
         },
         timeout: 10000
       });
-
+      
       // Log successful delivery
       await db.insert(webhookDeliveries).values({
         webhookId: params.webhookId,
@@ -59185,7 +59890,7 @@ export class WebhookService {
         error: error.message,
         createdAt: new Date()
       });
-
+      
       // Implement retry logic
       await this.retryWebhook({
         ...params,
@@ -59193,7 +59898,7 @@ export class WebhookService {
       });
     }
   }
-
+  
   /**
    * Retry failed webhook
    */
@@ -59207,11 +59912,11 @@ export class WebhookService {
   }): Promise<void> {
     const maxAttempts = 3;
     const delays = [1000, 5000, 15000]; // 1s, 5s, 15s
-
+    
     if (params.attempt >= maxAttempts) {
       return;
     }
-
+    
     setTimeout(async () => {
       await this.sendWebhook({
         url: params.url,
@@ -59222,7 +59927,7 @@ export class WebhookService {
       });
     }, delays[params.attempt - 1]);
   }
-
+  
   /**
    * Verify webhook signature
    */
@@ -59233,14 +59938,14 @@ export class WebhookService {
       Buffer.from(expectedSignature)
     );
   }
-
+  
   private static generateSignature(payload: string, secret: string): string {
     return crypto
       .createHmac('sha256', secret)
       .update(payload)
       .digest('hex');
   }
-
+  
   private static generateSecret(): string {
     return crypto.randomBytes(32).toString('hex');
   }
@@ -59267,11 +59972,11 @@ export class FeatureFlagService {
     const feature = await db.query.featureFlags.findFirst({
       where: eq(featureFlags.key, params.featureKey)
     });
-
+    
     if (!feature || !feature.enabled) {
       return false;
     }
-
+    
     // Check percentage rollout
     if (feature.rolloutPercentage < 100) {
       if (params.userId) {
@@ -59281,24 +59986,24 @@ export class FeatureFlagService {
         }
       }
     }
-
+    
     // Check user targeting
     if (feature.targetUserIds && params.userId) {
       if (!feature.targetUserIds.includes(params.userId)) {
         return false;
       }
     }
-
+    
     // Check conditions
     if (feature.conditions && params.context) {
       if (!this.evaluateConditions(feature.conditions, params.context)) {
         return false;
       }
     }
-
+    
     return true;
   }
-
+  
   /**
    * Create or update feature flag
    */
@@ -59313,7 +60018,7 @@ export class FeatureFlagService {
     const existing = await db.query.featureFlags.findFirst({
       where: eq(featureFlags.key, params.key)
     });
-
+    
     if (existing) {
       await db.update(featureFlags)
         .set({
@@ -59336,29 +60041,29 @@ export class FeatureFlagService {
       });
     }
   }
-
+  
   /**
    * Get all feature flags for user
    */
   static async getUserFeatures(userId: number): Promise<Record<string, boolean>> {
     const allFeatures = await db.select().from(featureFlags);
-
+    
     const features: Record<string, boolean> = {};
-
+    
     for (const feature of allFeatures) {
       features[feature.key] = await this.isFeatureEnabled({
         featureKey: feature.key,
         userId
       });
     }
-
+    
     return features;
   }
-
+  
   private static hashUserId(userId: number): number {
     return userId % 100;
   }
-
+  
   private static evaluateConditions(conditions: any, context: Record<string, any>): boolean {
     // Simple condition evaluation
     for (const [key, value] of Object.entries(conditions)) {
@@ -59462,14 +60167,14 @@ export async function initializeWebSocketServer(httpServer: HTTPServer): Promise
       credentials: true
     }
   });
-
+  
   // Setup Redis adapter for horizontal scaling
   const pubClient = createClient({ url: process.env.REDIS_URL });
   const subClient = pubClient.duplicate();
-
+  
   await Promise.all([pubClient.connect(), subClient.connect()]);
   webSocketServer.adapter(createAdapter(pubClient, subClient));
-
+  
   console.log('✅ WebSocket server initialized');
   return webSocketServer;
 }
@@ -59629,7 +60334,7 @@ import nodemailer from 'nodemailer';
 
 class EmailServiceClass {
   private transporter: nodemailer.Transporter | null = null;
-
+  
   async initialize(): Promise<void> {
     this.transporter = nodemailer.createTransporter({
       host: process.env.SMTP_HOST,
@@ -59640,10 +60345,10 @@ class EmailServiceClass {
         pass: process.env.SMTP_PASSWORD
       }
     });
-
+    
     console.log('✅ Email service initialized');
   }
-
+  
   async send(params: {
     to: string;
     subject: string;
@@ -59652,7 +60357,7 @@ class EmailServiceClass {
     if (!this.transporter) {
       throw new Error('Email service not initialized');
     }
-
+    
     await this.transporter.sendMail({
       from: '"Mundo Tango" <noreply@mundotango.life>',
       to: params.to,
@@ -59693,18 +60398,18 @@ router.post('/posts', authMiddleware, async (req, res) => {
   try {
     const userId = req.user!.userId;
     const { content } = req.body;
-
+    
     // Create post in database (db imported)
     const [post] = await db.insert(posts).values({
       userId,
       content,
       createdAt: new Date()
     }).returning();
-
+    
     // Send real-time update (WebSocket imported)
     const wsServer = getWebSocketServer();
     wsServer.emit('new_post', post);
-
+    
     // Send notification (Service imported)
     await NotificationService.send({
       userId,
@@ -59712,13 +60417,13 @@ router.post('/posts', authMiddleware, async (req, res) => {
       title: 'Post Published',
       message: 'Your post was published successfully'
     });
-
+    
     // Award points (Service imported)
     await GamificationService.trackAction({
       userId,
       action: 'post_created'
     });
-
+    
     res.json({ success: true, post });
   } catch (error) {
     console.error('Error creating post:', error);
@@ -59780,37 +60485,37 @@ import { createServer } from 'http';
 
 async function bootstrap() {
   console.log('🚀 Starting Mundo Tango Server...');
-
+  
   // 1. Initialize database connection
   console.log('📦 Connecting to database...');
   await import('./db');
-
+  
   // 2. Initialize Redis
   console.log('📦 Connecting to Redis...');
   await import('./config/redis');
-
+  
   // 3. Initialize services
   console.log('📦 Initializing services...');
   const { EmailService } = await import('./services/EmailService');
   await EmailService.initialize();
-
+  
   // 4. Create Express app
   const app = express();
   const httpServer = createServer(app);
-
+  
   // 5. Initialize WebSocket
   console.log('📦 Initializing WebSocket server...');
   const { initializeWebSocketServer } = await import('./websocket/server');
   await initializeWebSocketServer(httpServer);
-
+  
   // 6. Setup middleware
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-
+  
   // 7. Setup routes
   console.log('📦 Loading routes...');
   app.use('/api', (await import('./routes')).default);
-
+  
   // 8. Start server
   const PORT = process.env.PORT || 3000;
   httpServer.listen(PORT, () => {
@@ -59837,10 +60542,10 @@ import redisClient from '../config/redis';
 beforeAll(async () => {
   // Setup test database
   await db.execute(sql`CREATE SCHEMA IF NOT EXISTS test`);
-
+  
   // Setup test Redis
   await redisClient.select(1); // Use Redis DB 1 for tests
-
+  
   console.log('✅ Test environment initialized');
 });
 
@@ -59849,7 +60554,7 @@ afterAll(async () => {
   await db.execute(sql`DROP SCHEMA test CASCADE`);
   await redisClient.flushDb();
   await redisClient.quit();
-
+  
   console.log('✅ Test environment cleaned up');
 });
 
@@ -59980,7 +60685,7 @@ export class ArgoCDService {
       );
 
       const appData = JSON.parse(stdout);
-
+      
       return {
         health: appData.status.health.status,
         sync: appData.status.sync.status,
@@ -60043,7 +60748,7 @@ export class ArgoCDService {
       );
 
       const history = JSON.parse(stdout);
-
+      
       return history.slice(0, limit).map((entry: any) => ({
         revision: entry.revision,
         deployedAt: new Date(entry.deployedAt),
@@ -60063,7 +60768,7 @@ export class ArgoCDService {
 # File: infrastructure/terraform/main.tf
 terraform {
   required_version = ">= 1.0"
-
+  
   backend "s3" {
     bucket         = "mundotango-terraform-state"
     key            = "production/terraform.tfstate"
@@ -60086,7 +60791,7 @@ terraform {
 
 provider "aws" {
   region = var.aws_region
-
+  
   default_tags {
     tags = {
       Environment = var.environment
@@ -60855,7 +61560,7 @@ metadata:
   name: mundotango-istio
 spec:
   profile: production
-
+  
   hub: gcr.io/istio-release
   tag: 1.20.0
 
@@ -61458,7 +62163,7 @@ export class BlueGreenDeployment {
       // Step 2: Health check green version
       logger.info('Step 2: Running health checks on green version');
       const healthCheckPassed = await this.healthCheckVersion(service, greenVersion);
-
+      
       if (!healthCheckPassed) {
         throw new Error('Green version failed health checks');
       }
@@ -61828,7 +62533,7 @@ export class ReadReplicaManager {
   async executeRead(query: string, params: any[] = []): Promise<any> {
     const replica = this.getReplica();
     const client = await replica.connect();
-
+    
     try {
       const result = await client.query(query, params);
       return result.rows;
@@ -62026,7 +62731,7 @@ export class PITRManager {
         if (dir.startsWith('backup-')) {
           const backupPath = path.join(this.backupPath, dir);
           const stats = await fs.stat(backupPath);
-
+          
           backups.push({
             path: backupPath,
             timestamp: stats.mtime,
@@ -62094,7 +62799,7 @@ export class PITRManager {
 
   private async createRecoveryConfig(config: PITRConfig): Promise<void> {
     let recoveryConfig = `restore_command = 'cp ${this.walArchivePath}/%f %p'\n`;
-
+    
     if (config.recoveryTargetTime) {
       recoveryConfig += `recovery_target_time = '${config.recoveryTargetTime.toISOString()}'\n`;
     } else if (config.recoveryTargetXid) {
@@ -62111,14 +62816,14 @@ export class PITRManager {
 
   private async waitForRecoveryComplete(): Promise<void> {
     logger.info('Waiting for recovery to complete...');
-
+    
     // Poll for recovery completion
     for (let i = 0; i < 60; i++) {
       try {
         const { stdout } = await execAsync(
           `psql -c "SELECT pg_is_in_recovery()" -t`
         );
-
+        
         if (stdout.trim() === 'f') {
           logger.info('✅ Recovery completed');
           return;
@@ -62139,14 +62844,14 @@ export class PITRManager {
   async cleanupOldBackups(keepCount: number = 7): Promise<void> {
     try {
       const backups = await this.listBackups();
-
+      
       if (backups.length <= keepCount) {
         logger.info(`Only ${backups.length} backups exist, no cleanup needed`);
         return;
       }
 
       const toDelete = backups.slice(keepCount);
-
+      
       for (const backup of toDelete) {
         await fs.rm(backup.path, { recursive: true, force: true });
         logger.info(`Deleted old backup: ${backup.path}`);
@@ -63133,7 +63838,7 @@ export class BackupVerifier {
       return true;
     } catch (error) {
       logger.error('Restore test failed:', error);
-
+      
       // Cleanup on failure
       try {
         await execAsync(`pg_ctl stop -D ${this.testRestorePath}`).catch(() => {});
@@ -63326,7 +64031,7 @@ export class ChaosEngineeringService {
     duration: number;
   }> {
     const experiment = this.experiments.get(experimentName);
-
+    
     if (!experiment) {
       throw new Error(`Experiment not found: ${experimentName}`);
     }
@@ -63365,7 +64070,7 @@ export class ChaosEngineeringService {
       };
     } catch (error) {
       logger.error('❌ Experiment failed:', error);
-
+      
       // Attempt rollback even on failure
       try {
         await experiment.rollback();
@@ -63623,20 +64328,20 @@ export class ContainerRegistryManager {
   async buildAndPush(imageName: string, tag: string, dockerfilePath: string = '.'): Promise<void> {
     try {
       const fullImageName = `${this.registryUrl}/${imageName}:${tag}`;
-
+      
       logger.info(`Building image: ${fullImageName}`);
-
+      
       // Build image
       await execAsync(`docker build -t ${fullImageName} ${dockerfilePath}`);
-
+      
       logger.info(`Pushing image: ${fullImageName}`);
-
+      
       // Login to registry
       await this.login();
-
+      
       // Push image
       await execAsync(`docker push ${fullImageName}`);
-
+      
       logger.info(`✅ Image pushed: ${fullImageName}`);
     } catch (error) {
       logger.error(`Failed to build/push image ${imageName}:`, error);
@@ -63676,7 +64381,7 @@ export class ContainerRegistryManager {
   async cleanupOldImages(repository: string, keepCount: number = 10): Promise<void> {
     try {
       const images = await this.listImages(repository);
-
+      
       // Sort by push date (newest first)
       images.sort((a, b) => b.pushedAt.getTime() - a.pushedAt.getTime());
 
@@ -63720,7 +64425,7 @@ export class ContainerRegistryManager {
   }> {
     try {
       const fullImageName = `${this.registryUrl}/${imageName}:${tag}`;
-
+      
       logger.info(`Scanning image for vulnerabilities: ${fullImageName}`);
 
       // Use Trivy for vulnerability scanning
@@ -63767,7 +64472,7 @@ export class ContainerRegistryManager {
   async signImage(imageName: string, tag: string): Promise<void> {
     try {
       const fullImageName = `${this.registryUrl}/${imageName}:${tag}`;
-
+      
       logger.info(`Signing image: ${fullImageName}`);
 
       // Use cosign for image signing
@@ -63786,9 +64491,9 @@ export class ContainerRegistryManager {
   async verifyImage(imageName: string, tag: string): Promise<boolean> {
     try {
       const fullImageName = `${this.registryUrl}/${imageName}:${tag}`;
-
+      
       await execAsync(`cosign verify --key cosign.pub ${fullImageName}`);
-
+      
       logger.info(`✅ Image signature verified: ${fullImageName}`);
       return true;
     } catch (error) {
@@ -63808,7 +64513,7 @@ export class ContainerRegistryManager {
   }> {
     try {
       const fullImageName = `${this.registryUrl}/${imageName}:${tag}`;
-
+      
       const { stdout } = await execAsync(`docker manifest inspect ${fullImageName}`);
       const manifest = JSON.parse(stdout);
 
@@ -63954,11 +64659,11 @@ export class MultiEnvDeploymentManager {
       logger.info(`✅ Deployment to ${config.environment} completed successfully`);
     } catch (error) {
       logger.error(`❌ Deployment to ${config.environment} failed:`, error);
-
+      
       if (config.rollbackOnFailure) {
         await this.rollback(config);
       }
-
+      
       throw error;
     }
   }
@@ -63985,7 +64690,7 @@ export class MultiEnvDeploymentManager {
     logger.info(`Executing blue-green deployment for ${config.environment}`);
 
     const currentVersion = await this.getCurrentVersion(config.environment);
-
+    
     await this.blueGreen.deploy(
       `mundotango-${config.environment}`,
       currentVersion,
@@ -64042,7 +64747,7 @@ export class MultiEnvDeploymentManager {
    */
   private async requestApproval(config: DeploymentConfig): Promise<void> {
     logger.info('⏸️  Deployment approval required');
-
+    
     // In production, this would send notification and wait for approval
     // For now, we'll simulate
     logger.info('✅ Deployment approved');
@@ -64095,7 +64800,7 @@ export class MultiEnvDeploymentManager {
 
     // Check ArgoCD sync status
     const appStatus = await this.argocd.getAppStatus(`mundotango-${config.environment}`);
-
+    
     if (appStatus.sync !== 'Synced') {
       throw new Error(`Application not synced: ${appStatus.sync}`);
     }
@@ -64134,7 +64839,7 @@ export class MultiEnvDeploymentManager {
 
     for (let i = 0; i < 60; i++) {
       const appStatus = await this.argocd.getAppStatus(`mundotango-${environment}`);
-
+      
       if (appStatus.sync === 'Synced' && appStatus.health === 'Healthy') {
         logger.info('✅ Rollout completed');
         return;
@@ -64325,7 +65030,7 @@ export class ModelRegistry {
   async updateModelStatus(modelId: string, status: ModelMetadata['status']): Promise<void> {
     try {
       const model = await this.getModel(modelId);
-
+      
       if (!model) {
         throw new Error(`Model not found: ${modelId}`);
       }
@@ -64346,7 +65051,7 @@ export class ModelRegistry {
   async deleteModel(modelId: string): Promise<void> {
     try {
       const model = await this.getModel(modelId);
-
+      
       if (!model) {
         throw new Error(`Model not found: ${modelId}`);
       }
@@ -64543,7 +65248,7 @@ export class ModelABTestingService {
    */
   selectModel(testId: string): string {
     const config = this.activeTests.get(testId);
-
+    
     if (!config) {
       throw new Error(`Test not found: ${testId}`);
     }
@@ -64557,7 +65262,7 @@ export class ModelABTestingService {
    */
   recordPrediction(testId: string, modelId: string, metrics: Record<string, number>): void {
     const result = this.testResults.get(testId);
-
+    
     if (!result) {
       logger.warn(`Test not found: ${testId}`);
       return;
@@ -64718,7 +65423,7 @@ export class ModelMonitoringService {
     try {
       // In production, save to timeseries database like InfluxDB or TimescaleDB
       logger.debug(`Flushing ${this.predictionBuffer.length} predictions to database`);
-
+      
       this.predictionBuffer = [];
     } catch (error) {
       logger.error('Failed to flush predictions:', error);
@@ -64829,7 +65534,7 @@ export class ModelMonitoringService {
         // Calculate distribution difference (simplified - use KL divergence or KS test in production)
         const currentMean = this.calculateMean(currentValues);
         const referenceMean = this.calculateMean(referenceValues);
-
+        
         const drift = Math.abs(currentMean - referenceMean) / (referenceMean || 1);
 
         totalDrift += drift;
@@ -65017,7 +65722,7 @@ export class ModelRetrainingPipeline {
       // Step 2: Run training script
       logger.info(`Job ${jobId}: Running training script`);
       const { stdout } = await execAsync(`python ${config.trainingScript}`);
-
+      
       const trainingOutput = JSON.parse(stdout);
       job.metrics = trainingOutput.metrics;
 
@@ -65032,7 +65737,7 @@ export class ModelRetrainingPipeline {
       // Step 4: Register new model version
       logger.info(`Job ${jobId}: Registering new model`);
       const oldModel = await this.modelRegistry.getModel(config.modelId);
-
+      
       if (!oldModel) {
         throw new Error(`Model not found: ${config.modelId}`);
       }
@@ -65085,7 +65790,7 @@ export class ModelRetrainingPipeline {
       // Check performance threshold
       if (config.triggers.performanceThreshold) {
         const metrics = await this.monitoring.getPerformanceMetrics(config.modelId);
-
+        
         if (metrics.accuracy && metrics.accuracy < config.triggers.performanceThreshold) {
           reasons.push(`Performance below threshold: ${metrics.accuracy} < ${config.triggers.performanceThreshold}`);
           shouldRetrain = true;
@@ -65381,7 +66086,7 @@ export class VectorSearchAdvanced {
     try {
       // Use cross-encoder model for reranking
       // In production, call reranking API (Cohere, etc.)
-
+      
       const reranked = candidates
         .map(candidate => ({
           ...candidate,
@@ -65459,7 +66164,7 @@ export class VectorIndexOptimizer {
       } else {
         // Large dataset - use IVF for scalability
         const nlist = Math.floor(Math.sqrt(vectorCount));
-
+        
         config = {
           indexType: 'IVF',
           metric: 'cosine',
@@ -65501,10 +66206,10 @@ export class VectorIndexOptimizer {
 
       for (let i = 0; i < testQueries.length; i++) {
         const queryStart = Date.now();
-
+        
         // Execute query (simulated)
         const results = await this.executeQuery(testQueries[i], indexConfig);
-
+        
         queryTimes.push(Date.now() - queryStart);
 
         // Check recall
@@ -65668,7 +66373,7 @@ export class EmbeddingModelManager {
   async generateEmbeddings(request: EmbeddingRequest): Promise<number[][]> {
     try {
       const model = this.models.get(request.modelId);
-
+      
       if (!model) {
         throw new Error(`Model not found: ${request.modelId}`);
       }
@@ -66002,7 +66707,7 @@ export class MultiAgentCoordinator extends EventEmitter {
     // Execute task
     try {
       const result = await this.executeTask(agent, task);
-
+      
       task.status = 'completed';
       task.result = result;
       agent.status = 'idle';
@@ -66252,7 +66957,7 @@ export class HierarchicalAgentSystem {
 
     // Find best child for task
     const childAgents = children.map(id => this.coordinator.getAgentStatus(id)).filter(Boolean);
-
+    
     const suitableChild = childAgents.find(agent => 
       task.requiredCapabilities.every(cap => agent!.capabilities.includes(cap))
     );
@@ -66317,10 +67022,10 @@ export class HierarchicalAgentSystem {
     const traverse = (agentId: string, indent: number = 0): void => {
       const prefix = '  '.repeat(indent);
       const agent = this.coordinator.getAgentStatus(agentId);
-
+      
       if (agent) {
         visualization += `${prefix}├─ ${agent.name} (${agent.type})\n`;
-
+        
         const children = this.hierarchy.children.get(agentId) || [];
         children.forEach(childId => traverse(childId, indent + 1));
       }
@@ -66392,7 +67097,7 @@ export class AgentBenchmark {
       : 0;
 
     const successRate = totalTasks > 0 ? completedTasks / totalTasks : 0;
-
+    
     const throughput = avgExecutionTime > 0
       ? (60000 / avgExecutionTime) // tasks per minute
       : 0;
@@ -66518,7 +67223,7 @@ export class SentimentAnalysisService {
       return result;
     } catch (error) {
       logger.error('Sentiment analysis failed:', error);
-
+      
       // Fallback to simple analysis
       return this.simpleSentimentAnalysis(text);
     }
@@ -66558,7 +67263,7 @@ export class SentimentAnalysisService {
     });
 
     const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-
+    
     let trend: 'improving' | 'declining' | 'stable';
     if (slope > 0.01) trend = 'improving';
     else if (slope < -0.01) trend = 'declining';
@@ -66664,7 +67369,7 @@ export class EntityExtractionService {
       };
     } catch (error) {
       logger.error('Entity extraction failed:', error);
-
+      
       // Fallback to simple pattern matching
       return this.simpleEntityExtraction(text);
     }
@@ -66678,7 +67383,7 @@ export class EntityExtractionService {
     entityTypes: Entity['type'][]
   ): Promise<Entity[]> {
     const result = await this.extractEntities(text);
-
+    
     return result.entities.filter(entity => 
       entityTypes.includes(entity.type)
     );
@@ -66847,7 +67552,7 @@ export class TextSummarizationService {
       };
     } catch (error) {
       logger.error('Summarization failed:', error);
-
+      
       // Fallback to extractive summarization
       return this.extractiveSummarize(text, options);
     }
@@ -66924,7 +67629,7 @@ export class TextSummarizationService {
    */
   async extractKeyPoints(text: string, count: number = 5): Promise<string[]> {
     const result = await this.summarize(text, { bulletPoints: true });
-
+    
     return result.keyPoints?.slice(0, count) || [];
   }
 }
@@ -67105,7 +67810,7 @@ export class MicroFrontendDeployment {
    */
   async deployMicroFrontend(name: string, version: string): Promise<void> {
     const mfe = this.microFrontends.get(name);
-
+    
     if (!mfe) {
       throw new Error(`Micro-frontend not found: ${name}`);
     }
@@ -67173,7 +67878,7 @@ export class MicroFrontendDeployment {
       }
 
       const currentVersion = await this.getCurrentVersion(dep);
-
+      
       // In production, check actual semantic version compatibility
       if (!currentVersion) {
         conflicts.push(`No version found for dependency: ${dep}`);
@@ -67221,10 +67926,10 @@ export class MicroFrontendDeployment {
 
   private async deployToCDN(mfe: MicroFrontend, version: string): Promise<void> {
     logger.info(`Deploying ${mfe.name} to CDN`);
-
+    
     // In production, upload to S3/CloudFront or similar
     const cdnPath = `https://cdn.mundotango.life/mfe/${mfe.name}/${version}`;
-
+    
     await execAsync(`cd ${mfe.path}/dist && aws s3 sync . s3://mundotango-mfe/${mfe.name}/${version}/`);
   }
 
@@ -67323,7 +68028,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant = 'primary', size = 'md', className = '', children, ...props }, ref) => {
     const baseStyles = 'rounded-lg font-medium transition-colors';
-
+    
     const variantStyles = {
       primary: 'bg-primary-500 text-white hover:bg-primary-600',
       secondary: 'bg-secondary-500 text-white hover:bg-secondary-700',
@@ -67390,7 +68095,7 @@ export class MicroFrontendEventBus {
   off(event: string, callback: EventCallback): void {
     const callbacks = this.events.get(event) || [];
     const index = callbacks.indexOf(callback);
-
+    
     if (index > -1) {
       callbacks.splice(index, 1);
     }
@@ -67506,7 +68211,7 @@ self.addEventListener('fetch', (event) => {
 async function networkFirstStrategy(request, cacheName) {
   try {
     const response = await fetch(request);
-
+    
     if (response.ok) {
       const cache = await caches.open(cacheName);
       cache.put(request, response.clone());
@@ -67515,7 +68220,7 @@ async function networkFirstStrategy(request, cacheName) {
     return response;
   } catch (error) {
     const cached = await caches.match(request);
-
+    
     if (cached) {
       return cached;
     }
@@ -67532,14 +68237,14 @@ async function networkFirstStrategy(request, cacheName) {
 // Cache first strategy
 async function cacheFirstStrategy(request, cacheName) {
   const cached = await caches.match(request);
-
+  
   if (cached) {
     return cached;
   }
 
   try {
     const response = await fetch(request);
-
+    
     if (response.ok) {
       const cache = await caches.open(cacheName);
       cache.put(request, response.clone());
@@ -67605,7 +68310,7 @@ self.addEventListener('notificationclick', (event) => {
 
   if (event.action === 'open' || !event.action) {
     const url = event.notification.data || '/';
-
+    
     event.waitUntil(
       clients.openWindow(url)
     );
@@ -67643,7 +68348,7 @@ async function openDB() {
 
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
-
+      
       if (!db.objectStoreNames.contains('pending-posts')) {
         db.createObjectStore('pending-posts', { keyPath: 'id', autoIncrement: true });
       }
@@ -67954,7 +68659,7 @@ export class ResourceHints {
       link.rel = 'preload';
       link.href = resource.href;
       link.as = resource.as;
-
+      
       if (resource.type) {
         link.type = resource.type;
       }
@@ -68017,10 +68722,10 @@ export class ResourceHints {
   private static isCritical(rule: CSSStyleRule): boolean {
     try {
       const elements = document.querySelectorAll(rule.selectorText);
-
+      
       for (const element of Array.from(elements)) {
         const rect = element.getBoundingClientRect();
-
+        
         // Check if element is in viewport
         if (rect.top < window.innerHeight && rect.bottom > 0) {
           return true;
@@ -68147,7 +68852,7 @@ export class BundleAnalyzer {
    */
   static generateReport(stats: Awaited<ReturnType<typeof BundleAnalyzer.analyzeBundles>>): string {
     let report = '# Bundle Analysis Report\n\n';
-
+    
     report += `**Total Size**: ${this.formatBytes(stats.totalSize)}\n`;
     report += `**Total Gzipped**: ${this.formatBytes(stats.totalGzipSize)}\n`;
     report += `**Compression**: ${((1 - stats.totalGzipSize / stats.totalSize) * 100).toFixed(1)}%\n\n`;
@@ -68173,11 +68878,11 @@ export class BundleAnalyzer {
 
   private static formatBytes(bytes: number): string {
     if (bytes === 0) return '0 B';
-
+    
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-
+    
     return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
   }
 }
@@ -68430,7 +69135,7 @@ export class LiveRegionManager {
     region.setAttribute('aria-live', politeness);
     region.setAttribute('aria-atomic', 'true');
     region.className = 'sr-only'; // Screen reader only
-
+    
     document.body.appendChild(region);
     this.regions.set(id, region);
 
@@ -68446,10 +69151,10 @@ export class LiveRegionManager {
     regionId: string = 'global-announcements'
   ): void {
     const region = this.createRegion(regionId, politeness);
-
+    
     // Clear and set new message
     region.textContent = '';
-
+    
     // Small delay to ensure screen readers pick up the change
     setTimeout(() => {
       region.textContent = message;
@@ -68506,7 +69211,7 @@ export class FocusManager {
     this.trapActive = true;
 
     const focusableElements = this.getFocusableElements(element);
-
+    
     if (focusableElements.length === 0) return;
 
     const firstElement = focusableElements[0];
@@ -68531,7 +69236,7 @@ export class FocusManager {
     };
 
     element.addEventListener('keydown', handleTabKey);
-
+    
     // Store handler for cleanup
     (element as any)._focusTrapHandler = handleTabKey;
 
@@ -68622,7 +69327,7 @@ export class KeyboardNavigationManager {
     itemSelector: string
   ): void {
     const items = Array.from(container.querySelectorAll<HTMLElement>(itemSelector));
-
+    
     if (items.length === 0) return;
 
     // Set first item as focusable
@@ -68679,7 +69384,7 @@ export class KeyboardNavigationManager {
       link.href = `#${target.id}`;
       link.textContent = target.label;
       link.className = 'skip-link';
-
+      
       link.addEventListener('click', (e) => {
         e.preventDefault();
         const targetElement = document.getElementById(target.id);
@@ -68751,12 +69456,12 @@ export class ScreenReaderUtils {
     description: string
   ): void {
     const labelId = `desc-${Math.random().toString(36).substr(2, 9)}`;
-
+    
     const descElement = document.createElement('span');
     descElement.id = labelId;
     descElement.className = 'sr-only';
     descElement.textContent = description;
-
+    
     element.appendChild(descElement);
     element.setAttribute('aria-describedby', labelId);
   }
@@ -68785,7 +69490,7 @@ export class ScreenReaderUtils {
    */
   static announceRouteChange(pageName: string): void {
     LiveRegionManager.announce(`Navigated to ${pageName} page`);
-
+    
     // Update document title
     document.title = `${pageName} - MundoTango`;
   }
@@ -68908,7 +69613,7 @@ export class ZeroTrustManager {
       // Evaluate each policy
       for (const policy of applicablePolicies) {
         const evaluation = await this.evaluatePolicy(policy, request);
-
+        
         if (!evaluation.allowed) {
           return evaluation;
         }
@@ -68970,7 +69675,7 @@ export class ZeroTrustManager {
     // Check device trust
     if (policy.conditions.deviceTrust) {
       const deviceTrust = await this.checkDeviceTrust(request.context.deviceId);
-
+      
       if (policy.conditions.deviceTrust === 'trusted' && deviceTrust !== 'trusted') {
         return {
           allowed: false,
@@ -68991,7 +69696,7 @@ export class ZeroTrustManager {
     // Check MFA
     if (policy.conditions.mfaRequired) {
       const mfaVerified = await this.checkMFAStatus(request.userId);
-
+      
       if (!mfaVerified) {
         return {
           allowed: false,
@@ -69013,14 +69718,14 @@ export class ZeroTrustManager {
   ): Promise<boolean> {
     // Check session validity
     const session = await this.getSession(sessionId);
-
+    
     if (!session) {
       return false;
     }
 
     // Check if user status changed
     const userActive = await this.checkUserStatus(userId);
-
+    
     if (!userActive) {
       await this.terminateSession(sessionId);
       return false;
@@ -69028,7 +69733,7 @@ export class ZeroTrustManager {
 
     // Check device posture
     const deviceHealthy = await this.checkDevicePosture(session.deviceId);
-
+    
     if (!deviceHealthy) {
       await this.terminateSession(sessionId);
       return false;
@@ -69518,7 +70223,7 @@ export class KeyRotationService {
       logger.info(`Starting key rotation for ${keyId}`);
 
       const currentKey = this.keys.get(keyId);
-
+      
       if (!currentKey) {
         throw new Error(`Key not found: ${keyId}`);
       }
@@ -69750,7 +70455,7 @@ export class GDPRComplianceManager {
 
       // Save to file and return URL
       const exportPath = `/exports/user-${userId}-${Date.now()}.${format}`;
-
+      
       // In production, save to secure storage
       logger.info(`Data export generated: ${exportPath}`);
 
@@ -69897,7 +70602,7 @@ export class SOC2AuditManager {
     }>;
   }> {
     const control = this.controls.get(controlId);
-
+    
     if (!control) {
       throw new Error(`Control not found: ${controlId}`);
     }
@@ -69965,7 +70670,7 @@ export class SOC2AuditManager {
     evidence: any[];
   }> {
     const control = this.controls.get(controlId);
-
+    
     if (!control) {
       throw new Error(`Control not found: ${controlId}`);
     }
@@ -70488,7 +71193,7 @@ export class StreamProcessor extends EventEmitter {
       // In production, batch insert to analytics database
     } catch (error) {
       logger.error('Failed to flush analytics events:', error);
-
+      
       // Put events back in buffer for retry
       this.buffer.unshift(...events);
     }
@@ -70757,7 +71462,7 @@ export class PredictiveAnalyticsEngine {
     intercept: number
   ): number {
     const mean = data.reduce((sum, p) => sum + p.value, 0) / data.length;
-
+    
     let totalSS = 0;
     let residualSS = 0;
 
@@ -71201,10 +71906,10 @@ export class SessionReplayService {
 
     // Detect rage clicks (multiple clicks in short time)
     const clickEvents = session.events.filter(e => e.type === 'click');
-
+    
     for (let i = 0; i < clickEvents.length - 2; i++) {
       const timeDiff = clickEvents[i + 2].timestamp - clickEvents[i].timestamp;
-
+      
       if (timeDiff < 1000) { // 3 clicks within 1 second
         analysis.rageclicks++;
         analysis.issues.push({
@@ -71235,7 +71940,7 @@ export class SessionReplayService {
     return Array.from(this.sessions.values()).filter(session => {
       if (criteria.userId && session.userId !== criteria.userId) return false;
       if (criteria.minDuration && (session.duration || 0) < criteria.minDuration) return false;
-
+      
       return true;
     });
   }
@@ -71363,7 +72068,7 @@ export class CohortAnalysisService {
 
     for (const name of cohortNames) {
       const cohort = this.cohorts.get(name);
-
+      
       if (!cohort) continue;
 
       let values: number[];
@@ -71403,7 +72108,7 @@ export class CohortAnalysisService {
 
     // Calculate revenue for each period
     const revenueByPeriod = await this.getCohortRevenue(cohort);
-
+    
     // Calculate cumulative LTV
     let cumulativeLTV = 0;
     const LTVByPeriod: number[] = [];
@@ -71954,7 +72659,7 @@ export class AutoMLService {
     testSize: number
   ): { trainData: any[]; testData: any[] } {
     const splitIndex = Math.floor(dataset.length * (1 - testSize));
-
+    
     return {
       trainData: dataset.slice(0, splitIndex),
       testData: dataset.slice(splitIndex),
@@ -72155,7 +72860,7 @@ export class IntentClassificationService {
         for (const pattern of patterns) {
           if (normalizedText.includes(pattern)) {
             const confidence = this.calculateConfidence(normalizedText, pattern);
-
+            
             if (confidence > bestMatch.confidence) {
               bestMatch = { intent, confidence };
             }
@@ -72183,7 +72888,7 @@ export class IntentClassificationService {
   async classifyMultiIntent(text: string): Promise<Intent[]> {
     // Detect multiple intents in one sentence
     const sentences = text.split(/[.!?]+/);
-
+    
     const intents = await Promise.all(
       sentences.map(s => this.classifyIntent(s))
     );
@@ -72204,7 +72909,7 @@ export class IntentClassificationService {
     // Date extraction
     const datePattern = /\b(today|tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i;
     const dateMatch = text.match(datePattern);
-
+    
     if (dateMatch) {
       entities.push({
         type: 'date',
@@ -72216,7 +72921,7 @@ export class IntentClassificationService {
     // Location extraction
     const locationPattern = /\b(in|at|near)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b/;
     const locationMatch = text.match(locationPattern);
-
+    
     if (locationMatch) {
       entities.push({
         type: 'location',
@@ -72228,7 +72933,7 @@ export class IntentClassificationService {
     // Time extraction
     const timePattern = /\b(\d{1,2}:\d{2}\s*(?:am|pm)?)\b/i;
     const timeMatch = text.match(timePattern);
-
+    
     if (timeMatch) {
       entities.push({
         type: 'time',
@@ -72275,7 +72980,7 @@ export class IntentClassificationService {
 
     for (const [intentName] of this.intents.entries()) {
       const intent = await this.classifyIntent(text);
-
+      
       if (intent.name === intentName) {
         allIntents.push(intent);
       }
@@ -72335,7 +73040,7 @@ export class DialogueManager {
     try {
       // Get or create dialogue state
       let state = this.states.get(sessionId);
-
+      
       if (!state) {
         state = this.createState(sessionId);
         this.states.set(sessionId, state);
@@ -72386,13 +73091,13 @@ export class DialogueManager {
     switch (intent.name) {
       case 'create_account':
         return this.handleCreateAccount(state);
-
+      
       case 'search_events':
         return this.handleSearchEvents(state);
-
+      
       case 'get_help':
         return this.handleGetHelp(state);
-
+      
       default:
         return {
           message: "I'm not sure how to help with that. Could you rephrase?",
@@ -72411,7 +73116,7 @@ export class DialogueManager {
 
     if (missingSlots.length > 0) {
       const nextSlot = missingSlots[0];
-
+      
       return {
         message: this.getSlotPrompt(nextSlot),
         actions: [],
@@ -72523,7 +73228,7 @@ export class DialogueManager {
    */
   exportDialogue(sessionId: string): string {
     const state = this.states.get(sessionId);
-
+    
     if (!state) {
       return '';
     }
@@ -72588,7 +73293,7 @@ export class ChatbotFramework {
 
       // Get conversation history
       let conversation = this.conversations.get(conversationId);
-
+      
       if (!conversation) {
         conversation = [];
         this.conversations.set(conversationId, conversation);
@@ -72637,7 +73342,7 @@ export class ChatbotFramework {
       return response;
     } catch (error) {
       logger.error('Chat processing failed:', error);
-
+      
       return {
         response: this.getFallbackResponse(),
         confidence: 0.5,
@@ -72701,16 +73406,16 @@ export class ChatbotFramework {
     switch (this.config.personality) {
       case 'friendly':
         return `😊 ${response}`;
-
+      
       case 'professional':
         return response;
-
+      
       case 'casual':
         return response.toLowerCase().replace(/\./g, '!');
-
+      
       case 'formal':
         return `${response} I hope this information is helpful.`;
-
+      
       default:
         return response;
     }
@@ -73001,7 +73706,7 @@ export class MultiLanguageNLPService {
   async getMultilingualEmbedding(text: string): Promise<number[]> {
     // Use multilingual model (e.g., mBERT, XLM-R)
     // In production, call embedding API
-
+    
     // Placeholder: return random embedding
     return new Array(768).fill(0).map(() => Math.random());
   }
@@ -73093,10 +73798,10 @@ export class MultiLanguageNLPService {
   ): Promise<string[]> {
     // Use language-specific keyword extraction
     const words = text.toLowerCase().split(/\s+/);
-
+    
     // Simple: return most frequent words
     const wordCounts = new Map<string, number>();
-
+    
     words.forEach(word => {
       if (word.length > 3) {
         wordCounts.set(word, (wordCounts.get(word) || 0) + 1);
@@ -73395,7 +74100,7 @@ export class RecommendationRLSystem {
    */
   private getMaxQValue(state: string): number {
     const actionValues = this.qTable.get(state);
-
+    
     if (!actionValues || actionValues.size === 0) {
       return 0;
     }
