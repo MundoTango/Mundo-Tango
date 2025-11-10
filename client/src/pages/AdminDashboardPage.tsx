@@ -48,17 +48,37 @@ interface RecentActivity {
 }
 
 export default function AdminDashboardPage() {
-  const { data: stats, isLoading: loadingStats } = useQuery<DashboardStats>({
-    queryKey: ["/api/admin/stats"],
+  const { data: platformHealth, isLoading: loadingStats } = useQuery({
+    queryKey: ["/api/admin/platform/health"],
   });
 
-  const { data: moderationQueue = [], isLoading: loadingQueue } = useQuery<ModerationItem[]>({
-    queryKey: ["/api/admin/moderation-queue"],
+  const { data: moderationQueue = [], isLoading: loadingQueue } = useQuery({
+    queryKey: ["/api/admin/content/flagged"],
   });
 
-  const { data: recentActivity = [], isLoading: loadingActivity } = useQuery<RecentActivity[]>({
-    queryKey: ["/api/admin/activity"],
+  const { data: recentActivity = [], isLoading: loadingActivity } = useQuery({
+    queryKey: ["/api/admin/activity/recent"],
   });
+
+  const stats: DashboardStats = platformHealth ? {
+    totalUsers: platformHealth.totalUsers || 0,
+    activeUsers: platformHealth.activeUsers24h || 0,
+    totalPosts: platformHealth.totalPosts || 0,
+    totalEvents: platformHealth.totalEvents || 0,
+    pendingReports: moderationQueue.length || 0,
+    resolvedReports: 0,
+    userGrowth: 0,
+    engagementRate: 0,
+  } : {
+    totalUsers: 0,
+    activeUsers: 0,
+    totalPosts: 0,
+    totalEvents: 0,
+    pendingReports: 0,
+    resolvedReports: 0,
+    userGrowth: 0,
+    engagementRate: 0,
+  };
 
   const StatCard = ({ 
     title, 

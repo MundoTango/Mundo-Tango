@@ -91,6 +91,9 @@ const ProjectTrackerPage = lazy(() => import("@/pages/admin/ProjectTrackerPage")
 const AgentHealthDashboard = lazy(() => import("@/pages/admin/AgentHealthDashboard"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
 const AdminUsersPage = lazy(() => import("@/pages/AdminUsersPage"));
+const AdminUsersManagementPage = lazy(() => import("@/pages/AdminUsersManagementPage"));
+const AdminModerationPage = lazy(() => import("@/pages/AdminModerationPage"));
+const AdminAnalyticsPage = lazy(() => import("@/pages/AdminAnalyticsPage"));
 const ContentModerationPage = lazy(() => import("@/pages/ContentModerationPage"));
 const UserReportsPage = lazy(() => import("@/pages/UserReportsPage"));
 const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
@@ -695,6 +698,30 @@ function Router() {
         <ProtectedRoute>
           <AdminLayout>
             <AdminUsersPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/users-management">
+        <ProtectedRoute>
+          <AdminLayout>
+            <AdminUsersManagementPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/moderation-queue">
+        <ProtectedRoute>
+          <AdminLayout>
+            <AdminModerationPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/analytics">
+        <ProtectedRoute>
+          <AdminLayout>
+            <AdminAnalyticsPage />
           </AdminLayout>
         </ProtectedRoute>
       </Route>
