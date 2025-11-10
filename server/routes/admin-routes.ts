@@ -802,4 +802,160 @@ router.post("/role-requests/:requestId/reject", authenticateToken, requireAdmin,
   }
 });
 
+/**
+ * GET /api/admin/event-approvals
+ * Get all events pending approval with filters
+ */
+router.get("/event-approvals", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const { status, eventType } = req.query;
+
+    let query = db
+      .select({
+        id: events.id,
+        title: events.title,
+        description: events.description,
+        eventType: events.eventType,
+        startDate: events.startDate,
+        endDate: events.endDate,
+        location: events.location,
+        city: events.city,
+        country: events.country,
+        venue: events.venue,
+        isOnline: events.isOnline,
+        onlineLink: events.onlineLink,
+        imageUrl: events.imageUrl,
+        maxAttendees: events.maxAttendees,
+        currentAttendees: events.currentAttendees,
+        isPaid: events.isPaid,
+        price: events.price,
+        currency: events.currency,
+        status: events.status,
+        visibility: events.visibility,
+        musicStyle: events.musicStyle,
+        dressCode: events.dressCode,
+        tags: events.tags,
+        approvedBy: events.approvedBy,
+        approvedAt: events.approvedAt,
+        rejectionReason: events.rejectionReason,
+        adminNotes: events.adminNotes,
+        createdAt: events.createdAt,
+        userId: events.userId,
+      })
+      .from(events)
+      .$dynamic();
+
+    // Add status filter
+    if (status && status !== "all") {
+      query = query.where(eq(events.status, status as string));
+    } else {
+      // Default to showing pending events if no filter
+      query = query.where(eq(events.status, "pending"));
+    }
+
+    // Add event type filter
+    if (eventType && eventType !== "all") {
+      query = query.where(eq(events.eventType, eventType as string));
+    }
+
+    const eventsList = await query.orderBy(desc(events.createdAt));
+
+    // Enrich with organizer data
+    const enrichedEvents = await Promise.all(
+      eventsList.map(async (event) => {
+        const [organizer] = await db
+          .select({
+            id: users.id,
+            name: users.name,
+            username: users.username,
+            email: users.email,
+            profileImage: users.profileImage,
+          })
+          .from(users)
+          .where(eq(users.id, event.userId));
+
+        return {
+          ...event,
+          organizer,
+        };
+      })
+    );
+
+    res.json(enrichedEvents);
+  } catch (error: any) {
+    console.error("Error fetching event approvals:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/admin/event-approvals/:eventId/approve
+ * Approve an event and publish it
+ */
+router.post("/event-approvals/:eventId/approve", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { eventId } = req.params;
+    const { adminNotes } = req.body;
+
+    const [updated] = await db
+      .update(events)
+      .set({
+        status: "published",
+        adminNotes,
+        approvedBy: req.user!.id,
+        approvedAt: new Date(),
+        publishedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(events.id, parseInt(eventId)))
+      .returning();
+
+    if (!updated) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    res.json({ success: true, event: updated });
+  } catch (error: any) {
+    console.error("Error approving event:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/admin/event-approvals/:eventId/reject
+ * Reject an event
+ */
+router.post("/event-approvals/:eventId/reject", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { eventId } = req.params;
+    const { adminNotes, rejectionReason } = req.body;
+
+    if (!rejectionReason) {
+      return res.status(400).json({ error: "Rejection reason is required" });
+    }
+
+    const [updated] = await db
+      .update(events)
+      .set({
+        status: "rejected",
+        adminNotes,
+        rejectionReason,
+        approvedBy: req.user!.id,
+        approvedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(events.id, parseInt(eventId)))
+      .returning();
+
+    if (!updated) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    res.json({ success: true, event: updated });
+  } catch (error: any) {
+    console.error("Error rejecting event:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;

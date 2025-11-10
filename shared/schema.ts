@@ -184,6 +184,12 @@ export const events = pgTable("events", {
   status: varchar("status", { length: 20 }).default("published"),
   cancellationReason: text("cancellation_reason"),
   
+  // Approval Workflow (for community-submitted events requiring admin review)
+  approvedBy: integer("approved_by").references(() => users.id),
+  approvedAt: timestamp("approved_at"),
+  rejectionReason: text("rejection_reason"),
+  adminNotes: text("admin_notes"),
+  
   // Stats
   viewCount: integer("view_count").default(0),
   shareCount: integer("share_count").default(0),

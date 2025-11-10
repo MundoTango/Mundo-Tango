@@ -90,6 +90,7 @@ const SelfHealingPage = lazy(() => import("@/pages/admin/SelfHealingPage"));
 const ProjectTrackerPage = lazy(() => import("@/pages/admin/ProjectTrackerPage"));
 const UserReportsPage = lazy(() => import("@/pages/admin/UserReportsPage"));
 const RoleRequestsPage = lazy(() => import("@/pages/admin/RoleRequestsPage"));
+const EventApprovalsPage = lazy(() => import("@/pages/admin/EventApprovalsPage"));
 const AgentHealthDashboard = lazy(() => import("@/pages/admin/AgentHealthDashboard"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
 const AdminUsersPage = lazy(() => import("@/pages/AdminUsersPage"));
@@ -679,6 +680,14 @@ function Router() {
         <ProtectedRoute>
           <AdminLayout>
             <RoleRequestsPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/event-approvals">
+        <ProtectedRoute>
+          <AdminLayout>
+            <EventApprovalsPage />
           </AdminLayout>
         </ProtectedRoute>
       </Route>
