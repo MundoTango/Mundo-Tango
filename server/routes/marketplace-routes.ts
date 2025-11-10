@@ -103,7 +103,9 @@ router.get("/items/:id", async (req: Request, res: Response) => {
 // POST /api/marketplace/items - Create new item (auth required)
 router.post("/items", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const sellerId = req.user!.userId;
+    const sellerId = req.userId!;
+    console.log('[Marketplace] Creating item - userId:', req.userId, 'user:', req.user?.id);
+    
     const {
       title,
       description,
@@ -152,7 +154,7 @@ router.post("/items", authenticateToken, async (req: AuthRequest, res: Response)
 // PATCH /api/marketplace/items/:id - Update item (auth required, owner only)
 router.patch("/items/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
     const { id } = req.params;
 
     // Check ownership
@@ -189,7 +191,7 @@ router.patch("/items/:id", authenticateToken, async (req: AuthRequest, res: Resp
 // DELETE /api/marketplace/items/:id - Delete item (auth required, owner only)
 router.delete("/items/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
     const { id } = req.params;
 
     // Check ownership
@@ -221,7 +223,7 @@ router.delete("/items/:id", authenticateToken, async (req: AuthRequest, res: Res
 // PATCH /api/marketplace/items/:id/status - Update item status (auth required, owner only)
 router.patch("/items/:id/status", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
     const { id } = req.params;
     const { status } = req.body;
 
@@ -262,7 +264,7 @@ router.patch("/items/:id/status", authenticateToken, async (req: AuthRequest, re
 // GET /api/marketplace/my-items - Get user's items (auth required)
 router.get("/my-items", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
 
     const items = await db
       .select()

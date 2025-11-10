@@ -105,7 +105,7 @@ router.get("/listings/:id", async (req: Request, res: Response) => {
 // POST /api/housing/listings - Create new listing (auth required)
 router.post("/listings", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const hostId = req.user!.userId;
+    const hostId = req.userId!;
     const {
       title,
       description,
@@ -159,7 +159,7 @@ router.post("/listings", authenticateToken, async (req: AuthRequest, res: Respon
 // PATCH /api/housing/listings/:id - Update listing (auth required, owner only)
 router.patch("/listings/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
     const { id } = req.params;
 
     // Check ownership
@@ -196,7 +196,7 @@ router.patch("/listings/:id", authenticateToken, async (req: AuthRequest, res: R
 // DELETE /api/housing/listings/:id - Delete listing (auth required, owner only)
 router.delete("/listings/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
     const { id } = req.params;
 
     // Check ownership
@@ -232,7 +232,7 @@ router.delete("/listings/:id", authenticateToken, async (req: AuthRequest, res: 
 // GET /api/housing/bookings - Get user's bookings (auth required)
 router.get("/bookings", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
     const { status } = req.query;
 
     let query = db
@@ -270,7 +270,7 @@ router.get("/bookings", authenticateToken, async (req: AuthRequest, res: Respons
 // POST /api/housing/bookings - Create booking (auth required)
 router.post("/bookings", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const guestId = req.user!.userId;
+    const guestId = req.userId!;
     const {
       listingId,
       checkInDate,
@@ -342,7 +342,7 @@ router.post("/bookings", authenticateToken, async (req: AuthRequest, res: Respon
 // PATCH /api/housing/bookings/:id/status - Update booking status (auth required)
 router.patch("/bookings/:id/status", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
     const { id } = req.params;
     const { status } = req.body;
 
@@ -419,7 +419,7 @@ router.get("/listings/:listingId/reviews", async (req: Request, res: Response) =
 // POST /api/housing/listings/:listingId/reviews - Create review (auth required)
 router.post("/listings/:listingId/reviews", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
     const { listingId } = req.params;
     const { rating, review } = req.body;
 
@@ -476,7 +476,7 @@ router.post("/listings/:listingId/reviews", authenticateToken, async (req: AuthR
 // GET /api/housing/favorites - Get user's favorite listings (auth required)
 router.get("/favorites", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
 
     const favorites = await db
       .select({
@@ -503,7 +503,7 @@ router.get("/favorites", authenticateToken, async (req: AuthRequest, res: Respon
 // POST /api/housing/favorites/:listingId - Add to favorites (auth required)
 router.post("/favorites/:listingId", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
     const { listingId } = req.params;
 
     // Check if already favorited
@@ -538,7 +538,7 @@ router.post("/favorites/:listingId", authenticateToken, async (req: AuthRequest,
 // DELETE /api/housing/favorites/:listingId - Remove from favorites (auth required)
 router.delete("/favorites/:listingId", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
     const { listingId } = req.params;
 
     await db

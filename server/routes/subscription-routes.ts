@@ -13,7 +13,7 @@ const router = Router();
 // GET /api/subscriptions/me - Get current user's subscription (auth required)
 router.get("/me", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
 
     const result = await db
       .select({
@@ -56,7 +56,7 @@ router.get("/tiers", async (req: Request, res: Response) => {
 // POST /api/subscriptions - Create new subscription (auth required)
 router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
     const {
       tierId,
       billingInterval,
@@ -110,7 +110,7 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
 // PATCH /api/subscriptions/:id - Update subscription (auth required)
 router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
     const { id } = req.params;
 
     // Check ownership
@@ -147,7 +147,7 @@ router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) 
 // POST /api/subscriptions/:id/cancel - Cancel subscription (auth required)
 router.post("/:id/cancel", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
     const { id } = req.params;
     const { cancelAt } = req.body;
 
@@ -186,7 +186,7 @@ router.post("/:id/cancel", authenticateToken, async (req: AuthRequest, res: Resp
 // POST /api/subscriptions/:id/reactivate - Reactivate cancelled subscription (auth required)
 router.post("/:id/reactivate", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
     const { id } = req.params;
 
     // Check ownership
@@ -228,7 +228,7 @@ router.post("/:id/reactivate", authenticateToken, async (req: AuthRequest, res: 
 // GET /api/subscriptions/history - Get user's subscription history (auth required)
 router.get("/history", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.userId;
+    const userId = req.userId!;
 
     const history = await db
       .select({
