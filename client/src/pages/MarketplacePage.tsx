@@ -4,13 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, Tag, Clock } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ShoppingBag, Tag, Clock, Search, Star } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function MarketplacePage() {
   const [activeTab, setActiveTab] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Build proper query URL with category filter
   const queryUrl = activeTab === "all" 
@@ -21,101 +24,173 @@ export default function MarketplacePage() {
     queryKey: [queryUrl],
   });
 
+  // Filter items by search query
+  const filteredItems = items && Array.isArray(items) 
+    ? items.filter((item: any) => {
+        if (!searchQuery) return true;
+        const searchLower = searchQuery.toLowerCase();
+        return (
+          item.title?.toLowerCase().includes(searchLower) ||
+          item.description?.toLowerCase().includes(searchLower)
+        );
+      })
+    : [];
+
+  // Determine status badge based on item data
+  const getStatusBadge = (item: any) => {
+    if (item.status === 'sold') {
+      return <Badge variant="destructive">Sold</Badge>;
+    }
+    if (item.status === 'reserved') {
+      return <Badge className="bg-yellow-600">Reserved</Badge>;
+    }
+    return <Badge className="bg-green-600">Available</Badge>;
+  };
+
   return (
     <SelfHealingErrorBoundary pageName="Marketplace" fallbackRoute="/feed">
       <PageLayout title="Tango Marketplace" showBreadcrumbs>
-<div className="min-h-screen bg-background py-8 px-4">
-      <div className="container mx-auto max-w-6xl">
-        {/* Header */}
-        
+        <div className="min-h-screen bg-background py-8 px-4">
+          <div className="container mx-auto max-w-6xl">
+            {/* Header */}
+            <div className="mb-6">
+              <h1 className="text-4xl font-bold mb-2">Tango Marketplace</h1>
+              <p className="text-muted-foreground">
+                Buy and sell tango shoes, clothing, music, and accessories
+              </p>
+            </div>
 
-        {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-6">
-            <TabsTrigger value="all" data-testid="tab-all">All Items</TabsTrigger>
-            <TabsTrigger value="shoes" data-testid="tab-shoes">Shoes</TabsTrigger>
-            <TabsTrigger value="clothing" data-testid="tab-clothing">Clothing</TabsTrigger>
-            <TabsTrigger value="music" data-testid="tab-music">Music</TabsTrigger>
-            <TabsTrigger value="accessories" data-testid="tab-accessories">Accessories</TabsTrigger>
-          </TabsList>
+            {/* Search Bar */}
+            <div className="mb-6">
+              <div className="relative max-w-md">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search items..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                  data-testid="input-search-marketplace"
+                />
+              </div>
+            </div>
 
-          <TabsContent value={activeTab}>
-            {isLoading ? (
-              <div className="text-center py-12">Loading items...</div>
-            ) : items && Array.isArray(items) && items.length > 0 ? (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {items.map((item: any) => (
-                  <Card key={item.id} className="hover-elevate" data-testid={`item-card-${item.id}`}>
-                    {/* Image */}
-                    {item.image && (
-                      <div className="aspect-square bg-muted overflow-hidden">
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="object-cover w-full h-full"
-                        />
-                      </div>
-                    )}
+            {/* Tabs */}
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="mb-6">
+                <TabsTrigger value="all" data-testid="tab-all">All Items</TabsTrigger>
+                <TabsTrigger value="shoes" data-testid="tab-shoes">Shoes</TabsTrigger>
+                <TabsTrigger value="clothing" data-testid="tab-clothing">Clothing</TabsTrigger>
+                <TabsTrigger value="music" data-testid="tab-music">Music</TabsTrigger>
+                <TabsTrigger value="accessories" data-testid="tab-accessories">Accessories</TabsTrigger>
+              </TabsList>
 
-                    <CardHeader>
-                      <div className="flex items-start justify-between gap-2">
-                        <CardTitle className="text-lg line-clamp-2">
-                          {item.title}
-                        </CardTitle>
-                        {item.condition && (
-                          <Badge variant="secondary">{item.condition}</Badge>
+              <TabsContent value={activeTab}>
+                {isLoading ? (
+                  <div className="text-center py-12">Loading items...</div>
+                ) : filteredItems.length > 0 ? (
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {filteredItems.map((item: any) => (
+                      <Card key={item.id} className="hover-elevate" data-testid={`item-card-${item.id}`}>
+                        {/* Image */}
+                        {item.image && (
+                          <div className="aspect-square bg-muted overflow-hidden relative">
+                            <img
+                              src={item.image}
+                              alt={item.title}
+                              className="object-cover w-full h-full"
+                            />
+                            {/* Status Badge Overlay */}
+                            <div className="absolute top-2 right-2">
+                              {getStatusBadge(item)}
+                            </div>
+                          </div>
                         )}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl font-bold text-primary">
-                          ${item.price}
-                        </span>
-                        {item.originalPrice && item.originalPrice > item.price && (
-                          <span className="text-sm text-muted-foreground line-through">
-                            ${item.originalPrice}
-                          </span>
-                        )}
-                      </div>
-                    </CardHeader>
 
-                    <CardContent className="space-y-3">
-                      {item.description && (
-                        <p className="text-sm text-muted-foreground line-clamp-2">
-                          {item.description}
-                        </p>
-                      )}
+                        <CardHeader>
+                          <div className="flex items-start justify-between gap-2">
+                            <CardTitle className="text-lg line-clamp-2">
+                              {item.title}
+                            </CardTitle>
+                            {item.condition && (
+                              <Badge variant="secondary">{item.condition}</Badge>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-2xl font-bold text-primary">
+                              ${item.price}
+                            </span>
+                            {item.originalPrice && item.originalPrice > item.price && (
+                              <span className="text-sm text-muted-foreground line-through">
+                                ${item.originalPrice}
+                              </span>
+                            )}
+                          </div>
+                        </CardHeader>
 
-                      <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4" />
-                          {item.postedDate}
-                        </div>
-                        {item.location && (
-                          <span>{item.location}</span>
-                        )}
-                      </div>
+                        <CardContent className="space-y-3">
+                          {/* Seller Info */}
+                          <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+                            <Avatar className="h-10 w-10">
+                              <AvatarImage src={item.seller?.profileImage} />
+                              <AvatarFallback>{item.seller?.name?.[0] || "S"}</AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-sm truncate">
+                                {item.seller?.name || "Anonymous Seller"}
+                              </p>
+                              {item.seller?.rating && (
+                                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                  <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                  <span>{item.seller.rating.toFixed(1)}</span>
+                                  {item.seller.reviewCount && (
+                                    <span>({item.seller.reviewCount})</span>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
 
-                      <Link href={`/marketplace/${item.id}`}>
-                        <Button className="w-full" data-testid={`button-view-${item.id}`}>
-                          View Details
-                        </Button>
-                      </Link>
+                          {item.description && (
+                            <p className="text-sm text-muted-foreground line-clamp-2">
+                              {item.description}
+                            </p>
+                          )}
+
+                          <div className="flex items-center justify-between text-sm text-muted-foreground">
+                            <div className="flex items-center gap-1">
+                              <Clock className="h-4 w-4" />
+                              {item.postedDate || "Recently posted"}
+                            </div>
+                            {item.location && (
+                              <span>{item.location}</span>
+                            )}
+                          </div>
+
+                          <Link href={`/marketplace/${item.id}`}>
+                            <Button 
+                              className="w-full" 
+                              data-testid={`button-view-${item.id}`}
+                              disabled={item.status === 'sold'}
+                            >
+                              {item.status === 'sold' ? 'Sold Out' : 'View Details'}
+                            </Button>
+                          </Link>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <Card>
+                    <CardContent className="py-12 text-center text-muted-foreground">
+                      <ShoppingBag className="mx-auto h-12 w-12 mb-4 opacity-50" />
+                      <p>{searchQuery ? 'No items match your search' : 'No items available in this category'}</p>
                     </CardContent>
                   </Card>
-                ))}
-              </div>
-            ) : (
-              <Card>
-                <CardContent className="py-12 text-center text-muted-foreground">
-                  <ShoppingBag className="mx-auto h-12 w-12 mb-4 opacity-50" />
-                  <p>No items available in this category</p>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          </div>
+        </div>
       </PageLayout>
     </SelfHealingErrorBoundary>
   );
