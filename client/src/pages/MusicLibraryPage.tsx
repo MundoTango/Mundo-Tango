@@ -6,8 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Music, Play, Heart, Download, Search } from "lucide-react";
-import { PageLayout } from "@/components/PageLayout";
-import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { AppLayout } from "@/components/AppLayout";
 
 export default function MusicLibraryPage() {
   const [activeTab, setActiveTab] = useState("tango");
@@ -18,10 +17,15 @@ export default function MusicLibraryPage() {
   });
 
   return (
-    <SelfHealingErrorBoundary pageName="Music Library" fallbackRoute="/feed">
-      <PageLayout title="Music Library" showBreadcrumbs>
-<div className="min-h-screen bg-background py-8 px-4">
+    <AppLayout>
+      <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold mb-2" data-testid="text-page-title">Music Library</h1>
+          <p className="text-muted-foreground" data-testid="text-page-description">
+            Explore our curated collection of tango music
+          </p>
+        </div>
         
 
         <div className="mb-6">
@@ -95,7 +99,6 @@ export default function MusicLibraryPage() {
         </Tabs>
       </div>
     </div>
-    </PageLayout>
-    </SelfHealingErrorBoundary>
+    </AppLayout>
   );
 }

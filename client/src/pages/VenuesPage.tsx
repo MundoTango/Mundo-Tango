@@ -5,8 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MapPin, Star, Clock, Phone, Globe } from "lucide-react";
 import { Link } from "wouter";
-import { PageLayout } from "@/components/PageLayout";
-import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { AppLayout } from "@/components/AppLayout";
 
 export default function VenuesPage() {
   const { data: venues, isLoading } = useQuery({
@@ -14,11 +13,15 @@ export default function VenuesPage() {
   });
 
   return (
-    <SelfHealingErrorBoundary pageName="Venues" fallbackRoute="/feed">
-      <PageLayout title="Tango Venues" showBreadcrumbs>
-<div className="min-h-screen bg-background py-8 px-4">
+    <AppLayout>
+      <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-6xl">
-        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold mb-2" data-testid="text-page-title">Tango Venues</h1>
+          <p className="text-muted-foreground" data-testid="text-page-description">
+            Discover tango venues and milongas around the world
+          </p>
+        </div>
         
 
         {/* Venues Grid */}
@@ -125,7 +128,6 @@ export default function VenuesPage() {
         )}
       </div>
     </div>
-      </PageLayout>
-    </SelfHealingErrorBoundary>
+    </AppLayout>
   );
 }

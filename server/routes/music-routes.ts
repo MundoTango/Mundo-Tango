@@ -1,6 +1,6 @@
 import { Router, Response } from "express";
-import { db } from "../db";
-import { musicLibrary, playlists, playlistSongs, musicFavorites } from "../../shared/schema";
+import { db } from "@shared/db";
+import { musicLibrary, playlists, playlistSongs, musicFavorites } from "@shared/schema";
 import { eq, desc, and, or, ilike } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 

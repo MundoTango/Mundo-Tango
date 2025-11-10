@@ -1,6 +1,6 @@
 import { Router, Response } from "express";
-import { db } from "../db";
-import { teachers, venues, users } from "../../shared/schema";
+import { db } from "@shared/db";
+import { teachers, venues, users } from "@shared/schema";
 import { eq, desc, and, or, ilike, sql } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 
