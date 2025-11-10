@@ -958,4 +958,153 @@ router.post("/event-approvals/:eventId/reject", authenticateToken, requireAdmin,
   }
 });
 
+/**
+ * GET /api/admin/housing-reviews
+ * Get housing listings for safety verification
+ */
+router.get("/housing-reviews", authenticateToken, requireAdmin, async (req, res: Response) => {
+  try {
+    const { verificationStatus, propertyType } = req.query;
+
+    let query = db
+      .select({
+        id: housingListings.id,
+        title: housingListings.title,
+        description: housingListings.description,
+        propertyType: housingListings.propertyType,
+        bedrooms: housingListings.bedrooms,
+        bathrooms: housingListings.bathrooms,
+        maxGuests: housingListings.maxGuests,
+        pricePerNight: housingListings.pricePerNight,
+        currency: housingListings.currency,
+        address: housingListings.address,
+        city: housingListings.city,
+        country: housingListings.country,
+        amenities: housingListings.amenities,
+        houseRules: housingListings.houseRules,
+        images: housingListings.images,
+        status: housingListings.status,
+        verificationStatus: housingListings.verificationStatus,
+        verifiedBy: housingListings.verifiedBy,
+        verifiedAt: housingListings.verifiedAt,
+        safetyNotes: housingListings.safetyNotes,
+        rejectionReason: housingListings.rejectionReason,
+        createdAt: housingListings.createdAt,
+        hostId: housingListings.hostId,
+      })
+      .from(housingListings)
+      .$dynamic();
+
+    // Add verification status filter
+    if (verificationStatus && verificationStatus !== "all") {
+      query = query.where(eq(housingListings.verificationStatus, verificationStatus as string));
+    } else {
+      // Default to showing pending listings
+      query = query.where(eq(housingListings.verificationStatus, "pending"));
+    }
+
+    // Add property type filter
+    if (propertyType && propertyType !== "all") {
+      query = query.where(eq(housingListings.propertyType, propertyType as string));
+    }
+
+    const listings = await query.orderBy(desc(housingListings.createdAt));
+
+    // Enrich with host data
+    const enrichedListings = await Promise.all(
+      listings.map(async (listing) => {
+        const [host] = await db
+          .select({
+            id: users.id,
+            name: users.name,
+            username: users.username,
+            email: users.email,
+            profileImage: users.profileImage,
+          })
+          .from(users)
+          .where(eq(users.id, listing.hostId));
+
+        return {
+          ...listing,
+          host,
+        };
+      })
+    );
+
+    res.json(enrichedListings);
+  } catch (error: any) {
+    console.error("Error fetching housing reviews:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/admin/housing-reviews/:listingId/verify
+ * Verify a housing listing for safety
+ */
+router.post("/housing-reviews/:listingId/verify", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { listingId } = req.params;
+    const { safetyNotes } = req.body;
+
+    const [updated] = await db
+      .update(housingListings)
+      .set({
+        verificationStatus: "verified",
+        safetyNotes,
+        verifiedBy: req.user!.id,
+        verifiedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(housingListings.id, parseInt(listingId)))
+      .returning();
+
+    if (!updated) {
+      return res.status(404).json({ error: "Listing not found" });
+    }
+
+    res.json({ success: true, listing: updated });
+  } catch (error: any) {
+    console.error("Error verifying housing listing:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/admin/housing-reviews/:listingId/reject
+ * Reject a housing listing for safety concerns
+ */
+router.post("/housing-reviews/:listingId/reject", authenticateToken, requireAdmin, async (req: AuthRequest, res: Response) => {
+  try {
+    const { listingId } = req.params;
+    const { safetyNotes, rejectionReason } = req.body;
+
+    if (!rejectionReason) {
+      return res.status(400).json({ error: "Rejection reason is required" });
+    }
+
+    const [updated] = await db
+      .update(housingListings)
+      .set({
+        verificationStatus: "rejected",
+        safetyNotes,
+        rejectionReason,
+        verifiedBy: req.user!.id,
+        verifiedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(housingListings.id, parseInt(listingId)))
+      .returning();
+
+    if (!updated) {
+      return res.status(404).json({ error: "Listing not found" });
+    }
+
+    res.json({ success: true, listing: updated });
+  } catch (error: any) {
+    console.error("Error rejecting housing listing:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;

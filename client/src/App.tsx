@@ -91,6 +91,7 @@ const ProjectTrackerPage = lazy(() => import("@/pages/admin/ProjectTrackerPage")
 const UserReportsPage = lazy(() => import("@/pages/admin/UserReportsPage"));
 const RoleRequestsPage = lazy(() => import("@/pages/admin/RoleRequestsPage"));
 const EventApprovalsPage = lazy(() => import("@/pages/admin/EventApprovalsPage"));
+const HousingReviewsPage = lazy(() => import("@/pages/admin/HousingReviewsPage"));
 const AgentHealthDashboard = lazy(() => import("@/pages/admin/AgentHealthDashboard"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
 const AdminUsersPage = lazy(() => import("@/pages/AdminUsersPage"));
@@ -688,6 +689,14 @@ function Router() {
         <ProtectedRoute>
           <AdminLayout>
             <EventApprovalsPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/housing-reviews">
+        <ProtectedRoute>
+          <AdminLayout>
+            <HousingReviewsPage />
           </AdminLayout>
         </ProtectedRoute>
       </Route>

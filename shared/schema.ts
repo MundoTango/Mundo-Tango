@@ -2145,6 +2145,14 @@ export const housingListings = pgTable("housing_listings", {
   houseRules: text("house_rules"),
   images: text("images").array(),
   status: varchar("status").default("active").notNull(),
+  
+  // Safety Verification (admin reviews for trust & safety)
+  verificationStatus: varchar("verification_status").default("pending").notNull(),
+  verifiedBy: integer("verified_by").references(() => users.id),
+  verifiedAt: timestamp("verified_at"),
+  safetyNotes: text("safety_notes"),
+  rejectionReason: text("rejection_reason"),
+  
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => ({
