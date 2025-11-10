@@ -394,13 +394,13 @@ router.get("/analytics/content-performance", authenticateToken, requireAdmin, as
       id: posts.id,
       content: posts.content,
       userId: posts.userId,
-      likesCount: posts.likesCount,
-      commentsCount: posts.commentsCount,
-      sharesCount: posts.sharesCount,
+      likesCount: posts.likes,
+      commentsCount: posts.comments,
+      sharesCount: posts.shares,
       createdAt: posts.createdAt,
     })
       .from(posts)
-      .orderBy(desc(posts.likesCount))
+      .orderBy(desc(posts.likes))
       .limit(parseInt(limit as string));
 
     res.json(topPosts);
