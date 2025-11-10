@@ -724,7 +724,35 @@ export class DbStorage implements IStorage {
   }
 
   async getPosts(params: { userId?: number; limit?: number; offset?: number }): Promise<SelectPost[]> {
-    let query = db.select().from(posts);
+    let query = db
+      .select({
+        id: posts.id,
+        userId: posts.userId,
+        content: posts.content,
+        richContent: posts.richContent,
+        plainText: posts.plainText,
+        imageUrl: posts.imageUrl,
+        videoUrl: posts.videoUrl,
+        mediaEmbeds: posts.mediaEmbeds,
+        mentions: posts.mentions,
+        hashtags: posts.hashtags,
+        location: posts.location,
+        visibility: posts.visibility,
+        postType: posts.postType,
+        likes: posts.likes,
+        comments: posts.comments,
+        shares: posts.shares,
+        createdAt: posts.createdAt,
+        updatedAt: posts.updatedAt,
+        user: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage,
+        },
+      })
+      .from(posts)
+      .leftJoin(users, eq(posts.userId, users.id));
     
     if (params.userId) {
       query = query.where(eq(posts.userId, params.userId)) as any;

@@ -11,6 +11,7 @@ import { ReportModal } from "@/components/modals/ReportModal";
 import { useReactToPost, useSharePost, useSavePost, useUnsavePost, useReportPost } from "@/hooks/usePostInteractions";
 import { useAuth } from "@/contexts/AuthContext";
 import { CommentsSection } from "./CommentsSection";
+import { renderMentionPills } from "@/utils/renderMentionPills";
 
 export interface PostItemData {
   id: number;
@@ -118,9 +119,9 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
 
         {/* Content */}
         <div className="px-4 pb-3">
-          <p className="whitespace-pre-wrap" data-testid={`post-content-${post.id}`}>
-            {post.content}
-          </p>
+          <div className="whitespace-pre-wrap" data-testid={`post-content-${post.id}`}>
+            {renderMentionPills(post.content)}
+          </div>
         </div>
 
         {/* Image */}
