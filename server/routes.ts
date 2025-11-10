@@ -300,7 +300,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         offset: parseInt(offset as string),
         currentUserId: currentUserId,
       });
-      res.json(posts);
+      
+      // Enrich posts with group type information for proper color rendering
+      const { enrichPostContentWithGroupTypes } = await import("./utils/enrich-mentions");
+      const enrichedPosts = await Promise.all(
+        posts.map(async (post: any) => ({
+          ...post,
+          content: await enrichPostContentWithGroupTypes(post.content),
+        }))
+      );
+      
+      res.json(enrichedPosts);
     } catch (error) {
       console.error("[GET /api/posts] Error fetching posts:", error);
       res.status(500).json({ message: "Failed to fetch posts" });
