@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, MapPin, Settings as SettingsIcon } from "lucide-react";
+import { Users, MapPin, Settings as SettingsIcon, Calendar, Home, Building2, Heart } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { SelectGroup } from "@shared/schema";
@@ -183,22 +183,34 @@ export default function GroupDetailsPage() {
       </Card>
 
       <Tabs defaultValue="discussion">
-        <TabsList className="w-full">
-          <TabsTrigger value="discussion" className="flex-1">
+        <TabsList className="w-full grid grid-cols-4 lg:grid-cols-8 gap-1">
+          <TabsTrigger value="discussion">
             Discussion
           </TabsTrigger>
-          <TabsTrigger value="members" className="flex-1">
+          <TabsTrigger value="events">
+            <Calendar className="h-4 w-4 mr-1" />
+            Events
+          </TabsTrigger>
+          <TabsTrigger value="housing">
+            <Home className="h-4 w-4 mr-1" />
+            Housing
+          </TabsTrigger>
+          <TabsTrigger value="hub">
+            <Heart className="h-4 w-4 mr-1" />
+            Hub
+          </TabsTrigger>
+          <TabsTrigger value="members">
             Members
           </TabsTrigger>
-          <TabsTrigger value="invites" className="flex-1">
+          <TabsTrigger value="invites">
             Invites
           </TabsTrigger>
-          <TabsTrigger value="about" className="flex-1">
+          <TabsTrigger value="about">
             About
           </TabsTrigger>
           {membershipData?.isMember && (
-            <TabsTrigger value="settings" className="flex-1">
-              <SettingsIcon className="h-4 w-4 mr-2" />
+            <TabsTrigger value="settings">
+              <SettingsIcon className="h-4 w-4 mr-1" />
               Settings
             </TabsTrigger>
           )}
@@ -210,6 +222,187 @@ export default function GroupDetailsPage() {
             canPost={membershipData?.isMember || false}
             canModerate={membershipData?.isMember || false}
           />
+        </TabsContent>
+
+        <TabsContent value="events" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-primary" />
+                Group Events
+              </CardTitle>
+              <CardDescription>
+                Upcoming events organized by this group
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Mock event data */}
+              {[
+                { id: 1, title: "Weekly Milonga", date: "2024-11-15", attendees: 45, location: group.city || "Local venue" },
+                { id: 2, title: "Tango Workshop", date: "2024-11-18", attendees: 28, location: group.city || "Dance studio" },
+                { id: 3, title: "Group Practice", date: "2024-11-22", attendees: 32, location: group.city || "Community center" }
+              ].map((event) => (
+                <div key={event.id} className="p-4 border rounded-lg hover-elevate" data-testid={`event-${event.id}`}>
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex-1">
+                      <h3 className="font-semibold mb-1">{event.title}</h3>
+                      <div className="text-sm text-muted-foreground space-y-1">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          {new Date(event.date).toLocaleDateString()}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4" />
+                          {event.location}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Users className="h-4 w-4" />
+                          {event.attendees} attending
+                        </div>
+                      </div>
+                    </div>
+                    <Button size="sm" data-testid={`button-rsvp-${event.id}`}>
+                      RSVP
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="housing" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Home className="h-5 w-5 text-primary" />
+                Housing Options
+              </CardTitle>
+              <CardDescription>
+                Available housing for group members in {group.city || "the area"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Mock housing data */}
+              {[
+                { id: 1, host: "Maria S.", type: "Private Room", price: "$45/night", availability: "Available" },
+                { id: 2, host: "Carlos M.", type: "Shared Room", price: "$25/night", availability: "Available" },
+                { id: 3, host: "Ana P.", type: "Entire Apartment", price: "$85/night", availability: "Booked" }
+              ].map((housing) => (
+                <div key={housing.id} className="p-4 border rounded-lg hover-elevate" data-testid={`housing-${housing.id}`}>
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex-1">
+                      <h3 className="font-semibold mb-1">{housing.type}</h3>
+                      <div className="text-sm text-muted-foreground space-y-1">
+                        <div>Hosted by {housing.host}</div>
+                        <div className="font-medium text-foreground">{housing.price}</div>
+                        <div className={housing.availability === "Available" ? "text-green-600" : "text-muted-foreground"}>
+                          {housing.availability}
+                        </div>
+                      </div>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      disabled={housing.availability !== "Available"}
+                      data-testid={`button-book-${housing.id}`}
+                    >
+                      {housing.availability === "Available" ? "View Details" : "Unavailable"}
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="hub" className="mt-6">
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Heart className="h-5 w-5 text-primary" />
+                  Community Hub
+                </CardTitle>
+                <CardDescription>
+                  Local tango resources in {group.city || group.country || "your area"}
+                </CardDescription>
+              </CardHeader>
+            </Card>
+
+            {/* Milongas Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Local Milongas</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {[
+                  { id: 1, name: "La Viruta", schedule: "Wed & Fri 11pm", rating: 4.8 },
+                  { id: 2, name: "Club Gricel", schedule: "Sat 10pm", rating: 4.9 }
+                ].map((milonga) => (
+                  <div key={milonga.id} className="p-3 border rounded-lg hover-elevate">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h4 className="font-semibold">{milonga.name}</h4>
+                        <p className="text-sm text-muted-foreground">{milonga.schedule}</p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-sm font-medium">{milonga.rating}</span>
+                        <span className="text-yellow-500">★</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Venues Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Building2 className="h-5 w-5" />
+                  Dance Studios & Venues
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {[
+                  { id: 1, name: "Studio Tango Central", type: "Studio", address: "Downtown" },
+                  { id: 2, name: "Centro Cultural", type: "Cultural Center", address: "San Telmo" }
+                ].map((venue) => (
+                  <div key={venue.id} className="p-3 border rounded-lg hover-elevate">
+                    <h4 className="font-semibold">{venue.name}</h4>
+                    <div className="text-sm text-muted-foreground flex items-center gap-4">
+                      <span>{venue.type}</span>
+                      <span className="flex items-center gap-1">
+                        <MapPin className="h-3 w-3" />
+                        {venue.address}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Resources Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Community Resources</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="p-3 border rounded-lg hover-elevate">
+                  <h4 className="font-semibold mb-1">Shoe Repair Services</h4>
+                  <p className="text-sm text-muted-foreground">Recommended cobblers specializing in tango shoes</p>
+                </div>
+                <div className="p-3 border rounded-lg hover-elevate">
+                  <h4 className="font-semibold mb-1">Music Collections</h4>
+                  <p className="text-sm text-muted-foreground">Curated playlists and tanda recommendations</p>
+                </div>
+                <div className="p-3 border rounded-lg hover-elevate">
+                  <h4 className="font-semibold mb-1">Travel Tips</h4>
+                  <p className="text-sm text-muted-foreground">Transportation, safety, and local customs</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="members" className="mt-6">
