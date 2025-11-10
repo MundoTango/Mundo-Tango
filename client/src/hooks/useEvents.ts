@@ -1,155 +1,193 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { queryClient } from "@/lib/queryClient";
+import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/lib/supabase";
-import {
-  getEvents,
-  getEventById,
-  createEvent,
-  deleteEvent,
-  getRSVPsByEventId,
-  createOrUpdateRSVP,
-  getEventAttendance,
-  type EventFilters,
-} from "@/lib/supabaseQueries";
-import type { EventWithProfile, InsertEvent, InsertRSVP, RSVP } from "@shared/supabase-types";
+
+export type EventFilters = {
+  search?: string;
+  category?: string;
+  dateFilter?: 'upcoming' | 'past' | 'all';
+};
+
+interface Event {
+  id: number;
+  title: string;
+  description: string | null;
+  eventType: string | null;
+  location: string | null;
+  city: string | null;
+  country: string | null;
+  date: string | null;
+  startTime: string | null;
+  endTime: string | null;
+  userId: number;
+  maxAttendees: number | null;
+  createdAt: string;
+  user?: {
+    id: number;
+    name: string;
+    username: string;
+    avatarUrl: string | null;
+  };
+}
+
+interface RSVP {
+  id: number;
+  eventId: number;
+  userId: number;
+  status: string;
+  createdAt: string;
+  event?: Event;
+}
 
 export function useEvents(filters?: EventFilters) {
-  return useQuery<EventWithProfile[]>({
-    queryKey: ["events", filters],
-    queryFn: () => getEvents(filters),
+  return useQuery<Event[]>({
+    queryKey: ["/api/events", filters],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (filters?.search) params.append('search', filters.search);
+      if (filters?.category && filters.category.toLowerCase() !== 'all') {
+        params.append('eventType', filters.category);
+      }
+      
+      const queryString = params.toString();
+      const url = `/api/events${queryString ? `?${queryString}` : ''}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Failed to fetch events');
+      const data = await res.json();
+      return data.events || data || [];
+    },
   });
 }
 
-export function useEvent(id: string) {
-  return useQuery<EventWithProfile>({
-    queryKey: ["events", id],
-    queryFn: () => getEventById(id),
+export function useEvent(id: string | number) {
+  return useQuery<Event>({
+    queryKey: ["/api/events", id],
+    queryFn: async () => {
+      const res = await fetch(`/api/events/${id}`);
+      if (!res.ok) throw new Error('Failed to fetch event');
+      return await res.json();
+    },
     enabled: !!id,
   });
 }
 
-export function useEventAttendance(eventId: string) {
+export function useEventAttendance(eventId: string | number) {
   return useQuery<{ attending: number; capacity: number | null; waitlist: number }>({
-    queryKey: ["event-attendance", eventId],
-    queryFn: () => getEventAttendance(eventId),
+    queryKey: ["/api/events", eventId, "attendance"],
+    queryFn: async () => {
+      const res = await fetch(`/api/events/${eventId}/attendees`);
+      if (!res.ok) throw new Error('Failed to fetch attendance');
+      const data = await res.json();
+      return {
+        attending: data.length || 0,
+        capacity: null,
+        waitlist: 0
+      };
+    },
     enabled: !!eventId,
   });
 }
 
 export function useCreateEvent() {
   const { user } = useAuth();
+  const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (data: Omit<InsertEvent, "user_id">) => {
+    mutationFn: async (data: any) => {
       if (!user) throw new Error("Must be logged in");
-      return createEvent({ ...data, user_id: user.id });
+      const res = await apiRequest('POST', '/api/events', data);
+      return await res.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["events"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events"] });
+      toast({
+        title: "Event created",
+        description: "Your event has been created successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to create event",
+        variant: "destructive",
+      });
     },
   });
 }
 
 export function useDeleteEvent() {
+  const { toast } = useToast();
+
   return useMutation({
-    mutationFn: (id: string) => deleteEvent(id),
+    mutationFn: async (id: string | number) => {
+      return await apiRequest('DELETE', `/api/events/${id}`);
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["events"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events"] });
+      toast({
+        title: "Event deleted",
+        description: "Event has been removed",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete event",
+        variant: "destructive",
+      });
     },
   });
 }
 
-export function useEventRSVPs(eventId: string) {
+export function useEventRSVPs(eventId: string | number) {
   return useQuery({
-    queryKey: ["rsvps", eventId],
-    queryFn: () => getRSVPsByEventId(eventId),
+    queryKey: ["/api/events", eventId, "attendees"],
+    queryFn: async () => {
+      const res = await fetch(`/api/events/${eventId}/attendees`);
+      if (!res.ok) throw new Error('Failed to fetch RSVPs');
+      return await res.json();
+    },
     enabled: !!eventId,
   });
 }
 
-export function useRSVPEvent(eventId: string) {
+export function useMyRSVPs() {
+  return useQuery<RSVP[]>({
+    queryKey: ["/api/events/my-rsvps"],
+    queryFn: async () => {
+      const res = await fetch('/api/events/my-rsvps');
+      if (!res.ok) throw new Error('Failed to fetch my RSVPs');
+      return await res.json();
+    },
+  });
+}
+
+export function useRSVPEvent() {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const { data: userRSVP } = useQuery<RSVP | null>({
-    queryKey: ["user-rsvp", eventId, user?.id],
-    queryFn: async () => {
-      if (!user) return null;
-      const { data } = await supabase
-        .from("rsvps")
-        .select("*")
-        .eq("event_id", eventId)
-        .eq("user_id", user.id)
-        .maybeSingle();
-      return data;
-    },
-    enabled: !!user,
-  });
-
   return useMutation({
-    mutationFn: async (data: { eventId: string; status: "going" | "maybe" | "not_going" }) => {
+    mutationFn: async (data: { eventId: string | number; status: "going" | "maybe" | "not_going" }) => {
       if (!user) throw new Error("Must be logged in");
-
-      const attendance = await getEventAttendance(data.eventId);
-      const { attending, capacity } = attendance;
-
-      if (data.status === "going" && capacity && attending >= capacity) {
-        toast({
-          title: "You're on the waitlist",
-          description: "This event is at capacity. You've been added to the waitlist.",
-        });
-      } else if (data.status === "going") {
-        toast({
-          title: "RSVP confirmed",
-          description: "You're attending this event!",
-        });
-      } else if (data.status === "not_going") {
-        toast({
-          title: "RSVP cancelled",
-          description: "Your RSVP has been cancelled.",
-        });
-      }
-
-      return createOrUpdateRSVP({
-        user_id: user.id,
-        event_id: data.eventId,
-        status: data.status,
-      });
+      const res = await apiRequest('POST', `/api/events/${data.eventId}/rsvp`, { status: data.status });
+      return await res.json();
     },
     onMutate: async (variables) => {
-      await queryClient.cancelQueries({ queryKey: ["rsvps", variables.eventId] });
-      await queryClient.cancelQueries({ queryKey: ["event-attendance", variables.eventId] });
-      await queryClient.cancelQueries({ queryKey: ["user-rsvp", variables.eventId] });
+      await queryClient.cancelQueries({ queryKey: ["/api/events", variables.eventId, "attendees"] });
+      await queryClient.cancelQueries({ queryKey: ["/api/events/my-rsvps"] });
 
-      const previousRsvps = queryClient.getQueryData(["rsvps", variables.eventId]);
-      const previousAttendance = queryClient.getQueryData(["event-attendance", variables.eventId]);
-      const previousUserRsvp = queryClient.getQueryData(["user-rsvp", variables.eventId, user?.id]);
+      const previousAttendees = queryClient.getQueryData(["/api/events", variables.eventId, "attendees"]);
+      const previousMyRsvps = queryClient.getQueryData(["/api/events/my-rsvps"]);
 
-      const oldStatus = userRSVP?.status;
-      const newStatus = variables.status;
-      const delta = (newStatus === "going" ? 1 : 0) - (oldStatus === "going" ? 1 : 0);
-
-      queryClient.setQueryData(["event-attendance", variables.eventId], (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          attending: Math.max(0, old.attending + delta),
-        };
-      });
-
-      return { previousRsvps, previousAttendance, previousUserRsvp };
+      return { previousAttendees, previousMyRsvps };
     },
     onError: (err, variables, context) => {
-      if (context?.previousRsvps) {
-        queryClient.setQueryData(["rsvps", variables.eventId], context.previousRsvps);
+      if (context?.previousAttendees) {
+        queryClient.setQueryData(["/api/events", variables.eventId, "attendees"], context.previousAttendees);
       }
-      if (context?.previousAttendance) {
-        queryClient.setQueryData(["event-attendance", variables.eventId], context.previousAttendance);
-      }
-      if (context?.previousUserRsvp !== undefined) {
-        queryClient.setQueryData(["user-rsvp", variables.eventId, user?.id], context.previousUserRsvp);
+      if (context?.previousMyRsvps) {
+        queryClient.setQueryData(["/api/events/my-rsvps"], context.previousMyRsvps);
       }
       toast({
         title: "Error",
@@ -157,12 +195,28 @@ export function useRSVPEvent(eventId: string) {
         variant: "destructive",
       });
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["rsvps", variables.eventId] });
-      queryClient.invalidateQueries({ queryKey: ["events", variables.eventId] });
-      queryClient.invalidateQueries({ queryKey: ["event-attendance", variables.eventId] });
-      queryClient.invalidateQueries({ queryKey: ["user-rsvp", variables.eventId] });
-      queryClient.invalidateQueries({ queryKey: ["events"] });
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/events", variables.eventId, "attendees"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events", variables.eventId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events/my-rsvps"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/events"] });
+
+      if (variables.status === "going") {
+        toast({
+          title: "RSVP confirmed",
+          description: "You're attending this event!",
+        });
+      } else if (variables.status === "maybe") {
+        toast({
+          title: "RSVP updated",
+          description: "You might attend this event.",
+        });
+      } else if (variables.status === "not_going") {
+        toast({
+          title: "RSVP cancelled",
+          description: "Your RSVP has been cancelled.",
+        });
+      }
     },
   });
 }
