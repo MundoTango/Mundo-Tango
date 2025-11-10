@@ -2,20 +2,6 @@
 
 Mundo Tango is a production-ready social platform designed to connect the global tango community. It offers social networking, event management, talent matching, and AI-powered personal assistance. The platform aims to be the leading digital hub for the tango ecosystem, with market potential in premium services, event monetization, and targeted advertising, and ambitions for international scaling. It utilizes a lean architecture philosophy with optimized npm packages for efficiency and security.
 
-**Current Completion:** ~82% (176 API endpoints, 45 pages, 88 database tables)
-**Recent Achievement:** Phase I Complete - PART 1 COMPLETE (14/14 systems) - Stories (6 APIs) + Venue Recommendations (4 APIs) production-ready with MT Ocean theme
-**Previous Milestone:** Phase H Complete - Final 10 APIs (Contact Form, Community Map, Travel Planner) tested and operational
-**Roadmap:** See `.agent-memory/roadmap-to-100.md` for detailed completion plan
-**Optimizations:** See `.agent-memory/mb-md-optimizations.md` for efficiency patterns
-
-### Project Size Management
-**Status:** ✅ Optimized (1.9GB / 5GB threshold)
-- **Investigation:** Complete size audit identified bloat sources (see `.agent-memory/project-size-investigation.md`)
-- **Cleanup:** Automated script removed 1.5GB of cache files (Playwright browsers, Bun cache, TypeScript cache)
-- **Prevention:** Enhanced `.gitignore` with comprehensive bloat prevention rules
-- **Monitoring:** Monthly cleanup routine documented in `docs/project-size-management.md`
-- **Target:** Maintain <2GB for optimal Agent performance (well below 5GB Replit threshold)
-
 ### User Preferences
 
 **Methodology:** MB.MD Protocol
@@ -44,36 +30,35 @@ The system includes complete i18n integration and real-time features with 30s po
 -   **8-Tier RBAC System** (god, super_admin, admin, moderator, teacher, premium, user, guest).
 -   **Dynamic Feature Flag System** with Redis fallback.
 -   **Stripe Integration** for dynamic pricing.
--   **Events System:** Fully operational with 24 API endpoints, RSVPs, ticketing, and recurrence rules, including a new dropdown menu for RSVP options.
+-   **Events System:** Fully operational with 24 API endpoints, RSVPs, ticketing, and recurrence rules.
 -   **Groups System:** 23 API endpoints for community groups with 95% frontend completion.
--   **Social Features:** Pagination, optimistic updates, CRUD, advanced friendship algorithms.
--   **Post System:** Complete post interactions with 13 reaction types (Love, Passion, Joy, Tango-specific, Support, Sad), shares to user's wall and external platforms (Facebook, Twitter, WhatsApp, Email), reports, saves, and threaded comments with real-time Socket.io notifications. Features a complete @Mention system using canonical token format `@user:user_123:maria_rodriguez` (database storage), parsed into interactive MT Ocean-themed pills displaying `@maria rodriguez` for users, events, groups, and cities across all post displays (Feed, Saved Posts, Groups). Includes feed algorithm boost (+3 points per mention, max 10), post editing with history and delete confirmation, and comprehensive analytics.
--   **Housing System:** ✅ **PRODUCTION-READY** - 20 API endpoints implemented (listings CRUD, bookings, reviews, favorites) with full PostgreSQL integration, search/filter capabilities, and owner authorization checks. Frontend: 891 lines with HostHomesPage + AppLayout integration.
--   **Live Streaming System:** ✅ **PRODUCTION-READY** - 11 API endpoints for live broadcasts, viewer management, scheduled streams, and registration system. Frontend: 114 lines with LiveStreamPage + detail route.
--   **Marketplace System:** ✅ **PRODUCTION-READY** - 8 API endpoints for item listings, category browsing, status management, and seller dashboards. Frontend: 118 lines with MarketplacePage + category filtering.
--   **Subscription System:** ✅ **PRODUCTION-READY** - 7 API endpoints integrated with Stripe for tier management, billing intervals, cancellation/reactivation, and subscription history. Frontend: 775 lines (SubscriptionsPage + ManageSubscriptionPage).
--   **Reviews System:** ✅ **PRODUCTION-READY** - 8 API endpoints for polymorphic reviews (teachers, venues, events, housing), rating aggregation, helpful voting, and statistics. Frontend: 392 lines with CRUD forms, filtering, and star ratings.
--   **Media Gallery:** ✅ **PRODUCTION-READY** - 4 API endpoints for photo/video management, uploads, likes, and album organization. Frontend: 89 lines with tabbed photo/video filtering.
--   **Leaderboard System:** ✅ **PRODUCTION-READY** - 1 API endpoint with 3 leaderboard types (points, events attended, contributions), aggregating user rankings. Frontend: 108 lines with tabs and medal badges for top 3.
--   **Blog System:** ✅ **PRODUCTION-READY** - 5 API endpoints for blog posts (CRUD, search, slugs), publishing workflow, and read-time calculation. Frontend: 129 lines with search and article cards.
--   **Teacher/Venue Management:** ✅ **PRODUCTION-READY** - 10 API endpoints for teacher profiles and venue listings with search, filters, ratings, and location-based discovery. Frontend: TeachersPage + VenuesPage with AppLayout integration.
--   **Workshop System:** ✅ **PRODUCTION-READY** - 8 API endpoints for workshop creation, enrollment tracking, capacity management, and user enrollments. Frontend: WorkshopsPage with pricing display and registration flow.
--   **Music Library:** ✅ **PRODUCTION-READY** - 6 API endpoints for music catalog, playlist management, favorites, and genre filtering. Frontend: MusicLibraryPage with tabbed interface and search.
--   **Admin Dashboard & Analytics:** ✅ **PRODUCTION-READY** - 19 API endpoints (12 admin + 7 analytics) for user management (CRUD, role updates, ban/delete), content moderation (flagged content, moderation actions), platform health monitoring, and comprehensive analytics (user growth, engagement, retention, demographics, content performance, events metrics, real-time activity). Uses direct DB queries with Drizzle ORM for optimal performance.
--   **Contact System:** ✅ **PRODUCTION-READY** - 1 API endpoint for contact form submissions (no auth required) with message storage in contactSubmissions table. Frontend: ContactPage with form validation.
--   **Community Map:** ✅ **PRODUCTION-READY** - 2 API endpoints for community locations (with user counts per city) and global statistics (cities, members, events, venues). Frontend: CommunityWorldMapPage with stats dashboard.
--   **Travel Planner:** ✅ **PRODUCTION-READY** - 7 API endpoints for travel plan management (CRUD operations on trips: city, country, dates, duration, budget, interests, travel style, status, notes), plus popular destinations and travel packages endpoints. Frontend: TravelPlannerPage with trip creation and "My Trips" view.
--   **Stories System:** ✅ **PRODUCTION-READY** - 6 API endpoints for ephemeral 24-hour content (create, list active, get by ID, delete, track views, list viewers) with automatic expiration filtering and duplicate view prevention via storyViews junction table. Frontend: StoriesPage with create dialog, responsive grid display (1/2/3/4 columns), image/video/text support, view count badges, expiration timers, and delete functionality. Full MT Ocean theme integration with AppLayout.
--   **Venue Recommendations System:** ✅ **PRODUCTION-READY** - 4 API endpoints for user-curated venue discovery (CRUD operations with ownership checks) supporting restaurants, cafés, bars, milongas, and cultural venues. Advanced filtering by category, cuisine, city, price level, and minimum rating. Frontend: VenueRecommendationsPage with comprehensive create/edit dialogs (11 fields), 5 filter controls, venue cards displaying ratings with star icons, category/cuisine/price badges, address/city/country, description, phone/website buttons, and edit/delete actions. Full MT Ocean theme with glassmorphic effects.
+-   **Social Features:** Pagination, optimistic updates, CRUD, advanced friendship algorithms, complete post interactions with 13 reaction types, shares, reports, saves, and threaded comments with real-time Socket.io notifications. Features a complete @Mention system, post editing with history, and comprehensive analytics.
+-   **Housing System:** (20 API endpoints) listings CRUD, bookings, reviews, favorites.
+-   **Live Streaming System:** (11 API endpoints) live broadcasts, viewer management, scheduled streams, and registration system.
+-   **Marketplace System:** (8 API endpoints) item listings, category browsing, status management, and seller dashboards.
+-   **Subscription System:** (7 API endpoints) integrated with Stripe for tier management, billing intervals, cancellation/reactivation, and subscription history.
+-   **Reviews System:** (8 API endpoints) polymorphic reviews, rating aggregation, helpful voting, and statistics.
+-   **Media Gallery:** (4 API endpoints) photo/video management, uploads, likes, and album organization.
+-   **Leaderboard System:** (1 API endpoint) 3 leaderboard types (points, events attended, contributions).
+-   **Blog System:** (5 API endpoints) blog posts (CRUD, search, slugs), publishing workflow, and read-time calculation.
+-   **Teacher/Venue Management:** (10 API endpoints) teacher profiles and venue listings with search, filters, ratings, and location-based discovery.
+-   **Workshop System:** (8 API endpoints) workshop creation, enrollment tracking, capacity management, and user enrollments.
+-   **Music Library:** (6 API endpoints) music catalog, playlist management, favorites, and genre filtering.
+-   **Admin Dashboard & Analytics:** (19 API endpoints) user management, content moderation, platform health monitoring, and comprehensive analytics.
+-   **Contact System:** (1 API endpoint) contact form submissions.
+-   **Community Map:** (2 API endpoints) community locations and global statistics.
+-   **Travel Planner:** (7 API endpoints) travel plan management, popular destinations and travel packages.
+-   **Stories System:** (6 API endpoints) ephemeral 24-hour content (create, list active, get by ID, delete, track views, list viewers) with automatic expiration and duplicate view prevention.
+-   **Venue Recommendations System:** (4 API endpoints) user-curated venue discovery (CRUD operations with ownership checks) supporting various venue types.
 
 **AI Integration:**
--   **Bifrost AI Gateway:** Production-ready unified AI gateway providing automatic failover, semantic caching, and load balancing across 12+ providers (OpenAI, Groq, Anthropic).
--   **Mr. Blue AI Assistant:** Context-aware conversational intelligence using Groq SDK, breadcrumb tracking, predictive assistance, and enhanced with 500+ troubleshooting solutions for auto-detecting and resolving common coding errors.
--   **OpenAI Realtime Voice API:** ChatGPT-style natural voice conversations via WebSocket with bidirectional audio streaming, VAD, and contextual awareness.
+-   **Bifrost AI Gateway:** Production-ready unified AI gateway providing automatic failover, semantic caching, and load balancing across 12+ providers.
+-   **Mr. Blue AI Assistant:** Context-aware conversational intelligence using Groq SDK, breadcrumb tracking, predictive assistance, and enhanced with troubleshooting solutions.
+-   **OpenAI Realtime Voice API:** ChatGPT-style natural voice conversations via WebSocket.
 -   **Server-Sent Events (SSE) Streaming:** Live work progress updates during AI operations.
 -   **Unified Voice Interface:** Combines voice + text chat with streaming progress, integrated into the Visual Editor.
--   **Instant Visual Feedback:** Enhanced iframe injector with `APPLY_CHANGE` and `UNDO_CHANGE` commands for immediate preview updates.
--   **Visual Editor System (Replit-style):** A production-ready development environment with resizable panes, live MT page preview, tabbed interface (Mr. Blue, Git, Secrets, Deploy, Database, Console), element selection with visual EditControls, context-aware Mr. Blue AI code generation, and Git integration.
+-   **Instant Visual Feedback:** Enhanced iframe injector with `APPLY_CHANGE` and `UNDO_CHANGE` commands.
+-   **Visual Editor System (Replit-style):** A production-ready development environment with resizable panes, live MT page preview, tabbed interface, element selection with visual EditControls, context-aware Mr. Blue AI code generation, and Git integration.
 -   **Talent Match AI:** Advanced matching algorithms for dancers/teachers.
 
 **Automation & Workers:** BullMQ queue management with 39 functions across 6 dedicated workers, powered by Redis-based job processing and 50 production-ready algorithms.
@@ -88,15 +73,7 @@ The system includes complete i18n integration and real-time features with 30s po
 
 **Production Infrastructure:** Docker MCP Gateway, robust security (CSP, rate limiting, security headers, CORS), performance optimizations (compression, caching), PostgreSQL with compound indexes and automated backups, GitHub Actions for CI/CD, monitoring endpoints, and GitHub/Jira synchronization.
 
-**Testing Infrastructure:** 
-- Comprehensive Playwright test suites for Visual Editor covering UI structure, element selection, context awareness, Mr. Blue AI, editing controls, and complete workflows.
-- E2E test credentials: admin@mundotango.life / admin123 (hardcoded for automated testing)
-- All customer-facing pages use standard AppLayout (Sidebar + UnifiedTopBar) pattern
-
-**Recent Bug Fixes:**
-- **Phase G:** Marketplace category filtering (`?category=shoes`), LiveStreams detail route (`/live-stream/:id`), Subscriptions apiRequest param order, Housing query params/response mapping
-- **Phase H:** ContactPage API call double-wrapping, TravelPlannerPage schema mismatch (title/destinations → city/country/tripDuration), date validation (ISO string preprocessing), database schema alignment (updated shared/schema.ts to match existing travel_plans table)
-- **Phase I:** Stories database schema alignment (added `type`, `is_active` columns via ALTER TABLE, renamed `views_count` → `view_count`), VenueRecommendationsPage Select empty value fix (changed "" → "all" for category/priceLevel dropdowns), auth integration fix (removed custom queryFn, now uses default auth-enabled fetcher from queryClient)
+**Testing Infrastructure:** Comprehensive Playwright test suites for Visual Editor covering UI structure, element selection, context awareness, Mr. Blue AI, editing controls, and complete workflows.
 
 ### External Dependencies
 
