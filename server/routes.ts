@@ -410,38 +410,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Reaction type is required" });
       }
 
-      await db.transaction(async (tx) => {
-        // Remove any existing reaction
-        await tx.delete(reactions).where(
-          and(
-            eq(reactions.postId, postId),
-            eq(reactions.userId, req.userId!)
-          )
-        );
+      // Remove any existing reaction
+      await db.delete(reactions).where(
+        and(
+          eq(reactions.postId, postId),
+          eq(reactions.userId, req.userId!)
+        )
+      );
 
-        // Add new reaction if not removing
-        if (reactionType !== '') {
-          await tx.insert(reactions).values({
-            postId,
-            userId: req.userId!,
-            reactionType,
+      // Add new reaction if not removing
+      if (reactionType !== '') {
+        await db.insert(reactions).values({
+          postId,
+          userId: req.userId!,
+          reactionType,
+        });
+
+        // Send notification to post author
+        const post = await storage.getPostById(postId);
+        if (post && post.userId !== req.userId) {
+          await storage.createNotification({
+            userId: post.userId,
+            type: 'reaction',
+            title: 'New reaction',
+            message: `Someone reacted ${reactionType} to your post`,
+            data: JSON.stringify({ postId }),
+            actionUrl: `/feed#post-${postId}`,
+            isRead: false
           });
-
-          // Send notification to post author
-          const post = await storage.getPostById(postId);
-          if (post && post.userId !== req.userId) {
-            await storage.createNotification({
-              userId: post.userId,
-              type: 'reaction',
-              title: 'New reaction',
-              message: `Someone reacted ${reactionType} to your post`,
-              data: JSON.stringify({ postId }),
-              actionUrl: `/feed#post-${postId}`,
-              isRead: false
-            });
-          }
         }
-      });
+      }
 
       res.json({ reacted: reactionType !== '' });
     } catch (error) {

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageCircle, Share2, Bookmark, BookmarkCheck } from "lucide-react";
+import { MessageCircle, Share2, Bookmark, BookmarkCheck } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ReactionSelector } from "@/components/ui/ReactionSelector";
 import { PostActionsMenu } from "@/components/ui/PostActionsMenu";
@@ -41,7 +41,6 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
   const [showComments, setShowComments] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
-  const [showReactionSelector, setShowReactionSelector] = useState(false);
 
   const reactMutation = useReactToPost();
   const shareMutation = useSharePost();
@@ -52,9 +51,8 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
   const isAuthor = user?.id === post.userId;
   const isSaved = post.isSaved || false;
 
-  const handleReaction = async (reactionType: string) => {
-    await reactMutation.mutateAsync({ postId: post.id, reactionType });
-    setShowReactionSelector(false);
+  const handleReaction = async (reactionId: string) => {
+    await reactMutation.mutateAsync({ postId: post.id, reactionType: reactionId });
   };
 
   const handleShare = async (shareType: 'timeline' | 'comment' | 'link', comment?: string) => {
@@ -139,26 +137,11 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
 
         {/* Actions */}
         <div className="px-4 pb-3 flex items-center gap-1">
-          <div className="relative">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="hover-elevate gap-2"
-              onClick={() => setShowReactionSelector(!showReactionSelector)}
-              data-testid={`button-react-${post.id}`}
-            >
-              <Heart className="w-4 h-4" />
-              {post.likes > 0 && <span className="text-xs">{post.likes}</span>}
-            </Button>
-            {showReactionSelector && (
-              <div className="absolute left-0 top-full mt-2 z-50">
-                <ReactionSelector
-                  onSelect={handleReaction}
-                  onClose={() => setShowReactionSelector(false)}
-                />
-              </div>
-            )}
-          </div>
+          <ReactionSelector
+            postId={post.id}
+            onReact={handleReaction}
+            reactions={{}}
+          />
 
           <Button
             variant="ghost"
