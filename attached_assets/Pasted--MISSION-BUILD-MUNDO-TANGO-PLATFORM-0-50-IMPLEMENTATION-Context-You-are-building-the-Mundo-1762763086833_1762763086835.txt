@@ -1,0 +1,203 @@
+# MISSION: BUILD MUNDO TANGO PLATFORM (0-50% IMPLEMENTATION)
+## Context
+You are building the **Mundo Tango platform** (mundotango.life) - a comprehensive Life CEO & Multi-Community tango platform. You have a **complete 75,032-line handoff document** (`docs/handoff/ULTIMATE_ZERO_TO_DEPLOY_COMPLETE.md`) that contains 100% production-ready code, zero placeholders, and complete implementations for the first 50% of the platform.
+**IMPORTANT:** Some platform features have already been partially built using early versions of this documentation. Your job is to:
+1. Analyze what exists
+2. Read the complete handoff document
+3. Build a comprehensive MB.MD plan
+4. Implement everything to match the document exactly
+## Your First Steps (CRITICAL - DO THESE IN ORDER)
+### Step 1: Analyze Current State
+```bash
+# Check project structure
+ls -la
+# Check what files exist
+find . -name "*.ts" -o -name "*.tsx" | head -30
+# Check database schema
+cat shared/schema.ts 2>/dev/null || echo "Schema file doesn't exist yet"
+# Check package.json
+cat package.json
+# Check what's already implemented
+grep -r "export function\|export class\|export const" server/ client/ --include="*.ts" --include="*.tsx" | wc -l
+
+Step 2: Read the Complete Documentation
+# Check document size
+wc -l docs/handoff/ULTIMATE_ZERO_TO_DEPLOY_COMPLETE.md
+# View table of contents
+grep "^# PART" docs/handoff/ULTIMATE_ZERO_TO_DEPLOY_COMPLETE.md
+# Read key sections
+# (You MUST read the entire 75K-line document to understand what to build)
+
+Step 3: Create MB.MD Implementation Plan
+Using the MB.MD methodology (Simultaneously, Recursively, Critically), create a task list that:
+
+Analyzes gaps between current implementation and the documentation
+Identifies all features documented in Parts 1-135 (0-50% of platform)
+Prioritizes implementation based on dependencies
+Plans parallel execution (build multiple features simultaneously)
+Ensures zero placeholders (every feature fully implemented)
+Reference: See docs/handoff/COMPREHENSIVE_AI_COMPLETE_HANDOFF.md Section 17 for complete MB.MD methodology guide.
+
+What the Documentation Contains (0-50%)
+The 75,032-line document includes complete, production-ready implementations of:
+
+Core Infrastructure (Parts 1-15)
+Complete database schema (PostgreSQL + Drizzle ORM)
+Full backend API (Node.js + Express + TypeScript)
+Complete frontend (React + TypeScript + shadcn/ui)
+Authentication system (JWT, sessions, RBAC, 2FA)
+Real-time features (Socket.IO)
+Features to Build (Parts 16-135)
+✅ Events System: Full CRUD, RSVP, calendar, reminders
+✅ E-commerce: Products, cart, checkout, Stripe integration
+✅ Social Features: Posts, comments, likes, follows, messaging
+✅ File Management: Cloudinary uploads, image optimization, video processing
+✅ Email System: Resend integration, React Email templates
+✅ AI Integration: OpenAI, Claude, Groq implementations
+✅ Testing Suite: Playwright E2E, Vitest unit, k6 load tests
+✅ Monitoring: Sentry, Prometheus, Grafana, PostHog
+✅ CI/CD: GitHub Actions pipelines
+✅ Infrastructure: Docker, Kubernetes, Nginx configurations
+MB.MD Methodology Requirements
+When implementing, you MUST:
+
+M - Multiple (Simultaneous Execution)
+Build multiple features at once
+Don't do one file at a time
+Implement frontend + backend + database for each feature simultaneously
+Example: When building Events, create schema + API routes + React components all together
+B - Best Practices (Production Quality)
+Zero placeholders or TODOs
+Complete error handling
+Full input validation
+Proper TypeScript types
+Security hardening (authentication, authorization, rate limiting)
+Performance optimization (caching, indexing, lazy loading)
+M - Massive (Scale)
+Think in terms of complete features, not individual functions
+Implement entire subsystems at once
+Add comprehensive tests for everything
+Build for scale (10K+ concurrent users)
+D - Deployment Ready (Production Code)
+Every line must be deployable
+No mock data in production paths
+Complete database migrations
+Proper environment variable handling
+Full monitoring and logging
+Quality Standards (NON-NEGOTIABLE)
+✅ Match the documentation exactly - Build what's in the 75K-line doc
+✅ Zero placeholders - No "TODO" or "implement this later"
+✅ Production-ready - Code that can deploy today
+✅ Fully tested - Unit, integration, and E2E tests
+✅ Properly typed - Complete TypeScript coverage
+✅ Security hardened - Input validation, authentication, authorization
+✅ Performance optimized - Caching, indexes, lazy loading
+
+Platform Information
+Domain: mundotango.life (use this in all configurations)
+API: api.mundotango.life
+Support: support@mundotango.life
+Docs: docs.mundotango.life
+Tech Stack: Node.js 20+, React 18+, TypeScript 5+, PostgreSQL 16+, Redis 7+
+Your Implementation Workflow
+1. Analysis Phase (First)
+# Read documentation structure
+grep "^# PART" docs/handoff/ULTIMATE_ZERO_TO_DEPLOY_COMPLETE.md
+# Understand what exists
+ls -R server/ client/ shared/
+# Check database current state
+npm run db:push -- --dry-run
+
+2. Planning Phase (Second)
+Create a comprehensive task list:
+
+ Database schema completion (match Parts 1-10)
+ Authentication system (Parts 11-15)
+ Events system (Parts 16-30)
+ E-commerce system (Parts 31-50)
+ Social features (Parts 51-70)
+ Real-time messaging (Parts 71-85)
+ File management (Parts 86-95)
+ Testing suite (Parts 96-115)
+ Monitoring & DevOps (Parts 116-135)
+3. Execution Phase (Third)
+Build using MB.MD methodology:
+
+Implement features in parallel
+Complete entire subsystems at once
+Add tests as you build
+Deploy and validate continuously
+4. Validation Phase (Fourth)
+# Run all tests
+npm run test:all
+# Check TypeScript
+npm run type-check
+# Test API endpoints
+npm run test:integration
+# Run E2E tests
+npm run test:e2e
+# Check security
+npm audit
+# Verify database schema
+npm run db:push -- --dry-run
+
+Example: How to Approach Events System
+Instead of building one file at a time, use MB.MD:
+
+Read the Events documentation (Parts 16-30 in the handoff doc)
+Implement simultaneously:
+Database schema: shared/schema.ts (events, rsvps, eventCategories tables)
+Backend API: server/routes.ts (all events endpoints)
+Storage layer: server/storage.ts (IStorage interface methods)
+Frontend components: client/src/pages/Events.tsx, client/src/components/EventCard.tsx
+Forms: client/src/components/forms/EventForm.tsx
+Tests: tests/integration/events.test.ts, tests/e2e/events.spec.ts
+Deploy and validate that everything works together
+Critical Files to Reference
+Before building, read these key files in the documentation:
+
+Database schema examples (Parts 1-5)
+API route patterns (Parts 6-10)
+Frontend component structure (Parts 11-20)
+Testing examples (Parts 96-115)
+Deployment configurations (Parts 116-135)
+Questions to Answer Before Building
+What database tables are documented but not yet created?
+What API endpoints are documented but not yet implemented?
+What React components are documented but not yet built?
+What tests are documented but not yet written?
+What integrations (Stripe, OpenAI, etc.) are documented but not yet configured?
+Success Criteria
+✅ All features from Parts 1-135 implemented
+✅ All tests passing (unit, integration, E2E)
+✅ Zero TypeScript errors
+✅ Zero security vulnerabilities
+✅ Application runs locally without errors
+✅ All documented API endpoints working
+✅ All documented React components rendering
+✅ Database schema matches documentation exactly
+✅ Real-time features (Socket.IO) working
+✅ Payment processing (Stripe) functional
+✅ File uploads (Cloudinary) working
+✅ Email system (Resend) sending
+✅ Monitoring (Sentry) configured
+✅ CI/CD pipeline passing
+
+Your First Task
+Create a comprehensive MB.MD task list that:
+
+Lists every feature documented in Parts 1-135
+Identifies what's already built vs. what's missing
+Groups features into parallel workstreams
+Estimates complexity and dependencies
+Plans the build sequence
+Then show me the task list for approval before starting implementation.
+
+Remember
+Read FIRST - Understand the entire 75K-line document
+Plan SECOND - Create comprehensive MB.MD task list
+Build THIRD - Implement everything simultaneously
+Validate LAST - Test and deploy
+The documentation contains EVERYTHING you need. Your job is to BUILD it exactly as documented.
+
+Let's build Mundo Tango! 🚀💃🕺
