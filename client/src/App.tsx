@@ -179,6 +179,8 @@ const LeaderboardPage = lazy(() => import("@/pages/LeaderboardPage"));
 const FAQPage = lazy(() => import("@/pages/FAQPage"));
 const HelpPage = lazy(() => import("@/pages/HelpPage"));
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
+const StoriesPage = lazy(() => import("@/pages/StoriesPage"));
+const VenueRecommendationsPage = lazy(() => import("@/pages/VenueRecommendationsPage"));
 const TermsPage = lazy(() => import("@/pages/TermsPage"));
 const PrivacyPolicyPage = lazy(() => import("@/pages/PrivacyPolicyPage"));
 const CommunityGuidelinesPage = lazy(() => import("@/pages/CommunityGuidelinesPage"));
@@ -538,6 +540,16 @@ function Router() {
       <Route path="/privacy" component={PrivacyPolicyPage} />
       <Route path="/terms" component={TermsPage} />
       <Route path="/contact" component={ContactPage} />
+      <Route path="/stories">
+        <ProtectedRoute>
+          <StoriesPage />
+        </ProtectedRoute>
+      </Route>
+      <Route path="/venue-recommendations">
+        <ProtectedRoute>
+          <VenueRecommendationsPage />
+        </ProtectedRoute>
+      </Route>
       <Route path="/pricing" component={PricingPage} />
       
       <Route path="/checkout">
