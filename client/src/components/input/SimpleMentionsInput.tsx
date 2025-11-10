@@ -157,6 +157,46 @@ export function SimpleMentionsInput({
     }
   }, [showMentionDropdown]);
 
+  // Helper: Fetch with automatic token refresh on 401
+  const fetchWithAuth = async (url: string): Promise<Response> => {
+    let accessToken = localStorage.getItem('accessToken');
+    
+    if (!accessToken) {
+      throw new Error('No access token');
+    }
+
+    let response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+      credentials: 'include',
+    });
+
+    // If token expired, refresh and retry
+    if (response.status === 401) {
+      const refreshResponse = await fetch('/api/auth/refresh', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      });
+
+      if (refreshResponse.ok) {
+        const { accessToken: newToken } = await refreshResponse.json();
+        localStorage.setItem('accessToken', newToken);
+        
+        // Retry with new token
+        response = await fetch(url, {
+          headers: {
+            'Authorization': `Bearer ${newToken}`,
+          },
+          credentials: 'include',
+        });
+      }
+    }
+
+    return response;
+  };
+
   // Search for mentions when @ is typed (debounced 300ms)
   useEffect(() => {
     if (!showMentionDropdown) {
@@ -176,14 +216,10 @@ export function SimpleMentionsInput({
           city: `/api/mentions/cities/search?q=${encodeURIComponent(mentionSearchQuery)}`,
         };
 
-        // Fetch all entity types in parallel
+        // Fetch all entity types in parallel with auto token refresh
         const responses = await Promise.all(
           (Object.keys(endpoints) as EntityType[]).map(async (type) => {
-            const response = await fetch(endpoints[type], {
-              headers: {
-                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-              },
-            });
+            const response = await fetchWithAuth(endpoints[type]);
             
             // Check for auth errors
             if (response.status === 401) {
