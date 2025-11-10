@@ -78,6 +78,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
   const [richContent, setRichContent] = useState(existingPost?.richContent || "");
   const [mentions, setMentions] = useState<MentionEntity[]>(existingPost?.mentions || []);
   const [mentionIds, setMentionIds] = useState<string[]>([]);
+  const [inputKey, setInputKey] = useState(0); // Force re-render of input on reset
   
   // Media state
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
@@ -268,6 +269,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       setShowVisibility(false);
       setShowEnhancement(false);
       setEnhancedContent("");
+      setInputKey(prev => prev + 1); // Force SimpleMentionsInput to reset
 
       if (onPostCreated) onPostCreated();
 
@@ -327,6 +329,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
 
       {/* Main Content Input with @Mentions */}
       <SimpleMentionsInput
+        key={inputKey}
         value={content}
         onChange={(newContent, newMentions) => {
           setContent(newContent);
