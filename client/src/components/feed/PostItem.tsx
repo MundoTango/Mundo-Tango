@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Share2, Bookmark, BookmarkCheck } from "lucide-react";
+import { MessageCircle, Share2, Bookmark, BookmarkCheck, Users } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { Link } from "wouter";
 import { ReactionSelector } from "@/components/ui/ReactionSelector";
 import { PostActionsMenu } from "@/components/ui/PostActionsMenu";
 import { ShareModal } from "@/components/modals/ShareModal";
@@ -28,6 +29,7 @@ export interface PostItemData {
     name: string;
     username: string;
     profileImage?: string | null;
+    friendshipStatus?: 'accepted' | 'pending' | 'none' | null;
   };
 }
 
@@ -137,7 +139,7 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
         )}
 
         {/* Actions */}
-        <div className="px-4 pb-3 flex items-center gap-1">
+        <div className="px-4 pb-3 flex items-center gap-1 flex-wrap">
           <ReactionSelector
             postId={post.id}
             onReact={handleReaction}
@@ -164,6 +166,22 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
           >
             <Share2 className="w-4 h-4" />
           </Button>
+
+          {/* See Friendship Button - Only for accepted friends */}
+          {post.user?.friendshipStatus === 'accepted' && post.user?.id !== user?.id && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hover-elevate gap-2"
+              asChild
+              data-testid={`button-see-friendship-${post.user.id}`}
+            >
+              <Link href={`/friendship/${post.user.id}`}>
+                <Users className="w-4 h-4" style={{ color: '#14B8A6' }} />
+                <span className="text-xs hidden sm:inline">See Friendship</span>
+              </Link>
+            </Button>
+          )}
 
           <Button
             variant="ghost"

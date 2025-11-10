@@ -38,6 +38,7 @@ const VolunteerPage = lazy(() => import("@/pages/VolunteerPage"));
 const FeedPage = lazy(() => import("@/pages/FeedPage"));
 const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 const FriendsListPage = lazy(() => import("@/pages/FriendsListPage"));
+const FriendshipPage = lazy(() => import("@/pages/FriendshipPage"));
 const FollowingPage = lazy(() => import("@/pages/FollowingPage"));
 const FollowersPage = lazy(() => import("@/pages/FollowersPage"));
 const MessagesPage = lazy(() => import("@/pages/MessagesPage"));
@@ -372,6 +373,14 @@ function Router() {
           <AppLayout>
             <FriendsListPage />
           </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/friendship/:userId">
+        <ProtectedRoute>
+          <Suspense fallback={<LoadingFallback />}>
+            <FriendshipPage />
+          </Suspense>
         </ProtectedRoute>
       </Route>
 

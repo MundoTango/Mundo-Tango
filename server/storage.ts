@@ -723,7 +723,7 @@ export class DbStorage implements IStorage {
     return result[0];
   }
 
-  async getPosts(params: { userId?: number; limit?: number; offset?: number }): Promise<SelectPost[]> {
+  async getPosts(params: { userId?: number; limit?: number; offset?: number; currentUserId?: number }): Promise<SelectPost[]> {
     let query = db
       .select({
         id: posts.id,
@@ -749,10 +749,42 @@ export class DbStorage implements IStorage {
           name: users.name,
           username: users.username,
           profileImage: users.profileImage,
+          friendshipStatus: sql<'accepted' | 'pending' | 'none' | null>`
+            CASE 
+              WHEN ${params.currentUserId} IS NULL THEN NULL
+              WHEN ${friendships.id} IS NOT NULL AND ${friendships.status} = 'active' THEN 'accepted'
+              WHEN ${friendRequests.id} IS NOT NULL AND ${friendRequests.status} = 'pending' THEN 'pending'
+              ELSE 'none'
+            END
+          `.as('friendshipStatus'),
         },
       })
       .from(posts)
-      .leftJoin(users, eq(posts.userId, users.id));
+      .leftJoin(users, eq(posts.userId, users.id))
+      .leftJoin(
+        friendships,
+        and(
+          or(
+            and(
+              eq(friendships.userId, params.currentUserId || 0),
+              eq(friendships.friendId, users.id)
+            ),
+            and(
+              eq(friendships.friendId, params.currentUserId || 0),
+              eq(friendships.userId, users.id)
+            )
+          ),
+          eq(friendships.status, 'active')
+        )
+      )
+      .leftJoin(
+        friendRequests,
+        and(
+          eq(friendRequests.senderId, params.currentUserId || 0),
+          eq(friendRequests.receiverId, users.id),
+          eq(friendRequests.status, 'pending')
+        )
+      );
     
     if (params.userId) {
       query = query.where(eq(posts.userId, params.userId)) as any;

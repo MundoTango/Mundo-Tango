@@ -290,13 +290,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/posts", async (req: Request, res: Response) => {
+  app.get("/api/posts", async (req: Request & { userId?: number }, res: Response) => {
     try {
       const { userId, limit = "20", offset = "0" } = req.query;
+      const currentUserId = req.userId; // From auth middleware if authenticated
       const posts = await storage.getPosts({
         userId: userId ? parseInt(userId as string) : undefined,
         limit: parseInt(limit as string),
-        offset: parseInt(offset as string)
+        offset: parseInt(offset as string),
+        currentUserId: currentUserId,
       });
       res.json(posts);
     } catch (error) {
