@@ -1,0 +1,211 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "mundotango-app",
+    "title": "Mundo Tango - Application Metrics",
+    "tags": ["mundotango", "application"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 1,
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+        "type": "graph",
+        "title": "HTTP Request Rate",
+        "targets": [
+          {
+            "expr": "rate(http_requests_total[5m])",
+            "legendFormat": "{{method}} {{route}}"
+          }
+        ],
+        "yaxes": [
+          { "format": "reqps", "label": "Requests/sec" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 2,
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+        "type": "graph",
+        "title": "HTTP Request Duration (p95)",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "{{route}} p95"
+          }
+        ],
+        "yaxes": [
+          { "format": "s", "label": "Duration" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 3,
+        "gridPos": { "x": 0, "y": 8, "w": 6, "h": 6 },
+        "type": "stat",
+        "title": "Active Users",
+        "targets": [
+          {
+            "expr": "active_users_total"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area"
+        }
+      },
+      {
+        "id": 4,
+        "gridPos": { "x": 6, "y": 8, "w": 6, "h": 6 },
+        "type": "stat",
+        "title": "Database Connections",
+        "targets": [
+          {
+            "expr": "db_connections_active"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area"
+        }
+      },
+      {
+        "id": 5,
+        "gridPos": { "x": 12, "y": 8, "w": 6, "h": 6 },
+        "type": "stat",
+        "title": "WebSocket Connections",
+        "targets": [
+          {
+            "expr": "websocket_connections_active"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area"
+        }
+      },
+      {
+        "id": 6,
+        "gridPos": { "x": 18, "y": 8, "w": 6, "h": 6 },
+        "type": "stat",
+        "title": "Error Rate (5m)",
+        "targets": [
+          {
+            "expr": "rate(errors_total[5m])"
+          }
+        ],
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area"
+        },
+        "thresholds": [
+          { "value": 0, "color": "green" },
+          { "value": 0.1, "color": "yellow" },
+          { "value": 1, "color": "red" }
+        ]
+      },
+      {
+        "id": 7,
+        "gridPos": { "x": 0, "y": 14, "w": 12, "h": 8 },
+        "type": "graph",
+        "title": "Database Query Duration (p95)",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(db_query_duration_seconds_bucket[5m]))",
+            "legendFormat": "{{query_type}} {{table}}"
+          }
+        ],
+        "yaxes": [
+          { "format": "s", "label": "Duration" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 8,
+        "gridPos": { "x": 12, "y": 14, "w": 12, "h": 8 },
+        "type": "graph",
+        "title": "AI Request Duration (p95)",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(ai_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "{{provider}} {{model}}"
+          }
+        ],
+        "yaxes": [
+          { "format": "s", "label": "Duration" },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 9,
+        "gridPos": { "x": 0, "y": 22, "w": 8, "h": 8 },
+        "type": "graph",
+        "title": "Event Creations by Type",
+        "targets": [
+          {
+            "expr": "rate(events_created_total[5m])",
+            "legendFormat": "{{event_type}}"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "gridPos": { "x": 8, "y": 22, "w": 8, "h": 8 },
+        "type": "graph",
+        "title": "Post Reactions by Type",
+        "targets": [
+          {
+            "expr": "rate(post_reactions_total[5m])",
+            "legendFormat": "{{reaction_type}}"
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "gridPos": { "x": 16, "y": 22, "w": 8, "h": 8 },
+        "type": "graph",
+        "title": "Stripe Payments",
+        "targets": [
+          {
+            "expr": "rate(stripe_payments_total[5m])",
+            "legendFormat": "{{type}} {{status}}"
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "gridPos": { "x": 0, "y": 30, "w": 12, "h": 8 },
+        "type": "graph",
+        "title": "Cache Hit Rate",
+        "targets": [
+          {
+            "expr": "rate(cache_hits_total[5m]) / (rate(cache_hits_total[5m]) + rate(cache_misses_total[5m]))",
+            "legendFormat": "Hit Rate"
+          }
+        ],
+        "yaxes": [
+          { "format": "percentunit", "label": "Hit Rate", "min": 0, "max": 1 },
+          { "format": "short" }
+        ]
+      },
+      {
+        "id": 13,
+        "gridPos": { "x": 12, "y": 30, "w": 12, "h": 8 },
+        "type": "graph",
+        "title": "Background Job Duration",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(background_job_duration_seconds_bucket[5m]))",
+            "legendFormat": "{{job_type}} p95"
+          }
+        ],
+        "yaxes": [
+          { "format": "s", "label": "Duration" },
+          { "format": "short" }
+        ]
+      }
+    ]
+  }
+}
