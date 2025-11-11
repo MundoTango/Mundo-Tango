@@ -185,6 +185,8 @@ const FAQPage = lazy(() => import("@/pages/FAQPage"));
 const HelpPage = lazy(() => import("@/pages/HelpPage"));
 const HelpCenterPage = lazy(() => import("@/pages/HelpCenterPage"));
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
+const UserProfilePublicPage = lazy(() => import("@/pages/UserProfilePublicPage"));
+const MessagesDetailPage = lazy(() => import("@/pages/MessagesDetailPage"));
 const StoriesPage = lazy(() => import("@/pages/StoriesPage"));
 const VenueRecommendationsPage = lazy(() => import("@/pages/VenueRecommendationsPage"));
 const TermsPage = lazy(() => import("@/pages/TermsPage"));
@@ -370,6 +372,22 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <MessagesPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/messages/:conversationId">
+        <ProtectedRoute>
+          <AppLayout>
+            <MessagesDetailPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/users/:userId">
+        <ProtectedRoute>
+          <AppLayout>
+            <UserProfilePublicPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
