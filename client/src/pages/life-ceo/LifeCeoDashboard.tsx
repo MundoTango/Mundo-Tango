@@ -72,14 +72,12 @@ export default function LifeCeoDashboard() {
     setChatMessage("");
 
     try {
-      const response = await apiRequest(`/api/life-ceo/agents/${selectedAgent.id}/chat`, {
-        method: 'POST',
-        body: JSON.stringify({
-          message: chatMessage,
-          conversationHistory: chatHistory,
-        }),
+      const res = await apiRequest('POST', `/api/life-ceo/agents/${selectedAgent.id}/chat`, {
+        message: chatMessage,
+        conversationHistory: chatHistory,
       });
 
+      const response = await res.json();
       const assistantMessage = { role: 'assistant', content: response.response };
       setChatHistory([...updatedHistory, assistantMessage]);
     } catch (error) {
