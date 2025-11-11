@@ -42,16 +42,13 @@ interface ThemeProviderProps {
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [location] = useLocation();
   
-  // Initialize dark mode from localStorage or system preference
+  // Initialize dark mode from localStorage or system preference (DEFAULT: DARK)
   const [darkMode, setDarkModeState] = useState<DarkMode>(() => {
     const stored = localStorage.getItem('mundo-tango-dark-mode');
     if (stored === 'light' || stored === 'dark') return stored;
     
-    // Check system preference
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    }
-    return 'light';
+    // Default to dark mode for Mundo Tango
+    return 'dark';
   });
   
   // AUTO-DETECT VISUAL THEME BASED ON ROUTE
