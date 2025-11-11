@@ -3517,6 +3517,105 @@ export const contactSubmissions = pgTable("contact_submissions", {
 }));
 
 // ============================================================================
+// P0 WORKFLOWS - PART 2 CRITICAL FEATURES
+// ============================================================================
+
+// WORKFLOW #1: Founder Approval Workflow
+export const featureReviewStatus = pgTable("feature_review_status", {
+  id: serial("id").primaryKey(),
+  featureName: varchar("feature_name", { length: 255 }).notNull(),
+  pageUrl: varchar("page_url", { length: 500 }).notNull(),
+  description: text("description"),
+  status: varchar("status", { length: 50 }).notNull().default('pending_review'),
+  builtBy: varchar("built_by", { length: 100 }),
+  reviewedBy: integer("reviewed_by").references(() => users.id),
+  reviewNotes: text("review_notes"),
+  submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+  reviewedAt: timestamp("reviewed_at"),
+  approvedAt: timestamp("approved_at"),
+  checklist: jsonb("checklist").$type<{
+    functionalityWorks: boolean;
+    designMatches: boolean;
+    noBugs: boolean;
+    meetsRequirements: boolean;
+    readyForUsers: boolean;
+  }>(),
+  metadata: jsonb("metadata").$type<{
+    filesChanged?: string[];
+    testCoverage?: number;
+    performanceMetrics?: object;
+  }>()
+}, (table) => ({
+  statusIdx: index("idx_feature_review_status").on(table.status),
+  submittedIdx: index("idx_feature_review_submitted").on(table.submittedAt),
+}));
+
+// WORKFLOW #2: Safety Review Workflow
+export const safetyReviews = pgTable("safety_reviews", {
+  id: serial("id").primaryKey(),
+  targetType: varchar("target_type", { length: 50 }).notNull(),
+  targetId: integer("target_id").notNull(),
+  reviewerId: integer("reviewer_id").references(() => users.id),
+  status: varchar("status", { length: 50 }).notNull().default('pending'),
+  riskLevel: varchar("risk_level", { length: 50 }).default('low'),
+  issues: jsonb("issues").$type<Array<{
+    category: string;
+    severity: string;
+    description: string;
+  }>>(),
+  notes: text("notes"),
+  backgroundCheckCompleted: boolean("background_check_completed").default(false),
+  backgroundCheckProvider: varchar("background_check_provider", { length: 100 }),
+  backgroundCheckResult: jsonb("background_check_result"),
+  verificationDocuments: text("verification_documents").array(),
+  actionTaken: varchar("action_taken", { length: 100 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  reviewedAt: timestamp("reviewed_at"),
+  resolvedAt: timestamp("resolved_at")
+}, (table) => ({
+  targetIdx: index("idx_safety_reviews_target").on(table.targetType, table.targetId),
+  statusIdx: index("idx_safety_reviews_status").on(table.status),
+  riskIdx: index("idx_safety_reviews_risk").on(table.riskLevel),
+}));
+
+// WORKFLOW #3: AI Support Workflow
+export const supportTickets = pgTable("support_tickets", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  subject: varchar("subject", { length: 255 }).notNull(),
+  category: varchar("category", { length: 100 }),
+  priority: varchar("priority", { length: 50 }).default('medium'),
+  status: varchar("status", { length: 50 }).notNull().default('open'),
+  description: text("description").notNull(),
+  aiResponse: text("ai_response"),
+  aiConfidence: real("ai_confidence"),
+  humanReviewRequired: boolean("human_review_required").default(false),
+  assignedTo: integer("assigned_to").references(() => users.id),
+  resolvedBy: integer("resolved_by").references(() => users.id),
+  resolution: text("resolution"),
+  satisfactionRating: integer("satisfaction_rating"),
+  satisfactionFeedback: text("satisfaction_feedback"),
+  conversationHistory: jsonb("conversation_history").$type<Array<{
+    role: 'user' | 'ai' | 'agent';
+    message: string;
+    timestamp: string;
+    confidence?: number;
+  }>>(),
+  tags: text("tags").array(),
+  relatedTickets: integer("related_tickets").array(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  resolvedAt: timestamp("resolved_at"),
+  firstResponseAt: timestamp("first_response_at")
+}, (table) => ({
+  userIdx: index("idx_support_tickets_user").on(table.userId),
+  statusIdx: index("idx_support_tickets_status").on(table.status),
+  priorityIdx: index("idx_support_tickets_priority").on(table.priority),
+  assignedIdx: index("idx_support_tickets_assigned").on(table.assignedTo),
+  createdIdx: index("idx_support_tickets_created").on(table.createdAt),
+}));
+
+// ============================================================================
 // ZOD SCHEMAS & TYPES - NEW TABLES
 // ============================================================================
 
@@ -3614,6 +3713,25 @@ export type SelectTalentProfile = typeof talentProfiles.$inferSelect;
 export const insertTalentMatchSchema = createInsertSchema(talentMatches).omit({ id: true, createdAt: true });
 export type InsertTalentMatch = z.infer<typeof insertTalentMatchSchema>;
 export type SelectTalentMatch = typeof talentMatches.$inferSelect;
+
+// ============================================================================
+// P0 WORKFLOWS ZOD SCHEMAS & TYPES
+// ============================================================================
+
+// Feature Review Status (Founder Approval Workflow)
+export const insertFeatureReviewStatusSchema = createInsertSchema(featureReviewStatus).omit({ id: true, submittedAt: true, reviewedAt: true, approvedAt: true });
+export type InsertFeatureReviewStatus = z.infer<typeof insertFeatureReviewStatusSchema>;
+export type SelectFeatureReviewStatus = typeof featureReviewStatus.$inferSelect;
+
+// Safety Reviews
+export const insertSafetyReviewSchema = createInsertSchema(safetyReviews).omit({ id: true, createdAt: true, reviewedAt: true, resolvedAt: true });
+export type InsertSafetyReview = z.infer<typeof insertSafetyReviewSchema>;
+export type SelectSafetyReview = typeof safetyReviews.$inferSelect;
+
+// Support Tickets (AI Support Workflow)
+export const insertSupportTicketSchema = createInsertSchema(supportTickets).omit({ id: true, createdAt: true, updatedAt: true, resolvedAt: true, firstResponseAt: true });
+export type InsertSupportTicket = z.infer<typeof insertSupportTicketSchema>;
+export type SelectSupportTicket = typeof supportTickets.$inferSelect;
 
 // Newsletter Campaigns
 export const insertNewsletterCampaignSchema = createInsertSchema(newsletterCampaigns).omit({ id: true, createdAt: true, sentAt: true });
