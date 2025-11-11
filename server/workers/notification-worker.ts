@@ -27,8 +27,15 @@ const notificationWorker = new Worker(
       console.log(`Processing notification job ${job.id} for user ${job.data.userId}`);
       
       // Create notification in database
-      // Note: Adjust fields based on actual notifications schema
-      console.log('Creating notification for user:', job.data.userId);
+      await db.insert(notifications).values({
+        userId: job.data.userId,
+        type: job.data.type,
+        title: job.data.title,
+        message: job.data.message,
+        data: job.data.data ? JSON.stringify(job.data.data) : undefined,
+        isRead: false,
+        actionUrl: job.data.actionUrl,
+      });
       
       // Send push notification if requested
       if (job.data.sendPush) {
