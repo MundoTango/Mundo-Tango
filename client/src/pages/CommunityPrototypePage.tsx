@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useTheme } from "@/contexts/theme-context";
+import { CommunityMapWithLayers } from "@/components/map/CommunityMapWithLayers";
 import { 
   Globe, MapPin, Users, Calendar, Home, Building2, Search, 
   Sun, Moon, Filter, ChevronRight
@@ -19,12 +20,14 @@ const GLOBAL_STATS = {
   venues: 0,
 };
 
-// MOCK COMMUNITIES
-const COMMUNITIES = [
-  { id: 1, name: "Buenos Aires", country: "Argentina", members: 3542, badge: "active" },
-  { id: 2, name: "Madrid", country: "Spain", members: 1287, badge: "active" },
-  { id: 3, name: "Milan", country: "Italy", members: 894, badge: null },
-];
+// TOP CITIES BY EVENTS (sorted by event count)
+const TOP_CITIES = [
+  { id: 1, name: "Buenos Aires", country: "Argentina", people: 3542, events: 127, housing: 43, recommendations: 62, badge: "active" },
+  { id: 2, name: "Paris", country: "France", people: 1842, events: 89, housing: 28, recommendations: 34, badge: "active" },
+  { id: 3, name: "Madrid", country: "Spain", people: 1287, events: 76, housing: 21, recommendations: 29, badge: "active" },
+  { id: 4, name: "New York", country: "USA", people: 2314, events: 73, housing: 31, recommendations: 41, badge: "active" },
+  { id: 5, name: "Berlin", country: "Germany", people: 1687, events: 51, housing: 24, recommendations: 29, badge: null },
+].sort((a, b) => b.events - a.events);
 
 // MAP LAYERS
 const MAP_LAYERS = [
@@ -37,6 +40,7 @@ export default function CommunityPrototypePage() {
   const { darkMode, toggleDarkMode } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeLayers, setActiveLayers] = useState(["events", "housing", "venues"]);
+  const [selectedCity, setSelectedCity] = useState<typeof TOP_CITIES[0] | null>(null);
 
   const toggleLayer = (layerId: string) => {
     setActiveLayers(prev => 
@@ -45,6 +49,23 @@ export default function CommunityPrototypePage() {
         : [...prev, layerId]
     );
   };
+
+  // Convert to map locations format
+  const mapLocations = useMemo(() => TOP_CITIES.map(city => ({
+    id: city.id,
+    city: city.name,
+    country: city.country,
+    coordinates: { 
+      lat: city.id === 1 ? -34.6037 : city.id === 2 ? 48.8566 : city.id === 3 ? 40.4168 : city.id === 4 ? 40.7128 : 52.5200,
+      lng: city.id === 1 ? -58.3816 : city.id === 2 ? 2.3522 : city.id === 3 ? -3.7038 : city.id === 4 ? -74.0060 : 13.4050
+    },
+    memberCount: city.people,
+    activeEvents: city.events,
+    venues: city.recommendations,
+    housing: city.housing,
+    recommendations: city.recommendations,
+    isActive: city.badge === "active"
+  })), []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -119,28 +140,49 @@ export default function CommunityPrototypePage() {
               </div>
             </Card>
 
-            {/* Communities List */}
+            {/* Top Cities by Events */}
             <Card className="p-6">
-              <h3 className="font-semibold mb-4">Communities ({COMMUNITIES.length} locations)</h3>
-              <div className="space-y-3">
-                {COMMUNITIES.map((community) => (
+              <h3 className="font-semibold mb-4">Top Cities by Events</h3>
+              <div className="space-y-4">
+                {TOP_CITIES.map((city, index) => (
                   <motion.div
-                    key={community.id}
+                    key={city.id}
                     whileHover={{ x: 4 }}
-                    className="flex items-center justify-between p-3 rounded-lg hover-elevate cursor-pointer"
+                    className="rounded-lg hover-elevate cursor-pointer border p-4"
                   >
-                    <div className="flex items-center gap-3">
-                      <MapPin className="w-5 h-5 text-cyan-500" />
-                      <div>
-                        <p className="font-medium">{community.name}</p>
-                        <p className="text-xs text-muted-foreground">{community.country}</p>
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center font-bold text-sm">
+                          {index + 1}
+                        </div>
+                        <div>
+                          <p className="font-semibold">{city.name}</p>
+                          <p className="text-xs text-muted-foreground">{city.country}</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {community.badge === "active" && (
+                      {city.badge === "active" && (
                         <Badge variant="secondary" className="text-xs">Active</Badge>
                       )}
-                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                    
+                    {/* City Stats Grid */}
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="flex items-center gap-1">
+                        <Users className="w-3 h-3 text-cyan-500" />
+                        <span className="text-muted-foreground">{city.people} people</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3 text-purple-500" />
+                        <span className="text-muted-foreground">{city.events} events</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Home className="w-3 h-3 text-green-500" />
+                        <span className="text-muted-foreground">{city.housing} housing</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Building2 className="w-3 h-3 text-amber-500" />
+                        <span className="text-muted-foreground">{city.recommendations} recs</span>
+                      </div>
                     </div>
                   </motion.div>
                 ))}
@@ -152,48 +194,16 @@ export default function CommunityPrototypePage() {
             </Card>
           </div>
 
-          {/* Right: Interactive Map Placeholder */}
+          {/* Right: Interactive Map */}
           <div className="flex-1">
             <Card className="overflow-hidden h-[800px]">
-              <div className="relative w-full h-full bg-gradient-to-br from-cyan-50 to-blue-100 dark:from-slate-800 dark:to-slate-900">
-                {/* Map Placeholder */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center space-y-4">
-                    <Globe className="w-24 h-24 mx-auto text-cyan-500 animate-pulse" />
-                    <h3 className="text-2xl font-serif font-bold">Interactive Map</h3>
-                    <p className="text-muted-foreground max-w-md">
-                      Color-coded markers for Events ({activeLayers.includes('events') ? 'ON' : 'OFF'}), 
-                      Housing ({activeLayers.includes('housing') ? 'ON' : 'OFF'}), 
-                      and Venues ({activeLayers.includes('venues') ? 'ON' : 'OFF'})
-                    </p>
-                    <div className="flex items-center justify-center gap-4 mt-6">
-                      {MAP_LAYERS.map((layer) => (
-                        <div key={layer.id} className="flex items-center gap-2">
-                          <div className={`w-4 h-4 rounded-full ${layer.color}`} />
-                          <span className="text-sm">{layer.label}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Mock Markers */}
-                <motion.div
-                  className="absolute top-1/4 left-1/3 w-8 h-8 rounded-full bg-purple-500 border-4 border-white shadow-lg"
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ repeat: Infinity, duration: 2 }}
-                />
-                <motion.div
-                  className="absolute top-1/2 right-1/3 w-8 h-8 rounded-full bg-green-500 border-4 border-white shadow-lg"
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ repeat: Infinity, duration: 2, delay: 0.5 }}
-                />
-                <motion.div
-                  className="absolute bottom-1/3 left-1/2 w-8 h-8 rounded-full bg-amber-500 border-4 border-white shadow-lg"
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ repeat: Infinity, duration: 2, delay: 1 }}
-                />
-              </div>
+              <CommunityMapWithLayers
+                locations={mapLocations}
+                layers={MAP_LAYERS.map(l => ({ ...l, enabled: activeLayers.includes(l.id) }))}
+                center={[-34.6037, -58.3816]}
+                zoom={2}
+                onCityClick={(city) => setSelectedCity(TOP_CITIES.find(c => c.name === city.city) || null)}
+              />
             </Card>
           </div>
         </div>
@@ -237,7 +247,7 @@ function CommunityHero({ stats }: { stats: typeof GLOBAL_STATS }) {
           {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
             <StatCard icon={Globe} label="Cities" value={stats.cities} suffix="cities 4 countries" />
-            <StatCard icon={Users} label="Members" value={stats.members} suffix="worldwide dancers" />
+            <StatCard icon={Users} label="Members" value={stats.members} suffix="worldwide members" />
             <StatCard icon={Calendar} label="Active Events" value={stats.events} suffix="this month" />
             <StatCard icon={Building2} label="Venues" value={stats.venues} suffix="milongas & studios" />
           </div>

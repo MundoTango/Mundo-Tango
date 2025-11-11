@@ -397,15 +397,15 @@ export const groupMembers = pgTable("group_members", {
   groupId: integer("group_id").notNull().references(() => groups.id, { onDelete: "cascade" }),
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   
-  // Role System
+  // Role System: 'member' (full rights via automation) | 'follower' (limited rights via voluntary follow) | 'admin' | 'moderator'
   role: varchar("role", { length: 20 }).default("member"),
   
-  // Permissions
-  canPost: boolean("can_post").default(true),
-  canComment: boolean("can_comment").default(true),
-  canCreateEvents: boolean("can_create_events").default(false),
-  canInvite: boolean("can_invite").default(true),
-  canModerate: boolean("can_moderate").default(false),
+  // Permissions (defaults differ for members vs followers)
+  canPost: boolean("can_post").default(true), // true for members, false for followers
+  canComment: boolean("can_comment").default(true), // true for both
+  canCreateEvents: boolean("can_create_events").default(false), // true for members, false for followers
+  canInvite: boolean("can_invite").default(true), // true for members, false for followers
+  canModerate: boolean("can_moderate").default(false), // false for both (admin/moderator only)
   
   // Join Information
   joinedAt: timestamp("joined_at").defaultNow(),
