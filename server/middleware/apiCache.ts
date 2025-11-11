@@ -105,7 +105,8 @@ export function cacheResponse(options: CacheOptions = {}) {
 export function invalidateCache(pattern: string | RegExp) {
   let count = 0;
 
-  for (const [key] of cache.entries()) {
+  const entries = Array.from(cache.entries());
+  for (const [key] of entries) {
     if (typeof pattern === "string") {
       if (key.includes(pattern)) {
         cache.delete(key);
@@ -174,7 +175,8 @@ function cleanupExpiredEntries() {
   const now = Date.now();
   let count = 0;
 
-  for (const [key, entry] of cache.entries()) {
+  const entries = Array.from(cache.entries());
+  for (const [key, entry] of entries) {
     const age = (now - entry.timestamp) / 1000;
     if (age >= entry.ttl) {
       cache.delete(key);
