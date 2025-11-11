@@ -29,6 +29,7 @@ import { ConnectionStatusBadge } from "@/components/feed/ConnectionStatusBadge";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 import { PostItem } from "@/components/feed/PostItem";
 import { EditPostDialog } from "@/components/modals/EditPostDialog";
+import { FeedHeroWelcome } from "@/components/feed/FeedHeroWelcome";
 import { Link } from "wouter";
 
 type Post = {
@@ -51,14 +52,14 @@ type Post = {
 };
 
 const TANGO_TAGS = [
-  { name: "Milonga", icon: "🪭", color: "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800" },
-  { name: "Práctica", icon: "💃", color: "bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800" },
-  { name: "Performance", icon: "⭐", color: "bg-yellow-50 dark:bg-yellow-950/30 text-yellow-600 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800" },
-  { name: "Workshop", icon: "🎓", color: "bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800" },
-  { name: "Festival", icon: "🎉", color: "bg-pink-50 dark:bg-pink-950/30 text-pink-600 dark:text-pink-400 border-pink-200 dark:border-pink-800" },
-  { name: "Travel", icon: "✈️", color: "bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600 dark:text-cyan-400 border-cyan-200 dark:border-cyan-800" },
-  { name: "Music", icon: "🎵", color: "bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800" },
-  { name: "Fashion", icon: "👗", color: "bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-800" },
+  { name: "Milonga", Icon: Music2, color: "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800" },
+  { name: "Práctica", Icon: Users, color: "bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800" },
+  { name: "Performance", Icon: Star, color: "bg-yellow-50 dark:bg-yellow-950/30 text-yellow-600 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800" },
+  { name: "Workshop", Icon: GraduationCap, color: "bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800" },
+  { name: "Festival", Icon: PartyPopper, color: "bg-pink-50 dark:bg-pink-950/30 text-pink-600 dark:text-pink-400 border-pink-200 dark:border-pink-800" },
+  { name: "Travel", Icon: Plane, color: "bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600 dark:text-cyan-400 border-cyan-200 dark:border-cyan-800" },
+  { name: "Music", Icon: Music2, color: "bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800" },
+  { name: "Fashion", Icon: Sparkles, color: "bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-800" },
 ];
 
 const RECOMMENDATION_CATEGORIES = [
@@ -372,6 +373,9 @@ export default function FeedPage() {
       <div className="flex gap-6 p-6 max-w-7xl mx-auto">
         {/* Main Feed Column */}
         <div className="flex-1 max-w-3xl space-y-6">
+          {/* Hero Welcome Section */}
+          <FeedHeroWelcome />
+          
           {/* Connection Status Badge */}
           <div className="flex justify-end">
             <ConnectionStatusBadge />
