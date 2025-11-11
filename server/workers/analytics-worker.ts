@@ -1,7 +1,7 @@
 import { Worker, Job } from 'bullmq';
 import { getRedisClient } from '../cache/redis-cache';
 import { jobDuration, jobTotal } from '../monitoring/prometheus';
-import { db } from '../../db';
+import { db } from '../../shared/db';
 import { sql } from 'drizzle-orm';
 
 /**
