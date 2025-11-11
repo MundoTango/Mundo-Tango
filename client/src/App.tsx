@@ -193,7 +193,6 @@ const DanceStylesDetailPage = lazy(() => import("@/pages/DanceStylesDetailPage")
 const AdminContentModerationDetailPage = lazy(() => import("@/pages/AdminContentModerationDetailPage"));
 const EventCheckInPage = lazy(() => import("@/pages/EventCheckInPage"));
 const GroupsDetailPage = lazy(() => import("@/pages/GroupsDetailPage"));
-const AdminUserDetailPage = lazy(() => import("@/pages/AdminUserDetailPage"));
 const AdminSettingsPage = lazy(() => import("@/pages/AdminSettingsPage"));
 const AdminReportsPage = lazy(() => import("@/pages/AdminReportsPage"));
 const TeacherProfilePage = lazy(() => import("@/pages/TeacherProfilePage"));

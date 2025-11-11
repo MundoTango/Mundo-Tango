@@ -740,6 +740,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Global search endpoint for UnifiedTopBar
+  app.get("/api/user/global-search", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const query = req.query.q as string;
+      
+      if (!query || query.length < 3) {
+        return res.json({ users: [], events: [], groups: [], posts: [] });
+      }
+
+      const searchTerm = `%${query.toLowerCase()}%`;
+
+      // Search users
+      const usersResults = await db.select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        profileImage: users.profileImage,
+        type: sql<string>`'user'`,
+      })
+        .from(users)
+        .where(
+          or(
+            sql`LOWER(${users.name}) LIKE ${searchTerm}`,
+            sql`LOWER(${users.username}) LIKE ${searchTerm}`
+          )
+        )
+        .limit(5);
+
+      // Search events
+      const eventsResults = await db.select({
+        id: events.id,
+        title: events.title,
+        date: events.date,
+        city: events.city,
+        type: sql<string>`'event'`,
+      })
+        .from(events)
+        .where(sql`LOWER(${events.title}) LIKE ${searchTerm}`)
+        .limit(5);
+
+      // Search groups
+      const groupsResults = await db.select({
+        id: groups.id,
+        name: groups.name,
+        description: groups.description,
+        memberCount: groups.memberCount,
+        type: sql<string>`'group'`,
+      })
+        .from(groups)
+        .where(sql`LOWER(${groups.name}) LIKE ${searchTerm}`)
+        .limit(5);
+
+      res.json({
+        users: usersResults,
+        events: eventsResults,
+        groups: groupsResults,
+      });
+    } catch (error) {
+      console.error("Global search error:", error);
+      res.status(500).json({ message: "Search failed" });
+    }
+  });
+
   app.post("/api/events", authenticateToken, validateRequest(insertEventSchema.omit({ userId: true })), async (req: AuthRequest, res: Response) => {
     try {
       const event = await storage.createEvent({
