@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/node";
-import { ProfilingIntegration } from "@sentry/profiling-node";
+import { nodeProfilingIntegration } from "@sentry/profiling-node";
 import { Express } from "express";
 
 /**
@@ -27,12 +27,8 @@ export function initializeSentry(app: Express) {
     
     // Integrations
     integrations: [
-      // Enable HTTP calls tracing
-      new Sentry.Integrations.Http({ tracing: true }),
-      // Enable Express.js middleware tracing
-      new Sentry.Integrations.Express({ app }),
       // Enable profiling
-      new ProfilingIntegration(),
+      nodeProfilingIntegration(),
     ],
     
     // Ignore certain errors
@@ -57,7 +53,7 @@ export function initializeSentry(app: Express) {
       }
       
       // Remove sensitive query parameters
-      if (event.request?.query_string) {
+      if (event.request?.query_string && typeof event.request.query_string === 'string') {
         event.request.query_string = event.request.query_string
           .replace(/token=[^&]*/g, "token=[REDACTED]")
           .replace(/password=[^&]*/g, "password=[REDACTED]")
@@ -86,22 +82,23 @@ export function initializeSentry(app: Express) {
  * Express middleware for Sentry request handling
  */
 export function getSentryRequestHandler() {
-  return Sentry.Handlers.requestHandler();
+  return Sentry.expressErrorHandler();
 }
 
 /**
- * Express middleware for Sentry tracing
+ * Express middleware for Sentry tracing (no longer needed in v8)
  */
 export function getSentryTracingHandler() {
-  return Sentry.Handlers.tracingHandler();
+  // Tracing is automatic in Sentry v8+
+  return (_req: any, _res: any, next: any) => next();
 }
 
 /**
  * Express error handler for Sentry
  */
 export function getSentryErrorHandler() {
-  return Sentry.Handlers.errorHandler({
-    shouldHandleError(error) {
+  return Sentry.expressErrorHandler({
+    shouldHandleError(error: any) {
       // Capture all errors with status code >= 500
       return error.status ? error.status >= 500 : true;
     },
@@ -155,12 +152,14 @@ export function addBreadcrumb(message: string, category: string, data?: Record<s
 }
 
 /**
- * Start a new transaction for performance tracking
+ * Start a new span for performance tracking
  */
 export function startTransaction(name: string, op: string) {
-  return Sentry.startTransaction({
+  return Sentry.startSpan({
     name,
     op,
+  }, () => {
+    // Span will be automatically completed
   });
 }
 
