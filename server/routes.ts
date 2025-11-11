@@ -48,6 +48,7 @@ import teacherRoutes from "./routes/teacher-routes";
 import venueRoutes from "./routes/venue-routes";
 import workshopRoutes from "./routes/workshop-routes";
 import musicRoutes from "./routes/music-routes";
+import healthRoutes from "./routes/health";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
@@ -187,6 +188,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/venues", venueRoutes);
   app.use("/api/workshops", workshopRoutes);
   app.use("/api/music", musicRoutes);
+  
+  // Enhanced Health Check Routes (Production Monitoring)
+  app.use(healthRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(createPostBodySchema), async (req: AuthRequest, res: Response) => {
     try {
