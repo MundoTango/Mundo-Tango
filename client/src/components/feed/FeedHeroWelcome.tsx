@@ -32,7 +32,7 @@ export function FeedHeroWelcome() {
       className="relative mb-6 overflow-hidden"
     >
       <Card 
-        className="relative p-8 border-2"
+        className="relative p-10 md:p-12 border-2"
         style={{
           background: `
             linear-gradient(135deg, 
@@ -99,7 +99,7 @@ export function FeedHeroWelcome() {
             >
               <Sparkles className="w-6 h-6 text-primary" />
             </motion.div>
-            <h1 className="text-3xl font-bold">
+            <h1 className="text-4xl md:text-5xl font-serif font-bold">
               <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
                 {greeting}, {firstName}!
               </span>
@@ -110,7 +110,7 @@ export function FeedHeroWelcome() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.5 }}
-            className="text-muted-foreground mb-6 text-lg"
+            className="text-muted-foreground mb-8 text-xl leading-relaxed"
           >
             Welcome back to your tango community
           </motion.p>

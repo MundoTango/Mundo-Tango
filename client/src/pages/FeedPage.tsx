@@ -370,9 +370,9 @@ export default function FeedPage() {
         title="Memory Feed - Mundo Tango"
         description="Connect with the global tango community. Share memories, discover events, and engage with fellow dancers from around the world."
       />
-      <div className="flex gap-6 p-6 max-w-7xl mx-auto">
+      <div className="flex gap-8 px-6 py-12 max-w-7xl mx-auto">
         {/* Main Feed Column */}
-        <div className="flex-1 max-w-3xl space-y-6">
+        <div className="flex-1 max-w-3xl space-y-8">
           {/* Hero Welcome Section */}
           <FeedHeroWelcome />
           
