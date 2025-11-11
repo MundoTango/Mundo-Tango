@@ -304,28 +304,33 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
   const canPost = content.trim().length > 0 || mediaFiles.length > 0;
 
   return (
-    <Card 
-      className={`p-6 ${className}`}
-      style={{
-        background: 'linear-gradient(180deg, rgba(64, 224, 208, 0.08) 0%, rgba(30, 144, 255, 0.05) 100%)',
-        backdropFilter: 'blur(12px)',
-        borderColor: 'rgba(64, 224, 208, 0.2)',
-      }}
-      data-testid="post-creator"
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
     >
-      {/* User Profile Header */}
-      <div className="flex items-center gap-3 mb-4">
-        <Avatar className="h-12 w-12">
-          <AvatarImage src={user?.profileImage || ""} />
-          <AvatarFallback style={{ background: 'linear-gradient(135deg, #40E0D0, #1E90FF)' }}>
-            {user?.name?.charAt(0) || user?.email?.charAt(0) || "U"}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex-1">
-          <div className="font-semibold">{user?.name || user?.email}</div>
-          <div className="text-sm text-muted-foreground">Share a memory...</div>
+      <Card 
+        className={`p-8 ${className}`}
+        style={{
+          background: 'linear-gradient(180deg, rgba(64, 224, 208, 0.08) 0%, rgba(30, 144, 255, 0.05) 100%)',
+          backdropFilter: 'blur(12px)',
+          borderColor: 'rgba(64, 224, 208, 0.2)',
+        }}
+        data-testid="post-creator"
+      >
+        {/* User Profile Header */}
+        <div className="flex items-center gap-3 mb-6">
+          <Avatar className="h-12 w-12">
+            <AvatarImage src={user?.profileImage || ""} />
+            <AvatarFallback style={{ background: 'linear-gradient(135deg, #40E0D0, #1E90FF)' }}>
+              {user?.name?.charAt(0) || user?.email?.charAt(0) || "U"}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <div className="font-semibold">{user?.name || user?.email}</div>
+            <div className="text-sm text-muted-foreground">Share a memory...</div>
+          </div>
         </div>
-      </div>
 
       {/* Main Content Input with @Mentions */}
       <SimpleMentionsInput
@@ -386,10 +391,10 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
               borderColor: 'rgba(64, 224, 208, 0.3)',
             }}
           >
-            <div className="text-sm font-semibold mb-3 flex items-center gap-2">
+            <h3 className="text-lg font-serif font-bold mb-3 flex items-center gap-2">
               <Hash className="w-4 h-4" style={{ color: '#40E0D0' }} />
               Add Tags - Categorize your memory
-            </div>
+            </h3>
             <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
               {MEMORY_TAGS.map((tag) => {
                 const isSelected = selectedTags.includes(tag.id);
@@ -433,10 +438,10 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
               borderColor: 'rgba(255, 191, 0, 0.3)',
             }}
           >
-            <div className="text-sm font-semibold flex items-center gap-2">
+            <h3 className="text-lg font-serif font-bold flex items-center gap-2">
               <MapPin className="w-4 h-4 text-orange-500" />
               Hidden Gems - Share your favorite places
-            </div>
+            </h3>
 
             {/* Category Selector */}
             <div>
@@ -511,10 +516,10 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
               borderColor: 'rgba(168, 85, 247, 0.3)',
             }}
           >
-            <div className="text-sm font-semibold mb-2 flex items-center gap-2">
+            <h3 className="text-lg font-serif font-bold mb-2 flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-purple-500" />
               AI Enhanced Version
-            </div>
+            </h3>
             <div className="text-sm bg-white/50 dark:bg-black/20 p-3 rounded-lg">
               {enhancedContent}
             </div>
@@ -545,10 +550,10 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
               borderColor: 'rgba(16, 185, 129, 0.3)',
             }}
           >
-            <div className="text-sm font-semibold mb-3 flex items-center gap-2">
+            <h3 className="text-lg font-serif font-bold mb-3 flex items-center gap-2">
               <Globe className="w-4 h-4 text-green-500" />
               Who can see this?
-            </div>
+            </h3>
             <div className="grid grid-cols-3 gap-2">
               <Button
                 type="button"
@@ -788,6 +793,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
           })}
         </div>
       )}
-    </Card>
+      </Card>
+    </motion.div>
   );
 }

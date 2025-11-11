@@ -265,8 +265,8 @@ export function SmartPostFeed({ posts, onFilterChange, children }: SmartPostFeed
               }}
               data-testid="advanced-filters-panel"
             >
-              <div className="text-sm font-semibold flex items-center gap-2">
-                <SlidersHorizontal className="w-4 h-4" style={{ color: '#40E0D0' }} />
+              <div className="text-xl font-serif font-bold flex items-center gap-2">
+                <SlidersHorizontal className="w-5 h-5" style={{ color: '#40E0D0' }} />
                 Advanced Filters
               </div>
 

@@ -13,6 +13,7 @@ import { useReactToPost, useSharePost, useSavePost, useUnsavePost } from "@/hook
 import { useAuth } from "@/contexts/AuthContext";
 import { CommentsSection } from "./CommentsSection";
 import { renderMentionPills } from "@/utils/renderMentionPills";
+import { motion } from "framer-motion";
 
 export interface PostItemData {
   id: number;
@@ -72,15 +73,21 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
 
   return (
     <>
-      <Card 
-        className="mb-4 overflow-hidden"
-        style={{
-          background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.08), rgba(30, 144, 255, 0.05))',
-          backdropFilter: 'blur(12px)',
-          borderColor: 'rgba(64, 224, 208, 0.2)',
-        }}
-        data-testid={`post-item-${post.id}`}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.5 }}
       >
+        <Card 
+          className="mb-4 overflow-hidden"
+          style={{
+            background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.08), rgba(30, 144, 255, 0.05))',
+            backdropFilter: 'blur(12px)',
+            borderColor: 'rgba(64, 224, 208, 0.2)',
+          }}
+          data-testid={`post-item-${post.id}`}
+        >
         {/* Header */}
         <div className="p-4 flex items-start justify-between">
           <div className="flex items-start gap-3 flex-1">
@@ -125,12 +132,16 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
         {/* Image */}
         {post.imageUrl && (
           <div className="px-4 pb-3">
-            <img 
-              src={post.imageUrl} 
-              alt="Post media" 
-              className="rounded-lg w-full object-cover max-h-96"
-              data-testid={`post-image-${post.id}`}
-            />
+            <div className="relative aspect-[16/9] overflow-hidden rounded-lg">
+              <motion.img 
+                src={post.imageUrl} 
+                alt="Post media" 
+                className="w-full h-full object-cover"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.6 }}
+                data-testid={`post-image-${post.id}`}
+              />
+            </div>
           </div>
         )}
 
@@ -201,7 +212,8 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
             <CommentsSection postId={post.id} />
           </div>
         )}
-      </Card>
+        </Card>
+      </motion.div>
 
       {/* Modals */}
       <ShareModal
