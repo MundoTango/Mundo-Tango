@@ -31,41 +31,15 @@ export class AISupportService {
    * Create a new support ticket with AI response
    */
   static async createTicket(
-    data: InsertSupportTicket,
-    aiResponse?: string,
-    aiConfidence?: number
+    data: InsertSupportTicket & {
+      aiResponse?: string;
+      aiConfidence?: number;
+      conversationHistory?: any[];
+    }
   ): Promise<SelectSupportTicket> {
-    const humanReviewRequired = aiConfidence ? aiConfidence < 0.7 : true;
-
     const [ticket] = await db
       .insert(supportTickets)
-      .values({
-        ...data,
-        aiResponse,
-        aiConfidence,
-        humanReviewRequired,
-        status: humanReviewRequired ? 'awaiting_review' : 'open',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        firstResponseAt: aiResponse ? new Date() : undefined,
-        conversationHistory: [
-          {
-            role: 'user',
-            message: data.description,
-            timestamp: new Date().toISOString(),
-          },
-          ...(aiResponse
-            ? [
-                {
-                  role: 'ai' as const,
-                  message: aiResponse,
-                  timestamp: new Date().toISOString(),
-                  confidence: aiConfidence,
-                },
-              ]
-            : []),
-        ],
-      })
+      .values(data)
       .returning();
 
     return ticket;

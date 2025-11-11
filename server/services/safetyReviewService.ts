@@ -33,11 +33,7 @@ export class SafetyReviewService {
   ): Promise<SelectSafetyReview> {
     const [review] = await db
       .insert(safetyReviews)
-      .values({
-        ...data,
-        status: 'pending',
-        createdAt: new Date(),
-      })
+      .values(data)
       .returning();
 
     return review;

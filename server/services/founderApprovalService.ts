@@ -27,11 +27,7 @@ export class FounderApprovalService {
   ): Promise<SelectFeatureReviewStatus> {
     const [feature] = await db
       .insert(featureReviewStatus)
-      .values({
-        ...data,
-        status: 'pending_review',
-        submittedAt: new Date(),
-      })
+      .values(data)
       .returning();
 
     return feature;

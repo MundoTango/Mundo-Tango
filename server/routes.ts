@@ -2993,5 +2993,488 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ============================================================================
+  // PART 2 P0 WORKFLOWS - CRITICAL ADMIN INFRASTRUCTURE (23 endpoints)
+  // ============================================================================
+
+  // Import P0 workflow services
+  const { FounderApprovalService } = await import("./services/founderApprovalService");
+  const { SafetyReviewService } = await import("./services/safetyReviewService");
+  const { AISupportService } = await import("./services/aiSupportService");
+
+  // ============================================================================
+  // WORKFLOW #1: FOUNDER APPROVAL (8 endpoints)
+  // ============================================================================
+
+  // 1.1 POST /api/admin/founder-approval - Submit feature for approval
+  app.post("/api/admin/founder-approval", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const feature = await FounderApprovalService.submitFeatureForReview(req.body);
+      res.status(201).json(feature);
+    } catch (error) {
+      console.error("Submit feature for approval error:", error);
+      res.status(500).json({ message: "Failed to submit feature for approval" });
+    }
+  });
+
+  // 1.2 GET /api/admin/founder-approval/pending - Get pending reviews
+  app.get("/api/admin/founder-approval/pending", authenticateToken, requireRoleLevel('admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const pending = await FounderApprovalService.getPendingReviews();
+      res.json(pending);
+    } catch (error) {
+      console.error("Get pending reviews error:", error);
+      res.status(500).json({ message: "Failed to fetch pending reviews" });
+    }
+  });
+
+  // 1.3 GET /api/admin/founder-approval/:id - Get feature review by ID
+  app.get("/api/admin/founder-approval/:id", authenticateToken, requireRoleLevel('admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const feature = await FounderApprovalService.getFeatureReview(id);
+      
+      if (!feature) {
+        return res.status(404).json({ message: "Feature review not found" });
+      }
+
+      res.json(feature);
+    } catch (error) {
+      console.error("Get feature review error:", error);
+      res.status(500).json({ message: "Failed to fetch feature review" });
+    }
+  });
+
+  // 1.4 GET /api/admin/founder-approval/page/:pageUrl - Get features by page
+  app.get("/api/admin/founder-approval/page/:pageUrl", authenticateToken, requireRoleLevel('admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const pageUrl = decodeURIComponent(req.params.pageUrl);
+      const features = await FounderApprovalService.getFeaturesByPage(pageUrl);
+      res.json(features);
+    } catch (error) {
+      console.error("Get features by page error:", error);
+      res.status(500).json({ message: "Failed to fetch features" });
+    }
+  });
+
+  // 1.5 POST /api/admin/founder-approval/:id/approve - Approve feature
+  app.post("/api/admin/founder-approval/:id/approve", authenticateToken, requireRoleLevel('god'), async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { reviewNotes, checklist } = req.body;
+      
+      const feature = await FounderApprovalService.approveFeature(
+        id,
+        req.user!.id,
+        reviewNotes,
+        checklist
+      );
+
+      res.json(feature);
+    } catch (error) {
+      console.error("Approve feature error:", error);
+      res.status(500).json({ message: "Failed to approve feature" });
+    }
+  });
+
+  // 1.6 POST /api/admin/founder-approval/:id/request-changes - Request changes
+  app.post("/api/admin/founder-approval/:id/request-changes", authenticateToken, requireRoleLevel('god'), async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { reviewNotes, checklist } = req.body;
+      
+      const feature = await FounderApprovalService.requestChanges(
+        id,
+        req.user!.id,
+        reviewNotes,
+        checklist
+      );
+
+      res.json(feature);
+    } catch (error) {
+      console.error("Request changes error:", error);
+      res.status(500).json({ message: "Failed to request changes" });
+    }
+  });
+
+  // 1.7 POST /api/admin/founder-approval/:id/reject - Reject feature
+  app.post("/api/admin/founder-approval/:id/reject", authenticateToken, requireRoleLevel('god'), async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { reviewNotes } = req.body;
+      
+      const feature = await FounderApprovalService.rejectFeature(
+        id,
+        req.user!.id,
+        reviewNotes
+      );
+
+      res.json(feature);
+    } catch (error) {
+      console.error("Reject feature error:", error);
+      res.status(500).json({ message: "Failed to reject feature" });
+    }
+  });
+
+  // 1.8 GET /api/admin/founder-approval/stats - Get approval statistics
+  app.get("/api/admin/founder-approval/stats", authenticateToken, requireRoleLevel('admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const stats = await FounderApprovalService.getApprovalStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Get approval stats error:", error);
+      res.status(500).json({ message: "Failed to fetch statistics" });
+    }
+  });
+
+  // ============================================================================
+  // WORKFLOW #2: SAFETY REVIEW (10 endpoints)
+  // ============================================================================
+
+  // 2.1 POST /api/admin/safety-reviews - Create safety review
+  app.post("/api/admin/safety-reviews", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const review = await SafetyReviewService.createSafetyReview(req.body);
+      res.status(201).json(review);
+    } catch (error) {
+      console.error("Create safety review error:", error);
+      res.status(500).json({ message: "Failed to create safety review" });
+    }
+  });
+
+  // 2.2 GET /api/admin/safety-reviews/pending - Get pending reviews
+  app.get("/api/admin/safety-reviews/pending", authenticateToken, requireRoleLevel('moderator'), async (req: AuthRequest, res: Response) => {
+    try {
+      const { targetType } = req.query;
+      const pending = await SafetyReviewService.getPendingReviews(targetType as string);
+      res.json(pending);
+    } catch (error) {
+      console.error("Get pending safety reviews error:", error);
+      res.status(500).json({ message: "Failed to fetch pending reviews" });
+    }
+  });
+
+  // 2.3 GET /api/admin/safety-reviews/high-priority - Get high-priority reviews
+  app.get("/api/admin/safety-reviews/high-priority", authenticateToken, requireRoleLevel('moderator'), async (req: AuthRequest, res: Response) => {
+    try {
+      const reviews = await SafetyReviewService.getHighPriorityReviews();
+      res.json(reviews);
+    } catch (error) {
+      console.error("Get high-priority reviews error:", error);
+      res.status(500).json({ message: "Failed to fetch high-priority reviews" });
+    }
+  });
+
+  // 2.4 GET /api/admin/safety-reviews/:id - Get safety review by ID
+  app.get("/api/admin/safety-reviews/:id", authenticateToken, requireRoleLevel('moderator'), async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const review = await SafetyReviewService.getSafetyReview(id);
+      
+      if (!review) {
+        return res.status(404).json({ message: "Safety review not found" });
+      }
+
+      res.json(review);
+    } catch (error) {
+      console.error("Get safety review error:", error);
+      res.status(500).json({ message: "Failed to fetch safety review" });
+    }
+  });
+
+  // 2.5 GET /api/admin/safety-reviews/target/:targetType/:targetId - Get reviews for target
+  app.get("/api/admin/safety-reviews/target/:targetType/:targetId", authenticateToken, requireRoleLevel('moderator'), async (req: AuthRequest, res: Response) => {
+    try {
+      const targetType = req.params.targetType;
+      const targetId = parseInt(req.params.targetId);
+      const reviews = await SafetyReviewService.getReviewsForTarget(targetType, targetId);
+      res.json(reviews);
+    } catch (error) {
+      console.error("Get target reviews error:", error);
+      res.status(500).json({ message: "Failed to fetch target reviews" });
+    }
+  });
+
+  // 2.6 PATCH /api/admin/safety-reviews/:id/risk-level - Update risk level
+  app.patch("/api/admin/safety-reviews/:id/risk-level", authenticateToken, requireRoleLevel('moderator'), async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { riskLevel, notes } = req.body;
+      
+      const review = await SafetyReviewService.updateRiskLevel(id, riskLevel, notes);
+      res.json(review);
+    } catch (error) {
+      console.error("Update risk level error:", error);
+      res.status(500).json({ message: "Failed to update risk level" });
+    }
+  });
+
+  // 2.7 POST /api/admin/safety-reviews/:id/background-check - Complete background check
+  app.post("/api/admin/safety-reviews/:id/background-check", authenticateToken, requireRoleLevel('admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { provider, result, documents } = req.body;
+      
+      const review = await SafetyReviewService.completeBackgroundCheck(id, provider, result, documents);
+      res.json(review);
+    } catch (error) {
+      console.error("Complete background check error:", error);
+      res.status(500).json({ message: "Failed to complete background check" });
+    }
+  });
+
+  // 2.8 POST /api/admin/safety-reviews/:id/approve - Approve safety review
+  app.post("/api/admin/safety-reviews/:id/approve", authenticateToken, requireRoleLevel('moderator'), async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { actionTaken, notes } = req.body;
+      
+      const review = await SafetyReviewService.approveSafetyReview(
+        id,
+        req.user!.id,
+        actionTaken,
+        notes
+      );
+
+      res.json(review);
+    } catch (error) {
+      console.error("Approve safety review error:", error);
+      res.status(500).json({ message: "Failed to approve safety review" });
+    }
+  });
+
+  // 2.9 POST /api/admin/safety-reviews/:id/reject - Reject/flag safety review
+  app.post("/api/admin/safety-reviews/:id/reject", authenticateToken, requireRoleLevel('moderator'), async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { actionTaken, notes, issues } = req.body;
+      
+      const review = await SafetyReviewService.rejectSafetyReview(
+        id,
+        req.user!.id,
+        actionTaken,
+        notes,
+        issues
+      );
+
+      res.json(review);
+    } catch (error) {
+      console.error("Reject safety review error:", error);
+      res.status(500).json({ message: "Failed to reject safety review" });
+    }
+  });
+
+  // 2.10 POST /api/admin/safety-reviews/:id/escalate - Escalate review
+  app.post("/api/admin/safety-reviews/:id/escalate", authenticateToken, requireRoleLevel('moderator'), async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { riskLevel, notes } = req.body;
+      
+      const review = await SafetyReviewService.escalateReview(id, riskLevel, notes);
+      res.json(review);
+    } catch (error) {
+      console.error("Escalate review error:", error);
+      res.status(500).json({ message: "Failed to escalate review" });
+    }
+  });
+
+  // 2.11 GET /api/admin/safety-reviews/stats - Get safety statistics
+  app.get("/api/admin/safety-reviews/stats", authenticateToken, requireRoleLevel('admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const stats = await SafetyReviewService.getSafetyStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Get safety stats error:", error);
+      res.status(500).json({ message: "Failed to fetch statistics" });
+    }
+  });
+
+  // ============================================================================
+  // WORKFLOW #4: AI SUPPORT (14 endpoints)
+  // ============================================================================
+
+  // 4.1 POST /api/support/tickets - Create support ticket
+  app.post("/api/support/tickets", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const ticket = await AISupportService.createTicket({
+        ...req.body,
+        userId: req.user!.id
+      });
+      res.status(201).json(ticket);
+    } catch (error) {
+      console.error("Create support ticket error:", error);
+      res.status(500).json({ message: "Failed to create support ticket" });
+    }
+  });
+
+  // 4.2 GET /api/support/tickets - Get user's tickets
+  app.get("/api/support/tickets", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const tickets = await AISupportService.getUserTickets(req.user!.id);
+      res.json(tickets);
+    } catch (error) {
+      console.error("Get user tickets error:", error);
+      res.status(500).json({ message: "Failed to fetch tickets" });
+    }
+  });
+
+  // 4.3 GET /api/support/tickets/:id - Get ticket by ID
+  app.get("/api/support/tickets/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const ticket = await AISupportService.getTicket(id);
+      
+      if (!ticket) {
+        return res.status(404).json({ message: "Ticket not found" });
+      }
+
+      if (ticket.userId !== req.user!.id && !['admin', 'super_admin', 'god'].includes(req.user!.role)) {
+        return res.status(403).json({ message: "Not authorized" });
+      }
+
+      res.json(ticket);
+    } catch (error) {
+      console.error("Get ticket error:", error);
+      res.status(500).json({ message: "Failed to fetch ticket" });
+    }
+  });
+
+  // 4.4 POST /api/support/tickets/:id/ai-response - Add AI response
+  app.post("/api/support/tickets/:id/ai-response", authenticateToken, requireRoleLevel('admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { response, confidence } = req.body;
+      
+      const ticket = await AISupportService.addAIResponse(id, response, confidence);
+      res.json(ticket);
+    } catch (error) {
+      console.error("Add AI response error:", error);
+      res.status(500).json({ message: "Failed to add AI response" });
+    }
+  });
+
+  // 4.5 POST /api/support/tickets/:id/assign - Assign to agent
+  app.post("/api/support/tickets/:id/assign", authenticateToken, requireRoleLevel('admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { agentId } = req.body;
+      
+      const ticket = await AISupportService.assignToAgent(id, agentId);
+      res.json(ticket);
+    } catch (error) {
+      console.error("Assign ticket error:", error);
+      res.status(500).json({ message: "Failed to assign ticket" });
+    }
+  });
+
+  // 4.6 POST /api/support/tickets/:id/agent-response - Add agent response
+  app.post("/api/support/tickets/:id/agent-response", authenticateToken, requireRoleLevel('admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { message } = req.body;
+      
+      const ticket = await AISupportService.addAgentResponse(id, req.user!.id, message);
+      res.json(ticket);
+    } catch (error) {
+      console.error("Add agent response error:", error);
+      res.status(500).json({ message: "Failed to add agent response" });
+    }
+  });
+
+  // 4.7 POST /api/support/tickets/:id/resolve - Resolve ticket
+  app.post("/api/support/tickets/:id/resolve", authenticateToken, requireRoleLevel('admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { resolution } = req.body;
+      
+      const ticket = await AISupportService.resolveTicket(id, req.user!.id, resolution);
+      res.json(ticket);
+    } catch (error) {
+      console.error("Resolve ticket error:", error);
+      res.status(500).json({ message: "Failed to resolve ticket" });
+    }
+  });
+
+  // 4.8 POST /api/support/tickets/:id/rating - Add satisfaction rating
+  app.post("/api/support/tickets/:id/rating", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { rating, feedback } = req.body;
+      
+      const ticket = await AISupportService.getTicket(id);
+      if (ticket?.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Not authorized" });
+      }
+
+      const updated = await AISupportService.addSatisfactionRating(id, rating, feedback);
+      res.json(updated);
+    } catch (error) {
+      console.error("Add rating error:", error);
+      res.status(500).json({ message: "Failed to add rating" });
+    }
+  });
+
+  // 4.9 POST /api/support/tickets/:id/escalate - Escalate ticket
+  app.post("/api/support/tickets/:id/escalate", authenticateToken, requireRoleLevel('admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { newPriority, reason } = req.body;
+      
+      const ticket = await AISupportService.escalateTicket(id, newPriority, reason);
+      res.json(ticket);
+    } catch (error) {
+      console.error("Escalate ticket error:", error);
+      res.status(500).json({ message: "Failed to escalate ticket" });
+    }
+  });
+
+  // 4.10 GET /api/admin/support/open - Get open tickets
+  app.get("/api/admin/support/open", authenticateToken, requireRoleLevel('admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const { priority, humanReviewRequired } = req.query;
+      const tickets = await AISupportService.getOpenTickets(
+        priority as string,
+        humanReviewRequired === 'true'
+      );
+      res.json(tickets);
+    } catch (error) {
+      console.error("Get open tickets error:", error);
+      res.status(500).json({ message: "Failed to fetch open tickets" });
+    }
+  });
+
+  // 4.11 GET /api/admin/support/review - Get tickets requiring review
+  app.get("/api/admin/support/review", authenticateToken, requireRoleLevel('admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const tickets = await AISupportService.getTicketsRequiringReview();
+      res.json(tickets);
+    } catch (error) {
+      console.error("Get tickets for review error:", error);
+      res.status(500).json({ message: "Failed to fetch tickets" });
+    }
+  });
+
+  // 4.12 GET /api/admin/support/high-priority - Get high-priority tickets
+  app.get("/api/admin/support/high-priority", authenticateToken, requireRoleLevel('admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const tickets = await AISupportService.getHighPriorityTickets();
+      res.json(tickets);
+    } catch (error) {
+      console.error("Get high-priority tickets error:", error);
+      res.status(500).json({ message: "Failed to fetch high-priority tickets" });
+    }
+  });
+
+  // 4.13 GET /api/admin/support/stats - Get support statistics
+  app.get("/api/admin/support/stats", authenticateToken, requireRoleLevel('admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const stats = await AISupportService.getSupportStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Get support stats error:", error);
+      res.status(500).json({ message: "Failed to fetch statistics" });
+    }
+  });
+
   return httpServer;
 }
