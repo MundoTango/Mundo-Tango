@@ -1,13 +1,13 @@
 import { 
-  Users, Music, GraduationCap, Radio, Star, Calendar, Home,
+  Footprints, UserCircle2, GraduationCap, Radio, Star, Calendar, Home,
   Camera, Palette, Briefcase, Mic, Pen, BookOpen, Target, 
   Shirt, Globe, Music2, Eye, Heart
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const ROLE_ICONS = {
-  "dancer-leader": { icon: Users, label: "Dancer (Leader)", color: "text-blue-500" },
-  "dancer-follower": { icon: Music, label: "Dancer (Follower)", color: "text-pink-500" },
+  "dancer-leader": { icon: Footprints, label: "Dancer (Leader)", color: "text-blue-500" },
+  "dancer-follower": { icon: UserCircle2, label: "Dancer (Follower)", color: "text-pink-500" },
   "teacher": { icon: GraduationCap, label: "Teacher", color: "text-purple-500" },
   "dj": { icon: Radio, label: "DJ", color: "text-orange-500" },
   "performer": { icon: Star, label: "Performer", color: "text-amber-500" },
