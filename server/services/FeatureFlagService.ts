@@ -4,28 +4,36 @@ import { eq, and, sql } from 'drizzle-orm';
 import Redis from 'ioredis';
 
 /**
- * Feature Flag Service with Redis Caching
+ * Feature Flag Service with CONDITIONAL Redis Caching
  * 
  * Supports:
  * - Boolean features (on/off)
  * - Quota features (usage limits with tracking)
  * - Tier-based enforcement
  * - Automatic quota resets (daily/weekly/monthly)
- * - Redis caching for performance (TTL: 5 minutes)
+ * - Redis caching for performance (TTL: 5 minutes) - ONLY if Redis is available
  */
 
-const redis = new Redis({
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379'),
-  maxRetriesPerRequest: 3,
-  retryStrategy: (times) => {
-    if (times > 3) {
-      console.warn('[FeatureFlagService] Redis unavailable, using direct DB queries');
-      return null;
-    }
-    return Math.min(times * 100, 2000);
-  }
-});
+// Conditional Redis - only connect if REDIS_URL is set
+const REDIS_ENABLED = Boolean(process.env.REDIS_URL);
+let redis: Redis | null = null;
+
+if (REDIS_ENABLED) {
+  redis = new Redis(process.env.REDIS_URL!, {
+    maxRetriesPerRequest: 1,
+    retryStrategy: (times) => {
+      if (times > 1) {
+        console.warn('[FeatureFlagService] Redis unavailable, using direct DB queries');
+        redis = null;
+        return null;
+      }
+      return 200;
+    },
+    enableOfflineQueue: false,
+  });
+} else {
+  console.log('[FeatureFlagService] Redis disabled - using direct DB queries');
+}
 
 const CACHE_TTL = 300; // 5 minutes
 
@@ -75,15 +83,17 @@ export class FeatureFlagService {
    * Check if user can use a boolean feature (with Redis caching)
    */
   static async canUseFeature(userId: number, featureName: string): Promise<FeatureAccessResult> {
-    // Try cache first
-    const cacheKey = `feature:${userId}:${featureName}`;
-    try {
-      const cached = await redis.get(cacheKey);
-      if (cached) {
-        return JSON.parse(cached);
+    // Try cache first (only if Redis is available)
+    if (redis) {
+      const cacheKey = `feature:${userId}:${featureName}`;
+      try {
+        const cached = await redis.get(cacheKey);
+        if (cached) {
+          return JSON.parse(cached);
+        }
+      } catch (err) {
+        console.warn('[FeatureFlagService] Redis read error, using DB');
       }
-    } catch (err) {
-      console.warn('[FeatureFlagService] Redis read error, using DB');
     }
 
     // Get user's tier from RBAC roles (not users.subscriptionTier)
@@ -125,11 +135,14 @@ export class FeatureFlagService {
       ? { allowed: tierLimit[0].limitValue === 1 }
       : { allowed: true };
 
-    // Cache result
-    try {
-      await redis.setex(cacheKey, CACHE_TTL, JSON.stringify(result));
-    } catch (err) {
-      console.warn('[FeatureFlagService] Redis write error');
+    // Cache result (only if Redis available)
+    if (redis) {
+      const cacheKey = `feature:${userId}:${featureName}`;
+      try {
+        await redis.setex(cacheKey, CACHE_TTL, JSON.stringify(result));
+      } catch (err) {
+        console.warn('[FeatureFlagService] Redis write error');
+      }
     }
 
     return result;
@@ -143,15 +156,17 @@ export class FeatureFlagService {
     userId: number,
     featureName: string
   ): Promise<QuotaFeatureResult> {
-    // Try cache first
-    const cacheKey = `quota:${userId}:${featureName}`;
-    try {
-      const cached = await redis.get(cacheKey);
-      if (cached) {
-        return JSON.parse(cached);
+    // Try cache first (only if Redis available)
+    if (redis) {
+      const cacheKey = `quota:${userId}:${featureName}`;
+      try {
+        const cached = await redis.get(cacheKey);
+        if (cached) {
+          return JSON.parse(cached);
+        }
+      } catch (err) {
+        console.warn('[FeatureFlagService] Redis read error, using DB');
       }
-    } catch (err) {
-      console.warn('[FeatureFlagService] Redis read error, using DB');
     }
 
     // Get user's tier from RBAC roles (not users.subscriptionTier)
@@ -254,7 +269,7 @@ export class FeatureFlagService {
         .limit(1);
     }
 
-    const current = usage[0].currentUsage;
+    const current = usage[0]?.currentUsage ?? 0;
     const limit = tierLimit[0].limitValue;
 
     // Check if quota exceeded
@@ -273,11 +288,14 @@ export class FeatureFlagService {
           isUnlimited: false,
         };
 
-    // Cache result
-    try {
-      await redis.setex(cacheKey, CACHE_TTL, JSON.stringify(result));
-    } catch (err) {
-      console.warn('[FeatureFlagService] Redis write error');
+    // Cache result (only if Redis available)
+    if (redis) {
+      const cacheKey = `quota:${userId}:${featureName}`;
+      try {
+        await redis.setex(cacheKey, CACHE_TTL, JSON.stringify(result));
+      } catch (err) {
+        console.warn('[FeatureFlagService] Redis write error');
+      }
     }
 
     return result;
@@ -287,12 +305,14 @@ export class FeatureFlagService {
    * Increment quota usage for a feature (invalidates cache)
    */
   static async incrementQuota(userId: number, featureName: string): Promise<void> {
-    // Invalidate cache
-    const cacheKey = `quota:${userId}:${featureName}`;
-    try {
-      await redis.del(cacheKey);
-    } catch (err) {
-      console.warn('[FeatureFlagService] Redis delete error');
+    // Invalidate cache (only if Redis available)
+    if (redis) {
+      const cacheKey = `quota:${userId}:${featureName}`;
+      try {
+        await redis.del(cacheKey);
+      } catch (err) {
+        console.warn('[FeatureFlagService] Redis delete error');
+      }
     }
     // Get feature flag
     const feature = await db

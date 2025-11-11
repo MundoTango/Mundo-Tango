@@ -2,110 +2,170 @@ import Redis from 'ioredis';
 import { cacheHits, cacheMisses } from '../monitoring/prometheus';
 
 /**
- * Redis Caching System
- * Implements caching strategies with invalidation patterns
+ * Redis Caching System (CONDITIONAL)
+ * Implements caching with automatic in-memory fallback when Redis unavailable
  */
 
 // Redis client (singleton)
 let redisClient: Redis | null = null;
+let redisAvailable = false;
+let inMemoryCache = new Map<string, { value: any; expiry: number }>();
 
-export function getRedisClient(): Redis {
+// Check if Redis should be enabled - ONLY if REDIS_URL is explicitly set
+const REDIS_ENABLED = Boolean(process.env.REDIS_URL);
+
+export function getRedisClient(): Redis | null {
+  if (!REDIS_ENABLED) {
+    return null;
+  }
+  
   if (!redisClient) {
-    redisClient = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      password: process.env.REDIS_PASSWORD,
-      retryStrategy: (times) => {
-        const delay = Math.min(times * 50, 2000);
-        return delay;
-      },
-    });
-    
-    redisClient.on('error', (err) => {
-      console.error('Redis connection error:', err);
-    });
-    
-    redisClient.on('connect', () => {
-      console.log('Redis connected successfully');
-    });
+    try {
+      redisClient = new Redis(process.env.REDIS_URL!, {
+        maxRetriesPerRequest: 1,
+        retryStrategy: (times) => {
+          if (times > 1) {
+            redisAvailable = false;
+            return null; // Stop retrying after 1 attempt
+          }
+          return 100;
+        },
+        enableOfflineQueue: false,
+      });
+      
+      redisClient.on('error', (err) => {
+        console.warn('⚠️ Redis cache error:', err.message);
+        redisAvailable = false;
+      });
+      
+      redisClient.on('connect', () => {
+        console.log('✅ Redis cache connected');
+        redisAvailable = true;
+      });
+    } catch (error) {
+      console.log('⚠️ Redis unavailable - using in-memory cache fallback');
+      return null;
+    }
   }
   
   return redisClient;
 }
 
 /**
- * Cache wrapper with automatic hit/miss tracking
+ * Cache wrapper with automatic Redis/In-Memory fallback
  */
 export class CacheService {
-  private redis: Redis;
+  private redis: Redis | null;
   private defaultTTL: number = 3600; // 1 hour
   
   constructor() {
     this.redis = getRedisClient();
+    if (!this.redis) {
+      console.log('ℹ️ Using in-memory cache (Redis unavailable)');
+    }
   }
   
   /**
-   * Get cached value
+   * Get cached value (Redis or in-memory)
    */
   async get<T>(key: string): Promise<T | null> {
     try {
-      const cached = await this.redis.get(key);
-      
-      if (cached) {
-        cacheHits.inc({ cache_type: 'redis' });
-        return JSON.parse(cached);
+      // Try Redis first
+      if (this.redis && redisAvailable) {
+        const cached = await this.redis.get(key);
+        if (cached) {
+          cacheHits.inc({ cache_type: 'redis' });
+          return JSON.parse(cached);
+        }
+        cacheMisses.inc({ cache_type: 'redis' });
+        return null;
       }
       
-      cacheMisses.inc({ cache_type: 'redis' });
+      // Fallback to in-memory
+      const cached = inMemoryCache.get(key);
+      if (cached && cached.expiry > Date.now()) {
+        cacheHits.inc({ cache_type: 'memory' });
+        return cached.value;
+      }
+      
+      cacheMisses.inc({ cache_type: 'memory' });
       return null;
     } catch (error) {
-      console.error('Cache get error:', error);
       cacheMisses.inc({ cache_type: 'redis' });
       return null;
     }
   }
   
   /**
-   * Set cache value with TTL
+   * Set cache value with TTL (Redis or in-memory)
    */
   async set(key: string, value: any, ttl?: number): Promise<boolean> {
+    const expiry = ttl || this.defaultTTL;
+    
     try {
-      const serialized = JSON.stringify(value);
-      const expiry = ttl || this.defaultTTL;
+      // Try Redis first
+      if (this.redis && redisAvailable) {
+        const serialized = JSON.stringify(value);
+        await this.redis.setex(key, expiry, serialized);
+        return true;
+      }
       
-      await this.redis.setex(key, expiry, serialized);
+      // Fallback to in-memory
+      inMemoryCache.set(key, {
+        value,
+        expiry: Date.now() + (expiry * 1000),
+      });
       return true;
     } catch (error) {
-      console.error('Cache set error:', error);
-      return false;
+      // Silent fallback to in-memory
+      inMemoryCache.set(key, {
+        value,
+        expiry: Date.now() + (expiry * 1000),
+      });
+      return true;
     }
   }
   
   /**
-   * Delete cache key
+   * Delete cache key (Redis or in-memory)
    */
   async del(key: string): Promise<boolean> {
     try {
-      await this.redis.del(key);
+      if (this.redis && redisAvailable) {
+        await this.redis.del(key);
+      }
+      inMemoryCache.delete(key);
       return true;
     } catch (error) {
-      console.error('Cache delete error:', error);
-      return false;
+      inMemoryCache.delete(key);
+      return true;
     }
   }
   
   /**
-   * Delete multiple keys matching pattern
+   * Delete multiple keys matching pattern (Redis or in-memory)
    */
   async delPattern(pattern: string): Promise<number> {
     try {
-      const keys = await this.redis.keys(pattern);
-      if (keys.length === 0) return 0;
+      if (this.redis && redisAvailable) {
+        const keys = await this.redis.keys(pattern);
+        if (keys.length > 0) {
+          await this.redis.del(...keys);
+        }
+        return keys.length;
+      }
       
-      await this.redis.del(...keys);
-      return keys.length;
+      // In-memory pattern matching
+      const regex = new RegExp(pattern.replace('*', '.*'));
+      let count = 0;
+      for (const key of inMemoryCache.keys()) {
+        if (regex.test(key)) {
+          inMemoryCache.delete(key);
+          count++;
+        }
+      }
+      return count;
     } catch (error) {
-      console.error('Cache delete pattern error:', error);
       return 0;
     }
   }

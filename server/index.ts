@@ -22,7 +22,7 @@ import {
   searchRateLimiter 
 } from "./middleware/rateLimiter";
 import { securityHeaders } from "./middleware/securityHeaders";
-import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
+import { setCsrfToken, verifyDoubleSubmitCookie } from "./middleware/csrf";
 
 const app = express();
 
@@ -130,9 +130,9 @@ app.use((req, res, next) => {
   app.use('/api/search', searchRateLimiter);
   app.use('/api', apiRateLimiter);
   
-  // CSRF Protection - Use double-submit cookie pattern (no server-side storage needed)
-  // Skip CSRF for now - re-enable after fixing session management
-  // app.use('/api', verifyCsrfToken);
+  // CSRF Protection - Double-submit cookie pattern (stateless, no Redis needed)
+  app.use(setCsrfToken); // Set token cookie on all GET requests
+  app.use('/api', verifyDoubleSubmitCookie); // Verify token on mutations
   
   const server = await registerRoutes(app);
 
