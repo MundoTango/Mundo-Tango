@@ -193,6 +193,13 @@ const DanceStylesDetailPage = lazy(() => import("@/pages/DanceStylesDetailPage")
 const AdminContentModerationDetailPage = lazy(() => import("@/pages/AdminContentModerationDetailPage"));
 const EventCheckInPage = lazy(() => import("@/pages/EventCheckInPage"));
 const GroupsDetailPage = lazy(() => import("@/pages/GroupsDetailPage"));
+const AdminUserDetailPage = lazy(() => import("@/pages/AdminUserDetailPage"));
+const AdminSettingsPage = lazy(() => import("@/pages/AdminSettingsPage"));
+const AdminReportsPage = lazy(() => import("@/pages/AdminReportsPage"));
+const TeacherProfilePage = lazy(() => import("@/pages/TeacherProfilePage"));
+const TutorialDetailPage = lazy(() => import("@/pages/TutorialDetailPage"));
+const MarketplaceItemDetailPage = lazy(() => import("@/pages/MarketplaceItemDetailPage"));
+const BlogDetailPage = lazy(() => import("@/pages/BlogDetailPage"));
 const StoriesPage = lazy(() => import("@/pages/StoriesPage"));
 const VenueRecommendationsPage = lazy(() => import("@/pages/VenueRecommendationsPage"));
 const TermsPage = lazy(() => import("@/pages/TermsPage"));
@@ -876,6 +883,48 @@ function Router() {
       <Route path="/admin/moderation/:reportId">
         <ProtectedRoute>
           <AdminContentModerationDetailPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/users/:userId">
+        <ProtectedRoute>
+          <AdminUserDetailPage />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/settings">
+        <ProtectedRoute>
+          <AdminSettingsPage />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/reports">
+        <ProtectedRoute>
+          <AdminReportsPage />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/teachers/:teacherId">
+        <ProtectedRoute>
+          <TeacherProfilePage />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/tutorials/:tutorialId">
+        <ProtectedRoute>
+          <TutorialDetailPage />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/marketplace/:itemId">
+        <ProtectedRoute>
+          <MarketplaceItemDetailPage />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/blog/:blogId">
+        <ProtectedRoute>
+          <BlogDetailPage />
         </ProtectedRoute>
       </Route>
       

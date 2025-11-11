@@ -1,120 +1,105 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Play, Clock, Users, Star, BookOpen } from "lucide-react";
+import { MapPin, Clock, Phone, Mail, Star, Calendar } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
-export default function TutorialDetailPage() {
+export default function VenueDetailPage() {
   return (
-    <SelfHealingErrorBoundary pageName="Tutorial Detail" fallbackRoute="/tutorials">
-      <PageLayout title="Mastering the Ocho: Forward & Back" showBreadcrumbs>
-<div className="min-h-screen bg-background py-8 px-4">
-      <div className="container mx-auto max-w-6xl">
-        <div className="grid gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <div className="aspect-video bg-muted mb-6 overflow-hidden rounded-lg flex items-center justify-center">
-              <Play className="h-20 w-20 text-primary/50" />
-            </div>
-
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-2">
-                <Badge>Intermediate</Badge>
-                <Badge variant="outline">Technique</Badge>
-              </div>
-              
-              
-              <div className="flex items-center gap-4">
-                <Avatar>
-                  <AvatarImage src="" />
-                  <AvatarFallback>CR</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-semibold">Carlos Rodriguez</p>
-                  <p className="text-sm text-muted-foreground">Master Instructor</p>
-                </div>
+    <SelfHealingErrorBoundary pageName="Venue Details" fallbackRoute="/events">
+      <PageLayout title="La Catedral Tango" showBreadcrumbs>
+      <div className="min-h-screen bg-background py-8 px-4">
+        <div className="container mx-auto max-w-4xl">
+          {/* Venue Header */}
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold mb-2">La Catedral Tango</h1>
+            <div className="flex items-center gap-4 flex-wrap">
+              <Badge variant="outline">Milonga</Badge>
+              <div className="flex items-center gap-1">
+                <Star className="h-4 w-4 fill-primary text-primary" />
+                4.8 (245 reviews)
               </div>
             </div>
+          </div>
 
-            <Card className="mb-6">
+          <div className="grid gap-8 lg:grid-cols-3">
+          <div className="lg:col-span-2 space-y-6">
+            <Card>
               <CardHeader>
-                <CardTitle>About This Tutorial</CardTitle>
+                <CardTitle>About This Venue</CardTitle>
               </CardHeader>
               <CardContent className="text-muted-foreground">
                 <p>
-                  Learn how to execute perfect ochos with precision and musicality. This comprehensive
-                  tutorial breaks down the fundamental technique step-by-step, covering both forward
-                  and backward ochos.
+                  La Catedral is one of Buenos Aires' most iconic tango venues. Located in a converted
+                  warehouse, it offers an authentic and intimate atmosphere for traditional milongas.
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>What You'll Learn</CardTitle>
+                <CardTitle>Upcoming Events</CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <BookOpen className="h-5 w-5 shrink-0 mt-0.5 text-primary" />
-                    <span>Proper weight transfer and pivot technique</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <BookOpen className="h-5 w-5 shrink-0 mt-0.5 text-primary" />
-                    <span>Body alignment and posture during ochos</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <BookOpen className="h-5 w-5 shrink-0 mt-0.5 text-primary" />
-                    <span>Common mistakes and how to avoid them</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <BookOpen className="h-5 w-5 shrink-0 mt-0.5 text-primary" />
-                    <span>Musical interpretation for ochos</span>
-                  </li>
-                </ul>
+                <div className="space-y-4">
+                  {[1, 2, 3].map((item) => (
+                    <div key={item} className="flex items-center justify-between py-3 border-b last:border-0">
+                      <div className="flex items-center gap-3">
+                        <Calendar className="h-5 w-5 text-muted-foreground" />
+                        <div>
+                          <p className="font-medium">Friday Night Milonga</p>
+                          <p className="text-sm text-muted-foreground">Dec 15, 2025 • 8:00 PM</p>
+                        </div>
+                      </div>
+                      <Button size="sm">RSVP</Button>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           </div>
 
           <div>
-            <Card className="sticky top-4">
+            <Card>
               <CardHeader>
-                <CardTitle>Course Details</CardTitle>
+                <CardTitle>Venue Information</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-3 text-sm">
-                  <Clock className="h-5 w-5 text-muted-foreground" />
-                  <span>25 minutes</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <Users className="h-5 w-5 text-muted-foreground" />
-                  <span>2,847 students</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <Star className="h-5 w-5 fill-primary text-primary" />
-                  <span>4.9 (342 reviews)</span>
-                </div>
-
-                <div className="pt-4">
-                  <div className="text-center mb-4">
-                    <p className="text-3xl font-bold text-primary">$12.99</p>
-                    <p className="text-sm text-muted-foreground">one-time purchase</p>
+              <CardContent className="space-y-4 text-sm">
+                <div className="flex items-start gap-3">
+                  <MapPin className="h-5 w-5 text-muted-foreground shrink-0" />
+                  <div>
+                    <p className="font-medium">Address</p>
+                    <p className="text-muted-foreground">Sarmiento 4006, Buenos Aires</p>
                   </div>
-                  <Button className="w-full mb-2" data-testid="button-enroll">
-                    <Play className="h-4 w-4 mr-2" />
-                    Enroll Now
-                  </Button>
-                  <Button variant="outline" className="w-full" data-testid="button-preview">
-                    Preview
-                  </Button>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Clock className="h-5 w-5 text-muted-foreground shrink-0" />
+                  <div>
+                    <p className="font-medium">Hours</p>
+                    <p className="text-muted-foreground">Tue-Sun: 8PM - 2AM</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Phone className="h-5 w-5 text-muted-foreground shrink-0" />
+                  <div>
+                    <p className="font-medium">Phone</p>
+                    <p className="text-muted-foreground">+54 11 5236-8888</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Mail className="h-5 w-5 text-muted-foreground shrink-0" />
+                  <div>
+                    <p className="font-medium">Email</p>
+                    <p className="text-muted-foreground">info@lacatedral.com</p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </div>
         </div>
+        </div>
       </div>
-    </div>
     </PageLayout>
     </SelfHealingErrorBoundary>
   );
