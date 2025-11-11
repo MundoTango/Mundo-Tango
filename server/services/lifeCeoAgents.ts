@@ -318,12 +318,15 @@ export class LifeCeoAgentService {
 
       const contextPrompt = this.buildContextPrompt(insights);
 
-      const fullConversation = [
+      const fullConversation: Array<{ role: 'user' | 'assistant'; content: string }> = [
         {
           role: 'user' as const,
           content: `${agent.systemPrompt}\n\n${contextPrompt}\n\nUser: ${message}`,
         },
-        ...conversationHistory.slice(-10),
+        ...conversationHistory.slice(-10).map(msg => ({
+          role: msg.role as 'user' | 'assistant',
+          content: msg.content,
+        })),
       ];
 
       const response = await anthropic.messages.create({
