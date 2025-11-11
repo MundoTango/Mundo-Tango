@@ -10,22 +10,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTheme } from "@/contexts/theme-context";
 import { 
   Users, MapPin, Star, Building2, Search, Plus, Globe,
-  TrendingUp, MessageCircle, UserPlus, ChevronRight, Sun, Moon
+  TrendingUp, MessageCircle, UserPlus, ChevronRight, Sun, Moon,
+  Calendar, Home
 } from "lucide-react";
 
-// MY GROUPS - Automated by city/pro
+// MY GROUPS - Automated by city/pro (simplified to city name)
 const MY_GROUPS = [
   {
     id: 1,
-    name: "Buenos Aires Tango Community",
+    name: "Buenos Aires",
     type: "city",
     memberCount: 12847,
     unreadPosts: 23,
-    coverImage: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1200&auto=format&fit=crop&q=80",
+    coverImage: "https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=1200&auto=format&fit=crop&q=80", // BA cityscape
   },
   {
     id: 2,
-    name: "Professional Tango Teachers",
+    name: "Teachers Network",
     type: "professional",
     memberCount: 3421,
     unreadPosts: 8,
@@ -33,14 +34,16 @@ const MY_GROUPS = [
   },
 ];
 
-// CITIES - City name + cityscape
+// CITIES - City name + cityscape with detailed stats
 const CITY_GROUPS = [
   {
     id: 1,
     name: "Buenos Aires",
     country: "Argentina",
-    memberCount: 12847,
-    activeToday: 2341,
+    users: 12847,
+    events: 234,
+    housing: 89,
+    recommendations: 156,
     cityscape: "https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=1200&auto=format&fit=crop&q=80",
     description: "The birthplace of tango",
   },
@@ -48,8 +51,10 @@ const CITY_GROUPS = [
     id: 2,
     name: "Paris",
     country: "France",
-    memberCount: 8234,
-    activeToday: 1456,
+    users: 8234,
+    events: 178,
+    housing: 64,
+    recommendations: 124,
     cityscape: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1200&auto=format&fit=crop&q=80",
     description: "Europe's tango capital",
   },
@@ -57,8 +62,10 @@ const CITY_GROUPS = [
     id: 3,
     name: "New York",
     country: "USA",
-    memberCount: 6421,
-    activeToday: 987,
+    users: 6421,
+    events: 156,
+    housing: 45,
+    recommendations: 98,
     cityscape: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=1200&auto=format&fit=crop&q=80",
     description: "Vibrant North American scene",
   },
@@ -66,8 +73,10 @@ const CITY_GROUPS = [
     id: 4,
     name: "Berlin",
     country: "Germany",
-    memberCount: 5234,
-    activeToday: 823,
+    users: 5234,
+    events: 134,
+    housing: 38,
+    recommendations: 87,
     cityscape: "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=1200&auto=format&fit=crop&q=80",
     description: "Alternative tango culture",
   },
@@ -75,8 +84,10 @@ const CITY_GROUPS = [
     id: 5,
     name: "Istanbul",
     country: "Turkey",
-    memberCount: 3421,
-    activeToday: 564,
+    users: 3421,
+    events: 89,
+    housing: 28,
+    recommendations: 56,
     cityscape: "https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?w=1200&auto=format&fit=crop&q=80",
     description: "Bridge between cultures",
   },
@@ -84,34 +95,36 @@ const CITY_GROUPS = [
     id: 6,
     name: "Tokyo",
     country: "Japan",
-    memberCount: 4123,
-    activeToday: 712,
+    users: 4123,
+    events: 112,
+    housing: 32,
+    recommendations: 71,
     cityscape: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1200&auto=format&fit=crop&q=80",
     description: "Asian tango excellence",
   },
 ];
 
-// PRO GROUPS - Professional communities
+// PRO GROUPS - Professional communities (simplified names)
 const PRO_GROUPS = [
   {
     id: 1,
-    name: "Professional Tango Teachers",
-    description: "A global network of certified tango instructors sharing methodology, pedagogy, and business insights.",
+    name: "Teachers Network",
+    description: "A global network of certified instructors sharing methodology, pedagogy, and business insights.",
     coverImage: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1200&auto=format&fit=crop&q=80",
     memberCount: 3421,
     verified: true,
   },
   {
     id: 2,
-    name: "Tango DJ Collective",
-    description: "Master the art of tango musicality. Share playlists, discover rare recordings, and elevate your DJ craft.",
+    name: "DJ Collective",
+    description: "Master the art of musicality. Share playlists, discover rare recordings, and elevate your DJ craft.",
     coverImage: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=1200&auto=format&fit=crop&q=80",
     memberCount: 1876,
     verified: true,
   },
   {
     id: 3,
-    name: "Event Organizers Network",
+    name: "Event Organizers",
     description: "Connect with milonga and festival organizers worldwide. Best practices, sponsorships, and collaboration.",
     coverImage: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200&auto=format&fit=crop&q=80",
     memberCount: 2134,
@@ -119,8 +132,8 @@ const PRO_GROUPS = [
   },
   {
     id: 4,
-    name: "Tango Performers Union",
-    description: "Professional stage performers sharing opportunities, choreography, and performance techniques.",
+    name: "Performers Union",
+    description: "Stage performers sharing opportunities, choreography, and performance techniques.",
     coverImage: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=1200&auto=format&fit=crop&q=80",
     memberCount: 987,
     verified: true,
@@ -376,15 +389,36 @@ function CityGroupCard({ city, index }: { city: typeof CITY_GROUPS[0]; index: nu
         <div className="p-6 space-y-4">
           <p className="text-sm text-muted-foreground">{city.description}</p>
           
-          <div className="flex items-center justify-between text-sm">
-            <span className="flex items-center gap-1 text-muted-foreground">
-              <Users className="w-4 h-4" />
-              {city.memberCount.toLocaleString()}
-            </span>
-            <span className="flex items-center gap-1 text-green-600">
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              {city.activeToday.toLocaleString()} active
-            </span>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-cyan-500" />
+              <div>
+                <div className="font-semibold">{city.users.toLocaleString()}</div>
+                <div className="text-xs text-muted-foreground">Users</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-purple-500" />
+              <div>
+                <div className="font-semibold">{city.events}</div>
+                <div className="text-xs text-muted-foreground">Events</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Home className="w-4 h-4 text-green-500" />
+              <div>
+                <div className="font-semibold">{city.housing}</div>
+                <div className="text-xs text-muted-foreground">Housing</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Star className="w-4 h-4 text-amber-500" />
+              <div>
+                <div className="font-semibold">{city.recommendations}</div>
+                <div className="text-xs text-muted-foreground">Recs</div>
+              </div>
+            </div>
           </div>
 
           <Button className="w-full gap-2">
