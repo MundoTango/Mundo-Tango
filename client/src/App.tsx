@@ -29,6 +29,7 @@ import MarketingPrototype from "@/pages/MarketingPrototype";
 import MarketingPrototypeEnhanced from "@/pages/MarketingPrototypeEnhanced";
 import MarketingPrototypeOcean from "@/pages/MarketingPrototypeOcean";
 import FeedPrototypePage from "@/pages/FeedPrototypePage";
+import GroupsPrototypePage from "@/pages/GroupsPrototypePage";
 
 // Lazy-loaded pages for better performance
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
@@ -239,6 +240,7 @@ function Router() {
       <Route path="/marketing-prototype-enhanced" component={MarketingPrototypeEnhanced} />
       <Route path="/marketing-prototype-ocean" component={MarketingPrototypeOcean} />
       <Route path="/feed-prototype" component={FeedPrototypePage} />
+      <Route path="/groups-prototype" component={GroupsPrototypePage} />
       <Route path="/about" component={AboutPage} />
       <Route path="/discover" component={DiscoverPage} />
       <Route path="/volunteer" component={VolunteerPage} />

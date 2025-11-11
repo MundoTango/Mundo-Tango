@@ -6,36 +6,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/contexts/AuthContext";
+import { PostCreator } from "@/components/universal/PostCreator";
+import { SmartPostFeed } from "@/components/feed/SmartPostFeed";
+import { UpcomingEventsSidebar } from "@/components/feed/UpcomingEventsSidebar";
+import { RoleIconBadge } from "@/components/feed/RoleIconBadge";
 import { 
   Heart, MessageCircle, Share2, Bookmark, MoreHorizontal,
-  MapPin, Music2, Star, GraduationCap, PartyPopper, Plane,
-  TrendingUp, Users, Calendar, Music, Sparkles, Home,
-  Camera, Palette, Briefcase, Mic, Pen, BookOpen,
-  Target, Shirt, Globe, Radio, Eye, Trophy, Filter
+  MapPin, Star, TrendingUp
 } from "lucide-react";
-
-// Tango Role Icon Mapping
-const ROLE_ICONS = {
-  "dancer-leader": Users,
-  "dancer-follower": Music,
-  "teacher": GraduationCap,
-  "dj": Radio,
-  "performer": Star,
-  "organizer": Calendar,
-  "venue-owner": Home,
-  "photographer": Camera,
-  "artist": Palette,
-  "business": Briefcase,
-  "mc": Mic,
-  "journalist": Pen,
-  "historian": BookOpen,
-  "coach": Target,
-  "clothing-designer": Shirt,
-  "community-builder": Globe,
-  "musician": Music2,
-  "fan": Eye,
-  "other": Heart,
-} as const;
 
 const TANGO_QUOTES = [
   { text: "The tango is a direct expression of something that poets have often tried to state in words: the belief that a struggle may be a celebration.", author: "Jorge Luis Borges" },
@@ -48,6 +26,67 @@ export default function FeedPrototypePage() {
   const [quoteIndex, setQuoteIndex] = useState(0);
   const currentQuote = TANGO_QUOTES[quoteIndex];
 
+  // Mock posts for demonstration
+  const mockPosts = [
+    {
+      id: 1,
+      userId: 1,
+      content: "Last night at Salon Canning was pure magic. The energy, the music, the embrace... moments like these remind me why we dance. 💫",
+      imageUrl: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=1200&auto=format&fit=crop&q=80",
+      visibility: "public",
+      likes: 142,
+      comments: 28,
+      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      tags: ["milonga", "buenos-aires"],
+      location: "Buenos Aires, Argentina",
+      user: {
+        id: 1,
+        name: "Sofia Martinez",
+        username: "sofia_tango",
+        profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=sofia",
+        tangoRoles: ["dancer-leader", "teacher", "organizer"],
+        verified: true
+      }
+    },
+    {
+      id: 2,
+      userId: 2,
+      content: "Teaching my first workshop this weekend! 🎓 Topic: The Art of Musicality in Tango. Limited spots available - who's joining?",
+      visibility: "public",
+      likes: 89,
+      comments: 15,
+      createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+      location: "Milan, Italy",
+      user: {
+        id: 2,
+        name: "Marco Rossi",
+        username: "marco_dj",
+        profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=marco",
+        tangoRoles: ["teacher", "dj"],
+        verified: false
+      }
+    },
+    {
+      id: 3,
+      userId: 3,
+      content: "Festival season is here! Just booked tickets to three festivals across Europe. Who else is planning their tango travel? ✈️🌍",
+      imageUrl: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&auto=format&fit=crop&q=80",
+      visibility: "public",
+      likes: 234,
+      comments: 47,
+      createdAt: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+      location: "Barcelona, Spain",
+      user: {
+        id: 3,
+        name: "Elena Volkov",
+        username: "elena_dance",
+        profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=elena",
+        tangoRoles: ["organizer", "dancer-follower", "photographer"],
+        verified: true
+      }
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       {/* Daily Tango Inspiration Hero - Full Width */}
@@ -58,73 +97,27 @@ export default function FeedPrototypePage() {
         <div className="flex gap-12">
           {/* Main Feed Column - Editorial Style */}
           <div className="flex-1 max-w-4xl space-y-12">
-            {/* Create Post - Clean & Spacious */}
-            <CreatePostCard />
+            {/* Post Creator - Integrated */}
+            <PostCreator 
+              onPostCreated={() => {}}
+              className="border-0 shadow-sm"
+            />
 
-            {/* Feed Filters + Trending */}
-            <div className="flex items-center justify-between">
-              <FeedFilters />
-              <TrendingBadge />
-            </div>
-
-            <Separator className="my-8" />
-
-            {/* Post Feed - Magazine Style */}
-            <div className="space-y-16">
-              <PostCard
-                author={{
-                  name: "Sofia Martinez",
-                  username: "@sofia_tango",
-                  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sofia",
-                  verified: true,
-                  role: "dancer-leader"
-                }}
-                content="Last night at Salon Canning was pure magic. The energy, the music, the embrace... moments like these remind me why we dance. 💫"
-                timestamp="2h ago"
-                location="Buenos Aires, Argentina"
-                category="Milonga"
-                stats={{ likes: 142, comments: 28, shares: 12 }}
-                image="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=1200&auto=format&fit=crop&q=80"
-              />
-
-              <PostCard
-                author={{
-                  name: "Marco Rossi",
-                  username: "@marco_dj",
-                  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=marco",
-                  verified: false,
-                  role: "teacher"
-                }}
-                content="Teaching my first workshop this weekend! 🎓 Topic: The Art of Musicality in Tango. Limited spots available - who's joining?"
-                timestamp="5h ago"
-                location="Milan, Italy"
-                category="Workshop"
-                stats={{ likes: 89, comments: 15, shares: 8 }}
-              />
-
-              <PostCard
-                author={{
-                  name: "Elena Volkov",
-                  username: "@elena_dance",
-                  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=elena",
-                  verified: true,
-                  role: "organizer"
-                }}
-                content="Festival season is here! Just booked tickets to three festivals across Europe. Who else is planning their tango travel? ✈️🌍"
-                timestamp="8h ago"
-                location="Barcelona, Spain"
-                category="Travel"
-                stats={{ likes: 234, comments: 47, shares: 31 }}
-                image="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&auto=format&fit=crop&q=80"
-              />
-            </div>
+            {/* Smart Feed Search & Filters */}
+            <SmartPostFeed posts={mockPosts as any}>
+              {/* Post Feed - Magazine Style */}
+              <div className="space-y-16 mt-8">
+                {mockPosts.map((post) => (
+                  <PostCard key={post.id} post={post} />
+                ))}
+              </div>
+            </SmartPostFeed>
           </div>
 
           {/* Sidebar - Elevated Design */}
           <div className="w-96 space-y-8 sticky top-8 self-start">
+            <UpcomingEventsSidebar />
             <CommunityPulse />
-            <UpcomingHighlights />
-            <SuggestedConnections />
           </div>
         </div>
       </div>
@@ -196,99 +189,28 @@ function DailyInspirationHero({ quote }: { quote: { text: string; author: string
   );
 }
 
-function CreatePostCard() {
-  const { user } = useAuth();
-  return (
-    <Card className="p-8 border-0 shadow-sm bg-card/50 backdrop-blur-sm">
-      <div className="flex gap-6">
-        <Avatar className="w-14 h-14">
-          <AvatarImage src={user?.profileImage || undefined} />
-          <AvatarFallback className="text-lg">{user?.name?.[0] || 'U'}</AvatarFallback>
-        </Avatar>
-        <div className="flex-1 space-y-4">
-          <input
-            type="text"
-            placeholder="Share your tango moment..."
-            className="w-full px-0 py-2 text-lg bg-transparent border-0 border-b-2 border-border focus:border-primary focus:outline-none transition-colors placeholder:text-muted-foreground/60"
-          />
-          <div className="flex items-center gap-3">
-            <Button size="sm" variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
-              <Camera className="w-4 h-4" />
-              Photo
-            </Button>
-            <Button size="sm" variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
-              <MapPin className="w-4 h-4" />
-              Location
-            </Button>
-            <Button size="sm" variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
-              <Music2 className="w-4 h-4" />
-              Music
-            </Button>
-            <Button size="sm" className="ml-auto">
-              Share
-            </Button>
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-function FeedFilters() {
-  const [active, setActive] = useState("all");
-  const filters = [
-    { id: "all", label: "All Posts" },
-    { id: "following", label: "Following" },
-    { id: "popular", label: "Popular" },
-  ];
-
-  return (
-    <div className="flex gap-2">
-      {filters.map((filter) => (
-        <Button
-          key={filter.id}
-          variant={active === filter.id ? "default" : "ghost"}
-          size="sm"
-          onClick={() => setActive(filter.id)}
-          className="rounded-full"
-        >
-          {filter.label}
-        </Button>
-      ))}
-    </div>
-  );
-}
-
-function TrendingBadge() {
-  return (
-    <Button variant="outline" size="sm" className="gap-2">
-      <TrendingUp className="w-4 h-4 text-primary" />
-      Trending
-      <Badge variant="secondary" className="ml-1">24</Badge>
-    </Button>
-  );
-}
-
 interface PostCardProps {
-  author: {
-    name: string;
-    username: string;
-    avatar: string;
-    verified: boolean;
-    role?: keyof typeof ROLE_ICONS;
+  post: {
+    id: number;
+    content: string;
+    imageUrl?: string;
+    likes: number;
+    comments: number;
+    createdAt: string;
+    location?: string;
+    user: {
+      name: string;
+      username: string;
+      profileImage?: string;
+      tangoRoles?: string[];
+      verified?: boolean;
+    };
   };
-  content: string;
-  timestamp: string;
-  location: string;
-  category: string;
-  stats: { likes: number; comments: number; shares: number };
-  image?: string;
 }
 
-function PostCard({ author, content, timestamp, location, category, stats, image }: PostCardProps) {
+function PostCard({ post }: PostCardProps) {
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
-  const RoleIcon = author.role ? ROLE_ICONS[author.role] : null;
 
   return (
     <motion.article
@@ -297,77 +219,68 @@ function PostCard({ author, content, timestamp, location, category, stats, image
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="group"
+      data-testid={`post-card-${post.id}`}
     >
       {/* Featured Image - Magazine Style */}
-      {image && (
+      {post.imageUrl && (
         <div className="relative aspect-[16/9] overflow-hidden rounded-2xl mb-8">
           <motion.img
-            src={image}
+            src={post.imageUrl}
             alt="Post"
             className="w-full h-full object-cover"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.6 }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-          <Badge 
-            className="absolute top-6 left-6 bg-white/90 text-foreground border-0"
-          >
-            {category}
-          </Badge>
         </div>
       )}
 
       {/* Post Content */}
       <div className="space-y-6">
-        {/* Author Info - Editorial Style */}
-        <div className="flex items-center gap-4">
-          <Avatar className="w-12 h-12 ring-2 ring-offset-2 ring-primary/20">
-            <AvatarImage src={author.avatar} />
-            <AvatarFallback>{author.name[0]}</AvatarFallback>
+        {/* Author Info - Editorial Style with Role Icons */}
+        <div className="flex items-start gap-4">
+          <Avatar className="w-14 h-14 ring-2 ring-offset-2 ring-primary/20">
+            <AvatarImage src={post.user.profileImage} />
+            <AvatarFallback className="text-lg">{post.user.name[0]}</AvatarFallback>
           </Avatar>
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-lg">{author.name}</h3>
-              {author.verified && <Star className="w-4 h-4 text-primary fill-primary" />}
-              {RoleIcon && (
-                <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10">
-                  <RoleIcon className="w-3 h-3 text-primary" />
-                  <span className="text-xs text-primary font-medium">
-                    {author.role?.split('-').join(' ')}
-                  </span>
-                </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-3 flex-wrap">
+              <h3 className="font-semibold text-lg">{post.user.name}</h3>
+              {post.user.verified && <Star className="w-4 h-4 text-primary fill-primary shrink-0" />}
+              {/* Role Icons with Hover Tooltips */}
+              {post.user.tangoRoles && post.user.tangoRoles.length > 0 && (
+                <RoleIconBadge roles={post.user.tangoRoles} size="md" />
               )}
             </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>{author.username}</span>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1 flex-wrap">
+              <span>@{post.user.username}</span>
               <span>·</span>
-              <span>{timestamp}</span>
-              {location && (
+              <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+              {post.location && (
                 <>
                   <span>·</span>
                   <div className="flex items-center gap-1">
                     <MapPin className="w-3 h-3" />
-                    <span>{location}</span>
+                    <span>{post.location}</span>
                   </div>
                 </>
               )}
             </div>
           </div>
-          <Button size="icon" variant="ghost" className="rounded-full">
+          <Button size="icon" variant="ghost" className="rounded-full shrink-0">
             <MoreHorizontal className="w-5 h-5" />
           </Button>
         </div>
 
         {/* Post Text - Better Typography */}
         <p className="text-xl leading-relaxed text-foreground/90">
-          {content}
+          {post.content}
         </p>
 
         {/* Stats Bar - Minimal */}
         <div className="flex items-center gap-6 text-sm text-muted-foreground py-4">
-          <span>{stats.likes} likes</span>
-          <span>{stats.comments} comments</span>
-          <span>{stats.shares} shares</span>
+          <span>{post.likes} likes</span>
+          <span>{post.comments} comments</span>
         </div>
 
         <Separator />
@@ -443,86 +356,5 @@ function PulseStat({ label, value, trend }: { label: string; value: string; tren
         </Badge>
       </div>
     </div>
-  );
-}
-
-function UpcomingHighlights() {
-  const events = [
-    { name: "Milonga La Estrella", time: "Tonight 8PM", location: "Buenos Aires" },
-    { name: "Beginner Workshop", time: "Tomorrow 2PM", location: "Barcelona" },
-  ];
-
-  return (
-    <Card className="p-6 border-0 shadow-sm">
-      <div className="flex items-center gap-2 mb-6">
-        <Sparkles className="w-5 h-5 text-primary" />
-        <h3 className="font-semibold">Upcoming</h3>
-      </div>
-      <div className="space-y-4">
-        {events.map((event, i) => (
-          <motion.div
-            key={event.name}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="p-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer"
-          >
-            <p className="font-medium mb-1">{event.name}</p>
-            <div className="flex items-center gap-3 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <Calendar className="w-3 h-3" />
-                {event.time}
-              </span>
-              <span className="flex items-center gap-1">
-                <MapPin className="w-3 h-3" />
-                {event.location}
-              </span>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </Card>
-  );
-}
-
-function SuggestedConnections() {
-  const suggestions = [
-    { name: "Carlos Silva", role: "dancer-leader", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=carlos" },
-    { name: "Ana Torres", role: "teacher", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=ana" },
-  ];
-
-  return (
-    <Card className="p-6 border-0 shadow-sm">
-      <h3 className="font-semibold mb-6">Suggested Connections</h3>
-      <div className="space-y-4">
-        {suggestions.map((person, i) => {
-          const RoleIcon = ROLE_ICONS[person.role as keyof typeof ROLE_ICONS];
-          return (
-            <motion.div
-              key={person.name}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="flex items-center gap-3"
-            >
-              <Avatar className="w-10 h-10">
-                <AvatarImage src={person.avatar} />
-                <AvatarFallback>{person.name[0]}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{person.name}</p>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  {RoleIcon && <RoleIcon className="w-3 h-3" />}
-                  <span className="capitalize">{person.role.replace('-', ' ')}</span>
-                </div>
-              </div>
-              <Button size="sm" variant="outline" className="shrink-0">
-                Follow
-              </Button>
-            </motion.div>
-          );
-        })}
-      </div>
-    </Card>
   );
 }
