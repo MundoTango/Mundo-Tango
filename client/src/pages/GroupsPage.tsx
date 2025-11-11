@@ -488,18 +488,19 @@ export default function GroupsPage() {
                     </div>
                   </Card>
 
-            {/* Create Group CTA */}
-            {!isCreating && (
-              <Card className="p-6 bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/20">
-                <h3 className="font-semibold mb-2">Start a Community</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Create your own group and bring dancers together
-                </p>
-                <Button className="w-full" onClick={() => setIsCreating(true)} data-testid="button-create-group">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Group
-                </Button>
-              </Card>
+                  {/* Create Group CTA */}
+                  {!isCreating && (
+                    <Card className="p-6 bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/20">
+                      <h3 className="font-semibold mb-2">Start a Community</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Create your own group and bring dancers together
+                      </p>
+                      <Button className="w-full" onClick={() => setIsCreating(true)} data-testid="button-create-group">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Create Group
+                      </Button>
+                    </Card>
+                  )}
                 </div>
               </div>
             </div>
