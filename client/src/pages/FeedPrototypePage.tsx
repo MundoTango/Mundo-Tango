@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,260 +8,264 @@ import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
   Heart, MessageCircle, Share2, Bookmark, MoreHorizontal,
-  Sparkles, Users, Calendar, MapPin, Music2, Star, 
-  GraduationCap, PartyPopper, Plane, TrendingUp, Zap
+  MapPin, Music2, Star, GraduationCap, PartyPopper, Plane,
+  TrendingUp, Users, Calendar, Music, Sparkles, Home,
+  Camera, Palette, Briefcase, Mic, Pen, BookOpen,
+  Target, Shirt, Globe, Radio, Eye, Trophy, Filter
 } from "lucide-react";
+
+// Tango Role Icon Mapping
+const ROLE_ICONS = {
+  "dancer-leader": Users,
+  "dancer-follower": Music,
+  "teacher": GraduationCap,
+  "dj": Radio,
+  "performer": Star,
+  "organizer": Calendar,
+  "venue-owner": Home,
+  "photographer": Camera,
+  "artist": Palette,
+  "business": Briefcase,
+  "mc": Mic,
+  "journalist": Pen,
+  "historian": BookOpen,
+  "coach": Target,
+  "clothing-designer": Shirt,
+  "community-builder": Globe,
+  "musician": Music2,
+  "fan": Eye,
+  "other": Heart,
+} as const;
+
+const TANGO_QUOTES = [
+  { text: "The tango is a direct expression of something that poets have often tried to state in words: the belief that a struggle may be a celebration.", author: "Jorge Luis Borges" },
+  { text: "Tango is a sad thought that is danced.", author: "Enrique Santos Discépolo" },
+  { text: "The tango can be debated, and we all do, but it still encloses, as does all that is truthful, a secret.", author: "Jorge Luis Borges" },
+];
 
 export default function FeedPrototypePage() {
   const { user } = useAuth();
-  const firstName = user?.name?.split(' ')[0] || user?.username || 'Dancer';
-  const currentHour = new Date().getHours();
-  const greeting = 
-    currentHour < 12 ? 'Good morning' :
-    currentHour < 18 ? 'Good afternoon' : 
-    'Good evening';
+  const [quoteIndex, setQuoteIndex] = useState(0);
+  const currentQuote = TANGO_QUOTES[quoteIndex];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-      <div className="flex gap-6 p-6 max-w-7xl mx-auto">
-        {/* Main Feed Column */}
-        <div className="flex-1 max-w-3xl space-y-6">
-          {/* Hero Welcome Section */}
-          <HeroWelcome greeting={greeting} firstName={firstName} />
+    <div className="min-h-screen bg-background">
+      {/* Daily Tango Inspiration Hero - Full Width */}
+      <DailyInspirationHero quote={currentQuote} />
 
-          {/* Create Post Card */}
-          <CreatePostCard />
+      {/* Main Content - Magazine Layout */}
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="flex gap-12">
+          {/* Main Feed Column - Editorial Style */}
+          <div className="flex-1 max-w-4xl space-y-12">
+            {/* Create Post - Clean & Spacious */}
+            <CreatePostCard />
 
-          {/* Trending Topics */}
-          <TrendingTopics />
+            {/* Feed Filters + Trending */}
+            <div className="flex items-center justify-between">
+              <FeedFilters />
+              <TrendingBadge />
+            </div>
 
-          {/* Post Feed */}
-          <PostCard
-            author={{
-              name: "Sofia Martinez",
-              username: "@sofia_tango",
-              avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sofia",
-              verified: true
-            }}
-            content="Just experienced the most magical milonga at Salon Canning! The energy, the music, the embrace... this is why we dance. 💫"
-            timestamp="2 hours ago"
-            location="Buenos Aires, Argentina"
-            category="Milonga"
-            stats={{ likes: 142, comments: 28, shares: 12 }}
-            image="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800&auto=format&fit=crop"
-          />
+            <Separator className="my-8" />
 
-          <PostCard
-            author={{
-              name: "Marco Rossi",
-              username: "@marco_dj",
-              avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=marco",
-              verified: false
-            }}
-            content="Teaching my first workshop this weekend! 🎓 Topic: The Art of Musicality in Tango. Limited spots available - who's joining?"
-            timestamp="5 hours ago"
-            location="Milan, Italy"
-            category="Workshop"
-            stats={{ likes: 89, comments: 15, shares: 8 }}
-          />
+            {/* Post Feed - Magazine Style */}
+            <div className="space-y-16">
+              <PostCard
+                author={{
+                  name: "Sofia Martinez",
+                  username: "@sofia_tango",
+                  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sofia",
+                  verified: true,
+                  role: "dancer-leader"
+                }}
+                content="Last night at Salon Canning was pure magic. The energy, the music, the embrace... moments like these remind me why we dance. 💫"
+                timestamp="2h ago"
+                location="Buenos Aires, Argentina"
+                category="Milonga"
+                stats={{ likes: 142, comments: 28, shares: 12 }}
+                image="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=1200&auto=format&fit=crop&q=80"
+              />
 
-          <PostCard
-            author={{
-              name: "Elena Volkov",
-              username: "@elena_dance",
-              avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=elena",
-              verified: true
-            }}
-            content="Festival season is here! Just booked tickets to three festivals across Europe. Who else is planning their tango travel? ✈️🌍"
-            timestamp="8 hours ago"
-            location="Barcelona, Spain"
-            category="Travel"
-            stats={{ likes: 234, comments: 47, shares: 31 }}
-            image="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800&auto=format&fit=crop"
-          />
-        </div>
+              <PostCard
+                author={{
+                  name: "Marco Rossi",
+                  username: "@marco_dj",
+                  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=marco",
+                  verified: false,
+                  role: "teacher"
+                }}
+                content="Teaching my first workshop this weekend! 🎓 Topic: The Art of Musicality in Tango. Limited spots available - who's joining?"
+                timestamp="5h ago"
+                location="Milan, Italy"
+                category="Workshop"
+                stats={{ likes: 89, comments: 15, shares: 8 }}
+              />
 
-        {/* Right Sidebar */}
-        <div className="w-80 space-y-6">
-          <CommunityStats />
-          <SuggestedConnections />
-          <UpcomingEvents />
+              <PostCard
+                author={{
+                  name: "Elena Volkov",
+                  username: "@elena_dance",
+                  avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=elena",
+                  verified: true,
+                  role: "organizer"
+                }}
+                content="Festival season is here! Just booked tickets to three festivals across Europe. Who else is planning their tango travel? ✈️🌍"
+                timestamp="8h ago"
+                location="Barcelona, Spain"
+                category="Travel"
+                stats={{ likes: 234, comments: 47, shares: 31 }}
+                image="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&auto=format&fit=crop&q=80"
+              />
+            </div>
+          </div>
+
+          {/* Sidebar - Elevated Design */}
+          <div className="w-96 space-y-8 sticky top-8 self-start">
+            <CommunityPulse />
+            <UpcomingHighlights />
+            <SuggestedConnections />
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function HeroWelcome({ greeting, firstName }: { greeting: string; firstName: string }) {
+function DailyInspirationHero({ quote }: { quote: { text: string; author: string } }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="relative overflow-hidden"
-    >
-      <Card 
-        className="relative p-8 border-2"
+    <div className="relative h-[60vh] w-full overflow-hidden">
+      {/* Background Image with Parallax Effect */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center"
         style={{
-          background: `
-            linear-gradient(135deg, 
-              rgba(64, 224, 208, 0.12) 0%, 
-              rgba(30, 144, 255, 0.08) 50%,
-              rgba(100, 180, 255, 0.06) 100%
-            )
-          `,
-          borderImage: 'linear-gradient(135deg, rgba(64, 224, 208, 0.4), rgba(30, 144, 255, 0.3)) 1',
-          backdropFilter: 'blur(20px)',
-          boxShadow: `
-            0 8px 32px rgba(64, 224, 208, 0.15),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2)
-          `,
+          backgroundImage: `url('https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=2000&auto=format&fit=crop&q=80')`,
         }}
       >
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <motion.div
-            className="absolute -top-20 -right-20 w-64 h-64 rounded-full"
-            style={{
-              background: 'radial-gradient(circle, rgba(64, 224, 208, 0.15) 0%, transparent 70%)',
-            }}
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          />
-        </div>
-
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-3">
-            <motion.div animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}>
-              <Sparkles className="w-6 h-6 text-primary" />
-            </motion.div>
-            <h1 className="text-3xl font-bold">
-              <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                {greeting}, {firstName}!
-              </span>
-            </h1>
-          </div>
-          <p className="text-muted-foreground mb-6 text-lg">
-            Welcome back to your tango community
-          </p>
-
-          <div className="grid grid-cols-3 gap-4">
-            <StatCard icon={<Heart className="w-5 h-5" />} value={24} label="Posts Today" delay={0.7} />
-            <StatCard icon={<Users className="w-5 h-5" />} value={142} label="Active Now" delay={0.8} />
-            <StatCard icon={<Calendar className="w-5 h-5" />} value={8} label="Events This Week" delay={0.9} />
-          </div>
-        </div>
-      </Card>
-    </motion.div>
-  );
-}
-
-function StatCard({ icon, value, label, delay }: { icon: React.ReactNode; value: number; label: string; delay: number }) {
-  return (
-    <motion.div
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ delay, duration: 0.4, type: "spring", stiffness: 200 }}
-      whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-      className="flex flex-col items-center p-4 rounded-lg cursor-pointer"
-      style={{
-        background: 'rgba(255, 255, 255, 0.05)',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(64, 224, 208, 0.2)',
-      }}
-    >
-      <div className="text-primary mb-2">{icon}</div>
-      <div className="text-2xl font-bold bg-gradient-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">
-        {value}
+        {/* Gradient Overlay for Readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
       </div>
-      <div className="text-xs text-muted-foreground text-center mt-1">{label}</div>
-    </motion.div>
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="max-w-4xl"
+        >
+          <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+            Daily Tango Inspiration
+          </Badge>
+          
+          <AnimatePresence mode="wait">
+            <motion.blockquote
+              key={quote.text}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.6 }}
+              className="text-4xl md:text-5xl lg:text-6xl font-serif text-white leading-tight mb-8"
+            >
+              "{quote.text}"
+            </motion.blockquote>
+          </AnimatePresence>
+
+          <motion.cite
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+            className="text-xl text-white/80 font-light not-italic"
+          >
+            — {quote.author}
+          </motion.cite>
+        </motion.div>
+      </div>
+
+      {/* Scroll Indicator */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        animate={{ y: [0, 10, 0] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      >
+        <div className="w-6 h-10 border-2 border-white/30 rounded-full p-1">
+          <div className="w-1 h-3 bg-white/60 rounded-full mx-auto" />
+        </div>
+      </motion.div>
+    </div>
   );
 }
 
 function CreatePostCard() {
   const { user } = useAuth();
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2 }}
-    >
-      <Card className="p-6 hover-elevate" style={{ backdropFilter: 'blur(10px)' }}>
-        <div className="flex gap-4">
-          <Avatar>
-            <AvatarImage src={user?.profileImage || undefined} />
-            <AvatarFallback>{user?.name?.[0] || 'U'}</AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <input
-              type="text"
-              placeholder="Share your tango moment..."
-              className="w-full px-4 py-3 rounded-lg bg-muted/50 border-0 focus:ring-2 focus:ring-primary/50 transition-all"
-            />
-            <div className="flex gap-2 mt-4">
-              <Button size="sm" variant="ghost" className="gap-2">
-                <Music2 className="w-4 h-4" />
-                Music
-              </Button>
-              <Button size="sm" variant="ghost" className="gap-2">
-                <MapPin className="w-4 h-4" />
-                Location
-              </Button>
-              <Button size="sm" variant="ghost" className="gap-2">
-                <Star className="w-4 h-4" />
-                Feeling
-              </Button>
-            </div>
+    <Card className="p-8 border-0 shadow-sm bg-card/50 backdrop-blur-sm">
+      <div className="flex gap-6">
+        <Avatar className="w-14 h-14">
+          <AvatarImage src={user?.profileImage || undefined} />
+          <AvatarFallback className="text-lg">{user?.name?.[0] || 'U'}</AvatarFallback>
+        </Avatar>
+        <div className="flex-1 space-y-4">
+          <input
+            type="text"
+            placeholder="Share your tango moment..."
+            className="w-full px-0 py-2 text-lg bg-transparent border-0 border-b-2 border-border focus:border-primary focus:outline-none transition-colors placeholder:text-muted-foreground/60"
+          />
+          <div className="flex items-center gap-3">
+            <Button size="sm" variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
+              <Camera className="w-4 h-4" />
+              Photo
+            </Button>
+            <Button size="sm" variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
+              <MapPin className="w-4 h-4" />
+              Location
+            </Button>
+            <Button size="sm" variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
+              <Music2 className="w-4 h-4" />
+              Music
+            </Button>
+            <Button size="sm" className="ml-auto">
+              Share
+            </Button>
           </div>
         </div>
-      </Card>
-    </motion.div>
+      </div>
+    </Card>
   );
 }
 
-function TrendingTopics() {
-  const topics = [
-    { name: "Milonga", icon: Music2, count: 45 },
-    { name: "Workshop", icon: GraduationCap, count: 28 },
-    { name: "Festival", icon: PartyPopper, count: 18 },
-    { name: "Travel", icon: Plane, count: 12 },
+function FeedFilters() {
+  const [active, setActive] = useState("all");
+  const filters = [
+    { id: "all", label: "All Posts" },
+    { id: "following", label: "Following" },
+    { id: "popular", label: "Popular" },
   ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 0.3 }}
-    >
-      <Card className="p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <TrendingUp className="w-5 h-5 text-primary" />
-          <h3 className="font-semibold">Trending Topics</h3>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {topics.map((topic, i) => (
-            <motion.div
-              key={topic.name}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.4 + i * 0.1, type: "spring" }}
-            >
-              <Badge 
-                variant="secondary" 
-                className="gap-2 px-3 py-2 hover-elevate cursor-pointer"
-              >
-                <topic.icon className="w-4 h-4" />
-                {topic.name}
-                <span className="text-xs opacity-60">• {topic.count}</span>
-              </Badge>
-            </motion.div>
-          ))}
-        </div>
-      </Card>
-    </motion.div>
+    <div className="flex gap-2">
+      {filters.map((filter) => (
+        <Button
+          key={filter.id}
+          variant={active === filter.id ? "default" : "ghost"}
+          size="sm"
+          onClick={() => setActive(filter.id)}
+          className="rounded-full"
+        >
+          {filter.label}
+        </Button>
+      ))}
+    </div>
+  );
+}
+
+function TrendingBadge() {
+  return (
+    <Button variant="outline" size="sm" className="gap-2">
+      <TrendingUp className="w-4 h-4 text-primary" />
+      Trending
+      <Badge variant="secondary" className="ml-1">24</Badge>
+    </Button>
   );
 }
 
@@ -271,190 +275,170 @@ interface PostCardProps {
     username: string;
     avatar: string;
     verified: boolean;
+    role?: keyof typeof ROLE_ICONS;
   };
   content: string;
   timestamp: string;
   location: string;
   category: string;
-  stats: {
-    likes: number;
-    comments: number;
-    shares: number;
-  };
+  stats: { likes: number; comments: number; shares: number };
   image?: string;
 }
 
 function PostCard({ author, content, timestamp, location, category, stats, image }: PostCardProps) {
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
-
-  const categoryConfig = {
-    Milonga: { icon: Music2, color: "text-red-500" },
-    Workshop: { icon: GraduationCap, color: "text-blue-500" },
-    Travel: { icon: Plane, color: "text-cyan-500" },
-  } as any;
-
-  const config = categoryConfig[category] || { icon: Star, color: "text-yellow-500" };
+  const RoleIcon = author.role ? ROLE_ICONS[author.role] : null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
+    <motion.article
+      initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="group"
     >
-      <Card 
-        className="overflow-hidden hover-elevate active-elevate-2 transition-all duration-300"
-        style={{
-          background: 'rgba(255, 255, 255, 0.02)',
-          backdropFilter: 'blur(20px)',
-          boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
-        }}
-      >
-        {/* Header */}
-        <div className="p-6 pb-4">
-          <div className="flex items-start justify-between">
-            <div className="flex gap-3">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Avatar className="w-12 h-12 ring-2 ring-primary/20">
-                  <AvatarImage src={author.avatar} />
-                  <AvatarFallback>{author.name[0]}</AvatarFallback>
-                </Avatar>
-              </motion.div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h4 className="font-semibold">{author.name}</h4>
-                  {author.verified && (
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: "spring", delay: 0.2 }}
-                    >
-                      <Zap className="w-4 h-4 text-primary fill-primary" />
-                    </motion.div>
-                  )}
-                </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span>{author.username}</span>
-                  <span>•</span>
-                  <span>{timestamp}</span>
-                </div>
-                <div className="flex items-center gap-1 mt-1">
-                  <MapPin className="w-3 h-3 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">{location}</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="gap-1.5">
-                <config.icon className={`w-3 h-3 ${config.color}`} />
-                {category}
-              </Badge>
-              <Button size="icon" variant="ghost">
-                <MoreHorizontal className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="px-6 pb-4">
-          <p className="text-base leading-relaxed">{content}</p>
-        </div>
-
-        {/* Image */}
-        {image && (
-          <motion.div 
-            className="relative overflow-hidden"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.3 }}
+      {/* Featured Image - Magazine Style */}
+      {image && (
+        <div className="relative aspect-[16/9] overflow-hidden rounded-2xl mb-8">
+          <motion.img
+            src={image}
+            alt="Post"
+            className="w-full h-full object-cover"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.6 }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <Badge 
+            className="absolute top-6 left-6 bg-white/90 text-foreground border-0"
           >
-            <img 
-              src={image} 
-              alt="Post" 
-              className="w-full h-80 object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-          </motion.div>
-        )}
+            {category}
+          </Badge>
+        </div>
+      )}
 
-        {/* Stats Bar */}
-        <div className="px-6 py-3 flex items-center justify-between text-sm text-muted-foreground border-t">
-          <div className="flex gap-4">
-            <span>{stats.likes} likes</span>
-            <span>{stats.comments} comments</span>
+      {/* Post Content */}
+      <div className="space-y-6">
+        {/* Author Info - Editorial Style */}
+        <div className="flex items-center gap-4">
+          <Avatar className="w-12 h-12 ring-2 ring-offset-2 ring-primary/20">
+            <AvatarImage src={author.avatar} />
+            <AvatarFallback>{author.name[0]}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold text-lg">{author.name}</h3>
+              {author.verified && <Star className="w-4 h-4 text-primary fill-primary" />}
+              {RoleIcon && (
+                <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10">
+                  <RoleIcon className="w-3 h-3 text-primary" />
+                  <span className="text-xs text-primary font-medium">
+                    {author.role?.split('-').join(' ')}
+                  </span>
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>{author.username}</span>
+              <span>·</span>
+              <span>{timestamp}</span>
+              {location && (
+                <>
+                  <span>·</span>
+                  <div className="flex items-center gap-1">
+                    <MapPin className="w-3 h-3" />
+                    <span>{location}</span>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
+          <Button size="icon" variant="ghost" className="rounded-full">
+            <MoreHorizontal className="w-5 h-5" />
+          </Button>
+        </div>
+
+        {/* Post Text - Better Typography */}
+        <p className="text-xl leading-relaxed text-foreground/90">
+          {content}
+        </p>
+
+        {/* Stats Bar - Minimal */}
+        <div className="flex items-center gap-6 text-sm text-muted-foreground py-4">
+          <span>{stats.likes} likes</span>
+          <span>{stats.comments} comments</span>
           <span>{stats.shares} shares</span>
         </div>
 
         <Separator />
 
-        {/* Actions */}
-        <div className="p-4 flex items-center justify-around">
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-2"
-              onClick={() => setLiked(!liked)}
-            >
-              <Heart className={`w-5 h-5 ${liked ? 'fill-red-500 text-red-500' : ''}`} />
-              <span className={liked ? 'text-red-500 font-semibold' : ''}>Like</span>
-            </Button>
-          </motion.div>
+        {/* Actions - Spacious */}
+        <div className="flex items-center gap-8 py-2">
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setLiked(!liked)}
+            className="flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors"
+          >
+            <Heart className={`w-6 h-6 ${liked ? 'fill-red-500 text-red-500' : ''}`} />
+            <span className="text-sm font-medium">Like</span>
+          </motion.button>
 
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <Button variant="ghost" size="sm" className="gap-2">
-              <MessageCircle className="w-5 h-5" />
-              Comment
-            </Button>
-          </motion.div>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors"
+          >
+            <MessageCircle className="w-6 h-6" />
+            <span className="text-sm font-medium">Comment</span>
+          </motion.button>
 
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <Button variant="ghost" size="sm" className="gap-2">
-              <Share2 className="w-5 h-5" />
-              Share
-            </Button>
-          </motion.div>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors"
+          >
+            <Share2 className="w-6 h-6" />
+            <span className="text-sm font-medium">Share</span>
+          </motion.button>
 
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSaved(!saved)}
-            >
-              <Bookmark className={`w-5 h-5 ${saved ? 'fill-primary text-primary' : ''}`} />
-            </Button>
-          </motion.div>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setSaved(!saved)}
+            className="flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors ml-auto"
+          >
+            <Bookmark className={`w-6 h-6 ${saved ? 'fill-primary text-primary' : ''}`} />
+          </motion.button>
         </div>
-      </Card>
-    </motion.div>
+      </div>
+    </motion.article>
   );
 }
 
-function CommunityStats() {
+function CommunityPulse() {
   return (
-    <Card className="p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Users className="w-5 h-5 text-primary" />
+    <Card className="p-6 border-0 shadow-sm">
+      <div className="flex items-center gap-2 mb-6">
+        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
         <h3 className="font-semibold">Community Pulse</h3>
       </div>
       <div className="space-y-4">
-        <StatRow label="Active Dancers" value="2,847" trend="+12%" />
-        <StatRow label="Events Today" value="34" trend="+8%" />
-        <StatRow label="New Connections" value="156" trend="+24%" />
+        <PulseStat label="Active Now" value="2,847" trend="+12%" />
+        <PulseStat label="Events Today" value="34" trend="+8%" />
+        <PulseStat label="New Members" value="156" trend="+24%" />
       </div>
     </Card>
   );
 }
 
-function StatRow({ label, value, trend }: { label: string; value: string; trend: string }) {
+function PulseStat({ label, value, trend }: { label: string; value: string; trend: string }) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between py-2">
       <span className="text-sm text-muted-foreground">{label}</span>
-      <div className="flex items-center gap-2">
-        <span className="font-semibold">{value}</span>
-        <Badge variant="secondary" className="text-xs text-green-600">
+      <div className="flex items-center gap-3">
+        <span className="text-xl font-semibold">{value}</span>
+        <Badge variant="secondary" className="text-xs text-green-600 bg-green-50 dark:bg-green-950">
           {trend}
         </Badge>
       </div>
@@ -462,36 +446,38 @@ function StatRow({ label, value, trend }: { label: string; value: string; trend:
   );
 }
 
-function SuggestedConnections() {
-  const suggestions = [
-    { name: "Carlos Silva", role: "Professional Dancer", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=carlos" },
-    { name: "Ana Torres", role: "Dance Teacher", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=ana" },
-    { name: "Luis Garcia", role: "Event Organizer", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=luis" },
+function UpcomingHighlights() {
+  const events = [
+    { name: "Milonga La Estrella", time: "Tonight 8PM", location: "Buenos Aires" },
+    { name: "Beginner Workshop", time: "Tomorrow 2PM", location: "Barcelona" },
   ];
 
   return (
-    <Card className="p-6">
-      <h3 className="font-semibold mb-4">Suggested Connections</h3>
+    <Card className="p-6 border-0 shadow-sm">
+      <div className="flex items-center gap-2 mb-6">
+        <Sparkles className="w-5 h-5 text-primary" />
+        <h3 className="font-semibold">Upcoming</h3>
+      </div>
       <div className="space-y-4">
-        {suggestions.map((person, i) => (
+        {events.map((event, i) => (
           <motion.div
-            key={person.name}
+            key={event.name}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="flex items-center justify-between"
+            className="p-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors cursor-pointer"
           >
-            <div className="flex items-center gap-3">
-              <Avatar>
-                <AvatarImage src={person.avatar} />
-                <AvatarFallback>{person.name[0]}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="text-sm font-medium">{person.name}</p>
-                <p className="text-xs text-muted-foreground">{person.role}</p>
-              </div>
+            <p className="font-medium mb-1">{event.name}</p>
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <Calendar className="w-3 h-3" />
+                {event.time}
+              </span>
+              <span className="flex items-center gap-1">
+                <MapPin className="w-3 h-3" />
+                {event.location}
+              </span>
             </div>
-            <Button size="sm" variant="outline">Follow</Button>
           </motion.div>
         ))}
       </div>
@@ -499,36 +485,43 @@ function SuggestedConnections() {
   );
 }
 
-function UpcomingEvents() {
-  const events = [
-    { name: "Milonga La Estrella", date: "Tonight 8PM", location: "Buenos Aires" },
-    { name: "Beginner Workshop", date: "Tomorrow 2PM", location: "Barcelona" },
+function SuggestedConnections() {
+  const suggestions = [
+    { name: "Carlos Silva", role: "dancer-leader", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=carlos" },
+    { name: "Ana Torres", role: "teacher", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=ana" },
   ];
 
   return (
-    <Card className="p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Calendar className="w-5 h-5 text-primary" />
-        <h3 className="font-semibold">Upcoming Events</h3>
-      </div>
+    <Card className="p-6 border-0 shadow-sm">
+      <h3 className="font-semibold mb-6">Suggested Connections</h3>
       <div className="space-y-4">
-        {events.map((event, i) => (
-          <motion.div
-            key={event.name}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="p-3 rounded-lg bg-muted/50 hover-elevate cursor-pointer"
-          >
-            <p className="font-medium text-sm">{event.name}</p>
-            <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-              <Calendar className="w-3 h-3" />
-              <span>{event.date}</span>
-              <MapPin className="w-3 h-3 ml-1" />
-              <span>{event.location}</span>
-            </div>
-          </motion.div>
-        ))}
+        {suggestions.map((person, i) => {
+          const RoleIcon = ROLE_ICONS[person.role as keyof typeof ROLE_ICONS];
+          return (
+            <motion.div
+              key={person.name}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="flex items-center gap-3"
+            >
+              <Avatar className="w-10 h-10">
+                <AvatarImage src={person.avatar} />
+                <AvatarFallback>{person.name[0]}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">{person.name}</p>
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  {RoleIcon && <RoleIcon className="w-3 h-3" />}
+                  <span className="capitalize">{person.role.replace('-', ' ')}</span>
+                </div>
+              </div>
+              <Button size="sm" variant="outline" className="shrink-0">
+                Follow
+              </Button>
+            </motion.div>
+          );
+        })}
       </div>
     </Card>
   );
