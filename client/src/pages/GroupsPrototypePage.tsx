@@ -211,9 +211,9 @@ export default function GroupsPrototypePage() {
                   </div>
                 </div>
 
-                <div className="space-y-6">
-                  {MY_GROUPS.map((group) => (
-                    <MyGroupCard key={group.id} group={group} />
+                <div className="grid md:grid-cols-2 gap-6">
+                  {MY_GROUPS.map((group, index) => (
+                    <MyGroupCard key={group.id} group={group} index={index} />
                   ))}
                 </div>
 
@@ -321,38 +321,58 @@ function GroupsHero() {
   );
 }
 
-function MyGroupCard({ group }: { group: typeof MY_GROUPS[0] }) {
+function MyGroupCard({ group, index }: { group: typeof MY_GROUPS[0]; index: number }) {
   return (
-    <Card className="overflow-hidden hover-elevate cursor-pointer">
-      <div className="flex gap-6 p-6">
-        <div className="relative w-32 h-32 rounded-lg overflow-hidden shrink-0">
-          <img src={group.coverImage} alt={group.name} className="w-full h-full object-cover" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between mb-3">
-            <div>
-              <h3 className="text-xl font-semibold mb-1">{group.name}</h3>
-              <Badge variant="secondary" className="text-xs capitalize">
-                {group.type}
-              </Badge>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1 }}
+      whileHover={{ y: -4 }}
+      className="group cursor-pointer"
+    >
+      <Card className="overflow-hidden hover-elevate h-full">
+        {/* Cover Image - 16:9 */}
+        <div className="relative aspect-[16/9] overflow-hidden">
+          <motion.img
+            src={group.coverImage}
+            alt={group.name}
+            className="w-full h-full object-cover"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.6 }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+          
+          {/* Group Name Overlay + New Badge */}
+          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+            <div className="flex items-end justify-between">
+              <div>
+                <h3 className="text-2xl font-serif font-bold mb-1">{group.name}</h3>
+                <Badge variant="secondary" className="text-xs capitalize bg-white/20 text-white border-white/30">
+                  {group.type}
+                </Badge>
+              </div>
+              {group.unreadPosts > 0 && (
+                <Badge className="bg-red-500 text-white">{group.unreadPosts} new</Badge>
+              )}
             </div>
-            {group.unreadPosts > 0 && (
-              <Badge className="bg-red-500">{group.unreadPosts} new</Badge>
-            )}
           </div>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-            <span className="flex items-center gap-1">
-              <Users className="w-4 h-4" />
-              {group.memberCount.toLocaleString()} members
-            </span>
+        </div>
+
+        {/* Group Info */}
+        <div className="p-6 space-y-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Users className="w-4 h-4" />
+            <span>{group.memberCount.toLocaleString()} members</span>
           </div>
-          <Button className="gap-2">
+
+          <Button className="w-full gap-2">
             <MessageCircle className="w-4 h-4" />
             View Posts
           </Button>
         </div>
-      </div>
-    </Card>
+      </Card>
+    </motion.div>
   );
 }
 

@@ -2,105 +2,49 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { RoleIconBadge } from "@/components/feed/RoleIconBadge";
 import { useTheme } from "@/contexts/theme-context";
 import { 
-  Users, MapPin, Star, Search, TrendingUp, Calendar,
-  MessageCircle, UserPlus, Sun, Moon, Globe, Award,
-  Zap, Heart
+  Globe, MapPin, Users, Calendar, Home, Building2, Search, 
+  Sun, Moon, Filter, ChevronRight
 } from "lucide-react";
 
-// FEATURED COMMUNITY MEMBERS
-const FEATURED_MEMBERS = [
-  {
-    id: 1,
-    name: "Sofia Martinez",
-    username: "sofia_tango",
-    location: "Buenos Aires, Argentina",
-    roles: ["dancer-leader", "teacher", "organizer"],
-    profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=sofia",
-    coverImage: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=1200&auto=format&fit=crop&q=80",
-    followers: 4521,
-    contributions: 234,
-    verified: true,
-  },
-  {
-    id: 2,
-    name: "Marco Rossi",
-    username: "marco_dj",
-    location: "Milan, Italy",
-    roles: ["teacher", "dj"],
-    profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=marco",
-    coverImage: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1200&auto=format&fit=crop&q=80",
-    followers: 3421,
-    contributions: 189,
-    verified: true,
-  },
-  {
-    id: 3,
-    name: "Elena Volkov",
-    username: "elena_dance",
-    location: "Barcelona, Spain",
-    roles: ["organizer", "dancer-follower", "photographer"],
-    profileImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=elena",
-    coverImage: "https://images.unsplash.com/photo-1545224144-b38cd309ef69?w=1200&auto=format&fit=crop&q=80",
-    followers: 5234,
-    contributions: 312,
-    verified: true,
-  },
+// MOCK GLOBAL STATS
+const GLOBAL_STATS = {
+  cities: 10,
+  countries: 4,
+  members: 85,
+  events: 10,
+  venues: 0,
+};
+
+// MOCK COMMUNITIES
+const COMMUNITIES = [
+  { id: 1, name: "Buenos Aires", country: "Argentina", members: 3542, badge: "active" },
+  { id: 2, name: "Madrid", country: "Spain", members: 1287, badge: "active" },
+  { id: 3, name: "Milan", country: "Italy", members: 894, badge: null },
 ];
 
-// COMMUNITY HIGHLIGHTS
-const HIGHLIGHTS = [
-  {
-    id: 1,
-    title: "Most Active City",
-    value: "Buenos Aires",
-    change: "+12%",
-    icon: MapPin,
-    color: "text-cyan-500",
-  },
-  {
-    id: 2,
-    title: "Events This Week",
-    value: "234",
-    change: "+8%",
-    icon: Calendar,
-    color: "text-purple-500",
-  },
-  {
-    id: 3,
-    title: "New Members",
-    value: "156",
-    change: "+24%",
-    icon: Users,
-    color: "text-green-500",
-  },
-  {
-    id: 4,
-    title: "Total Contributions",
-    value: "12.8K",
-    change: "+15%",
-    icon: Heart,
-    color: "text-pink-500",
-  },
-];
-
-// TOP CONTRIBUTORS
-const TOP_CONTRIBUTORS = [
-  { id: 1, name: "Sofia Martinez", points: 2847, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=sofia", badge: "🥇" },
-  { id: 2, name: "Marco Rossi", points: 2341, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=marco", badge: "🥈" },
-  { id: 3, name: "Elena Volkov", points: 2156, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=elena", badge: "🥉" },
-  { id: 4, name: "Carlos Silva", points: 1987, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=carlos", badge: "" },
-  { id: 5, name: "Anna Schmidt", points: 1823, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=anna", badge: "" },
+// MAP LAYERS
+const MAP_LAYERS = [
+  { id: "events", label: "Events", icon: Calendar, color: "bg-purple-500", enabled: true },
+  { id: "housing", label: "Housing", icon: Home, color: "bg-green-500", enabled: true },
+  { id: "venues", label: "Venues", icon: Building2, color: "bg-amber-500", enabled: true },
 ];
 
 export default function CommunityPrototypePage() {
   const { darkMode, toggleDarkMode } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeLayers, setActiveLayers] = useState(["events", "housing", "venues"]);
+
+  const toggleLayer = (layerId: string) => {
+    setActiveLayers(prev => 
+      prev.includes(layerId) 
+        ? prev.filter(id => id !== layerId)
+        : [...prev, layerId]
+    );
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -121,57 +65,136 @@ export default function CommunityPrototypePage() {
       </div>
 
       {/* Hero Section */}
-      <CommunityHero />
+      <CommunityHero stats={GLOBAL_STATS} />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="flex gap-12">
-          {/* Main Column */}
-          <div className="flex-1 max-w-4xl space-y-12">
+        <div className="flex gap-8">
+          {/* Left: Map Controls */}
+          <div className="w-96 space-y-6">
             {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <Input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search community members, cities, roles..."
-                className="pl-12 h-12 text-base"
-              />
-            </div>
-
-            {/* Community Highlights */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {HIGHLIGHTS.map((highlight) => (
-                <Card key={highlight.id} className="p-6 hover-elevate">
-                  <highlight.icon className={`w-8 h-8 mb-4 ${highlight.color}`} />
-                  <div className="text-3xl font-bold mb-1">{highlight.value}</div>
-                  <div className="text-sm text-muted-foreground mb-2">{highlight.title}</div>
-                  <Badge variant="secondary" className="text-xs text-green-600 bg-green-50 dark:bg-green-950">
-                    {highlight.change}
-                  </Badge>
-                </Card>
-              ))}
-            </div>
-
-            {/* Featured Members */}
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-serif font-bold">Featured Members</h2>
-                <Button variant="outline">View All</Button>
+            <Card className="p-6">
+              <h3 className="font-semibold mb-4">Search cities or countries...</h3>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Buenos Aires, Argentina..."
+                  className="pl-10"
+                />
               </div>
+            </Card>
 
-              <div className="space-y-8">
-                {FEATURED_MEMBERS.map((member, index) => (
-                  <FeaturedMemberCard key={member.id} member={member} index={index} />
+            {/* Map Layers */}
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold">Map Layers</h3>
+                <Filter className="w-5 h-5 text-muted-foreground" />
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">
+                Toggle different data layers on the map
+              </p>
+              <div className="space-y-3">
+                {MAP_LAYERS.map((layer) => (
+                  <button
+                    key={layer.id}
+                    onClick={() => toggleLayer(layer.id)}
+                    className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all ${
+                      activeLayers.includes(layer.id)
+                        ? 'bg-primary/10 border-2 border-primary'
+                        : 'bg-muted/50 border-2 border-transparent'
+                    }`}
+                  >
+                    <div className={`w-3 h-3 rounded-full ${layer.color}`} />
+                    <layer.icon className="w-5 h-5" />
+                    <span className="font-medium">{layer.label}</span>
+                    <div className="ml-auto">
+                      {activeLayers.includes(layer.id) && (
+                        <div className="w-2 h-2 rounded-full bg-green-500" />
+                      )}
+                    </div>
+                  </button>
                 ))}
               </div>
-            </div>
+            </Card>
+
+            {/* Communities List */}
+            <Card className="p-6">
+              <h3 className="font-semibold mb-4">Communities ({COMMUNITIES.length} locations)</h3>
+              <div className="space-y-3">
+                {COMMUNITIES.map((community) => (
+                  <motion.div
+                    key={community.id}
+                    whileHover={{ x: 4 }}
+                    className="flex items-center justify-between p-3 rounded-lg hover-elevate cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3">
+                      <MapPin className="w-5 h-5 text-cyan-500" />
+                      <div>
+                        <p className="font-medium">{community.name}</p>
+                        <p className="text-xs text-muted-foreground">{community.country}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {community.badge === "active" && (
+                        <Badge variant="secondary" className="text-xs">Active</Badge>
+                      )}
+                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              <Button variant="outline" className="w-full mt-4">
+                <Globe className="w-4 h-4 mr-2" />
+                Ask Mr. Blue
+              </Button>
+            </Card>
           </div>
 
-          {/* Sidebar */}
-          <div className="w-96 space-y-8 sticky top-8 self-start">
-            <TopContributorsCard />
-            <GlobalStatsCard />
+          {/* Right: Interactive Map Placeholder */}
+          <div className="flex-1">
+            <Card className="overflow-hidden h-[800px]">
+              <div className="relative w-full h-full bg-gradient-to-br from-cyan-50 to-blue-100 dark:from-slate-800 dark:to-slate-900">
+                {/* Map Placeholder */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center space-y-4">
+                    <Globe className="w-24 h-24 mx-auto text-cyan-500 animate-pulse" />
+                    <h3 className="text-2xl font-serif font-bold">Interactive Map</h3>
+                    <p className="text-muted-foreground max-w-md">
+                      Color-coded markers for Events ({activeLayers.includes('events') ? 'ON' : 'OFF'}), 
+                      Housing ({activeLayers.includes('housing') ? 'ON' : 'OFF'}), 
+                      and Venues ({activeLayers.includes('venues') ? 'ON' : 'OFF'})
+                    </p>
+                    <div className="flex items-center justify-center gap-4 mt-6">
+                      {MAP_LAYERS.map((layer) => (
+                        <div key={layer.id} className="flex items-center gap-2">
+                          <div className={`w-4 h-4 rounded-full ${layer.color}`} />
+                          <span className="text-sm">{layer.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mock Markers */}
+                <motion.div
+                  className="absolute top-1/4 left-1/3 w-8 h-8 rounded-full bg-purple-500 border-4 border-white shadow-lg"
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ repeat: Infinity, duration: 2 }}
+                />
+                <motion.div
+                  className="absolute top-1/2 right-1/3 w-8 h-8 rounded-full bg-green-500 border-4 border-white shadow-lg"
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ repeat: Infinity, duration: 2, delay: 0.5 }}
+                />
+                <motion.div
+                  className="absolute bottom-1/3 left-1/2 w-8 h-8 rounded-full bg-amber-500 border-4 border-white shadow-lg"
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ repeat: Infinity, duration: 2, delay: 1 }}
+                />
+              </div>
+            </Card>
           </div>
         </div>
       </div>
@@ -179,9 +202,9 @@ export default function CommunityPrototypePage() {
   );
 }
 
-function CommunityHero() {
+function CommunityHero({ stats }: { stats: typeof GLOBAL_STATS }) {
   return (
-    <div className="relative h-[50vh] w-full overflow-hidden">
+    <div className="relative h-[40vh] w-full overflow-hidden">
       <div 
         className="absolute inset-0 bg-cover bg-center"
         style={{
@@ -204,156 +227,40 @@ function CommunityHero() {
           </Badge>
           
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
-            Meet Our Community
+            Global Tango Community
           </h1>
           
-          <p className="text-xl text-white/80 max-w-2xl mx-auto">
-            12,847 passionate dancers, teachers, and artists across 89 cities worldwide
+          <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
+            Discover tango communities around the world
           </p>
+
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+            <StatCard icon={Globe} label="Cities" value={stats.cities} suffix="cities 4 countries" />
+            <StatCard icon={Users} label="Members" value={stats.members} suffix="worldwide dancers" />
+            <StatCard icon={Calendar} label="Active Events" value={stats.events} suffix="this month" />
+            <StatCard icon={Building2} label="Venues" value={stats.venues} suffix="milongas & studios" />
+          </div>
         </motion.div>
       </div>
     </div>
   );
 }
 
-interface FeaturedMemberCardProps {
-  member: typeof FEATURED_MEMBERS[0];
-  index: number;
-}
-
-function FeaturedMemberCard({ member, index }: FeaturedMemberCardProps) {
+function StatCard({ icon: Icon, label, value, suffix }: { 
+  icon: any; 
+  label: string; 
+  value: number; 
+  suffix: string;
+}) {
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-      className="group"
+    <motion.div
+      whileHover={{ scale: 1.05 }}
+      className="p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20"
     >
-      {/* Cover Image - 16:9 */}
-      <div className="relative aspect-[16/9] overflow-hidden rounded-2xl mb-6">
-        <motion.img
-          src={member.coverImage}
-          alt={member.name}
-          className="w-full h-full object-cover"
-          whileHover={{ scale: 1.05 }}
-          transition={{ duration: 0.6 }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-        
-        {/* Profile Info Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-8">
-          <div className="flex items-end gap-6">
-            <Avatar className="w-24 h-24 ring-4 ring-white/20">
-              <AvatarImage src={member.profileImage} />
-              <AvatarFallback className="text-2xl">{member.name[0]}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1 text-white">
-              <div className="flex items-center gap-3 mb-2">
-                <h3 className="text-3xl font-serif font-bold">{member.name}</h3>
-                {member.verified && <Star className="w-6 h-6 fill-white" />}
-              </div>
-              <p className="text-white/80 mb-2">@{member.username}</p>
-              <div className="flex items-center gap-2 text-sm">
-                <MapPin className="w-4 h-4" />
-                <span>{member.location}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Member Details */}
-      <div className="space-y-4 px-2">
-        {/* Role Icons */}
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-muted-foreground">Roles:</span>
-          <RoleIconBadge roles={member.roles} size="md" />
-        </div>
-
-        {/* Stats */}
-        <div className="flex items-center gap-8 text-sm">
-          <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-cyan-500" />
-            <span className="font-semibold">{member.followers.toLocaleString()}</span>
-            <span className="text-muted-foreground">followers</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-amber-500" />
-            <span className="font-semibold">{member.contributions}</span>
-            <span className="text-muted-foreground">contributions</span>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-3">
-          <Button className="gap-2 flex-1">
-            <UserPlus className="w-4 h-4" />
-            Follow
-          </Button>
-          <Button variant="outline" className="gap-2 flex-1">
-            <MessageCircle className="w-4 h-4" />
-            Message
-          </Button>
-        </div>
-      </div>
-    </motion.article>
-  );
-}
-
-function TopContributorsCard() {
-  return (
-    <Card className="p-6 border-0 shadow-sm">
-      <div className="flex items-center gap-2 mb-6">
-        <Award className="w-5 h-5 text-amber-500" />
-        <h3 className="font-semibold">Top Contributors</h3>
-      </div>
-      <div className="space-y-4">
-        {TOP_CONTRIBUTORS.map((contributor, i) => (
-          <motion.div
-            key={contributor.id}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="flex items-center gap-3 group cursor-pointer"
-          >
-            <div className="text-2xl w-8">{contributor.badge || `${i + 1}.`}</div>
-            <Avatar className="w-10 h-10">
-              <AvatarImage src={contributor.avatar} />
-              <AvatarFallback>{contributor.name[0]}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate group-hover:text-primary transition-colors">
-                {contributor.name}
-              </p>
-              <p className="text-xs text-muted-foreground">{contributor.points.toLocaleString()} points</p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </Card>
-  );
-}
-
-function GlobalStatsCard() {
-  return (
-    <Card className="p-6 border-0 shadow-sm">
-      <h3 className="font-semibold mb-6">Global Statistics</h3>
-      <div className="space-y-4">
-        <StatRow label="Total Members" value="12,847" />
-        <StatRow label="Active Cities" value="89" />
-        <StatRow label="Events This Month" value="2,341" />
-        <StatRow label="Contributions" value="45.2K" />
-      </div>
-    </Card>
-  );
-}
-
-function StatRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between py-2">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <span className="text-xl font-semibold">{value}</span>
-    </div>
+      <Icon className="w-8 h-8 text-white mb-3 mx-auto" />
+      <div className="text-4xl font-bold text-white mb-1">{value}</div>
+      <div className="text-sm text-white/60">{suffix}</div>
+    </motion.div>
   );
 }
