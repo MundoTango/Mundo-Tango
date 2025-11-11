@@ -8,14 +8,15 @@ import rateLimit from 'express-rate-limit';
 
 export const cspMiddleware = (req: Request, res: Response, next: NextFunction) => {
   // Fix: Remove double quotes from 'unsafe-dynamic' and add proper semicolons
+  // Updated to allow Leaflet CSS from unpkg.com and OpenAI API
   const cspDirectives = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://cdn.jsdelivr.net",
     "script-src-elem 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com",
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: https: blob:",
-    "connect-src 'self' https://*.supabase.co https://api.stripe.com https://api.groq.com wss://*.supabase.co",
+    "connect-src 'self' https://*.supabase.co https://api.stripe.com https://api.groq.com https://api.openai.com wss://*.supabase.co wss:",
     "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
     "object-src 'none'",
     "base-uri 'self'",

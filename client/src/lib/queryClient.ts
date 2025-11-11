@@ -1,6 +1,11 @@
 import { QueryClient, QueryFunction, QueryCache, MutationCache } from "@tanstack/react-query";
 import { logger } from './logger';
 
+function getCsrfToken(): string | null {
+  const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+  return match ? match[1] : null;
+}
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
@@ -16,6 +21,7 @@ export async function apiRequest(
   data?: unknown | undefined,
 ): Promise<Response> {
   const token = localStorage.getItem('accessToken');
+  const csrfToken = getCsrfToken();
   const headers: Record<string, string> = {};
   
   if (data) {
@@ -24,6 +30,11 @@ export async function apiRequest(
   
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
+  }
+  
+  // Include CSRF token for mutating requests
+  if (csrfToken && ["POST", "PUT", "PATCH", "DELETE"].includes(method.toUpperCase())) {
+    headers["x-xsrf-token"] = csrfToken;
   }
   
   const res = await fetch(url, {
