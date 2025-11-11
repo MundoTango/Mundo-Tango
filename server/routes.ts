@@ -3476,5 +3476,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ===============================
+  // DATABASE BACKUP ENDPOINTS
+  // ===============================
+
+  // POST /api/admin/backups/create - Create database backup
+  app.post("/api/admin/backups/create", authenticateToken, requireRoleLevel('super_admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const { createBackup } = await import("./utils/databaseBackup.js");
+      const backupPath = await createBackup();
+      res.json({ 
+        success: true, 
+        backupPath,
+        message: "Database backup created successfully" 
+      });
+    } catch (error) {
+      console.error("Create backup error:", error);
+      res.status(500).json({ message: "Failed to create backup" });
+    }
+  });
+
+  // GET /api/admin/backups/list - List all backups
+  app.get("/api/admin/backups/list", authenticateToken, requireRoleLevel('super_admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const { listBackups } = await import("./utils/databaseBackup.js");
+      const backups = await listBackups();
+      res.json(backups);
+    } catch (error) {
+      console.error("List backups error:", error);
+      res.status(500).json({ message: "Failed to list backups" });
+    }
+  });
+
+  // GET /api/admin/backups/stats - Get backup statistics
+  app.get("/api/admin/backups/stats", authenticateToken, requireRoleLevel('super_admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const { getBackupStats } = await import("./utils/databaseBackup.js");
+      const stats = await getBackupStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Get backup stats error:", error);
+      res.status(500).json({ message: "Failed to get backup statistics" });
+    }
+  });
+
+  // POST /api/admin/backups/cleanup - Clean up old backups
+  app.post("/api/admin/backups/cleanup", authenticateToken, requireRoleLevel('super_admin'), async (req: AuthRequest, res: Response) => {
+    try {
+      const { cleanupOldBackups } = await import("./utils/databaseBackup.js");
+      const deletedCount = await cleanupOldBackups();
+      res.json({ 
+        success: true, 
+        deletedCount,
+        message: `Cleaned up ${deletedCount} old backups` 
+      });
+    } catch (error) {
+      console.error("Cleanup backups error:", error);
+      res.status(500).json({ message: "Failed to cleanup backups" });
+    }
+  });
+
   return httpServer;
 }
