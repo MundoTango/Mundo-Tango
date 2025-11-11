@@ -1,0 +1,364 @@
+{
+  "info": {
+    "name": "Mundo Tango API",
+    "_postman_id": "mundotango-api-v1",
+    "description": "Complete Postman collection for Mundo Tango API testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@mundotango.life\",\n  \"password\": \"SecurePass123!\",\n  \"username\": \"testuser\",\n  \"fullName\": \"Test User\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response.token) {",
+                  "  pm.environment.set('authToken', response.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@mundotango.life\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "Get All Events",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/events",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "events"]
+            }
+          }
+        },
+        {
+          "name": "Create Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Milonga in Buenos Aires\",\n  \"description\": \"Traditional milonga with live orchestra\",\n  \"eventDate\": \"2025-12-01T20:00:00Z\",\n  \"location\": \"Buenos Aires, Argentina\",\n  \"eventType\": \"milonga\",\n  \"capacity\": 150\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/events",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "events"]
+            }
+          }
+        },
+        {
+          "name": "RSVP to Event",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/events/{{eventId}}/rsvp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "events", "{{eventId}}", "rsvp"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Posts",
+      "item": [
+        {
+          "name": "Get Feed",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/posts?page=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Just had an amazing milonga tonight! 💃\",\n  \"visibility\": \"public\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/posts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts"]
+            }
+          }
+        },
+        {
+          "name": "React to Post",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reactionType\": \"heart\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/posts/{{postId}}/react",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "posts", "{{postId}}", "react"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Housing",
+      "item": [
+        {
+          "name": "Get Listings",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/housing",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "housing"]
+            }
+          }
+        },
+        {
+          "name": "Create Listing",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Cozy Apartment near Milongas\",\n  \"description\": \"Beautiful 2BR apartment in San Telmo\",\n  \"price\": 100,\n  \"location\": \"Buenos Aires, Argentina\",\n  \"accommodationType\": \"apartment\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/housing",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "housing"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Life CEO",
+      "item": [
+        {
+          "name": "Get All Agents",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/life-ceo/agents",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "life-ceo", "agents"]
+            }
+          }
+        },
+        {
+          "name": "Chat with Agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Help me plan my career development\",\n  \"agentId\": \"career\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/life-ceo/chat",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "life-ceo", "chat"]
+            }
+          }
+        },
+        {
+          "name": "Get Daily Insights",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/life-ceo/insights/daily",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "life-ceo", "insights", "daily"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Workflows",
+      "item": [
+        {
+          "name": "Get Pending Features",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/founder-approval/pending",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "founder-approval", "pending"]
+            }
+          }
+        },
+        {
+          "name": "Get Safety Reviews",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/safety-reviews/pending",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "safety-reviews", "pending"]
+            }
+          }
+        },
+        {
+          "name": "Get Support Tickets",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/support/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "support", "tickets"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Monitoring",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            }
+          }
+        },
+        {
+          "name": "Metrics",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/metrics",
+              "host": ["{{baseUrl}}"],
+              "path": ["metrics"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "eventId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "postId",
+      "value": "1",
+      "type": "string"
+    }
+  ]
+}
