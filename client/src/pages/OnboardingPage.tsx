@@ -5,11 +5,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
-import { ChevronLeft, ChevronRight, MapPin, Camera, Heart } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, Camera, Heart, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import heroImage from "@assets/stock_images/elegant_professional_9405e610.jpg";
 
 const tangoRoles = [
   { id: "dancer", label: "Dancer", emoji: "💃" },
@@ -89,15 +91,56 @@ export default function OnboardingPage() {
         description="Complete your profile to join the global tango community"
       />
 
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-primary/10 via-accent/5 to-background p-4">
-        <div className="w-full max-w-2xl">
-          {/* Progress Bar */}
-          <div className="mb-8">
-            <Progress value={progress} className="h-2" data-testid="progress-bar" />
-            <p className="text-center text-sm text-muted-foreground mt-2">
-              Step {currentStep} of {totalSteps}
+      {/* Hero Section */}
+      <div className="relative h-[40vh] w-full overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url('${heroImage}')` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        </div>
+        
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+          >
+            <Badge variant="outline" className="mb-4 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-onboarding">
+              Getting Started
+            </Badge>
+            
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4">
+              Welcome to Mundo Tango
+            </h1>
+            
+            <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
+              Join the global tango community in just a few steps
             </p>
-          </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Onboarding Content */}
+      <div className="bg-background">
+        <div className="container mx-auto max-w-3xl px-6 py-12">
+          {/* Editorial Step Indicator */}
+          <motion.div 
+            className="mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <Progress value={progress} className="h-3 mb-4" data-testid="progress-bar" />
+            <div className="flex justify-between items-center">
+              <p className="text-sm font-medium">
+                Step {currentStep} of {totalSteps}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {Math.round(progress)}% Complete
+              </p>
+            </div>
+          </motion.div>
 
           <AnimatePresence mode="wait">
             <motion.div
@@ -106,50 +149,57 @@ export default function OnboardingPage() {
               initial="enter"
               animate="center"
               exit="exit"
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.4 }}
             >
-              <Card className="mb-6">
-                <CardContent className="pt-8 pb-8">
+              <Card className="overflow-hidden">
+                <CardContent className="p-8 md:p-12">
                   {/* Step 1: Welcome */}
                   {currentStep === 1 && (
-                    <div className="text-center space-y-6">
-                      <div className="text-6xl mb-4">👋</div>
-                      <h2 className="text-2xl font-bold">Welcome to Mundo Tango!</h2>
-                      <p className="text-lg text-muted-foreground max-w-md mx-auto">
-                        Let's set up your profile so you can start connecting with the global tango community.
+                    <motion.div 
+                      className="text-center space-y-6"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                    >
+                      <Sparkles className="h-16 w-16 text-primary mx-auto mb-6" />
+                      <h2 className="text-3xl md:text-4xl font-serif font-bold">Welcome to Your Journey</h2>
+                      <p className="text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
+                        Let's set up your profile so you can start connecting with the global tango community and discover events near you.
                       </p>
-                    </div>
+                    </motion.div>
                   )}
 
                   {/* Step 2: Location */}
                   {currentStep === 2 && (
-                    <div className="space-y-6">
+                    <div className="space-y-8">
                       <div className="text-center">
-                        <MapPin className="h-12 w-12 text-primary mx-auto mb-4" />
-                        <h2 className="text-2xl font-bold mb-2">Where are you dancing?</h2>
-                        <p className="text-muted-foreground">
+                        <MapPin className="h-16 w-16 text-primary mx-auto mb-6" />
+                        <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Where Are You Dancing?</h2>
+                        <p className="text-muted-foreground text-lg leading-relaxed">
                           Help us connect you with local events and dancers
                         </p>
                       </div>
                       
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="city">City</Label>
+                      <div className="space-y-6 max-w-md mx-auto">
+                        <div className="space-y-3">
+                          <Label htmlFor="city" className="text-base font-medium">City</Label>
                           <Input
                             id="city"
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
                             placeholder="Buenos Aires"
+                            className="h-12 text-base"
                             data-testid="input-city"
                           />
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="country">Country</Label>
+                        <div className="space-y-3">
+                          <Label htmlFor="country" className="text-base font-medium">Country</Label>
                           <Input
                             id="country"
                             value={country}
                             onChange={(e) => setCountry(e.target.value)}
                             placeholder="Argentina"
+                            className="h-12 text-base"
                             data-testid="input-country"
                           />
                         </div>
@@ -159,21 +209,28 @@ export default function OnboardingPage() {
 
                   {/* Step 3: Profile Photo */}
                   {currentStep === 3 && (
-                    <div className="space-y-6">
+                    <div className="space-y-8">
                       <div className="text-center">
-                        <Camera className="h-12 w-12 text-primary mx-auto mb-4" />
-                        <h2 className="text-2xl font-bold mb-2">Add a profile photo</h2>
-                        <p className="text-muted-foreground">
+                        <Camera className="h-16 w-16 text-primary mx-auto mb-6" />
+                        <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Add a Profile Photo</h2>
+                        <p className="text-muted-foreground text-lg leading-relaxed">
                           A photo helps the community recognize you
                         </p>
                       </div>
 
-                      <div className="flex flex-col items-center gap-4">
+                      <div className="flex flex-col items-center gap-6">
                         {photoUrl ? (
-                          <img src={photoUrl} alt="Profile" className="h-32 w-32 rounded-full object-cover" />
+                          <motion.img 
+                            src={photoUrl} 
+                            alt="Profile" 
+                            className="h-40 w-40 rounded-full object-cover border-4 border-primary/20"
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ duration: 0.4 }}
+                          />
                         ) : (
-                          <div className="h-32 w-32 rounded-full bg-muted flex items-center justify-center">
-                            <Camera className="h-12 w-12 text-muted-foreground" />
+                          <div className="h-40 w-40 rounded-full bg-muted flex items-center justify-center border-4 border-primary/10">
+                            <Camera className="h-16 w-16 text-muted-foreground" />
                           </div>
                         )}
                         <Input
@@ -185,9 +242,10 @@ export default function OnboardingPage() {
                               setPhotoUrl(URL.createObjectURL(file));
                             }
                           }}
+                          className="max-w-md"
                           data-testid="input-photo"
                         />
-                        <Button variant="outline" onClick={() => handleNext()} data-testid="button-skip-photo">
+                        <Button variant="ghost" onClick={() => handleNext()} data-testid="button-skip-photo">
                           Skip for now
                         </Button>
                       </div>
@@ -196,41 +254,56 @@ export default function OnboardingPage() {
 
                   {/* Step 4: Tango Roles */}
                   {currentStep === 4 && (
-                    <div className="space-y-6">
+                    <div className="space-y-8">
                       <div className="text-center">
-                        <Heart className="h-12 w-12 text-primary mx-auto mb-4" />
-                        <h2 className="text-2xl font-bold mb-2">How do you participate in tango?</h2>
-                        <p className="text-muted-foreground">
+                        <Heart className="h-16 w-16 text-primary mx-auto mb-6" />
+                        <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">How Do You Participate in Tango?</h2>
+                        <p className="text-muted-foreground text-lg leading-relaxed">
                           Select all that apply (you can add more later)
                         </p>
                       </div>
 
-                      <div className="grid grid-cols-3 gap-3">
-                        {tangoRoles.map((role) => (
-                          <button
+                      <div className="grid grid-cols-3 md:grid-cols-4 gap-4">
+                        {tangoRoles.map((role, index) => (
+                          <motion.button
                             key={role.id}
                             onClick={() => toggleRole(role.id)}
-                            className={`p-4 rounded-lg border-2 transition-all hover-elevate ${
+                            className={`p-4 rounded-xl border-2 transition-all hover-elevate active-elevate-2 ${
                               selectedRoles.includes(role.id)
                                 ? "border-primary bg-primary/10"
                                 : "border-border"
                             }`}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.03 }}
                             data-testid={`button-role-${role.id}`}
                           >
                             <div className="text-3xl mb-2">{role.emoji}</div>
-                            <div className="text-xs font-medium">{role.label}</div>
-                          </button>
+                            <div className="text-xs font-medium leading-tight">{role.label}</div>
+                          </motion.button>
                         ))}
                       </div>
+
+                      {selectedRoles.length > 0 && (
+                        <motion.div 
+                          className="text-center pt-4 border-t"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                        >
+                          <p className="text-sm text-muted-foreground">
+                            {selectedRoles.length} role{selectedRoles.length > 1 ? 's' : ''} selected
+                          </p>
+                        </motion.div>
+                      )}
                     </div>
                   )}
 
                   {/* Step 5: Guided Tour Intro */}
                   {currentStep === 5 && (
                     <div className="text-center space-y-6">
-                      <div className="text-6xl mb-4">🎯</div>
-                      <h2 className="text-2xl font-bold">Ready for a quick tour?</h2>
-                      <p className="text-lg text-muted-foreground max-w-md mx-auto">
+                      <div className="text-7xl mb-6">🎯</div>
+                      <h2 className="text-3xl md:text-4xl font-serif font-bold">Ready for a Quick Tour?</h2>
+                      <p className="text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
                         We'll show you around the platform so you can start connecting with the tango community right away.
                       </p>
                     </div>
@@ -239,10 +312,10 @@ export default function OnboardingPage() {
                   {/* Step 6: Completion */}
                   {currentStep === 6 && (
                     <div className="text-center space-y-6">
-                      <div className="text-6xl mb-4">🎉</div>
-                      <h2 className="text-2xl font-bold">You're all set!</h2>
-                      <p className="text-lg text-muted-foreground max-w-md mx-auto">
-                        Welcome to Mundo Tango. Let's start exploring!
+                      <div className="text-7xl mb-6">🎉</div>
+                      <h2 className="text-3xl md:text-4xl font-serif font-bold">You're All Set!</h2>
+                      <p className="text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
+                        Welcome to Mundo Tango. Let's start exploring and connecting with dancers worldwide!
                       </p>
                     </div>
                   )}
@@ -250,7 +323,7 @@ export default function OnboardingPage() {
               </Card>
 
               {/* Navigation Buttons */}
-              <div className="flex justify-between mt-6">
+              <div className="flex justify-between mt-8">
                 <Button
                   variant="outline"
                   onClick={handlePrev}

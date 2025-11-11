@@ -7,11 +7,13 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
-import { Search, HelpCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Search, HelpCircle, MessageCircle } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { motion } from "framer-motion";
 
 const faqs = [
   {
@@ -112,73 +114,136 @@ export default function FAQPage() {
         title="FAQ - Mundo Tango"
         description="Find answers to common questions about Mundo Tango. Learn how to get started, find events, connect with dancers, and make the most of our platform."
       />
-      <div className="min-h-screen bg-background py-8 px-4">
+
+      {/* Hero Section */}
+      <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center" style={{
+          backgroundImage: `url('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=1600&h=900&fit=crop&q=80')`
+        }}>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        </div>
+        
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+          >
+            <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
+              <HelpCircle className="w-3 h-3 mr-1.5" />
+              Help Center
+            </Badge>
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
+              Frequently Asked Questions
+            </h1>
+            
+            <p className="text-xl text-white/80 max-w-2xl mx-auto">
+              Find answers to your questions about Mundo Tango
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="bg-background py-12 px-6">
         <div className="container mx-auto max-w-4xl">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-4">Frequently Asked Questions</h1>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+          {/* Search */}
+          <motion.div 
+            className="mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <div className="relative max-w-2xl mx-auto">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Search FAQs..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-12 h-12 text-base"
                 data-testid="input-search-faq"
               />
             </div>
-          </div>
+          </motion.div>
 
           {/* FAQs */}
-        {filteredFaqs.length > 0 ? (
-          <div className="space-y-8">
-            {filteredFaqs.map((category, idx) => (
-              <Card key={idx} data-testid={`faq-category-${idx}`}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <HelpCircle className="h-5 w-5 text-primary" />
-                    {category.category}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Accordion type="single" collapsible className="w-full">
-                    {category.questions.map((qa, qIdx) => (
-                      <AccordionItem key={qIdx} value={`item-${idx}-${qIdx}`}>
-                        <AccordionTrigger data-testid={`faq-question-${idx}-${qIdx}`}>
-                          {qa.q}
-                        </AccordionTrigger>
-                        <AccordionContent className="text-muted-foreground">
-                          {qa.a}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <Card>
-            <CardContent className="py-12 text-center text-muted-foreground">
-              <Search className="mx-auto h-12 w-12 mb-4 opacity-50" />
-              <p>No FAQs match your search</p>
-            </CardContent>
-          </Card>
-        )}
+          {filteredFaqs.length > 0 ? (
+            <div className="space-y-8">
+              {filteredFaqs.map((category, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: idx * 0.1 }}
+                >
+                  <Card data-testid={`faq-category-${idx}`}>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-3 text-2xl font-serif">
+                        <div className="p-2 rounded-lg bg-primary/10">
+                          <HelpCircle className="h-6 w-6 text-primary" />
+                        </div>
+                        {category.category}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <Accordion type="single" collapsible className="w-full">
+                        {category.questions.map((qa, qIdx) => (
+                          <AccordionItem key={qIdx} value={`item-${idx}-${qIdx}`}>
+                            <AccordionTrigger 
+                              className="text-left font-semibold"
+                              data-testid={`faq-question-${idx}-${qIdx}`}
+                            >
+                              {qa.q}
+                            </AccordionTrigger>
+                            <AccordionContent className="text-muted-foreground leading-relaxed">
+                              {qa.a}
+                            </AccordionContent>
+                          </AccordionItem>
+                        ))}
+                      </Accordion>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="py-16 text-center">
+                <Search className="mx-auto h-16 w-16 mb-6 opacity-30" />
+                <h3 className="text-xl font-serif font-bold mb-2">No Results Found</h3>
+                <p className="text-muted-foreground">Try a different search term</p>
+              </CardContent>
+            </Card>
+          )}
 
-        {/* Still need help */}
-        <Card className="mt-8 bg-primary/5 border-primary/20">
-          <CardContent className="py-8 text-center">
-            <h3 className="text-xl font-semibold mb-2">Still need help?</h3>
-            <p className="text-muted-foreground mb-4">
-              Can't find what you're looking for? Contact our support team
-            </p>
-            <a href="mailto:support@mundotango.com" className="text-primary hover:underline">
-              support@mundotango.com
-            </a>
-          </CardContent>
-        </Card>
+          {/* Contact CTA */}
+          <motion.div
+            className="mt-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+              <CardContent className="py-12 text-center">
+                <div className="inline-flex p-4 rounded-2xl bg-primary/10 mb-6">
+                  <MessageCircle className="h-10 w-10 text-primary" />
+                </div>
+                <h3 className="text-3xl font-serif font-bold mb-3">Still need help?</h3>
+                <p className="text-muted-foreground mb-6 text-lg max-w-lg mx-auto">
+                  Can't find what you're looking for? Our support team is here to help
+                </p>
+                <a 
+                  href="mailto:support@mundotango.com" 
+                  className="inline-block text-primary hover:underline text-lg font-semibold"
+                >
+                  support@mundotango.com
+                </a>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
       </div>
     </PageLayout>

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
 import { SEO } from "@/components/SEO";
 import { useQuery } from "@tanstack/react-query";
@@ -23,6 +23,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { motion } from "framer-motion";
 
 const localizer = momentLocalizer(moment);
 
@@ -36,7 +37,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-function EventCard({ event }: { event: EventWithProfile }) {
+function EventCard({ event, index = 0 }: { event: EventWithProfile; index?: number }) {
   const { user } = useAuth();
   const rsvpMutation = useRSVPEvent(event.id);
   const { data: attendance } = useEventAttendance(event.id);
@@ -58,113 +59,114 @@ function EventCard({ event }: { event: EventWithProfile }) {
   const formatEventDateTime = (dateString: string): string => {
     try {
       const date = new Date(dateString);
-      return format(date, "MMM dd, yyyy 'at' h:mm a");
+      return format(date, "MMM dd, yyyy");
+    } catch {
+      return dateString;
+    }
+  };
+
+  const formatEventTime = (dateString: string): string => {
+    try {
+      const date = new Date(dateString);
+      return format(date, "h:mm a");
     } catch {
       return dateString;
     }
   };
 
   return (
-    <Card 
-      className="overflow-hidden hover-elevate" 
-      data-testid={`card-event-${event.id}`}
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
     >
-      {event.image_url ? (
-        <div className="aspect-video w-full overflow-hidden">
-          <img
-            src={event.image_url}
+      <Card 
+        className="overflow-hidden hover-elevate" 
+        data-testid={`card-event-${event.id}`}
+      >
+        <div className="relative aspect-[16/9] overflow-hidden">
+          <motion.img
+            src={event.image_url || "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=800&auto=format&fit=crop"}
             alt={event.title}
             className="w-full h-full object-cover"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.6 }}
             data-testid={`img-event-${event.id}`}
           />
-        </div>
-      ) : (
-        <div className="aspect-video w-full bg-muted flex items-center justify-center">
-          <CalendarIcon className="h-12 w-12 text-muted-foreground" />
-        </div>
-      )}
-
-      <CardHeader>
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <h3 className="line-clamp-2 text-lg font-semibold" data-testid={`text-event-title-${event.id}`}>
-            {event.title}
-          </h3>
-          <div className="flex gap-2 flex-wrap">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+          <div className="absolute top-4 right-4 flex gap-2">
             {event.category && (
-              <Badge variant="secondary" data-testid={`badge-category-${event.id}`}>
+              <Badge className="bg-white/10 text-white border-white/30 backdrop-blur-sm" data-testid={`badge-category-${event.id}`}>
                 {event.category}
               </Badge>
             )}
             {isFull && (
-              <Badge variant="destructive" data-testid={`badge-full-${event.id}`}>
+              <Badge className="bg-red-500 text-white" data-testid={`badge-full-${event.id}`}>
                 Full
               </Badge>
             )}
           </div>
-        </div>
-      </CardHeader>
-
-      <CardContent className="space-y-3">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <CalendarIcon className="h-4 w-4 flex-shrink-0" />
-          <span data-testid={`text-event-date-${event.id}`}>
-            {formatEventDateTime(event.start_date)}
-          </span>
+          <div className="absolute bottom-4 left-4 right-4 text-white">
+            <h3 className="text-2xl font-serif font-bold line-clamp-2 mb-2" data-testid={`text-event-title-${event.id}`}>
+              {event.title}
+            </h3>
+          </div>
         </div>
 
-        {event.location && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <MapPin className="h-4 w-4 flex-shrink-0" />
-            <span className="line-clamp-1" data-testid={`text-event-location-${event.id}`}>
-              {event.location}
+        <CardContent className="p-6 space-y-3">
+          <div className="flex items-center gap-2 text-sm">
+            <CalendarIcon className="h-4 w-4 flex-shrink-0 text-primary" />
+            <span data-testid={`text-event-date-${event.id}`}>
+              {formatEventDateTime(event.start_date)} • {formatEventTime(event.start_date)}
             </span>
           </div>
-        )}
 
-        <div className="flex items-center gap-2 text-sm">
-          <Users className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-          <span data-testid={`text-rsvp-count-${event.id}`}>
-            {attendance ? (
-              <>
-                {attendance.attending} {attendance.attending === 1 ? 'person' : 'people'} attending
-                {attendance.capacity && ` / ${attendance.capacity}`}
-                {attendance.waitlist > 0 && (
-                  <span className="text-muted-foreground" data-testid={`text-waitlist-${event.id}`}>
-                    {' '}({attendance.waitlist} waitlisted)
-                  </span>
-                )}
-              </>
-            ) : (
-              'Loading...'
-            )}
-          </span>
-        </div>
-      </CardContent>
-
-      <CardFooter className="flex gap-2">
-        <Button
-          variant={isRsvped ? "outline" : "default"}
-          className="flex-1"
-          onClick={handleRSVP}
-          disabled={!user || rsvpMutation.isPending}
-          data-testid={`button-rsvp-${event.id}`}
-        >
-          {rsvpMutation.isPending ? (
-            "Loading..."
-          ) : isRsvped ? (
-            "Cancel RSVP"
-          ) : (
-            "RSVP"
+          {event.location && (
+            <div className="flex items-center gap-2 text-sm">
+              <MapPin className="h-4 w-4 flex-shrink-0 text-primary" />
+              <span className="line-clamp-1" data-testid={`text-event-location-${event.id}`}>
+                {event.location}
+              </span>
+            </div>
           )}
-        </Button>
 
-        <Link href={`/events/${event.id}`}>
-          <Button variant="outline" data-testid={`button-view-event-${event.id}`}>
-            Details
+          <div className="flex items-center gap-2 text-sm">
+            <Users className="h-4 w-4 flex-shrink-0 text-primary" />
+            <span data-testid={`text-rsvp-count-${event.id}`}>
+              {attendance ? (
+                <>
+                  {attendance.attending} {attendance.attending === 1 ? 'person' : 'people'}
+                  {attendance.capacity && ` / ${attendance.capacity}`}
+                </>
+              ) : (
+                'Loading...'
+              )}
+            </span>
+          </div>
+        </CardContent>
+
+        <CardFooter className="flex gap-2 pt-0 px-6 pb-6">
+          <Button
+            variant={isRsvped ? "outline" : "default"}
+            className="flex-1 gap-2"
+            onClick={handleRSVP}
+            disabled={!user || rsvpMutation.isPending}
+            data-testid={`button-rsvp-${event.id}`}
+          >
+            <Users className="h-4 w-4" />
+            {rsvpMutation.isPending ? "Loading..." : isRsvped ? "Cancel RSVP" : "RSVP"}
           </Button>
-        </Link>
-      </CardFooter>
-    </Card>
+
+          <Link href={`/events/${event.id}`}>
+            <Button variant="outline" className="gap-2" data-testid={`button-view-event-${event.id}`}>
+              Details
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </Link>
+        </CardFooter>
+      </Card>
+    </motion.div>
   );
 }
 
@@ -206,26 +208,48 @@ export default function EventsPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Events" fallbackRoute="/feed">
-      <PageLayout title="Discover Events" showBreadcrumbs>
-        <>
-          <SEO
-            title="Discover Events"
-            description="Find tango events, milongas, and workshops near you. Join the global tango community and discover authentic Argentine tango experiences worldwide."
-          />
-          <div className="max-w-7xl mx-auto p-6 space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between gap-4 flex-wrap">
-              <div>
-                <h1 className="text-3xl font-serif font-bold mb-2">Discover Events</h1>
-                <p className="text-muted-foreground">
-                  Find tango events, milongas, and workshops near you
-                </p>
-              </div>
-              <Button data-testid="button-create-event">
-                <Plus className="h-4 w-4 mr-2" />
+      <>
+        <SEO
+          title="Discover Events"
+          description="Find tango events, milongas, and workshops near you. Join the global tango community and discover authentic Argentine tango experiences worldwide."
+        />
+        
+        {/* Hero Section */}
+        <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+          <div className="absolute inset-0 bg-cover bg-center" style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1600&auto=format&fit=crop')`
+          }}>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+          </div>
+          
+          <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            >
+              <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+                Events & Milongas
+              </Badge>
+              
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
+                Discover Tango Events
+              </h1>
+              
+              <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
+                Find milongas, workshops, and performances near you. Join the global tango community.
+              </p>
+
+              <Button size="lg" className="gap-2" data-testid="button-create-event">
+                <Plus className="h-5 w-5" />
                 Create Event
+                <ChevronRight className="h-5 w-5" />
               </Button>
-            </div>
+            </motion.div>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 py-12 space-y-8">
 
             {/* Search & Filters */}
             <div className="space-y-4">
@@ -305,9 +329,9 @@ export default function EventsPage() {
                 {viewMode === "list" && (
                   <>
                     {events && events.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {events.map((event) => (
-                          <EventCard key={event.id} event={event} />
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {events.map((event, index) => (
+                          <EventCard key={event.id} event={event} index={index} />
                         ))}
                       </div>
                     ) : (
@@ -383,9 +407,8 @@ export default function EventsPage() {
                 )}
               </>
             )}
-          </div>
-        </>
-      </PageLayout>
+        </div>
+      </>
     </SelfHealingErrorBoundary>
   );
 }

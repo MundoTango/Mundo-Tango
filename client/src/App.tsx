@@ -634,6 +634,7 @@ function Router() {
       <Route path="/blog" component={BlogPage} />
       <Route path="/blog/:slug" component={BlogPage} />
       <Route path="/music" component={MusicLibraryPage} />
+      <Route path="/music-library" component={MusicLibraryPage} />
       <Route path="/community-guidelines" component={CommunityGuidelinesPage} />
       <Route path="/privacy" component={PrivacyPolicyPage} />
       <Route path="/terms" component={TermsPage} />

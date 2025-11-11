@@ -1,10 +1,14 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
-import { Target, TrendingUp, Award, Users, BarChart3, Star } from "lucide-react";
+import { Target, TrendingUp, Award, Users, BarChart3, Star, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import performanceHeroImg from "@assets/stock_images/business_team_meetin_2bf5caa8.jpg";
+import performanceImg1 from "@assets/stock_images/business_team_meetin_3dea7a0d.jpg";
+import performanceImg2 from "@assets/stock_images/business_team_meetin_5006ca1f.jpg";
 
 export default function PerformanceAgentPage() {
   const metrics = [
@@ -32,102 +36,142 @@ export default function PerformanceAgentPage() {
 <>
       <SEO
         title="Performance Agent - HR Dashboard"
-        description="Track employee performance, goals, and review cycles."
+        description="Track employee performance, goals, and review cycles with AI-powered insights."
       />
 
-      <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/5 to-background py-12 px-4">
-        <div className="container mx-auto max-w-6xl">
+      {/* Hero Section */}
+      <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center" style={{
+          backgroundImage: `url('${performanceHeroImg}')`
+        }}>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        </div>
+        
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
+            transition={{ duration: 1, ease: "easeOut" }}
           >
-            <div className="flex items-center gap-3 mb-2">
-              <div className="h-12 w-12 rounded-full bg-purple-500/10 flex items-center justify-center">
-                <Target className="h-6 w-6 text-purple-500" />
-              </div>
-              <div>
-                
-                <p className="text-muted-foreground">Your AI performance management assistant</p>
-              </div>
-            </div>
+            <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-hr">
+              HR AI
+            </Badge>
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
+              Performance Agent
+            </h1>
+            
+            <p className="text-xl text-white/80 max-w-2xl mx-auto">
+              Excellence tracking - monitor goals, manage reviews, and drive continuous improvement
+            </p>
           </motion.div>
+        </div>
+      </div>
 
-          {/* Metrics Grid */}
-          <div className="grid gap-6 md:grid-cols-4 mb-8">
-            {metrics.map((metric, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-              >
-                <Card className="glass-card">
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <metric.icon className={`h-8 w-8 ${metric.color}`} />
-                      <span className="text-xs text-green-500 font-medium">{metric.change}</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{metric.label}</p>
-                    <p className="text-2xl font-bold">{metric.value}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        {/* Metrics Grid */}
+        <div className="grid gap-8 md:grid-cols-4 mb-16">
+          {metrics.map((metric, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, delay: idx * 0.1 }}
+            >
+              <Card className="hover-elevate">
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <metric.icon className={`h-8 w-8 ${metric.color}`} />
+                    <span className="text-xs text-green-500 font-medium">{metric.change}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{metric.label}</p>
+                  <p className="text-3xl font-serif font-bold mt-2">{metric.value}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
 
-          <div className="grid gap-6 lg:grid-cols-2">
-            {/* Top Performers */}
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Star className="h-5 w-5 text-orange-500" />
-                  Top Performers
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
+        {/* Featured Performance Cards */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+          className="mb-16"
+        >
+          <h2 className="text-3xl md:text-4xl font-serif font-bold mb-8">Performance Insights</h2>
+          
+          <div className="grid gap-8 md:grid-cols-2">
+            {/* Top Performers Card with 16:9 Image */}
+            <Card className="overflow-hidden hover-elevate">
+              <div className="relative aspect-[16/9] overflow-hidden">
+                <motion.img
+                  src={performanceImg1}
+                  alt="Top Performers"
+                  className="w-full h-full object-cover"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.6 }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <h3 className="text-2xl font-serif font-bold">Top Performers</h3>
+                  <p className="text-white/80 text-sm mt-1">Outstanding contributors this quarter</p>
+                </div>
+              </div>
+              <CardContent className="p-6 space-y-3">
                 {topPerformers.map((performer, idx) => (
-                  <div key={idx} className="p-4 rounded-lg border bg-gradient-to-r from-orange-500/5 to-transparent">
+                  <div key={idx} className="p-4 rounded-lg border bg-gradient-to-r from-orange-500/5 to-transparent" data-testid={`performer-${idx}`}>
                     <div className="flex items-center justify-between mb-2">
                       <div>
-                        <h3 className="font-semibold">{performer.name}</h3>
-                        <p className="text-sm text-muted-foreground">{performer.role}</p>
+                        <h4 className="font-semibold text-sm">{performer.name}</h4>
+                        <p className="text-xs text-muted-foreground">{performer.role}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-2xl font-bold text-orange-500">{performer.score}</p>
+                        <p className="text-2xl font-serif font-bold text-orange-500">{performer.score}</p>
                         <p className="text-xs text-green-500">{performer.improvement}</p>
                       </div>
                     </div>
                   </div>
                 ))}
-                <Button className="w-full" variant="outline" data-testid="button-view-all-performance">
+                <Button className="w-full gap-2" variant="outline" data-testid="button-view-all-performance">
+                  <BarChart3 className="w-4 h-4" />
                   View All Team Members
                 </Button>
               </CardContent>
             </Card>
 
-            {/* Recent Reviews */}
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Award className="h-5 w-5 text-purple-500" />
-                  Performance Reviews
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
+            {/* Performance Reviews Card with 16:9 Image */}
+            <Card className="overflow-hidden hover-elevate">
+              <div className="relative aspect-[16/9] overflow-hidden">
+                <motion.img
+                  src={performanceImg2}
+                  alt="Performance Reviews"
+                  className="w-full h-full object-cover"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.6 }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <h3 className="text-2xl font-serif font-bold">Reviews</h3>
+                  <p className="text-white/80 text-sm mt-1">Upcoming and completed evaluations</p>
+                </div>
+              </div>
+              <CardContent className="p-6 space-y-3">
                 {recentReviews.map((review, idx) => (
-                  <div key={idx} className="p-4 rounded-lg border hover-elevate">
+                  <div key={idx} className="p-4 rounded-lg border hover-elevate" data-testid={`review-${idx}`}>
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold">{review.employee}</h3>
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        review.status === "complete" ? "bg-green-500/20 text-green-500"
-                        : review.status === "scheduled" ? "bg-blue-500/20 text-blue-500"
-                        : "bg-gray-500/20 text-gray-500"
-                      }`}>
+                      <h4 className="font-semibold text-sm">{review.employee}</h4>
+                      <Badge className={
+                        review.status === "complete" ? "bg-green-500"
+                        : review.status === "scheduled" ? "bg-blue-500"
+                        : ""
+                      }>
                         {review.status}
-                      </span>
+                      </Badge>
                     </div>
-                    <div className="flex gap-4 text-sm text-muted-foreground">
+                    <div className="flex gap-4 text-xs text-muted-foreground">
                       <span>Reviewer: {review.reviewer}</span>
                       <span>•</span>
                       <span>{review.date}</span>
@@ -147,15 +191,17 @@ export default function PerformanceAgentPage() {
                     )}
                   </div>
                 ))}
-                <Button className="w-full" data-testid="button-schedule-review">
+                <Button className="w-full gap-2" data-testid="button-schedule-review">
+                  <Sparkles className="w-4 h-4" />
                   Schedule New Review
                 </Button>
               </CardContent>
             </Card>
           </div>
-        </div>
+        </motion.div>
       </div>
     </>
     </PageLayout>
-    </SelfHealingErrorBoundary>);
+    </SelfHealingErrorBoundary>
+  );
 }

@@ -1,10 +1,14 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
-import { UserPlus, Briefcase, Users, TrendingUp, CheckCircle2, Clock } from "lucide-react";
+import { UserPlus, Briefcase, Users, TrendingUp, CheckCircle2, Clock, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import recruiterHeroImg from "@assets/stock_images/business_team_meetin_eee3879e.jpg";
+import recruiterImg1 from "@assets/stock_images/business_team_meetin_e7614141.jpg";
+import recruiterImg2 from "@assets/stock_images/business_team_meetin_c8361ee1.jpg";
 
 export default function RecruiterAgentPage() {
   const metrics = [
@@ -33,71 +37,102 @@ export default function RecruiterAgentPage() {
 <>
       <SEO
         title="Recruiter Agent - HR Dashboard"
-        description="Manage recruitment pipeline, candidates, and hiring analytics."
+        description="Manage recruitment pipeline, candidates, and hiring analytics with AI-powered insights."
       />
 
-      <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/5 to-background py-12 px-4">
-        <div className="container mx-auto max-w-6xl">
+      {/* Hero Section */}
+      <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center" style={{
+          backgroundImage: `url('${recruiterHeroImg}')`
+        }}>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        </div>
+        
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
+            transition={{ duration: 1, ease: "easeOut" }}
           >
-            <div className="flex items-center gap-3 mb-2">
-              <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
-                <UserPlus className="h-6 w-6 text-blue-500" />
-              </div>
-              <div>
-                
-                <p className="text-muted-foreground">Your AI recruitment assistant</p>
-              </div>
-            </div>
+            <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-hr">
+              HR AI
+            </Badge>
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
+              Recruiter Agent
+            </h1>
+            
+            <p className="text-xl text-white/80 max-w-2xl mx-auto">
+              Intelligent recruitment - streamline hiring, manage candidates, and build exceptional teams
+            </p>
           </motion.div>
+        </div>
+      </div>
 
-          {/* Metrics Grid */}
-          <div className="grid gap-6 md:grid-cols-4 mb-8">
-            {metrics.map((metric, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-              >
-                <Card className="glass-card">
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <metric.icon className={`h-8 w-8 ${metric.color}`} />
-                      <span className="text-xs text-green-500 font-medium">{metric.change}</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{metric.label}</p>
-                    <p className="text-2xl font-bold">{metric.value}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        {/* Metrics Grid */}
+        <div className="grid gap-8 md:grid-cols-4 mb-16">
+          {metrics.map((metric, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, delay: idx * 0.1 }}
+            >
+              <Card className="hover-elevate">
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <metric.icon className={`h-8 w-8 ${metric.color}`} />
+                    <span className="text-xs text-green-500 font-medium">{metric.change}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{metric.label}</p>
+                  <p className="text-3xl font-serif font-bold mt-2">{metric.value}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
 
-          <div className="grid gap-6 lg:grid-cols-2">
-            {/* Open Positions */}
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Briefcase className="h-5 w-5 text-primary" />
-                  Open Positions
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
+        {/* Featured Recruitment Cards */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+          className="mb-16"
+        >
+          <h2 className="text-3xl md:text-4xl font-serif font-bold mb-8">Hiring Pipeline</h2>
+          
+          <div className="grid gap-8 md:grid-cols-2">
+            {/* Open Positions Card with 16:9 Image */}
+            <Card className="overflow-hidden hover-elevate">
+              <div className="relative aspect-[16/9] overflow-hidden">
+                <motion.img
+                  src={recruiterImg1}
+                  alt="Open Positions"
+                  className="w-full h-full object-cover"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.6 }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <h3 className="text-2xl font-serif font-bold">Open Positions</h3>
+                  <p className="text-white/80 text-sm mt-1">Active job openings and applicants</p>
+                </div>
+              </div>
+              <CardContent className="p-6 space-y-3">
                 {openPositions.map((position, idx) => (
-                  <div key={idx} className="p-4 rounded-lg border hover-elevate">
+                  <div key={idx} className="p-4 rounded-lg border hover-elevate" data-testid={`position-${idx}`}>
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold">{position.title}</h3>
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        position.urgency === "high" ? "bg-red-500/20 text-red-500"
-                        : position.urgency === "medium" ? "bg-orange-500/20 text-orange-500"
-                        : "bg-blue-500/20 text-blue-500"
-                      }`}>
+                      <h4 className="font-semibold text-sm">{position.title}</h4>
+                      <Badge className={
+                        position.urgency === "high" ? "bg-red-500"
+                        : position.urgency === "medium" ? "bg-orange-500"
+                        : "bg-blue-500"
+                      }>
                         {position.urgency}
-                      </span>
+                      </Badge>
                     </div>
                     <div className="flex gap-4 text-sm text-muted-foreground">
                       <span>{position.applicants} applicants</span>
@@ -106,42 +141,53 @@ export default function RecruiterAgentPage() {
                     </div>
                   </div>
                 ))}
-                <Button className="w-full" variant="outline" data-testid="button-post-job">
-                  + Post New Job
+                <Button className="w-full gap-2" variant="outline" data-testid="button-post-job">
+                  <Sparkles className="w-4 h-4" />
+                  Post New Job
                 </Button>
               </CardContent>
             </Card>
 
-            {/* Top Candidates */}
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-green-500" />
-                  Top Candidates
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
+            {/* Top Candidates Card with 16:9 Image */}
+            <Card className="overflow-hidden hover-elevate">
+              <div className="relative aspect-[16/9] overflow-hidden">
+                <motion.img
+                  src={recruiterImg2}
+                  alt="Top Candidates"
+                  className="w-full h-full object-cover"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.6 }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <h3 className="text-2xl font-serif font-bold">Top Candidates</h3>
+                  <p className="text-white/80 text-sm mt-1">Highest-rated talent in pipeline</p>
+                </div>
+              </div>
+              <CardContent className="p-6 space-y-3">
                 {topCandidates.map((candidate, idx) => (
-                  <div key={idx} className="p-4 rounded-lg border bg-muted/50">
+                  <div key={idx} className="p-4 rounded-lg border bg-muted/50" data-testid={`candidate-${idx}`}>
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold">{candidate.name}</h3>
+                      <h4 className="font-semibold">{candidate.name}</h4>
                       <span className="text-sm font-bold text-green-500">{candidate.score}%</span>
                     </div>
                     <p className="text-sm text-muted-foreground mb-2">{candidate.role}</p>
-                    <span className="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-500">
+                    <Badge className="bg-blue-500">
                       {candidate.status}
-                    </span>
+                    </Badge>
                   </div>
                 ))}
-                <Button className="w-full" data-testid="button-view-candidates">
+                <Button className="w-full gap-2" data-testid="button-view-candidates">
+                  <TrendingUp className="w-4 h-4" />
                   View All Candidates
                 </Button>
               </CardContent>
             </Card>
           </div>
-        </div>
+        </motion.div>
       </div>
     </>
     </PageLayout>
-    </SelfHealingErrorBoundary>);
+    </SelfHealingErrorBoundary>
+  );
 }

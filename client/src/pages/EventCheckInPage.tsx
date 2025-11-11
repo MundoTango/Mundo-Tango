@@ -6,10 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, QrCode, Search, UserCheck, Calendar, MapPin, ArrowLeft } from "lucide-react";
+import { CheckCircle2, QrCode, Search, UserCheck, Calendar, MapPin, ArrowLeft, Users } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 
 interface Event {
   id: number;
@@ -91,129 +93,176 @@ export default function EventCheckInPage() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
-        <div className="container mx-auto max-w-5xl py-8 px-4">
-          <Button variant="outline" asChild className="mb-6" data-testid="button-back">
+      <>
+        <SEO
+          title={`Check-In - ${event.title}`}
+          description={`Event check-in management for ${event.title}`}
+        />
+
+        {/* Hero Header */}
+        <div className="relative h-[30vh] w-full overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5">
+            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-background" />
+          </div>
+          
+          <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <Badge variant="outline" className="mb-4 border-primary/30 bg-primary/10">
+                Event Check-In
+              </Badge>
+              
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold leading-tight mb-4">
+                {event.title}
+              </h1>
+              
+              <div className="flex flex-wrap items-center justify-center gap-6 text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-primary" />
+                  <span>{format(new Date(event.date), 'PPP')}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  <span>{event.venue}, {event.city}</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        <div className="max-w-5xl mx-auto px-6 py-12">
+          <Button variant="outline" asChild className="mb-8" data-testid="button-back">
             <Link href={`/events/${eventId}`}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Event
             </Link>
           </Button>
 
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <UserCheck className="h-6 w-6 text-primary" />
-                Event Check-In
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h2 className="text-2xl font-bold text-foreground mb-2" data-testid="text-event-title">
-                  {event.title}
-                </h2>
-                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    {format(new Date(event.date), 'PPP')}
+          {/* Stats Cards */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
+          >
+            <Card>
+              <CardContent className="p-6 text-center">
+                <Users className="h-8 w-8 text-primary mx-auto mb-2" />
+                <div className="text-4xl font-bold font-serif mb-1">{rsvps.length}</div>
+                <div className="text-sm text-muted-foreground">Total RSVPs</div>
+              </CardContent>
+            </Card>
+            <Card className="border-primary/20">
+              <CardContent className="p-6 text-center">
+                <UserCheck className="h-8 w-8 text-primary mx-auto mb-2" />
+                <div className="text-4xl font-bold font-serif text-primary mb-1">{checkedInCount}</div>
+                <div className="text-sm text-muted-foreground">Checked In</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6 text-center">
+                <CheckCircle2 className="h-8 w-8 text-primary mx-auto mb-2" />
+                <div className="text-4xl font-bold font-serif mb-1">{checkInRate}%</div>
+                <div className="text-sm text-muted-foreground">Attendance Rate</div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Search Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            <Card className="mb-6">
+              <CardContent className="p-6">
+                <div className="flex flex-col md:flex-row items-center gap-4">
+                  <div className="flex-1 w-full relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search by name or email..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10"
+                      data-testid="input-search-attendees"
+                    />
                   </div>
-                  <div className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    {event.venue}, {event.city}
+                  <Button variant="outline" className="gap-2 w-full md:w-auto" data-testid="button-scan-qr">
+                    <QrCode className="h-4 w-4" />
+                    Scan QR Code
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Attendee List */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
+            <Card>
+              <CardHeader className="border-b">
+                <CardTitle className="text-2xl font-serif">Attendee List</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                {filteredRsvps.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <UserCheck className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>{searchQuery ? "No attendees found matching your search" : "No RSVPs yet"}</p>
                   </div>
-                </div>
-              </div>
+                ) : (
+                  <div className="space-y-3">
+                    {filteredRsvps.map((rsvp, index) => (
+                      <motion.div
+                        key={rsvp.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.4, delay: index * 0.05 }}
+                        className="flex items-center justify-between p-4 rounded-lg border hover-elevate"
+                        data-testid={`attendee-${rsvp.id}`}
+                      >
+                        <div className="flex-1">
+                          <div className="font-semibold">{rsvp.userName}</div>
+                          <div className="text-sm text-muted-foreground">{rsvp.userEmail}</div>
+                          {rsvp.checkedIn && rsvp.checkedInAt && (
+                            <div className="text-xs text-muted-foreground mt-1">
+                              Checked in at {format(new Date(rsvp.checkedInAt), 'p')}
+                            </div>
+                          )}
+                        </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-border">
-                <div className="text-center p-4 bg-card rounded-lg border border-border">
-                  <div className="text-3xl font-bold text-foreground">{rsvps.length}</div>
-                  <div className="text-sm text-muted-foreground">Total RSVPs</div>
-                </div>
-                <div className="text-center p-4 bg-card rounded-lg border border-border">
-                  <div className="text-3xl font-bold text-primary">{checkedInCount}</div>
-                  <div className="text-sm text-muted-foreground">Checked In</div>
-                </div>
-                <div className="text-center p-4 bg-card rounded-lg border border-border">
-                  <div className="text-3xl font-bold text-foreground">{checkInRate}%</div>
-                  <div className="text-sm text-muted-foreground">Attendance Rate</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="mb-6">
-            <CardHeader>
-              <div className="flex items-center gap-4">
-                <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search by name or email..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                    data-testid="input-search-attendees"
-                  />
-                </div>
-                <Button variant="outline" data-testid="button-scan-qr">
-                  <QrCode className="h-4 w-4 mr-2" />
-                  Scan QR
-                </Button>
-              </div>
-            </CardHeader>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Attendee List</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {filteredRsvps.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">
-                  {searchQuery ? "No attendees found matching your search" : "No RSVPs yet"}
-                </p>
-              ) : (
-                <div className="space-y-2">
-                  {filteredRsvps.map((rsvp) => (
-                    <div
-                      key={rsvp.id}
-                      className="flex items-center justify-between p-4 bg-card rounded-lg border border-border hover-elevate"
-                      data-testid={`attendee-${rsvp.id}`}
-                    >
-                      <div className="flex-1">
-                        <div className="font-semibold text-foreground">{rsvp.userName}</div>
-                        <div className="text-sm text-muted-foreground">{rsvp.userEmail}</div>
-                        {rsvp.checkedIn && rsvp.checkedInAt && (
-                          <div className="text-xs text-muted-foreground mt-1">
-                            Checked in at {format(new Date(rsvp.checkedInAt), 'p')}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        {rsvp.checkedIn ? (
-                          <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20">
-                            <CheckCircle2 className="h-4 w-4 mr-1" />
-                            Checked In
-                          </Badge>
-                        ) : (
-                          <Button
-                            onClick={() => checkInMutation.mutate(rsvp.id)}
-                            disabled={checkInMutation.isPending}
-                            data-testid={`button-checkin-${rsvp.id}`}
-                          >
-                            <UserCheck className="h-4 w-4 mr-2" />
-                            Check In
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                        <div className="flex items-center gap-3">
+                          {rsvp.checkedIn ? (
+                            <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
+                              <CheckCircle2 className="h-4 w-4 mr-1" />
+                              Checked In
+                            </Badge>
+                          ) : (
+                            <Button
+                              onClick={() => checkInMutation.mutate(rsvp.id)}
+                              disabled={checkInMutation.isPending}
+                              className="gap-2"
+                              data-testid={`button-checkin-${rsvp.id}`}
+                            >
+                              <UserCheck className="h-4 w-4" />
+                              Check In
+                            </Button>
+                          )}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
-      </div>
+      </>
     </AppLayout>
   );
 }

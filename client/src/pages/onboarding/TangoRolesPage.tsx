@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Check } from "lucide-react";
+import { Loader2, Check, Heart, ChevronRight } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
-import { Badge } from "@/components/ui/badge";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { motion } from "framer-motion";
+import heroImage from "@assets/stock_images/elegant_professional_29e89c1e.jpg";
 
 const TANGO_ROLES = [
   { id: "dancer-leader", emoji: "🕺", name: "Dancer (Leader)", description: "I lead in tango dancing" },
@@ -97,91 +99,153 @@ export default function TangoRolesPage() {
       <PageLayout title="TangoRoles" showBreadcrumbs>
 <>
       <SEO title="Your Tango Roles - Mundo Tango" description="Tell us what you do in the tango community" />
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
-        <Card className="w-full max-w-3xl">
-          <CardHeader>
-            <div className="mb-4 flex items-center justify-between">
-              <div className="text-sm text-muted-foreground">Step 3 of 4</div>
-              <div className="flex gap-1">
-                <div className="h-2 w-8 rounded-full bg-primary"></div>
-                <div className="h-2 w-8 rounded-full bg-primary"></div>
-                <div className="h-2 w-8 rounded-full bg-primary"></div>
-                <div className="h-2 w-8 rounded-full bg-muted"></div>
-              </div>
-            </div>
-            <CardTitle className="text-2xl font-serif">What do you do in tango?</CardTitle>
-            <p className="text-muted-foreground text-sm mt-2">
-              Select all that apply - minimum 1 required
+      
+      {/* Hero Section */}
+      <div className="relative h-[50vh] w-full overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url('${heroImage}')` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        </div>
+        
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+          >
+            <Badge variant="outline" className="mb-4 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-step-3">
+              Step 3 of 4
+            </Badge>
+            
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4">
+              What Do You Do in Tango?
+            </h1>
+            
+            <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
+              Select all that apply - express your passion
             </p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {TANGO_ROLES.map((role) => (
-                <button
-                  key={role.id}
-                  onClick={() => toggleRole(role.id)}
-                  className={`relative flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all hover-elevate active-elevate-2 ${
-                    selectedRoles.includes(role.id)
-                      ? "border-primary bg-primary/10"
-                      : "border-muted"
-                  }`}
-                  data-testid={`role-${role.id}`}
-                >
-                  {selectedRoles.includes(role.id) && (
-                    <div className="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                      <Check className="h-3 w-3" />
-                    </div>
-                  )}
-                  <span className="text-3xl">{role.emoji}</span>
-                  <span className="text-sm font-medium text-center leading-tight">
-                    {role.name}
-                  </span>
-                </button>
-              ))}
-            </div>
+          </motion.div>
+        </div>
+      </div>
 
-            {selectedRoles.length > 0 && (
-              <div className="border-t pt-4 mt-4">
-                <p className="text-sm font-medium mb-2">Selected roles ({selectedRoles.length}):</p>
-                <div className="flex flex-wrap gap-2">
-                  {selectedRoles.map((roleId) => {
-                    const role = TANGO_ROLES.find(r => r.id === roleId);
-                    return (
-                      <Badge key={roleId} variant="secondary" className="gap-1">
-                        <span>{role?.emoji}</span>
-                        <span>{role?.name}</span>
-                      </Badge>
-                    );
-                  })}
+      {/* Content Section */}
+      <div className="bg-background">
+        <div className="container mx-auto max-w-5xl px-6 py-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <Card className="overflow-hidden">
+              <CardHeader className="bg-card p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 rounded-xl bg-primary/10">
+                    <Heart className="h-6 w-6 text-primary" />
+                  </div>
+                  <h2 className="text-2xl font-serif font-bold">Your Tango Roles</h2>
                 </div>
-              </div>
-            )}
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button
-              variant="outline"
-              onClick={() => navigate("/onboarding/step-2")}
-              disabled={isLoading}
-              data-testid="button-back"
-            >
-              Back
-            </Button>
-            <Button
-              onClick={handleContinue}
-              disabled={isLoading || selectedRoles.length === 0}
-              data-testid="button-continue"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                "Continue"
-              )}
-            </Button>
-          </CardFooter>
-        </Card>
+                <p className="text-muted-foreground leading-relaxed">
+                  Choose all the ways you participate in tango - minimum 1 required
+                </p>
+              </CardHeader>
+
+              <CardContent className="p-8 space-y-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  {TANGO_ROLES.map((role, index) => (
+                    <motion.button
+                      key={role.id}
+                      onClick={() => toggleRole(role.id)}
+                      className={`relative flex flex-col items-center gap-3 p-6 rounded-xl border-2 transition-all hover-elevate active-elevate-2 ${
+                        selectedRoles.includes(role.id)
+                          ? "border-primary bg-primary/10"
+                          : "border-muted"
+                      }`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.03 }}
+                      data-testid={`role-${role.id}`}
+                    >
+                      {selectedRoles.includes(role.id) && (
+                        <motion.div 
+                          className="absolute top-3 right-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground"
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ type: "spring" }}
+                        >
+                          <Check className="h-3 w-3" />
+                        </motion.div>
+                      )}
+                      <span className="text-4xl">{role.emoji}</span>
+                      <span className="text-sm font-medium text-center leading-tight">
+                        {role.name}
+                      </span>
+                    </motion.button>
+                  ))}
+                </div>
+
+                {selectedRoles.length > 0 && (
+                  <motion.div 
+                    className="border-t pt-6 mt-6"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                  >
+                    <p className="text-sm font-medium mb-3">Selected roles ({selectedRoles.length}):</p>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedRoles.map((roleId) => {
+                        const role = TANGO_ROLES.find(r => r.id === roleId);
+                        return (
+                          <Badge key={roleId} variant="secondary" className="gap-1 text-base py-1.5 px-3">
+                            <span>{role?.emoji}</span>
+                            <span>{role?.name}</span>
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </CardContent>
+
+              <CardFooter className="p-8 bg-muted/20 flex justify-between">
+                <Button
+                  variant="outline"
+                  onClick={() => navigate("/onboarding/step-2")}
+                  disabled={isLoading}
+                  data-testid="button-back"
+                >
+                  Back
+                </Button>
+                <Button
+                  onClick={handleContinue}
+                  disabled={isLoading || selectedRoles.length === 0}
+                  className="gap-2"
+                  data-testid="button-continue"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      Continue
+                      <ChevronRight className="h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </CardFooter>
+            </Card>
+
+            {/* Progress Indicator */}
+            <div className="flex justify-center gap-2 mt-8">
+              <div className="h-2 w-16 rounded-full bg-primary"></div>
+              <div className="h-2 w-16 rounded-full bg-primary"></div>
+              <div className="h-2 w-16 rounded-full bg-primary"></div>
+              <div className="h-2 w-16 rounded-full bg-muted"></div>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </>
     </PageLayout>

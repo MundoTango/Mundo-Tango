@@ -1,10 +1,14 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
-import { BarChart3, TrendingUp, Users, Clock, Globe, Smartphone } from "lucide-react";
+import { BarChart3, TrendingUp, Users, Clock, Globe, Smartphone, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import analyticsHeroImg from "@assets/stock_images/professional_office__7baceb73.jpg";
+import analyticsImg1 from "@assets/stock_images/professional_office__e56fc639.jpg";
+import analyticsImg2 from "@assets/stock_images/professional_office__ac13e3df.jpg";
 
 export default function AnalyticsAgentPage() {
   const metrics = [
@@ -34,63 +38,94 @@ export default function AnalyticsAgentPage() {
 <>
       <SEO
         title="Analytics Agent - Marketing Dashboard"
-        description="Track website analytics, user behavior, and conversion metrics."
+        description="Track website analytics, user behavior, and conversion metrics with AI-powered insights."
       />
 
-      <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/5 to-background py-12 px-4">
-        <div className="container mx-auto max-w-6xl">
+      {/* Hero Section */}
+      <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center" style={{
+          backgroundImage: `url('${analyticsHeroImg}')`
+        }}>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        </div>
+        
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
+            transition={{ duration: 1, ease: "easeOut" }}
           >
-            <div className="flex items-center gap-3 mb-2">
-              <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
-                <BarChart3 className="h-6 w-6 text-green-500" />
-              </div>
-              <div>
-                
-                <p className="text-muted-foreground">Your AI analytics assistant</p>
-              </div>
-            </div>
+            <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-marketing">
+              Marketing AI
+            </Badge>
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
+              Analytics Agent
+            </h1>
+            
+            <p className="text-xl text-white/80 max-w-2xl mx-auto">
+              Data-driven insights - track performance, understand behavior, and optimize for growth
+            </p>
           </motion.div>
+        </div>
+      </div>
 
-          {/* Metrics Grid */}
-          <div className="grid gap-6 md:grid-cols-4 mb-8">
-            {metrics.map((metric, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-              >
-                <Card className="glass-card">
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <metric.icon className={`h-8 w-8 ${metric.color}`} />
-                      <span className="text-xs text-green-500 font-medium">{metric.change}</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{metric.label}</p>
-                    <p className="text-2xl font-bold">{metric.value}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        {/* Metrics Grid */}
+        <div className="grid gap-8 md:grid-cols-4 mb-16">
+          {metrics.map((metric, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, delay: idx * 0.1 }}
+            >
+              <Card className="hover-elevate">
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <metric.icon className={`h-8 w-8 ${metric.color}`} />
+                    <span className="text-xs text-green-500 font-medium">{metric.change}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{metric.label}</p>
+                  <p className="text-3xl font-serif font-bold mt-2">{metric.value}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
 
-          <div className="grid gap-6 lg:grid-cols-2">
-            {/* Top Pages */}
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-primary" />
-                  Top Pages
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
+        {/* Featured Analytics Cards */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+          className="mb-16"
+        >
+          <h2 className="text-3xl md:text-4xl font-serif font-bold mb-8">Traffic Insights</h2>
+          
+          <div className="grid gap-8 md:grid-cols-2">
+            {/* Top Pages Card with 16:9 Image */}
+            <Card className="overflow-hidden hover-elevate">
+              <div className="relative aspect-[16/9] overflow-hidden">
+                <motion.img
+                  src={analyticsImg1}
+                  alt="Top Pages"
+                  className="w-full h-full object-cover"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.6 }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <h3 className="text-2xl font-serif font-bold">Top Pages</h3>
+                  <p className="text-white/80 text-sm mt-1">Most visited destinations</p>
+                </div>
+              </div>
+              <CardContent className="p-6 space-y-3">
                 {topPages.map((page, idx) => (
-                  <div key={idx} className="p-4 rounded-lg border hover-elevate">
-                    <h3 className="font-semibold mb-2">{page.page}</h3>
+                  <div key={idx} className="p-4 rounded-lg border hover-elevate" data-testid={`page-${idx}`}>
+                    <h4 className="font-semibold mb-3">{page.page}</h4>
                     <div className="grid grid-cols-3 gap-2 text-sm">
                       <div>
                         <p className="text-xs text-muted-foreground">Views</p>
@@ -107,23 +142,32 @@ export default function AnalyticsAgentPage() {
                     </div>
                   </div>
                 ))}
-                <Button className="w-full" variant="outline" data-testid="button-view-all-pages">
+                <Button className="w-full gap-2" variant="outline" data-testid="button-view-all-pages">
+                  <BarChart3 className="w-4 h-4" />
                   View All Pages
                 </Button>
               </CardContent>
             </Card>
 
-            {/* Traffic Sources */}
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Globe className="h-5 w-5 text-blue-500" />
-                  Traffic Sources
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            {/* Traffic Sources Card with 16:9 Image */}
+            <Card className="overflow-hidden hover-elevate">
+              <div className="relative aspect-[16/9] overflow-hidden">
+                <motion.img
+                  src={analyticsImg2}
+                  alt="Traffic Sources"
+                  className="w-full h-full object-cover"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.6 }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <h3 className="text-2xl font-serif font-bold">Traffic Sources</h3>
+                  <p className="text-white/80 text-sm mt-1">Where visitors come from</p>
+                </div>
+              </div>
+              <CardContent className="p-6 space-y-4">
                 {trafficSources.map((source, idx) => (
-                  <div key={idx}>
+                  <div key={idx} data-testid={`traffic-source-${idx}`}>
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium">{source.source}</span>
                       <div className="flex items-center gap-2">
@@ -141,15 +185,17 @@ export default function AnalyticsAgentPage() {
                     </div>
                   </div>
                 ))}
-                <Button className="w-full mt-4" data-testid="button-traffic-report">
+                <Button className="w-full mt-4 gap-2" data-testid="button-traffic-report">
+                  <Sparkles className="w-4 h-4" />
                   Generate Traffic Report
                 </Button>
               </CardContent>
             </Card>
           </div>
-        </div>
+        </motion.div>
       </div>
     </>
     </PageLayout>
-    </SelfHealingErrorBoundary>);
+    </SelfHealingErrorBoundary>
+  );
 }
