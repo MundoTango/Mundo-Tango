@@ -6,48 +6,43 @@
 
 ---
 
-## Bug #1: Post Reaction System Not Persisting ⚠️ CRITICAL
+## Bug #1: Post Reaction System Not Persisting ✅ FIXED
 
-**Severity:** HIGH
-**Impact:** User interactions (reactions) not saved, breaking engagement features
+**Severity:** HIGH (RESOLVED)
+**Impact:** User interactions (reactions) were not saved to posts.likes count
 
 **Description:**
-Post reaction endpoint returns 200 success but reactions don't persist to database or update UI.
+Post reaction endpoint returned 200 success but reactions didn't update the posts.likes column, causing GET /api/posts to show likes: 0 even after reactions were added.
 
 **Evidence:**
 - Server log: `POST /api/posts/176/react 200 in 198ms :: {"reacted":true}`
-- Subsequent `GET /api/posts` for post 176 shows `likes: 0`
-- UI shows no active state (no aria-pressed, no like count change)
-- Reaction type sent in request body
+- Subsequent `GET /api/posts` for post 176 showed `likes: 0`
+- UI showed no like count change
+- Reaction was being saved to `reactions` table but `posts.likes` column was not updated
 
-**Technical Details:**
+**Root Cause:**
+1. POST `/api/posts/:id/react` wrote to `reactions` table (lines 478-482)
+2. GET `/api/posts` queried `posts.likes` column (line 751 in storage.ts)
+3. **Missing synchronization** - reactions table writes never updated posts.likes count
+
+**Fix Applied:**
+Added reaction count aggregation and posts.likes update in `server/routes.ts` (lines 502-509):
+
+```typescript
+// Update posts.likes count to reflect current reaction count
+const reactionCount = await db.select({ count: sql<number>`count(*)::int` })
+  .from(reactions)
+  .where(eq(reactions.postId, postId));
+
+await db.update(posts)
+  .set({ likes: reactionCount[0]?.count || 0 })
+  .where(eq(posts.id, postId));
 ```
-POST /api/posts/:id/react
-Body: { reactionType: "like" }
-Response: { reacted: true } (200)
 
-BUT: GET /api/posts shows likes: 0
-```
+**Files Modified:**
+- `server/routes.ts` - Line 502-509 (added posts.likes update after reaction insert/delete)
 
-**Root Cause (Suspected):**
-1. Reaction endpoint `/api/posts/:id/react` writes to `reactions` table
-2. BUT GET `/api/posts` likely queries `likesCount` from posts table (not reactions)
-3. Cache invalidation not happening
-4. OR reactions table not aggregated into posts.likesCount
-
-**Files to Investigate:**
-- `server/routes.ts` - Line 459+ (POST /api/posts/:id/react)
-- `server/routes.ts` - GET /api/posts endpoint
-- `server/storage.ts` - likePost(), unlikePost() implementations
-- `shared/schema.ts` - reactions table vs posts.likesCount relationship
-
-**Fix Strategy:**
-1. Check if GET /api/posts aggregates reactions table
-2. Ensure cache invalidation on React Query
-3. Verify optimistic UI updates in frontend
-4. Confirm reactions persist to DB (check `reactions` table directly)
-
-**Status:** INVESTIGATING
+**Status:** ✅ FIXED (November 11, 2025)
 
 ---
 

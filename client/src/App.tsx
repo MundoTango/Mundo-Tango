@@ -192,6 +192,7 @@ const AboutTangoPage = lazy(() => import("@/pages/AboutTangoPage"));
 const DanceStylesDetailPage = lazy(() => import("@/pages/DanceStylesDetailPage"));
 const AdminContentModerationDetailPage = lazy(() => import("@/pages/AdminContentModerationDetailPage"));
 const EventCheckInPage = lazy(() => import("@/pages/EventCheckInPage"));
+const GroupsDetailPage = lazy(() => import("@/pages/GroupsDetailPage"));
 const StoriesPage = lazy(() => import("@/pages/StoriesPage"));
 const VenueRecommendationsPage = lazy(() => import("@/pages/VenueRecommendationsPage"));
 const TermsPage = lazy(() => import("@/pages/TermsPage"));
@@ -362,6 +363,12 @@ function Router() {
           <AppLayout>
             <GroupsPage />
           </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/groups/:groupId">
+        <ProtectedRoute>
+          <GroupsDetailPage />
         </ProtectedRoute>
       </Route>
 
