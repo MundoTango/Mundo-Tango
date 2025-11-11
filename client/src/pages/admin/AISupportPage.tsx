@@ -523,13 +523,15 @@ export default function AISupportPage() {
                   </Button>
                   <Button
                     variant="secondary"
-                    onClick={() =>
-                      escalateMutation.mutate({
-                        id: selectedTicket.id,
-                        newPriority: "urgent",
-                        reason: "Escalated by admin",
-                      })
-                    }
+                    onClick={() => {
+                      if (selectedTicket) {
+                        escalateMutation.mutate({
+                          id: selectedTicket.id,
+                          newPriority: "urgent",
+                          reason: "Escalated by admin",
+                        });
+                      }
+                    }}
                     disabled={escalateMutation.isPending}
                     data-testid="button-escalate"
                   >
@@ -537,7 +539,11 @@ export default function AISupportPage() {
                     Escalate
                   </Button>
                   <Button
-                    onClick={() => resolveMutation.mutate({ id: selectedTicket.id, resolution })}
+                    onClick={() => {
+                      if (selectedTicket) {
+                        resolveMutation.mutate({ id: selectedTicket.id, resolution });
+                      }
+                    }}
                     disabled={resolveMutation.isPending || !resolution}
                     data-testid="button-resolve"
                   >

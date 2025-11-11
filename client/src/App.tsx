@@ -93,6 +93,11 @@ const RoleRequestsPage = lazy(() => import("@/pages/admin/RoleRequestsPage"));
 const EventApprovalsPage = lazy(() => import("@/pages/admin/EventApprovalsPage"));
 const HousingReviewsPage = lazy(() => import("@/pages/admin/HousingReviewsPage"));
 const AgentHealthDashboard = lazy(() => import("@/pages/admin/AgentHealthDashboard"));
+
+// P0 Workflow Pages
+const FounderApprovalPage = lazy(() => import("@/pages/admin/FounderApprovalPage"));
+const SafetyReviewPage = lazy(() => import("@/pages/admin/SafetyReviewPage"));
+const AISupportPage = lazy(() => import("@/pages/admin/AISupportPage"));
 const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
 const AdminUsersPage = lazy(() => import("@/pages/AdminUsersPage"));
 const AdminUsersManagementPage = lazy(() => import("@/pages/AdminUsersManagementPage"));
@@ -791,6 +796,30 @@ function Router() {
         <ProtectedRoute>
           <AdminLayout>
             <AgentHealthDashboard />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/founder-approval">
+        <ProtectedRoute>
+          <AdminLayout>
+            <FounderApprovalPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/safety-reviews">
+        <ProtectedRoute>
+          <AdminLayout>
+            <SafetyReviewPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/ai-support">
+        <ProtectedRoute>
+          <AdminLayout>
+            <AISupportPage />
           </AdminLayout>
         </ProtectedRoute>
       </Route>
