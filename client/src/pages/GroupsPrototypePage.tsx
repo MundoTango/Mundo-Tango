@@ -7,9 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTheme } from "@/contexts/theme-context";
 import { 
   Users, MapPin, Star, Building2, Search, Plus, Globe,
-  TrendingUp, MessageCircle, UserPlus, ChevronRight
+  TrendingUp, MessageCircle, UserPlus, ChevronRight, Sun, Moon
 } from "lucide-react";
 
 // MY GROUPS - Automated by city/pro
@@ -127,11 +128,29 @@ const PRO_GROUPS = [
 ];
 
 export default function GroupsPrototypePage() {
+  const { darkMode, toggleDarkMode } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("my-groups");
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Theme Toggle - Fixed Position */}
+      <div className="fixed top-6 right-6 z-50">
+        <Button
+          onClick={toggleDarkMode}
+          size="icon"
+          variant="outline"
+          className="rounded-full w-12 h-12 bg-background/80 backdrop-blur-sm border-2 shadow-lg hover:scale-110 transition-transform"
+          data-testid="button-theme-toggle"
+        >
+          {darkMode === 'dark' ? (
+            <Sun className="w-5 h-5 text-amber-500" />
+          ) : (
+            <Moon className="w-5 h-5 text-blue-600" />
+          )}
+        </Button>
+      </div>
+
       {/* Hero Section */}
       <GroupsHero />
 

@@ -6,13 +6,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/theme-context";
 import { PostCreator } from "@/components/universal/PostCreator";
 import { SmartPostFeed } from "@/components/feed/SmartPostFeed";
 import { UpcomingEventsSidebar } from "@/components/feed/UpcomingEventsSidebar";
 import { RoleIconBadge } from "@/components/feed/RoleIconBadge";
 import { 
   Heart, MessageCircle, Share2, Bookmark, MoreHorizontal,
-  MapPin, Star, TrendingUp
+  MapPin, Star, TrendingUp, Sun, Moon
 } from "lucide-react";
 
 const TANGO_QUOTES = [
@@ -23,6 +24,7 @@ const TANGO_QUOTES = [
 
 export default function FeedPrototypePage() {
   const { user } = useAuth();
+  const { darkMode, toggleDarkMode } = useTheme();
   const [quoteIndex, setQuoteIndex] = useState(0);
   const currentQuote = TANGO_QUOTES[quoteIndex];
 
@@ -89,6 +91,23 @@ export default function FeedPrototypePage() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Theme Toggle - Fixed Position */}
+      <div className="fixed top-6 right-6 z-50">
+        <Button
+          onClick={toggleDarkMode}
+          size="icon"
+          variant="outline"
+          className="rounded-full w-12 h-12 bg-background/80 backdrop-blur-sm border-2 shadow-lg hover:scale-110 transition-transform"
+          data-testid="button-theme-toggle"
+        >
+          {darkMode === 'dark' ? (
+            <Sun className="w-5 h-5 text-amber-500" />
+          ) : (
+            <Moon className="w-5 h-5 text-blue-600" />
+          )}
+        </Button>
+      </div>
+
       {/* Daily Tango Inspiration Hero - Full Width */}
       <DailyInspirationHero quote={currentQuote} />
 
