@@ -496,6 +496,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
+      // Update posts.likes count to reflect current reaction count
+      const reactionCount = await db.select({ count: sql<number>`count(*)::int` })
+        .from(reactions)
+        .where(eq(reactions.postId, postId));
+      
+      await db.update(posts)
+        .set({ likes: reactionCount[0]?.count || 0 })
+        .where(eq(posts.id, postId));
+
       res.json({ reacted: reactionType !== '' });
     } catch (error) {
       console.error('React to post error:', error);

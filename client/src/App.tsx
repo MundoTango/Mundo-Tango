@@ -190,7 +190,8 @@ const MessagesDetailPage = lazy(() => import("@/pages/MessagesDetailPage"));
 const CheckoutSuccessPage = lazy(() => import("@/pages/CheckoutSuccessPage"));
 const AboutTangoPage = lazy(() => import("@/pages/AboutTangoPage"));
 const DanceStylesDetailPage = lazy(() => import("@/pages/DanceStylesDetailPage"));
-const AdminContentModerationDetailPage = lazy(() => import("@/pages/admin/AdminContentModerationDetailPage"));
+const AdminContentModerationDetailPage = lazy(() => import("@/pages/AdminContentModerationDetailPage"));
+const EventCheckInPage = lazy(() => import("@/pages/EventCheckInPage"));
 const StoriesPage = lazy(() => import("@/pages/StoriesPage"));
 const VenueRecommendationsPage = lazy(() => import("@/pages/VenueRecommendationsPage"));
 const TermsPage = lazy(() => import("@/pages/TermsPage"));
@@ -853,8 +854,23 @@ function Router() {
       <Route path="/tutorials/:id" component={TutorialDetailPage} />
       <Route path="/marketplace/:id" component={MarketplaceItemPage} />
       <Route path="/booking/confirmation" component={BookingConfirmationPage} />
+      <Route path="/checkout/success" component={CheckoutSuccessPage} />
       <Route path="/payment/success" component={PaymentSuccessPage} />
       <Route path="/payment/failed" component={PaymentFailedPage} />
+      <Route path="/about-tango" component={AboutTangoPage} />
+      <Route path="/dance-styles/:styleId" component={DanceStylesDetailPage} />
+      
+      <Route path="/events/:eventId/check-in">
+        <ProtectedRoute>
+          <EventCheckInPage />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/moderation/:reportId">
+        <ProtectedRoute>
+          <AdminContentModerationDetailPage />
+        </ProtectedRoute>
+      </Route>
       
       <Route path="/settings/email">
         <ProtectedRoute>
