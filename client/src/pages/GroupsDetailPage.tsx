@@ -1,5 +1,6 @@
 import { useParams, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -107,93 +108,121 @@ export default function GroupsDetailPage() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
-        <div className="container mx-auto max-w-5xl py-8 px-4">
-          <Button variant="outline" asChild className="mb-6" data-testid="button-back">
-            <Link href="/groups">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Groups
-            </Link>
-          </Button>
+      <div className="min-h-screen bg-background">
+        {/* Editorial Hero Section */}
+        <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: group.imageUrl 
+                ? `url('${group.imageUrl}')`
+                : `url('https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=2000&auto=format&fit=crop&q=80')`,
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+          </div>
 
-          <Card className="mb-6">
-            <CardContent className="p-8">
-              <div className="flex flex-col md:flex-row gap-6">
-                {group.imageUrl && (
-                  <div className="flex-shrink-0">
-                    <img
-                      src={group.imageUrl}
-                      alt={group.name}
-                      className="w-32 h-32 rounded-lg object-cover border border-border"
-                    />
+          <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="max-w-4xl"
+            >
+              <Badge 
+                variant="outline" 
+                className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm capitalize"
+              >
+                {group.type} Group
+              </Badge>
+
+              <h1 
+                className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white leading-tight mb-6"
+                data-testid="text-group-name"
+              >
+                {group.name}
+              </h1>
+
+              {group.description && (
+                <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
+                  {group.description}
+                </p>
+              )}
+
+              <div className="flex flex-wrap items-center justify-center gap-6 text-white/90 mb-8">
+                {group.city && (
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-5 h-5" />
+                    <span>{group.city}, {group.country}</span>
                   </div>
                 )}
-
-                <div className="flex-1">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h1 className="text-3xl font-bold text-foreground mb-2" data-testid="text-group-name">
-                        {group.name}
-                      </h1>
-                      <Badge className={groupTypeColors[group.type as keyof typeof groupTypeColors]}>
-                        {group.type}
-                      </Badge>
-                    </div>
-
-                    {group.isAdmin && (
-                      <Button variant="outline" asChild data-testid="button-manage-group">
-                        <Link href={`/groups/${groupId}/settings`}>
-                          <Settings className="h-4 w-4 mr-2" />
-                          Manage
-                        </Link>
-                      </Button>
-                    )}
-                  </div>
-
-                  {group.description && (
-                    <p className="text-muted-foreground mb-4">{group.description}</p>
-                  )}
-
-                  <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4">
-                    {group.city && (
-                      <div className="flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
-                        {group.city}, {group.country}
-                      </div>
-                    )}
-                    <div className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
-                      {group.memberCount} members
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      Created {format(new Date(group.createdAt), 'MMM yyyy')}
-                    </div>
-                  </div>
-
-                  {!group.isMember ? (
-                    <Button
-                      onClick={() => joinMutation.mutate()}
-                      disabled={joinMutation.isPending}
-                      data-testid="button-join-group"
-                    >
-                      <UserPlus className="h-4 w-4 mr-2" />
-                      Join Group
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="outline"
-                      onClick={() => leaveMutation.mutate()}
-                      disabled={leaveMutation.isPending}
-                      data-testid="button-leave-group"
-                    >
-                      Leave Group
-                    </Button>
-                  )}
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  <span>{group.memberCount} members</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5" />
+                  <span>Since {format(new Date(group.createdAt), 'MMM yyyy')}</span>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+
+              <div className="flex gap-4 justify-center">
+                {!group.isMember ? (
+                  <Button
+                    onClick={() => joinMutation.mutate()}
+                    disabled={joinMutation.isPending}
+                    size="lg"
+                    data-testid="button-join-group"
+                  >
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Join Group
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    onClick={() => leaveMutation.mutate()}
+                    disabled={leaveMutation.isPending}
+                    size="lg"
+                    className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
+                    data-testid="button-leave-group"
+                  >
+                    Leave Group
+                  </Button>
+                )}
+                
+                {group.isAdmin && (
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    asChild 
+                    className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
+                    data-testid="button-manage-group"
+                  >
+                    <Link href={`/groups/${groupId}/settings`}>
+                      <Settings className="h-4 w-4 mr-2" />
+                      Manage
+                    </Link>
+                  </Button>
+                )}
+                
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  asChild 
+                  className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
+                  data-testid="button-back"
+                >
+                  <Link href="/groups">
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Back
+                  </Link>
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        <div className="container mx-auto max-w-5xl py-12 px-4">
 
           <Card>
             <CardHeader>

@@ -17,9 +17,9 @@ import {
   Search
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 interface Communication {
   id: number;
@@ -81,84 +81,85 @@ export default function ESACommunicationsPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="ESA Communications" fallbackRoute="/platform/esa">
-      <PageLayout title="ESA Communications" showBreadcrumbs>
-        <div className="container mx-auto p-6 space-y-6">
-          {/* Header */}
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3" data-testid="text-page-title">
-              <MessageSquare className="h-8 w-8 text-primary" />
+      {/* Hero Section - 16:9 Aspect Ratio */}
+      <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-green-500/20">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        </div>
+        
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="space-y-6"
+          >
+            <Badge variant="outline" className="mb-4 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+              <MessageSquare className="w-4 h-4 mr-2 inline" />
+              Communication Network
+            </Badge>
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight" data-testid="text-page-title">
               Inter-Agent Communications
             </h1>
-            <p className="text-muted-foreground mt-1">
-              H2A, A2A, and A2H message logs and communication graph
+            
+            <p className="text-xl text-white/80 max-w-2xl mx-auto">
+              H2A · A2A · A2H Message Logs and Communication Graph
             </p>
-          </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-6 py-12 space-y-12">
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card className="hover-elevate">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Messages</CardTitle>
-                <MessageSquare className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold" data-testid="text-total-messages">
-                  {stats?.totalMessages?.toLocaleString() || 0}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  All channels
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover-elevate">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">H2A Messages</CardTitle>
-                <User className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-blue-600" data-testid="text-h2a-messages">
-                  {stats?.h2aMessages || 0}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Human to Agent
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover-elevate">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">A2A Messages</CardTitle>
-                <Bot className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-purple-600" data-testid="text-a2a-messages">
-                  {stats?.a2aMessages || 0}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Agent to Agent
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover-elevate">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Conversations</CardTitle>
-                <Activity className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold" data-testid="text-active-conversations">
-                  {stats?.activeConversations || 0}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {stats?.messagesPerHour || 0} msg/hr
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-8"
+          >
+            {[
+              { title: "Total Messages", value: stats?.totalMessages?.toLocaleString() || 0, subtitle: "All channels", icon: MessageSquare, testId: "text-total-messages" },
+              { title: "H2A Messages", value: stats?.h2aMessages || 0, subtitle: "Human to Agent", icon: User, testId: "text-h2a-messages", color: "text-blue-600" },
+              { title: "A2A Messages", value: stats?.a2aMessages || 0, subtitle: "Agent to Agent", icon: Bot, testId: "text-a2a-messages", color: "text-purple-600" },
+              { title: "Active Conversations", value: stats?.activeConversations || 0, subtitle: `${stats?.messagesPerHour || 0} msg/hr`, icon: Activity, testId: "text-active-conversations" }
+            ].map((stat, index) => (
+              <motion.div
+                key={stat.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <Card className="hover-elevate">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                    <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+                    <stat.icon className="w-5 h-5 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className={`text-3xl font-serif font-bold ${stat.color || ''}`} data-testid={stat.testId}>
+                      {stat.value}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {stat.subtitle}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </motion.div>
 
           {/* Search */}
-          <div className="relative">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="relative"
+          >
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
@@ -168,46 +169,58 @@ export default function ESACommunicationsPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
               data-testid="input-search-messages"
             />
-          </div>
+          </motion.div>
 
           {/* Tabs */}
-          <Tabs defaultValue="all" className="w-full">
-            <TabsList className="grid w-full max-w-2xl grid-cols-4">
-              <TabsTrigger value="all" data-testid="tab-all">
-                All
-              </TabsTrigger>
-              <TabsTrigger value="h2a" data-testid="tab-h2a">
-                H2A
-              </TabsTrigger>
-              <TabsTrigger value="a2a" data-testid="tab-a2a">
-                A2A
-              </TabsTrigger>
-              <TabsTrigger value="a2h" data-testid="tab-a2h">
-                A2H
-              </TabsTrigger>
-            </TabsList>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+          >
+            <Tabs defaultValue="all" className="w-full">
+              <TabsList className="grid w-full max-w-2xl grid-cols-4">
+                <TabsTrigger value="all" data-testid="tab-all">
+                  All
+                </TabsTrigger>
+                <TabsTrigger value="h2a" data-testid="tab-h2a">
+                  H2A
+                </TabsTrigger>
+                <TabsTrigger value="a2a" data-testid="tab-a2a">
+                  A2A
+                </TabsTrigger>
+                <TabsTrigger value="a2h" data-testid="tab-a2h">
+                  A2H
+                </TabsTrigger>
+              </TabsList>
 
-            <TabsContent value="all" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Communication Log</CardTitle>
-                  <CardDescription>
-                    All inter-agent and human-agent communications
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {commsLoading ? (
-                    <div className="text-center py-8 text-muted-foreground">
-                      Loading communications...
-                    </div>
-                  ) : filteredCommunications.length > 0 ? (
-                    <div className="space-y-3">
-                      {filteredCommunications.map((comm) => (
-                        <Card 
-                          key={comm.id} 
-                          className="hover-elevate"
-                          data-testid={`communication-${comm.id}`}
-                        >
+              <TabsContent value="all" className="mt-6">
+                <Card className="hover-elevate">
+                  <CardHeader className="p-8">
+                    <CardTitle className="text-3xl font-serif font-bold">Communication Log</CardTitle>
+                    <CardDescription className="text-base mt-2">
+                      All inter-agent and human-agent communications
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-8">
+                    {commsLoading ? (
+                      <div className="text-center py-12 text-muted-foreground">
+                        Loading communications...
+                      </div>
+                    ) : filteredCommunications.length > 0 ? (
+                      <div className="space-y-4">
+                        {filteredCommunications.map((comm, index) => (
+                          <motion.div
+                            key={comm.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.3, delay: index * 0.05 }}
+                          >
+                            <Card 
+                              className="hover-elevate"
+                              data-testid={`communication-${comm.id}`}
+                            >
                           <CardHeader className="pb-3">
                             <div className="flex items-start justify-between gap-4">
                               <div className="flex items-center gap-3 flex-1">
@@ -261,64 +274,72 @@ export default function ESACommunicationsPage() {
                               )}
                             </div>
                           </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12 text-muted-foreground">
-                      <MessageSquare className="mx-auto h-12 w-12 mb-3 opacity-50" />
-                      <p>No communications found</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {['h2a', 'a2a', 'a2h'].map((type) => (
-              <TabsContent key={type} value={type} className="mt-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="uppercase">{type} Communications</CardTitle>
-                    <CardDescription>
-                      {type === 'h2a' && 'Human to Agent messages'}
-                      {type === 'a2a' && 'Agent to Agent messages'}
-                      {type === 'a2h' && 'Agent to Human messages'}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-12 text-muted-foreground">
-                      Filtered view for {type.toUpperCase()} communications
-                    </div>
+                            </Card>
+                          </motion.div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-16 text-muted-foreground">
+                        <MessageSquare className="mx-auto h-16 w-16 mb-6 opacity-50" />
+                        <p className="text-lg font-medium">No communications found</p>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
-            ))}
-          </Tabs>
+
+              {['h2a', 'a2a', 'a2h'].map((type) => (
+                <TabsContent key={type} value={type} className="mt-6">
+                  <Card className="hover-elevate">
+                    <CardHeader className="p-8">
+                      <CardTitle className="text-3xl font-serif font-bold uppercase">{type} Communications</CardTitle>
+                      <CardDescription className="text-base mt-2">
+                        {type === 'h2a' && 'Human to Agent messages'}
+                        {type === 'a2a' && 'Agent to Agent messages'}
+                        {type === 'a2h' && 'Agent to Human messages'}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-8">
+                      <div className="text-center py-16 text-muted-foreground">
+                        Filtered view for {type.toUpperCase()} communications
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              ))}
+            </Tabs>
+          </motion.div>
 
           {/* Communication Graph Placeholder */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Communication Graph</CardTitle>
-              <CardDescription>
-                Visual representation of agent communication patterns
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-96 bg-gradient-to-br from-muted/20 to-muted/50 rounded-lg flex items-center justify-center border border-border">
-                <div className="text-center space-y-3">
-                  <Activity className="mx-auto h-16 w-16 text-primary/50 animate-pulse" />
-                  <div>
-                    <h3 className="font-semibold mb-1">Interactive Graph Coming Soon</h3>
-                    <p className="text-sm text-muted-foreground max-w-md">
-                      Real-time visualization of agent communication networks with D3.js or Cytoscape
-                    </p>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+          >
+            <Card className="hover-elevate">
+              <CardHeader className="p-8">
+                <CardTitle className="text-3xl font-serif font-bold">Communication Graph</CardTitle>
+                <CardDescription className="text-base mt-2">
+                  Visual representation of agent communication patterns
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                <div className="h-96 bg-gradient-to-br from-muted/20 to-muted/50 rounded-xl flex items-center justify-center border border-border">
+                  <div className="text-center space-y-4">
+                    <Activity className="mx-auto h-20 w-20 text-primary/50 animate-pulse" />
+                    <div>
+                      <h3 className="text-xl font-serif font-bold mb-2">Interactive Graph Coming Soon</h3>
+                      <p className="text-base text-muted-foreground max-w-md mx-auto">
+                        Real-time visualization of agent communication networks with D3.js or Cytoscape
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
-      </PageLayout>
     </SelfHealingErrorBoundary>
   );
 }

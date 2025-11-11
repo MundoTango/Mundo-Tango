@@ -14,6 +14,8 @@ import { Plus, Eye, EyeOff, Trash2, RefreshCw, Check, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 
 interface Secret {
   id: number;
@@ -129,15 +131,34 @@ export default function SecretsPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Secrets" fallbackRoute="/platform">
-      <PageLayout title="Secrets Management" showBreadcrumbs>
-<div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          
-          <p className="text-muted-foreground mt-1">
-            Manage environment variables for your deployments
-          </p>
-        </div>
+      <>
+        <SEO
+          title="Secrets Management - Admin"
+          description="Manage API keys, tokens, and environment variables securely for your deployments."
+        />
+        
+        <PageLayout title="Secrets Management" showBreadcrumbs>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="container mx-auto p-6 space-y-8">
+              <motion.div 
+                className="text-center pb-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+              >
+                <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  Environment Variables
+                </h2>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                  Securely manage API keys, tokens, and configuration values for your deployments
+                </p>
+              </motion.div>
+
+              <div className="flex items-center justify-between">
         <div className="flex gap-2">
           <Button
             onClick={() => syncSecretsMutation.mutate()}
@@ -333,8 +354,10 @@ export default function SecretsPage() {
           )}
         </CardContent>
       </Card>
-      </div>
-      </PageLayout>
+            </div>
+          </motion.div>
+        </PageLayout>
+      </>
     </SelfHealingErrorBoundary>
   );
 }

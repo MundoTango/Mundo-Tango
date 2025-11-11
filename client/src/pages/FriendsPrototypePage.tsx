@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, UserPlus, UserMinus, MessageCircle, MoreVertical, Users, UserCheck, Clock } from "lucide-react";
 
+const tangoHeroImage = "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?q=80&w=2070&auto=format&fit=crop";
+
 const FRIENDS = [
   {
     id: 1,
@@ -86,15 +88,44 @@ export default function FriendsPrototypePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b">
-        <div className="container mx-auto px-6 py-8">
-          <h1 className="text-4xl font-serif font-bold mb-2">Friends</h1>
-          <p className="text-muted-foreground">Connect with dancers worldwide</p>
+      {/* Editorial Hero Section */}
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden"
+        data-testid="section-hero"
+      >
+        <div className="absolute inset-0 aspect-video">
+          <img
+            src={tangoHeroImage}
+            alt="Tango dancers connecting"
+            className="w-full h-full object-cover"
+            data-testid="img-hero"
+          />
         </div>
-      </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        <div className="relative h-full flex items-center justify-center text-center px-4">
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+          >
+            <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+              Your Community
+            </Badge>
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6" data-testid="heading-page-title">
+              Friends
+            </h1>
+            <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-hero-subtitle">
+              Connect with dancers worldwide
+            </p>
+          </motion.div>
+        </div>
+      </motion.section>
 
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-6 py-16">
         {/* Search */}
         <div className="relative max-w-2xl mb-8">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />

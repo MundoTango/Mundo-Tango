@@ -1,10 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
 import { Apple, Utensils, Droplets, TrendingUp, Target, Flame } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import nutritionHeroImage from "@assets/stock_images/modern_professional_e8f4a2d1.jpg";
 
 export default function NutritionAgentPage() {
   const stats = [
@@ -36,23 +38,35 @@ export default function NutritionAgentPage() {
         description="Track your meals, calories, and nutrition goals with AI-powered dietary insights."
       />
 
-      <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/5 to-background py-12 px-4">
+      {/* 16:9 Editorial Hero */}
+      <div className="relative aspect-video w-full overflow-hidden mb-16" data-testid="hero-nutrition">
+        <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: `url(${nutritionHeroImage})`}}>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        </div>
+        
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          className="relative z-10 flex flex-col items-center justify-center h-full px-4 text-center"
+        >
+          <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+            <Apple className="w-3 h-3 mr-1" />
+            Nutrition Agent
+          </Badge>
+          
+          <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 tracking-tight leading-tight max-w-4xl">
+            Fuel Your Body, Elevate Your Dance
+          </h1>
+          
+          <p className="text-xl text-white/90 max-w-2xl">
+            Track meals, optimize nutrition, and achieve your wellness goals with AI-powered insights
+          </p>
+        </motion.div>
+      </div>
+
+      <div className="min-h-screen bg-background py-12 px-4">
         <div className="container mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center">
-                <Apple className="h-6 w-6 text-green-500" />
-              </div>
-              <div>
-                
-                <p className="text-muted-foreground">Your AI nutrition coach</p>
-              </div>
-            </div>
-          </motion.div>
 
           {/* Stats Grid */}
           <div className="grid gap-6 md:grid-cols-4 mb-8">

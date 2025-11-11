@@ -28,7 +28,7 @@ export default function MarketingPrototypeOcean() {
       <motion.section
         ref={heroRef}
         style={{ opacity: heroOpacity, scale: heroScale }}
-        className="relative h-screen flex items-center justify-center overflow-hidden"
+        className="relative h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden"
         data-testid="section-hero-ocean"
       >
         {/* MT Ocean Gradient */}
@@ -61,11 +61,11 @@ export default function MarketingPrototypeOcean() {
             <Badge className={cn("mb-6 text-white font-semibold text-sm px-4 py-2", theme.badge)} data-testid="badge-network-ocean">
               THE GLOBAL TANGO NETWORK
             </Badge>
-            <h1 className="text-7xl md:text-9xl font-bold mb-6 text-white tracking-tight">
-              WHERE TANGO{" "}
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold mb-6 text-white tracking-tight leading-tight">
+              Where Tango{" "}
               <br />
               <span className={cn("bg-gradient-to-r bg-clip-text text-transparent", theme.accentGradient)}>
-                MEETS COMMUNITY
+                Meets Community
               </span>
             </h1>
           </motion.div>
@@ -135,7 +135,7 @@ export default function MarketingPrototypeOcean() {
       <ScrollRevealSection delay={0.3}>
         <section className="py-32 px-4" data-testid="section-features-ocean">
           <div className="max-w-7xl mx-auto">
-            <motion.h2 className="text-6xl font-bold text-center mb-16 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <motion.h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-center mb-16 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
               7 Ways to Connect
             </motion.h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -185,7 +185,7 @@ export default function MarketingPrototypeOcean() {
         <section className="py-32 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 relative overflow-hidden" data-testid="section-cta-ocean">
           <div className="absolute inset-0 bg-black/40" />
           <div className="relative z-10 max-w-4xl mx-auto text-center px-4">
-            <h2 className="text-5xl md:text-7xl font-bold text-white mb-6">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6">
               Ready to Dance?
             </h2>
             <p className="text-xl text-white/90 mb-12">
@@ -234,8 +234,8 @@ function StatCard({ number, label, delay, color }: { number: string; label: stri
       transition={{ duration: 0.6, delay }}
       className="text-center"
     >
-      <div className={cn("text-5xl md:text-6xl font-bold mb-2", color)}>{number}</div>
-      <div className="text-lg text-muted-foreground">{label}</div>
+      <div className={cn("text-4xl md:text-5xl font-serif font-bold mb-2", color)}>{number}</div>
+      <div className="text-sm text-muted-foreground uppercase tracking-wide">{label}</div>
     </motion.div>
   );
 }
@@ -256,7 +256,7 @@ function FeatureCard({ icon, title, description, delay }: { icon: React.ReactNod
       <Card className="h-full transition-all hover:shadow-2xl cursor-pointer border-2 border-cyan-500/30">
         <CardContent className="p-8">
           <div className="mb-4">{icon}</div>
-          <h3 className="text-2xl font-bold mb-3">{title}</h3>
+          <h3 className="text-xl md:text-2xl font-serif font-bold mb-3">{title}</h3>
           <p className="text-muted-foreground">{description}</p>
           <div className="mt-6 flex items-center gap-2 text-sm font-medium text-cyan-500">
             <span>Learn More</span>

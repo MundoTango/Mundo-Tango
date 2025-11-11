@@ -177,7 +177,7 @@ function DailyInspirationHero({ quote }: { quote: { text: string; author: string
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.6 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-serif text-white leading-tight mb-8"
+              className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white leading-tight mb-8"
             >
               "{quote.text}"
             </motion.blockquote>

@@ -5,8 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, Clock, Heart, Share2, BookmarkPlus, ArrowLeft } from "lucide-react";
+import { Calendar, Clock, Heart, Share2, BookmarkPlus, ArrowLeft, BookOpen } from "lucide-react";
 import { format } from "date-fns";
+import { motion } from "framer-motion";
 
 interface BlogPost {
   id: number;
@@ -59,33 +60,70 @@ export default function BlogDetailPage() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
-        <div className="container mx-auto max-w-4xl py-8 px-4">
-          <Button variant="outline" asChild className="mb-6" data-testid="button-back">
+      <div className="min-h-screen bg-background">
+        {/* Hero Section */}
+        <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+          <div className="absolute inset-0 bg-cover bg-center" style={{
+            backgroundImage: post.featuredImage ? `url('${post.featuredImage}')` : `url('https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=1600&h=900&fit=crop&q=80')`
+          }}>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+          </div>
+          
+          <div className="relative z-10 flex flex-col items-center justify-end h-full px-8 pb-12">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="w-full max-w-4xl"
+            >
+              <Badge variant="outline" className="mb-4 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+                <BookOpen className="w-3 h-3 mr-1.5" />
+                {post.category}
+              </Badge>
+              
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4" data-testid="text-blog-title">
+                {post.title}
+              </h1>
+              
+              <div className="flex items-center gap-4 text-white/80">
+                <div className="flex items-center gap-2">
+                  <Avatar className="w-8 h-8 border-2 border-white/30">
+                    <AvatarImage src={post.authorImage} />
+                    <AvatarFallback>{post.authorName[0]}</AvatarFallback>
+                  </Avatar>
+                  <span className="font-medium">{post.authorName}</span>
+                </div>
+                <span>•</span>
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-4 w-4" />
+                  {format(new Date(post.publishedAt), 'MMMM dd, yyyy')}
+                </div>
+                <span>•</span>
+                <div className="flex items-center gap-1">
+                  <Clock className="h-4 w-4" />
+                  {post.readTime} min read
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        <div className="container mx-auto max-w-4xl px-6 py-12">
+          <Button variant="outline" asChild className="mb-8" data-testid="button-back">
             <Link href="/blog">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Blog
             </Link>
           </Button>
 
-          <Card>
-            <CardContent className="p-0">
-              {post.featuredImage && (
-                <div className="aspect-video overflow-hidden rounded-t-lg">
-                  <img
-                    src={post.featuredImage}
-                    alt={post.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-
-              <div className="p-8">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <Card>
+              <CardContent className="p-8">
                 <div className="mb-6">
-                  <Badge className="mb-4">{post.category}</Badge>
-                  <h1 className="text-4xl font-bold text-foreground mb-4" data-testid="text-blog-title">
-                    {post.title}
-                  </h1>
 
                   <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
                     <div className="flex items-center gap-2">

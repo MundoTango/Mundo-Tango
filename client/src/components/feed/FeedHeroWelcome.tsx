@@ -61,7 +61,7 @@ export function FeedHeroWelcome() {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white" data-testid="heading-welcome">
               {greeting}, {firstName}!
             </h1>
-          </motion.div>
+          </div>
 
           <p className="text-xl md:text-2xl text-white/90 max-w-2xl">
             Welcome back to your tango community

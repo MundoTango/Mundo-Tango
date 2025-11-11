@@ -20,6 +20,8 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
+import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 
 interface UserSettings {
   emailNotifications: boolean;
@@ -82,11 +84,35 @@ export default function UserSettingsPage() {
   }
 
   return (
-    <PageLayout title="Settings" showBreadcrumbs>
-<SelfHealingErrorBoundary pageName="User Settings" fallbackRoute="/settings">
-      <div className="container max-w-4xl mx-auto p-6" data-testid="page-user-settings">
+    <SelfHealingErrorBoundary pageName="User Settings" fallbackRoute="/settings">
+      <>
+        <SEO
+          title="User Settings"
+          description="Manage your account settings, privacy preferences, notifications, and security options."
+        />
+        
+        <PageLayout title="Settings" showBreadcrumbs>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="container max-w-4xl mx-auto p-6" data-testid="page-user-settings">
+              <motion.div 
+                className="text-center pb-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+              >
+                <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  Your Settings
+                </h2>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                  Customize your account, privacy, notifications, and security preferences
+                </p>
+              </motion.div>
 
-      <Tabs defaultValue="account" data-testid="tabs-settings">
+              <Tabs defaultValue="account" data-testid="tabs-settings">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="account" data-testid="tab-account">
             <User className="h-4 w-4 mr-2" />
@@ -351,9 +377,11 @@ export default function UserSettingsPage() {
             </CardContent>
           </Card>
         </TabsContent>
-      </Tabs>
-      </div>
+              </Tabs>
+            </div>
+          </motion.div>
+        </PageLayout>
+      </>
     </SelfHealingErrorBoundary>
-    </PageLayout>
   );
 }

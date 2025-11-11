@@ -115,11 +115,11 @@ export default function TangoRolesPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
-            <Badge variant="outline" className="mb-4 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-step-3">
+            <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-step-3">
               Step 3 of 4
             </Badge>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6">
               What Do You Do in Tango?
             </h1>
             
@@ -144,7 +144,7 @@ export default function TangoRolesPage() {
                   <div className="p-3 rounded-xl bg-primary/10">
                     <Heart className="h-6 w-6 text-primary" />
                   </div>
-                  <h2 className="text-2xl font-serif font-bold">Your Tango Roles</h2>
+                  <h2 className="text-2xl md:text-3xl font-serif font-bold">Your Tango Roles</h2>
                 </div>
                 <p className="text-muted-foreground leading-relaxed">
                   Choose all the ways you participate in tango - minimum 1 required

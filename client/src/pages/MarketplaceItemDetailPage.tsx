@@ -9,6 +9,7 @@ import { ShoppingCart, Heart, Share2, MapPin, Package, Shield, ArrowLeft } from 
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { motion } from "framer-motion";
 
 interface MarketplaceItem {
   id: number;
@@ -73,65 +74,77 @@ export default function MarketplaceItemDetailPage() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
-        <div className="container mx-auto max-w-6xl py-8 px-4">
-          <Button variant="outline" asChild className="mb-6" data-testid="button-back">
-            <Link href="/marketplace">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Marketplace
-            </Link>
-          </Button>
+      <div className="min-h-screen bg-background">
+        {/* 16:9 Editorial Hero Image */}
+        <div className="relative aspect-video w-full overflow-hidden" data-testid="hero-item">
+          <div className="absolute inset-0 bg-muted">
+            {item.images[0] ? (
+              <img
+                src={item.images[0]}
+                alt={item.title}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full bg-gradient-to-br from-primary/20 to-accent/10">
+                <Package className="h-32 w-32 text-muted-foreground/30" />
+              </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-transparent" />
+          </div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+            className="relative z-10 h-full flex flex-col justify-end p-8"
+          >
+            <Button variant="outline" asChild className="mb-auto w-fit backdrop-blur-sm bg-white/10 border-white/30 text-white hover:bg-white/20" data-testid="button-back">
+              <Link href="/marketplace">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Marketplace
+              </Link>
+            </Button>
+            
+            <div className="max-w-4xl">
+              <div className="flex gap-2 mb-4">
+                <Badge className="bg-white/10 backdrop-blur-sm border-white/30 text-white">{item.category}</Badge>
+                <Badge variant="outline" className="bg-white/10 backdrop-blur-sm border-white/30 text-white">{item.condition}</Badge>
+                {item.isAvailable && (
+                  <Badge variant="outline" className="bg-green-500/20 text-white border-green-500/30 backdrop-blur-sm">
+                    Available
+                  </Badge>
+                )}
+              </div>
+              <h1 className="text-5xl md:text-6xl font-serif font-bold text-white mb-4 tracking-tight" data-testid="text-item-title">
+                {item.title}
+              </h1>
+              <p className="text-4xl font-bold text-white">
+                {item.currency}{item.price.toLocaleString()}
+              </p>
+            </div>
+          </motion.div>
+        </div>
 
+        <div className="container mx-auto max-w-6xl py-12 px-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
               <Card className="mb-6">
-                <CardContent className="p-0">
-                  <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
-                    {item.images[0] ? (
-                      <img
-                        src={item.images[0]}
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center h-full">
-                        <Package className="h-16 w-16 text-muted-foreground/50" />
-                      </div>
-                    )}
+                <CardContent className="p-8">
+                  <div className="mb-8">
+                    <h2 className="text-3xl font-serif font-bold text-foreground mb-4">Description</h2>
+                    <p className="text-muted-foreground text-lg leading-relaxed whitespace-pre-line">
+                      {item.description}
+                    </p>
                   </div>
 
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h1 className="text-3xl font-bold text-foreground mb-2" data-testid="text-item-title">
-                          {item.title}
-                        </h1>
-                        <div className="flex gap-2">
-                          <Badge>{item.category}</Badge>
-                          <Badge variant="outline">{item.condition}</Badge>
-                          {item.isAvailable && (
-                            <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/20">
-                              Available
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="text-4xl font-bold text-primary mb-6">
-                      {item.currency}{item.price.toLocaleString()}
-                    </div>
-
-                    <div className="border-t border-border pt-6 mb-6">
-                      <h3 className="font-semibold text-foreground mb-3">Description</h3>
-                      <p className="text-muted-foreground whitespace-pre-line">
-                        {item.description}
-                      </p>
-                    </div>
-
-                    <div className="border-t border-border pt-6">
-                      <h3 className="font-semibold text-foreground mb-3">Details</h3>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="border-t border-border pt-8">
+                    <h3 className="text-2xl font-serif font-bold text-foreground mb-6">Details</h3>
+                    <div className="grid grid-cols-2 gap-6 text-base">
                         <div>
                           <span className="text-muted-foreground">Condition:</span>
                           <span className="ml-2 font-semibold text-foreground">{item.condition}</span>
@@ -152,15 +165,20 @@ export default function MarketplaceItemDetailPage() {
                         </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </motion.div>
             </div>
 
             <div className="lg:col-span-1">
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
               <Card className="mb-6 sticky top-4">
                 <CardHeader>
-                  <CardTitle>Seller Information</CardTitle>
+                  <CardTitle className="font-serif font-bold">Seller Information</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center gap-3">
@@ -210,6 +228,7 @@ export default function MarketplaceItemDetailPage() {
                   </div>
                 </CardContent>
               </Card>
+              </motion.div>
             </div>
           </div>
         </div>

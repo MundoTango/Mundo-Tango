@@ -1,19 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
 import { Heart, Users, MessageCircle, TrendingUp, Calendar, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import relationshipHeroImg from "@assets/stock_images/business_team_meetin_061b6626.jpg";
+import relationshipImg1 from "@assets/stock_images/business_team_meetin_2bf5caa8.jpg";
 
 export default function RelationshipAgentPage() {
-  const stats = [
-    { label: "Connection Score", value: "87%", icon: Heart, color: "text-pink-500" },
-    { label: "Quality Time", value: "12h", icon: Calendar, color: "text-blue-500" },
-    { label: "Communication", value: "Strong", icon: MessageCircle, color: "text-green-500" },
-    { label: "Relationship Health", value: "8.5/10", icon: Sparkles, color: "text-purple-500" }
-  ];
-
   const recentActivities = [
     { activity: "Date Night: Tango Milonga", date: "2 days ago", quality: "Excellent", impact: "high" },
     { activity: "Deep Conversation", date: "4 days ago", quality: "Good", impact: "medium" },
@@ -32,146 +28,205 @@ export default function RelationshipAgentPage() {
     { activity: "Cook a Meal Together", category: "Quality Time", time: "1 hour" }
   ];
 
+  const metrics = [
+    { label: "Connection Score", value: "87%", icon: Heart, color: "text-pink-500" },
+    { label: "Quality Time", value: "12h", icon: Calendar, color: "text-blue-500" },
+    { label: "Communication", value: "Strong", icon: MessageCircle, color: "text-green-500" },
+    { label: "Health", value: "8.5/10", icon: Sparkles, color: "text-purple-500" }
+  ];
+
   return (
-    <SelfHealingErrorBoundary pageName="RelationshipAgentPage" fallbackRoute="/life-ceo">
-    <PageLayout title="Relationship Agent" showBreadcrumbs>
-<>
-      <SEO
-        title="Relationship Agent - Life CEO"
-        description="Strengthen your relationships with AI-powered insights, communication tools, and quality time tracking."
-      />
+    <SelfHealingErrorBoundary pageName="Relationship Agent" fallbackRoute="/life-ceo">
+      <PageLayout title="Relationship Agent" showBreadcrumbs>
+        <>
+          <SEO
+            title="Relationship Agent - Life CEO"
+            description="Strengthen your relationships with AI-powered insights, communication tools, and quality time tracking."
+          />
 
-      <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/5 to-background py-12 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div className="h-12 w-12 rounded-full bg-pink-500/10 flex items-center justify-center">
-                <Heart className="h-6 w-6 text-pink-500" />
-              </div>
-              <div>
-                
-                <p className="text-muted-foreground">Your AI relationship counselor</p>
-              </div>
+          {/* Editorial Hero Section - 16:9 */}
+          <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden" data-testid="hero-section">
+            <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: `url(${relationshipHeroImg})`}}>
+              <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
             </div>
-          </motion.div>
-
-          {/* Stats Grid */}
-          <div className="grid gap-6 md:grid-cols-4 mb-8">
-            {stats.map((stat, idx) => (
+            
+            <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
               <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
+                transition={{ duration: 1, ease: "easeOut" }}
               >
-                <Card className="glass-card">
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <stat.icon className={`h-8 w-8 ${stat.color}`} />
-                      <TrendingUp className="h-4 w-4 text-green-500" />
+                <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
+                  Personal Connections
+                </Badge>
+                
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight" data-testid="heading-hero">
+                  Relationship Agent
+                </h1>
+                
+                <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+                  Your AI relationship counselor
+                </p>
+              </motion.div>
+            </div>
+          </div>
+
+          <div className="max-w-7xl mx-auto px-6 py-16">
+            {/* Metrics Grid */}
+            <div className="grid gap-8 md:grid-cols-4 mb-16">
+              {metrics.map((metric, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.6, delay: idx * 0.1 }}
+                >
+                  <Card className="hover-elevate">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <metric.icon className={`h-8 w-8 ${metric.color}`} />
+                        <TrendingUp className="h-4 w-4 text-green-500" />
+                      </div>
+                      <p className="text-sm text-muted-foreground">{metric.label}</p>
+                      <p className="text-3xl font-serif font-bold mt-2">{metric.value}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Section Header */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+              className="mb-12"
+            >
+              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Connection Insights</h2>
+              <p className="text-lg text-muted-foreground">
+                Build stronger bonds through meaningful interactions
+              </p>
+            </motion.div>
+
+            <div className="grid gap-8 lg:grid-cols-2">
+              {/* Recent Activities Card with 16:9 Image */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6 }}
+              >
+                <Card className="overflow-hidden hover-elevate">
+                  <div className="relative aspect-[16/9] overflow-hidden">
+                    <motion.img
+                      src={relationshipImg1}
+                      alt="Shared Moments"
+                      className="w-full h-full object-cover"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.6 }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4 text-white">
+                      <h3 className="text-2xl font-serif font-bold">Shared Moments</h3>
+                      <p className="text-white/80 text-sm mt-1">Quality time together</p>
                     </div>
-                    <p className="text-sm text-muted-foreground">{stat.label}</p>
-                    <p className="text-2xl font-bold">{stat.value}</p>
+                  </div>
+                  <CardContent className="p-8 space-y-3">
+                    {recentActivities.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className={`p-4 rounded-lg border ${
+                          item.impact === "high" 
+                            ? "bg-pink-500/5 border-pink-500/20" 
+                            : "bg-muted/50 border-border"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="font-semibold">{item.activity}</h3>
+                          <Badge className={
+                            item.quality === "Excellent" ? "bg-green-500" : "bg-blue-500"
+                          }>
+                            {item.quality}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">{item.date}</p>
+                      </div>
+                    ))}
+                    <Button className="w-full" variant="outline" data-testid="button-log-activity">
+                      + Log Shared Activity
+                    </Button>
                   </CardContent>
                 </Card>
               </motion.div>
-            ))}
-          </div>
 
-          <div className="grid gap-6 lg:grid-cols-2">
-            {/* Recent Activities */}
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-primary" />
-                  Shared Moments
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {recentActivities.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className={`p-4 rounded-lg border ${
-                      item.impact === "high" 
-                        ? "bg-pink-500/5 border-pink-500/20" 
-                        : "bg-muted/50 border-border"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold">{item.activity}</h3>
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        item.quality === "Excellent" 
-                          ? "bg-green-500/20 text-green-500" 
-                          : "bg-blue-500/20 text-blue-500"
-                      }`}>
-                        {item.quality}
-                      </span>
+              {/* AI Insights */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+              >
+                <Card className="glass-card h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-2xl font-serif">
+                      <Sparkles className="h-6 w-6 text-purple-500" />
+                      AI Relationship Insights
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {insights.map((insight, idx) => (
+                      <div
+                        key={idx}
+                        className={`p-4 rounded-lg border ${
+                          insight.type === "positive" 
+                            ? "bg-green-500/5 border-green-500/20" 
+                            : "bg-blue-500/5 border-blue-500/20"
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          {insight.type === "positive" ? (
+                            <Heart className="h-5 w-5 text-green-500 mt-0.5" />
+                          ) : (
+                            <MessageCircle className="h-5 w-5 text-blue-500 mt-0.5" />
+                          )}
+                          <div>
+                            <h3 className="font-semibold text-sm mb-1">{insight.title}</h3>
+                            <p className="text-sm text-muted-foreground">{insight.message}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                    <div className="grid gap-3 mt-6">
+                      <h4 className="font-semibold">Suggested Activities</h4>
+                      {suggestions.map((suggestion, idx) => (
+                        <div key={idx} className="p-3 rounded-lg border hover-elevate cursor-pointer">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-medium text-sm">{suggestion.activity}</p>
+                              <p className="text-xs text-muted-foreground">{suggestion.category} • {suggestion.time}</p>
+                            </div>
+                            <Button size="sm" data-testid={`button-plan-${idx}`}>
+                              Plan
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                    <p className="text-sm text-muted-foreground">{item.date}</p>
-                  </div>
-                ))}
-                <Button className="w-full" variant="outline" data-testid="button-log-activity">
-                  + Log Shared Activity
-                </Button>
-              </CardContent>
-            </Card>
 
-            {/* AI Insights */}
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-purple-500" />
-                  AI Relationship Insights
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {insights.map((insight, idx) => (
-                  <div
-                    key={idx}
-                    className={`p-4 rounded-lg border ${
-                      insight.type === "positive" 
-                        ? "bg-green-500/5 border-green-500/20" 
-                        : "bg-blue-500/5 border-blue-500/20"
-                    }`}
-                  >
-                    <h3 className="font-semibold text-sm mb-1">{insight.title}</h3>
-                    <p className="text-sm text-muted-foreground">{insight.message}</p>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* Activity Suggestions */}
-            <Card className="glass-card lg:col-span-2">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5 text-blue-500" />
-                  Suggested Activities
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-4 md:grid-cols-3">
-                {suggestions.map((suggestion, idx) => (
-                  <div key={idx} className="p-4 rounded-lg border hover-elevate cursor-pointer">
-                    <h3 className="font-semibold mb-2">{suggestion.activity}</h3>
-                    <div className="flex flex-col gap-1 text-sm text-muted-foreground mb-3">
-                      <span>{suggestion.category}</span>
-                      <span>{suggestion.time}</span>
-                    </div>
-                    <Button size="sm" className="w-full" data-testid={`button-plan-${idx}`}>
-                      Plan Activity
+                    <Button className="w-full gap-2" data-testid="button-view-all">
+                      <Users className="w-4 h-4" />
+                      View All Suggestions
                     </Button>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </div>
           </div>
-        </div>
-      </div>
-    </>
-    </PageLayout>
-    </SelfHealingErrorBoundary>);
+        </>
+      </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

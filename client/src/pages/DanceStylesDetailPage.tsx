@@ -1,10 +1,12 @@
 import { useParams } from "wouter";
-import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Music, Users, Video, BookOpen, ArrowLeft } from "lucide-react";
+import { Music, Users, Video, BookOpen, ArrowLeft, ChevronRight } from "lucide-react";
 import { Link } from "wouter";
+import { motion } from "framer-motion";
+import { PageLayout } from "@/components/PageLayout";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 const danceStyles = {
   milonguero: {
@@ -21,6 +23,7 @@ const danceStyles = {
     difficulty: "Intermediate",
     idealFor: "Social dancing, crowded milongas",
     music: "Traditional tango orchestras (Di Sarli, D'Arienzo, Troilo)",
+    heroImage: "https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=1600&h=900&fit=crop"
   },
   salon: {
     name: "Salon Style",
@@ -36,6 +39,7 @@ const danceStyles = {
     difficulty: "Beginner to Advanced",
     idealFor: "Social dancing, performances",
     music: "Wide variety of traditional and modern tango",
+    heroImage: "https://images.unsplash.com/photo-1545128485-c400e7702796?w=1600&h=900&fit=crop"
   },
   nuevo: {
     name: "Tango Nuevo",
@@ -51,6 +55,7 @@ const danceStyles = {
     difficulty: "Advanced",
     idealFor: "Performances, exploration, contemporary music",
     music: "Electronic tango, alternative music, traditional with new interpretations",
+    heroImage: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1600&h=900&fit=crop"
   },
   vals: {
     name: "Tango Vals",
@@ -66,6 +71,7 @@ const danceStyles = {
     difficulty: "Intermediate",
     idealFor: "Social dancing during vals tandas",
     music: "Tango vals orchestras and compositions",
+    heroImage: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=1600&h=900&fit=crop"
   },
   milonga: {
     name: "Milonga",
@@ -81,6 +87,7 @@ const danceStyles = {
     difficulty: "Intermediate to Advanced",
     idealFor: "Social dancing during milonga tandas",
     music: "Milonga orchestras and rhythmic compositions",
+    heroImage: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=1600&h=900&fit=crop"
   },
 };
 
@@ -88,107 +95,157 @@ export default function DanceStylesDetailPage() {
   const { styleId } = useParams();
   const style = danceStyles[styleId as keyof typeof danceStyles];
 
+  const fadeInUp = {
+    initial: { opacity: 0, y: 40 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-100px" },
+    transition: { duration: 0.6 }
+  };
+
   if (!style) {
     return (
-      <AppLayout>
-        <div className="container mx-auto max-w-4xl py-8 px-4">
-          <p className="text-center text-muted-foreground">Style not found</p>
-        </div>
-      </AppLayout>
+      <SelfHealingErrorBoundary pageName="Dance Style Detail" fallbackRoute="/dance-styles">
+        <PageLayout title="Style Not Found" showBreadcrumbs>
+          <div className="container mx-auto max-w-4xl py-8 px-4">
+            <p className="text-center text-muted-foreground">Style not found</p>
+          </div>
+        </PageLayout>
+      </SelfHealingErrorBoundary>
     );
   }
 
   return (
-    <AppLayout>
-      <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
-        <div className="container mx-auto max-w-4xl py-8 px-4">
-          <Button variant="outline" asChild className="mb-6" data-testid="button-back">
-            <Link href="/dance-styles">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dance Styles
-            </Link>
-          </Button>
-
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-3">
-              <Music className="h-8 w-8 text-primary" />
-              <h1 className="text-4xl font-bold text-foreground" data-testid="text-style-name">
-                {style.name}
-              </h1>
+    <SelfHealingErrorBoundary pageName="Dance Style Detail" fallbackRoute="/dance-styles">
+      <PageLayout title={style.name} showBreadcrumbs>
+        <div className="min-h-screen">
+          {/* Hero Section - 16:9 */}
+          <section className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+            <div className="absolute inset-0 bg-cover bg-center" style={{
+              backgroundImage: `url('${style.heroImage}')`
+            }}>
+              <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
             </div>
-            <p className="text-xl text-muted-foreground">{style.description}</p>
-          </div>
+            
+            <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, ease: "easeOut" }}
+              >
+                <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-dance-style">
+                  <Music className="w-3 h-3 mr-1.5" />
+                  Dance Style
+                </Badge>
+                
+                <h1 className="text-4xl md:text-5xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-style-name">
+                  {style.name}
+                </h1>
+                
+                <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-style-description">
+                  {style.description}
+                </p>
+              </motion.div>
+            </div>
+          </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <Card>
-              <CardContent className="p-6 text-center">
-                <BookOpen className="h-8 w-8 text-primary mx-auto mb-2" />
-                <div className="font-semibold text-foreground mb-1">Difficulty</div>
-                <Badge variant="outline">{style.difficulty}</Badge>
-              </CardContent>
-            </Card>
+          {/* Content Section */}
+          <div className="max-w-5xl mx-auto px-6 py-12">
+            <motion.div {...fadeInUp} className="mb-8">
+              <Button variant="outline" asChild data-testid="button-back">
+                <Link href="/dance-styles">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Dance Styles
+                </Link>
+              </Button>
+            </motion.div>
 
-            <Card>
-              <CardContent className="p-6 text-center">
-                <Users className="h-8 w-8 text-primary mx-auto mb-2" />
-                <div className="font-semibold text-foreground mb-1">Ideal For</div>
-                <div className="text-sm text-muted-foreground">{style.idealFor}</div>
-              </CardContent>
-            </Card>
+            {/* Stats Cards */}
+            <motion.div {...fadeInUp} className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+              <Card className="overflow-hidden hover-elevate">
+                <CardContent className="p-8 text-center">
+                  <BookOpen className="h-10 w-10 text-primary mx-auto mb-4" />
+                  <div className="text-sm font-medium text-muted-foreground mb-2">Difficulty</div>
+                  <Badge variant="outline" className="text-base" data-testid="badge-difficulty">{style.difficulty}</Badge>
+                </CardContent>
+              </Card>
 
-            <Card>
-              <CardContent className="p-6 text-center">
-                <Video className="h-8 w-8 text-primary mx-auto mb-2" />
-                <div className="font-semibold text-foreground mb-1">Origin</div>
-                <div className="text-sm text-muted-foreground">{style.origin}</div>
-              </CardContent>
-            </Card>
-          </div>
+              <Card className="overflow-hidden hover-elevate">
+                <CardContent className="p-8 text-center">
+                  <Users className="h-10 w-10 text-primary mx-auto mb-4" />
+                  <div className="text-sm font-medium text-muted-foreground mb-2">Ideal For</div>
+                  <div className="text-base" data-testid="text-ideal-for">{style.idealFor}</div>
+                </CardContent>
+              </Card>
 
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Characteristics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2">
-                {style.characteristics.map((char, index) => (
-                  <li key={index} className="flex items-start gap-2 text-muted-foreground">
-                    <span className="text-primary mt-1">•</span>
-                    <span>{char}</span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+              <Card className="overflow-hidden hover-elevate">
+                <CardContent className="p-8 text-center">
+                  <Video className="h-10 w-10 text-primary mx-auto mb-4" />
+                  <div className="text-sm font-medium text-muted-foreground mb-2">Origin</div>
+                  <div className="text-base" data-testid="text-origin">{style.origin}</div>
+                </CardContent>
+              </Card>
+            </motion.div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Music className="h-5 w-5 text-primary" />
-                Musical Accompaniment
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">{style.music}</p>
-            </CardContent>
-          </Card>
+            {/* Characteristics */}
+            <motion.div {...fadeInUp} transition={{ delay: 0.1 }}>
+              <Card className="mb-8 overflow-hidden">
+                <CardHeader className="border-b">
+                  <CardTitle className="text-2xl font-serif">Characteristics</CardTitle>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <ul className="space-y-4">
+                    {style.characteristics.map((char, index) => (
+                      <motion.li 
+                        key={index} 
+                        className="flex items-start gap-3"
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: index * 0.05 }}
+                      >
+                        <span className="text-primary mt-1 text-xl">•</span>
+                        <span className="text-base leading-relaxed">{char}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            </motion.div>
 
-          <div className="mt-8 flex gap-3">
-            <Button asChild data-testid="button-find-teachers">
+            {/* Musical Accompaniment */}
+            <motion.div {...fadeInUp} transition={{ delay: 0.2 }}>
+              <Card className="overflow-hidden">
+                <CardHeader className="border-b">
+                  <CardTitle className="flex items-center gap-2 text-2xl font-serif">
+                    <Music className="h-6 w-6 text-primary" />
+                    Musical Accompaniment
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <p className="text-base leading-relaxed" data-testid="text-music">{style.music}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* CTAs */}
+            <motion.div {...fadeInUp} transition={{ delay: 0.3 }} className="mt-12 flex flex-wrap gap-4 justify-center">
               <Link href="/teachers">
-                <Users className="h-4 w-4 mr-2" />
-                Find Teachers
+                <Button size="lg" className="gap-2" data-testid="button-find-teachers">
+                  <Users className="h-5 w-5" />
+                  Find Teachers
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
               </Link>
-            </Button>
-            <Button variant="outline" asChild data-testid="button-watch-videos">
               <Link href="/tutorials">
-                <Video className="h-4 w-4 mr-2" />
-                Watch Tutorials
+                <Button variant="outline" size="lg" className="gap-2" data-testid="button-watch-videos">
+                  <Video className="h-5 w-5" />
+                  Watch Tutorials
+                </Button>
               </Link>
-            </Button>
+            </motion.div>
           </div>
         </div>
-      </div>
-    </AppLayout>
+      </PageLayout>
+    </SelfHealingErrorBoundary>
   );
 }

@@ -100,35 +100,48 @@ export default function EventCheckInPage() {
         />
 
         {/* Hero Header */}
-        <div className="relative h-[30vh] w-full overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5">
-            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-background" />
-          </div>
+        <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+          <motion.div 
+            className="absolute inset-0 bg-cover bg-center" 
+            style={{
+              backgroundImage: `url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1600&h=900&fit=crop&q=80')`
+            }}
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 1.5 }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+          </motion.div>
           
           <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+              transition={{ duration: 1, ease: "easeOut" }}
             >
-              <Badge variant="outline" className="mb-4 border-primary/30 bg-primary/10">
+              <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+                <UserCheck className="w-3 h-3 mr-1.5" />
                 Event Check-In
               </Badge>
               
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold leading-tight mb-4">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6">
                 {event.title}
               </h1>
               
-              <div className="flex flex-wrap items-center justify-center gap-6 text-muted-foreground">
+              <div className="flex flex-wrap items-center justify-center gap-6 text-white/80 text-lg mb-4">
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-primary" />
+                  <Calendar className="h-5 w-5" />
                   <span>{format(new Date(event.date), 'PPP')}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-primary" />
+                  <MapPin className="h-5 w-5" />
                   <span>{event.venue}, {event.city}</span>
                 </div>
               </div>
+
+              <Badge className="text-white border-white/30 bg-white/10 backdrop-blur-sm">
+                {checkedInCount} of {rsvps.length} checked in
+              </Badge>
             </motion.div>
           </div>
         </div>

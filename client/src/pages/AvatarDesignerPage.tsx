@@ -13,6 +13,7 @@ import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary'
 import { SEO } from '@/components/SEO';
 import { Upload, X, Sparkles, Download, User, Clock, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 interface UploadedPhoto {
   id: string;
@@ -274,17 +275,37 @@ export default function AvatarDesignerPage() {
       />
 
       <div className="min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto p-6 space-y-8">
-          {/* Header */}
-          <div className="text-center space-y-4">
-            <div className="flex items-center justify-center gap-3">
-              <Sparkles className="h-8 w-8 text-primary" />
-              <h1 className="text-4xl font-bold">3D Avatar Designer</h1>
-            </div>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Create your custom Pixar-style avatar using AI. Upload reference photos and customize every detail.
-            </p>
+        {/* Hero Section */}
+        <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+          <div className="absolute inset-0 bg-cover bg-center" style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=1600&h=900&fit=crop&q=80')`
+          }}>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
           </div>
+          
+          <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            >
+              <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
+                <Sparkles className="w-3 h-3 mr-1.5" />
+                AI Avatar Designer
+              </Badge>
+              
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
+                3D Avatar Designer
+              </h1>
+              
+              <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-page-description">
+                Create your custom Pixar-style avatar using AI
+              </p>
+            </motion.div>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 py-12 space-y-8">
 
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Left Column: Upload & Customization */}
@@ -292,7 +313,7 @@ export default function AvatarDesignerPage() {
               {/* Photo Upload Section */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-2xl font-serif">
                     <Upload className="h-5 w-5" />
                     Upload Reference Photos
                   </CardTitle>
@@ -368,7 +389,7 @@ export default function AvatarDesignerPage() {
               {/* Customization Controls */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Customize Your Avatar</CardTitle>
+                  <CardTitle className="text-2xl font-serif">Customize Your Avatar</CardTitle>
                   <CardDescription>
                     Fine-tune the appearance and personality of your 3D avatar
                   </CardDescription>
@@ -486,7 +507,7 @@ export default function AvatarDesignerPage() {
               {currentGeneration && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className="flex items-center gap-2 text-2xl font-serif">
                       <Sparkles className="h-5 w-5 text-primary" />
                       Your Avatar
                     </CardTitle>
@@ -555,7 +576,7 @@ export default function AvatarDesignerPage() {
               {generationHistory.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">Recent Generations</CardTitle>
+                    <CardTitle className="text-2xl font-serif">Recent Generations</CardTitle>
                     <CardDescription>Your last 5 avatar creations</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-3">
@@ -600,7 +621,7 @@ export default function AvatarDesignerPage() {
               {/* Info Card */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">How It Works</CardTitle>
+                  <CardTitle className="text-2xl font-serif">How It Works</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm text-muted-foreground">
                   <div className="flex gap-3">

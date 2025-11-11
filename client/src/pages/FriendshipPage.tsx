@@ -8,6 +8,8 @@ import { AppLayout } from "@/components/AppLayout";
 import { LoadingFallback } from "@/components/LoadingFallback";
 import { Users, Calendar, MessageCircle, Heart, MapPin, UserCheck } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { motion } from "framer-motion";
+import tangoHeroImage from "@assets/tango-professional-1.jpg";
 
 export default function FriendshipPage() {
   const { userId } = useParams<{ userId: string }>();
@@ -50,23 +52,39 @@ export default function FriendshipPage() {
 
   return (
     <AppLayout>
-      <div className="max-w-4xl mx-auto p-6 space-y-6">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 
-            className="text-4xl font-bold mb-2"
-            style={{
-              background: 'linear-gradient(135deg, #40E0D0, #1E90FF)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}
-          >
-            Friendship with {friend?.name}
-          </h1>
-          <p className="text-muted-foreground">
-            Your connection in the tango community
-          </p>
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden"
+        data-testid="section-hero"
+      >
+        <div className="absolute inset-0 aspect-video">
+          <img
+            src={tangoHeroImage}
+            alt="Tango dancers connecting"
+            className="w-full h-full object-cover"
+            data-testid="img-hero"
+          />
         </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        <div className="relative h-full flex items-center justify-center text-center px-4">
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+          >
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-4" data-testid="heading-page-title">
+              Friendship with {friend?.name}
+            </h1>
+            <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto font-light" data-testid="text-hero-subtitle">
+              Your connection in the tango community
+            </p>
+          </motion.div>
+        </div>
+      </motion.section>
+
+      <div className="max-w-4xl mx-auto px-6 py-16 space-y-8"
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

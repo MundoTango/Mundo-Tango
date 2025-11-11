@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle, Clock, AlertCircle, ListTodo, Play } from "lucide-react";
-import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { motion } from "framer-motion";
 
 interface AgentTask {
   id: number;
@@ -72,11 +72,9 @@ export default function AgentTasksPage() {
   if (isLoading) {
     return (
       <SelfHealingErrorBoundary pageName="Agent Tasks" fallbackRoute="/platform">
-        <PageLayout title="Agent Tasks" showBreadcrumbs>
-<div className="container mx-auto p-6">
-        <div className="text-center py-8">Loading agent tasks...</div>
-      </div>
-        </PageLayout>
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="text-center py-8">Loading agent tasks...</div>
+        </div>
       </SelfHealingErrorBoundary>
     );
   }
@@ -87,13 +85,46 @@ export default function AgentTasksPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Agent Tasks" fallbackRoute="/platform">
-      <div className="container mx-auto p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold" data-testid="text-page-title">Agent Tasks</h1>
-        <p className="text-muted-foreground mt-1">
-          Task coordination and execution tracking
-        </p>
-      </div>
+      <div className="min-h-screen bg-background">
+        {/* Hero Section */}
+        <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+          <div className="absolute inset-0 bg-cover bg-center" style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=1600&h=900&fit=crop')`
+          }}>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+          </div>
+          
+          <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            >
+              <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
+                <ListTodo className="w-3 h-3 mr-1.5" />
+                Task Management
+              </Badge>
+              
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
+                Agent Tasks
+              </h1>
+              
+              <p className="text-xl text-white/80 max-w-2xl mx-auto">
+                Task coordination and execution tracking
+              </p>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Content Section */}
+        <div className="bg-background py-12 px-6">
+          <div className="container mx-auto max-w-7xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="space-y-8"
+            >
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -299,6 +330,9 @@ export default function AgentTasksPage() {
           </Card>
         </TabsContent>
       </Tabs>
+            </motion.div>
+          </div>
+        </div>
       </div>
     </SelfHealingErrorBoundary>
   );

@@ -2,10 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
-import { PageLayout } from "@/components/PageLayout";
+import { Users } from "lucide-react";
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
+import { motion } from "framer-motion";
 
 export default function AdminUsersPage() {
   const users = [
@@ -15,17 +14,50 @@ export default function AdminUsersPage() {
   ];
 
   return (
-    <PageLayout title="User Management" showBreadcrumbs>
-<SelfHealingErrorBoundary pageName="Admin Users" fallbackRoute="/admin">
-<div className="min-h-screen bg-background py-8 px-4">
-      <div className="container mx-auto max-w-6xl">
-        
+    <SelfHealingErrorBoundary pageName="Admin Users" fallbackRoute="/admin">
+      <div className="min-h-screen bg-background">
+        {/* Hero Section */}
+        <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+          <div className="absolute inset-0 bg-cover bg-center" style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1600&h=900&fit=crop')`
+          }}>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+          </div>
+          
+          <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            >
+              <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
+                <Users className="w-3 h-3 mr-1.5" />
+                User Directory
+              </Badge>
+              
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
+                Platform Users
+              </h1>
+              
+              <p className="text-xl text-white/80 max-w-2xl mx-auto">
+                Browse and manage all user accounts on the platform
+              </p>
+            </motion.div>
+          </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>All Users ({users.length})</CardTitle>
-          </CardHeader>
+        {/* Content Section */}
+        <div className="bg-background py-12 px-6">
+          <div className="container mx-auto max-w-6xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-2xl font-serif">All Users ({users.length})</CardTitle>
+                </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {users.map((user) => (
@@ -59,9 +91,11 @@ export default function AdminUsersPage() {
               ))}
             </div>
           </CardContent>
-        </Card>
+              </Card>
+            </motion.div>
+          </div>
+        </div>
       </div>
     </SelfHealingErrorBoundary>
-    </PageLayout>
   );
 }

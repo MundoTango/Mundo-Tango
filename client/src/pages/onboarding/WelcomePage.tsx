@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, Users, Calendar, MapPin } from "lucide-react";
+import { Sparkles, Users, Calendar, MapPin, ChevronRight } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { useAuth } from "@/contexts/AuthContext";
 import { PageLayout } from "@/components/PageLayout";
@@ -97,6 +97,7 @@ export default function WelcomePage() {
               >
                 <Sparkles className="h-5 w-5" />
                 Let's Get Started
+                <ChevronRight className="h-5 w-5" />
               </Button>
             </motion.div>
           </motion.div>

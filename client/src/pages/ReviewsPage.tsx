@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -145,20 +146,48 @@ export default function ReviewsPage() {
 
   return (
     <AppLayout>
-      <div className="container max-w-6xl mx-auto p-6 space-y-6">
-        {/* Header */}
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold">Reviews</h1>
-            <p className="text-muted-foreground">
-              Explore community reviews and share your experiences
-            </p>
+      <div className="min-h-screen bg-background">
+        {/* Editorial Hero Section - 16:9 */}
+        <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+          <div 
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: `url('https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=2574&auto=format&fit=crop')`
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
           </div>
+          
+          <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            >
+              <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+                Community
+              </Badge>
+              
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
+                Reviews
+              </h1>
+              
+              <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
+                Explore community reviews and share your experiences
+              </p>
 
-          <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-            <DialogTrigger asChild>
-              <Button data-testid="button-create-review">Write a Review</Button>
-            </DialogTrigger>
+              <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+                <DialogTrigger asChild>
+                  <Button 
+                    size="lg" 
+                    variant="outline"
+                    className="gap-2 text-white border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20" 
+                    data-testid="button-create-review"
+                  >
+                    <Star className="h-5 w-5" />
+                    Write a Review
+                  </Button>
+                </DialogTrigger>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Write a Review</DialogTitle>
@@ -302,10 +331,19 @@ export default function ReviewsPage() {
               </Form>
             </DialogContent>
           </Dialog>
+            </motion.div>
+          </div>
         </div>
 
+        {/* Editorial Content Layout */}
+        <div className="container max-w-6xl mx-auto px-6 py-16 space-y-8">
         {/* Statistics Dashboard */}
-        <div className="grid gap-4 md:grid-cols-3">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="grid gap-6 md:grid-cols-3"
+        >
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium text-muted-foreground">Total Reviews</CardTitle>
@@ -349,10 +387,15 @@ export default function ReviewsPage() {
               ))}
             </CardContent>
           </Card>
-        </div>
+        </motion.div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-2">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="flex flex-wrap gap-2"
+        >
           {["all", "teacher", "venue", "event", "housing"].map((type) => (
             <Button
               key={type}
@@ -363,24 +406,41 @@ export default function ReviewsPage() {
               {type.charAt(0).toUpperCase() + type.slice(1)}
             </Button>
           ))}
-        </div>
+        </motion.div>
 
         {/* Reviews List */}
         {isLoading ? (
-          <div className="text-center py-12 text-muted-foreground">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-12 text-muted-foreground"
+          >
             Loading reviews...
-          </div>
+          </motion.div>
         ) : filteredReviews.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
           <Card>
             <CardContent className="py-12 text-center">
               <Star className="mx-auto h-12 w-12 mb-4 opacity-50 text-muted-foreground" />
               <p className="text-muted-foreground">No reviews found</p>
             </CardContent>
           </Card>
+          </motion.div>
         ) : (
-          <div className="space-y-4">
-            {filteredReviews.map((review) => (
-              <Card key={review.id} data-testid={`card-review-${review.id}`}>
+          <div className="space-y-6">
+            {filteredReviews.map((review, index) => (
+              <motion.div
+                key={review.id}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.05 }}
+              >
+              <Card data-testid={`card-review-${review.id}`} className="hover-elevate">
                 <CardHeader>
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className="flex items-start gap-3">
@@ -391,7 +451,7 @@ export default function ReviewsPage() {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <CardTitle className="text-lg">
+                        <CardTitle className="text-xl font-serif">
                           {review.title || "Untitled Review"}
                         </CardTitle>
                         <div className="flex flex-wrap items-center gap-2 mt-1">
@@ -445,9 +505,11 @@ export default function ReviewsPage() {
                   )}
                 </CardContent>
               </Card>
+              </motion.div>
             ))}
           </div>
         )}
+        </div>
       </div>
     </AppLayout>
   );

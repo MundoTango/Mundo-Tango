@@ -1,10 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
 import { Film, Music, Gamepad2, Popcorn, Star, TrendingUp, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import entertainmentHeroImg from "@assets/stock_images/elegant_professional_0956f754.jpg";
+import entertainmentImg1 from "@assets/stock_images/elegant_professional_e4da136e.jpg";
 
 export default function EntertainmentAgentPage() {
   const stats = [
@@ -27,124 +30,173 @@ export default function EntertainmentAgentPage() {
   ];
 
   return (
-    <SelfHealingErrorBoundary pageName="Entertainment Agent" fallbackRoute="/platform">
-    <PageLayout title="Entertainment Agent" showBreadcrumbs>
-<>
-      <SEO
-        title="Entertainment Agent - Life CEO"
-        description="Discover movies, music, games, and tango events with personalized AI recommendations."
-      />
+    <SelfHealingErrorBoundary pageName="Entertainment Agent" fallbackRoute="/life-ceo">
+      <PageLayout title="Entertainment Agent" showBreadcrumbs>
+        <>
+          <SEO
+            title="Entertainment Agent - Life CEO"
+            description="Discover movies, music, games, and tango events with personalized AI recommendations."
+          />
 
-      <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/5 to-background py-12 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div className="h-12 w-12 rounded-full bg-purple-500/10 flex items-center justify-center">
-                <Popcorn className="h-6 w-6 text-purple-500" />
-              </div>
-              <div>
-                
-                <p className="text-muted-foreground">Your personal entertainment curator</p>
-              </div>
+          {/* Editorial Hero Section - 16:9 */}
+          <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden" data-testid="hero-section">
+            <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: `url(${entertainmentHeroImg})`}}>
+              <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
             </div>
-          </motion.div>
-
-          {/* Stats Grid */}
-          <div className="grid gap-6 md:grid-cols-4 mb-8">
-            {stats.map((stat, idx) => (
+            
+            <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
               <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
+                transition={{ duration: 1, ease: "easeOut" }}
               >
-                <Card className="glass-card">
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <stat.icon className={`h-8 w-8 ${stat.color}`} />
-                      <TrendingUp className="h-4 w-4 text-green-500" />
+                <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
+                  Leisure & Culture
+                </Badge>
+                
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight" data-testid="heading-hero">
+                  Entertainment Agent
+                </h1>
+                
+                <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+                  Your personal entertainment curator for music, movies, and tango events
+                </p>
+              </motion.div>
+            </div>
+          </div>
+
+          <div className="max-w-7xl mx-auto px-6 py-16">
+            {/* Stats Grid */}
+            <div className="grid gap-8 md:grid-cols-4 mb-16">
+              {stats.map((stat, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.6, delay: idx * 0.1 }}
+                >
+                  <Card className="hover-elevate">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <stat.icon className={`h-8 w-8 ${stat.color}`} />
+                        <TrendingUp className="h-4 w-4 text-green-500" />
+                      </div>
+                      <p className="text-sm text-muted-foreground">{stat.label}</p>
+                      <p className="text-3xl font-serif font-bold mt-2">{stat.value}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Section Header */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+              className="mb-12"
+            >
+              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Entertainment Picks</h2>
+              <p className="text-lg text-muted-foreground">
+                Personalized recommendations for your leisure time
+              </p>
+            </motion.div>
+
+            <div className="grid gap-8 lg:grid-cols-2">
+              {/* AI Recommendations Card with 16:9 Image */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6 }}
+              >
+                <Card className="overflow-hidden hover-elevate">
+                  <div className="relative aspect-[16/9] overflow-hidden">
+                    <motion.img
+                      src={entertainmentImg1}
+                      alt="AI Recommendations"
+                      className="w-full h-full object-cover"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.6 }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4 text-white">
+                      <h3 className="text-2xl font-serif font-bold">AI Recommendations</h3>
+                      <p className="text-white/80 text-sm mt-1">Curated just for you</p>
                     </div>
-                    <p className="text-sm text-muted-foreground">{stat.label}</p>
-                    <p className="text-2xl font-bold">{stat.value}</p>
+                  </div>
+                  <CardContent className="p-8 space-y-3">
+                    {recommendations.map((rec, idx) => (
+                      <div
+                        key={idx}
+                        className="p-4 rounded-lg border hover-elevate cursor-pointer"
+                        data-testid={`recommendation-${idx}`}
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1">
+                            <h3 className="font-semibold mb-1">{rec.title}</h3>
+                            <div className="flex gap-2 text-sm text-muted-foreground">
+                              <Badge variant="outline">{rec.type}</Badge>
+                              <span>•</span>
+                              <span>{rec.duration}</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
+                            <span className="text-sm font-medium">{rec.rating}</span>
+                          </div>
+                        </div>
+                        <Button size="sm" className="w-full mt-2" data-testid={`button-play-${idx}`}>
+                          View Details
+                        </Button>
+                      </div>
+                    ))}
                   </CardContent>
                 </Card>
               </motion.div>
-            ))}
-          </div>
 
-          <div className="grid gap-6 lg:grid-cols-2">
-            {/* AI Recommendations */}
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Star className="h-5 w-5 text-yellow-500" />
-                  AI Recommendations
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {recommendations.map((rec, idx) => (
-                  <div
-                    key={idx}
-                    className="p-4 rounded-lg border hover-elevate cursor-pointer"
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1">
-                        <h3 className="font-semibold mb-1">{rec.title}</h3>
+              {/* My Watchlist */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+              >
+                <Card className="glass-card h-full">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-2xl font-serif">
+                      <Film className="h-6 w-6 text-primary" />
+                      My Watchlist
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {watchlist.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="p-4 rounded-lg border hover-elevate"
+                        data-testid={`watchlist-${idx}`}
+                      >
+                        <h3 className="font-semibold mb-1">{item.title}</h3>
                         <div className="flex gap-2 text-sm text-muted-foreground">
-                          <span>{rec.type}</span>
+                          <Badge variant="outline">{item.genre}</Badge>
                           <span>•</span>
-                          <span>{rec.duration}</span>
+                          <span>Added {item.added}</span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                        <span className="text-sm font-medium">{rec.rating}</span>
-                      </div>
-                    </div>
-                    <Button size="sm" className="w-full mt-2" data-testid={`button-play-${idx}`}>
-                      View Details
+                    ))}
+                    <Button className="w-full gap-2" variant="outline" data-testid="button-add-to-watchlist">
+                      <Popcorn className="w-4 h-4" />
+                      Add to Watchlist
                     </Button>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            {/* My Watchlist */}
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Film className="h-5 w-5 text-primary" />
-                  My Watchlist
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {watchlist.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="p-4 rounded-lg border hover-elevate"
-                  >
-                    <h3 className="font-semibold mb-1">{item.title}</h3>
-                    <div className="flex gap-2 text-sm text-muted-foreground">
-                      <span>{item.genre}</span>
-                      <span>•</span>
-                      <span>Added {item.added}</span>
-                    </div>
-                  </div>
-                ))}
-                <Button className="w-full" variant="outline" data-testid="button-add-to-watchlist">
-                  + Add to Watchlist
-                </Button>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </div>
           </div>
-        </div>
-      </div>
-    </>
-    </PageLayout>
+        </>
+      </PageLayout>
     </SelfHealingErrorBoundary>
   );
 }

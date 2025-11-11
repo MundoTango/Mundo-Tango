@@ -1,10 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
 import { Home, Wrench, ShoppingCart, Calendar, CheckCircle2, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import heroImage from "@assets/IMG_9171-Mejorado-NR_1762013255727.jpg";
 
 export default function HomeManagementPage() {
   const maintenance = [
@@ -19,6 +21,13 @@ export default function HomeManagementPage() {
     { item: "Cleaning supplies", category: "Household", needed: "Monthly restock" }
   ];
 
+  const fadeInUp = {
+    initial: { opacity: 0, y: 30 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-100px" },
+    transition: { duration: 0.6 }
+  };
+
   return (
     <SelfHealingErrorBoundary pageName="LifeCEOHomeManagement" fallbackRoute="/life-ceo">
       <PageLayout title="Home Management" showBreadcrumbs>
@@ -28,23 +37,39 @@ export default function HomeManagementPage() {
         description="Track home maintenance, shopping lists, and household tasks with your AI home agent."
       />
 
-      <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/5 to-background py-12 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div className="h-12 w-12 rounded-full bg-orange-500/10 flex items-center justify-center">
-                <Home className="h-6 w-6 text-orange-500" />
+      <div className="min-h-screen">
+        {/* Editorial Hero Section - 16:9 */}
+        <section className="relative h-[50vh] w-full overflow-hidden">
+          <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: `url(${heroImage})`}}>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+          </div>
+          
+          <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            >
+              <div className="mb-6 flex items-center justify-center h-16 w-16 rounded-full bg-orange-500/20 backdrop-blur-sm border border-orange-500/30 mx-auto">
+                <Home className="h-8 w-8 text-orange-400" />
               </div>
-              <div>
-                
-                <p className="text-muted-foreground">Your smart home assistant</p>
-              </div>
-            </div>
-          </motion.div>
+              
+              <Badge variant="outline" className="mb-4 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+                Life CEO · Home
+              </Badge>
+              
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-4 tracking-tight">
+                Home Management
+              </h1>
+              
+              <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
+                Your smart home assistant for maintenance and organization
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        <div className="container mx-auto max-w-7xl px-6 py-16">
 
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Maintenance Tasks */}

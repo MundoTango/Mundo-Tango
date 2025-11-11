@@ -18,6 +18,8 @@ import {
   Music
 } from "lucide-react";
 import { format } from "date-fns";
+import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 
 interface UserProfile {
   id: number;
@@ -69,90 +71,120 @@ export default function UserProfilePublicPage() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
-        <div className="container mx-auto max-w-6xl py-8 px-4">
-          {/* Profile Header */}
-          <Card className="mb-6">
-            <CardContent className="p-8">
-              <div className="flex flex-col md:flex-row gap-6 items-start">
-                <Avatar className="h-32 w-32 border-4 border-primary/20">
-                  <AvatarImage src={profile.avatarUrl} alt={profile.name} />
-                  <AvatarFallback className="text-3xl">{profile.name.charAt(0)}</AvatarFallback>
-                </Avatar>
+      <>
+        <SEO
+          title={`${profile.name} (@${profile.username}) - Tango Profile`}
+          description={profile.bio || `View ${profile.name}'s tango profile, posts, and events.`}
+        />
 
-                <div className="flex-1 space-y-4">
-                  <div>
-                    <h1 className="text-3xl font-bold text-foreground flex items-center gap-2" data-testid="text-profile-name">
-                      {profile.name}
-                      {profile.role === 'premium' && (
-                        <Badge variant="default" className="ml-2">Premium</Badge>
-                      )}
-                      {profile.role === 'teacher' && (
-                        <Badge variant="outline" className="ml-2 border-primary text-primary">Teacher</Badge>
-                      )}
-                    </h1>
-                    <p className="text-muted-foreground">@{profile.username}</p>
-                  </div>
+        {/* Hero Cover Section */}
+        <div className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
+          <motion.div 
+            className="absolute inset-0 bg-cover bg-center" 
+            style={{
+              backgroundImage: `url('https://images.unsplash.com/photo-1485872299829-c673f5194813?w=1600&h=900&fit=crop&q=80')`
+            }}
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 1.5 }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-background" />
+          </motion.div>
+        </div>
 
-                  {profile.bio && (
-                    <p className="text-foreground">{profile.bio}</p>
-                  )}
+        <div className="bg-background">
+          <div className="container mx-auto max-w-6xl px-6 -mt-24">
+            {/* Profile Card with Avatar */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <Card className="mb-8">
+                <CardContent className="p-8">
+                  <div className="flex flex-col md:flex-row gap-6 items-start">
+                    <Avatar className="h-32 w-32 border-4 border-background shadow-xl">
+                      <AvatarImage src={profile.avatarUrl} alt={profile.name} />
+                      <AvatarFallback className="text-3xl">{profile.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
 
-                  <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                    {profile.city && profile.country && (
-                      <div className="flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
-                        {profile.city}, {profile.country}
+                    <div className="flex-1 space-y-4">
+                      <div>
+                        <h1 className="text-4xl font-serif font-bold text-foreground flex flex-wrap items-center gap-2" data-testid="text-profile-name">
+                          {profile.name}
+                          {profile.role === 'premium' && (
+                            <Badge variant="default" className="ml-2">Premium</Badge>
+                          )}
+                          {profile.role === 'teacher' && (
+                            <Badge variant="outline" className="ml-2 border-primary text-primary">
+                              <Award className="h-3 w-3 mr-1" />
+                              Teacher
+                            </Badge>
+                          )}
+                        </h1>
+                        <p className="text-muted-foreground text-lg mt-1">@{profile.username}</p>
                       </div>
-                    )}
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      Joined {format(new Date(profile.joinedAt), 'MMMM yyyy')}
-                    </div>
-                    {profile.danceLevel && (
-                      <div className="flex items-center gap-1">
-                        <Music className="h-4 w-4" />
-                        {profile.danceLevel}
+
+                      {profile.bio && (
+                        <p className="text-foreground leading-relaxed text-lg">{profile.bio}</p>
+                      )}
+
+                      <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                        {profile.city && profile.country && (
+                          <div className="flex items-center gap-1.5">
+                            <MapPin className="h-4 w-4 text-primary" />
+                            {profile.city}, {profile.country}
+                          </div>
+                        )}
+                        <div className="flex items-center gap-1.5">
+                          <Calendar className="h-4 w-4 text-primary" />
+                          Joined {format(new Date(profile.joinedAt), 'MMMM yyyy')}
+                        </div>
+                        {profile.danceLevel && (
+                          <div className="flex items-center gap-1.5">
+                            <Music className="h-4 w-4 text-primary" />
+                            {profile.danceLevel}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="text-center p-3 rounded-lg bg-card">
-                      <div className="text-2xl font-bold text-foreground">{profile.stats.posts}</div>
-                      <div className="text-xs text-muted-foreground">Posts</div>
-                    </div>
-                    <div className="text-center p-3 rounded-lg bg-card">
-                      <div className="text-2xl font-bold text-foreground">{profile.stats.friends}</div>
-                      <div className="text-xs text-muted-foreground">Friends</div>
-                    </div>
-                    <div className="text-center p-3 rounded-lg bg-card">
-                      <div className="text-2xl font-bold text-foreground">{profile.stats.eventsAttended}</div>
-                      <div className="text-xs text-muted-foreground">Events</div>
-                    </div>
-                    <div className="text-center p-3 rounded-lg bg-card">
-                      <div className="text-2xl font-bold text-foreground">{profile.stats.points}</div>
-                      <div className="text-xs text-muted-foreground">Points</div>
-                    </div>
-                  </div>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4">
+                        <div className="text-center p-4 rounded-lg border">
+                          <div className="text-3xl font-serif font-bold text-foreground">{profile.stats.posts}</div>
+                          <div className="text-sm text-muted-foreground mt-1">Posts</div>
+                        </div>
+                        <div className="text-center p-4 rounded-lg border">
+                          <div className="text-3xl font-serif font-bold text-foreground">{profile.stats.friends}</div>
+                          <div className="text-sm text-muted-foreground mt-1">Friends</div>
+                        </div>
+                        <div className="text-center p-4 rounded-lg border">
+                          <div className="text-3xl font-serif font-bold text-foreground">{profile.stats.eventsAttended}</div>
+                          <div className="text-sm text-muted-foreground mt-1">Events</div>
+                        </div>
+                        <div className="text-center p-4 rounded-lg border">
+                          <div className="text-3xl font-serif font-bold text-primary">{profile.stats.points}</div>
+                          <div className="text-sm text-muted-foreground mt-1">Points</div>
+                        </div>
+                      </div>
 
-                  <div className="flex gap-3">
-                    <Button data-testid="button-add-friend">
-                      <UserPlus className="h-4 w-4 mr-2" />
-                      Add Friend
-                    </Button>
-                    <Button variant="outline" data-testid="button-message">
-                      <MessageCircle className="h-4 w-4 mr-2" />
-                      Message
-                    </Button>
-                    <Button variant="outline" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
+                      <div className="flex gap-3 flex-wrap">
+                        <Button data-testid="button-add-friend">
+                          <UserPlus className="h-4 w-4 mr-2" />
+                          Add Friend
+                        </Button>
+                        <Button variant="outline" data-testid="button-message">
+                          <MessageCircle className="h-4 w-4 mr-2" />
+                          Message
+                        </Button>
+                        <Button variant="outline" size="icon">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            </motion.div>
 
           {/* Content Tabs */}
           <Tabs defaultValue="posts" className="space-y-6">
@@ -254,8 +286,9 @@ export default function UserProfilePublicPage() {
               </Card>
             </TabsContent>
           </Tabs>
+          </div>
         </div>
-      </div>
+      </>
     </AppLayout>
   );
 }

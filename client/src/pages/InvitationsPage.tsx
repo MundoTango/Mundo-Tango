@@ -19,8 +19,11 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { SEO } from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { motion } from "framer-motion";
+import invitationsHeroImg from "@assets/stock_images/professional_office__6787b655.jpg";
 
 interface Invitation {
   id: number;
@@ -106,28 +109,55 @@ export default function InvitationsPage() {
   return (
     <SelfHealingErrorBoundary pageName="Invitations" fallbackRoute="/dashboard">
       <PageLayout title="Role Invitations" showBreadcrumbs>
-        <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-8 px-4">
-          <div className="container mx-auto max-w-4xl space-y-8">
-            {/* Header */}
-            <div>
-              <h1 className="text-4xl font-bold font-serif text-foreground flex items-center gap-3" data-testid="text-page-title">
-                <Mail className="h-10 w-10 text-primary" />
-                Role Invitations
-              </h1>
-              <p className="text-muted-foreground mt-2">
-                Manage invitations to become a teacher, organizer, or venue owner
-              </p>
-            </div>
+        <>
+          <SEO
+            title="Role Invitations - Mundo Tango"
+            description="Manage your tango community role invitations - teacher, organizer, venue owner, and moderator invitations"
+          />
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* Editorial Hero Section - 16:9 */}
+          <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden" data-testid="hero-section">
+            <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: `url(${invitationsHeroImg})`}}>
+              <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+            </div>
+            
+            <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, ease: "easeOut" }}
+              >
+                <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
+                  Community Roles
+                </Badge>
+                
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 tracking-tight" data-testid="heading-hero">
+                  Role Invitations
+                </h1>
+                
+                <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+                  Join the tango community as a teacher, organizer, venue owner, or moderator
+                </p>
+              </motion.div>
+            </div>
+          </div>
+
+          <div className="max-w-7xl mx-auto px-6 py-16">
+            {/* Stats Grid */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+              className="grid gap-6 md:grid-cols-4 mb-16"
+            >
               <Card className="hover-elevate">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Pending</CardTitle>
                   <Clock className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold" data-testid="text-pending">
+                  <div className="text-3xl font-serif font-bold" data-testid="text-pending">
                     {stats?.pending || 0}
                   </div>
                 </CardContent>
@@ -139,7 +169,7 @@ export default function InvitationsPage() {
                   <Check className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-green-600" data-testid="text-accepted">
+                  <div className="text-3xl font-serif font-bold text-green-600" data-testid="text-accepted">
                     {stats?.accepted || 0}
                   </div>
                 </CardContent>
@@ -151,7 +181,7 @@ export default function InvitationsPage() {
                   <X className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-muted-foreground" data-testid="text-declined">
+                  <div className="text-3xl font-serif font-bold text-muted-foreground" data-testid="text-declined">
                     {stats?.declined || 0}
                   </div>
                 </CardContent>
@@ -163,16 +193,30 @@ export default function InvitationsPage() {
                   <Crown className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold" data-testid="text-active-roles">
+                  <div className="text-3xl font-serif font-bold" data-testid="text-active-roles">
                     {stats?.activeRoles || 0}
                   </div>
                 </CardContent>
               </Card>
-            </div>
+            </motion.div>
+
+            {/* Section Heading */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+              className="mb-12"
+            >
+              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Manage Invitations</h2>
+              <p className="text-lg text-muted-foreground">
+                Review and respond to role invitations from community members
+              </p>
+            </motion.div>
 
             {/* Tabs */}
             <Tabs defaultValue="pending" className="w-full">
-              <TabsList className="grid w-full max-w-md grid-cols-2">
+              <TabsList className="grid w-full max-w-md grid-cols-2 mb-8">
                 <TabsTrigger value="pending" data-testid="tab-pending">
                   Pending ({pendingInvitations.length})
                 </TabsTrigger>
@@ -181,7 +225,7 @@ export default function InvitationsPage() {
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="pending" className="space-y-4 mt-8">
+              <TabsContent value="pending" className="space-y-4">
                 {isLoading ? (
                   <div className="space-y-4">
                     {[1, 2].map((i) => (
@@ -195,79 +239,86 @@ export default function InvitationsPage() {
                   </div>
                 ) : pendingInvitations.length > 0 ? (
                   <div className="space-y-4">
-                    {pendingInvitations.map((invitation) => {
+                    {pendingInvitations.map((invitation, idx) => {
                       const Icon = roleIcons[invitation.role];
                       return (
-                        <Card 
-                          key={invitation.id} 
-                          className="overflow-hidden hover-elevate border-primary/30" 
-                          data-testid={`invitation-${invitation.id}`}
+                        <motion.div
+                          key={invitation.id}
+                          initial={{ opacity: 0, y: 30 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: idx * 0.1, duration: 0.5 }}
                         >
-                          <CardHeader>
-                            <div className="flex items-start justify-between gap-4">
-                              <div className="flex items-start gap-3 flex-1">
-                                <Avatar className="h-12 w-12">
-                                  <AvatarImage src={invitation.fromUser.profileImage || undefined} />
-                                  <AvatarFallback>
-                                    {invitation.fromUser.name.charAt(0).toUpperCase()}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <Badge className={roleColors[invitation.role]}>
-                                      <Icon className="h-3 w-3 mr-1" />
-                                      {roleLabels[invitation.role]}
-                                    </Badge>
+                          <Card 
+                            className="overflow-hidden hover-elevate border-primary/30" 
+                            data-testid={`invitation-${invitation.id}`}
+                          >
+                            <CardHeader>
+                              <div className="flex items-start justify-between gap-4">
+                                <div className="flex items-start gap-3 flex-1">
+                                  <Avatar className="h-12 w-12">
+                                    <AvatarImage src={invitation.fromUser.profileImage || undefined} />
+                                    <AvatarFallback>
+                                      {invitation.fromUser.name.charAt(0).toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <Badge className={roleColors[invitation.role]}>
+                                        <Icon className="h-3 w-3 mr-1" />
+                                        {roleLabels[invitation.role]}
+                                      </Badge>
+                                    </div>
+                                    <CardTitle className="text-xl mb-1 font-serif">
+                                      Invitation from {invitation.fromUser.name}
+                                    </CardTitle>
+                                    <CardDescription>
+                                      @{invitation.fromUser.username} • {formatDistanceToNow(new Date(invitation.createdAt), { addSuffix: true })}
+                                    </CardDescription>
                                   </div>
-                                  <CardTitle className="text-xl mb-1">
-                                    Invitation from {invitation.fromUser.name}
-                                  </CardTitle>
-                                  <CardDescription>
-                                    @{invitation.fromUser.username} • {formatDistanceToNow(new Date(invitation.createdAt), { addSuffix: true })}
-                                  </CardDescription>
                                 </div>
                               </div>
-                            </div>
-                          </CardHeader>
-                          <CardContent className="space-y-4">
-                            {invitation.message && (
-                              <div className="p-4 bg-muted/50 rounded-lg">
-                                <p className="text-sm text-foreground italic">
-                                  "{invitation.message}"
-                                </p>
-                              </div>
-                            )}
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                              {invitation.message && (
+                                <div className="p-4 bg-muted/50 rounded-lg">
+                                  <p className="text-sm text-foreground italic">
+                                    "{invitation.message}"
+                                  </p>
+                                </div>
+                              )}
 
-                            {invitation.expiresAt && (
-                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <Clock className="h-4 w-4" />
-                                Expires {formatDistanceToNow(new Date(invitation.expiresAt), { addSuffix: true })}
-                              </div>
-                            )}
+                              {invitation.expiresAt && (
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                  <Clock className="h-4 w-4" />
+                                  Expires {formatDistanceToNow(new Date(invitation.expiresAt), { addSuffix: true })}
+                                </div>
+                              )}
 
-                            <div className="flex gap-3 pt-2">
-                              <Button
-                                className="flex-1 gap-2"
-                                onClick={() => acceptMutation.mutate(invitation.id)}
-                                disabled={acceptMutation.isPending}
-                                data-testid={`button-accept-${invitation.id}`}
-                              >
-                                <Check className="h-4 w-4" />
-                                Accept Invitation
-                              </Button>
-                              <Button
-                                variant="outline"
-                                className="flex-1 gap-2"
-                                onClick={() => declineMutation.mutate(invitation.id)}
-                                disabled={declineMutation.isPending}
-                                data-testid={`button-decline-${invitation.id}`}
-                              >
-                                <X className="h-4 w-4" />
-                                Decline
-                              </Button>
-                            </div>
-                          </CardContent>
-                        </Card>
+                              <div className="flex gap-3 pt-2">
+                                <Button
+                                  className="flex-1 gap-2"
+                                  onClick={() => acceptMutation.mutate(invitation.id)}
+                                  disabled={acceptMutation.isPending}
+                                  data-testid={`button-accept-${invitation.id}`}
+                                >
+                                  <Check className="h-4 w-4" />
+                                  Accept Invitation
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  className="flex-1 gap-2"
+                                  onClick={() => declineMutation.mutate(invitation.id)}
+                                  disabled={declineMutation.isPending}
+                                  data-testid={`button-decline-${invitation.id}`}
+                                >
+                                  <X className="h-4 w-4" />
+                                  Decline
+                                </Button>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </motion.div>
                       );
                     })}
                   </div>
@@ -275,7 +326,7 @@ export default function InvitationsPage() {
                   <Card>
                     <CardContent className="py-16 text-center">
                       <Mail className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
-                      <h3 className="text-xl font-semibold mb-2">No pending invitations</h3>
+                      <h3 className="text-xl font-serif font-semibold mb-2">No pending invitations</h3>
                       <p className="text-muted-foreground">
                         You'll see role invitations here when someone invites you
                       </p>
@@ -284,47 +335,54 @@ export default function InvitationsPage() {
                 )}
               </TabsContent>
 
-              <TabsContent value="history" className="space-y-4 mt-8">
+              <TabsContent value="history" className="space-y-4">
                 {pastInvitations.length > 0 ? (
                   <div className="space-y-4">
-                    {pastInvitations.map((invitation) => {
+                    {pastInvitations.map((invitation, idx) => {
                       const Icon = roleIcons[invitation.role];
                       return (
-                        <Card 
-                          key={invitation.id} 
-                          className="opacity-75"
-                          data-testid={`invitation-history-${invitation.id}`}
+                        <motion.div
+                          key={invitation.id}
+                          initial={{ opacity: 0, y: 30 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: idx * 0.1, duration: 0.5 }}
                         >
-                          <CardHeader>
-                            <div className="flex items-start gap-3">
-                              <Avatar className="h-10 w-10">
-                                <AvatarImage src={invitation.fromUser.profileImage || undefined} />
-                                <AvatarFallback>
-                                  {invitation.fromUser.name.charAt(0).toUpperCase()}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <Badge variant="outline" className={roleColors[invitation.role]}>
-                                    <Icon className="h-3 w-3 mr-1" />
-                                    {roleLabels[invitation.role]}
-                                  </Badge>
-                                  <Badge 
-                                    variant={invitation.status === 'accepted' ? 'default' : 'secondary'}
-                                  >
-                                    {invitation.status}
-                                  </Badge>
+                          <Card 
+                            className="opacity-75"
+                            data-testid={`invitation-history-${invitation.id}`}
+                          >
+                            <CardHeader>
+                              <div className="flex items-start gap-3">
+                                <Avatar className="h-10 w-10">
+                                  <AvatarImage src={invitation.fromUser.profileImage || undefined} />
+                                  <AvatarFallback>
+                                    {invitation.fromUser.name.charAt(0).toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <Badge variant="outline" className={roleColors[invitation.role]}>
+                                      <Icon className="h-3 w-3 mr-1" />
+                                      {roleLabels[invitation.role]}
+                                    </Badge>
+                                    <Badge 
+                                      variant={invitation.status === 'accepted' ? 'default' : 'secondary'}
+                                    >
+                                      {invitation.status}
+                                    </Badge>
+                                  </div>
+                                  <p className="font-medium">
+                                    {invitation.fromUser.name}
+                                  </p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {formatDistanceToNow(new Date(invitation.createdAt), { addSuffix: true })}
+                                  </p>
                                 </div>
-                                <p className="font-medium">
-                                  {invitation.fromUser.name}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                  {formatDistanceToNow(new Date(invitation.createdAt), { addSuffix: true })}
-                                </p>
                               </div>
-                            </div>
-                          </CardHeader>
-                        </Card>
+                            </CardHeader>
+                          </Card>
+                        </motion.div>
                       );
                     })}
                   </div>
@@ -338,7 +396,7 @@ export default function InvitationsPage() {
               </TabsContent>
             </Tabs>
           </div>
-        </div>
+        </>
       </PageLayout>
     </SelfHealingErrorBoundary>
   );

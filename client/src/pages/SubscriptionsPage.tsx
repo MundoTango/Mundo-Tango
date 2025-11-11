@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -109,29 +110,55 @@ export default function SubscriptionsPage() {
   return (
     <SelfHealingErrorBoundary pageName="Subscriptions" fallbackRoute="/feed">
       <PageLayout title="Choose Your Plan" showBreadcrumbs>
-        <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-12 px-4">
-          <div className="container mx-auto max-w-7xl">
-            {/* Hero Section */}
-            <div className="text-center mb-12 space-y-4">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                Unlock Your Tango Journey
-              </h1>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-                Choose the perfect plan to connect with dancers, discover events, and grow your tango community
-              </p>
+        <div className="min-h-screen bg-background">
+          {/* Editorial Hero Section - 16:9 */}
+          <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+            <div 
+              className="absolute inset-0 bg-cover bg-center"
+              style={{
+                backgroundImage: `url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2670&auto=format&fit=crop')`
+              }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+            </div>
+            
+            <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, ease: "easeOut" }}
+              >
+                <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+                  Membership
+                </Badge>
+                
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
+                  Unlock Your Tango Journey
+                </h1>
+                
+                <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
+                  Choose the perfect plan to connect with dancers, discover events, and grow your tango community
+                </p>
 
-              {/* Current Subscription Badge */}
-              {currentSubscription && (
-                <div className="flex justify-center mt-6">
-                  <Badge variant="secondary" className="text-sm px-4 py-2" data-testid="badge-current-plan">
+                {/* Current Subscription Badge */}
+                {currentSubscription && (
+                  <Badge variant="outline" className="text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-current-plan">
                     Current Plan: {currentSubscription.tier.displayName}
                   </Badge>
-                </div>
-              )}
+                )}
+              </motion.div>
             </div>
+          </div>
 
+          {/* Editorial Content Layout */}
+          <div className="container mx-auto max-w-7xl px-6 py-16">
             {/* Billing Toggle */}
-            <div className="flex justify-center mb-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="flex justify-center mb-12"
+            >
               <Tabs value={billingInterval} onValueChange={(v) => setBillingInterval(v as "monthly" | "annual")} className="w-auto">
                 <TabsList className="backdrop-blur-sm bg-card/50 border border-border" data-testid="tabs-billing">
                   <TabsTrigger value="monthly" data-testid="tab-monthly">
@@ -145,7 +172,7 @@ export default function SubscriptionsPage() {
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
-            </div>
+            </motion.div>
 
             {/* Pricing Cards */}
             {tiersLoading ? (
@@ -172,11 +199,18 @@ export default function SubscriptionsPage() {
               </div>
             ) : tiers && tiers.length > 0 ? (
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {tiers.map((tier) => {
+                {tiers.map((tier, index) => {
                   const price = billingInterval === "monthly" ? tier.monthlyPrice : tier.annualPrice;
                   const isCurrent = isCurrentPlan(tier.name);
 
                   return (
+                    <motion.div
+                      key={tier.id}
+                      initial={{ opacity: 0, y: 40 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                    >
                     <Card
                       key={tier.id}
                       className={`relative backdrop-blur-lg border-2 transition-all duration-300 hover-elevate ${
@@ -277,6 +311,7 @@ export default function SubscriptionsPage() {
                         )}
                       </CardFooter>
                     </Card>
+                    </motion.div>
                   );
                 })}
               </div>
@@ -289,9 +324,15 @@ export default function SubscriptionsPage() {
             )}
 
             {/* FAQ Section */}
-            <div className="mt-20 max-w-3xl mx-auto">
-              <h2 className="text-3xl font-bold text-center mb-8">Frequently Asked Questions</h2>
-              <div className="space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="mt-20 max-w-3xl mx-auto"
+            >
+              <h2 className="text-3xl md:text-4xl font-serif font-bold text-center mb-12">Frequently Asked Questions</h2>
+              <div className="space-y-6">
                 <Card className="backdrop-blur-md bg-card/50 border-border">
                   <CardHeader>
                     <CardTitle className="text-lg">Can I change plans later?</CardTitle>
@@ -325,7 +366,7 @@ export default function SubscriptionsPage() {
                   </CardContent>
                 </Card>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </PageLayout>

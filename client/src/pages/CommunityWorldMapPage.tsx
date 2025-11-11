@@ -20,10 +20,10 @@ import {
   Filter,
   X
 } from "lucide-react";
-import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { CommunityMapWithLayers } from "@/components/map/CommunityMapWithLayers";
 import { useState, useEffect, useMemo } from "react";
+import { motion } from "framer-motion";
 
 // Fix Leaflet default marker icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -204,29 +204,49 @@ export default function CommunityWorldMapPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Community World Map" fallbackRoute="/discover">
-      <PageLayout title="Global Tango Community" showBreadcrumbs>
-        <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-          <div className="container mx-auto p-6 space-y-6">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <div>
-                <h1 className="text-4xl font-bold font-serif text-foreground flex items-center gap-3" data-testid="text-page-title">
-                  <Globe className="h-10 w-10 text-primary" />
-                  Global Tango Community
-                </h1>
-                <p className="text-muted-foreground mt-2">
-                  Discover tango communities around the world
-                </p>
-              </div>
-              <Button
-                variant={showFilters ? "default" : "outline"}
-                onClick={() => setShowFilters(!showFilters)}
-                data-testid="button-toggle-filters"
-              >
-                <Filter className="mr-2 h-4 w-4" />
-                Filters
-              </Button>
-            </div>
+      <div className="min-h-screen bg-background">
+        {/* Hero Section */}
+        <div className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
+          <div className="absolute inset-0 bg-cover bg-center" style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=1600&h=900&fit=crop&q=80')`
+          }}>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+          </div>
+          
+          <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            >
+              <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
+                <Globe className="w-3 h-3 mr-1.5" />
+                Global Network
+              </Badge>
+              
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4" data-testid="text-page-title">
+                Global Tango Community
+              </h1>
+              
+              <p className="text-lg text-white/80 max-w-2xl mx-auto" data-testid="text-page-description">
+                Discover tango communities around the world
+              </p>
+            </motion.div>
+          </div>
+        </div>
+
+        <div className="container mx-auto px-6 py-12 space-y-6">
+          {/* Filters Button */}
+          <div className="flex justify-end">
+            <Button
+              variant={showFilters ? "default" : "outline"}
+              onClick={() => setShowFilters(!showFilters)}
+              data-testid="button-toggle-filters"
+            >
+              <Filter className="mr-2 h-4 w-4" />
+              Filters
+            </Button>
+          </div>
 
             {/* Global Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -527,7 +547,6 @@ export default function CommunityWorldMapPage() {
             )}
           </div>
         </div>
-      </PageLayout>
     </SelfHealingErrorBoundary>
   );
 }

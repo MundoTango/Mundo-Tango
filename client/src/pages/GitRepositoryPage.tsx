@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { GitBranch, GitCommit, ExternalLink, RefreshCw } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { motion } from "framer-motion";
+import tangoHeroImage from "@assets/tango-professional-1.jpg";
 
 interface GitInfo {
   owner: string;
@@ -54,23 +56,51 @@ export default function GitRepositoryPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Git Repository" fallbackRoute="/platform">
-      <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold" data-testid="text-page-title">Git Repository</h1>
-          <p className="text-muted-foreground mt-1">
-            {gitInfo.owner}/{gitInfo.repo}
-          </p>
-        </div>
-        <Button variant="outline" asChild data-testid="button-view-on-github">
-          <a href={repoUrl} target="_blank" rel="noopener noreferrer">
-            <>
-              <ExternalLink className="w-4 h-4 mr-2" />
-              View on GitHub
-            </>
-          </a>
-        </Button>
-      </div>
+      <div className="min-h-screen bg-background">
+        {/* Editorial Hero Section */}
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden"
+          data-testid="section-hero"
+        >
+          <div className="absolute inset-0 aspect-video">
+            <img
+              src={tangoHeroImage}
+              alt="Git Repository"
+              className="w-full h-full object-cover"
+              data-testid="img-hero"
+            />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+          <div className="relative h-full flex items-center justify-center text-center px-4">
+            <motion.div
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+            >
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-4" data-testid="heading-page-title">
+                Git Repository
+              </h1>
+              <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto font-light" data-testid="text-hero-subtitle">
+                {gitInfo.owner}/{gitInfo.repo}
+              </p>
+              <div className="mt-6">
+                <Button variant="outline" asChild data-testid="button-view-on-github" className="bg-white/10 border-white/30 text-white hover:bg-white/20">
+                  <a href={repoUrl} target="_blank" rel="noopener noreferrer">
+                    <>
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      View on GitHub
+                    </>
+                  </a>
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        </motion.section>
+
+      <div className="container mx-auto px-6 py-16 space-y-8">
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -172,6 +202,7 @@ export default function GitRepositoryPage() {
           </div>
         </CardContent>
       </Card>
+      </div>
       </div>
     </SelfHealingErrorBoundary>
   );

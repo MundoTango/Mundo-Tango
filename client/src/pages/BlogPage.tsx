@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { BookOpen, Calendar, Clock, Search } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 export default function BlogPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -24,15 +25,45 @@ export default function BlogPage() {
 
   return (
     <AppLayout>
-      <div className="container max-w-6xl mx-auto p-6 space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Tango Blog</h1>
-          <p className="text-muted-foreground">
-            Stories, tips, and insights from the tango world
-          </p>
+      <div className="min-h-screen bg-background">
+        {/* Hero Section */}
+        <div className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
+          <div className="absolute inset-0 bg-cover bg-center" style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&h=900&fit=crop&q=80')`
+          }}>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+          </div>
+          
+          <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            >
+              <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
+                <BookOpen className="w-3 h-3 mr-1.5" />
+                Editorial
+              </Badge>
+              
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-4" data-testid="text-page-title">
+                Tango Blog
+              </h1>
+              
+              <p className="text-lg text-white/80 max-w-2xl mx-auto" data-testid="text-page-description">
+                Stories, tips, and insights from the tango world
+              </p>
+            </motion.div>
+          </div>
         </div>
 
-        <div className="space-y-4 mb-6">
+        <div className="container max-w-6xl mx-auto px-6 py-12 space-y-8">
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="space-y-4 mb-6"
+        >
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
@@ -59,7 +90,7 @@ export default function BlogPage() {
               </Button>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {isLoading ? (
           <div className="text-center py-12">Loading articles...</div>
@@ -67,8 +98,15 @@ export default function BlogPage() {
           <div className="space-y-6">
             {posts
               .filter((post: any) => categoryFilter === "all" || post.category === categoryFilter)
-              .map((post: any) => (
-              <Card key={post.id} className="hover-elevate" data-testid={`post-${post.id}`}>
+              .map((post: any, index: number) => (
+              <motion.div
+                key={post.id}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <Card className="hover-elevate" data-testid={`post-${post.id}`}>
                 <div className="grid md:grid-cols-3 gap-6">
                   {post.image && (
                     <div className="aspect-video md:aspect-square bg-muted overflow-hidden">
@@ -82,7 +120,7 @@ export default function BlogPage() {
                         {post.published && <Badge variant="secondary">Published</Badge>}
                       </div>
                       <Link href={`/blog/${post.slug || post.id}`}>
-                        <CardTitle className="text-2xl hover:underline cursor-pointer">
+                        <CardTitle className="text-2xl font-serif hover:underline cursor-pointer">
                           {post.title}
                         </CardTitle>
                       </Link>
@@ -126,6 +164,7 @@ export default function BlogPage() {
                   </div>
                 </div>
               </Card>
+              </motion.div>
             ))}
           </div>
         ) : (

@@ -10,6 +10,8 @@ import { ShoppingBag, Tag, Clock, Search, Star } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { motion } from "framer-motion";
+import marketplaceHeroImage from "@assets/stock_images/modern_professional_e8f4a2d1.jpg";
 
 export default function MarketplacePage() {
   const [activeTab, setActiveTab] = useState("all");
@@ -50,15 +52,36 @@ export default function MarketplacePage() {
   return (
     <SelfHealingErrorBoundary pageName="Marketplace" fallbackRoute="/feed">
       <PageLayout title="Tango Marketplace" showBreadcrumbs>
+        
+        {/* Editorial Hero Section - 16:9 */}
+        <div className="relative aspect-video w-full overflow-hidden mb-16" data-testid="hero-marketplace">
+          <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: `url(${marketplaceHeroImage})`}}>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+          </div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+            className="relative z-10 flex flex-col items-center justify-center h-full px-4 text-center"
+          >
+            <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-marketplace">
+              <ShoppingBag className="w-3 h-3 mr-1" />
+              Tango Marketplace
+            </Badge>
+            
+            <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 tracking-tight leading-tight max-w-4xl" data-testid="heading-hero">
+              Discover Authentic Tango Treasures
+            </h1>
+            
+            <p className="text-xl text-white/90 max-w-2xl mb-8">
+              Buy and sell premium tango shoes, clothing, music, and accessories from passionate dancers worldwide
+            </p>
+          </motion.div>
+        </div>
+
         <div className="min-h-screen bg-background py-8 px-4">
           <div className="container mx-auto max-w-6xl">
-            {/* Header */}
-            <div className="mb-6">
-              <h1 className="text-4xl font-bold mb-2">Tango Marketplace</h1>
-              <p className="text-muted-foreground">
-                Buy and sell tango shoes, clothing, music, and accessories
-              </p>
-            </div>
 
             {/* Search Bar */}
             <div className="mb-6">
@@ -89,11 +112,17 @@ export default function MarketplacePage() {
                   <div className="text-center py-12">Loading items...</div>
                 ) : filteredItems.length > 0 ? (
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {filteredItems.map((item: any) => (
-                      <Card key={item.id} className="hover-elevate" data-testid={`item-card-${item.id}`}>
-                        {/* Image */}
+                    {filteredItems.map((item: any, idx: number) => (
+                      <motion.div
+                        key={item.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: idx * 0.1 }}
+                      >
+                      <Card className="hover-elevate" data-testid={`item-card-${item.id}`}>
+                        {/* 16:9 Editorial Image */}
                         {item.image && (
-                          <div className="aspect-square bg-muted overflow-hidden relative">
+                          <div className="aspect-video bg-muted overflow-hidden relative">
                             <img
                               src={item.image}
                               alt={item.title}
@@ -108,7 +137,7 @@ export default function MarketplacePage() {
 
                         <CardHeader>
                           <div className="flex items-start justify-between gap-2">
-                            <CardTitle className="text-lg line-clamp-2">
+                            <CardTitle className="text-lg font-serif font-bold line-clamp-2">
                               {item.title}
                             </CardTitle>
                             {item.condition && (
@@ -177,6 +206,7 @@ export default function MarketplacePage() {
                           </Link>
                         </CardContent>
                       </Card>
+                      </motion.div>
                     ))}
                   </div>
                 ) : (

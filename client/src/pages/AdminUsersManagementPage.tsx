@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, UserCog, Trash2, Ban } from "lucide-react";
-import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { motion } from "framer-motion";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -94,10 +94,48 @@ export default function AdminUsersManagementPage() {
   };
 
   return (
-    <PageLayout title="User Management" showBreadcrumbs>
-      <SelfHealingErrorBoundary pageName="Admin Users" fallbackRoute="/admin">
-        <div className="container mx-auto p-6" data-testid="page-admin-users">
-          <div className="mb-6 flex gap-4">
+    <SelfHealingErrorBoundary pageName="Admin Users" fallbackRoute="/admin">
+      <div className="min-h-screen bg-background">
+        {/* Hero Section */}
+        <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+          <div className="absolute inset-0 bg-cover bg-center" style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1600&h=900&fit=crop')`
+          }}>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+          </div>
+          
+          <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            >
+              <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
+                <UserCog className="w-3 h-3 mr-1.5" />
+                User Administration
+              </Badge>
+              
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
+                User Management
+              </h1>
+              
+              <p className="text-xl text-white/80 max-w-2xl mx-auto">
+                Manage user accounts, roles, and permissions across the platform
+              </p>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Content Section */}
+        <div className="bg-background py-12 px-6">
+          <div className="container mx-auto max-w-7xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              data-testid="page-admin-users"
+            >
+              <div className="mb-8 flex gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -126,12 +164,12 @@ export default function AdminUsersManagementPage() {
             </Select>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                All Users {usersData && `(${usersData.total})`}
-              </CardTitle>
-            </CardHeader>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-2xl font-serif">
+                    All Users {usersData && `(${usersData.total})`}
+                  </CardTitle>
+                </CardHeader>
             <CardContent>
               {isLoading ? (
                 <div className="space-y-4">
@@ -277,8 +315,10 @@ export default function AdminUsersManagementPage() {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+            </motion.div>
+          </div>
         </div>
-      </SelfHealingErrorBoundary>
-    </PageLayout>
+      </div>
+    </SelfHealingErrorBoundary>
   );
 }

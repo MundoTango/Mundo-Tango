@@ -5,8 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { Settings, Database, Shield, Bell, Mail, Code } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
+import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 
 export default function AdminSettingsPage() {
   const { toast } = useToast();
@@ -26,16 +29,46 @@ export default function AdminSettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
-      <div className="container mx-auto max-w-6xl py-8 px-4">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2" data-testid="text-settings-title">
-            Platform Settings
-          </h1>
-          <p className="text-muted-foreground">
-            Configure your Mundo Tango platform
-          </p>
+    <SelfHealingErrorBoundary pageName="Admin Settings" fallbackRoute="/admin">
+      <div className="min-h-screen bg-background">
+        {/* Hero Section */}
+        <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+          <div className="absolute inset-0 bg-cover bg-center" style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1600&h=900&fit=crop')`
+          }}>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+          </div>
+          
+          <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            >
+              <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
+                <Settings className="w-3 h-3 mr-1.5" />
+                Platform Configuration
+              </Badge>
+              
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-settings-title">
+                Platform Settings
+              </h1>
+              
+              <p className="text-xl text-white/80 max-w-2xl mx-auto">
+                Configure and customize your Mundo Tango platform
+              </p>
+            </motion.div>
+          </div>
         </div>
+
+        {/* Content Section */}
+        <div className="bg-background py-12 px-6">
+          <div className="container mx-auto max-w-6xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
 
         <Tabs defaultValue="general" className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
@@ -64,7 +97,7 @@ export default function AdminSettingsPage() {
           <TabsContent value="general">
             <Card>
               <CardHeader>
-                <CardTitle>General Settings</CardTitle>
+                <CardTitle className="text-2xl font-serif">General Settings</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
@@ -132,7 +165,7 @@ export default function AdminSettingsPage() {
           <TabsContent value="security">
             <Card>
               <CardHeader>
-                <CardTitle>Security Settings</CardTitle>
+                <CardTitle className="text-2xl font-serif">Security Settings</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -177,7 +210,7 @@ export default function AdminSettingsPage() {
           <TabsContent value="notifications">
             <Card>
               <CardHeader>
-                <CardTitle>Notification Settings</CardTitle>
+                <CardTitle className="text-2xl font-serif">Notification Settings</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -206,7 +239,7 @@ export default function AdminSettingsPage() {
           <TabsContent value="email">
             <Card>
               <CardHeader>
-                <CardTitle>Email Settings</CardTitle>
+                <CardTitle className="text-2xl font-serif">Email Settings</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center justify-between">
@@ -235,7 +268,7 @@ export default function AdminSettingsPage() {
           <TabsContent value="advanced">
             <Card>
               <CardHeader>
-                <CardTitle>Advanced Settings</CardTitle>
+                <CardTitle className="text-2xl font-serif">Advanced Settings</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="bg-muted/50 p-4 rounded-lg border border-border">
@@ -263,7 +296,10 @@ export default function AdminSettingsPage() {
             </Card>
           </TabsContent>
         </Tabs>
+            </motion.div>
+          </div>
+        </div>
       </div>
-    </div>
+    </SelfHealingErrorBoundary>
   );
 }

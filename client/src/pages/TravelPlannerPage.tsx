@@ -4,13 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, MapPin, Plane, Hotel, Music, Plus } from "lucide-react";
-import { PageLayout } from "@/components/PageLayout";
+import { Calendar, MapPin, Plane, Hotel, Music, Plus, ChevronRight } from "lucide-react";
+import { AppLayout } from "@/components/AppLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 
 interface TravelPackage {
   id: number;
@@ -108,12 +110,58 @@ export default function TravelPlannerPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Tango Travel Planner" fallbackRoute="/feed">
-    <PageLayout title="Tango Travel Planner" showBreadcrumbs>
-<div className="min-h-screen bg-background py-8 px-4">
-      <div className="container mx-auto max-w-6xl">
-        
+      <AppLayout>
+        <>
+          <SEO
+            title="Tango Travel Planner - Plan Your Perfect Tango Journey"
+            description="Discover tango destinations, workshops, and events around the world. Plan your perfect tango adventure with curated travel packages."
+          />
 
-        <div className="grid gap-6 lg:grid-cols-3">
+          {/* Hero Section */}
+          <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+            <motion.div 
+              className="absolute inset-0 bg-cover bg-center" 
+              style={{
+                backgroundImage: `url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1600&h=900&fit=crop&q=80')`
+              }}
+              initial={{ scale: 1.1 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 1.5 }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+            </motion.div>
+            
+            <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, ease: "easeOut" }}
+              >
+                <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+                  <Plane className="w-3 h-3 mr-1.5" />
+                  Travel the Tango World
+                </Badge>
+                
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
+                  Tango Travel Planner
+                </h1>
+                
+                <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
+                  Discover extraordinary tango experiences across the globe
+                </p>
+
+                <Button size="lg" className="gap-2" data-testid="button-explore-packages">
+                  <Music className="h-5 w-5" />
+                  Explore Packages
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+              </motion.div>
+            </div>
+          </div>
+
+          <div className="bg-background py-12 px-6">
+            <div className="container mx-auto max-w-7xl">
+              <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="mb-6 w-full">
@@ -123,44 +171,68 @@ export default function TravelPlannerPage() {
               </TabsList>
 
               <TabsContent value="packages">
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {packages.length > 0 ? (
-                    packages.map((pkg) => (
-                      <Card key={pkg.id} className="hover-elevate" data-testid={`package-${pkg.id}`}>
-                        <CardHeader>
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <CardTitle>{pkg.title}</CardTitle>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                {new Date(pkg.startDate).toLocaleDateString()} - {new Date(pkg.endDate).toLocaleDateString()}
-                              </p>
+                    packages.map((pkg, index) => (
+                      <motion.div
+                        key={pkg.id}
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-100px" }}
+                        transition={{ duration: 0.6, delay: index * 0.1 }}
+                      >
+                        <Card className="overflow-hidden hover-elevate" data-testid={`package-${pkg.id}`}>
+                          <div className="relative aspect-[16/9] overflow-hidden">
+                            <motion.img
+                              src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800&h=450&fit=crop&q=80"
+                              alt={pkg.title}
+                              className="w-full h-full object-cover"
+                              whileHover={{ scale: 1.05 }}
+                              transition={{ duration: 0.6 }}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                            <div className="absolute bottom-4 left-4 right-4 text-white">
+                              <h3 className="text-2xl font-serif font-bold mb-2">{pkg.title}</h3>
+                              <div className="flex items-center gap-2 text-sm text-white/90">
+                                <MapPin className="h-4 w-4" />
+                                {pkg.location}
+                              </div>
                             </div>
-                            <Music className="h-5 w-5 text-primary" />
-                          </div>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-2 text-sm text-muted-foreground">
-                            <div className="flex items-center gap-2">
-                              <MapPin className="h-4 w-4" />
-                              {pkg.location}
-                            </div>
-                            {pkg.description && (
-                              <p className="line-clamp-2">{pkg.description}</p>
+                            {pkg.category && (
+                              <div className="absolute top-4 right-4">
+                                <Badge className="bg-white/10 backdrop-blur-sm border-white/20 text-white">
+                                  {pkg.category}
+                                </Badge>
+                              </div>
                             )}
                           </div>
-                          <div className="flex items-center justify-between mt-4">
-                            <span className="text-xl font-bold text-primary">
-                              {pkg.price ? `$${pkg.price}` : "Varies"}
-                            </span>
-                            <Button size="sm" data-testid={`button-view-${pkg.id}`}>View Details</Button>
-                          </div>
-                        </CardContent>
-                      </Card>
+                          <CardContent className="p-6 space-y-4">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <Calendar className="h-4 w-4 text-primary" />
+                              {new Date(pkg.startDate).toLocaleDateString()} - {new Date(pkg.endDate).toLocaleDateString()}
+                            </div>
+                            {pkg.description && (
+                              <p className="text-sm text-muted-foreground leading-relaxed">{pkg.description}</p>
+                            )}
+                            <div className="flex items-center justify-between pt-4 border-t">
+                              <span className="text-2xl font-bold font-serif text-primary">
+                                {pkg.price ? `$${pkg.price}` : "Varies"}
+                              </span>
+                              <Button className="gap-2" data-testid={`button-view-${pkg.id}`}>
+                                View Details
+                                <ChevronRight className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
                     ))
                   ) : (
                     <Card>
-                      <CardContent className="py-8 text-center text-muted-foreground">
-                        No travel packages available at the moment.
+                      <CardContent className="py-16 text-center text-muted-foreground">
+                        <Plane className="mx-auto h-16 w-16 mb-4 opacity-50" />
+                        <p className="text-lg">No travel packages available</p>
+                        <p className="text-sm mt-2">Check back soon for exciting tango adventures</p>
                       </CardContent>
                     </Card>
                   )}
@@ -168,22 +240,43 @@ export default function TravelPlannerPage() {
               </TabsContent>
 
               <TabsContent value="destinations">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {destinations.map((dest) => (
-                    <Card key={dest.id} className="hover-elevate" data-testid={`destination-${dest.id}`}>
-                      <CardHeader>
-                        <CardTitle className="text-lg">{dest.name}</CardTitle>
-                        <CardDescription>{dest.description}</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex items-center justify-between">
-                          <Badge variant="secondary">
-                            Popularity: {dest.popularity}%
-                          </Badge>
-                          <Button size="sm" variant="outline">Explore</Button>
+                <div className="grid gap-6 md:grid-cols-2">
+                  {destinations.map((dest, index) => (
+                    <motion.div
+                      key={dest.id}
+                      initial={{ opacity: 0, y: 40 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-100px" }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                    >
+                      <Card className="overflow-hidden hover-elevate" data-testid={`destination-${dest.id}`}>
+                        <div className="relative aspect-[16/9] overflow-hidden">
+                          <motion.img
+                            src={dest.image || "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800&h=450&fit=crop&q=80"}
+                            alt={dest.name}
+                            className="w-full h-full object-cover"
+                            whileHover={{ scale: 1.05 }}
+                            transition={{ duration: 0.6 }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                          <div className="absolute bottom-4 left-4 right-4 text-white">
+                            <h3 className="text-2xl font-serif font-bold mb-1">{dest.name}</h3>
+                          </div>
+                          <div className="absolute top-4 right-4">
+                            <Badge className="bg-white/10 backdrop-blur-sm border-white/20 text-white">
+                              {dest.popularity}% Popular
+                            </Badge>
+                          </div>
                         </div>
-                      </CardContent>
-                    </Card>
+                        <CardContent className="p-6">
+                          <p className="text-sm text-muted-foreground leading-relaxed mb-4">{dest.description}</p>
+                          <Button variant="outline" className="w-full gap-2">
+                            Explore
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
                   ))}
                 </div>
               </TabsContent>
@@ -314,9 +407,11 @@ export default function TravelPlannerPage() {
             </Card>
           </div>
         </div>
-      </div>
-    </div>
-    </PageLayout>
+              </div>
+            </div>
+          </div>
+        </>
+      </AppLayout>
     </SelfHealingErrorBoundary>
   );
 }

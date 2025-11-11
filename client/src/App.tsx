@@ -192,6 +192,7 @@ const ManageSubscriptionPage = lazy(() => import("@/pages/ManageSubscriptionPage
 const BlogPage = lazy(() => import("@/pages/BlogPage"));
 const NewsletterPage = lazy(() => import("@/pages/NewsletterPage"));
 const LiveStreamPage = lazy(() => import("@/pages/LiveStreamPage"));
+const StreamDetailPage = lazy(() => import("@/pages/StreamDetailPage"));
 const ReviewsPage = lazy(() => import("@/pages/ReviewsPage"));
 const MediaGalleryPage = lazy(() => import("@/pages/MediaGalleryPage"));
 const LeaderboardPage = lazy(() => import("@/pages/LeaderboardPage"));
@@ -700,7 +701,7 @@ function Router() {
       <Route path="/live-stream/:id">
         <ProtectedRoute>
           <AppLayout>
-            <LiveStreamPage />
+            <StreamDetailPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>

@@ -1,10 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
-import { Dumbbell, Activity, Trophy, Flame, TrendingUp, Target } from "lucide-react";
+import { Dumbbell, Activity, Trophy, Flame, TrendingUp, Target, Check } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import heroImage from "@assets/IMG_9474-Mejorado-NR_1762013337546.jpg";
 
 export default function FitnessAgentPage() {
   const stats = [
@@ -26,6 +28,13 @@ export default function FitnessAgentPage() {
     { goal: "Active 5 days", current: 5, target: 5, percentage: 100 }
   ];
 
+  const fadeInUp = {
+    initial: { opacity: 0, y: 30 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-100px" },
+    transition: { duration: 0.6 }
+  };
+
   return (
     <SelfHealingErrorBoundary pageName="Fitness Agent" fallbackRoute="/platform">
     <PageLayout title="Fitness Agent" showBreadcrumbs>
@@ -35,94 +44,122 @@ export default function FitnessAgentPage() {
         description="Track your tango fitness, workouts, and achieve your physical goals with AI coaching."
       />
 
-      <div className="min-h-screen bg-gradient-to-br from-primary/10 via-accent/5 to-background py-12 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-8"
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div className="h-12 w-12 rounded-full bg-orange-500/10 flex items-center justify-center">
-                <Dumbbell className="h-6 w-6 text-orange-500" />
+      <div className="min-h-screen">
+        {/* Editorial Hero Section - 16:9 */}
+        <section className="relative h-[50vh] w-full overflow-hidden">
+          <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: `url(${heroImage})`}}>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+          </div>
+          
+          <div className="relative z-10 flex flex-col items-center justify-center h-full px-6 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            >
+              <div className="mb-6 flex items-center justify-center h-16 w-16 rounded-full bg-orange-500/20 backdrop-blur-sm border border-orange-500/30 mx-auto">
+                <Dumbbell className="h-8 w-8 text-orange-400" />
               </div>
-              <div>
-                
-                <p className="text-muted-foreground">Your AI fitness trainer</p>
-              </div>
+              
+              <Badge variant="outline" className="mb-4 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+                Life CEO · Fitness
+              </Badge>
+              
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-4 tracking-tight">
+                Fitness Agent
+              </h1>
+              
+              <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
+                Your AI fitness trainer for tango performance and wellness
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        <div className="container mx-auto max-w-7xl px-6 py-16">
+
+          {/* Stats Grid */}
+          <motion.div {...fadeInUp} className="mb-20">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold mb-12 text-center">Your Fitness Dashboard</h2>
+            <div className="grid gap-6 md:grid-cols-4">
+              {stats.map((stat, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1, duration: 0.5 }}
+                >
+                  <Card className="hover-elevate h-full">
+                    <CardContent className="pt-8 pb-6">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center justify-center h-14 w-14 rounded-full bg-primary/10">
+                          <stat.icon className={`h-7 w-7 ${stat.color}`} />
+                        </div>
+                        <TrendingUp className="h-5 w-5 text-green-500" />
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-2">{stat.label}</p>
+                      <p className="text-3xl md:text-4xl font-serif font-bold">{stat.value}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
 
-          {/* Stats Grid */}
-          <div className="grid gap-6 md:grid-cols-4 mb-8">
-            {stats.map((stat, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-              >
-                <Card className="glass-card">
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <stat.icon className={`h-8 w-8 ${stat.color}`} />
-                      <TrendingUp className="h-4 w-4 text-green-500" />
-                    </div>
-                    <p className="text-sm text-muted-foreground">{stat.label}</p>
-                    <p className="text-2xl font-bold">{stat.value}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="grid gap-6 lg:grid-cols-2">
+          <motion.div className="grid gap-8 lg:grid-cols-2 mb-20">
             {/* Today's Workouts */}
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-primary" />
-                  Today's Workouts
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {todayWorkouts.map((workout, idx) => (
-                  <div
-                    key={idx}
-                    className={`p-4 rounded-lg border ${
-                      workout.completed 
-                        ? "bg-green-500/5 border-green-500/20" 
-                        : "bg-muted/50 border-border"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div>
-                        <h3 className="font-semibold">{workout.name}</h3>
-                        <span className="text-xs text-muted-foreground">{workout.type}</span>
+            <motion.div {...fadeInUp}>
+              <Card className="h-full hover-elevate">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3 text-xl md:text-2xl font-serif font-bold">
+                    <Activity className="h-6 w-6 text-primary" />
+                    Today's Workouts
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {todayWorkouts.map((workout, idx) => (
+                    <div
+                      key={idx}
+                      className={`p-5 rounded-lg border ${
+                        workout.completed 
+                          ? "bg-green-500/5 border-green-500/20" 
+                          : "bg-muted/30 border-border"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <div>
+                          <h3 className="font-serif font-bold text-lg mb-1">{workout.name}</h3>
+                          <Badge variant="outline" className="text-xs">{workout.type}</Badge>
+                        </div>
+                        {workout.completed && (
+                          <div className="flex items-center gap-1 text-green-500">
+                            <Check className="h-4 w-4" />
+                            <span className="text-sm font-medium">Done</span>
+                          </div>
+                        )}
                       </div>
-                      {workout.completed && (
-                        <span className="text-xs text-green-500 font-medium">✓ Done</span>
-                      )}
+                      <div className="flex gap-4 text-sm text-muted-foreground">
+                        <span>{workout.duration}</span>
+                        <span>•</span>
+                        <span>{workout.calories} cal</span>
+                      </div>
                     </div>
-                    <div className="flex gap-4 text-sm text-muted-foreground">
-                      <span>{workout.duration}</span>
-                      <span>•</span>
-                      <span>{workout.calories} cal</span>
-                    </div>
-                  </div>
-                ))}
-                <Button className="w-full" variant="outline" data-testid="button-add-workout">
-                  + Log Workout
-                </Button>
-              </CardContent>
-            </Card>
+                  ))}
+                  <Button className="w-full mt-4" size="lg" variant="outline" data-testid="button-add-workout">
+                    + Log Workout
+                  </Button>
+                </CardContent>
+              </Card>
+            </motion.div>
 
             {/* Weekly Goals */}
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Trophy className="h-5 w-5 text-yellow-500" />
-                  Weekly Goals
+            <motion.div {...fadeInUp} transition={{ delay: 0.2 }}>
+              <Card className="h-full hover-elevate">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3 text-xl md:text-2xl font-serif font-bold">
+                    <Trophy className="h-6 w-6 text-yellow-500" />
+                    Weekly Goals
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">

@@ -9,10 +9,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, MapPin, Star, DollarSign, Phone, Globe, Edit2, Trash2, Filter } from "lucide-react";
+import { Plus, MapPin, Star, DollarSign, Phone, Globe, Edit2, Trash2, Filter, ChevronRight } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
+import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 
 interface VenueRecommendation {
   id: number;
@@ -173,26 +175,66 @@ export default function VenueRecommendationsPage() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gradient-to-b from-background via-background to-accent/5">
-        <div className="container mx-auto max-w-7xl py-8 px-4">
-          {/* Header */}
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h1 className="text-4xl font-bold text-foreground flex items-center gap-3" data-testid="text-venues-title">
-                <MapPin className="h-10 w-10 text-primary" />
+      <>
+        <SEO
+          title="Venue Recommendations - Discover Tango Destinations"
+          description="Explore curated recommendations for restaurants, cafés, milongas, and cultural venues perfect for tango dancers."
+        />
+
+        {/* Hero Section */}
+        <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+          <motion.div 
+            className="absolute inset-0 bg-cover bg-center" 
+            style={{
+              backgroundImage: `url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1600&h=900&fit=crop&q=80')`
+            }}
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 1.5 }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+          </motion.div>
+          
+          <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+            >
+              <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+                <MapPin className="w-3 h-3 mr-1.5" />
+                Curated for Dancers
+              </Badge>
+              
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
                 Venue Recommendations
               </h1>
-              <p className="text-muted-foreground mt-2">
-                Discover and share great restaurants, cafés, and venues
+              
+              <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
+                Discover and share exceptional restaurants, cafés, and cultural venues
               </p>
-            </div>
 
-            <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-              <DialogTrigger asChild>
-                <Button size="lg" className="gap-2" data-testid="button-create-venue">
+              <div className="flex gap-4 justify-center">
+                <Button 
+                  size="lg" 
+                  className="gap-2" 
+                  data-testid="button-create-venue-hero"
+                  onClick={() => setIsCreateOpen(true)}
+                >
                   <Plus className="h-5 w-5" />
                   Add Venue
+                  <ChevronRight className="h-5 w-5" />
                 </Button>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        <div className="bg-background py-12 px-6">
+          <div className="container mx-auto max-w-7xl">
+            <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+              <DialogTrigger asChild>
+                <button className="hidden" />
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
@@ -432,123 +474,133 @@ export default function VenueRecommendationsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3].map((i) => (
                 <Card key={i}>
+                  <Skeleton className="aspect-[16/9] w-full" />
                   <CardHeader>
-                    <Skeleton className="h-6 w-1/2" />
+                    <Skeleton className="h-6 w-3/4 mb-2" />
+                    <Skeleton className="h-4 w-1/2" />
                   </CardHeader>
                   <CardContent>
-                    <Skeleton className="h-48 w-full" />
+                    <Skeleton className="h-20 w-full" />
                   </CardContent>
                 </Card>
               ))}
             </div>
           ) : venues.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {venues.map((venue) => (
-                <Card key={venue.id} className="hover-elevate" data-testid={`venue-${venue.id}`}>
-                  {venue.imageUrl && (
-                    <div className="h-48 overflow-hidden">
-                      <img
-                        src={venue.imageUrl}
+              {venues.map((venue, index) => (
+                <motion.div
+                  key={venue.id}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.6, delay: index * 0.05 }}
+                >
+                  <Card className="overflow-hidden hover-elevate" data-testid={`venue-${venue.id}`}>
+                    <div className="relative aspect-[16/9] overflow-hidden">
+                      <motion.img
+                        src={venue.imageUrl || "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=450&fit=crop&q=80"}
                         alt={venue.name}
                         className="w-full h-full object-cover"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.6 }}
                         data-testid={`img-venue-${venue.id}`}
                       />
-                    </div>
-                  )}
-                  
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <CardTitle className="line-clamp-1" data-testid={`text-venue-name-${venue.id}`}>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                      
+                      <div className="absolute bottom-4 left-4 right-4 text-white">
+                        <h3 className="text-2xl font-serif font-bold mb-1 line-clamp-1" data-testid={`text-venue-name-${venue.id}`}>
                           {venue.name}
-                        </CardTitle>
-                        <CardDescription className="mt-1">
-                          <div className="flex flex-wrap gap-2 mt-2">
-                            <Badge variant="outline">{venue.category}</Badge>
-                            {venue.cuisine && <Badge variant="secondary">{venue.cuisine}</Badge>}
-                            {venue.priceLevel && (
-                              <Badge variant="outline" className="gap-1">
-                                <DollarSign className="h-3 w-3" />
-                                {venue.priceLevel}
-                              </Badge>
-                            )}
-                          </div>
-                        </CardDescription>
+                        </h3>
+                        <div className="flex items-center gap-2 text-sm text-white/90">
+                          <MapPin className="h-3 w-3" />
+                          {venue.city}{venue.country ? `, ${venue.country}` : ''}
+                        </div>
                       </div>
-                      {venue.rating && (
-                        <Badge className="bg-primary text-primary-foreground gap-1">
-                          <Star className="h-3 w-3 fill-current" />
-                          {venue.rating.toFixed(1)}
+
+                      <div className="absolute top-4 right-4 flex gap-2">
+                        {venue.rating && (
+                          <Badge className="bg-white/10 backdrop-blur-sm border-white/20 text-white gap-1">
+                            <Star className="h-3 w-3 fill-current" />
+                            {venue.rating.toFixed(1)}
+                          </Badge>
+                        )}
+                      </div>
+
+                      <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+                        <Badge className="bg-white/10 backdrop-blur-sm border-white/20 text-white">
+                          {venue.category}
                         </Badge>
-                      )}
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="space-y-3">
-                    <div className="flex items-start gap-2 text-sm text-muted-foreground">
-                      <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <div>{venue.address}</div>
-                        <div>{venue.city}{venue.country ? `, ${venue.country}` : ''}</div>
+                        {venue.priceLevel && (
+                          <Badge className="bg-white/10 backdrop-blur-sm border-white/20 text-white gap-1">
+                            <DollarSign className="h-3 w-3" />
+                            {venue.priceLevel}
+                          </Badge>
+                        )}
                       </div>
                     </div>
 
-                    {venue.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-2">
-                        {venue.description}
-                      </p>
-                    )}
+                    <CardContent className="p-6 space-y-4">
+                      <div className="flex flex-wrap gap-2">
+                        {venue.cuisine && <Badge variant="secondary">{venue.cuisine}</Badge>}
+                      </div>
 
-                    <div className="flex gap-2 text-sm">
-                      {venue.phoneNumber && (
-                        <Button variant="outline" size="sm" className="gap-1" asChild>
-                          <a href={`tel:${venue.phoneNumber}`}>
-                            <Phone className="h-3 w-3" />
-                            Call
-                          </a>
-                        </Button>
+                      {venue.description && (
+                        <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                          {venue.description}
+                        </p>
                       )}
-                      {venue.website && (
-                        <Button variant="outline" size="sm" className="gap-1" asChild>
-                          <a href={venue.website} target="_blank" rel="noopener noreferrer">
-                            <Globe className="h-3 w-3" />
-                            Website
-                          </a>
-                        </Button>
-                      )}
-                    </div>
 
-                    <div className="flex gap-2 pt-2 border-t">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 gap-1"
-                        onClick={() => openEditDialog(venue)}
-                        data-testid={`button-edit-venue-${venue.id}`}
-                      >
-                        <Edit2 className="h-3 w-3" />
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 gap-1 text-destructive"
-                        onClick={() => deleteVenueMutation.mutate(venue.id)}
-                        data-testid={`button-delete-venue-${venue.id}`}
-                      >
-                        <Trash2 className="h-3 w-3" />
-                        Delete
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                      <div className="flex flex-wrap gap-2">
+                        {venue.phoneNumber && (
+                          <Button variant="outline" size="sm" className="gap-1" asChild>
+                            <a href={`tel:${venue.phoneNumber}`}>
+                              <Phone className="h-3 w-3" />
+                              Call
+                            </a>
+                          </Button>
+                        )}
+                        {venue.website && (
+                          <Button variant="outline" size="sm" className="gap-1" asChild>
+                            <a href={venue.website} target="_blank" rel="noopener noreferrer">
+                              <Globe className="h-3 w-3" />
+                              Website
+                            </a>
+                          </Button>
+                        )}
+                      </div>
+
+                      <div className="flex gap-2 pt-4 border-t">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 gap-1"
+                          onClick={() => openEditDialog(venue)}
+                          data-testid={`button-edit-venue-${venue.id}`}
+                        >
+                          <Edit2 className="h-3 w-3" />
+                          Edit
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 gap-1 text-destructive"
+                          onClick={() => deleteVenueMutation.mutate(venue.id)}
+                          data-testid={`button-delete-venue-${venue.id}`}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                          Delete
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               ))}
             </div>
           ) : (
             <Card>
               <CardContent className="py-16 text-center">
                 <MapPin className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">No venue recommendations yet</h3>
+                <h3 className="text-2xl font-serif font-bold mb-2">No venue recommendations yet</h3>
                 <p className="text-muted-foreground mb-6">
                   Be the first to recommend a great venue in your city
                 </p>
@@ -608,8 +660,9 @@ export default function VenueRecommendationsPage() {
               )}
             </DialogContent>
           </Dialog>
+          </div>
         </div>
-      </div>
+      </>
     </AppLayout>
   );
 }
