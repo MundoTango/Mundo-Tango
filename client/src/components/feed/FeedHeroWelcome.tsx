@@ -26,123 +26,75 @@ export function FeedHeroWelcome() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -20 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="relative mb-6 overflow-hidden"
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="relative w-full h-[50vh] md:h-[60vh] mb-12 rounded-2xl overflow-hidden"
+      data-testid="hero-feed"
     >
-      <Card 
-        className="relative p-10 md:p-12 border-2"
-        style={{
-          background: `
-            linear-gradient(135deg, 
-              rgba(64, 224, 208, 0.12) 0%, 
-              rgba(30, 144, 255, 0.08) 50%,
-              rgba(100, 180, 255, 0.06) 100%
-            )
-          `,
-          borderImage: 'linear-gradient(135deg, rgba(64, 224, 208, 0.4), rgba(30, 144, 255, 0.3)) 1',
-          backdropFilter: 'blur(20px)',
-          boxShadow: `
-            0 8px 32px rgba(64, 224, 208, 0.15),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2),
-            0 1px 3px rgba(0, 0, 0, 0.05)
-          `,
-        }}
-      >
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <motion.div
-            className="absolute -top-20 -right-20 w-64 h-64 rounded-full"
-            style={{
-              background: 'radial-gradient(circle, rgba(64, 224, 208, 0.15) 0%, transparent 70%)',
-            }}
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-          <motion.div
-            className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full"
-            style={{
-              background: 'radial-gradient(circle, rgba(30, 144, 255, 0.12) 0%, transparent 70%)',
-            }}
-            animate={{
-              scale: [1.2, 1, 1.2],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 2
-            }}
-          />
-        </div>
+      {/* Background Image with 16:9 Aspect Ratio */}
+      <div className="absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1547036967-23d11aacaee0?q=80&w=2070&auto=format&fit=crop"
+          alt="Tango dancers in elegant embrace"
+          className="w-full h-full object-cover"
+        />
+        {/* Gradient Overlay - Editorial Standard */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+      </div>
 
-        {/* Content */}
-        <div className="relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="flex items-center gap-3 mb-3"
-          >
+      {/* Content */}
+      <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+          className="space-y-6"
+        >
+          <div className="flex items-center gap-3">
             <motion.div
               animate={{ rotate: [0, 10, -10, 0] }}
               transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
             >
-              <Sparkles className="w-6 h-6 text-primary" />
+              <Sparkles className="w-8 h-8 text-white" />
             </motion.div>
-            <h1 className="text-4xl md:text-5xl font-serif font-bold">
-              <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                {greeting}, {firstName}!
-              </span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white" data-testid="heading-welcome">
+              {greeting}, {firstName}!
             </h1>
           </motion.div>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            className="text-muted-foreground mb-8 text-xl leading-relaxed"
-          >
+          <p className="text-xl md:text-2xl text-white/90 max-w-2xl">
             Welcome back to your tango community
-          </motion.p>
+          </p>
 
           {/* Quick Stats */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-            className="grid grid-cols-3 gap-4"
+            transition={{ delay: 0.5, duration: 0.6 }}
+            className="grid grid-cols-3 gap-4 md:gap-6 mt-8 max-w-3xl"
           >
             <StatCard
               icon={<Heart className="w-5 h-5" />}
               value={stats?.postsToday || 0}
               label="Posts Today"
-              delay={0.7}
+              delay={0.6}
             />
             <StatCard
               icon={<Users className="w-5 h-5" />}
               value={stats?.activeUsers || 0}
               label="Active Now"
-              delay={0.8}
+              delay={0.7}
             />
             <StatCard
               icon={<Calendar className="w-5 h-5" />}
               value={stats?.upcomingEvents || 0}
               label="Events This Week"
-              delay={0.9}
+              delay={0.8}
             />
           </motion.div>
-        </div>
-      </Card>
+        </motion.div>
+      </div>
     </motion.div>
   );
 }
@@ -157,27 +109,23 @@ interface StatCardProps {
 function StatCard({ icon, value, label, delay }: StatCardProps) {
   return (
     <motion.div
-      initial={{ scale: 0.8, opacity: 0 }}
+      initial={{ scale: 0.9, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      transition={{ delay, duration: 0.4, type: "spring", stiffness: 200 }}
+      transition={{ delay, duration: 0.5 }}
       whileHover={{ 
         scale: 1.05,
         transition: { duration: 0.2 }
       }}
-      className="flex flex-col items-center p-4 rounded-lg cursor-pointer"
-      style={{
-        background: 'rgba(255, 255, 255, 0.05)',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(64, 224, 208, 0.2)',
-      }}
+      className="flex flex-col items-center p-6 rounded-xl backdrop-blur-md bg-white/10 border border-white/20"
+      data-testid={`stat-${label.toLowerCase().replace(/\s/g, '-')}`}
     >
-      <div className="text-primary mb-2">
+      <div className="text-white mb-2">
         {icon}
       </div>
-      <div className="text-2xl font-bold bg-gradient-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">
+      <div className="text-3xl md:text-4xl font-bold text-white">
         {value}
       </div>
-      <div className="text-xs text-muted-foreground text-center mt-1">
+      <div className="text-sm text-white/80 text-center mt-1">
         {label}
       </div>
     </motion.div>
