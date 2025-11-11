@@ -343,6 +343,14 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/profile/edit">
+        <ProtectedRoute>
+          <AppLayout>
+            <ProfileEditPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/profile/:id">
         <ProtectedRoute>
           <AppLayout>
@@ -720,6 +728,16 @@ function Router() {
 
       <Route path="/newsletter" component={NewsletterPage} />
       
+      <Route path="/admin">
+        {() => {
+          const [, setLocation] = useLocation();
+          useEffect(() => {
+            setLocation("/admin/dashboard");
+          }, [setLocation]);
+          return null;
+        }}
+      </Route>
+      
       <Route path="/admin/dashboard">
         <ProtectedRoute>
           <AdminLayout>
@@ -992,14 +1010,6 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <TwoFactorAuthPage />
-          </AppLayout>
-        </ProtectedRoute>
-      </Route>
-
-      <Route path="/profile/edit">
-        <ProtectedRoute>
-          <AppLayout>
-            <ProfileEditPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>

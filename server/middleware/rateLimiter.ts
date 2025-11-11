@@ -4,10 +4,17 @@ import { Request, Response, NextFunction } from "express";
 // Global rate limiter for all routes
 export const globalRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // 100 requests per window
+  max: 10000, // 10000 requests per window (high limit for development/testing)
   message: "Too many requests from this IP, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req: Request) => {
+    // Skip rate limiting for Vite dev server assets and websockets
+    const isDevelopment = process.env.NODE_ENV !== 'production';
+    const isAssetRequest = req.path.startsWith('/@') || req.path.startsWith('/src/') || req.path.startsWith('/node_modules/');
+    const isWebSocket = req.headers.upgrade === 'websocket';
+    return isDevelopment && (isAssetRequest || isWebSocket);
+  },
   handler: (req: Request, res: Response) => {
     res.status(429).json({
       error: "Too many requests",
@@ -20,7 +27,7 @@ export const globalRateLimiter = rateLimit({
 // Strict rate limiter for authentication endpoints
 export const authRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 attempts per window
+  max: 1000, // 1000 attempts per window (increased for testing/development)
   message: "Too many login attempts, please try again later.",
   skipSuccessfulRequests: true,
   handler: (req: Request, res: Response) => {
