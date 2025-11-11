@@ -72,9 +72,18 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 async function refreshAccessToken(): Promise<{ accessToken: string } | null> {
   try {
+    // Get CSRF token from cookie
+    const csrfMatch = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+    const csrfToken = csrfMatch ? csrfMatch[1] : null;
+    
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (csrfToken) {
+      headers["x-xsrf-token"] = csrfToken;
+    }
+    
     const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       credentials: "include",
     });
 
