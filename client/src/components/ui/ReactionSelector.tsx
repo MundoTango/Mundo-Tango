@@ -39,6 +39,7 @@ interface ReactionSelectorProps {
   postId: number;
   currentReaction?: string;
   reactions?: { [key: string]: number };
+  totalCount?: number;
   onReact: (reactionId: string) => void;
   className?: string;
 }
@@ -47,6 +48,7 @@ export const ReactionSelector = ({
   postId,
   currentReaction,
   reactions = {},
+  totalCount,
   onReact,
   className = ''
 }: ReactionSelectorProps) => {
@@ -73,6 +75,7 @@ export const ReactionSelector = ({
   };
 
   const getTotalReactions = () => {
+    if (totalCount !== undefined) return totalCount;
     return Object.values(reactions).reduce((sum, count) => sum + count, 0);
   };
 

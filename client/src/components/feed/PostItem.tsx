@@ -9,7 +9,7 @@ import { ReactionSelector } from "@/components/ui/ReactionSelector";
 import { PostActionsMenu } from "@/components/ui/PostActionsMenu";
 import { ShareModal } from "@/components/modals/ShareModal";
 import { ReportModal } from "@/components/modals/ReportModal";
-import { useReactToPost, useSharePost, useSavePost, useUnsavePost, useReportPost } from "@/hooks/usePostInteractions";
+import { useReactToPost, useSharePost, useSavePost, useUnsavePost } from "@/hooks/usePostInteractions";
 import { useAuth } from "@/contexts/AuthContext";
 import { CommentsSection } from "./CommentsSection";
 import { renderMentionPills } from "@/utils/renderMentionPills";
@@ -49,7 +49,6 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
   const shareMutation = useSharePost();
   const saveMutation = useSavePost();
   const unsaveMutation = useUnsavePost();
-  const reportMutation = useReportPost();
 
   const isAuthor = user?.id === post.userId;
   const isSaved = post.isSaved || false;
@@ -70,9 +69,6 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
     }
   };
 
-  const handleReport = async (category: string, description: string) => {
-    await reportMutation.mutateAsync({ postId: post.id, category, description });
-  };
 
   return (
     <>
@@ -144,6 +140,7 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
             postId={post.id}
             onReact={handleReaction}
             reactions={{}}
+            totalCount={post.likes}
           />
 
           <Button
@@ -216,9 +213,9 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
 
       <ReportModal
         open={showReportModal}
-        onClose={() => setShowReportModal(false)}
+        onOpenChange={setShowReportModal}
         postId={post.id}
-        onReport={handleReport}
+        contentType="post"
       />
     </>
   );
