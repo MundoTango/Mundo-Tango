@@ -148,7 +148,6 @@ const TwoFactorAuthPage = lazy(() => import("@/pages/TwoFactorAuthPage"));
 const TeachersPage = lazy(() => import("@/pages/TeachersPage"));
 const TeacherDetailPage = lazy(() => import("@/pages/TeacherDetailPage"));
 const VenuesPage = lazy(() => import("@/pages/VenuesPage"));
-const VenueDetailPage = lazy(() => import("@/pages/VenueDetailPage"));
 const TutorialsPage = lazy(() => import("@/pages/TutorialsPage"));
 const TutorialDetailPage = lazy(() => import("@/pages/TutorialDetailPage"));
 const WorkshopsPage = lazy(() => import("@/pages/WorkshopsPage"));
@@ -196,7 +195,6 @@ const GroupsDetailPage = lazy(() => import("@/pages/GroupsDetailPage"));
 const AdminSettingsPage = lazy(() => import("@/pages/AdminSettingsPage"));
 const AdminReportsPage = lazy(() => import("@/pages/AdminReportsPage"));
 const TeacherProfilePage = lazy(() => import("@/pages/TeacherProfilePage"));
-const TutorialDetailPage = lazy(() => import("@/pages/TutorialDetailPage"));
 const MarketplaceItemDetailPage = lazy(() => import("@/pages/MarketplaceItemDetailPage"));
 const BlogDetailPage = lazy(() => import("@/pages/BlogDetailPage"));
 const StoriesPage = lazy(() => import("@/pages/StoriesPage"));
@@ -863,7 +861,6 @@ function Router() {
 
       <Route path="/help" component={HelpPage} />
       <Route path="/teachers/:id" component={TeacherDetailPage} />
-      <Route path="/venues/:id" component={VenueDetailPage} />
       <Route path="/tutorials/:id" component={TutorialDetailPage} />
       <Route path="/marketplace/:id" component={MarketplaceItemPage} />
       <Route path="/booking/confirmation" component={BookingConfirmationPage} />
