@@ -1,0 +1,491 @@
+=======================================================================
+MUNDO TANGO - PAGE AGENTS COMPLETE DOCUMENTATION
+=======================================================================
+
+VERSION: 1.0
+GENERATED: October 30, 2025
+PURPOSE: All Page Agents (P1-P50+) with complete responsibilities
+
+=======================================================================
+SECTION 1: PAGE AGENT ARCHITECTURE
+=======================================================================
+
+### What Are Page Agents?
+
+**Page Agents** are specialized AI agents assigned to individual pages
+within the Mundo Tango platform. Each page has a dedicated agent
+responsible for:
+
+- Page functionality and features
+- User experience optimization
+- Data flow management
+- Component coordination
+- Performance monitoring
+- Error handling
+- Analytics tracking
+
+### Page Agent Naming Convention
+
+```
+Format: P[number] ([Page Name])
+
+Examples:
+- P1 (Login)
+- P2 (Register)
+- P10 (Home Feed)
+- P34 (Admin Projects)
+```
+
+### Total Page Agents: 50+
+
+=======================================================================
+SECTION 2: AUTHENTICATION PAGE AGENTS (P1-P5)
+=======================================================================
+
+### P1 (Login Page Agent)
+
+**Route**: `/login`
+**File**: `client/src/pages/LoginPage.tsx`
+**Responsibility**: User authentication and login flow
+
+**Agent Responsibilities**:
+1. Form validation (email, password)
+2. 2FA token handling
+3. API communication (/api/auth/login)
+4. Token storage management
+5. Error message display
+6. Redirect on success
+7. Rate limiting enforcement
+
+**Component Tree**:
+```
+LoginPage (P1)
+├── LoginForm
+│   ├── EmailInput (E1-Login-Email)
+│   ├── PasswordInput (E2-Login-Password)
+│   ├── TwoFactorInput (E3-Login-2FA) [conditional]
+│   └── SubmitButton (E4-Login-Submit)
+├── ForgotPasswordLink
+└── RegisterLink
+```
+
+**Data Flow**:
+```
+User Input → Form Validation (P1) → API Call → Response Handling → Navigation
+```
+
+**Performance Metrics**:
+- Load time: < 500ms
+- API response: < 200ms
+- Error display: < 100ms
+- Success redirect: Immediate
+
+**Error Scenarios Handled**:
+- Invalid credentials (401)
+- Account locked (403)
+- 2FA required (422)
+- Network error (500)
+- Rate limit exceeded (429)
+
+---
+
+### P2 (Register Page Agent)
+
+**Route**: `/register`
+**File**: `client/src/pages/RegisterPage.tsx`
+**Responsibility**: New user registration
+
+**Agent Responsibilities**:
+1. Multi-field form validation
+2. Password strength checking
+3. Email uniqueness verification
+4. Username availability check
+5. Terms acceptance tracking
+6. Welcome email trigger
+7. Auto-login after registration
+
+**Component Tree**:
+```
+RegisterPage (P2)
+├── RegisterForm
+│   ├── EmailInput (E5-Register-Email)
+│   ├── UsernameInput (E6-Register-Username)
+│   ├── PasswordInput (E7-Register-Password)
+│   ├── ConfirmPasswordInput (E8-Register-ConfirmPassword)
+│   ├── NameInput (E9-Register-Name)
+│   ├── CitySelect (E10-Register-City) [optional]
+│   ├── CountrySelect (E11-Register-Country) [optional]
+│   ├── TermsCheckbox (E12-Register-Terms)
+│   └── SubmitButton (E13-Register-Submit)
+└── LoginLink
+```
+
+**Validation Rules**:
+```typescript
+- Email: Valid format, unique
+- Username: 3-50 chars, alphanumeric + underscore, unique
+- Password: Min 8 chars, 1 uppercase, 1 lowercase, 1 number
+- Name: Required, 1-100 chars
+- Terms: Must be checked
+```
+
+---
+
+### P3 (Forgot Password Page Agent)
+
+**Route**: `/forgot-password`
+**Responsibility**: Password reset request
+
+**Agent Responsibilities**:
+1. Email validation
+2. Reset token generation request
+3. Email sending confirmation
+4. User feedback
+5. Rate limiting (max 3 requests per hour)
+
+---
+
+### P4 (Reset Password Page Agent)
+
+**Route**: `/reset-password?token=xxxxx`
+**Responsibility**: Complete password reset
+
+**Agent Responsibilities**:
+1. Token validation
+2. Password update
+3. Session invalidation
+4. Redirect to login
+5. Expiry handling (15 min)
+
+---
+
+### P5 (Logout Page Agent)
+
+**Route**: `/logout`
+**Responsibility**: Secure logout
+
+**Agent Responsibilities**:
+1. Token invalidation
+2. LocalStorage cleanup
+3. Session termination
+4. Redirect to login
+5. Analytics tracking
+
+=======================================================================
+SECTION 3: CORE PLATFORM PAGE AGENTS (P6-P20)
+=======================================================================
+
+### P10 (Home Feed Page Agent)
+
+**Route**: `/feed`
+**File**: `client/src/pages/HomePage.tsx`
+**Responsibility**: Main social feed
+
+**Agent Responsibilities**:
+1. **Post Loading**:
+   - Infinite scroll pagination
+   - Real-time updates (WebSocket)
+   - Cache management
+   - Optimistic updates
+
+2. **Post Creation**:
+   - Form validation
+   - Image upload coordination
+   - Video embed handling
+   - Draft saving
+
+3. **Interactions**:
+   - Reaction tracking
+   - Comment management
+   - Share functionality
+   - Report handling
+
+4. **Feed Algorithms**:
+   - Post ranking (ML-based)
+   - Friend posts prioritization
+   - Trending content boost
+   - Personalization
+
+**Component Tree**:
+```
+HomePage (P10)
+├── LeftSidebar
+│   ├── UserProfile (E20-Feed-UserProfile)
+│   ├── QuickLinks (E21-Feed-QuickLinks)
+│   └── LanguageSwitcher (E22-Feed-LangSwitch)
+├── MainFeed
+│   ├── CreatePost (E23-Feed-CreatePost)
+│   ├── PostList
+│   │   └── PostCard × N (E24-Feed-PostCard-{id})
+│   │       ├── UserAvatar
+│   │       ├── PostContent
+│   │       ├── MediaDisplay
+│   │       ├── ReactionButtons (E25-Post-Reactions)
+│   │       └── CommentSection (E26-Post-Comments)
+│   └── InfiniteScrollTrigger
+└── RightSidebar
+    ├── EventsWidget (E27-Feed-Events)
+    ├── OnlineUsers (E28-Feed-OnlineUsers)
+    └── MrBlueButton (E29-Feed-MrBlue)
+```
+
+**Real-Time Events**:
+```
+post:new → Prepend to feed
+post:update → Update in place
+post:delete → Remove from feed
+user:online → Update presence
+user:offline → Update presence
+```
+
+**Performance Targets**:
+- Initial load: < 1s
+- Post render: < 50ms per post
+- Scroll performance: 60fps
+- WebSocket latency: < 100ms
+
+---
+
+### P15 (Profile Page Agent)
+
+**Route**: `/profile/:id`
+**Responsibility**: User profile display and editing
+
+**Agent Responsibilities**:
+1. Profile data loading
+2. Post history display
+3. Friends list management
+4. Event attendance tracking
+5. Profile editing (if own profile)
+6. Privacy controls
+7. Profile analytics
+
+---
+
+### P18 (Messages Page Agent)
+
+**Route**: `/messages`
+**Responsibility**: Real-time messaging
+
+**Agent Responsibilities**:
+1. Conversation list management
+2. Real-time message delivery
+3. Typing indicators
+4. Read receipts
+5. File attachment handling
+6. Message search
+7. Conversation archiving
+
+---
+
+### P20 (Events Page Agent)
+
+**Route**: `/events`
+**Responsibility**: Event discovery and management
+
+**Agent Responsibilities**:
+1. Event list filtering
+2. Map integration
+3. RSVP management
+4. Event creation
+5. Calendar sync
+6. Reminder notifications
+
+=======================================================================
+SECTION 4: ADMIN PAGE AGENTS (P30-P40)
+=======================================================================
+
+### P34 (Admin Projects Page Agent)
+
+**Route**: `/admin/projects`
+**File**: `client/src/pages/admin/Projects.tsx`
+**Responsibility**: Self-hosted project tracker (Agent #65 integration)
+
+**Agent Responsibilities**:
+1. **Project Management**:
+   - Epic/Story/Task hierarchy
+   - Agent assignment
+   - Status tracking
+   - Priority management
+
+2. **GitHub Integration**:
+   - Bidirectional sync
+   - Issue linking
+   - Code reference
+   - PR tracking
+
+3. **Kanban Board**:
+   - Drag-and-drop
+   - Column customization
+   - WIP limits
+   - Burndown charts
+
+4. **Comments System**:
+   - @mentions
+   - Threading
+   - File attachments
+   - Activity feed
+
+**Component Tree**:
+```
+AdminProjectsPage (P34)
+├── ProjectHeader
+│   ├── CreateProjectButton (E50-Projects-Create)
+│   ├── FilterControls (E51-Projects-Filter)
+│   └── ViewToggle (E52-Projects-ViewToggle)
+├── KanbanBoard (if kanban view)
+│   ├── Column × N (E53-Projects-Column-{status})
+│   │   └── ProjectCard × N (E54-Projects-Card-{id})
+│   │       ├── Title
+│   │       ├── AssignedAgent
+│   │       ├── Priority
+│   │       ├── DueDate
+│   │       └── GitHubLink
+│   └── AddColumnButton
+├── ListView (if list view)
+│   └── ProjectTable (E55-Projects-Table)
+└── ProjectDetailModal (E56-Projects-DetailModal)
+    ├── DescriptionEditor
+    ├── CommentsSection
+    ├── GitHubSync
+    └── ActivityLog
+```
+
+---
+
+### P35 (ESA Mind Page Agent)
+
+**Route**: `/admin/esa-mind`
+**Responsibility**: ESA Framework visualization (105 agents, 61 layers)
+
+**Agent Responsibilities**:
+1. Agent status monitoring
+2. Layer health tracking
+3. Phase progress visualization
+4. Performance metrics
+5. Interactive diagrams
+6. Real-time updates
+
+---
+
+### P37 (Visual Editor Page Agent)
+
+**Route**: `/admin/visual-editor`
+**Responsibility**: Replit-style page editor with AI
+
+**Agent Responsibilities**:
+1. GrapesJS coordination
+2. AI code generation (GPT-4o)
+3. Cost tracking
+4. Live preview
+5. Git workflow automation
+6. Component library management
+
+=======================================================================
+SECTION 5: PAGE AGENT COORDINATION PROTOCOL
+=======================================================================
+
+### Inter-Page Agent Communication
+
+**Shared State Management**:
+```typescript
+interface PageAgentContext {
+  currentUser: User;
+  permissions: Permission[];
+  notifications: Notification[];
+  onlineUsers: number[];
+  systemStatus: SystemStatus;
+}
+```
+
+**Event Bus**:
+```typescript
+// P10 broadcasts new post
+PageAgentBus.emit('post:created', { postId: 123 });
+
+// P15 listens for profile updates
+PageAgentBus.on('profile:updated', (userId) => {
+  if (currentProfileId === userId) {
+    refreshProfile();
+  }
+});
+```
+
+### Page Agent Lifecycle
+
+```
+1. Mount → Initialize agent
+2. Load → Fetch required data
+3. Render → Display UI
+4. Monitor → Track performance
+5. Update → Handle state changes
+6. Unmount → Cleanup and report
+```
+
+=======================================================================
+SECTION 6: ALL PAGE AGENTS INDEX
+=======================================================================
+
+### Authentication & Access (P1-P5)
+- P1: Login
+- P2: Register
+- P3: Forgot Password
+- P4: Reset Password
+- P5: Logout
+
+### Core Platform (P6-P20)
+- P6: Landing Page
+- P7: About Page
+- P8: Pricing Page
+- P9: Contact Page
+- P10: Home Feed ⭐
+- P11: Explore Page
+- P12: Search Results
+- P13: Notifications
+- P14: Settings
+- P15: Profile ⭐
+- P16: Edit Profile
+- P17: Friends List
+- P18: Messages ⭐
+- P19: Communities
+- P20: Events ⭐
+
+### Community Features (P21-P29)
+- P21: Event Detail
+- P22: Create Event
+- P23: Community Detail
+- P24: Create Community
+- P25: Housing Listings
+- P26: Housing Detail
+- P27: Map View
+- P28: Calendar View
+- P29: Subscription/Pricing
+
+### Admin Panel (P30-P45)
+- P30: Admin Dashboard
+- P31: User Management
+- P32: Analytics
+- P33: Content Moderation
+- P34: Admin Projects ⭐
+- P35: ESA Mind ⭐
+- P36: System Logs
+- P37: Visual Editor ⭐
+- P38: Email Templates
+- P39: Role Management
+- P40: API Keys
+- P41: Webhooks
+- P42: Backup Management
+- P43: Performance Monitor
+- P44: Security Dashboard
+- P45: Audit Logs
+
+### Utility Pages (P46-P50)
+- P46: 404 Not Found
+- P47: 500 Server Error
+- P48: Offline Page (PWA)
+- P49: Maintenance Mode
+- P50: Terms of Service
+
+=======================================================================
+END OF PAGE AGENTS COMPLETE DOCUMENTATION
+=======================================================================

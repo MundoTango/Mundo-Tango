@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { usePosts, useCreatePost, useToggleLike, useComments, useCreateComment, useUpdateComment, useDeleteComment } from "@/hooks/usePosts";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card } from "@/components/ui/card";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -370,6 +371,37 @@ export default function FeedPage() {
         title="Memory Feed - Mundo Tango"
         description="Connect with the global tango community. Share memories, discover events, and engage with fellow dancers from around the world."
       />
+      
+      {/* Editorial Hero Section - 16:9 */}
+      <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center" style={{
+          backgroundImage: `url('https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop')`
+        }}>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        </div>
+        
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+          >
+            <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+              <Heart className="w-3 h-3 mr-1.5" />
+              Community Feed
+            </Badge>
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
+              Share Your Tango Journey
+            </h1>
+            
+            <p className="text-xl text-white/80 max-w-2xl mx-auto">
+              Connect, inspire, and celebrate moments with dancers around the world
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
       <div className="flex gap-8 px-6 py-12 max-w-7xl mx-auto">
         {/* Main Feed Column */}
         <div className="flex-1 max-w-3xl space-y-8">

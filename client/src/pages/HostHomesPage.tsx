@@ -23,7 +23,10 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
+import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 import type { SelectHousingListing } from "@shared/schema";
+import heroImage from "@assets/stock_images/professional_office__9e53fcce.jpg";
 
 // Standard amenities list from HOUSING_TABLES.md
 const STANDARD_AMENITIES = [
@@ -253,57 +256,103 @@ function HostHomesPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto py-8 px-4">
-        {/* Header with Actions */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">Tango Host Homes</h1>
-            <p className="text-muted-foreground mt-1">Find your perfect tango accommodation</p>
-          </div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <Button
-              variant="outline"
-              onClick={() => setShowFilters(!showFilters)}
-              data-testid="button-filter"
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              Filters
-              {(filters.propertyTypes.length > 0 || filters.amenities.length > 0) && (
-                <Badge variant="secondary" className="ml-2">
-                  {filters.propertyTypes.length + filters.amenities.length}
-                </Badge>
-              )}
-            </Button>
-            <div className="flex items-center border rounded-md">
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('grid')}
-                data-testid="toggle-grid-view"
-              >
-                <Grid3x3 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'map' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('map')}
-                data-testid="toggle-map-view"
-              >
-                <MapIcon className="h-4 w-4" />
-              </Button>
-            </div>
-            <Button onClick={() => setShowWizard(true)} data-testid="button-create-listing">
-              <Plus className="h-4 w-4 mr-2" />
-              Become a Host
-            </Button>
-          </div>
-        </div>
+    <>
+      <SEO
+        title="Tango Host Homes - Mundo Tango"
+        description="Find authentic tango accommodations hosted by passionate dancers around the world"
+      />
 
-        <div className="flex gap-6">
-          {/* Filter Sidebar */}
-          {showFilters && (
-            <Card className="w-80 flex-shrink-0 h-fit" data-testid="filter-sidebar">
+      {/* Editorial Hero Section - 16:9 */}
+      <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('${heroImage}')` }}>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        </div>
+        
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+          >
+            <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-category">
+              Tango Housing
+            </Badge>
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="heading-hero">
+              Tango Host Homes
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+              Stay with passionate tango dancers and experience authentic local communities around the world
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto py-12 px-6 max-w-7xl">
+          {/* Header with Actions */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+            className="mb-12"
+          >
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-serif font-bold mb-2">Explore Homes</h2>
+                <p className="text-lg text-muted-foreground">Browse authentic accommodations from our tango community</p>
+              </div>
+              <div className="flex items-center gap-3 flex-wrap">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowFilters(!showFilters)}
+                  data-testid="button-filter"
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filters
+                  {(filters.propertyTypes.length > 0 || filters.amenities.length > 0) && (
+                    <Badge variant="secondary" className="ml-2">
+                      {filters.propertyTypes.length + filters.amenities.length}
+                    </Badge>
+                  )}
+                </Button>
+                <div className="flex items-center border rounded-md">
+                  <Button
+                    variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('grid')}
+                    data-testid="toggle-grid-view"
+                  >
+                    <Grid3x3 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === 'map' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('map')}
+                    data-testid="toggle-map-view"
+                  >
+                    <MapIcon className="h-4 w-4" />
+                  </Button>
+                </div>
+                <Button onClick={() => setShowWizard(true)} data-testid="button-create-listing">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Become a Host
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+
+          <div className="flex gap-6">
+            {/* Filter Sidebar */}
+            {showFilters && (
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <Card className="w-80 flex-shrink-0 h-fit" data-testid="filter-sidebar">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>Filters</CardTitle>
@@ -466,122 +515,157 @@ function HostHomesPageContent() {
                 </Button>
               </CardContent>
             </Card>
-          )}
+              </motion.div>
+            )}
 
-          {/* Main Content */}
-          <div className="flex-1">
-            {viewMode === 'grid' ? (
-              // Grid View
-              isLoading ? (
-                <div className="text-center py-12">Loading homes...</div>
-              ) : homes && homes.length > 0 ? (
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {homes.map((home) => (
-                    <Card key={home.id} className="hover-elevate" data-testid={`home-card-${home.id}`}>
-                      {home.images && home.images[0] && (
-                        <div className="aspect-video bg-muted overflow-hidden rounded-t-lg">
-                          <img src={home.images[0]} alt={home.title} className="object-cover w-full h-full" />
-                        </div>
-                      )}
-
-                      <CardHeader>
-                        <div className="flex items-start justify-between gap-2">
-                          <CardTitle className="text-lg line-clamp-1">{home.title}</CardTitle>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <MapPin className="h-4 w-4" />
-                          {home.city}, {home.country}
-                        </div>
-                      </CardHeader>
-
-                      <CardContent className="space-y-3">
-                        <p className="text-sm text-muted-foreground line-clamp-2">{home.description}</p>
-
-                        {/* Property Details */}
-                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                          {home.bedrooms && (
-                            <div className="flex items-center gap-1">
-                              <Bed className="h-3 w-3" />
-                              {home.bedrooms} bed
-                            </div>
-                          )}
-                          {home.bathrooms && (
-                            <div className="flex items-center gap-1">
-                              <Bath className="h-3 w-3" />
-                              {home.bathrooms} bath
-                            </div>
-                          )}
-                          {home.maxGuests && (
-                            <div className="flex items-center gap-1">
-                              <Users className="h-3 w-3" />
-                              {home.maxGuests} guests
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Amenities */}
-                        {home.amenities && home.amenities.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
-                            {home.amenities.slice(0, 3).map((amenityId: string) => {
-                              const amenity = STANDARD_AMENITIES.find(a => a.id === amenityId);
-                              return amenity ? (
-                                <Badge key={amenityId} variant="secondary" className="text-xs">
-                                  {amenity.label}
-                                </Badge>
-                              ) : null;
-                            })}
-                            {home.amenities.length > 3 && (
-                              <Badge variant="secondary" className="text-xs">
-                                +{home.amenities.length - 3}
-                              </Badge>
+            {/* Main Content */}
+            <div className="flex-1">
+              {viewMode === 'grid' ? (
+                // Grid View
+                isLoading ? (
+                  <div className="text-center py-16">
+                    <p className="text-lg text-muted-foreground">Loading homes...</p>
+                  </div>
+                ) : homes && homes.length > 0 ? (
+                  <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    {homes.map((home, index) => (
+                      <motion.div
+                        key={home.id}
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: index * 0.1, duration: 0.5 }}
+                      >
+                        <Card className="overflow-hidden hover-elevate" data-testid={`home-card-${home.id}`}>
+                          {/* Editorial 16:9 Image with Gradient Overlay */}
+                          <div className="relative aspect-[16/9] overflow-hidden">
+                            {home.images && home.images[0] ? (
+                              <motion.img
+                                src={home.images[0]}
+                                alt={home.title}
+                                className="w-full h-full object-cover"
+                                whileHover={{ scale: 1.05 }}
+                                transition={{ duration: 0.6 }}
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-muted flex items-center justify-center">
+                                <Home className="h-12 w-12 text-muted-foreground/50" />
+                              </div>
                             )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                            
+                            {/* Title overlay on image */}
+                            <div className="absolute bottom-4 left-4 right-4 text-white">
+                              <h3 className="text-xl md:text-2xl font-serif font-bold line-clamp-2">{home.title}</h3>
+                              <div className="flex items-center gap-1 mt-2 text-white/90">
+                                <MapPin className="h-4 w-4" />
+                                <span className="text-sm">{home.city}, {home.country}</span>
+                              </div>
+                            </div>
                           </div>
-                        )}
 
-                        <div className="flex items-center justify-between pt-2">
-                          <div>
-                            <span className="text-2xl font-bold text-primary">
-                              ${(home.pricePerNight / 100).toFixed(0)}
-                            </span>
-                            <span className="text-sm text-muted-foreground">/night</span>
-                          </div>
-                          <Link href={`/host-homes/${home.id}`}>
-                            <Button size="sm" data-testid={`button-view-${home.id}`}>View</Button>
-                          </Link>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                          <CardContent className="p-6 space-y-4">
+                            <p className="text-base text-muted-foreground line-clamp-2 leading-relaxed">
+                              {home.description}
+                            </p>
+
+                            {/* Property Details */}
+                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                              {home.bedrooms && (
+                                <div className="flex items-center gap-1.5">
+                                  <Bed className="h-4 w-4" />
+                                  <span>{home.bedrooms} bed</span>
+                                </div>
+                              )}
+                              {home.bathrooms && (
+                                <div className="flex items-center gap-1.5">
+                                  <Bath className="h-4 w-4" />
+                                  <span>{home.bathrooms} bath</span>
+                                </div>
+                              )}
+                              {home.maxGuests && (
+                                <div className="flex items-center gap-1.5">
+                                  <Users className="h-4 w-4" />
+                                  <span>{home.maxGuests} guests</span>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Amenities */}
+                            {home.amenities && home.amenities.length > 0 && (
+                              <div className="flex flex-wrap gap-2">
+                                {home.amenities.slice(0, 3).map((amenityId: string) => {
+                                  const amenity = STANDARD_AMENITIES.find(a => a.id === amenityId);
+                                  return amenity ? (
+                                    <Badge key={amenityId} variant="secondary" className="text-xs">
+                                      {amenity.label}
+                                    </Badge>
+                                  ) : null;
+                                })}
+                                {home.amenities.length > 3 && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    +{home.amenities.length - 3}
+                                  </Badge>
+                                )}
+                              </div>
+                            )}
+
+                            <Separator />
+
+                            <div className="flex items-center justify-between pt-2">
+                              <div>
+                                <span className="text-3xl font-serif font-bold text-primary">
+                                  ${(home.pricePerNight / 100).toFixed(0)}
+                                </span>
+                                <span className="text-sm text-muted-foreground ml-1">/night</span>
+                              </div>
+                              <Link href={`/host-homes/${home.id}`}>
+                                <Button size="sm" data-testid={`button-view-${home.id}`}>
+                                  View Details
+                                  <ChevronRight className="h-4 w-4 ml-1" />
+                                </Button>
+                              </Link>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
               ) : (
-                <Card>
-                  <CardContent className="py-12 text-center text-muted-foreground">
-                    <Home className="mx-auto h-12 w-12 mb-4 opacity-50" />
-                    <p>No host homes available</p>
-                    <Button className="mt-4" onClick={() => setShowWizard(true)}>
-                      Become a Host
-                    </Button>
+                  <Card className="overflow-hidden">
+                    <CardContent className="py-16 text-center">
+                      <Home className="mx-auto h-16 w-16 mb-6 text-muted-foreground/50" />
+                      <h3 className="text-2xl font-serif font-bold mb-3">No Homes Available</h3>
+                      <p className="text-lg text-muted-foreground mb-6">
+                        Be the first to list your home with our tango community
+                      </p>
+                      <Button onClick={() => setShowWizard(true)} className="gap-2">
+                        <Plus className="h-4 w-4" />
+                        Become a Host
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )
+              ) : (
+                // Map View
+                <Card className="h-[600px] overflow-hidden">
+                  <CardContent className="h-full flex items-center justify-center">
+                    <div className="text-center">
+                      <MapIcon className="mx-auto h-16 w-16 mb-6 text-muted-foreground/50" />
+                      <h3 className="text-2xl font-serif font-bold mb-3">Map View</h3>
+                      <p className="text-lg text-muted-foreground mb-2">Interactive map integration coming soon</p>
+                      <p className="text-sm text-muted-foreground">
+                        Will display all listings using latitude/longitude coordinates
+                      </p>
+                    </div>
                   </CardContent>
                 </Card>
-              )
-            ) : (
-              // Map View
-              <Card className="h-[600px]">
-                <CardContent className="h-full flex items-center justify-center">
-                  <div className="text-center text-muted-foreground">
-                    <MapIcon className="mx-auto h-12 w-12 mb-4 opacity-50" />
-                    <p className="text-lg font-medium">Map View</p>
-                    <p className="text-sm mt-2">Interactive map integration coming soon</p>
-                    <p className="text-xs mt-4">
-                      Will display all listings using latitude/longitude coordinates
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>
+    </>
 
       {/* Host Creation Wizard Dialog */}
       <Dialog open={showWizard} onOpenChange={setShowWizard}>

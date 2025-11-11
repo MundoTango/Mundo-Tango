@@ -1,0 +1,273 @@
+# 📖 ABRIDGED HANDOFF GUIDE - AI AGENT REFERENCE
+**Mundo Tango Platform - Quick Reference for AI Agents**
+
+**Generated:** November 5, 2025  
+**Methodology:** MB.MD (Simultaneously, Recursively, Critically)  
+**Purpose:** Concise summary of all 165 handoffs for rapid AI agent context loading  
+**Full Documentation:** See COMPREHENSIVE_PLATFORM_HANDOFF_INDEX.md (754KB, 28,747 lines)
+
+---
+
+## PART 1: DATABASE LAYER (Handoffs 1-50)
+
+### 1-10: Core User & Auth Tables
+**Users, profiles, sessions, roles, permissions, 2FA, audit logs, tenants** - Complete authentication system with RBAC/ABAC, multi-tenant support, session management with JWT/refresh tokens, 2FA TOTP, comprehensive audit logging, and row-level security policies.
+
+### 11-20: Social Networking Tables
+**Posts, comments, likes, shares, follows, friendships, bookmarks, mentions, tags, reactions** - Full social graph with post creation/editing, nested comments, reaction system (6 types), friend requests with 3-degree connections, content bookmarking, @mentions autocomplete, and hashtag categories (15 types).
+
+### 21-30: Events & Groups Tables
+**Events, RSVPs, tickets, groups, memberships, invites, categories, recurring patterns** - Complete event management with ticketing (Stripe), RSVP tracking, waitlists, recurring events (daily/weekly/monthly), group communities with roles (admin/moderator/member), and invitation system.
+
+### 31-40: Housing & Commerce Tables
+**Listings, bookings, reviews, availability, pricing, amenities, photos** - Marketplace with availability calendars, dynamic pricing, booking requests, host/guest reviews (5-star), amenity filtering, connection-level access (1st/2nd/3rd degree friends), and Stripe payment integration.
+
+### 41-50: Messaging, AI & Platform Tables
+**Messages, conversations, notifications, AI agents, learning patterns, recommendations, analytics** - Real-time messaging via Socket.io, multi-channel notifications (in-app/email/push/SMS), 141 AI agents with semantic memory (LanceDB), recommendation engine, and comprehensive analytics tracking.
+
+---
+
+## PART 2: API ROUTES LAYER (Handoffs 51-65)
+
+### 51-52: Authentication APIs
+**POST /auth/register, /auth/login, /auth/logout, /auth/refresh, /auth/verify-email, /auth/reset-password, /auth/2fa/setup, /auth/2fa/verify** - JWT-based auth with refresh tokens (7-day expiry), email verification, password reset flow, 2FA TOTP, and session management.
+
+### 53-54: User Management APIs
+**GET/PUT /users/:id, /users/:id/profile, /users/search, DELETE /users/:id** - User CRUD with profile management, search/filtering, role assignment (8-tier RBAC), and soft delete with data retention policies.
+
+### 55-56: Social Networking APIs
+**POST /posts, GET /posts/feed, /posts/:id/comments, /posts/:id/like, /posts/:id/share** - Create posts (text/image/video, 30 files max), algorithmic feed (timeline/for-you/following), nested comments, like/unlike, share tracking, and edit history.
+
+### 57-58: Events APIs
+**POST /events, GET /events, /events/:id, /events/:id/rsvp, /events/:id/tickets** - Event creation with recurrence patterns, RSVP management (going/interested/not-going), ticket sales via Stripe, attendee lists, check-in system, and analytics (views/RSVPs/revenue).
+
+### 59-60: Groups APIs
+**POST /groups, GET /groups, /groups/:id/join, /groups/:id/members, /groups/:id/posts** - Create public/private groups, join/leave, member management, group-specific posts, moderation tools (ban/mute), and invite system.
+
+### 61-62: Messaging APIs
+**POST /messages, GET /conversations, /conversations/:id/messages, /messages/:id/read** - Send messages (text/media), fetch conversations, mark as read, typing indicators (Socket.io), message search, and thread history.
+
+### 63-64: Housing & Payments APIs
+**POST /listings, /bookings, GET /listings/search, /bookings/:id/confirm, POST /payments/intent** - Create listings with availability, booking requests, Stripe payment processing, review system, and commission tracking (10% platform fee).
+
+### 65: API Summary & Integration
+**Real-time WebSocket events, rate limiting (100 req/15min), CORS configuration, error handling (Sentry), request validation (Zod)** - Complete API infrastructure with Socket.io for live updates, express-rate-limit middleware, comprehensive error tracking, and schema validation on all endpoints.
+
+---
+
+## PART 3: FRONTEND LAYER (Handoffs 66-95)
+
+### 66: Frontend Pages Overview
+**134+ pages across 12 categories** - Home, Auth (8), Social (18), Events (12), Groups (10), Messages (8), Housing (12), Recommendations (6), Community (10), Admin (15), Projects (10), AI (8), Payments (6).
+
+### 67: Components Library Overview
+**465+ components** - shadcn/ui base (40), MT UI Library (50), Feature components (300), Layout (20), Utilities (45). Includes PostCreator (1,732 lines), CommunityMap, MrBlueChat, VisualEditor, and complete form/table/modal systems.
+
+### 68-70: Core Pages (Home, Auth, Profile)
+**Landing page with hero/features, Login/Register with OAuth (Google/Facebook) + 2FA, Profile pages with stats/posts/events** - Mobile-first responsive design, MT Ocean Theme gradients, accessibility (WCAG AA), and SEO optimization.
+
+### 71: Social Feed & Posts
+**PostCreator with 6 animated buttons (Hidden Gems/Tags/Camera/AI/Visibility/Share), infinite scroll feed, real-time updates** - Internal media upload (30 files, 500MB each), @mentions autocomplete, location tagging, AI content enhancement, 15 hashtag categories, privacy controls.
+
+### 72-73: Events & Groups Pages
+**Event creation/discovery (grid/list/map/calendar views), RSVP management, Group communities with roles** - Filter by type/city/date/price, recurring event support, ticket purchasing, group posts/events, member management, invitation system.
+
+### 74: Messaging & Chat
+**Real-time chat with typing indicators, read receipts, message reactions, reply threading** - Socket.io integration, emoji picker, GIF support, file uploads, message search, pin messages, edit/delete own messages.
+
+### 75-76: Housing & Recommendations
+**Marketplace with filters (city/dates/guests/price/amenities/connection-level), booking flow, review system** - Calendar availability, Stripe payments, host/guest profiles, recommendations by category (restaurants/cafes/classes/milongas).
+
+### 77: Community Map
+**3 interactive layers (Events/Housing/Recommendations), 10+ filters, Buenos Aires flagship, MT Ocean gradient markers** - Leaflet.js + OpenStreetMap, connection-level filtering (1st/2nd/3rd degree), glassmorphic UI, real-time updates, 5 automation systems (geocoding).
+
+### 78-79: AI & Project Tracker
+**LifeCEO (16 specialized agents), MrBlue (3D avatar + voice), ESAMind dashboard, Visual Editor** - React Three Fiber animations, Web Speech API, GPT-4o code generation, cost tracking, context-aware AI responses, project hierarchy (6 levels: Projects→Systems→Areas→Epics→Stories→Tasks), GitHub bidirectional sync.
+
+### 80-85: Admin, Payments, Analytics
+**Admin dashboard (users/content/reports/analytics), Subscription plans (Free/Premium $20/mo), Stripe checkout** - Content moderation queue, role management, feature flags, payment methods, invoices, user analytics (profile views/engagement/follower growth).
+
+### 86-95: Additional Features
+**Travel Planner, Gamification (achievements/badges), Live Streaming, Visual Editor (Replit-style), Agent Framework, Monitoring, Security, Database Admin, Testing, DevOps** - Itinerary builder, leaderboards, stream creation, page builder with drag-drop, system health monitoring, audit logs, table browser, Playwright integration.
+
+---
+
+## PART 4: BACKEND SERVICES (Handoffs 96-110)
+
+### 96-97: Auth & Storage Services
+**authService.ts (register/login/logout/2FA/password reset), storage.ts (IStorage interface with 40+ domain methods), db.ts (Drizzle ORM + Neon)** - JWT tokens (7-day expiry), bcrypt password hashing, email verification, 2FA TOTP setup, database abstraction layer.
+
+### 98-99: Real-time & Media Services
+**socketService.ts (Socket.io: chat/notifications/presence/typing), uploadService.ts (Cloudinary/S3/local)** - Room-based messaging, broadcast events, chunked uploads, image optimization (Sharp), video thumbnails (FFmpeg), signed URLs.
+
+### 100-101: Email & Notifications
+**emailService.ts (Resend/SendGrid: welcome/reset/verification/digest), notificationService.ts (multi-channel: in-app/email/push/SMS)** - Handlebars templates, 68 languages support, preference checking, delivery tracking, Twilio SMS integration.
+
+### 102-104: Search, Geocoding, Payments
+**searchService.ts (Elasticsearch: users/posts/events/groups), geocodingService.ts (OSM Nominatim/Google Maps), paymentService.ts (Stripe)** - Full-text search, autocomplete suggestions, address geocoding, place details, payment intents, subscriptions, webhooks (payment.succeeded/subscription.updated).
+
+### 105-107: AI, Analytics, Caching
+**aiService.ts (OpenAI GPT-4o/Whisper/TTS, Claude, Groq, Gemini), analyticsService.ts (PostHog/Prometheus/Sentry), cacheService.ts (Redis)** - Chat completion, audio transcription, speech synthesis, content moderation, semantic search (embeddings), page views, event tracking, key-value caching with TTL.
+
+### 108-110: Queues, Translation, Automation
+**queueService.ts (BullMQ: email/notifications/analytics/media/exports), translationService.ts (68 languages via OpenAI), n8nService.ts (8 workflows)** - Background job processing, translation generation/validation, automation (user onboarding/event sync/friend requests/housing alerts).
+
+---
+
+## PART 5: INFRASTRUCTURE (Handoffs 111-125)
+
+### 111-113: Docker, Config, Monitoring
+**Dockerfile (Node 20 Alpine), docker-compose.yml (app/postgres/redis), .env structure, Winston logging, Prometheus metrics** - Multi-stage builds, health checks, environment variables (25+ required), structured logging (JSON format), HTTP request duration tracking.
+
+### 114-116: Error Handling, Rate Limiting, Security
+**Sentry integration (error tracking/tracing), express-rate-limit (100 req/15min), Helmet (security headers)** - Request context, source maps, CSP directives, HSTS, XSS protection, IP-based throttling.
+
+### 117-125: Operations
+**Backup/recovery procedures, Drizzle migrations (npm run db:push), secrets management, load balancing, CDN (Cloudinary), SSL/TLS (Let's Encrypt), DNS config, WebSocket scaling (Redis adapter), cron jobs (BullMQ)** - Automated backups (daily/weekly/monthly), migration rollback, secret rotation, horizontal scaling, edge caching, auto-renewal, cluster mode support.
+
+---
+
+## PART 6: TESTING (Handoffs 126-135)
+
+### 126-128: Unit, Integration, E2E
+**Vitest (unit tests, coverage >95%), Supertest (API integration), Playwright (E2E browser automation)** - Component testing, API endpoint validation, user flow testing (login→create post→comment), cross-browser support (Chrome/Firefox/Safari).
+
+### 129-131: Visual, Accessibility, Performance
+**Backstop.js (visual regression, 3 viewports), Axe (a11y testing, WCAG AA), Lighthouse CI (performance >90, a11y >90)** - Screenshot comparison, color contrast validation, ARIA compliance, TTI/FCP metrics, SEO audits.
+
+### 132-135: Additional Testing
+**Postman/Newman (API collections), Artillery (load testing, 1000 VU), security testing (OWASP Top 10), TestSprite AI (automated regression)** - Contract testing, stress testing, SQL injection prevention, XSS detection, automated test generation.
+
+---
+
+## PART 7: DESIGN SYSTEM (Handoffs 136-145)
+
+### 136-137: MT Ocean Theme & Typography
+**Color palette (teal/turquoise/blue/navy/purple/pink/coral), gradients (3 types), glassmorphism** - HSL format, CSS variables, primary/secondary/accent gradients, rgba backgrounds with backdrop-filter blur.
+
+**Font families (Inter/Playfair Display/Fira Code), 9 size scales (xs→5xl), line heights, letter spacing** - Sans/serif/mono stacks, responsive typography, font weight ranges (400-700).
+
+### 138-140: Components, Dark Mode, Animations
+**Button variants (primary/secondary/outline/ghost), sizes (sm/md/lg), cva pattern** - Consistent prop interfaces, variant system, composition patterns.
+
+**ThemeProvider with localStorage sync, class-based switching, explicit light/dark variants** - Document element class toggling, CSS variable switching, user preference persistence.
+
+**Framer Motion animations, transition durations, easing curves, hover/focus states** - Fade/slide/scale animations, stagger effects, gesture support.
+
+### 141-145: Icons, Illustrations, Accessibility
+**Lucide React (500+ icons), react-icons/si (brand logos), custom SVG system** - Icon sizing, color theming, accessibility labels.
+
+**Illustration guidelines (style/colors/composition), photography standards (format/resolution/subjects)** - Consistent visual language, brand alignment.
+
+**WCAG 2.1 AA compliance, keyboard navigation, screen reader support, focus management, color contrast (≥4.5:1)** - Semantic HTML, ARIA labels, skip links, responsive breakpoints (sm/md/lg/xl/2xl: 640/768/1024/1280/1536px).
+
+---
+
+## PART 8: INTERNATIONALIZATION (Handoffs 146-150)
+
+### 146-147: i18n Setup & Translation
+**i18next + react-i18next, 68 supported languages, namespace organization, lazy loading** - Language detection, fallback chains, plural forms, interpolation.
+
+**OpenAI GPT-4o translation generation, quality validation, missing key detection, coverage reports** - Batch translation, context-aware translations, formality levels, variable preservation.
+
+### 148-150: RTL & Locales
+**RTL support (Arabic/Hebrew), bidirectional text, mirrored layouts** - CSS logical properties, dir="rtl" attribute, icon flipping.
+
+**Locale-specific formatting (dates via date-fns, numbers, currency), timezone handling, calendar systems** - Regional number formats, currency symbols, 12/24-hour time.
+
+---
+
+## PART 9: INTEGRATIONS (Handoffs 151-160)
+
+### 151-153: Stripe, AI, Media
+**Stripe (payment intents, subscriptions, webhooks), checkout flow, SCA/3DS** - Customer creation, payment methods, invoice generation, subscription lifecycle.
+
+**OpenAI (GPT-4o chat, Whisper transcription, TTS), Anthropic Claude, Groq (fast inference), Google Gemini** - Model selection, prompt engineering, streaming responses, cost optimization.
+
+**Cloudinary (image/video upload, transformations, CDN), Google Maps (geocoding, places)** - Asset optimization, responsive images, signed URLs, place autocomplete.
+
+### 154-156: GitHub, Automation, CI/CD
+**Octokit REST API (issues, PRs, commits), bidirectional sync with project tracker** - OAuth app, webhook events, status updates, commit linking.
+
+**n8n workflows (8 types: onboarding/events/notifications/friends/goals/housing/volunteers/promotion)** - Trigger conditions, multi-step flows, email integration, database operations.
+
+**GitHub Actions (test/build/deploy), branch protection, automated releases** - Pipeline stages, environment secrets, deployment triggers, status checks.
+
+### 157-160: Deployment, Migrations, Monitoring
+**Replit Deploy (autoscale/vm/scheduled), build commands, environment variables** - Port binding (5000), health checks, rollback support.
+
+**Drizzle migrations (npm run db:push --force), schema versioning, data preservation** - Column additions, index creation, relationship updates.
+
+**Sentry (errors), PostHog (analytics), Prometheus (metrics), OpenReplay (sessions), UptimeRobot (uptime)** - Alert policies, dashboard creation, retention periods.
+
+---
+
+## PART 10: BUSINESS & NEW SYSTEMS (Handoffs 161-165)
+
+### 161: Business Strategy
+**Market: $500M TAM, 1-2M dancers, $2.5M→$14M revenue (Year 1→3). User personas: Traveling Dancer/Professional Teacher/Event Organizer/Social Dancer.** Value props per persona, 4 revenue streams (subscriptions $20/mo, event commission 5%, housing commission 10%, featured listings $50-100/mo), KPIs (acquisition/engagement/conversion/retention/advocacy), marketing channels (owned/paid/earned/partnerships), growth roadmap (MVP 12wks→Travel 20wks→Cross-community 36wks).
+
+### 162: Talent Match System
+**Multi-app architecture: marketing-site:5173, talent-match:5174, server:4000. Resume upload→AI Clarifier interview→skill signals→task recommendations→admin approval.** 11 API endpoints (/volunteers/resumes, /clarifier/session, /clarifier/message, /match/suggest, /admin/assignments), 5 database tables (volunteers, resumes, clarifier_sessions, tasks, assignments), signal detection (backend/security/database/frontend/governance keywords), task mapping with hours/reason, privacy-first with full-career resume philosophy.
+
+### 163: Additional 36 Agents
+**Marketing (5): BrandArchitect, ContentFunnel, CommunityStoryteller, OSSEvangelist, Analytics.** Define brand identity, content strategy, user stories, open-source advocacy, funnel monitoring.
+
+**Volunteer/Hire (5): VolunteerArchitect, ATS, OrgPsych, Governance, UXHiring.** Volunteer programs, applicant tracking (6 pipeline stages), team dynamics, policy creation, onboarding optimization.
+
+**Executive (5): CEO, CTO, COO, CFO, CPO.** Strategic vision, technical architecture, operational excellence, financial planning, product roadmap.
+
+**Shadowing rules: Phases 1-5 (planning observers), 6-15 (build co-pilots), 16-21 (operations review). Total: 141 agents (105 ESA + 36 new).**
+
+### 164: JSON Specifications
+**Master plan JSON (vision/audiences/goals/KPIs/channels/architecture/security/agents), ESA.json (141 agents organized by category/domain/phase).** API contracts (ClarifierSession schema, TaskRecommendation schema), environment variables schema (25+ vars with validation), server runtime hooks (load ESA.json at boot, Clarifier reads AI_ClarifierLogic.md).
+
+### 165: Final Summary
+**165 total handoffs, 28,747 lines, 754KB documentation. Coverage: 198 DB tables, 143+ API endpoints, 134+ pages, 465+ components, 50+ services, 141 agents, 68 languages, 405 npm packages.** Zero-to-deploy (7 steps: clone→env→db:push→dev→test→build→deploy), maintenance procedures (daily/weekly/monthly/quarterly), success metrics (99.9% uptime, <200ms API, <2s page load, 25K users Y1, $2.5M revenue Y1, 20% premium conversion, 40%+ D30 retention, NPS >50).
+
+---
+
+## QUICK REFERENCE TABLE
+
+| Part | Handoffs | Topic | Key Info |
+|------|----------|-------|----------|
+| 1 | 1-50 | Database | 198 tables, PostgreSQL+Drizzle, RLS policies |
+| 2 | 51-65 | API Routes | 143+ endpoints, JWT auth, Zod validation |
+| 3 | 66-95 | Frontend | 134+ pages, 465+ components, React+TypeScript |
+| 4 | 96-110 | Services | 50+ services, Socket.io, Stripe, AI, Redis |
+| 5 | 111-125 | Infrastructure | Docker, monitoring, security, scaling |
+| 6 | 126-135 | Testing | Unit/E2E/visual/a11y, >95% coverage |
+| 7 | 136-145 | Design | MT Ocean Theme, WCAG AA, dark mode |
+| 8 | 146-150 | i18n | 68 languages, RTL, locale formatting |
+| 9 | 151-160 | Integrations | Stripe, OpenAI, GitHub, n8n, CI/CD |
+| 10 | 161-165 | Business | Market $500M TAM, Talent Match, 141 agents |
+
+---
+
+## AI AGENT USAGE INSTRUCTIONS
+
+**For building features:**
+1. Read relevant handoff numbers for your domain
+2. Check database schema (Part 1)
+3. Verify API endpoints exist (Part 2)
+4. Review frontend patterns (Part 3)
+5. Use existing services (Part 4)
+
+**For debugging:**
+1. Check infrastructure logs (Part 5)
+2. Run relevant tests (Part 6)
+3. Verify integrations (Part 9)
+
+**For deployment:**
+1. Follow Part 9 CI/CD
+2. Run Part 6 tests
+3. Check Part 5 monitoring
+
+**Full details:** See `COMPREHENSIVE_PLATFORM_HANDOFF_INDEX.md` (754KB)
+
+---
+
+**END OF ABRIDGED GUIDE**  
+**Total Length:** ~400 lines (vs 28,747 in full version)  
+**Compression Ratio:** 72:1  
+**Use Case:** Rapid AI agent context loading, quick reference, overview for stakeholders

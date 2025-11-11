@@ -159,75 +159,101 @@ export default function EventDetailsPage() {
         </div>
 
         {/* Content Section */}
-        <div className="max-w-5xl mx-auto px-6 py-12">
+        <div className="max-w-5xl mx-auto px-6 py-16">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
+            className="space-y-8"
           >
             <Card className="overflow-hidden">
               <CardHeader className="border-b">
-                <CardTitle className="text-2xl font-serif">Event Details</CardTitle>
+                <CardTitle className="text-3xl font-serif">Event Details</CardTitle>
               </CardHeader>
               <CardContent className="p-8 space-y-8">
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Calendar className="h-6 w-6 text-primary" />
+                <div className="grid gap-8 md:grid-cols-2">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="flex items-start gap-4"
+                  >
+                    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Calendar className="h-7 w-7 text-primary" />
                     </div>
                     <div>
-                      <p className="font-semibold mb-1">Date & Time</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-lg font-semibold mb-2">Date & Time</p>
+                      <p className="text-base text-muted-foreground leading-relaxed">
                         {event.start_date && format(new Date(event.start_date), "PPPP 'at' p")}
                         {event.end_date && (
                           <> - {format(new Date(event.end_date), "p")}</>
                         )}
                       </p>
                     </div>
-                  </div>
+                  </motion.div>
 
                   {event.location && (
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <MapPin className="h-6 w-6 text-primary" />
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                      className="flex items-start gap-4"
+                    >
+                      <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <MapPin className="h-7 w-7 text-primary" />
                       </div>
                       <div>
-                        <p className="font-semibold mb-1">Location</p>
-                        <p className="text-sm text-muted-foreground">{event.location}</p>
+                        <p className="text-lg font-semibold mb-2">Location</p>
+                        <p className="text-base text-muted-foreground leading-relaxed">{event.location}</p>
                       </div>
-                    </div>
+                    </motion.div>
                   )}
 
                   {event.is_virtual && (
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Globe className="h-6 w-6 text-primary" />
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                      className="flex items-start gap-4"
+                    >
+                      <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Globe className="h-7 w-7 text-primary" />
                       </div>
                       <div>
-                        <p className="font-semibold mb-1">Online Event</p>
-                        <p className="text-sm text-muted-foreground">Join virtually from anywhere</p>
+                        <p className="text-lg font-semibold mb-2">Online Event</p>
+                        <p className="text-base text-muted-foreground leading-relaxed">Join virtually from anywhere</p>
                       </div>
-                    </div>
+                    </motion.div>
                   )}
 
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Users className="h-6 w-6 text-primary" />
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                    className="flex items-start gap-4"
+                  >
+                    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Users className="h-7 w-7 text-primary" />
                     </div>
                     <div>
-                      <p className="font-semibold mb-1">Attendees</p>
-                      <p className="text-sm text-muted-foreground">Join the community</p>
+                      <p className="text-lg font-semibold mb-2">Attendees</p>
+                      <p className="text-base text-muted-foreground leading-relaxed">Join the community</p>
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
 
                 {event.description && (
-                  <div className="pt-6 border-t">
-                    <h3 className="text-xl font-serif font-bold mb-4">About This Event</h3>
-                    <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 }}
+                    className="pt-8 border-t"
+                  >
+                    <h3 className="text-2xl font-serif font-bold mb-6">About This Event</h3>
+                    <p className="text-lg text-muted-foreground whitespace-pre-wrap leading-relaxed">
                       {event.description}
                     </p>
-                  </div>
+                  </motion.div>
                 )}
               </CardContent>
             </Card>

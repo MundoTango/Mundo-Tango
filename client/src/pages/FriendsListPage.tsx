@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { uploadMediaFiles } from "@/lib/mediaUpload";
+import { motion } from "framer-motion";
 
 interface Friend {
   id: number;
@@ -380,6 +381,36 @@ export default function FriendsListPage() {
   return (
     <SelfHealingErrorBoundary pageName="Friends" fallbackRoute="/feed">
       <PageLayout title="Friends" showBreadcrumbs>
+      {/* Editorial Hero Section - 16:9 */}
+      <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center" style={{
+          backgroundImage: `url('https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=1600&auto=format&fit=crop')`
+        }}>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        </div>
+        
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+          >
+            <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+              <Users className="w-3 h-3 mr-1.5" />
+              Your Network
+            </Badge>
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
+              Tango Friends
+            </h1>
+            
+            <p className="text-xl text-white/80 max-w-2xl mx-auto">
+              Connect with dancers who share your passion for Argentine tango
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
       {/* MT Ocean Theme Background */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-50 via-blue-100 to-teal-100 dark:from-slate-900 dark:via-blue-950 dark:to-cyan-950" />
@@ -388,9 +419,10 @@ export default function FriendsListPage() {
         <div className="absolute top-1/2 right-1/3 w-96 h-96 bg-teal-400/20 rounded-full blur-3xl animate-pulse delay-2000" />
       </div>
 
-      <div className="container max-w-4xl mx-auto p-6" data-testid="page-friends">
+      <div className="container max-w-4xl mx-auto p-6 bg-background" data-testid="page-friends">
         <div className="mb-6">
-          <p className="text-muted-foreground">Manage your tango connections</p>
+          <h2 className="text-2xl font-serif font-bold mb-2">Manage Your Connections</h2>
+          <p className="text-muted-foreground">Build and nurture your tango community</p>
         </div>
 
         <div className="mb-6">

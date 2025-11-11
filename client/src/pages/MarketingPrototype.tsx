@@ -1,6 +1,7 @@
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ArrowDown, Sparkles, Music, Users, Heart, Globe } from "lucide-react";
 import { Link } from "wouter";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
@@ -18,7 +19,7 @@ export default function MarketingPrototype() {
   return (
     <SelfHealingErrorBoundary pageName="Marketing Prototype" fallbackRoute="/">
     <div className="min-h-screen bg-background overflow-x-hidden">
-      {/* Hero Section - Full Screen with Animated Gradient */}
+      {/* Hero Section - Full Screen with Editorial Treatment */}
       <motion.section
         ref={heroRef}
         style={{ opacity: heroOpacity, scale: heroScale }}
@@ -60,14 +61,18 @@ export default function MarketingPrototype() {
           <Music size={100} />
         </motion.div>
 
-        {/* Hero Content */}
-        <div className="relative z-10 text-center px-4 max-w-6xl mx-auto">
+        {/* Hero Content - Editorial Typography */}
+        <div className="relative z-10 text-center px-8 max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2 }}
           >
-            <h1 className="text-7xl md:text-9xl font-bold mb-6 text-white tracking-tight">
+            <Badge variant="outline" className="mb-8 text-white border-white/30 bg-white/10 backdrop-blur-sm px-6 py-2">
+              Global Tango Community
+            </Badge>
+            
+            <h1 className="text-6xl md:text-8xl lg:text-9xl font-serif font-bold mb-8 text-white tracking-tight leading-tight">
               WHERE TANGO{" "}
               <br />
               <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
@@ -80,7 +85,7 @@ export default function MarketingPrototype() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.5 }}
-            className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto"
+            className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed"
           >
             Connect with 10,000+ dancers worldwide. Discover events, find partners, and immerse yourself in the global tango movement.
           </motion.p>
@@ -89,11 +94,11 @@ export default function MarketingPrototype() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.8 }}
-            className="flex flex-wrap gap-4 justify-center"
+            className="flex flex-wrap gap-6 justify-center"
           >
             <Button
               size="lg"
-              className="bg-white text-purple-600 hover:bg-white/90 text-lg px-8 py-6"
+              className="bg-white text-purple-600 hover:bg-white/90 text-lg px-10 py-7"
               data-testid="button-join-community"
             >
               Join the Community
@@ -101,7 +106,7 @@ export default function MarketingPrototype() {
             <Button
               size="lg"
               variant="outline"
-              className="border-white text-white hover:bg-white/10 text-lg px-8 py-6 backdrop-blur-sm"
+              className="border-white text-white hover:bg-white/10 text-lg px-10 py-7 backdrop-blur-sm"
               data-testid="button-explore-events"
             >
               Explore Events
@@ -123,7 +128,7 @@ export default function MarketingPrototype() {
         </motion.div>
       </motion.section>
 
-      {/* Chapter 1: The Dance */}
+      {/* Chapter 1: The Dance - Editorial Spacing */}
       <ChapterSection
         title="THE DANCE"
         subtitle="Feel the passion of tango"
@@ -153,9 +158,9 @@ export default function MarketingPrototype() {
         iconPosition="right"
       />
 
-      {/* Global Network Section */}
+      {/* Global Network Section - Editorial Card Treatment */}
       <section className="py-32 bg-gradient-to-br from-cyan-500/10 via-blue-600/10 to-purple-600/10" data-testid="section-global">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -164,10 +169,10 @@ export default function MarketingPrototype() {
             className="text-center mb-20"
           >
             <Globe size={80} className="mx-auto mb-8 text-blue-500" />
-            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 bg-clip-text text-transparent">
+            <h2 className="text-5xl md:text-6xl font-serif font-bold mb-8 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 bg-clip-text text-transparent">
               A TRULY GLOBAL PLATFORM
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               Mundo Tango brings together dancers from every corner of the world, creating connections that transcend borders and language.
             </p>
           </motion.div>
@@ -181,7 +186,7 @@ export default function MarketingPrototype() {
         </div>
       </section>
 
-      {/* Final CTA Section */}
+      {/* Final CTA Section - Editorial Typography */}
       <section className="py-32 bg-gradient-to-br from-purple-600 to-cyan-500 text-white relative overflow-hidden" data-testid="section-cta">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
@@ -191,19 +196,19 @@ export default function MarketingPrototype() {
           }} />
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 1 }}
           >
-            <h2 className="text-6xl md:text-7xl font-bold mb-8">
+            <h2 className="text-5xl md:text-7xl font-serif font-bold mb-8 leading-tight">
               YOUR TANGO JOURNEY
               <br />
               STARTS HERE
             </h2>
-            <p className="text-2xl mb-12 text-white/90">
+            <p className="text-xl md:text-2xl mb-12 text-white/90 leading-relaxed">
               Join the world's most vibrant tango community today.
             </p>
             <div className="flex flex-wrap gap-6 justify-center">
@@ -231,16 +236,16 @@ export default function MarketingPrototype() {
 
       {/* Prototype Badge */}
       <div className="fixed top-4 right-4 z-50">
-        <div className="bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg backdrop-blur-sm border border-white/20">
+        <Badge className="bg-purple-600 text-white px-4 py-2 text-sm font-semibold shadow-lg backdrop-blur-sm border border-white/20">
           PROTOTYPE
-        </div>
+        </Badge>
       </div>
     </div>
     </SelfHealingErrorBoundary>
   );
 }
 
-// Chapter Section Component
+// Chapter Section Component with Editorial Spacing
 interface ChapterSectionProps {
   title: string;
   subtitle: string;
@@ -260,22 +265,22 @@ function ChapterSection({ title, subtitle, description, icon, gradient, iconPosi
       className={`min-h-screen flex items-center py-32 bg-gradient-to-br ${gradient}`}
       data-testid={`section-${title.toLowerCase().replace(/\s+/g, '-')}`}
     >
-      <div className="max-w-7xl mx-auto px-4 w-full">
-        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-16 items-center ${iconPosition === "left" ? "lg:flex-row-reverse" : ""}`}>
-          {/* Content */}
+      <div className="max-w-7xl mx-auto px-6 w-full">
+        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-20 items-center ${iconPosition === "left" ? "lg:flex-row-reverse" : ""}`}>
+          {/* Content - Editorial Typography */}
           <motion.div
             initial={{ opacity: 0, x: iconPosition === "right" ? -100 : 100 }}
             animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: iconPosition === "right" ? -100 : 100 }}
             transition={{ duration: 1 }}
             className={iconPosition === "left" ? "lg:order-2" : ""}
           >
-            <p className="text-sm font-semibold text-primary mb-4 tracking-widest uppercase">
+            <p className="text-sm font-semibold text-primary mb-6 tracking-widest uppercase">
               {subtitle}
             </p>
-            <h2 className="text-7xl md:text-8xl font-bold mb-8 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 bg-clip-text text-transparent">
+            <h2 className="text-6xl md:text-7xl lg:text-8xl font-serif font-bold mb-8 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 bg-clip-text text-transparent leading-tight">
               {title}
             </h2>
-            <p className="text-xl text-muted-foreground leading-relaxed">
+            <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed">
               {description}
             </p>
           </motion.div>
@@ -291,7 +296,7 @@ function ChapterSection({ title, subtitle, description, icon, gradient, iconPosi
             <div className="relative">
               {/* Glow Effect */}
               <div className="absolute inset-0 blur-3xl opacity-50 bg-gradient-to-br from-cyan-500 to-purple-500 rounded-full" />
-              <div className="relative bg-background/50 backdrop-blur-xl p-12 rounded-3xl border border-white/10 shadow-2xl">
+              <div className="relative bg-background/50 backdrop-blur-xl p-16 rounded-3xl border border-white/10 shadow-2xl">
                 {icon}
               </div>
             </div>
@@ -302,7 +307,7 @@ function ChapterSection({ title, subtitle, description, icon, gradient, iconPosi
   );
 }
 
-// Stat Card Component
+// Stat Card Component with Editorial Treatment
 interface StatCardProps {
   number: string;
   label: string;
@@ -317,10 +322,10 @@ function StatCard({ number, label, delay }: StatCardProps) {
       viewport={{ once: true }}
       transition={{ duration: 0.8, delay }}
       whileHover={{ scale: 1.05, y: -10 }}
-      className="bg-background/50 backdrop-blur-xl p-8 rounded-2xl border border-white/10 shadow-xl text-center"
+      className="bg-background/50 backdrop-blur-xl p-10 rounded-2xl border border-white/10 shadow-xl text-center"
       data-testid={`stat-${label.toLowerCase().replace(/\s+/g, '-')}`}
     >
-      <div className="text-5xl font-bold mb-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 bg-clip-text text-transparent">
+      <div className="text-5xl font-serif font-bold mb-3 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 bg-clip-text text-transparent">
         {number}
       </div>
       <div className="text-lg text-muted-foreground">{label}</div>

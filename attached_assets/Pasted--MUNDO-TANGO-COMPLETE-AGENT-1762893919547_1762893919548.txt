@@ -1,0 +1,296 @@
+=======================================================================
+MUNDO TANGO - COMPLETE AGENT INDEX & TAXONOMY
+=======================================================================
+
+VERSION: 1.0
+GENERATED: October 30, 2025
+PURPOSE: Master index of ALL agents across the platform
+
+=======================================================================
+SECTION 1: AGENT TAXONOMY OVERVIEW
+=======================================================================
+
+### Total Agents: 200+ across all categories
+
+**Agent Categories**:
+1. **System Agents** (Agents #1-#105) - ESA Framework
+2. **Page Agents** (P1-P50) - Page-specific logic
+3. **Element Agents** (E1-E1000+) - UI component agents
+4. **Algorithm Agents** (A1-A50) - Computational agents
+5. **Customer Journey Agents** (J1-J20) - Journey orchestration
+6. **Data Flow Agents** (D1-D30) - Data pipeline agents
+
+=======================================================================
+SECTION 2: ESA SYSTEM AGENTS (Agents #1-#105)
+=======================================================================
+
+### Meta-Coordination Layer (Agents #1-#5)
+- Agent #1: System Architect
+- Agent #2: Quality Coordinator
+- Agent #3: Integration Manager
+- Agent #4: Performance Monitor
+- Agent #5: Security Overseer
+
+### Division Chiefs (Agents #6-#15)
+- Agent #6: Frontend Division Chief
+- Agent #7: Backend Division Chief
+- Agent #8: Database Division Chief
+- Agent #9: AI Division Chief
+- Agent #10: Design Division Chief
+- Agent #11: Testing Division Chief
+- Agent #12: DevOps Division Chief
+- Agent #13: Security Division Chief
+- Agent #14: Content Division Chief
+- Agent #15: Analytics Division Chief
+
+### Key Specialized Agents
+- Agent #65: Project Tracker (Jira replacement)
+- Agent #68: Pattern Learning Agent
+- Agent #73-80: Mr Blue AI Companion agents
+- Agent #81: Data Flow Agent
+- Agent #82: Deployment Agent
+- Agent #83: Master Coordinator Agent
+
+**Reference**: See HANDOFF_21_ESA_FRAMEWORK_COMPLETE.txt
+
+=======================================================================
+SECTION 3: CUSTOMER JOURNEY AGENTS (J1-J20)
+=======================================================================
+
+### J1 (New User Onboarding Journey Agent)
+
+**Purpose**: Orchestrate complete new user onboarding
+
+**Journey Steps**:
+1. Registration (P2)
+2. Welcome email (trigger)
+3. Profile setup prompt
+4. First connection suggestion
+5. First post creation
+6. Feature tour (optional)
+
+**Agent Responsibilities**:
+- Track onboarding progress
+- Trigger appropriate prompts
+- Measure completion rate
+- Identify drop-off points
+- Optimize conversion
+
+---
+
+### J5 (Event Discovery Journey Agent)
+
+**Purpose**: Guide users from event discovery to attendance
+
+**Journey Steps**:
+1. Land on Events page (P20)
+2. Browse/filter events
+3. View event detail (P21)
+4. RSVP confirmation
+5. Calendar sync (optional)
+6. Pre-event reminder
+7. Post-event feedback
+
+**Metrics Tracked**:
+- Discovery to RSVP rate
+- RSVP to attendance rate
+- Event satisfaction score
+
+---
+
+### J10 (Subscription Upgrade Journey Agent)
+
+**Purpose**: Convert free users to paid subscribers
+
+**Journey Steps**:
+1. Feature limit hit
+2. Upgrade prompt display
+3. Pricing page visit (P8)
+4. Plan comparison
+5. Checkout (Stripe)
+6. Payment confirmation
+7. Feature unlock
+8. Welcome to Pro email
+
+**Optimization**:
+- A/B test upgrade prompts
+- Optimize pricing display
+- Reduce checkout friction
+- Track conversion funnel
+
+=======================================================================
+SECTION 4: DATA FLOW AGENTS (D1-D30)
+=======================================================================
+
+### D1 (User Authentication Flow Agent)
+
+**Purpose**: Manage complete authentication data flow
+
+**Flow**:
+```
+Input: Email + Password
+  ↓
+[D1] Validate format
+  ↓
+[API] POST /api/auth/login
+  ↓
+[Database] SELECT user WHERE email
+  ↓
+[Security] bcrypt.compare(password)
+  ↓
+[D1] Generate JWT tokens
+  ↓
+[Database] INSERT refresh_token
+  ↓
+[Response] Return tokens + user
+  ↓
+[Client] Store in localStorage
+  ↓
+[Navigation] Redirect to /feed
+```
+
+---
+
+### D5 (Post Creation Flow Agent)
+
+**Purpose**: Orchestrate post creation data flow
+
+**Flow**:
+```
+Input: Post content + media
+  ↓
+[D5] Validate content
+  ↓
+[Media] Upload to Cloudinary (if media)
+  ↓
+[API] POST /api/posts
+  ↓
+[Database] INSERT into posts table
+  ↓
+[D5] Generate post ID
+  ↓
+[WebSocket] Broadcast post:new event
+  ↓
+[Cache] Invalidate feed cache
+  ↓
+[Response] Return created post
+  ↓
+[Client] Optimistic update
+  ↓
+[Feed] Display new post
+```
+
+---
+
+### D15 (Payment Processing Flow Agent)
+
+**Purpose**: Handle Stripe payment flow end-to-end
+
+**Flow**:
+```
+User clicks "Subscribe"
+  ↓
+[D15] Create checkout session
+  ↓
+[Stripe API] Create session
+  ↓
+[Response] Return checkout URL
+  ↓
+[Redirect] To Stripe Checkout
+  ↓
+[User] Enters payment info
+  ↓
+[Stripe] Process payment
+  ↓
+[Webhook] POST /api/stripe/webhook
+  ↓
+[D15] Verify signature
+  ↓
+[D15] Parse event
+  ↓
+[Database] UPDATE user subscription
+  ↓
+[Email] Send confirmation
+  ↓
+[Redirect] Back to platform
+  ↓
+[D15] Unlock features
+```
+
+=======================================================================
+SECTION 5: AGENT COMMUNICATION MATRIX
+=======================================================================
+
+### How Agents Communicate
+
+**1. Event Bus**:
+```typescript
+interface AgentEventBus {
+  emit(event: string, data: any): void;
+  on(event: string, handler: Function): void;
+  off(event: string, handler: Function): void;
+}
+
+// Example
+AgentEventBus.emit('user:registered', { userId: 123 });
+
+// J1 (Onboarding) listens
+AgentEventBus.on('user:registered', (data) => {
+  startOnboardingJourney(data.userId);
+});
+```
+
+**2. Shared Context**:
+```typescript
+interface AgentContext {
+  currentUser: User;
+  permissions: Permission[];
+  systemStatus: SystemStatus;
+  activeJourneys: Journey[];
+}
+```
+
+**3. Direct Communication**:
+```typescript
+// Agent #65 (Projects) → Agent #81 (Data Flow)
+Agent81.documentDataFlow({
+  feature: 'project-creation',
+  source: 'Agent #65',
+  flow: projectCreationFlow
+});
+```
+
+=======================================================================
+SECTION 6: COMPLETE AGENT INDEX
+=======================================================================
+
+### By Category Count
+
+| Category | Count | Prefix | Example |
+|----------|-------|--------|---------|
+| ESA System Agents | 105 | Agent #X | Agent #65 |
+| Page Agents | 50+ | PX | P10 (Home Feed) |
+| Element Agents | 1000+ | EX-Page-Element | E23-Feed-CreatePost |
+| Algorithm Agents | 50 | AX | A1 (Feed Ranking) |
+| Journey Agents | 20 | JX | J1 (Onboarding) |
+| Data Flow Agents | 30 | DX | D5 (Post Creation) |
+
+**TOTAL**: 1,255+ agents
+
+### Agent Responsibility Matrix
+
+```
+Feature: Create Post
+
+Agents Involved:
+- P10 (Home Feed): Page coordination
+- E23 (CreatePost): UI component
+- D5 (Post Creation Flow): Data orchestration
+- A1 (Feed Ranking): Post positioning
+- Agent #81 (Data Flow): Documentation
+- Agent #68 (Pattern Learning): Optimization
+```
+
+=======================================================================
+END OF SPECIALIZED AGENTS INDEX
+=======================================================================

@@ -88,10 +88,16 @@ export default function FriendsPage() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-4" data-testid="heading-page-title">
+            <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+              <Users className="w-3 h-3 mr-1.5" />
+              Your Network
+            </Badge>
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6" data-testid="heading-page-title">
               Friends
             </h1>
-            <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto font-light" data-testid="text-hero-subtitle">
+            
+            <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-hero-subtitle">
               Connect with dancers from around the world
             </p>
           </motion.div>

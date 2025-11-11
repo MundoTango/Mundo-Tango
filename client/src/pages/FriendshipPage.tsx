@@ -1,12 +1,12 @@
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AppLayout } from "@/components/AppLayout";
 import { LoadingFallback } from "@/components/LoadingFallback";
-import { Users, Calendar, MessageCircle, Heart, MapPin, UserCheck } from "lucide-react";
+import { Users, Calendar, MessageCircle, Heart, MapPin, UserCheck, ChevronRight } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { motion } from "framer-motion";
 import tangoHeroImage from "@assets/tango-professional-1.jpg";
@@ -45,208 +45,186 @@ export default function FriendshipPage() {
   }
 
   const friend = friendData?.user;
-  const closenessColor = 
-    (friendshipStats?.closenessScore || 0) >= 75 ? '#10B981' : 
-    (friendshipStats?.closenessScore || 0) >= 50 ? '#F59E0B' : 
-    '#6B7280';
 
   return (
     <AppLayout>
-      <motion.section
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden"
-        data-testid="section-hero"
-      >
-        <div className="absolute inset-0 aspect-video">
-          <img
-            src={tangoHeroImage}
-            alt="Tango dancers connecting"
-            className="w-full h-full object-cover"
-            data-testid="img-hero"
-          />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
-        <div className="relative h-full flex items-center justify-center text-center px-4">
+      {/* Editorial Hero Section */}
+      <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+        <motion.div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url('${tangoHeroImage}')` }}
+          initial={{ scale: 1.1 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 1.5 }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        </motion.div>
+
+        <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
           <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="max-w-4xl"
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-4" data-testid="heading-page-title">
-              Friendship with {friend?.name}
+            <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+              Friendship
+            </Badge>
+
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="heading-page-title">
+              {friend?.name}
             </h1>
-            <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto font-light" data-testid="text-hero-subtitle">
+
+            <p className="text-xl text-white/80 max-w-2xl mx-auto" data-testid="text-hero-subtitle">
               Your connection in the tango community
             </p>
           </motion.div>
         </div>
-      </motion.section>
+      </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-16 space-y-8"
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Closeness Score */}
-          <Card 
-            className="p-6"
-            style={{
-              background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(30, 144, 255, 0.05))',
-              borderColor: 'rgba(64, 224, 208, 0.3)',
-            }}
-            data-testid="card-closeness-score"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Heart className="w-5 h-5" style={{ color: closenessColor }} />
-                <h3 className="font-semibold">Closeness Score</h3>
-              </div>
-              <Badge 
-                variant="outline"
-                style={{ 
-                  borderColor: closenessColor,
-                  color: closenessColor,
-                }}
-              >
-                {friendshipStats?.closenessScore || 0}/100
-              </Badge>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Based on shared events, mutual friends, and interactions
-            </p>
-          </Card>
-
-          {/* Time as Friends */}
-          <Card 
-            className="p-6"
-            style={{
-              background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(30, 144, 255, 0.05))',
-              borderColor: 'rgba(64, 224, 208, 0.3)',
-            }}
-            data-testid="card-friendship-duration"
-          >
-            <div className="flex items-center gap-2 mb-4">
-              <Calendar className="w-5 h-5" style={{ color: '#40E0D0' }} />
-              <h3 className="font-semibold">Friends Since</h3>
-            </div>
-            <p className="text-2xl font-bold" style={{ color: '#40E0D0' }}>
-              {friendshipStats?.daysSinceFriendship || 0} days
-            </p>
-            {friendshipStats?.lastInteraction && (
-              <p className="text-xs text-muted-foreground mt-2">
-                Last interaction {formatDistanceToNow(new Date(friendshipStats.lastInteraction), { addSuffix: true })}
-              </p>
-            )}
-          </Card>
-
-          {/* Shared Events */}
-          <Card 
-            className="p-6"
-            style={{
-              background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(30, 144, 255, 0.05))',
-              borderColor: 'rgba(64, 224, 208, 0.3)',
-            }}
-            data-testid="card-shared-events"
-          >
-            <div className="flex items-center gap-2 mb-4">
-              <MapPin className="w-5 h-5" style={{ color: '#1E90FF' }} />
-              <h3 className="font-semibold">Shared Events</h3>
-            </div>
-            <p className="text-2xl font-bold" style={{ color: '#1E90FF' }}>
-              {friendshipStats?.sharedEvents || 0}
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Milongas and workshops attended together
-            </p>
-          </Card>
-
-          {/* Mutual Friends */}
-          <Card 
-            className="p-6"
-            style={{
-              background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(30, 144, 255, 0.05))',
-              borderColor: 'rgba(64, 224, 208, 0.3)',
-            }}
-            data-testid="card-mutual-friends"
-          >
-            <div className="flex items-center gap-2 mb-4">
-              <Users className="w-5 h-5" style={{ color: '#14B8A6' }} />
-              <h3 className="font-semibold">Mutual Friends</h3>
-            </div>
-            <p className="text-2xl font-bold" style={{ color: '#14B8A6' }}>
-              {mutualFriends?.length || 0}
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Friends you both know
-            </p>
-          </Card>
-        </div>
-
-        {/* Mutual Friends List */}
-        {mutualFriends && mutualFriends.length > 0 && (
-          <Card 
-            className="p-6"
-            style={{
-              background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.08), rgba(30, 144, 255, 0.05))',
-              borderColor: 'rgba(64, 224, 208, 0.2)',
-            }}
-          >
-            <h3 className="font-semibold mb-4 flex items-center gap-2">
-              <UserCheck className="w-5 h-5" style={{ color: '#14B8A6' }} />
-              Mutual Friends
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {mutualFriends.map((mutualFriend: any) => (
-                <div 
-                  key={mutualFriend.id}
-                  className="flex items-center gap-3 p-3 rounded-lg hover-elevate"
-                  style={{ background: 'rgba(255, 255, 255, 0.5)' }}
-                  data-testid={`mutual-friend-${mutualFriend.id}`}
-                >
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={mutualFriend.profileImage || ""} />
-                    <AvatarFallback style={{ background: 'linear-gradient(135deg, #40E0D0, #1E90FF)' }}>
-                      {mutualFriend.name?.charAt(0) || "U"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">{mutualFriend.name}</p>
-                    <p className="text-xs text-muted-foreground truncate">@{mutualFriend.username}</p>
+      {/* Main Content */}
+      <div className="max-w-5xl mx-auto px-6 py-16 space-y-8">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          {/* Stats Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            {/* Closeness Score */}
+            <Card className="overflow-hidden hover-elevate" data-testid="card-closeness-score">
+              <CardContent className="p-8">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Heart className="w-6 h-6 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-serif font-bold">Closeness Score</h3>
                   </div>
+                  <Badge className="text-lg px-4 py-1">
+                    {friendshipStats?.closenessScore || 0}/100
+                  </Badge>
                 </div>
-              ))}
-            </div>
-          </Card>
-        )}
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Based on shared events, mutual friends, and interactions
+                </p>
+              </CardContent>
+            </Card>
 
-        {/* Actions */}
-        <div className="flex gap-3 justify-center">
-          <Button
-            variant="outline"
-            className="hover-elevate gap-2"
-            style={{
-              borderColor: 'rgba(64, 224, 208, 0.5)',
-              background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(30, 144, 255, 0.05))',
-            }}
-            data-testid="button-send-message"
-          >
-            <MessageCircle className="w-4 h-4" />
-            Send Message
-          </Button>
-          <Button
-            variant="outline"
-            className="hover-elevate gap-2"
-            style={{
-              borderColor: 'rgba(64, 224, 208, 0.5)',
-              background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.1), rgba(30, 144, 255, 0.05))',
-            }}
-            data-testid="button-view-profile"
-          >
-            <Users className="w-4 h-4" />
-            View Profile
-          </Button>
-        </div>
+            {/* Time as Friends */}
+            <Card className="overflow-hidden hover-elevate" data-testid="card-friendship-duration">
+              <CardContent className="p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Calendar className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-serif font-bold">Friends Since</h3>
+                </div>
+                <p className="text-3xl font-bold text-primary mb-2">
+                  {friendshipStats?.daysSinceFriendship || 0} days
+                </p>
+                {friendshipStats?.lastInteraction && (
+                  <p className="text-xs text-muted-foreground">
+                    Last interaction {formatDistanceToNow(new Date(friendshipStats.lastInteraction), { addSuffix: true })}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Shared Events */}
+            <Card className="overflow-hidden hover-elevate" data-testid="card-shared-events">
+              <CardContent className="p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <MapPin className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-serif font-bold">Shared Events</h3>
+                </div>
+                <p className="text-3xl font-bold text-primary mb-2">
+                  {friendshipStats?.sharedEvents || 0}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Milongas and workshops attended together
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Mutual Friends */}
+            <Card className="overflow-hidden hover-elevate" data-testid="card-mutual-friends">
+              <CardContent className="p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Users className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-serif font-bold">Mutual Friends</h3>
+                </div>
+                <p className="text-3xl font-bold text-primary mb-2">
+                  {mutualFriends?.length || 0}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Friends you both know
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Mutual Friends List */}
+          {mutualFriends && mutualFriends.length > 0 && (
+            <Card className="overflow-hidden">
+              <CardContent className="p-8">
+                <h3 className="text-2xl font-serif font-bold mb-6 flex items-center gap-2">
+                  <UserCheck className="w-6 h-6 text-primary" />
+                  Mutual Friends
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {mutualFriends.map((mutualFriend: any) => (
+                    <motion.div
+                      key={mutualFriend.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      className="flex items-center gap-4 p-4 border rounded-xl hover-elevate"
+                      data-testid={`mutual-friend-${mutualFriend.id}`}
+                    >
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src={mutualFriend.profileImage || ""} />
+                        <AvatarFallback className="bg-primary/10 text-primary">
+                          {mutualFriend.name?.charAt(0) || "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold truncate">{mutualFriend.name}</p>
+                        <p className="text-sm text-muted-foreground truncate">@{mutualFriend.username}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Actions */}
+          <div className="flex gap-4 justify-center pt-8">
+            <Button
+              size="lg"
+              className="gap-2"
+              data-testid="button-send-message"
+            >
+              <MessageCircle className="w-5 h-5" />
+              Send Message
+              <ChevronRight className="w-5 h-5" />
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="gap-2"
+              data-testid="button-view-profile"
+            >
+              <Users className="w-5 h-5" />
+              View Profile
+            </Button>
+          </div>
+        </motion.div>
       </div>
     </AppLayout>
   );

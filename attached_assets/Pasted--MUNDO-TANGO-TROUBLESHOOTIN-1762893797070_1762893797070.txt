@@ -1,0 +1,528 @@
+=======================================================================
+MUNDO TANGO - TROUBLESHOOTING GUIDE
+=======================================================================
+
+VERSION: 1.0
+GENERATED: October 30, 2025
+PURPOSE: Common issues and solutions
+
+=======================================================================
+SECTION 1: DATABASE ISSUES
+=======================================================================
+
+### Issue: "Database connection failed"
+
+**Symptoms:**
+```
+Error: connect ECONNREFUSED
+Unable to connect to database
+```
+
+**Solutions:**
+
+1. **Check DATABASE_URL format**
+   ```bash
+   # Correct format:
+   DATABASE_URL=postgresql://user:pass@host.neon.tech/db?sslmode=require
+   
+   # Common mistakes:
+   # - Missing ?sslmode=require
+   # - Wrong username/password
+   # - Project is paused (Neon auto-pauses after 7 days)
+   ```
+
+2. **Wake up Neon project**
+   ```bash
+   # Visit Neon console: https://console.neon.tech/
+   # Click on your project
+   # Project will wake up automatically
+   ```
+
+3. **Test connection**
+   ```bash
+   # Install psql
+   brew install postgresql  # macOS
+   sudo apt install postgresql-client  # Linux
+   
+   # Test connection
+   psql "postgresql://user:pass@host.neon.tech/db?sslmode=require"
+   ```
+
+---
+
+### Issue: "Schema mismatch" or "Table doesn't exist"
+
+**Symptoms:**
+```
+Error: relation "users" does not exist
+Schema validation failed
+```
+
+**Solutions:**
+
+1. **Push schema to database**
+   ```bash
+   npm run db:push
+   
+   # If that fails with data loss warning:
+   npm run db:push --force
+   ```
+
+2. **Reset database (CAUTION: deletes all data)**
+   ```bash
+   # In Drizzle Studio
+   npm run db:studio
+   # Manually drop all tables
+   
+   # Then push schema
+   npm run db:push
+   ```
+
+3. **Check schema.ts matches database**
+   ```bash
+   # Generate migration to see differences
+   npm run db:generate
+   # Review generated SQL in drizzle/ folder
+   ```
+
+=======================================================================
+SECTION 2: AI SERVICE ISSUES
+=======================================================================
+
+### Issue: "GROQ_API_KEY invalid or missing"
+
+**Symptoms:**
+```
+Error: 401 Unauthorized
+Invalid API key provided
+```
+
+**Solutions:**
+
+1. **Verify key format**
+   ```bash
+   # Groq keys start with: gsk_
+   echo $GROQ_API_KEY
+   # Should output: gsk_xxxxxxxxx
+   
+   # Check for spaces/newlines
+   echo "$GROQ_API_KEY" | od -c
+   # Should not show \n or extra spaces
+   ```
+
+2. **Regenerate key**
+   ```bash
+   # Visit https://console.groq.com/keys
+   # Delete old key
+   # Create new key
+   # Update .env with new key
+   # Restart server
+   ```
+
+3. **Test key directly**
+   ```bash
+   curl https://api.groq.com/openai/v1/chat/completions \
+     -H "Authorization: Bearer $GROQ_API_KEY" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "model": "llama-3.1-70b-versatile",
+       "messages": [{"role": "user", "content": "Hi"}]
+     }'
+   ```
+
+---
+
+### Issue: "Rate limit exceeded"
+
+**Symptoms:**
+```
+Error: 429 Too Many Requests
+Rate limit exceeded, try again later
+```
+
+**Solutions:**
+
+1. **Check rate limits**
+   ```
+   Groq: 14,400 requests/min (very high)
+   Gemini: 60 requests/min
+   OpenRouter: Varies by model
+   OpenAI: Depends on tier
+   Anthropic: Depends on tier
+   ```
+
+2. **Use fallback chains**
+   ```typescript
+   // Automatically handled by UnifiedAIOrchestrator
+   // If Groq fails → tries Gemini → tries OpenRouter
+   const result = await smartRoute({
+     query: "Hello",
+     useCase: 'chat',
+     priority: 'speed'
+   });
+   ```
+
+3. **Implement backoff**
+   ```typescript
+   // Already implemented in all services
+   // Exponential backoff: 1s → 2s → 4s
+   // Max retries: 3
+   ```
+
+=======================================================================
+SECTION 3: MR BLUE CHAT ISSUES
+=======================================================================
+
+### Issue: Mr Blue not responding
+
+**Symptoms:**
+- Message sent but no response
+- Loading indicator stuck
+- Console error
+
+**Solutions:**
+
+1. **Check AI service status**
+   ```bash
+   # Test Groq (primary service for Mr Blue)
+   curl -X POST http://localhost:5000/api/mrblue/test
+   
+   # Expected response:
+   # { "status": "ok", "platform": "groq" }
+   ```
+
+2. **Check browser console**
+   ```javascript
+   // F12 → Console tab
+   // Look for errors like:
+   // - CORS errors → Server issue
+   // - 401 errors → Not logged in
+   // - 500 errors → Server crash
+   ```
+
+3. **Check server logs**
+   ```bash
+   # Look for:
+   # [Orchestrator] ❌ groq failed: ...
+   # [Orchestrator] 🔄 Trying fallback 1/2...
+   ```
+
+4. **Test with curl**
+   ```bash
+   curl -X POST http://localhost:5000/api/mrblue/chat \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+     -d '{
+       "messages": [{"role": "user", "content": "Hi"}],
+       "pageContext": "/"
+     }'
+   ```
+
+---
+
+### Issue: Voice input not working
+
+**Symptoms:**
+- Microphone button not responding
+- "Speech recognition not supported" error
+
+**Solutions:**
+
+1. **Check browser compatibility**
+   ```
+   ✅ Chrome/Edge: Full support
+   ✅ Safari: Partial support
+   ❌ Firefox: No support (use Chrome)
+   ```
+
+2. **Enable microphone permission**
+   ```
+   Chrome: Settings → Privacy → Site Settings → Microphone
+   Allow for your-app.repl.co
+   ```
+
+3. **Test Speech Recognition**
+   ```javascript
+   // In browser console
+   const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+   recognition.start();
+   recognition.onresult = (e) => console.log(e.results[0][0].transcript);
+   // Speak something
+   ```
+
+=======================================================================
+SECTION 4: AUTHENTICATION ISSUES
+=======================================================================
+
+### Issue: "Invalid token" or "Unauthorized"
+
+**Symptoms:**
+```
+Error: 401 Unauthorized
+Token expired or invalid
+```
+
+**Solutions:**
+
+1. **Check token expiration**
+   ```javascript
+   // Tokens expire after 24 hours
+   // Frontend should handle refresh
+   
+   // Check token:
+   const token = localStorage.getItem('auth_token');
+   const payload = JSON.parse(atob(token.split('.')[1]));
+   console.log('Expires:', new Date(payload.exp * 1000));
+   ```
+
+2. **Clear and re-login**
+   ```javascript
+   // In browser console
+   localStorage.clear();
+   // Then log in again
+   ```
+
+3. **Check SESSION_SECRET**
+   ```bash
+   # Ensure SESSION_SECRET is set in .env
+   echo $SESSION_SECRET
+   # Should be 64-char random string
+   
+   # If missing, generate:
+   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+   ```
+
+---
+
+### Issue: "User already exists"
+
+**Symptoms:**
+```
+Error: 409 Conflict
+Email or username already exists
+```
+
+**Solutions:**
+
+1. **Use different email/username**
+   ```
+   Common mistake: Trying same email twice
+   Solution: Use unique email
+   ```
+
+2. **Check database for existing user**
+   ```sql
+   -- In Drizzle Studio
+   SELECT * FROM users WHERE email = 'user@example.com';
+   ```
+
+3. **Delete test user (development only)**
+   ```sql
+   -- CAUTION: Only in development!
+   DELETE FROM users WHERE email = 'test@example.com';
+   ```
+
+=======================================================================
+SECTION 5: PERFORMANCE ISSUES
+=======================================================================
+
+### Issue: Slow API responses (>2 seconds)
+
+**Symptoms:**
+- Pages take long to load
+- Spinner shows for extended time
+
+**Solutions:**
+
+1. **Check database indexes**
+   ```sql
+   -- All indexes in schema.ts should exist
+   -- Verify with:
+   \d+ users
+   -- Should show indexes on email, city, country
+   ```
+
+2. **Enable query logging**
+   ```typescript
+   // In drizzle.config.ts
+   export default {
+     logger: true  // Shows all SQL queries
+   };
+   ```
+
+3. **Use connection pooling**
+   ```bash
+   # Use DATABASE_URL_POOLING for production
+   DATABASE_URL_POOLING=postgresql://...@...-pooler.neon.tech/...
+   ```
+
+4. **Check AI service latency**
+   ```
+   Groq: 400-800ms (fast)
+   Gemini: 800-1200ms (medium)
+   Claude: 1200-2000ms (slow but quality)
+   
+   If slower → check internet connection
+   ```
+
+---
+
+### Issue: High AI costs
+
+**Symptoms:**
+- Unexpected high bills
+- Cost tracking shows large amounts
+
+**Solutions:**
+
+1. **Check cost summary**
+   ```bash
+   # View in logs or create endpoint:
+   GET /api/ai/costs
+   ```
+
+2. **Use cheaper models**
+   ```typescript
+   // Instead of GPT-4o ($10/1M output)
+   // Use Gemini Flash Lite ($0.08/1M output)
+   
+   const result = await GeminiService.query({
+     prompt: query,
+     model: GeminiService.models.FLASH_LITE
+   });
+   ```
+
+3. **Implement rate limiting**
+   ```typescript
+   // Limit users to 50 Mr Blue messages/day
+   // Already implemented in backend
+   ```
+
+=======================================================================
+SECTION 6: DEPLOYMENT ISSUES
+=======================================================================
+
+### Issue: Build fails on deployment
+
+**Symptoms:**
+```
+Error: Build failed
+npm run build exited with code 1
+```
+
+**Solutions:**
+
+1. **Check TypeScript errors**
+   ```bash
+   npm run build
+   # Fix all TypeScript errors shown
+   ```
+
+2. **Check environment variables**
+   ```bash
+   # In Replit Secrets, ensure all required vars are set:
+   # - DATABASE_URL
+   # - SESSION_SECRET
+   # - GROQ_API_KEY (minimum)
+   ```
+
+3. **Clear node_modules**
+   ```bash
+   rm -rf node_modules package-lock.json
+   npm install
+   npm run build
+   ```
+
+---
+
+### Issue: "CORS error" in production
+
+**Symptoms:**
+```
+Access to fetch at 'https://api...' blocked by CORS
+```
+
+**Solutions:**
+
+1. **Check allowed origins**
+   ```typescript
+   // In server/index.ts
+   app.use(cors({
+     origin: process.env.NODE_ENV === 'production'
+       ? process.env.REPLIT_DOMAINS?.split(',')
+       : ['http://localhost:5000'],
+     credentials: true
+   }));
+   ```
+
+2. **Verify REPLIT_DOMAINS**
+   ```bash
+   echo $REPLIT_DOMAINS
+   # Should output: your-app.repl.co
+   ```
+
+=======================================================================
+SECTION 7: COMMON ERROR CODES
+=======================================================================
+
+### Error Code Reference
+
+| Code | Meaning | Solution |
+|------|---------|----------|
+| 400 | Bad Request | Check request body format |
+| 401 | Unauthorized | Login or check token |
+| 403 | Forbidden | Insufficient permissions |
+| 404 | Not Found | Resource doesn't exist |
+| 409 | Conflict | Duplicate entry (email/username) |
+| 429 | Rate Limited | Wait and retry, or use fallback |
+| 500 | Server Error | Check server logs |
+| 503 | Service Unavailable | AI service down, fallback used |
+
+=======================================================================
+SECTION 8: GETTING HELP
+=======================================================================
+
+### Debug Checklist
+
+Before asking for help, verify:
+
+- [ ] .env file has all required variables
+- [ ] Database connection works
+- [ ] At least 3 AI services configured (Groq, Gemini, OpenRouter)
+- [ ] Server starts without errors
+- [ ] Browser console shows no errors
+- [ ] Latest code from repository
+
+### Logs to Collect
+
+1. **Server logs**
+   ```bash
+   npm run dev 2>&1 | tee server.log
+   ```
+
+2. **Browser console**
+   ```
+   F12 → Console tab → Copy all errors
+   ```
+
+3. **Database status**
+   ```bash
+   npm run db:studio
+   # Take screenshot of tables list
+   ```
+
+4. **AI service test**
+   ```bash
+   node test-ai.js > ai-test.log
+   ```
+
+### Community Resources
+
+- GitHub Issues: Create detailed bug report
+- Replit Forums: Ask in community
+- Documentation: Re-read HANDOFF_*.txt files
+
+=======================================================================
+END OF TROUBLESHOOTING GUIDE
+Most common issues covered
+=======================================================================

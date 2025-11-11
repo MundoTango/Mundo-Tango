@@ -1,0 +1,141 @@
+# 🤖 AI & AGENTS API - COMPLETE ZERO-KNOWLEDGE HANDOFF
+**Part 58 of 160: Mundo Tango Platform Rebuild Guide**
+
+**Generated:** November 5, 2025  
+**Methodology:** MB.MD (Simultaneously, Recursively, Critically)  
+**Status:** Production-Ready Implementation
+
+---
+
+## 🤖 AI AGENTS API
+
+### POST /api/ai/chat
+**Purpose:** Chat with AI agents
+
+**Request:**
+```typescript
+{
+  message: string;
+  agentId?: string; // Specific agent or default
+  conversationId?: string;
+  context?: Record<string, any>;
+}
+```
+
+**Response:**
+```typescript
+{
+  response: string;
+  agentId: string;
+  conversationId: string;
+  tokens: number;
+}
+```
+
+### POST /api/life-ceo-agents/chat
+**Purpose:** Chat with Life CEO specialized agents
+
+**Request:**
+```typescript
+{
+  message: string;
+  agentType: 'finance' | 'health' | 'career' | 'relationships' | 'travel';
+  userId: number;
+}
+```
+
+### POST /api/mr-blue/chat
+**Purpose:** Mr Blue AI companion
+
+**Request:**
+```typescript
+{
+  message: string;
+  pageContext?: string;
+  userRole?: string;
+}
+```
+
+**Response:**
+```typescript
+{
+  response: string;
+  suggestions?: string[];
+  actionItems?: Array<{
+    title: string;
+    url: string;
+  }>;
+}
+```
+
+### POST /api/ai/voice/transcribe
+**Purpose:** Speech-to-text
+
+**Request:** FormData
+```typescript
+{
+  audio: File; // Audio file
+}
+```
+
+**Response:**
+```typescript
+{
+  text: string;
+  language: string;
+  duration: number;
+}
+```
+
+### POST /api/ai/voice/synthesize
+**Purpose:** Text-to-speech
+
+**Request:**
+```typescript
+{
+  text: string;
+  voice?: string;
+  language?: string;
+}
+```
+
+**Response:**
+```typescript
+{
+  audioUrl: string;
+  duration: number;
+}
+```
+
+### GET /api/agents
+**Purpose:** List all AI agents
+
+**Response:**
+```typescript
+{
+  agents: Array<{
+    id: string;
+    name: string;
+    description: string;
+    capabilities: string[];
+    status: 'active' | 'inactive';
+  }>;
+}
+```
+
+### POST /api/agents/:id/learn
+**Purpose:** Teach agent new pattern
+
+**Request:**
+```typescript
+{
+  patternName: string;
+  problemSignature: string;
+  solutionTemplate: string;
+  codeExample?: string;
+}
+```
+
+---
+
+**END OF AI & AGENTS API HANDOFF**

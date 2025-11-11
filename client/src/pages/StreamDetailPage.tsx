@@ -22,6 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import type { SelectLiveStream } from "@shared/schema";
 import { 
   Radio, Users, Eye, Heart, Share2, MessageCircle, Calendar,
   Clock, ArrowLeft, Sparkles, Play, Volume2, Maximize
@@ -30,7 +31,7 @@ import {
 export default function StreamDetailPage() {
   const { id } = useParams();
   
-  const { data: stream, isLoading } = useQuery<any>({
+  const { data: stream, isLoading } = useQuery<SelectLiveStream>({
     queryKey: ["/api/livestreams", id],
   });
 
@@ -111,11 +112,11 @@ export default function StreamDetailPage() {
                           </div>
                         )}
 
-                        {stream.viewers !== undefined && (
+                        {stream.viewers !== null && stream.viewers !== undefined && (
                           <div className="absolute top-4 right-4">
                             <Badge className="flex items-center gap-2 bg-black/60 backdrop-blur-sm border-white/20 text-white" data-testid="badge-viewers">
                               <Eye className="h-3 w-3" />
-                              <span>{stream.viewers.toLocaleString()} watching</span>
+                              <span>{stream.viewers?.toLocaleString() || '0'} watching</span>
                             </Badge>
                           </div>
                         )}
@@ -166,28 +167,16 @@ export default function StreamDetailPage() {
                       <h1 className="text-3xl md:text-4xl font-serif font-bold mb-3" data-testid="stream-title">
                         {stream.title}
                       </h1>
-                      {stream.category && (
-                        <Badge variant="outline" className="mb-4">
-                          <Sparkles className="h-3 w-3 mr-1" />
-                          {stream.category}
-                        </Badge>
-                      )}
                     </div>
 
                     {/* Host Info */}
                     <div className="flex items-center justify-between flex-wrap gap-4 pb-4 border-b border-border">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-12 w-12">
-                          <AvatarImage src={stream.hostAvatar} alt={stream.host} />
                           <AvatarFallback>{stream.host?.[0] || 'H'}</AvatarFallback>
                         </Avatar>
                         <div>
                           <p className="font-medium" data-testid="host-name">{stream.host}</p>
-                          {stream.hostFollowers && (
-                            <p className="text-sm text-muted-foreground">
-                              {stream.hostFollowers.toLocaleString()} followers
-                            </p>
-                          )}
                         </div>
                       </div>
 
@@ -207,18 +196,6 @@ export default function StreamDetailPage() {
                         Share
                       </Button>
                     </div>
-
-                    {/* Description */}
-                    {stream.description && (
-                      <Card>
-                        <CardContent className="pt-6">
-                          <h3 className="text-lg font-serif font-bold mb-2">About</h3>
-                          <p className="text-muted-foreground leading-relaxed" data-testid="stream-description">
-                            {stream.description}
-                          </p>
-                        </CardContent>
-                      </Card>
-                    )}
                   </div>
                 </FadeInSection>
               </div>
@@ -232,15 +209,6 @@ export default function StreamDetailPage() {
                       <CardTitle className="text-xl font-serif font-bold">Stream Info</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      {stream.startedAt && (
-                        <div className="flex items-center gap-2 text-sm">
-                          <Clock className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-muted-foreground">
-                            Started {new Date(stream.startedAt).toLocaleTimeString()}
-                          </span>
-                        </div>
-                      )}
-                      
                       {stream.scheduledDate && !stream.isLive && (
                         <div className="flex items-center gap-2 text-sm">
                           <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -250,10 +218,10 @@ export default function StreamDetailPage() {
                         </div>
                       )}
 
-                      {stream.language && (
+                      {stream.registrations !== null && stream.registrations !== undefined && (
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-muted-foreground">Language</span>
-                          <Badge variant="secondary">{stream.language}</Badge>
+                          <span className="text-muted-foreground">Registrations</span>
+                          <Badge variant="secondary">{stream.registrations}</Badge>
                         </div>
                       )}
                     </CardContent>

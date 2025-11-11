@@ -66,7 +66,7 @@ export default function ProfilePrototypePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Cover Photo - 16:9 aspect ratio hero */}
+      {/* Cover Photo - 16:9 aspect ratio hero with editorial treatment */}
       <div className="relative w-full aspect-[16/6] overflow-hidden">
         <motion.img
           src={PROFILE_DATA.coverPhoto}
@@ -76,7 +76,7 @@ export default function ProfilePrototypePage() {
           animate={{ scale: 1 }}
           transition={{ duration: 1.5 }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-background" />
         
         <Button
           variant="outline"
@@ -89,7 +89,7 @@ export default function ProfilePrototypePage() {
 
       {/* Profile Header */}
       <div className="container mx-auto px-6 -mt-24 relative z-10">
-        <div className="flex flex-col md:flex-row gap-6 items-start md:items-end mb-8">
+        <div className="flex flex-col md:flex-row gap-8 items-start md:items-end mb-12">
           {/* Avatar */}
           <motion.div
             initial={{ y: 20, opacity: 0 }}
@@ -97,45 +97,50 @@ export default function ProfilePrototypePage() {
             transition={{ delay: 0.3 }}
             className="relative"
           >
-            <Avatar className="w-40 h-40 border-8 border-background">
+            <Avatar className="w-48 h-48 border-8 border-background shadow-2xl">
               <AvatarImage src={PROFILE_DATA.avatar} />
-              <AvatarFallback>SR</AvatarFallback>
+              <AvatarFallback className="text-3xl">SR</AvatarFallback>
             </Avatar>
-            <div className="absolute -bottom-2 -right-2 bg-green-500 w-8 h-8 rounded-full border-4 border-background" />
+            <div className="absolute -bottom-2 -right-2 bg-green-500 w-10 h-10 rounded-full border-4 border-background" />
           </motion.div>
 
           {/* Profile Info */}
           <div className="flex-1">
-            <div className="flex items-start justify-between gap-4 flex-wrap">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="flex items-start justify-between gap-6 flex-wrap"
+            >
               <div>
-                <h1 className="text-4xl font-serif font-bold mb-2">{PROFILE_DATA.name}</h1>
-                <p className="text-muted-foreground mb-4">{PROFILE_DATA.username}</p>
+                <h1 className="text-4xl md:text-5xl font-serif font-bold mb-3">{PROFILE_DATA.name}</h1>
+                <p className="text-lg text-muted-foreground mb-6">{PROFILE_DATA.username}</p>
 
-                {/* Role Badges - Prominent */}
-                <div className="flex gap-2 mb-4">
+                {/* Role Badges - Prominent editorial treatment */}
+                <div className="flex gap-2 mb-6">
                   {PROFILE_DATA.roles.map((role) => (
-                    <Badge key={role} className="gap-1 capitalize">
+                    <Badge key={role} className="gap-1.5 capitalize px-4 py-1.5 text-sm">
                       {getRoleIcon(role)}
                       {role}
                     </Badge>
                   ))}
                 </div>
 
-                <p className="text-base mb-4 max-w-2xl">{PROFILE_DATA.bio}</p>
+                <p className="text-base md:text-lg leading-relaxed mb-6 max-w-2xl">{PROFILE_DATA.bio}</p>
 
-                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <MapPin className="w-4 h-4" />
+                <div className="flex flex-wrap gap-6 text-base text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-5 h-5" />
                     {PROFILE_DATA.location}
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-5 h-5" />
                     Joined {PROFILE_DATA.joined}
                   </div>
                 </div>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <Button>
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Message
@@ -148,36 +153,42 @@ export default function ProfilePrototypePage() {
                   <Settings className="w-4 h-4" />
                 </Button>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <Card className="mb-8">
-          <CardContent className="p-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold mb-1">{PROFILE_DATA.stats.followers.toLocaleString()}</div>
-                <div className="text-sm text-muted-foreground">Followers</div>
+        {/* Stats Grid - Editorial card treatment */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+        >
+          <Card className="mb-12">
+            <CardContent className="p-8">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div className="text-center">
+                  <div className="text-4xl font-serif font-bold mb-2">{PROFILE_DATA.stats.followers.toLocaleString()}</div>
+                  <div className="text-sm text-muted-foreground">Followers</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl font-serif font-bold mb-2">{PROFILE_DATA.stats.following.toLocaleString()}</div>
+                  <div className="text-sm text-muted-foreground">Following</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl font-serif font-bold mb-2">{PROFILE_DATA.stats.events}</div>
+                  <div className="text-sm text-muted-foreground">Events Attended</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-4xl font-serif font-bold mb-2">{PROFILE_DATA.stats.posts}</div>
+                  <div className="text-sm text-muted-foreground">Contributions</div>
+                </div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold mb-1">{PROFILE_DATA.stats.following.toLocaleString()}</div>
-                <div className="text-sm text-muted-foreground">Following</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold mb-1">{PROFILE_DATA.stats.events}</div>
-                <div className="text-sm text-muted-foreground">Events Attended</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold mb-1">{PROFILE_DATA.stats.posts}</div>
-                <div className="text-sm text-muted-foreground">Contributions</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mb-12">
           <TabsList className="mb-8">
             <TabsTrigger value="posts">Posts</TabsTrigger>
             <TabsTrigger value="events">Events</TabsTrigger>
@@ -185,37 +196,44 @@ export default function ProfilePrototypePage() {
             <TabsTrigger value="about">About</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="posts" className="space-y-6">
+          <TabsContent value="posts" className="space-y-8">
             {ACTIVITY_FEED.map((item, index) => (
               <ActivityCard key={item.id} item={item} index={index} />
             ))}
           </TabsContent>
 
           <TabsContent value="events">
-            <Card className="p-8 text-center">
-              <Calendar className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-semibold mb-2">Events Timeline</h3>
-              <p className="text-sm text-muted-foreground">
+            <Card className="p-12 text-center">
+              <Calendar className="w-16 h-16 mx-auto mb-6 text-muted-foreground" />
+              <h3 className="text-2xl font-serif font-bold mb-3">Events Timeline</h3>
+              <p className="text-base text-muted-foreground">
                 {PROFILE_DATA.stats.events} events attended
               </p>
             </Card>
           </TabsContent>
 
           <TabsContent value="media">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="aspect-square bg-muted rounded-lg" />
+                <motion.div 
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="aspect-square bg-muted rounded-xl hover-elevate" 
+                />
               ))}
             </div>
           </TabsContent>
 
           <TabsContent value="about">
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Achievements</h3>
-              <div className="flex flex-wrap gap-2">
+            <Card className="p-8">
+              <h3 className="text-2xl font-serif font-bold mb-6">Achievements</h3>
+              <div className="flex flex-wrap gap-3">
                 {PROFILE_DATA.badges.map((badge) => (
-                  <Badge key={badge} variant="outline" className="gap-1">
-                    <Award className="w-3 h-3" />
+                  <Badge key={badge} variant="outline" className="gap-1.5 px-4 py-2 text-sm">
+                    <Award className="w-4 h-4" />
                     {badge}
                   </Badge>
                 ))}
@@ -231,33 +249,40 @@ export default function ProfilePrototypePage() {
 function ActivityCard({ item, index }: { item: typeof ACTIVITY_FEED[0]; index: number }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.1 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
     >
       <Card className="overflow-hidden hover-elevate">
         {item.image && (
           <div className="relative aspect-[16/9] overflow-hidden">
-            <img src={item.image} alt="" className="w-full h-full object-cover" />
+            <motion.img 
+              src={item.image} 
+              alt="" 
+              className="w-full h-full object-cover"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.6 }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
           </div>
         )}
-        <CardContent className="p-6">
-          <p className="mb-4">{item.content}</p>
+        <CardContent className="p-8">
+          <p className="text-lg leading-relaxed mb-6">{item.content}</p>
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>{item.timestamp}</span>
             {item.likes !== undefined && (
-              <div className="flex gap-4">
-                <button className="flex items-center gap-1 hover:text-foreground">
-                  <Heart className="w-4 h-4" />
+              <div className="flex gap-6">
+                <button className="flex items-center gap-2 hover:text-foreground hover-elevate">
+                  <Heart className="w-5 h-5" />
                   {item.likes}
                 </button>
-                <button className="flex items-center gap-1 hover:text-foreground">
-                  <MessageCircle className="w-4 h-4" />
+                <button className="flex items-center gap-2 hover:text-foreground hover-elevate">
+                  <MessageCircle className="w-5 h-5" />
                   {item.comments}
                 </button>
-                <button className="flex items-center gap-1 hover:text-foreground">
-                  <Share2 className="w-4 h-4" />
+                <button className="flex items-center gap-2 hover:text-foreground hover-elevate">
+                  <Share2 className="w-5 h-5" />
                 </button>
               </div>
             )}

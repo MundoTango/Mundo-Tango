@@ -25,7 +25,7 @@ export default function FollowingPage() {
     <SelfHealingErrorBoundary pageName="Following" fallbackRoute="/profile">
       <PageLayout title="Following" showBreadcrumbs>
         {/* Editorial Hero */}
-        <div className="relative h-[40vh] w-full overflow-hidden mb-12">
+        <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden mb-12">
           <div className="absolute inset-0 bg-cover bg-center" style={{
             backgroundImage: `url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1600&h=900&fit=crop')`
           }}>
