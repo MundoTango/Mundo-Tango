@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,13 +12,15 @@ import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, Plus, Search, MapPin, TrendingUp, Award, Heart, Activity, Filter, X } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Users, Plus, Search, MapPin, TrendingUp, Award, Heart, Activity, Filter, X, Globe, Star, MessageCircle, UserPlus, Calendar, Home, Building2, ChevronRight } from "lucide-react";
 import type { SelectGroup } from "@shared/schema";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { GroupCreationModal } from "@/components/groups/GroupCreationModal";
 import { GroupCategoryFilter } from "@/components/groups/GroupCategoryFilter";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Health score calculation (mock)
 const calculateHealthScore = (group: SelectGroup): number => {
@@ -34,9 +37,10 @@ const calculateDistance = (city: string | null): number => {
 };
 
 export default function GroupsPage() {
+  const { user } = useAuth();
   const [isCreating, setIsCreating] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState("my-groups");
   const [showFilters, setShowFilters] = useState(false);
   
   // Advanced filters
@@ -61,6 +65,27 @@ export default function GroupsPage() {
       isFeatured: (group.memberCount || 0) > 20 && calculateHealthScore(group) > 70
     }));
   }, [groups]);
+
+  // Separate City and Professional groups
+  const cityGroups = useMemo(() => {
+    return enrichedGroups.filter(g => g.type === "city");
+  }, [enrichedGroups]);
+
+  const professionalGroups = useMemo(() => {
+    return enrichedGroups.filter(g => g.type === "professional");
+  }, [enrichedGroups]);
+
+  // My Groups - automatically joined based on user's city/role
+  const myGroups = useMemo(() => {
+    if (!user) return [];
+    return enrichedGroups.filter(g => {
+      // City match
+      if (g.type === "city" && g.city === user.city) return true;
+      // Professional role match (mock - would need user.tangoRoles)
+      if (g.type === "professional") return false; // Add logic when tangoRoles available
+      return false;
+    });
+  }, [enrichedGroups, user]);
 
   // Featured groups (algorithm-selected)
   const featuredGroups = useMemo(() => {
@@ -125,74 +150,129 @@ export default function GroupsPage() {
     return result;
   }, [enrichedGroups, searchQuery, filters]);
 
-  const renderGroupCard = (group: SelectGroup & { healthScore: number; distance: number; isFeatured: boolean }) => (
-    <Card key={group.id} className="overflow-hidden hover-elevate" data-testid={`card-group-${group.id}`}>
-      {group.coverImage && (
-        <div className="h-32 w-full overflow-hidden">
-          <img
-            src={group.coverImage}
+  // Render City Group Card with editorial design
+  const renderCityCard = (group: SelectGroup & { healthScore: number; distance: number }) => (
+    <motion.div
+      key={group.id}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      whileHover={{ y: -4 }}
+      className="group cursor-pointer"
+    >
+      <Card className="overflow-hidden hover-elevate h-full">
+        {/* Cityscape Image - 16:9 */}
+        <div className="relative aspect-[16/9] overflow-hidden">
+          <motion.img
+            src={group.coverImage || `https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=1200&auto=format&fit=crop&q=80`}
             alt={group.name}
             className="w-full h-full object-cover"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.6 }}
           />
-        </div>
-      )}
-      <CardHeader>
-        <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-lg" data-testid="text-group-name">{group.name}</CardTitle>
-          {group.isFeatured && (
-            <Badge variant="default" className="shrink-0">
-              <Award className="h-3 w-3 mr-1" />
-              Featured
-            </Badge>
-          )}
-        </div>
-        <CardDescription className="flex items-center gap-3 flex-wrap">
-          <span className="flex items-center gap-1">
-            <Users className="h-4 w-4" />
-            {group.memberCount || 0} members
-          </span>
-          {group.city && (
-            <span className="flex items-center gap-1">
-              <MapPin className="h-4 w-4" />
-              {group.city}
-            </span>
-          )}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        <p className="line-clamp-2 text-sm text-muted-foreground">
-          {group.description}
-        </p>
-        
-        {/* Health Score */}
-        <div className="flex items-center gap-2">
-          <div className="flex-1">
-            <div className="flex items-center justify-between text-xs mb-1">
-              <span className="text-muted-foreground">Health Score</span>
-              <span className="font-semibold">{group.healthScore}/100</span>
-            </div>
-            <div className="h-2 bg-muted rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-primary to-secondary transition-all"
-                style={{ width: `${group.healthScore}%` }}
-              />
-            </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+          
+          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+            <h3 className="text-2xl font-serif font-bold mb-1">{group.name}</h3>
+            <p className="text-sm text-white/80">{group.city}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Activity className="h-3 w-3" />
-          {group.distance} km away
+        <div className="p-6 space-y-4">
+          <p className="text-sm text-muted-foreground line-clamp-2">{group.description}</p>
+          
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-cyan-500" />
+              <div>
+                <div className="font-semibold">{(group.memberCount || 0).toLocaleString()}</div>
+                <div className="text-xs text-muted-foreground">Members</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Activity className="w-4 h-4 text-green-500" />
+              <div>
+                <div className="font-semibold">{group.healthScore}/100</div>
+                <div className="text-xs text-muted-foreground">Active</div>
+              </div>
+            </div>
+          </div>
+
+          <Link href={`/groups/${group.id}`} className="w-full">
+            <Button className="w-full gap-2" data-testid={`button-view-group-${group.id}`}>
+              <UserPlus className="w-4 h-4" />
+              Join {group.name}
+            </Button>
+          </Link>
         </div>
-      </CardContent>
-      <CardFooter>
-        <Link href={`/groups/${group.id}`} className="w-full">
-          <Button className="w-full" data-testid={`button-view-group-${group.id}`}>
-            View Group
+      </Card>
+    </motion.div>
+  );
+
+  // Render Professional Group Card with editorial design
+  const renderProCard = (group: SelectGroup & { healthScore: number; distance: number; isFeatured: boolean }) => (
+    <motion.article
+      key={group.id}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6 }}
+      className="group mb-12"
+    >
+      <div className="relative aspect-[16/9] overflow-hidden rounded-2xl mb-8">
+        <motion.img
+          src={group.coverImage || `https://images.unsplash.com/photo-1540575861501-7cf05a4b125a?w=1200&auto=format&fit=crop&q=80`}
+          alt={group.name}
+          className="w-full h-full object-cover"
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.6 }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+        
+        <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+          <div className="flex items-center gap-3 mb-4">
+            <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm">
+              Professional
+            </Badge>
+            {group.isFeatured && (
+              <div className="flex items-center gap-1 text-sm bg-white/20 px-2 py-1 rounded-full backdrop-blur-sm">
+                <Star className="w-3 h-3 fill-white" />
+                <span>Featured</span>
+              </div>
+            )}
+          </div>
+          <h2 className="text-3xl font-serif font-bold">{group.name}</h2>
+        </div>
+      </div>
+
+      <div className="space-y-6 px-2">
+        <p className="text-lg leading-relaxed text-foreground/90">
+          {group.description}
+        </p>
+
+        <div className="flex flex-wrap items-center gap-6 text-sm">
+          <div className="flex items-center gap-2">
+            <Users className="w-5 h-5 text-primary" />
+            <span className="font-semibold">{(group.memberCount || 0).toLocaleString()}</span>
+            <span className="text-muted-foreground">members</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Globe className="w-5 h-5 text-cyan-500" />
+            <span className="font-semibold">{group.city || "Global"}</span>
+          </div>
+        </div>
+
+        <Link href={`/groups/${group.id}`}>
+          <Button size="lg" className="gap-2" data-testid={`button-view-group-${group.id}`}>
+            <UserPlus className="w-5 h-5" />
+            Join Community
+            <ChevronRight className="w-4 h-4" />
           </Button>
         </Link>
-      </CardFooter>
-    </Card>
+      </div>
+
+      <Separator className="mt-12" />
+    </motion.article>
   );
 
   return (
@@ -200,193 +280,228 @@ export default function GroupsPage() {
       <PageLayout title="Tango Groups" showBreadcrumbs>
         <>
           <SEO 
-            title="Tango Groups"
-            description="Discover and join tango communities. Connect with dancers, find practice groups, and engage with the global tango community."
+            title="Tango Groups - Global Communities"
+            description="Connect with tango communities worldwide. Join city groups, professional networks, and build lasting friendships in the global tango community."
           />
-          <div className="max-w-7xl mx-auto p-6 space-y-6">
-            {/* Header with Create Button */}
-            <div className="flex items-center justify-between gap-4 flex-wrap">
-              <div>
-                <h1 className="text-3xl font-bold">Tango Groups</h1>
-                <p className="text-muted-foreground">Connect with communities around the world</p>
-              </div>
-              <div className="flex gap-2">
-                <Button 
-                  variant={showFilters ? "default" : "outline"}
-                  onClick={() => setShowFilters(!showFilters)} 
-                  data-testid="button-toggle-filters"
-                >
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filters
-                </Button>
-                <Button onClick={() => setIsCreating(true)} data-testid="button-create-group">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Group
-                </Button>
-              </div>
+
+          {/* Hero Section */}
+          <div className="relative h-[50vh] w-full overflow-hidden">
+            <div 
+              className="absolute inset-0 bg-cover bg-center"
+              style={{
+                backgroundImage: `url('https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=2000&auto=format&fit=crop&q=80')`,
+              }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
             </div>
 
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search groups..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-                data-testid="input-search-groups"
-              />
+            <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="max-w-4xl"
+              >
+                <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
+                  Global Tango Communities
+                </Badge>
+                
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6">
+                  Find Your Community
+                </h1>
+                
+                <p className="text-xl text-white/80 max-w-2xl mx-auto">
+                  Connect with local dancers, join professional networks, and build lasting friendships worldwide
+                </p>
+              </motion.div>
             </div>
+          </div>
 
-            {/* Advanced Filters */}
-            {showFilters && (
-              <Card className="border-primary/20">
-                <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <CardTitle>Advanced Filters</CardTitle>
-                    <Button variant="ghost" size="icon" onClick={() => setShowFilters(false)}>
-                      <X className="h-4 w-4" />
-                    </Button>
+          {/* Main Content */}
+          <div className="min-h-screen bg-background">
+            <div className="container mx-auto px-6 py-12">
+              <div className="flex gap-12">
+                {/* Main Column */}
+                <div className="flex-1 max-w-5xl">
+                  {/* Search */}
+                  <div className="relative mb-8">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search groups, cities, interests..."
+                      className="pl-12 h-12 text-base"
+                      data-testid="input-search-groups"
+                    />
                   </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label>Minimum Members: {filters.minMembers}</Label>
-                      <Slider
-                        value={[filters.minMembers]}
-                        onValueChange={([value]) => setFilters({ ...filters, minMembers: value })}
-                        max={100}
-                        step={5}
-                        data-testid="slider-min-members"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Minimum Health Score: {filters.minHealthScore}</Label>
-                      <Slider
-                        value={[filters.minHealthScore]}
-                        onValueChange={([value]) => setFilters({ ...filters, minHealthScore: value })}
-                        max={100}
-                        step={5}
-                        data-testid="slider-min-health-score"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Sort By</Label>
-                      <Select value={filters.sortBy} onValueChange={(value) => setFilters({ ...filters, sortBy: value })}>
-                        <SelectTrigger data-testid="select-sort-by">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="featured">Featured First</SelectItem>
-                          <SelectItem value="members">Most Members</SelectItem>
-                          <SelectItem value="health">Highest Health Score</SelectItem>
-                          <SelectItem value="nearby">Nearest</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
 
-            {/* Featured Groups Section */}
-            {!isLoading && featuredGroups.length > 0 && (
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Award className="h-5 w-5 text-primary" />
-                  <h2 className="text-2xl font-bold">Featured Groups</h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {featuredGroups.map(renderGroupCard)}
-                </div>
-              </div>
-            )}
+                  {/* Tabs Navigation */}
+                  <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                    <TabsList className="grid w-full grid-cols-3 mb-8">
+                      <TabsTrigger value="my-groups" className="text-base">
+                        <Star className="w-4 h-4 mr-2" />
+                        My Groups
+                      </TabsTrigger>
+                      <TabsTrigger value="cities" className="text-base">
+                        <Building2 className="w-4 h-4 mr-2" />
+                        Cities
+                      </TabsTrigger>
+                      <TabsTrigger value="professional" className="text-base">
+                        <Globe className="w-4 h-4 mr-2" />
+                        Professional
+                      </TabsTrigger>
+                    </TabsList>
 
-            {/* Popular Near You Section */}
-            {!isLoading && nearbyGroups.length > 0 && (
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-primary" />
-                  <h2 className="text-2xl font-bold">Popular Near You</h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {nearbyGroups.map(renderGroupCard)}
-                </div>
-              </div>
-            )}
-
-            {/* City Rankings */}
-            {!isLoading && cityRankings.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-primary" />
-                    <CardTitle>Top Cities by Members</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {cityRankings.map((city, index) => (
-                      <div 
-                        key={city.city} 
-                        className="flex items-center gap-4 p-3 border rounded-lg hover-elevate"
-                        data-testid={`city-rank-${index + 1}`}
-                      >
-                        <div className={`
-                          w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg
-                          ${index === 0 ? 'bg-yellow-500 text-white' : ''}
-                          ${index === 1 ? 'bg-gray-400 text-white' : ''}
-                          ${index === 2 ? 'bg-amber-700 text-white' : ''}
-                          ${index > 2 ? 'bg-muted text-muted-foreground' : ''}
-                        `}>
-                          {index + 1}
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="font-semibold">{city.city}</h4>
-                          <div className="text-sm text-muted-foreground flex items-center gap-4">
-                            <span>{city.members.toLocaleString()} members</span>
-                            <span>{city.groups} groups</span>
-                            <span>{city.events} events</span>
-                          </div>
+                    {/* MY GROUPS Tab */}
+                    <TabsContent value="my-groups" className="space-y-8">
+                      <div className="flex items-center justify-between mb-6">
+                        <div>
+                          <h2 className="text-3xl font-serif font-bold">My Groups</h2>
+                          <p className="text-muted-foreground mt-2">
+                            Automatically added based on your city and professional roles
+                          </p>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
 
-            {/* All Groups */}
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold">All Groups</h2>
-              {isLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {[1, 2, 3, 4].map((i) => (
-                    <Card key={i}>
-                      <Skeleton className="h-32 w-full rounded-t-xl" />
-                      <CardHeader>
-                        <Skeleton className="h-6 w-3/4" />
-                        <Skeleton className="h-4 w-1/2" />
-                      </CardHeader>
-                      <CardContent>
-                        <Skeleton className="h-16 w-full" />
-                      </CardContent>
-                    </Card>
-                  ))}
+                      {isLoading ? (
+                        <div className="grid md:grid-cols-2 gap-6">
+                          {[...Array(4)].map((_, i) => (
+                            <Skeleton key={i} className="h-64 w-full" />
+                          ))}
+                        </div>
+                      ) : myGroups.length > 0 ? (
+                        <div className="grid md:grid-cols-2 gap-6">
+                          {myGroups.map((group) => renderCityCard(group))}
+                        </div>
+                      ) : (
+                        <Card className="p-8 text-center border-dashed">
+                          <Users className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                          <h3 className="text-lg font-semibold mb-2">Join More Communities</h3>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            Explore Cities and Professional groups to expand your network
+                          </p>
+                          <div className="flex gap-3 justify-center">
+                            <Button variant="outline" onClick={() => setActiveTab("cities")}>
+                              Browse Cities
+                            </Button>
+                            <Button onClick={() => setActiveTab("professional")}>
+                              Professional Groups
+                            </Button>
+                          </div>
+                        </Card>
+                      )}
+                    </TabsContent>
+
+                    {/* CITIES Tab */}
+                    <TabsContent value="cities" className="space-y-8">
+                      <div className="mb-6">
+                        <h2 className="text-3xl font-serif font-bold">Tango Cities Worldwide</h2>
+                        <p className="text-muted-foreground mt-2">
+                          Connect with dancers in cities around the globe
+                        </p>
+                      </div>
+
+                      {isLoading ? (
+                        <div className="grid grid-cols-2 gap-6">
+                          {[...Array(6)].map((_, i) => (
+                            <Skeleton key={i} className="h-96 w-full" />
+                          ))}
+                        </div>
+                      ) : cityGroups.length > 0 ? (
+                        <div className="grid grid-cols-2 gap-6">
+                          {cityGroups.map((group) => renderCityCard(group))}
+                        </div>
+                      ) : (
+                        <Card className="p-8 text-center">
+                          <MapPin className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                          <h3 className="text-lg font-semibold mb-2">No City Groups Yet</h3>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            City groups will appear here as they're created
+                          </p>
+                        </Card>
+                      )}
+                    </TabsContent>
+
+                    {/* PROFESSIONAL Tab */}
+                    <TabsContent value="professional" className="space-y-8">
+                      <div className="flex items-center justify-between mb-6">
+                        <div>
+                          <h2 className="text-3xl font-serif font-bold">Professional Communities</h2>
+                          <p className="text-muted-foreground mt-2">
+                            Networks for teachers, DJs, organizers, and performers
+                          </p>
+                        </div>
+                        <Button className="gap-2" onClick={() => setIsCreating(true)}>
+                          <Plus className="w-4 h-4" />
+                          Request New Group
+                        </Button>
+                      </div>
+
+                      {isLoading ? (
+                        <div className="space-y-12">
+                          {[...Array(3)].map((_, i) => (
+                            <Skeleton key={i} className="h-96 w-full" />
+                          ))}
+                        </div>
+                      ) : professionalGroups.length > 0 ? (
+                        <div className="space-y-12">
+                          {professionalGroups.map((group) => renderProCard(group))}
+                        </div>
+                      ) : (
+                        <Card className="p-8 text-center">
+                          <Award className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                          <h3 className="text-lg font-semibold mb-2">No Professional Groups Yet</h3>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            Professional communities will appear here
+                          </p>
+                          <Button onClick={() => setIsCreating(true)}>
+                            <Plus className="w-4 h-4 mr-2" />
+                            Create First Group
+                          </Button>
+                        </Card>
+                      )}
+                    </TabsContent>
+                  </Tabs>
                 </div>
-              ) : filteredGroups && filteredGroups.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {filteredGroups.map(renderGroupCard)}
+
+                {/* Sidebar */}
+                <div className="w-96 space-y-6 sticky top-8 self-start hidden lg:block">
+                  <Card className="p-6">
+                    <h3 className="font-semibold mb-4">Quick Stats</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Total Groups</span>
+                        <span className="font-bold">{enrichedGroups.length}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">City Groups</span>
+                        <span className="font-bold">{cityGroups.length}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Professional</span>
+                        <span className="font-bold">{professionalGroups.length}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">My Groups</span>
+                        <span className="font-bold">{myGroups.length}</span>
+                      </div>
+                    </div>
+                  </Card>
+
+            {/* Create Group CTA */}
+            {!isCreating && (
+              <Card className="p-6 bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/20">
+                <h3 className="font-semibold mb-2">Start a Community</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Create your own group and bring dancers together
+                </p>
+                <Button className="w-full" onClick={() => setIsCreating(true)} data-testid="button-create-group">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Group
+                </Button>
+              </Card>
                 </div>
-              ) : (
-                <Card>
-                  <CardContent className="pt-6 text-center text-muted-foreground">
-                    No groups found. Try adjusting your filters or be the first to create one!
-                  </CardContent>
-                </Card>
-              )}
+              </div>
             </div>
 
             {/* Create Group Modal */}
