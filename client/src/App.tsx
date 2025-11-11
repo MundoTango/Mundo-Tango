@@ -31,6 +31,13 @@ import MarketingPrototypeOcean from "@/pages/MarketingPrototypeOcean";
 import FeedPrototypePage from "@/pages/FeedPrototypePage";
 import GroupsPrototypePage from "@/pages/GroupsPrototypePage";
 import CommunityPrototypePage from "@/pages/CommunityPrototypePage";
+import EventsPrototypePage from "@/pages/EventsPrototypePage";
+import ProfilePrototypePage from "@/pages/ProfilePrototypePage";
+import MessagesPrototypePage from "@/pages/MessagesPrototypePage";
+import FriendsPrototypePage from "@/pages/FriendsPrototypePage";
+import FavoritesPrototypePage from "@/pages/FavoritesPrototypePage";
+import NotificationsPrototypePage from "@/pages/NotificationsPrototypePage";
+import EventsGalleryPrototypePage from "@/pages/EventsGalleryPrototypePage";
 
 // Lazy-loaded pages for better performance
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
@@ -243,6 +250,13 @@ function Router() {
       <Route path="/feed-prototype" component={FeedPrototypePage} />
       <Route path="/groups-prototype" component={GroupsPrototypePage} />
       <Route path="/community-prototype" component={CommunityPrototypePage} />
+      <Route path="/events-prototype" component={EventsPrototypePage} />
+      <Route path="/profile-prototype" component={ProfilePrototypePage} />
+      <Route path="/messages-prototype" component={MessagesPrototypePage} />
+      <Route path="/friends-prototype" component={FriendsPrototypePage} />
+      <Route path="/favorites-prototype" component={FavoritesPrototypePage} />
+      <Route path="/notifications-prototype" component={NotificationsPrototypePage} />
+      <Route path="/events-gallery-prototype" component={EventsGalleryPrototypePage} />
       <Route path="/about" component={AboutPage} />
       <Route path="/discover" component={DiscoverPage} />
       <Route path="/volunteer" component={VolunteerPage} />
