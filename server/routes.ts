@@ -1327,9 +1327,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Search endpoint
   app.get("/api/search", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const query = req.query.q as string || "";
+      const query = (req.query.query as string) || "";
       if (query.length < 2) {
-        return res.json([]);
+        return res.json({ users: [], events: [], groups: [] });
       }
       const results = await storage.search(query, req.userId!);
       res.json(results);

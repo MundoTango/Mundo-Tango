@@ -2479,7 +2479,7 @@ export class DbStorage implements IStorage {
       type: sql<string>`'group'`,
       title: groups.name,
       subtitle: groups.description,
-      image: groups.avatar,
+      image: groups.imageUrl,
       url: sql<string>`'/groups/' || ${groups.id}`,
     }).from(groups)
       .where(

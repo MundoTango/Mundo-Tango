@@ -19,7 +19,7 @@ export default function SearchPage() {
     events?: any[];
     groups?: any[];
   }>({
-    queryKey: ["/api/search", query],
+    queryKey: ["/api/search", { query }],
     enabled: query.length > 2,
   });
 

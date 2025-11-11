@@ -29,7 +29,7 @@ export function SearchBar() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { data: results = [], isLoading } = useQuery<SearchResult[]>({
-    queryKey: ["/api/search", query],
+    queryKey: ["/api/search", { query }],
     enabled: query.length >= 2,
   });
 
