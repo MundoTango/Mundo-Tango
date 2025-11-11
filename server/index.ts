@@ -85,9 +85,12 @@ app.use(setCsrfToken);
 // HEALTH CHECK ENDPOINTS
 // ============================================================================
 
+// Legacy health checks (keep for backward compatibility)
 app.get('/health', healthCheckHandler);
 app.get('/ready', readinessCheckHandler);
 app.get('/live', livenessCheckHandler);
+
+// Enhanced health checks will be registered via routes below
 
 app.use((req, res, next) => {
   const start = Date.now();
