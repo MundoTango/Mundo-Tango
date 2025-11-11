@@ -1,13 +1,35 @@
 import express, { type Request, Response, NextFunction } from "express";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { startPreviewExpirationChecker } from "./lib/preview-expiration";
 import { applySecurity, apiRateLimiter } from "./middleware/security";
 import { compressionMiddleware, performanceMonitoringMiddleware } from "./config/performance";
 import { healthCheckHandler, readinessCheckHandler, livenessCheckHandler } from "./health-check";
+import { 
+  initializeSentry, 
+  getSentryRequestHandler, 
+  getSentryTracingHandler,
+  getSentryErrorHandler 
+} from "./config/sentry";
+import logger, { stream } from "./middleware/logger";
+import { 
+  globalRateLimiter, 
+  authRateLimiter,
+  uploadRateLimiter,
+  adminRateLimiter,
+  searchRateLimiter 
+} from "./middleware/rateLimiter";
+import { securityHeaders } from "./middleware/securityHeaders";
+import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
 
 const app = express();
+
+// ============================================================================
+// SENTRY INITIALIZATION
+// ============================================================================
+initializeSentry(app);
 
 // ============================================================================
 // TRUST PROXY CONFIGURATION
@@ -19,8 +41,23 @@ app.set('trust proxy', 1);
 // SECURITY & PERFORMANCE MIDDLEWARE
 // ============================================================================
 
-// Apply security middleware (CSP, CORS, headers, etc.)
+// Sentry request handler (must be first)
+app.use(getSentryRequestHandler());
+
+// Sentry tracing handler
+app.use(getSentryTracingHandler());
+
+// Winston + Morgan HTTP request logging
+app.use(morgan('combined', { stream }));
+
+// Apply enhanced security headers
+app.use(securityHeaders);
+
+// Apply legacy security middleware (CSP, CORS, headers, etc.)
 app.use(applySecurity());
+
+// Global rate limiting
+app.use(globalRateLimiter);
 
 // Enable compression
 app.use(compressionMiddleware);
@@ -40,6 +77,9 @@ app.use(express.json({
 }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// CSRF Protection - set token for GET requests
+app.use(setCsrfToken);
 
 // ============================================================================
 // HEALTH CHECK ENDPOINTS
@@ -80,14 +120,30 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Apply rate limiting to API routes
+  // Apply rate limiting to specific route patterns
+  app.use('/api/auth', authRateLimiter);
+  app.use('/api/admin', adminRateLimiter);
+  app.use('/api/upload', uploadRateLimiter);
+  app.use('/api/search', searchRateLimiter);
   app.use('/api', apiRateLimiter);
   
+  // CSRF Protection - verify token for mutating requests
+  app.use('/api', verifyCsrfToken);
+  
   const server = await registerRoutes(app);
+
+  // Sentry error handler (must be before other error handlers)
+  app.use(getSentryErrorHandler());
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
+    
+    // Log error with Winston
+    logger.error(`Error ${status}: ${message}`, {
+      error: err.message,
+      stack: err.stack,
+    });
 
     res.status(status).json({ message });
     throw err;
