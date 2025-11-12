@@ -196,7 +196,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 // POST /api/groups - Create new group (auth required)
 router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const authorId = req.authorId!;
+    const userId = req.user!.id;
     
     const groupData = insertGroupSchema.omit({ createdBy: true }).parse(req.body);
 
@@ -204,14 +204,14 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
       .insert(groups)
       .values({
         ...groupData,
-        createdBy: authorId
+        createdBy: userId
       })
       .returning();
 
     // Automatically add creator as admin member
     await db.insert(groupMembers).values({
       groupId: group.id,
-      authorId,
+      userId,
       role: "admin",
       status: "active"
     });
@@ -229,7 +229,7 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
 // PUT /api/groups/:id - Update group (auth required, admin only)
 router.put("/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const authorId = req.authorId!;
+    const userId = req.user!.id;
     const { id } = req.params;
 
     // Check if user is admin
@@ -238,7 +238,7 @@ router.put("/:id", authenticateToken, async (req: AuthRequest, res: Response) =>
       .from(groupMembers)
       .where(and(
         eq(groupMembers.groupId, parseInt(id)),
-        eq(groupMembers.userId, authorId),
+        eq(groupMembers.userId, userId),
         or(
           eq(groupMembers.role, "admin"),
           eq(groupMembers.role, "moderator")
@@ -269,7 +269,7 @@ router.put("/:id", authenticateToken, async (req: AuthRequest, res: Response) =>
 // DELETE /api/groups/:id - Delete group (auth required, creator only)
 router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const authorId = req.authorId!;
+    const userId = req.user!.id;
     const { id } = req.params;
 
     // Check if user is creator
@@ -283,7 +283,7 @@ router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response)
       return res.status(404).json({ message: "Group not found" });
     }
 
-    if (group[0].createdBy !== authorId) {
+    if (group[0].createdBy !== userId) {
       return res.status(403).json({ message: "Only the group creator can delete this group" });
     }
 
@@ -303,7 +303,7 @@ router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response)
 // POST /api/groups/:id/join - Join group (auth required)
 router.post("/:id/join", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const authorId = req.authorId!;
+    const userId = req.user!.id;
     const { id } = req.params;
 
     // Check if group exists
@@ -323,7 +323,7 @@ router.post("/:id/join", authenticateToken, async (req: AuthRequest, res: Respon
       .from(groupMembers)
       .where(and(
         eq(groupMembers.groupId, parseInt(id)),
-        eq(groupMembers.userId, authorId)
+        eq(groupMembers.userId, userId)
       ))
       .limit(1);
 
@@ -338,7 +338,7 @@ router.post("/:id/join", authenticateToken, async (req: AuthRequest, res: Respon
         .set({ status: "active", joinedAt: new Date() })
         .where(and(
           eq(groupMembers.groupId, parseInt(id)),
-          eq(groupMembers.userId, authorId)
+          eq(groupMembers.userId, userId)
         ))
         .returning();
       
@@ -352,7 +352,7 @@ router.post("/:id/join", authenticateToken, async (req: AuthRequest, res: Respon
       .insert(groupMembers)
       .values({
         groupId: parseInt(id),
-        authorId,
+        userId,
         role: "member",
         status
       })
@@ -376,7 +376,7 @@ router.post("/:id/join", authenticateToken, async (req: AuthRequest, res: Respon
 // POST /api/groups/:id/leave - Leave group (auth required)
 router.post("/:id/leave", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const authorId = req.authorId!;
+    const userId = req.user!.id;
     const { id } = req.params;
 
     // Check if member
@@ -385,7 +385,7 @@ router.post("/:id/leave", authenticateToken, async (req: AuthRequest, res: Respo
       .from(groupMembers)
       .where(and(
         eq(groupMembers.groupId, parseInt(id)),
-        eq(groupMembers.userId, authorId)
+        eq(groupMembers.userId, userId)
       ))
       .limit(1);
 
@@ -410,7 +410,7 @@ router.post("/:id/leave", authenticateToken, async (req: AuthRequest, res: Respo
       .delete(groupMembers)
       .where(and(
         eq(groupMembers.groupId, parseInt(id)),
-        eq(groupMembers.userId, authorId)
+        eq(groupMembers.userId, userId)
       ));
 
     // Update member count
@@ -508,7 +508,7 @@ router.get("/:id/posts", async (req: Request, res: Response) => {
 // POST /api/groups/:id/posts - Create group post (auth required, members only)
 router.post("/:id/posts", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const authorId = req.authorId!;
+    const userId = req.user!.id;
     const { id } = req.params;
     const { content, mediaUrls } = req.body;
 
@@ -535,7 +535,7 @@ router.post("/:id/posts", authenticateToken, async (req: AuthRequest, res: Respo
       .insert(groupPosts)
       .values({
         groupId: parseInt(id),
-        authorId,
+        userId,
         content,
         mediaUrls: mediaUrls || []
       })
