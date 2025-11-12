@@ -1,0 +1,59 @@
+{
+  "cookies": [
+    {
+      "name": "refreshToken",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJlbWFpbCI6ImFkbWluQG11bmRvdGFuZ28ubGlmZSIsInJvbGUiOiJzdXBlcl9hZG1pbiIsImlhdCI6MTc2Mjk4OTk4OCwiZXhwIjoxNzYzNTk0Nzg4fQ._UKYZOHScaIoVQRiubUgKapYBPNBjcnVX9kdjSksZwk",
+      "domain": "e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev",
+      "path": "/",
+      "expires": 1763594788.11053,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "XSRF-TOKEN",
+      "value": "39b72a1f6c52ea218a189d6e47078083381ab26f4329712550a944e5840c75f0",
+      "domain": "e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev",
+      "path": "/",
+      "expires": 1763076395.930541,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev",
+      "localStorage": [
+        {
+          "name": "i18nextLng",
+          "value": "en"
+        },
+        {
+          "name": "mr_blue_breadcrumbs",
+          "value": "{\"sessionId\":\"session_1762989970434_vu6zdnnm7\",\"breadcrumbs\":[]}"
+        },
+        {
+          "name": "mundo-tango-dark-mode",
+          "value": "light"
+        },
+        {
+          "name": "accessToken",
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE1LCJlbWFpbCI6ImFkbWluQG11bmRvdGFuZ28ubGlmZSIsInJvbGUiOiJzdXBlcl9hZG1pbiIsImlhdCI6MTc2Mjk4OTk4OCwiZXhwIjoxNzYyOTkwODg4fQ.T7aqZcmsVTPmupmD9ZRbpOZyYBNl4jA0msnwYSMiv3Y"
+        },
+        {
+          "name": "mt_errors",
+          "value": "[{\"timestamp\":\"2025-11-12T23:26:35.897Z\",\"level\":\"error\",\"message\":\"Query failed\",\"component\":\"ReactQuery\",\"action\":\"query\",\"error\":\"Unexpected token '<', \\\"<!DOCTYPE \\\"... is not valid JSON\",\"stack\":\"SyntaxError: Unexpected token '<', \\\"<!DOCTYPE \\\"... is not valid JSON\"},{\"timestamp\":\"2025-11-12T23:26:35.911Z\",\"level\":\"error\",\"message\":\"Query failed\",\"component\":\"ReactQuery\",\"action\":\"query\",\"error\":\"Unexpected token '<', \\\"<!DOCTYPE \\\"... is not valid JSON\",\"stack\":\"SyntaxError: Unexpected token '<', \\\"<!DOCTYPE \\\"... is not valid JSON\"},{\"timestamp\":\"2025-11-12T23:26:35.940Z\",\"level\":\"error\",\"message\":\"Query failed\",\"component\":\"ReactQuery\",\"action\":\"query\",\"error\":\"Unexpected token '<', \\\"<!DOCTYPE \\\"... is not valid JSON\",\"stack\":\"SyntaxError: Unexpected token '<', \\\"<!DOCTYPE \\\"... is not valid JSON\"}]"
+        },
+        {
+          "name": "visual_editor_session",
+          "value": "{\"sessionId\":\"edit-1762989970435\",\"edits\":[],\"totalChanges\":0}"
+        },
+        {
+          "name": "replitDevBannerClosed-e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev",
+          "value": "true"
+        }
+      ]
+    }
+  ]
+}
