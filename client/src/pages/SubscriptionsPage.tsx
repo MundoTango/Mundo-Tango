@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SEO } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check, Sparkles, Crown, Zap } from "lucide-react";
@@ -110,6 +111,10 @@ export default function SubscriptionsPage() {
   return (
     <SelfHealingErrorBoundary pageName="Subscriptions" fallbackRoute="/feed">
       <PageLayout title="Choose Your Plan" showBreadcrumbs>
+        <SEO
+          title="Subscriptions & Pricing | Mundo Tango"
+          description="Choose your perfect membership plan. Access premium features, connect with dancers worldwide, and unlock exclusive tango community benefits. Free and paid tiers available."
+        />
         <div className="min-h-screen bg-background">
           {/* Editorial Hero Section - 16:9 */}
           <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">

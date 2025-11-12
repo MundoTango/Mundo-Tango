@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import { Input } from "@/components/ui/input";
 import { BookOpen, Calendar, Clock, Search } from "lucide-react";
 import { Link } from "wouter";
@@ -25,6 +26,10 @@ export default function BlogPage() {
 
   return (
     <AppLayout>
+      <SEO
+        title="Tango Blog | Mundo Tango"
+        description="Read stories, tips, and insights from the tango world. Explore techniques, history, culture, events, and interviews from dancers and teachers worldwide."
+      />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <div className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">

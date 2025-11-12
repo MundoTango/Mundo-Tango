@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SEO } from "@/components/SEO";
 import { EyeOff, Shield } from "lucide-react";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
@@ -13,6 +14,10 @@ export default function BlockedContentPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Blocked Content" fallbackRoute="/settings">
+      <SEO
+        title="Blocked Content | Mundo Tango"
+        description="Manage content you've hidden from your feed. Review and unblock posts or comments you previously blocked on Mundo Tango."
+      />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <div className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">

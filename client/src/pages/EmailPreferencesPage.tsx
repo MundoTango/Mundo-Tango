@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import { Mail, Settings, ChevronRight } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
@@ -19,6 +20,10 @@ export default function EmailPreferencesPage() {
   return (
     <SelfHealingErrorBoundary pageName="Email Preferences" fallbackRoute="/settings">
       <PageLayout title="Email Preferences" showBreadcrumbs>
+        <SEO
+          title="Email Preferences | Mundo Tango"
+          description="Manage your email notification preferences. Control which updates you receive from Mundo Tango and stay informed about events, messages, and community activity."
+        />
         <div className="min-h-screen">
           {/* Hero Section - 16:9 */}
           <section className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">

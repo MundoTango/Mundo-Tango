@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle, Clock, AlertCircle, ListTodo, Play } from "lucide-react";
@@ -85,6 +86,10 @@ export default function AgentTasksPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Agent Tasks" fallbackRoute="/platform">
+      <SEO
+        title="Agent Tasks | Mundo Tango"
+        description="Monitor and manage AI agent tasks. Track pending, in-progress, and completed tasks across all platform agents for optimal performance."
+      />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">

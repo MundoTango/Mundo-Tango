@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -66,6 +67,10 @@ export default function ProfilePrototypePage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={`${PROFILE_DATA.name} (@${PROFILE_DATA.username.replace('@', '')}) | Mundo Tango`}
+        description={`${PROFILE_DATA.bio} ${PROFILE_DATA.location}. View posts, events, and connect with ${PROFILE_DATA.name} on Mundo Tango.`}
+      />
       {/* Cover Photo - 16:9 aspect ratio hero with editorial treatment */}
       <div className="relative w-full aspect-[16/6] overflow-hidden">
         <motion.img

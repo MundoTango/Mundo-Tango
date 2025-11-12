@@ -96,6 +96,25 @@ export const follows = pgTable("follows", {
 }));
 
 // ============================================================================
+// PROFILE ANALYTICS
+// ============================================================================
+
+export const profileViews = pgTable("profile_views", {
+  id: serial("id").primaryKey(),
+  profileUserId: integer("profile_user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  viewerUserId: integer("viewer_user_id").references(() => users.id, { onDelete: "cascade" }),
+  profileType: varchar("profile_type", { length: 50 }),
+  viewerIp: varchar("viewer_ip", { length: 45 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  profileUserIdx: index("profile_views_profile_user_idx").on(table.profileUserId),
+  viewerUserIdx: index("profile_views_viewer_user_idx").on(table.viewerUserId),
+  createdAtIdx: index("profile_views_created_at_idx").on(table.createdAt),
+  profileTypeIdx: index("profile_views_profile_type_idx").on(table.profileType),
+  compositeIdx: index("profile_views_composite_idx").on(table.profileUserId, table.createdAt),
+}));
+
+// ============================================================================
 // EVENTS (matching existing schema + extensions)
 // ============================================================================
 
@@ -1556,6 +1575,14 @@ export const insertFollowSchema = createInsertSchema(follows).omit({
 });
 export type InsertFollow = z.infer<typeof insertFollowSchema>;
 export type SelectFollow = typeof follows.$inferSelect;
+
+// Profile Views
+export const insertProfileViewSchema = createInsertSchema(profileViews).omit({ 
+  id: true, 
+  createdAt: true 
+});
+export type InsertProfileView = z.infer<typeof insertProfileViewSchema>;
+export type SelectProfileView = typeof profileViews.$inferSelect;
 
 // Post Likes
 export const insertPostLikeSchema = createInsertSchema(postLikes).omit({ 
@@ -3794,6 +3821,1285 @@ export const talentMatches = pgTable("talent_matches", {
   scoreIdx: index("idx_talent_matches_score").on(table.matchScore),
 }));
 
+// ============================================================================
+// SPECIALIZED PROFILE TABLES - 17 PROFESSIONAL PROFILE TYPES
+// ============================================================================
+
+// 1. Teacher Profiles
+export const teacherProfiles = pgTable("teacher_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  
+  // Bio & Experience
+  bio: text("bio"),
+  yearsExperience: integer("years_experience"),
+  teachingSince: integer("teaching_since"),
+  
+  // Teaching Styles & Specialties
+  teachingStyles: text("teaching_styles").array(), // 'salon', 'nuevo', 'milonguero', etc.
+  specialties: text("specialties").array(), // 'beginners', 'advanced', 'technique', 'musicality'
+  levels: text("levels").array(), // 'beginner', 'intermediate', 'advanced'
+  
+  // Certifications
+  certifications: text("certifications").array(),
+  certificationDetails: jsonb("certification_details").$type<Array<{
+    name: string;
+    issuer: string;
+    year: number;
+    certificate_url?: string;
+  }>>(),
+  
+  // Pricing & Availability
+  hourlyRate: numeric("hourly_rate", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  privateClassRate: numeric("private_class_rate", { precision: 10, scale: 2 }),
+  groupClassRate: numeric("group_class_rate", { precision: 10, scale: 2 }),
+  availability: jsonb("availability").$type<{
+    weekdays?: string[];
+    timeSlots?: string[];
+    locations?: string[];
+  }>(),
+  
+  // Media
+  photoUrls: text("photo_urls").array(),
+  videoUrls: text("video_urls").array(),
+  portfolioUrl: text("portfolio_url"),
+  
+  // Teaching Info
+  languagesSpoken: text("languages_spoken").array(),
+  teachingLocations: text("teaching_locations").array(), // cities/venues
+  onlineTeaching: boolean("online_teaching").default(false),
+  travelForTeaching: boolean("travel_for_teaching").default(false),
+  
+  // Stats
+  totalStudents: integer("total_students").default(0),
+  activeStudents: integer("active_students").default(0),
+  averageRating: real("average_rating"),
+  reviewCount: integer("review_count").default(0),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("teacher_profiles_user_idx").on(table.userId),
+  activeIdx: index("teacher_profiles_active_idx").on(table.isActive),
+  ratingIdx: index("teacher_profiles_rating_idx").on(table.averageRating),
+}));
+
+// 2. DJ Profiles
+export const djProfiles = pgTable("dj_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  
+  // Bio & Experience
+  bio: text("bio"),
+  djName: varchar("dj_name", { length: 255 }),
+  yearsExperience: integer("years_experience"),
+  startedYear: integer("started_year"),
+  
+  // Music Styles
+  musicStyles: text("music_styles").array(), // 'traditional', 'alternative', 'neo', 'vals', 'milonga'
+  specialties: text("specialties").array(),
+  eras: text("eras").array(), // 'golden age', 'contemporary', 'mixed'
+  
+  // Equipment
+  equipment: jsonb("equipment").$type<{
+    mixer?: string;
+    speakers?: string;
+    software?: string[];
+    other?: string[];
+  }>(),
+  hasOwnEquipment: boolean("has_own_equipment").default(false),
+  
+  // Experience
+  setsPerformed: integer("sets_performed").default(0),
+  eventsWorked: integer("events_worked").default(0),
+  venuesPlayed: text("venues_played").array(),
+  
+  // Portfolio
+  portfolioLinks: text("portfolio_links").array(),
+  soundcloudUrl: text("soundcloud_url"),
+  spotifyUrl: text("spotify_url"),
+  youtubeUrl: text("youtube_url"),
+  mixcloudUrl: text("mixcloud_url"),
+  
+  // Pricing
+  hourlyRate: numeric("hourly_rate", { precision: 10, scale: 2 }),
+  eventRate: numeric("event_rate", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  
+  // Availability
+  availability: jsonb("availability"),
+  travelRadius: integer("travel_radius"), // miles/km
+  willingToTravel: boolean("willing_to_travel").default(false),
+  
+  // Media
+  photoUrls: text("photo_urls").array(),
+  videoUrls: text("video_urls").array(),
+  
+  // Stats
+  averageRating: real("average_rating"),
+  reviewCount: integer("review_count").default(0),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("dj_profiles_user_idx").on(table.userId),
+  activeIdx: index("dj_profiles_active_idx").on(table.isActive),
+  ratingIdx: index("dj_profiles_rating_idx").on(table.averageRating),
+}));
+
+// 3. Photographer Profiles
+export const photographerProfiles = pgTable("photographer_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  
+  // Bio
+  bio: text("bio"),
+  businessName: varchar("business_name", { length: 255 }),
+  yearsExperience: integer("years_experience"),
+  
+  // Specialties
+  specialties: text("specialties").array(), // 'event', 'portrait', 'performance', 'social'
+  photographyStyle: text("photography_style").array(), // 'candid', 'artistic', 'documentary'
+  
+  // Equipment
+  equipment: jsonb("equipment").$type<{
+    cameras?: string[];
+    lenses?: string[];
+    lighting?: string[];
+    other?: string[];
+  }>(),
+  
+  // Portfolio
+  portfolioUrl: text("portfolio_url"),
+  instagramUrl: text("instagram_url"),
+  websiteUrl: text("website_url"),
+  photoUrls: text("photo_urls").array(),
+  
+  // Packages & Pricing
+  packages: jsonb("packages").$type<Array<{
+    name: string;
+    description: string;
+    price: number;
+    duration?: string;
+    deliverables?: string[];
+  }>>(),
+  hourlyRate: numeric("hourly_rate", { precision: 10, scale: 2 }),
+  eventRate: numeric("event_rate", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  
+  // Services
+  servicesOffered: text("services_offered").array(), // 'photo', 'video', 'editing', 'prints'
+  deliveryTime: varchar("delivery_time", { length: 100 }), // '2 weeks', '1 month'
+  
+  // Coverage
+  coverageAreas: text("coverage_areas").array(),
+  willingToTravel: boolean("willing_to_travel").default(false),
+  travelFee: numeric("travel_fee", { precision: 10, scale: 2 }),
+  
+  // Stats
+  eventsPhotographed: integer("events_photographed").default(0),
+  averageRating: real("average_rating"),
+  reviewCount: integer("review_count").default(0),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("photographer_profiles_user_idx").on(table.userId),
+  activeIdx: index("photographer_profiles_active_idx").on(table.isActive),
+  ratingIdx: index("photographer_profiles_rating_idx").on(table.averageRating),
+}));
+
+// 4. Performer Profiles
+export const performerProfiles = pgTable("performer_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  
+  // Bio
+  bio: text("bio"),
+  stageName: varchar("stage_name", { length: 255 }),
+  yearsPerforming: integer("years_performing"),
+  
+  // Performance Types
+  performanceTypes: text("performance_types").array(), // 'solo', 'couple', 'group', 'show'
+  styles: text("styles").array(), // 'stage tango', 'fantasia', 'traditional'
+  
+  // Experience
+  performanceCount: integer("performance_count").default(0),
+  venuesPerformed: text("venues_performed").array(),
+  notablePerformances: jsonb("notable_performances").$type<Array<{
+    event: string;
+    venue: string;
+    date: string;
+    description?: string;
+  }>>(),
+  
+  // Repertoire
+  repertoire: text("repertoire").array(),
+  choreographies: text("choreographies").array(),
+  
+  // Media
+  demoVideoUrls: text("demo_video_urls").array(),
+  photoUrls: text("photo_urls").array(),
+  portfolioUrl: text("portfolio_url"),
+  youtubeUrl: text("youtube_url"),
+  instagramUrl: text("instagram_url"),
+  
+  // Availability
+  availability: jsonb("availability"),
+  requiresPartner: boolean("requires_partner").default(false),
+  partnerName: varchar("partner_name", { length: 255 }),
+  
+  // Pricing
+  performanceFee: numeric("performance_fee", { precision: 10, scale: 2 }),
+  rehearsalFee: numeric("rehearsal_fee", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  
+  // Technical Requirements
+  technicalRequirements: text("technical_requirements"),
+  musicRequirements: text("music_requirements"),
+  
+  // Stats
+  averageRating: real("average_rating"),
+  reviewCount: integer("review_count").default(0),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("performer_profiles_user_idx").on(table.userId),
+  activeIdx: index("performer_profiles_active_idx").on(table.isActive),
+  ratingIdx: index("performer_profiles_rating_idx").on(table.averageRating),
+}));
+
+// 5. Vendor Profiles
+export const vendorProfiles = pgTable("vendor_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  
+  // Business Info
+  businessName: varchar("business_name", { length: 255 }).notNull(),
+  bio: text("bio"),
+  yearsInBusiness: integer("years_in_business"),
+  
+  // Products & Services
+  productCategories: text("product_categories").array(), // 'shoes', 'clothing', 'accessories', 'music'
+  servicesOffered: text("services_offered").array(),
+  
+  // Catalog
+  products: jsonb("products").$type<Array<{
+    name: string;
+    description: string;
+    price: number;
+    category: string;
+    imageUrl?: string;
+    inStock?: boolean;
+  }>>(),
+  
+  // Pricing
+  priceRange: varchar("price_range", { length: 50 }), // '$', '$$', '$$$'
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  acceptsCustomOrders: boolean("accepts_custom_orders").default(false),
+  
+  // Delivery
+  deliveryAreas: text("delivery_areas").array(),
+  shippingOptions: text("shipping_options").array(), // 'local pickup', 'domestic', 'international'
+  shippingCost: numeric("shipping_cost", { precision: 10, scale: 2 }),
+  
+  // Store Info
+  websiteUrl: text("website_url"),
+  shopUrl: text("shop_url"),
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  
+  // Social & Media
+  instagramUrl: text("instagram_url"),
+  facebookUrl: text("facebook_url"),
+  photoUrls: text("photo_urls").array(),
+  
+  // Location
+  hasPhysicalStore: boolean("has_physical_store").default(false),
+  storeAddress: text("store_address"),
+  storeHours: jsonb("store_hours"),
+  
+  // Stats
+  totalSales: integer("total_sales").default(0),
+  averageRating: real("average_rating"),
+  reviewCount: integer("review_count").default(0),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("vendor_profiles_user_idx").on(table.userId),
+  activeIdx: index("vendor_profiles_active_idx").on(table.isActive),
+  ratingIdx: index("vendor_profiles_rating_idx").on(table.averageRating),
+}));
+
+// 6. Musician Profiles
+export const musicianProfiles = pgTable("musician_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  
+  // Bio
+  bio: text("bio"),
+  artistName: varchar("artist_name", { length: 255 }),
+  yearsExperience: integer("years_experience"),
+  
+  // Musical Info
+  instruments: text("instruments").array(), // 'bandoneon', 'violin', 'piano', 'guitar'
+  genres: text("genres").array(), // 'tango', 'milonga', 'vals', 'folklore'
+  musicalStyles: text("musical_styles").array(), // 'traditional', 'nuevo', 'electrotango'
+  
+  // Performance History
+  performanceHistory: jsonb("performance_history").$type<Array<{
+    venue: string;
+    date: string;
+    role: string;
+    description?: string;
+  }>>(),
+  orchestrasPlayed: text("orchestras_played").array(),
+  
+  // Recordings & Media
+  audioSamples: text("audio_samples").array(),
+  videoUrls: text("video_urls").array(),
+  spotifyUrl: text("spotify_url"),
+  soundcloudUrl: text("soundcloud_url"),
+  youtubeUrl: text("youtube_url"),
+  
+  // Portfolio
+  albums: jsonb("albums").$type<Array<{
+    title: string;
+    year: number;
+    role: string;
+    url?: string;
+  }>>(),
+  compositions: text("compositions").array(),
+  
+  // Availability
+  availableForHire: boolean("available_for_hire").default(false),
+  availability: jsonb("availability"),
+  
+  // Pricing
+  performanceFee: numeric("performance_fee", { precision: 10, scale: 2 }),
+  sessionFee: numeric("session_fee", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  
+  // Stats
+  performanceCount: integer("performance_count").default(0),
+  averageRating: real("average_rating"),
+  reviewCount: integer("review_count").default(0),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("musician_profiles_user_idx").on(table.userId),
+  activeIdx: index("musician_profiles_active_idx").on(table.isActive),
+  ratingIdx: index("musician_profiles_rating_idx").on(table.averageRating),
+}));
+
+// 7. Choreographer Profiles
+export const choreographerProfiles = pgTable("choreographer_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  
+  // Bio
+  bio: text("bio"),
+  yearsExperience: integer("years_experience"),
+  
+  // Style Specialties
+  styleSpecialties: text("style_specialties").array(), // 'stage', 'salon', 'nuevo', 'theatrical'
+  
+  // Works Created
+  worksCreated: jsonb("works_created").$type<Array<{
+    title: string;
+    year: number;
+    duration: string;
+    description: string;
+    performers?: string;
+    videoUrl?: string;
+  }>>(),
+  choreographyCount: integer("choreography_count").default(0),
+  
+  // Teaching
+  teachingAvailable: boolean("teaching_available").default(false),
+  workshopsOffered: text("workshops_offered").array(),
+  
+  // Portfolio
+  portfolioUrl: text("portfolio_url"),
+  videoUrls: text("video_urls").array(),
+  photoUrls: text("photo_urls").array(),
+  youtubeUrl: text("youtube_url"),
+  instagramUrl: text("instagram_url"),
+  
+  // Collaborations
+  notableCollaborations: text("notable_collaborations").array(),
+  companies: text("companies").array(), // Companies worked with
+  
+  // Services
+  servicesOffered: text("services_offered").array(), // 'custom choreography', 'show creation', 'workshops'
+  
+  // Pricing
+  choreographyFee: numeric("choreography_fee", { precision: 10, scale: 2 }),
+  workshopFee: numeric("workshop_fee", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  
+  // Availability
+  availability: jsonb("availability"),
+  willingToTravel: boolean("willing_to_travel").default(false),
+  
+  // Stats
+  averageRating: real("average_rating"),
+  reviewCount: integer("review_count").default(0),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("choreographer_profiles_user_idx").on(table.userId),
+  activeIdx: index("choreographer_profiles_active_idx").on(table.isActive),
+  ratingIdx: index("choreographer_profiles_rating_idx").on(table.averageRating),
+}));
+
+// 8. Tango School Profiles
+export const tangoSchoolProfiles = pgTable("tango_school_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  
+  // School Info
+  schoolName: varchar("school_name", { length: 255 }).notNull(),
+  bio: text("bio"),
+  founded: integer("founded"),
+  
+  // Classes Offered
+  classTypes: text("class_types").array(), // 'group', 'private', 'workshops', 'intensive'
+  levels: text("levels").array(), // 'beginner', 'intermediate', 'advanced'
+  styles: text("styles").array(), // 'salon', 'milonguero', 'nuevo'
+  
+  // Schedule
+  schedule: jsonb("schedule").$type<Array<{
+    day: string;
+    time: string;
+    level: string;
+    teacher: string;
+  }>>(),
+  
+  // Instructors
+  instructors: jsonb("instructors").$type<Array<{
+    name: string;
+    bio?: string;
+    photo?: string;
+    specialties?: string[];
+  }>>(),
+  instructorCount: integer("instructor_count").default(0),
+  
+  // Facilities
+  facilities: jsonb("facilities").$type<{
+    floorType?: string;
+    floorSize?: string;
+    capacity?: number;
+    amenities?: string[];
+    accessibility?: string[];
+  }>(),
+  address: text("address"),
+  city: varchar("city", { length: 255 }),
+  country: varchar("country", { length: 255 }),
+  
+  // Pricing
+  priceRange: varchar("price_range", { length: 50 }),
+  packages: jsonb("packages").$type<Array<{
+    name: string;
+    description: string;
+    price: number;
+    duration: string;
+    classCount?: number;
+  }>>(),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  
+  // Contact
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  websiteUrl: text("website_url"),
+  
+  // Media
+  photoUrls: text("photo_urls").array(),
+  videoUrls: text("video_urls").array(),
+  instagramUrl: text("instagram_url"),
+  facebookUrl: text("facebook_url"),
+  
+  // Stats
+  studentCount: integer("student_count").default(0),
+  averageRating: real("average_rating"),
+  reviewCount: integer("review_count").default(0),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("tango_school_profiles_user_idx").on(table.userId),
+  activeIdx: index("tango_school_profiles_active_idx").on(table.isActive),
+  cityIdx: index("tango_school_profiles_city_idx").on(table.city),
+  ratingIdx: index("tango_school_profiles_rating_idx").on(table.averageRating),
+}));
+
+// 9. Tango Hotel Profiles
+export const tangoHotelProfiles = pgTable("tango_hotel_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  
+  // Hotel Info
+  hotelName: varchar("hotel_name", { length: 255 }).notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 50 }), // 'hotel', 'hostel', 'apartment', 'guesthouse'
+  starRating: integer("star_rating"), // 1-5
+  
+  // Location
+  address: text("address"),
+  city: varchar("city", { length: 255 }),
+  country: varchar("country", { length: 255 }),
+  neighborhood: varchar("neighborhood", { length: 255 }),
+  latitude: numeric("latitude", { precision: 10, scale: 7 }),
+  longitude: numeric("longitude", { precision: 10, scale: 7 }),
+  
+  // Rooms
+  rooms: jsonb("rooms").$type<Array<{
+    type: string;
+    capacity: number;
+    price: number;
+    amenities: string[];
+    photos?: string[];
+  }>>(),
+  totalRooms: integer("total_rooms"),
+  
+  // Amenities
+  amenities: text("amenities").array(), // 'wifi', 'breakfast', 'pool', 'gym', 'parking'
+  tangoAmenities: text("tango_amenities").array(), // 'practice space', 'dance floor', 'sound system'
+  
+  // Tango Events
+  hostsEvents: boolean("hosts_events").default(false),
+  eventsHosted: jsonb("events_hosted").$type<Array<{
+    name: string;
+    frequency: string;
+    description?: string;
+  }>>(),
+  hasDanceFloor: boolean("has_dance_floor").default(false),
+  
+  // Pricing
+  priceRange: varchar("price_range", { length: 50 }), // '$', '$$', '$$$'
+  lowestRate: numeric("lowest_rate", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  
+  // Tango-Specific Features
+  proximityToMilongas: text("proximity_to_milongas"),
+  tangoPackages: jsonb("tango_packages").$type<Array<{
+    name: string;
+    description: string;
+    price: number;
+    includes: string[];
+  }>>(),
+  
+  // Contact & Booking
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  websiteUrl: text("website_url"),
+  bookingUrl: text("booking_url"),
+  
+  // Media
+  photoUrls: text("photo_urls").array(),
+  videoUrls: text("video_urls").array(),
+  instagramUrl: text("instagram_url"),
+  
+  // Stats
+  averageRating: real("average_rating"),
+  reviewCount: integer("review_count").default(0),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("tango_hotel_profiles_user_idx").on(table.userId),
+  activeIdx: index("tango_hotel_profiles_active_idx").on(table.isActive),
+  cityIdx: index("tango_hotel_profiles_city_idx").on(table.city),
+  ratingIdx: index("tango_hotel_profiles_rating_idx").on(table.averageRating),
+}));
+
+// 10. Wellness Profiles
+export const wellnessProfiles = pgTable("wellness_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  
+  // Professional Info
+  bio: text("bio"),
+  professionalTitle: varchar("professional_title", { length: 255 }),
+  yearsExperience: integer("years_experience"),
+  
+  // Services
+  servicesOffered: text("services_offered").array(), // 'massage', 'physical therapy', 'yoga', 'pilates'
+  specialties: text("specialties").array(), // 'sports injury', 'dancer wellness', 'injury prevention'
+  
+  // Certifications
+  certifications: text("certifications").array(),
+  certificationDetails: jsonb("certification_details").$type<Array<{
+    name: string;
+    issuer: string;
+    year: number;
+    certificateUrl?: string;
+  }>>(),
+  licenses: text("licenses").array(),
+  
+  // Pricing
+  sessionRate: numeric("session_rate", { precision: 10, scale: 2 }),
+  packageRates: jsonb("package_rates").$type<Array<{
+    name: string;
+    sessions: number;
+    price: number;
+    description?: string;
+  }>>(),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  
+  // Practice Info
+  practiceName: varchar("practice_name", { length: 255 }),
+  address: text("address"),
+  city: varchar("city", { length: 255 }),
+  country: varchar("country", { length: 255 }),
+  
+  // Availability
+  availability: jsonb("availability"),
+  acceptsInsurance: boolean("accepts_insurance").default(false),
+  insuranceProviders: text("insurance_providers").array(),
+  
+  // Virtual Services
+  offersVirtualSessions: boolean("offers_virtual_sessions").default(false),
+  virtualPlatforms: text("virtual_platforms").array(),
+  
+  // Contact
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  websiteUrl: text("website_url"),
+  
+  // Media
+  photoUrls: text("photo_urls").array(),
+  videoUrls: text("video_urls").array(),
+  
+  // Stats
+  totalClients: integer("total_clients").default(0),
+  averageRating: real("average_rating"),
+  reviewCount: integer("review_count").default(0),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("wellness_profiles_user_idx").on(table.userId),
+  activeIdx: index("wellness_profiles_active_idx").on(table.isActive),
+  cityIdx: index("wellness_profiles_city_idx").on(table.city),
+  ratingIdx: index("wellness_profiles_rating_idx").on(table.averageRating),
+}));
+
+// 11. Tour Operator Profiles
+export const tourOperatorProfiles = pgTable("tour_operator_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  
+  // Business Info
+  companyName: varchar("company_name", { length: 255 }).notNull(),
+  bio: text("bio"),
+  yearsInBusiness: integer("years_in_business"),
+  
+  // Destinations
+  destinations: text("destinations").array(), // Cities/countries covered
+  primaryDestinations: text("primary_destinations").array(),
+  
+  // Packages
+  packages: jsonb("packages").$type<Array<{
+    name: string;
+    description: string;
+    duration: string;
+    destination: string;
+    price: number;
+    included: string[];
+    groupSize: {
+      min: number;
+      max: number;
+    };
+    dates?: string[];
+  }>>(),
+  
+  // Tour Types
+  tourTypes: text("tour_types").array(), // 'group', 'private', 'custom', 'festival'
+  tangoFocus: boolean("tango_focus").default(true),
+  
+  // Group Sizes
+  minGroupSize: integer("min_group_size"),
+  maxGroupSize: integer("max_group_size"),
+  
+  // Pricing
+  priceRange: varchar("price_range", { length: 50 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  
+  // Services Included
+  servicesIncluded: text("services_included").array(), // 'accommodation', 'transport', 'classes', 'milongas'
+  
+  // Languages
+  languagesOffered: text("languages_offered").array(),
+  
+  // Contact
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  websiteUrl: text("website_url"),
+  
+  // Media
+  photoUrls: text("photo_urls").array(),
+  videoUrls: text("video_urls").array(),
+  instagramUrl: text("instagram_url"),
+  facebookUrl: text("facebook_url"),
+  
+  // Stats
+  toursCompleted: integer("tours_completed").default(0),
+  totalParticipants: integer("total_participants").default(0),
+  averageRating: real("average_rating"),
+  reviewCount: integer("review_count").default(0),
+  
+  // Licenses & Certifications
+  licenses: text("licenses").array(),
+  certifications: text("certifications").array(),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("tour_operator_profiles_user_idx").on(table.userId),
+  activeIdx: index("tour_operator_profiles_active_idx").on(table.isActive),
+  ratingIdx: index("tour_operator_profiles_rating_idx").on(table.averageRating),
+}));
+
+// 12. Host Venue Profiles
+export const hostVenueProfiles = pgTable("host_venue_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  
+  // Venue Info
+  venueName: varchar("venue_name", { length: 255 }).notNull(),
+  description: text("description"),
+  venueType: varchar("venue_type", { length: 100 }), // 'studio', 'ballroom', 'cultural center', 'restaurant'
+  
+  // Location
+  address: text("address"),
+  city: varchar("city", { length: 255 }),
+  country: varchar("country", { length: 255 }),
+  neighborhood: varchar("neighborhood", { length: 255 }),
+  latitude: numeric("latitude", { precision: 10, scale: 7 }),
+  longitude: numeric("longitude", { precision: 10, scale: 7 }),
+  
+  // Capacity
+  capacity: integer("capacity"),
+  standingCapacity: integer("standing_capacity"),
+  seatedCapacity: integer("seated_capacity"),
+  
+  // Facilities
+  floorType: varchar("floor_type", { length: 100 }), // 'wood', 'parquet', 'vinyl'
+  floorSize: varchar("floor_size", { length: 100 }), // '500 sq ft', etc.
+  facilities: text("facilities").array(), // 'sound system', 'stage', 'lighting', 'climate control'
+  amenities: text("amenities").array(), // 'parking', 'wheelchair access', 'wifi', 'bar'
+  
+  // Availability
+  availabilityCalendar: jsonb("availability_calendar"), // Complex availability data
+  minimumBookingHours: integer("minimum_booking_hours"),
+  advanceBookingDays: integer("advance_booking_days"), // How far in advance required
+  
+  // Pricing
+  hourlyRate: numeric("hourly_rate", { precision: 10, scale: 2 }),
+  dailyRate: numeric("daily_rate", { precision: 10, scale: 2 }),
+  depositRequired: boolean("deposit_required").default(false),
+  depositAmount: numeric("deposit_amount", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  
+  // Event Types Accepted
+  eventTypesAccepted: text("event_types_accepted").array(), // 'milonga', 'class', 'workshop', 'performance'
+  
+  // Technical Specs
+  soundSystem: jsonb("sound_system").$type<{
+    available: boolean;
+    specs?: string;
+    included?: boolean;
+  }>(),
+  lightingSystem: jsonb("lighting_system"),
+  
+  // Catering
+  cateringAvailable: boolean("catering_available").default(false),
+  alcoholAllowed: boolean("alcohol_allowed").default(false),
+  externalCateringAllowed: boolean("external_catering_allowed").default(false),
+  
+  // Contact
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  websiteUrl: text("website_url"),
+  
+  // Media
+  photoUrls: text("photo_urls").array(),
+  videoUrls: text("video_urls").array(),
+  virtualTourUrl: text("virtual_tour_url"),
+  
+  // Stats
+  eventsHosted: integer("events_hosted").default(0),
+  averageRating: real("average_rating"),
+  reviewCount: integer("review_count").default(0),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("host_venue_profiles_user_idx").on(table.userId),
+  activeIdx: index("host_venue_profiles_active_idx").on(table.isActive),
+  cityIdx: index("host_venue_profiles_city_idx").on(table.city),
+  ratingIdx: index("host_venue_profiles_rating_idx").on(table.averageRating),
+  capacityIdx: index("host_venue_profiles_capacity_idx").on(table.capacity),
+}));
+
+// 13. Tango Guide Profiles
+export const tangoGuideProfiles = pgTable("tango_guide_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  
+  // Guide Info
+  bio: text("bio"),
+  yearsExperience: integer("years_experience"),
+  
+  // Coverage
+  citiesCovered: text("cities_covered").array(),
+  primaryCity: varchar("primary_city", { length: 255 }),
+  country: varchar("country", { length: 255 }),
+  
+  // Languages
+  languagesSpoken: text("languages_spoken").array(),
+  
+  // Services
+  servicesOffered: text("services_offered").array(), // 'city tours', 'milonga tours', 'shopping', 'cultural'
+  tourTypes: text("tour_types").array(), // 'walking', 'driving', 'evening', 'multi-day'
+  
+  // Expertise
+  specialKnowledge: text("special_knowledge").array(), // 'tango history', 'venues', 'local culture'
+  neighborhoods: text("neighborhoods").array(), // Neighborhoods covered
+  
+  // Tango-Specific
+  milongaKnowledge: boolean("milonga_knowledge").default(true),
+  venueConnections: boolean("venue_connections").default(false), // Has connections to get in
+  canArrangeClasses: boolean("can_arrange_classes").default(false),
+  canArrangeShows: boolean("can_arrange_shows").default(false),
+  
+  // Pricing
+  hourlyRate: numeric("hourly_rate", { precision: 10, scale: 2 }),
+  halfDayRate: numeric("half_day_rate", { precision: 10, scale: 2 }),
+  fullDayRate: numeric("full_day_rate", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  
+  // Packages
+  packages: jsonb("packages").$type<Array<{
+    name: string;
+    description: string;
+    duration: string;
+    price: number;
+    includes: string[];
+  }>>(),
+  
+  // Availability
+  availability: jsonb("availability"),
+  minimumHours: integer("minimum_hours"),
+  advanceNotice: integer("advance_notice"), // Days of advance notice required
+  
+  // Transportation
+  hasVehicle: boolean("has_vehicle").default(false),
+  vehicleType: varchar("vehicle_type", { length: 100 }),
+  transportIncluded: boolean("transport_included").default(false),
+  
+  // Contact
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  websiteUrl: text("website_url"),
+  
+  // Media
+  photoUrls: text("photo_urls").array(),
+  videoUrls: text("video_urls").array(),
+  
+  // Stats
+  toursCompleted: integer("tours_completed").default(0),
+  averageRating: real("average_rating"),
+  reviewCount: integer("review_count").default(0),
+  
+  // Certifications
+  tourismLicense: varchar("tourism_license", { length: 255 }),
+  certifications: text("certifications").array(),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("tango_guide_profiles_user_idx").on(table.userId),
+  activeIdx: index("tango_guide_profiles_active_idx").on(table.isActive),
+  cityIdx: index("tango_guide_profiles_city_idx").on(table.primaryCity),
+  ratingIdx: index("tango_guide_profiles_rating_idx").on(table.averageRating),
+}));
+
+// 14. Content Creator Profiles
+export const contentCreatorProfiles = pgTable("content_creator_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  
+  // Creator Info
+  bio: text("bio"),
+  creatorName: varchar("creator_name", { length: 255 }),
+  yearsCreating: integer("years_creating"),
+  
+  // Content Types
+  contentTypes: text("content_types").array(), // 'video', 'blog', 'podcast', 'photography', 'social media'
+  formats: text("formats").array(), // 'tutorials', 'vlogs', 'reviews', 'documentaries'
+  
+  // Platforms
+  platforms: jsonb("platforms").$type<Array<{
+    name: string;
+    handle: string;
+    url: string;
+    followers?: number;
+  }>>(),
+  
+  // Portfolio
+  portfolioUrl: text("portfolio_url"),
+  featuredWork: jsonb("featured_work").$type<Array<{
+    title: string;
+    url: string;
+    type: string;
+    description?: string;
+    thumbnail?: string;
+  }>>(),
+  
+  // Social Media
+  youtubeUrl: text("youtube_url"),
+  instagramUrl: text("instagram_url"),
+  tiktokUrl: text("tiktok_url"),
+  blogUrl: text("blog_url"),
+  podcastUrl: text("podcast_url"),
+  
+  // Audience
+  totalFollowers: integer("total_followers").default(0),
+  averageViews: integer("average_views"),
+  engagementRate: real("engagement_rate"),
+  
+  // Collaboration
+  openToCollaboration: boolean("open_to_collaboration").default(true),
+  collaborationTypes: text("collaboration_types").array(), // 'sponsorship', 'guest post', 'interview', 'review'
+  
+  // Pricing
+  collaborationRates: jsonb("collaboration_rates").$type<Array<{
+    type: string;
+    price: number;
+    description: string;
+  }>>(),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  
+  // Media Kit
+  mediaKitUrl: text("media_kit_url"),
+  
+  // Contact
+  businessEmail: varchar("business_email", { length: 255 }),
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  
+  // Stats
+  totalContent: integer("total_content").default(0),
+  averageRating: real("average_rating"),
+  reviewCount: integer("review_count").default(0),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("content_creator_profiles_user_idx").on(table.userId),
+  activeIdx: index("content_creator_profiles_active_idx").on(table.isActive),
+  followersIdx: index("content_creator_profiles_followers_idx").on(table.totalFollowers),
+  ratingIdx: index("content_creator_profiles_rating_idx").on(table.averageRating),
+}));
+
+// 15. Learning Resource Profiles
+export const learningResourceProfiles = pgTable("learning_resource_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  
+  // Resource Info
+  resourceName: varchar("resource_name", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Course Types
+  courseTypes: text("course_types").array(), // 'online course', 'video series', 'ebook', 'tutorial'
+  levels: text("levels").array(), // 'beginner', 'intermediate', 'advanced'
+  formats: text("formats").array(), // 'video', 'text', 'audio', 'interactive'
+  
+  // Courses/Resources
+  resources: jsonb("resources").$type<Array<{
+    title: string;
+    description: string;
+    type: string;
+    level: string;
+    price: number;
+    duration?: string;
+    lessons?: number;
+    url?: string;
+    thumbnail?: string;
+  }>>(),
+  
+  // Pricing
+  priceRange: varchar("price_range", { length: 50 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  offersFreeTrial: boolean("offers_free_trial").default(false),
+  freeResourcesAvailable: boolean("free_resources_available").default(false),
+  
+  // Platform
+  platformUrl: text("platform_url"),
+  platformType: varchar("platform_type", { length: 100 }), // 'udemy', 'teachable', 'custom', 'youtube'
+  
+  // Content Details
+  totalLessons: integer("total_lessons").default(0),
+  totalHours: integer("total_hours"),
+  languagesAvailable: text("languages_available").array(),
+  
+  // Features
+  features: text("features").array(), // 'certificates', 'lifetime access', 'community', 'support'
+  includesCertificate: boolean("includes_certificate").default(false),
+  
+  // Preview
+  previewVideoUrl: text("preview_video_url"),
+  sampleLessons: text("sample_lessons").array(),
+  
+  // Media
+  photoUrls: text("photo_urls").array(),
+  videoUrls: text("video_urls").array(),
+  
+  // Stats
+  totalStudents: integer("total_students").default(0),
+  completionRate: real("completion_rate"),
+  averageRating: real("average_rating"),
+  reviewCount: integer("review_count").default(0),
+  
+  // Contact
+  email: varchar("email", { length: 255 }),
+  websiteUrl: text("website_url"),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("learning_resource_profiles_user_idx").on(table.userId),
+  activeIdx: index("learning_resource_profiles_active_idx").on(table.isActive),
+  ratingIdx: index("learning_resource_profiles_rating_idx").on(table.averageRating),
+  studentsIdx: index("learning_resource_profiles_students_idx").on(table.totalStudents),
+}));
+
+// 16. Taxi Dancer Profiles
+export const taxiDancerProfiles = pgTable("taxi_dancer_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  
+  // Profile Info
+  bio: text("bio"),
+  yearsExperience: integer("years_experience"),
+  
+  // Dance Info
+  roles: text("roles").array(), // 'leader', 'follower', 'both'
+  styles: text("styles").array(), // 'salon', 'milonguero', 'nuevo'
+  levels: text("levels").array(), // Levels comfortable dancing with
+  
+  // Availability
+  availability: jsonb("availability").$type<{
+    weekdays?: string[];
+    timeSlots?: string[];
+    regularMilongas?: string[];
+  }>(),
+  availableForEvents: boolean("available_for_events").default(true),
+  availableForPractice: boolean("available_for_practice").default(true),
+  
+  // Pricing
+  hourlyRate: numeric("hourly_rate", { precision: 10, scale: 2 }),
+  eventRate: numeric("event_rate", { precision: 10, scale: 2 }),
+  packageRates: jsonb("package_rates").$type<Array<{
+    hours: number;
+    price: number;
+    description?: string;
+  }>>(),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  
+  // Experience
+  experienceLevel: varchar("experience_level", { length: 50 }), // 'beginner friendly', 'intermediate', 'advanced'
+  specialSkills: text("special_skills").array(), // 'teaching', 'performance', 'specific techniques'
+  
+  // Preferences
+  preferredVenues: text("preferred_venues").array(),
+  travelRadius: integer("travel_radius"), // miles/km willing to travel
+  minimumBooking: integer("minimum_booking"), // Minimum hours
+  
+  // Languages
+  languagesSpoken: text("languages_spoken").array(),
+  
+  // Media
+  photoUrls: text("photo_urls").array(),
+  videoUrls: text("video_urls").array(),
+  
+  // Contact
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  
+  // Stats
+  totalDances: integer("total_dances").default(0),
+  regularClients: integer("regular_clients").default(0),
+  averageRating: real("average_rating"),
+  reviewCount: integer("review_count").default(0),
+  
+  // Background Check
+  backgroundCheckCompleted: boolean("background_check_completed").default(false),
+  backgroundCheckDate: timestamp("background_check_date"),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("taxi_dancer_profiles_user_idx").on(table.userId),
+  activeIdx: index("taxi_dancer_profiles_active_idx").on(table.isActive),
+  ratingIdx: index("taxi_dancer_profiles_rating_idx").on(table.averageRating),
+}));
+
+// 17. Organizer Profiles
+export const organizerProfiles = pgTable("organizer_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull().unique(),
+  
+  // Organizer Info
+  bio: text("bio"),
+  organizationName: varchar("organization_name", { length: 255 }),
+  yearsOrganizing: integer("years_organizing"),
+  
+  // Event Types
+  eventTypesOrganized: text("event_types_organized").array(), // 'milonga', 'festival', 'workshop', 'marathon'
+  eventSizes: text("event_sizes").array(), // 'small', 'medium', 'large'
+  
+  // Experience
+  totalEventsOrganized: integer("total_events_organized").default(0),
+  pastEvents: jsonb("past_events").$type<Array<{
+    name: string;
+    type: string;
+    date: string;
+    location: string;
+    attendees?: number;
+    description?: string;
+  }>>(),
+  
+  // Specialties
+  specialties: text("specialties").array(), // 'festivals', 'weekly milongas', 'workshops', 'marathons'
+  
+  // Services Offered
+  servicesOffered: text("services_offered").array(), // 'full event planning', 'consulting', 'DJ booking', 'venue finding'
+  
+  // Portfolio
+  portfolioUrl: text("portfolio_url"),
+  photoUrls: text("photo_urls").array(),
+  videoUrls: text("video_urls").array(),
+  
+  // Testimonials
+  testimonials: jsonb("testimonials").$type<Array<{
+    name: string;
+    role?: string;
+    quote: string;
+    event?: string;
+  }>>(),
+  
+  // Location & Coverage
+  city: varchar("city", { length: 255 }),
+  country: varchar("country", { length: 255 }),
+  regionsServed: text("regions_served").array(),
+  willingToTravel: boolean("willing_to_travel").default(false),
+  
+  // Pricing
+  consultingRate: numeric("consulting_rate", { precision: 10, scale: 2 }),
+  eventFee: numeric("event_fee", { precision: 10, scale: 2 }),
+  pricingModel: varchar("pricing_model", { length: 100 }), // 'hourly', 'per event', 'package', 'percentage'
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  
+  // Contact
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  websiteUrl: text("website_url"),
+  
+  // Social Media
+  facebookUrl: text("facebook_url"),
+  instagramUrl: text("instagram_url"),
+  
+  // Stats
+  upcomingEvents: integer("upcoming_events").default(0),
+  averageAttendance: integer("average_attendance"),
+  averageRating: real("average_rating"),
+  reviewCount: integer("review_count").default(0),
+  
+  // Status
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("organizer_profiles_user_idx").on(table.userId),
+  activeIdx: index("organizer_profiles_active_idx").on(table.isActive),
+  cityIdx: index("organizer_profiles_city_idx").on(table.city),
+  ratingIdx: index("organizer_profiles_rating_idx").on(table.averageRating),
+}));
+
 export const newsletterCampaigns = pgTable("newsletter_campaigns", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
@@ -4041,6 +5347,521 @@ export type SelectTalentProfile = typeof talentProfiles.$inferSelect;
 export const insertTalentMatchSchema = createInsertSchema(talentMatches).omit({ id: true, createdAt: true });
 export type InsertTalentMatch = z.infer<typeof insertTalentMatchSchema>;
 export type SelectTalentMatch = typeof talentMatches.$inferSelect;
+
+// ============================================================================
+// SPECIALIZED PROFILE ZOD SCHEMAS & TYPES - 17 PROFILE TYPES
+// ============================================================================
+
+// 1. Teacher Profiles
+export const insertTeacherProfileSchema = createInsertSchema(teacherProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertTeacherProfile = z.infer<typeof insertTeacherProfileSchema>;
+export type SelectTeacherProfile = typeof teacherProfiles.$inferSelect;
+
+// 2. DJ Profiles
+export const insertDJProfileSchema = createInsertSchema(djProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertDJProfile = z.infer<typeof insertDJProfileSchema>;
+export type SelectDJProfile = typeof djProfiles.$inferSelect;
+
+// 3. Photographer Profiles
+export const insertPhotographerProfileSchema = createInsertSchema(photographerProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertPhotographerProfile = z.infer<typeof insertPhotographerProfileSchema>;
+export type SelectPhotographerProfile = typeof photographerProfiles.$inferSelect;
+
+// 4. Performer Profiles
+export const insertPerformerProfileSchema = createInsertSchema(performerProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertPerformerProfile = z.infer<typeof insertPerformerProfileSchema>;
+export type SelectPerformerProfile = typeof performerProfiles.$inferSelect;
+
+// 5. Vendor Profiles
+export const insertVendorProfileSchema = createInsertSchema(vendorProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertVendorProfile = z.infer<typeof insertVendorProfileSchema>;
+export type SelectVendorProfile = typeof vendorProfiles.$inferSelect;
+
+// 6. Musician Profiles
+export const insertMusicianProfileSchema = createInsertSchema(musicianProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertMusicianProfile = z.infer<typeof insertMusicianProfileSchema>;
+export type SelectMusicianProfile = typeof musicianProfiles.$inferSelect;
+
+// 7. Choreographer Profiles
+export const insertChoreographerProfileSchema = createInsertSchema(choreographerProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertChoreographerProfile = z.infer<typeof insertChoreographerProfileSchema>;
+export type SelectChoreographerProfile = typeof choreographerProfiles.$inferSelect;
+
+// 8. Tango School Profiles
+export const insertTangoSchoolProfileSchema = createInsertSchema(tangoSchoolProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertTangoSchoolProfile = z.infer<typeof insertTangoSchoolProfileSchema>;
+export type SelectTangoSchoolProfile = typeof tangoSchoolProfiles.$inferSelect;
+
+// 9. Tango Hotel Profiles
+export const insertTangoHotelProfileSchema = createInsertSchema(tangoHotelProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertTangoHotelProfile = z.infer<typeof insertTangoHotelProfileSchema>;
+export type SelectTangoHotelProfile = typeof tangoHotelProfiles.$inferSelect;
+
+// 10. Wellness Profiles
+export const insertWellnessProfileSchema = createInsertSchema(wellnessProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertWellnessProfile = z.infer<typeof insertWellnessProfileSchema>;
+export type SelectWellnessProfile = typeof wellnessProfiles.$inferSelect;
+
+// 11. Tour Operator Profiles
+export const insertTourOperatorProfileSchema = createInsertSchema(tourOperatorProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertTourOperatorProfile = z.infer<typeof insertTourOperatorProfileSchema>;
+export type SelectTourOperatorProfile = typeof tourOperatorProfiles.$inferSelect;
+
+// 12. Host Venue Profiles
+export const insertHostVenueProfileSchema = createInsertSchema(hostVenueProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertHostVenueProfile = z.infer<typeof insertHostVenueProfileSchema>;
+export type SelectHostVenueProfile = typeof hostVenueProfiles.$inferSelect;
+
+// 13. Tango Guide Profiles
+export const insertTangoGuideProfileSchema = createInsertSchema(tangoGuideProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertTangoGuideProfile = z.infer<typeof insertTangoGuideProfileSchema>;
+export type SelectTangoGuideProfile = typeof tangoGuideProfiles.$inferSelect;
+
+// 14. Content Creator Profiles
+export const insertContentCreatorProfileSchema = createInsertSchema(contentCreatorProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertContentCreatorProfile = z.infer<typeof insertContentCreatorProfileSchema>;
+export type SelectContentCreatorProfile = typeof contentCreatorProfiles.$inferSelect;
+
+// 15. Learning Resource Profiles
+export const insertLearningResourceProfileSchema = createInsertSchema(learningResourceProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertLearningResourceProfile = z.infer<typeof insertLearningResourceProfileSchema>;
+export type SelectLearningResourceProfile = typeof learningResourceProfiles.$inferSelect;
+
+// 16. Taxi Dancer Profiles
+export const insertTaxiDancerProfileSchema = createInsertSchema(taxiDancerProfiles).omit({ id: true, createdAt: true, updatedAt: true, backgroundCheckDate: true });
+export type InsertTaxiDancerProfile = z.infer<typeof insertTaxiDancerProfileSchema>;
+export type SelectTaxiDancerProfile = typeof taxiDancerProfiles.$inferSelect;
+
+// 17. Organizer Profiles
+export const insertOrganizerProfileSchema = createInsertSchema(organizerProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertOrganizerProfile = z.infer<typeof insertOrganizerProfileSchema>;
+export type SelectOrganizerProfile = typeof organizerProfiles.$inferSelect;
+
+// ============================================================================
+// COMPREHENSIVE UPDATE VALIDATION SCHEMAS FOR ALL PROFILE TYPES
+// ============================================================================
+
+// 1. Teacher Profile Update Schema
+export const updateTeacherProfileSchema = insertTeacherProfileSchema.partial().extend({
+  bio: z.string().max(5000).optional(),
+  yearsExperience: z.number().int().min(0).max(100).optional(),
+  teachingSince: z.number().int().min(1900).max(new Date().getFullYear()).optional(),
+  teachingStyles: z.array(z.string().max(100)).max(20).optional(),
+  specialties: z.array(z.string().max(100)).max(30).optional(),
+  levels: z.array(z.string().max(50)).max(10).optional(),
+  certifications: z.array(z.string().max(200)).max(20).optional(),
+  hourlyRate: z.number().min(0).max(10000).optional(),
+  privateClassRate: z.number().min(0).max(10000).optional(),
+  groupClassRate: z.number().min(0).max(10000).optional(),
+  photoUrls: z.array(z.string().url().max(500)).max(50).optional(),
+  videoUrls: z.array(z.string().url().max(500)).max(30).optional(),
+  portfolioUrl: z.string().url().max(500).optional(),
+  languagesSpoken: z.array(z.string().max(50)).max(20).optional(),
+  teachingLocations: z.array(z.string().max(200)).max(30).optional(),
+  currency: z.string().length(3).optional(),
+});
+export type UpdateTeacherProfile = z.infer<typeof updateTeacherProfileSchema>;
+
+// 2. DJ Profile Update Schema
+export const updateDJProfileSchema = insertDJProfileSchema.partial().extend({
+  bio: z.string().max(5000).optional(),
+  djName: z.string().max(255).optional(),
+  yearsExperience: z.number().int().min(0).max(100).optional(),
+  startedYear: z.number().int().min(1900).max(new Date().getFullYear()).optional(),
+  musicStyles: z.array(z.string().max(100)).max(20).optional(),
+  specialties: z.array(z.string().max(100)).max(30).optional(),
+  eras: z.array(z.string().max(100)).max(15).optional(),
+  setsPerformed: z.number().int().min(0).max(100000).optional(),
+  eventsWorked: z.number().int().min(0).max(50000).optional(),
+  venuesPlayed: z.array(z.string().max(200)).max(100).optional(),
+  portfolioLinks: z.array(z.string().url().max(500)).max(20).optional(),
+  soundcloudUrl: z.string().url().max(500).optional(),
+  spotifyUrl: z.string().url().max(500).optional(),
+  youtubeUrl: z.string().url().max(500).optional(),
+  mixcloudUrl: z.string().url().max(500).optional(),
+  hourlyRate: z.number().min(0).max(50000).optional(),
+  eventRate: z.number().min(0).max(100000).optional(),
+  travelRadius: z.number().int().min(0).max(10000).optional(),
+  photoUrls: z.array(z.string().url().max(500)).max(50).optional(),
+  videoUrls: z.array(z.string().url().max(500)).max(30).optional(),
+  currency: z.string().length(3).optional(),
+});
+export type UpdateDJProfile = z.infer<typeof updateDJProfileSchema>;
+
+// 3. Photographer Profile Update Schema
+export const updatePhotographerProfileSchema = insertPhotographerProfileSchema.partial().extend({
+  bio: z.string().max(5000).optional(),
+  businessName: z.string().max(255).optional(),
+  yearsExperience: z.number().int().min(0).max(100).optional(),
+  specialties: z.array(z.string().max(100)).max(20).optional(),
+  photographyStyle: z.array(z.string().max(100)).max(20).optional(),
+  portfolioUrl: z.string().url().max(500).optional(),
+  instagramUrl: z.string().url().max(500).optional(),
+  websiteUrl: z.string().url().max(500).optional(),
+  photoUrls: z.array(z.string().url().max(500)).max(100).optional(),
+  hourlyRate: z.number().min(0).max(50000).optional(),
+  eventRate: z.number().min(0).max(100000).optional(),
+  servicesOffered: z.array(z.string().max(100)).max(20).optional(),
+  deliveryTime: z.string().max(100).optional(),
+  coverageAreas: z.array(z.string().max(200)).max(50).optional(),
+  travelFee: z.number().min(0).max(50000).optional(),
+  eventsPhotographed: z.number().int().min(0).max(100000).optional(),
+  currency: z.string().length(3).optional(),
+});
+export type UpdatePhotographerProfile = z.infer<typeof updatePhotographerProfileSchema>;
+
+// 4. Performer Profile Update Schema
+export const updatePerformerProfileSchema = insertPerformerProfileSchema.partial().extend({
+  bio: z.string().max(5000).optional(),
+  stageName: z.string().max(255).optional(),
+  yearsPerforming: z.number().int().min(0).max(100).optional(),
+  performanceTypes: z.array(z.string().max(100)).max(20).optional(),
+  styles: z.array(z.string().max(100)).max(20).optional(),
+  performanceCount: z.number().int().min(0).max(100000).optional(),
+  venuesPerformed: z.array(z.string().max(200)).max(100).optional(),
+  repertoire: z.array(z.string().max(200)).max(100).optional(),
+  choreographies: z.array(z.string().max(200)).max(50).optional(),
+  demoVideoUrls: z.array(z.string().url().max(500)).max(30).optional(),
+  photoUrls: z.array(z.string().url().max(500)).max(100).optional(),
+  portfolioUrl: z.string().url().max(500).optional(),
+  youtubeUrl: z.string().url().max(500).optional(),
+  instagramUrl: z.string().url().max(500).optional(),
+  partnerName: z.string().max(255).optional(),
+  performanceFee: z.number().min(0).max(1000000).optional(),
+  rehearsalFee: z.number().min(0).max(100000).optional(),
+  technicalRequirements: z.string().max(2000).optional(),
+  musicRequirements: z.string().max(2000).optional(),
+  currency: z.string().length(3).optional(),
+});
+export type UpdatePerformerProfile = z.infer<typeof updatePerformerProfileSchema>;
+
+// 5. Vendor Profile Update Schema
+export const updateVendorProfileSchema = insertVendorProfileSchema.partial().extend({
+  businessName: z.string().max(255),
+  bio: z.string().max(5000).optional(),
+  yearsInBusiness: z.number().int().min(0).max(200).optional(),
+  productCategories: z.array(z.string().max(100)).max(30).optional(),
+  servicesOffered: z.array(z.string().max(100)).max(30).optional(),
+  priceRange: z.string().max(50).optional(),
+  deliveryAreas: z.array(z.string().max(200)).max(100).optional(),
+  shippingOptions: z.array(z.string().max(100)).max(20).optional(),
+  shippingCost: z.number().min(0).max(10000).optional(),
+  websiteUrl: z.string().url().max(500).optional(),
+  shopUrl: z.string().url().max(500).optional(),
+  phoneNumber: z.string().max(50).optional(),
+  email: z.string().email().max(255).optional(),
+  instagramUrl: z.string().url().max(500).optional(),
+  facebookUrl: z.string().url().max(500).optional(),
+  photoUrls: z.array(z.string().url().max(500)).max(100).optional(),
+  storeAddress: z.string().max(500).optional(),
+  totalSales: z.number().int().min(0).max(1000000000).optional(),
+  currency: z.string().length(3).optional(),
+});
+export type UpdateVendorProfile = z.infer<typeof updateVendorProfileSchema>;
+
+// 6. Musician Profile Update Schema
+export const updateMusicianProfileSchema = insertMusicianProfileSchema.partial().extend({
+  bio: z.string().max(5000).optional(),
+  artistName: z.string().max(255).optional(),
+  yearsExperience: z.number().int().min(0).max(100).optional(),
+  instruments: z.array(z.string().max(100)).max(20).optional(),
+  genres: z.array(z.string().max(100)).max(30).optional(),
+  musicalStyles: z.array(z.string().max(100)).max(30).optional(),
+  orchestrasPlayed: z.array(z.string().max(200)).max(50).optional(),
+  audioSamples: z.array(z.string().url().max(500)).max(50).optional(),
+  videoUrls: z.array(z.string().url().max(500)).max(50).optional(),
+  spotifyUrl: z.string().url().max(500).optional(),
+  soundcloudUrl: z.string().url().max(500).optional(),
+  youtubeUrl: z.string().url().max(500).optional(),
+  compositions: z.array(z.string().max(200)).max(100).optional(),
+  performanceFee: z.number().min(0).max(1000000).optional(),
+  sessionFee: z.number().min(0).max(100000).optional(),
+  performanceCount: z.number().int().min(0).max(100000).optional(),
+  currency: z.string().length(3).optional(),
+});
+export type UpdateMusicianProfile = z.infer<typeof updateMusicianProfileSchema>;
+
+// 7. Choreographer Profile Update Schema
+export const updateChoreographerProfileSchema = insertChoreographerProfileSchema.partial().extend({
+  bio: z.string().max(5000).optional(),
+  yearsExperience: z.number().int().min(0).max(100).optional(),
+  styleSpecialties: z.array(z.string().max(100)).max(20).optional(),
+  choreographyCount: z.number().int().min(0).max(10000).optional(),
+  workshopsOffered: z.array(z.string().max(200)).max(50).optional(),
+  portfolioUrl: z.string().url().max(500).optional(),
+  videoUrls: z.array(z.string().url().max(500)).max(100).optional(),
+  photoUrls: z.array(z.string().url().max(500)).max(100).optional(),
+  youtubeUrl: z.string().url().max(500).optional(),
+  instagramUrl: z.string().url().max(500).optional(),
+  notableCollaborations: z.array(z.string().max(200)).max(100).optional(),
+  companies: z.array(z.string().max(200)).max(50).optional(),
+  servicesOffered: z.array(z.string().max(200)).max(30).optional(),
+  choreographyFee: z.number().min(0).max(1000000).optional(),
+  workshopFee: z.number().min(0).max(100000).optional(),
+  currency: z.string().length(3).optional(),
+});
+export type UpdateChoreographerProfile = z.infer<typeof updateChoreographerProfileSchema>;
+
+// 8. Tango School Profile Update Schema
+export const updateTangoSchoolProfileSchema = insertTangoSchoolProfileSchema.partial().extend({
+  schoolName: z.string().max(255),
+  bio: z.string().max(5000).optional(),
+  founded: z.number().int().min(1800).max(new Date().getFullYear()).optional(),
+  classTypes: z.array(z.string().max(100)).max(20).optional(),
+  levels: z.array(z.string().max(50)).max(15).optional(),
+  styles: z.array(z.string().max(100)).max(20).optional(),
+  instructorCount: z.number().int().min(0).max(1000).optional(),
+  address: z.string().max(500).optional(),
+  city: z.string().max(255).optional(),
+  country: z.string().max(255).optional(),
+  priceRange: z.string().max(50).optional(),
+  phoneNumber: z.string().max(50).optional(),
+  email: z.string().email().max(255).optional(),
+  websiteUrl: z.string().url().max(500).optional(),
+  photoUrls: z.array(z.string().url().max(500)).max(100).optional(),
+  videoUrls: z.array(z.string().url().max(500)).max(50).optional(),
+  instagramUrl: z.string().url().max(500).optional(),
+  facebookUrl: z.string().url().max(500).optional(),
+  studentCount: z.number().int().min(0).max(1000000).optional(),
+  currency: z.string().length(3).optional(),
+});
+export type UpdateTangoSchoolProfile = z.infer<typeof updateTangoSchoolProfileSchema>;
+
+// 9. Tango Hotel Profile Update Schema
+export const updateTangoHotelProfileSchema = insertTangoHotelProfileSchema.partial().extend({
+  hotelName: z.string().max(255),
+  description: z.string().max(5000).optional(),
+  category: z.string().max(50).optional(),
+  starRating: z.number().int().min(1).max(5).optional(),
+  address: z.string().max(500).optional(),
+  city: z.string().max(255).optional(),
+  country: z.string().max(255).optional(),
+  phoneNumber: z.string().max(50).optional(),
+  email: z.string().email().max(255).optional(),
+  websiteUrl: z.string().url().max(500).optional(),
+  bookingUrl: z.string().url().max(500).optional(),
+  photoUrls: z.array(z.string().url().max(500)).max(100).optional(),
+  videoUrls: z.array(z.string().url().max(500)).max(30).optional(),
+  instagramUrl: z.string().url().max(500).optional(),
+  facebookUrl: z.string().url().max(500).optional(),
+  priceRange: z.string().max(50).optional(),
+  roomCount: z.number().int().min(0).max(10000).optional(),
+  currency: z.string().length(3).optional(),
+});
+export type UpdateTangoHotelProfile = z.infer<typeof updateTangoHotelProfileSchema>;
+
+// 10. Wellness Profile Update Schema
+export const updateWellnessProfileSchema = insertWellnessProfileSchema.partial().extend({
+  businessName: z.string().max(255),
+  bio: z.string().max(5000).optional(),
+  yearsExperience: z.number().int().min(0).max(100).optional(),
+  specialties: z.array(z.string().max(100)).max(30).optional(),
+  servicesOffered: z.array(z.string().max(100)).max(50).optional(),
+  certifications: z.array(z.string().max(200)).max(30).optional(),
+  address: z.string().max(500).optional(),
+  city: z.string().max(255).optional(),
+  country: z.string().max(255).optional(),
+  phoneNumber: z.string().max(50).optional(),
+  email: z.string().email().max(255).optional(),
+  websiteUrl: z.string().url().max(500).optional(),
+  bookingUrl: z.string().url().max(500).optional(),
+  photoUrls: z.array(z.string().url().max(500)).max(100).optional(),
+  videoUrls: z.array(z.string().url().max(500)).max(30).optional(),
+  instagramUrl: z.string().url().max(500).optional(),
+  facebookUrl: z.string().url().max(500).optional(),
+  priceRange: z.string().max(50).optional(),
+  sessionRate: z.number().min(0).max(10000).optional(),
+  packageRate: z.number().min(0).max(100000).optional(),
+  currency: z.string().length(3).optional(),
+});
+export type UpdateWellnessProfile = z.infer<typeof updateWellnessProfileSchema>;
+
+// 11. Tour Operator Profile Update Schema
+export const updateTourOperatorProfileSchema = insertTourOperatorProfileSchema.partial().extend({
+  companyName: z.string().max(255),
+  description: z.string().max(5000).optional(),
+  yearsInBusiness: z.number().int().min(0).max(200).optional(),
+  tourTypes: z.array(z.string().max(100)).max(30).optional(),
+  specialties: z.array(z.string().max(100)).max(30).optional(),
+  destinations: z.array(z.string().max(200)).max(100).optional(),
+  languagesOffered: z.array(z.string().max(50)).max(30).optional(),
+  phoneNumber: z.string().max(50).optional(),
+  email: z.string().email().max(255).optional(),
+  websiteUrl: z.string().url().max(500).optional(),
+  bookingUrl: z.string().url().max(500).optional(),
+  photoUrls: z.array(z.string().url().max(500)).max(100).optional(),
+  videoUrls: z.array(z.string().url().max(500)).max(50).optional(),
+  instagramUrl: z.string().url().max(500).optional(),
+  facebookUrl: z.string().url().max(500).optional(),
+  priceRange: z.string().max(50).optional(),
+  toursCompleted: z.number().int().min(0).max(1000000).optional(),
+  currency: z.string().length(3).optional(),
+});
+export type UpdateTourOperatorProfile = z.infer<typeof updateTourOperatorProfileSchema>;
+
+// 12. Host Venue Profile Update Schema
+export const updateHostVenueProfileSchema = insertHostVenueProfileSchema.partial().extend({
+  venueName: z.string().max(255),
+  description: z.string().max(5000).optional(),
+  venueType: z.string().max(100).optional(),
+  capacity: z.number().int().min(0).max(1000000).optional(),
+  eventTypes: z.array(z.string().max(100)).max(30).optional(),
+  amenities: z.array(z.string().max(100)).max(50).optional(),
+  address: z.string().max(500).optional(),
+  city: z.string().max(255).optional(),
+  country: z.string().max(255).optional(),
+  phoneNumber: z.string().max(50).optional(),
+  email: z.string().email().max(255).optional(),
+  websiteUrl: z.string().url().max(500).optional(),
+  bookingUrl: z.string().url().max(500).optional(),
+  photoUrls: z.array(z.string().url().max(500)).max(100).optional(),
+  videoUrls: z.array(z.string().url().max(500)).max(50).optional(),
+  virtualTourUrl: z.string().url().max(500).optional(),
+  instagramUrl: z.string().url().max(500).optional(),
+  facebookUrl: z.string().url().max(500).optional(),
+  priceRange: z.string().max(50).optional(),
+  baseRate: z.number().min(0).max(1000000).optional(),
+  hourlyRate: z.number().min(0).max(100000).optional(),
+  eventsHosted: z.number().int().min(0).max(1000000).optional(),
+  currency: z.string().length(3).optional(),
+});
+export type UpdateHostVenueProfile = z.infer<typeof updateHostVenueProfileSchema>;
+
+// 13. Tango Guide Profile Update Schema
+export const updateTangoGuideProfileSchema = insertTangoGuideProfileSchema.partial().extend({
+  bio: z.string().max(5000).optional(),
+  yearsExperience: z.number().int().min(0).max(100).optional(),
+  citiesCovered: z.array(z.string().max(200)).max(50).optional(),
+  primaryCity: z.string().max(255).optional(),
+  country: z.string().max(255).optional(),
+  languagesSpoken: z.array(z.string().max(50)).max(30).optional(),
+  servicesOffered: z.array(z.string().max(200)).max(30).optional(),
+  tourTypes: z.array(z.string().max(100)).max(20).optional(),
+  specialKnowledge: z.array(z.string().max(200)).max(50).optional(),
+  neighborhoods: z.array(z.string().max(200)).max(50).optional(),
+  hourlyRate: z.number().min(0).max(10000).optional(),
+  halfDayRate: z.number().min(0).max(50000).optional(),
+  fullDayRate: z.number().min(0).max(100000).optional(),
+  minimumHours: z.number().int().min(0).max(24).optional(),
+  advanceNotice: z.number().int().min(0).max(365).optional(),
+  vehicleType: z.string().max(100).optional(),
+  phoneNumber: z.string().max(50).optional(),
+  email: z.string().email().max(255).optional(),
+  websiteUrl: z.string().url().max(500).optional(),
+  photoUrls: z.array(z.string().url().max(500)).max(100).optional(),
+  videoUrls: z.array(z.string().url().max(500)).max(30).optional(),
+  toursCompleted: z.number().int().min(0).max(100000).optional(),
+  tourismLicense: z.string().max(255).optional(),
+  certifications: z.array(z.string().max(200)).max(20).optional(),
+  currency: z.string().length(3).optional(),
+});
+export type UpdateTangoGuideProfile = z.infer<typeof updateTangoGuideProfileSchema>;
+
+// 14. Content Creator Profile Update Schema
+export const updateContentCreatorProfileSchema = insertContentCreatorProfileSchema.partial().extend({
+  bio: z.string().max(5000).optional(),
+  creatorName: z.string().max(255).optional(),
+  yearsCreating: z.number().int().min(0).max(100).optional(),
+  contentTypes: z.array(z.string().max(100)).max(20).optional(),
+  formats: z.array(z.string().max(100)).max(30).optional(),
+  portfolioUrl: z.string().url().max(500).optional(),
+  youtubeUrl: z.string().url().max(500).optional(),
+  instagramUrl: z.string().url().max(500).optional(),
+  tiktokUrl: z.string().url().max(500).optional(),
+  blogUrl: z.string().url().max(500).optional(),
+  podcastUrl: z.string().url().max(500).optional(),
+  totalFollowers: z.number().int().min(0).max(1000000000).optional(),
+  averageViews: z.number().int().min(0).max(1000000000).optional(),
+  engagementRate: z.number().min(0).max(100).optional(),
+  collaborationTypes: z.array(z.string().max(100)).max(20).optional(),
+  mediaKitUrl: z.string().url().max(500).optional(),
+  businessEmail: z.string().email().max(255).optional(),
+  phoneNumber: z.string().max(50).optional(),
+  totalContent: z.number().int().min(0).max(1000000).optional(),
+  currency: z.string().length(3).optional(),
+});
+export type UpdateContentCreatorProfile = z.infer<typeof updateContentCreatorProfileSchema>;
+
+// 15. Learning Resource Profile Update Schema
+export const updateLearningResourceProfileSchema = insertLearningResourceProfileSchema.partial().extend({
+  resourceName: z.string().max(255),
+  description: z.string().max(5000).optional(),
+  courseTypes: z.array(z.string().max(100)).max(20).optional(),
+  levels: z.array(z.string().max(50)).max(15).optional(),
+  formats: z.array(z.string().max(100)).max(20).optional(),
+  priceRange: z.string().max(50).optional(),
+  platformUrl: z.string().url().max(500).optional(),
+  platformType: z.string().max(100).optional(),
+  totalLessons: z.number().int().min(0).max(100000).optional(),
+  totalHours: z.number().int().min(0).max(100000).optional(),
+  languagesAvailable: z.array(z.string().max(50)).max(50).optional(),
+  features: z.array(z.string().max(200)).max(30).optional(),
+  previewVideoUrl: z.string().url().max(500).optional(),
+  sampleLessons: z.array(z.string().url().max(500)).max(20).optional(),
+  photoUrls: z.array(z.string().url().max(500)).max(50).optional(),
+  videoUrls: z.array(z.string().url().max(500)).max(50).optional(),
+  totalStudents: z.number().int().min(0).max(10000000).optional(),
+  completionRate: z.number().min(0).max(100).optional(),
+  email: z.string().email().max(255).optional(),
+  websiteUrl: z.string().url().max(500).optional(),
+  currency: z.string().length(3).optional(),
+});
+export type UpdateLearningResourceProfile = z.infer<typeof updateLearningResourceProfileSchema>;
+
+// 16. Taxi Dancer Profile Update Schema
+export const updateTaxiDancerProfileSchema = insertTaxiDancerProfileSchema.partial().extend({
+  bio: z.string().max(5000).optional(),
+  yearsExperience: z.number().int().min(0).max(100).optional(),
+  roles: z.array(z.string().max(50)).max(5).optional(),
+  styles: z.array(z.string().max(100)).max(20).optional(),
+  levels: z.array(z.string().max(50)).max(10).optional(),
+  hourlyRate: z.number().min(0).max(10000).optional(),
+  eventRate: z.number().min(0).max(50000).optional(),
+  experienceLevel: z.string().max(50).optional(),
+  specialSkills: z.array(z.string().max(200)).max(30).optional(),
+  preferredVenues: z.array(z.string().max(200)).max(50).optional(),
+  travelRadius: z.number().int().min(0).max(10000).optional(),
+  minimumBooking: z.number().int().min(0).max(24).optional(),
+  languagesSpoken: z.array(z.string().max(50)).max(30).optional(),
+  photoUrls: z.array(z.string().url().max(500)).max(50).optional(),
+  videoUrls: z.array(z.string().url().max(500)).max(30).optional(),
+  phoneNumber: z.string().max(50).optional(),
+  email: z.string().email().max(255).optional(),
+  totalDances: z.number().int().min(0).max(1000000).optional(),
+  regularClients: z.number().int().min(0).max(10000).optional(),
+  currency: z.string().length(3).optional(),
+});
+export type UpdateTaxiDancerProfile = z.infer<typeof updateTaxiDancerProfileSchema>;
+
+// 17. Organizer Profile Update Schema
+export const updateOrganizerProfileSchema = insertOrganizerProfileSchema.partial().extend({
+  bio: z.string().max(5000).optional(),
+  organizationName: z.string().max(255).optional(),
+  yearsOrganizing: z.number().int().min(0).max(100).optional(),
+  eventTypesOrganized: z.array(z.string().max(100)).max(30).optional(),
+  eventSizes: z.array(z.string().max(50)).max(10).optional(),
+  totalEventsOrganized: z.number().int().min(0).max(100000).optional(),
+  specialties: z.array(z.string().max(200)).max(30).optional(),
+  servicesOffered: z.array(z.string().max(200)).max(30).optional(),
+  portfolioUrl: z.string().url().max(500).optional(),
+  photoUrls: z.array(z.string().url().max(500)).max(100).optional(),
+  videoUrls: z.array(z.string().url().max(500)).max(50).optional(),
+  city: z.string().max(255).optional(),
+  country: z.string().max(255).optional(),
+  regionsServed: z.array(z.string().max(200)).max(100).optional(),
+  consultingRate: z.number().min(0).max(100000).optional(),
+  eventFee: z.number().min(0).max(10000000).optional(),
+  pricingModel: z.string().max(100).optional(),
+  phoneNumber: z.string().max(50).optional(),
+  email: z.string().email().max(255).optional(),
+  websiteUrl: z.string().url().max(500).optional(),
+  facebookUrl: z.string().url().max(500).optional(),
+  instagramUrl: z.string().url().max(500).optional(),
+  upcomingEvents: z.number().int().min(0).max(10000).optional(),
+  averageAttendance: z.number().int().min(0).max(1000000).optional(),
+  currency: z.string().length(3).optional(),
+});
+export type UpdateOrganizerProfile = z.infer<typeof updateOrganizerProfileSchema>;
 
 // ============================================================================
 // P0 WORKFLOWS ZOD SCHEMAS & TYPES
@@ -4929,6 +6750,2939 @@ export type SelectAIBlackboard = typeof aiBlackboard.$inferSelect;
 export const insertAIPerformanceSchema = createInsertSchema(aiPerformance).omit({ id: true, createdAt: true });
 export type InsertAIPerformance = z.infer<typeof insertAIPerformanceSchema>;
 export type SelectAIPerformance = typeof aiPerformance.$inferSelect;
+
+// ============================================================================
+// PROFILE MEDIA & ANALYTICS (BATCH 13-14)
+// ============================================================================
+
+/**
+ * Profile Media Table - User portfolio/gallery media items
+ * Stores photos and videos uploaded to user profiles
+ * Separate from general media table - specifically for profile portfolios
+ */
+export const profileMedia = pgTable("profile_media", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // Media details
+  type: varchar("type", { length: 20 }).notNull(), // photo, video
+  url: text("url").notNull(),
+  thumbnail: text("thumbnail"),
+  
+  // Metadata
+  caption: text("caption"),
+  altText: text("alt_text"),
+  displayOrder: integer("display_order").default(0),
+  
+  // Media properties
+  width: integer("width"),
+  height: integer("height"),
+  fileSize: integer("file_size"), // bytes
+  mimeType: varchar("mime_type", { length: 100 }),
+  
+  // Organization
+  category: varchar("category", { length: 50 }), // portfolio, performances, teaching, events
+  tags: text("tags").array(),
+  
+  // Engagement
+  views: integer("views").default(0),
+  likes: integer("likes").default(0),
+  
+  // Visibility
+  isPublic: boolean("is_public").default(true),
+  isFeatured: boolean("is_featured").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("profile_media_user_idx").on(table.userId),
+  typeIdx: index("profile_media_type_idx").on(table.type),
+  categoryIdx: index("profile_media_category_idx").on(table.category),
+  orderIdx: index("profile_media_order_idx").on(table.userId, table.displayOrder),
+  featuredIdx: index("profile_media_featured_idx").on(table.userId, table.isFeatured),
+}));
+
+/**
+ * Profile Analytics Table - Profile view and engagement tracking
+ * Tracks profile visits, engagement metrics, and professional inquiries
+ * Privacy: Only profile owner can see detailed analytics
+ */
+export const profileAnalytics = pgTable("profile_analytics", {
+  id: serial("id").primaryKey(),
+  
+  // Profile being viewed
+  profileUserId: integer("profile_user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // Viewer (null for anonymous views)
+  viewerUserId: integer("viewer_user_id").references(() => users.id, { onDelete: "set null" }),
+  
+  // View details
+  viewDate: timestamp("view_date").defaultNow().notNull(),
+  viewDuration: integer("view_duration"), // seconds
+  
+  // Source & Context
+  referrerUrl: text("referrer_url"),
+  sourceType: varchar("source_type", { length: 50 }), // search, direct, social, recommendation
+  deviceType: varchar("device_type", { length: 20 }), // mobile, desktop, tablet
+  
+  // Engagement
+  sectionsViewed: text("sections_viewed").array(), // about, photos, events, etc
+  interactionType: varchar("interaction_type", { length: 50 }), // view, message, follow, booking_inquiry
+  
+  // Geographic
+  city: varchar("city", { length: 255 }),
+  country: varchar("country", { length: 255 }),
+  
+  // Session tracking
+  sessionId: varchar("session_id", { length: 100 }),
+  isUniqueView: boolean("is_unique_view").default(true), // First view in 24h period
+}, (table) => ({
+  profileUserIdx: index("profile_analytics_profile_user_idx").on(table.profileUserId),
+  viewerUserIdx: index("profile_analytics_viewer_user_idx").on(table.viewerUserId),
+  viewDateIdx: index("profile_analytics_view_date_idx").on(table.viewDate),
+  uniqueViewIdx: index("profile_analytics_unique_view_idx").on(table.isUniqueView),
+  interactionIdx: index("profile_analytics_interaction_idx").on(table.interactionType),
+  profileDateIdx: index("profile_analytics_profile_date_idx").on(table.profileUserId, table.viewDate),
+}));
+
+/**
+ * Profile Inquiries Table - Contact/booking inquiries for business profiles
+ * Tracks professional inquiries for teachers, venues, performers, etc.
+ */
+export const profileInquiries = pgTable("profile_inquiries", {
+  id: serial("id").primaryKey(),
+  
+  // Target profile (teacher, venue, etc)
+  profileUserId: integer("profile_user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // Inquirer
+  inquirerUserId: integer("inquirer_user_id").references(() => users.id, { onDelete: "set null" }),
+  inquirerName: varchar("inquirer_name", { length: 255 }),
+  inquirerEmail: varchar("inquirer_email", { length: 255 }),
+  inquirerPhone: varchar("inquirer_phone", { length: 50 }),
+  
+  // Inquiry details
+  inquiryType: varchar("inquiry_type", { length: 50 }).notNull(), // lesson, booking, collaboration, event
+  subject: varchar("subject", { length: 255 }),
+  message: text("message").notNull(),
+  
+  // Event/service details (if applicable)
+  preferredDate: timestamp("preferred_date"),
+  eventType: varchar("event_type", { length: 100 }),
+  numberOfPeople: integer("number_of_people"),
+  budget: numeric("budget", { precision: 10, scale: 2 }),
+  
+  // Status
+  status: varchar("status", { length: 20 }).default("new"), // new, replied, accepted, declined, completed
+  response: text("response"),
+  respondedAt: timestamp("responded_at"),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  profileUserIdx: index("profile_inquiries_profile_user_idx").on(table.profileUserId),
+  inquirerUserIdx: index("profile_inquiries_inquirer_user_idx").on(table.inquirerUserId),
+  statusIdx: index("profile_inquiries_status_idx").on(table.status),
+  typeIdx: index("profile_inquiries_type_idx").on(table.inquiryType),
+  createdAtIdx: index("profile_inquiries_created_at_idx").on(table.createdAt),
+}));
+
+// ============================================================================
+// BATCH 01: PROFILE SCHEMAS FOR 23 TAB TYPES
+// ============================================================================
+
+// ============================================================================
+// PROFESSIONAL PROFILES (7)
+// ============================================================================
+
+/**
+ * Teacher Profile - Complete tango teacher professional profile
+ * Bio, teaching styles, rates, availability, certifications
+ */
+export const teacherProfiles = pgTable("teacher_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Professional Bio
+  tagline: varchar("tagline", { length: 255 }),
+  bio: text("bio"),
+  teachingPhilosophy: text("teaching_philosophy"),
+  specializations: text("specializations").array(), // vals, milonga, nuevo, etc
+  
+  // Experience
+  yearsTeaching: integer("years_teaching"),
+  certifications: jsonb("certifications").$type<Array<{
+    name: string;
+    issuer: string;
+    year: number;
+    url?: string;
+  }>>(),
+  
+  // Teaching Details
+  teachingStyles: text("teaching_styles").array(), // tango, vals, milonga, nuevo
+  skillLevels: text("skill_levels").array(), // beginner, intermediate, advanced
+  languages: text("languages").array(),
+  
+  // Availability
+  availableForPrivate: boolean("available_for_private").default(true),
+  availableForGroup: boolean("available_for_group").default(true),
+  availableForWorkshops: boolean("available_for_workshops").default(false),
+  availableForEvents: boolean("available_for_events").default(false),
+  availabilitySchedule: jsonb("availability_schedule"),
+  
+  // Rates
+  privateRate: numeric("private_rate", { precision: 10, scale: 2 }),
+  groupRate: numeric("group_rate", { precision: 10, scale: 2 }),
+  workshopRate: numeric("workshop_rate", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  ratesNote: text("rates_note"),
+  
+  // Location
+  teachingLocation: text("teaching_location").array(), // cities/venues where they teach
+  travelRadius: integer("travel_radius"), // km willing to travel
+  availableForTravel: boolean("available_for_travel").default(false),
+  
+  // Media
+  videoUrls: text("video_urls").array(),
+  portfolioUrl: text("portfolio_url"),
+  
+  // Reviews & Stats
+  averageRating: numeric("average_rating", { precision: 3, scale: 2 }),
+  totalReviews: integer("total_reviews").default(0),
+  totalStudents: integer("total_students").default(0),
+  
+  // Visibility
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("teacher_profiles_user_idx").on(table.userId),
+  activeIdx: index("teacher_profiles_active_idx").on(table.isActive),
+  ratingIdx: index("teacher_profiles_rating_idx").on(table.averageRating),
+  verifiedIdx: index("teacher_profiles_verified_idx").on(table.isVerified),
+}));
+
+/**
+ * DJ Profile - Professional DJ profile for tango events
+ * Genres, equipment, events performed, rates
+ */
+export const djProfiles = pgTable("dj_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Professional Info
+  artistName: varchar("artist_name", { length: 255 }),
+  bio: text("bio"),
+  tagline: varchar("tagline", { length: 255 }),
+  
+  // Music Specialization
+  genres: text("genres").array(), // traditional, nuevo, alternative, etc
+  musicEras: text("music_eras").array(), // golden age, contemporary, etc
+  specialties: text("specialties").array(), // cortinas, tandas, etc
+  
+  // Experience
+  yearsExperience: integer("years_experience"),
+  eventsPlayed: integer("events_played").default(0),
+  notableVenues: text("notable_venues").array(),
+  
+  // Equipment
+  equipment: jsonb("equipment").$type<{
+    speakers?: string;
+    mixer?: string;
+    laptop?: string;
+    software?: string;
+    other?: string[];
+  }>(),
+  providesEquipment: boolean("provides_equipment").default(true),
+  
+  // Availability
+  availableForMilongas: boolean("available_for_milongas").default(true),
+  availableForFestivals: boolean("available_for_festivals").default(false),
+  availableForPrivate: boolean("available_for_private").default(false),
+  availabilitySchedule: jsonb("availability_schedule"),
+  
+  // Rates
+  hourlyRate: numeric("hourly_rate", { precision: 10, scale: 2 }),
+  eventRate: numeric("event_rate", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  ratesNote: text("rates_note"),
+  
+  // Travel
+  willingToTravel: boolean("willing_to_travel").default(false),
+  travelRadius: integer("travel_radius"),
+  
+  // Media
+  sampleMixUrls: text("sample_mix_urls").array(),
+  spotifyUrl: text("spotify_url"),
+  soundcloudUrl: text("soundcloud_url"),
+  youtubeUrl: text("youtube_url"),
+  
+  // Reviews & Stats
+  averageRating: numeric("average_rating", { precision: 3, scale: 2 }),
+  totalReviews: integer("total_reviews").default(0),
+  
+  // Visibility
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("dj_profiles_user_idx").on(table.userId),
+  activeIdx: index("dj_profiles_active_idx").on(table.isActive),
+  ratingIdx: index("dj_profiles_rating_idx").on(table.averageRating),
+  verifiedIdx: index("dj_profiles_verified_idx").on(table.isVerified),
+}));
+
+/**
+ * Musician Profile - Professional musicians for tango events
+ * Instruments, genres, portfolio, availability
+ */
+export const musicianProfiles = pgTable("musician_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Professional Info
+  artistName: varchar("artist_name", { length: 255 }),
+  bio: text("bio"),
+  tagline: varchar("tagline", { length: 255 }),
+  
+  // Musical Details
+  primaryInstrument: varchar("primary_instrument", { length: 100 }),
+  instruments: text("instruments").array(),
+  genres: text("genres").array(), // tango, milonga, vals, folklore, etc
+  styles: text("styles").array(), // traditional, nuevo, contemporary
+  
+  // Experience
+  yearsExperience: integer("years_experience"),
+  performanceCount: integer("performance_count").default(0),
+  bands: jsonb("bands").$type<Array<{
+    name: string;
+    role: string;
+    years: string;
+    website?: string;
+  }>>(),
+  
+  // Training
+  education: text("education"),
+  certifications: text("certifications").array(),
+  
+  // Availability
+  availableForPerformances: boolean("available_for_performances").default(true),
+  availableForRecording: boolean("available_for_recording").default(false),
+  availableForTeaching: boolean("available_for_teaching").default(false),
+  availabilitySchedule: jsonb("availability_schedule"),
+  
+  // Ensemble Options
+  soloPerformer: boolean("solo_performer").default(true),
+  ensembleSize: varchar("ensemble_size", { length: 50 }), // solo, duo, trio, quartet, orchestra
+  
+  // Rates
+  performanceRate: numeric("performance_rate", { precision: 10, scale: 2 }),
+  hourlyRate: numeric("hourly_rate", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  ratesNote: text("rates_note"),
+  
+  // Travel
+  willingToTravel: boolean("willing_to_travel").default(false),
+  travelRadius: integer("travel_radius"),
+  
+  // Portfolio
+  recordings: text("recordings").array(),
+  videoUrls: text("video_urls").array(),
+  spotifyUrl: text("spotify_url"),
+  soundcloudUrl: text("soundcloud_url"),
+  youtubeUrl: text("youtube_url"),
+  website: text("website"),
+  
+  // Reviews & Stats
+  averageRating: numeric("average_rating", { precision: 3, scale: 2 }),
+  totalReviews: integer("total_reviews").default(0),
+  
+  // Visibility
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("musician_profiles_user_idx").on(table.userId),
+  activeIdx: index("musician_profiles_active_idx").on(table.isActive),
+  instrumentIdx: index("musician_profiles_instrument_idx").on(table.primaryInstrument),
+  ratingIdx: index("musician_profiles_rating_idx").on(table.averageRating),
+  verifiedIdx: index("musician_profiles_verified_idx").on(table.isVerified),
+}));
+
+/**
+ * Choreographer Profile - Professional choreography services
+ * Styles, experience, portfolio, rates
+ */
+export const choreographerProfiles = pgTable("choreographer_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Professional Info
+  artistName: varchar("artist_name", { length: 255 }),
+  bio: text("bio"),
+  tagline: varchar("tagline", { length: 255 }),
+  artisticVision: text("artistic_vision"),
+  
+  // Specialization
+  danceStyles: text("dance_styles").array(), // tango, contemporary tango, stage tango, etc
+  choreographyTypes: text("choreography_types").array(), // show, competition, wedding, theatrical
+  
+  // Experience
+  yearsExperience: integer("years_experience"),
+  productionsCount: integer("productions_count").default(0),
+  notableWorks: jsonb("notable_works").$type<Array<{
+    title: string;
+    year: number;
+    venue: string;
+    description?: string;
+    url?: string;
+  }>>(),
+  
+  // Awards & Recognition
+  awards: jsonb("awards").$type<Array<{
+    name: string;
+    year: number;
+    organization: string;
+  }>>(),
+  
+  // Services
+  offersPrivateChoreography: boolean("offers_private_choreography").default(true),
+  offersGroupChoreography: boolean("offers_group_choreography").default(true),
+  offersShowChoreography: boolean("offers_show_choreography").default(false),
+  offersCompetitionChoreography: boolean("offers_competition_choreography").default(false),
+  
+  // Availability
+  availabilitySchedule: jsonb("availability_schedule"),
+  leadTime: integer("lead_time"), // days notice required
+  
+  // Rates
+  hourlyRate: numeric("hourly_rate", { precision: 10, scale: 2 }),
+  projectRate: numeric("project_rate", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  ratesNote: text("rates_note"),
+  
+  // Portfolio
+  videoUrls: text("video_urls").array(),
+  portfolioUrl: text("portfolio_url"),
+  instagramUrl: text("instagram_url"),
+  youtubeUrl: text("youtube_url"),
+  
+  // Reviews & Stats
+  averageRating: numeric("average_rating", { precision: 3, scale: 2 }),
+  totalReviews: integer("total_reviews").default(0),
+  
+  // Visibility
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("choreographer_profiles_user_idx").on(table.userId),
+  activeIdx: index("choreographer_profiles_active_idx").on(table.isActive),
+  ratingIdx: index("choreographer_profiles_rating_idx").on(table.averageRating),
+  verifiedIdx: index("choreographer_profiles_verified_idx").on(table.isVerified),
+}));
+
+/**
+ * Photographer Profile - Professional photography services
+ * Portfolio, packages, equipment, rates
+ */
+export const photographerProfiles = pgTable("photographer_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Professional Info
+  businessName: varchar("business_name", { length: 255 }),
+  bio: text("bio"),
+  tagline: varchar("tagline", { length: 255 }),
+  photographyStyle: text("photography_style"),
+  
+  // Specialization
+  specialties: text("specialties").array(), // events, portraits, dance, editorial, etc
+  eventTypes: text("event_types").array(), // milongas, festivals, workshops, performances
+  
+  // Experience
+  yearsExperience: integer("years_experience"),
+  eventsPhotographed: integer("events_photographed").default(0),
+  
+  // Equipment
+  cameras: text("cameras").array(),
+  lenses: text("lenses").array(),
+  lighting: text("lighting").array(),
+  equipmentNote: text("equipment_note"),
+  
+  // Services
+  offersEventPhotography: boolean("offers_event_photography").default(true),
+  offersPortraits: boolean("offers_portraits").default(true),
+  offersEditing: boolean("offers_editing").default(true),
+  offersVideography: boolean("offers_videography").default(false),
+  offersPrints: boolean("offers_prints").default(false),
+  
+  // Deliverables
+  deliveryTimeframe: varchar("delivery_timeframe", { length: 100 }), // "2-3 weeks", etc
+  deliveryFormats: text("delivery_formats").array(), // digital, print, album, etc
+  includesEditing: boolean("includes_editing").default(true),
+  
+  // Packages
+  packages: jsonb("packages").$type<Array<{
+    name: string;
+    description: string;
+    price: number;
+    hours?: number;
+    photos?: number;
+    includes?: string[];
+  }>>(),
+  
+  // Rates
+  hourlyRate: numeric("hourly_rate", { precision: 10, scale: 2 }),
+  halfDayRate: numeric("half_day_rate", { precision: 10, scale: 2 }),
+  fullDayRate: numeric("full_day_rate", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  ratesNote: text("rates_note"),
+  
+  // Travel
+  willingToTravel: boolean("willing_to_travel").default(true),
+  travelRadius: integer("travel_radius"),
+  travelFeeNote: text("travel_fee_note"),
+  
+  // Portfolio
+  portfolioUrl: text("portfolio_url"),
+  instagramUrl: text("instagram_url"),
+  facebookUrl: text("facebook_url"),
+  websiteUrl: text("website_url"),
+  
+  // Gallery (sample work)
+  galleryImages: text("gallery_images").array(),
+  
+  // Reviews & Stats
+  averageRating: numeric("average_rating", { precision: 3, scale: 2 }),
+  totalReviews: integer("total_reviews").default(0),
+  
+  // Visibility
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("photographer_profiles_user_idx").on(table.userId),
+  activeIdx: index("photographer_profiles_active_idx").on(table.isActive),
+  ratingIdx: index("photographer_profiles_rating_idx").on(table.averageRating),
+  verifiedIdx: index("photographer_profiles_verified_idx").on(table.isVerified),
+}));
+
+/**
+ * Performer Profile - Professional tango performers
+ * Styles, videos, achievements, availability
+ */
+export const performerProfiles = pgTable("performer_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Professional Info
+  stageName: varchar("stage_name", { length: 255 }),
+  bio: text("bio"),
+  tagline: varchar("tagline", { length: 255 }),
+  performanceStyle: text("performance_style"),
+  
+  // Specialization
+  performanceTypes: text("performance_types").array(), // stage shows, competitions, demonstrations, flash mobs
+  danceStyles: text("dance_styles").array(), // traditional tango, nuevo, theatrical, etc
+  roles: text("roles").array(), // lead, follow, both
+  
+  // Experience
+  yearsPerforming: integer("years_performing"),
+  showsPerformed: integer("shows_performed").default(0),
+  
+  // Partner Information
+  hasRegularPartner: boolean("has_regular_partner").default(false),
+  partnerInfo: jsonb("partner_info").$type<{
+    name?: string;
+    yearsPartnership?: number;
+    bio?: string;
+  }>(),
+  soloPerformer: boolean("solo_performer").default(false),
+  
+  // Achievements
+  competitions: jsonb("competitions").$type<Array<{
+    name: string;
+    year: number;
+    placement: string;
+    location: string;
+  }>>(),
+  
+  awards: jsonb("awards").$type<Array<{
+    name: string;
+    year: number;
+    organization: string;
+  }>>(),
+  
+  notablePerformances: jsonb("notable_performances").$type<Array<{
+    event: string;
+    venue: string;
+    date: string;
+    location: string;
+    description?: string;
+  }>>(),
+  
+  // Availability
+  availableForShows: boolean("available_for_shows").default(true),
+  availableForCompetitions: boolean("available_for_competitions").default(false),
+  availableForDemonstrations: boolean("available_for_demonstrations").default(true),
+  availableForTeaching: boolean("available_for_teaching").default(false),
+  availabilitySchedule: jsonb("availability_schedule"),
+  
+  // Technical Requirements
+  technicalRequirements: text("technical_requirements"),
+  performanceDuration: varchar("performance_duration", { length: 100 }),
+  setupTime: integer("setup_time"), // minutes
+  
+  // Rates
+  performanceRate: numeric("performance_rate", { precision: 10, scale: 2 }),
+  demonstrationRate: numeric("demonstration_rate", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  ratesNote: text("rates_note"),
+  
+  // Travel
+  willingToTravel: boolean("willing_to_travel").default(true),
+  internationalTravel: boolean("international_travel").default(false),
+  
+  // Media
+  performanceVideos: text("performance_videos").array(),
+  instagramUrl: text("instagram_url"),
+  youtubeUrl: text("youtube_url"),
+  websiteUrl: text("website_url"),
+  
+  // Reviews & Stats
+  averageRating: numeric("average_rating", { precision: 3, scale: 2 }),
+  totalReviews: integer("total_reviews").default(0),
+  
+  // Visibility
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("performer_profiles_user_idx").on(table.userId),
+  activeIdx: index("performer_profiles_active_idx").on(table.isActive),
+  ratingIdx: index("performer_profiles_rating_idx").on(table.averageRating),
+  verifiedIdx: index("performer_profiles_verified_idx").on(table.isVerified),
+}));
+
+/**
+ * Vendor Profile - Tango-related products and services
+ * Products, services, categories, pricing
+ */
+export const vendorProfiles = pgTable("vendor_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Business Info
+  businessName: varchar("business_name", { length: 255 }).notNull(),
+  bio: text("bio"),
+  tagline: varchar("tagline", { length: 255 }),
+  
+  // Categories
+  primaryCategory: varchar("primary_category", { length: 100 }), // shoes, clothing, accessories, etc
+  categories: text("categories").array(),
+  
+  // Products/Services
+  productsOffered: jsonb("products_offered").$type<Array<{
+    name: string;
+    category: string;
+    description?: string;
+    priceRange?: string;
+  }>>(),
+  
+  servicesOffered: jsonb("services_offered").$type<Array<{
+    name: string;
+    description: string;
+    price?: number;
+    duration?: string;
+  }>>(),
+  
+  specializations: text("specializations").array(), // custom shoes, repairs, tailoring, etc
+  
+  // Brands & Inventory
+  brandsCarried: text("brands_carried").array(),
+  customOrders: boolean("custom_orders").default(false),
+  customOrderLeadTime: integer("custom_order_lead_time"), // days
+  
+  // Business Details
+  businessType: varchar("business_type", { length: 50 }), // retail, online, manufacturer, service
+  yearsInBusiness: integer("years_in_business"),
+  
+  // Location & Contact
+  hasPhysicalStore: boolean("has_physical_store").default(false),
+  storeAddress: text("store_address"),
+  storeCity: varchar("store_city", { length: 255 }),
+  storeCountry: varchar("store_country", { length: 255 }),
+  storeHours: jsonb("store_hours"),
+  
+  // Online Presence
+  hasOnlineStore: boolean("has_online_store").default(false),
+  websiteUrl: text("website_url"),
+  onlineStoreUrl: text("online_store_url"),
+  
+  // Shipping & Fulfillment
+  shipsInternationally: boolean("ships_internationally").default(false),
+  shippingRegions: text("shipping_regions").array(),
+  averageShippingTime: varchar("average_shipping_time", { length: 100 }),
+  
+  // Pricing
+  priceRange: varchar("price_range", { length: 50 }), // $, $$, $$$, $$$$
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  acceptedPayments: text("accepted_payments").array(),
+  
+  // Policies
+  returnPolicy: text("return_policy"),
+  warrantyInfo: text("warranty_info"),
+  
+  // Gallery
+  productImages: text("product_images").array(),
+  
+  // Social Media
+  instagramUrl: text("instagram_url"),
+  facebookUrl: text("facebook_url"),
+  
+  // Reviews & Stats
+  averageRating: numeric("average_rating", { precision: 3, scale: 2 }),
+  totalReviews: integer("total_reviews").default(0),
+  
+  // Visibility
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("vendor_profiles_user_idx").on(table.userId),
+  activeIdx: index("vendor_profiles_active_idx").on(table.isActive),
+  categoryIdx: index("vendor_profiles_category_idx").on(table.primaryCategory),
+  cityIdx: index("vendor_profiles_city_idx").on(table.storeCity),
+  ratingIdx: index("vendor_profiles_rating_idx").on(table.averageRating),
+  verifiedIdx: index("vendor_profiles_verified_idx").on(table.isVerified),
+}));
+
+// ============================================================================
+// BUSINESS PROFILES (3)
+// ============================================================================
+
+/**
+ * Tango School Profile - Dance schools and studios
+ * Location, programs, teachers, schedule
+ */
+export const tangoSchoolProfiles = pgTable("tango_school_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // School Info
+  schoolName: varchar("school_name", { length: 255 }).notNull(),
+  bio: text("bio"),
+  tagline: varchar("tagline", { length: 255 }),
+  foundedYear: integer("founded_year"),
+  
+  // Location
+  address: text("address").notNull(),
+  city: varchar("city", { length: 255 }).notNull(),
+  country: varchar("country", { length: 255 }).notNull(),
+  latitude: numeric("latitude", { precision: 10, scale: 7 }),
+  longitude: numeric("longitude", { precision: 10, scale: 7 }),
+  
+  // Facility Details
+  squareFootage: integer("square_footage"),
+  numberOfStudios: integer("number_of_studios").default(1),
+  floorType: varchar("floor_type", { length: 100 }),
+  amenities: text("amenities").array(), // changing rooms, parking, cafe, etc
+  accessibility: text("accessibility").array(),
+  
+  // Programs Offered
+  programs: jsonb("programs").$type<Array<{
+    name: string;
+    level: string;
+    description: string;
+    schedule?: string;
+    price?: number;
+  }>>(),
+  
+  classTypes: text("class_types").array(), // group, private, workshops, intensives
+  skillLevels: text("skill_levels").array(), // beginner, intermediate, advanced
+  danceStyles: text("dance_styles").array(), // tango, vals, milonga
+  
+  // Teaching Staff
+  numberOfTeachers: integer("number_of_teachers"),
+  teachers: jsonb("teachers").$type<Array<{
+    name: string;
+    bio?: string;
+    specialization?: string;
+    photoUrl?: string;
+  }>>(),
+  
+  // Schedule & Capacity
+  weeklyClassCount: integer("weekly_class_count"),
+  maxStudentsPerClass: integer("max_students_per_class"),
+  schedule: jsonb("schedule"),
+  
+  // Pricing
+  dropInRate: numeric("drop_in_rate", { precision: 10, scale: 2 }),
+  monthlyRate: numeric("monthly_rate", { precision: 10, scale: 2 }),
+  privateRate: numeric("private_rate", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  offersTrial: boolean("offers_trial").default(true),
+  trialPrice: numeric("trial_price", { precision: 10, scale: 2 }),
+  
+  // Additional Services
+  hostsEvents: boolean("hosts_events").default(false),
+  rentalsAvailable: boolean("rentals_available").default(false),
+  
+  // Media
+  photoUrls: text("photo_urls").array(),
+  videoUrls: text("video_urls").array(),
+  virtualTourUrl: text("virtual_tour_url"),
+  
+  // Contact
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  websiteUrl: text("website_url"),
+  instagramUrl: text("instagram_url"),
+  facebookUrl: text("facebook_url"),
+  
+  // Reviews & Stats
+  averageRating: numeric("average_rating", { precision: 3, scale: 2 }),
+  totalReviews: integer("total_reviews").default(0),
+  totalStudents: integer("total_students").default(0),
+  
+  // Visibility
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("tango_school_profiles_user_idx").on(table.userId),
+  activeIdx: index("tango_school_profiles_active_idx").on(table.isActive),
+  cityIdx: index("tango_school_profiles_city_idx").on(table.city),
+  countryIdx: index("tango_school_profiles_country_idx").on(table.country),
+  ratingIdx: index("tango_school_profiles_rating_idx").on(table.averageRating),
+  verifiedIdx: index("tango_school_profiles_verified_idx").on(table.isVerified),
+}));
+
+/**
+ * Tango Hotel Profile - Tango-themed hotels and accommodations
+ * Amenities, rooms, packages, location
+ */
+export const tangoHotelProfiles = pgTable("tango_hotel_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Hotel Info
+  hotelName: varchar("hotel_name", { length: 255 }).notNull(),
+  bio: text("bio"),
+  tagline: varchar("tagline", { length: 255 }),
+  hotelType: varchar("hotel_type", { length: 100 }), // hotel, hostel, B&B, apartment
+  starRating: integer("star_rating"),
+  
+  // Location
+  address: text("address").notNull(),
+  city: varchar("city", { length: 255 }).notNull(),
+  country: varchar("country", { length: 255 }).notNull(),
+  latitude: numeric("latitude", { precision: 10, scale: 7 }),
+  longitude: numeric("longitude", { precision: 10, scale: 7 }),
+  neighborhood: varchar("neighborhood", { length: 255 }),
+  
+  // Proximity to Tango Venues
+  nearbyMilongas: jsonb("nearby_milongas").$type<Array<{
+    name: string;
+    distance: string;
+    walkingTime?: number;
+  }>>(),
+  
+  // Accommodations
+  totalRooms: integer("total_rooms"),
+  roomTypes: jsonb("room_types").$type<Array<{
+    type: string;
+    description: string;
+    capacity: number;
+    pricePerNight: number;
+    amenities: string[];
+  }>>(),
+  
+  // Tango-Specific Amenities
+  tangoAmenities: text("tango_amenities").array(), // dance floor, music library, shoe cleaning, etc
+  
+  // Standard Amenities
+  amenities: text("amenities").array(), // wifi, breakfast, parking, pool, gym, etc
+  
+  // Services
+  services: text("services").array(), // concierge, room service, tours, laundry, etc
+  tangoServices: text("tango_services").array(), // tango lessons, milonga shuttle, etc
+  
+  // Packages
+  packages: jsonb("packages").$type<Array<{
+    name: string;
+    description: string;
+    duration: string;
+    includes: string[];
+    price: number;
+  }>>(),
+  
+  // Pricing
+  priceRangeLow: numeric("price_range_low", { precision: 10, scale: 2 }),
+  priceRangeHigh: numeric("price_range_high", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  
+  // Policies
+  checkInTime: varchar("check_in_time", { length: 50 }),
+  checkOutTime: varchar("check_out_time", { length: 50 }),
+  cancellationPolicy: text("cancellation_policy"),
+  petsAllowed: boolean("pets_allowed").default(false),
+  smokingAllowed: boolean("smoking_allowed").default(false),
+  
+  // Media
+  photoUrls: text("photo_urls").array(),
+  videoUrls: text("video_urls").array(),
+  virtualTourUrl: text("virtual_tour_url"),
+  
+  // Contact & Booking
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  websiteUrl: text("website_url"),
+  bookingUrl: text("booking_url"),
+  instagramUrl: text("instagram_url"),
+  facebookUrl: text("facebook_url"),
+  
+  // Reviews & Stats
+  averageRating: numeric("average_rating", { precision: 3, scale: 2 }),
+  totalReviews: integer("total_reviews").default(0),
+  
+  // Visibility
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("tango_hotel_profiles_user_idx").on(table.userId),
+  activeIdx: index("tango_hotel_profiles_active_idx").on(table.isActive),
+  cityIdx: index("tango_hotel_profiles_city_idx").on(table.city),
+  countryIdx: index("tango_hotel_profiles_country_idx").on(table.country),
+  ratingIdx: index("tango_hotel_profiles_rating_idx").on(table.averageRating),
+  verifiedIdx: index("tango_hotel_profiles_verified_idx").on(table.isVerified),
+}));
+
+/**
+ * Host Venue Profile - Venues hosting tango events
+ * Capacity, amenities, calendar, policies
+ */
+export const hostVenueProfiles = pgTable("host_venue_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Venue Info
+  venueName: varchar("venue_name", { length: 255 }).notNull(),
+  bio: text("bio"),
+  tagline: varchar("tagline", { length: 255 }),
+  venueType: varchar("venue_type", { length: 100 }), // dedicated dance hall, multi-purpose, restaurant, etc
+  
+  // Location
+  address: text("address").notNull(),
+  city: varchar("city", { length: 255 }).notNull(),
+  country: varchar("country", { length: 255 }).notNull(),
+  latitude: numeric("latitude", { precision: 10, scale: 7 }),
+  longitude: numeric("longitude", { precision: 10, scale: 7 }),
+  neighborhood: varchar("neighborhood", { length: 255 }),
+  
+  // Capacity & Space
+  danceFloorSize: integer("dance_floor_size"), // square feet/meters
+  floorType: varchar("floor_type", { length: 100 }),
+  maximumCapacity: integer("maximum_capacity"),
+  seatingCapacity: integer("seating_capacity"),
+  standingCapacity: integer("standing_capacity"),
+  
+  // Amenities
+  amenities: text("amenities").array(), // sound system, lighting, bar, kitchen, coat check, etc
+  hasBar: boolean("has_bar").default(false),
+  hasKitchen: boolean("has_kitchen").default(false),
+  hasCateringAvailable: boolean("has_catering_available").default(false),
+  
+  // Technical Specs
+  soundSystem: text("sound_system"),
+  lightingSystem: text("lighting_system"),
+  hasProjector: boolean("has_projector").default(false),
+  hasStage: boolean("has_stage").default(false),
+  
+  // Accessibility
+  wheelchairAccessible: boolean("wheelchair_accessible").default(false),
+  parkingAvailable: boolean("parking_available").default(false),
+  parkingSpaces: integer("parking_spaces"),
+  publicTransitNearby: boolean("public_transit_nearby").default(false),
+  
+  // Event Types Hosted
+  eventTypes: text("event_types").array(), // milongas, festivals, workshops, performances
+  regularEvents: jsonb("regular_events").$type<Array<{
+    name: string;
+    frequency: string;
+    dayOfWeek?: string;
+    time?: string;
+  }>>(),
+  
+  // Availability
+  availableForRental: boolean("available_for_rental").default(true),
+  availableDays: text("available_days").array(),
+  minimumRentalHours: integer("minimum_rental_hours"),
+  
+  // Pricing
+  hourlyRate: numeric("hourly_rate", { precision: 10, scale: 2 }),
+  halfDayRate: numeric("half_day_rate", { precision: 10, scale: 2 }),
+  fullDayRate: numeric("full_day_rate", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  depositRequired: boolean("deposit_required").default(false),
+  depositAmount: numeric("deposit_amount", { precision: 10, scale: 2 }),
+  
+  // Policies
+  alcoholPermitted: boolean("alcohol_permitted").default(true),
+  externalCateringAllowed: boolean("external_catering_allowed").default(true),
+  setupTime: integer("setup_time"), // minutes
+  cleanupTime: integer("cleanup_time"), // minutes
+  cancellationPolicy: text("cancellation_policy"),
+  rulesAndRestrictions: text("rules_and_restrictions"),
+  
+  // Media
+  photoUrls: text("photo_urls").array(),
+  videoUrls: text("video_urls").array(),
+  floorPlanUrl: text("floor_plan_url"),
+  virtualTourUrl: text("virtual_tour_url"),
+  
+  // Contact
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  websiteUrl: text("website_url"),
+  instagramUrl: text("instagram_url"),
+  facebookUrl: text("facebook_url"),
+  
+  // Reviews & Stats
+  averageRating: numeric("average_rating", { precision: 3, scale: 2 }),
+  totalReviews: integer("total_reviews").default(0),
+  totalEventsHosted: integer("total_events_hosted").default(0),
+  
+  // Visibility
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("host_venue_profiles_user_idx").on(table.userId),
+  activeIdx: index("host_venue_profiles_active_idx").on(table.isActive),
+  cityIdx: index("host_venue_profiles_city_idx").on(table.city),
+  countryIdx: index("host_venue_profiles_country_idx").on(table.country),
+  capacityIdx: index("host_venue_profiles_capacity_idx").on(table.maximumCapacity),
+  ratingIdx: index("host_venue_profiles_rating_idx").on(table.averageRating),
+  verifiedIdx: index("host_venue_profiles_verified_idx").on(table.isVerified),
+}));
+
+// ============================================================================
+// SPECIALTY SERVICES (4)
+// ============================================================================
+
+/**
+ * Wellness Profile - Wellness services for dancers
+ * Services, certifications, approach, rates
+ */
+export const wellnessProfiles = pgTable("wellness_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Professional Info
+  businessName: varchar("business_name", { length: 255 }),
+  bio: text("bio"),
+  tagline: varchar("tagline", { length: 255 }),
+  
+  // Specialization
+  primarySpecialty: varchar("primary_specialty", { length: 100 }), // massage, physical therapy, yoga, etc
+  specialties: text("specialties").array(),
+  focusAreas: text("focus_areas").array(), // sports injury, flexibility, pain management, etc
+  dancerSpecialist: boolean("dancer_specialist").default(true),
+  
+  // Qualifications
+  certifications: jsonb("certifications").$type<Array<{
+    name: string;
+    issuer: string;
+    year: number;
+    expiryDate?: string;
+  }>>(),
+  
+  education: jsonb("education").$type<Array<{
+    degree: string;
+    institution: string;
+    year: number;
+  }>>(),
+  
+  yearsExperience: integer("years_experience"),
+  licenseNumber: varchar("license_number", { length: 100 }),
+  
+  // Services Offered
+  services: jsonb("services").$type<Array<{
+    name: string;
+    description: string;
+    duration: number; // minutes
+    price: number;
+  }>>(),
+  
+  // Approach & Philosophy
+  treatmentApproach: text("treatment_approach"),
+  specializedTechniques: text("specialized_techniques").array(),
+  
+  // Availability
+  availableDays: text("available_days").array(),
+  availabilitySchedule: jsonb("availability_schedule"),
+  acceptsWalkIns: boolean("accepts_walk_ins").default(false),
+  
+  // Location
+  hasOffice: boolean("has_office").default(true),
+  officeAddress: text("office_address"),
+  officeCity: varchar("office_city", { length: 255 }),
+  officeCountry: varchar("office_country", { length: 255 }),
+  houseCallsAvailable: boolean("house_calls_available").default(false),
+  virtualSessions: boolean("virtual_sessions").default(false),
+  
+  // Pricing
+  sessionRate: numeric("session_rate", { precision: 10, scale: 2 }),
+  packageDeals: jsonb("package_deals").$type<Array<{
+    name: string;
+    sessions: number;
+    price: number;
+    savings?: number;
+  }>>(),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  acceptsInsurance: boolean("accepts_insurance").default(false),
+  insuranceProviders: text("insurance_providers").array(),
+  
+  // Policies
+  cancellationPolicy: text("cancellation_policy"),
+  latePolicy: text("late_policy"),
+  
+  // Contact
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  websiteUrl: text("website_url"),
+  instagramUrl: text("instagram_url"),
+  
+  // Reviews & Stats
+  averageRating: numeric("average_rating", { precision: 3, scale: 2 }),
+  totalReviews: integer("total_reviews").default(0),
+  totalClients: integer("total_clients").default(0),
+  
+  // Visibility
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("wellness_profiles_user_idx").on(table.userId),
+  activeIdx: index("wellness_profiles_active_idx").on(table.isActive),
+  specialtyIdx: index("wellness_profiles_specialty_idx").on(table.primarySpecialty),
+  cityIdx: index("wellness_profiles_city_idx").on(table.officeCity),
+  ratingIdx: index("wellness_profiles_rating_idx").on(table.averageRating),
+  verifiedIdx: index("wellness_profiles_verified_idx").on(table.isVerified),
+}));
+
+/**
+ * Tour Operator Profile - Tango travel and tours
+ * Destinations, packages, itineraries
+ */
+export const tourOperatorProfiles = pgTable("tour_operator_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Company Info
+  companyName: varchar("company_name", { length: 255 }).notNull(),
+  bio: text("bio"),
+  tagline: varchar("tagline", { length: 255 }),
+  foundedYear: integer("founded_year"),
+  
+  // Specialization
+  tourTypes: text("tour_types").array(), // group, private, festival packages, immersion programs
+  focusRegions: text("focus_regions").array(),
+  
+  // Destinations
+  destinations: jsonb("destinations").$type<Array<{
+    city: string;
+    country: string;
+    description: string;
+    highlights: string[];
+    bestSeasons?: string[];
+  }>>(),
+  
+  // Tour Packages
+  packages: jsonb("packages").$type<Array<{
+    name: string;
+    destination: string;
+    duration: number; // days
+    description: string;
+    includes: string[];
+    excludes: string[];
+    groupSize: string;
+    priceFrom: number;
+    highlights: string[];
+  }>>(),
+  
+  // Services Included
+  servicesIncluded: text("services_included").array(), // accommodation, classes, milongas, meals, transport
+  
+  // Group Details
+  averageGroupSize: integer("average_group_size"),
+  maxGroupSize: integer("max_group_size"),
+  minGroupSize: integer("min_group_size"),
+  privateToursAvailable: boolean("private_tours_available").default(true),
+  
+  // Experience Level
+  yearsOperating: integer("years_operating"),
+  toursPerYear: integer("tours_per_year"),
+  totalTravelers: integer("total_travelers").default(0),
+  
+  // Expertise
+  localConnections: text("local_connections"),
+  languages: text("languages").array(),
+  specializesInTango: boolean("specializes_in_tango").default(true),
+  
+  // Pricing
+  priceRangeLow: numeric("price_range_low", { precision: 10, scale: 2 }),
+  priceRangeHigh: numeric("price_range_high", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  depositRequired: boolean("deposit_required").default(true),
+  depositPercentage: integer("deposit_percentage"),
+  
+  // Policies
+  cancellationPolicy: text("cancellation_policy"),
+  refundPolicy: text("refund_policy"),
+  travelInsuranceRequired: boolean("travel_insurance_required").default(false),
+  
+  // What's Included
+  accommodationType: varchar("accommodation_type", { length: 100 }),
+  mealsIncluded: text("meals_included").array(),
+  transportIncluded: boolean("transport_included").default(true),
+  
+  // Media
+  photoUrls: text("photo_urls").array(),
+  videoUrls: text("video_urls").array(),
+  brochureUrl: text("brochure_url"),
+  
+  // Contact
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  websiteUrl: text("website_url"),
+  instagramUrl: text("instagram_url"),
+  facebookUrl: text("facebook_url"),
+  
+  // Reviews & Stats
+  averageRating: numeric("average_rating", { precision: 3, scale: 2 }),
+  totalReviews: integer("total_reviews").default(0),
+  
+  // Visibility
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("tour_operator_profiles_user_idx").on(table.userId),
+  activeIdx: index("tour_operator_profiles_active_idx").on(table.isActive),
+  ratingIdx: index("tour_operator_profiles_rating_idx").on(table.averageRating),
+  verifiedIdx: index("tour_operator_profiles_verified_idx").on(table.isVerified),
+}));
+
+/**
+ * Tango Guide Profile - Local tango guides and cultural experts
+ * Cities, languages, expertise, reviews
+ */
+export const tangoGuideProfiles = pgTable("tango_guide_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Professional Info
+  guideName: varchar("guide_name", { length: 255 }),
+  bio: text("bio"),
+  tagline: varchar("tagline", { length: 255 }),
+  
+  // Expertise
+  expertCities: jsonb("expert_cities").$type<Array<{
+    city: string;
+    country: string;
+    yearsKnowledge: number;
+    description?: string;
+  }>>(),
+  
+  languages: text("languages").array(),
+  specializations: text("specializations").array(), // tango history, venues, shopping, culture
+  
+  // Experience
+  yearsAsGuide: integer("years_as_guide"),
+  guidedTours: integer("guided_tours").default(0),
+  
+  // Services Offered
+  services: text("services").array(), // venue tours, shopping assistance, class recommendations, cultural tours
+  
+  tourTypes: jsonb("tour_types").$type<Array<{
+    name: string;
+    description: string;
+    duration: string;
+    price: number;
+    includes: string[];
+  }>>(),
+  
+  // Availability
+  availableDays: text("available_days").array(),
+  advanceBookingRequired: integer("advance_booking_required"), // days
+  emergencyAvailable: boolean("emergency_available").default(false),
+  
+  // Knowledge Areas
+  knowledgeAreas: text("knowledge_areas").array(), // tango history, milongas, festivals, shopping, accommodation
+  insiderAccess: text("insider_access").array(), // exclusive venues, special events, private milongas
+  
+  // Local Connections
+  venueConnections: boolean("venue_connections").default(true),
+  teacherConnections: boolean("teacher_connections").default(true),
+  eventOrganizerConnections: boolean("event_organizer_connections").default(false),
+  
+  // Pricing
+  hourlyRate: numeric("hourly_rate", { precision: 10, scale: 2 }),
+  halfDayRate: numeric("half_day_rate", { precision: 10, scale: 2 }),
+  fullDayRate: numeric("full_day_rate", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  groupDiscounts: boolean("group_discounts").default(true),
+  
+  // Services Included
+  includesTransport: boolean("includes_transport").default(false),
+  includesAdmissions: boolean("includes_admissions").default(false),
+  includesMeals: boolean("includes_meals").default(false),
+  
+  // Contact Methods
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  whatsappNumber: varchar("whatsapp_number", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  preferredContactMethod: varchar("preferred_contact_method", { length: 50 }),
+  
+  // Media
+  photoUrls: text("photo_urls").array(),
+  videoIntroUrl: text("video_intro_url"),
+  instagramUrl: text("instagram_url"),
+  
+  // Reviews & Stats
+  averageRating: numeric("average_rating", { precision: 3, scale: 2 }),
+  totalReviews: integer("total_reviews").default(0),
+  
+  // Visibility
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("tango_guide_profiles_user_idx").on(table.userId),
+  activeIdx: index("tango_guide_profiles_active_idx").on(table.isActive),
+  ratingIdx: index("tango_guide_profiles_rating_idx").on(table.averageRating),
+  verifiedIdx: index("tango_guide_profiles_verified_idx").on(table.isVerified),
+}));
+
+/**
+ * Taxi Dancer Profile - Professional dance partners for hire
+ * Availability, rates, styles, preferences
+ */
+export const taxiDancerProfiles = pgTable("taxi_dancer_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Professional Info
+  displayName: varchar("display_name", { length: 255 }),
+  bio: text("bio"),
+  tagline: varchar("tagline", { length: 255 }),
+  
+  // Dance Details
+  primaryRole: varchar("primary_role", { length: 20 }), // lead, follow
+  canDanceBothRoles: boolean("can_dance_both_roles").default(false),
+  danceStyles: text("dance_styles").array(), // tango, vals, milonga
+  skillLevel: varchar("skill_level", { length: 50 }),
+  
+  // Experience
+  yearsOfDancing: integer("years_of_dancing"),
+  yearsAsTaxiDancer: integer("years_as_taxi_dancer"),
+  
+  // Availability
+  availableDays: text("available_days").array(),
+  availabilitySchedule: jsonb("availability_schedule"),
+  lastMinuteBookings: boolean("last_minute_bookings").default(false),
+  minimumNotice: integer("minimum_notice"), // hours
+  
+  // Service Details
+  services: text("services").array(), // practice partner, event companion, lesson support
+  minimumHours: integer("minimum_hours").default(1),
+  
+  // Preferences
+  preferredVenues: text("preferred_venues").array(),
+  willingToTravel: boolean("willing_to_travel").default(false),
+  travelRadius: integer("travel_radius"), // km
+  
+  experienceLevels: text("experience_levels").array(), // beginners welcome, intermediate, advanced only
+  
+  // Pricing
+  hourlyRate: numeric("hourly_rate", { precision: 10, scale: 2 }),
+  eventRate: numeric("event_rate", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  discountPackages: jsonb("discount_packages").$type<Array<{
+    name: string;
+    hours: number;
+    price: number;
+    savings?: number;
+  }>>(),
+  
+  // Policies
+  cancellationPolicy: text("cancellation_policy"),
+  paymentMethods: text("payment_methods").array(),
+  requiresDeposit: boolean("requires_deposit").default(false),
+  
+  // Professional Standards
+  dresscode: varchar("dresscode", { length: 100 }),
+  conduct: text("conduct"),
+  
+  // Contact
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  preferredContactMethod: varchar("preferred_contact_method", { length: 50 }),
+  
+  // Media
+  photoUrls: text("photo_urls").array(),
+  videoUrls: text("video_urls").array(),
+  
+  // Reviews & Stats
+  averageRating: numeric("average_rating", { precision: 3, scale: 2 }),
+  totalReviews: integer("total_reviews").default(0),
+  totalBookings: integer("total_bookings").default(0),
+  
+  // Visibility & Safety
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  backgroundCheckDate: timestamp("background_check_date"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("taxi_dancer_profiles_user_idx").on(table.userId),
+  activeIdx: index("taxi_dancer_profiles_active_idx").on(table.isActive),
+  roleIdx: index("taxi_dancer_profiles_role_idx").on(table.primaryRole),
+  ratingIdx: index("taxi_dancer_profiles_rating_idx").on(table.averageRating),
+  verifiedIdx: index("taxi_dancer_profiles_verified_idx").on(table.isVerified),
+}));
+
+// ============================================================================
+// CONTENT/ORGANIZATION (3)
+// ============================================================================
+
+/**
+ * Content Creator Profile - Tango content creators and influencers
+ * Platforms, content types, metrics
+ */
+export const contentCreatorProfiles = pgTable("content_creator_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Creator Info
+  creatorName: varchar("creator_name", { length: 255 }),
+  bio: text("bio"),
+  tagline: varchar("tagline", { length: 255 }),
+  niche: varchar("niche", { length: 100 }), // education, entertainment, lifestyle, etc
+  
+  // Content Details
+  contentTypes: text("content_types").array(), // videos, photos, blogs, podcasts, tutorials
+  contentThemes: text("content_themes").array(), // technique, history, culture, events, lifestyle
+  uploadFrequency: varchar("upload_frequency", { length: 50 }),
+  
+  // Platforms
+  platforms: jsonb("platforms").$type<Array<{
+    name: string;
+    url: string;
+    followers?: number;
+    verified?: boolean;
+  }>>(),
+  
+  // Metrics
+  totalFollowers: integer("total_followers").default(0),
+  totalViews: integer("total_views").default(0),
+  totalContent: integer("total_content").default(0),
+  engagementRate: numeric("engagement_rate", { precision: 5, scale: 2 }), // percentage
+  
+  // Audience
+  primaryAudience: varchar("primary_audience", { length: 100 }),
+  audienceRegions: text("audience_regions").array(),
+  audienceLanguages: text("audience_languages").array(),
+  
+  // Collaboration
+  openToCollaborations: boolean("open_to_collaborations").default(true),
+  collaborationTypes: text("collaboration_types").array(), // sponsorships, guest posts, features
+  
+  // Services Offered
+  offersSponsorship: boolean("offers_sponsorship").default(false),
+  offersFeaturedContent: boolean("offers_featured_content").default(false),
+  offersAffiliateMarketing: boolean("offers_affiliate_marketing").default(false),
+  offersContentCreation: boolean("offers_content_creation").default(false),
+  
+  // Rates
+  sponsorshipRate: numeric("sponsorship_rate", { precision: 10, scale: 2 }),
+  postRate: numeric("post_rate", { precision: 10, scale: 2 }),
+  videoRate: numeric("video_rate", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  
+  // Media Kit
+  mediaKitUrl: text("media_kit_url"),
+  demographicsUrl: text("demographics_url"),
+  
+  // Portfolio
+  featuredWork: text("featured_work").array(),
+  brandCollaborations: text("brand_collaborations").array(),
+  
+  // Contact
+  businessEmail: varchar("business_email", { length: 255 }),
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  
+  // Social Links
+  youtubeUrl: text("youtube_url"),
+  instagramUrl: text("instagram_url"),
+  tiktokUrl: text("tiktok_url"),
+  facebookUrl: text("facebook_url"),
+  twitterUrl: text("twitter_url"),
+  websiteUrl: text("website_url"),
+  
+  // Visibility
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("content_creator_profiles_user_idx").on(table.userId),
+  activeIdx: index("content_creator_profiles_active_idx").on(table.isActive),
+  followersIdx: index("content_creator_profiles_followers_idx").on(table.totalFollowers),
+  verifiedIdx: index("content_creator_profiles_verified_idx").on(table.isVerified),
+}));
+
+/**
+ * Learning Resource Profile - Educational materials and courses
+ * Materials, topics, formats
+ */
+export const learningResourceProfiles = pgTable("learning_resource_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Resource Info
+  resourceName: varchar("resource_name", { length: 255 }),
+  bio: text("bio"),
+  tagline: varchar("tagline", { length: 255 }),
+  
+  // Resource Types
+  resourceTypes: text("resource_types").array(), // online courses, ebooks, videos, podcasts, worksheets
+  primaryFormat: varchar("primary_format", { length: 100 }),
+  
+  // Topics & Coverage
+  topics: text("topics").array(), // technique, musicality, history, culture, etiquette
+  skillLevels: text("skill_levels").array(), // beginner, intermediate, advanced
+  danceStyles: text("dance_styles").array(), // tango, vals, milonga
+  
+  // Learning Materials
+  materials: jsonb("materials").$type<Array<{
+    title: string;
+    type: string;
+    description: string;
+    format: string;
+    duration?: string;
+    price?: number;
+    url?: string;
+    isFree?: boolean;
+  }>>(),
+  
+  // Course Details (if applicable)
+  courses: jsonb("courses").$type<Array<{
+    title: string;
+    description: string;
+    lessons: number;
+    duration: string;
+    level: string;
+    price: number;
+    enrollmentCount?: number;
+  }>>(),
+  
+  // Content Stats
+  totalResources: integer("total_resources").default(0),
+  totalStudents: integer("total_students").default(0),
+  totalDownloads: integer("total_downloads").default(0),
+  
+  // Delivery Method
+  deliveryMethods: text("delivery_methods").array(), // self-paced, live online, downloadable, streaming
+  platformUsed: varchar("platform_used", { length: 100 }), // Teachable, Udemy, own website, etc
+  
+  // Languages
+  languagesAvailable: text("languages_available").array(),
+  subtitlesAvailable: text("subtitles_available").array(),
+  
+  // Pricing
+  pricingModel: varchar("pricing_model", { length: 50 }), // free, one-time, subscription, freemium
+  priceRangeLow: numeric("price_range_low", { precision: 10, scale: 2 }),
+  priceRangeHigh: numeric("price_range_high", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  offersFreeTrial: boolean("offers_free_trial").default(false),
+  freeResourcesAvailable: boolean("free_resources_available").default(true),
+  
+  // Access & Support
+  lifetimeAccess: boolean("lifetime_access").default(false),
+  certificateOffered: boolean("certificate_offered").default(false),
+  supportIncluded: boolean("support_included").default(false),
+  communityAccess: boolean("community_access").default(false),
+  
+  // Updates
+  regularlyUpdated: boolean("regularly_updated").default(true),
+  lastUpdated: timestamp("last_updated"),
+  
+  // Media
+  sampleContent: text("sample_content").array(),
+  previewUrls: text("preview_urls").array(),
+  
+  // Contact & Links
+  websiteUrl: text("website_url"),
+  email: varchar("email", { length: 255 }),
+  youtubeUrl: text("youtube_url"),
+  instagramUrl: text("instagram_url"),
+  
+  // Reviews & Stats
+  averageRating: numeric("average_rating", { precision: 3, scale: 2 }),
+  totalReviews: integer("total_reviews").default(0),
+  completionRate: numeric("completion_rate", { precision: 5, scale: 2 }),
+  
+  // Visibility
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("learning_resource_profiles_user_idx").on(table.userId),
+  activeIdx: index("learning_resource_profiles_active_idx").on(table.isActive),
+  formatIdx: index("learning_resource_profiles_format_idx").on(table.primaryFormat),
+  ratingIdx: index("learning_resource_profiles_rating_idx").on(table.averageRating),
+  verifiedIdx: index("learning_resource_profiles_verified_idx").on(table.isVerified),
+}));
+
+/**
+ * Organizer Profile - Event organizers and promoters
+ * Events organized, experience, references
+ */
+export const organizerProfiles = pgTable("organizer_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Organizer Info
+  organizerName: varchar("organizer_name", { length: 255 }),
+  organizationName: varchar("organization_name", { length: 255 }),
+  bio: text("bio"),
+  tagline: varchar("tagline", { length: 255 }),
+  
+  // Experience
+  yearsOrganizing: integer("years_organizing"),
+  totalEventsOrganized: integer("total_events_organized").default(0),
+  
+  // Event Types
+  eventTypes: text("event_types").array(), // milongas, festivals, workshops, marathons, encuentros
+  eventSizes: text("event_sizes").array(), // intimate, medium, large, festival
+  
+  // Notable Events
+  notableEvents: jsonb("notable_events").$type<Array<{
+    name: string;
+    type: string;
+    date: string;
+    location: string;
+    attendees?: number;
+    description?: string;
+  }>>(),
+  
+  // Recurring Events
+  recurringEvents: jsonb("recurring_events").$type<Array<{
+    name: string;
+    frequency: string;
+    venue: string;
+    averageAttendance?: number;
+  }>>(),
+  
+  // Organizational Skills
+  specializations: text("specializations").array(), // festival production, weekly milongas, marathons, etc
+  
+  // Team & Resources
+  hasTeam: boolean("has_team").default(false),
+  teamSize: integer("team_size"),
+  hasVenue: boolean("has_venue").default(false),
+  venueInfo: text("venue_info"),
+  
+  // Services Offered
+  offersEventProduction: boolean("offers_event_production").default(true),
+  offersConsulting: boolean("offers_consulting").default(false),
+  offersVenueManagement: boolean("offers_venue_management").default(false),
+  offersPromotionServices: boolean("offers_promotion_services").default(false),
+  
+  // Geographic Scope
+  primaryCities: text("primary_cities").array(),
+  willingToTravelFor: text("willing_to_travel_for").array(),
+  
+  // Professional Network
+  teacherConnections: boolean("teacher_connections").default(false),
+  djConnections: boolean("dj_connections").default(false),
+  venueConnections: boolean("venue_connections").default(false),
+  performerConnections: boolean("performer_connections").default(false),
+  
+  // References
+  references: jsonb("references").$type<Array<{
+    name: string;
+    role: string;
+    relationship: string;
+    contactInfo?: string;
+    testimonial?: string;
+  }>>(),
+  
+  testimonials: text("testimonials").array(),
+  
+  // Contact
+  phoneNumber: varchar("phone_number", { length: 50 }),
+  email: varchar("email", { length: 255 }),
+  websiteUrl: text("website_url"),
+  instagramUrl: text("instagram_url"),
+  facebookUrl: text("facebook_url"),
+  
+  // Media
+  eventPhotos: text("event_photos").array(),
+  eventVideos: text("event_videos").array(),
+  
+  // Reviews & Reputation
+  averageRating: numeric("average_rating", { precision: 3, scale: 2 }),
+  totalReviews: integer("total_reviews").default(0),
+  
+  // Visibility
+  isActive: boolean("is_active").default(true),
+  isVerified: boolean("is_verified").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("organizer_profiles_user_idx").on(table.userId),
+  activeIdx: index("organizer_profiles_active_idx").on(table.isActive),
+  eventsIdx: index("organizer_profiles_events_idx").on(table.totalEventsOrganized),
+  ratingIdx: index("organizer_profiles_rating_idx").on(table.averageRating),
+  verifiedIdx: index("organizer_profiles_verified_idx").on(table.isVerified),
+}));
+
+// ============================================================================
+// USER EXTENDED PROFILES (6)
+// ============================================================================
+
+/**
+ * Travel Preferences Profile - User's travel history and preferences
+ * Destinations visited/wishlist, travel style
+ */
+export const travelPreferencesProfiles = pgTable("travel_preferences_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Travel Style
+  travelStyle: text("travel_style").array(), // luxury, budget, backpacker, cultural immersion, etc
+  accommodationPreferences: text("accommodation_preferences").array(),
+  
+  // Destinations Visited
+  destinationsVisited: jsonb("destinations_visited").$type<Array<{
+    city: string;
+    country: string;
+    year?: number;
+    duration?: string;
+    highlights?: string[];
+    wouldRevisit?: boolean;
+  }>>(),
+  
+  totalCountriesVisited: integer("total_countries_visited").default(0),
+  totalCitiesVisited: integer("total_cities_visited").default(0),
+  
+  // Wishlist
+  destinationsWishlist: jsonb("destinations_wishlist").$type<Array<{
+    city: string;
+    country: string;
+    reason?: string;
+    priority?: string;
+    plannedYear?: number;
+  }>>(),
+  
+  // Tango Travel
+  tangoDestinationsVisited: text("tango_destinations_visited").array(),
+  tangoFestivalsAttended: jsonb("tango_festivals_attended").$type<Array<{
+    name: string;
+    location: string;
+    year: number;
+    rating?: number;
+  }>>(),
+  
+  // Preferences
+  preferredTravelMonths: text("preferred_travel_months").array(),
+  travelCompanions: varchar("travel_companions", { length: 100 }), // solo, partner, group, flexible
+  languagesSpoken: text("languages_spoken").array(),
+  
+  // Budget & Planning
+  typicalTripDuration: varchar("typical_trip_duration", { length: 100 }),
+  budgetRange: varchar("budget_range", { length: 50 }),
+  planningStyle: varchar("planning_style", { length: 100 }), // spontaneous, planned, flexible
+  
+  // Interests
+  travelInterests: text("travel_interests").array(), // tango, culture, food, adventure, relaxation
+  
+  // Sharing Preferences
+  sharePublicly: boolean("share_publicly").default(true),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("travel_preferences_profiles_user_idx").on(table.userId),
+  countriesIdx: index("travel_preferences_profiles_countries_idx").on(table.totalCountriesVisited),
+}));
+
+/**
+ * Events Profile - User's event attendance and hosting history
+ * Attended events, RSVPs, hosting history
+ */
+export const eventsProfiles = pgTable("events_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Attendance Stats
+  totalEventsAttended: integer("total_events_attended").default(0),
+  totalMilongasAttended: integer("total_milongas_attended").default(0),
+  totalFestivalsAttended: integer("total_festivals_attended").default(0),
+  totalWorkshopsAttended: integer("total_workshops_attended").default(0),
+  
+  // Favorite Events
+  favoriteEvents: jsonb("favorite_events").$type<Array<{
+    eventId?: number;
+    eventName: string;
+    location: string;
+    reason?: string;
+  }>>(),
+  
+  // Hosting History
+  totalEventsHosted: integer("total_events_hosted").default(0),
+  hostingTypes: text("hosting_types").array(), // milongas, workshops, practices, house parties
+  
+  hostedEvents: jsonb("hosted_events").$type<Array<{
+    eventId?: number;
+    name: string;
+    date: string;
+    attendees?: number;
+    type: string;
+  }>>(),
+  
+  // Preferences
+  preferredEventTypes: text("preferred_event_types").array(),
+  preferredEventSizes: text("preferred_event_sizes").array(), // intimate, medium, large
+  preferredDays: text("preferred_days").array(),
+  preferredTimes: text("preferred_times").array(),
+  
+  // Attendance Patterns
+  averageEventsPerMonth: integer("average_events_per_month"),
+  mostActiveCity: varchar("most_active_city", { length: 255 }),
+  
+  // RSVP Behavior
+  rsvpReliability: numeric("rsvp_reliability", { precision: 5, scale: 2 }), // percentage of RSVPs honored
+  
+  // Notable Attendances
+  notableEvents: jsonb("notable_events").$type<Array<{
+    name: string;
+    location: string;
+    year: number;
+    type: string;
+    highlight?: string;
+  }>>(),
+  
+  // Sharing Preferences
+  shareAttendance: boolean("share_attendance").default(true),
+  shareHosting: boolean("share_hosting").default(true),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("events_profiles_user_idx").on(table.userId),
+  attendedIdx: index("events_profiles_attended_idx").on(table.totalEventsAttended),
+  hostedIdx: index("events_profiles_hosted_idx").on(table.totalEventsHosted),
+}));
+
+/**
+ * Friends/Network Profile - User's connections and social network
+ * Connections, endorsements
+ */
+export const friendsNetworkProfiles = pgTable("friends_network_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Network Stats
+  totalFriends: integer("total_friends").default(0),
+  totalFollowers: integer("total_followers").default(0),
+  totalFollowing: integer("total_following").default(0),
+  
+  // Connection Quality
+  dancePartners: integer("dance_partners").default(0),
+  regularPartners: integer("regular_partners").default(0),
+  
+  // Geographic Distribution
+  friendsByCity: jsonb("friends_by_city").$type<Record<string, number>>(),
+  friendsByCountry: jsonb("friends_by_country").$type<Record<string, number>>(),
+  
+  // Endorsements Received
+  endorsements: jsonb("endorsements").$type<Array<{
+    fromUserId: number;
+    fromUserName: string;
+    skill: string;
+    comment?: string;
+    date: string;
+  }>>(),
+  
+  totalEndorsements: integer("total_endorsements").default(0),
+  
+  // Skills Endorsed
+  skillsEndorsed: jsonb("skills_endorsed").$type<Record<string, number>>(), // skill -> count
+  
+  // Dance Connections
+  leadersConnected: integer("leaders_connected").default(0),
+  followersConnected: integer("followers_connected").default(0),
+  
+  // Professional Connections
+  teachersConnected: integer("teachers_connected").default(0),
+  organizersConnected: integer("organizers_connected").default(0),
+  djsConnected: integer("djs_connected").default(0),
+  
+  // Activity
+  newConnectionsThisMonth: integer("new_connections_this_month").default(0),
+  newConnectionsThisYear: integer("new_connections_this_year").default(0),
+  
+  // Network Highlights
+  notableConnections: jsonb("notable_connections").$type<Array<{
+    userId: number;
+    userName: string;
+    relationship: string;
+    since?: string;
+  }>>(),
+  
+  // Privacy Settings
+  showConnectionCount: boolean("show_connection_count").default(true),
+  showMutualFriends: boolean("show_mutual_friends").default(true),
+  showEndorsements: boolean("show_endorsements").default(true),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("friends_network_profiles_user_idx").on(table.userId),
+  friendsIdx: index("friends_network_profiles_friends_idx").on(table.totalFriends),
+  endorsementsIdx: index("friends_network_profiles_endorsements_idx").on(table.totalEndorsements),
+}));
+
+/**
+ * Photos/Media Gallery Profile - User's media collections
+ * Albums, featured content
+ */
+export const photosMediaGalleryProfiles = pgTable("photos_media_gallery_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Gallery Stats
+  totalPhotos: integer("total_photos").default(0),
+  totalVideos: integer("total_videos").default(0),
+  totalAlbums: integer("total_albums").default(0),
+  totalViews: integer("total_views").default(0),
+  totalLikes: integer("total_likes").default(0),
+  
+  // Featured Content
+  featuredPhoto: text("featured_photo"),
+  featuredVideo: text("featured_video"),
+  featuredAlbum: integer("featured_album"),
+  
+  // Albums
+  albums: jsonb("albums").$type<Array<{
+    id: string;
+    name: string;
+    description?: string;
+    coverPhoto?: string;
+    photoCount: number;
+    createdDate: string;
+    isPublic: boolean;
+  }>>(),
+  
+  // Content Categories
+  contentByCategory: jsonb("content_by_category").$type<Record<string, number>>(), // category -> count
+  
+  // Popular Content
+  mostViewedPhoto: text("most_viewed_photo"),
+  mostLikedPhoto: text("most_liked_photo"),
+  
+  // Upload Activity
+  lastUploadDate: timestamp("last_upload_date"),
+  uploadsThisMonth: integer("uploads_this_month").default(0),
+  uploadsThisYear: integer("uploads_this_year").default(0),
+  
+  // Storage
+  totalStorageUsed: integer("total_storage_used").default(0), // MB
+  
+  // Sharing Stats
+  totalShares: integer("total_shares").default(0),
+  totalTags: integer("total_tags").default(0),
+  
+  // Privacy Settings
+  defaultPhotoVisibility: varchar("default_photo_visibility", { length: 20 }).default("public"),
+  allowDownloads: boolean("allow_downloads").default(true),
+  allowTagging: boolean("allow_tagging").default(true),
+  watermarkPhotos: boolean("watermark_photos").default(false),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("photos_media_gallery_profiles_user_idx").on(table.userId),
+  photosIdx: index("photos_media_gallery_profiles_photos_idx").on(table.totalPhotos),
+  viewsIdx: index("photos_media_gallery_profiles_views_idx").on(table.totalViews),
+}));
+
+/**
+ * About/Bio Extended Profile - Detailed user background
+ * Detailed background, story, achievements
+ */
+export const aboutBioExtendedProfiles = pgTable("about_bio_extended_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Extended Biography
+  fullBio: text("full_bio"),
+  tangoJourneyStory: text("tango_journey_story"),
+  inspirations: text("inspirations"),
+  dancingPhilosophy: text("dancing_philosophy"),
+  
+  // Milestones
+  milestones: jsonb("milestones").$type<Array<{
+    year: number;
+    title: string;
+    description: string;
+    category?: string;
+  }>>(),
+  
+  // Achievements
+  achievements: jsonb("achievements").$type<Array<{
+    title: string;
+    date: string;
+    description?: string;
+    organization?: string;
+    url?: string;
+  }>>(),
+  
+  competitions: jsonb("competitions").$type<Array<{
+    name: string;
+    year: number;
+    placement?: string;
+    location: string;
+  }>>(),
+  
+  performances: jsonb("performances").$type<Array<{
+    event: string;
+    role: string;
+    date: string;
+    venue: string;
+    location: string;
+  }>>(),
+  
+  // Training & Education
+  training: jsonb("training").$type<Array<{
+    teacher: string;
+    location: string;
+    period: string;
+    focus?: string;
+  }>>(),
+  
+  workshops: jsonb("workshops").$type<Array<{
+    name: string;
+    instructor: string;
+    location: string;
+    year: number;
+  }>>(),
+  
+  // Influences & Inspirations
+  favoriteTeachers: text("favorite_teachers").array(),
+  favoriteDancers: text("favorite_dancers").array(),
+  musicalInfluences: text("musical_influences").array(),
+  
+  // Personal Interests
+  hobbies: text("hobbies").array(),
+  otherDances: text("other_dances").array(),
+  languages: text("languages").array(),
+  
+  // Life Outside Tango
+  profession: varchar("profession", { length: 255 }),
+  education: text("education"),
+  interests: text("interests").array(),
+  
+  // Quotes & Testimonials
+  favoriteQuote: text("favorite_quote"),
+  testimonials: jsonb("testimonials").$type<Array<{
+    from: string;
+    role: string;
+    text: string;
+    date?: string;
+  }>>(),
+  
+  // Media
+  photoGallery: text("photo_gallery").array(),
+  videoHighlights: text("video_highlights").array(),
+  
+  // Visibility
+  isPublic: boolean("is_public").default(true),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("about_bio_extended_profiles_user_idx").on(table.userId),
+}));
+
+/**
+ * Feed/Activity Profile - User's social feed and activity settings
+ * Posts, interactions, visibility
+ */
+export const feedActivityProfiles = pgTable("feed_activity_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  
+  // Posting Activity
+  totalPosts: integer("total_posts").default(0),
+  totalPhotoPosts: integer("total_photo_posts").default(0),
+  totalVideoPosts: integer("total_video_posts").default(0),
+  totalTextPosts: integer("total_text_posts").default(0),
+  totalShares: integer("total_shares").default(0),
+  
+  // Engagement Received
+  totalLikesReceived: integer("total_likes_received").default(0),
+  totalCommentsReceived: integer("total_comments_received").default(0),
+  totalSharesReceived: integer("total_shares_received").default(0),
+  
+  // Engagement Given
+  totalLikesGiven: integer("total_likes_given").default(0),
+  totalCommentsGiven: integer("total_comments_given").default(0),
+  totalSharesGiven: integer("total_shares_given").default(0),
+  
+  // Activity Patterns
+  averagePostsPerWeek: numeric("average_posts_per_week", { precision: 5, scale: 2 }),
+  mostActiveDay: varchar("most_active_day", { length: 20 }),
+  mostActiveTime: varchar("most_active_time", { length: 50 }),
+  
+  // Content Preferences
+  preferredPostTypes: text("preferred_post_types").array(),
+  commonHashtags: text("common_hashtags").array(),
+  
+  // Popular Posts
+  mostLikedPostId: integer("most_liked_post_id"),
+  mostCommentedPostId: integer("most_commented_post_id"),
+  mostSharedPostId: integer("most_shared_post_id"),
+  
+  // Visibility & Privacy Settings
+  defaultPostVisibility: varchar("default_post_visibility", { length: 20 }).default("public"),
+  allowCommentsOnPosts: boolean("allow_comments_on_posts").default(true),
+  allowSharingOfPosts: boolean("allow_sharing_of_posts").default(true),
+  allowTaggingInPosts: boolean("allow_tagging_in_posts").default(true),
+  
+  // Notification Settings
+  notifyOnLikes: boolean("notify_on_likes").default(true),
+  notifyOnComments: boolean("notify_on_comments").default(true),
+  notifyOnShares: boolean("notify_on_shares").default(true),
+  notifyOnMentions: boolean("notify_on_mentions").default(true),
+  
+  // Feed Preferences
+  showFriendsOnly: boolean("show_friends_only").default(false),
+  hideReposts: boolean("hide_reposts").default(false),
+  
+  // Activity Streaks
+  currentPostingStreak: integer("current_posting_streak").default(0),
+  longestPostingStreak: integer("longest_posting_streak").default(0),
+  
+  // Last Activity
+  lastPostDate: timestamp("last_post_date"),
+  lastCommentDate: timestamp("last_comment_date"),
+  lastLikeDate: timestamp("last_like_date"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("feed_activity_profiles_user_idx").on(table.userId),
+  postsIdx: index("feed_activity_profiles_posts_idx").on(table.totalPosts),
+  engagementIdx: index("feed_activity_profiles_engagement_idx").on(table.totalLikesReceived),
+}));
+
+// Profile Media Zod Schemas
+export const insertProfileMediaSchema = createInsertSchema(profileMedia).omit({ id: true, createdAt: true, updatedAt: true });
+export const updateProfileMediaSchema = insertProfileMediaSchema.partial();
+export type InsertProfileMedia = z.infer<typeof insertProfileMediaSchema>;
+export type UpdateProfileMedia = z.infer<typeof updateProfileMediaSchema>;
+export type SelectProfileMedia = typeof profileMedia.$inferSelect;
+
+// Profile Analytics Zod Schemas
+export const insertProfileAnalyticsSchema = createInsertSchema(profileAnalytics).omit({ id: true });
+export type InsertProfileAnalytics = z.infer<typeof insertProfileAnalyticsSchema>;
+export type SelectProfileAnalytics = typeof profileAnalytics.$inferSelect;
+
+// Profile Inquiries Zod Schemas
+export const insertProfileInquirySchema = createInsertSchema(profileInquiries).omit({ id: true, createdAt: true, updatedAt: true });
+export const updateProfileInquirySchema = insertProfileInquirySchema.partial();
+export type InsertProfileInquiry = z.infer<typeof insertProfileInquirySchema>;
+export type UpdateProfileInquiry = z.infer<typeof updateProfileInquirySchema>;
+export type SelectProfileInquiry = typeof profileInquiries.$inferSelect;
+
+// ============================================================================
+// BATCH 11: COMPREHENSIVE ZOD VALIDATION SCHEMAS FOR 23 PROFILE TYPES
+// ============================================================================
+
+// Professional Profiles (7)
+
+// 1. Teacher Profile Schema
+export const insertTeacherProfileSchema = createInsertSchema(teacherProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    tagline: z.string().min(10).max(255).optional(),
+    bio: z.string().min(50).max(5000).optional(),
+    teachingPhilosophy: z.string().min(50).max(2000).optional(),
+    specializations: z.array(z.string().min(1).max(100)).optional(),
+    yearsTeaching: z.number().int().min(0).max(100).optional(),
+    teachingStyles: z.array(z.string().min(1).max(50)).optional(),
+    skillLevels: z.array(z.string().min(1).max(50)).optional(),
+    languages: z.array(z.string().min(2).max(50)).optional(),
+    privateRate: z.number().min(0).max(10000).optional(),
+    groupRate: z.number().min(0).max(10000).optional(),
+    workshopRate: z.number().min(0).max(10000).optional(),
+    currency: z.string().length(3).optional(),
+    ratesNote: z.string().max(500).optional(),
+    teachingLocation: z.array(z.string().min(1).max(255)).optional(),
+    travelRadius: z.number().int().min(0).max(10000).optional(),
+    videoUrls: z.array(z.string().url()).optional(),
+    portfolioUrl: z.string().url().optional(),
+    averageRating: z.number().min(0).max(5).optional(),
+    totalReviews: z.number().int().min(0).optional(),
+    totalStudents: z.number().int().min(0).optional(),
+  });
+
+export const updateTeacherProfileSchema = insertTeacherProfileSchema.partial();
+export type InsertTeacherProfile = z.infer<typeof insertTeacherProfileSchema>;
+export type UpdateTeacherProfile = z.infer<typeof updateTeacherProfileSchema>;
+export type SelectTeacherProfile = typeof teacherProfiles.$inferSelect;
+
+// 2. DJ Profile Schema
+export const insertDjProfileSchema = createInsertSchema(djProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    artistName: z.string().min(1).max(255).optional(),
+    bio: z.string().min(50).max(5000).optional(),
+    tagline: z.string().min(10).max(255).optional(),
+    genres: z.array(z.string().min(1).max(100)).optional(),
+    musicEras: z.array(z.string().min(1).max(100)).optional(),
+    specialties: z.array(z.string().min(1).max(100)).optional(),
+    yearsExperience: z.number().int().min(0).max(100).optional(),
+    eventsPlayed: z.number().int().min(0).optional(),
+    notableVenues: z.array(z.string().min(1).max(255)).optional(),
+    hourlyRate: z.number().min(0).max(10000).optional(),
+    eventRate: z.number().min(0).max(50000).optional(),
+    currency: z.string().length(3).optional(),
+    ratesNote: z.string().max(500).optional(),
+    travelRadius: z.number().int().min(0).max(10000).optional(),
+    sampleMixUrls: z.array(z.string().url()).optional(),
+    spotifyUrl: z.string().url().optional(),
+    soundcloudUrl: z.string().url().optional(),
+    youtubeUrl: z.string().url().optional(),
+    averageRating: z.number().min(0).max(5).optional(),
+    totalReviews: z.number().int().min(0).optional(),
+  });
+
+export const updateDjProfileSchema = insertDjProfileSchema.partial();
+export type InsertDjProfile = z.infer<typeof insertDjProfileSchema>;
+export type UpdateDjProfile = z.infer<typeof updateDjProfileSchema>;
+export type SelectDjProfile = typeof djProfiles.$inferSelect;
+
+// 3. Musician Profile Schema
+export const insertMusicianProfileSchema = createInsertSchema(musicianProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    artistName: z.string().min(1).max(255).optional(),
+    bio: z.string().min(50).max(5000).optional(),
+    tagline: z.string().min(10).max(255).optional(),
+    primaryInstrument: z.string().min(1).max(100).optional(),
+    instruments: z.array(z.string().min(1).max(100)).optional(),
+    genres: z.array(z.string().min(1).max(100)).optional(),
+    styles: z.array(z.string().min(1).max(100)).optional(),
+    yearsExperience: z.number().int().min(0).max(100).optional(),
+    performanceCount: z.number().int().min(0).optional(),
+    education: z.string().max(1000).optional(),
+    certifications: z.array(z.string().min(1).max(255)).optional(),
+    ensembleSize: z.string().min(1).max(50).optional(),
+    performanceRate: z.number().min(0).max(50000).optional(),
+    hourlyRate: z.number().min(0).max(10000).optional(),
+    currency: z.string().length(3).optional(),
+    ratesNote: z.string().max(500).optional(),
+    travelRadius: z.number().int().min(0).max(10000).optional(),
+    recordings: z.array(z.string().min(1).max(500)).optional(),
+    videoUrls: z.array(z.string().url()).optional(),
+    spotifyUrl: z.string().url().optional(),
+    soundcloudUrl: z.string().url().optional(),
+    youtubeUrl: z.string().url().optional(),
+    website: z.string().url().optional(),
+    averageRating: z.number().min(0).max(5).optional(),
+    totalReviews: z.number().int().min(0).optional(),
+  });
+
+export const updateMusicianProfileSchema = insertMusicianProfileSchema.partial();
+export type InsertMusicianProfile = z.infer<typeof insertMusicianProfileSchema>;
+export type UpdateMusicianProfile = z.infer<typeof updateMusicianProfileSchema>;
+export type SelectMusicianProfile = typeof musicianProfiles.$inferSelect;
+
+// 4. Choreographer Profile Schema
+export const insertChoreographerProfileSchema = createInsertSchema(choreographerProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    artistName: z.string().min(1).max(255).optional(),
+    bio: z.string().min(50).max(5000).optional(),
+    tagline: z.string().min(10).max(255).optional(),
+    artisticVision: z.string().min(50).max(2000).optional(),
+    danceStyles: z.array(z.string().min(1).max(100)).optional(),
+    choreographyTypes: z.array(z.string().min(1).max(100)).optional(),
+    yearsExperience: z.number().int().min(0).max(100).optional(),
+    productionsCount: z.number().int().min(0).optional(),
+    leadTime: z.number().int().min(0).max(365).optional(),
+    hourlyRate: z.number().min(0).max(10000).optional(),
+    projectRate: z.number().min(0).max(100000).optional(),
+    currency: z.string().length(3).optional(),
+    ratesNote: z.string().max(500).optional(),
+    videoUrls: z.array(z.string().url()).optional(),
+    portfolioUrl: z.string().url().optional(),
+    instagramUrl: z.string().url().optional(),
+    youtubeUrl: z.string().url().optional(),
+    averageRating: z.number().min(0).max(5).optional(),
+    totalReviews: z.number().int().min(0).optional(),
+  });
+
+export const updateChoreographerProfileSchema = insertChoreographerProfileSchema.partial();
+export type InsertChoreographerProfile = z.infer<typeof insertChoreographerProfileSchema>;
+export type UpdateChoreographerProfile = z.infer<typeof updateChoreographerProfileSchema>;
+export type SelectChoreographerProfile = typeof choreographerProfiles.$inferSelect;
+
+// 5. Photographer Profile Schema
+export const insertPhotographerProfileSchema = createInsertSchema(photographerProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    businessName: z.string().min(1).max(255).optional(),
+    bio: z.string().min(50).max(5000).optional(),
+    tagline: z.string().min(10).max(255).optional(),
+    photographyStyle: z.string().min(10).max(500).optional(),
+    specialties: z.array(z.string().min(1).max(100)).optional(),
+    eventTypes: z.array(z.string().min(1).max(100)).optional(),
+    yearsExperience: z.number().int().min(0).max(100).optional(),
+    eventsPhotographed: z.number().int().min(0).optional(),
+    cameras: z.array(z.string().min(1).max(255)).optional(),
+    lenses: z.array(z.string().min(1).max(255)).optional(),
+    lighting: z.array(z.string().min(1).max(255)).optional(),
+    equipmentNote: z.string().max(1000).optional(),
+    deliveryTimeframe: z.string().min(1).max(100).optional(),
+    deliveryFormats: z.array(z.string().min(1).max(100)).optional(),
+    hourlyRate: z.number().min(0).max(10000).optional(),
+    halfDayRate: z.number().min(0).max(20000).optional(),
+    fullDayRate: z.number().min(0).max(50000).optional(),
+    currency: z.string().length(3).optional(),
+    ratesNote: z.string().max(500).optional(),
+    travelRadius: z.number().int().min(0).max(10000).optional(),
+    travelFeeNote: z.string().max(500).optional(),
+    portfolioUrl: z.string().url().optional(),
+    instagramUrl: z.string().url().optional(),
+    facebookUrl: z.string().url().optional(),
+    websiteUrl: z.string().url().optional(),
+    galleryImages: z.array(z.string().url()).optional(),
+    averageRating: z.number().min(0).max(5).optional(),
+    totalReviews: z.number().int().min(0).optional(),
+  });
+
+export const updatePhotographerProfileSchema = insertPhotographerProfileSchema.partial();
+export type InsertPhotographerProfile = z.infer<typeof insertPhotographerProfileSchema>;
+export type UpdatePhotographerProfile = z.infer<typeof updatePhotographerProfileSchema>;
+export type SelectPhotographerProfile = typeof photographerProfiles.$inferSelect;
+
+// 6. Performer Profile Schema
+export const insertPerformerProfileSchema = createInsertSchema(performerProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    stageName: z.string().min(1).max(255).optional(),
+    bio: z.string().min(50).max(5000).optional(),
+    tagline: z.string().min(10).max(255).optional(),
+    performanceStyle: z.string().min(10).max(500).optional(),
+    performanceTypes: z.array(z.string().min(1).max(100)).optional(),
+    danceStyles: z.array(z.string().min(1).max(100)).optional(),
+    roles: z.array(z.string().min(1).max(50)).optional(),
+    yearsPerforming: z.number().int().min(0).max(100).optional(),
+    showsPerformed: z.number().int().min(0).optional(),
+    performanceDuration: z.string().min(1).max(100).optional(),
+    setupTime: z.number().int().min(0).max(1440).optional(),
+    technicalRequirements: z.string().max(2000).optional(),
+    performanceRate: z.number().min(0).max(100000).optional(),
+    demonstrationRate: z.number().min(0).max(50000).optional(),
+    currency: z.string().length(3).optional(),
+    ratesNote: z.string().max(500).optional(),
+    performanceVideos: z.array(z.string().url()).optional(),
+    instagramUrl: z.string().url().optional(),
+    youtubeUrl: z.string().url().optional(),
+    websiteUrl: z.string().url().optional(),
+    averageRating: z.number().min(0).max(5).optional(),
+    totalReviews: z.number().int().min(0).optional(),
+  });
+
+export const updatePerformerProfileSchema = insertPerformerProfileSchema.partial();
+export type InsertPerformerProfile = z.infer<typeof insertPerformerProfileSchema>;
+export type UpdatePerformerProfile = z.infer<typeof updatePerformerProfileSchema>;
+export type SelectPerformerProfile = typeof performerProfiles.$inferSelect;
+
+// 7. Vendor Profile Schema
+export const insertVendorProfileSchema = createInsertSchema(vendorProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    businessName: z.string().min(1).max(255),
+    bio: z.string().min(50).max(5000).optional(),
+    tagline: z.string().min(10).max(255).optional(),
+    primaryCategory: z.string().min(1).max(100).optional(),
+    categories: z.array(z.string().min(1).max(100)).optional(),
+    specializations: z.array(z.string().min(1).max(100)).optional(),
+    brandsCarried: z.array(z.string().min(1).max(100)).optional(),
+    customOrderLeadTime: z.number().int().min(0).max(365).optional(),
+    businessType: z.string().min(1).max(50).optional(),
+    yearsInBusiness: z.number().int().min(0).max(200).optional(),
+    storeAddress: z.string().max(500).optional(),
+    storeCity: z.string().min(1).max(255).optional(),
+    storeCountry: z.string().min(1).max(255).optional(),
+    websiteUrl: z.string().url().optional(),
+    onlineStoreUrl: z.string().url().optional(),
+    shippingRegions: z.array(z.string().min(1).max(100)).optional(),
+    averageShippingTime: z.string().min(1).max(100).optional(),
+    priceRange: z.string().min(1).max(50).optional(),
+    currency: z.string().length(3).optional(),
+    acceptedPayments: z.array(z.string().min(1).max(100)).optional(),
+    returnPolicy: z.string().max(2000).optional(),
+    warrantyInfo: z.string().max(2000).optional(),
+    productImages: z.array(z.string().url()).optional(),
+    instagramUrl: z.string().url().optional(),
+    facebookUrl: z.string().url().optional(),
+    averageRating: z.number().min(0).max(5).optional(),
+    totalReviews: z.number().int().min(0).optional(),
+  });
+
+export const updateVendorProfileSchema = insertVendorProfileSchema.partial();
+export type InsertVendorProfile = z.infer<typeof insertVendorProfileSchema>;
+export type UpdateVendorProfile = z.infer<typeof updateVendorProfileSchema>;
+export type SelectVendorProfile = typeof vendorProfiles.$inferSelect;
+
+// Business Profiles (3)
+
+// 8. Tango School Profile Schema
+export const insertTangoSchoolProfileSchema = createInsertSchema(tangoSchoolProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    schoolName: z.string().min(1).max(255),
+    bio: z.string().min(50).max(5000).optional(),
+    tagline: z.string().min(10).max(255).optional(),
+    founded: z.number().int().min(1800).max(new Date().getFullYear()).optional(),
+    yearsInBusiness: z.number().int().min(0).max(200).optional(),
+    classTypes: z.array(z.string().min(1).max(100)).optional(),
+    levels: z.array(z.string().min(1).max(50)).optional(),
+    styles: z.array(z.string().min(1).max(100)).optional(),
+    teachers: z.array(z.string().min(1).max(255)).optional(),
+    address: z.string().max(500).optional(),
+    city: z.string().min(1).max(255).optional(),
+    country: z.string().min(1).max(255).optional(),
+    phoneNumber: z.string().min(5).max(50).optional(),
+    email: z.string().email().optional(),
+    websiteUrl: z.string().url().optional(),
+    instagramUrl: z.string().url().optional(),
+    facebookUrl: z.string().url().optional(),
+    videoUrls: z.array(z.string().url()).optional(),
+    averageRating: z.number().min(0).max(5).optional(),
+    totalReviews: z.number().int().min(0).optional(),
+    totalStudents: z.number().int().min(0).optional(),
+  });
+
+export const updateTangoSchoolProfileSchema = insertTangoSchoolProfileSchema.partial();
+export type InsertTangoSchoolProfile = z.infer<typeof insertTangoSchoolProfileSchema>;
+export type UpdateTangoSchoolProfile = z.infer<typeof updateTangoSchoolProfileSchema>;
+export type SelectTangoSchoolProfile = typeof tangoSchoolProfiles.$inferSelect;
+
+// 9. Tango Hotel Profile Schema
+export const insertTangoHotelProfileSchema = createInsertSchema(tangoHotelProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    hotelName: z.string().min(1).max(255),
+    bio: z.string().min(50).max(5000).optional(),
+    tagline: z.string().min(10).max(255).optional(),
+    starRating: z.number().int().min(1).max(5).optional(),
+    roomTypes: z.array(z.string().min(1).max(100)).optional(),
+    amenities: z.array(z.string().min(1).max(100)).optional(),
+    tangoAmenities: z.array(z.string().min(1).max(100)).optional(),
+    totalRooms: z.number().int().min(1).max(10000).optional(),
+    priceRange: z.string().min(1).max(50).optional(),
+    currency: z.string().length(3).optional(),
+    address: z.string().max(500).optional(),
+    city: z.string().min(1).max(255).optional(),
+    country: z.string().min(1).max(255).optional(),
+    phoneNumber: z.string().min(5).max(50).optional(),
+    email: z.string().email().optional(),
+    websiteUrl: z.string().url().optional(),
+    bookingUrl: z.string().url().optional(),
+    instagramUrl: z.string().url().optional(),
+    facebookUrl: z.string().url().optional(),
+    photoUrls: z.array(z.string().url()).optional(),
+    videoUrls: z.array(z.string().url()).optional(),
+    averageRating: z.number().min(0).max(5).optional(),
+    totalReviews: z.number().int().min(0).optional(),
+  });
+
+export const updateTangoHotelProfileSchema = insertTangoHotelProfileSchema.partial();
+export type InsertTangoHotelProfile = z.infer<typeof insertTangoHotelProfileSchema>;
+export type UpdateTangoHotelProfile = z.infer<typeof updateTangoHotelProfileSchema>;
+export type SelectTangoHotelProfile = typeof tangoHotelProfiles.$inferSelect;
+
+// 10. Host/Venue Profile Schema
+export const insertHostVenueProfileSchema = createInsertSchema(hostVenueProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    venueName: z.string().min(1).max(255),
+    bio: z.string().min(50).max(5000).optional(),
+    tagline: z.string().min(10).max(255).optional(),
+    venueType: z.string().min(1).max(100).optional(),
+    capacity: z.number().int().min(1).max(100000).optional(),
+    floorType: z.string().min(1).max(100).optional(),
+    floorSize: z.string().min(1).max(100).optional(),
+    amenities: z.array(z.string().min(1).max(100)).optional(),
+    equipment: z.array(z.string().min(1).max(100)).optional(),
+    venueRules: z.array(z.string().min(1).max(500)).optional(),
+    hourlyRate: z.number().min(0).max(100000).optional(),
+    eventRate: z.number().min(0).max(500000).optional(),
+    currency: z.string().length(3).optional(),
+    ratesNote: z.string().max(500).optional(),
+    address: z.string().max(500).optional(),
+    city: z.string().min(1).max(255).optional(),
+    country: z.string().min(1).max(255).optional(),
+    phoneNumber: z.string().min(5).max(50).optional(),
+    email: z.string().email().optional(),
+    websiteUrl: z.string().url().optional(),
+    bookingUrl: z.string().url().optional(),
+    instagramUrl: z.string().url().optional(),
+    facebookUrl: z.string().url().optional(),
+    photoUrls: z.array(z.string().url()).optional(),
+    videoUrls: z.array(z.string().url()).optional(),
+    averageRating: z.number().min(0).max(5).optional(),
+    totalReviews: z.number().int().min(0).optional(),
+    totalEventsHosted: z.number().int().min(0).optional(),
+  });
+
+export const updateHostVenueProfileSchema = insertHostVenueProfileSchema.partial();
+export type InsertHostVenueProfile = z.infer<typeof insertHostVenueProfileSchema>;
+export type UpdateHostVenueProfile = z.infer<typeof updateHostVenueProfileSchema>;
+export type SelectHostVenueProfile = typeof hostVenueProfiles.$inferSelect;
+
+// Specialty Services (4)
+
+// 11. Wellness Profile Schema
+export const insertWellnessProfileSchema = createInsertSchema(wellnessProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    businessName: z.string().min(1).max(255).optional(),
+    bio: z.string().min(50).max(5000).optional(),
+    tagline: z.string().min(10).max(255).optional(),
+    serviceTypes: z.array(z.string().min(1).max(100)).optional(),
+    specializations: z.array(z.string().min(1).max(100)).optional(),
+    yearsExperience: z.number().int().min(0).max(100).optional(),
+    certifications: z.array(z.string().min(1).max(255)).optional(),
+    sessionDuration: z.string().min(1).max(100).optional(),
+    sessionRate: z.number().min(0).max(10000).optional(),
+    packageRate: z.number().min(0).max(50000).optional(),
+    currency: z.string().length(3).optional(),
+    ratesNote: z.string().max(500).optional(),
+    address: z.string().max(500).optional(),
+    city: z.string().min(1).max(255).optional(),
+    country: z.string().min(1).max(255).optional(),
+    phoneNumber: z.string().min(5).max(50).optional(),
+    email: z.string().email().optional(),
+    websiteUrl: z.string().url().optional(),
+    bookingUrl: z.string().url().optional(),
+    instagramUrl: z.string().url().optional(),
+    facebookUrl: z.string().url().optional(),
+    averageRating: z.number().min(0).max(5).optional(),
+    totalReviews: z.number().int().min(0).optional(),
+    totalClients: z.number().int().min(0).optional(),
+  });
+
+export const updateWellnessProfileSchema = insertWellnessProfileSchema.partial();
+export type InsertWellnessProfile = z.infer<typeof insertWellnessProfileSchema>;
+export type UpdateWellnessProfile = z.infer<typeof updateWellnessProfileSchema>;
+export type SelectWellnessProfile = typeof wellnessProfiles.$inferSelect;
+
+// 12. Tour Operator Profile Schema
+export const insertTourOperatorProfileSchema = createInsertSchema(tourOperatorProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    companyName: z.string().min(1).max(255),
+    bio: z.string().min(50).max(5000).optional(),
+    tagline: z.string().min(10).max(255).optional(),
+    tourTypes: z.array(z.string().min(1).max(100)).optional(),
+    destinations: z.array(z.string().min(1).max(255)).optional(),
+    specializations: z.array(z.string().min(1).max(100)).optional(),
+    languages: z.array(z.string().min(2).max(50)).optional(),
+    yearsInBusiness: z.number().int().min(0).max(200).optional(),
+    groupSizeMin: z.number().int().min(1).max(1000).optional(),
+    groupSizeMax: z.number().int().min(1).max(1000).optional(),
+    priceRange: z.string().min(1).max(50).optional(),
+    currency: z.string().length(3).optional(),
+    phoneNumber: z.string().min(5).max(50).optional(),
+    email: z.string().email().optional(),
+    websiteUrl: z.string().url().optional(),
+    bookingUrl: z.string().url().optional(),
+    instagramUrl: z.string().url().optional(),
+    facebookUrl: z.string().url().optional(),
+    photoUrls: z.array(z.string().url()).optional(),
+    videoUrls: z.array(z.string().url()).optional(),
+    averageRating: z.number().min(0).max(5).optional(),
+    totalReviews: z.number().int().min(0).optional(),
+    totalToursCompleted: z.number().int().min(0).optional(),
+    totalClients: z.number().int().min(0).optional(),
+  });
+
+export const updateTourOperatorProfileSchema = insertTourOperatorProfileSchema.partial();
+export type InsertTourOperatorProfile = z.infer<typeof insertTourOperatorProfileSchema>;
+export type UpdateTourOperatorProfile = z.infer<typeof updateTourOperatorProfileSchema>;
+export type SelectTourOperatorProfile = typeof tourOperatorProfiles.$inferSelect;
+
+// 13. Tango Guide Profile Schema
+export const insertTangoGuideProfileSchema = createInsertSchema(tangoGuideProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    guideName: z.string().min(1).max(255).optional(),
+    bio: z.string().min(50).max(5000).optional(),
+    tagline: z.string().min(10).max(255).optional(),
+    serviceTypes: z.array(z.string().min(1).max(100)).optional(),
+    cities: z.array(z.string().min(1).max(255)).optional(),
+    specializations: z.array(z.string().min(1).max(100)).optional(),
+    languages: z.array(z.string().min(2).max(50)).optional(),
+    yearsExperience: z.number().int().min(0).max(100).optional(),
+    toursGiven: z.number().int().min(0).optional(),
+    hourlyRate: z.number().min(0).max(10000).optional(),
+    dayRate: z.number().min(0).max(50000).optional(),
+    weekRate: z.number().min(0).max(200000).optional(),
+    currency: z.string().length(3).optional(),
+    ratesNote: z.string().max(500).optional(),
+    phoneNumber: z.string().min(5).max(50).optional(),
+    email: z.string().email().optional(),
+    websiteUrl: z.string().url().optional(),
+    instagramUrl: z.string().url().optional(),
+    facebookUrl: z.string().url().optional(),
+    averageRating: z.number().min(0).max(5).optional(),
+    totalReviews: z.number().int().min(0).optional(),
+    totalClients: z.number().int().min(0).optional(),
+  });
+
+export const updateTangoGuideProfileSchema = insertTangoGuideProfileSchema.partial();
+export type InsertTangoGuideProfile = z.infer<typeof insertTangoGuideProfileSchema>;
+export type UpdateTangoGuideProfile = z.infer<typeof updateTangoGuideProfileSchema>;
+export type SelectTangoGuideProfile = typeof tangoGuideProfiles.$inferSelect;
+
+// 14. Taxi Dancer Profile Schema
+export const insertTaxiDancerProfileSchema = createInsertSchema(taxiDancerProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    stageName: z.string().min(1).max(255).optional(),
+    bio: z.string().min(50).max(5000).optional(),
+    tagline: z.string().min(10).max(255).optional(),
+    danceRoles: z.array(z.string().min(1).max(50)).optional(),
+    styles: z.array(z.string().min(1).max(100)).optional(),
+    skillLevel: z.string().min(1).max(50).optional(),
+    yearsExperience: z.number().int().min(0).max(100).optional(),
+    availability: z.array(z.string().min(1).max(100)).optional(),
+    hourlyRate: z.number().min(0).max(10000).optional(),
+    eventRate: z.number().min(0).max(50000).optional(),
+    currency: z.string().length(3).optional(),
+    ratesNote: z.string().max(500).optional(),
+    cities: z.array(z.string().min(1).max(255)).optional(),
+    languages: z.array(z.string().min(2).max(50)).optional(),
+    videoUrls: z.array(z.string().url()).optional(),
+    instagramUrl: z.string().url().optional(),
+    averageRating: z.number().min(0).max(5).optional(),
+    totalReviews: z.number().int().min(0).optional(),
+    totalDances: z.number().int().min(0).optional(),
+  });
+
+export const updateTaxiDancerProfileSchema = insertTaxiDancerProfileSchema.partial();
+export type InsertTaxiDancerProfile = z.infer<typeof insertTaxiDancerProfileSchema>;
+export type UpdateTaxiDancerProfile = z.infer<typeof updateTaxiDancerProfileSchema>;
+export type SelectTaxiDancerProfile = typeof taxiDancerProfiles.$inferSelect;
+
+// Content/Organization Profiles (3)
+
+// 15. Content Creator Profile Schema
+export const insertContentCreatorProfileSchema = createInsertSchema(contentCreatorProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    creatorName: z.string().min(1).max(255).optional(),
+    bio: z.string().min(50).max(5000).optional(),
+    tagline: z.string().min(10).max(255).optional(),
+    contentTypes: z.array(z.string().min(1).max(100)).optional(),
+    platforms: z.array(z.string().min(1).max(100)).optional(),
+    specializations: z.array(z.string().min(1).max(100)).optional(),
+    yearsCreating: z.number().int().min(0).max(100).optional(),
+    totalFollowers: z.number().int().min(0).optional(),
+    averageViews: z.number().int().min(0).optional(),
+    contentCount: z.number().int().min(0).optional(),
+    collaborationRate: z.number().min(0).max(1000000).optional(),
+    sponsorshipRate: z.number().min(0).max(1000000).optional(),
+    currency: z.string().length(3).optional(),
+    ratesNote: z.string().max(500).optional(),
+    youtubeUrl: z.string().url().optional(),
+    instagramUrl: z.string().url().optional(),
+    tiktokUrl: z.string().url().optional(),
+    websiteUrl: z.string().url().optional(),
+    portfolioUrl: z.string().url().optional(),
+    email: z.string().email().optional(),
+    averageRating: z.number().min(0).max(5).optional(),
+    totalReviews: z.number().int().min(0).optional(),
+  });
+
+export const updateContentCreatorProfileSchema = insertContentCreatorProfileSchema.partial();
+export type InsertContentCreatorProfile = z.infer<typeof insertContentCreatorProfileSchema>;
+export type UpdateContentCreatorProfile = z.infer<typeof updateContentCreatorProfileSchema>;
+export type SelectContentCreatorProfile = typeof contentCreatorProfiles.$inferSelect;
+
+// 16. Learning Resource Profile Schema
+export const insertLearningResourceProfileSchema = createInsertSchema(learningResourceProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    resourceName: z.string().min(1).max(255),
+    bio: z.string().min(50).max(5000).optional(),
+    tagline: z.string().min(10).max(255).optional(),
+    resourceTypes: z.array(z.string().min(1).max(100)).optional(),
+    topics: z.array(z.string().min(1).max(100)).optional(),
+    formats: z.array(z.string().min(1).max(100)).optional(),
+    skillLevels: z.array(z.string().min(1).max(50)).optional(),
+    languages: z.array(z.string().min(2).max(50)).optional(),
+    totalResources: z.number().int().min(0).optional(),
+    totalStudents: z.number().int().min(0).optional(),
+    priceRange: z.string().min(1).max(50).optional(),
+    currency: z.string().length(3).optional(),
+    websiteUrl: z.string().url().optional(),
+    platformUrl: z.string().url().optional(),
+    email: z.string().email().optional(),
+    averageRating: z.number().min(0).max(5).optional(),
+    totalReviews: z.number().int().min(0).optional(),
+  });
+
+export const updateLearningResourceProfileSchema = insertLearningResourceProfileSchema.partial();
+export type InsertLearningResourceProfile = z.infer<typeof insertLearningResourceProfileSchema>;
+export type UpdateLearningResourceProfile = z.infer<typeof updateLearningResourceProfileSchema>;
+export type SelectLearningResourceProfile = typeof learningResourceProfiles.$inferSelect;
+
+// 17. Organizer Profile Schema
+export const insertOrganizerProfileSchema = createInsertSchema(organizerProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    organizerName: z.string().min(1).max(255).optional(),
+    bio: z.string().min(50).max(5000).optional(),
+    tagline: z.string().min(10).max(255).optional(),
+    eventTypes: z.array(z.string().min(1).max(100)).optional(),
+    eventSizes: z.array(z.string().min(1).max(100)).optional(),
+    specializations: z.array(z.string().min(1).max(100)).optional(),
+    yearsOrganizing: z.number().int().min(0).max(100).optional(),
+    totalEventsOrganized: z.number().int().min(0).optional(),
+    teamSize: z.number().int().min(0).max(10000).optional(),
+    primaryCities: z.array(z.string().min(1).max(255)).optional(),
+    willingToTravelFor: z.array(z.string().min(1).max(100)).optional(),
+    phoneNumber: z.string().min(5).max(50).optional(),
+    email: z.string().email().optional(),
+    websiteUrl: z.string().url().optional(),
+    instagramUrl: z.string().url().optional(),
+    facebookUrl: z.string().url().optional(),
+    eventPhotos: z.array(z.string().url()).optional(),
+    eventVideos: z.array(z.string().url()).optional(),
+    averageRating: z.number().min(0).max(5).optional(),
+    totalReviews: z.number().int().min(0).optional(),
+  });
+
+export const updateOrganizerProfileSchema = insertOrganizerProfileSchema.partial();
+export type InsertOrganizerProfile = z.infer<typeof insertOrganizerProfileSchema>;
+export type UpdateOrganizerProfile = z.infer<typeof updateOrganizerProfileSchema>;
+export type SelectOrganizerProfile = typeof organizerProfiles.$inferSelect;
+
+// User Extended Profiles (6)
+
+// 18. Travel Preferences Profile Schema
+export const insertTravelPreferencesProfileSchema = createInsertSchema(travelPreferencesProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    travelStyle: z.array(z.string().min(1).max(100)).optional(),
+    accommodationPreferences: z.array(z.string().min(1).max(100)).optional(),
+    totalCountriesVisited: z.number().int().min(0).max(300).optional(),
+    totalCitiesVisited: z.number().int().min(0).max(10000).optional(),
+    tangoDestinationsVisited: z.array(z.string().min(1).max(255)).optional(),
+    preferredTravelMonths: z.array(z.string().min(1).max(20)).optional(),
+    travelCompanions: z.string().min(1).max(100).optional(),
+    languagesSpoken: z.array(z.string().min(2).max(50)).optional(),
+    typicalTripDuration: z.string().min(1).max(100).optional(),
+    budgetRange: z.string().min(1).max(50).optional(),
+    planningStyle: z.string().min(1).max(100).optional(),
+    travelInterests: z.array(z.string().min(1).max(100)).optional(),
+  });
+
+export const updateTravelPreferencesProfileSchema = insertTravelPreferencesProfileSchema.partial();
+export type InsertTravelPreferencesProfile = z.infer<typeof insertTravelPreferencesProfileSchema>;
+export type UpdateTravelPreferencesProfile = z.infer<typeof updateTravelPreferencesProfileSchema>;
+export type SelectTravelPreferencesProfile = typeof travelPreferencesProfiles.$inferSelect;
+
+// 19. Events Profile Schema
+export const insertEventsProfileSchema = createInsertSchema(eventsProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    totalEventsAttended: z.number().int().min(0).optional(),
+    totalMilongasAttended: z.number().int().min(0).optional(),
+    totalFestivalsAttended: z.number().int().min(0).optional(),
+    totalWorkshopsAttended: z.number().int().min(0).optional(),
+    totalEventsHosted: z.number().int().min(0).optional(),
+    hostingTypes: z.array(z.string().min(1).max(100)).optional(),
+    preferredEventTypes: z.array(z.string().min(1).max(100)).optional(),
+    preferredEventSizes: z.array(z.string().min(1).max(100)).optional(),
+    preferredDays: z.array(z.string().min(1).max(20)).optional(),
+    preferredTimes: z.array(z.string().min(1).max(50)).optional(),
+    averageEventsPerMonth: z.number().int().min(0).max(100).optional(),
+    mostActiveCity: z.string().min(1).max(255).optional(),
+    rsvpReliability: z.number().min(0).max(100).optional(),
+  });
+
+export const updateEventsProfileSchema = insertEventsProfileSchema.partial();
+export type InsertEventsProfile = z.infer<typeof insertEventsProfileSchema>;
+export type UpdateEventsProfile = z.infer<typeof updateEventsProfileSchema>;
+export type SelectEventsProfile = typeof eventsProfiles.$inferSelect;
+
+// 20. Friends/Network Profile Schema
+export const insertFriendsNetworkProfileSchema = createInsertSchema(friendsNetworkProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    totalFriends: z.number().int().min(0).optional(),
+    totalFollowers: z.number().int().min(0).optional(),
+    totalFollowing: z.number().int().min(0).optional(),
+    dancePartners: z.number().int().min(0).optional(),
+    regularPartners: z.number().int().min(0).optional(),
+    totalEndorsements: z.number().int().min(0).optional(),
+    leadersConnected: z.number().int().min(0).optional(),
+    followersConnected: z.number().int().min(0).optional(),
+    teachersConnected: z.number().int().min(0).optional(),
+    organizersConnected: z.number().int().min(0).optional(),
+    djsConnected: z.number().int().min(0).optional(),
+    newConnectionsThisMonth: z.number().int().min(0).optional(),
+    newConnectionsThisYear: z.number().int().min(0).optional(),
+  });
+
+export const updateFriendsNetworkProfileSchema = insertFriendsNetworkProfileSchema.partial();
+export type InsertFriendsNetworkProfile = z.infer<typeof insertFriendsNetworkProfileSchema>;
+export type UpdateFriendsNetworkProfile = z.infer<typeof updateFriendsNetworkProfileSchema>;
+export type SelectFriendsNetworkProfile = typeof friendsNetworkProfiles.$inferSelect;
+
+// 21. Photos/Media Gallery Profile Schema
+export const insertPhotosMediaGalleryProfileSchema = createInsertSchema(photosMediaGalleryProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    totalPhotos: z.number().int().min(0).optional(),
+    totalVideos: z.number().int().min(0).optional(),
+    totalAlbums: z.number().int().min(0).optional(),
+    totalViews: z.number().int().min(0).optional(),
+    totalLikes: z.number().int().min(0).optional(),
+    featuredPhoto: z.string().url().optional(),
+    featuredVideo: z.string().url().optional(),
+    featuredAlbum: z.number().int().min(0).optional(),
+    mostViewedPhoto: z.string().url().optional(),
+    mostLikedPhoto: z.string().url().optional(),
+    uploadsThisMonth: z.number().int().min(0).optional(),
+    uploadsThisYear: z.number().int().min(0).optional(),
+    totalStorageUsed: z.number().int().min(0).optional(),
+    totalShares: z.number().int().min(0).optional(),
+    totalTags: z.number().int().min(0).optional(),
+    defaultPhotoVisibility: z.enum(['public', 'friends', 'private']).optional(),
+  });
+
+export const updatePhotosMediaGalleryProfileSchema = insertPhotosMediaGalleryProfileSchema.partial();
+export type InsertPhotosMediaGalleryProfile = z.infer<typeof insertPhotosMediaGalleryProfileSchema>;
+export type UpdatePhotosMediaGalleryProfile = z.infer<typeof updatePhotosMediaGalleryProfileSchema>;
+export type SelectPhotosMediaGalleryProfile = typeof photosMediaGalleryProfiles.$inferSelect;
+
+// 22. About/Bio Extended Profile Schema
+export const insertAboutBioExtendedProfileSchema = createInsertSchema(aboutBioExtendedProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    fullBio: z.string().min(100).max(10000).optional(),
+    tangoJourneyStory: z.string().min(100).max(10000).optional(),
+    inspirations: z.string().min(50).max(5000).optional(),
+    dancingPhilosophy: z.string().min(50).max(5000).optional(),
+    favoriteTeachers: z.array(z.string().min(1).max(255)).optional(),
+    favoriteDancers: z.array(z.string().min(1).max(255)).optional(),
+    musicalInfluences: z.array(z.string().min(1).max(255)).optional(),
+    hobbies: z.array(z.string().min(1).max(100)).optional(),
+    otherDances: z.array(z.string().min(1).max(100)).optional(),
+    languages: z.array(z.string().min(2).max(50)).optional(),
+    profession: z.string().min(1).max(255).optional(),
+    education: z.string().max(2000).optional(),
+    interests: z.array(z.string().min(1).max(100)).optional(),
+    favoriteQuote: z.string().max(1000).optional(),
+    photoGallery: z.array(z.string().url()).optional(),
+    videoHighlights: z.array(z.string().url()).optional(),
+  });
+
+export const updateAboutBioExtendedProfileSchema = insertAboutBioExtendedProfileSchema.partial();
+export type InsertAboutBioExtendedProfile = z.infer<typeof insertAboutBioExtendedProfileSchema>;
+export type UpdateAboutBioExtendedProfile = z.infer<typeof updateAboutBioExtendedProfileSchema>;
+export type SelectAboutBioExtendedProfile = typeof aboutBioExtendedProfiles.$inferSelect;
+
+// 23. Feed/Activity Profile Schema
+export const insertFeedActivityProfileSchema = createInsertSchema(feedActivityProfiles)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    totalPosts: z.number().int().min(0).optional(),
+    totalPhotoPosts: z.number().int().min(0).optional(),
+    totalVideoPosts: z.number().int().min(0).optional(),
+    totalTextPosts: z.number().int().min(0).optional(),
+    totalShares: z.number().int().min(0).optional(),
+    totalLikesReceived: z.number().int().min(0).optional(),
+    totalCommentsReceived: z.number().int().min(0).optional(),
+    totalSharesReceived: z.number().int().min(0).optional(),
+    totalLikesGiven: z.number().int().min(0).optional(),
+    totalCommentsGiven: z.number().int().min(0).optional(),
+    totalSharesGiven: z.number().int().min(0).optional(),
+    averagePostsPerWeek: z.number().min(0).max(1000).optional(),
+    mostActiveDay: z.string().min(1).max(20).optional(),
+    mostActiveTime: z.string().min(1).max(50).optional(),
+    preferredPostTypes: z.array(z.string().min(1).max(100)).optional(),
+    commonHashtags: z.array(z.string().min(1).max(100)).optional(),
+    mostLikedPostId: z.number().int().min(0).optional(),
+    mostCommentedPostId: z.number().int().min(0).optional(),
+    mostSharedPostId: z.number().int().min(0).optional(),
+    defaultPostVisibility: z.enum(['public', 'friends', 'private']).optional(),
+    currentPostingStreak: z.number().int().min(0).optional(),
+    longestPostingStreak: z.number().int().min(0).optional(),
+  });
+
+export const updateFeedActivityProfileSchema = insertFeedActivityProfileSchema.partial();
+export type InsertFeedActivityProfile = z.infer<typeof insertFeedActivityProfileSchema>;
+export type UpdateFeedActivityProfile = z.infer<typeof updateFeedActivityProfileSchema>;
+export type SelectFeedActivityProfile = typeof feedActivityProfiles.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -70,6 +71,10 @@ export default function MessagesPrototypePage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Messages | Mundo Tango"
+        description="Stay connected with the tango community. Send and receive messages, chat with dancers, teachers, and organizers. Keep your tango conversations in one place."
+      />
       {/* Hero Header - Editorial Style */}
       <div className="relative h-[40vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{

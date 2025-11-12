@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { SEO } from "@/components/SEO";
 import { Users, MapPin, Calendar, Settings, UserPlus, ArrowLeft } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -108,6 +109,10 @@ export default function GroupsDetailPage() {
 
   return (
     <AppLayout>
+      <SEO
+        title={`${group?.name || 'Group'} | Mundo Tango`}
+        description={group?.description || `Join the ${group?.name} community group on Mundo Tango. Connect with tango enthusiasts and participate in events.`}
+      />
       <div className="min-h-screen bg-background">
         {/* Editorial Hero Section */}
         <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SEO } from "@/components/SEO";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, MapPin, Users, Clock, Filter, Search, Map, List, Star, Heart, Share2, ChevronRight } from "lucide-react";
@@ -73,6 +74,10 @@ export default function EventsPrototypePage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Tango Events Worldwide | Mundo Tango"
+        description="Discover tango events near you. Find milongas, workshops, festivals, and classes. RSVP to events and connect with the global tango community."
+      />
       {/* Hero Section */}
       <div className="relative h-[60vh] w-full overflow-hidden">
         <div 

@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
@@ -72,6 +73,10 @@ export default function TeachersPage() {
 
   return (
     <AppLayout>
+      <SEO
+        title="Find Tango Teachers & Instructors | Mundo Tango"
+        description="Discover experienced tango teachers worldwide. Browse certified instructors, read reviews, compare rates, and book private or group lessons. Learn from the best."
+      />
       {/* Hero Section */}
       <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{

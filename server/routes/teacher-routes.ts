@@ -114,6 +114,146 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   }
 });
 
+// GET /api/teachers/search - Search teacher profiles
+router.get("/search", async (req, res: Response) => {
+  try {
+    const { 
+      query, 
+      specialty, 
+      city, 
+      country, 
+      minRating, 
+      limit = "20", 
+      offset = "0" 
+    } = req.query;
+
+    let dbQuery = db.select({
+      teacher: teachers,
+      user: {
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        profileImage: users.profileImage,
+        city: users.city,
+        country: users.country,
+      },
+    })
+    .from(teachers)
+    .leftJoin(users, eq(teachers.userId, users.id))
+    .orderBy(desc(teachers.rating))
+    .$dynamic();
+
+    const conditions = [];
+
+    // Text search
+    if (query && typeof query === "string") {
+      conditions.push(
+        or(
+          ilike(users.name, `%${query}%`),
+          ilike(teachers.bio, `%${query}%`)
+        ) as any
+      );
+    }
+
+    // Specialty filter
+    if (specialty && typeof specialty === "string") {
+      conditions.push(
+        sql`${teachers.specialties} && ARRAY[${specialty}]::text[]`
+      );
+    }
+
+    // City filter
+    if (city && typeof city === "string") {
+      conditions.push(ilike(users.city, `%${city}%`));
+    }
+
+    // Country filter
+    if (country && typeof country === "string") {
+      conditions.push(ilike(users.country, `%${country}%`));
+    }
+
+    // Rating filter
+    if (minRating && typeof minRating === "string") {
+      const rating = parseFloat(minRating);
+      if (!isNaN(rating)) {
+        conditions.push(sql`${teachers.rating} >= ${rating}`);
+      }
+    }
+
+    if (conditions.length > 0) {
+      dbQuery = dbQuery.where(and(...conditions));
+    }
+
+    const limitNum = parseInt(limit as string) || 20;
+    const offsetNum = parseInt(offset as string) || 0;
+    
+    dbQuery = dbQuery.limit(limitNum).offset(offsetNum);
+
+    const result = await dbQuery;
+
+    res.json({
+      success: true,
+      data: result.map((r: any) => ({
+        ...r.teacher,
+        user: r.user,
+      })),
+      pagination: {
+        limit: limitNum,
+        offset: offsetNum,
+      }
+    });
+  } catch (error) {
+    console.error("Error searching teachers:", error);
+    res.status(500).json({ 
+      success: false,
+      message: "Failed to search teachers" 
+    });
+  }
+});
+
+// GET /api/teachers/featured - Get featured teachers
+router.get("/featured", async (req, res: Response) => {
+  try {
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    const result = await db.select({
+      teacher: teachers,
+      user: {
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        profileImage: users.profileImage,
+        city: users.city,
+        country: users.country,
+      },
+    })
+    .from(teachers)
+    .leftJoin(users, eq(teachers.userId, users.id))
+    .where(
+      and(
+        eq(teachers.verified, true),
+        sql`${teachers.rating} >= 4.0`
+      )
+    )
+    .orderBy(desc(teachers.rating), desc(teachers.reviewCount))
+    .limit(limit);
+
+    res.json({
+      success: true,
+      data: result.map((r: any) => ({
+        ...r.teacher,
+        user: r.user,
+      }))
+    });
+  } catch (error) {
+    console.error("Error fetching featured teachers:", error);
+    res.status(500).json({ 
+      success: false,
+      message: "Failed to fetch featured teachers" 
+    });
+  }
+});
+
 // PATCH /api/teachers/:id - Update teacher profile (auth required, owner only)
 router.patch("/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {

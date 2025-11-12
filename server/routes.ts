@@ -46,9 +46,20 @@ import mediaRoutes from "./routes/media-routes";
 import leaderboardRoutes from "./routes/leaderboard-routes";
 import blogRoutes from "./routes/blog-routes";
 import teacherRoutes from "./routes/teacher-routes";
+import djRoutes from "./routes/dj-routes";
+import musicianRoutes from "./routes/musician-routes";
 import venueRoutes from "./routes/venue-routes";
 import workshopRoutes from "./routes/workshop-routes";
 import musicRoutes from "./routes/music-routes";
+import profileRoutes from "./routes/profileRoutes";
+import profileMediaRoutes from "./routes/profileMediaRoutes";
+import profileAnalyticsRoutes from "./routes/profileAnalyticsRoutes";
+import professionalProfileRoutes from "./routes/professionalProfileRoutes";
+import businessProfileRoutes from "./routes/businessProfileRoutes";
+import serviceProviderProfileRoutes from "./routes/serviceProviderProfileRoutes";
+import serviceProfileRoutes from "./routes/serviceProfileRoutes";
+import specialtyProfileRoutes from "./routes/specialtyProfileRoutes";
+import contentProfileRoutes from "./routes/contentProfileRoutes";
 import healthRoutes from "./routes/health";
 console.log("🔍 [DEBUG] About to import agentIntelligenceRoutes...");
 import agentIntelligenceRoutes from "./routes/agentIntelligenceRoutes";
@@ -88,6 +99,27 @@ import {
   insertContactSubmissionSchema,
   insertStorySchema,
   insertVenueRecommendationSchema,
+  insertTeacherProfileSchema,
+  insertDjProfileSchema,
+  insertMusicianProfileSchema,
+  insertPhotographerProfileSchema,
+  insertPerformerProfileSchema,
+  insertVendorProfileSchema,
+  insertTangoSchoolProfileSchema,
+  insertTangoHotelProfileSchema,
+  insertHostVenueProfileSchema,
+  insertWellnessProfileSchema,
+  insertTourOperatorProfileSchema,
+  insertTangoGuideProfileSchema,
+  insertTaxiDancerProfileSchema,
+  insertContentCreatorProfileSchema,
+  insertLearningResourceProfileSchema,
+  insertOrganizerProfileSchema,
+  photographerProfiles,
+  performerProfiles,
+  djProfiles,
+  musicianProfiles,
+  contentCreatorProfiles,
 } from "@shared/schema";
 import { 
   esaAgents,
@@ -99,6 +131,8 @@ import { eq, and, or, desc, sql, isNotNull, gte } from "drizzle-orm";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { cityscapeService } from "./services/cityscape-service";
+import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
 
 const validateRequest = (schema: z.ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -136,6 +170,93 @@ const errorHandler = (err: any, req: Request, res: Response, next: NextFunction)
     error: process.env.NODE_ENV === "development" ? err.message : undefined
   });
 };
+
+// ============================================================================
+// MULTER & CLOUDINARY CONFIGURATION FOR PROFILE MEDIA
+// ============================================================================
+
+const profileMediaUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 100 * 1024 * 1024, // 100MB limit for videos
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedMimes = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/webp',
+      'video/mp4',
+      'video/webm',
+      'application/pdf',
+    ];
+    
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Allowed: JPEG, PNG, WebP, MP4, WebM, PDF'));
+    }
+  }
+});
+
+// Configure Cloudinary if environment variables are present
+if (process.env.CLOUDINARY_URL || 
+    (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET)) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+  console.log('[ProfileMedia] Cloudinary configured for media uploads');
+} else {
+  console.warn('[ProfileMedia] Cloudinary not configured - using base64 fallback for media uploads');
+}
+
+async function uploadMediaToCloudinary(
+  file: Express.Multer.File,
+  folder: string,
+  resourceType: 'image' | 'video' | 'raw' = 'image'
+): Promise<{ url: string; publicId?: string }> {
+  if (!process.env.CLOUDINARY_CLOUD_NAME) {
+    // Fallback to base64
+    const base64 = file.buffer.toString('base64');
+    const dataUrl = `data:${file.mimetype};base64,${base64}`;
+    return { url: dataUrl };
+  }
+
+  try {
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder,
+          resource_type: resourceType,
+          transformation: resourceType === 'image' ? [
+            { width: 1920, height: 1920, crop: 'limit' },
+            { quality: 'auto:good' },
+            { fetch_format: 'auto' },
+          ] : undefined,
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          if (!result) return reject(new Error('Upload failed'));
+          
+          resolve({
+            url: result.secure_url,
+            publicId: result.public_id,
+          });
+        }
+      );
+      
+      uploadStream.end(file.buffer);
+    });
+  } catch (error) {
+    console.error('[ProfileMedia] Cloudinary upload failed:', error);
+    // Fallback to base64
+    const base64 = file.buffer.toString('base64');
+    const dataUrl = `data:${file.mimetype};base64,${base64}`;
+    return { url: dataUrl };
+  }
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Phase 1 & 2 Deployment Blocker Routes
@@ -210,9 +331,1398 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Phase E: Professional Tools Routes
   app.use("/api/teachers", teacherRoutes);
+  app.use("/api/djs", djRoutes);
+  app.use("/api/musicians", musicianRoutes);
+
+  // BATCH 05: Photographer/Performer/Vendor Profile APIs
+  
+  // Photographer Profile Routes
+  app.post("/api/profiles/photographer", authenticateToken, validateRequest(insertPhotographerProfileSchema.omit({ userId: true })), async (req: AuthRequest, res: Response) => {
+    try {
+      const profile = await storage.createPhotographerProfile({
+        ...req.body,
+        userId: req.userId!
+      });
+      res.status(201).json(profile);
+    } catch (error: any) {
+      console.error("[POST /api/profiles/photographer] Error:", error);
+      res.status(500).json({ message: "Failed to create photographer profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/photographer/:userId", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const profile = await storage.getPhotographerProfile(userId);
+      
+      if (!profile) {
+        return res.status(404).json({ message: "Photographer profile not found" });
+      }
+      
+      res.json(profile);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/photographer/:userId] Error:", error);
+      res.status(500).json({ message: "Failed to fetch photographer profile", error: error.message });
+    }
+  });
+
+  app.put("/api/profiles/photographer", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const updated = await storage.updatePhotographerProfile(req.userId!, req.body);
+      res.json(updated);
+    } catch (error: any) {
+      console.error("[PUT /api/profiles/photographer] Error:", error);
+      res.status(500).json({ message: "Failed to update photographer profile", error: error.message });
+    }
+  });
+
+  app.delete("/api/profiles/photographer", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deletePhotographerProfile(req.userId!);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error("[DELETE /api/profiles/photographer] Error:", error);
+      res.status(500).json({ message: "Failed to delete photographer profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/photographers/search", async (req: Request, res: Response) => {
+    try {
+      const { 
+        specialty,
+        city, 
+        minRating, 
+        maxRate,
+        limit = "20", 
+        offset = "0" 
+      } = req.query;
+      
+      const profiles = await storage.searchPhotographerProfiles({
+        specialty: specialty as string | undefined,
+        city: city as string | undefined,
+        minRating: minRating ? parseFloat(minRating as string) : undefined,
+        maxRate: maxRate ? parseFloat(maxRate as string) : undefined,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string),
+      });
+      
+      res.json(profiles);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/photographers/search] Error:", error);
+      res.status(500).json({ message: "Failed to search photographer profiles", error: error.message });
+    }
+  });
+
+  // Performer Profile Routes
+  app.post("/api/profiles/performer", authenticateToken, validateRequest(insertPerformerProfileSchema.omit({ userId: true })), async (req: AuthRequest, res: Response) => {
+    try {
+      const profile = await storage.createPerformerProfile({
+        ...req.body,
+        userId: req.userId!
+      });
+      res.status(201).json(profile);
+    } catch (error: any) {
+      console.error("[POST /api/profiles/performer] Error:", error);
+      res.status(500).json({ message: "Failed to create performer profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/performer/:userId", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const profile = await storage.getPerformerProfile(userId);
+      
+      if (!profile) {
+        return res.status(404).json({ message: "Performer profile not found" });
+      }
+      
+      res.json(profile);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/performer/:userId] Error:", error);
+      res.status(500).json({ message: "Failed to fetch performer profile", error: error.message });
+    }
+  });
+
+  app.put("/api/profiles/performer", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const updated = await storage.updatePerformerProfile(req.userId!, req.body);
+      res.json(updated);
+    } catch (error: any) {
+      console.error("[PUT /api/profiles/performer] Error:", error);
+      res.status(500).json({ message: "Failed to update performer profile", error: error.message });
+    }
+  });
+
+  app.delete("/api/profiles/performer", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deletePerformerProfile(req.userId!);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error("[DELETE /api/profiles/performer] Error:", error);
+      res.status(500).json({ message: "Failed to delete performer profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/performers/search", async (req: Request, res: Response) => {
+    try {
+      const { 
+        performanceType,
+        style, 
+        city,
+        minRating,
+        maxFee,
+        limit = "20", 
+        offset = "0" 
+      } = req.query;
+      
+      const profiles = await storage.searchPerformerProfiles({
+        performanceType: performanceType as string | undefined,
+        style: style as string | undefined,
+        city: city as string | undefined,
+        minRating: minRating ? parseFloat(minRating as string) : undefined,
+        maxFee: maxFee ? parseFloat(maxFee as string) : undefined,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string),
+      });
+      
+      res.json(profiles);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/performers/search] Error:", error);
+      res.status(500).json({ message: "Failed to search performer profiles", error: error.message });
+    }
+  });
+
+  // Vendor Profile Routes
+  app.post("/api/profiles/vendor", authenticateToken, validateRequest(insertVendorProfileSchema.omit({ userId: true })), async (req: AuthRequest, res: Response) => {
+    try {
+      const profile = await storage.createVendorProfile({
+        ...req.body,
+        userId: req.userId!
+      });
+      res.status(201).json(profile);
+    } catch (error: any) {
+      console.error("[POST /api/profiles/vendor] Error:", error);
+      res.status(500).json({ message: "Failed to create vendor profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/vendor/:userId", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const profile = await storage.getVendorProfile(userId);
+      
+      if (!profile) {
+        return res.status(404).json({ message: "Vendor profile not found" });
+      }
+      
+      res.json(profile);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/vendor/:userId] Error:", error);
+      res.status(500).json({ message: "Failed to fetch vendor profile", error: error.message });
+    }
+  });
+
+  app.put("/api/profiles/vendor", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const updated = await storage.updateVendorProfile(req.userId!, req.body);
+      res.json(updated);
+    } catch (error: any) {
+      console.error("[PUT /api/profiles/vendor] Error:", error);
+      res.status(500).json({ message: "Failed to update vendor profile", error: error.message });
+    }
+  });
+
+  app.delete("/api/profiles/vendor", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteVendorProfile(req.userId!);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error("[DELETE /api/profiles/vendor] Error:", error);
+      res.status(500).json({ message: "Failed to delete vendor profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/vendors/search", async (req: Request, res: Response) => {
+    try {
+      const { 
+        productCategory,
+        city,
+        priceRange,
+        minRating,
+        limit = "20", 
+        offset = "0" 
+      } = req.query;
+      
+      const profiles = await storage.searchVendorProfiles({
+        productCategory: productCategory as string | undefined,
+        city: city as string | undefined,
+        priceRange: priceRange as string | undefined,
+        minRating: minRating ? parseFloat(minRating as string) : undefined,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string),
+      });
+      
+      res.json(profiles);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/vendors/search] Error:", error);
+      res.status(500).json({ message: "Failed to search vendor profiles", error: error.message });
+    }
+  });
+
+  // BATCH 06: Business Profile APIs - Tango School
+  app.post("/api/profiles/tango-school", authenticateToken, validateRequest(insertTangoSchoolProfileSchema.omit({ userId: true })), async (req: AuthRequest, res: Response) => {
+    try {
+      const profile = await storage.createTangoSchoolProfile({
+        ...req.body,
+        userId: req.userId!
+      });
+      res.status(201).json(profile);
+    } catch (error: any) {
+      console.error("[POST /api/profiles/tango-school] Error:", error);
+      res.status(500).json({ message: "Failed to create tango school profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/tango-school/:userId", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const profile = await storage.getTangoSchoolProfile(userId);
+      
+      if (!profile) {
+        return res.status(404).json({ message: "Tango school profile not found" });
+      }
+      
+      res.json(profile);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/tango-school/:userId] Error:", error);
+      res.status(500).json({ message: "Failed to fetch tango school profile", error: error.message });
+    }
+  });
+
+  app.put("/api/profiles/tango-school", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const updated = await storage.updateTangoSchoolProfile(req.userId!, req.body);
+      res.json(updated);
+    } catch (error: any) {
+      console.error("[PUT /api/profiles/tango-school] Error:", error);
+      res.status(500).json({ message: "Failed to update tango school profile", error: error.message });
+    }
+  });
+
+  app.delete("/api/profiles/tango-school", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteTangoSchoolProfile(req.userId!);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error("[DELETE /api/profiles/tango-school] Error:", error);
+      res.status(500).json({ message: "Failed to delete tango school profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/tango-schools/search", async (req: Request, res: Response) => {
+    try {
+      const { 
+        city,
+        country,
+        minRating,
+        verified,
+        classTypes,
+        limit = "20", 
+        offset = "0" 
+      } = req.query;
+      
+      const profiles = await storage.searchTangoSchoolProfiles({
+        city: city as string | undefined,
+        country: country as string | undefined,
+        minRating: minRating ? parseFloat(minRating as string) : undefined,
+        verified: verified === "true" ? true : verified === "false" ? false : undefined,
+        classTypes: classTypes ? (Array.isArray(classTypes) ? classTypes as string[] : [classTypes as string]) : undefined,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string),
+      });
+      
+      res.json(profiles);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/tango-schools/search] Error:", error);
+      res.status(500).json({ message: "Failed to search tango school profiles", error: error.message });
+    }
+  });
+
+  // BATCH 06: Business Profile APIs - Tango Hotel
+  app.post("/api/profiles/tango-hotel", authenticateToken, validateRequest(insertTangoHotelProfileSchema.omit({ userId: true })), async (req: AuthRequest, res: Response) => {
+    try {
+      const profile = await storage.createTangoHotelProfile({
+        ...req.body,
+        userId: req.userId!
+      });
+      res.status(201).json(profile);
+    } catch (error: any) {
+      console.error("[POST /api/profiles/tango-hotel] Error:", error);
+      res.status(500).json({ message: "Failed to create tango hotel profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/tango-hotel/:userId", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const profile = await storage.getTangoHotelProfile(userId);
+      
+      if (!profile) {
+        return res.status(404).json({ message: "Tango hotel profile not found" });
+      }
+      
+      res.json(profile);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/tango-hotel/:userId] Error:", error);
+      res.status(500).json({ message: "Failed to fetch tango hotel profile", error: error.message });
+    }
+  });
+
+  app.put("/api/profiles/tango-hotel", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const updated = await storage.updateTangoHotelProfile(req.userId!, req.body);
+      res.json(updated);
+    } catch (error: any) {
+      console.error("[PUT /api/profiles/tango-hotel] Error:", error);
+      res.status(500).json({ message: "Failed to update tango hotel profile", error: error.message });
+    }
+  });
+
+  app.delete("/api/profiles/tango-hotel", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteTangoHotelProfile(req.userId!);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error("[DELETE /api/profiles/tango-hotel] Error:", error);
+      res.status(500).json({ message: "Failed to delete tango hotel profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/tango-hotels/search", async (req: Request, res: Response) => {
+    try {
+      const { 
+        city,
+        country,
+        minRating,
+        minPrice,
+        maxPrice,
+        verified,
+        amenities,
+        limit = "20", 
+        offset = "0" 
+      } = req.query;
+      
+      const profiles = await storage.searchTangoHotelProfiles({
+        city: city as string | undefined,
+        country: country as string | undefined,
+        minRating: minRating ? parseFloat(minRating as string) : undefined,
+        minPrice: minPrice ? parseFloat(minPrice as string) : undefined,
+        maxPrice: maxPrice ? parseFloat(maxPrice as string) : undefined,
+        verified: verified === "true" ? true : verified === "false" ? false : undefined,
+        amenities: amenities ? (Array.isArray(amenities) ? amenities as string[] : [amenities as string]) : undefined,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string),
+      });
+      
+      res.json(profiles);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/tango-hotels/search] Error:", error);
+      res.status(500).json({ message: "Failed to search tango hotel profiles", error: error.message });
+    }
+  });
+
+  // BATCH 06: Business Profile APIs - Host Venue
+  app.post("/api/profiles/host-venue", authenticateToken, validateRequest(insertHostVenueProfileSchema.omit({ userId: true })), async (req: AuthRequest, res: Response) => {
+    try {
+      const profile = await storage.createHostVenueProfile({
+        ...req.body,
+        userId: req.userId!
+      });
+      res.status(201).json(profile);
+    } catch (error: any) {
+      console.error("[POST /api/profiles/host-venue] Error:", error);
+      res.status(500).json({ message: "Failed to create host venue profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/host-venue/:userId", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const profile = await storage.getHostVenueProfile(userId);
+      
+      if (!profile) {
+        return res.status(404).json({ message: "Host venue profile not found" });
+      }
+      
+      res.json(profile);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/host-venue/:userId] Error:", error);
+      res.status(500).json({ message: "Failed to fetch host venue profile", error: error.message });
+    }
+  });
+
+  app.put("/api/profiles/host-venue", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const updated = await storage.updateHostVenueProfile(req.userId!, req.body);
+      res.json(updated);
+    } catch (error: any) {
+      console.error("[PUT /api/profiles/host-venue] Error:", error);
+      res.status(500).json({ message: "Failed to update host venue profile", error: error.message });
+    }
+  });
+
+  app.delete("/api/profiles/host-venue", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteHostVenueProfile(req.userId!);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error("[DELETE /api/profiles/host-venue] Error:", error);
+      res.status(500).json({ message: "Failed to delete host venue profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/host-venues/search", async (req: Request, res: Response) => {
+    try {
+      const { 
+        city,
+        country,
+        minRating,
+        minCapacity,
+        verified,
+        amenities,
+        venueTypes,
+        limit = "20", 
+        offset = "0" 
+      } = req.query;
+      
+      const profiles = await storage.searchHostVenueProfiles({
+        city: city as string | undefined,
+        country: country as string | undefined,
+        minRating: minRating ? parseFloat(minRating as string) : undefined,
+        minCapacity: minCapacity ? parseInt(minCapacity as string) : undefined,
+        verified: verified === "true" ? true : verified === "false" ? false : undefined,
+        amenities: amenities ? (Array.isArray(amenities) ? amenities as string[] : [amenities as string]) : undefined,
+        venueTypes: venueTypes ? (Array.isArray(venueTypes) ? venueTypes as string[] : [venueTypes as string]) : undefined,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string),
+      });
+      
+      res.json(profiles);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/host-venues/search] Error:", error);
+      res.status(500).json({ message: "Failed to search host venue profiles", error: error.message });
+    }
+  });
+
+  // ============================================================================
+  // BATCH 07: Specialty Service APIs (Wellness/Tour Operator/Guide/Taxi Dancer)
+  // ============================================================================
+
+  // Wellness Profile Routes
+  app.post("/api/profiles/wellness", authenticateToken, validateRequest(insertWellnessProfileSchema.omit({ userId: true })), async (req: AuthRequest, res: Response) => {
+    try {
+      const profile = await storage.createWellnessProfile({
+        ...req.body,
+        userId: req.userId!
+      });
+      res.status(201).json(profile);
+    } catch (error: any) {
+      console.error("[POST /api/profiles/wellness] Error:", error);
+      res.status(500).json({ message: "Failed to create wellness profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/wellness/:userId", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const profile = await storage.getWellnessProfile(userId);
+      
+      if (!profile) {
+        return res.status(404).json({ message: "Wellness profile not found" });
+      }
+      
+      res.json(profile);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/wellness/:userId] Error:", error);
+      res.status(500).json({ message: "Failed to fetch wellness profile", error: error.message });
+    }
+  });
+
+  app.put("/api/profiles/wellness", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const updated = await storage.updateWellnessProfile(req.userId!, req.body);
+      res.json(updated);
+    } catch (error: any) {
+      console.error("[PUT /api/profiles/wellness] Error:", error);
+      res.status(500).json({ message: "Failed to update wellness profile", error: error.message });
+    }
+  });
+
+  app.delete("/api/profiles/wellness", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteWellnessProfile(req.userId!);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error("[DELETE /api/profiles/wellness] Error:", error);
+      res.status(500).json({ message: "Failed to delete wellness profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/wellness/search", async (req: Request, res: Response) => {
+    try {
+      const { 
+        specialty,
+        city,
+        minRating,
+        maxRate,
+        verified,
+        limit = "20", 
+        offset = "0" 
+      } = req.query;
+      
+      const profiles = await storage.searchWellnessProfiles({
+        specialty: specialty as string | undefined,
+        city: city as string | undefined,
+        minRating: minRating ? parseFloat(minRating as string) : undefined,
+        maxRate: maxRate ? parseFloat(maxRate as string) : undefined,
+        verified: verified === "true" ? true : verified === "false" ? false : undefined,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string),
+      });
+      
+      res.json(profiles);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/wellness/search] Error:", error);
+      res.status(500).json({ message: "Failed to search wellness profiles", error: error.message });
+    }
+  });
+
+  // Tour Operator Profile Routes
+  app.post("/api/profiles/tour-operator", authenticateToken, validateRequest(insertTourOperatorProfileSchema.omit({ userId: true })), async (req: AuthRequest, res: Response) => {
+    try {
+      const profile = await storage.createTourOperatorProfile({
+        ...req.body,
+        userId: req.userId!
+      });
+      res.status(201).json(profile);
+    } catch (error: any) {
+      console.error("[POST /api/profiles/tour-operator] Error:", error);
+      res.status(500).json({ message: "Failed to create tour operator profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/tour-operator/:userId", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const profile = await storage.getTourOperatorProfile(userId);
+      
+      if (!profile) {
+        return res.status(404).json({ message: "Tour operator profile not found" });
+      }
+      
+      res.json(profile);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/tour-operator/:userId] Error:", error);
+      res.status(500).json({ message: "Failed to fetch tour operator profile", error: error.message });
+    }
+  });
+
+  app.put("/api/profiles/tour-operator", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const updated = await storage.updateTourOperatorProfile(req.userId!, req.body);
+      res.json(updated);
+    } catch (error: any) {
+      console.error("[PUT /api/profiles/tour-operator] Error:", error);
+      res.status(500).json({ message: "Failed to update tour operator profile", error: error.message });
+    }
+  });
+
+  app.delete("/api/profiles/tour-operator", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteTourOperatorProfile(req.userId!);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error("[DELETE /api/profiles/tour-operator] Error:", error);
+      res.status(500).json({ message: "Failed to delete tour operator profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/tour-operators/search", async (req: Request, res: Response) => {
+    try {
+      const { 
+        destination,
+        tourType,
+        city,
+        minRating,
+        maxPrice,
+        verified,
+        limit = "20", 
+        offset = "0" 
+      } = req.query;
+      
+      const profiles = await storage.searchTourOperatorProfiles({
+        destination: destination as string | undefined,
+        tourType: tourType as string | undefined,
+        city: city as string | undefined,
+        minRating: minRating ? parseFloat(minRating as string) : undefined,
+        maxPrice: maxPrice ? parseFloat(maxPrice as string) : undefined,
+        verified: verified === "true" ? true : verified === "false" ? false : undefined,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string),
+      });
+      
+      res.json(profiles);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/tour-operators/search] Error:", error);
+      res.status(500).json({ message: "Failed to search tour operator profiles", error: error.message });
+    }
+  });
+
+  // Tango Guide Profile Routes
+  app.post("/api/profiles/tango-guide", authenticateToken, validateRequest(insertTangoGuideProfileSchema.omit({ userId: true })), async (req: AuthRequest, res: Response) => {
+    try {
+      const profile = await storage.createTangoGuideProfile({
+        ...req.body,
+        userId: req.userId!
+      });
+      res.status(201).json(profile);
+    } catch (error: any) {
+      console.error("[POST /api/profiles/tango-guide] Error:", error);
+      res.status(500).json({ message: "Failed to create tango guide profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/tango-guide/:userId", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const profile = await storage.getTangoGuideProfile(userId);
+      
+      if (!profile) {
+        return res.status(404).json({ message: "Tango guide profile not found" });
+      }
+      
+      res.json(profile);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/tango-guide/:userId] Error:", error);
+      res.status(500).json({ message: "Failed to fetch tango guide profile", error: error.message });
+    }
+  });
+
+  app.put("/api/profiles/tango-guide", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const updated = await storage.updateTangoGuideProfile(req.userId!, req.body);
+      res.json(updated);
+    } catch (error: any) {
+      console.error("[PUT /api/profiles/tango-guide] Error:", error);
+      res.status(500).json({ message: "Failed to update tango guide profile", error: error.message });
+    }
+  });
+
+  app.delete("/api/profiles/tango-guide", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteTangoGuideProfile(req.userId!);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error("[DELETE /api/profiles/tango-guide] Error:", error);
+      res.status(500).json({ message: "Failed to delete tango guide profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/tango-guides/search", async (req: Request, res: Response) => {
+    try {
+      const { 
+        city,
+        languages,
+        minRating,
+        maxRate,
+        verified,
+        limit = "20", 
+        offset = "0" 
+      } = req.query;
+      
+      const profiles = await storage.searchTangoGuideProfiles({
+        city: city as string | undefined,
+        languages: languages ? (Array.isArray(languages) ? languages as string[] : [languages as string]) : undefined,
+        minRating: minRating ? parseFloat(minRating as string) : undefined,
+        maxRate: maxRate ? parseFloat(maxRate as string) : undefined,
+        verified: verified === "true" ? true : verified === "false" ? false : undefined,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string),
+      });
+      
+      res.json(profiles);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/tango-guides/search] Error:", error);
+      res.status(500).json({ message: "Failed to search tango guide profiles", error: error.message });
+    }
+  });
+
+  // Taxi Dancer Profile Routes
+  app.post("/api/profiles/taxi-dancer", authenticateToken, validateRequest(insertTaxiDancerProfileSchema.omit({ userId: true })), async (req: AuthRequest, res: Response) => {
+    try {
+      const profile = await storage.createTaxiDancerProfile({
+        ...req.body,
+        userId: req.userId!
+      });
+      res.status(201).json(profile);
+    } catch (error: any) {
+      console.error("[POST /api/profiles/taxi-dancer] Error:", error);
+      res.status(500).json({ message: "Failed to create taxi dancer profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/taxi-dancer/:userId", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const profile = await storage.getTaxiDancerProfile(userId);
+      
+      if (!profile) {
+        return res.status(404).json({ message: "Taxi dancer profile not found" });
+      }
+      
+      res.json(profile);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/taxi-dancer/:userId] Error:", error);
+      res.status(500).json({ message: "Failed to fetch taxi dancer profile", error: error.message });
+    }
+  });
+
+  app.put("/api/profiles/taxi-dancer", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const updated = await storage.updateTaxiDancerProfile(req.userId!, req.body);
+      res.json(updated);
+    } catch (error: any) {
+      console.error("[PUT /api/profiles/taxi-dancer] Error:", error);
+      res.status(500).json({ message: "Failed to update taxi dancer profile", error: error.message });
+    }
+  });
+
+  app.delete("/api/profiles/taxi-dancer", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteTaxiDancerProfile(req.userId!);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error("[DELETE /api/profiles/taxi-dancer] Error:", error);
+      res.status(500).json({ message: "Failed to delete taxi dancer profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/taxi-dancers/search", async (req: Request, res: Response) => {
+    try {
+      const { 
+        city,
+        role,
+        minRating,
+        maxRate,
+        verified,
+        available,
+        limit = "20", 
+        offset = "0" 
+      } = req.query;
+      
+      const profiles = await storage.searchTaxiDancerProfiles({
+        city: city as string | undefined,
+        role: role as string | undefined,
+        minRating: minRating ? parseFloat(minRating as string) : undefined,
+        maxRate: maxRate ? parseFloat(maxRate as string) : undefined,
+        verified: verified === "true" ? true : verified === "false" ? false : undefined,
+        available: available === "true" ? true : available === "false" ? false : undefined,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string),
+      });
+      
+      res.json(profiles);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/taxi-dancers/search] Error:", error);
+      res.status(500).json({ message: "Failed to search taxi dancer profiles", error: error.message });
+    }
+  });
+
+  // ============================================================================
+  // BATCH 08: Content Creator/Learning Resource/Organizer Profile APIs
+  // ============================================================================
+
+  // Content Creator Profile Routes
+  app.post("/api/profiles/content-creator", authenticateToken, validateRequest(insertContentCreatorProfileSchema.omit({ userId: true })), async (req: AuthRequest, res: Response) => {
+    try {
+      const profile = await storage.createContentCreatorProfile({
+        ...req.body,
+        userId: req.userId!
+      });
+      res.status(201).json(profile);
+    } catch (error: any) {
+      console.error("[POST /api/profiles/content-creator] Error:", error);
+      res.status(500).json({ message: "Failed to create content creator profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/content-creator/:userId", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const profile = await storage.getContentCreatorProfile(userId);
+      
+      if (!profile) {
+        return res.status(404).json({ message: "Content creator profile not found" });
+      }
+      
+      res.json(profile);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/content-creator/:userId] Error:", error);
+      res.status(500).json({ message: "Failed to fetch content creator profile", error: error.message });
+    }
+  });
+
+  app.put("/api/profiles/content-creator", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const updated = await storage.updateContentCreatorProfile(req.userId!, req.body);
+      res.json(updated);
+    } catch (error: any) {
+      console.error("[PUT /api/profiles/content-creator] Error:", error);
+      res.status(500).json({ message: "Failed to update content creator profile", error: error.message });
+    }
+  });
+
+  app.delete("/api/profiles/content-creator", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteContentCreatorProfile(req.userId!);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error("[DELETE /api/profiles/content-creator] Error:", error);
+      res.status(500).json({ message: "Failed to delete content creator profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/content-creators/search", async (req: Request, res: Response) => {
+    try {
+      const { 
+        contentType,
+        platform,
+        city,
+        minFollowers,
+        minRating,
+        verified,
+        limit = "20", 
+        offset = "0" 
+      } = req.query;
+      
+      const profiles = await storage.searchContentCreatorProfiles({
+        contentType: contentType as string | undefined,
+        platform: platform as string | undefined,
+        city: city as string | undefined,
+        minFollowers: minFollowers ? parseInt(minFollowers as string) : undefined,
+        minRating: minRating ? parseFloat(minRating as string) : undefined,
+        verified: verified === "true" ? true : verified === "false" ? false : undefined,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string),
+      });
+      
+      res.json(profiles);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/content-creators/search] Error:", error);
+      res.status(500).json({ message: "Failed to search content creator profiles", error: error.message });
+    }
+  });
+
+  // Learning Resource Profile Routes
+  app.post("/api/profiles/learning-resource", authenticateToken, validateRequest(insertLearningResourceProfileSchema.omit({ userId: true })), async (req: AuthRequest, res: Response) => {
+    try {
+      const profile = await storage.createLearningResourceProfile({
+        ...req.body,
+        userId: req.userId!
+      });
+      res.status(201).json(profile);
+    } catch (error: any) {
+      console.error("[POST /api/profiles/learning-resource] Error:", error);
+      res.status(500).json({ message: "Failed to create learning resource profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/learning-resource/:userId", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const profile = await storage.getLearningResourceProfile(userId);
+      
+      if (!profile) {
+        return res.status(404).json({ message: "Learning resource profile not found" });
+      }
+      
+      res.json(profile);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/learning-resource/:userId] Error:", error);
+      res.status(500).json({ message: "Failed to fetch learning resource profile", error: error.message });
+    }
+  });
+
+  app.put("/api/profiles/learning-resource", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const updated = await storage.updateLearningResourceProfile(req.userId!, req.body);
+      res.json(updated);
+    } catch (error: any) {
+      console.error("[PUT /api/profiles/learning-resource] Error:", error);
+      res.status(500).json({ message: "Failed to update learning resource profile", error: error.message });
+    }
+  });
+
+  app.delete("/api/profiles/learning-resource", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteLearningResourceProfile(req.userId!);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error("[DELETE /api/profiles/learning-resource] Error:", error);
+      res.status(500).json({ message: "Failed to delete learning resource profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/learning-resources/search", async (req: Request, res: Response) => {
+    try {
+      const { 
+        resourceType,
+        format,
+        level,
+        city,
+        minRating,
+        verified,
+        limit = "20", 
+        offset = "0" 
+      } = req.query;
+      
+      const profiles = await storage.searchLearningResourceProfiles({
+        resourceType: resourceType as string | undefined,
+        format: format as string | undefined,
+        level: level as string | undefined,
+        city: city as string | undefined,
+        minRating: minRating ? parseFloat(minRating as string) : undefined,
+        verified: verified === "true" ? true : verified === "false" ? false : undefined,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string),
+      });
+      
+      res.json(profiles);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/learning-resources/search] Error:", error);
+      res.status(500).json({ message: "Failed to search learning resource profiles", error: error.message });
+    }
+  });
+
+  // Organizer Profile Routes
+  app.post("/api/profiles/organizer", authenticateToken, validateRequest(insertOrganizerProfileSchema.omit({ userId: true })), async (req: AuthRequest, res: Response) => {
+    try {
+      const profile = await storage.createOrganizerProfile({
+        ...req.body,
+        userId: req.userId!
+      });
+      res.status(201).json(profile);
+    } catch (error: any) {
+      console.error("[POST /api/profiles/organizer] Error:", error);
+      res.status(500).json({ message: "Failed to create organizer profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/organizer/:userId", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const profile = await storage.getOrganizerProfile(userId);
+      
+      if (!profile) {
+        return res.status(404).json({ message: "Organizer profile not found" });
+      }
+      
+      res.json(profile);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/organizer/:userId] Error:", error);
+      res.status(500).json({ message: "Failed to fetch organizer profile", error: error.message });
+    }
+  });
+
+  app.put("/api/profiles/organizer", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const updated = await storage.updateOrganizerProfile(req.userId!, req.body);
+      res.json(updated);
+    } catch (error: any) {
+      console.error("[PUT /api/profiles/organizer] Error:", error);
+      res.status(500).json({ message: "Failed to update organizer profile", error: error.message });
+    }
+  });
+
+  app.delete("/api/profiles/organizer", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteOrganizerProfile(req.userId!);
+      res.status(204).send();
+    } catch (error: any) {
+      console.error("[DELETE /api/profiles/organizer] Error:", error);
+      res.status(500).json({ message: "Failed to delete organizer profile", error: error.message });
+    }
+  });
+
+  app.get("/api/profiles/organizers/search", async (req: Request, res: Response) => {
+    try {
+      const { 
+        organizationType,
+        city,
+        country,
+        minEventsOrganized,
+        minRating,
+        verified,
+        limit = "20", 
+        offset = "0" 
+      } = req.query;
+      
+      const profiles = await storage.searchOrganizerProfiles({
+        organizationType: organizationType as string | undefined,
+        city: city as string | undefined,
+        country: country as string | undefined,
+        minEventsOrganized: minEventsOrganized ? parseInt(minEventsOrganized as string) : undefined,
+        minRating: minRating ? parseFloat(minRating as string) : undefined,
+        verified: verified === "true" ? true : verified === "false" ? false : undefined,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string),
+      });
+      
+      res.json(profiles);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/organizers/search] Error:", error);
+      res.status(500).json({ message: "Failed to search organizer profiles", error: error.message });
+    }
+  });
+
+  // ============================================================================
+  // BATCH 13: Profile Media Upload Endpoints
+  // ============================================================================
+
+  // Helper function to get profile table and field names based on type
+  const getProfileConfig = (type: string) => {
+    const configs: Record<string, { table: any; photoField: string; videoField: string; portfolioField?: string }> = {
+      'photographer': { 
+        table: photographerProfiles, 
+        photoField: 'photoUrls', 
+        videoField: 'videoUrls'
+      },
+      'performer': { 
+        table: performerProfiles, 
+        photoField: 'photoUrls', 
+        videoField: 'demoVideoUrls'
+      },
+      'dj': { 
+        table: djProfiles, 
+        photoField: 'photoUrls', 
+        videoField: 'videoUrls'
+      },
+      'musician': { 
+        table: musicianProfiles, 
+        photoField: 'photoUrls',
+        videoField: 'videoUrls',
+        portfolioField: 'audioSamples'
+      },
+      'content-creator': { 
+        table: contentCreatorProfiles, 
+        photoField: 'photoUrls',
+        videoField: 'videoUrls'
+      },
+    };
+    return configs[type];
+  };
+
+  // POST /api/profiles/:type/upload-photo
+  app.post("/api/profiles/:type/upload-photo", authenticateToken, profileMediaUpload.single('file'), async (req: AuthRequest, res: Response) => {
+    try {
+      const { type } = req.params;
+      const config = getProfileConfig(type);
+      
+      if (!config) {
+        return res.status(400).json({ message: `Invalid profile type: ${type}` });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file provided' });
+      }
+
+      if (!req.file.mimetype.startsWith('image/')) {
+        return res.status(400).json({ message: 'File must be an image' });
+      }
+
+      // Upload to Cloudinary
+      const uploadResult = await uploadMediaToCloudinary(
+        req.file,
+        `profiles/${type}/${req.userId}/photos`,
+        'image'
+      );
+
+      // Get current profile
+      const [profile] = await db.select()
+        .from(config.table)
+        .where(eq(config.table.userId, req.userId!))
+        .limit(1);
+
+      if (!profile) {
+        return res.status(404).json({ message: `${type} profile not found` });
+      }
+
+      // Add URL to photo array
+      const currentPhotos = profile[config.photoField] || [];
+      const updatedPhotos = [...currentPhotos, uploadResult.url];
+
+      // Update profile
+      await db.update(config.table)
+        .set({ [config.photoField]: updatedPhotos, updatedAt: new Date() })
+        .where(eq(config.table.userId, req.userId!));
+
+      res.status(201).json({ 
+        message: 'Photo uploaded successfully',
+        url: uploadResult.url
+      });
+    } catch (error: any) {
+      console.error(`[POST /api/profiles/:type/upload-photo] Error:`, error);
+      res.status(500).json({ message: 'Failed to upload photo', error: error.message });
+    }
+  });
+
+  // POST /api/profiles/:type/upload-video
+  app.post("/api/profiles/:type/upload-video", authenticateToken, profileMediaUpload.single('file'), async (req: AuthRequest, res: Response) => {
+    try {
+      const { type } = req.params;
+      const config = getProfileConfig(type);
+      
+      if (!config) {
+        return res.status(400).json({ message: `Invalid profile type: ${type}` });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file provided' });
+      }
+
+      if (!req.file.mimetype.startsWith('video/')) {
+        return res.status(400).json({ message: 'File must be a video' });
+      }
+
+      // Upload to Cloudinary
+      const uploadResult = await uploadMediaToCloudinary(
+        req.file,
+        `profiles/${type}/${req.userId}/videos`,
+        'video'
+      );
+
+      // Get current profile
+      const [profile] = await db.select()
+        .from(config.table)
+        .where(eq(config.table.userId, req.userId!))
+        .limit(1);
+
+      if (!profile) {
+        return res.status(404).json({ message: `${type} profile not found` });
+      }
+
+      // Add URL to video array
+      const currentVideos = profile[config.videoField] || [];
+      const updatedVideos = [...currentVideos, uploadResult.url];
+
+      // Update profile
+      await db.update(config.table)
+        .set({ [config.videoField]: updatedVideos, updatedAt: new Date() })
+        .where(eq(config.table.userId, req.userId!));
+
+      res.status(201).json({ 
+        message: 'Video uploaded successfully',
+        url: uploadResult.url
+      });
+    } catch (error: any) {
+      console.error(`[POST /api/profiles/:type/upload-video] Error:`, error);
+      res.status(500).json({ message: 'Failed to upload video', error: error.message });
+    }
+  });
+
+  // POST /api/profiles/:type/upload-portfolio
+  app.post("/api/profiles/:type/upload-portfolio", authenticateToken, profileMediaUpload.single('file'), async (req: AuthRequest, res: Response) => {
+    try {
+      const { type } = req.params;
+      const config = getProfileConfig(type);
+      
+      if (!config) {
+        return res.status(400).json({ message: `Invalid profile type: ${type}` });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file provided' });
+      }
+
+      // Determine resource type based on mime type
+      let resourceType: 'image' | 'video' | 'raw' = 'image';
+      let fieldToUpdate = config.photoField;
+
+      if (req.file.mimetype.startsWith('video/')) {
+        resourceType = 'video';
+        fieldToUpdate = config.videoField;
+      } else if (req.file.mimetype === 'application/pdf') {
+        resourceType = 'raw';
+        fieldToUpdate = config.portfolioField || config.photoField;
+      } else if (req.file.mimetype.startsWith('audio/')) {
+        resourceType = 'raw';
+        fieldToUpdate = config.portfolioField || 'audioSamples';
+      }
+
+      // Upload to Cloudinary
+      const uploadResult = await uploadMediaToCloudinary(
+        req.file,
+        `profiles/${type}/${req.userId}/portfolio`,
+        resourceType
+      );
+
+      // Get current profile
+      const [profile] = await db.select()
+        .from(config.table)
+        .where(eq(config.table.userId, req.userId!))
+        .limit(1);
+
+      if (!profile) {
+        return res.status(404).json({ message: `${type} profile not found` });
+      }
+
+      // Add URL to appropriate array
+      const currentItems = profile[fieldToUpdate] || [];
+      const updatedItems = [...currentItems, uploadResult.url];
+
+      // Update profile
+      await db.update(config.table)
+        .set({ [fieldToUpdate]: updatedItems, updatedAt: new Date() })
+        .where(eq(config.table.userId, req.userId!));
+
+      res.status(201).json({ 
+        message: 'Portfolio item uploaded successfully',
+        url: uploadResult.url,
+        type: resourceType
+      });
+    } catch (error: any) {
+      console.error(`[POST /api/profiles/:type/upload-portfolio] Error:`, error);
+      res.status(500).json({ message: 'Failed to upload portfolio item', error: error.message });
+    }
+  });
+
+  // DELETE /api/profiles/:type/media/:mediaId
+  app.delete("/api/profiles/:type/media/:mediaId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { type, mediaId } = req.params;
+      const config = getProfileConfig(type);
+      
+      if (!config) {
+        return res.status(400).json({ message: `Invalid profile type: ${type}` });
+      }
+
+      // mediaId is the URL to remove
+      const urlToRemove = decodeURIComponent(mediaId);
+
+      // Get current profile
+      const [profile] = await db.select()
+        .from(config.table)
+        .where(eq(config.table.userId, req.userId!))
+        .limit(1);
+
+      if (!profile) {
+        return res.status(404).json({ message: `${type} profile not found` });
+      }
+
+      // Remove from all possible fields
+      const updates: any = { updatedAt: new Date() };
+
+      if (profile[config.photoField]) {
+        const filtered = (profile[config.photoField] as string[]).filter(url => url !== urlToRemove);
+        if (filtered.length !== (profile[config.photoField] as string[]).length) {
+          updates[config.photoField] = filtered;
+        }
+      }
+
+      if (profile[config.videoField]) {
+        const filtered = (profile[config.videoField] as string[]).filter(url => url !== urlToRemove);
+        if (filtered.length !== (profile[config.videoField] as string[]).length) {
+          updates[config.videoField] = filtered;
+        }
+      }
+
+      if (config.portfolioField && profile[config.portfolioField]) {
+        const filtered = (profile[config.portfolioField] as string[]).filter(url => url !== urlToRemove);
+        if (filtered.length !== (profile[config.portfolioField] as string[]).length) {
+          updates[config.portfolioField] = filtered;
+        }
+      }
+
+      // Update profile
+      await db.update(config.table)
+        .set(updates)
+        .where(eq(config.table.userId, req.userId!));
+
+      res.json({ message: 'Media deleted successfully' });
+    } catch (error: any) {
+      console.error(`[DELETE /api/profiles/:type/media/:mediaId] Error:`, error);
+      res.status(500).json({ message: 'Failed to delete media', error: error.message });
+    }
+  });
+
+  // GET /api/profiles/:type/:userId/media
+  app.get("/api/profiles/:type/:userId/media", async (req: Request, res: Response) => {
+    try {
+      const { type, userId } = req.params;
+      const config = getProfileConfig(type);
+      
+      if (!config) {
+        return res.status(400).json({ message: `Invalid profile type: ${type}` });
+      }
+
+      const userIdInt = parseInt(userId);
+      if (isNaN(userIdInt)) {
+        return res.status(400).json({ message: 'Invalid user ID' });
+      }
+
+      // Get profile
+      const [profile] = await db.select()
+        .from(config.table)
+        .where(eq(config.table.userId, userIdInt))
+        .limit(1);
+
+      if (!profile) {
+        return res.status(404).json({ message: `${type} profile not found` });
+      }
+
+      // Collect all media
+      const media: any = {
+        photos: profile[config.photoField] || [],
+        videos: profile[config.videoField] || [],
+      };
+
+      if (config.portfolioField && profile[config.portfolioField]) {
+        media.portfolio = profile[config.portfolioField];
+      }
+
+      res.json(media);
+    } catch (error: any) {
+      console.error(`[GET /api/profiles/:type/:userId/media] Error:`, error);
+      res.status(500).json({ message: 'Failed to fetch media', error: error.message });
+    }
+  });
+
   app.use("/api/venues", venueRoutes);
   app.use("/api/workshops", workshopRoutes);
   app.use("/api/music", musicRoutes);
+  app.use("/api/profile", profileRoutes);
+  
+  // BATCH 13-14: Profile Media & Analytics Routes
+  app.use("/api/profile", profileMediaRoutes);
+  app.use("/api/profile", profileAnalyticsRoutes);
+  
+  // BATCH 04-05: Professional Profile Routes
+  app.use("/api/profiles", professionalProfileRoutes);
+  
+  // BATCH 06-07: Business + Specialty Profile Routes
+  app.use("/api/profiles", businessProfileRoutes);
+  
+  // BATCH 05-06: Service Provider + Business Profile API Endpoints
+  app.use("/api", serviceProviderProfileRoutes);
+  
+  // BATCH 05: Service Provider Profile Routes (photographers, performers, vendors, choreographers)
+  app.use("/api/profiles", serviceProfileRoutes);
+  
+  // BATCH 07-08: Specialty + Content/Organizer Profile Routes
+  app.use("/api/profile", specialtyProfileRoutes);
+  
+  // BATCH 08: Content/Organizer Profile Routes
+  app.use("/api/profiles", contentProfileRoutes);
   
   // Enhanced Health Check Routes (Production Monitoring)
   app.use(healthRoutes);
@@ -3582,6 +5092,503 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Cleanup backups error:", error);
       res.status(500).json({ message: "Failed to cleanup backups" });
+    }
+  });
+
+  // ===============================
+  // BATCH 03: CORE PROFILE API ENDPOINTS
+  // ===============================
+
+  // Validation schemas for profile operations
+  const updateBaseProfileSchema = z.object({
+    bio: z.string().optional(),
+    city: z.string().optional(),
+    country: z.string().optional(),
+    profileImage: z.string().url().optional().or(z.literal("")),
+    backgroundImage: z.string().url().optional().or(z.literal("")),
+    languages: z.array(z.string()).optional(),
+    tangoRoles: z.array(z.string()).optional(),
+    name: z.string().optional(),
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
+    occupation: z.string().optional(),
+  });
+
+  const trackProfileViewSchema = z.object({
+    viewerIp: z.string().optional(),
+    viewerUserId: z.number().optional(),
+  });
+
+  // GET /api/profile - Get current user's complete profile (all professional profiles merged)
+  app.get("/api/profile", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      const profile = await storage.getUserProfile(req.userId);
+
+      if (!profile) {
+        return res.status(404).json({ message: "Profile not found" });
+      }
+
+      res.json(profile);
+    } catch (error) {
+      console.error("[Profile API] Error fetching current user profile:", error);
+      res.status(500).json({ message: "Failed to fetch profile" });
+    }
+  });
+
+  // PUT /api/profile - Update user base profile
+  app.put("/api/profile", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      if (!req.userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      const validatedData = updateBaseProfileSchema.parse(req.body);
+      
+      const updatedProfile = await storage.updateUserProfile(req.userId, validatedData);
+
+      if (!updatedProfile) {
+        return res.status(404).json({ message: "Profile not found" });
+      }
+
+      res.json(updatedProfile);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Invalid data", 
+          errors: error.errors 
+        });
+      }
+      console.error("[Profile API] Error updating profile:", error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
+  // GET /api/profile/:userId - Get any user's public profile
+  app.get("/api/profile/:userId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+
+      // Get target user's profile
+      const targetProfile = await storage.getUserProfile(userId);
+      
+      if (!targetProfile) {
+        return res.status(404).json({ message: "Profile not found" });
+      }
+
+      // Check visibility permissions
+      const visibilitySettings = await storage.getProfileVisibilitySettings(userId);
+      const profileVisibility = visibilitySettings?.profileVisibility || "public";
+
+      // Check if viewer can access this profile
+      const viewerId = req.userId;
+      let canView = false;
+
+      if (profileVisibility === "public") {
+        canView = true;
+      } else if (profileVisibility === "friends") {
+        // Check if viewer is a friend
+        if (viewerId && viewerId !== userId) {
+          const [friendships] = await db
+            .select()
+            .from(friendships as any)
+            .where(
+              or(
+                and(eq((friendships as any).userId, viewerId), eq((friendships as any).friendId, userId)),
+                and(eq((friendships as any).userId, userId), eq((friendships as any).friendId, viewerId))
+              )
+            )
+            .limit(1);
+          canView = !!friendships;
+        } else if (viewerId === userId) {
+          canView = true; // User can always view their own profile
+        }
+      } else if (profileVisibility === "private") {
+        // Only the profile owner can view
+        canView = viewerId === userId;
+      }
+
+      if (!canView) {
+        return res.status(403).json({ 
+          message: "You do not have permission to view this profile",
+          visibilityLevel: profileVisibility 
+        });
+      }
+
+      res.json(targetProfile);
+    } catch (error) {
+      console.error("[Profile API] Error fetching user profile:", error);
+      res.status(500).json({ message: "Failed to fetch profile" });
+    }
+  });
+
+  // GET /api/profile/:userId/visibility - Check profile visibility permissions
+  app.get("/api/profile/:userId/visibility", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+
+      // Get visibility settings
+      const visibilitySettings = await storage.getProfileVisibilitySettings(userId);
+      const profileVisibility = visibilitySettings?.profileVisibility || "public";
+
+      // Check if viewer can access
+      const viewerId = req.userId;
+      let canView = false;
+
+      if (profileVisibility === "public") {
+        canView = true;
+      } else if (profileVisibility === "friends") {
+        if (viewerId && viewerId !== userId) {
+          const [friendship] = await db
+            .select()
+            .from(friendships as any)
+            .where(
+              or(
+                and(eq((friendships as any).userId, viewerId), eq((friendships as any).friendId, userId)),
+                and(eq((friendships as any).userId, userId), eq((friendships as any).friendId, viewerId))
+              )
+            )
+            .limit(1);
+          canView = !!friendship;
+        } else if (viewerId === userId) {
+          canView = true;
+        }
+      } else if (profileVisibility === "private") {
+        canView = viewerId === userId;
+      }
+
+      res.json({
+        canView,
+        visibilityLevel: profileVisibility,
+        isOwner: viewerId === userId,
+        isFriend: viewerId !== userId && canView && profileVisibility === "friends"
+      });
+    } catch (error) {
+      console.error("[Profile API] Error checking visibility:", error);
+      res.status(500).json({ message: "Failed to check visibility" });
+    }
+  });
+
+  // GET /api/profile/:userId/stats - Get profile statistics
+  app.get("/api/profile/:userId/stats", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+
+      // Check if profile exists
+      const user = await storage.getUserById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "Profile not found" });
+      }
+
+      // Get follower count
+      const [followersResult] = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(follows)
+        .where(eq(follows.followingId, userId));
+      const followers = followersResult?.count || 0;
+
+      // Get following count
+      const [followingResult] = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(follows)
+        .where(eq(follows.followerId, userId));
+      const following = followingResult?.count || 0;
+
+      // Get friendship/connections count
+      const [connectionsResult] = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(friendships as any)
+        .where(
+          or(
+            eq((friendships as any).userId, userId),
+            eq((friendships as any).friendId, userId)
+          )
+        );
+      const connections = connectionsResult?.count || 0;
+
+      // Get profile view stats
+      const viewStats = await storage.getProfileViewStats(userId);
+      const views = viewStats?.totalViews || 0;
+
+      // Calculate profile completion percentage
+      const profileFields = [
+        user.bio,
+        user.profileImage,
+        user.city,
+        user.country,
+        user.languages?.length,
+        user.tangoRoles?.length,
+        user.firstName,
+        user.lastName,
+      ];
+      const completedFields = profileFields.filter(field => field).length;
+      const completionPercentage = Math.round((completedFields / profileFields.length) * 100);
+
+      res.json({
+        views,
+        followers,
+        following,
+        connections,
+        completionPercentage,
+        totalPosts: user.postCount || 0,
+        totalEvents: user.eventCount || 0,
+      });
+    } catch (error) {
+      console.error("[Profile API] Error fetching profile stats:", error);
+      res.status(500).json({ message: "Failed to fetch profile stats" });
+    }
+  });
+
+  // POST /api/profile/:userId/view - Track profile view
+  app.post("/api/profile/:userId/view", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+
+      const validatedData = trackProfileViewSchema.parse(req.body);
+
+      // Check if profile exists
+      const user = await storage.getUserById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "Profile not found" });
+      }
+
+      // Track the view (you can implement this in storage or use analytics service)
+      // For now, we'll just acknowledge the view was tracked
+      // In a real implementation, you might store this in a profileViews table
+
+      res.json({ 
+        success: true,
+        message: "Profile view tracked successfully"
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Invalid data", 
+          errors: error.errors 
+        });
+      }
+      console.error("[Profile API] Error tracking profile view:", error);
+      res.status(500).json({ message: "Failed to track profile view" });
+    }
+  });
+
+  // Teacher Profiles
+  app.post("/api/profiles/teacher", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const validated = insertTeacherProfileSchema.parse(req.body);
+      const profile = await storage.createTeacherProfile({ ...validated, userId: req.userId! });
+      res.status(201).json(profile);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Validation error", errors: error.errors });
+      }
+      console.error("[Teacher Profile] Create error:", error);
+      res.status(500).json({ message: "Failed to create teacher profile" });
+    }
+  });
+
+  app.get("/api/profiles/teacher/:userId", async (req: Request, res: Response) => {
+    try {
+      const profile = await storage.getTeacherProfile(parseInt(req.params.userId));
+      if (!profile) return res.status(404).json({ message: "Profile not found" });
+      res.json(profile);
+    } catch (error) {
+      console.error("[Teacher Profile] Get error:", error);
+      res.status(500).json({ message: "Failed to fetch teacher profile" });
+    }
+  });
+
+  app.put("/api/profiles/teacher", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const validated = insertTeacherProfileSchema.partial().parse(req.body);
+      const profile = await storage.updateTeacherProfile(req.userId!, validated);
+      res.json(profile);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Validation error", errors: error.errors });
+      }
+      console.error("[Teacher Profile] Update error:", error);
+      res.status(500).json({ message: "Failed to update teacher profile" });
+    }
+  });
+
+  app.delete("/api/profiles/teacher", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteTeacherProfile(req.userId!);
+      res.status(204).send();
+    } catch (error) {
+      console.error("[Teacher Profile] Delete error:", error);
+      res.status(500).json({ message: "Failed to delete teacher profile" });
+    }
+  });
+
+  app.get("/api/profiles/teachers/search", async (req: Request, res: Response) => {
+    try {
+      const filters = { 
+        city: req.query.city as string | undefined, 
+        minRate: req.query.minRate ? parseFloat(req.query.minRate as string) : undefined, 
+        maxRate: req.query.maxRate ? parseFloat(req.query.maxRate as string) : undefined, 
+        styles: req.query.styles as string | undefined, 
+        level: req.query.level as string | undefined 
+      };
+      const results = await storage.searchTeacherProfiles(filters);
+      res.json(results);
+    } catch (error) {
+      console.error("[Teacher Profile] Search error:", error);
+      res.status(500).json({ message: "Failed to search teacher profiles" });
+    }
+  });
+
+  // DJ Profiles
+  app.post("/api/profiles/dj", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const validated = insertDjProfileSchema.parse(req.body);
+      const profile = await storage.createDjProfile({ ...validated, userId: req.userId! });
+      res.status(201).json(profile);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Validation error", errors: error.errors });
+      }
+      console.error("[DJ Profile] Create error:", error);
+      res.status(500).json({ message: "Failed to create DJ profile" });
+    }
+  });
+
+  app.get("/api/profiles/dj/:userId", async (req: Request, res: Response) => {
+    try {
+      const profile = await storage.getDjProfile(parseInt(req.params.userId));
+      if (!profile) return res.status(404).json({ message: "Profile not found" });
+      res.json(profile);
+    } catch (error) {
+      console.error("[DJ Profile] Get error:", error);
+      res.status(500).json({ message: "Failed to fetch DJ profile" });
+    }
+  });
+
+  app.put("/api/profiles/dj", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const validated = insertDjProfileSchema.partial().parse(req.body);
+      const profile = await storage.updateDjProfile(req.userId!, validated);
+      res.json(profile);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Validation error", errors: error.errors });
+      }
+      console.error("[DJ Profile] Update error:", error);
+      res.status(500).json({ message: "Failed to update DJ profile" });
+    }
+  });
+
+  app.delete("/api/profiles/dj", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteDjProfile(req.userId!);
+      res.status(204).send();
+    } catch (error) {
+      console.error("[DJ Profile] Delete error:", error);
+      res.status(500).json({ message: "Failed to delete DJ profile" });
+    }
+  });
+
+  app.get("/api/profiles/djs/search", async (req: Request, res: Response) => {
+    try {
+      const filters = { 
+        city: req.query.city as string | undefined, 
+        minRate: req.query.minRate ? parseFloat(req.query.minRate as string) : undefined, 
+        maxRate: req.query.maxRate ? parseFloat(req.query.maxRate as string) : undefined, 
+        styles: req.query.styles as string | undefined, 
+        equipmentType: req.query.equipmentType as string | undefined 
+      };
+      const results = await storage.searchDjProfiles(filters);
+      res.json(results);
+    } catch (error) {
+      console.error("[DJ Profile] Search error:", error);
+      res.status(500).json({ message: "Failed to search DJ profiles" });
+    }
+  });
+
+  // Musician Profiles
+  app.post("/api/profiles/musician", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const validated = insertMusicianProfileSchema.parse(req.body);
+      const profile = await storage.createMusicianProfile({ ...validated, userId: req.userId! });
+      res.status(201).json(profile);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Validation error", errors: error.errors });
+      }
+      console.error("[Musician Profile] Create error:", error);
+      res.status(500).json({ message: "Failed to create musician profile" });
+    }
+  });
+
+  app.get("/api/profiles/musician/:userId", async (req: Request, res: Response) => {
+    try {
+      const profile = await storage.getMusicianProfile(parseInt(req.params.userId));
+      if (!profile) return res.status(404).json({ message: "Profile not found" });
+      res.json(profile);
+    } catch (error) {
+      console.error("[Musician Profile] Get error:", error);
+      res.status(500).json({ message: "Failed to fetch musician profile" });
+    }
+  });
+
+  app.put("/api/profiles/musician", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const validated = insertMusicianProfileSchema.partial().parse(req.body);
+      const profile = await storage.updateMusicianProfile(req.userId!, validated);
+      res.json(profile);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Validation error", errors: error.errors });
+      }
+      console.error("[Musician Profile] Update error:", error);
+      res.status(500).json({ message: "Failed to update musician profile" });
+    }
+  });
+
+  app.delete("/api/profiles/musician", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      await storage.deleteMusicianProfile(req.userId!);
+      res.status(204).send();
+    } catch (error) {
+      console.error("[Musician Profile] Delete error:", error);
+      res.status(500).json({ message: "Failed to delete musician profile" });
+    }
+  });
+
+  app.get("/api/profiles/musicians/search", async (req: Request, res: Response) => {
+    try {
+      const filters = { 
+        city: req.query.city as string | undefined, 
+        minRate: req.query.minRate ? parseFloat(req.query.minRate as string) : undefined, 
+        maxRate: req.query.maxRate ? parseFloat(req.query.maxRate as string) : undefined, 
+        instruments: req.query.instruments as string | undefined, 
+        ensembleType: req.query.ensembleType as string | undefined 
+      };
+      const results = await storage.searchMusicianProfiles(filters);
+      res.json(results);
+    } catch (error) {
+      console.error("[Musician Profile] Search error:", error);
+      res.status(500).json({ message: "Failed to search musician profiles" });
     }
   });
 

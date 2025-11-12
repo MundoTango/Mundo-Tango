@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import { Search, Book, MessageCircle, Mail } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
@@ -12,6 +13,10 @@ export default function HelpPage() {
   return (
     <PageLayout title="How Can We Help?" showBreadcrumbs>
 <SelfHealingErrorBoundary pageName="Help Center" fallbackRoute="/">
+      <SEO
+        title="Help & Support | Mundo Tango"
+        description="Get help and support for Mundo Tango. Find answers in our FAQ, contact our support team, or chat with us live. We're here to help you navigate the platform."
+      />
 <div className="min-h-screen bg-background">
       {/* Editorial Hero Section */}
       <motion.section

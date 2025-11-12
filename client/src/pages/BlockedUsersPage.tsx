@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SEO } from "@/components/SEO";
 import { UserX, Shield } from "lucide-react";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
@@ -14,6 +15,10 @@ export default function BlockedUsersPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Blocked Users" fallbackRoute="/settings">
+      <SEO
+        title="Blocked Users | Mundo Tango"
+        description="Manage your blocked users list. View and unblock users you've previously blocked from interacting with your Mundo Tango profile."
+      />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <div className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">

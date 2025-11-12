@@ -11,6 +11,7 @@ import {
   postLikes,
   postComments,
   follows,
+  profileViews,
   events,
   eventRsvps,
   eventPhotos,
@@ -82,6 +83,8 @@ import {
   type InsertPostComment,
   type SelectFollow,
   type InsertFollow,
+  type SelectProfileView,
+  type InsertProfileView,
   type SelectEvent,
   type InsertEvent,
   type SelectEventRsvp,
@@ -126,6 +129,60 @@ import {
   type InsertHousingListing,
   type SelectHousingBooking,
   type InsertHousingBooking,
+  talentProfiles,
+  teacherProfiles,
+  djProfiles,
+  photographerProfiles,
+  performerProfiles,
+  vendorProfiles,
+  musicianProfiles,
+  choreographerProfiles,
+  tangoSchoolProfiles,
+  tangoHotelProfiles,
+  wellnessProfiles,
+  tourOperatorProfiles,
+  hostVenueProfiles,
+  tangoGuideProfiles,
+  contentCreatorProfiles,
+  learningResourceProfiles,
+  taxiDancerProfiles,
+  organizerProfiles,
+  type SelectTalentProfile,
+  type InsertTalentProfile,
+  type SelectTeacherProfile,
+  type InsertTeacherProfile,
+  type SelectDJProfile,
+  type InsertDJProfile,
+  type SelectPhotographerProfile,
+  type InsertPhotographerProfile,
+  type SelectPerformerProfile,
+  type InsertPerformerProfile,
+  type SelectVendorProfile,
+  type InsertVendorProfile,
+  type SelectMusicianProfile,
+  type InsertMusicianProfile,
+  type SelectChoreographerProfile,
+  type InsertChoreographerProfile,
+  type SelectTangoSchoolProfile,
+  type InsertTangoSchoolProfile,
+  type SelectTangoHotelProfile,
+  type InsertTangoHotelProfile,
+  type SelectWellnessProfile,
+  type InsertWellnessProfile,
+  type SelectTourOperatorProfile,
+  type InsertTourOperatorProfile,
+  type SelectHostVenueProfile,
+  type InsertHostVenueProfile,
+  type SelectTangoGuideProfile,
+  type InsertTangoGuideProfile,
+  type SelectContentCreatorProfile,
+  type InsertContentCreatorProfile,
+  type SelectLearningResourceProfile,
+  type InsertLearningResourceProfile,
+  type SelectTaxiDancerProfile,
+  type InsertTaxiDancerProfile,
+  type SelectOrganizerProfile,
+  type InsertOrganizerProfile,
 } from "@shared/schema";
 
 // Platform independence tables
@@ -217,6 +274,7 @@ export interface IStorage {
     sharedGroups: number;
     lastInteraction: string | null;
   } | null>;
+  checkFriendship(userId1: number, userId2: number): Promise<boolean>;
   
   // Communities
   getCommunityByCity(cityName: string): Promise<any | undefined>;
@@ -585,6 +643,624 @@ export interface IStorage {
     limit?: number;
     offset?: number;
   }): Promise<SelectEvent[]>;
+  
+  // ============================================================================
+  // PROFILES - CORE OPERATIONS (BATCH 02-03)
+  // ============================================================================
+  
+  getUserProfile(userId: number): Promise<SelectUser & { profiles: any } | undefined>;
+  updateUserProfile(userId: number, data: Partial<SelectUser>): Promise<SelectUser | undefined>;
+  getPublicProfile(userId: number): Promise<any>;
+  trackProfileView(viewerId: number, viewedUserId: number, profileType?: string, viewerIp?: string): Promise<void>;
+  getProfileAnalytics(userId: number): Promise<any>;
+  getProfileInsights(userId: number): Promise<any>;
+  
+  // ============================================================================
+  // BATCH 02: COMPREHENSIVE PROFILE MANAGEMENT
+  // ============================================================================
+  
+  // Core Profile Methods
+  getProfile(userId: number, profileType?: string): Promise<any>;
+  updateProfile(userId: number, profileType: string, data: any): Promise<any>;
+  getAllUserProfiles(userId: number): Promise<any>;
+  
+  // Business Profile Methods (schools, hotels, venues)
+  getBusinessProfile(userId: number, businessType: string): Promise<any>;
+  updateBusinessProfile(userId: number, businessType: string, data: any): Promise<any>;
+  
+  // Specialty Profile Methods (wellness, tours, guides, learning resources)
+  getSpecialtyProfile(userId: number, specialtyType: string): Promise<any>;
+  updateSpecialtyProfile(userId: number, specialtyType: string, data: any): Promise<any>;
+  
+  // Profile Visibility & Privacy
+  getProfileVisibilitySettings(userId: number): Promise<any>;
+  updateProfileVisibility(userId: number, settings: any): Promise<any>;
+  
+  // Profile Analytics
+  incrementProfileView(userId: number, viewerId: number): Promise<void>;
+  getProfileViewStats(userId: number): Promise<any>;
+  
+  // ============================================================================
+  // BATCH 15: ADVANCED PROFILE SEARCH AND FILTERING
+  // ============================================================================
+  
+  // Comprehensive profile search across all profile types
+  searchProfiles(filters: {
+    profileTypes?: string[];
+    location?: { city?: string; country?: string; radius?: number };
+    priceRange?: { min?: number; max?: number };
+    availability?: string;
+    experience?: { min?: number; max?: number };
+    languages?: string[];
+    specialties?: string[];
+    rating?: { min?: number };
+    searchQuery?: string;
+    sortBy?: 'relevance' | 'rating' | 'price' | 'experience' | 'recent';
+    limit?: number;
+    offset?: number;
+  }): Promise<{ profiles: any[]; total: number }>;
+  
+  // Browse profiles by type with optional location filtering
+  getProfileDirectory(params: {
+    profileType: string;
+    city?: string;
+    country?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<{ profiles: any[]; total: number }>;
+  
+  // Get featured professionals
+  getFeaturedProfiles(params: {
+    profileType?: string;
+    limit?: number;
+  }): Promise<any[]>;
+  
+  // Location-based profile search
+  getNearbyProfiles(params: {
+    latitude: number;
+    longitude: number;
+    radius: number;
+    profileType?: string;
+    limit?: number;
+  }): Promise<any[]>;
+  
+  // Get recommended profiles for a user
+  getRecommendedProfiles(params: {
+    userId: number;
+    limit?: number;
+  }): Promise<any[]>;
+  
+  // Get profile statistics by type
+  getProfileStats(): Promise<any>;
+  
+  // Teacher Profiles
+  getTeacherProfile(userId: number): Promise<SelectTeacherProfile | null>;
+  createTeacherProfile(data: InsertTeacherProfile): Promise<SelectTeacherProfile>;
+  updateTeacherProfile(userId: number, data: Partial<SelectTeacherProfile>): Promise<SelectTeacherProfile | null>;
+  deleteTeacherProfile(userId: number): Promise<void>;
+  
+  // DJ Profiles
+  getDJProfile(userId: number): Promise<SelectDJProfile | null>;
+  createDJProfile(data: InsertDJProfile): Promise<SelectDJProfile>;
+  updateDJProfile(userId: number, data: Partial<SelectDJProfile>): Promise<SelectDJProfile | null>;
+  deleteDJProfile(userId: number): Promise<void>;
+  
+  // Photographer Profiles
+  getPhotographerProfile(userId: number): Promise<SelectPhotographerProfile | null>;
+  createPhotographerProfile(data: InsertPhotographerProfile): Promise<SelectPhotographerProfile>;
+  updatePhotographerProfile(userId: number, data: Partial<SelectPhotographerProfile>): Promise<SelectPhotographerProfile | null>;
+  deletePhotographerProfile(userId: number): Promise<void>;
+  
+  // Performer Profiles
+  getPerformerProfile(userId: number): Promise<SelectPerformerProfile | null>;
+  createPerformerProfile(data: InsertPerformerProfile): Promise<SelectPerformerProfile>;
+  updatePerformerProfile(userId: number, data: Partial<SelectPerformerProfile>): Promise<SelectPerformerProfile | null>;
+  deletePerformerProfile(userId: number): Promise<void>;
+  
+  // Vendor Profiles
+  getVendorProfile(userId: number): Promise<SelectVendorProfile | null>;
+  createVendorProfile(data: InsertVendorProfile): Promise<SelectVendorProfile>;
+  updateVendorProfile(userId: number, data: Partial<SelectVendorProfile>): Promise<SelectVendorProfile | null>;
+  deleteVendorProfile(userId: number): Promise<void>;
+  
+  // Musician Profiles
+  getMusicianProfile(userId: number): Promise<SelectMusicianProfile | null>;
+  createMusicianProfile(data: InsertMusicianProfile): Promise<SelectMusicianProfile>;
+  updateMusicianProfile(userId: number, data: Partial<SelectMusicianProfile>): Promise<SelectMusicianProfile | null>;
+  deleteMusicianProfile(userId: number): Promise<void>;
+  
+  // Choreographer Profiles
+  getChoreographerProfile(userId: number): Promise<SelectChoreographerProfile | null>;
+  createChoreographerProfile(data: InsertChoreographerProfile): Promise<SelectChoreographerProfile>;
+  updateChoreographerProfile(userId: number, data: Partial<SelectChoreographerProfile>): Promise<SelectChoreographerProfile | null>;
+  deleteChoreographerProfile(userId: number): Promise<void>;
+  
+  // Tango School Profiles
+  getTangoSchoolProfile(userId: number): Promise<SelectTangoSchoolProfile | null>;
+  createTangoSchoolProfile(data: InsertTangoSchoolProfile): Promise<SelectTangoSchoolProfile>;
+  updateTangoSchoolProfile(userId: number, data: Partial<SelectTangoSchoolProfile>): Promise<SelectTangoSchoolProfile | null>;
+  deleteTangoSchoolProfile(userId: number): Promise<void>;
+  
+  // Tango Hotel Profiles
+  getTangoHotelProfile(userId: number): Promise<SelectTangoHotelProfile | null>;
+  createTangoHotelProfile(data: InsertTangoHotelProfile): Promise<SelectTangoHotelProfile>;
+  updateTangoHotelProfile(userId: number, data: Partial<SelectTangoHotelProfile>): Promise<SelectTangoHotelProfile | null>;
+  deleteTangoHotelProfile(userId: number): Promise<void>;
+  
+  // Wellness Profiles
+  getWellnessProfile(userId: number): Promise<SelectWellnessProfile | null>;
+  createWellnessProfile(data: InsertWellnessProfile): Promise<SelectWellnessProfile>;
+  updateWellnessProfile(userId: number, data: Partial<SelectWellnessProfile>): Promise<SelectWellnessProfile | null>;
+  deleteWellnessProfile(userId: number): Promise<void>;
+  
+  // Tour Operator Profiles
+  getTourOperatorProfile(userId: number): Promise<SelectTourOperatorProfile | null>;
+  createTourOperatorProfile(data: InsertTourOperatorProfile): Promise<SelectTourOperatorProfile>;
+  updateTourOperatorProfile(userId: number, data: Partial<SelectTourOperatorProfile>): Promise<SelectTourOperatorProfile | null>;
+  deleteTourOperatorProfile(userId: number): Promise<void>;
+  
+  // Host Venue Profiles
+  getHostVenueProfile(userId: number): Promise<SelectHostVenueProfile | null>;
+  createHostVenueProfile(data: InsertHostVenueProfile): Promise<SelectHostVenueProfile>;
+  updateHostVenueProfile(userId: number, data: Partial<SelectHostVenueProfile>): Promise<SelectHostVenueProfile | null>;
+  deleteHostVenueProfile(userId: number): Promise<void>;
+  
+  // Tango Guide Profiles
+  getTangoGuideProfile(userId: number): Promise<SelectTangoGuideProfile | null>;
+  createTangoGuideProfile(data: InsertTangoGuideProfile): Promise<SelectTangoGuideProfile>;
+  updateTangoGuideProfile(userId: number, data: Partial<SelectTangoGuideProfile>): Promise<SelectTangoGuideProfile | null>;
+  deleteTangoGuideProfile(userId: number): Promise<void>;
+  
+  // Content Creator Profiles
+  getContentCreatorProfile(userId: number): Promise<SelectContentCreatorProfile | null>;
+  createContentCreatorProfile(data: InsertContentCreatorProfile): Promise<SelectContentCreatorProfile>;
+  updateContentCreatorProfile(userId: number, data: Partial<SelectContentCreatorProfile>): Promise<SelectContentCreatorProfile | null>;
+  deleteContentCreatorProfile(userId: number): Promise<void>;
+  
+  // Learning Resource Profiles
+  getLearningResourceProfile(userId: number): Promise<SelectLearningResourceProfile | null>;
+  createLearningResourceProfile(data: InsertLearningResourceProfile): Promise<SelectLearningResourceProfile>;
+  updateLearningResourceProfile(userId: number, data: Partial<SelectLearningResourceProfile>): Promise<SelectLearningResourceProfile | null>;
+  deleteLearningResourceProfile(userId: number): Promise<void>;
+  
+  // Taxi Dancer Profiles
+  getTaxiDancerProfile(userId: number): Promise<SelectTaxiDancerProfile | null>;
+  createTaxiDancerProfile(data: InsertTaxiDancerProfile): Promise<SelectTaxiDancerProfile>;
+  updateTaxiDancerProfile(userId: number, data: Partial<SelectTaxiDancerProfile>): Promise<SelectTaxiDancerProfile | null>;
+  deleteTaxiDancerProfile(userId: number): Promise<void>;
+  
+  // Organizer Profiles
+  getOrganizerProfile(userId: number): Promise<SelectOrganizerProfile | null>;
+  createOrganizerProfile(data: InsertOrganizerProfile): Promise<SelectOrganizerProfile>;
+  updateOrganizerProfile(userId: number, data: Partial<SelectOrganizerProfile>): Promise<SelectOrganizerProfile | null>;
+  deleteOrganizerProfile(userId: number): Promise<void>;
+  
+  // Talent Profiles (Generic)
+  getTalentProfile(userId: number): Promise<SelectTalentProfile | null>;
+  createTalentProfile(data: InsertTalentProfile): Promise<SelectTalentProfile>;
+  updateTalentProfile(userId: number, data: Partial<SelectTalentProfile>): Promise<SelectTalentProfile | null>;
+  deleteTalentProfile(userId: number): Promise<void>;
+  
+  // BATCH 15: Enhanced Profile Search Methods with Advanced Filtering
+  // Common search result interface for all profile types
+  searchTeacherProfiles(params: { 
+    q?: string;  // Full-text search across bio, specialties, etc.
+    city?: string; 
+    country?: string; 
+    lat?: number;  // Geolocation search
+    lng?: number;
+    radius?: number;  // In kilometers
+    minRate?: number;  // Unified rate parameter
+    maxRate?: number;
+    minRating?: number; 
+    verified?: boolean;
+    specialties?: string[];
+    languages?: string[];
+    availableDate?: string;  // ISO date format
+    minExperience?: number;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectTeacherProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
+  
+  searchDJProfiles(params: { 
+    q?: string;
+    city?: string; 
+    country?: string; 
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRate?: number;
+    maxRate?: number;
+    minRating?: number;
+    verified?: boolean;
+    musicStyles?: string[];
+    languages?: string[];
+    availableDate?: string;
+    minExperience?: number;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectDJProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
+  
+  searchPhotographerProfiles(params: { 
+    q?: string;
+    city?: string; 
+    country?: string; 
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRate?: number;
+    maxRate?: number;
+    minRating?: number;
+    verified?: boolean;
+    specialties?: string[];
+    languages?: string[];
+    availableDate?: string;
+    minExperience?: number;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectPhotographerProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
+  
+  searchPerformerProfiles(params: { 
+    q?: string;
+    city?: string; 
+    country?: string; 
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRate?: number;
+    maxRate?: number;
+    minRating?: number;
+    verified?: boolean;
+    performanceTypes?: string[];
+    languages?: string[];
+    availableDate?: string;
+    minExperience?: number;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectPerformerProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
+  
+  searchVendorProfiles(params: { 
+    q?: string;
+    city?: string; 
+    country?: string; 
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRate?: number;
+    maxRate?: number;
+    minRating?: number;
+    verified?: boolean;
+    productCategories?: string[];
+    languages?: string[];
+    availableDate?: string;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectVendorProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
+  
+  searchMusicianProfiles(params: { 
+    q?: string;
+    city?: string; 
+    country?: string; 
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRate?: number;
+    maxRate?: number;
+    minRating?: number;
+    verified?: boolean;
+    instruments?: string[];
+    genres?: string[];
+    languages?: string[];
+    availableDate?: string;
+    minExperience?: number;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectMusicianProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
+  
+  searchChoreographerProfiles(params: { 
+    q?: string;
+    city?: string; 
+    country?: string; 
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRate?: number;
+    maxRate?: number;
+    minRating?: number;
+    verified?: boolean;
+    styles?: string[];
+    languages?: string[];
+    availableDate?: string;
+    minExperience?: number;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectChoreographerProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
+  
+  searchTangoSchoolProfiles(params: { 
+    q?: string;
+    city?: string; 
+    country?: string; 
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRate?: number;
+    maxRate?: number;
+    minRating?: number;
+    verified?: boolean;
+    classTypes?: string[];
+    languages?: string[];
+    availableDate?: string;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectTangoSchoolProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
+  
+  searchTangoHotelProfiles(params: { 
+    q?: string;
+    city?: string; 
+    country?: string; 
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRate?: number;
+    maxRate?: number;
+    minRating?: number;
+    verified?: boolean;
+    amenities?: string[];
+    languages?: string[];
+    availableDate?: string;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectTangoHotelProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
+  
+  searchHostVenueProfiles(params: { 
+    q?: string;
+    city?: string; 
+    country?: string; 
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRating?: number;
+    minCapacity?: number;
+    verified?: boolean;
+    amenities?: string[];
+    venueTypes?: string[];
+    availableDate?: string;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectHostVenueProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
+  
+  searchWellnessProfiles(params: { 
+    q?: string;
+    services?: string; 
+    city?: string;
+    country?: string;
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRating?: number;
+    minRate?: number;
+    maxRate?: number;
+    verified?: boolean;
+    specialties?: string[];
+    languages?: string[];
+    availableDate?: string;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectWellnessProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
+  
+  searchTourOperatorProfiles(params: { 
+    q?: string;
+    destination?: string;
+    city?: string;
+    country?: string;
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRating?: number;
+    verified?: boolean;
+    tourTypes?: string[];
+    languages?: string[];
+    availableDate?: string;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectTourOperatorProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
+  
+  searchTangoGuideProfiles(params: { 
+    q?: string;
+    city?: string; 
+    language?: string;
+    country?: string;
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRating?: number;
+    minRate?: number;
+    maxRate?: number;
+    verified?: boolean;
+    languages?: string[];
+    availableDate?: string;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectTangoGuideProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
+  
+  searchTaxiDancerProfiles(params: { 
+    q?: string;
+    city?: string; 
+    style?: string;
+    country?: string;
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRating?: number;
+    minRate?: number;
+    maxRate?: number;
+    verified?: boolean;
+    languages?: string[];
+    availableDate?: string;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectTaxiDancerProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
+  
+  searchContentCreatorProfiles(params: { 
+    q?: string;
+    platform?: string; 
+    contentType?: string;
+    city?: string;
+    country?: string;
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRating?: number;
+    minFollowers?: number;
+    verified?: boolean;
+    languages?: string[];
+    availableDate?: string;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectContentCreatorProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
+  
+  searchLearningResourceProfiles(params: { 
+    q?: string;
+    topic?: string; 
+    format?: string;
+    city?: string;
+    country?: string;
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRating?: number;
+    minRate?: number;
+    maxRate?: number;
+    verified?: boolean;
+    level?: string;
+    languages?: string[];
+    availableDate?: string;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectLearningResourceProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
+  
+  searchOrganizerProfiles(params: { 
+    q?: string;
+    city?: string; 
+    eventType?: string;
+    country?: string;
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRating?: number;
+    verified?: boolean;
+    minEventsOrganized?: number;
+    languages?: string[];
+    availableDate?: string;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectOrganizerProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
+  
+  searchTalentProfiles(params: {
+    q?: string;
+    city?: string;
+    country?: string;
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRating?: number;
+    verified?: boolean;
+    talentType?: string;
+    languages?: string[];
+    availableDate?: string;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number;
+    offset?: number;
+  }): Promise<{ 
+    results: SelectTalentProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }>;
 }
 
 export class DbStorage implements IStorage {
@@ -1224,6 +1900,29 @@ export class DbStorage implements IStorage {
     await db.update(friendships)
       .set({ lastInteractionAt: new Date() })
       .where(eq(friendships.id, friendshipId));
+  }
+
+  async checkFriendship(userId1: number, userId2: number): Promise<boolean> {
+    const friendship = await db
+      .select({ id: friendships.id })
+      .from(friendships)
+      .where(
+        or(
+          and(
+            eq(friendships.userId, userId1),
+            eq(friendships.friendId, userId2),
+            eq(friendships.status, 'active')
+          ),
+          and(
+            eq(friendships.userId, userId2),
+            eq(friendships.friendId, userId1),
+            eq(friendships.status, 'active')
+          )
+        )
+      )
+      .limit(1);
+    
+    return friendship.length > 0;
   }
 
   async removeFriend(userId: number, friendId: number): Promise<void> {
@@ -3541,6 +4240,1869 @@ export class DbStorage implements IStorage {
 
   async deleteHousingBooking(id: number): Promise<void> {
     await db.delete(housingBookings).where(eq(housingBookings.id, id));
+  }
+  
+  // ============================================================================
+  // PROFILES - CORE OPERATIONS (BATCH 02-03)
+  // ============================================================================
+  
+  async getUserProfile(userId: number): Promise<SelectUser & { profiles: any } | undefined> {
+    const user = await this.getUserById(userId);
+    if (!user) return undefined;
+    
+    const profiles: any = {};
+    
+    const [teacher, dj, photographer, performer, vendor, musician, choreographer, tangoSchool, tangoHotel, wellness, tourOperator, hostVenue, tangoGuide, contentCreator, learningResource, taxiDancer, organizer, talent] = await Promise.all([
+      this.getTeacherProfile(userId),
+      this.getDJProfile(userId),
+      this.getPhotographerProfile(userId),
+      this.getPerformerProfile(userId),
+      this.getVendorProfile(userId),
+      this.getMusicianProfile(userId),
+      this.getChoreographerProfile(userId),
+      this.getTangoSchoolProfile(userId),
+      this.getTangoHotelProfile(userId),
+      this.getWellnessProfile(userId),
+      this.getTourOperatorProfile(userId),
+      this.getHostVenueProfile(userId),
+      this.getTangoGuideProfile(userId),
+      this.getContentCreatorProfile(userId),
+      this.getLearningResourceProfile(userId),
+      this.getTaxiDancerProfile(userId),
+      this.getOrganizerProfile(userId),
+      this.getTalentProfile(userId),
+    ]);
+    
+    if (teacher) profiles.teacher = teacher;
+    if (dj) profiles.dj = dj;
+    if (photographer) profiles.photographer = photographer;
+    if (performer) profiles.performer = performer;
+    if (vendor) profiles.vendor = vendor;
+    if (musician) profiles.musician = musician;
+    if (choreographer) profiles.choreographer = choreographer;
+    if (tangoSchool) profiles.tangoSchool = tangoSchool;
+    if (tangoHotel) profiles.tangoHotel = tangoHotel;
+    if (wellness) profiles.wellness = wellness;
+    if (tourOperator) profiles.tourOperator = tourOperator;
+    if (hostVenue) profiles.hostVenue = hostVenue;
+    if (tangoGuide) profiles.tangoGuide = tangoGuide;
+    if (contentCreator) profiles.contentCreator = contentCreator;
+    if (learningResource) profiles.learningResource = learningResource;
+    if (taxiDancer) profiles.taxiDancer = taxiDancer;
+    if (organizer) profiles.organizer = organizer;
+    if (talent) profiles.talent = talent;
+    
+    return { ...user, profiles };
+  }
+  
+  async updateUserProfile(userId: number, data: Partial<SelectUser>): Promise<SelectUser | undefined> {
+    return this.updateUser(userId, data);
+  }
+  
+  async getPublicProfile(userId: number): Promise<any> {
+    const fullProfile = await this.getUserProfile(userId);
+    if (!fullProfile) return null;
+    
+    const { password, apiToken, deviceToken, stripeCustomerId, stripeSubscriptionId, ...publicData } = fullProfile;
+    return publicData;
+  }
+  
+  async searchProfiles(filters: { 
+    query?: string; 
+    city?: string; 
+    country?: string; 
+    role?: string; 
+    limit?: number; 
+    offset?: number;
+  }): Promise<any[]> {
+    const { query, city, country, role, limit = 20, offset = 0 } = filters;
+    
+    let conditions: any[] = [eq(users.isActive, true)];
+    
+    if (query) {
+      conditions.push(
+        or(
+          ilike(users.name, `%${query}%`),
+          ilike(users.username, `%${query}%`),
+          ilike(users.bio, `%${query}%`)
+        )
+      );
+    }
+    
+    if (city) {
+      conditions.push(ilike(users.city, `%${city}%`));
+    }
+    
+    if (country) {
+      conditions.push(ilike(users.country, `%${country}%`));
+    }
+    
+    if (role && role !== 'user') {
+      conditions.push(eq(users.role, role));
+    }
+    
+    return await db
+      .select()
+      .from(users)
+      .where(and(...conditions))
+      .limit(limit)
+      .offset(offset);
+  }
+  
+  async trackProfileView(viewerId: number | null, viewedUserId: number, profileType?: string, viewerIp?: string): Promise<void> {
+    // Insert into profileViews table
+    await db.insert(profileViews).values({
+      profileUserId: viewedUserId,
+      viewerUserId: viewerId,
+      profileType: profileType || null,
+      viewerIp: viewerIp || null,
+    });
+    
+    // Also keep the activity log for backward compatibility
+    if (viewerId) {
+      await this.createActivityLog({
+        userId: viewerId,
+        action: 'profile_view',
+        targetType: 'user',
+        targetId: viewedUserId,
+        metadata: { viewedAt: new Date().toISOString(), profileType },
+      });
+    }
+  }
+  
+  async getProfileAnalytics(userId: number): Promise<any> {
+    // Get all profile views for this user
+    const allViews = await db
+      .select()
+      .from(profileViews)
+      .where(eq(profileViews.profileUserId, userId))
+      .orderBy(desc(profileViews.createdAt));
+    
+    const totalViews = allViews.length;
+    const uniqueViewers = new Set(
+      allViews
+        .filter(v => v.viewerUserId !== null)
+        .map(v => v.viewerUserId)
+    ).size;
+    
+    // Calculate views by day for the last 30 days
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    const recentViews = allViews.filter(v => 
+      v.createdAt && v.createdAt >= thirtyDaysAgo
+    );
+    
+    // Group views by day
+    const viewsByDay: Record<string, number> = {};
+    recentViews.forEach(view => {
+      if (view.createdAt) {
+        const day = view.createdAt.toISOString().split('T')[0];
+        viewsByDay[day] = (viewsByDay[day] || 0) + 1;
+      }
+    });
+    
+    const viewsByDayArray = Object.entries(viewsByDay).map(([date, count]) => ({
+      date,
+      count
+    })).sort((a, b) => a.date.localeCompare(b.date));
+    
+    // Calculate profile completeness (simplified)
+    const user = await this.getUserById(userId);
+    let completeness = 0;
+    if (user) {
+      const fields = [
+        user.name, user.bio, user.city, user.country, 
+        user.profileImage, user.website
+      ];
+      completeness = (fields.filter(f => f).length / fields.length) * 100;
+    }
+    
+    return {
+      totalViews,
+      uniqueVisitors: uniqueViewers,
+      viewsByDay: viewsByDayArray,
+      topReferrers: [], // Placeholder for future implementation
+      averageTimeOnProfile: 0, // Placeholder for future implementation
+      profileCompleteness: Math.round(completeness),
+      searchAppearances: 0, // Placeholder for future implementation
+    };
+  }
+  
+  async getProfileInsights(userId: number): Promise<any> {
+    // Get all views
+    const allViews = await db
+      .select()
+      .from(profileViews)
+      .where(eq(profileViews.profileUserId, userId));
+    
+    // Calculate views by profile type
+    const viewsByType: Record<string, number> = {};
+    allViews.forEach(view => {
+      if (view.profileType) {
+        viewsByType[view.profileType] = (viewsByType[view.profileType] || 0) + 1;
+      }
+    });
+    
+    const mostViewedSections = Object.entries(viewsByType)
+      .map(([section, count]) => ({ section, count }))
+      .sort((a, b) => b.count - a.count);
+    
+    // Calculate interaction rate (simplified - using follows as proxy)
+    const followers = await db
+      .select()
+      .from(follows)
+      .where(eq(follows.followingId, userId));
+    
+    const interactionRate = allViews.length > 0 
+      ? (followers.length / allViews.length) * 100 
+      : 0;
+    
+    // Calculate conversion rate (simplified - using event RSVPs as proxy)
+    const events = await db
+      .select()
+      .from(events)
+      .where(eq(events.userId, userId));
+    
+    const conversionRate = allViews.length > 0 && events.length > 0
+      ? ((events.reduce((sum, e) => sum + (e.currentAttendees || 0), 0)) / allViews.length) * 100
+      : 0;
+    
+    return {
+      mostViewedSections,
+      interactionRate: Math.round(interactionRate * 100) / 100,
+      conversionRate: Math.round(conversionRate * 100) / 100,
+    };
+  }
+  
+  // ============================================================================
+  // BATCH 02: COMPREHENSIVE PROFILE MANAGEMENT
+  // ============================================================================
+  
+  async getProfile(userId: number, profileType?: string): Promise<any> {
+    if (!profileType) {
+      return this.getUserProfile(userId);
+    }
+    
+    const profileMap: Record<string, () => Promise<any>> = {
+      'teacher': () => this.getTeacherProfile(userId),
+      'dj': () => this.getDJProfile(userId),
+      'photographer': () => this.getPhotographerProfile(userId),
+      'performer': () => this.getPerformerProfile(userId),
+      'vendor': () => this.getVendorProfile(userId),
+      'musician': () => this.getMusicianProfile(userId),
+      'choreographer': () => this.getChoreographerProfile(userId),
+      'tangoSchool': () => this.getTangoSchoolProfile(userId),
+      'tangoHotel': () => this.getTangoHotelProfile(userId),
+      'wellness': () => this.getWellnessProfile(userId),
+      'tourOperator': () => this.getTourOperatorProfile(userId),
+      'hostVenue': () => this.getHostVenueProfile(userId),
+      'tangoGuide': () => this.getTangoGuideProfile(userId),
+      'contentCreator': () => this.getContentCreatorProfile(userId),
+      'learningResource': () => this.getLearningResourceProfile(userId),
+      'taxiDancer': () => this.getTaxiDancerProfile(userId),
+      'organizer': () => this.getOrganizerProfile(userId),
+      'talent': () => this.getTalentProfile(userId),
+    };
+    
+    const getter = profileMap[profileType];
+    if (!getter) {
+      throw new Error(`Unknown profile type: ${profileType}`);
+    }
+    
+    return getter();
+  }
+  
+  async updateProfile(userId: number, profileType: string, data: any): Promise<any> {
+    const updateMap: Record<string, (data: any) => Promise<any>> = {
+      'teacher': (d) => this.updateTeacherProfile(userId, d),
+      'dj': (d) => this.updateDJProfile(userId, d),
+      'photographer': (d) => this.updatePhotographerProfile(userId, d),
+      'performer': (d) => this.updatePerformerProfile(userId, d),
+      'vendor': (d) => this.updateVendorProfile(userId, d),
+      'musician': (d) => this.updateMusicianProfile(userId, d),
+      'choreographer': (d) => this.updateChoreographerProfile(userId, d),
+      'tangoSchool': (d) => this.updateTangoSchoolProfile(userId, d),
+      'tangoHotel': (d) => this.updateTangoHotelProfile(userId, d),
+      'wellness': (d) => this.updateWellnessProfile(userId, d),
+      'tourOperator': (d) => this.updateTourOperatorProfile(userId, d),
+      'hostVenue': (d) => this.updateHostVenueProfile(userId, d),
+      'tangoGuide': (d) => this.updateTangoGuideProfile(userId, d),
+      'contentCreator': (d) => this.updateContentCreatorProfile(userId, d),
+      'learningResource': (d) => this.updateLearningResourceProfile(userId, d),
+      'taxiDancer': (d) => this.updateTaxiDancerProfile(userId, d),
+      'organizer': (d) => this.updateOrganizerProfile(userId, d),
+      'talent': (d) => this.updateTalentProfile(userId, d),
+    };
+    
+    const updater = updateMap[profileType];
+    if (!updater) {
+      throw new Error(`Unknown profile type: ${profileType}`);
+    }
+    
+    return updater(data);
+  }
+  
+  async createProfile(userId: number, profileType: string, data: any): Promise<any> {
+    const createMap: Record<string, (data: any) => Promise<any>> = {
+      'teacher': (d) => this.createTeacherProfile({ userId, ...d }),
+      'dj': (d) => this.createDJProfile({ userId, ...d }),
+      'photographer': (d) => this.createPhotographerProfile({ userId, ...d }),
+      'performer': (d) => this.createPerformerProfile({ userId, ...d }),
+      'vendor': (d) => this.createVendorProfile({ userId, ...d }),
+      'musician': (d) => this.createMusicianProfile({ userId, ...d }),
+      'choreographer': (d) => this.createChoreographerProfile({ userId, ...d }),
+      'tangoSchool': (d) => this.createTangoSchoolProfile({ userId, ...d }),
+      'tangoHotel': (d) => this.createTangoHotelProfile({ userId, ...d }),
+      'wellness': (d) => this.createWellnessProfile({ userId, ...d }),
+      'tourOperator': (d) => this.createTourOperatorProfile({ userId, ...d }),
+      'hostVenue': (d) => this.createHostVenueProfile({ userId, ...d }),
+      'tangoGuide': (d) => this.createTangoGuideProfile({ userId, ...d }),
+      'contentCreator': (d) => this.createContentCreatorProfile({ userId, ...d }),
+      'learningResource': (d) => this.createLearningResourceProfile({ userId, ...d }),
+      'taxiDancer': (d) => this.createTaxiDancerProfile({ userId, ...d }),
+      'organizer': (d) => this.createOrganizerProfile({ userId, ...d }),
+      'talent': (d) => this.createTalentProfile({ userId, ...d }),
+    };
+    
+    const creator = createMap[profileType];
+    if (!creator) {
+      throw new Error(`Unknown profile type: ${profileType}`);
+    }
+    
+    return creator(data);
+  }
+  
+  async deleteProfile(userId: number, profileType: string): Promise<boolean> {
+    const deleteMap: Record<string, () => Promise<void>> = {
+      'teacher': () => this.deleteTeacherProfile(userId),
+      'dj': () => this.deleteDJProfile(userId),
+      'photographer': () => this.deletePhotographerProfile(userId),
+      'performer': () => this.deletePerformerProfile(userId),
+      'vendor': () => this.deleteVendorProfile(userId),
+      'musician': () => this.deleteMusicianProfile(userId),
+      'choreographer': () => this.deleteChoreographerProfile(userId),
+      'tangoSchool': () => this.deleteTangoSchoolProfile(userId),
+      'tangoHotel': () => this.deleteTangoHotelProfile(userId),
+      'wellness': () => this.deleteWellnessProfile(userId),
+      'tourOperator': () => this.deleteTourOperatorProfile(userId),
+      'hostVenue': () => this.deleteHostVenueProfile(userId),
+      'tangoGuide': () => this.deleteTangoGuideProfile(userId),
+      'contentCreator': () => this.deleteContentCreatorProfile(userId),
+      'learningResource': () => this.deleteLearningResourceProfile(userId),
+      'taxiDancer': () => this.deleteTaxiDancerProfile(userId),
+      'organizer': () => this.deleteOrganizerProfile(userId),
+      'talent': () => this.deleteTalentProfile(userId),
+    };
+    
+    const deleter = deleteMap[profileType];
+    if (!deleter) {
+      throw new Error(`Unknown profile type: ${profileType}`);
+    }
+    
+    try {
+      await deleter();
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+  
+  async getAllUserProfiles(userId: number): Promise<any> {
+    return this.getUserProfile(userId);
+  }
+  
+  async getBusinessProfile(userId: number, businessType: string): Promise<any> {
+    const businessMap: Record<string, () => Promise<any>> = {
+      'tangoSchool': () => this.getTangoSchoolProfile(userId),
+      'tangoHotel': () => this.getTangoHotelProfile(userId),
+      'hostVenue': () => this.getHostVenueProfile(userId),
+      'venue': () => this.getHostVenueProfile(userId),
+    };
+    
+    const getter = businessMap[businessType];
+    if (!getter) {
+      throw new Error(`Unknown business type: ${businessType}`);
+    }
+    
+    return getter();
+  }
+  
+  async updateBusinessProfile(userId: number, businessType: string, data: any): Promise<any> {
+    const updateMap: Record<string, (data: any) => Promise<any>> = {
+      'tangoSchool': (d) => this.updateTangoSchoolProfile(userId, d),
+      'tangoHotel': (d) => this.updateTangoHotelProfile(userId, d),
+      'hostVenue': (d) => this.updateHostVenueProfile(userId, d),
+      'venue': (d) => this.updateHostVenueProfile(userId, d),
+    };
+    
+    const updater = updateMap[businessType];
+    if (!updater) {
+      throw new Error(`Unknown business type: ${businessType}`);
+    }
+    
+    return updater(data);
+  }
+  
+  async getSpecialtyProfile(userId: number, specialtyType: string): Promise<any> {
+    const specialtyMap: Record<string, () => Promise<any>> = {
+      'wellness': () => this.getWellnessProfile(userId),
+      'tourOperator': () => this.getTourOperatorProfile(userId),
+      'tangoGuide': () => this.getTangoGuideProfile(userId),
+      'guide': () => this.getTangoGuideProfile(userId),
+      'learningResource': () => this.getLearningResourceProfile(userId),
+      'contentCreator': () => this.getContentCreatorProfile(userId),
+    };
+    
+    const getter = specialtyMap[specialtyType];
+    if (!getter) {
+      throw new Error(`Unknown specialty type: ${specialtyType}`);
+    }
+    
+    return getter();
+  }
+  
+  async updateSpecialtyProfile(userId: number, specialtyType: string, data: any): Promise<any> {
+    const updateMap: Record<string, (data: any) => Promise<any>> = {
+      'wellness': (d) => this.updateWellnessProfile(userId, d),
+      'tourOperator': (d) => this.updateTourOperatorProfile(userId, d),
+      'tangoGuide': (d) => this.updateTangoGuideProfile(userId, d),
+      'guide': (d) => this.updateTangoGuideProfile(userId, d),
+      'learningResource': (d) => this.updateLearningResourceProfile(userId, d),
+      'contentCreator': (d) => this.updateContentCreatorProfile(userId, d),
+    };
+    
+    const updater = updateMap[specialtyType];
+    if (!updater) {
+      throw new Error(`Unknown specialty type: ${specialtyType}`);
+    }
+    
+    return updater(data);
+  }
+  
+  async getProfileVisibilitySettings(userId: number): Promise<any> {
+    const user = await this.getUserById(userId);
+    if (!user) return null;
+    
+    return {
+      userId: user.id,
+      profileVisibility: 'public',
+      showEmail: false,
+      showPhone: false,
+      showLocation: true,
+      showSocialLinks: true,
+      allowProfileViews: true,
+      allowMessages: true,
+      showOnlineStatus: false,
+    };
+  }
+  
+  async updateProfileVisibility(userId: number, settings: any): Promise<any> {
+    return settings;
+  }
+  
+  async incrementProfileView(userId: number, viewerId: number): Promise<void> {
+    if (userId === viewerId) return;
+    
+    await this.trackProfileView(viewerId, userId);
+  }
+  
+  async getProfileViewStats(userId: number): Promise<any> {
+    const logs = await db
+      .select()
+      .from(activityLogs)
+      .where(
+        and(
+          eq(activityLogs.targetType, 'user'),
+          eq(activityLogs.targetId, userId),
+          eq(activityLogs.action, 'profile_view')
+        )
+      )
+      .orderBy(desc(activityLogs.createdAt))
+      .limit(100);
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const lastWeek = new Date(today);
+    lastWeek.setDate(lastWeek.getDate() - 7);
+    
+    const lastMonth = new Date(today);
+    lastMonth.setDate(lastMonth.getDate() - 30);
+    
+    const viewsToday = logs.filter(log => log.createdAt && log.createdAt >= today).length;
+    const viewsThisWeek = logs.filter(log => log.createdAt && log.createdAt >= lastWeek).length;
+    const viewsThisMonth = logs.filter(log => log.createdAt && log.createdAt >= lastMonth).length;
+    
+    const uniqueViewers = new Set(logs.map(log => log.userId));
+    
+    return {
+      totalViews: logs.length,
+      viewsToday,
+      viewsThisWeek,
+      viewsThisMonth,
+      uniqueViewers: uniqueViewers.size,
+      recentViews: logs.slice(0, 10).map(log => ({
+        viewerId: log.userId,
+        viewedAt: log.createdAt,
+      })),
+    };
+  }
+  
+  async getProfileStats(userId: number): Promise<any> {
+    const [followers, following, posts, events] = await Promise.all([
+      db.select().from(follows).where(eq(follows.followingId, userId)),
+      db.select().from(follows).where(eq(follows.followerId, userId)),
+      db.select().from(posts).where(eq(posts.userId, userId)),
+      db.select().from(events).where(eq(events.userId, userId)),
+    ]);
+    
+    return {
+      followersCount: followers.length,
+      followingCount: following.length,
+      postsCount: posts.length,
+      eventsCount: events.length,
+    };
+  }
+  
+  async getFeaturedProfiles(params: { profileType?: string; limit?: number }): Promise<any[]> {
+    const { profileType, limit = 10 } = params;
+    
+    if (!profileType || profileType === 'all') {
+      const allProfiles = await Promise.all([
+        db.select().from(teacherProfiles).where(eq(teacherProfiles.isFeatured, true)).limit(Math.floor(limit / 6)),
+        db.select().from(djProfiles).where(eq(djProfiles.isFeatured, true)).limit(Math.floor(limit / 6)),
+        db.select().from(performerProfiles).where(eq(performerProfiles.isFeatured, true)).limit(Math.floor(limit / 6)),
+        db.select().from(photographerProfiles).where(eq(photographerProfiles.isFeatured, true)).limit(Math.floor(limit / 6)),
+        db.select().from(vendorProfiles).where(eq(vendorProfiles.isFeatured, true)).limit(Math.floor(limit / 6)),
+        db.select().from(musicianProfiles).where(eq(musicianProfiles.isFeatured, true)).limit(Math.floor(limit / 6)),
+      ]);
+      return allProfiles.flat().slice(0, limit);
+    }
+    
+    const profileTableMap: Record<string, any> = {
+      'teacher': teacherProfiles,
+      'dj': djProfiles,
+      'photographer': photographerProfiles,
+      'performer': performerProfiles,
+      'vendor': vendorProfiles,
+      'musician': musicianProfiles,
+      'choreographer': choreographerProfiles,
+      'tangoSchool': tangoSchoolProfiles,
+      'tangoHotel': tangoHotelProfiles,
+      'wellness': wellnessProfiles,
+      'tourOperator': tourOperatorProfiles,
+      'hostVenue': hostVenueProfiles,
+      'tangoGuide': tangoGuideProfiles,
+      'contentCreator': contentCreatorProfiles,
+      'learningResource': learningResourceProfiles,
+      'taxiDancer': taxiDancerProfiles,
+      'organizer': organizerProfiles,
+    };
+    
+    const table = profileTableMap[profileType];
+    if (!table) {
+      return [];
+    }
+    
+    return await db.select()
+      .from(table)
+      .where(eq(table.isFeatured, true))
+      .orderBy(desc(table.averageRating))
+      .limit(limit);
+  }
+  
+  async getProfileDirectory(params: {
+    profileType: string;
+    city?: string;
+    country?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<{ profiles: any[]; total: number }> {
+    const { profileType, city, country, limit = 20, offset = 0 } = params;
+    
+    const profileTableMap: Record<string, any> = {
+      'teacher': teacherProfiles,
+      'dj': djProfiles,
+      'photographer': photographerProfiles,
+      'performer': performerProfiles,
+      'vendor': vendorProfiles,
+      'musician': musicianProfiles,
+      'choreographer': choreographerProfiles,
+      'tangoSchool': tangoSchoolProfiles,
+      'tangoHotel': tangoHotelProfiles,
+      'wellness': wellnessProfiles,
+      'tourOperator': tourOperatorProfiles,
+      'hostVenue': hostVenueProfiles,
+      'tangoGuide': tangoGuideProfiles,
+      'contentCreator': contentCreatorProfiles,
+      'learningResource': learningResourceProfiles,
+      'taxiDancer': taxiDancerProfiles,
+      'organizer': organizerProfiles,
+    };
+    
+    const table = profileTableMap[profileType];
+    if (!table) {
+      return { profiles: [], total: 0 };
+    }
+    
+    const conditions: any[] = [eq(table.isActive, true)];
+    
+    if (city || country) {
+      const profilesWithUsers = await db.select()
+        .from(table)
+        .innerJoin(users, eq(table.userId, users.id))
+        .where(and(
+          ...conditions,
+          city ? sql`LOWER(${users.city}) = LOWER(${city})` : sql`true`,
+          country ? sql`LOWER(${users.country}) = LOWER(${country})` : sql`true`
+        ))
+        .orderBy(desc(table.averageRating))
+        .limit(limit)
+        .offset(offset);
+      
+      const profiles = profilesWithUsers.map((row: any) => {
+        const tableKey = Object.keys(row).find(key => key.includes('_profiles'));
+        return tableKey ? row[tableKey] : row;
+      });
+      
+      return { profiles, total: profiles.length };
+    }
+    
+    const profiles = await db.select()
+      .from(table)
+      .where(and(...conditions))
+      .orderBy(desc(table.averageRating))
+      .limit(limit)
+      .offset(offset);
+    
+    return { profiles, total: profiles.length };
+  }
+  
+  async getNearbyProfiles(params: {
+    latitude: number;
+    longitude: number;
+    radius: number;
+    profileType?: string;
+    limit?: number;
+  }): Promise<any[]> {
+    const { latitude, longitude, radius, profileType, limit = 20 } = params;
+    
+    const nearbyUsers = await db.select()
+      .from(users)
+      .where(and(
+        eq(users.isActive, true),
+        sql`
+          (6371 * acos(
+            cos(radians(${latitude})) * 
+            cos(radians(CAST(${users.city} AS FLOAT))) * 
+            cos(radians(CAST(${users.city} AS FLOAT)) - radians(${longitude})) + 
+            sin(radians(${latitude})) * 
+            sin(radians(CAST(${users.city} AS FLOAT)))
+          )) <= ${radius}
+        `
+      ))
+      .limit(limit);
+    
+    if (!profileType) {
+      return nearbyUsers;
+    }
+    
+    const userIds = nearbyUsers.map(u => u.id);
+    if (userIds.length === 0) return [];
+    
+    const profileTableMap: Record<string, any> = {
+      'teacher': teacherProfiles,
+      'dj': djProfiles,
+      'photographer': photographerProfiles,
+      'performer': performerProfiles,
+      'vendor': vendorProfiles,
+      'musician': musicianProfiles,
+      'choreographer': choreographerProfiles,
+      'tangoSchool': tangoSchoolProfiles,
+      'tangoHotel': tangoHotelProfiles,
+      'wellness': wellnessProfiles,
+      'tourOperator': tourOperatorProfiles,
+      'hostVenue': hostVenueProfiles,
+      'tangoGuide': tangoGuideProfiles,
+      'contentCreator': contentCreatorProfiles,
+      'learningResource': learningResourceProfiles,
+      'taxiDancer': taxiDancerProfiles,
+      'organizer': organizerProfiles,
+    };
+    
+    const table = profileTableMap[profileType];
+    if (!table) {
+      return [];
+    }
+    
+    return await db.select()
+      .from(table)
+      .where(and(
+        inArray(table.userId, userIds),
+        eq(table.isActive, true)
+      ))
+      .orderBy(desc(table.averageRating));
+  }
+  
+  async getRecommendedProfiles(params: {
+    userId: number;
+    limit?: number;
+  }): Promise<any[]> {
+    const { userId, limit = 10 } = params;
+    
+    const user = await this.getUserById(userId);
+    if (!user) return [];
+    
+    const conditions: any[] = [
+      eq(users.isActive, true),
+      ne(users.id, userId),
+    ];
+    
+    if (user.city) {
+      conditions.push(eq(users.city, user.city));
+    }
+    
+    const recommendedUsers = await db.select()
+      .from(users)
+      .where(and(...conditions))
+      .limit(limit);
+    
+    return recommendedUsers;
+  }
+  
+  async getProfilesByCity(city: string, profileType: string, limit: number = 20): Promise<any[]> {
+    const result = await this.getProfileDirectory({
+      profileType,
+      city,
+      limit,
+    });
+    return result.profiles;
+  }
+  
+  // Teacher Profiles
+  async getTeacherProfile(userId: number): Promise<SelectTeacherProfile | null> {
+    const result = await db.select().from(teacherProfiles).where(eq(teacherProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createTeacherProfile(data: InsertTeacherProfile): Promise<SelectTeacherProfile> {
+    const [result] = await db.insert(teacherProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updateTeacherProfile(userId: number, data: Partial<SelectTeacherProfile>): Promise<SelectTeacherProfile | null> {
+    const [result] = await db
+      .update(teacherProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(teacherProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deleteTeacherProfile(userId: number): Promise<void> {
+    await db.delete(teacherProfiles).where(eq(teacherProfiles.userId, userId));
+  }
+  
+  // DJ Profiles
+  async getDJProfile(userId: number): Promise<SelectDJProfile | null> {
+    const result = await db.select().from(djProfiles).where(eq(djProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createDJProfile(data: InsertDJProfile): Promise<SelectDJProfile> {
+    const [result] = await db.insert(djProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updateDJProfile(userId: number, data: Partial<SelectDJProfile>): Promise<SelectDJProfile | null> {
+    const [result] = await db
+      .update(djProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(djProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deleteDJProfile(userId: number): Promise<void> {
+    await db.delete(djProfiles).where(eq(djProfiles.userId, userId));
+  }
+  
+  // Photographer Profiles
+  async getPhotographerProfile(userId: number): Promise<SelectPhotographerProfile | null> {
+    const result = await db.select().from(photographerProfiles).where(eq(photographerProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createPhotographerProfile(data: InsertPhotographerProfile): Promise<SelectPhotographerProfile> {
+    const [result] = await db.insert(photographerProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updatePhotographerProfile(userId: number, data: Partial<SelectPhotographerProfile>): Promise<SelectPhotographerProfile | null> {
+    const [result] = await db
+      .update(photographerProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(photographerProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deletePhotographerProfile(userId: number): Promise<void> {
+    await db.delete(photographerProfiles).where(eq(photographerProfiles.userId, userId));
+  }
+  
+  // Performer Profiles
+  async getPerformerProfile(userId: number): Promise<SelectPerformerProfile | null> {
+    const result = await db.select().from(performerProfiles).where(eq(performerProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createPerformerProfile(data: InsertPerformerProfile): Promise<SelectPerformerProfile> {
+    const [result] = await db.insert(performerProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updatePerformerProfile(userId: number, data: Partial<SelectPerformerProfile>): Promise<SelectPerformerProfile | null> {
+    const [result] = await db
+      .update(performerProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(performerProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deletePerformerProfile(userId: number): Promise<void> {
+    await db.delete(performerProfiles).where(eq(performerProfiles.userId, userId));
+  }
+  
+  // Vendor Profiles
+  async getVendorProfile(userId: number): Promise<SelectVendorProfile | null> {
+    const result = await db.select().from(vendorProfiles).where(eq(vendorProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createVendorProfile(data: InsertVendorProfile): Promise<SelectVendorProfile> {
+    const [result] = await db.insert(vendorProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updateVendorProfile(userId: number, data: Partial<SelectVendorProfile>): Promise<SelectVendorProfile | null> {
+    const [result] = await db
+      .update(vendorProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(vendorProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deleteVendorProfile(userId: number): Promise<void> {
+    await db.delete(vendorProfiles).where(eq(vendorProfiles.userId, userId));
+  }
+  
+  // Musician Profiles
+  async getMusicianProfile(userId: number): Promise<SelectMusicianProfile | null> {
+    const result = await db.select().from(musicianProfiles).where(eq(musicianProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createMusicianProfile(data: InsertMusicianProfile): Promise<SelectMusicianProfile> {
+    const [result] = await db.insert(musicianProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updateMusicianProfile(userId: number, data: Partial<SelectMusicianProfile>): Promise<SelectMusicianProfile | null> {
+    const [result] = await db
+      .update(musicianProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(musicianProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deleteMusicianProfile(userId: number): Promise<void> {
+    await db.delete(musicianProfiles).where(eq(musicianProfiles.userId, userId));
+  }
+  
+  // Choreographer Profiles
+  async getChoreographerProfile(userId: number): Promise<SelectChoreographerProfile | null> {
+    const result = await db.select().from(choreographerProfiles).where(eq(choreographerProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createChoreographerProfile(data: InsertChoreographerProfile): Promise<SelectChoreographerProfile> {
+    const [result] = await db.insert(choreographerProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updateChoreographerProfile(userId: number, data: Partial<SelectChoreographerProfile>): Promise<SelectChoreographerProfile | null> {
+    const [result] = await db
+      .update(choreographerProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(choreographerProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deleteChoreographerProfile(userId: number): Promise<void> {
+    await db.delete(choreographerProfiles).where(eq(choreographerProfiles.userId, userId));
+  }
+  
+  // Tango School Profiles
+  async getTangoSchoolProfile(userId: number): Promise<SelectTangoSchoolProfile | null> {
+    const result = await db.select().from(tangoSchoolProfiles).where(eq(tangoSchoolProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createTangoSchoolProfile(data: InsertTangoSchoolProfile): Promise<SelectTangoSchoolProfile> {
+    const [result] = await db.insert(tangoSchoolProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updateTangoSchoolProfile(userId: number, data: Partial<SelectTangoSchoolProfile>): Promise<SelectTangoSchoolProfile | null> {
+    const [result] = await db
+      .update(tangoSchoolProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(tangoSchoolProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deleteTangoSchoolProfile(userId: number): Promise<void> {
+    await db.delete(tangoSchoolProfiles).where(eq(tangoSchoolProfiles.userId, userId));
+  }
+  
+  // Tango Hotel Profiles
+  async getTangoHotelProfile(userId: number): Promise<SelectTangoHotelProfile | null> {
+    const result = await db.select().from(tangoHotelProfiles).where(eq(tangoHotelProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createTangoHotelProfile(data: InsertTangoHotelProfile): Promise<SelectTangoHotelProfile> {
+    const [result] = await db.insert(tangoHotelProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updateTangoHotelProfile(userId: number, data: Partial<SelectTangoHotelProfile>): Promise<SelectTangoHotelProfile | null> {
+    const [result] = await db
+      .update(tangoHotelProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(tangoHotelProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deleteTangoHotelProfile(userId: number): Promise<void> {
+    await db.delete(tangoHotelProfiles).where(eq(tangoHotelProfiles.userId, userId));
+  }
+  
+  // Wellness Profiles
+  async getWellnessProfile(userId: number): Promise<SelectWellnessProfile | null> {
+    const result = await db.select().from(wellnessProfiles).where(eq(wellnessProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createWellnessProfile(data: InsertWellnessProfile): Promise<SelectWellnessProfile> {
+    const [result] = await db.insert(wellnessProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updateWellnessProfile(userId: number, data: Partial<SelectWellnessProfile>): Promise<SelectWellnessProfile | null> {
+    const [result] = await db
+      .update(wellnessProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(wellnessProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deleteWellnessProfile(userId: number): Promise<void> {
+    await db.delete(wellnessProfiles).where(eq(wellnessProfiles.userId, userId));
+  }
+  
+  // Tour Operator Profiles
+  async getTourOperatorProfile(userId: number): Promise<SelectTourOperatorProfile | null> {
+    const result = await db.select().from(tourOperatorProfiles).where(eq(tourOperatorProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createTourOperatorProfile(data: InsertTourOperatorProfile): Promise<SelectTourOperatorProfile> {
+    const [result] = await db.insert(tourOperatorProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updateTourOperatorProfile(userId: number, data: Partial<SelectTourOperatorProfile>): Promise<SelectTourOperatorProfile | null> {
+    const [result] = await db
+      .update(tourOperatorProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(tourOperatorProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deleteTourOperatorProfile(userId: number): Promise<void> {
+    await db.delete(tourOperatorProfiles).where(eq(tourOperatorProfiles.userId, userId));
+  }
+  
+  // Host Venue Profiles
+  async getHostVenueProfile(userId: number): Promise<SelectHostVenueProfile | null> {
+    const result = await db.select().from(hostVenueProfiles).where(eq(hostVenueProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createHostVenueProfile(data: InsertHostVenueProfile): Promise<SelectHostVenueProfile> {
+    const [result] = await db.insert(hostVenueProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updateHostVenueProfile(userId: number, data: Partial<SelectHostVenueProfile>): Promise<SelectHostVenueProfile | null> {
+    const [result] = await db
+      .update(hostVenueProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(hostVenueProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deleteHostVenueProfile(userId: number): Promise<void> {
+    await db.delete(hostVenueProfiles).where(eq(hostVenueProfiles.userId, userId));
+  }
+  
+  // Tango Guide Profiles
+  async getTangoGuideProfile(userId: number): Promise<SelectTangoGuideProfile | null> {
+    const result = await db.select().from(tangoGuideProfiles).where(eq(tangoGuideProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createTangoGuideProfile(data: InsertTangoGuideProfile): Promise<SelectTangoGuideProfile> {
+    const [result] = await db.insert(tangoGuideProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updateTangoGuideProfile(userId: number, data: Partial<SelectTangoGuideProfile>): Promise<SelectTangoGuideProfile | null> {
+    const [result] = await db
+      .update(tangoGuideProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(tangoGuideProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deleteTangoGuideProfile(userId: number): Promise<void> {
+    await db.delete(tangoGuideProfiles).where(eq(tangoGuideProfiles.userId, userId));
+  }
+  
+  // Content Creator Profiles
+  async getContentCreatorProfile(userId: number): Promise<SelectContentCreatorProfile | null> {
+    const result = await db.select().from(contentCreatorProfiles).where(eq(contentCreatorProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createContentCreatorProfile(data: InsertContentCreatorProfile): Promise<SelectContentCreatorProfile> {
+    const [result] = await db.insert(contentCreatorProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updateContentCreatorProfile(userId: number, data: Partial<SelectContentCreatorProfile>): Promise<SelectContentCreatorProfile | null> {
+    const [result] = await db
+      .update(contentCreatorProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(contentCreatorProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deleteContentCreatorProfile(userId: number): Promise<void> {
+    await db.delete(contentCreatorProfiles).where(eq(contentCreatorProfiles.userId, userId));
+  }
+  
+  // Learning Resource Profiles
+  async getLearningResourceProfile(userId: number): Promise<SelectLearningResourceProfile | null> {
+    const result = await db.select().from(learningResourceProfiles).where(eq(learningResourceProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createLearningResourceProfile(data: InsertLearningResourceProfile): Promise<SelectLearningResourceProfile> {
+    const [result] = await db.insert(learningResourceProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updateLearningResourceProfile(userId: number, data: Partial<SelectLearningResourceProfile>): Promise<SelectLearningResourceProfile | null> {
+    const [result] = await db
+      .update(learningResourceProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(learningResourceProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deleteLearningResourceProfile(userId: number): Promise<void> {
+    await db.delete(learningResourceProfiles).where(eq(learningResourceProfiles.userId, userId));
+  }
+  
+  // Taxi Dancer Profiles
+  async getTaxiDancerProfile(userId: number): Promise<SelectTaxiDancerProfile | null> {
+    const result = await db.select().from(taxiDancerProfiles).where(eq(taxiDancerProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createTaxiDancerProfile(data: InsertTaxiDancerProfile): Promise<SelectTaxiDancerProfile> {
+    const [result] = await db.insert(taxiDancerProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updateTaxiDancerProfile(userId: number, data: Partial<SelectTaxiDancerProfile>): Promise<SelectTaxiDancerProfile | null> {
+    const [result] = await db
+      .update(taxiDancerProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(taxiDancerProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deleteTaxiDancerProfile(userId: number): Promise<void> {
+    await db.delete(taxiDancerProfiles).where(eq(taxiDancerProfiles.userId, userId));
+  }
+  
+  // Organizer Profiles
+  async getOrganizerProfile(userId: number): Promise<SelectOrganizerProfile | null> {
+    const result = await db.select().from(organizerProfiles).where(eq(organizerProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createOrganizerProfile(data: InsertOrganizerProfile): Promise<SelectOrganizerProfile> {
+    const [result] = await db.insert(organizerProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updateOrganizerProfile(userId: number, data: Partial<SelectOrganizerProfile>): Promise<SelectOrganizerProfile | null> {
+    const [result] = await db
+      .update(organizerProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(organizerProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deleteOrganizerProfile(userId: number): Promise<void> {
+    await db.delete(organizerProfiles).where(eq(organizerProfiles.userId, userId));
+  }
+  
+  // BATCH 15: Enhanced Profile Search Methods with Advanced Filtering
+  // Helper function for Haversine distance calculation in SQL
+  private buildDistanceExpression(lat: number, lng: number) {
+    return sql`(
+      6371 * acos(
+        cos(radians(${lat})) *
+        cos(radians(CAST(${users.latitude} AS DOUBLE PRECISION))) *
+        cos(radians(CAST(${users.longitude} AS DOUBLE PRECISION)) - radians(${lng})) +
+        sin(radians(${lat})) *
+        sin(radians(CAST(${users.latitude} AS DOUBLE PRECISION)))
+      )
+    )`;
+  }
+
+  async searchTeacherProfiles(params: { 
+    q?: string;
+    city?: string; 
+    country?: string; 
+    lat?: number;
+    lng?: number;
+    radius?: number;
+    minRate?: number;
+    maxRate?: number;
+    minRating?: number; 
+    verified?: boolean;
+    specialties?: string[];
+    languages?: string[];
+    availableDate?: string;
+    minExperience?: number;
+    sort?: 'rating' | 'price' | 'distance' | 'recent';
+    limit?: number; 
+    offset?: number;
+  }): Promise<{ 
+    results: SelectTeacherProfile[]; 
+    total: number; 
+    facets: Record<string, Record<string, number>> 
+  }> {
+    const { q, city, country, lat, lng, radius, minRate, maxRate, minRating, verified, specialties, languages, availableDate, minExperience, sort = 'rating', limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(teacherProfiles.isActive, true)];
+    
+    // Full-text search across bio and specialties
+    if (q) {
+      conditions.push(
+        or(
+          sql`LOWER(${teacherProfiles.bio}) LIKE LOWER(${'%' + q + '%'})`,
+          sql`EXISTS (SELECT 1 FROM unnest(${teacherProfiles.specialties}) AS s WHERE LOWER(s) LIKE LOWER(${'%' + q + '%'}))`
+        )
+      );
+    }
+    
+    // Basic filters
+    if (city) conditions.push(sql`LOWER(${users.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${users.country}) = LOWER(${country})`);
+    if (minRating !== undefined) conditions.push(gte(teacherProfiles.averageRating, minRating));
+    if (minRate !== undefined) conditions.push(gte(teacherProfiles.hourlyRate, minRate));
+    if (maxRate !== undefined) conditions.push(lte(teacherProfiles.hourlyRate, maxRate));
+    if (verified !== undefined) conditions.push(eq(teacherProfiles.isVerified, verified));
+    if (minExperience !== undefined) conditions.push(gte(teacherProfiles.yearsExperience, minExperience));
+    
+    // Array filters
+    if (specialties && specialties.length > 0) {
+      conditions.push(sql`${teacherProfiles.specialties} && ARRAY[${sql.join(specialties.map(s => sql`${s}`), sql`, `)}]::text[]`);
+    }
+    if (languages && languages.length > 0) {
+      conditions.push(sql`${teacherProfiles.languagesSpoken} && ARRAY[${sql.join(languages.map(l => sql`${l}`), sql`, `)}]::text[]`);
+    }
+    
+    // Geolocation filter
+    if (lat !== undefined && lng !== undefined && radius !== undefined) {
+      const distanceExpr = this.buildDistanceExpression(lat, lng);
+      conditions.push(sql`${distanceExpr} <= ${radius}`);
+    }
+    
+    // Build sort expression
+    let orderExpr;
+    if (sort === 'rating') {
+      orderExpr = desc(teacherProfiles.averageRating);
+    } else if (sort === 'price') {
+      orderExpr = asc(teacherProfiles.hourlyRate);
+    } else if (sort === 'distance' && lat !== undefined && lng !== undefined) {
+      orderExpr = sql`${this.buildDistanceExpression(lat, lng)} ASC`;
+    } else {
+      orderExpr = desc(teacherProfiles.createdAt);
+    }
+    
+    // Get results with user join for location data
+    const results = await db
+      .select({
+        profile: teacherProfiles,
+        user: users
+      })
+      .from(teacherProfiles)
+      .innerJoin(users, eq(teacherProfiles.userId, users.id))
+      .where(and(...conditions))
+      .orderBy(orderExpr)
+      .limit(limit)
+      .offset(offset);
+    
+    // Get total count
+    const [{ count }] = await db
+      .select({ count: sql<number>`COUNT(*)::int` })
+      .from(teacherProfiles)
+      .innerJoin(users, eq(teacherProfiles.userId, users.id))
+      .where(and(...conditions));
+    
+    // Build facets - count by specialty and level
+    const specialtyFacets = await db
+      .select({
+        specialty: sql<string>`unnest(${teacherProfiles.specialties})`,
+        count: sql<number>`COUNT(*)::int`
+      })
+      .from(teacherProfiles)
+      .innerJoin(users, eq(teacherProfiles.userId, users.id))
+      .where(and(...conditions))
+      .groupBy(sql`unnest(${teacherProfiles.specialties})`);
+    
+    const levelFacets = await db
+      .select({
+        level: sql<string>`unnest(${teacherProfiles.levels})`,
+        count: sql<number>`COUNT(*)::int`
+      })
+      .from(teacherProfiles)
+      .innerJoin(users, eq(teacherProfiles.userId, users.id))
+      .where(and(...conditions))
+      .groupBy(sql`unnest(${teacherProfiles.levels})`);
+    
+    const facets = {
+      specialties: Object.fromEntries(specialtyFacets.map(f => [f.specialty, f.count])),
+      levels: Object.fromEntries(levelFacets.map(f => [f.level, f.count]))
+    };
+    
+    return {
+      results: results.map(r => r.profile),
+      total: count,
+      facets
+    };
+  }
+
+  async searchDJProfiles(params: { 
+    city?: string; 
+    country?: string; 
+    minRating?: number;
+    maxHourlyRate?: number;
+    minHourlyRate?: number;
+    verified?: boolean;
+    musicStyles?: string[];
+    minExperience?: number;
+    availability?: string;
+    limit?: number; 
+    offset?: number;
+  }): Promise<SelectDJProfile[]> {
+    const { city, country, minRating, maxHourlyRate, minHourlyRate, verified, musicStyles, minExperience, availability, limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(djProfiles.isActive, true)];
+    
+    if (city) conditions.push(sql`LOWER(${djProfiles.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${djProfiles.country}) = LOWER(${country})`);
+    if (minRating !== undefined) conditions.push(gte(djProfiles.averageRating, minRating));
+    if (maxHourlyRate !== undefined) conditions.push(lte(djProfiles.hourlyRate, maxHourlyRate));
+    if (minHourlyRate !== undefined) conditions.push(gte(djProfiles.hourlyRate, minHourlyRate));
+    if (verified !== undefined) conditions.push(eq(djProfiles.isVerified, verified));
+    if (musicStyles && musicStyles.length > 0) {
+      conditions.push(sql`${djProfiles.musicStyles} && ARRAY[${sql.join(musicStyles.map(s => sql`${s}`), sql`, `)}]::text[]`);
+    }
+    if (minExperience !== undefined) conditions.push(gte(djProfiles.yearsOfExperience, minExperience));
+    if (availability) conditions.push(eq(djProfiles.availabilityStatus, availability));
+    
+    return db.select().from(djProfiles)
+      .where(and(...conditions))
+      .orderBy(desc(djProfiles.averageRating))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async searchPhotographerProfiles(params: { 
+    city?: string; 
+    country?: string; 
+    minRating?: number;
+    maxHourlyRate?: number;
+    minHourlyRate?: number;
+    verified?: boolean;
+    specialties?: string[];
+    minExperience?: number;
+    availability?: string;
+    limit?: number; 
+    offset?: number;
+  }): Promise<SelectPhotographerProfile[]> {
+    const { city, country, minRating, maxHourlyRate, minHourlyRate, verified, specialties, minExperience, availability, limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(photographerProfiles.isActive, true)];
+    
+    if (city) conditions.push(sql`LOWER(${photographerProfiles.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${photographerProfiles.country}) = LOWER(${country})`);
+    if (minRating !== undefined) conditions.push(gte(photographerProfiles.averageRating, minRating));
+    if (maxHourlyRate !== undefined) conditions.push(lte(photographerProfiles.hourlyRate, maxHourlyRate));
+    if (minHourlyRate !== undefined) conditions.push(gte(photographerProfiles.hourlyRate, minHourlyRate));
+    if (verified !== undefined) conditions.push(eq(photographerProfiles.isVerified, verified));
+    if (specialties && specialties.length > 0) {
+      conditions.push(sql`${photographerProfiles.specialties} && ARRAY[${sql.join(specialties.map(s => sql`${s}`), sql`, `)}]::text[]`);
+    }
+    if (minExperience !== undefined) conditions.push(gte(photographerProfiles.yearsOfExperience, minExperience));
+    if (availability) conditions.push(eq(photographerProfiles.availabilityStatus, availability));
+    
+    return db.select().from(photographerProfiles)
+      .where(and(...conditions))
+      .orderBy(desc(photographerProfiles.averageRating))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async searchPerformerProfiles(params: { 
+    city?: string; 
+    country?: string; 
+    minRating?: number;
+    maxHourlyRate?: number;
+    minHourlyRate?: number;
+    verified?: boolean;
+    performanceTypes?: string[];
+    minExperience?: number;
+    availability?: string;
+    limit?: number; 
+    offset?: number;
+  }): Promise<SelectPerformerProfile[]> {
+    const { city, country, minRating, maxHourlyRate, minHourlyRate, verified, performanceTypes, minExperience, availability, limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(performerProfiles.isActive, true)];
+    
+    if (city) conditions.push(sql`LOWER(${performerProfiles.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${performerProfiles.country}) = LOWER(${country})`);
+    if (minRating !== undefined) conditions.push(gte(performerProfiles.averageRating, minRating));
+    if (maxHourlyRate !== undefined) conditions.push(lte(performerProfiles.hourlyRate, maxHourlyRate));
+    if (minHourlyRate !== undefined) conditions.push(gte(performerProfiles.hourlyRate, minHourlyRate));
+    if (verified !== undefined) conditions.push(eq(performerProfiles.isVerified, verified));
+    if (performanceTypes && performanceTypes.length > 0) {
+      conditions.push(sql`${performerProfiles.performanceTypes} && ARRAY[${sql.join(performanceTypes.map(s => sql`${s}`), sql`, `)}]::text[]`);
+    }
+    if (minExperience !== undefined) conditions.push(gte(performerProfiles.yearsOfExperience, minExperience));
+    if (availability) conditions.push(eq(performerProfiles.availabilityStatus, availability));
+    
+    return db.select().from(performerProfiles)
+      .where(and(...conditions))
+      .orderBy(desc(performerProfiles.averageRating))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async searchVendorProfiles(params: { 
+    city?: string; 
+    country?: string; 
+    minRating?: number;
+    verified?: boolean;
+    productCategories?: string[];
+    limit?: number; 
+    offset?: number;
+  }): Promise<SelectVendorProfile[]> {
+    const { city, country, minRating, verified, productCategories, limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(vendorProfiles.isActive, true)];
+    
+    if (city) conditions.push(sql`LOWER(${vendorProfiles.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${vendorProfiles.country}) = LOWER(${country})`);
+    if (minRating !== undefined) conditions.push(gte(vendorProfiles.averageRating, minRating));
+    if (verified !== undefined) conditions.push(eq(vendorProfiles.isVerified, verified));
+    if (productCategories && productCategories.length > 0) {
+      conditions.push(sql`${vendorProfiles.productCategories} && ARRAY[${sql.join(productCategories.map(s => sql`${s}`), sql`, `)}]::text[]`);
+    }
+    
+    return db.select().from(vendorProfiles)
+      .where(and(...conditions))
+      .orderBy(desc(vendorProfiles.averageRating))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async searchMusicianProfiles(params: { 
+    city?: string; 
+    country?: string; 
+    minRating?: number;
+    maxHourlyRate?: number;
+    minHourlyRate?: number;
+    verified?: boolean;
+    instruments?: string[];
+    genres?: string[];
+    minExperience?: number;
+    availability?: string;
+    limit?: number; 
+    offset?: number;
+  }): Promise<SelectMusicianProfile[]> {
+    const { city, country, minRating, maxHourlyRate, minHourlyRate, verified, instruments, genres, minExperience, availability, limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(musicianProfiles.isActive, true)];
+    
+    if (city) conditions.push(sql`LOWER(${musicianProfiles.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${musicianProfiles.country}) = LOWER(${country})`);
+    if (minRating !== undefined) conditions.push(gte(musicianProfiles.averageRating, minRating));
+    if (maxHourlyRate !== undefined) conditions.push(lte(musicianProfiles.hourlyRate, maxHourlyRate));
+    if (minHourlyRate !== undefined) conditions.push(gte(musicianProfiles.hourlyRate, minHourlyRate));
+    if (verified !== undefined) conditions.push(eq(musicianProfiles.isVerified, verified));
+    if (instruments && instruments.length > 0) {
+      conditions.push(sql`${musicianProfiles.instruments} && ARRAY[${sql.join(instruments.map(s => sql`${s}`), sql`, `)}]::text[]`);
+    }
+    if (genres && genres.length > 0) {
+      conditions.push(sql`${musicianProfiles.genres} && ARRAY[${sql.join(genres.map(s => sql`${s}`), sql`, `)}]::text[]`);
+    }
+    if (minExperience !== undefined) conditions.push(gte(musicianProfiles.yearsOfExperience, minExperience));
+    if (availability) conditions.push(eq(musicianProfiles.availabilityStatus, availability));
+    
+    return db.select().from(musicianProfiles)
+      .where(and(...conditions))
+      .orderBy(desc(musicianProfiles.averageRating))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async searchChoreographerProfiles(params: { 
+    city?: string; 
+    country?: string; 
+    minRating?: number;
+    maxHourlyRate?: number;
+    minHourlyRate?: number;
+    verified?: boolean;
+    styles?: string[];
+    minExperience?: number;
+    availability?: string;
+    limit?: number; 
+    offset?: number;
+  }): Promise<SelectChoreographerProfile[]> {
+    const { city, country, minRating, maxHourlyRate, minHourlyRate, verified, styles, minExperience, availability, limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(choreographerProfiles.isActive, true)];
+    
+    if (city) conditions.push(sql`LOWER(${choreographerProfiles.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${choreographerProfiles.country}) = LOWER(${country})`);
+    if (minRating !== undefined) conditions.push(gte(choreographerProfiles.averageRating, minRating));
+    if (maxHourlyRate !== undefined) conditions.push(lte(choreographerProfiles.hourlyRate, maxHourlyRate));
+    if (minHourlyRate !== undefined) conditions.push(gte(choreographerProfiles.hourlyRate, minHourlyRate));
+    if (verified !== undefined) conditions.push(eq(choreographerProfiles.isVerified, verified));
+    if (styles && styles.length > 0) {
+      conditions.push(sql`${choreographerProfiles.styles} && ARRAY[${sql.join(styles.map(s => sql`${s}`), sql`, `)}]::text[]`);
+    }
+    if (minExperience !== undefined) conditions.push(gte(choreographerProfiles.yearsOfExperience, minExperience));
+    if (availability) conditions.push(eq(choreographerProfiles.availabilityStatus, availability));
+    
+    return db.select().from(choreographerProfiles)
+      .where(and(...conditions))
+      .orderBy(desc(choreographerProfiles.averageRating))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async searchTangoSchoolProfiles(params: { 
+    city?: string; 
+    country?: string; 
+    minRating?: number;
+    verified?: boolean;
+    classTypes?: string[];
+    limit?: number; 
+    offset?: number;
+  }): Promise<SelectTangoSchoolProfile[]> {
+    const { city, country, minRating, verified, classTypes, limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(tangoSchoolProfiles.isActive, true)];
+    
+    if (city) conditions.push(sql`LOWER(${tangoSchoolProfiles.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${tangoSchoolProfiles.country}) = LOWER(${country})`);
+    if (minRating !== undefined) conditions.push(gte(tangoSchoolProfiles.averageRating, minRating));
+    if (verified !== undefined) conditions.push(eq(tangoSchoolProfiles.isVerified, verified));
+    if (classTypes && classTypes.length > 0) {
+      conditions.push(sql`${tangoSchoolProfiles.classTypes} && ARRAY[${sql.join(classTypes.map(s => sql`${s}`), sql`, `)}]::text[]`);
+    }
+    
+    return db.select().from(tangoSchoolProfiles)
+      .where(and(...conditions))
+      .orderBy(desc(tangoSchoolProfiles.averageRating))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async searchTangoHotelProfiles(params: { 
+    city?: string; 
+    country?: string; 
+    minRating?: number;
+    minPrice?: number;
+    maxPrice?: number;
+    verified?: boolean;
+    amenities?: string[];
+    limit?: number; 
+    offset?: number;
+  }): Promise<SelectTangoHotelProfile[]> {
+    const { city, country, minRating, minPrice, maxPrice, verified, amenities, limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(tangoHotelProfiles.isActive, true)];
+    
+    if (city) conditions.push(sql`LOWER(${tangoHotelProfiles.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${tangoHotelProfiles.country}) = LOWER(${country})`);
+    if (minRating !== undefined) conditions.push(gte(tangoHotelProfiles.averageRating, minRating));
+    if (minPrice !== undefined) conditions.push(gte(tangoHotelProfiles.pricePerNight, minPrice));
+    if (maxPrice !== undefined) conditions.push(lte(tangoHotelProfiles.pricePerNight, maxPrice));
+    if (verified !== undefined) conditions.push(eq(tangoHotelProfiles.isVerified, verified));
+    if (amenities && amenities.length > 0) {
+      conditions.push(sql`${tangoHotelProfiles.amenities} && ARRAY[${sql.join(amenities.map(s => sql`${s}`), sql`, `)}]::text[]`);
+    }
+    
+    return db.select().from(tangoHotelProfiles)
+      .where(and(...conditions))
+      .orderBy(desc(tangoHotelProfiles.averageRating))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async searchHostVenueProfiles(params: { 
+    city?: string; 
+    country?: string; 
+    minRating?: number;
+    minCapacity?: number;
+    verified?: boolean;
+    amenities?: string[];
+    venueTypes?: string[];
+    limit?: number; 
+    offset?: number;
+  }): Promise<SelectHostVenueProfile[]> {
+    const { city, country, minRating, minCapacity, verified, amenities, venueTypes, limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(hostVenueProfiles.isActive, true)];
+    
+    if (city) conditions.push(sql`LOWER(${hostVenueProfiles.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${hostVenueProfiles.country}) = LOWER(${country})`);
+    if (minRating !== undefined) conditions.push(gte(hostVenueProfiles.averageRating, minRating));
+    if (minCapacity !== undefined) conditions.push(gte(hostVenueProfiles.capacity, minCapacity));
+    if (verified !== undefined) conditions.push(eq(hostVenueProfiles.isVerified, verified));
+    if (amenities && amenities.length > 0) {
+      conditions.push(sql`${hostVenueProfiles.amenities} && ARRAY[${sql.join(amenities.map(s => sql`${s}`), sql`, `)}]::text[]`);
+    }
+    if (venueTypes && venueTypes.length > 0) {
+      conditions.push(sql`${hostVenueProfiles.venueTypes} && ARRAY[${sql.join(venueTypes.map(s => sql`${s}`), sql`, `)}]::text[]`);
+    }
+    
+    return db.select().from(hostVenueProfiles)
+      .where(and(...conditions))
+      .orderBy(desc(hostVenueProfiles.averageRating))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async searchWellnessProfiles(params: { 
+    services?: string; 
+    city?: string;
+    country?: string;
+    minRating?: number;
+    maxHourlyRate?: number;
+    minHourlyRate?: number;
+    verified?: boolean;
+    specialties?: string[];
+    limit?: number; 
+    offset?: number;
+  }): Promise<SelectWellnessProfile[]> {
+    const { services, city, country, minRating, maxHourlyRate, minHourlyRate, verified, specialties, limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(wellnessProfiles.isActive, true)];
+    
+    if (services) conditions.push(sql`${wellnessProfiles.servicesOffered} @> ARRAY[${services}]::text[]`);
+    if (city) conditions.push(sql`LOWER(${wellnessProfiles.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${wellnessProfiles.country}) = LOWER(${country})`);
+    if (minRating !== undefined) conditions.push(gte(wellnessProfiles.averageRating, minRating));
+    if (maxHourlyRate !== undefined) conditions.push(lte(wellnessProfiles.hourlyRate, maxHourlyRate));
+    if (minHourlyRate !== undefined) conditions.push(gte(wellnessProfiles.hourlyRate, minHourlyRate));
+    if (verified !== undefined) conditions.push(eq(wellnessProfiles.isVerified, verified));
+    if (specialties && specialties.length > 0) {
+      conditions.push(sql`${wellnessProfiles.specialties} && ARRAY[${sql.join(specialties.map(s => sql`${s}`), sql`, `)}]::text[]`);
+    }
+    
+    return db.select().from(wellnessProfiles)
+      .where(and(...conditions))
+      .orderBy(desc(wellnessProfiles.averageRating))
+      .limit(limit)
+      .offset(offset);
+  }
+  
+  async searchTourOperatorProfiles(params: { 
+    destination?: string;
+    city?: string;
+    country?: string;
+    minRating?: number;
+    verified?: boolean;
+    tourTypes?: string[];
+    limit?: number; 
+    offset?: number;
+  }): Promise<SelectTourOperatorProfile[]> {
+    const { destination, city, country, minRating, verified, tourTypes, limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(tourOperatorProfiles.isActive, true)];
+    
+    if (destination) conditions.push(sql`${tourOperatorProfiles.destinations} @> ARRAY[${destination}]::text[]`);
+    if (city) conditions.push(sql`LOWER(${tourOperatorProfiles.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${tourOperatorProfiles.country}) = LOWER(${country})`);
+    if (minRating !== undefined) conditions.push(gte(tourOperatorProfiles.averageRating, minRating));
+    if (verified !== undefined) conditions.push(eq(tourOperatorProfiles.isVerified, verified));
+    if (tourTypes && tourTypes.length > 0) {
+      conditions.push(sql`${tourOperatorProfiles.tourTypes} && ARRAY[${sql.join(tourTypes.map(s => sql`${s}`), sql`, `)}]::text[]`);
+    }
+    
+    return db.select().from(tourOperatorProfiles)
+      .where(and(...conditions))
+      .orderBy(desc(tourOperatorProfiles.averageRating))
+      .limit(limit)
+      .offset(offset);
+  }
+  
+  async searchTangoGuideProfiles(params: { 
+    city?: string; 
+    language?: string;
+    country?: string;
+    minRating?: number;
+    maxHourlyRate?: number;
+    minHourlyRate?: number;
+    verified?: boolean;
+    availability?: string;
+    limit?: number; 
+    offset?: number;
+  }): Promise<SelectTangoGuideProfile[]> {
+    const { city, language, country, minRating, maxHourlyRate, minHourlyRate, verified, availability, limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(tangoGuideProfiles.isActive, true)];
+    
+    if (city) {
+      conditions.push(or(
+        sql`LOWER(${tangoGuideProfiles.primaryCity}) = LOWER(${city})`,
+        sql`${tangoGuideProfiles.citiesCovered} @> ARRAY[${city}]::text[]`
+      ));
+    }
+    if (country) conditions.push(sql`LOWER(${tangoGuideProfiles.country}) = LOWER(${country})`);
+    if (language) conditions.push(sql`${tangoGuideProfiles.languagesSpoken} @> ARRAY[${language}]::text[]`);
+    if (minRating !== undefined) conditions.push(gte(tangoGuideProfiles.averageRating, minRating));
+    if (maxHourlyRate !== undefined) conditions.push(lte(tangoGuideProfiles.hourlyRate, maxHourlyRate));
+    if (minHourlyRate !== undefined) conditions.push(gte(tangoGuideProfiles.hourlyRate, minHourlyRate));
+    if (verified !== undefined) conditions.push(eq(tangoGuideProfiles.isVerified, verified));
+    if (availability) conditions.push(eq(tangoGuideProfiles.availabilityStatus, availability));
+    
+    return db.select().from(tangoGuideProfiles)
+      .where(and(...conditions))
+      .orderBy(desc(tangoGuideProfiles.averageRating))
+      .limit(limit)
+      .offset(offset);
+  }
+  
+  async searchTaxiDancerProfiles(params: { 
+    city?: string; 
+    style?: string;
+    country?: string;
+    minRating?: number;
+    maxHourlyRate?: number;
+    minHourlyRate?: number;
+    verified?: boolean;
+    availability?: string;
+    limit?: number; 
+    offset?: number;
+  }): Promise<SelectTaxiDancerProfile[]> {
+    const { city, style, country, minRating, maxHourlyRate, minHourlyRate, verified, availability, limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(taxiDancerProfiles.isActive, true)];
+    
+    if (style) conditions.push(sql`${taxiDancerProfiles.styles} @> ARRAY[${style}]::text[]`);
+    if (minRating !== undefined) conditions.push(gte(taxiDancerProfiles.averageRating, minRating));
+    if (maxHourlyRate !== undefined) conditions.push(lte(taxiDancerProfiles.hourlyRate, maxHourlyRate));
+    if (minHourlyRate !== undefined) conditions.push(gte(taxiDancerProfiles.hourlyRate, minHourlyRate));
+    if (verified !== undefined) conditions.push(eq(taxiDancerProfiles.isVerified, verified));
+    if (availability) conditions.push(eq(taxiDancerProfiles.availabilityStatus, availability));
+    
+    let query = db.select().from(taxiDancerProfiles);
+    
+    if (city || country) {
+      query = query.innerJoin(users, eq(taxiDancerProfiles.userId, users.id));
+      if (city) conditions.push(sql`LOWER(${users.city}) = LOWER(${city})`);
+      if (country) conditions.push(sql`LOWER(${users.country}) = LOWER(${country})`);
+      
+      return query
+        .where(and(...conditions))
+        .orderBy(desc(taxiDancerProfiles.averageRating))
+        .limit(limit)
+        .offset(offset)
+        .then(results => results.map(r => r.taxi_dancer_profiles));
+    }
+    
+    return db.select().from(taxiDancerProfiles)
+      .where(and(...conditions))
+      .orderBy(desc(taxiDancerProfiles.averageRating))
+      .limit(limit)
+      .offset(offset);
+  }
+  
+  async searchContentCreatorProfiles(params: { 
+    platform?: string; 
+    contentType?: string;
+    city?: string;
+    country?: string;
+    minRating?: number;
+    minFollowers?: number;
+    verified?: boolean;
+    limit?: number; 
+    offset?: number;
+  }): Promise<SelectContentCreatorProfile[]> {
+    const { platform, contentType, city, country, minRating, minFollowers, verified, limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(contentCreatorProfiles.isActive, true)];
+    
+    if (contentType) conditions.push(sql`${contentCreatorProfiles.contentTypes} @> ARRAY[${contentType}]::text[]`);
+    if (city) conditions.push(sql`LOWER(${contentCreatorProfiles.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${contentCreatorProfiles.country}) = LOWER(${country})`);
+    if (minRating !== undefined) conditions.push(gte(contentCreatorProfiles.averageRating, minRating));
+    if (minFollowers !== undefined) conditions.push(gte(contentCreatorProfiles.totalFollowers, minFollowers));
+    if (verified !== undefined) conditions.push(eq(contentCreatorProfiles.isVerified, verified));
+    if (platform) {
+      conditions.push(sql`EXISTS (SELECT 1 FROM jsonb_array_elements(${contentCreatorProfiles.platforms}) AS p WHERE p->>'name' = ${platform})`);
+    }
+    
+    return db.select().from(contentCreatorProfiles)
+      .where(and(...conditions))
+      .orderBy(desc(contentCreatorProfiles.totalFollowers))
+      .limit(limit)
+      .offset(offset);
+  }
+  
+  async searchLearningResourceProfiles(params: { 
+    topic?: string; 
+    format?: string;
+    city?: string;
+    country?: string;
+    minRating?: number;
+    minPrice?: number;
+    maxPrice?: number;
+    verified?: boolean;
+    level?: string;
+    limit?: number; 
+    offset?: number;
+  }): Promise<SelectLearningResourceProfile[]> {
+    const { topic, format, city, country, minRating, minPrice, maxPrice, verified, level, limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(learningResourceProfiles.isActive, true)];
+    
+    if (format) conditions.push(sql`${learningResourceProfiles.formats} @> ARRAY[${format}]::text[]`);
+    if (topic) conditions.push(sql`${learningResourceProfiles.courseTypes} @> ARRAY[${topic}]::text[]`);
+    if (city) conditions.push(sql`LOWER(${learningResourceProfiles.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${learningResourceProfiles.country}) = LOWER(${country})`);
+    if (minRating !== undefined) conditions.push(gte(learningResourceProfiles.averageRating, minRating));
+    if (minPrice !== undefined) conditions.push(gte(learningResourceProfiles.averagePrice, minPrice));
+    if (maxPrice !== undefined) conditions.push(lte(learningResourceProfiles.averagePrice, maxPrice));
+    if (verified !== undefined) conditions.push(eq(learningResourceProfiles.isVerified, verified));
+    if (level) conditions.push(sql`${learningResourceProfiles.levels} @> ARRAY[${level}]::text[]`);
+    
+    return db.select().from(learningResourceProfiles)
+      .where(and(...conditions))
+      .orderBy(desc(learningResourceProfiles.averageRating))
+      .limit(limit)
+      .offset(offset);
+  }
+  
+  async searchOrganizerProfiles(params: { 
+    city?: string; 
+    eventType?: string;
+    country?: string;
+    minRating?: number;
+    verified?: boolean;
+    minEventsOrganized?: number;
+    limit?: number; 
+    offset?: number;
+  }): Promise<SelectOrganizerProfile[]> {
+    const { city, eventType, country, minRating, verified, minEventsOrganized, limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(organizerProfiles.isActive, true)];
+    
+    if (city) conditions.push(sql`LOWER(${organizerProfiles.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${organizerProfiles.country}) = LOWER(${country})`);
+    if (eventType) conditions.push(sql`${organizerProfiles.eventTypesOrganized} @> ARRAY[${eventType}]::text[]`);
+    if (minRating !== undefined) conditions.push(gte(organizerProfiles.averageRating, minRating));
+    if (verified !== undefined) conditions.push(eq(organizerProfiles.isVerified, verified));
+    if (minEventsOrganized !== undefined) conditions.push(gte(organizerProfiles.totalEventsOrganized, minEventsOrganized));
+    
+    return db.select().from(organizerProfiles)
+      .where(and(...conditions))
+      .orderBy(desc(organizerProfiles.averageRating))
+      .limit(limit)
+      .offset(offset);
+  }
+  
+  async searchTalentProfiles(params: {
+    city?: string;
+    country?: string;
+    minRating?: number;
+    verified?: boolean;
+    talentType?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<SelectTalentProfile[]> {
+    const { city, country, minRating, verified, talentType, limit = 20, offset = 0 } = params;
+    const conditions: any[] = [eq(talentProfiles.isActive, true)];
+    
+    if (city) conditions.push(sql`LOWER(${talentProfiles.city}) = LOWER(${city})`);
+    if (country) conditions.push(sql`LOWER(${talentProfiles.country}) = LOWER(${country})`);
+    if (minRating !== undefined) conditions.push(gte(talentProfiles.averageRating, minRating));
+    if (verified !== undefined) conditions.push(eq(talentProfiles.isVerified, verified));
+    if (talentType) conditions.push(eq(talentProfiles.talentType, talentType));
+    
+    return db.select().from(talentProfiles)
+      .where(and(...conditions))
+      .orderBy(desc(talentProfiles.averageRating))
+      .limit(limit)
+      .offset(offset);
+  }
+  
+  // Talent Profiles (Generic)
+  async getTalentProfile(userId: number): Promise<SelectTalentProfile | null> {
+    const result = await db.select().from(talentProfiles).where(eq(talentProfiles.userId, userId)).limit(1);
+    return result[0] || null;
+  }
+  
+  async createTalentProfile(data: InsertTalentProfile): Promise<SelectTalentProfile> {
+    const [result] = await db.insert(talentProfiles).values(data).returning();
+    return result;
+  }
+  
+  async updateTalentProfile(userId: number, data: Partial<SelectTalentProfile>): Promise<SelectTalentProfile | null> {
+    const [result] = await db
+      .update(talentProfiles)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(talentProfiles.userId, userId))
+      .returning();
+    return result || null;
+  }
+  
+  async deleteTalentProfile(userId: number): Promise<void> {
+    await db.delete(talentProfiles).where(eq(talentProfiles.userId, userId));
   }
 }
 

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, Clock, Heart, Share2, BookmarkPlus, ArrowLeft, BookOpen } from "lucide-react";
@@ -60,6 +61,10 @@ export default function BlogDetailPage() {
 
   return (
     <AppLayout>
+      <SEO
+        title={`${post.title} | Mundo Tango Blog`}
+        description={post.excerpt || post.content.substring(0, 155)}
+      />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">

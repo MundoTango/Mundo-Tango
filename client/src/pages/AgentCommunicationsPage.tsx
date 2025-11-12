@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SEO } from "@/components/SEO";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MessageSquare, Send, Inbox, Bot, AlertTriangle, Info } from "lucide-react";
@@ -79,6 +80,10 @@ export default function AgentCommunicationsPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Agent Communications" fallbackRoute="/platform">
+      <SEO
+        title="Agent Communications | Mundo Tango"
+        description="View agent-to-agent and agent-to-user communications. Monitor messages, status updates, and system notifications across the platform."
+      />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -64,6 +65,10 @@ export default function FriendsPage() {
   return (
     <SelfHealingErrorBoundary pageName="Friends" fallbackRoute="/feed">
     <PageLayout title="Friends" showBreadcrumbs>
+      <SEO
+        title="Friends | Mundo Tango"
+        description="Manage your tango network. View friends, accept requests, discover suggestions, and connect with dancers worldwide. Build your tango community."
+      />
 <div className="min-h-screen bg-background">
       {/* Editorial Hero Section */}
       <motion.section

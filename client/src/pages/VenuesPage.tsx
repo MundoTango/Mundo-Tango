@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MapPin, Star, Clock, Phone, Globe, Search, Music, Navigation } from "lucide-react";
@@ -32,6 +33,10 @@ export default function VenuesPage() {
 
   return (
     <AppLayout>
+      <SEO
+        title="Tango Venues & Milongas Worldwide | Mundo Tango"
+        description="Discover beautiful tango venues and milongas around the world. Find dance spaces, cafes, clubs, and cultural centers hosting tango events. Search by city."
+      />
       {/* Hero Section */}
       <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{

@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import { Bell } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
@@ -10,6 +11,10 @@ export default function NotificationSettingsPage() {
   return (
     <PageLayout title="Notification Settings" showBreadcrumbs>
 <SelfHealingErrorBoundary pageName="Notification Settings" fallbackRoute="/settings">
+      <SEO
+        title="Notification Settings | Mundo Tango"
+        description="Customize your notification preferences. Choose which push notifications and alerts you receive for events, messages, friend requests, and community updates."
+      />
       <div className="container mx-auto max-w-2xl">
 
         <Card className="mb-6">

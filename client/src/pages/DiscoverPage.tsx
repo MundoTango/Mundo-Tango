@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SEO } from "@/components/SEO";
 import { Input } from "@/components/ui/input";
 import { 
   MapPin, Calendar, Users, Search, Filter, Star,
@@ -64,6 +65,10 @@ export default function DiscoverPage() {
   return (
     <PageLayout title="Discover Tango Events" showBreadcrumbs>
 <SelfHealingErrorBoundary pageName="Discover Events" fallbackRoute="/feed">
+      <SEO
+        title="Discover Tango | Mundo Tango"
+        description="Explore the world of tango. Discover events, venues, teachers, and communities worldwide. Connect with dancers, learn new styles, and grow your tango network."
+      />
 <div className="min-h-screen">
       {/* Hero Section - 16:9 Aspect Ratio */}
       <section className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">

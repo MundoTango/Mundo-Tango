@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SEO } from "@/components/SEO";
 import { Shield, Lock, Eye, Database, Mail } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
@@ -9,6 +10,10 @@ export default function PrivacyPolicyPage() {
   return (
     <SelfHealingErrorBoundary pageName="Privacy Policy" fallbackRoute="/">
     <PageLayout title="Privacy Policy" showBreadcrumbs>
+      <SEO
+        title="Privacy Policy | Mundo Tango"
+        description="Learn how we protect your personal information. Understand our data collection, usage, security measures, and your privacy rights on Mundo Tango."
+      />
       {/* Hero Section */}
       <div className="relative h-[50vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{

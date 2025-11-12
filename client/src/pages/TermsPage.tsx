@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SEO } from "@/components/SEO";
 import { FileText, AlertTriangle, Scale, UserX } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
@@ -9,6 +10,10 @@ export default function TermsPage() {
   return (
     <SelfHealingErrorBoundary pageName="Terms of Service" fallbackRoute="/">
     <PageLayout title="Terms of Service" showBreadcrumbs>
+      <SEO
+        title="Terms of Service | Mundo Tango"
+        description="Read our terms of service. Understand your rights and responsibilities on Mundo Tango. User accounts, content guidelines, and community standards."
+      />
       <div className="min-h-screen bg-background">
         {/* Editorial Hero Section - 16:9 */}
         <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">

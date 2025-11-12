@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -77,6 +78,10 @@ export default function NotificationsPrototypePage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Notifications | Mundo Tango"
+        description="Stay updated with your tango community activity. View likes, comments, friend requests, event invitations, and group updates. Never miss important connections."
+      />
       {/* Hero Header - Editorial Style */}
       <div className="relative h-[40vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{

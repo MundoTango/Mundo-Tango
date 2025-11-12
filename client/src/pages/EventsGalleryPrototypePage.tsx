@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SEO } from "@/components/SEO";
 import { Calendar, MapPin, Users, Star, TrendingUp, Heart } from "lucide-react";
 
 const FEATURED_EVENTS = [
@@ -75,6 +76,10 @@ const UPCOMING_EVENTS = [
 export default function EventsGalleryPrototypePage() {
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Featured Tango Events Gallery | Mundo Tango"
+        description="Explore featured tango events worldwide. Browse festivals, championships, workshops, and upcoming milongas. Join thousands of dancers at premier tango events."
+      />
       {/* Hero Banner */}
       <div className="relative h-[70vh] w-full overflow-hidden">
         <div 

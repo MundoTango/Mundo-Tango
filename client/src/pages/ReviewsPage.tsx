@@ -5,6 +5,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { SEO } from "@/components/SEO";
 import { Star, ThumbsUp, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -146,6 +147,10 @@ export default function ReviewsPage() {
 
   return (
     <AppLayout>
+      <SEO
+        title="Community Reviews | Mundo Tango"
+        description="Read and write reviews for teachers, venues, events, and more. Share your experiences and help the tango community make informed decisions."
+      />
       <div className="min-h-screen bg-background">
         {/* Editorial Hero Section - 16:9 */}
         <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">

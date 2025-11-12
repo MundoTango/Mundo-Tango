@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { SEO } from "@/components/SEO";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -34,6 +35,10 @@ export default function SearchPage() {
   return (
     <SelfHealingErrorBoundary pageName="Search" fallbackRoute="/">
       <PageLayout title="Search" showBreadcrumbs>
+      <SEO
+        title="Search Tango Community | Mundo Tango"
+        description="Search for people, events, groups, and more across the global tango community. Find dancers, teachers, venues, and connect with tango enthusiasts worldwide."
+      />
       <div className="min-h-screen bg-background">
         {/* Editorial Hero Section - 16:9 */}
         <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">

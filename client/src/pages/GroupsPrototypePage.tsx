@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { SEO } from "@/components/SEO";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -147,6 +148,10 @@ export default function GroupsPrototypePage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Tango Groups & Communities | Mundo Tango"
+        description="Join tango communities worldwide. Connect with city groups, professional networks, and interest-based communities. Find your tango family in 180+ cities."
+      />
       {/* Theme Toggle - Fixed Position */}
       <div className="fixed top-6 right-6 z-50">
         <Button
