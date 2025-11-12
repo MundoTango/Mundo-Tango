@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import {Bot, Brain, CheckCircle, Clock, Users, Zap, Award, Activity } from "lucide-react";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 
 interface AgentStats {
   totalAgents: number;
@@ -62,6 +63,11 @@ export default function ESADashboardPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="ESA Dashboard" fallbackRoute="/platform">
+      <SEO 
+        title="ESA Framework"
+        description="Expert Specialized Agents platform with 61 layers and MB.MD protocol for intelligent task automation and agent orchestration"
+        ogImage="/og-image.png"
+      />
       {/* Hero Section - 16:9 Aspect Ratio */}
       <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-purple-500/20 to-blue-500/20">

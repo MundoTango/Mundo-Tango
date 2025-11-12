@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Users, FileText, Calendar, AlertTriangle } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
+import { SEO } from "@/components/SEO";
 
 export default function AdminDashboard() {
   const { data: stats } = useQuery({ queryKey: ["/api/admin/stats/overview"] });
@@ -19,6 +20,11 @@ export default function AdminDashboard() {
   return (
     <PageLayout title="Admin Dashboard" showBreadcrumbs>
 <SelfHealingErrorBoundary pageName="Admin Dashboard" fallbackRoute="/admin">
+      <SEO 
+        title="Admin Dashboard"
+        description="Monitor platform health, user growth, moderation queue, and key metrics for Mundo Tango community management"
+        ogImage="/og-image.png"
+      />
 <div className="container mx-auto py-8 px-4">
       
 

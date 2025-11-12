@@ -6,6 +6,7 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
+import { SEO } from "@/components/SEO";
 
 export default function DashboardPage() {
   const stats = [
@@ -24,6 +25,11 @@ export default function DashboardPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Dashboard" fallbackRoute="/feed">
+      <SEO 
+        title="Your Dashboard"
+        description="Track your tango journey, view stats, and stay connected with upcoming events, connections, and community activity"
+        ogImage="/og-image.png"
+      />
       <PageLayout title="Dashboard" showBreadcrumbs>
         <div className="min-h-screen">
           {/* Hero Section - 16:9 */}

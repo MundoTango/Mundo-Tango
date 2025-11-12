@@ -20,6 +20,7 @@ import {
 import { motion } from "framer-motion";
 import { useState } from "react";
 import heroImage from "@assets/stock_images/business_team_meetin_061b6626.jpg";
+import { SEO } from "@/components/SEO";
 
 interface HelpTopic {
   id: string;

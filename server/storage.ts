@@ -700,6 +700,29 @@ export interface IStorage {
     offset?: number;
   }): Promise<{ profiles: any[]; total: number }>;
   
+  // BATCH 15: Unified Profile Search across ALL 17 types
+  searchAllProfiles(filters: {
+    q?: string;
+    types?: string[];
+    city?: string;
+    country?: string;
+    minRating?: number;
+    maxPrice?: number;
+    verified?: boolean;
+    availability?: boolean;
+    page?: number;
+    limit?: number;
+  }): Promise<{
+    results: Array<{
+      type: string;
+      profile: any;
+      user: any;
+    }>;
+    total: number;
+    page: number;
+    totalPages: number;
+  }>;
+  
   // Browse profiles by type with optional location filtering
   getProfileDirectory(params: {
     profileType: string;
@@ -4347,6 +4370,179 @@ export class DbStorage implements IStorage {
       .where(and(...conditions))
       .limit(limit)
       .offset(offset);
+  }
+
+  async searchAllProfiles(filters: {
+    q?: string;
+    types?: string[];
+    city?: string;
+    country?: string;
+    minRating?: number;
+    maxPrice?: number;
+    verified?: boolean;
+    availability?: boolean;
+    page = 1;
+    limit = 20;
+  }): Promise<{
+    results: Array<{
+      type: string;
+      profile: any;
+      user: any;
+    }>;
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    const { q, types, city, country, minRating, maxPrice, verified, availability, page, limit } = filters;
+    const offset = (page - 1) * limit;
+
+    // Define all 17 profile types
+    const allProfileTypes = [
+      'teacher', 'dj', 'photographer', 'performer', 'vendor', 'musician',
+      'choreographer', 'tangoSchool', 'tangoHotel', 'wellness', 'tourOperator',
+      'hostVenue', 'tangoGuide', 'contentCreator', 'learningResource',
+      'taxiDancer', 'organizer'
+    ];
+
+    // Use specified types or all types
+    const searchTypes = types && types.length > 0 ? types : allProfileTypes;
+
+    // Map profile types to table configurations
+    const profileTableMap: Record<string, any> = {
+      'teacher': { table: teacherProfiles, rateFields: ['privateRate', 'groupRate', 'workshopRate'] },
+      'dj': { table: djProfiles, rateFields: ['hourlyRate', 'eventRate'] },
+      'photographer': { table: photographerProfiles, rateFields: ['hourlyRate', 'eventRate'] },
+      'performer': { table: performerProfiles, rateFields: ['performanceFee'] },
+      'vendor': { table: vendorProfiles, rateFields: [] },
+      'musician': { table: musicianProfiles, rateFields: ['hourlyRate', 'performanceFee'] },
+      'choreographer': { table: choreographerProfiles, rateFields: ['sessionRate', 'choreographyRate'] },
+      'tangoSchool': { table: tangoSchoolProfiles, rateFields: [] },
+      'tangoHotel': { table: tangoHotelProfiles, rateFields: [] },
+      'wellness': { table: wellnessProfiles, rateFields: ['sessionRate'] },
+      'tourOperator': { table: tourOperatorProfiles, rateFields: ['dayRate'] },
+      'hostVenue': { table: hostVenueProfiles, rateFields: [] },
+      'tangoGuide': { table: tangoGuideProfiles, rateFields: ['hourlyRate', 'dayRate'] },
+      'contentCreator': { table: contentCreatorProfiles, rateFields: [] },
+      'learningResource': { table: learningResourceProfiles, rateFields: [] },
+      'taxiDancer': { table: taxiDancerProfiles, rateFields: ['hourlyRate'] },
+      'organizer': { table: organizerProfiles, rateFields: ['consultingRate'] },
+    };
+
+    // Search each profile type
+    const searchPromises = searchTypes.map(async (profileType) => {
+      const config = profileTableMap[profileType];
+      if (!config) return [];
+
+      const { table } = config;
+      const conditions: any[] = [eq(table.isActive, true)];
+
+      // Text search in bio and specialties
+      if (q) {
+        const searchPattern = `%${q}%`;
+        conditions.push(
+          or(
+            ilike(table.bio, searchPattern),
+            table.specialties ? sql`EXISTS (
+              SELECT 1 FROM unnest(${table.specialties}) AS spec 
+              WHERE spec ILIKE ${searchPattern}
+            )` : sql`false`,
+            table.specializations ? sql`EXISTS (
+              SELECT 1 FROM unnest(${table.specializations}) AS spec 
+              WHERE spec ILIKE ${searchPattern}
+            )` : sql`false`
+          )
+        );
+      }
+
+      // Location filter
+      if (city && table.city) {
+        conditions.push(ilike(table.city, `%${city}%`));
+      }
+      if (country && table.country) {
+        conditions.push(ilike(table.country, `%${country}%`));
+      }
+
+      // Rating filter
+      if (minRating && table.averageRating) {
+        conditions.push(gte(table.averageRating, minRating));
+      }
+
+      // Verified filter
+      if (verified !== undefined && table.isVerified) {
+        conditions.push(eq(table.isVerified, verified));
+      }
+
+      // Availability filter
+      if (availability !== undefined) {
+        if (table.availableForPrivate) {
+          conditions.push(eq(table.availableForPrivate, availability));
+        } else if (table.isAvailable) {
+          conditions.push(eq(table.isAvailable, availability));
+        }
+      }
+
+      // Price filter - check if any rate field is within range
+      if (maxPrice && config.rateFields.length > 0) {
+        const priceConditions = config.rateFields.map((field: string) => 
+          table[field] ? lte(table[field], maxPrice.toString()) : sql`false`
+        );
+        if (priceConditions.length > 0) {
+          conditions.push(or(...priceConditions));
+        }
+      }
+
+      try {
+        const profiles = await db
+          .select()
+          .from(table)
+          .where(and(...conditions))
+          .orderBy(desc(table.averageRating || table.id))
+          .limit(1000); // Get more than needed for merging
+
+        // Join with user data
+        const results = await Promise.all(
+          profiles.map(async (profile: any) => {
+            const user = await this.getUserById(profile.userId);
+            return user ? { type: profileType, profile, user } : null;
+          })
+        );
+
+        return results.filter(r => r !== null);
+      } catch (error) {
+        console.error(`[searchAllProfiles] Error searching ${profileType}:`, error);
+        return [];
+      }
+    });
+
+    // Execute all searches in parallel
+    const allResults = await Promise.all(searchPromises);
+    const mergedResults = allResults.flat();
+
+    // Sort by relevance (rating) and then by recent activity
+    mergedResults.sort((a, b) => {
+      const ratingA = a.profile.averageRating || 0;
+      const ratingB = b.profile.averageRating || 0;
+      
+      if (ratingB !== ratingA) {
+        return ratingB - ratingA;
+      }
+      
+      const dateA = a.profile.updatedAt || a.profile.createdAt || new Date(0);
+      const dateB = b.profile.updatedAt || b.profile.createdAt || new Date(0);
+      return dateB.getTime() - dateA.getTime();
+    });
+
+    // Paginate results
+    const total = mergedResults.length;
+    const totalPages = Math.ceil(total / limit);
+    const paginatedResults = mergedResults.slice(offset, offset + limit);
+
+    return {
+      results: paginatedResults,
+      total,
+      page,
+      totalPages,
+    };
   }
   
   async trackProfileView(viewerId: number | null, viewedUserId: number, profileType?: string, viewerIp?: string): Promise<void> {

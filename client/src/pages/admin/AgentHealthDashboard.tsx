@@ -20,6 +20,7 @@ import { useState, useEffect } from 'react';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
+import { SEO } from '@/components/SEO';
 
 /**
  * BLOCKER 8: Agent Health Dashboard
@@ -197,6 +198,11 @@ export default function AgentHealthDashboard() {
 
   return (
     <SelfHealingErrorBoundary pageName="Agent Health Dashboard" fallbackRoute="/admin">
+      <SEO 
+        title="Agent Health Dashboard"
+        description="Monitor and validate 134 ESA agents with real-time health checks, performance metrics, and automated fallback systems"
+        ogImage="/og-image.png"
+      />
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>

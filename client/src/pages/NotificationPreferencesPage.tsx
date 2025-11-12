@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { Bell, Mail, Smartphone, Users, Calendar, MessageSquare, Heart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { SEO } from "@/components/SEO";
 
 interface NotificationPreferences {
   email: {
@@ -89,6 +90,11 @@ export default function NotificationPreferencesPage() {
 
   return (
     <AppLayout>
+      <SEO 
+        title="Notification Preferences"
+        description="Customize email and push notification settings for events, messages, friend requests, and community updates on Mundo Tango"
+        ogImage="/og-image.png"
+      />
       <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
         <div className="container mx-auto max-w-4xl py-8 px-4">
           <div className="mb-8">

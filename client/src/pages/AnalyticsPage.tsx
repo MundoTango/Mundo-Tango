@@ -5,6 +5,7 @@ import { ArrowDown, ArrowUp, Users, Zap, Server, AlertTriangle, BarChart3 } from
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Line, LineChart } from "recharts";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 
 interface AnalyticsData {
   overview: {
@@ -93,6 +94,11 @@ export default function AnalyticsPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Analytics" fallbackRoute="/platform">
+      <SEO 
+        title="Platform Analytics"
+        description="Monitor deployment metrics, API usage, performance tracking, and error analysis for Mundo Tango platform operations"
+        ogImage="/og-image.png"
+      />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">

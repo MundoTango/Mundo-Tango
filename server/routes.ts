@@ -115,11 +115,25 @@ import {
   insertContentCreatorProfileSchema,
   insertLearningResourceProfileSchema,
   insertOrganizerProfileSchema,
+  insertChoreographerProfileSchema,
   photographerProfiles,
   performerProfiles,
   djProfiles,
   musicianProfiles,
   contentCreatorProfiles,
+  teacherProfiles,
+  vendorProfiles,
+  choreographerProfiles,
+  tangoSchoolProfiles,
+  tangoHotelProfiles,
+  hostVenueProfiles,
+  wellnessProfiles,
+  tourOperatorProfiles,
+  tangoGuideProfiles,
+  taxiDancerProfiles,
+  learningResourceProfiles,
+  organizerProfiles,
+  profileMedia,
 } from "@shared/schema";
 import { 
   esaAgents,
@@ -333,6 +347,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/teachers", teacherRoutes);
   app.use("/api/djs", djRoutes);
   app.use("/api/musicians", musicianRoutes);
+
+  // ============================================================================
+  // BATCH 15: UNIFIED PROFILE SEARCH
+  // ============================================================================
+  
+  app.get("/api/profiles/search", async (req: Request, res: Response) => {
+    try {
+      const {
+        q,
+        types,
+        city,
+        country,
+        minRating,
+        maxPrice,
+        verified,
+        availability,
+        page = "1",
+        limit = "20"
+      } = req.query;
+
+      // Parse query parameters
+      const parsedTypes = types 
+        ? (Array.isArray(types) ? types : [types]).map(t => String(t))
+        : undefined;
+      
+      const parsedVerified = verified !== undefined 
+        ? verified === "true" || verified === "1"
+        : undefined;
+      
+      const parsedAvailability = availability !== undefined
+        ? availability === "true" || availability === "1"
+        : undefined;
+
+      const searchFilters = {
+        q: q ? String(q) : undefined,
+        types: parsedTypes,
+        city: city ? String(city) : undefined,
+        country: country ? String(country) : undefined,
+        minRating: minRating ? parseFloat(String(minRating)) : undefined,
+        maxPrice: maxPrice ? parseFloat(String(maxPrice)) : undefined,
+        verified: parsedVerified,
+        availability: parsedAvailability,
+        page: parseInt(String(page)),
+        limit: parseInt(String(limit)),
+      };
+
+      const result = await storage.searchAllProfiles(searchFilters);
+      
+      res.json(result);
+    } catch (error: any) {
+      console.error("[GET /api/profiles/search] Error:", error);
+      res.status(500).json({ 
+        message: "Failed to search profiles", 
+        error: error.message 
+      });
+    }
+  });
 
   // BATCH 05: Photographer/Performer/Vendor Profile APIs
   
@@ -1392,20 +1463,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Helper function to get profile table and field names based on type
   const getProfileConfig = (type: string) => {
     const configs: Record<string, { table: any; photoField: string; videoField: string; portfolioField?: string }> = {
-      'photographer': { 
-        table: photographerProfiles, 
-        photoField: 'photoUrls', 
-        videoField: 'videoUrls'
-      },
-      'performer': { 
-        table: performerProfiles, 
-        photoField: 'photoUrls', 
-        videoField: 'demoVideoUrls'
+      'teacher': {
+        table: teacherProfiles,
+        photoField: 'photoUrls',
+        videoField: 'videoUrls',
+        portfolioField: 'certifications'
       },
       'dj': { 
         table: djProfiles, 
         photoField: 'photoUrls', 
-        videoField: 'videoUrls'
+        videoField: 'videoUrls',
+        portfolioField: 'setLists'
       },
       'musician': { 
         table: musicianProfiles, 
@@ -1413,27 +1481,113 @@ export async function registerRoutes(app: Express): Promise<Server> {
         videoField: 'videoUrls',
         portfolioField: 'audioSamples'
       },
+      'photographer': { 
+        table: photographerProfiles, 
+        photoField: 'photoUrls', 
+        videoField: 'videoUrls',
+        portfolioField: 'portfolioUrls'
+      },
+      'performer': { 
+        table: performerProfiles, 
+        photoField: 'photoUrls', 
+        videoField: 'demoVideoUrls',
+        portfolioField: 'performanceHistory'
+      },
+      'vendor': {
+        table: vendorProfiles,
+        photoField: 'photoUrls',
+        videoField: 'videoUrls',
+        portfolioField: 'catalogUrls'
+      },
+      'choreographer': {
+        table: choreographerProfiles,
+        photoField: 'photoUrls',
+        videoField: 'videoUrls',
+        portfolioField: 'choreographyPortfolio'
+      },
+      'tango-school': {
+        table: tangoSchoolProfiles,
+        photoField: 'photoUrls',
+        videoField: 'videoUrls',
+        portfolioField: 'facilityPhotos'
+      },
+      'tango-hotel': {
+        table: tangoHotelProfiles,
+        photoField: 'photoUrls',
+        videoField: 'virtualTourUrl',
+        portfolioField: 'roomPhotos'
+      },
+      'host-venue': {
+        table: hostVenueProfiles,
+        photoField: 'photoUrls',
+        videoField: 'videoUrls',
+        portfolioField: 'venuePhotos'
+      },
+      'wellness': {
+        table: wellnessProfiles,
+        photoField: 'photoUrls',
+        videoField: 'videoUrls',
+        portfolioField: 'servicePhotos'
+      },
+      'tour-operator': {
+        table: tourOperatorProfiles,
+        photoField: 'photoUrls',
+        videoField: 'videoUrls',
+        portfolioField: 'tourPhotos'
+      },
+      'tango-guide': {
+        table: tangoGuideProfiles,
+        photoField: 'photoUrls',
+        videoField: 'videoUrls',
+        portfolioField: 'tourHighlights'
+      },
+      'taxi-dancer': {
+        table: taxiDancerProfiles,
+        photoField: 'photoUrls',
+        videoField: 'videoUrls',
+        portfolioField: 'dancePhotos'
+      },
       'content-creator': { 
         table: contentCreatorProfiles, 
         photoField: 'photoUrls',
-        videoField: 'videoUrls'
+        videoField: 'videoUrls',
+        portfolioField: 'contentPortfolio'
+      },
+      'learning-resource': {
+        table: learningResourceProfiles,
+        photoField: 'photoUrls',
+        videoField: 'videoUrls',
+        portfolioField: 'resourceLinks'
+      },
+      'organizer': {
+        table: organizerProfiles,
+        photoField: 'photoUrls',
+        videoField: 'videoUrls',
+        portfolioField: 'eventPhotos'
       },
     };
     return configs[type];
   };
 
-  // POST /api/profiles/:type/upload-photo
-  app.post("/api/profiles/:type/upload-photo", authenticateToken, profileMediaUpload.single('file'), async (req: AuthRequest, res: Response) => {
+  // POST /api/profiles/:profileType/:userId/upload-photo
+  app.post("/api/profiles/:profileType/:userId/upload-photo", authenticateToken, profileMediaUpload.single('photo'), async (req: AuthRequest, res: Response) => {
     try {
-      const { type } = req.params;
-      const config = getProfileConfig(type);
+      const { profileType, userId } = req.params;
+      const userIdInt = parseInt(userId);
+      
+      // Validate that user can only upload to their own profile
+      if (req.userId !== userIdInt) {
+        return res.status(403).json({ message: 'You can only upload photos to your own profile' });
+      }
+      
+      const config = getProfileConfig(profileType);
       
       if (!config) {
-        return res.status(400).json({ message: `Invalid profile type: ${type}` });
+        return res.status(400).json({ message: `Invalid profile type: ${profileType}` });
       }
 
       if (!req.file) {
-        return res.status(400).json({ message: 'No file provided' });
+        return res.status(400).json({ message: 'No photo file provided' });
       }
 
       if (!req.file.mimetype.startsWith('image/')) {
@@ -1443,18 +1597,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Upload to Cloudinary
       const uploadResult = await uploadMediaToCloudinary(
         req.file,
-        `profiles/${type}/${req.userId}/photos`,
+        `profiles/${profileType}/${userIdInt}/photos`,
         'image'
       );
 
       // Get current profile
       const [profile] = await db.select()
         .from(config.table)
-        .where(eq(config.table.userId, req.userId!))
+        .where(eq(config.table.userId, userIdInt))
         .limit(1);
 
       if (!profile) {
-        return res.status(404).json({ message: `${type} profile not found` });
+        return res.status(404).json({ message: `${profileType} profile not found` });
       }
 
       // Add URL to photo array
@@ -1464,30 +1618,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update profile
       await db.update(config.table)
         .set({ [config.photoField]: updatedPhotos, updatedAt: new Date() })
-        .where(eq(config.table.userId, req.userId!));
+        .where(eq(config.table.userId, userIdInt));
 
       res.status(201).json({ 
         message: 'Photo uploaded successfully',
-        url: uploadResult.url
+        url: uploadResult.url,
+        type: 'photo'
       });
     } catch (error: any) {
-      console.error(`[POST /api/profiles/:type/upload-photo] Error:`, error);
+      console.error(`[POST /api/profiles/:profileType/:userId/upload-photo] Error:`, error);
       res.status(500).json({ message: 'Failed to upload photo', error: error.message });
     }
   });
 
-  // POST /api/profiles/:type/upload-video
-  app.post("/api/profiles/:type/upload-video", authenticateToken, profileMediaUpload.single('file'), async (req: AuthRequest, res: Response) => {
+  // POST /api/profiles/:profileType/:userId/upload-video
+  app.post("/api/profiles/:profileType/:userId/upload-video", authenticateToken, profileMediaUpload.single('video'), async (req: AuthRequest, res: Response) => {
     try {
-      const { type } = req.params;
-      const config = getProfileConfig(type);
+      const { profileType, userId } = req.params;
+      const userIdInt = parseInt(userId);
+      
+      // Validate that user can only upload to their own profile
+      if (req.userId !== userIdInt) {
+        return res.status(403).json({ message: 'You can only upload videos to your own profile' });
+      }
+      
+      const config = getProfileConfig(profileType);
       
       if (!config) {
-        return res.status(400).json({ message: `Invalid profile type: ${type}` });
+        return res.status(400).json({ message: `Invalid profile type: ${profileType}` });
       }
 
       if (!req.file) {
-        return res.status(400).json({ message: 'No file provided' });
+        return res.status(400).json({ message: 'No video file provided' });
       }
 
       if (!req.file.mimetype.startsWith('video/')) {
@@ -1497,18 +1659,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Upload to Cloudinary
       const uploadResult = await uploadMediaToCloudinary(
         req.file,
-        `profiles/${type}/${req.userId}/videos`,
+        `profiles/${profileType}/${userIdInt}/videos`,
         'video'
       );
 
       // Get current profile
       const [profile] = await db.select()
         .from(config.table)
-        .where(eq(config.table.userId, req.userId!))
+        .where(eq(config.table.userId, userIdInt))
         .limit(1);
 
       if (!profile) {
-        return res.status(404).json({ message: `${type} profile not found` });
+        return res.status(404).json({ message: `${profileType} profile not found` });
       }
 
       // Add URL to video array
@@ -1518,26 +1680,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update profile
       await db.update(config.table)
         .set({ [config.videoField]: updatedVideos, updatedAt: new Date() })
-        .where(eq(config.table.userId, req.userId!));
+        .where(eq(config.table.userId, userIdInt));
 
       res.status(201).json({ 
         message: 'Video uploaded successfully',
-        url: uploadResult.url
+        url: uploadResult.url,
+        type: 'video'
       });
     } catch (error: any) {
-      console.error(`[POST /api/profiles/:type/upload-video] Error:`, error);
+      console.error(`[POST /api/profiles/:profileType/:userId/upload-video] Error:`, error);
       res.status(500).json({ message: 'Failed to upload video', error: error.message });
     }
   });
 
-  // POST /api/profiles/:type/upload-portfolio
-  app.post("/api/profiles/:type/upload-portfolio", authenticateToken, profileMediaUpload.single('file'), async (req: AuthRequest, res: Response) => {
+  // POST /api/profiles/:profileType/:userId/upload-portfolio
+  app.post("/api/profiles/:profileType/:userId/upload-portfolio", authenticateToken, profileMediaUpload.single('file'), async (req: AuthRequest, res: Response) => {
     try {
-      const { type } = req.params;
-      const config = getProfileConfig(type);
+      const { profileType, userId } = req.params;
+      const userIdInt = parseInt(userId);
+      
+      // Validate that user can only upload to their own profile
+      if (req.userId !== userIdInt) {
+        return res.status(403).json({ message: 'You can only upload portfolio items to your own profile' });
+      }
+      
+      const config = getProfileConfig(profileType);
       
       if (!config) {
-        return res.status(400).json({ message: `Invalid profile type: ${type}` });
+        return res.status(400).json({ message: `Invalid profile type: ${profileType}` });
       }
 
       if (!req.file) {
@@ -1546,34 +1716,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Determine resource type based on mime type
       let resourceType: 'image' | 'video' | 'raw' = 'image';
-      let fieldToUpdate = config.photoField;
+      let fieldToUpdate = config.portfolioField || config.photoField;
 
       if (req.file.mimetype.startsWith('video/')) {
         resourceType = 'video';
-        fieldToUpdate = config.videoField;
+        fieldToUpdate = config.portfolioField || config.videoField;
       } else if (req.file.mimetype === 'application/pdf') {
         resourceType = 'raw';
         fieldToUpdate = config.portfolioField || config.photoField;
       } else if (req.file.mimetype.startsWith('audio/')) {
         resourceType = 'raw';
-        fieldToUpdate = config.portfolioField || 'audioSamples';
+        fieldToUpdate = config.portfolioField || config.photoField;
       }
 
       // Upload to Cloudinary
       const uploadResult = await uploadMediaToCloudinary(
         req.file,
-        `profiles/${type}/${req.userId}/portfolio`,
+        `profiles/${profileType}/${userIdInt}/portfolio`,
         resourceType
       );
 
       // Get current profile
       const [profile] = await db.select()
         .from(config.table)
-        .where(eq(config.table.userId, req.userId!))
+        .where(eq(config.table.userId, userIdInt))
         .limit(1);
 
       if (!profile) {
-        return res.status(404).json({ message: `${type} profile not found` });
+        return res.status(404).json({ message: `${profileType} profile not found` });
       }
 
       // Add URL to appropriate array
@@ -1583,27 +1753,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update profile
       await db.update(config.table)
         .set({ [fieldToUpdate]: updatedItems, updatedAt: new Date() })
-        .where(eq(config.table.userId, req.userId!));
+        .where(eq(config.table.userId, userIdInt));
 
       res.status(201).json({ 
         message: 'Portfolio item uploaded successfully',
         url: uploadResult.url,
-        type: resourceType
+        type: resourceType,
+        field: fieldToUpdate
       });
     } catch (error: any) {
-      console.error(`[POST /api/profiles/:type/upload-portfolio] Error:`, error);
+      console.error(`[POST /api/profiles/:profileType/:userId/upload-portfolio] Error:`, error);
       res.status(500).json({ message: 'Failed to upload portfolio item', error: error.message });
     }
   });
 
-  // DELETE /api/profiles/:type/media/:mediaId
-  app.delete("/api/profiles/:type/media/:mediaId", authenticateToken, async (req: AuthRequest, res: Response) => {
+  // DELETE /api/profiles/:profileType/:userId/media/:mediaId
+  app.delete("/api/profiles/:profileType/:userId/media/:mediaId", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const { type, mediaId } = req.params;
-      const config = getProfileConfig(type);
+      const { profileType, userId, mediaId } = req.params;
+      const userIdInt = parseInt(userId);
+      
+      // Validate that user can only delete from their own profile
+      if (req.userId !== userIdInt) {
+        return res.status(403).json({ message: 'You can only delete media from your own profile' });
+      }
+      
+      const config = getProfileConfig(profileType);
       
       if (!config) {
-        return res.status(400).json({ message: `Invalid profile type: ${type}` });
+        return res.status(400).json({ message: `Invalid profile type: ${profileType}` });
       }
 
       // mediaId is the URL to remove
@@ -1612,20 +1790,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get current profile
       const [profile] = await db.select()
         .from(config.table)
-        .where(eq(config.table.userId, req.userId!))
+        .where(eq(config.table.userId, userIdInt))
         .limit(1);
 
       if (!profile) {
-        return res.status(404).json({ message: `${type} profile not found` });
+        return res.status(404).json({ message: `${profileType} profile not found` });
       }
 
       // Remove from all possible fields
       const updates: any = { updatedAt: new Date() };
+      let mediaFound = false;
 
       if (profile[config.photoField]) {
         const filtered = (profile[config.photoField] as string[]).filter(url => url !== urlToRemove);
         if (filtered.length !== (profile[config.photoField] as string[]).length) {
           updates[config.photoField] = filtered;
+          mediaFound = true;
         }
       }
 
@@ -1633,6 +1813,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const filtered = (profile[config.videoField] as string[]).filter(url => url !== urlToRemove);
         if (filtered.length !== (profile[config.videoField] as string[]).length) {
           updates[config.videoField] = filtered;
+          mediaFound = true;
         }
       }
 
@@ -1640,29 +1821,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const filtered = (profile[config.portfolioField] as string[]).filter(url => url !== urlToRemove);
         if (filtered.length !== (profile[config.portfolioField] as string[]).length) {
           updates[config.portfolioField] = filtered;
+          mediaFound = true;
         }
+      }
+
+      if (!mediaFound) {
+        return res.status(404).json({ message: 'Media not found in profile' });
       }
 
       // Update profile
       await db.update(config.table)
         .set(updates)
-        .where(eq(config.table.userId, req.userId!));
+        .where(eq(config.table.userId, userIdInt));
 
       res.json({ message: 'Media deleted successfully' });
     } catch (error: any) {
-      console.error(`[DELETE /api/profiles/:type/media/:mediaId] Error:`, error);
+      console.error(`[DELETE /api/profiles/:profileType/:userId/media/:mediaId] Error:`, error);
       res.status(500).json({ message: 'Failed to delete media', error: error.message });
     }
   });
 
-  // GET /api/profiles/:type/:userId/media
-  app.get("/api/profiles/:type/:userId/media", async (req: Request, res: Response) => {
+  // GET /api/profiles/:profileType/:userId/media
+  app.get("/api/profiles/:profileType/:userId/media", async (req: Request, res: Response) => {
     try {
-      const { type, userId } = req.params;
-      const config = getProfileConfig(type);
+      const { profileType, userId } = req.params;
+      const config = getProfileConfig(profileType);
       
       if (!config) {
-        return res.status(400).json({ message: `Invalid profile type: ${type}` });
+        return res.status(400).json({ message: `Invalid profile type: ${profileType}` });
       }
 
       const userIdInt = parseInt(userId);
@@ -1677,7 +1863,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .limit(1);
 
       if (!profile) {
-        return res.status(404).json({ message: `${type} profile not found` });
+        return res.status(404).json({ message: `${profileType} profile not found` });
       }
 
       // Collect all media
@@ -1692,7 +1878,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json(media);
     } catch (error: any) {
-      console.error(`[GET /api/profiles/:type/:userId/media] Error:`, error);
+      console.error(`[GET /api/profiles/:profileType/:userId/media] Error:`, error);
       res.status(500).json({ message: 'Failed to fetch media', error: error.message });
     }
   });
@@ -5589,6 +5775,259 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("[Musician Profile] Search error:", error);
       res.status(500).json({ message: "Failed to search musician profiles" });
+    }
+  });
+
+  // ============================================================================
+  // BATCH 14: PROFILE ANALYTICS TRACKING
+  // ============================================================================
+
+  /**
+   * POST /api/profiles/:userId/track-view
+   * Track a profile view with analytics data
+   */
+  app.post("/api/profiles/:userId/track-view", async (req: Request, res: Response) => {
+    try {
+      const profileUserId = parseInt(req.params.userId);
+      
+      if (isNaN(profileUserId)) {
+        return res.status(400).json({ message: 'Invalid user ID' });
+      }
+
+      // Extract tracking data from request body
+      const { profileType, source } = req.body;
+      
+      // Get viewer IP (check for proxies)
+      const viewerIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() 
+        || req.headers['x-real-ip'] as string
+        || req.socket.remoteAddress 
+        || null;
+
+      // Get viewer user ID if authenticated (optional)
+      const authHeader = req.headers.authorization;
+      let viewerUserId: number | null = null;
+      
+      if (authHeader?.startsWith('Bearer ')) {
+        try {
+          const token = authHeader.substring(7);
+          const decoded = require('jsonwebtoken').verify(token, process.env.JWT_SECRET || 'fallback-secret');
+          viewerUserId = (decoded as any).userId;
+          
+          // Don't track self-views
+          if (viewerUserId === profileUserId) {
+            return res.json({ message: 'Self-view not tracked' });
+          }
+        } catch (error) {
+          // Token invalid or expired, continue as anonymous view
+        }
+      }
+
+      // Create profile view record
+      await db.insert(profileViews).values({
+        profileUserId,
+        viewerUserId,
+        profileType: profileType || null,
+        viewerIp,
+      });
+
+      res.status(201).json({ 
+        message: 'Profile view tracked successfully'
+      });
+    } catch (error) {
+      console.error('[Profile Analytics] Track view error:', error);
+      res.status(500).json({ message: 'Failed to track profile view' });
+    }
+  });
+
+  /**
+   * GET /api/profiles/:userId/analytics
+   * Get comprehensive analytics for a profile with aggregation
+   * Query params: period (day|week|month), days (number)
+   */
+  app.get("/api/profiles/:userId/analytics", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const profileUserId = parseInt(req.params.userId);
+      
+      if (isNaN(profileUserId)) {
+        return res.status(400).json({ message: 'Invalid user ID' });
+      }
+
+      // Privacy check: only owner can see detailed analytics
+      if (req.userId !== profileUserId) {
+        return res.status(403).json({ message: 'Not authorized to view analytics' });
+      }
+
+      const { period = 'month', days = '30' } = req.query;
+      const daysNum = parseInt(days as string);
+      const startDate = new Date(Date.now() - daysNum * 24 * 60 * 60 * 1000);
+
+      // Total view count
+      const [totalViewsResult] = await db.select({
+        count: count(),
+      })
+      .from(profileViews)
+      .where(
+        and(
+          eq(profileViews.profileUserId, profileUserId),
+          gte(profileViews.createdAt, startDate)
+        )
+      );
+
+      // Unique visitors (distinct viewer IPs and user IDs)
+      const [uniqueVisitorsResult] = await db.select({
+        uniqueIps: sql<number>`COUNT(DISTINCT CASE WHEN ${profileViews.viewerIp} IS NOT NULL THEN ${profileViews.viewerIp} END)`,
+        uniqueUsers: sql<number>`COUNT(DISTINCT CASE WHEN ${profileViews.viewerUserId} IS NOT NULL THEN ${profileViews.viewerUserId} END)`,
+      })
+      .from(profileViews)
+      .where(
+        and(
+          eq(profileViews.profileUserId, profileUserId),
+          gte(profileViews.createdAt, startDate)
+        )
+      );
+
+      // Views by profile type/tab
+      const viewsByTab = await db.select({
+        profileType: profileViews.profileType,
+        count: count(),
+      })
+      .from(profileViews)
+      .where(
+        and(
+          eq(profileViews.profileUserId, profileUserId),
+          gte(profileViews.createdAt, startDate),
+          isNotNull(profileViews.profileType)
+        )
+      )
+      .groupBy(profileViews.profileType)
+      .orderBy(desc(count()));
+
+      // Daily views aggregation
+      const dailyViews = await db.select({
+        date: sql<string>`DATE(${profileViews.createdAt})`,
+        totalViews: count(),
+        uniqueVisitors: sql<number>`COUNT(DISTINCT COALESCE(${profileViews.viewerUserId}::text, ${profileViews.viewerIp}))`,
+      })
+      .from(profileViews)
+      .where(
+        and(
+          eq(profileViews.profileUserId, profileUserId),
+          gte(profileViews.createdAt, startDate)
+        )
+      )
+      .groupBy(sql`DATE(${profileViews.createdAt})`)
+      .orderBy(sql`DATE(${profileViews.createdAt})`);
+
+      // Weekly aggregation
+      const weeklyViews = await db.select({
+        week: sql<string>`DATE_TRUNC('week', ${profileViews.createdAt})`,
+        totalViews: count(),
+        uniqueVisitors: sql<number>`COUNT(DISTINCT COALESCE(${profileViews.viewerUserId}::text, ${profileViews.viewerIp}))`,
+      })
+      .from(profileViews)
+      .where(
+        and(
+          eq(profileViews.profileUserId, profileUserId),
+          gte(profileViews.createdAt, startDate)
+        )
+      )
+      .groupBy(sql`DATE_TRUNC('week', ${profileViews.createdAt})`)
+      .orderBy(sql`DATE_TRUNC('week', ${profileViews.createdAt})`);
+
+      // Monthly aggregation
+      const monthlyViews = await db.select({
+        month: sql<string>`DATE_TRUNC('month', ${profileViews.createdAt})`,
+        totalViews: count(),
+        uniqueVisitors: sql<number>`COUNT(DISTINCT COALESCE(${profileViews.viewerUserId}::text, ${profileViews.viewerIp}))`,
+      })
+      .from(profileViews)
+      .where(
+        and(
+          eq(profileViews.profileUserId, profileUserId),
+          gte(profileViews.createdAt, startDate)
+        )
+      )
+      .groupBy(sql`DATE_TRUNC('month', ${profileViews.createdAt})`)
+      .orderBy(sql`DATE_TRUNC('month', ${profileViews.createdAt})`);
+
+      res.json({
+        period: daysNum,
+        summary: {
+          totalViews: totalViewsResult.count || 0,
+          uniqueVisitors: (uniqueVisitorsResult.uniqueIps || 0) + (uniqueVisitorsResult.uniqueUsers || 0),
+          uniqueIps: uniqueVisitorsResult.uniqueIps || 0,
+          uniqueUsers: uniqueVisitorsResult.uniqueUsers || 0,
+        },
+        viewsByTab,
+        daily: dailyViews,
+        weekly: weeklyViews,
+        monthly: monthlyViews,
+      });
+    } catch (error) {
+      console.error('[Profile Analytics] Get analytics error:', error);
+      res.status(500).json({ message: 'Failed to fetch analytics' });
+    }
+  });
+
+  /**
+   * GET /api/profiles/:userId/visitors
+   * Get recent profile visitors with details
+   * Query params: limit (number)
+   */
+  app.get("/api/profiles/:userId/visitors", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const profileUserId = parseInt(req.params.userId);
+      
+      if (isNaN(profileUserId)) {
+        return res.status(400).json({ message: 'Invalid user ID' });
+      }
+
+      // Privacy check: only owner can see visitors
+      if (req.userId !== profileUserId) {
+        return res.status(403).json({ message: 'Not authorized to view visitors' });
+      }
+
+      const { limit = '50' } = req.query;
+      const limitNum = Math.min(parseInt(limit as string), 100); // Cap at 100
+
+      // Get recent visitors with user details (if authenticated)
+      const visitors = await db.select({
+        id: profileViews.id,
+        viewedAt: profileViews.createdAt,
+        profileType: profileViews.profileType,
+        viewerUserId: profileViews.viewerUserId,
+        viewerIp: profileViews.viewerIp,
+        viewer: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage,
+          city: users.city,
+          country: users.country,
+        },
+      })
+      .from(profileViews)
+      .leftJoin(users, eq(profileViews.viewerUserId, users.id))
+      .where(eq(profileViews.profileUserId, profileUserId))
+      .orderBy(desc(profileViews.createdAt))
+      .limit(limitNum);
+
+      // Format response
+      const formattedVisitors = visitors.map(v => ({
+        id: v.id,
+        viewedAt: v.viewedAt,
+        profileType: v.profileType,
+        viewer: v.viewerUserId ? v.viewer : null,
+        isAnonymous: !v.viewerUserId,
+        viewerLocation: v.viewerIp ? {
+          ip: v.viewerIp.substring(0, v.viewerIp.lastIndexOf('.')) + '.xxx', // Partial IP for privacy
+        } : null,
+      }));
+
+      res.json(formattedVisitors);
+    } catch (error) {
+      console.error('[Profile Analytics] Get visitors error:', error);
+      res.status(500).json({ message: 'Failed to fetch visitors' });
     }
   });
 

@@ -28,6 +28,7 @@ import {
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { SEO } from "@/components/SEO";
 
 const agents = [
   { id: "A1", name: "Goals.Agent", icon: Target, description: "Goal setting & tracking", route: "/life-ceo/goals" },
@@ -68,6 +69,11 @@ export default function LifeCEODashboard() {
 
   return (
     <SelfHealingErrorBoundary pageName="LifeCEODashboard" fallbackRoute="/feed">
+      <SEO 
+        title="Life CEO Dashboard"
+        description="Manage all aspects of your life with 16 intelligent agents for health, finance, career, relationships, and personal growth"
+        ogImage="/og-image.png"
+      />
       <PageLayout title="Life CEO" showBreadcrumbs>
         <div className="container mx-auto py-8 px-4">
       

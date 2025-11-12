@@ -9,6 +9,7 @@ import {Bot, Brain, CheckCircle, Clock, Users, Zap, Award, Activity } from "luci
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 
 interface AgentStats {
   totalAgents: number;
@@ -74,6 +75,11 @@ export default function ESADashboardPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="ESA Dashboard" fallbackRoute="/platform">
+      <SEO 
+        title="ESA Framework Dashboard"
+        description="Manage 134 Expert Specialized Agents with real-time monitoring, task management, and multi-AI orchestration for intelligent automation"
+        ogImage="/og-image.png"
+      />
       <PageLayout title="ESA Framework Dashboard" showBreadcrumbs>
         <div className="min-h-screen">
           {/* Hero Section - 16:9 */}

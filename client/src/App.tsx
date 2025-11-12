@@ -41,6 +41,7 @@ import EventsGalleryPrototypePage from "@/pages/EventsGalleryPrototypePage";
 
 // Lazy-loaded pages for better performance
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
+const FeaturesPage = lazy(() => import("@/pages/FeaturesPage"));
 const CalendarPage = lazy(() => import("@/pages/CalendarPage"));
 // Social & Community
 const DiscoverPage = lazy(() => import("@/pages/DiscoverPage"));
@@ -259,6 +260,7 @@ function Router() {
       <Route path="/notifications-prototype" component={NotificationsPrototypePage} />
       <Route path="/events-gallery-prototype" component={EventsGalleryPrototypePage} />
       <Route path="/about" component={AboutPage} />
+      <Route path="/features" component={FeaturesPage} />
       <Route path="/discover" component={DiscoverPage} />
       <Route path="/volunteer" component={VolunteerPage} />
       <Route path="/talent-match" component={TalentMatchPage} />

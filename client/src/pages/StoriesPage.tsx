@@ -15,6 +15,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { formatDistanceToNow } from "date-fns";
+import { SEO } from "@/components/SEO";
 
 interface Story {
   id: number;

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Users } from "lucide-react";
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 
 export default function AdminUsersPage() {
   const users = [
@@ -15,6 +16,11 @@ export default function AdminUsersPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Admin Users" fallbackRoute="/admin">
+      <SEO 
+        title="Platform Users"
+        description="Browse and manage all user accounts, roles, and permissions across the Mundo Tango platform"
+        ogImage="/og-image.png"
+      />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">

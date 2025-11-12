@@ -7,6 +7,7 @@ import { TrendingUp, Users, Activity, MapPin, BarChart3, Clock } from "lucide-re
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { formatDistanceToNow } from "date-fns";
+import { SEO } from "@/components/SEO";
 
 export default function AdminAnalyticsPage() {
   const [timeframe, setTimeframe] = useState("7d");
@@ -84,6 +85,11 @@ export default function AdminAnalyticsPage() {
   return (
     <PageLayout title="Analytics Dashboard" showBreadcrumbs>
       <SelfHealingErrorBoundary pageName="Admin Analytics" fallbackRoute="/admin">
+        <SEO 
+          title="Analytics Dashboard"
+          description="Platform analytics with user growth, engagement metrics, content performance, demographics, and real-time activity tracking"
+          ogImage="/og-image.png"
+        />
         <div className="container mx-auto p-6 space-y-6" data-testid="page-admin-analytics">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold">Platform Analytics</h2>

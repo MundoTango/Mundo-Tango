@@ -10,6 +10,7 @@ import { Settings, Database, Shield, Bell, Mail, Code } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { SEO } from "@/components/SEO";
 
 export default function AdminSettingsPage() {
   const { toast } = useToast();
@@ -30,6 +31,11 @@ export default function AdminSettingsPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Admin Settings" fallbackRoute="/admin">
+      <SEO 
+        title="Platform Settings"
+        description="Configure Mundo Tango platform settings including security, notifications, database, and system preferences for admins"
+        ogImage="/og-image.png"
+      />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">

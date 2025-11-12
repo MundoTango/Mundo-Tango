@@ -26,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 
 interface Task {
   id: number;
@@ -81,6 +82,11 @@ export default function ESATasksPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="ESA Tasks" fallbackRoute="/platform/esa">
+      <SEO 
+        title="ESA Task Queue"
+        description="Manage and monitor intelligent agent tasks with priority tracking, real-time status updates, and automated task distribution"
+        ogImage="/og-image.png"
+      />
       {/* Hero Section - 16:9 Aspect Ratio */}
       <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 via-blue-500/20 to-purple-500/20">

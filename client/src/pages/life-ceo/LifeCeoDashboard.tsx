@@ -12,6 +12,7 @@ import {
   MessageSquare, Sparkles, TrendingUp, Calendar
 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
+import { SEO } from "@/components/SEO";
 
 const iconMap: Record<string, any> = {
   briefcase: Briefcase,
@@ -92,6 +93,12 @@ export default function LifeCeoDashboard() {
   };
 
   return (
+    <>
+      <SEO 
+        title="Life CEO"
+        description="Personal AI team of 16 specialized agents helping you excel in health, finance, career, relationships, learning, and all life domains"
+        ogImage="/og-image.png"
+      />
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-blue-950 dark:to-indigo-950">
       <div className="container mx-auto p-4 md:p-8">
         <div className="mb-8 text-center">

@@ -6,10 +6,16 @@ import { Label } from "@/components/ui/label";
 import { CreditCard, Lock, ShoppingCart } from "lucide-react";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 
 export default function CheckoutPage() {
   return (
     <SelfHealingErrorBoundary pageName="Checkout" fallbackRoute="/pricing">
+      <SEO 
+        title="Checkout"
+        description="Complete your purchase securely with encrypted payment processing for Mundo Tango premium subscription"
+        ogImage="/og-image.png"
+      />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <div className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">

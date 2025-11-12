@@ -7,6 +7,7 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { PostItem, type PostItemData } from "@/components/feed/PostItem";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SEO } from "@/components/SEO";
 
 export default function SavedPostsPage() {
   const { data: savedPosts, isLoading } = useQuery<PostItemData[]>({

@@ -20,6 +20,7 @@ import { formatDistanceToNow } from "date-fns";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 
 interface Communication {
   id: number;
@@ -81,6 +82,11 @@ export default function ESACommunicationsPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="ESA Communications" fallbackRoute="/platform/esa">
+      <SEO 
+        title="Inter-Agent Communications"
+        description="Monitor H2A, A2A, and A2H communications across the ESA network with real-time message tracking and conversation analytics"
+        ogImage="/og-image.png"
+      />
       {/* Hero Section - 16:9 Aspect Ratio */}
       <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-green-500/20">

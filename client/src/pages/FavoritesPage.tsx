@@ -18,6 +18,7 @@ import { formatDistanceToNow } from "date-fns";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 
 interface Favorite {
   id: number;

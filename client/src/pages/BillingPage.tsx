@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { CreditCard, Download, Calendar } from "lucide-react";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 
 export default function BillingPage() {
   const invoices = [
@@ -14,6 +15,11 @@ export default function BillingPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Billing & Invoices" fallbackRoute="/settings">
+      <SEO 
+        title="Billing & Invoices"
+        description="Manage your subscription, view payment history, and download invoices for your Mundo Tango account"
+        ogImage="/og-image.png"
+      />
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
         <div className="relative h-[40vh] md:h-[50vh] w-full overflow-hidden">
