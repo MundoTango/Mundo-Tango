@@ -114,7 +114,7 @@ async function handleSearchAlert(job: Job) {
 // Create Worker with automatic Redis fallback
 const housingWorker = createWorker(
   "housing-automation",
-  async (job: Job) => {
+  async (job: Job<any, any, string>) => {
     try {
       switch (job.name) {
         case "booking-confirmation":
@@ -139,17 +139,18 @@ const housingWorker = createWorker(
       console.error(`[Housing Worker] Error:`, error);
       throw error;
     }
-  },
-  { connection }
+  }
 );
 
-housingWorker.on("completed", (job) => {
-  console.log(`✅ Housing job ${job.id} completed`);
-});
+if ('on' in housingWorker) {
+  housingWorker.on("completed", (job: Job) => {
+    console.log(`✅ Housing job ${job.id} completed`);
+  });
 
-housingWorker.on("failed", (job, err) => {
-  console.error(`❌ Housing job ${job?.id} failed:`, err.message);
-});
+  housingWorker.on("failed", (job: Job | undefined, err: Error) => {
+    console.error(`❌ Housing job ${job?.id} failed:`, err.message);
+  });
+}
 
 console.log("🚀 Housing Automation Worker started");
 

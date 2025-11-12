@@ -14,14 +14,14 @@ import { Badge } from "@/components/ui/badge";
 
 export default function EventDetailsPage() {
   const [, params] = useRoute("/events/:id");
-  const eventId = params?.id || "";
+  const eventId = parseInt(params?.id || "0");
   const { data: event, isLoading } = useEvent(eventId);
-  const rsvpEvent = useRSVPEvent(eventId);
+  const rsvpEvent = useRSVPEvent();
   const { toast } = useToast();
 
   const handleRsvp = async (status: "going" | "maybe" | "not_going") => {
     try {
-      await rsvpEvent.mutateAsync({ eventId, status });
+      await rsvpEvent.mutateAsync({ eventId: eventId, status });
       toast({
         title: "RSVP confirmed!",
         description: `You are ${status} for this event.`,
@@ -86,7 +86,7 @@ export default function EventDetailsPage() {
           <motion.div 
             className="absolute inset-0 bg-cover bg-center" 
             style={{
-              backgroundImage: `url('${event.image_url || "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop"}')`
+              backgroundImage: `url('https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop')`
             }}
             initial={{ scale: 1.1 }}
             animate={{ scale: 1 }}
@@ -102,9 +102,9 @@ export default function EventDetailsPage() {
               transition={{ duration: 1, ease: "easeOut" }}
               className="max-w-4xl w-full"
             >
-              {event.category && (
+              {event.eventType && (
                 <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-                  {event.category}
+                  {event.eventType}
                 </Badge>
               )}
               
@@ -115,18 +115,12 @@ export default function EventDetailsPage() {
               <div className="flex flex-wrap items-center justify-center gap-6 text-white/90 mb-8">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-5 w-5" />
-                  <span>{event.start_date && format(new Date(event.start_date), "MMM dd, yyyy")}</span>
+                  <span>{event.date && format(new Date(event.date), "MMM dd, yyyy")}</span>
                 </div>
                 {event.location && (
                   <div className="flex items-center gap-2">
                     <MapPin className="h-5 w-5" />
                     <span>{event.location}</span>
-                  </div>
-                )}
-                {event.is_virtual && (
-                  <div className="flex items-center gap-2">
-                    <Globe className="h-5 w-5" />
-                    <span>Virtual Event</span>
                   </div>
                 )}
               </div>
@@ -184,10 +178,9 @@ export default function EventDetailsPage() {
                     <div>
                       <p className="text-lg font-semibold mb-2">Date & Time</p>
                       <p className="text-base text-muted-foreground leading-relaxed">
-                        {event.start_date && format(new Date(event.start_date), "PPPP 'at' p")}
-                        {event.end_date && (
-                          <> - {format(new Date(event.end_date), "p")}</>
-                        )}
+                        {event.date && format(new Date(event.date), "PPPP")}
+                        {event.startTime && <> at {event.startTime}</>}
+                        {event.endTime && <> - {event.endTime}</>}
                       </p>
                     </div>
                   </motion.div>
@@ -205,23 +198,6 @@ export default function EventDetailsPage() {
                       <div>
                         <p className="text-lg font-semibold mb-2">Location</p>
                         <p className="text-base text-muted-foreground leading-relaxed">{event.location}</p>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {event.is_virtual && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 }}
-                      className="flex items-start gap-4"
-                    >
-                      <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Globe className="h-7 w-7 text-primary" />
-                      </div>
-                      <div>
-                        <p className="text-lg font-semibold mb-2">Online Event</p>
-                        <p className="text-base text-muted-foreground leading-relaxed">Join virtually from anywhere</p>
                       </div>
                     </motion.div>
                   )}

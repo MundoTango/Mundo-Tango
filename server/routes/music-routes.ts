@@ -169,10 +169,10 @@ router.get("/favorites", authenticateToken, async (req: AuthRequest, res: Respon
 // POST /api/music/tracks - Upload track (auth required)
 router.post("/tracks", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const { title, artist, album, genre, duration, audioUrl, imageUrl } = req.body;
+    const { title, artist, album, genre, year, duration, fileUrl, orchestra } = req.body;
 
-    if (!title || !artist || !audioUrl) {
-      return res.status(400).json({ message: "Title, artist, and audio URL are required" });
+    if (!title || !artist) {
+      return res.status(400).json({ message: "Title and artist are required" });
     }
 
     const result = await db.insert(musicLibrary).values({
@@ -180,10 +180,10 @@ router.post("/tracks", authenticateToken, async (req: AuthRequest, res: Response
       artist,
       album: album || null,
       genre: genre || null,
+      year: year || null,
       duration: duration || null,
-      audioUrl,
-      imageUrl: imageUrl || null,
-      plays: 0,
+      fileUrl: fileUrl || null,
+      orchestra: orchestra || null,
     }).returning();
 
     res.status(201).json(result[0]);

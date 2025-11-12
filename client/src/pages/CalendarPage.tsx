@@ -184,7 +184,8 @@ export default function CalendarPage() {
             <div className="mt-12">
               <h2 className="text-3xl font-serif font-bold mb-6">Upcoming Events</h2>
               <div className="grid gap-6 md:grid-cols-2">
-                {events && Array.isArray(events) && events.slice(0, 4).map((event: any, index: number) => (
+                {events && Array.isArray(events) && events.slice(0, 4).map((event: any, index: number) => {
+                  return (
                   <motion.div
                     key={event.id}
                     initial={{ opacity: 0, y: 40 }}
@@ -212,7 +213,7 @@ export default function CalendarPage() {
                         <CardContent className="p-4 space-y-2">
                           <div className="flex items-center gap-2 text-sm">
                             <CalendarIcon className="h-4 w-4 text-primary" />
-                            <span>{event.startDate && format(new Date(event.startDate || event.start_date), "MMM dd, yyyy")}</span>
+                            <span>{(event.startDate || event.start_date) && format(new Date(event.startDate || event.start_date || event.date), "MMM dd, yyyy")}</span>
                           </div>
                           {event.location && (
                             <div className="flex items-center gap-2 text-sm">
@@ -224,7 +225,8 @@ export default function CalendarPage() {
                       </Card>
                     </Link>
                   </motion.div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </motion.div>

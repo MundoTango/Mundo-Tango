@@ -135,7 +135,9 @@ class LanceDBService {
       if (this.embeddingCache.size >= 1000) {
         // Remove oldest entry (simple LRU)
         const firstKey = this.embeddingCache.keys().next().value;
-        this.embeddingCache.delete(firstKey);
+        if (firstKey) {
+          this.embeddingCache.delete(firstKey);
+        }
       }
       this.embeddingCache.set(cacheKey, embedding);
 
