@@ -79,7 +79,7 @@ export function PublicNavbar() {
             <Button 
               size="default" 
               className="ocean-gradient text-white font-semibold"
-              data-testid="button-login"
+              data-testid="button-nav-login"
             >
               LOGIN
             </Button>

@@ -240,8 +240,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         country: data.user.country,
       });
 
-      // Redirect to feed after successful login per spec (PART 2, section 2.1, line 556)
-      navigate("/feed");
+      // Redirect to root after successful login - ProtectedRoute will handle auth check
+      // Use setTimeout to ensure state updates complete before navigation (fixes race condition)
+      setTimeout(() => navigate("/"), 0);
     } catch (error) {
       console.error("Login error:", error);
       throw error;

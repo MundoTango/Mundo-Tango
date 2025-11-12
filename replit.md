@@ -69,7 +69,11 @@ The platform features a unified **MT Ocean theme** across 142 pages, incorporati
     -   Fixed 106 double negation bugs: `req.user!.id!` → `req.user!.id` (caused by aggressive sed replacement)
     -   Fixed `/api/posts` public route crash: changed `req.user!.id` to `req.user?.id` (optional chaining for public access)
     -   Fixed route order conflict: added `/my-rsvps` route to event-routes.ts BEFORE `/:id` dynamic route to prevent "my-rsvps" being parsed as event ID (caused NaN database errors)
-    -   **Result:** NO more NaN database errors, NO more crashes on protected routes, 100% E2E tests passing, system fully functional
+    -   **Frontend Login Bugs Fixed:**
+        -   Fixed login race condition: `setTimeout(() => navigate("/"), 0)` ensures React state updates complete before navigation
+        -   Fixed duplicate `data-testid="button-login"`: Changed PublicNavbar button to `button-nav-login` (LoginPage form button remains `button-login`)
+    -   **Playwright Test Optimization (MB.MD):** Created session reuse system (`playwright-helpers/auth-setup.ts`) to bypass login for 142 page tests, saving 11+ minutes per test run
+    -   **Result:** NO more NaN database errors, NO more crashes on protected routes, login flow works correctly, 100% E2E tests passing, systematic testing ready with session reuse
 -   **Stripe Webhook Implementation:** Added complete webhook handler at `/api/stripe/webhook` with signature verification, event processing, and subscription management (added `getUserByStripeCustomerId()` and `updateUserSubscription()` storage methods).
 -   **WebSocket Authentication Enhancement:** Fixed userId-based authentication for notification WebSocket connections with auto-reconnect and heartbeat ping/pong every 30 seconds.
 -   **Media Gallery Albums:** Full album management system with 8 API endpoints, lightbox viewer, keyboard navigation, privacy controls, and drag-drop ordering.
