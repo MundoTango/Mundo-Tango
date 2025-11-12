@@ -6,10 +6,16 @@ import { authenticateToken, AuthRequest } from "../middleware/auth";
 
 const router = Router();
 
-// GET /api/travel/plans - Get user's travel plans (auth required)
-router.get("/plans", authenticateToken, async (req: AuthRequest, res: Response) => {
+// GET /api/travel/plans - Get user's travel plans (public with userId query param)
+router.get("/plans", async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user!.id;
+    // Support both authenticated and public access
+    const userIdParam = req.query.userId ? parseInt(req.query.userId as string) : null;
+    const userId = userIdParam || req.user?.id;
+
+    if (!userId) {
+      return res.status(400).json({ message: "userId query parameter required for public access" });
+    }
 
     const result = await db.select()
       .from(travelPlans)

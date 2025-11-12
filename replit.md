@@ -63,6 +63,7 @@ The platform features a unified **MT Ocean theme** across 142 pages, incorporati
 **Testing Infrastructure:** Comprehensive Playwright test suites achieving **95% coverage**, including E2E critical tests (authentication, payments with 9 Stripe tests, admin), WebSocket real-time tests (6 tests for notifications and live chat), Media Gallery Album tests (13 tests covering CRUD, lightbox, keyboard navigation), theme persistence tests (4 tests), integration tests (API validation), security tests (OWASP Top 10), performance tests (k6 load testing), and visual editor tests, totaling approximately 1,500+ lines across 12 suites.
 
 **Recent Improvements (November 12, 2025):**
+-   **ProfilePage Editorial Glassmorphic Hero Design (PART_4):** Rebuilt profile hero with editorial design where profile photo IS the hero image (400px height), glassmorphic info card overlay (bottom 40%), upcoming travel integration showing next 2 trips, MT Ocean theme with white text on dark gradient, public profile access (removed ProtectedRoute), and complete ProfileTabTravel component with React Query data fetching.
 -   **Critical Authentication Bug Fixes (MB.MD 99% → 100%):** Completed systematic fix of 140+ authentication bugs across the codebase:
     -   Fixed 129 instances in `server/routes.ts`: replaced `req.userId` with `req.user!.id` (authentication middleware stores user in `req.user`, not `req.userId`)
     -   Fixed 5 instances in `server/routes/event-routes.ts`: replaced `req.userId!` with `req.user!.id`
