@@ -396,5 +396,6 @@ export default function LifeCeoDashboard() {
         </Tabs>
       </div>
     </div>
+    </>
   );
 }

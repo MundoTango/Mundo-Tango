@@ -6,8 +6,8 @@ import { Plane, MapPin, Calendar, DollarSign, Briefcase, Heart } from "lucide-re
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import travelHeroImg from "@assets/stock_images/global_world_map_di_7a6d97d8.jpg";
-import travelImg1 from "@assets/stock_images/global_world_map_di_9c41b94e.jpg";
+import travelHeroImg from "@assets/stock_images/global_world_map_con_0c38d510.jpg";
+import travelImg1 from "@assets/stock_images/global_world_map_con_5d0982b5.jpg";
 
 export default function TravelAgentPage() {
   const upcomingTrips = [

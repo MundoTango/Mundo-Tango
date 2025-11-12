@@ -7,7 +7,7 @@ import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 import { motion } from "framer-motion";
-import tangoHeroImage from "@assets/tango-professional-1.jpg";
+import tangoHeroImage from "@assets/IMG_9144-Mejorado-NR_1762013255726.jpg";
 
 export default function HelpPage() {
   return (

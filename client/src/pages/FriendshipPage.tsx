@@ -9,7 +9,7 @@ import { LoadingFallback } from "@/components/LoadingFallback";
 import { Users, Calendar, MessageCircle, Heart, MapPin, UserCheck, ChevronRight } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { motion } from "framer-motion";
-import tangoHeroImage from "@assets/tango-professional-1.jpg";
+import tangoHeroImage from "@assets/IMG_9144-Mejorado-NR_1762013255726.jpg";
 
 export default function FriendshipPage() {
   const { userId } = useParams<{ userId: string }>();
