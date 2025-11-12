@@ -219,9 +219,17 @@ export interface IStorage {
   getUserById(id: number): Promise<SelectUser | undefined>;
   getUserByEmail(email: string): Promise<SelectUser | undefined>;
   getUserByUsername(username: string): Promise<SelectUser | undefined>;
+  getUserByStripeCustomerId(customerId: string): Promise<SelectUser | undefined>;
   createUser(user: InsertUser): Promise<SelectUser>;
   updateUser(id: number, data: Partial<SelectUser>): Promise<SelectUser | undefined>;
   updateUserPassword(id: number, hashedPassword: string): Promise<void>;
+  updateUserSubscription(userId: number, data: { 
+    stripeSubscriptionId?: string; 
+    stripeCustomerId?: string; 
+    plan?: string; 
+    status?: 'active' | 'canceled' | 'past_due'; 
+    currentPeriodEnd?: Date;
+  }): Promise<void>;
   
   createRefreshToken(token: InsertRefreshToken): Promise<SelectRefreshToken>;
   getRefreshToken(token: string): Promise<SelectRefreshToken | undefined>;
@@ -1314,6 +1322,11 @@ export class DbStorage implements IStorage {
     return result[0];
   }
 
+  async getUserByStripeCustomerId(customerId: string): Promise<SelectUser | undefined> {
+    const result = await db.select().from(users).where(eq(users.stripeCustomerId, customerId)).limit(1);
+    return result[0];
+  }
+
   async createUser(user: InsertUser): Promise<SelectUser> {
     const result = await db.insert(users).values(user).returning();
     return result[0];
@@ -1333,6 +1346,22 @@ export class DbStorage implements IStorage {
       .update(users)
       .set({ password: hashedPassword, updatedAt: new Date() })
       .where(eq(users.id, id));
+  }
+
+  async updateUserSubscription(userId: number, data: {
+    stripeSubscriptionId?: string;
+    stripeCustomerId?: string;
+    plan?: string;
+    status?: 'active' | 'canceled' | 'past_due';
+    currentPeriodEnd?: Date;
+  }): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        ...data,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId));
   }
 
   async createRefreshToken(token: InsertRefreshToken): Promise<SelectRefreshToken> {
