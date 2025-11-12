@@ -54,6 +54,7 @@ import agentCommunicationRoutes from "./routes/agentCommunicationRoutes";
 import knowledgeRoutes from "./routes/knowledgeRoutes";
 import monitoringRoutes from "./routes/monitoringRoutes";
 import multiAIRoutes from "./routes/multiAIRoutes";
+import documentationGovernanceRoutes from "./routes/documentation-governance-routes";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
@@ -155,6 +156,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // BATCH 16: Multi-AI Orchestration Routes
   app.use("/api/ai/multi", multiAIRoutes);
+  
+  // BATCH 29: Documentation Governance System
+  app.use("/api/documentation", documentationGovernanceRoutes);
   
   // Existing routes
   app.use("/api/auth", authRoutes);

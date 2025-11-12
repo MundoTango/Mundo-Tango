@@ -17,7 +17,7 @@
  * - BullMQ (deadline management)
  */
 
-import { db } from "../../../db";
+import { db } from "../../../shared/db";
 import { agentDecisions } from "../../../shared/schema";
 import type { 
   InsertAgentDecision,

@@ -1,0 +1,35 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Documentation Governance - Pre-commit Hook
+# Validates documentation before allowing commits
+# Based on APPENDIX P governance rules
+
+echo "🔍 Running documentation validation..."
+
+# Check if documentation files were modified
+DOCS_MODIFIED=$(git diff --cached --name-only | grep -E "docs/.*\.md$|AGENT_LEARNING_INDEX_COMPLETE\.md")
+
+if [ -n "$DOCS_MODIFIED" ]; then
+  echo "📝 Documentation files modified, running validation..."
+  
+  # Run validation script
+  node scripts/validate-docs.cjs
+  
+  if [ $? -ne 0 ]; then
+    echo ""
+    echo "❌ Documentation validation failed!"
+    echo "Please fix the errors above before committing."
+    echo ""
+    echo "To bypass this check (NOT RECOMMENDED):"
+    echo "  git commit --no-verify"
+    echo ""
+    exit 1
+  fi
+  
+  echo "✅ Documentation validation passed!"
+else
+  echo "ℹ️  No documentation files modified, skipping validation."
+fi
+
+exit 0

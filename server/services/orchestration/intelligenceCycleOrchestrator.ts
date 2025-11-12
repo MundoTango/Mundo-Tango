@@ -22,7 +22,7 @@
  * - Agent Collaboration Service - COLLABORATE phase
  */
 
-import { db } from "../../../db";
+import { db } from "../../../shared/db";
 import { intelligenceCycles } from "../../../shared/schema";
 import type { 
   InsertIntelligenceCycle,

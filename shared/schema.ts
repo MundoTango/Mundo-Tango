@@ -4254,6 +4254,75 @@ export const customerJourneyTests = pgTable("customer_journey_tests", {
   testedAtIdx: index("customer_journey_tests_tested_at_idx").on(table.testedAt),
 }));
 
+/**
+ * AI Guardrail Violations Table (APPENDIX Q - BATCH 28)
+ * Tracks AI error prevention guardrail violations across 7 layers
+ * Enables tracking of hallucinations, breaking changes, and other AI errors
+ * 
+ * 7 Guardrail Layers:
+ * 1. Pre-Execution Validation - Requirements clarity before coding
+ * 2. Multi-AI Code Review - Peer validation from Agents #79, #68, #80
+ * 3. Hallucination Detection - Verify code references exist
+ * 4. Breaking Change Prevention - Impact analysis before changes
+ * 5. Requirement Verification - Output matches requirements exactly
+ * 6. Continuous Monitoring - Watch for runtime errors
+ * 7. Pattern Learning - Learn from mistakes (Agent #68)
+ */
+export const aiGuardrailViolations = pgTable("ai_guardrail_violations", {
+  id: serial("id").primaryKey(),
+  
+  // Violation identification
+  guardrailLayer: varchar("guardrail_layer", { length: 50 }).notNull(), // Layer 1-7
+  violationType: varchar("violation_type", { length: 100 }).notNull(), // hallucination, breaking_change, etc
+  severity: varchar("severity", { length: 20 }).notNull(), // critical, high, medium, low
+  
+  // Agent context
+  agentId: varchar("agent_id", { length: 100 }).notNull(), // Which AI made the error
+  targetFeature: varchar("target_feature", { length: 255 }), // What was being built
+  targetFile: varchar("target_file", { length: 500 }), // Which file was affected
+  
+  // Violation details
+  violationDetails: jsonb("violation_details").notNull(), // Full violation data
+  codeSnippet: text("code_snippet"), // Problematic code
+  expectedBehavior: text("expected_behavior"), // What should have happened
+  actualBehavior: text("actual_behavior"), // What actually happened
+  
+  // Detection & resolution
+  detectedBy: varchar("detected_by", { length: 100 }).notNull(), // Which guardrail/agent detected it
+  autoFixed: boolean("auto_fixed").default(false), // Was it auto-corrected?
+  fixApplied: text("fix_applied"), // What fix was applied
+  fixedBy: varchar("fixed_by", { length: 100 }), // Which agent fixed it
+  
+  // Impact assessment
+  impactLevel: varchar("impact_level", { length: 20 }), // production, staging, development
+  affectedUsers: integer("affected_users").default(0), // How many users impacted
+  downtimeMinutes: integer("downtime_minutes").default(0), // Service downtime caused
+  
+  // Learning & pattern extraction
+  patternExtracted: boolean("pattern_extracted").default(false), // Was a pattern learned?
+  patternId: integer("pattern_id").references(() => learningPatterns.id), // Link to learned pattern
+  preventionRule: text("prevention_rule"), // Rule to prevent recurrence
+  
+  // Metadata
+  metadata: jsonb("metadata"), // Additional context data
+  status: varchar("status", { length: 50 }).default("open"), // open, fixed, acknowledged, ignored
+  
+  // Timestamps
+  detectedAt: timestamp("detected_at").defaultNow(),
+  fixedAt: timestamp("fixed_at"),
+  acknowledgedAt: timestamp("acknowledged_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  guardrailLayerIdx: index("ai_guardrail_violations_layer_idx").on(table.guardrailLayer),
+  violationTypeIdx: index("ai_guardrail_violations_type_idx").on(table.violationType),
+  severityIdx: index("ai_guardrail_violations_severity_idx").on(table.severity),
+  agentIdx: index("ai_guardrail_violations_agent_idx").on(table.agentId),
+  statusIdx: index("ai_guardrail_violations_status_idx").on(table.status),
+  detectedAtIdx: index("ai_guardrail_violations_detected_at_idx").on(table.detectedAt),
+  impactIdx: index("ai_guardrail_violations_impact_idx").on(table.impactLevel, table.severity),
+}));
+
 // ============================================================================
 // ESA AGENT ZOD SCHEMAS & TYPES
 // ============================================================================
@@ -4307,6 +4376,18 @@ export type SelectAgentKnowledge = typeof agentKnowledge.$inferSelect;
 export const insertCustomerJourneyTestSchema = createInsertSchema(customerJourneyTests).omit({ id: true, createdAt: true, testedAt: true });
 export type InsertCustomerJourneyTest = z.infer<typeof insertCustomerJourneyTestSchema>;
 export type SelectCustomerJourneyTest = typeof customerJourneyTests.$inferSelect;
+
+// AI Guardrail Violations (APPENDIX Q - BATCH 28)
+export const insertAIGuardrailViolationSchema = createInsertSchema(aiGuardrailViolations).omit({ 
+  id: true, 
+  createdAt: true, 
+  updatedAt: true, 
+  detectedAt: true, 
+  fixedAt: true, 
+  acknowledgedAt: true 
+});
+export type InsertAIGuardrailViolation = z.infer<typeof insertAIGuardrailViolationSchema>;
+export type SelectAIGuardrailViolation = typeof aiGuardrailViolations.$inferSelect;
 
 // Agent Change Broadcasts (TRACK 2 BATCH 10-12)
 export const insertAgentChangeBroadcastSchema = createInsertSchema(agentChangeBroadcasts).omit({ 

@@ -10,7 +10,7 @@
  * Reference: ESA A2A Protocol - Performance Tracking Communication
  */
 
-import { db } from "../../../db";
+import { db } from "../../../shared/db";
 import { agentPerformanceMetrics, agentPerformanceAlerts } from "../../../shared/schema";
 import type { 
   InsertAgentPerformanceMetrics, 

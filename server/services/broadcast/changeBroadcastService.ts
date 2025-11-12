@@ -17,7 +17,7 @@
  * - BullMQ (reliable queueing)
  */
 
-import { db } from "../../../db";
+import { db } from "../../../shared/db";
 import { agentChangeBroadcasts } from "../../../shared/schema";
 import type { 
   InsertAgentChangeBroadcast,
