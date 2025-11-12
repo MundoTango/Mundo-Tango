@@ -21,7 +21,11 @@ import {
 import { learningPatterns } from "../../shared/schema";
 import { eq, desc, and, or, gte, like, sql, count } from "drizzle-orm";
 
+console.log('[DEBUG] 🔄 knowledgeRoutes.ts - Starting module load...');
+
 const router = Router();
+
+console.log('[DEBUG] ✅ knowledgeRoutes.ts - Module load complete');
 
 // ============================================================================
 // VALIDATION SCHEMAS

@@ -18,7 +18,11 @@ import { db } from "../../shared/db";
 import { agentCommunications, esaAgents, agentChangeBroadcasts, agentTasks } from "../../shared/platform-schema";
 import { eq, desc, and, or, gte, count, sql, inArray } from "drizzle-orm";
 
+console.log('[DEBUG] 🔄 agentCommunicationRoutes.ts - Starting module load...');
+
 const router = Router();
+
+console.log('[DEBUG] ✅ agentCommunicationRoutes.ts - Module load complete');
 
 // ============================================================================
 // VALIDATION SCHEMAS

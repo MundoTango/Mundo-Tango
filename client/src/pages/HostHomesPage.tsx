@@ -664,6 +664,7 @@ function HostHomesPageContent() {
             </div>
           </div>
         </div>
+      </div>
 
       {/* Host Creation Wizard Dialog */}
       <Dialog open={showWizard} onOpenChange={setShowWizard}>

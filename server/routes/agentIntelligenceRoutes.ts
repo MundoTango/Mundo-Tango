@@ -27,7 +27,11 @@ import {
 } from "../../shared/schema";
 import { eq, desc, and, gte, sql, count, or } from "drizzle-orm";
 
+console.log('[DEBUG] 🔄 agentIntelligenceRoutes.ts - Starting module load...');
+
 const router = Router();
+
+console.log('[DEBUG] ✅ agentIntelligenceRoutes.ts - Module load complete');
 
 // Lazy initialization to avoid blocking during module load
 let collaborationService: AgentCollaborationService | null = null;

@@ -14,11 +14,22 @@ import { exec } from "child_process";
 import { promisify } from "util";
 import * as fs from "fs/promises";
 import * as path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
 const execAsync = promisify(exec);
+
+console.log('[DEBUG] 🔄 learningIndexRoutes.ts - Starting module load...');
+
+// ES module __dirname equivalent
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const router = Router();
 
 const LEARNING_INDEX_PATH = path.join(__dirname, "../../docs/handoff/AGENT_LEARNING_INDEX_COMPLETE.md");
+
+console.log('[DEBUG] ✅ learningIndexRoutes.ts - Module load complete');
 
 // ============================================================================
 // VALIDATION SCHEMAS

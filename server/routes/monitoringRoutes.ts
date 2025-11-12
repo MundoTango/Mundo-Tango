@@ -21,7 +21,11 @@ import {
 } from "../../shared/schema";
 import { eq, desc, and, gte, sql, count } from "drizzle-orm";
 
+console.log('[DEBUG] 🔄 monitoringRoutes.ts - Starting module load...');
+
 const router = Router();
+
+console.log('[DEBUG] ✅ monitoringRoutes.ts - Module load complete');
 
 // ============================================================================
 // ENDPOINTS

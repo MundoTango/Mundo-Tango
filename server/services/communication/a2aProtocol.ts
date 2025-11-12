@@ -1259,5 +1259,35 @@ RESPONSE REQUIRED IMMEDIATELY
   }
 }
 
-export const a2aProtocol = new A2AProtocolService();
+// ============================================================================
+// LAZY INITIALIZATION - Avoid blocking during module load
+// ============================================================================
+
+let a2aProtocolInstance: A2AProtocolService | null = null;
+
+function getA2AProtocol(): A2AProtocolService {
+  if (!a2aProtocolInstance) {
+    console.log('[A2A Protocol] 🔧 Initializing A2A Protocol Service...');
+    a2aProtocolInstance = new A2AProtocolService();
+    console.log('[A2A Protocol] ✅ A2A Protocol Service initialized');
+  }
+  return a2aProtocolInstance;
+}
+
+// Export lazy getter object for backward compatibility
+export const a2aProtocol = {
+  escalateIssue: (request: EscalationRequest) => getA2AProtocol().escalateIssue(request),
+  requestPeerCollaboration: (request: any) => getA2AProtocol().requestPeerCollaboration(request),
+  declareEmergency: (request: any) => getA2AProtocol().declareEmergency(request),
+  shareKnowledge: (request: any) => getA2AProtocol().shareKnowledge(request),
+  sendMessage: (message: A2AMessage) => getA2AProtocol().sendMessage(message),
+  getAgent: (agentId: string) => getA2AProtocol().getAgent(agentId),
+  getMessageHistory: (agentId?: string, limit?: number) => getA2AProtocol().getMessageHistory(agentId, limit),
+  getKnowledgeBase: (type?: string) => getA2AProtocol().getKnowledgeBase(type),
+  updateAgentMetrics: (agentId: string, metrics: AgentMetrics) => getA2AProtocol().updateAgentMetrics(agentId, metrics),
+  getHierarchyPath: (agentId: string) => getA2AProtocol().getHierarchyPath(agentId),
+  getEscalationPath: (agentId: string) => getA2AProtocol().getEscalationPath(agentId),
+  getTotalAgentCount: () => getA2AProtocol().getTotalAgentCount(),
+};
+
 export default a2aProtocol;
