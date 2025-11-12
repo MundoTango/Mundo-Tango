@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Settings, UserPlus, UserMinus, UserCheck } from "lucide-react";
+import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
@@ -110,6 +110,20 @@ export default function ProfilePage() {
     enabled: !!(currentUser && profileId && currentUser.id !== profileId),
   });
 
+  // Fetch upcoming travel plans for this user
+  const { data: upcomingTravel = [] } = useQuery<any[]>({
+    queryKey: ['/api/travel/plans', profileId],
+    queryFn: async () => {
+      const res = await fetch(`/api/travel/plans?userId=${profileId}`);
+      if (!res.ok) return [];
+      const plans = await res.json();
+      // Filter for upcoming trips only
+      const now = new Date();
+      return plans.filter((trip: any) => new Date(trip.startDate) > now).slice(0, 3);
+    },
+    enabled: !!profileId,
+  });
+
   const isOwnProfile = currentUser?.id === profileId;
   
   // Check friendship status
@@ -188,103 +202,148 @@ export default function ProfilePage() {
         description={user.bio || `${user.name}'s profile on Mundo Tango`}
       />
       
-      {/* Hero Section with Profile Cover (16:9) */}
-      <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center" style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop')`
-        }}>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+      {/* PART_4: Hero Profile Photo Section - Editorial Glassmorphic Design */}
+      <div className="relative w-full h-[400px] overflow-hidden">
+        {/* Profile Photo as Hero Image */}
+        <img 
+          src={user.profileImage || 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop'} 
+          alt={`${user.name}'s profile`}
+          className="w-full h-full object-cover"
+          data-testid="img-hero-profile"
+        />
+        
+        {/* Editorial Gradient Overlay (bottom 40%) */}
+        <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-gradient-to-t from-black/80 via-black/60 to-transparent" />
+        
+        {/* Action Buttons - Top Right */}
+        <div className="absolute top-6 right-6 z-20 flex gap-3">
+          {isOwnProfile ? (
+            <Button asChild variant="outline" className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" data-testid="button-edit-profile">
+              <Link href="/profile/edit">
+                <Settings className="h-4 w-4" />
+                Edit Profile
+              </Link>
+            </Button>
+          ) : isFriend ? (
+            <Button 
+              variant="outline"
+              className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
+              onClick={() => removeFriendMutation.mutate()}
+              disabled={removeFriendMutation.isPending}
+              data-testid={`button-remove-friend-${profileId}`}
+            >
+              <UserMinus className="h-4 w-4" />
+              {removeFriendMutation.isPending ? 'Removing...' : 'Remove Friend'}
+            </Button>
+          ) : hasPendingRequest ? (
+            <Button 
+              variant="outline"
+              className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm"
+              disabled
+              data-testid="button-request-pending"
+            >
+              <UserCheck className="h-4 w-4" />
+              Request Sent
+            </Button>
+          ) : (
+            <Button 
+              className="gap-2 text-white bg-primary/80 backdrop-blur-sm hover:bg-primary"
+              onClick={() => sendFriendRequestMutation.mutate()}
+              disabled={sendFriendRequestMutation.isPending}
+              data-testid={`button-add-friend-${profileId}`}
+            >
+              <UserPlus className="h-4 w-4" />
+              {sendFriendRequestMutation.isPending ? 'Sending...' : 'Add Friend'}
+            </Button>
+          )}
         </div>
         
-        <div className="relative z-10 flex flex-col items-center justify-end h-full px-8 pb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="text-center space-y-6"
-          >
-            <Avatar className="h-32 w-32 mx-auto border-4 border-white/20 shadow-2xl" data-testid="avatar-profile">
-              <AvatarImage src={user.profileImage || undefined} />
-              <AvatarFallback className="text-4xl bg-primary/20 backdrop-blur-sm">
-                {user.name?.charAt(0).toUpperCase() || 'U'}
-              </AvatarFallback>
-            </Avatar>
-            
-            <div className="space-y-3">
-              <div className="flex items-center justify-center gap-3 flex-wrap">
-                <h1 className="text-4xl md:text-5xl font-serif text-white font-bold" data-testid="text-username">
-                  {user.name}
-                </h1>
-                {user.role === 'super_admin' && (
-                  <Badge variant="outline" className="text-white border-white/30 bg-white/10 backdrop-blur-sm" data-testid="badge-role">
-                    Super Admin
-                  </Badge>
-                )}
-              </div>
-              
-              <p className="text-lg text-white/80" data-testid="text-handle">
-                @{user.username}
-              </p>
-              
-              {user.bio && (
-                <p className="text-lg text-white/90 max-w-2xl mx-auto" data-testid="text-bio">
-                  {user.bio}
-                </p>
+        {/* Glassmorphic User Info Card - Bottom Overlay */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="absolute bottom-0 left-0 right-0 p-6"
+        >
+          <div className="backdrop-blur-md bg-white/10 dark:bg-black/20 border border-white/20 rounded-t-2xl p-6 shadow-2xl">
+            {/* Name & Verification */}
+            <div className="flex items-center gap-3 mb-2">
+              <h1 className="text-3xl font-bold text-white drop-shadow-lg" data-testid="text-username">
+                {user.name}
+              </h1>
+              {user.role === 'super_admin' && (
+                <Badge className="bg-primary text-white border-0" data-testid="badge-verified">
+                  <CheckCircle className="w-3 h-3 mr-1" />
+                  Verified
+                </Badge>
               )}
-              
-              {(user.city || user.country) && (
-                <div className="flex items-center justify-center gap-2 text-white/80" data-testid="text-location">
-                  <MapPin className="h-5 w-5" />
-                  <span className="text-base">
-                    {[user.city, user.country].filter(Boolean).join(', ')}
-                  </span>
-                </div>
-              )}
-              
-              <div className="flex justify-center gap-3 pt-4">
-                {isOwnProfile ? (
-                  <Button asChild variant="outline" className="gap-2 text-white border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20" data-testid="button-edit-profile">
-                    <Link href="/profile/edit">
-                      <Settings className="h-4 w-4" />
-                      Edit Profile
-                    </Link>
-                  </Button>
-                ) : isFriend ? (
-                  <Button 
-                    variant="outline"
-                    className="gap-2 text-white border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20"
-                    onClick={() => removeFriendMutation.mutate()}
-                    disabled={removeFriendMutation.isPending}
-                    data-testid={`button-remove-friend-${profileId}`}
-                  >
-                    <UserMinus className="h-4 w-4" />
-                    {removeFriendMutation.isPending ? 'Removing...' : 'Remove Friend'}
-                  </Button>
-                ) : hasPendingRequest ? (
-                  <Button 
-                    variant="outline"
-                    className="gap-2 text-white border-white/30 bg-white/10 backdrop-blur-sm"
-                    disabled
-                    data-testid="button-request-pending"
-                  >
-                    <UserCheck className="h-4 w-4" />
-                    Request Sent
-                  </Button>
-                ) : (
-                  <Button 
-                    className="gap-2 text-white bg-primary/80 backdrop-blur-sm hover:bg-primary"
-                    onClick={() => sendFriendRequestMutation.mutate()}
-                    disabled={sendFriendRequestMutation.isPending}
-                    data-testid={`button-add-friend-${profileId}`}
-                  >
-                    <UserPlus className="h-4 w-4" />
-                    {sendFriendRequestMutation.isPending ? 'Sending...' : 'Add Friend'}
-                  </Button>
-                )}
-              </div>
             </div>
-          </motion.div>
-        </div>
+            
+            {/* Username */}
+            <p className="text-white/90 text-sm mb-3 font-medium" data-testid="text-handle">@{user.username}</p>
+            
+            {/* Bio */}
+            {user.bio && (
+              <p className="text-white/80 text-sm mb-4" data-testid="text-bio">{user.bio}</p>
+            )}
+            
+            {/* Tango Roles */}
+            {user.tangoRoles && user.tangoRoles.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-4">
+                {user.tangoRoles.map((role, index) => (
+                  <Badge 
+                    key={index} 
+                    variant="outline" 
+                    className="bg-white/20 text-white border-white/30 backdrop-blur-sm"
+                    data-testid={`badge-role-${role}`}
+                  >
+                    {role.replace(/_/g, ' ')}
+                  </Badge>
+                ))}
+              </div>
+            )}
+            
+            {/* UPCOMING TRAVEL - CRITICAL FEATURE */}
+            {upcomingTravel && upcomingTravel.length > 0 && (
+              <div className="bg-primary/20 border border-primary/30 rounded-lg p-3 backdrop-blur-sm mb-3" data-testid="section-upcoming-travel">
+                <div className="flex items-center gap-2 mb-2">
+                  <Plane className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-semibold text-white">Upcoming Travel</span>
+                </div>
+                <div className="space-y-1">
+                  {upcomingTravel.slice(0, 2).map((trip: any, index: number) => (
+                    <div key={trip.id || index} className="flex items-center gap-2 text-xs text-white/90" data-testid={`trip-${index}`}>
+                      <Calendar className="w-3 h-3 text-primary" />
+                      <span className="font-medium">{trip.city}</span>
+                      <span className="text-white/70">
+                        ({new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}-
+                        {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })})
+                      </span>
+                    </div>
+                  ))}
+                  {upcomingTravel.length > 2 && (
+                    <Button 
+                      variant="link" 
+                      className="text-primary text-xs p-0 h-auto hover:text-primary/80"
+                      onClick={() => setActiveTab('travel')}
+                      data-testid="button-more-trips"
+                    >
+                      +{upcomingTravel.length - 2} more trips →
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+            
+            {/* Current Location */}
+            {(user.city || user.country) && (
+              <div className="flex items-center gap-2 text-white/80 text-sm" data-testid="text-location">
+                <MapPin className="w-4 h-4" />
+                <span>{[user.city, user.country].filter(Boolean).join(', ')}</span>
+              </div>
+            )}
+          </div>
+        </motion.div>
       </div>
 
       {/* Tab Navigation */}
