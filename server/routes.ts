@@ -26,6 +26,7 @@ import visualEditorRoutes from "./routes/visualEditor";
 import whisperRoutes from "./routes/whisper";
 import openaiRealtimeRoutes from "./routes/openai-realtime";
 import realtimeVoiceRoutes, { initRealtimeVoiceWebSocket } from "./routes/realtimeVoice";
+import { initLivestreamWebSocket } from "./services/livestream-websocket";
 import rbacRoutes from "./routes/rbac-routes";
 import featureFlagsRoutes from "./routes/feature-flags-routes";
 import pricingRoutes from "./routes/pricing-routes";
@@ -43,6 +44,7 @@ import marketplaceRoutes from "./routes/marketplace-routes";
 import subscriptionRoutes from "./routes/subscription-routes";
 import reviewRoutes from "./routes/review-routes";
 import mediaRoutes from "./routes/media-routes";
+import { registerAlbumRoutes } from "./routes/album-routes";
 import leaderboardRoutes from "./routes/leaderboard-routes";
 import blogRoutes from "./routes/blog-routes";
 import teacherRoutes from "./routes/teacher-routes";
@@ -344,6 +346,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Phase D: Community & Engagement Systems
   app.use("/api/reviews", reviewRoutes);
   app.use("/api/media", mediaRoutes);
+  registerAlbumRoutes(app);
   app.use("/api/leaderboard", leaderboardRoutes);
   app.use("/api/blog", blogRoutes);
   
@@ -3561,6 +3564,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize Realtime Voice WebSocket
   initRealtimeVoiceWebSocket(httpServer);
   console.log("[WebSocket] Realtime Voice service initialized on /ws/realtime");
+
+  // Initialize Livestream Chat WebSocket
+  initLivestreamWebSocket(httpServer);
+  console.log("[WebSocket] Livestream chat initialized on /ws/stream/:streamId");
 
   // ============================================================================
   // GROUPS - Additional routes (main routes are above around line 579)

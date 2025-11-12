@@ -1283,6 +1283,19 @@ export const liveStreams = pgTable("live_streams", {
   liveIdx: index("live_streams_live_idx").on(table.isLive),
 }));
 
+// Live Stream Messages
+export const liveStreamMessages = pgTable("live_stream_messages", {
+  id: serial("id").primaryKey(),
+  streamId: integer("stream_id").notNull().references(() => liveStreams.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  message: text("message").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  streamIdx: index("live_stream_messages_stream_idx").on(table.streamId),
+  userIdx: index("live_stream_messages_user_idx").on(table.userId),
+  createdAtIdx: index("live_stream_messages_created_at_idx").on(table.createdAt),
+}));
+
 // Media Gallery
 export const media = pgTable("media", {
   id: serial("id").primaryKey(),
@@ -1471,6 +1484,10 @@ export type SelectReview = typeof reviews.$inferSelect;
 export const insertLiveStreamSchema = createInsertSchema(liveStreams).omit({ id: true, createdAt: true });
 export type InsertLiveStream = z.infer<typeof insertLiveStreamSchema>;
 export type SelectLiveStream = typeof liveStreams.$inferSelect;
+
+export const insertLiveStreamMessageSchema = createInsertSchema(liveStreamMessages).omit({ id: true, createdAt: true });
+export type InsertLiveStreamMessage = z.infer<typeof insertLiveStreamMessageSchema>;
+export type SelectLiveStreamMessage = typeof liveStreamMessages.$inferSelect;
 
 export const insertMediaSchema = createInsertSchema(media).omit({ id: true, createdAt: true });
 export type InsertMedia = z.infer<typeof insertMediaSchema>;
@@ -2271,14 +2288,15 @@ export const mediaAlbums = pgTable("media_albums", {
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   name: varchar("name").notNull(),
   description: text("description"),
-  coverImageUrl: text("cover_image_url"),
+  coverImageId: integer("cover_image_id").references(() => media.id, { onDelete: "set null" }),
   mediaCount: integer("media_count").default(0),
-  privacy: varchar("privacy").default("public"),
+  privacy: varchar("privacy").default("public").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => ({
   userIdx: index("media_albums_user_idx").on(table.userId),
   createdAtIdx: index("media_albums_created_at_idx").on(table.createdAt),
+  coverImageIdx: index("media_albums_cover_image_idx").on(table.coverImageId),
 }));
 
 // Album Media (junction table)
@@ -2286,11 +2304,12 @@ export const albumMedia = pgTable("album_media", {
   id: serial("id").primaryKey(),
   albumId: integer("album_id").notNull().references(() => mediaAlbums.id, { onDelete: "cascade" }),
   mediaId: integer("media_id").notNull().references(() => media.id, { onDelete: "cascade" }),
-  order: integer("order").default(0),
-  createdAt: timestamp("created_at").defaultNow(),
+  order: integer("order").default(0).notNull(),
+  addedAt: timestamp("added_at").defaultNow().notNull(),
 }, (table) => ({
   albumIdx: index("album_media_album_idx").on(table.albumId),
   mediaIdx: index("album_media_media_idx").on(table.mediaId),
+  orderIdx: index("album_media_order_idx").on(table.albumId, table.order),
   uniqueAlbumMedia: uniqueIndex("unique_album_media").on(table.albumId, table.mediaId),
 }));
 

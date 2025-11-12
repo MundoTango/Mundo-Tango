@@ -3,6 +3,7 @@ import { getRedisClient } from '../cache/redis-cache';
 import { jobDuration, jobTotal } from '../monitoring/prometheus';
 import { db } from '../../shared/db';
 import { notifications } from '../../shared/schema';
+import { wsNotificationService } from '../services/websocket-notification-service';
 
 /**
  * Notification Worker
@@ -16,6 +17,7 @@ interface NotificationJob {
   message: string;
   data?: Record<string, any>;
   sendPush?: boolean;
+  actionUrl?: string;
 }
 
 const notificationWorker = new Worker(
@@ -43,7 +45,21 @@ const notificationWorker = new Worker(
       }
       
       // Send real-time notification via WebSocket
-      // TODO: Implement WebSocket notification
+      const wsNotification = {
+        type: job.data.type,
+        title: job.data.title,
+        message: job.data.message,
+        data: job.data.data,
+        actionUrl: job.data.actionUrl,
+        timestamp: new Date().toISOString(),
+      };
+      
+      const sent = wsNotificationService.sendNotification(job.data.userId, wsNotification);
+      if (sent) {
+        console.log(`[WORKER] Real-time notification sent to user ${job.data.userId} via WebSocket`);
+      } else {
+        console.log(`[WORKER] User ${job.data.userId} is not connected, notification saved to database only`);
+      }
       
       const duration = (Date.now() - start) / 1000;
       jobDuration.observe({ job_type: 'notification', status: 'success' }, duration);

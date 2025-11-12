@@ -42,10 +42,17 @@ interface ThemeProviderProps {
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [location] = useLocation();
   
-  // Initialize dark mode from localStorage or system preference (DEFAULT: DARK)
+  // Initialize dark mode from localStorage BEFORE first render (prevent flash)
   const [darkMode, setDarkModeState] = useState<DarkMode>(() => {
+    // Check localStorage first
     const stored = localStorage.getItem('mundo-tango-dark-mode');
     if (stored === 'light' || stored === 'dark') return stored;
+    
+    // Fallback to system preference
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      return prefersDark ? 'dark' : 'light';
+    }
     
     // Default to dark mode for Mundo Tango
     return 'dark';
@@ -56,7 +63,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     return getThemeForRoute(location);
   }, [location]);
   
-  // Apply theme to document
+  // Apply theme to document IMMEDIATELY (prevent flash)
   useEffect(() => {
     const root = document.documentElement;
     
@@ -76,10 +83,24 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     applyCSSVariables(root, tokens, darkMode);
   }, [darkMode, visualTheme]);
   
-  // Persist dark mode to localStorage
+  // Persist dark mode to localStorage on every change
   useEffect(() => {
     localStorage.setItem('mundo-tango-dark-mode', darkMode);
   }, [darkMode]);
+  
+  // Sync theme changes across tabs
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'mundo-tango-dark-mode' && e.newValue) {
+        if (e.newValue === 'light' || e.newValue === 'dark') {
+          setDarkModeState(e.newValue);
+        }
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
   
   const toggleDarkMode = () => {
     setDarkModeState(prev => prev === 'light' ? 'dark' : 'light');

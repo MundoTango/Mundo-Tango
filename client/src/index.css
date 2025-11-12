@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global overflow fix to prevent horizontal scrolling */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 /* LIGHT MODE */
 :root {
   --button-outline: rgba(0,0,0, .10);

@@ -68,6 +68,10 @@ const EventDetailsPage = lazy(() => import("@/pages/EventDetailsPage"));
 const GroupsPage = lazy(() => import("@/pages/GroupsPage"));
 const GroupDetailsPage = lazy(() => import("@/pages/GroupDetailsPage"));
 
+// Media & Albums
+const AlbumsPage = lazy(() => import("@/pages/albums"));
+const AlbumDetailPage = lazy(() => import("@/pages/album-detail"));
+
 // Talent & AI
 const TalentMatchPage = lazy(() => import("@/pages/TalentMatchPage"));
 const MrBlueChatPage = lazy(() => import("@/pages/MrBlueChatPage"));
@@ -418,6 +422,22 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <GroupDetailsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/albums">
+        <ProtectedRoute>
+          <AppLayout>
+            <AlbumsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/albums/:id">
+        <ProtectedRoute>
+          <AppLayout>
+            <AlbumDetailPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>

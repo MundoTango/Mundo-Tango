@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from "express";
 import { db } from "@shared/db";
-import { liveStreams } from "@shared/schema";
+import { liveStreams, liveStreamMessages, users } from "@shared/schema";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { eq, desc, sql } from "drizzle-orm";
 
@@ -259,6 +259,81 @@ router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response)
   } catch (error) {
     console.error("[Livestream] Error deleting stream:", error);
     res.status(500).json({ message: "Failed to delete stream" });
+  }
+});
+
+// ============================================================================
+// LIVE STREAM CHAT ROUTES
+// ============================================================================
+
+// GET /api/livestreams/:id/messages - Get message history
+router.get("/:id/messages", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { limit = "50", offset = "0" } = req.query;
+
+    const messages = await db
+      .select({
+        id: liveStreamMessages.id,
+        streamId: liveStreamMessages.streamId,
+        userId: liveStreamMessages.userId,
+        message: liveStreamMessages.message,
+        createdAt: liveStreamMessages.createdAt,
+        username: users.username,
+        profileImage: users.profileImage,
+      })
+      .from(liveStreamMessages)
+      .leftJoin(users, eq(liveStreamMessages.userId, users.id))
+      .where(eq(liveStreamMessages.streamId, parseInt(id)))
+      .orderBy(desc(liveStreamMessages.createdAt))
+      .limit(parseInt(limit as string))
+      .offset(parseInt(offset as string));
+
+    res.json(messages.reverse());
+  } catch (error) {
+    console.error("[Livestream] Error fetching messages:", error);
+    res.status(500).json({ message: "Failed to fetch messages" });
+  }
+});
+
+// POST /api/livestreams/:id/messages - Send message
+router.post("/:id/messages", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { message } = req.body;
+
+    if (!message || !message.trim()) {
+      return res.status(400).json({ message: "Message is required" });
+    }
+
+    const [newMessage] = await db
+      .insert(liveStreamMessages)
+      .values({
+        streamId: parseInt(id),
+        userId: req.userId!,
+        message: message.trim(),
+      })
+      .returning();
+
+    const [messageWithUser] = await db
+      .select({
+        id: liveStreamMessages.id,
+        streamId: liveStreamMessages.streamId,
+        userId: liveStreamMessages.userId,
+        message: liveStreamMessages.message,
+        createdAt: liveStreamMessages.createdAt,
+        username: users.username,
+        profileImage: users.profileImage,
+      })
+      .from(liveStreamMessages)
+      .leftJoin(users, eq(liveStreamMessages.userId, users.id))
+      .where(eq(liveStreamMessages.id, newMessage.id))
+      .limit(1);
+
+    res.status(201).json(messageWithUser);
+  } catch (error) {
+    console.error("[Livestream] Error sending message:", error);
+    res.status(500).json({ message: "Failed to send message" });
   }
 });
 

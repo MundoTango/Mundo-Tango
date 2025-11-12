@@ -1284,6 +1284,18 @@ export interface IStorage {
     total: number; 
     facets: Record<string, Record<string, number>> 
   }>;
+  
+  // Album Management
+  createAlbum(album: any): Promise<any>;
+  getAlbumById(id: number): Promise<any | undefined>;
+  getUserAlbums(userId: number): Promise<any[]>;
+  updateAlbum(id: number, data: any): Promise<any | undefined>;
+  deleteAlbum(id: number): Promise<void>;
+  addMediaToAlbum(albumId: number, mediaId: number, order: number): Promise<any>;
+  getAlbumMedia(albumId: number, params: { limit?: number; offset?: number }): Promise<any[]>;
+  removeMediaFromAlbum(albumId: number, mediaId: number): Promise<void>;
+  getAlbumWithMedia(id: number): Promise<any | undefined>;
+  checkAlbumOwnership(albumId: number, userId: number): Promise<boolean>;
 }
 
 export class DbStorage implements IStorage {
@@ -6299,6 +6311,113 @@ export class DbStorage implements IStorage {
   
   async deleteTalentProfile(userId: number): Promise<void> {
     await db.delete(talentProfiles).where(eq(talentProfiles.userId, userId));
+  }
+  
+  // ============================================================================
+  // ALBUM MANAGEMENT
+  // ============================================================================
+  
+  async createAlbum(album: any): Promise<any> {
+    const [newAlbum] = await db.insert(mediaAlbums).values(album).returning();
+    return newAlbum;
+  }
+  
+  async getAlbumById(id: number): Promise<any | undefined> {
+    const [album] = await db.select().from(mediaAlbums).where(eq(mediaAlbums.id, id)).limit(1);
+    return album;
+  }
+  
+  async getUserAlbums(userId: number): Promise<any[]> {
+    return await db.select().from(mediaAlbums).where(eq(mediaAlbums.userId, userId)).orderBy(desc(mediaAlbums.createdAt));
+  }
+  
+  async updateAlbum(id: number, data: any): Promise<any | undefined> {
+    const [updated] = await db
+      .update(mediaAlbums)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(mediaAlbums.id, id))
+      .returning();
+    return updated;
+  }
+  
+  async deleteAlbum(id: number): Promise<void> {
+    await db.delete(mediaAlbums).where(eq(mediaAlbums.id, id));
+  }
+  
+  async addMediaToAlbum(albumId: number, mediaId: number, order: number): Promise<any> {
+    const [result] = await db.insert(albumMedia).values({
+      albumId,
+      mediaId,
+      order
+    }).returning();
+    
+    await db.execute(sql`
+      UPDATE media_albums 
+      SET media_count = (SELECT COUNT(*) FROM album_media WHERE album_id = ${albumId})
+      WHERE id = ${albumId}
+    `);
+    
+    return result;
+  }
+  
+  async getAlbumMedia(albumId: number, params: { limit?: number; offset?: number }): Promise<any[]> {
+    const limit = params.limit || 50;
+    const offset = params.offset || 0;
+    
+    const results = await db.execute(sql`
+      SELECT 
+        am.id,
+        am.album_id as "albumId",
+        am.media_id as "mediaId",
+        am.order,
+        am.added_at as "addedAt",
+        m.id as "media_id",
+        m.user_id as "media_userId",
+        m.type as "media_type",
+        m.url as "media_url",
+        m.thumbnail as "media_thumbnail",
+        m.caption as "media_caption",
+        m.created_at as "media_createdAt"
+      FROM album_media am
+      JOIN media m ON am.media_id = m.id
+      WHERE am.album_id = ${albumId}
+      ORDER BY am.order ASC, am.added_at DESC
+      LIMIT ${limit} OFFSET ${offset}
+    `);
+    
+    return results.rows || [];
+  }
+  
+  async removeMediaFromAlbum(albumId: number, mediaId: number): Promise<void> {
+    await db.delete(albumMedia).where(
+      and(
+        eq(albumMedia.albumId, albumId),
+        eq(albumMedia.mediaId, mediaId)
+      )
+    );
+    
+    await db.execute(sql`
+      UPDATE media_albums 
+      SET media_count = (SELECT COUNT(*) FROM album_media WHERE album_id = ${albumId})
+      WHERE id = ${albumId}
+    `);
+  }
+  
+  async getAlbumWithMedia(id: number): Promise<any | undefined> {
+    const album = await this.getAlbumById(id);
+    if (!album) return undefined;
+    
+    const media = await this.getAlbumMedia(id, { limit: 100, offset: 0 });
+    
+    return {
+      ...album,
+      media
+    };
+  }
+  
+  async checkAlbumOwnership(albumId: number, userId: number): Promise<boolean> {
+    const album = await this.getAlbumById(albumId);
+    return album?.userId === userId;
   }
 }
 

@@ -22,6 +22,8 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { useAuthContext } from "@/contexts/AuthContext";
+import LiveStreamChat from "@/components/LiveStreamChat";
 import type { SelectLiveStream } from "@shared/schema";
 import { 
   Radio, Users, Eye, Heart, Share2, MessageCircle, Calendar,
@@ -30,6 +32,7 @@ import {
 
 export default function StreamDetailPage() {
   const { id } = useParams();
+  const { user } = useAuthContext();
   
   const { data: stream, isLoading } = useQuery<SelectLiveStream>({
     queryKey: ["/api/livestreams", id],
@@ -230,41 +233,11 @@ export default function StreamDetailPage() {
 
                 {/* Live Chat */}
                 <FadeInSection delay={0.4}>
-                  <Card className="h-[500px] flex flex-col">
-                    <CardHeader className="flex-shrink-0">
-                      <CardTitle className="text-xl font-serif font-bold flex items-center gap-2">
-                        <MessageCircle className="h-5 w-5" />
-                        Live Chat
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex-1 overflow-hidden flex flex-col">
-                      <div className="flex-1 overflow-y-auto mb-4 space-y-3">
-                        {stream.isLive ? (
-                          <div className="text-sm text-muted-foreground text-center py-8">
-                            Chat messages will appear here
-                          </div>
-                        ) : (
-                          <div className="text-sm text-muted-foreground text-center py-8">
-                            Chat is disabled for non-live streams
-                          </div>
-                        )}
-                      </div>
-                      
-                      {stream.isLive && (
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            placeholder="Send a message..."
-                            className="flex-1 px-3 py-2 rounded-md border bg-background text-sm"
-                            data-testid="input-chat"
-                          />
-                          <Button size="sm" data-testid="button-send-chat">
-                            Send
-                          </Button>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
+                  <LiveStreamChat 
+                    streamId={id!} 
+                    isLive={stream.isLive || false}
+                    currentUserId={user?.id}
+                  />
                 </FadeInSection>
               </div>
             </div>
