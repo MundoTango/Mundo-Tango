@@ -381,11 +381,9 @@ function Router() {
       </Route>
 
       <Route path="/profile/:id">
-        <ProtectedRoute>
-          <AppLayout>
-            <ProfilePage />
-          </AppLayout>
-        </ProtectedRoute>
+        <AppLayout>
+          <ProfilePage />
+        </AppLayout>
       </Route>
 
       <Route path="/events">

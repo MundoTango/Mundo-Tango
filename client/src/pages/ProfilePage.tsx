@@ -322,14 +322,13 @@ export default function ProfilePage() {
                     </div>
                   ))}
                   {upcomingTravel.length > 2 && (
-                    <Button 
-                      variant="link" 
-                      className="text-primary text-xs p-0 h-auto hover:text-primary/80"
+                    <button 
+                      className="text-primary text-xs p-0 h-auto hover:text-primary/80 underline cursor-pointer bg-transparent border-none"
                       onClick={() => setActiveTab('travel')}
                       data-testid="button-more-trips"
                     >
                       +{upcomingTravel.length - 2} more trips →
-                    </Button>
+                    </button>
                   )}
                 </div>
               </div>
