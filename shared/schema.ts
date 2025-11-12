@@ -2945,38 +2945,60 @@ export const agentKnowledge = pgTable("agent_knowledge", {
   tagsIdx: index("idx_agent_knowledge_tags").on(table.tags)
 }));
 
-// Agent Communications - Agent-to-agent messages
+/**
+ * Agent Communications - A2A (Agent-to-Agent) Message Queue
+ * Supports request/response, broadcasts, alerts, and escalations
+ * Includes priority queue, expiration, and response tracking
+ */
 export const agentCommunications = pgTable("agent_communications", {
   id: serial("id").primaryKey(),
   fromAgent: varchar("from_agent", { length: 100 }).notNull(),
   toAgent: varchar("to_agent", { length: 100 }).notNull(),
   messageType: varchar("message_type", { length: 50 }).notNull(),
-  message: text("message").notNull(),
+  subject: varchar("subject", { length: 255 }),
+  content: text("content").notNull(),
+  payload: jsonb("payload"),
+  priority: varchar("priority", { length: 20 }).default('normal'),
+  status: varchar("status", { length: 20 }).default('pending'),
+  requiresResponse: boolean("requires_response").default(false),
+  response: jsonb("response"),
+  processedAt: timestamp("processed_at"),
+  expiresAt: timestamp("expires_at"),
   metadata: jsonb("metadata"),
-  isRead: boolean("is_read").default(false),
   createdAt: timestamp("created_at").notNull().defaultNow()
 }, (table) => ({
   fromIdx: index("idx_agent_comms_from").on(table.fromAgent),
   toIdx: index("idx_agent_comms_to").on(table.toAgent),
   typeIdx: index("idx_agent_comms_type").on(table.messageType),
-  readIdx: index("idx_agent_comms_read").on(table.isRead)
+  statusIdx: index("idx_agent_comms_status").on(table.status),
+  priorityIdx: index("idx_agent_comms_priority").on(table.priority),
 }));
 
-// Agent Collaborations - Multi-agent teamwork
+/**
+ * Agent Collaborations - Multi-agent collaborative problem-solving
+ * Tracks collaboration sessions with voting, confidence, and outcomes
+ * Supports peer-to-peer and group collaborations
+ */
 export const agentCollaborations = pgTable("agent_collaborations", {
   id: serial("id").primaryKey(),
-  agentId: varchar("agent_id", { length: 100 }).notNull(),
-  collaboratorId: varchar("collaborator_id", { length: 100 }).notNull(),
-  issue: text("issue").notNull(),
-  status: varchar("status", { length: 50 }).notNull(), // 'pending', 'in_progress', 'resolved'
-  resolution: text("resolution"),
+  requestingAgent: varchar("requesting_agent", { length: 100 }).notNull(),
+  respondingAgent: varchar("responding_agent", { length: 100 }).notNull(),
+  problem: text("problem").notNull(),
+  solution: text("solution"),
+  outcome: varchar("outcome", { length: 20 }),
+  resolutionTime: integer("resolution_time"),
+  confidence: real("confidence"),
+  votesReceived: integer("votes_received").default(0),
+  votesRequired: integer("votes_required").default(1),
+  status: varchar("status", { length: 20 }).default('active'),
   metadata: jsonb("metadata"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  requestedAt: timestamp("requested_at").notNull().defaultNow(),
   resolvedAt: timestamp("resolved_at")
 }, (table) => ({
-  agentIdx: index("idx_agent_collab_agent").on(table.agentId),
-  collaboratorIdx: index("idx_agent_collab_collaborator").on(table.collaboratorId),
-  statusIdx: index("idx_agent_collab_status").on(table.status)
+  requestingIdx: index("idx_agent_collab_requesting").on(table.requestingAgent),
+  respondingIdx: index("idx_agent_collab_responding").on(table.respondingAgent),
+  statusIdx: index("idx_agent_collab_status").on(table.status),
+  outcomeIdx: index("idx_agent_collab_outcome").on(table.outcome),
 }));
 
 // Agent Self Tests - Self-testing results
@@ -2994,6 +3016,314 @@ export const agentSelfTests = pgTable("agent_self_tests", {
   agentIdx: index("idx_agent_tests_agent").on(table.agentId),
   typeIdx: index("idx_agent_tests_type").on(table.testType),
   passedIdx: index("idx_agent_tests_passed").on(table.passed)
+}));
+
+// Agent Performance Metrics - Track agent performance over time (Prometheus + BullMQ integration)
+export const agentPerformanceMetrics = pgTable("agent_performance_metrics", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull(), // e.g., 'AGENT_54', 'AGENT_11'
+  agentName: varchar("agent_name", { length: 255 }), // e.g., 'Accessibility', 'UI Framework'
+  agentDomain: varchar("agent_domain", { length: 100 }), // e.g., 'Platform', 'Foundation'
+  
+  // Task Performance Metrics
+  tasksCompleted: integer("tasks_completed").default(0).notNull(),
+  tasksInProgress: integer("tasks_in_progress").default(0).notNull(),
+  tasksFailed: integer("tasks_failed").default(0).notNull(),
+  totalTasks: integer("total_tasks").default(0).notNull(),
+  
+  // Duration Metrics (in seconds)
+  avgTaskDuration: real("avg_task_duration").default(0), // average seconds per task
+  minTaskDuration: real("min_task_duration"),
+  maxTaskDuration: real("max_task_duration"),
+  totalDuration: real("total_duration").default(0), // total time spent on tasks
+  
+  // Quality Metrics
+  errorRate: real("error_rate").default(0), // percentage 0-1 (e.g., 0.02 = 2%)
+  errorCount: integer("error_count").default(0),
+  successRate: real("success_rate").default(1), // percentage 0-1 (e.g., 0.98 = 98%)
+  
+  // Cache Performance (for agents with caching)
+  cacheHitRate: real("cache_hit_rate"), // percentage 0-1
+  cacheHits: integer("cache_hits").default(0),
+  cacheMisses: integer("cache_misses").default(0),
+  
+  // Workload Metrics
+  workloadPercentage: real("workload_percentage").default(0), // 0-100
+  queueDepth: integer("queue_depth").default(0), // number of tasks waiting
+  concurrentTasks: integer("concurrent_tasks").default(0),
+  maxConcurrentTasks: integer("max_concurrent_tasks").default(5),
+  
+  // Health Score (0-100, calculated from multiple metrics)
+  healthScore: real("health_score").default(100),
+  status: varchar("status", { length: 50 }).default("healthy"), // 'healthy' | 'degraded' | 'overloaded' | 'failing'
+  
+  // Timestamps
+  lastActive: timestamp("last_active").defaultNow().notNull(),
+  lastTaskCompleted: timestamp("last_task_completed"),
+  lastError: timestamp("last_error"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  
+  // Metadata
+  metadata: jsonb("metadata"), // Additional metrics, tags, BullMQ job IDs, etc.
+  
+  // Time window for aggregation
+  timeWindow: varchar("time_window", { length: 50 }).default("hour"), // 'minute' | 'hour' | 'day' | 'week'
+  windowStart: timestamp("window_start").defaultNow().notNull(),
+  windowEnd: timestamp("window_end")
+}, (table) => ({
+  agentIdIdx: index("idx_perf_agent_id").on(table.agentId),
+  agentDomainIdx: index("idx_perf_domain").on(table.agentDomain),
+  statusIdx: index("idx_perf_status").on(table.status),
+  lastActiveIdx: index("idx_perf_last_active").on(table.lastActive),
+  timeWindowIdx: index("idx_perf_time_window").on(table.timeWindow, table.windowStart),
+  healthScoreIdx: index("idx_perf_health_score").on(table.healthScore),
+  workloadIdx: index("idx_perf_workload").on(table.workloadPercentage)
+}));
+
+// Agent Performance Alerts - Alert tracking for performance issues
+export const agentPerformanceAlerts = pgTable("agent_performance_alerts", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull(),
+  agentName: varchar("agent_name", { length: 255 }),
+  agentDomain: varchar("agent_domain", { length: 100 }),
+  
+  alertType: varchar("alert_type", { length: 100 }).notNull(), // 'high_error_rate' | 'high_workload' | 'slow_performance' | 'queue_backup' | 'low_cache_hit' | 'health_degraded'
+  severity: varchar("severity", { length: 20 }).notNull(), // 'low' | 'medium' | 'high' | 'critical'
+  
+  message: text("message").notNull(),
+  threshold: real("threshold"), // The threshold that was exceeded
+  actualValue: real("actual_value"), // The actual value that triggered the alert
+  
+  status: varchar("status", { length: 20 }).default("active"), // 'active' | 'acknowledged' | 'resolved' | 'dismissed'
+  acknowledgedBy: varchar("acknowledged_by", { length: 100 }),
+  acknowledgedAt: timestamp("acknowledged_at"),
+  resolvedAt: timestamp("resolved_at"),
+  
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull()
+}, (table) => ({
+  agentIdIdx: index("idx_alert_agent_id").on(table.agentId),
+  typeIdx: index("idx_alert_type").on(table.alertType),
+  severityIdx: index("idx_alert_severity").on(table.severity),
+  statusIdx: index("idx_alert_status").on(table.status),
+  createdAtIdx: index("idx_alert_created_at").on(table.createdAt)
+}));
+
+// ============================================================================
+// KNOWLEDGE INFRASTRUCTURE ORCHESTRATION (TRACK 2 BATCH 10-12)
+// ============================================================================
+
+// Agent Change Broadcasts - System-wide change notifications
+export const agentChangeBroadcasts = pgTable("agent_change_broadcasts", {
+  id: serial("id").primaryKey(),
+  changeId: varchar("change_id", { length: 100 }).notNull().unique(),
+  changeType: varchar("change_type", { length: 100 }).notNull(), // 'code_update' | 'config_change' | 'schema_update' | 'pattern_learned' | 'feature_added'
+  changeDescription: text("change_description").notNull(),
+  changeDetails: jsonb("change_details"), // Full change payload
+  
+  // Source
+  initiatedBy: varchar("initiated_by", { length: 100 }).notNull(), // agent ID or user ID
+  sourceAgent: varchar("source_agent", { length: 100 }), // agent that made the change
+  priority: varchar("priority", { length: 20 }).default("medium"), // 'critical' | 'high' | 'medium' | 'low'
+  
+  // Affected Agents
+  affectedAgents: text("affected_agents").array().default(sql`ARRAY[]::text[]`), // List of agent IDs that need to know
+  affectedDomains: text("affected_domains").array(), // e.g., ['platform', 'ui', 'backend']
+  affectedTags: text("affected_tags").array(), // Additional filtering tags
+  
+  // Broadcasting
+  broadcastStrategy: varchar("broadcast_strategy", { length: 50 }).default("immediate"), // 'immediate' | 'batched' | 'scheduled'
+  batchSize: integer("batch_size").default(10), // For batched broadcasts
+  batchDelay: integer("batch_delay").default(1000), // Milliseconds between batches
+  
+  // Status Tracking
+  status: varchar("status", { length: 50 }).default("pending"), // 'pending' | 'broadcasting' | 'completed' | 'failed' | 'partial'
+  totalAgents: integer("total_agents").default(0),
+  acknowledgedCount: integer("acknowledged_count").default(0),
+  failedCount: integer("failed_count").default(0),
+  acknowledgedBy: text("acknowledged_by").array().default(sql`ARRAY[]::text[]`), // List of agent IDs that acknowledged
+  failedAgents: text("failed_agents").array(), // List of agent IDs that failed to receive
+  
+  // Retry Mechanism
+  retryCount: integer("retry_count").default(0),
+  maxRetries: integer("max_retries").default(3),
+  retryStrategy: varchar("retry_strategy", { length: 50 }).default("exponential"), // 'exponential' | 'linear' | 'fixed'
+  nextRetryAt: timestamp("next_retry_at"),
+  lastRetryAt: timestamp("last_retry_at"),
+  
+  // Propagation Metrics
+  propagationStartedAt: timestamp("propagation_started_at"),
+  propagationCompletedAt: timestamp("propagation_completed_at"),
+  propagationDuration: integer("propagation_duration"), // milliseconds
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  expiresAt: timestamp("expires_at"), // Optional expiry for time-sensitive changes
+  
+  metadata: jsonb("metadata")
+}, (table) => ({
+  changeIdIdx: index("idx_change_broadcasts_change_id").on(table.changeId),
+  statusIdx: index("idx_change_broadcasts_status").on(table.status),
+  priorityIdx: index("idx_change_broadcasts_priority").on(table.priority),
+  createdAtIdx: index("idx_change_broadcasts_created_at").on(table.createdAt),
+  nextRetryIdx: index("idx_change_broadcasts_next_retry").on(table.nextRetryAt),
+  affectedAgentsIdx: index("idx_change_broadcasts_affected_agents").using("gin", table.affectedAgents),
+  sourceAgentIdx: index("idx_change_broadcasts_source_agent").on(table.sourceAgent)
+}));
+
+// Agent Decisions - Multi-agent consensus and conflict resolution
+export const agentDecisions = pgTable("agent_decisions", {
+  id: serial("id").primaryKey(),
+  decisionId: varchar("decision_id", { length: 100 }).notNull().unique(),
+  decisionType: varchar("decision_type", { length: 100 }).notNull(), // 'feature_approval' | 'conflict_resolution' | 'priority_assignment' | 'resource_allocation'
+  decisionContext: text("decision_context").notNull(),
+  decisionQuestion: text("decision_question").notNull(),
+  
+  // Participants
+  initiatedBy: varchar("initiated_by", { length: 100 }).notNull(),
+  participatingAgents: text("participating_agents").array().notNull(), // List of agent IDs involved
+  requiredConsensus: real("required_consensus").default(0.66), // 0-1, percentage of agreement needed (e.g., 0.66 = 66%)
+  
+  // Voting & Consensus
+  votingMechanism: varchar("voting_mechanism", { length: 50 }).default("majority"), // 'unanimous' | 'majority' | 'weighted' | 'authority'
+  votes: jsonb("votes"), // { "AGENT_54": { vote: "approve", weight: 1, reasoning: "...", timestamp: "..." }, ... }
+  votesCast: integer("votes_cast").default(0),
+  votesRequired: integer("votes_required"),
+  
+  // Conflict Resolution
+  hasConflict: boolean("has_conflict").default(false),
+  conflictResolutionStrategy: varchar("conflict_resolution_strategy", { length: 50 }), // 'vote' | 'priority' | 'authority' | 'human_escalation'
+  conflictDetails: jsonb("conflict_details"),
+  conflictingAgents: text("conflicting_agents").array(),
+  
+  // Priority Management
+  priority: varchar("priority", { length: 20 }).default("medium"), // 'critical' | 'high' | 'medium' | 'low'
+  deadline: timestamp("deadline"),
+  isPrioritized: boolean("is_prioritized").default(false),
+  priorityScore: real("priority_score"), // Calculated score for queue position
+  
+  // Strategic Alignment
+  alignsWithStrategy: boolean("aligns_with_strategy"),
+  strategicAlignment: jsonb("strategic_alignment"), // { category: "user_experience", score: 0.95, reasoning: "..." }
+  alignmentScore: real("alignment_score"), // 0-1
+  
+  // Decision Outcome
+  status: varchar("status", { length: 50 }).default("pending"), // 'pending' | 'voting' | 'decided' | 'implemented' | 'rejected' | 'escalated'
+  decision: varchar("decision", { length: 50 }), // 'approve' | 'reject' | 'defer' | 'escalate'
+  consensusReached: boolean("consensus_reached").default(false),
+  consensusLevel: real("consensus_level"), // 0-1, actual percentage of agreement
+  finalReasoning: text("final_reasoning"),
+  
+  // Escalation
+  escalatedTo: varchar("escalated_to", { length: 100 }), // e.g., 'AGENT_ADMIN' or 'human'
+  escalationReason: text("escalation_reason"),
+  escalatedAt: timestamp("escalated_at"),
+  
+  // Implementation Tracking
+  implementedAt: timestamp("implemented_at"),
+  implementedBy: varchar("implemented_by", { length: 100 }),
+  implementationNotes: text("implementation_notes"),
+  
+  // Audit Trail
+  decisionLog: jsonb("decision_log"), // Array of timestamped events
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  decidedAt: timestamp("decided_at"),
+  
+  metadata: jsonb("metadata")
+}, (table) => ({
+  decisionIdIdx: index("idx_agent_decisions_decision_id").on(table.decisionId),
+  statusIdx: index("idx_agent_decisions_status").on(table.status),
+  priorityIdx: index("idx_agent_decisions_priority").on(table.priority),
+  deadlineIdx: index("idx_agent_decisions_deadline").on(table.deadline),
+  createdAtIdx: index("idx_agent_decisions_created_at").on(table.createdAt),
+  participatingAgentsIdx: index("idx_agent_decisions_participants").using("gin", table.participatingAgents),
+  initiatedByIdx: index("idx_agent_decisions_initiated_by").on(table.initiatedBy)
+}));
+
+// Intelligence Cycles - Automated 7-step learning cycles
+export const intelligenceCycles = pgTable("intelligence_cycles", {
+  id: serial("id").primaryKey(),
+  cycleId: varchar("cycle_id", { length: 100 }).notNull().unique(),
+  cycleName: varchar("cycle_name", { length: 255 }).notNull(),
+  cycleType: varchar("cycle_type", { length: 100 }).default("standard"), // 'standard' | 'emergency' | 'scheduled' | 'triggered'
+  cycleDescription: text("cycle_description"),
+  
+  // 7-Step Cycle: LEARN → TEST → ANALYZE → COLLABORATE → BUILD → TEST → REPORT
+  currentStep: varchar("current_step", { length: 50 }).default("LEARN"), // Current step in cycle
+  stepsCompleted: text("steps_completed").array().default(sql`ARRAY[]::text[]`), // List of completed steps
+  stepsOrder: text("steps_order").array().default(sql`ARRAY['LEARN', 'TEST', 'ANALYZE', 'COLLABORATE', 'BUILD', 'TEST', 'REPORT']::text[]`),
+  
+  // Step Details & Metrics
+  stepMetrics: jsonb("step_metrics"), // { "LEARN": { startedAt: "...", completedAt: "...", duration: 120, status: "completed", data: {...} }, ... }
+  stepResults: jsonb("step_results"), // Results from each step
+  stepErrors: jsonb("step_errors"), // Errors encountered in each step
+  
+  // Triggering & Scheduling
+  triggerType: varchar("trigger_type", { length: 50 }).default("manual"), // 'manual' | 'scheduled' | 'event' | 'threshold'
+  triggerSource: varchar("trigger_source", { length: 100 }), // What initiated this cycle
+  schedule: varchar("schedule", { length: 100 }), // Cron expression for recurring cycles
+  nextScheduledRun: timestamp("next_scheduled_run"),
+  
+  // Participating Agents
+  leadAgent: varchar("lead_agent", { length: 100 }), // Agent orchestrating the cycle
+  participatingAgents: text("participating_agents").array().default(sql`ARRAY[]::text[]`), // All agents involved
+  agentRoles: jsonb("agent_roles"), // { "AGENT_54": "learner", "AGENT_11": "builder", ... }
+  agentContributions: jsonb("agent_contributions"), // Track what each agent contributed
+  
+  // Status & Progress
+  status: varchar("status", { length: 50 }).default("pending"), // 'pending' | 'running' | 'paused' | 'completed' | 'failed' | 'cancelled'
+  progress: real("progress").default(0), // 0-100 percentage
+  
+  // Performance Metrics
+  cycleStartedAt: timestamp("cycle_started_at"),
+  cycleCompletedAt: timestamp("cycle_completed_at"),
+  totalDuration: integer("total_duration"), // milliseconds
+  avgStepDuration: integer("avg_step_duration"), // milliseconds
+  
+  // Quality Metrics
+  successRate: real("success_rate"), // 0-1, based on step completions
+  qualityScore: real("quality_score"), // 0-100, overall cycle quality
+  issuesIdentified: integer("issues_identified").default(0),
+  issuesResolved: integer("issues_resolved").default(0),
+  patternsLearned: integer("patterns_learned").default(0),
+  
+  // Outputs & Deliverables
+  learningOutputs: jsonb("learning_outputs"), // What was learned
+  buildOutputs: jsonb("build_outputs"), // What was built
+  reportGenerated: boolean("report_generated").default(false),
+  reportUrl: text("report_url"),
+  
+  // Auto-triggering Configuration
+  autoTriggerEnabled: boolean("auto_trigger_enabled").default(false),
+  autoTriggerConditions: jsonb("auto_trigger_conditions"), // Conditions that trigger next cycle
+  nextCycleId: varchar("next_cycle_id", { length: 100 }), // Link to next cycle if auto-triggered
+  
+  // Failure Handling
+  failureReason: text("failure_reason"),
+  failedAt: timestamp("failed_at"),
+  retryCount: integer("retry_count").default(0),
+  maxRetries: integer("max_retries").default(2),
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  
+  metadata: jsonb("metadata")
+}, (table) => ({
+  cycleIdIdx: index("idx_intelligence_cycles_cycle_id").on(table.cycleId),
+  statusIdx: index("idx_intelligence_cycles_status").on(table.status),
+  currentStepIdx: index("idx_intelligence_cycles_current_step").on(table.currentStep),
+  cycleTypeIdx: index("idx_intelligence_cycles_type").on(table.cycleType),
+  leadAgentIdx: index("idx_intelligence_cycles_lead_agent").on(table.leadAgent),
+  createdAtIdx: index("idx_intelligence_cycles_created_at").on(table.createdAt),
+  nextScheduledIdx: index("idx_intelligence_cycles_next_scheduled").on(table.nextScheduledRun),
+  participatingAgentsIdx: index("idx_intelligence_cycles_participants").using("gin", table.participatingAgents)
 }));
 
 // ============================================================================
@@ -3217,31 +3547,29 @@ export const insertVisualEditSchema = createInsertSchema(visualEdits).omit({ id:
 export type InsertVisualEdit = z.infer<typeof insertVisualEditSchema>;
 export type SelectVisualEdit = typeof visualEdits.$inferSelect;
 
-// Agent Memories
-export const insertAgentMemorySchema = createInsertSchema(agentMemories).omit({ id: true, createdAt: true });
-export type InsertAgentMemory = z.infer<typeof insertAgentMemorySchema>;
-export type SelectAgentMemory = typeof agentMemories.$inferSelect;
-
-// Agent Knowledge
-export const insertAgentKnowledgeSchema = createInsertSchema(agentKnowledge).omit({ id: true, createdAt: true, updatedAt: true });
-export type InsertAgentKnowledge = z.infer<typeof insertAgentKnowledgeSchema>;
-export type SelectAgentKnowledge = typeof agentKnowledge.$inferSelect;
-
-// Agent Communications
-export const insertAgentCommunicationSchema = createInsertSchema(agentCommunications).omit({ id: true, createdAt: true });
-export type InsertAgentCommunication = z.infer<typeof insertAgentCommunicationSchema>;
-export type SelectAgentCommunication = typeof agentCommunications.$inferSelect;
-
-// Agent Collaborations
-export const insertAgentCollaborationSchema = createInsertSchema(agentCollaborations).omit({ id: true, createdAt: true, resolvedAt: true });
-export type InsertAgentCollaboration = z.infer<typeof insertAgentCollaborationSchema>;
-export type SelectAgentCollaboration = typeof agentCollaborations.$inferSelect;
-
 // Agent Self Tests
 export const insertAgentSelfTestSchema = createInsertSchema(agentSelfTests).omit({ id: true, createdAt: true });
 export type InsertAgentSelfTest = z.infer<typeof insertAgentSelfTestSchema>;
 export type SelectAgentSelfTest = typeof agentSelfTests.$inferSelect;
 
+// Agent Performance Metrics
+export const insertAgentPerformanceMetricsSchema = createInsertSchema(agentPerformanceMetrics).omit({ 
+  id: true, 
+  createdAt: true, 
+  updatedAt: true, 
+  lastActive: true 
+});
+export type InsertAgentPerformanceMetrics = z.infer<typeof insertAgentPerformanceMetricsSchema>;
+export type SelectAgentPerformanceMetrics = typeof agentPerformanceMetrics.$inferSelect;
+
+// Agent Performance Alerts
+export const insertAgentPerformanceAlertsSchema = createInsertSchema(agentPerformanceAlerts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export type InsertAgentPerformanceAlert = z.infer<typeof insertAgentPerformanceAlertsSchema>;
+export type SelectAgentPerformanceAlert = typeof agentPerformanceAlerts.$inferSelect;
 
 
 
@@ -3759,6 +4087,767 @@ export type SelectVenueRecommendation = typeof venueRecommendations.$inferSelect
 
 // ============================================================================
 // HOUSING MARKETPLACE SYSTEM (PART 15)
+
+// ============================================================================
+// ESA AGENT INTELLIGENCE SYSTEM (AGENT #79 & #80)
+// ============================================================================
+
+/**
+ * Agents Table - Master Registry
+ * Central registry of all 927+ ESA agents in the system
+ * Tracks agent metadata, capabilities, status, and performance
+ */
+export const agents = pgTable("agents", {
+  id: varchar("id", { length: 100 }).primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  type: varchar("type", { length: 100 }).notNull(),
+  category: varchar("category", { length: 100 }),
+  description: text("description"),
+  status: varchar("status", { length: 50 }).default('active'),
+  configuration: jsonb("configuration").default({}).notNull(),
+  capabilities: jsonb("capabilities").default([]),
+  personality: jsonb("personality"),
+  systemPrompt: text("system_prompt"),
+  version: varchar("version", { length: 50 }).default('1.0.0'),
+  layer: integer("layer"),
+  lastActive: timestamp("last_active"),
+  metrics: jsonb("metrics").default({}),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  idIdx: index("agents_id_idx").on(table.id),
+  typeIdx: index("agents_type_idx").on(table.type),
+  categoryIdx: index("agents_category_idx").on(table.category),
+  statusIdx: index("agents_status_idx").on(table.status),
+  layerIdx: index("agents_layer_idx").on(table.layer),
+}));
+
+/**
+ * Agent Learnings Table - Learning Coordinator (Agent #80)
+ * Stores all agent learnings for knowledge distribution
+ * Includes vector embeddings for semantic search
+ */
+export const agentLearnings = pgTable("agent_learnings", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }),
+  category: varchar("category", { length: 100 }).notNull(),
+  domain: varchar("domain", { length: 100 }),
+  problem: text("problem").notNull(),
+  solution: text("solution").notNull(),
+  outcome: jsonb("outcome"),
+  embedding: text("embedding"),
+  tags: text("tags").array(),
+  relatedAgents: text("related_agents").array(),
+  distributedUp: boolean("distributed_up").default(false),
+  distributedAcross: boolean("distributed_across").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  agentIdx: index("idx_agent_learnings_agent").on(table.agentId),
+  categoryIdx: index("idx_agent_learnings_category").on(table.category),
+  domainIdx: index("idx_agent_learnings_domain").on(table.domain),
+  tagsIdx: index("idx_agent_learnings_tags").using("gin", table.tags),
+}));
+
+/**
+ * Agent Escalations Table - Hierarchical Problem Escalation
+ * Tracks escalations through 4-level hierarchy: Peer → Domain → Chief → CEO
+ */
+export const agentEscalations = pgTable("agent_escalations", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull(),
+  issue: text("issue").notNull(),
+  severity: varchar("severity", { length: 20 }).notNull(),
+  context: jsonb("context"),
+  attemptedFixes: text("attempted_fixes").array(),
+  escalationLevel: varchar("escalation_level", { length: 20 }).notNull(),
+  escalatedTo: varchar("escalated_to", { length: 100 }),
+  escalationPath: text("escalation_path").array(),
+  status: varchar("status", { length: 20 }).default('pending'),
+  resolution: text("resolution"),
+  resolvedBy: varchar("resolved_by", { length: 100 }),
+  resolvedAt: timestamp("resolved_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  agentIdx: index("idx_agent_escalations_agent").on(table.agentId),
+  severityIdx: index("idx_agent_escalations_severity").on(table.severity),
+  levelIdx: index("idx_agent_escalations_level").on(table.escalationLevel),
+  statusIdx: index("idx_agent_escalations_status").on(table.status),
+  escalatedToIdx: index("idx_agent_escalations_to").on(table.escalatedTo),
+}));
+
+/**
+ * Learning Patterns Table - Agent #80 Pattern Library
+ * Recurring solution patterns discovered across agents
+ * Includes success rates and confidence scores
+ */
+export const learningPatterns = pgTable("learning_patterns", {
+  id: serial("id").primaryKey(),
+  patternName: varchar("pattern_name", { length: 255 }).notNull().unique(),
+  problemSignature: text("problem_signature").notNull(),
+  solutionTemplate: text("solution_template").notNull(),
+  category: varchar("category", { length: 100 }),
+  discoveredBy: text("discovered_by").array().notNull(),
+  timesApplied: integer("times_applied").default(0),
+  successRate: real("success_rate").default(0.5),
+  confidence: real("confidence").default(0.5),
+  metadata: jsonb("metadata"),
+  isActive: boolean("is_active").default(true),
+  lastUsed: timestamp("last_used"),
+  variations: jsonb("variations"),
+  whenNotToUse: text("when_not_to_use"),
+  codeExample: text("code_example"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  patternNameIdx: index("learning_patterns_pattern_name_idx").on(table.patternName),
+  categoryIdx: index("learning_patterns_category_idx").on(table.category),
+  successRateIdx: index("learning_patterns_success_rate_idx").on(table.successRate),
+  isActiveIdx: index("learning_patterns_is_active_idx").on(table.isActive),
+}));
+
+/**
+ * Validation Results Table - Agent #79 Quality Validator
+ * Stores feature validation outcomes, issues, and fix suggestions
+ * Enables collaborative debugging with offering to fix issues
+ */
+export const validationResults = pgTable("validation_results", {
+  id: serial("id").primaryKey(),
+  validatorAgent: varchar("validator_agent", { length: 50 }).default("Agent #79"),
+  targetAgent: varchar("target_agent", { length: 100 }).notNull(),
+  feature: varchar("feature", { length: 255 }).notNull(),
+  page: varchar("page", { length: 255 }),
+  testType: varchar("test_type", { length: 50 }).notNull(),
+  status: varchar("status", { length: 20 }).notNull(),
+  issues: jsonb("issues").default([]),
+  suggestions: jsonb("suggestions").default([]),
+  fixPlan: jsonb("fix_plan"),
+  collaborationOffered: boolean("collaboration_offered").default(false),
+  agentResponse: varchar("agent_response", { length: 50 }),
+  timeToFix: integer("time_to_fix"),
+  resolvedAt: timestamp("resolved_at"),
+  metadata: jsonb("metadata"),
+  validatedAt: timestamp("validated_at").defaultNow(),
+  fixedAt: timestamp("fixed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  targetAgentIdx: index("validation_results_target_agent_idx").on(table.targetAgent),
+  featureIdx: index("validation_results_feature_idx").on(table.feature),
+  statusIdx: index("validation_results_status_idx").on(table.status),
+  testTypeIdx: index("validation_results_test_type_idx").on(table.testType),
+}));
+
+// Customer Journey Tests (Agent #79 - End-to-End Testing)
+export const customerJourneyTests = pgTable("customer_journey_tests", {
+  id: serial("id").primaryKey(),
+  journeyName: varchar("journey_name", { length: 255 }).notNull(),
+  journeySteps: jsonb("journey_steps").notNull(),
+  status: varchar("status", { length: 50 }).notNull(),
+  failedStep: integer("failed_step"),
+  failureReason: text("failure_reason"),
+  responsibleAgents: text("responsible_agents").array(),
+  deviceTested: varchar("device_tested", { length: 50 }),
+  testedAt: timestamp("tested_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  journeyNameIdx: index("customer_journey_tests_journey_name_idx").on(table.journeyName),
+  statusIdx: index("customer_journey_tests_status_idx").on(table.status),
+  testedAtIdx: index("customer_journey_tests_tested_at_idx").on(table.testedAt),
+}));
+
+// ============================================================================
+// ESA AGENT ZOD SCHEMAS & TYPES
+// ============================================================================
+
+// Agents (Master Registry)
+export const insertAgentSchema = createInsertSchema(agents).omit({ createdAt: true, lastActive: true });
+export type InsertAgent = z.infer<typeof insertAgentSchema>;
+export type SelectAgent = typeof agents.$inferSelect;
+
+// Agent Learnings
+export const insertAgentLearningSchema = createInsertSchema(agentLearnings).omit({ id: true, createdAt: true });
+export type InsertAgentLearning = z.infer<typeof insertAgentLearningSchema>;
+export type SelectAgentLearning = typeof agentLearnings.$inferSelect;
+
+// Agent Escalations
+export const insertAgentEscalationSchema = createInsertSchema(agentEscalations).omit({ id: true, createdAt: true, updatedAt: true, resolvedAt: true });
+export type InsertAgentEscalation = z.infer<typeof insertAgentEscalationSchema>;
+export type SelectAgentEscalation = typeof agentEscalations.$inferSelect;
+
+// Learning Patterns
+export const insertLearningPatternSchema = createInsertSchema(learningPatterns).omit({ id: true, createdAt: true, updatedAt: true, lastUsed: true });
+export type InsertLearningPattern = z.infer<typeof insertLearningPatternSchema>;
+export type SelectLearningPattern = typeof learningPatterns.$inferSelect;
+
+// Validation Results
+export const insertValidationResultSchema = createInsertSchema(validationResults).omit({ id: true, createdAt: true, validatedAt: true, fixedAt: true, resolvedAt: true });
+export type InsertValidationResult = z.infer<typeof insertValidationResultSchema>;
+export type SelectValidationResult = typeof validationResults.$inferSelect;
+
+// Agent Communications
+export const insertAgentCommunicationSchema = createInsertSchema(agentCommunications).omit({ id: true, createdAt: true, processedAt: true });
+export type InsertAgentCommunication = z.infer<typeof insertAgentCommunicationSchema>;
+export type SelectAgentCommunication = typeof agentCommunications.$inferSelect;
+
+// Agent Collaborations
+export const insertAgentCollaborationSchema = createInsertSchema(agentCollaborations).omit({ id: true, requestedAt: true, resolvedAt: true });
+export type InsertAgentCollaboration = z.infer<typeof insertAgentCollaborationSchema>;
+export type SelectAgentCollaboration = typeof agentCollaborations.$inferSelect;
+
+// Agent Memories
+export const insertAgentMemorySchema = createInsertSchema(agentMemories).omit({ id: true, createdAt: true });
+export type InsertAgentMemory = z.infer<typeof insertAgentMemorySchema>;
+export type SelectAgentMemory = typeof agentMemories.$inferSelect;
+
+// Agent Knowledge
+export const insertAgentKnowledgeSchema = createInsertSchema(agentKnowledge).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertAgentKnowledge = z.infer<typeof insertAgentKnowledgeSchema>;
+export type SelectAgentKnowledge = typeof agentKnowledge.$inferSelect;
+
+// Customer Journey Tests
+export const insertCustomerJourneyTestSchema = createInsertSchema(customerJourneyTests).omit({ id: true, createdAt: true, testedAt: true });
+export type InsertCustomerJourneyTest = z.infer<typeof insertCustomerJourneyTestSchema>;
+export type SelectCustomerJourneyTest = typeof customerJourneyTests.$inferSelect;
+
+// Agent Change Broadcasts (TRACK 2 BATCH 10-12)
+export const insertAgentChangeBroadcastSchema = createInsertSchema(agentChangeBroadcasts).omit({ 
+  id: true, 
+  createdAt: true, 
+  updatedAt: true,
+  propagationStartedAt: true,
+  propagationCompletedAt: true,
+  lastRetryAt: true
+});
+export type InsertAgentChangeBroadcast = z.infer<typeof insertAgentChangeBroadcastSchema>;
+export type SelectAgentChangeBroadcast = typeof agentChangeBroadcasts.$inferSelect;
+
+// Agent Decisions (TRACK 2 BATCH 10-12)
+export const insertAgentDecisionSchema = createInsertSchema(agentDecisions).omit({ 
+  id: true, 
+  createdAt: true, 
+  updatedAt: true,
+  decidedAt: true,
+  escalatedAt: true,
+  implementedAt: true
+});
+export type InsertAgentDecision = z.infer<typeof insertAgentDecisionSchema>;
+export type SelectAgentDecision = typeof agentDecisions.$inferSelect;
+
+// Intelligence Cycles (TRACK 2 BATCH 10-12)
+export const insertIntelligenceCycleSchema = createInsertSchema(intelligenceCycles).omit({ 
+  id: true, 
+  createdAt: true, 
+  updatedAt: true,
+  cycleStartedAt: true,
+  cycleCompletedAt: true,
+  failedAt: true
+});
+export type InsertIntelligenceCycle = z.infer<typeof insertIntelligenceCycleSchema>;
+export type SelectIntelligenceCycle = typeof intelligenceCycles.$inferSelect;
+
+// ============================================================================
+// MULTI-AI ORCHESTRATION SYSTEM (BATCH 7)
+// 5 AI Platforms: OpenAI | Claude | Groq | Gemini | OpenRouter
+// ============================================================================
+
+/**
+ * AI Requests Table - Complete request tracking with platform/model/cost
+ * Tracks every AI API call across all 5 platforms with full cost attribution
+ * Enables FinOps cost tracking and performance analysis
+ * 
+ * Platforms supported:
+ * - OpenAI (GPT-4o, GPT-4o-mini)
+ * - Anthropic (Claude Sonnet, Haiku, Opus)
+ * - Groq (Llama 3.1 70B, 8B) - FREE
+ * - Gemini (Flash, Flash-lite, Pro)
+ * - OpenRouter (Multi-model gateway)
+ */
+export const aiRequests = pgTable("ai_requests", {
+  id: serial("id").primaryKey(),
+  
+  // Request identification
+  userId: integer("user_id").references(() => users.id),
+  agentId: varchar("agent_id", { length: 50 }),
+  sessionId: varchar("session_id", { length: 100 }),
+  conversationId: varchar("conversation_id", { length: 100 }),
+  requestId: varchar("request_id", { length: 100 }).unique(),
+  
+  // Platform & Model
+  platform: varchar("platform", { length: 20 }).notNull(), // openai, anthropic, groq, gemini, openrouter
+  model: varchar("model", { length: 100 }).notNull(), // gpt-4o, claude-3-5-sonnet, etc
+  
+  // Request Details
+  useCase: varchar("use_case", { length: 50 }), // chat, code, analysis, bulk, reasoning
+  priority: varchar("priority", { length: 20 }), // speed, cost, quality, balanced
+  prompt: text("prompt").notNull(),
+  systemPrompt: text("system_prompt"),
+  
+  // Request Parameters
+  temperature: real("temperature"),
+  maxTokens: integer("max_tokens"),
+  topP: real("top_p"),
+  
+  // Response
+  response: text("response"),
+  responseTime: integer("response_time"), // milliseconds
+  
+  // Token Usage
+  inputTokens: integer("input_tokens").notNull().default(0),
+  outputTokens: integer("output_tokens").notNull().default(0),
+  totalTokens: integer("total_tokens").notNull().default(0),
+  
+  // Cost Calculation (per 1M tokens pricing)
+  inputCostPerMillion: numeric("input_cost_per_million", { precision: 10, scale: 2 }), // e.g., 3.00 for GPT-4o
+  outputCostPerMillion: numeric("output_cost_per_million", { precision: 10, scale: 2 }), // e.g., 10.00 for GPT-4o
+  totalCost: numeric("total_cost", { precision: 10, scale: 6 }).notNull().default("0"), // Actual cost in USD
+  
+  // Cache Status
+  cacheHit: boolean("cache_hit").default(false),
+  cacheKey: varchar("cache_key", { length: 100 }),
+  cacheTtl: integer("cache_ttl"), // seconds
+  
+  // Fallback Chain
+  attemptNumber: integer("attempt_number").default(1), // 1 = primary, 2 = first fallback, etc
+  fallbackReason: varchar("fallback_reason", { length: 100 }), // rate_limit, error, circuit_open
+  originalPlatform: varchar("original_platform", { length: 20 }), // If fallback was used
+  
+  // Performance
+  latencyMs: integer("latency_ms").notNull(),
+  ttfbMs: integer("ttfb_ms"), // Time to first byte
+  tokensPerSecond: real("tokens_per_second"),
+  
+  // Status
+  status: varchar("status", { length: 20 }).notNull().default("success"), // success, error, timeout, rate_limited
+  errorMessage: text("error_message"),
+  errorCode: varchar("error_code", { length: 50 }),
+  
+  // Context
+  endpoint: varchar("endpoint", { length: 255 }), // Which API endpoint called this
+  userAgent: varchar("user_agent", { length: 255 }),
+  ipAddress: varchar("ip_address", { length: 50 }),
+  
+  // Metadata
+  metadata: jsonb("metadata"), // Additional platform-specific data
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  // Performance indexes
+  platformIdx: index("ai_requests_platform_idx").on(table.platform),
+  modelIdx: index("ai_requests_model_idx").on(table.model),
+  userIdx: index("ai_requests_user_idx").on(table.userId),
+  agentIdx: index("ai_requests_agent_idx").on(table.agentId),
+  sessionIdx: index("ai_requests_session_idx").on(table.sessionId),
+  conversationIdx: index("ai_requests_conversation_idx").on(table.conversationId),
+  createdAtIdx: index("ai_requests_created_at_idx").on(table.createdAt),
+  statusIdx: index("ai_requests_status_idx").on(table.status),
+  cacheHitIdx: index("ai_requests_cache_hit_idx").on(table.cacheHit),
+  
+  // Cost analysis indexes
+  platformModelIdx: index("ai_requests_platform_model_idx").on(table.platform, table.model),
+  costIdx: index("ai_requests_cost_idx").on(table.totalCost),
+  useCaseIdx: index("ai_requests_use_case_idx").on(table.useCase),
+  
+  // Composite indexes for common queries
+  userCostIdx: index("ai_requests_user_cost_idx").on(table.userId, table.totalCost, table.createdAt),
+  platformCostIdx: index("ai_requests_platform_cost_idx").on(table.platform, table.totalCost, table.createdAt),
+}));
+
+/**
+ * AI Costs Table - Aggregated cost tracking per platform/model
+ * Pre-computed daily cost summaries for fast FinOps dashboard queries
+ * Reduces need to aggregate aiRequests table on every query
+ */
+export const aiCosts = pgTable("ai_costs", {
+  id: serial("id").primaryKey(),
+  
+  // Time period
+  date: timestamp("date").notNull(), // Date of aggregation (daily)
+  hour: integer("hour"), // Optional hourly breakdown (0-23)
+  
+  // Platform & Model
+  platform: varchar("platform", { length: 20 }).notNull(),
+  model: varchar("model", { length: 100 }).notNull(),
+  
+  // Aggregated metrics
+  requestCount: integer("request_count").notNull().default(0),
+  successCount: integer("success_count").notNull().default(0),
+  errorCount: integer("error_count").notNull().default(0),
+  cacheHitCount: integer("cache_hit_count").notNull().default(0),
+  
+  // Token totals
+  totalInputTokens: integer("total_input_tokens").notNull().default(0),
+  totalOutputTokens: integer("total_output_tokens").notNull().default(0),
+  totalTokens: integer("total_tokens").notNull().default(0),
+  
+  // Cost totals
+  totalCost: numeric("total_cost", { precision: 10, scale: 6 }).notNull().default("0"),
+  avgCostPerRequest: numeric("avg_cost_per_request", { precision: 10, scale: 6 }),
+  
+  // Performance
+  avgLatencyMs: integer("avg_latency_ms"),
+  p95LatencyMs: integer("p95_latency_ms"),
+  p99LatencyMs: integer("p99_latency_ms"),
+  avgTokensPerSecond: real("avg_tokens_per_second"),
+  
+  // Cache efficiency
+  cacheHitRate: real("cache_hit_rate"), // Percentage (0-100)
+  cacheSavings: numeric("cache_savings", { precision: 10, scale: 6 }), // Cost saved by cache hits
+  
+  // By use case
+  chatRequests: integer("chat_requests").default(0),
+  codeRequests: integer("code_requests").default(0),
+  analysisRequests: integer("analysis_requests").default(0),
+  bulkRequests: integer("bulk_requests").default(0),
+  reasoningRequests: integer("reasoning_requests").default(0),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  dateIdx: index("ai_costs_date_idx").on(table.date),
+  platformIdx: index("ai_costs_platform_idx").on(table.platform),
+  modelIdx: index("ai_costs_model_idx").on(table.model),
+  platformModelDateIdx: index("ai_costs_platform_model_date_idx").on(table.platform, table.model, table.date),
+  uniqueCostEntry: uniqueIndex("unique_cost_entry").on(table.date, table.platform, table.model, table.hour),
+}));
+
+/**
+ * AI Cache Table - Semantic cache with prompt embeddings
+ * Stores AI responses keyed by normalized prompts to avoid duplicate API calls
+ * Uses embeddings for semantic similarity matching (optional feature)
+ * 
+ * Cache Strategy:
+ * - Exact match: Hash-based lookup (fastest)
+ * - Semantic match: Vector similarity search (optional)
+ * - TTL: 24 hours default, configurable per use case
+ */
+export const aiCache = pgTable("ai_cache", {
+  id: serial("id").primaryKey(),
+  
+  // Cache key (SHA-256 hash of normalized prompt + model + params)
+  cacheKey: varchar("cache_key", { length: 100 }).notNull().unique(),
+  
+  // Original request
+  platform: varchar("platform", { length: 20 }).notNull(),
+  model: varchar("model", { length: 100 }).notNull(),
+  prompt: text("prompt").notNull(),
+  normalizedPrompt: text("normalized_prompt").notNull(), // Lowercase, trimmed
+  systemPrompt: text("system_prompt"),
+  
+  // Request parameters (part of cache key)
+  temperature: real("temperature"),
+  maxTokens: integer("max_tokens"),
+  
+  // Cached response
+  response: text("response").notNull(),
+  
+  // Original metadata (from first request)
+  inputTokens: integer("input_tokens").notNull(),
+  outputTokens: integer("output_tokens").notNull(),
+  totalCost: numeric("total_cost", { precision: 10, scale: 6 }).notNull(),
+  originalLatencyMs: integer("original_latency_ms"),
+  
+  // Cache statistics
+  hitCount: integer("hit_count").notNull().default(0),
+  lastHitAt: timestamp("last_hit_at"),
+  totalSavings: numeric("total_savings", { precision: 10, scale: 6 }).default("0"), // Cost saved by cache hits
+  
+  // Semantic search (optional)
+  embedding: real("embedding").array(), // Vector embedding for semantic similarity
+  embeddingModel: varchar("embedding_model", { length: 50 }), // e.g., text-embedding-ada-002
+  
+  // TTL & Expiration
+  ttl: integer("ttl").notNull().default(86400), // Time-to-live in seconds (default 24h)
+  expiresAt: timestamp("expires_at").notNull(),
+  
+  // Metadata
+  useCase: varchar("use_case", { length: 50 }),
+  tags: text("tags").array(),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  cacheKeyIdx: index("ai_cache_cache_key_idx").on(table.cacheKey),
+  platformModelIdx: index("ai_cache_platform_model_idx").on(table.platform, table.model),
+  expiresAtIdx: index("ai_cache_expires_at_idx").on(table.expiresAt),
+  hitCountIdx: index("ai_cache_hit_count_idx").on(table.hitCount),
+  useCaseIdx: index("ai_cache_use_case_idx").on(table.useCase),
+  createdAtIdx: index("ai_cache_created_at_idx").on(table.createdAt),
+}));
+
+/**
+ * AI Rate Limits Table - Token bucket rate limiting state
+ * Tracks current token bucket state for each platform/model combination
+ * Implements token bucket algorithm to prevent API rate limit violations
+ * 
+ * Platform Rate Limits:
+ * - OpenAI GPT-4o: 500 RPM, 30k TPM
+ * - Claude Sonnet: 50 RPM, 40k TPM
+ * - Groq Llama 70B: 30 RPM, 14.4k TPM (FREE)
+ * - Gemini Flash: 1000 RPM, 4M TPM
+ */
+export const aiRateLimits = pgTable("ai_rate_limits", {
+  id: serial("id").primaryKey(),
+  
+  // Platform & Model
+  platform: varchar("platform", { length: 20 }).notNull(),
+  model: varchar("model", { length: 100 }).notNull(),
+  
+  // Token Bucket State
+  currentTokens: real("current_tokens").notNull(), // Current tokens in bucket
+  capacity: integer("capacity").notNull(), // Maximum tokens (RPM limit)
+  refillRate: real("refill_rate").notNull(), // Tokens per second (capacity / 60)
+  lastRefill: timestamp("last_refill").notNull(), // Last refill timestamp
+  
+  // Rate Limit Configuration
+  requestsPerMinute: integer("requests_per_minute").notNull(), // RPM limit
+  tokensPerMinute: integer("tokens_per_minute"), // TPM limit (optional)
+  requestsPerDay: integer("requests_per_day"), // RPD limit (optional)
+  
+  // Usage Tracking
+  requestsToday: integer("requests_today").default(0),
+  tokensToday: integer("tokens_today").default(0),
+  lastDailyReset: timestamp("last_daily_reset"),
+  
+  // Violation Tracking
+  violationCount: integer("violation_count").default(0), // How many times rate limit hit
+  lastViolation: timestamp("last_violation"),
+  consecutiveViolations: integer("consecutive_violations").default(0),
+  
+  // Status
+  isThrottled: boolean("is_throttled").default(false),
+  throttledUntil: timestamp("throttled_until"),
+  
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  platformModelIdx: uniqueIndex("ai_rate_limits_platform_model_idx").on(table.platform, table.model),
+  throttledIdx: index("ai_rate_limits_throttled_idx").on(table.isThrottled),
+}));
+
+/**
+ * AI Circuit Breakers Table - Circuit breaker state for platform resilience
+ * Implements circuit breaker pattern to prevent cascading failures
+ * Automatically opens circuit after repeated failures, closes after recovery
+ * 
+ * States:
+ * - CLOSED: Normal operation, requests flowing
+ * - OPEN: Too many failures, blocking requests temporarily
+ * - HALF_OPEN: Testing if service recovered, allowing limited requests
+ */
+export const aiCircuitBreakers = pgTable("ai_circuit_breakers", {
+  id: serial("id").primaryKey(),
+  
+  // Platform & Model
+  platform: varchar("platform", { length: 20 }).notNull(),
+  model: varchar("model", { length: 100 }).notNull(),
+  
+  // Circuit State
+  state: varchar("state", { length: 20 }).notNull().default("closed"), // closed, open, half_open
+  
+  // Failure Tracking
+  failureCount: integer("failure_count").notNull().default(0),
+  successCount: integer("success_count").notNull().default(0),
+  consecutiveFailures: integer("consecutive_failures").notNull().default(0),
+  
+  // Thresholds
+  failureThreshold: integer("failure_threshold").notNull().default(5), // Open after 5 failures
+  successThreshold: integer("success_threshold").notNull().default(2), // Close after 2 successes
+  timeout: integer("timeout").notNull().default(60000), // Milliseconds before half-open (60s)
+  
+  // Timing
+  lastFailure: timestamp("last_failure"),
+  lastSuccess: timestamp("last_success"),
+  openedAt: timestamp("opened_at"), // When circuit opened
+  halfOpenAt: timestamp("half_open_at"), // When circuit entered half-open
+  closedAt: timestamp("closed_at"), // When circuit closed
+  nextAttemptAt: timestamp("next_attempt_at"), // When to try half-open
+  
+  // Error Analysis
+  lastErrorMessage: text("last_error_message"),
+  lastErrorCode: varchar("last_error_code", { length: 50 }),
+  errorTypes: jsonb("error_types"), // Categorized error counts
+  
+  // Performance Impact
+  blockedRequests: integer("blocked_requests").default(0), // Requests blocked while open
+  
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  platformModelIdx: uniqueIndex("ai_circuit_breakers_platform_model_idx").on(table.platform, table.model),
+  stateIdx: index("ai_circuit_breakers_state_idx").on(table.state),
+  nextAttemptIdx: index("ai_circuit_breakers_next_attempt_idx").on(table.nextAttemptAt),
+}));
+
+/**
+ * AI Blackboard Table - Agent shared memory for multi-AI coordination
+ * Implements blackboard architectural pattern for collaborative AI analysis
+ * Enables multiple AI agents to read/write shared insights
+ * 
+ * Use Cases:
+ * - Code review: GPT-4o (structure) → Claude (security) → Gemini (performance)
+ * - Multi-perspective analysis: Different models contribute domain expertise
+ * - Consensus building: Synthesize insights from multiple AI sources
+ */
+export const aiBlackboard = pgTable("ai_blackboard", {
+  id: serial("id").primaryKey(),
+  
+  // Session identification
+  sessionId: varchar("session_id", { length: 100 }).notNull(),
+  taskType: varchar("task_type", { length: 50 }).notNull(), // code_review, analysis, synthesis
+  
+  // Agent contribution
+  agentId: varchar("agent_id", { length: 50 }).notNull(), // GPT-4o, Claude, Gemini, etc
+  platform: varchar("platform", { length: 20 }).notNull(),
+  model: varchar("model", { length: 100 }).notNull(),
+  
+  // Insight data
+  insight: text("insight").notNull(), // The agent's contribution
+  confidence: real("confidence"), // Agent's confidence score (0-1)
+  priority: integer("priority").default(5), // 1-10 importance ranking
+  
+  // Relationships
+  relatedTo: text("related_to").array(), // IDs of other insights this builds on
+  supersedes: text("supersedes").array(), // IDs of insights this replaces/improves
+  
+  // Context
+  contextData: jsonb("context_data"), // Additional structured data
+  tags: text("tags").array(),
+  
+  // Metadata
+  tokensCost: integer("tokens_cost"), // Tokens used to generate this insight
+  latencyMs: integer("latency_ms"),
+  
+  // Lifecycle
+  isActive: boolean("is_active").default(true),
+  isSynthesized: boolean("is_synthesized").default(false), // Used in final synthesis
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  expiresAt: timestamp("expires_at"), // Optional TTL for session cleanup
+}, (table) => ({
+  sessionIdx: index("ai_blackboard_session_idx").on(table.sessionId),
+  agentIdx: index("ai_blackboard_agent_idx").on(table.agentId),
+  taskTypeIdx: index("ai_blackboard_task_type_idx").on(table.taskType),
+  platformIdx: index("ai_blackboard_platform_idx").on(table.platform),
+  createdAtIdx: index("ai_blackboard_created_at_idx").on(table.createdAt),
+  activeIdx: index("ai_blackboard_active_idx").on(table.isActive),
+  sessionTaskIdx: index("ai_blackboard_session_task_idx").on(table.sessionId, table.taskType),
+}));
+
+/**
+ * AI Performance Table - Platform performance metrics and health monitoring
+ * Tracks real-world performance of each AI platform/model combination
+ * Used for intelligent routing decisions and SLA monitoring
+ * 
+ * Metrics tracked:
+ * - Latency: Response time distribution (p50, p95, p99)
+ * - Availability: Success rate and uptime
+ * - Quality: Error rates and types
+ * - Cost: Actual vs expected pricing
+ */
+export const aiPerformance = pgTable("ai_performance", {
+  id: serial("id").primaryKey(),
+  
+  // Platform & Model
+  platform: varchar("platform", { length: 20 }).notNull(),
+  model: varchar("model", { length: 100 }).notNull(),
+  
+  // Time window
+  windowStart: timestamp("window_start").notNull(),
+  windowEnd: timestamp("window_end").notNull(),
+  windowSize: integer("window_size").notNull().default(3600), // seconds (1 hour default)
+  
+  // Request volume
+  totalRequests: integer("total_requests").notNull().default(0),
+  successfulRequests: integer("successful_requests").notNull().default(0),
+  failedRequests: integer("failed_requests").notNull().default(0),
+  cachedRequests: integer("cached_requests").notNull().default(0),
+  
+  // Latency metrics (milliseconds)
+  avgLatency: integer("avg_latency"),
+  medianLatency: integer("median_latency"),
+  p95Latency: integer("p95_latency"),
+  p99Latency: integer("p99_latency"),
+  minLatency: integer("min_latency"),
+  maxLatency: integer("max_latency"),
+  
+  // Throughput
+  avgTokensPerSecond: real("avg_tokens_per_second"),
+  peakTokensPerSecond: real("peak_tokens_per_second"),
+  
+  // Reliability
+  successRate: real("success_rate"), // Percentage (0-100)
+  errorRate: real("error_rate"), // Percentage (0-100)
+  timeoutRate: real("timeout_rate"), // Percentage (0-100)
+  
+  // Error breakdown
+  rateLimitErrors: integer("rate_limit_errors").default(0),
+  authErrors: integer("auth_errors").default(0),
+  serverErrors: integer("server_errors").default(0),
+  networkErrors: integer("network_errors").default(0),
+  otherErrors: integer("other_errors").default(0),
+  
+  // Cost efficiency
+  totalCost: numeric("total_cost", { precision: 10, scale: 6 }),
+  costPerRequest: numeric("cost_per_request", { precision: 10, scale: 6 }),
+  costPer1kTokens: numeric("cost_per_1k_tokens", { precision: 10, scale: 6 }),
+  
+  // Quality metrics
+  avgInputTokens: integer("avg_input_tokens"),
+  avgOutputTokens: integer("avg_output_tokens"),
+  avgTotalTokens: integer("avg_total_tokens"),
+  
+  // SLA compliance
+  slaTarget: integer("sla_target"), // Target latency in ms
+  slaViolations: integer("sla_violations").default(0),
+  slaComplianceRate: real("sla_compliance_rate"), // Percentage (0-100)
+  
+  // Health score (0-100 composite metric)
+  healthScore: integer("health_score"),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  platformModelIdx: index("ai_performance_platform_model_idx").on(table.platform, table.model),
+  windowStartIdx: index("ai_performance_window_start_idx").on(table.windowStart),
+  healthScoreIdx: index("ai_performance_health_score_idx").on(table.healthScore),
+  platformWindowIdx: index("ai_performance_platform_window_idx").on(table.platform, table.windowStart),
+  uniqueWindow: uniqueIndex("unique_performance_window").on(table.platform, table.model, table.windowStart),
+}));
+
+// ============================================================================
+// MULTI-AI ORCHESTRATION ZOD SCHEMAS & TYPES
+// ============================================================================
+
+// AI Requests
+export const insertAIRequestSchema = createInsertSchema(aiRequests).omit({ id: true, createdAt: true });
+export type InsertAIRequest = z.infer<typeof insertAIRequestSchema>;
+export type SelectAIRequest = typeof aiRequests.$inferSelect;
+
+// AI Costs
+export const insertAICostSchema = createInsertSchema(aiCosts).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertAICost = z.infer<typeof insertAICostSchema>;
+export type SelectAICost = typeof aiCosts.$inferSelect;
+
+// AI Cache
+export const insertAICacheSchema = createInsertSchema(aiCache).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertAICache = z.infer<typeof insertAICacheSchema>;
+export type SelectAICache = typeof aiCache.$inferSelect;
+
+// AI Rate Limits
+export const insertAIRateLimitSchema = createInsertSchema(aiRateLimits).omit({ id: true, updatedAt: true });
+export type InsertAIRateLimit = z.infer<typeof insertAIRateLimitSchema>;
+export type SelectAIRateLimit = typeof aiRateLimits.$inferSelect;
+
+// AI Circuit Breakers
+export const insertAICircuitBreakerSchema = createInsertSchema(aiCircuitBreakers).omit({ id: true, updatedAt: true });
+export type InsertAICircuitBreaker = z.infer<typeof insertAICircuitBreakerSchema>;
+export type SelectAICircuitBreaker = typeof aiCircuitBreakers.$inferSelect;
+
+// AI Blackboard
+export const insertAIBlackboardSchema = createInsertSchema(aiBlackboard).omit({ id: true, createdAt: true });
+export type InsertAIBlackboard = z.infer<typeof insertAIBlackboardSchema>;
+export type SelectAIBlackboard = typeof aiBlackboard.$inferSelect;
+
+// AI Performance
+export const insertAIPerformanceSchema = createInsertSchema(aiPerformance).omit({ id: true, createdAt: true });
+export type InsertAIPerformance = z.infer<typeof insertAIPerformanceSchema>;
+export type SelectAIPerformance = typeof aiPerformance.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)

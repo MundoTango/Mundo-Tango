@@ -12,8 +12,10 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.68.0",
+    "@google/generative-ai": "^0.24.1",
     "@hookform/resolvers": "^3.10.0",
     "@jridgewell/trace-mapping": "^0.3.25",
+    "@lancedb/lancedb": "^0.22.3",
     "@lhci/cli": "^0.15.1",
     "@neondatabase/serverless": "^0.10.4",
     "@octokit/rest": "^22.0.0",
@@ -64,6 +66,7 @@
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "@types/three": "^0.181.0",
+    "apache-arrow": "^18.1.0",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
     "bullmq": "^5.63.0",

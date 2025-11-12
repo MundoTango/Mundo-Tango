@@ -49,6 +49,11 @@ import venueRoutes from "./routes/venue-routes";
 import workshopRoutes from "./routes/workshop-routes";
 import musicRoutes from "./routes/music-routes";
 import healthRoutes from "./routes/health";
+import agentIntelligenceRoutes from "./routes/agentIntelligenceRoutes";
+import agentCommunicationRoutes from "./routes/agentCommunicationRoutes";
+import knowledgeRoutes from "./routes/knowledgeRoutes";
+import monitoringRoutes from "./routes/monitoringRoutes";
+import multiAIRoutes from "./routes/multiAIRoutes";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
@@ -141,6 +146,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Phase 4 Deployment Blocker Routes
   app.use("/api/agents", agentHealthRoutes);
   app.use("/api/predictive", predictiveContextRoutes);
+  
+  // TRACK 3 BATCH 13-16: Agent Intelligence API Layer
+  app.use("/api/agent-intelligence", agentIntelligenceRoutes);
+  app.use("/api/agents/communication", agentCommunicationRoutes);
+  app.use("/api/knowledge", knowledgeRoutes);
+  app.use("/api/monitoring", monitoringRoutes);
+  
+  // BATCH 16: Multi-AI Orchestration Routes
+  app.use("/api/ai/multi", multiAIRoutes);
   
   // Existing routes
   app.use("/api/auth", authRoutes);

@@ -181,6 +181,83 @@ export const adminWorkflowActions = new Counter({
   registers: [register],
 });
 
+// ============================================================================
+// AGENT PERFORMANCE METRICS (TRACK 1 BATCH 5)
+// ============================================================================
+
+// Agent Tasks Completed
+export const agentTasksCompleted = new Counter({
+  name: 'agent_tasks_completed_total',
+  help: 'Total number of tasks completed by agents',
+  labelNames: ['agent_id', 'agent_name', 'agent_domain'],
+  registers: [register],
+});
+
+// Agent Tasks Failed
+export const agentTasksFailed = new Counter({
+  name: 'agent_tasks_failed_total',
+  help: 'Total number of tasks failed by agents',
+  labelNames: ['agent_id', 'agent_name', 'agent_domain'],
+  registers: [register],
+});
+
+// Agent Task Duration
+export const agentTaskDuration = new Histogram({
+  name: 'agent_task_duration_seconds',
+  help: 'Duration of agent tasks in seconds',
+  labelNames: ['agent_id', 'agent_name', 'agent_domain'],
+  buckets: [1, 5, 10, 30, 60, 120, 300, 600], // 1s to 10min
+  registers: [register],
+});
+
+// Agent Error Rate
+export const agentErrorRate = new Gauge({
+  name: 'agent_error_rate',
+  help: 'Current error rate for agents (0-1)',
+  labelNames: ['agent_id', 'agent_name'],
+  registers: [register],
+});
+
+// Agent Cache Hit Rate
+export const agentCacheHitRate = new Gauge({
+  name: 'agent_cache_hit_rate',
+  help: 'Current cache hit rate for agents (0-1)',
+  labelNames: ['agent_id', 'agent_name'],
+  registers: [register],
+});
+
+// Agent Workload Percentage
+export const agentWorkload = new Gauge({
+  name: 'agent_workload_percentage',
+  help: 'Current workload percentage for agents (0-100)',
+  labelNames: ['agent_id', 'agent_name', 'agent_domain'],
+  registers: [register],
+});
+
+// Agent Health Score
+export const agentHealthScore = new Gauge({
+  name: 'agent_health_score',
+  help: 'Current health score for agents (0-100)',
+  labelNames: ['agent_id', 'agent_name', 'status'],
+  registers: [register],
+});
+
+// Agent Queue Depth
+export const agentQueueDepth = new Gauge({
+  name: 'agent_queue_depth',
+  help: 'Current queue depth for agents',
+  labelNames: ['agent_id', 'agent_name'],
+  registers: [register],
+});
+
+// Agent Concurrent Tasks
+export const agentConcurrentTasks = new Gauge({
+  name: 'agent_concurrent_tasks',
+  help: 'Current number of concurrent tasks for agents',
+  labelNames: ['agent_id', 'agent_name'],
+  registers: [register],
+});
+
 /**
  * Middleware to track HTTP metrics
  */

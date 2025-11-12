@@ -4,6 +4,7 @@
 // Following existing Drizzle patterns from shared/schema.ts
 
 import { pgTable, serial, varchar, text, timestamp, integer, boolean, jsonb, index } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 import { users } from "./schema";
 
 // Table 1: Deployments
@@ -627,6 +628,101 @@ export const agentTrainingSessions = pgTable("agent_training_sessions", {
   createdAtIdx: index("agent_training_sessions_created_at_idx").on(table.createdAt),
 }));
 
+// ============================================================================
+// KNOWLEDGE GRAPH SYSTEM - TRACK 2 BATCH 7-9
+// ============================================================================
+
+// Table: Knowledge Graph Nodes
+// Represents agents as nodes in the knowledge graph with their capabilities
+export const knowledgeGraphNodes = pgTable("knowledge_graph_nodes", {
+  id: serial("id").primaryKey(),
+  
+  // Node identification
+  agentId: integer("agent_id").references(() => esaAgents.id).notNull().unique(),
+  nodeType: varchar("node_type", { length: 50 }).notNull(), // 'agent' | 'domain' | 'capability' | 'expertise'
+  
+  // Agent metadata (denormalized for performance)
+  agentCode: varchar("agent_code", { length: 50 }).notNull(),
+  agentName: varchar("agent_name", { length: 255 }).notNull(),
+  agentType: varchar("agent_type", { length: 50 }).notNull(),
+  division: varchar("division", { length: 50 }),
+  layer: integer("layer"),
+  
+  // Capabilities and expertise
+  capabilities: text("capabilities").array().notNull().default(sql`ARRAY[]::text[]`),
+  expertiseAreas: text("expertise_areas").array().notNull().default(sql`ARRAY[]::text[]`),
+  skills: text("skills").array().notNull().default(sql`ARRAY[]::text[]`),
+  
+  // Performance metrics
+  successRate: integer("success_rate").default(0), // 0-100
+  avgResponseTime: integer("avg_response_time"), // milliseconds
+  taskCount: integer("task_count").default(0),
+  collaborationScore: integer("collaboration_score").default(0), // 0-100
+  
+  // Availability
+  status: varchar("status", { length: 20 }).notNull().default('active'), // 'active' | 'busy' | 'offline' | 'overloaded'
+  currentLoad: integer("current_load").default(0), // 0-100 percentage
+  
+  // Graph metadata
+  centrality: integer("centrality"), // Network centrality score
+  importance: integer("importance").default(50), // 0-100 importance in network
+  
+  // Metadata
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  agentIdIdx: index("knowledge_graph_nodes_agent_id_idx").on(table.agentId),
+  nodeTypeIdx: index("knowledge_graph_nodes_node_type_idx").on(table.nodeType),
+  statusIdx: index("knowledge_graph_nodes_status_idx").on(table.status),
+  capabilitiesIdx: index("knowledge_graph_nodes_capabilities_idx").using("gin", table.capabilities),
+  expertiseIdx: index("knowledge_graph_nodes_expertise_idx").using("gin", table.expertiseAreas),
+}));
+
+// Table: Knowledge Graph Edges
+// Represents relationships between agents (collaboration, reporting, knowledge flow)
+export const knowledgeGraphEdges = pgTable("knowledge_graph_edges", {
+  id: serial("id").primaryKey(),
+  
+  // Edge endpoints
+  sourceNodeId: integer("source_node_id").references(() => knowledgeGraphNodes.id).notNull(),
+  targetNodeId: integer("target_node_id").references(() => knowledgeGraphNodes.id).notNull(),
+  
+  // Relationship type
+  relationshipType: varchar("relationship_type", { length: 50 }).notNull(), // 'reports_to' | 'collaborates_with' | 'delegates_to' | 'consults' | 'knowledge_flow' | 'escalates_to'
+  
+  // Relationship metadata
+  strength: integer("strength").default(50), // 0-100 relationship strength
+  frequency: integer("frequency").default(0), // Number of interactions
+  direction: varchar("direction", { length: 20 }).notNull().default('directed'), // 'directed' | 'bidirectional'
+  
+  // Communication metadata
+  lastInteraction: timestamp("last_interaction"),
+  avgResponseTime: integer("avg_response_time"), // milliseconds
+  successfulInteractions: integer("successful_interactions").default(0),
+  failedInteractions: integer("failed_interactions").default(0),
+  
+  // Knowledge transfer
+  knowledgeShared: text("knowledge_shared").array(),
+  patternsShared: integer("patterns_shared").default(0),
+  
+  // Metadata
+  metadata: jsonb("metadata").$type<{
+    context?: string;
+    protocol?: string;
+    priority?: string;
+    [key: string]: any;
+  }>(),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  sourceNodeIdx: index("knowledge_graph_edges_source_idx").on(table.sourceNodeId),
+  targetNodeIdx: index("knowledge_graph_edges_target_idx").on(table.targetNodeId),
+  relationshipTypeIdx: index("knowledge_graph_edges_relationship_type_idx").on(table.relationshipType),
+  strengthIdx: index("knowledge_graph_edges_strength_idx").on(table.strength),
+  sourceTargetUnique: index("knowledge_graph_edges_source_target_idx").on(table.sourceNodeId, table.targetNodeId, table.relationshipType),
+}));
+
 // Types for TypeScript
 export type EsaAgent = typeof esaAgents.$inferSelect;
 export type InsertEsaAgent = typeof esaAgents.$inferInsert;
@@ -642,3 +738,9 @@ export type InsertAgentCertification = typeof agentCertifications.$inferInsert;
 
 export type AgentTrainingSession = typeof agentTrainingSessions.$inferSelect;
 export type InsertAgentTrainingSession = typeof agentTrainingSessions.$inferInsert;
+
+export type KnowledgeGraphNode = typeof knowledgeGraphNodes.$inferSelect;
+export type InsertKnowledgeGraphNode = typeof knowledgeGraphNodes.$inferInsert;
+
+export type KnowledgeGraphEdge = typeof knowledgeGraphEdges.$inferSelect;
+export type InsertKnowledgeGraphEdge = typeof knowledgeGraphEdges.$inferInsert;
