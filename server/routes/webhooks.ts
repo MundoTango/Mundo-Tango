@@ -1,11 +1,163 @@
-// Webhook Handlers - Receive deployment status updates from Vercel + Railway
-// Tier 1: Deployment Automation
+// Webhook Handlers - Deployment + Stripe Payment Processing
 // Created: October 31, 2025
+// Updated: November 12, 2025 - Added Stripe webhook handler
 
 import { Router, Request, Response } from "express";
 import { storage } from "../storage";
+import Stripe from "stripe";
 
 const router = Router();
+
+// Initialize Stripe with secret key
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
+  apiVersion: "2024-11-20.acacia",
+});
+
+// Stripe Webhook Handler - PRODUCTION CRITICAL
+// Handles payment events from Stripe to activate subscriptions
+router.post("/stripe", async (req: Request, res: Response) => {
+  const sig = req.headers['stripe-signature'];
+
+  if (!sig) {
+    console.error('[Stripe Webhook] No signature header found');
+    return res.status(400).send('No signature');
+  }
+
+  let event: Stripe.Event;
+
+  try {
+    // Verify webhook signature for security
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    if (!webhookSecret) {
+      console.error('[Stripe Webhook] STRIPE_WEBHOOK_SECRET not configured');
+      return res.status(500).send('Webhook secret not configured');
+    }
+
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      sig,
+      webhookSecret
+    );
+  } catch (err: any) {
+    console.error(`[Stripe Webhook] Signature verification failed:`, err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  // Handle the event
+  console.log(`[Stripe Webhook] Received event: ${event.type}`);
+
+  try {
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        console.log(`[Stripe] Checkout completed for session: ${session.id}`);
+        
+        // Get customer and subscription details
+        const customerId = session.customer as string;
+        const subscriptionId = session.subscription as string;
+        
+        if (subscriptionId) {
+          // Retrieve full subscription details
+          const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+          
+          // Get price to determine plan tier
+          const priceId = subscription.items.data[0]?.price.id;
+          
+          // Map price ID to plan tier
+          let planTier = 'free';
+          if (priceId === process.env.STRIPE_PRICE_PREMIUM || priceId === process.env.VITE_STRIPE_PRICE_PREMIUM) {
+            planTier = 'premium';
+          } else if (priceId === process.env.STRIPE_PRICE_PROFESSIONAL || priceId === process.env.VITE_STRIPE_PRICE_PROFESSIONAL) {
+            planTier = 'professional';
+          }
+          
+          // Find user by Stripe customer ID and update subscription
+          const user = await storage.getUserByStripeCustomerId(customerId);
+          
+          if (user) {
+            await storage.updateUserSubscription(user.id, {
+              stripeSubscriptionId: subscriptionId,
+              stripeCustomerId: customerId,
+              plan: planTier,
+              status: 'active',
+              currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+            });
+            console.log(`[Stripe] Activated ${planTier} subscription for user ${user.id}`);
+          } else {
+            console.warn(`[Stripe] No user found for customer ${customerId}`);
+          }
+        }
+        break;
+      }
+
+      case 'customer.subscription.updated': {
+        const subscription = event.data.object as Stripe.Subscription;
+        console.log(`[Stripe] Subscription updated: ${subscription.id}`);
+        
+        const customerId = subscription.customer as string;
+        const user = await storage.getUserByStripeCustomerId(customerId);
+        
+        if (user) {
+          await storage.updateUserSubscription(user.id, {
+            status: subscription.status as 'active' | 'canceled' | 'past_due',
+            currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+          });
+          console.log(`[Stripe] Updated subscription status to ${subscription.status} for user ${user.id}`);
+        }
+        break;
+      }
+
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object as Stripe.Subscription;
+        console.log(`[Stripe] Subscription canceled: ${subscription.id}`);
+        
+        const customerId = subscription.customer as string;
+        const user = await storage.getUserByStripeCustomerId(customerId);
+        
+        if (user) {
+          await storage.updateUserSubscription(user.id, {
+            status: 'canceled',
+            plan: 'free',
+          });
+          console.log(`[Stripe] Downgraded user ${user.id} to free plan`);
+        }
+        break;
+      }
+
+      case 'invoice.payment_succeeded': {
+        const invoice = event.data.object as Stripe.Invoice;
+        console.log(`[Stripe] Payment succeeded for invoice: ${invoice.id}`);
+        // Payment successful - subscription remains active
+        break;
+      }
+
+      case 'invoice.payment_failed': {
+        const invoice = event.data.object as Stripe.Invoice;
+        console.log(`[Stripe] Payment failed for invoice: ${invoice.id}`);
+        
+        const customerId = invoice.customer as string;
+        const user = await storage.getUserByStripeCustomerId(customerId);
+        
+        if (user) {
+          await storage.updateUserSubscription(user.id, {
+            status: 'past_due',
+          });
+          console.log(`[Stripe] Marked subscription as past_due for user ${user.id}`);
+        }
+        break;
+      }
+
+      default:
+        console.log(`[Stripe] Unhandled event type: ${event.type}`);
+    }
+
+    // Return 200 to acknowledge receipt
+    res.json({ received: true });
+  } catch (error) {
+    console.error('[Stripe Webhook] Processing error:', error);
+    res.status(500).json({ error: 'Webhook processing failed' });
+  }
+});
 
 // Vercel Webhook Handler
 // Receives deployment status updates from Vercel
