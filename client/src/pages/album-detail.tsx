@@ -326,14 +326,14 @@ export default function AlbumDetail() {
       {/* Lightbox Viewer */}
       {lightboxIndex !== null && albumMedia[lightboxIndex] && (
         <Dialog open={true} onOpenChange={() => setLightboxIndex(null)}>
-          <DialogContent className="max-w-screen-lg p-0 bg-black">
+          <DialogContent className="max-w-screen-lg p-0 bg-black" data-testid="lightbox-viewer">
             <div className="relative h-[80vh] flex items-center justify-center">
               <Button
                 size="icon"
                 variant="ghost"
                 className="absolute top-4 right-4 text-white hover:bg-white/20 z-10"
                 onClick={() => setLightboxIndex(null)}
-                data-testid="button-close-lightbox"
+                data-testid="button-lightbox-close"
               >
                 <X className="w-6 h-6" />
               </Button>
@@ -345,7 +345,7 @@ export default function AlbumDetail() {
                     variant="ghost"
                     className="absolute left-4 text-white hover:bg-white/20"
                     onClick={handlePrevious}
-                    data-testid="button-previous"
+                    data-testid="button-lightbox-previous"
                   >
                     <ChevronLeft className="w-8 h-8" />
                   </Button>
@@ -354,7 +354,7 @@ export default function AlbumDetail() {
                     variant="ghost"
                     className="absolute right-4 text-white hover:bg-white/20"
                     onClick={handleNext}
-                    data-testid="button-next"
+                    data-testid="button-lightbox-next"
                   >
                     <ChevronRight className="w-8 h-8" />
                   </Button>
@@ -367,12 +367,14 @@ export default function AlbumDetail() {
                   controls
                   className="max-w-full max-h-full"
                   autoPlay
+                  data-testid="lightbox-video"
                 />
               ) : (
                 <img
                   src={albumMedia[lightboxIndex].media_url}
                   alt={albumMedia[lightboxIndex].media_caption || "Media"}
                   className="max-w-full max-h-full object-contain"
+                  data-testid="lightbox-image"
                 />
               )}
 
@@ -452,7 +454,7 @@ export default function AlbumDetail() {
             <Button
               onClick={handleAddMedia}
               disabled={!selectedMediaId || addMediaMutation.isPending}
-              data-testid="button-confirm-add-media"
+              data-testid="button-add-media-submit"
             >
               {addMediaMutation.isPending ? "Adding..." : "Add to Album"}
             </Button>

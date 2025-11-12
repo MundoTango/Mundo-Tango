@@ -109,3 +109,16 @@ export const generateTestMusicianProfile = () => ({
   country: 'Argentina',
   verified: false,
 });
+
+export const generateTestAlbum = () => ({
+  name: `Test Album ${nanoid(6)}`,
+  description: 'A beautiful collection of tango memories for testing',
+  privacy: 'public',
+});
+
+export const generateTestMedia = () => ({
+  caption: `Test media ${nanoid(6)}`,
+  type: 'image',
+  url: 'https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=800',
+  thumbnail: 'https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=200',
+});
