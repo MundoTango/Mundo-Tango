@@ -61,6 +61,8 @@ import serviceProfileRoutes from "./routes/serviceProfileRoutes";
 import specialtyProfileRoutes from "./routes/specialtyProfileRoutes";
 import contentProfileRoutes from "./routes/contentProfileRoutes";
 import healthRoutes from "./routes/health";
+import eventRoutes from "./routes/event-routes";
+import groupRoutes from "./routes/group-routes";
 console.log("🔍 [DEBUG] About to import agentIntelligenceRoutes...");
 import agentIntelligenceRoutes from "./routes/agentIntelligenceRoutes";
 console.log("✅ [DEBUG] agentIntelligenceRoutes loaded");
@@ -347,6 +349,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/teachers", teacherRoutes);
   app.use("/api/djs", djRoutes);
   app.use("/api/musicians", musicianRoutes);
+
+  // AGENT 10: Events & Groups Systems
+  app.use("/api/events", eventRoutes);
+  app.use("/api/groups", groupRoutes);
 
   // ============================================================================
   // BATCH 15: UNIFIED PROFILE SEARCH

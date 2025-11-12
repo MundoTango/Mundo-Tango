@@ -433,47 +433,48 @@
   }
 
   /* ========== NAVIGATION DESIGN TOKENS ========== */
-  
-  /* Sidebar-specific colors */
-  --ocean: #40E0D0;
-  --ocean-muted: rgba(64, 224, 208, 0.6);
-  --ocean-secondary: rgba(64, 224, 208, 0.8);
-  --ocean-seafoam-400: #40E0D0;
-  --seafoam: #40E0D0;
-  --ocean-deep: #0047AB;
-  
-  /* Background colors */
-  --bg-primary: hsl(0 0% 98%);
-  --bg-ocean-gradient: linear-gradient(135deg, #40E0D0 0%, #1E90FF 50%, #0047AB 100%);
-  
-  /* Profile card */
-  --profile-card-bg: rgba(255, 255, 255, 0.5);
-  --profile-border: rgba(64, 224, 208, 0.2);
-  
-  /* Stats cards */
-  --stat-card-bg: rgba(255, 255, 255, 0.3);
-  --stat-border: rgba(64, 224, 208, 0.15);
-  --stat-icon-bg: rgba(64, 224, 208, 0.1);
-  
-  /* Footer branding */
-  --footer-brand-bg: rgba(64, 224, 208, 0.1);
-  --footer-border: rgba(64, 224, 208, 0.2);
-  
-  /* Brand icon */
-  --brand-icon-bg: linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%);
-  
-  /* Avatar backgrounds */
-  --avatar-light-bg: linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%);
-  
-  /* Hover states */
-  --hover-ocean-light: rgba(64, 224, 208, 0.1);
-  --ocean-hover: rgba(64, 224, 208, 0.15);
-  
-  /* Active states */
-  --active-ocean-bg: rgba(64, 224, 208, 0.15);
-  
-  /* Overlay */
-  --overlay-ocean: rgba(64, 224, 208, 0.05);
+  :root {
+    /* Sidebar-specific colors */
+    --ocean: #40E0D0;
+    --ocean-muted: rgba(64, 224, 208, 0.6);
+    --ocean-secondary: rgba(64, 224, 208, 0.8);
+    --ocean-seafoam-400: #40E0D0;
+    --seafoam: #40E0D0;
+    --ocean-deep: #0047AB;
+    
+    /* Background colors */
+    --bg-primary: hsl(0 0% 98%);
+    --bg-ocean-gradient: linear-gradient(135deg, #40E0D0 0%, #1E90FF 50%, #0047AB 100%);
+    
+    /* Profile card */
+    --profile-card-bg: rgba(255, 255, 255, 0.5);
+    --profile-border: rgba(64, 224, 208, 0.2);
+    
+    /* Stats cards */
+    --stat-card-bg: rgba(255, 255, 255, 0.3);
+    --stat-border: rgba(64, 224, 208, 0.15);
+    --stat-icon-bg: rgba(64, 224, 208, 0.1);
+    
+    /* Footer branding */
+    --footer-brand-bg: rgba(64, 224, 208, 0.1);
+    --footer-border: rgba(64, 224, 208, 0.2);
+    
+    /* Brand icon */
+    --brand-icon-bg: linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%);
+    
+    /* Avatar backgrounds */
+    --avatar-light-bg: linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%);
+    
+    /* Hover states */
+    --hover-ocean-light: rgba(64, 224, 208, 0.1);
+    --ocean-hover: rgba(64, 224, 208, 0.15);
+    
+    /* Active states */
+    --active-ocean-bg: rgba(64, 224, 208, 0.15);
+    
+    /* Overlay */
+    --overlay-ocean: rgba(64, 224, 208, 0.05);
+  }
   
   /* ========== DESIGN TOKEN SYSTEM ========== */
   /* These CSS variables are populated by ThemeProvider based on route */
