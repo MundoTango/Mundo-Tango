@@ -100,7 +100,7 @@ import {
   insertStorySchema,
   insertVenueRecommendationSchema,
   insertTeacherProfileSchema,
-  insertDjProfileSchema,
+  insertDJProfileSchema,
   insertMusicianProfileSchema,
   insertPhotographerProfileSchema,
   insertPerformerProfileSchema,
@@ -5647,7 +5647,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // DJ Profiles
   app.post("/api/profiles/dj", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const validated = insertDjProfileSchema.parse(req.body);
+      const validated = insertDJProfileSchema.parse(req.body);
       const profile = await storage.createDjProfile({ ...validated, userId: req.userId! });
       res.status(201).json(profile);
     } catch (error) {
@@ -5672,7 +5672,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/profiles/dj", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const validated = insertDjProfileSchema.partial().parse(req.body);
+      const validated = insertDJProfileSchema.partial().parse(req.body);
       const profile = await storage.updateDjProfile(req.userId!, validated);
       res.json(profile);
     } catch (error) {

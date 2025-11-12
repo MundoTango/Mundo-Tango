@@ -4381,8 +4381,8 @@ export class DbStorage implements IStorage {
     maxPrice?: number;
     verified?: boolean;
     availability?: boolean;
-    page = 1;
-    limit = 20;
+    page?: number;
+    limit?: number;
   }): Promise<{
     results: Array<{
       type: string;
@@ -4393,7 +4393,7 @@ export class DbStorage implements IStorage {
     page: number;
     totalPages: number;
   }> {
-    const { q, types, city, country, minRating, maxPrice, verified, availability, page, limit } = filters;
+    const { q, types, city, country, minRating, maxPrice, verified, availability, page = 1, limit = 20 } = filters;
     const offset = (page - 1) * limit;
 
     // Define all 17 profile types
