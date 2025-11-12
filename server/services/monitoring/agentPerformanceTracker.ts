@@ -420,22 +420,20 @@ export function calculateHealthScore(factors: HealthScoreFactors): number {
  * ```
  */
 export async function monitorWorkload(agentId?: string): Promise<WorkloadStatus[]> {
-  let query = db
-    .select()
-    .from(agentPerformanceMetrics)
-    .where(
-      and(
-        eq(agentPerformanceMetrics.timeWindow, 'hour'),
-        gte(agentPerformanceMetrics.windowStart, new Date(Date.now() - 3600000))
-      )
-    )
-    .orderBy(desc(agentPerformanceMetrics.workloadPercentage));
+  const conditions = [
+    eq(agentPerformanceMetrics.timeWindow, 'hour'),
+    gte(agentPerformanceMetrics.windowStart, new Date(Date.now() - 3600000))
+  ];
 
   if (agentId) {
-    query = query.where(eq(agentPerformanceMetrics.agentId, agentId)) as any;
+    conditions.push(eq(agentPerformanceMetrics.agentId, agentId));
   }
 
-  const metrics = await query;
+  const metrics = await db
+    .select()
+    .from(agentPerformanceMetrics)
+    .where(and(...conditions))
+    .orderBy(desc(agentPerformanceMetrics.workloadPercentage));
 
   return metrics.map((m) => {
     let status: 'healthy' | 'busy' | 'overloaded' | 'failing' = 'healthy';
@@ -596,21 +594,19 @@ export async function generateReport(options?: {
   const startDate = options?.startDate || new Date(Date.now() - 24 * 3600000); // default: last 24h
   const endDate = options?.endDate || new Date();
   
-  let query = db
-    .select()
-    .from(agentPerformanceMetrics)
-    .where(
-      and(
-        gte(agentPerformanceMetrics.windowStart, startDate),
-        lte(agentPerformanceMetrics.windowStart, endDate)
-      )
-    );
+  const conditions = [
+    gte(agentPerformanceMetrics.windowStart, startDate),
+    lte(agentPerformanceMetrics.windowStart, endDate)
+  ];
 
   if (options?.agentDomain) {
-    query = query.where(eq(agentPerformanceMetrics.agentDomain, options.agentDomain)) as any;
+    conditions.push(eq(agentPerformanceMetrics.agentDomain, options.agentDomain));
   }
 
-  const metrics = await query;
+  const metrics = await db
+    .select()
+    .from(agentPerformanceMetrics)
+    .where(and(...conditions));
 
   // Calculate summary statistics
   const totalAgents = new Set(metrics.map(m => m.agentId)).size;
@@ -934,10 +930,20 @@ export async function getActiveAlerts(
   agentId?: string,
   severity?: 'low' | 'medium' | 'high' | 'critical'
 ): Promise<SelectAgentPerformanceAlert[]> {
-  let query = db
+  const conditions = [eq(agentPerformanceAlerts.status, 'active')];
+
+  if (agentId) {
+    conditions.push(eq(agentPerformanceAlerts.agentId, agentId));
+  }
+
+  if (severity) {
+    conditions.push(eq(agentPerformanceAlerts.severity, severity));
+  }
+
+  return await db
     .select()
     .from(agentPerformanceAlerts)
-    .where(eq(agentPerformanceAlerts.status, 'active'))
+    .where(and(...conditions))
     .orderBy(
       sql`CASE 
         WHEN severity = 'critical' THEN 1
@@ -947,16 +953,6 @@ export async function getActiveAlerts(
       END`,
       desc(agentPerformanceAlerts.createdAt)
     );
-
-  if (agentId) {
-    query = query.where(eq(agentPerformanceAlerts.agentId, agentId)) as any;
-  }
-
-  if (severity) {
-    query = query.where(eq(agentPerformanceAlerts.severity, severity)) as any;
-  }
-
-  return await query;
 }
 
 /**

@@ -49,6 +49,8 @@ import OpenAI from "openai";
 import { z } from "zod";
 import { logInfo, logError, logDebug } from "../../../server/middleware/logger";
 import { LearningCoordinatorService, type Learning } from "../learning/learningCoordinator";
+import { AIGuardrailsService } from "../quality/aiGuardrails";
+import { PatternRecognitionEngine, type ProblemSignature, type SolutionMatch } from "../intelligence/patternRecognition";
 
 // ============================================================================
 // ZOD VALIDATION SCHEMAS
@@ -254,10 +256,14 @@ interface PatternMatch {
  * 4. Collaboration: Offers help to responsible agents
  * 5. Success Tracking: Monitors fix times and collaboration acceptance
  * 6. Learning Capture: Logs all learnings to Agent #80
+ * 7. APPENDIX Q Guardrails: 7-layer AI error prevention system
+ * 8. Agent #68 Integration: Pattern recognition and learning
  */
 export class QualityValidatorService {
   private openai: OpenAI | null = null;
   private learningCoordinator: LearningCoordinatorService;
+  private aiGuardrails: AIGuardrailsService;
+  private patternEngine: PatternRecognitionEngine;
   private readonly agentId = "Agent #79";
   private readonly embeddingModel = "text-embedding-3-small";
   
@@ -269,6 +275,8 @@ export class QualityValidatorService {
       });
     }
     this.learningCoordinator = new LearningCoordinatorService();
+    this.aiGuardrails = new AIGuardrailsService();
+    this.patternEngine = new PatternRecognitionEngine();
   }
 
   // ==========================================================================
@@ -1303,6 +1311,525 @@ I've created a detailed fix plan with ${fixPlan.steps.length} steps and ${Object
       });
     } catch (error) {
       logError(error as Error, { agentId: this.agentId, context: 'Log learning to coordinator' });
+    }
+  }
+
+  // ==========================================================================
+  // APPENDIX Q: 7-LAYER GUARDRAIL SYSTEM
+  // ==========================================================================
+
+  /**
+   * Layer 1: Pre-Execution Validation Checklist
+   * Validates requirements and context BEFORE AI starts coding
+   * 
+   * @param agentId - Which AI agent is requesting validation
+   * @param requirement - What needs to be built
+   * @param context - Additional context (existing code, dependencies, etc)
+   * @returns Pre-execution validation result with go/no-go decision
+   * 
+   * @example
+   * ```typescript
+   * const preCheck = await qualityValidator.guardrail_layer1_preExecution(
+   *   'Agent #64',
+   *   'Add Stripe payment to checkout',
+   *   { feature: 'checkout', dependencies: ['stripe'] }
+   * );
+   * 
+   * if (!preCheck.passed) {
+   *   console.log('Blockers:', preCheck.blockers);
+   *   // Don't proceed until blockers are resolved
+   * }
+   * ```
+   */
+  async guardrail_layer1_preExecution(
+    agentId: string,
+    requirement: string,
+    context: Record<string, unknown> = {}
+  ) {
+    logInfo(`[${this.agentId}] 🛡️ Layer 1: Pre-Execution Validation`, { agentId, requirement });
+    return await this.aiGuardrails.layer1_preExecutionValidation(agentId, requirement, context);
+  }
+
+  /**
+   * Layer 2: Multi-AI Code Review
+   * Performs peer validation using Agents #79, #68, #80
+   * 
+   * @param code - Code to review
+   * @param requirements - What the code should accomplish
+   * @param affectedFiles - Files being modified
+   * @param agentId - Agent requesting review
+   * @returns Multi-AI review result with approval decision
+   * 
+   * @example
+   * ```typescript
+   * const review = await qualityValidator.guardrail_layer2_codeReview({
+   *   code: 'const stripe = require("stripe")(apiKey);',
+   *   requirements: 'Add Stripe integration',
+   *   affectedFiles: ['server/routes/payment.ts'],
+   *   agentId: 'Agent #64'
+   * });
+   * 
+   * if (!review.approved) {
+   *   console.log('Blockers:', review.blockers);
+   * }
+   * ```
+   */
+  async guardrail_layer2_codeReview(request: {
+    code: string;
+    requirements: string;
+    affectedFiles: string[];
+    agentId: string;
+    feature?: string;
+  }) {
+    logInfo(`[${this.agentId}] 🛡️ Layer 2: Multi-AI Code Review`, { agentId: request.agentId });
+    return await this.aiGuardrails.layer2_multiAIReview(request);
+  }
+
+  /**
+   * Layer 3: Hallucination Detection
+   * Verifies all code references actually exist in codebase
+   * 
+   * @param code - Code to check for hallucinations
+   * @param fileType - Type of file being checked
+   * @returns Hallucination detection result with confidence score
+   * 
+   * @example
+   * ```typescript
+   * const check = await qualityValidator.guardrail_layer3_hallucination({
+   *   code: 'import { magicalAutoFix } from "magic-lib";',
+   *   fileType: 'typescript'
+   * });
+   * 
+   * if (check.isHallucination) {
+   *   console.log('Hallucinated:', check.issues);
+   * }
+   * ```
+   */
+  async guardrail_layer3_hallucination(request: {
+    code: string;
+    fileType: 'typescript' | 'javascript' | 'tsx' | 'jsx' | 'json';
+    context?: {
+      imports?: string[];
+      functionCalls?: string[];
+      componentReferences?: string[];
+    };
+  }) {
+    logInfo(`[${this.agentId}] 🛡️ Layer 3: Hallucination Detection`, { fileType: request.fileType });
+    return await this.aiGuardrails.layer3_hallucinationDetection(request);
+  }
+
+  /**
+   * Layer 4: Breaking Change Prevention
+   * Analyzes impact of code changes before they're made
+   * 
+   * @param beforeCode - Original code
+   * @param afterCode - Modified code
+   * @param fileType - Type of file (schema, api, component, config)
+   * @param filePath - Path to the file
+   * @returns Breaking change analysis with migration requirements
+   * 
+   * @example
+   * ```typescript
+   * const analysis = await qualityValidator.guardrail_layer4_breakingChanges({
+   *   beforeCode: 'id: serial("id")',
+   *   afterCode: 'id: varchar("id").default(sql`gen_random_uuid()`)',
+   *   fileType: 'schema',
+   *   filePath: 'shared/schema.ts'
+   * });
+   * 
+   * if (analysis.breaking) {
+   *   console.log('Migration required:', analysis.migrationRequired);
+   * }
+   * ```
+   */
+  async guardrail_layer4_breakingChanges(request: {
+    beforeCode: string;
+    afterCode: string;
+    fileType: 'schema' | 'api' | 'component' | 'config';
+    filePath: string;
+  }) {
+    logInfo(`[${this.agentId}] 🛡️ Layer 4: Breaking Change Prevention`, { fileType: request.fileType });
+    return await this.aiGuardrails.layer4_breakingChangePrevention(request);
+  }
+
+  /**
+   * Layer 5: Requirement Verification
+   * Validates output matches requirements EXACTLY
+   * 
+   * @param requirement - Original requirement
+   * @param implementation - What was implemented
+   * @param feature - Feature name
+   * @param verificationCriteria - Optional specific criteria to check
+   * @returns Requirement verification result with match score
+   * 
+   * @example
+   * ```typescript
+   * const verification = await qualityValidator.guardrail_layer5_requirements({
+   *   requirement: 'Add dark mode toggle to navbar',
+   *   implementation: 'Added theme toggle button in header',
+   *   feature: 'Dark Mode',
+   *   verificationCriteria: [
+   *     'Toggle is in navbar',
+   *     'Toggle works',
+   *     'Theme persists on reload'
+   *   ]
+   * });
+   * 
+   * if (!verification.matched) {
+   *   console.log('Gaps:', verification.gaps);
+   * }
+   * ```
+   */
+  async guardrail_layer5_requirements(request: {
+    requirement: string;
+    implementation: string;
+    feature: string;
+    verificationCriteria?: string[];
+  }) {
+    logInfo(`[${this.agentId}] 🛡️ Layer 5: Requirement Verification`, { feature: request.feature });
+    return await this.aiGuardrails.layer5_requirementVerification(request);
+  }
+
+  /**
+   * Layer 6: Continuous Monitoring
+   * Monitors for errors AFTER deployment
+   * 
+   * @param feature - Feature to monitor
+   * @param timeWindowMinutes - How far back to look for errors
+   * @returns Monitoring alerts if issues detected
+   * 
+   * @example
+   * ```typescript
+   * const monitoring = await qualityValidator.guardrail_layer6_monitoring({
+   *   feature: 'Visual Editor',
+   *   timeWindowMinutes: 30
+   * });
+   * 
+   * if (monitoring.alerts.length > 0) {
+   *   console.log('Production errors detected:', monitoring.alerts);
+   * }
+   * ```
+   */
+  async guardrail_layer6_monitoring(options: {
+    feature?: string;
+    timeWindowMinutes?: number;
+  }) {
+    logInfo(`[${this.agentId}] 🛡️ Layer 6: Continuous Monitoring`, { feature: options.feature });
+    return await this.aiGuardrails.layer6_continuousMonitoring(options);
+  }
+
+  /**
+   * Layer 7: Pattern Learning (Agent #68 Integration)
+   * Learns from mistakes and creates reusable patterns
+   * 
+   * @param problem - Problem that occurred
+   * @param solution - How it was solved
+   * @param outcome - Result of the solution
+   * @returns Pattern learning result with pattern ID
+   * 
+   * @example
+   * ```typescript
+   * const learning = await qualityValidator.guardrail_layer7_patternLearning({
+   *   problem: 'Mobile overflow on Visual Editor',
+   *   solution: 'Added overflow-x: hidden to container',
+   *   outcome: { success: true, timeSaved: '2 hours' }
+   * });
+   * 
+   * console.log('Pattern created:', learning.patternName);
+   * ```
+   */
+  async guardrail_layer7_patternLearning(request: {
+    problem: string;
+    solution: string;
+    category: 'bug_fix' | 'optimization' | 'feature' | 'refactor' | 'pattern' | 'architecture';
+    domain: string;
+    discoveredBy: string;
+    outcome: {
+      success: boolean;
+      timeSaved?: string;
+      metricsImproved?: Record<string, number>;
+      issuesResolved?: number;
+    };
+    codeExample?: string;
+    whenNotToUse?: string;
+  }) {
+    logInfo(`[${this.agentId}] 🛡️ Layer 7: Pattern Learning (Agent #68)`, { 
+      category: request.category,
+      domain: request.domain 
+    });
+    return await this.aiGuardrails.layer7_patternLearning(request);
+  }
+
+  // ==========================================================================
+  // AGENT #68 PATTERN RECOGNITION INTEGRATION
+  // ==========================================================================
+
+  /**
+   * Detects if a problem matches existing patterns using Agent #68
+   * 
+   * @param signature - Problem signature to match
+   * @returns Pattern detection result with proven solutions
+   * 
+   * @example
+   * ```typescript
+   * const detection = await qualityValidator.detectPattern({
+   *   category: 'bug_fix',
+   *   domain: 'mobile',
+   *   problem: 'UI elements overflow viewport on mobile',
+   *   severity: 'high'
+   * });
+   * 
+   * if (detection.isRecurring) {
+   *   console.log('Proven solution:', detection.matchedPattern?.solutionTemplate);
+   * }
+   * ```
+   */
+  async detectPattern(signature: ProblemSignature) {
+    logInfo(`[${this.agentId}] 🔍 Pattern Detection (Agent #68)`, { 
+      category: signature.category,
+      domain: signature.domain 
+    });
+    return await this.patternEngine.detectPattern(signature);
+  }
+
+  /**
+   * Finds proven solutions for a problem using Agent #68's pattern library
+   * 
+   * @param signature - Problem signature
+   * @param limit - Maximum number of solutions to return
+   * @returns Array of proven solutions with confidence scores
+   * 
+   * @example
+   * ```typescript
+   * const solutions = await qualityValidator.findProvenSolutions({
+   *   category: 'bug_fix',
+   *   domain: 'mobile',
+   *   problem: 'Mobile overflow issue',
+   *   severity: 'high'
+   * }, 5);
+   * 
+   * solutions.forEach(sol => {
+   *   console.log(`Solution (${Math.round(sol.confidence * 100)}%):`, sol.solutionTemplate);
+   * });
+   * ```
+   */
+  async findProvenSolutions(signature: ProblemSignature, limit: number = 5): Promise<SolutionMatch[]> {
+    logInfo(`[${this.agentId}] 🎯 Finding Proven Solutions (Agent #68)`, { 
+      category: signature.category,
+      domain: signature.domain 
+    });
+    return await this.patternEngine.matchSolution(signature, limit);
+  }
+
+  /**
+   * Tracks when a pattern is applied and records the outcome
+   * Updates pattern statistics and success rates in Agent #68's library
+   * 
+   * @param application - Pattern application details
+   * 
+   * @example
+   * ```typescript
+   * await qualityValidator.trackPatternReuse({
+   *   success: true,
+   *   patternId: 123,
+   *   patternName: 'Mobile Overflow Fix',
+   *   appliedBy: 'Agent #79',
+   *   outcome: {
+   *     timeSaved: '30 minutes',
+   *     issuesResolved: 1
+   *   }
+   * });
+   * ```
+   */
+  async trackPatternReuse(application: {
+    success: boolean;
+    patternId: number;
+    patternName: string;
+    appliedBy: string;
+    outcome?: {
+      timeSaved?: string;
+      metricsImproved?: Record<string, number>;
+      issuesResolved?: number;
+    };
+    feedback?: string;
+  }) {
+    logInfo(`[${this.agentId}] 📈 Tracking Pattern Reuse (Agent #68)`, { 
+      patternName: application.patternName,
+      success: application.success 
+    });
+    await this.patternEngine.trackReuse(application);
+  }
+
+  // ==========================================================================
+  // COMPREHENSIVE VALIDATION WITH ALL GUARDRAILS
+  // ==========================================================================
+
+  /**
+   * Runs ALL 7 layers of guardrails on a code change
+   * This is the comprehensive validation method that uses all guardrails
+   * 
+   * @param request - Complete validation request
+   * @returns Comprehensive validation result with all guardrail checks
+   * 
+   * @example
+   * ```typescript
+   * const result = await qualityValidator.comprehensiveValidation({
+   *   agentId: 'Agent #64',
+   *   requirement: 'Add Stripe payment processing',
+   *   code: '...',
+   *   beforeCode: '...',
+   *   afterCode: '...',
+   *   feature: 'Payments',
+   *   affectedFiles: ['server/routes/payment.ts'],
+   *   fileType: 'api',
+   *   filePath: 'server/routes/payment.ts'
+   * });
+   * 
+   * if (!result.allLayersPassed) {
+   *   console.log('Failed layers:', result.failedLayers);
+   *   console.log('Recommendations:', result.recommendations);
+   * }
+   * ```
+   */
+  async comprehensiveValidation(request: {
+    agentId: string;
+    requirement: string;
+    code: string;
+    beforeCode?: string;
+    afterCode?: string;
+    feature: string;
+    affectedFiles: string[];
+    fileType: 'typescript' | 'javascript' | 'tsx' | 'jsx' | 'json' | 'schema' | 'api' | 'component' | 'config';
+    filePath: string;
+    dependencies?: string[];
+  }) {
+    logInfo(`[${this.agentId}] 🛡️ COMPREHENSIVE VALIDATION (All 7 Layers)`, { 
+      agentId: request.agentId,
+      feature: request.feature 
+    });
+
+    const results = {
+      allLayersPassed: true,
+      failedLayers: [] as string[],
+      layerResults: {} as Record<string, unknown>,
+      recommendations: [] as string[],
+      severity: 'none' as 'none' | 'low' | 'medium' | 'high' | 'critical',
+    };
+
+    try {
+      // Layer 1: Pre-Execution Validation
+      const layer1 = await this.guardrail_layer1_preExecution(
+        request.agentId,
+        request.requirement,
+        { 
+          feature: request.feature,
+          dependencies: request.dependencies 
+        }
+      );
+      results.layerResults.layer1_preExecution = layer1;
+      if (!layer1.passed) {
+        results.allLayersPassed = false;
+        results.failedLayers.push('Layer 1: Pre-Execution');
+        results.recommendations.push(...layer1.blockers);
+        results.severity = 'high';
+      }
+
+      // Layer 2: Multi-AI Code Review
+      const layer2 = await this.guardrail_layer2_codeReview({
+        code: request.code,
+        requirements: request.requirement,
+        affectedFiles: request.affectedFiles,
+        agentId: request.agentId,
+        feature: request.feature,
+      });
+      results.layerResults.layer2_codeReview = layer2;
+      if (!layer2.approved) {
+        results.allLayersPassed = false;
+        results.failedLayers.push('Layer 2: Multi-AI Code Review');
+        results.recommendations.push(...layer2.blockers);
+        results.severity = 'high';
+      }
+
+      // Layer 3: Hallucination Detection
+      const layer3 = await this.guardrail_layer3_hallucination({
+        code: request.code,
+        fileType: request.fileType as 'typescript' | 'javascript' | 'tsx' | 'jsx' | 'json',
+      });
+      results.layerResults.layer3_hallucination = layer3;
+      if (layer3.isHallucination) {
+        results.allLayersPassed = false;
+        results.failedLayers.push('Layer 3: Hallucination Detection');
+        results.recommendations.push(...layer3.issues.map(i => i.suggestion || i.item));
+        results.severity = layer3.issues.length > 2 ? 'critical' : 'high';
+      }
+
+      // Layer 4: Breaking Change Prevention (if before/after code provided)
+      if (request.beforeCode && request.afterCode) {
+        const layer4 = await this.guardrail_layer4_breakingChanges({
+          beforeCode: request.beforeCode,
+          afterCode: request.afterCode,
+          fileType: request.fileType as 'schema' | 'api' | 'component' | 'config',
+          filePath: request.filePath,
+        });
+        results.layerResults.layer4_breakingChanges = layer4;
+        if (layer4.breaking) {
+          results.allLayersPassed = false;
+          results.failedLayers.push('Layer 4: Breaking Change Prevention');
+          results.recommendations.push(layer4.recommendation);
+          results.severity = 'critical';
+        }
+      }
+
+      // Layer 5: Requirement Verification
+      const layer5 = await this.guardrail_layer5_requirements({
+        requirement: request.requirement,
+        implementation: request.code,
+        feature: request.feature,
+      });
+      results.layerResults.layer5_requirements = layer5;
+      if (!layer5.matched) {
+        results.allLayersPassed = false;
+        results.failedLayers.push('Layer 5: Requirement Verification');
+        results.recommendations.push(...layer5.gaps);
+        results.severity = results.severity === 'critical' ? 'critical' : 'high';
+      }
+
+      // Layer 6: Continuous Monitoring (check recent errors for this feature)
+      const layer6 = await this.guardrail_layer6_monitoring({
+        feature: request.feature,
+        timeWindowMinutes: 60,
+      });
+      results.layerResults.layer6_monitoring = layer6;
+
+      // Layer 7: Pattern Learning - Check if this problem matches known patterns
+      const problemSignature: ProblemSignature = {
+        category: 'feature',
+        domain: request.feature,
+        problem: request.requirement,
+      };
+      const patternDetection = await this.detectPattern(problemSignature);
+      results.layerResults.layer7_patternLearning = patternDetection;
+
+      // Final recommendation
+      if (results.allLayersPassed) {
+        logInfo(`[${this.agentId}] ✅ ALL 7 GUARDRAIL LAYERS PASSED`, { feature: request.feature });
+      } else {
+        logInfo(`[${this.agentId}] ⛔ GUARDRAIL VALIDATION FAILED`, { 
+          feature: request.feature,
+          failedLayers: results.failedLayers.length,
+          severity: results.severity 
+        });
+      }
+
+      return results;
+
+    } catch (error) {
+      logError(error as Error, { 
+        agentId: this.agentId, 
+        context: 'Comprehensive Validation',
+        feature: request.feature 
+      });
+      throw error;
     }
   }
 

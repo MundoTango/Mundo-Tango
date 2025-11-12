@@ -254,7 +254,7 @@ export async function castVote(options: CastVoteOptions): Promise<SelectAgentDec
   }
 
   // Validate decision is still open for voting
-  if (!['pending', 'voting'].includes(decision.status)) {
+  if (!['pending', 'voting'].includes(decision.status || 'pending')) {
     throw new Error(`Decision ${options.decisionId} is not open for voting (status: ${decision.status})`);
   }
 
@@ -334,11 +334,11 @@ export async function resolveConflict(decisionId: string): Promise<ConflictResol
   const votes = (decision.votes as Record<string, any>) || {};
 
   // Analyze votes
-  const voteAnalysis = analyzeVotes(votes, decision.votingMechanism);
+  const voteAnalysis = analyzeVotes(votes, decision.votingMechanism || 'majority');
 
   let result: ConflictResolutionResult;
 
-  if (voteAnalysis.consensusLevel >= decision.requiredConsensus) {
+  if (voteAnalysis.consensusLevel >= (decision.requiredConsensus ?? 0.66)) {
     // Consensus reached
     result = {
       decision: voteAnalysis.majorityVote as any,
@@ -489,7 +489,7 @@ export async function getDecisionMetrics(): Promise<DecisionMetrics> {
     .limit(1000);
 
   const totalDecisions = allDecisions.length;
-  const pendingDecisions = allDecisions.filter(d => ['pending', 'voting'].includes(d.status)).length;
+  const pendingDecisions = allDecisions.filter(d => ['pending', 'voting'].includes(d.status || 'pending')).length;
   const decidedToday = allDecisions.filter(d => 
     d.decidedAt && d.decidedAt >= oneDayAgo
   ).length;
@@ -553,9 +553,9 @@ async function finalizeDecision(decisionId: number): Promise<SelectAgentDecision
 
   const decision = decisions[0];
   const votes = (decision.votes as Record<string, any>) || {};
-  const analysis = analyzeVotes(votes, decision.votingMechanism);
+  const analysis = analyzeVotes(votes, decision.votingMechanism || 'majority');
 
-  const consensusReached = analysis.consensusLevel >= decision.requiredConsensus;
+  const consensusReached = analysis.consensusLevel >= (decision.requiredConsensus ?? 0.66);
   const finalDecision = consensusReached ? analysis.majorityVote : 'defer';
 
   const decisionLog = (decision.decisionLog as any[]) || [];
@@ -730,7 +730,7 @@ async function validateAgentAuthority(
   const authorityScore = Math.max(0, Math.min(1, baseScore - adjustment));
 
   // Determine if agent can escalate
-  const canEscalate = agentDef.reportingTo && agentDef.reportingTo.length > 0;
+  const canEscalate = !!(agentDef.reportingTo && agentDef.reportingTo.length > 0);
   const escalationPath = canEscalate ? agentDef.reportingTo : undefined;
 
   // Critical decisions require CHIEF level or higher

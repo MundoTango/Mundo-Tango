@@ -259,7 +259,7 @@ export async function startCycle(options: StartCycleOptions): Promise<SelectInte
       cycleDescription: options.cycleDescription || null,
       currentStep: 'LEARN',
       stepsCompleted: [],
-      stepsOrder: CYCLE_STEPS,
+      stepsOrder: [...CYCLE_STEPS],
       stepMetrics: {},
       stepResults: {},
       stepErrors: {},
@@ -478,10 +478,10 @@ export async function getCycleStatus(cycleId: string): Promise<{
   return {
     cycle,
     currentProgress: {
-      currentStep: cycle.currentStep,
+      currentStep: cycle.currentStep || 'LEARN',
       stepsCompleted,
       stepsRemaining,
-      progress: cycle.progress
+      progress: cycle.progress ?? 0
     },
     metrics: {
       totalDuration: cycle.totalDuration || undefined,
@@ -584,7 +584,7 @@ export async function autoTriggerCycle(previousCycleId: string): Promise<SelectI
     cycleDescription: `Auto-triggered from cycle ${previousCycleId}`,
     leadAgent: previousCycle.leadAgent || undefined,
     participatingAgents: previousCycle.participatingAgents || undefined,
-    autoTriggerEnabled: previousCycle.autoTriggerEnabled,
+    autoTriggerEnabled: previousCycle.autoTriggerEnabled ?? undefined,
     autoTriggerConditions: conditions,
     triggerSource: previousCycleId
   });

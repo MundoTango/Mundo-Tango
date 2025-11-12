@@ -75,8 +75,15 @@ async function testRedisConnection(): Promise<boolean> {
       maxRetriesPerRequest: 1,
       retryStrategy: () => null, // Don't retry
       enableOfflineQueue: false,
+      lazyConnect: true, // Don't connect immediately
     });
 
+    // Add error handler to prevent unhandled error events
+    testClient.on('error', (err) => {
+      // Silently ignore errors during connection test
+    });
+
+    await testClient.connect();
     await testClient.ping();
     await testClient.quit();
     return true;
@@ -96,6 +103,17 @@ export async function initializeRedis() {
       host: REDIS_HOST,
       port: REDIS_PORT,
       maxRetriesPerRequest: 3,
+    });
+
+    // Add error handler to prevent crashes
+    redis.on('error', (err) => {
+      console.error('⚠️  Redis connection error:', err.message);
+      redisAvailable = false;
+    });
+
+    redis.on('close', () => {
+      console.log('ℹ️  Redis connection closed');
+      redisAvailable = false;
     });
   } else {
     console.log("⚠️  Redis unavailable - using IN-MEMORY queue fallback");
@@ -148,5 +166,10 @@ export function createWorker(
   }
 }
 
-// Initialize on module load
-initializeRedis();
+// Initialize on module load (with proper async handling)
+initializeRedis().catch((error) => {
+  console.error('⚠️  Failed to initialize Redis:', error.message);
+  console.log('⚠️  Continuing with in-memory queue fallback');
+  redisAvailable = false;
+  redis = null;
+});

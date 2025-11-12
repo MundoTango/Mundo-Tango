@@ -8,7 +8,15 @@
 
 import Redis from 'ioredis';
 
-const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
+  lazyConnect: true, // Don't connect until needed
+  enableOfflineQueue: false,
+});
+
+// Add error handler to prevent unhandled error events
+redis.on('error', (err) => {
+  console.error('⚠️  AgentBlackboard Redis error:', err.message);
+});
 
 export interface BlackboardEntry {
   agentId: string;

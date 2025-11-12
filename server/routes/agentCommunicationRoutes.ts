@@ -10,7 +10,7 @@ import { Router, type Response } from "express";
 import { authenticateToken, type AuthRequest, requireRoleLevel } from "../middleware/auth";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
-import { A2AProtocolService, MessageType, MessagePriority } from "../services/communication/a2aProtocol";
+import { a2aProtocol, MessageType, MessagePriority } from "../services/communication/a2aProtocol";
 import { ChangeBroadcastService } from "../services/broadcast/changeBroadcastService";
 import { ESA_HIERARCHY } from "../services/esa/hierarchyManager";
 import { AgentPerformanceTracker } from "../services/monitoring/agentPerformanceTracker";
@@ -283,7 +283,7 @@ router.post("/escalate", authenticateToken, requireRoleLevel(5), async (req: Aut
   try {
     const escalation = escalateIssueSchema.parse(req.body);
 
-    const result = await A2AProtocolService.escalateIssue(escalation);
+    const result = await a2aProtocol.escalateIssue(escalation);
 
     res.json({
       success: true,
@@ -332,7 +332,7 @@ router.post("/collaborate", authenticateToken, requireRoleLevel(5), async (req: 
   try {
     const collaboration = collaborationRequestSchema.parse(req.body);
 
-    const result = await A2AProtocolService.requestPeerCollaboration(collaboration);
+    const result = await a2aProtocol.requestPeerCollaboration(collaboration);
 
     res.json({
       success: true,
@@ -484,7 +484,7 @@ router.post("/emergency", authenticateToken, requireRoleLevel(6), async (req: Au
   try {
     const emergency = declareEmergencySchema.parse(req.body);
 
-    const result = await A2AProtocolService.declareEmergency({
+    const result = await a2aProtocol.declareEmergency({
       agentId: emergency.agentId,
       situation: emergency.situation,
       impact: emergency.impact,

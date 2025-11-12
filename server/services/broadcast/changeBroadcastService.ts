@@ -302,7 +302,7 @@ export async function acknowledgeChange(payload: AcknowledgmentPayload): Promise
         .where(eq(agentChangeBroadcasts.id, current.id));
 
       // Schedule retry if not at max
-      if (current.retryCount < current.maxRetries) {
+      if ((current.retryCount ?? 0) < (current.maxRetries ?? 3)) {
         await scheduleRetry(current);
       }
     }
@@ -328,16 +328,18 @@ export async function getBroadcastStatus(changeId: string): Promise<BroadcastSta
   }
 
   const b = broadcast[0];
-  const progress = b.totalAgents > 0 
-    ? Math.round((b.acknowledgedCount / b.totalAgents) * 100)
+  const totalAgents = b.totalAgents ?? 0;
+  const acknowledgedCount = b.acknowledgedCount ?? 0;
+  const progress = totalAgents > 0 
+    ? Math.round((acknowledgedCount / totalAgents) * 100)
     : 0;
 
   return {
     changeId: b.changeId,
-    status: b.status,
-    totalAgents: b.totalAgents,
-    acknowledgedCount: b.acknowledgedCount,
-    failedCount: b.failedCount,
+    status: (b.status ?? 'pending') as 'pending' | 'broadcasting' | 'completed' | 'failed' | 'partial',
+    totalAgents,
+    acknowledgedCount,
+    failedCount: b.failedCount ?? 0,
     progress,
     acknowledgedBy: b.acknowledgedBy || [],
     failedAgents: b.failedAgents || []
@@ -370,7 +372,7 @@ export async function retryFailedBroadcasts(): Promise<number> {
   let retriedCount = 0;
 
   for (const broadcast of broadcasts) {
-    if (broadcast.retryCount < broadcast.maxRetries) {
+    if ((broadcast.retryCount ?? 0) < (broadcast.maxRetries ?? 3)) {
       await scheduleRetry(broadcast);
       retriedCount++;
     }
@@ -405,7 +407,7 @@ async function queueBroadcast(broadcast: SelectAgentChangeBroadcast): Promise<vo
       strategy: broadcast.broadcastStrategy
     },
     {
-      priority: getPriority(broadcast.priority),
+      priority: getPriority(broadcast.priority ?? 'medium'),
       attempts: 3,
       backoff: {
         type: 'exponential',
@@ -431,7 +433,9 @@ async function queueBroadcast(broadcast: SelectAgentChangeBroadcast): Promise<vo
 async function processBroadcast(broadcast: SelectAgentChangeBroadcast): Promise<void> {
   console.log(`[Change Broadcast] 📤 Processing broadcast ${broadcast.changeId}`);
 
-  const { affectedAgents, batchSize, batchDelay, broadcastStrategy } = broadcast;
+  const { affectedAgents, broadcastStrategy } = broadcast;
+  const batchSize = broadcast.batchSize ?? 10;
+  const batchDelay = broadcast.batchDelay ?? 1000;
 
   if (!affectedAgents || affectedAgents.length === 0) {
     await markBroadcastComplete(broadcast.id);
@@ -516,7 +520,7 @@ async function markBroadcastComplete(broadcastId: number): Promise<void> {
  * Schedules retry with exponential backoff
  */
 async function scheduleRetry(broadcast: SelectAgentChangeBroadcast): Promise<void> {
-  const retryCount = broadcast.retryCount + 1;
+  const retryCount = (broadcast.retryCount ?? 0) + 1;
   
   // Exponential backoff: 2^retryCount * 1000ms (1s, 2s, 4s, 8s, ...)
   const backoffMs = Math.pow(2, retryCount) * 1000;

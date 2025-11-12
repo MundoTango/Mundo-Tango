@@ -7,7 +7,15 @@ import Redis from 'ioredis';
 import type { AIResponse } from '../ai/UnifiedAIOrchestrator';
 
 // Initialize Redis client
-const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
+  lazyConnect: true, // Don't connect until needed
+  enableOfflineQueue: false,
+});
+
+// Add error handler to prevent unhandled error events
+redis.on('error', (err) => {
+  console.error('⚠️  RedisCache error:', err.message);
+});
 
 // Cache statistics
 let cacheHits = 0;

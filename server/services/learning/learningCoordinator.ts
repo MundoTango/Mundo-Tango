@@ -289,7 +289,7 @@ export class LearningCoordinatorService {
       const patternData = pattern[0];
       
       // Only broadcast if pattern has proven success
-      if (patternData.timesApplied >= 3 && patternData.successRate >= 0.9) {
+      if ((patternData.timesApplied ?? 0) >= 3 && (patternData.successRate ?? 0) >= 0.9) {
         const allAgents = this.getAllAgentIds();
         
         const bestPractice = {
@@ -571,7 +571,7 @@ export class LearningCoordinatorService {
     
     if (rates.length === 0) return 0.9;
     
-    return rates.reduce((sum, r) => sum + r, 0) / rates.length;
+    return rates.reduce((sum: number, r) => sum + r, 0) / rates.length;
   }
 
   /**
@@ -760,10 +760,10 @@ Respond in JSON format:
       if (pattern.length === 0) return;
       
       const currentPattern = pattern[0];
-      const newTimesApplied = currentPattern.timesApplied + 1;
+      const newTimesApplied = (currentPattern.timesApplied ?? 0) + 1;
       
       // Recalculate success rate
-      const currentSuccesses = Math.round(currentPattern.successRate * currentPattern.timesApplied);
+      const currentSuccesses = Math.round((currentPattern.successRate ?? 0.5) * (currentPattern.timesApplied ?? 0));
       const newSuccesses = currentSuccesses + (success ? 1 : 0);
       const newSuccessRate = newSuccesses / newTimesApplied;
       
@@ -809,8 +809,8 @@ Respond in JSON format:
         .orderBy(desc(learningPatterns.timesApplied));
       
       const totalPatterns = patterns.length;
-      const averageSuccessRate = patterns.reduce((sum, p) => sum + p.successRate, 0) / totalPatterns || 0;
-      const totalApplications = patterns.reduce((sum, p) => sum + p.timesApplied, 0);
+      const averageSuccessRate = patterns.reduce((sum, p) => sum + (p.successRate ?? 0), 0) / totalPatterns || 0;
+      const totalApplications = patterns.reduce((sum, p) => sum + (p.timesApplied ?? 0), 0);
       const topPatterns = patterns.slice(0, 10);
       
       // Calculate growth rate (patterns created in last 7 days vs previous 7 days)
@@ -818,9 +818,9 @@ Respond in JSON format:
       const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
       
-      const recentPatterns = patterns.filter(p => new Date(p.createdAt) >= sevenDaysAgo).length;
+      const recentPatterns = patterns.filter(p => p.createdAt && new Date(p.createdAt) >= sevenDaysAgo).length;
       const previousPatterns = patterns.filter(p => 
-        new Date(p.createdAt) >= fourteenDaysAgo && new Date(p.createdAt) < sevenDaysAgo
+        p.createdAt && new Date(p.createdAt) >= fourteenDaysAgo && new Date(p.createdAt) < sevenDaysAgo
       ).length;
       
       const knowledgeGrowthRate = previousPatterns > 0 

@@ -90,8 +90,16 @@ async function checkRedis(): Promise<HealthCheck> {
   try {
     // Dynamically import ioredis only if Redis is configured
     const Redis = (await import('ioredis')).default;
-    const redis = new Redis(process.env.REDIS_URL!);
+    const redis = new Redis(process.env.REDIS_URL!, {
+      lazyConnect: true, // Don't connect immediately
+    });
     
+    // Add error handler to prevent unhandled error events
+    redis.on('error', (err) => {
+      // Silently ignore errors during health check
+    });
+    
+    await redis.connect();
     await redis.ping();
     await redis.quit();
     

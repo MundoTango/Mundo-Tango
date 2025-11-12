@@ -207,34 +207,34 @@ export class AgentMemoryService {
       }
 
       // 2. Fetch full records from PostgreSQL
-      let query_builder = db
-        .select()
-        .from(agentMemories)
-        .where(
-          and(
-            eq(agentMemories.agentId, agentId),
-            inArray(agentMemories.id, pgIds)
-          )
-        );
+      // Build conditions array
+      const conditions = [
+        eq(agentMemories.agentId, agentId),
+        inArray(agentMemories.id, pgIds)
+      ];
 
       // Apply filters
       if (options.memoryType) {
-        query_builder = query_builder.where(eq(agentMemories.memoryType, options.memoryType)) as any;
+        conditions.push(eq(agentMemories.memoryType, options.memoryType));
       }
 
       if (options.minConfidence !== undefined) {
-        query_builder = query_builder.where(gte(agentMemories.confidence, options.minConfidence)) as any;
+        conditions.push(gte(agentMemories.confidence, options.minConfidence));
       }
 
       if (options.dateRange?.start) {
-        query_builder = query_builder.where(gte(agentMemories.createdAt, options.dateRange.start)) as any;
+        conditions.push(gte(agentMemories.createdAt, options.dateRange.start));
       }
 
       if (options.dateRange?.end) {
-        query_builder = query_builder.where(lte(agentMemories.createdAt, options.dateRange.end)) as any;
+        conditions.push(lte(agentMemories.createdAt, options.dateRange.end));
       }
 
-      const memories = await query_builder.limit(limit);
+      const memories = await db
+        .select()
+        .from(agentMemories)
+        .where(and(...conditions))
+        .limit(limit);
 
       // Sort by vector similarity (maintain LanceDB order)
       const sortedMemories = memories.sort((a, b) => {
@@ -372,27 +372,25 @@ export class AgentMemoryService {
       const maxMemories = contextWindow.maxMemories || 20;
       const cutoffTime = new Date(Date.now() - timeWindowMs);
 
-      // Build query
-      let query_builder = db
-        .select()
-        .from(agentMemories)
-        .where(
-          and(
-            eq(agentMemories.agentId, contextWindow.agentId),
-            gte(agentMemories.createdAt, cutoffTime)
-          )
-        )
-        .orderBy(desc(agentMemories.createdAt))
-        .limit(maxMemories);
+      // Build query conditions
+      const conditions = [
+        eq(agentMemories.agentId, contextWindow.agentId),
+        gte(agentMemories.createdAt, cutoffTime)
+      ];
 
       // Additional filter by session if provided
       if (contextWindow.sessionId) {
-        query_builder = query_builder.where(
+        conditions.push(
           sql`${agentMemories.context}->>'sessionId' = ${contextWindow.sessionId}`
-        ) as any;
+        );
       }
 
-      const contextMemories = await query_builder;
+      const contextMemories = await db
+        .select()
+        .from(agentMemories)
+        .where(and(...conditions))
+        .orderBy(desc(agentMemories.createdAt))
+        .limit(maxMemories);
 
       console.log(`[${this.serviceName}] ✅ Preserved ${contextMemories.length} context memories`);
       return contextMemories;

@@ -31,6 +31,7 @@ export function getRedisClient(): Redis | null {
           return 100;
         },
         enableOfflineQueue: false,
+        lazyConnect: true, // Don't connect until needed
       });
       
       redisClient.on('error', (err) => {

@@ -25,10 +25,9 @@ import {
   type InsertAIGuardrailViolation 
 } from "../../../shared/schema";
 import { eq, desc, and, sql } from "drizzle-orm";
-import { QualityValidatorService } from "./qualityValidator";
 import OpenAI from "openai";
 import { z } from "zod";
-import { logInfo, logError, logDebug, logWarn } from "../../middleware/logger";
+import { logInfo, logError, logDebug, logWarning } from "../../middleware/logger";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -217,7 +216,6 @@ interface PatternLearningResult {
  */
 export class AIGuardrailsService {
   private openai: OpenAI | null = null;
-  private qualityValidator: QualityValidatorService;
   private readonly serviceId = "AI Guardrails";
   
   constructor() {
@@ -227,7 +225,6 @@ export class AIGuardrailsService {
         baseURL: process.env.BIFROST_BASE_URL || undefined,
       });
     }
-    this.qualityValidator = new QualityValidatorService();
   }
 
   // ==========================================================================
@@ -989,7 +986,7 @@ export class AIGuardrailsService {
         status: 'open',
       });
       
-      logWarn(`Guardrail violation recorded`, { 
+      logWarning(`Guardrail violation recorded`, { 
         layer: violation.guardrailLayer, 
         type: violation.violationType,
         severity: violation.severity 

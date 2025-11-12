@@ -105,7 +105,14 @@ const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
   retryStrategy: (times) => {
     if (times > 3) return null;
     return Math.min(times * 100, 2000);
-  }
+  },
+  lazyConnect: true, // Don't connect until needed
+  enableOfflineQueue: false,
+});
+
+// Add error handler to prevent unhandled error events
+redis.on('error', (err) => {
+  console.error('⚠️  SemanticCacheService Redis error:', err.message);
 });
 
 const openai = new OpenAI({

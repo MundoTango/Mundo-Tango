@@ -31,6 +31,11 @@ if (REDIS_ENABLED) {
     },
     enableOfflineQueue: false,
   });
+
+  // Add error handler to prevent unhandled error events
+  redis.on('error', (err) => {
+    console.error('⚠️  FeatureFlagService Redis error:', err.message);
+  });
 } else {
   console.log('[FeatureFlagService] Redis disabled - using direct DB queries');
 }
