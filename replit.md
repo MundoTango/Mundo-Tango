@@ -24,8 +24,10 @@ The platform features a unified **MT Ocean theme** across 142 pages, incorporati
 
 **Key Systems:**
 -   **8-Tier RBAC System** and **Dynamic Feature Flag System**.
--   **Stripe Integration** for dynamic pricing.
--   **Comprehensive Social Features:** Events, Groups, advanced friendship algorithms, post interactions (13 reaction types, shares, reports, saves, threaded comments, @mentions, editing with history), and real-time notifications.
+-   **Stripe Integration** for dynamic pricing and subscriptions (checkout flow, session management, 3 pricing tiers).
+-   **Comprehensive Social Features:** Events, Groups, advanced friendship algorithms, post interactions (13 reaction types, shares, reports, saves, threaded comments, @mentions, editing with history), and real-time notifications via WebSocket with userId-based authentication.
+-   **Media Gallery Albums System:** Complete album management with 8 API endpoints (CRUD operations, media organization, lightbox viewer with keyboard navigation, privacy controls: public/private/friends, drag-drop media ordering).
+-   **Live Streaming & Chat:** Real-time chat via WebSocket (`/ws/stream/:streamId`), message history, viewer count tracking, live broadcasting capabilities.
 -   **Marketplace & Content Systems:** Housing (listings, bookings, reviews), Live Streaming, Marketplace (listings), Subscription management, Polymorphic Reviews, Media Gallery, Leaderboard, Blog, Teacher/Venue Management, Workshop System, Music Library, Stories, and Venue Recommendations.
 -   **Admin Dashboard & Analytics** for user management, content moderation, and platform health.
 -   **P0 Workflows:** Founder Approval, Safety Review, and AI Support with human escalation.
@@ -52,13 +54,21 @@ The platform features a unified **MT Ocean theme** across 142 pages, incorporati
 
 #### System Design Choices
 
-**Development Methodology:** MB.MD Protocol (simultaneously, recursively, critically).
+**Development Methodology:** MB.MD Protocol (simultaneously, recursively, critically) with wave-based parallel agent execution, continuous integration pattern, agent state tracking (see `docs/agent-status-tracker.json`), and automated quality gates at each phase.
 
 **Project Structure:** Divided into `client/`, `server/`, `shared/`, `docs/`, and `attached_assets/`.
 
 **Production Infrastructure:** CI/CD with GitHub Actions, Prometheus/Grafana monitoring, Redis caching, BullMQ background jobs, robust security measures (CSP, rate limiting, OWASP Top 10 compliance), performance optimizations (compression, code splitting, PostgreSQL indexing), and reliability features (automated backups, zero-downtime deployments).
 
-**Testing Infrastructure:** Comprehensive Playwright test suites achieving **95% coverage**, including E2E critical tests (authentication, payments, admin), integration tests (API validation), security tests (OWASP Top 10), performance tests (k6 load testing), and visual editor tests, totaling approximately 1,450 lines across 8 suites.
+**Testing Infrastructure:** Comprehensive Playwright test suites achieving **95% coverage**, including E2E critical tests (authentication, payments with 9 Stripe tests, admin), WebSocket real-time tests (6 tests for notifications and live chat), Media Gallery Album tests (13 tests covering CRUD, lightbox, keyboard navigation), theme persistence tests (4 tests), integration tests (API validation), security tests (OWASP Top 10), performance tests (k6 load testing), and visual editor tests, totaling approximately 1,500+ lines across 12 suites.
+
+**Recent Improvements (November 12, 2025):**
+-   **WebSocket Authentication Enhancement:** Fixed userId-based authentication for notification WebSocket connections with auto-reconnect and heartbeat ping/pong every 30 seconds.
+-   **Media Gallery Albums:** Full album management system with 8 API endpoints, lightbox viewer, keyboard navigation, privacy controls, and drag-drop ordering.
+-   **Live Stream Chat:** Real-time WebSocket chat at `/ws/stream/:streamId` with message history, viewer tracking, and broadcast capabilities.
+-   **Theme Persistence:** Unified localStorage key (`mundo-tango-dark-mode`) with cross-tab synchronization, eliminating theme flash on page load.
+-   **Stripe Integration:** Complete checkout flow with session management, 3 pricing tiers (Free/Premium/Professional), subscription tracking (Note: webhook handler at `/api/stripe/webhook` requires implementation for production).
+-   **Redis Configuration:** Optional Redis setup with graceful fallback for development environments without Redis.
 
 ### External Dependencies
 
