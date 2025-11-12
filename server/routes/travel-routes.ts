@@ -9,7 +9,7 @@ const router = Router();
 // GET /api/travel/plans - Get user's travel plans (auth required)
 router.get("/plans", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.userId!;
+    const userId = req.user!.id;
 
     const result = await db.select()
       .from(travelPlans)
@@ -26,7 +26,7 @@ router.get("/plans", authenticateToken, async (req: AuthRequest, res: Response) 
 // GET /api/travel/plans/:id - Get single travel plan (auth required)
 router.get("/plans/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.userId!;
+    const userId = req.user!.id;
     const { id } = req.params;
 
     const planResult = await db.select()
@@ -45,7 +45,7 @@ router.get("/plans/:id", authenticateToken, async (req: AuthRequest, res: Respon
     const itemsResult = await db.select()
       .from(travelPlanItems)
       .where(eq(travelPlanItems.travelPlanId, parseInt(id)))
-      .orderBy(travelPlanItems.startDate);
+      .orderBy(travelPlanItems.date);
 
     res.json({
       ...planResult[0],
@@ -60,23 +60,25 @@ router.get("/plans/:id", authenticateToken, async (req: AuthRequest, res: Respon
 // POST /api/travel/plans - Create travel plan (auth required)
 router.post("/plans", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.userId!;
-    const { name, description, startDate, endDate, budget, currency } = req.body;
+    const userId = req.user!.id;
+    const { city, country, startDate, endDate, tripDuration, budget, interests, travelStyle, status, notes } = req.body;
 
-    if (!name || !startDate) {
-      return res.status(400).json({ message: "Name and start date are required" });
+    if (!city || !startDate || !endDate) {
+      return res.status(400).json({ message: "City, start date, and end date are required" });
     }
 
     const result = await db.insert(travelPlans).values({
       userId,
-      name,
-      description: description || null,
+      city,
+      country: country || null,
       startDate,
-      endDate: endDate || null,
+      endDate,
+      tripDuration: tripDuration || Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)),
       budget: budget || null,
-      currency: currency || 'USD',
-      isPublic: false,
-      collaborators: [],
+      interests: interests || [],
+      travelStyle: travelStyle || null,
+      status: status || 'planning',
+      notes: notes || null,
     }).returning();
 
     res.status(201).json(result[0]);
@@ -86,20 +88,20 @@ router.post("/plans", authenticateToken, async (req: AuthRequest, res: Response)
   }
 });
 
-// POST /api/travel/plans/:id/destinations - Add destination to travel plan (auth required)
-router.post("/plans/:id/destinations", authenticateToken, async (req: AuthRequest, res: Response) => {
+// POST /api/travel/plans/:id/items - Add item/activity to travel plan (auth required)
+router.post("/plans/:id/items", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.userId!;
+    const userId = req.user!.id;
     const { id } = req.params;
     const { 
-      city, 
-      country, 
-      startDate, 
-      endDate, 
-      accommodation, 
-      activities, 
-      estimatedCost,
-      notes 
+      type,
+      title, 
+      description, 
+      date, 
+      location, 
+      cost,
+      bookingUrl,
+      isBooked 
     } = req.body;
 
     // Verify ownership
@@ -115,20 +117,20 @@ router.post("/plans/:id/destinations", authenticateToken, async (req: AuthReques
       return res.status(404).json({ message: "Travel plan not found or not authorized" });
     }
 
-    if (!city || !country || !startDate) {
-      return res.status(400).json({ message: "City, country, and start date are required" });
+    if (!type || !title) {
+      return res.status(400).json({ message: "Type and title are required" });
     }
 
     const result = await db.insert(travelPlanItems).values({
       travelPlanId: parseInt(id),
-      city,
-      country,
-      startDate,
-      endDate: endDate || null,
-      accommodation: accommodation || null,
-      activities: activities || [],
-      estimatedCost: estimatedCost || null,
-      notes: notes || null,
+      type,
+      title,
+      description: description || null,
+      date: date || null,
+      location: location || null,
+      cost: cost || null,
+      bookingUrl: bookingUrl || null,
+      isBooked: isBooked || false,
     }).returning();
 
     res.status(201).json(result[0]);
@@ -141,7 +143,7 @@ router.post("/plans/:id/destinations", authenticateToken, async (req: AuthReques
 // PATCH /api/travel/plans/:id - Update travel plan (auth required)
 router.patch("/plans/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.userId!;
+    const userId = req.user!.id;
     const { id } = req.params;
     const { name, description, startDate, endDate, budget, currency, isPublic } = req.body;
 
@@ -182,7 +184,7 @@ router.patch("/plans/:id", authenticateToken, async (req: AuthRequest, res: Resp
 // DELETE /api/travel/plans/:id - Delete travel plan (auth required)
 router.delete("/plans/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.userId!;
+    const userId = req.user!.id;
     const { id } = req.params;
 
     // Verify ownership
@@ -210,7 +212,7 @@ router.delete("/plans/:id", authenticateToken, async (req: AuthRequest, res: Res
 // DELETE /api/travel/plans/:planId/destinations/:itemId - Delete destination (auth required)
 router.delete("/plans/:planId/destinations/:itemId", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.userId!;
+    const userId = req.user!.id;
     const { planId, itemId } = req.params;
 
     // Verify ownership
