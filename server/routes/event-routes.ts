@@ -145,6 +145,35 @@ router.get("/analytics/attendance", async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/events/my-rsvps - Get user's RSVPs (MUST be before /:id route!)
+router.get("/my-rsvps", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    
+    const userRsvps = await db
+      .select({
+        event: events,
+        rsvp: eventRsvps,
+        organizer: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage
+        }
+      })
+      .from(eventRsvps)
+      .innerJoin(events, eq(eventRsvps.eventId, events.id))
+      .leftJoin(users, eq(events.userId, users.id))
+      .where(eq(eventRsvps.userId, userId))
+      .orderBy(desc(events.startDate));
+
+    res.json(userRsvps);
+  } catch (error) {
+    console.error("[Events] Error fetching user RSVPs:", error);
+    res.status(500).json({ message: "Failed to fetch user RSVPs" });
+  }
+});
+
 // GET /api/events/:id - Get event details
 router.get("/:id", async (req: Request, res: Response) => {
   try {
@@ -192,7 +221,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 // POST /api/events - Create new event (auth required)
 router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.userId!;
+    const userId = req.user!.id;
     
     const eventData = insertEventSchema.omit({ userId: true }).parse(req.body);
 
@@ -218,7 +247,7 @@ router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
 // PUT /api/events/:id - Update event (auth required, owner only)
 router.put("/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.userId!;
+    const userId = req.user!.id;
     const { id } = req.params;
 
     // Check ownership
@@ -255,7 +284,7 @@ router.put("/:id", authenticateToken, async (req: AuthRequest, res: Response) =>
 // DELETE /api/events/:id - Delete event (auth required, owner only)
 router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.userId!;
+    const userId = req.user!.id;
     const { id } = req.params;
 
     // Check ownership
@@ -289,7 +318,7 @@ router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response)
 // POST /api/events/:id/rsvp - RSVP to event (auth required)
 router.post("/:id/rsvp", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.userId!;
+    const userId = req.user!.id;
     const { id } = req.params;
     const { status = "going", guestCount = 0 } = req.body;
 
@@ -421,7 +450,7 @@ router.get("/:id/comments", async (req: Request, res: Response) => {
 // POST /api/events/:id/comments - Add comment to event (auth required)
 router.post("/:id/comments", authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.userId!;
+    const userId = req.user!.id;
     const { id } = req.params;
     const { content } = req.body;
 

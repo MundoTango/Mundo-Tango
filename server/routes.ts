@@ -423,7 +423,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const profile = await storage.createPhotographerProfile({
         ...req.body,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
       res.status(201).json(profile);
     } catch (error: any) {
@@ -450,7 +450,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/profiles/photographer", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const updated = await storage.updatePhotographerProfile(req.user!.id!, req.body);
+      const updated = await storage.updatePhotographerProfile(req.user!.id, req.body);
       res.json(updated);
     } catch (error: any) {
       console.error("[PUT /api/profiles/photographer] Error:", error);
@@ -460,7 +460,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profiles/photographer", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.deletePhotographerProfile(req.user!.id!);
+      await storage.deletePhotographerProfile(req.user!.id);
       res.status(204).send();
     } catch (error: any) {
       console.error("[DELETE /api/profiles/photographer] Error:", error);
@@ -500,7 +500,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const profile = await storage.createPerformerProfile({
         ...req.body,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
       res.status(201).json(profile);
     } catch (error: any) {
@@ -527,7 +527,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/profiles/performer", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const updated = await storage.updatePerformerProfile(req.user!.id!, req.body);
+      const updated = await storage.updatePerformerProfile(req.user!.id, req.body);
       res.json(updated);
     } catch (error: any) {
       console.error("[PUT /api/profiles/performer] Error:", error);
@@ -537,7 +537,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profiles/performer", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.deletePerformerProfile(req.user!.id!);
+      await storage.deletePerformerProfile(req.user!.id);
       res.status(204).send();
     } catch (error: any) {
       console.error("[DELETE /api/profiles/performer] Error:", error);
@@ -579,7 +579,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const profile = await storage.createVendorProfile({
         ...req.body,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
       res.status(201).json(profile);
     } catch (error: any) {
@@ -606,7 +606,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/profiles/vendor", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const updated = await storage.updateVendorProfile(req.user!.id!, req.body);
+      const updated = await storage.updateVendorProfile(req.user!.id, req.body);
       res.json(updated);
     } catch (error: any) {
       console.error("[PUT /api/profiles/vendor] Error:", error);
@@ -616,7 +616,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profiles/vendor", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.deleteVendorProfile(req.user!.id!);
+      await storage.deleteVendorProfile(req.user!.id);
       res.status(204).send();
     } catch (error: any) {
       console.error("[DELETE /api/profiles/vendor] Error:", error);
@@ -656,7 +656,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const profile = await storage.createTangoSchoolProfile({
         ...req.body,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
       res.status(201).json(profile);
     } catch (error: any) {
@@ -683,7 +683,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/profiles/tango-school", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const updated = await storage.updateTangoSchoolProfile(req.user!.id!, req.body);
+      const updated = await storage.updateTangoSchoolProfile(req.user!.id, req.body);
       res.json(updated);
     } catch (error: any) {
       console.error("[PUT /api/profiles/tango-school] Error:", error);
@@ -693,7 +693,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profiles/tango-school", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.deleteTangoSchoolProfile(req.user!.id!);
+      await storage.deleteTangoSchoolProfile(req.user!.id);
       res.status(204).send();
     } catch (error: any) {
       console.error("[DELETE /api/profiles/tango-school] Error:", error);
@@ -735,7 +735,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const profile = await storage.createTangoHotelProfile({
         ...req.body,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
       res.status(201).json(profile);
     } catch (error: any) {
@@ -762,7 +762,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/profiles/tango-hotel", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const updated = await storage.updateTangoHotelProfile(req.user!.id!, req.body);
+      const updated = await storage.updateTangoHotelProfile(req.user!.id, req.body);
       res.json(updated);
     } catch (error: any) {
       console.error("[PUT /api/profiles/tango-hotel] Error:", error);
@@ -772,7 +772,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profiles/tango-hotel", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.deleteTangoHotelProfile(req.user!.id!);
+      await storage.deleteTangoHotelProfile(req.user!.id);
       res.status(204).send();
     } catch (error: any) {
       console.error("[DELETE /api/profiles/tango-hotel] Error:", error);
@@ -818,7 +818,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const profile = await storage.createHostVenueProfile({
         ...req.body,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
       res.status(201).json(profile);
     } catch (error: any) {
@@ -845,7 +845,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/profiles/host-venue", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const updated = await storage.updateHostVenueProfile(req.user!.id!, req.body);
+      const updated = await storage.updateHostVenueProfile(req.user!.id, req.body);
       res.json(updated);
     } catch (error: any) {
       console.error("[PUT /api/profiles/host-venue] Error:", error);
@@ -855,7 +855,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profiles/host-venue", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.deleteHostVenueProfile(req.user!.id!);
+      await storage.deleteHostVenueProfile(req.user!.id);
       res.status(204).send();
     } catch (error: any) {
       console.error("[DELETE /api/profiles/host-venue] Error:", error);
@@ -905,7 +905,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const profile = await storage.createWellnessProfile({
         ...req.body,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
       res.status(201).json(profile);
     } catch (error: any) {
@@ -932,7 +932,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/profiles/wellness", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const updated = await storage.updateWellnessProfile(req.user!.id!, req.body);
+      const updated = await storage.updateWellnessProfile(req.user!.id, req.body);
       res.json(updated);
     } catch (error: any) {
       console.error("[PUT /api/profiles/wellness] Error:", error);
@@ -942,7 +942,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profiles/wellness", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.deleteWellnessProfile(req.user!.id!);
+      await storage.deleteWellnessProfile(req.user!.id);
       res.status(204).send();
     } catch (error: any) {
       console.error("[DELETE /api/profiles/wellness] Error:", error);
@@ -984,7 +984,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const profile = await storage.createTourOperatorProfile({
         ...req.body,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
       res.status(201).json(profile);
     } catch (error: any) {
@@ -1011,7 +1011,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/profiles/tour-operator", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const updated = await storage.updateTourOperatorProfile(req.user!.id!, req.body);
+      const updated = await storage.updateTourOperatorProfile(req.user!.id, req.body);
       res.json(updated);
     } catch (error: any) {
       console.error("[PUT /api/profiles/tour-operator] Error:", error);
@@ -1021,7 +1021,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profiles/tour-operator", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.deleteTourOperatorProfile(req.user!.id!);
+      await storage.deleteTourOperatorProfile(req.user!.id);
       res.status(204).send();
     } catch (error: any) {
       console.error("[DELETE /api/profiles/tour-operator] Error:", error);
@@ -1065,7 +1065,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const profile = await storage.createTangoGuideProfile({
         ...req.body,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
       res.status(201).json(profile);
     } catch (error: any) {
@@ -1092,7 +1092,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/profiles/tango-guide", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const updated = await storage.updateTangoGuideProfile(req.user!.id!, req.body);
+      const updated = await storage.updateTangoGuideProfile(req.user!.id, req.body);
       res.json(updated);
     } catch (error: any) {
       console.error("[PUT /api/profiles/tango-guide] Error:", error);
@@ -1102,7 +1102,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profiles/tango-guide", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.deleteTangoGuideProfile(req.user!.id!);
+      await storage.deleteTangoGuideProfile(req.user!.id);
       res.status(204).send();
     } catch (error: any) {
       console.error("[DELETE /api/profiles/tango-guide] Error:", error);
@@ -1144,7 +1144,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const profile = await storage.createTaxiDancerProfile({
         ...req.body,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
       res.status(201).json(profile);
     } catch (error: any) {
@@ -1171,7 +1171,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/profiles/taxi-dancer", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const updated = await storage.updateTaxiDancerProfile(req.user!.id!, req.body);
+      const updated = await storage.updateTaxiDancerProfile(req.user!.id, req.body);
       res.json(updated);
     } catch (error: any) {
       console.error("[PUT /api/profiles/taxi-dancer] Error:", error);
@@ -1181,7 +1181,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profiles/taxi-dancer", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.deleteTaxiDancerProfile(req.user!.id!);
+      await storage.deleteTaxiDancerProfile(req.user!.id);
       res.status(204).send();
     } catch (error: any) {
       console.error("[DELETE /api/profiles/taxi-dancer] Error:", error);
@@ -1229,7 +1229,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const profile = await storage.createContentCreatorProfile({
         ...req.body,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
       res.status(201).json(profile);
     } catch (error: any) {
@@ -1256,7 +1256,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/profiles/content-creator", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const updated = await storage.updateContentCreatorProfile(req.user!.id!, req.body);
+      const updated = await storage.updateContentCreatorProfile(req.user!.id, req.body);
       res.json(updated);
     } catch (error: any) {
       console.error("[PUT /api/profiles/content-creator] Error:", error);
@@ -1266,7 +1266,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profiles/content-creator", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.deleteContentCreatorProfile(req.user!.id!);
+      await storage.deleteContentCreatorProfile(req.user!.id);
       res.status(204).send();
     } catch (error: any) {
       console.error("[DELETE /api/profiles/content-creator] Error:", error);
@@ -1310,7 +1310,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const profile = await storage.createLearningResourceProfile({
         ...req.body,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
       res.status(201).json(profile);
     } catch (error: any) {
@@ -1337,7 +1337,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/profiles/learning-resource", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const updated = await storage.updateLearningResourceProfile(req.user!.id!, req.body);
+      const updated = await storage.updateLearningResourceProfile(req.user!.id, req.body);
       res.json(updated);
     } catch (error: any) {
       console.error("[PUT /api/profiles/learning-resource] Error:", error);
@@ -1347,7 +1347,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profiles/learning-resource", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.deleteLearningResourceProfile(req.user!.id!);
+      await storage.deleteLearningResourceProfile(req.user!.id);
       res.status(204).send();
     } catch (error: any) {
       console.error("[DELETE /api/profiles/learning-resource] Error:", error);
@@ -1391,7 +1391,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const profile = await storage.createOrganizerProfile({
         ...req.body,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
       res.status(201).json(profile);
     } catch (error: any) {
@@ -1418,7 +1418,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/profiles/organizer", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const updated = await storage.updateOrganizerProfile(req.user!.id!, req.body);
+      const updated = await storage.updateOrganizerProfile(req.user!.id, req.body);
       res.json(updated);
     } catch (error: any) {
       console.error("[PUT /api/profiles/organizer] Error:", error);
@@ -1428,7 +1428,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profiles/organizer", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.deleteOrganizerProfile(req.user!.id!);
+      await storage.deleteOrganizerProfile(req.user!.id);
       res.status(204).send();
     } catch (error: any) {
       console.error("[DELETE /api/profiles/organizer] Error:", error);
@@ -1930,7 +1930,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const post = await storage.createPost({
         ...req.body,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
 
       // NEW: Handle canonical mention format @user:user_123:maria
@@ -1962,7 +1962,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Send mention notifications to users
-      const author = await storage.getUserById(req.user!.id!);
+      const author = await storage.getUserById(req.user!.id);
       for (const mentionedUserId of mentionedUsers) {
         try {
           await storage.createNotification({
@@ -1991,7 +1991,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Auto-post to mentioned groups
       if (mentionedGroups.length > 0) {
-        const user = await storage.getUserById(req.user!.id!);
+        const user = await storage.getUserById(req.user!.id);
         const userCity = user?.city || post.location;
         
         for (const group of mentionedGroups) {
@@ -2009,14 +2009,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
               }
             } else {
               // For professional groups, consider members as residents
-              const isMember = await storage.isGroupMember(group.id, req.user!.id!);
+              const isMember = await storage.isGroupMember(group.id, req.user!.id);
               postType = isMember ? 'resident' : 'visitor';
             }
             
             // Create group post
             await storage.createGroupPost({
               groupId: group.id,
-              authorId: req.user!.id!,
+              authorId: req.user!.id,
               content: req.body.content,
               mediaUrls: req.body.imageUrls || [],
               mediaType: req.body.imageUrls && req.body.imageUrls.length > 0 ? 'image' : undefined,
@@ -2049,12 +2049,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
               name: cityName,
               description: `The official ${cityName} tango community. Connect with dancers, teachers, and events in your city.`,
               type: "city",
-              creatorId: req.user!.id!,
+              creatorId: req.user!.id,
               coverImage: cityscapePhoto?.url || "",
               city: cityName,
             });
 
-            await storage.joinGroup(newCityCommunity.id, req.user!.id!);
+            await storage.joinGroup(newCityCommunity.id, req.user!.id);
             
             console.log(`[City Auto-Creation] ✅ Created ${cityName} community (ID: ${newCityCommunity.id})`);
           }
@@ -2070,10 +2070,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/posts", async (req: Request & { userId?: number }, res: Response) => {
+  app.get("/api/posts", async (req: Request & { userId?: number; user?: any }, res: Response) => {
     try {
       const { userId, limit = "20", offset = "0" } = req.query;
-      const currentUserId = req.user!.id; // From auth middleware if authenticated
+      const currentUserId = req.user?.id; // From auth middleware if authenticated (optional for public route)
       const posts = await storage.getPosts({
         userId: userId ? parseInt(userId as string) : undefined,
         limit: parseInt(limit as string),
@@ -2176,7 +2176,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/posts/:id/like", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const postId = parseInt(req.params.id);
-      await storage.likePost(postId, req.user!.id!);
+      await storage.likePost(postId, req.user!.id);
       res.json({ liked: true });
     } catch (error) {
       res.status(500).json({ message: "Failed to like post" });
@@ -2186,7 +2186,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/posts/:id/like", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const postId = parseInt(req.params.id);
-      await storage.unlikePost(postId, req.user!.id!);
+      await storage.unlikePost(postId, req.user!.id);
       res.json({ liked: false });
     } catch (error) {
       res.status(500).json({ message: "Failed to unlike post" });
@@ -2207,7 +2207,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await db.delete(reactions).where(
         and(
           eq(reactions.postId, postId),
-          eq(reactions.userId, req.user!.id!)
+          eq(reactions.userId, req.user!.id)
         )
       );
 
@@ -2215,7 +2215,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (reactionType !== '') {
         await db.insert(reactions).values({
           postId,
-          userId: req.user!.id!,
+          userId: req.user!.id,
           reactionType,
         });
 
@@ -2263,7 +2263,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (shareType !== 'link') {
         await db.insert(postShares).values({
           postId,
-          userId: req.user!.id!,
+          userId: req.user!.id,
           shareType,
           comment: comment || null,
         });
@@ -2300,7 +2300,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const existing = await tx.select().from(commentLikes)
           .where(and(
             eq(commentLikes.commentId, commentId),
-            eq(commentLikes.userId, req.user!.id!)
+            eq(commentLikes.userId, req.user!.id)
           ))
           .limit(1);
 
@@ -2308,7 +2308,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Add like
           await tx.insert(commentLikes).values({
             commentId,
-            userId: req.user!.id!,
+            userId: req.user!.id,
           });
 
           // Send notification to comment author
@@ -2331,7 +2331,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await tx.delete(commentLikes).where(
             and(
               eq(commentLikes.commentId, commentId),
-              eq(commentLikes.userId, req.user!.id!)
+              eq(commentLikes.userId, req.user!.id)
             )
           );
         }
@@ -2347,7 +2347,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/posts/:id/save", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const postId = parseInt(req.params.id);
-      await storage.savePost(postId, req.user!.id!);
+      await storage.savePost(postId, req.user!.id);
       res.json({ saved: true });
     } catch (error) {
       res.status(500).json({ message: "Failed to save post" });
@@ -2357,7 +2357,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/posts/:id/save", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const postId = parseInt(req.params.id);
-      await storage.unsavePost(postId, req.user!.id!);
+      await storage.unsavePost(postId, req.user!.id);
       res.json({ saved: false });
     } catch (error) {
       res.status(500).json({ message: "Failed to unsave post" });
@@ -2376,7 +2376,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.reportPost({
         contentType: "post",
         contentId: postId,
-        reporterId: req.user!.id!,
+        reporterId: req.user!.id,
         reason,
         details: details || null,
       });
@@ -2393,7 +2393,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const comment = await storage.createPostComment({
         ...req.body,
         postId,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
       res.status(201).json(comment);
     } catch (error) {
@@ -2421,7 +2421,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Cannot follow yourself" });
       }
       
-      const result = await storage.followUser(req.user!.id!, followingId);
+      const result = await storage.followUser(req.user!.id, followingId);
       
       if (!result) {
         return res.status(400).json({ message: "Already following this user" });
@@ -2436,7 +2436,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/users/:id/follow", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const followingId = parseInt(req.params.id);
-      await storage.unfollowUser(req.user!.id!, followingId);
+      await storage.unfollowUser(req.user!.id, followingId);
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Failed to unfollow user" });
@@ -2545,7 +2545,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const event = await storage.createEvent({
         ...req.body,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
       res.status(201).json(event);
     } catch (error) {
@@ -2649,16 +2649,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid RSVP status" });
       }
       
-      const existing = await storage.getUserEventRsvp(eventId, req.user!.id!);
+      const existing = await storage.getUserEventRsvp(eventId, req.user!.id);
       
       if (existing) {
-        const updated = await storage.updateEventRsvp(eventId, req.user!.id!, status);
+        const updated = await storage.updateEventRsvp(eventId, req.user!.id, status);
         return res.json(updated);
       }
       
       const rsvp = await storage.createEventRsvp({
         eventId,
-        userId: req.user!.id!,
+        userId: req.user!.id,
         status
       });
       
@@ -2682,11 +2682,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const group = await storage.createGroup({
         ...req.body,
-        createdBy: req.user!.id!,
-        ownerId: req.user!.id!
+        createdBy: req.user!.id,
+        ownerId: req.user!.id
       });
       
-      await storage.joinGroup(group.id, req.user!.id!);
+      await storage.joinGroup(group.id, req.user!.id);
       
       res.status(201).json(group);
     } catch (error) {
@@ -2737,7 +2737,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/groups/:id/join", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const groupId = parseInt(req.params.id);
-      const result = await storage.joinGroup(groupId, req.user!.id!);
+      const result = await storage.joinGroup(groupId, req.user!.id);
       
       if (!result) {
         return res.status(400).json({ message: "Already a member of this group" });
@@ -2752,7 +2752,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/groups/:id/leave", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const groupId = parseInt(req.params.id);
-      await storage.leaveGroup(groupId, req.user!.id!);
+      await storage.leaveGroup(groupId, req.user!.id);
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Failed to leave group" });
@@ -2772,7 +2772,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/groups/:id/membership", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const groupId = parseInt(req.params.id);
-      const isMember = await storage.isGroupMember(groupId, req.user!.id!);
+      const isMember = await storage.isGroupMember(groupId, req.user!.id);
       res.json({ isMember });
     } catch (error) {
       res.status(500).json({ message: "Failed to check membership" });
@@ -2781,7 +2781,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/messages/conversations", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const conversations = await storage.getUserConversations(req.user!.id!);
+      const conversations = await storage.getUserConversations(req.user!.id);
       res.json(conversations);
     } catch (error) {
       console.error("Error fetching conversations:", error);
@@ -2797,7 +2797,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "userId is required" });
       }
       
-      const conversation = await storage.getOrCreateDirectConversation(req.user!.id!, otherUserId);
+      const conversation = await storage.getOrCreateDirectConversation(req.user!.id, otherUserId);
       res.status(201).json(conversation);
     } catch (error) {
       res.status(500).json({ message: "Failed to create conversation" });
@@ -2827,7 +2827,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const message = await storage.sendMessage({
         ...req.body,
         chatRoomId,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
       res.status(201).json(message);
     } catch (error) {
@@ -2838,7 +2838,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/messages/conversations/:id/read", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const chatRoomId = parseInt(req.params.id);
-      await storage.markConversationAsRead(chatRoomId, req.user!.id!);
+      await storage.markConversationAsRead(chatRoomId, req.user!.id);
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Failed to mark as read" });
@@ -2848,7 +2848,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/notifications", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const { limit = "50" } = req.query;
-      const notifications = await storage.getUserNotifications(req.user!.id!, parseInt(limit as string));
+      const notifications = await storage.getUserNotifications(req.user!.id, parseInt(limit as string));
       res.json(notifications);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch notifications" });
@@ -2867,7 +2867,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/notifications/read-all", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.markAllNotificationsAsRead(req.user!.id!);
+      await storage.markAllNotificationsAsRead(req.user!.id);
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Failed to mark all notifications as read" });
@@ -2877,7 +2877,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Friends endpoints
   app.get("/api/friends", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const friends = await storage.getUserFriends(req.user!.id!);
+      const friends = await storage.getUserFriends(req.user!.id);
       res.json(friends);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch friends" });
@@ -2886,7 +2886,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/friends/requests", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const requests = await storage.getFriendRequests(req.user!.id!);
+      const requests = await storage.getFriendRequests(req.user!.id);
       res.json(requests);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch friend requests" });
@@ -2895,7 +2895,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/friends/suggestions", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const suggestions = await storage.getFriendSuggestions(req.user!.id!);
+      const suggestions = await storage.getFriendSuggestions(req.user!.id);
       res.json(suggestions);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch friend suggestions" });
@@ -2905,7 +2905,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/friends/requests", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const { userId } = req.body;
-      const result = await storage.sendFriendRequest(req.user!.id!, userId);
+      const result = await storage.sendFriendRequest(req.user!.id, userId);
       res.status(201).json(result);
     } catch (error) {
       res.status(500).json({ message: "Failed to send friend request" });
@@ -2935,7 +2935,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/friends/request/:userId", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const receiverId = parseInt(req.params.userId);
-      const result = await storage.sendFriendRequest(req.user!.id!, receiverId);
+      const result = await storage.sendFriendRequest(req.user!.id, receiverId);
       res.status(201).json(result);
     } catch (error) {
       res.status(500).json({ message: "Failed to send friend request" });
@@ -2955,7 +2955,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/friends/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const friendId = parseInt(req.params.id);
-      await storage.removeFriend(req.user!.id!, friendId);
+      await storage.removeFriend(req.user!.id, friendId);
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ message: "Failed to remove friend" });
@@ -2965,7 +2965,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/friends/mutual/:userId", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const userId = parseInt(req.params.userId);
-      const mutualFriends = await storage.getMutualFriends(req.user!.id!, userId);
+      const mutualFriends = await storage.getMutualFriends(req.user!.id, userId);
       res.json(mutualFriends);
     } catch (error) {
       console.error("[GET /api/friends/mutual/:userId] Error:", error);
@@ -2976,7 +2976,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/friends/friendship/:friendId/stats", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const friendId = parseInt(req.params.friendId);
-      const stats = await storage.getFriendshipStats(req.user!.id!, friendId);
+      const stats = await storage.getFriendshipStats(req.user!.id, friendId);
       
       if (!stats) {
         return res.status(404).json({ message: "Friendship not found" });
@@ -3001,7 +3001,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/notifications/mark-all-read", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.markAllNotificationsAsRead(req.user!.id!);
+      await storage.markAllNotificationsAsRead(req.user!.id);
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ message: "Failed to mark all notifications as read" });
@@ -3038,9 +3038,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      const existingMembership = await storage.getCommunityMembership(community.id, req.user!.id!);
+      const existingMembership = await storage.getCommunityMembership(community.id, req.user!.id);
       if (!existingMembership) {
-        await storage.joinCommunity(community.id, req.user!.id!);
+        await storage.joinCommunity(community.id, req.user!.id);
       }
       
       res.json(community);
@@ -3085,7 +3085,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (query.length < 2) {
         return res.json({ users: [], events: [], groups: [] });
       }
-      const results = await storage.search(query, req.user!.id!);
+      const results = await storage.search(query, req.user!.id);
       res.json(results);
     } catch (error) {
       res.status(500).json({ message: "Search failed" });
@@ -3129,7 +3129,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/memories", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const { limit = "20", offset = "0", filter = "all" } = req.query;
-      const userId = req.user!.id!;
+      const userId = req.user!.id;
       
       let params: any = {
         type: filter === "all" ? undefined : filter === "photos" ? "image" : filter,
@@ -3149,7 +3149,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const memory = await storage.createMedia({
         ...req.body,
-        userId: req.user!.id!
+        userId: req.user!.id
       });
       res.status(201).json(memory);
     } catch (error) {
@@ -3163,7 +3163,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/recommendations", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const { type = "events", limit = "10" } = req.query;
-      const userId = req.user!.id!;
+      const userId = req.user!.id;
       
       let recommendations: any[] = [];
       const limitNum = parseInt(limit as string);
@@ -3245,7 +3245,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // For role invitations (e.g., admin, volunteer, team member invitations)
   app.get("/api/invitations", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const userId = req.user!.id!;
+      const userId = req.user!.id;
       
       // Get friend requests as invitations (can be extended for role-based invitations)
       const invitations = await storage.getFriendRequests(userId);
@@ -3266,7 +3266,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const invitation = await storage.sendFriendRequest({
-        senderId: req.user!.id!,
+        senderId: req.user!.id,
         receiverId,
         senderMessage: message || "",
         status: "pending"
@@ -3306,7 +3306,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/favorites", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const { category = "all" } = req.query;
-      const userId = req.user!.id!;
+      const userId = req.user!.id;
       
       // For now, returns saved posts (can be extended for other content types)
       const savedPostsData = await db
@@ -3345,7 +3345,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // For posts
       if (contentType === "post") {
-        await storage.savePost(contentId, req.user!.id!);
+        await storage.savePost(contentId, req.user!.id);
       }
       
       res.status(201).json({ message: "Added to favorites" });
@@ -3365,11 +3365,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const savedPost = await db
           .select()
           .from(savedPosts)
-          .where(and(eq(savedPosts.id, favoriteId), eq(savedPosts.userId, req.user!.id!)))
+          .where(and(eq(savedPosts.id, favoriteId), eq(savedPosts.userId, req.user!.id)))
           .limit(1);
         
         if (savedPost[0]) {
-          await storage.unsavePost(savedPost[0].postId, req.user!.id!);
+          await storage.unsavePost(savedPost[0].postId, req.user!.id);
         }
       }
       
@@ -5598,7 +5598,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/profiles/teacher", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const validated = insertTeacherProfileSchema.parse(req.body);
-      const profile = await storage.createTeacherProfile({ ...validated, userId: req.user!.id! });
+      const profile = await storage.createTeacherProfile({ ...validated, userId: req.user!.id });
       res.status(201).json(profile);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -5623,7 +5623,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/profiles/teacher", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const validated = insertTeacherProfileSchema.partial().parse(req.body);
-      const profile = await storage.updateTeacherProfile(req.user!.id!, validated);
+      const profile = await storage.updateTeacherProfile(req.user!.id, validated);
       res.json(profile);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -5636,7 +5636,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profiles/teacher", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.deleteTeacherProfile(req.user!.id!);
+      await storage.deleteTeacherProfile(req.user!.id);
       res.status(204).send();
     } catch (error) {
       console.error("[Teacher Profile] Delete error:", error);
@@ -5665,7 +5665,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/profiles/dj", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const validated = insertDJProfileSchema.parse(req.body);
-      const profile = await storage.createDjProfile({ ...validated, userId: req.user!.id! });
+      const profile = await storage.createDjProfile({ ...validated, userId: req.user!.id });
       res.status(201).json(profile);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -5690,7 +5690,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/profiles/dj", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const validated = insertDJProfileSchema.partial().parse(req.body);
-      const profile = await storage.updateDjProfile(req.user!.id!, validated);
+      const profile = await storage.updateDjProfile(req.user!.id, validated);
       res.json(profile);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -5703,7 +5703,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profiles/dj", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.deleteDjProfile(req.user!.id!);
+      await storage.deleteDjProfile(req.user!.id);
       res.status(204).send();
     } catch (error) {
       console.error("[DJ Profile] Delete error:", error);
@@ -5732,7 +5732,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/profiles/musician", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const validated = insertMusicianProfileSchema.parse(req.body);
-      const profile = await storage.createMusicianProfile({ ...validated, userId: req.user!.id! });
+      const profile = await storage.createMusicianProfile({ ...validated, userId: req.user!.id });
       res.status(201).json(profile);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -5757,7 +5757,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/profiles/musician", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const validated = insertMusicianProfileSchema.partial().parse(req.body);
-      const profile = await storage.updateMusicianProfile(req.user!.id!, validated);
+      const profile = await storage.updateMusicianProfile(req.user!.id, validated);
       res.json(profile);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -5770,7 +5770,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profiles/musician", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.deleteMusicianProfile(req.user!.id!);
+      await storage.deleteMusicianProfile(req.user!.id);
       res.status(204).send();
     } catch (error) {
       console.error("[Musician Profile] Delete error:", error);
