@@ -186,4 +186,41 @@ router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response)
   }
 });
 
+// PUT /api/blog/posts/:id/publish - Publish blog post (auth required)
+router.put("/posts/:id/publish", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const { id } = req.params;
+
+    // Check ownership
+    const existingResult = await db.select()
+      .from(blogPosts)
+      .where(eq(blogPosts.id, parseInt(id)))
+      .limit(1);
+
+    if (existingResult.length === 0) {
+      return res.status(404).json({ message: "Blog post not found" });
+    }
+
+    const existing: any = existingResult[0];
+
+    if (existing.authorId !== userId) {
+      return res.status(403).json({ message: "Not authorized to publish this post" });
+    }
+
+    const result = await db.update(blogPosts)
+      .set({
+        published: true,
+        updatedAt: new Date(),
+      })
+      .where(eq(blogPosts.id, parseInt(id)))
+      .returning();
+
+    res.json(result[0]);
+  } catch (error) {
+    console.error("Error publishing blog post:", error);
+    res.status(500).json({ message: "Failed to publish blog post" });
+  }
+});
+
 export default router;

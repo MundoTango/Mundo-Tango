@@ -51,6 +51,8 @@ import musicianRoutes from "./routes/musician-routes";
 import venueRoutes from "./routes/venue-routes";
 import workshopRoutes from "./routes/workshop-routes";
 import musicRoutes from "./routes/music-routes";
+import travelRoutes from "./routes/travel-routes";
+import achievementRoutes from "./routes/achievement-routes";
 import profileRoutes from "./routes/profileRoutes";
 import profileMediaRoutes from "./routes/profileMediaRoutes";
 import profileAnalyticsRoutes from "./routes/profileAnalyticsRoutes";
@@ -1892,6 +1894,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/venues", venueRoutes);
   app.use("/api/workshops", workshopRoutes);
   app.use("/api/music", musicRoutes);
+  app.use("/api/travel", travelRoutes);
+  app.use("/api/achievements", achievementRoutes);
   app.use("/api/profile", profileRoutes);
   
   // BATCH 13-14: Profile Media & Analytics Routes

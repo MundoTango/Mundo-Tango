@@ -166,4 +166,55 @@ router.get("/favorites", authenticateToken, async (req: AuthRequest, res: Respon
   }
 });
 
+// POST /api/music/tracks - Upload track (auth required)
+router.post("/tracks", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const { title, artist, album, genre, duration, audioUrl, imageUrl } = req.body;
+
+    if (!title || !artist || !audioUrl) {
+      return res.status(400).json({ message: "Title, artist, and audio URL are required" });
+    }
+
+    const result = await db.insert(musicLibrary).values({
+      title,
+      artist,
+      album: album || null,
+      genre: genre || null,
+      duration: duration || null,
+      audioUrl,
+      imageUrl: imageUrl || null,
+      plays: 0,
+    }).returning();
+
+    res.status(201).json(result[0]);
+  } catch (error) {
+    console.error("Error uploading track:", error);
+    res.status(500).json({ message: "Failed to upload track" });
+  }
+});
+
+// POST /api/music/playlists - Create playlist (auth required) - ALIAS for /playlist
+router.post("/playlists", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const { name, description, isPublic } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ message: "Playlist name is required" });
+    }
+
+    const result = await db.insert(playlists).values({
+      userId,
+      name,
+      description: description || null,
+      isPublic: isPublic || false,
+    }).returning();
+
+    res.status(201).json(result[0]);
+  } catch (error) {
+    console.error("Error creating playlist:", error);
+    res.status(500).json({ message: "Failed to create playlist" });
+  }
+});
+
 export default router;

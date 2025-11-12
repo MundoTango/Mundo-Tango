@@ -268,4 +268,36 @@ router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response)
   }
 });
 
+// GET /api/workshops/:id/schedule - Get workshop schedule (auth required)
+router.get("/:id/schedule", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const workshop = await db.select().from(workshops).where(eq(workshops.id, parseInt(id))).limit(1);
+    if (workshop.length === 0) {
+      return res.status(404).json({ message: "Workshop not found" });
+    }
+
+    // Get all enrollments for attendance tracking
+    const enrollments = await db.select()
+      .from(workshopEnrollments)
+      .where(eq(workshopEnrollments.workshopId, parseInt(id)))
+      .orderBy(workshopEnrollments.enrolledAt);
+
+    res.json({
+      workshop: workshop[0],
+      enrollments: enrollments.map(e => ({
+        userId: e.userId,
+        status: e.status,
+        enrolledAt: e.enrolledAt,
+      })),
+      totalEnrolled: enrollments.length,
+      spotsAvailable: (workshop[0].spotsLeft || 0),
+    });
+  } catch (error) {
+    console.error("Error fetching workshop schedule:", error);
+    res.status(500).json({ message: "Failed to fetch workshop schedule" });
+  }
+});
+
 export default router;

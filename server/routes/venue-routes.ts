@@ -155,4 +155,51 @@ router.delete("/:id", authenticateToken, async (req: AuthRequest, res: Response)
   }
 });
 
+// GET /api/venues/recommendations - Get venue recommendations based on location and rating
+router.get("/recommendations", async (req, res: Response) => {
+  try {
+    const { city, country, minRating = "0" } = req.query;
+
+    let query = db.select()
+      .from(venues)
+      .orderBy(desc(venues.rating), desc(venues.reviewCount))
+      .limit(20)
+      .$dynamic();
+
+    const conditions = [];
+    
+    if (city && typeof city === "string") {
+      conditions.push(eq(venues.city, city));
+    }
+
+    if (country && typeof country === "string") {
+      conditions.push(eq(venues.country, country));
+    }
+
+    const rating = parseInt(minRating as string);
+    if (rating > 0) {
+      conditions.push(sql`${venues.rating} >= ${rating}`);
+    }
+
+    // Only show verified or highly rated venues in recommendations
+    conditions.push(
+      or(
+        eq(venues.verified, true),
+        sql`${venues.rating} >= 4`
+      ) as any
+    );
+
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+
+    const result = await query;
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error fetching venue recommendations:", error);
+    res.status(500).json({ message: "Failed to fetch venue recommendations" });
+  }
+});
+
 export default router;
