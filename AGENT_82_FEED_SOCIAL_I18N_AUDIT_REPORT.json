@@ -1,0 +1,303 @@
+{
+  "agent": "AGENT-82",
+  "audit_date": "2025-01-14",
+  "mission": "Audit i18n implementation on Feed & Social pages",
+  "total_pages": 8,
+  "pages_with_i18n": 0,
+  "pages_without_i18n": 8,
+  "coverage_percent": 0,
+  "detailed_analysis": {
+    "FeedPage": {
+      "path": "client/src/pages/FeedPage.tsx",
+      "has_useTranslation_hook": false,
+      "has_translation_keys": false,
+      "hardcoded_strings_count": 85,
+      "sample_hardcoded_strings": [
+        "What's on your mind?",
+        "Public",
+        "Friends",
+        "Private",
+        "Add photo",
+        "Add video",
+        "Post",
+        "New Post",
+        "Share your thoughts",
+        "Select visibility",
+        "Add tags",
+        "Loading feed...",
+        "No posts yet",
+        "Start sharing to connect with the community",
+        "Mark all read",
+        "Activity Feed",
+        "Milonga",
+        "Práctica",
+        "Performance",
+        "Workshop",
+        "Festival",
+        "Travel",
+        "Music",
+        "Fashion"
+      ],
+      "i18n_status": "NOT_IMPLEMENTED",
+      "priority": "HIGH",
+      "notes": "Main feed page with extensive user-facing text including post creation, tags, visibility options, and feed content. Critical for internationalization."
+    },
+    "ProfilePage": {
+      "path": "client/src/pages/ProfilePage.tsx",
+      "has_useTranslation_hook": false,
+      "has_translation_keys": false,
+      "hardcoded_strings_count": 65,
+      "sample_hardcoded_strings": [
+        "Edit Profile",
+        "Send Friend Request",
+        "Remove Friend",
+        "Friends",
+        "Pending",
+        "Feed",
+        "About",
+        "Events",
+        "Photos",
+        "Travel",
+        "Teacher",
+        "DJ",
+        "Photographer",
+        "Performer",
+        "Vendor",
+        "Musician",
+        "Choreographer",
+        "years of dancing",
+        "Leader Level",
+        "Follower Level",
+        "Languages",
+        "Super Admin"
+      ],
+      "i18n_status": "NOT_IMPLEMENTED",
+      "priority": "HIGH",
+      "notes": "User profile page with tabs, role information, and personal details. High visibility page requiring full i18n support."
+    },
+    "MessagesPage": {
+      "path": "client/src/pages/MessagesPage.tsx",
+      "has_useTranslation_hook": false,
+      "has_translation_keys": false,
+      "hardcoded_strings_count": 42,
+      "sample_hardcoded_strings": [
+        "Messages",
+        "Stay Connected",
+        "Your Conversations",
+        "Build meaningful connections with dancers around the world",
+        "Active Chats",
+        "Community",
+        "Connections",
+        "conversation",
+        "conversations",
+        "Type a message...",
+        "Send",
+        "No messages yet",
+        "Start a conversation to connect",
+        "Loading messages...",
+        "Select a conversation to view messages"
+      ],
+      "i18n_status": "NOT_IMPLEMENTED",
+      "priority": "HIGH",
+      "notes": "Private messaging interface with hero section, conversation list, and message composer. Essential for communication features."
+    },
+    "NotificationsPage": {
+      "path": "client/src/pages/NotificationsPage.tsx",
+      "has_useTranslation_hook": false,
+      "has_translation_keys": false,
+      "hardcoded_strings_count": 48,
+      "sample_hardcoded_strings": [
+        "Notifications",
+        "Stay Connected",
+        "Your Notifications",
+        "Keep track of your community interactions, event updates, and friend requests",
+        "new notification",
+        "new notifications",
+        "Activity Feed",
+        "notification",
+        "notifications",
+        "No notifications to display",
+        "Mark all read",
+        "All",
+        "Unread",
+        "Read",
+        "Loading notifications...",
+        "All caught up!",
+        "No read notifications",
+        "No notifications yet",
+        "You've read all your notifications. Great job staying connected!",
+        "You haven't read any notifications yet.",
+        "We'll notify you when there's activity on your account. Start engaging with the community!",
+        "Explore Community",
+        "New",
+        "Mark read",
+        "Delete"
+      ],
+      "i18n_status": "NOT_IMPLEMENTED",
+      "priority": "HIGH",
+      "notes": "Notification center with filtering, marking read/unread, and deletion. Important for user engagement and activity tracking."
+    },
+    "FriendshipPage": {
+      "path": "client/src/pages/FriendshipPage.tsx",
+      "has_useTranslation_hook": false,
+      "has_translation_keys": false,
+      "hardcoded_strings_count": 32,
+      "sample_hardcoded_strings": [
+        "Friendship",
+        "Your connection in the tango community",
+        "Closeness Score",
+        "Based on shared events, mutual friends, and interactions",
+        "Friends Since",
+        "days",
+        "Last interaction",
+        "Shared Events",
+        "Milongas and workshops attended together",
+        "Mutual Friends",
+        "Friends you both know",
+        "Send Message",
+        "View Profile"
+      ],
+      "i18n_status": "NOT_IMPLEMENTED",
+      "priority": "MEDIUM",
+      "notes": "Friendship detail page showing connection statistics and mutual friends. Moderate priority for i18n."
+    },
+    "FollowersPage": {
+      "path": "client/src/pages/FollowersPage.tsx",
+      "has_useTranslation_hook": false,
+      "has_translation_keys": false,
+      "hardcoded_strings_count": 18,
+      "sample_hardcoded_strings": [
+        "Followers",
+        "Community",
+        "Your Followers",
+        "Connect with fellow dancers who follow your journey",
+        "Follow Back",
+        "No followers yet",
+        "Share your tango journey to grow your community"
+      ],
+      "i18n_status": "NOT_IMPLEMENTED",
+      "priority": "MEDIUM",
+      "notes": "Followers list page with user cards and follow actions. Moderate priority for social features."
+    },
+    "FollowingPage": {
+      "path": "client/src/pages/FollowingPage.tsx",
+      "has_useTranslation_hook": false,
+      "has_translation_keys": false,
+      "hardcoded_strings_count": 18,
+      "sample_hardcoded_strings": [
+        "Following",
+        "Connections",
+        "Dancers and artists you're connected with",
+        "Unfollow",
+        "Not following anyone yet",
+        "Discover dancers to connect with"
+      ],
+      "i18n_status": "NOT_IMPLEMENTED",
+      "priority": "MEDIUM",
+      "notes": "Following list page showing users being followed. Moderate priority for social features."
+    },
+    "SavedPostsPage": {
+      "path": "client/src/pages/SavedPostsPage.tsx",
+      "has_useTranslation_hook": false,
+      "has_translation_keys": false,
+      "hardcoded_strings_count": 16,
+      "sample_hardcoded_strings": [
+        "Saved Posts",
+        "Your Collection",
+        "Curated moments and memories you've bookmarked",
+        "No Saved Posts Yet",
+        "Posts you bookmark will appear here"
+      ],
+      "i18n_status": "NOT_IMPLEMENTED",
+      "priority": "MEDIUM",
+      "notes": "Saved/bookmarked posts page. Moderate priority as it's a supporting feature."
+    }
+  },
+  "summary": {
+    "total_hardcoded_strings": 324,
+    "avg_hardcoded_strings_per_page": 40.5,
+    "language_detection_implemented": false,
+    "i18n_library_available": true,
+    "i18n_library_note": "react-i18next and i18next are installed and configured (lib/i18n.ts exists), but not used in these pages"
+  },
+  "recommendations": [
+    {
+      "priority": "CRITICAL",
+      "action": "Import and use useTranslation hook",
+      "description": "Add 'import { useTranslation } from 'react-i18next';' to all 8 pages and destructure the t function: 'const { t } = useTranslation();'"
+    },
+    {
+      "priority": "CRITICAL",
+      "action": "Create translation key structure",
+      "description": "Define comprehensive translation keys in locales files (en/pages.json, es/pages.json, etc.) organized by page: feed.*, profile.*, messages.*, notifications.*, friendship.*, followers.*, following.*, savedPosts.*"
+    },
+    {
+      "priority": "HIGH",
+      "action": "Replace hardcoded strings with t() calls",
+      "description": "Systematically replace all 324+ hardcoded English strings with t('namespace.key') calls across all pages"
+    },
+    {
+      "priority": "HIGH",
+      "action": "Handle pluralization",
+      "description": "Use i18next pluralization features for strings like 'notification/notifications', 'conversation/conversations', etc."
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "Implement dynamic content translation",
+      "description": "Use interpolation for dynamic values like usernames, dates, counts: t('key', { username, count })"
+    },
+    {
+      "priority": "MEDIUM",
+      "action": "Test language switching",
+      "description": "Verify LanguageSelector component works correctly on all pages and triggers re-renders with translated content"
+    }
+  ],
+  "implementation_plan": {
+    "phase_1_high_priority": [
+      "FeedPage (85 strings)",
+      "ProfilePage (65 strings)",
+      "MessagesPage (42 strings)",
+      "NotificationsPage (48 strings)"
+    ],
+    "phase_2_medium_priority": [
+      "FriendshipPage (32 strings)",
+      "FollowersPage (18 strings)",
+      "FollowingPage (18 strings)",
+      "SavedPostsPage (16 strings)"
+    ],
+    "estimated_effort": {
+      "phase_1": "8-12 hours",
+      "phase_2": "4-6 hours",
+      "total": "12-18 hours"
+    }
+  },
+  "existing_i18n_infrastructure": {
+    "library": "react-i18next + i18next",
+    "config_file": "client/src/lib/i18n.ts",
+    "locales_directory": "client/public/locales/",
+    "supported_languages": ["en", "es", "fr", "de", "it", "pt"],
+    "language_detector": "i18next-browser-languagedetector",
+    "language_selector_component": "client/src/components/LanguageSelector.tsx",
+    "status": "Configured but not utilized in Feed & Social pages"
+  },
+  "verification_checklist": {
+    "imports": {
+      "useTranslation_hook_imported": false,
+      "pages_missing_import": 8
+    },
+    "translation_usage": {
+      "t_function_used": false,
+      "pages_using_t_function": 0
+    },
+    "hardcoded_content": {
+      "has_hardcoded_strings": true,
+      "pages_with_hardcoded_strings": 8,
+      "total_strings_to_translate": 324
+    },
+    "language_detection": {
+      "language_detector_configured": true,
+      "auto_detection_working": true,
+      "note": "Language detection is configured globally but pages don't use translated content"
+    }
+  }
+}

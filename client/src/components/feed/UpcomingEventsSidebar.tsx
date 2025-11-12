@@ -160,24 +160,60 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
     ];
   };
 
-  // Real-time RSVP updates via Socket.IO
+  // Real-time RSVP updates via WebSocket
   useEffect(() => {
-    const ws = new WebSocket(`${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/notifications`);
+    const accessToken = localStorage.getItem('accessToken');
     
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      
-      // Listen for RSVP updates
-      if (data.type === 'event_rsvp_update') {
-        setRealtimeRsvps(prev => ({
-          ...prev,
-          [data.eventId]: data.rsvpCount,
-        }));
+    // Don't connect if not authenticated
+    if (!accessToken) {
+      return;
+    }
+
+    let ws: WebSocket | null = null;
+    let reconnectTimeout: NodeJS.Timeout | null = null;
+
+    const connect = () => {
+      try {
+        ws = new WebSocket(`${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/notifications`);
+        
+        ws.onopen = () => {
+          console.log('[WS] Connected to notification service');
+        };
+
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          
+          // Listen for RSVP updates
+          if (data.type === 'event_rsvp_update') {
+            setRealtimeRsvps(prev => ({
+              ...prev,
+              [data.eventId]: data.rsvpCount,
+            }));
+          }
+        };
+
+        ws.onerror = (error) => {
+          console.log('[WS] WebSocket error:', error);
+        };
+
+        ws.onclose = () => {
+          console.log('[WS] Disconnected from notification service');
+          // Don't reconnect automatically - prevents infinite loop
+        };
+      } catch (error) {
+        console.error('[WS] Failed to create WebSocket:', error);
       }
     };
 
+    connect();
+
     return () => {
-      ws.close();
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+      }
+      if (ws) {
+        ws.close();
+      }
     };
   }, []);
 

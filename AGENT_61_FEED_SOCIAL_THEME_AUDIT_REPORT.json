@@ -1,0 +1,565 @@
+{
+  "audit_metadata": {
+    "agent_id": "AGENT_61",
+    "audit_name": "FEED_SOCIAL_PAGES_THEME_AUDIT_RERUN",
+    "audit_date": "2025-11-12",
+    "theme": "MT_OCEAN",
+    "total_pages_audited": 14,
+    "auditor": "Replit Agent Subagent",
+    "audit_method": "Direct source code analysis via grep, read, and search_codebase tools"
+  },
+  "theme_configuration": {
+    "name": "MT Ocean Theme",
+    "color_palette": {
+      "primary": "177 72% 56% (Turquoise #40E0D0)",
+      "secondary": "210 100% 56% (Dodger Blue #1E90FF)",
+      "accent": "218 100% 34% (Cobalt Blue #0047AB)",
+      "gradient_system": "Turquoise → Dodger Blue → Cobalt Blue"
+    },
+    "dark_mode_support": true,
+    "css_variable_system": "HSL with :root and .dark classes",
+    "file_location": "client/src/index.css"
+  },
+  "audit_criteria": {
+    "1_three_column_layout": "Verify 3-column layout implementation in FeedPage (Left sidebar + Main + Right sidebar)",
+    "2_turquoise_accents": "Check MT Ocean turquoise (#40E0D0) primary color usage across all pages",
+    "3_dark_light_mode": "Confirm dark/light mode CSS variable system in index.css",
+    "4_i18n_hooks": "Verify react-i18next useTranslation() hooks integration across all pages"
+  },
+  "overall_compliance_summary": {
+    "three_column_layout_feedpage": {
+      "compliant": 0,
+      "non_compliant": 1,
+      "percentage": "0%",
+      "status": "FAIL",
+      "details": "FeedPage has only 2-column layout (Main + Right Sidebar). FeedLeftSidebar component exists but is not integrated."
+    },
+    "mt_ocean_turquoise_accents": {
+      "compliant": 14,
+      "non_compliant": 0,
+      "percentage": "100%",
+      "status": "PASS",
+      "details": "All pages use semantic CSS classes that reference MT Ocean turquoise primary color (177 72% 56%)"
+    },
+    "dark_light_mode": {
+      "compliant": 14,
+      "non_compliant": 0,
+      "percentage": "100%",
+      "status": "PASS",
+      "details": "Complete .dark class CSS variable system with all color tokens properly defined in index.css"
+    },
+    "i18n_hooks": {
+      "compliant": 0,
+      "non_compliant": 14,
+      "percentage": "0%",
+      "status": "FAIL",
+      "details": "Zero pages implement useTranslation() hook. No i18n implementation found in any Feed & Social pages."
+    }
+  },
+  "critical_findings": {
+    "feedpage_layout_issue": {
+      "severity": "CRITICAL",
+      "file": "client/src/pages/FeedPage.tsx",
+      "line_number": 405,
+      "current_implementation": {
+        "layout_type": "2-column flex layout",
+        "container_class": "flex gap-8 px-6 py-12 max-w-7xl mx-auto",
+        "columns": [
+          {
+            "name": "Main Feed",
+            "class": "flex-1 max-w-3xl space-y-8",
+            "components": ["FeedHeroWelcome", "ConnectionStatusBadge", "PostCreator", "SmartPostFeed", "PostItem"]
+          },
+          {
+            "name": "Right Sidebar",
+            "class": "hidden lg:block w-80 space-y-6 sticky top-20 h-fit",
+            "components": ["UpcomingEventsSidebar", "FeedRightSidebar"]
+          }
+        ]
+      },
+      "required_implementation": {
+        "layout_type": "3-column flex layout",
+        "missing_component": "FeedLeftSidebar",
+        "component_exists": true,
+        "component_location": "client/src/components/FeedLeftSidebar.tsx",
+        "component_width": "w-[280px]",
+        "fix_required": "Add FeedLeftSidebar as first column before Main Feed"
+      },
+      "feedleftsidebar_details": {
+        "file": "client/src/components/FeedLeftSidebar.tsx",
+        "width": "280px",
+        "features": [
+          "User Profile Card (E30)",
+          "Quick Links Menu (E31) - Feed, Events, Groups, Messages, Saved, Trending, Venues, Music, Settings",
+          "Global Statistics - Global Dancers (3.2K), Active Events (945), Communities (6.8K), Your City (184)",
+          "Ocean gradient button for global community",
+          "Glass-card styling with glassmorphism effects"
+        ],
+        "styling": "glass-card with hover-elevate interactions",
+        "integration_status": "COMPONENT EXISTS BUT NOT USED"
+      }
+    }
+  },
+  "detailed_page_audits": [
+    {
+      "page_number": 1,
+      "page_name": "FeedPage",
+      "file_path": "client/src/pages/FeedPage.tsx",
+      "total_lines": 1129,
+      "three_column_layout": {
+        "status": "FAIL",
+        "current": "2-column (Main + Right Sidebar)",
+        "expected": "3-column (Left + Main + Right)",
+        "notes": "FeedLeftSidebar component exists but is not imported or used. Only FeedRightSidebar is integrated."
+      },
+      "mt_ocean_colors": {
+        "status": "PASS",
+        "primary_color": "Turquoise gradient (177 72% 56%)",
+        "implementation": "CSS variables: bg-primary/10, text-primary, border-primary",
+        "examples": ["Line 418: border-primary", "Line 394: text-white over gradient", "Uses semantic color classes throughout"]
+      },
+      "dark_mode": {
+        "status": "PASS",
+        "implementation": "Automatic via CSS variables with .dark class",
+        "notes": "All colors use semantic tokens that adapt to dark mode automatically"
+      },
+      "i18n_hooks": {
+        "status": "FAIL",
+        "implementation": "None",
+        "imports_checked": true,
+        "grep_result": "No 'useTranslation' or 'react-i18next' imports found",
+        "hardcoded_strings": ["Share Your Tango Journey", "Community Feed", "New posts available", etc.]
+      },
+      "editorial_hero": {
+        "status": "PASS",
+        "height": "50vh md:60vh (Line 376)",
+        "aspect_ratio": "16:9 editorial format",
+        "features": ["Framer Motion fadeInUp animation", "Gradient overlay: from-black/70 via-black/50 to-background", "Background image from Unsplash", "Badge, H1, and description text"],
+        "styling": "Editorial style with dark wash gradient for text readability"
+      },
+      "compliance_score": "50%"
+    },
+    {
+      "page_number": 2,
+      "page_name": "ProfilePage",
+      "file_path": "client/src/pages/ProfilePage.tsx",
+      "three_column_layout": {
+        "status": "N/A",
+        "notes": "Task focused on FeedPage 3-column layout specifically"
+      },
+      "mt_ocean_colors": {
+        "status": "PASS",
+        "implementation": "Uses text-primary, bg-primary/20, border-primary/50",
+        "notes": "MT Ocean turquoise accents throughout profile cards and stats"
+      },
+      "dark_mode": {
+        "status": "PASS",
+        "implementation": "CSS variable system",
+        "notes": "Automatic dark mode support via semantic classes"
+      },
+      "i18n_hooks": {
+        "status": "FAIL",
+        "implementation": "None",
+        "grep_result": "No useTranslation() hook found"
+      },
+      "compliance_score": "67%"
+    },
+    {
+      "page_number": 3,
+      "page_name": "MessagesPage",
+      "file_path": "client/src/pages/MessagesPage.tsx",
+      "mt_ocean_colors": {
+        "status": "PASS",
+        "implementation": "bg-primary, text-primary-foreground for active conversations",
+        "notes": "Primary color highlights active message threads"
+      },
+      "dark_mode": {
+        "status": "PASS",
+        "implementation": "CSS variables with .dark support"
+      },
+      "i18n_hooks": {
+        "status": "FAIL",
+        "implementation": "None"
+      },
+      "compliance_score": "67%"
+    },
+    {
+      "page_number": 4,
+      "page_name": "NotificationsPage",
+      "file_path": "client/src/pages/NotificationsPage.tsx",
+      "mt_ocean_colors": {
+        "status": "PASS",
+        "implementation": "bg-primary/5, border-primary/20, text-primary",
+        "notes": "Subtle turquoise accents on notification cards"
+      },
+      "dark_mode": {
+        "status": "PASS",
+        "implementation": "Full CSS variable support"
+      },
+      "i18n_hooks": {
+        "status": "FAIL",
+        "implementation": "None"
+      },
+      "compliance_score": "67%"
+    },
+    {
+      "page_number": 5,
+      "page_name": "FriendshipPage",
+      "file_path": "client/src/pages/FriendshipPage.tsx",
+      "mt_ocean_colors": {
+        "status": "PASS",
+        "implementation": "text-primary, bg-primary/10",
+        "notes": "Turquoise accents on friendship request cards"
+      },
+      "dark_mode": {
+        "status": "PASS"
+      },
+      "i18n_hooks": {
+        "status": "FAIL"
+      },
+      "compliance_score": "67%"
+    },
+    {
+      "page_number": 6,
+      "page_name": "FollowersPage",
+      "file_path": "client/src/pages/FollowersPage.tsx",
+      "mt_ocean_colors": {
+        "status": "PASS",
+        "implementation": "Semantic primary color classes"
+      },
+      "dark_mode": {
+        "status": "PASS"
+      },
+      "i18n_hooks": {
+        "status": "FAIL"
+      },
+      "compliance_score": "67%"
+    },
+    {
+      "page_number": 7,
+      "page_name": "FollowingPage",
+      "file_path": "client/src/pages/FollowingPage.tsx",
+      "mt_ocean_colors": {
+        "status": "PASS",
+        "implementation": "Semantic primary color classes"
+      },
+      "dark_mode": {
+        "status": "PASS"
+      },
+      "i18n_hooks": {
+        "status": "FAIL"
+      },
+      "compliance_score": "67%"
+    },
+    {
+      "page_number": 8,
+      "page_name": "SavedPostsPage",
+      "file_path": "client/src/pages/SavedPostsPage.tsx",
+      "mt_ocean_colors": {
+        "status": "PASS",
+        "implementation": "text-primary, from-primary/10 gradients"
+      },
+      "dark_mode": {
+        "status": "PASS"
+      },
+      "i18n_hooks": {
+        "status": "FAIL"
+      },
+      "compliance_score": "67%"
+    },
+    {
+      "page_number": 9,
+      "page_name": "BlockedUsersPage",
+      "file_path": "client/src/pages/BlockedUsersPage.tsx",
+      "mt_ocean_colors": {
+        "status": "PASS",
+        "implementation": "Semantic color classes"
+      },
+      "dark_mode": {
+        "status": "PASS"
+      },
+      "i18n_hooks": {
+        "status": "FAIL"
+      },
+      "compliance_score": "67%"
+    },
+    {
+      "page_number": 10,
+      "page_name": "DiscoverPage",
+      "file_path": "client/src/pages/DiscoverPage.tsx",
+      "mt_ocean_colors": {
+        "status": "PASS",
+        "implementation": "text-primary, border-primary accents"
+      },
+      "dark_mode": {
+        "status": "PASS"
+      },
+      "i18n_hooks": {
+        "status": "FAIL"
+      },
+      "compliance_score": "67%"
+    },
+    {
+      "page_number": 11,
+      "page_name": "SearchPage",
+      "file_path": "client/src/pages/SearchPage.tsx",
+      "mt_ocean_colors": {
+        "status": "PASS",
+        "implementation": "text-primary, bg-primary/10"
+      },
+      "dark_mode": {
+        "status": "PASS"
+      },
+      "i18n_hooks": {
+        "status": "FAIL"
+      },
+      "compliance_score": "67%"
+    },
+    {
+      "page_number": 12,
+      "page_name": "RecommendationsPage",
+      "file_path": "client/src/pages/RecommendationsPage.tsx",
+      "mt_ocean_colors": {
+        "status": "PASS",
+        "implementation": "text-primary, bg-primary for active tabs"
+      },
+      "dark_mode": {
+        "status": "PASS"
+      },
+      "i18n_hooks": {
+        "status": "FAIL"
+      },
+      "compliance_score": "67%"
+    },
+    {
+      "page_number": 13,
+      "page_name": "LeaderboardPage",
+      "file_path": "client/src/pages/LeaderboardPage.tsx",
+      "mt_ocean_colors": {
+        "status": "PASS",
+        "implementation": "text-primary, bg-primary/10 for top ranks"
+      },
+      "dark_mode": {
+        "status": "PASS"
+      },
+      "i18n_hooks": {
+        "status": "FAIL"
+      },
+      "compliance_score": "67%"
+    },
+    {
+      "page_number": 14,
+      "page_name": "StoriesPage",
+      "file_path": "client/src/pages/StoriesPage.tsx",
+      "mt_ocean_colors": {
+        "status": "PASS",
+        "implementation": "text-primary, from-primary/10 gradients"
+      },
+      "dark_mode": {
+        "status": "PASS"
+      },
+      "i18n_hooks": {
+        "status": "FAIL"
+      },
+      "compliance_score": "67%"
+    }
+  ],
+  "theme_components_analysis": {
+    "feedleftsidebar": {
+      "file": "client/src/components/FeedLeftSidebar.tsx",
+      "total_lines": 137,
+      "width": "w-[280px]",
+      "status": "EXISTS_BUT_UNUSED",
+      "sections": [
+        "User Profile Card (E30) - Avatar, name, username with link to profile",
+        "Quick Links Menu (E31) - 9 navigation links with icons",
+        "Global Statistics - 4 stat cards with icons and numbers"
+      ],
+      "styling": {
+        "glassmorphism": true,
+        "classes": ["glass-card", "hover-elevate"],
+        "gradient_button": true,
+        "ocean_gradient_class": "bg-gradient-to-r from-primary to-secondary text-white"
+      },
+      "mt_ocean_accents": {
+        "icons": "text-primary on statistic icons",
+        "backgrounds": "bg-primary/10 for icon containers",
+        "gradient": "from-primary to-secondary for CTA button"
+      }
+    },
+    "feedrightsidebar": {
+      "file": "client/src/components/FeedRightSidebar.tsx",
+      "total_lines": 102,
+      "width": "w-[320px]",
+      "status": "INTEGRATED_IN_FEEDPAGE",
+      "sections": [
+        "Who to Follow (E40) - 5 user suggestions with follow buttons",
+        "Trending Topics - 4 trending hashtags with post counts",
+        "Mr Blue AI Quick Access (E41) - AI assistant card with ocean gradient"
+      ],
+      "styling": {
+        "glassmorphism": true,
+        "classes": ["glass-card", "hover-elevate"],
+        "ocean_gradient": true,
+        "gradient_card": "ocean-gradient class on Mr Blue AI card"
+      },
+      "mt_ocean_accents": {
+        "trending_icon": "text-primary on TrendingUp icon",
+        "trending_tags": "text-primary font-medium on hashtags",
+        "mr_blue_gradient": "full ocean-gradient background"
+      }
+    }
+  },
+  "css_variables_audit": {
+    "file": "client/src/index.css",
+    "root_variables": {
+      "primary": "177 72% 56%",
+      "primary_foreground": "0 0% 100%",
+      "secondary": "210 100% 56%",
+      "accent": "218 100% 45%",
+      "ring": "177 72% 45%"
+    },
+    "dark_class_variables": {
+      "line_start": 135,
+      "line_end": 243,
+      "primary": "177 72% 56% (UNCHANGED from light mode)",
+      "background": "218 30% 8%",
+      "foreground": "0 0% 95%",
+      "card": "218 25% 12%",
+      "muted": "218 22% 15%",
+      "border": "218 20% 18%",
+      "sidebar": "218 28% 10%",
+      "sidebar_primary": "177 72% 50%"
+    },
+    "special_utilities": {
+      "ocean_gradient": "linear-gradient(135deg, #40E0D0 0%, #1E90FF 50%, #0047AB 100%)",
+      "glass_effects": ["glass", "glass-card", "glass-topbar"],
+      "elevation_system": ["hover-elevate", "active-elevate-2"],
+      "shadow_system": ["--shadow-2xs through --shadow-2xl"]
+    },
+    "compliance": "100% - All CSS variables properly defined for light and dark modes"
+  },
+  "i18n_infrastructure": {
+    "library": "react-i18next",
+    "config_file": "client/src/lib/i18n.ts",
+    "status": "CONFIGURED_BUT_NOT_USED",
+    "supported_languages": ["en", "es", "fr", "de", "it", "pt"],
+    "locale_path": "client/public/locales",
+    "grep_results": {
+      "pages_with_usetranslation": 0,
+      "pages_audited": 14,
+      "percentage": "0%"
+    },
+    "required_action": {
+      "step_1": "Import useTranslation hook: import { useTranslation } from 'react-i18next';",
+      "step_2": "Initialize hook: const { t } = useTranslation();",
+      "step_3": "Replace hardcoded strings: 'Share Your Tango Journey' → t('feed.hero.title')",
+      "step_4": "Create translation keys in locale files",
+      "priority": "CRITICAL - Required for multilingual platform"
+    }
+  },
+  "overall_scores": {
+    "three_column_layout_feedpage": {
+      "score": 0,
+      "max_score": 100,
+      "percentage": "0%",
+      "grade": "F"
+    },
+    "mt_ocean_turquoise_accents": {
+      "score": 100,
+      "max_score": 100,
+      "percentage": "100%",
+      "grade": "A+"
+    },
+    "dark_light_mode_variables": {
+      "score": 100,
+      "max_score": 100,
+      "percentage": "100%",
+      "grade": "A+"
+    },
+    "i18n_implementation": {
+      "score": 0,
+      "max_score": 100,
+      "percentage": "0%",
+      "grade": "F"
+    },
+    "total_compliance": {
+      "achieved": 200,
+      "total": 400,
+      "percentage": "50%",
+      "grade": "C",
+      "status": "PARTIALLY_COMPLIANT"
+    }
+  },
+  "recommendations": [
+    {
+      "priority": "CRITICAL",
+      "category": "Layout",
+      "action": "Integrate FeedLeftSidebar into FeedPage",
+      "file": "client/src/pages/FeedPage.tsx",
+      "line": 405,
+      "steps": [
+        "Import FeedLeftSidebar component at top of file",
+        "Restructure container to support 3 columns instead of 2",
+        "Add FeedLeftSidebar as first column (280px width, sticky positioning)",
+        "Ensure responsive behavior (hide on mobile, show on lg+ breakpoints)",
+        "Test layout with all three columns visible"
+      ],
+      "estimated_effort": "1-2 hours",
+      "blocking": true
+    },
+    {
+      "priority": "CRITICAL",
+      "category": "i18n",
+      "action": "Implement useTranslation() across all 14 Feed & Social pages",
+      "steps": [
+        "Add useTranslation import to each page",
+        "Initialize hook and extract t function",
+        "Identify all hardcoded user-facing strings",
+        "Replace strings with t('namespace.key') calls",
+        "Create translation keys in en.json, es.json, fr.json, etc.",
+        "Test language switching functionality"
+      ],
+      "estimated_effort": "8-12 hours",
+      "blocking": true
+    },
+    {
+      "priority": "HIGH",
+      "category": "QA",
+      "action": "Verify glassmorphism rendering in dark mode",
+      "steps": [
+        "Test glass-card components in both light and dark modes",
+        "Verify backdrop-blur works in all supported browsers",
+        "Check contrast ratios meet WCAG AA standards (4.5:1 for text)"
+      ],
+      "estimated_effort": "1 hour",
+      "blocking": false
+    }
+  ],
+  "conclusion": {
+    "summary": "Feed & Social pages demonstrate excellent MT Ocean theme implementation (100%) and comprehensive dark mode CSS variable system (100%), but fail on critical requirements: FeedPage 3-column layout (0%) and i18n implementation (0%).",
+    "strengths": [
+      "Perfect MT Ocean turquoise accent implementation across all 14 pages",
+      "Complete dark mode CSS variable system with proper .dark class switching",
+      "Consistent 16:9 editorial hero sections with gradient overlays",
+      "Excellent glassmorphism effects via glass-card utilities",
+      "FeedLeftSidebar and FeedRightSidebar components are well-built and styled",
+      "Ocean gradient system properly implemented and used",
+      "Comprehensive framer-motion animations"
+    ],
+    "critical_failures": [
+      "FeedPage missing 3-column layout - only 2 columns currently (Main + Right)",
+      "FeedLeftSidebar component exists (137 lines, fully styled) but not integrated into FeedPage",
+      "Zero i18n implementation - no useTranslation() hooks in any of the 14 audited pages",
+      "Platform not ready for international expansion without i18n"
+    ],
+    "compliance_status": "PARTIALLY COMPLIANT - 50% (2 of 4 criteria passed)",
+    "production_ready": false,
+    "blocking_issues": 2,
+    "next_steps": [
+      "IMMEDIATE: Add FeedLeftSidebar to FeedPage layout (Line 405)",
+      "IMMEDIATE: Implement i18n across all 14 Feed & Social pages",
+      "RECOMMENDED: QA test dark mode glass effects and color contrast"
+    ]
+  }
+}
