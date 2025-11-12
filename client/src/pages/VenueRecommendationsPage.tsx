@@ -175,11 +175,10 @@ export default function VenueRecommendationsPage() {
 
   return (
     <AppLayout>
-      <>
-        <SEO
-          title="Venue Recommendations - Discover Tango Destinations"
-          description="Explore curated recommendations for restaurants, cafés, milongas, and cultural venues perfect for tango dancers."
-        />
+      <SEO
+        title="Venue Recommendations - Discover Tango Destinations"
+        description="Explore curated recommendations for restaurants, cafés, milongas, and cultural venues perfect for tango dancers."
+      />
 
         {/* Hero Section */}
         <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
@@ -660,9 +659,7 @@ export default function VenueRecommendationsPage() {
               )}
             </DialogContent>
           </Dialog>
-          </div>
         </div>
-      </>
     </AppLayout>
   );
 }

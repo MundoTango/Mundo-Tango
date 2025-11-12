@@ -1539,8 +1539,23 @@ export class KnowledgeGraphService {
 }
 
 // ============================================================================
-// SINGLETON EXPORT
+// SINGLETON EXPORT (Lazy initialization to avoid blocking during module load)
 // ============================================================================
 
-export const knowledgeGraphService = new KnowledgeGraphService();
+let knowledgeGraphServiceInstance: KnowledgeGraphService | null = null;
+
+export function getKnowledgeGraphService(): KnowledgeGraphService {
+  if (!knowledgeGraphServiceInstance) {
+    knowledgeGraphServiceInstance = new KnowledgeGraphService();
+  }
+  return knowledgeGraphServiceInstance;
+}
+
+// For backward compatibility - lazy getter
+export const knowledgeGraphService = {
+  get instance() {
+    return getKnowledgeGraphService();
+  }
+};
+
 export default knowledgeGraphService;

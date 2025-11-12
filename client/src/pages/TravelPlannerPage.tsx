@@ -111,14 +111,13 @@ export default function TravelPlannerPage() {
   return (
     <SelfHealingErrorBoundary pageName="Tango Travel Planner" fallbackRoute="/feed">
       <AppLayout>
-        <>
-          <SEO
-            title="Tango Travel Planner - Plan Your Perfect Tango Journey"
-            description="Discover tango destinations, workshops, and events around the world. Plan your perfect tango adventure with curated travel packages."
-          />
+        <SEO
+          title="Tango Travel Planner - Plan Your Perfect Tango Journey"
+          description="Discover tango destinations, workshops, and events around the world. Plan your perfect tango adventure with curated travel packages."
+        />
 
-          {/* Hero Section */}
-          <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+        {/* Hero Section */}
+        <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
             <motion.div 
               className="absolute inset-0 bg-cover bg-center" 
               style={{
@@ -407,10 +406,8 @@ export default function TravelPlannerPage() {
             </Card>
           </div>
         </div>
-              </div>
-            </div>
-          </div>
-        </>
+      </div>
+    </div>
       </AppLayout>
     </SelfHealingErrorBoundary>
   );

@@ -197,6 +197,7 @@ export class CacheService {
 
 // Export singleton instance
 export const cache = new CacheService();
+console.log("✅ [DEBUG] redis-cache.ts module loading complete");
 
 /**
  * Cache invalidation patterns

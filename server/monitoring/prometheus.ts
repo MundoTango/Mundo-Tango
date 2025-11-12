@@ -8,8 +8,19 @@ import { Registry, Counter, Histogram, Gauge, collectDefaultMetrics } from 'prom
 // Create a Registry
 export const register = new Registry();
 
-// Collect default metrics (CPU, memory, etc.)
-collectDefaultMetrics({ register });
+// Lazy initialization of default metrics to avoid blocking startup
+let metricsInitialized = false;
+function ensureMetricsInitialized() {
+  if (!metricsInitialized) {
+    collectDefaultMetrics({ register });
+    metricsInitialized = true;
+  }
+}
+
+// Initialize metrics on first access
+export function initializeMetrics() {
+  ensureMetricsInitialized();
+}
 
 // Custom Metrics
 
@@ -306,6 +317,7 @@ export function trackAiRequest(provider: string, model: string, duration: number
  * Export metrics endpoint handler
  */
 export async function metricsHandler(req: any, res: any) {
+  ensureMetricsInitialized();
   res.set('Content-Type', register.contentType);
   const metrics = await register.metrics();
   res.end(metrics);

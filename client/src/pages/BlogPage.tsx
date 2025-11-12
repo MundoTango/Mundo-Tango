@@ -175,6 +175,7 @@ export default function BlogPage() {
             </CardContent>
           </Card>
         )}
+        </div>
       </div>
     </AppLayout>
   );

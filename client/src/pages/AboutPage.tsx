@@ -10,8 +10,8 @@ import { motion } from "framer-motion";
 export default function AboutPage() {
   return (
     <SelfHealingErrorBoundary pageName="About" fallbackRoute="/">
-    <PageLayout title="About Mundo Tango" showBreadcrumbs>
-<PublicLayout>
+      <PageLayout title="About Mundo Tango" showBreadcrumbs>
+        <PublicLayout>
       <SEO
         title="About Us - Mundo Tango"
         description="Learn about Mundo Tango's mission to connect the global tango community. Discover our values, vision, and commitment to fostering authentic connections through Argentine tango."
@@ -186,8 +186,8 @@ export default function AboutPage() {
         </motion.div>
       </div>
     </div>
-    </div>
-    </PublicLayout>
-    </PageLayout>
-    </SelfHealingErrorBoundary>);
+        </PublicLayout>
+      </PageLayout>
+    </SelfHealingErrorBoundary>
+  );
 }

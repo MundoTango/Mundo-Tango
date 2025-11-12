@@ -1,12 +1,16 @@
+console.log("🔍 [DEBUG] Starting server/index.ts imports...");
 import express, { type Request, Response, NextFunction } from "express";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
+console.log("🔍 [DEBUG] About to import ./routes...");
 import { registerRoutes } from "./routes";
+console.log("✅ [DEBUG] ./routes imported");
 import { setupVite, serveStatic, log } from "./vite";
 import { startPreviewExpirationChecker } from "./lib/preview-expiration";
 import { applySecurity, apiRateLimiter } from "./middleware/security";
 import { compressionMiddleware, performanceMonitoringMiddleware } from "./config/performance";
 import { healthCheckHandler, readinessCheckHandler, livenessCheckHandler } from "./health-check";
+console.log("✅ [DEBUG] All imports complete in server/index.ts");
 import { 
   initializeSentry, 
   getSentryRequestHandler, 
@@ -23,6 +27,8 @@ import {
 } from "./middleware/rateLimiter";
 import { securityHeaders } from "./middleware/securityHeaders";
 import { setCsrfToken, verifyDoubleSubmitCookie } from "./middleware/csrf";
+
+console.log("✅ [DEBUG] All server/index.ts imports completed!");
 
 const app = express();
 

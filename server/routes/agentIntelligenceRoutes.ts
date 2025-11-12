@@ -28,8 +28,24 @@ import {
 import { eq, desc, and, gte, sql, count, or } from "drizzle-orm";
 
 const router = Router();
-const collaborationService = new AgentCollaborationService();
-const knowledgeGraph = new KnowledgeGraphService();
+
+// Lazy initialization to avoid blocking during module load
+let collaborationService: AgentCollaborationService | null = null;
+let knowledgeGraph: KnowledgeGraphService | null = null;
+
+function getCollaborationService(): AgentCollaborationService {
+  if (!collaborationService) {
+    collaborationService = new AgentCollaborationService();
+  }
+  return collaborationService;
+}
+
+function getKnowledgeGraph(): KnowledgeGraphService {
+  if (!knowledgeGraph) {
+    knowledgeGraph = new KnowledgeGraphService();
+  }
+  return knowledgeGraph;
+}
 
 // ============================================================================
 // VALIDATION SCHEMAS
@@ -615,7 +631,7 @@ router.post("/collaboration", authenticateToken, requireRoleLevel(4), apiRateLim
     }
 
     // Request collaboration
-    const collaboration = await collaborationService.requestHelp({
+    const collaboration = await getCollaborationService().requestHelp({
       agentId,
       issue,
       context,
@@ -627,7 +643,7 @@ router.post("/collaboration", authenticateToken, requireRoleLevel(4), apiRateLim
     // Find expert matches if no preferred collaborator
     let expertMatches = [];
     if (!preferredCollaborator && domain) {
-      expertMatches = await collaborationService.findExperts(domain, issue);
+      expertMatches = await getCollaborationService().findExperts(domain, issue);
     }
 
     res.status(201).json({

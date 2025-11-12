@@ -320,7 +320,7 @@ router.post("/expertise", authenticateToken, requireRoleLevel(4), async (req: Au
   try {
     const expertiseQuery = findExpertsSchema.parse(req.body);
 
-    const matches = await knowledgeGraphService.findExpertAgents(expertiseQuery);
+    const matches = await knowledgeGraphService.instance.findExpertAgents(expertiseQuery);
 
     res.json({
       query: expertiseQuery,
@@ -460,7 +460,7 @@ router.post("/relationships", authenticateToken, requireRoleLevel(6), async (req
  */
 router.get("/network-analysis", authenticateToken, requireRoleLevel(5), async (req: AuthRequest, res: Response) => {
   try {
-    const analysis = await knowledgeGraphService.getNetworkAnalysis();
+    const analysis = await knowledgeGraphService.instance.getNetworkAnalysis();
 
     res.json(analysis);
   } catch (error: any) {
@@ -725,7 +725,7 @@ router.post("/flow", authenticateToken, requireRoleLevel(4), async (req: AuthReq
 
     const flow = flowSchema.parse(req.body);
 
-    await knowledgeGraphService.trackKnowledgeFlow({
+    await knowledgeGraphService.instance.trackKnowledgeFlow({
       sourceAgentCode: flow.sourceAgentCode,
       targetAgentCode: flow.targetAgentCode,
       knowledgeType: flow.knowledgeType,

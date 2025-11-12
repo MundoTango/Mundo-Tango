@@ -37,14 +37,13 @@ export default function FitnessAgentPage() {
 
   return (
     <SelfHealingErrorBoundary pageName="Fitness Agent" fallbackRoute="/platform">
-    <PageLayout title="Fitness Agent" showBreadcrumbs>
-<>
-      <SEO
-        title="Fitness Agent - Life CEO"
-        description="Track your tango fitness, workouts, and achieve your physical goals with AI coaching."
-      />
+      <PageLayout title="Fitness Agent" showBreadcrumbs>
+        <SEO
+          title="Fitness Agent - Life CEO"
+          description="Track your tango fitness, workouts, and achieve your physical goals with AI coaching."
+        />
 
-      <div className="min-h-screen">
+        <div className="min-h-screen">
         {/* Editorial Hero Section - 16:9 */}
         <section className="relative h-[50vh] w-full overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: `url(${heroImage})`}}>
@@ -193,11 +192,11 @@ export default function FitnessAgentPage() {
                 </Button>
               </CardContent>
             </Card>
-          </div>
+          </motion.div>
+          </motion.div>
         </div>
-      </div>
-    </>
-    </PageLayout>
+        </div>
+      </PageLayout>
     </SelfHealingErrorBoundary>
   );
 }

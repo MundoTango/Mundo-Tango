@@ -1,3 +1,4 @@
+console.log("🔍 [DEBUG] Starting server/routes.ts module loading...");
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
@@ -49,7 +50,9 @@ import venueRoutes from "./routes/venue-routes";
 import workshopRoutes from "./routes/workshop-routes";
 import musicRoutes from "./routes/music-routes";
 import healthRoutes from "./routes/health";
+console.log("🔍 [DEBUG] About to import agentIntelligenceRoutes...");
 import agentIntelligenceRoutes from "./routes/agentIntelligenceRoutes";
+console.log("✅ [DEBUG] agentIntelligenceRoutes loaded");
 import agentCommunicationRoutes from "./routes/agentCommunicationRoutes";
 import knowledgeRoutes from "./routes/knowledgeRoutes";
 import monitoringRoutes from "./routes/monitoringRoutes";
