@@ -6230,5 +6230,837 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ============================================================================
+  // PART_3: FINANCIAL MANAGEMENT API ROUTES (AGENTS #73-105)
+  // ============================================================================
+
+  // Financial Portfolios
+  app.get("/api/financial/portfolios", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const portfolios = await storage.getFinancialPortfolios(req.user!.id);
+      res.json(portfolios);
+    } catch (error) {
+      console.error('[Financial] Get portfolios error:', error);
+      res.status(500).json({ message: 'Failed to fetch portfolios' });
+    }
+  });
+
+  app.post("/api/financial/portfolios", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const data = insertFinancialPortfolioSchema.parse(req.body);
+      const portfolio = await storage.createFinancialPortfolio(req.user!.id, data);
+      res.json(portfolio);
+    } catch (error) {
+      console.error('[Financial] Create portfolio error:', error);
+      res.status(500).json({ message: 'Failed to create portfolio' });
+    }
+  });
+
+  app.get("/api/financial/portfolios/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const portfolio = await storage.getFinancialPortfolioById(id);
+      if (!portfolio) {
+        return res.status(404).json({ message: 'Portfolio not found' });
+      }
+      res.json(portfolio);
+    } catch (error) {
+      console.error('[Financial] Get portfolio error:', error);
+      res.status(500).json({ message: 'Failed to fetch portfolio' });
+    }
+  });
+
+  app.patch("/api/financial/portfolios/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const portfolio = await storage.updateFinancialPortfolio(id, req.body);
+      res.json(portfolio);
+    } catch (error) {
+      console.error('[Financial] Update portfolio error:', error);
+      res.status(500).json({ message: 'Failed to update portfolio' });
+    }
+  });
+
+  app.delete("/api/financial/portfolios/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteFinancialPortfolio(id);
+      res.json({ message: 'Portfolio deleted' });
+    } catch (error) {
+      console.error('[Financial] Delete portfolio error:', error);
+      res.status(500).json({ message: 'Failed to delete portfolio' });
+    }
+  });
+
+  // Financial Accounts
+  app.get("/api/financial/accounts", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const accounts = await storage.getFinancialAccounts(req.user!.id);
+      res.json(accounts);
+    } catch (error) {
+      console.error('[Financial] Get accounts error:', error);
+      res.status(500).json({ message: 'Failed to fetch accounts' });
+    }
+  });
+
+  app.post("/api/financial/accounts", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const data = insertFinancialAccountSchema.parse(req.body);
+      const account = await storage.createFinancialAccount(req.user!.id, data);
+      res.json(account);
+    } catch (error) {
+      console.error('[Financial] Create account error:', error);
+      res.status(500).json({ message: 'Failed to create account' });
+    }
+  });
+
+  app.post("/api/financial/accounts/:id/sync", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const account = await storage.syncFinancialAccount(id);
+      res.json(account);
+    } catch (error) {
+      console.error('[Financial] Sync account error:', error);
+      res.status(500).json({ message: 'Failed to sync account' });
+    }
+  });
+
+  // Financial Assets
+  app.get("/api/financial/portfolios/:portfolioId/assets", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const portfolioId = parseInt(req.params.portfolioId);
+      const assets = await storage.getFinancialAssets(portfolioId);
+      res.json(assets);
+    } catch (error) {
+      console.error('[Financial] Get assets error:', error);
+      res.status(500).json({ message: 'Failed to fetch assets' });
+    }
+  });
+
+  app.post("/api/financial/portfolios/:portfolioId/assets", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const portfolioId = parseInt(req.params.portfolioId);
+      const data = insertFinancialAssetSchema.parse(req.body);
+      const asset = await storage.createFinancialAsset(portfolioId, data);
+      res.json(asset);
+    } catch (error) {
+      console.error('[Financial] Create asset error:', error);
+      res.status(500).json({ message: 'Failed to create asset' });
+    }
+  });
+
+  // Financial Trades
+  app.get("/api/financial/portfolios/:portfolioId/trades", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const portfolioId = parseInt(req.params.portfolioId);
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+      const offset = req.query.offset ? parseInt(req.query.offset as string) : undefined;
+      const trades = await storage.getFinancialTrades(portfolioId, { limit, offset });
+      res.json(trades);
+    } catch (error) {
+      console.error('[Financial] Get trades error:', error);
+      res.status(500).json({ message: 'Failed to fetch trades' });
+    }
+  });
+
+  app.post("/api/financial/portfolios/:portfolioId/trades", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const portfolioId = parseInt(req.params.portfolioId);
+      const data = insertFinancialTradeSchema.parse(req.body);
+      const trade = await storage.createFinancialTrade(portfolioId, data);
+      res.json(trade);
+    } catch (error) {
+      console.error('[Financial] Create trade error:', error);
+      res.status(500).json({ message: 'Failed to create trade' });
+    }
+  });
+
+  // Financial Strategies
+  app.get("/api/financial/strategies", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const isActive = req.query.isActive === 'true';
+      const strategies = await storage.getFinancialStrategies({ isActive: req.query.isActive ? isActive : undefined });
+      res.json(strategies);
+    } catch (error) {
+      console.error('[Financial] Get strategies error:', error);
+      res.status(500).json({ message: 'Failed to fetch strategies' });
+    }
+  });
+
+  app.post("/api/financial/strategies", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const data = insertFinancialStrategySchema.parse(req.body);
+      const strategy = await storage.createFinancialStrategy(data);
+      res.json(strategy);
+    } catch (error) {
+      console.error('[Financial] Create strategy error:', error);
+      res.status(500).json({ message: 'Failed to create strategy' });
+    }
+  });
+
+  // Financial Market Data
+  app.get("/api/financial/market/:symbol", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const symbol = req.params.symbol;
+      const marketData = await storage.getFinancialMarketData(symbol);
+      res.json(marketData || {});
+    } catch (error) {
+      console.error('[Financial] Get market data error:', error);
+      res.status(500).json({ message: 'Failed to fetch market data' });
+    }
+  });
+
+  // Financial AI Decisions
+  app.get("/api/financial/portfolios/:portfolioId/ai-decisions", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const portfolioId = parseInt(req.params.portfolioId);
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+      const offset = req.query.offset ? parseInt(req.query.offset as string) : undefined;
+      const decisions = await storage.getFinancialAIDecisions(portfolioId, { limit, offset });
+      res.json(decisions);
+    } catch (error) {
+      console.error('[Financial] Get AI decisions error:', error);
+      res.status(500).json({ message: 'Failed to fetch AI decisions' });
+    }
+  });
+
+  app.post("/api/financial/ai-decisions", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const data = insertFinancialAIDecisionSchema.parse(req.body);
+      const decision = await storage.createFinancialAIDecision(data);
+      res.json(decision);
+    } catch (error) {
+      console.error('[Financial] Create AI decision error:', error);
+      res.status(500).json({ message: 'Failed to create AI decision' });
+    }
+  });
+
+  // Financial Risk Metrics
+  app.get("/api/financial/portfolios/:portfolioId/risk-metrics", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const portfolioId = parseInt(req.params.portfolioId);
+      const metrics = await storage.getFinancialRiskMetrics(portfolioId);
+      res.json(metrics || {});
+    } catch (error) {
+      console.error('[Financial] Get risk metrics error:', error);
+      res.status(500).json({ message: 'Failed to fetch risk metrics' });
+    }
+  });
+
+  // Financial Agents
+  app.get("/api/financial/agents", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const tier = req.query.tier ? parseInt(req.query.tier as string) : undefined;
+      const isActive = req.query.isActive === 'true';
+      const agents = await storage.getFinancialAgents({ tier, isActive: req.query.isActive ? isActive : undefined });
+      res.json(agents);
+    } catch (error) {
+      console.error('[Financial] Get agents error:', error);
+      res.status(500).json({ message: 'Failed to fetch agents' });
+    }
+  });
+
+  // Financial Monitoring Logs
+  app.get("/api/financial/monitoring", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const agentId = req.query.agentId ? parseInt(req.query.agentId as string) : undefined;
+      const portfolioId = req.query.portfolioId ? parseInt(req.query.portfolioId as string) : undefined;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+      const logs = await storage.getFinancialMonitoringLogs({ agentId, portfolioId, limit });
+      res.json(logs);
+    } catch (error) {
+      console.error('[Financial] Get monitoring logs error:', error);
+      res.status(500).json({ message: 'Failed to fetch monitoring logs' });
+    }
+  });
+
+  // ============================================================================
+  // PART_3: SOCIAL MEDIA INTEGRATION API ROUTES (AGENTS #120-124)
+  // ============================================================================
+
+  // Platform Connections
+  app.get("/api/social/connections", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const connections = await storage.getPlatformConnections(req.user!.id);
+      res.json(connections);
+    } catch (error) {
+      console.error('[Social] Get connections error:', error);
+      res.status(500).json({ message: 'Failed to fetch connections' });
+    }
+  });
+
+  app.post("/api/social/connections", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const data = insertPlatformConnectionSchema.parse(req.body);
+      const connection = await storage.createPlatformConnection(req.user!.id, data);
+      res.json(connection);
+    } catch (error) {
+      console.error('[Social] Create connection error:', error);
+      res.status(500).json({ message: 'Failed to create connection' });
+    }
+  });
+
+  app.get("/api/social/connections/:platform", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const platform = req.params.platform;
+      const connection = await storage.getPlatformConnection(req.user!.id, platform);
+      res.json(connection || {});
+    } catch (error) {
+      console.error('[Social] Get connection error:', error);
+      res.status(500).json({ message: 'Failed to fetch connection' });
+    }
+  });
+
+  // Social Posts
+  app.get("/api/social/posts", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const status = req.query.status as string | undefined;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+      const offset = req.query.offset ? parseInt(req.query.offset as string) : undefined;
+      const posts = await storage.getSocialPosts(req.user!.id, { status, limit, offset });
+      res.json(posts);
+    } catch (error) {
+      console.error('[Social] Get posts error:', error);
+      res.status(500).json({ message: 'Failed to fetch posts' });
+    }
+  });
+
+  app.post("/api/social/posts", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const data = insertSocialPostSchema.parse(req.body);
+      const post = await storage.createSocialPost(req.user!.id, data);
+      res.json(post);
+    } catch (error) {
+      console.error('[Social] Create post error:', error);
+      res.status(500).json({ message: 'Failed to create post' });
+    }
+  });
+
+  app.get("/api/social/posts/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const post = await storage.getSocialPostById(id);
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found' });
+      }
+      res.json(post);
+    } catch (error) {
+      console.error('[Social] Get post error:', error);
+      res.status(500).json({ message: 'Failed to fetch post' });
+    }
+  });
+
+  app.post("/api/social/posts/:id/publish", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const post = await storage.publishSocialPost(id);
+      res.json(post);
+    } catch (error) {
+      console.error('[Social] Publish post error:', error);
+      res.status(500).json({ message: 'Failed to publish post' });
+    }
+  });
+
+  // Social Campaigns
+  app.get("/api/social/campaigns", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const status = req.query.status as string | undefined;
+      const campaigns = await storage.getSocialCampaigns(req.user!.id, { status });
+      res.json(campaigns);
+    } catch (error) {
+      console.error('[Social] Get campaigns error:', error);
+      res.status(500).json({ message: 'Failed to fetch campaigns' });
+    }
+  });
+
+  app.post("/api/social/campaigns", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const data = insertSocialCampaignSchema.parse(req.body);
+      const campaign = await storage.createSocialCampaign(req.user!.id, data);
+      res.json(campaign);
+    } catch (error) {
+      console.error('[Social] Create campaign error:', error);
+      res.status(500).json({ message: 'Failed to create campaign' });
+    }
+  });
+
+  // Cross Platform Analytics
+  app.get("/api/social/analytics/:period", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const period = req.params.period;
+      const analytics = await storage.getCrossPlatformAnalytics(req.user!.id, period);
+      res.json(analytics || {});
+    } catch (error) {
+      console.error('[Social] Get analytics error:', error);
+      res.status(500).json({ message: 'Failed to fetch analytics' });
+    }
+  });
+
+  // AI Generated Content
+  app.get("/api/social/campaigns/:campaignId/ai-content", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const campaignId = parseInt(req.params.campaignId);
+      const approvalStatus = req.query.approvalStatus as string | undefined;
+      const content = await storage.getAIGeneratedContent(campaignId, { approvalStatus });
+      res.json(content);
+    } catch (error) {
+      console.error('[Social] Get AI content error:', error);
+      res.status(500).json({ message: 'Failed to fetch AI content' });
+    }
+  });
+
+  app.post("/api/social/ai-content", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const data = insertAIGeneratedContentSchema.parse(req.body);
+      const content = await storage.createAIGeneratedContent(data);
+      res.json(content);
+    } catch (error) {
+      console.error('[Social] Create AI content error:', error);
+      res.status(500).json({ message: 'Failed to create AI content' });
+    }
+  });
+
+  // Scraped Events
+  app.get("/api/social/scraped-events", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const status = req.query.status as string | undefined;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+      const offset = req.query.offset ? parseInt(req.query.offset as string) : undefined;
+      const events = await storage.getScrapedEvents({ status, limit, offset });
+      res.json(events);
+    } catch (error) {
+      console.error('[Social] Get scraped events error:', error);
+      res.status(500).json({ message: 'Failed to fetch scraped events' });
+    }
+  });
+
+  app.post("/api/social/scraped-events", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const data = insertScrapedEventSchema.parse(req.body);
+      const event = await storage.createScrapedEvent(data);
+      res.json(event);
+    } catch (error) {
+      console.error('[Social] Create scraped event error:', error);
+      res.status(500).json({ message: 'Failed to create scraped event' });
+    }
+  });
+
+  // Event Claims
+  app.get("/api/social/event-claims", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const claims = await storage.getEventClaims(req.user!.id);
+      res.json(claims);
+    } catch (error) {
+      console.error('[Social] Get event claims error:', error);
+      res.status(500).json({ message: 'Failed to fetch event claims' });
+    }
+  });
+
+  app.post("/api/social/event-claims", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const data = insertEventClaimSchema.parse(req.body);
+      const claim = await storage.createEventClaim(req.user!.id, data.scrapedEventId, data);
+      res.json(claim);
+    } catch (error) {
+      console.error('[Social] Create event claim error:', error);
+      res.status(500).json({ message: 'Failed to create event claim' });
+    }
+  });
+
+  // ============================================================================
+  // PART_3: CREATOR MARKETPLACE API ROUTES (AGENTS #158-160)
+  // ============================================================================
+
+  // Marketplace Products
+  app.get("/api/marketplace/products", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const creatorUserId = req.query.creatorUserId ? parseInt(req.query.creatorUserId as string) : undefined;
+      const category = req.query.category as string | undefined;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+      const offset = req.query.offset ? parseInt(req.query.offset as string) : undefined;
+      const products = await storage.getMarketplaceProducts({ creatorUserId, category, limit, offset });
+      res.json(products);
+    } catch (error) {
+      console.error('[Marketplace] Get products error:', error);
+      res.status(500).json({ message: 'Failed to fetch products' });
+    }
+  });
+
+  app.post("/api/marketplace/products", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const data = insertMarketplaceProductSchema.parse(req.body);
+      const product = await storage.createMarketplaceProduct(req.user!.id, data);
+      res.json(product);
+    } catch (error) {
+      console.error('[Marketplace] Create product error:', error);
+      res.status(500).json({ message: 'Failed to create product' });
+    }
+  });
+
+  app.get("/api/marketplace/products/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const product = await storage.getMarketplaceProductById(id);
+      if (!product) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+      res.json(product);
+    } catch (error) {
+      console.error('[Marketplace] Get product error:', error);
+      res.status(500).json({ message: 'Failed to fetch product' });
+    }
+  });
+
+  // Product Purchases
+  app.get("/api/marketplace/purchases", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const purchases = await storage.getProductPurchases(req.user!.id);
+      res.json(purchases);
+    } catch (error) {
+      console.error('[Marketplace] Get purchases error:', error);
+      res.status(500).json({ message: 'Failed to fetch purchases' });
+    }
+  });
+
+  app.post("/api/marketplace/products/:productId/purchase", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const productId = parseInt(req.params.productId);
+      const data = insertProductPurchaseSchema.parse(req.body);
+      const purchase = await storage.createProductPurchase(req.user!.id, productId, data);
+      res.json(purchase);
+    } catch (error) {
+      console.error('[Marketplace] Create purchase error:', error);
+      res.status(500).json({ message: 'Failed to create purchase' });
+    }
+  });
+
+  // Product Reviews
+  app.get("/api/marketplace/products/:productId/reviews", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const productId = parseInt(req.params.productId);
+      const reviews = await storage.getProductReviews(productId);
+      res.json(reviews);
+    } catch (error) {
+      console.error('[Marketplace] Get reviews error:', error);
+      res.status(500).json({ message: 'Failed to fetch reviews' });
+    }
+  });
+
+  app.post("/api/marketplace/products/:productId/reviews", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const productId = parseInt(req.params.productId);
+      const data = insertProductReviewSchema.parse(req.body);
+      const review = await storage.createProductReview(req.user!.id, productId, data);
+      res.json(review);
+    } catch (error) {
+      console.error('[Marketplace] Create review error:', error);
+      res.status(500).json({ message: 'Failed to create review' });
+    }
+  });
+
+  // Marketplace Analytics
+  app.get("/api/marketplace/analytics/:period", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const period = req.params.period;
+      const analytics = await storage.getMarketplaceAnalytics(req.user!.id, period);
+      res.json(analytics || {});
+    } catch (error) {
+      console.error('[Marketplace] Get analytics error:', error);
+      res.status(500).json({ message: 'Failed to fetch analytics' });
+    }
+  });
+
+  // Funding Campaigns (GoFundMe)
+  app.get("/api/funding/campaigns", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.query.userId ? parseInt(req.query.userId as string) : undefined;
+      const category = req.query.category as string | undefined;
+      const status = req.query.status as string | undefined;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+      const offset = req.query.offset ? parseInt(req.query.offset as string) : undefined;
+      const campaigns = await storage.getFundingCampaigns({ userId, category, status, limit, offset });
+      res.json(campaigns);
+    } catch (error) {
+      console.error('[Funding] Get campaigns error:', error);
+      res.status(500).json({ message: 'Failed to fetch campaigns' });
+    }
+  });
+
+  app.post("/api/funding/campaigns", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const data = insertFundingCampaignSchema.parse(req.body);
+      const campaign = await storage.createFundingCampaign(req.user!.id, data);
+      res.json(campaign);
+    } catch (error) {
+      console.error('[Funding] Create campaign error:', error);
+      res.status(500).json({ message: 'Failed to create campaign' });
+    }
+  });
+
+  app.get("/api/funding/campaigns/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const campaign = await storage.getFundingCampaignById(id);
+      if (!campaign) {
+        return res.status(404).json({ message: 'Campaign not found' });
+      }
+      res.json(campaign);
+    } catch (error) {
+      console.error('[Funding] Get campaign error:', error);
+      res.status(500).json({ message: 'Failed to fetch campaign' });
+    }
+  });
+
+  app.get("/api/funding/campaigns/:campaignId/donations", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const campaignId = parseInt(req.params.campaignId);
+      const donations = await storage.getCampaignDonations(campaignId);
+      res.json(donations);
+    } catch (error) {
+      console.error('[Funding] Get donations error:', error);
+      res.status(500).json({ message: 'Failed to fetch donations' });
+    }
+  });
+
+  app.post("/api/funding/campaigns/:campaignId/donations", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const campaignId = parseInt(req.params.campaignId);
+      const data = insertCampaignDonationSchema.parse(req.body);
+      const donation = await storage.createCampaignDonation(campaignId, data);
+      res.json(donation);
+    } catch (error) {
+      console.error('[Funding] Create donation error:', error);
+      res.status(500).json({ message: 'Failed to create donation' });
+    }
+  });
+
+  app.get("/api/funding/campaigns/:campaignId/updates", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const campaignId = parseInt(req.params.campaignId);
+      const updates = await storage.getCampaignUpdates(campaignId);
+      res.json(updates);
+    } catch (error) {
+      console.error('[Funding] Get updates error:', error);
+      res.status(500).json({ message: 'Failed to fetch updates' });
+    }
+  });
+
+  app.post("/api/funding/campaigns/:campaignId/updates", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const campaignId = parseInt(req.params.campaignId);
+      const data = insertCampaignUpdateSchema.parse(req.body);
+      const update = await storage.createCampaignUpdate(campaignId, data);
+      res.json(update);
+    } catch (error) {
+      console.error('[Funding] Create update error:', error);
+      res.status(500).json({ message: 'Failed to create update' });
+    }
+  });
+
+  // Legal Documents
+  app.get("/api/legal/documents", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const category = req.query.category as string | undefined;
+      const isPremium = req.query.isPremium === 'true';
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+      const offset = req.query.offset ? parseInt(req.query.offset as string) : undefined;
+      const documents = await storage.getLegalDocuments({ category, isPremium: req.query.isPremium ? isPremium : undefined, limit, offset });
+      res.json(documents);
+    } catch (error) {
+      console.error('[Legal] Get documents error:', error);
+      res.status(500).json({ message: 'Failed to fetch documents' });
+    }
+  });
+
+  app.post("/api/legal/documents", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const data = insertLegalDocumentSchema.parse(req.body);
+      const document = await storage.createLegalDocument(req.user!.id, data);
+      res.json(document);
+    } catch (error) {
+      console.error('[Legal] Create document error:', error);
+      res.status(500).json({ message: 'Failed to create document' });
+    }
+  });
+
+  app.get("/api/legal/documents/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const document = await storage.getLegalDocumentById(id);
+      if (!document) {
+        return res.status(404).json({ message: 'Document not found' });
+      }
+      res.json(document);
+    } catch (error) {
+      console.error('[Legal] Get document error:', error);
+      res.status(500).json({ message: 'Failed to fetch document' });
+    }
+  });
+
+  app.get("/api/legal/instances", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const instances = await storage.getDocumentInstances(req.user!.id);
+      res.json(instances);
+    } catch (error) {
+      console.error('[Legal] Get instances error:', error);
+      res.status(500).json({ message: 'Failed to fetch instances' });
+    }
+  });
+
+  app.post("/api/legal/documents/:templateId/instances", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const templateId = parseInt(req.params.templateId);
+      const data = insertDocumentInstanceSchema.parse(req.body);
+      const instance = await storage.createDocumentInstance(req.user!.id, templateId, data);
+      res.json(instance);
+    } catch (error) {
+      console.error('[Legal] Create instance error:', error);
+      res.status(500).json({ message: 'Failed to create instance' });
+    }
+  });
+
+  // ============================================================================
+  // PART_3: TRAVEL INTEGRATION API ROUTES (AGENTS #161-162)
+  // ============================================================================
+
+  // Travel Plans
+  app.get("/api/travel/plans", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const status = req.query.status as string | undefined;
+      const plans = await storage.getTravelPlans(req.user!.id, { status });
+      res.json(plans);
+    } catch (error) {
+      console.error('[Travel] Get plans error:', error);
+      res.status(500).json({ message: 'Failed to fetch plans' });
+    }
+  });
+
+  app.post("/api/travel/plans", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const data = insertTravelPlanSchema.parse(req.body);
+      const plan = await storage.createTravelPlan(req.user!.id, data);
+      res.json(plan);
+    } catch (error) {
+      console.error('[Travel] Create plan error:', error);
+      res.status(500).json({ message: 'Failed to create plan' });
+    }
+  });
+
+  app.get("/api/travel/plans/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const plan = await storage.getTravelPlanById(id);
+      if (!plan) {
+        return res.status(404).json({ message: 'Plan not found' });
+      }
+      res.json(plan);
+    } catch (error) {
+      console.error('[Travel] Get plan error:', error);
+      res.status(500).json({ message: 'Failed to fetch plan' });
+    }
+  });
+
+  app.patch("/api/travel/plans/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const plan = await storage.updateTravelPlan(id, req.body);
+      res.json(plan);
+    } catch (error) {
+      console.error('[Travel] Update plan error:', error);
+      res.status(500).json({ message: 'Failed to update plan' });
+    }
+  });
+
+  app.delete("/api/travel/plans/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteTravelPlan(id);
+      res.json({ message: 'Plan deleted' });
+    } catch (error) {
+      console.error('[Travel] Delete plan error:', error);
+      res.status(500).json({ message: 'Failed to delete plan' });
+    }
+  });
+
+  // Travel Plan Items
+  app.get("/api/travel/plans/:planId/items", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const planId = parseInt(req.params.planId);
+      const items = await storage.getTravelPlanItems(planId);
+      res.json(items);
+    } catch (error) {
+      console.error('[Travel] Get items error:', error);
+      res.status(500).json({ message: 'Failed to fetch items' });
+    }
+  });
+
+  app.post("/api/travel/plans/:planId/items", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const planId = parseInt(req.params.planId);
+      const data = insertTravelPlanItemSchema.parse(req.body);
+      const item = await storage.createTravelPlanItem(planId, data);
+      res.json(item);
+    } catch (error) {
+      console.error('[Travel] Create item error:', error);
+      res.status(500).json({ message: 'Failed to create item' });
+    }
+  });
+
+  app.patch("/api/travel/items/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      const item = await storage.updateTravelPlanItem(id, req.body);
+      res.json(item);
+    } catch (error) {
+      console.error('[Travel] Update item error:', error);
+      res.status(500).json({ message: 'Failed to update item' });
+    }
+  });
+
+  app.delete("/api/travel/items/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteTravelPlanItem(id);
+      res.json({ message: 'Item deleted' });
+    } catch (error) {
+      console.error('[Travel] Delete item error:', error);
+      res.status(500).json({ message: 'Failed to delete item' });
+    }
+  });
+
+  // Travel Preferences
+  app.get("/api/travel/preferences", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const preferences = await storage.getTravelPreferences(req.user!.id);
+      res.json(preferences || {});
+    } catch (error) {
+      console.error('[Travel] Get preferences error:', error);
+      res.status(500).json({ message: 'Failed to fetch preferences' });
+    }
+  });
+
+  app.patch("/api/travel/preferences", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const data = insertTravelPreferencesProfileSchema.parse(req.body);
+      const preferences = await storage.updateTravelPreferences(req.user!.id, data);
+      res.json(preferences);
+    } catch (error) {
+      console.error('[Travel] Update preferences error:', error);
+      res.status(500).json({ message: 'Failed to update preferences' });
+    }
+  });
+
+  // Travel Recommendations
+  app.get("/api/travel/recommendations", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const destination = req.query.destination as string | undefined;
+      const recommendations = await storage.getTravelRecommendations(req.user!.id, { destination });
+      res.json(recommendations);
+    } catch (error) {
+      console.error('[Travel] Get recommendations error:', error);
+      res.status(500).json({ message: 'Failed to fetch recommendations' });
+    }
+  });
+
   return httpServer;
 }

@@ -1305,6 +1305,187 @@ export interface IStorage {
   removeMediaFromAlbum(albumId: number, mediaId: number): Promise<void>;
   getAlbumWithMedia(id: number): Promise<any | undefined>;
   checkAlbumOwnership(albumId: number, userId: number): Promise<boolean>;
+  
+  // ============================================================================
+  // PART_3: FINANCIAL MANAGEMENT SYSTEM (AGENTS #73-105)
+  // ============================================================================
+  
+  // Financial Portfolios
+  createFinancialPortfolio(userId: number, data: any): Promise<any>;
+  getFinancialPortfolios(userId: number): Promise<any[]>;
+  getFinancialPortfolioById(id: number): Promise<any | undefined>;
+  updateFinancialPortfolio(id: number, data: any): Promise<any | undefined>;
+  deleteFinancialPortfolio(id: number): Promise<void>;
+  
+  // Financial Accounts
+  createFinancialAccount(userId: number, data: any): Promise<any>;
+  getFinancialAccounts(userId: number): Promise<any[]>;
+  getFinancialAccountById(id: number): Promise<any | undefined>;
+  updateFinancialAccount(id: number, data: any): Promise<any | undefined>;
+  deleteFinancialAccount(id: number): Promise<void>;
+  syncFinancialAccount(id: number): Promise<any>;
+  
+  // Financial Assets
+  createFinancialAsset(portfolioId: number, data: any): Promise<any>;
+  getFinancialAssets(portfolioId: number): Promise<any[]>;
+  updateFinancialAsset(id: number, data: any): Promise<any | undefined>;
+  deleteFinancialAsset(id: number): Promise<void>;
+  
+  // Financial Trades
+  createFinancialTrade(portfolioId: number, data: any): Promise<any>;
+  getFinancialTrades(portfolioId: number, params?: { limit?: number; offset?: number }): Promise<any[]>;
+  getFinancialTradeById(id: number): Promise<any | undefined>;
+  
+  // Financial Strategies
+  createFinancialStrategy(data: any): Promise<any>;
+  getFinancialStrategies(params?: { isActive?: boolean }): Promise<any[]>;
+  getFinancialStrategyById(id: number): Promise<any | undefined>;
+  updateFinancialStrategy(id: number, data: any): Promise<any | undefined>;
+  deleteFinancialStrategy(id: number): Promise<void>;
+  
+  // Financial Market Data
+  getFinancialMarketData(symbol: string): Promise<any | undefined>;
+  updateFinancialMarketData(symbol: string, data: any): Promise<any>;
+  
+  // Financial AI Decisions
+  createFinancialAIDecision(data: any): Promise<any>;
+  getFinancialAIDecisions(portfolioId: number, params?: { limit?: number; offset?: number }): Promise<any[]>;
+  
+  // Financial Risk Metrics
+  getFinancialRiskMetrics(portfolioId: number): Promise<any | undefined>;
+  updateFinancialRiskMetrics(portfolioId: number, data: any): Promise<any>;
+  
+  // Financial Agents
+  getFinancialAgents(params?: { tier?: number; isActive?: boolean }): Promise<any[]>;
+  getFinancialAgentById(id: number): Promise<any | undefined>;
+  updateFinancialAgent(id: number, data: any): Promise<any | undefined>;
+  
+  // Financial Monitoring
+  createFinancialMonitoringLog(data: any): Promise<any>;
+  getFinancialMonitoringLogs(params: { agentId?: number; portfolioId?: number; limit?: number }): Promise<any[]>;
+  
+  // ============================================================================
+  // PART_3: SOCIAL MEDIA INTEGRATION (AGENTS #120-124)
+  // ============================================================================
+  
+  // Platform Connections
+  createPlatformConnection(userId: number, data: any): Promise<any>;
+  getPlatformConnections(userId: number): Promise<any[]>;
+  getPlatformConnection(userId: number, platform: string): Promise<any | undefined>;
+  updatePlatformConnection(id: number, data: any): Promise<any | undefined>;
+  deletePlatformConnection(id: number): Promise<void>;
+  
+  // Social Posts
+  createSocialPost(userId: number, data: any): Promise<any>;
+  getSocialPosts(userId: number, params?: { status?: string; limit?: number; offset?: number }): Promise<any[]>;
+  getSocialPostById(id: number): Promise<any | undefined>;
+  updateSocialPost(id: number, data: any): Promise<any | undefined>;
+  deleteSocialPost(id: number): Promise<void>;
+  publishSocialPost(id: number): Promise<any>;
+  
+  // Social Campaigns
+  createSocialCampaign(userId: number, data: any): Promise<any>;
+  getSocialCampaigns(userId: number, params?: { status?: string }): Promise<any[]>;
+  getSocialCampaignById(id: number): Promise<any | undefined>;
+  updateSocialCampaign(id: number, data: any): Promise<any | undefined>;
+  deleteSocialCampaign(id: number): Promise<void>;
+  
+  // Cross Platform Analytics
+  getCrossPlatformAnalytics(userId: number, period: string): Promise<any | undefined>;
+  createCrossPlatformAnalytics(userId: number, data: any): Promise<any>;
+  
+  // AI Generated Content
+  createAIGeneratedContent(data: any): Promise<any>;
+  getAIGeneratedContent(campaignId: number, params?: { approvalStatus?: string }): Promise<any[]>;
+  updateAIGeneratedContent(id: number, data: any): Promise<any | undefined>;
+  
+  // Scraped Events
+  createScrapedEvent(data: any): Promise<any>;
+  getScrapedEvents(params?: { status?: string; limit?: number; offset?: number }): Promise<any[]>;
+  updateScrapedEvent(id: number, data: any): Promise<any | undefined>;
+  
+  // Event Claims
+  createEventClaim(userId: number, scrapedEventId: number, data: any): Promise<any>;
+  getEventClaims(userId: number): Promise<any[]>;
+  updateEventClaimStatus(id: number, status: string): Promise<any | undefined>;
+  
+  // ============================================================================
+  // PART_3: CREATOR MARKETPLACE (AGENTS #158-160)
+  // ============================================================================
+  
+  // Marketplace Products
+  createMarketplaceProduct(userId: number, data: any): Promise<any>;
+  getMarketplaceProducts(params?: { creatorUserId?: number; category?: string; limit?: number; offset?: number }): Promise<any[]>;
+  getMarketplaceProductById(id: number): Promise<any | undefined>;
+  updateMarketplaceProduct(id: number, data: any): Promise<any | undefined>;
+  deleteMarketplaceProduct(id: number): Promise<void>;
+  
+  // Product Purchases
+  createProductPurchase(userId: number, productId: number, data: any): Promise<any>;
+  getProductPurchases(userId: number): Promise<any[]>;
+  getProductPurchaseById(id: number): Promise<any | undefined>;
+  
+  // Product Reviews
+  createProductReview(userId: number, productId: number, data: any): Promise<any>;
+  getProductReviews(productId: number): Promise<any[]>;
+  updateProductReview(id: number, data: any): Promise<any | undefined>;
+  deleteProductReview(id: number): Promise<void>;
+  
+  // Marketplace Analytics
+  getMarketplaceAnalytics(userId: number, period: string): Promise<any | undefined>;
+  createMarketplaceAnalytics(userId: number, data: any): Promise<any>;
+  
+  // Funding Campaigns (GoFundMe)
+  createFundingCampaign(userId: number, data: any): Promise<any>;
+  getFundingCampaigns(params?: { userId?: number; category?: string; status?: string; limit?: number; offset?: number }): Promise<any[]>;
+  getFundingCampaignById(id: number): Promise<any | undefined>;
+  updateFundingCampaign(id: number, data: any): Promise<any | undefined>;
+  deleteFundingCampaign(id: number): Promise<void>;
+  
+  // Campaign Donations
+  createCampaignDonation(campaignId: number, data: any): Promise<any>;
+  getCampaignDonations(campaignId: number): Promise<any[]>;
+  
+  // Campaign Updates
+  createCampaignUpdate(campaignId: number, data: any): Promise<any>;
+  getCampaignUpdates(campaignId: number): Promise<any[]>;
+  
+  // Legal Documents
+  createLegalDocument(userId: number, data: any): Promise<any>;
+  getLegalDocuments(params?: { category?: string; isPremium?: boolean; limit?: number; offset?: number }): Promise<any[]>;
+  getLegalDocumentById(id: number): Promise<any | undefined>;
+  updateLegalDocument(id: number, data: any): Promise<any | undefined>;
+  deleteLegalDocument(id: number): Promise<void>;
+  
+  // Document Instances
+  createDocumentInstance(userId: number, templateId: number, data: any): Promise<any>;
+  getDocumentInstances(userId: number): Promise<any[]>;
+  updateDocumentInstance(id: number, data: any): Promise<any | undefined>;
+  
+  // ============================================================================
+  // PART_3: TRAVEL INTEGRATION (AGENTS #161-162)
+  // ============================================================================
+  
+  // Travel Plans
+  createTravelPlan(userId: number, data: any): Promise<any>;
+  getTravelPlans(userId: number, params?: { status?: string }): Promise<any[]>;
+  getTravelPlanById(id: number): Promise<any | undefined>;
+  updateTravelPlan(id: number, data: any): Promise<any | undefined>;
+  deleteTravelPlan(id: number): Promise<void>;
+  
+  // Travel Plan Items
+  createTravelPlanItem(travelPlanId: number, data: any): Promise<any>;
+  getTravelPlanItems(travelPlanId: number): Promise<any[]>;
+  updateTravelPlanItem(id: number, data: any): Promise<any | undefined>;
+  deleteTravelPlanItem(id: number): Promise<void>;
+  
+  // Travel Preferences
+  getTravelPreferences(userId: number): Promise<any | undefined>;
+  updateTravelPreferences(userId: number, data: any): Promise<any>;
+  
+  // Travel Recommendations
+  getTravelRecommendations(userId: number, params?: { destination?: string }): Promise<any[]>;
+  createTravelRecommendation(data: any): Promise<any>;
 }
 
 export class DbStorage implements IStorage {
@@ -6496,6 +6677,594 @@ export class DbStorage implements IStorage {
   async checkAlbumOwnership(albumId: number, userId: number): Promise<boolean> {
     const album = await this.getAlbumById(albumId);
     return album?.userId === userId;
+  }
+  
+  // ============================================================================
+  // PART_3: FINANCIAL MANAGEMENT SYSTEM IMPLEMENTATIONS
+  // ============================================================================
+  
+  async createFinancialPortfolio(userId: number, data: any): Promise<any> {
+    const [portfolio] = await db.insert(financialPortfolios).values({ ...data, userId }).returning();
+    return portfolio;
+  }
+  
+  async getFinancialPortfolios(userId: number): Promise<any[]> {
+    return await db.select().from(financialPortfolios).where(eq(financialPortfolios.userId, userId));
+  }
+  
+  async getFinancialPortfolioById(id: number): Promise<any | undefined> {
+    const [portfolio] = await db.select().from(financialPortfolios).where(eq(financialPortfolios.id, id)).limit(1);
+    return portfolio;
+  }
+  
+  async updateFinancialPortfolio(id: number, data: any): Promise<any | undefined> {
+    const [portfolio] = await db.update(financialPortfolios).set({ ...data, updatedAt: new Date() }).where(eq(financialPortfolios.id, id)).returning();
+    return portfolio;
+  }
+  
+  async deleteFinancialPortfolio(id: number): Promise<void> {
+    await db.delete(financialPortfolios).where(eq(financialPortfolios.id, id));
+  }
+  
+  async createFinancialAccount(userId: number, data: any): Promise<any> {
+    const [account] = await db.insert(financialAccounts).values({ ...data, userId }).returning();
+    return account;
+  }
+  
+  async getFinancialAccounts(userId: number): Promise<any[]> {
+    return await db.select().from(financialAccounts).where(eq(financialAccounts.userId, userId));
+  }
+  
+  async getFinancialAccountById(id: number): Promise<any | undefined> {
+    const [account] = await db.select().from(financialAccounts).where(eq(financialAccounts.id, id)).limit(1);
+    return account;
+  }
+  
+  async updateFinancialAccount(id: number, data: any): Promise<any | undefined> {
+    const [account] = await db.update(financialAccounts).set({ ...data, updatedAt: new Date() }).where(eq(financialAccounts.id, id)).returning();
+    return account;
+  }
+  
+  async deleteFinancialAccount(id: number): Promise<void> {
+    await db.delete(financialAccounts).where(eq(financialAccounts.id, id));
+  }
+  
+  async syncFinancialAccount(id: number): Promise<any> {
+    const [account] = await db.update(financialAccounts).set({ lastSyncedAt: new Date() }).where(eq(financialAccounts.id, id)).returning();
+    return account;
+  }
+  
+  async createFinancialAsset(portfolioId: number, data: any): Promise<any> {
+    const [asset] = await db.insert(financialAssets).values({ ...data, portfolioId }).returning();
+    return asset;
+  }
+  
+  async getFinancialAssets(portfolioId: number): Promise<any[]> {
+    return await db.select().from(financialAssets).where(eq(financialAssets.portfolioId, portfolioId));
+  }
+  
+  async updateFinancialAsset(id: number, data: any): Promise<any | undefined> {
+    const [asset] = await db.update(financialAssets).set({ ...data, lastUpdatedAt: new Date() }).where(eq(financialAssets.id, id)).returning();
+    return asset;
+  }
+  
+  async deleteFinancialAsset(id: number): Promise<void> {
+    await db.delete(financialAssets).where(eq(financialAssets.id, id));
+  }
+  
+  async createFinancialTrade(portfolioId: number, data: any): Promise<any> {
+    const [trade] = await db.insert(financialTrades).values({ ...data, portfolioId }).returning();
+    return trade;
+  }
+  
+  async getFinancialTrades(portfolioId: number, params?: { limit?: number; offset?: number }): Promise<any[]> {
+    const limit = params?.limit || 50;
+    const offset = params?.offset || 0;
+    return await db.select().from(financialTrades).where(eq(financialTrades.portfolioId, portfolioId)).limit(limit).offset(offset);
+  }
+  
+  async getFinancialTradeById(id: number): Promise<any | undefined> {
+    const [trade] = await db.select().from(financialTrades).where(eq(financialTrades.id, id)).limit(1);
+    return trade;
+  }
+  
+  async createFinancialStrategy(data: any): Promise<any> {
+    const [strategy] = await db.insert(financialStrategies).values(data).returning();
+    return strategy;
+  }
+  
+  async getFinancialStrategies(params?: { isActive?: boolean }): Promise<any[]> {
+    if (params?.isActive !== undefined) {
+      return await db.select().from(financialStrategies).where(eq(financialStrategies.isActive, params.isActive));
+    }
+    return await db.select().from(financialStrategies);
+  }
+  
+  async getFinancialStrategyById(id: number): Promise<any | undefined> {
+    const [strategy] = await db.select().from(financialStrategies).where(eq(financialStrategies.id, id)).limit(1);
+    return strategy;
+  }
+  
+  async updateFinancialStrategy(id: number, data: any): Promise<any | undefined> {
+    const [strategy] = await db.update(financialStrategies).set({ ...data, updatedAt: new Date() }).where(eq(financialStrategies.id, id)).returning();
+    return strategy;
+  }
+  
+  async deleteFinancialStrategy(id: number): Promise<void> {
+    await db.delete(financialStrategies).where(eq(financialStrategies.id, id));
+  }
+  
+  async getFinancialMarketData(symbol: string): Promise<any | undefined> {
+    const [data] = await db.select().from(financialMarketData).where(eq(financialMarketData.symbol, symbol)).orderBy(desc(financialMarketData.timestamp)).limit(1);
+    return data;
+  }
+  
+  async updateFinancialMarketData(symbol: string, data: any): Promise<any> {
+    const [marketData] = await db.insert(financialMarketData).values({ ...data, symbol }).returning();
+    return marketData;
+  }
+  
+  async createFinancialAIDecision(data: any): Promise<any> {
+    const [decision] = await db.insert(financialAIDecisions).values(data).returning();
+    return decision;
+  }
+  
+  async getFinancialAIDecisions(portfolioId: number, params?: { limit?: number; offset?: number }): Promise<any[]> {
+    const limit = params?.limit || 50;
+    const offset = params?.offset || 0;
+    return await db.select().from(financialAIDecisions).where(eq(financialAIDecisions.portfolioId, portfolioId)).limit(limit).offset(offset);
+  }
+  
+  async getFinancialRiskMetrics(portfolioId: number): Promise<any | undefined> {
+    const [metrics] = await db.select().from(financialRiskMetrics).where(eq(financialRiskMetrics.portfolioId, portfolioId)).orderBy(desc(financialRiskMetrics.calculatedAt)).limit(1);
+    return metrics;
+  }
+  
+  async updateFinancialRiskMetrics(portfolioId: number, data: any): Promise<any> {
+    const [metrics] = await db.insert(financialRiskMetrics).values({ ...data, portfolioId }).returning();
+    return metrics;
+  }
+  
+  async getFinancialAgents(params?: { tier?: number; isActive?: boolean }): Promise<any[]> {
+    let query = db.select().from(financialAgents);
+    const conditions = [];
+    if (params?.tier !== undefined) conditions.push(eq(financialAgents.tier, params.tier));
+    if (params?.isActive !== undefined) conditions.push(eq(financialAgents.isActive, params.isActive));
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    return await query;
+  }
+  
+  async getFinancialAgentById(id: number): Promise<any | undefined> {
+    const [agent] = await db.select().from(financialAgents).where(eq(financialAgents.id, id)).limit(1);
+    return agent;
+  }
+  
+  async updateFinancialAgent(id: number, data: any): Promise<any | undefined> {
+    const [agent] = await db.update(financialAgents).set({ ...data, updatedAt: new Date() }).where(eq(financialAgents.id, id)).returning();
+    return agent;
+  }
+  
+  async createFinancialMonitoringLog(data: any): Promise<any> {
+    const [log] = await db.insert(financialMonitoring).values(data).returning();
+    return log;
+  }
+  
+  async getFinancialMonitoringLogs(params: { agentId?: number; portfolioId?: number; limit?: number }): Promise<any[]> {
+    const limit = params.limit || 100;
+    let query = db.select().from(financialMonitoring);
+    const conditions = [];
+    if (params.agentId) conditions.push(eq(financialMonitoring.agentId, params.agentId));
+    if (params.portfolioId) conditions.push(eq(financialMonitoring.portfolioId, params.portfolioId));
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    return await query.limit(limit);
+  }
+  
+  // ============================================================================
+  // PART_3: SOCIAL MEDIA INTEGRATION IMPLEMENTATIONS
+  // ============================================================================
+  
+  async createPlatformConnection(userId: number, data: any): Promise<any> {
+    const [connection] = await db.insert(platformConnections).values({ ...data, userId }).returning();
+    return connection;
+  }
+  
+  async getPlatformConnections(userId: number): Promise<any[]> {
+    return await db.select().from(platformConnections).where(eq(platformConnections.userId, userId));
+  }
+  
+  async getPlatformConnection(userId: number, platform: string): Promise<any | undefined> {
+    const [connection] = await db.select().from(platformConnections).where(
+      and(eq(platformConnections.userId, userId), eq(platformConnections.platform, platform))
+    ).limit(1);
+    return connection;
+  }
+  
+  async updatePlatformConnection(id: number, data: any): Promise<any | undefined> {
+    const [connection] = await db.update(platformConnections).set({ ...data, updatedAt: new Date() }).where(eq(platformConnections.id, id)).returning();
+    return connection;
+  }
+  
+  async deletePlatformConnection(id: number): Promise<void> {
+    await db.delete(platformConnections).where(eq(platformConnections.id, id));
+  }
+  
+  async createSocialPost(userId: number, data: any): Promise<any> {
+    const [post] = await db.insert(socialPosts).values({ ...data, userId }).returning();
+    return post;
+  }
+  
+  async getSocialPosts(userId: number, params?: { status?: string; limit?: number; offset?: number }): Promise<any[]> {
+    const limit = params?.limit || 50;
+    const offset = params?.offset || 0;
+    let query = db.select().from(socialPosts).where(eq(socialPosts.userId, userId));
+    if (params?.status) {
+      query = query.where(and(eq(socialPosts.userId, userId), eq(socialPosts.status, params.status)));
+    }
+    return await query.limit(limit).offset(offset);
+  }
+  
+  async getSocialPostById(id: number): Promise<any | undefined> {
+    const [post] = await db.select().from(socialPosts).where(eq(socialPosts.id, id)).limit(1);
+    return post;
+  }
+  
+  async updateSocialPost(id: number, data: any): Promise<any | undefined> {
+    const [post] = await db.update(socialPosts).set({ ...data, updatedAt: new Date() }).where(eq(socialPosts.id, id)).returning();
+    return post;
+  }
+  
+  async deleteSocialPost(id: number): Promise<void> {
+    await db.delete(socialPosts).where(eq(socialPosts.id, id));
+  }
+  
+  async publishSocialPost(id: number): Promise<any> {
+    const [post] = await db.update(socialPosts).set({ status: 'published', publishedAt: new Date(), updatedAt: new Date() }).where(eq(socialPosts.id, id)).returning();
+    return post;
+  }
+  
+  async createSocialCampaign(userId: number, data: any): Promise<any> {
+    const [campaign] = await db.insert(socialCampaigns).values({ ...data, userId }).returning();
+    return campaign;
+  }
+  
+  async getSocialCampaigns(userId: number, params?: { status?: string }): Promise<any[]> {
+    let query = db.select().from(socialCampaigns).where(eq(socialCampaigns.userId, userId));
+    if (params?.status) {
+      query = query.where(and(eq(socialCampaigns.userId, userId), eq(socialCampaigns.status, params.status)));
+    }
+    return await query;
+  }
+  
+  async getSocialCampaignById(id: number): Promise<any | undefined> {
+    const [campaign] = await db.select().from(socialCampaigns).where(eq(socialCampaigns.id, id)).limit(1);
+    return campaign;
+  }
+  
+  async updateSocialCampaign(id: number, data: any): Promise<any | undefined> {
+    const [campaign] = await db.update(socialCampaigns).set({ ...data, updatedAt: new Date() }).where(eq(socialCampaigns.id, id)).returning();
+    return campaign;
+  }
+  
+  async deleteSocialCampaign(id: number): Promise<void> {
+    await db.delete(socialCampaigns).where(eq(socialCampaigns.id, id));
+  }
+  
+  async getCrossPlatformAnalytics(userId: number, period: string): Promise<any | undefined> {
+    const [analytics] = await db.select().from(crossPlatformAnalytics).where(
+      and(eq(crossPlatformAnalytics.userId, userId), eq(crossPlatformAnalytics.period, period))
+    ).orderBy(desc(crossPlatformAnalytics.calculatedAt)).limit(1);
+    return analytics;
+  }
+  
+  async createCrossPlatformAnalytics(userId: number, data: any): Promise<any> {
+    const [analytics] = await db.insert(crossPlatformAnalytics).values({ ...data, userId }).returning();
+    return analytics;
+  }
+  
+  async createAIGeneratedContent(data: any): Promise<any> {
+    const [content] = await db.insert(aiGeneratedContent).values(data).returning();
+    return content;
+  }
+  
+  async getAIGeneratedContent(campaignId: number, params?: { approvalStatus?: string }): Promise<any[]> {
+    let query = db.select().from(aiGeneratedContent).where(eq(aiGeneratedContent.campaignId, campaignId));
+    if (params?.approvalStatus) {
+      query = query.where(and(eq(aiGeneratedContent.campaignId, campaignId), eq(aiGeneratedContent.approvalStatus, params.approvalStatus)));
+    }
+    return await query;
+  }
+  
+  async updateAIGeneratedContent(id: number, data: any): Promise<any | undefined> {
+    const [content] = await db.update(aiGeneratedContent).set({ ...data, updatedAt: new Date() }).where(eq(aiGeneratedContent.id, id)).returning();
+    return content;
+  }
+  
+  async createScrapedEvent(data: any): Promise<any> {
+    const [event] = await db.insert(scrapedEvents).values(data).returning();
+    return event;
+  }
+  
+  async getScrapedEvents(params?: { status?: string; limit?: number; offset?: number }): Promise<any[]> {
+    const limit = params?.limit || 50;
+    const offset = params?.offset || 0;
+    let query = db.select().from(scrapedEvents);
+    if (params?.status) {
+      query = query.where(eq(scrapedEvents.status, params.status));
+    }
+    return await query.limit(limit).offset(offset);
+  }
+  
+  async updateScrapedEvent(id: number, data: any): Promise<any | undefined> {
+    const [event] = await db.update(scrapedEvents).set({ ...data, updatedAt: new Date() }).where(eq(scrapedEvents.id, id)).returning();
+    return event;
+  }
+  
+  async createEventClaim(userId: number, scrapedEventId: number, data: any): Promise<any> {
+    const [claim] = await db.insert(eventClaims).values({ ...data, userId, scrapedEventId }).returning();
+    return claim;
+  }
+  
+  async getEventClaims(userId: number): Promise<any[]> {
+    return await db.select().from(eventClaims).where(eq(eventClaims.userId, userId));
+  }
+  
+  async updateEventClaimStatus(id: number, status: string): Promise<any | undefined> {
+    const [claim] = await db.update(eventClaims).set({ verificationStatus: status, updatedAt: new Date() }).where(eq(eventClaims.id, id)).returning();
+    return claim;
+  }
+  
+  // ============================================================================
+  // PART_3: CREATOR MARKETPLACE IMPLEMENTATIONS
+  // ============================================================================
+  
+  async createMarketplaceProduct(userId: number, data: any): Promise<any> {
+    const [product] = await db.insert(marketplaceProducts).values({ ...data, creatorUserId: userId }).returning();
+    return product;
+  }
+  
+  async getMarketplaceProducts(params?: { creatorUserId?: number; category?: string; limit?: number; offset?: number }): Promise<any[]> {
+    const limit = params?.limit || 50;
+    const offset = params?.offset || 0;
+    let query = db.select().from(marketplaceProducts);
+    const conditions = [];
+    if (params?.creatorUserId) conditions.push(eq(marketplaceProducts.creatorUserId, params.creatorUserId));
+    if (params?.category) conditions.push(eq(marketplaceProducts.category, params.category));
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    return await query.limit(limit).offset(offset);
+  }
+  
+  async getMarketplaceProductById(id: number): Promise<any | undefined> {
+    const [product] = await db.select().from(marketplaceProducts).where(eq(marketplaceProducts.id, id)).limit(1);
+    return product;
+  }
+  
+  async updateMarketplaceProduct(id: number, data: any): Promise<any | undefined> {
+    const [product] = await db.update(marketplaceProducts).set({ ...data, updatedAt: new Date() }).where(eq(marketplaceProducts.id, id)).returning();
+    return product;
+  }
+  
+  async deleteMarketplaceProduct(id: number): Promise<void> {
+    await db.delete(marketplaceProducts).where(eq(marketplaceProducts.id, id));
+  }
+  
+  async createProductPurchase(userId: number, productId: number, data: any): Promise<any> {
+    const [purchase] = await db.insert(productPurchases).values({ ...data, buyerUserId: userId, productId }).returning();
+    return purchase;
+  }
+  
+  async getProductPurchases(userId: number): Promise<any[]> {
+    return await db.select().from(productPurchases).where(eq(productPurchases.buyerUserId, userId));
+  }
+  
+  async getProductPurchaseById(id: number): Promise<any | undefined> {
+    const [purchase] = await db.select().from(productPurchases).where(eq(productPurchases.id, id)).limit(1);
+    return purchase;
+  }
+  
+  async createProductReview(userId: number, productId: number, data: any): Promise<any> {
+    const [review] = await db.insert(productReviews).values({ ...data, userId, productId }).returning();
+    return review;
+  }
+  
+  async getProductReviews(productId: number): Promise<any[]> {
+    return await db.select().from(productReviews).where(eq(productReviews.productId, productId));
+  }
+  
+  async updateProductReview(id: number, data: any): Promise<any | undefined> {
+    const [review] = await db.update(productReviews).set({ ...data, updatedAt: new Date() }).where(eq(productReviews.id, id)).returning();
+    return review;
+  }
+  
+  async deleteProductReview(id: number): Promise<void> {
+    await db.delete(productReviews).where(eq(productReviews.id, id));
+  }
+  
+  async getMarketplaceAnalytics(userId: number, period: string): Promise<any | undefined> {
+    const [analytics] = await db.select().from(marketplaceAnalytics).where(
+      and(eq(marketplaceAnalytics.userId, userId), eq(marketplaceAnalytics.period, period))
+    ).orderBy(desc(marketplaceAnalytics.calculatedAt)).limit(1);
+    return analytics;
+  }
+  
+  async createMarketplaceAnalytics(userId: number, data: any): Promise<any> {
+    const [analytics] = await db.insert(marketplaceAnalytics).values({ ...data, userId }).returning();
+    return analytics;
+  }
+  
+  async createFundingCampaign(userId: number, data: any): Promise<any> {
+    const [campaign] = await db.insert(fundingCampaigns).values({ ...data, userId }).returning();
+    return campaign;
+  }
+  
+  async getFundingCampaigns(params?: { userId?: number; category?: string; status?: string; limit?: number; offset?: number }): Promise<any[]> {
+    const limit = params?.limit || 50;
+    const offset = params?.offset || 0;
+    let query = db.select().from(fundingCampaigns);
+    const conditions = [];
+    if (params?.userId) conditions.push(eq(fundingCampaigns.userId, params.userId));
+    if (params?.category) conditions.push(eq(fundingCampaigns.category, params.category));
+    if (params?.status) conditions.push(eq(fundingCampaigns.status, params.status));
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    return await query.limit(limit).offset(offset);
+  }
+  
+  async getFundingCampaignById(id: number): Promise<any | undefined> {
+    const [campaign] = await db.select().from(fundingCampaigns).where(eq(fundingCampaigns.id, id)).limit(1);
+    return campaign;
+  }
+  
+  async updateFundingCampaign(id: number, data: any): Promise<any | undefined> {
+    const [campaign] = await db.update(fundingCampaigns).set({ ...data, updatedAt: new Date() }).where(eq(fundingCampaigns.id, id)).returning();
+    return campaign;
+  }
+  
+  async deleteFundingCampaign(id: number): Promise<void> {
+    await db.delete(fundingCampaigns).where(eq(fundingCampaigns.id, id));
+  }
+  
+  async createCampaignDonation(campaignId: number, data: any): Promise<any> {
+    const [donation] = await db.insert(campaignDonations).values({ ...data, campaignId }).returning();
+    return donation;
+  }
+  
+  async getCampaignDonations(campaignId: number): Promise<any[]> {
+    return await db.select().from(campaignDonations).where(eq(campaignDonations.campaignId, campaignId));
+  }
+  
+  async createCampaignUpdate(campaignId: number, data: any): Promise<any> {
+    const [update] = await db.insert(campaignUpdates).values({ ...data, campaignId }).returning();
+    return update;
+  }
+  
+  async getCampaignUpdates(campaignId: number): Promise<any[]> {
+    return await db.select().from(campaignUpdates).where(eq(campaignUpdates.campaignId, campaignId));
+  }
+  
+  async createLegalDocument(userId: number, data: any): Promise<any> {
+    const [document] = await db.insert(legalDocuments).values({ ...data, creatorUserId: userId }).returning();
+    return document;
+  }
+  
+  async getLegalDocuments(params?: { category?: string; isPremium?: boolean; limit?: number; offset?: number }): Promise<any[]> {
+    const limit = params?.limit || 50;
+    const offset = params?.offset || 0;
+    let query = db.select().from(legalDocuments);
+    const conditions = [];
+    if (params?.category) conditions.push(eq(legalDocuments.category, params.category));
+    if (params?.isPremium !== undefined) conditions.push(eq(legalDocuments.isPremium, params.isPremium));
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    return await query.limit(limit).offset(offset);
+  }
+  
+  async getLegalDocumentById(id: number): Promise<any | undefined> {
+    const [document] = await db.select().from(legalDocuments).where(eq(legalDocuments.id, id)).limit(1);
+    return document;
+  }
+  
+  async updateLegalDocument(id: number, data: any): Promise<any | undefined> {
+    const [document] = await db.update(legalDocuments).set({ ...data, updatedAt: new Date() }).where(eq(legalDocuments.id, id)).returning();
+    return document;
+  }
+  
+  async deleteLegalDocument(id: number): Promise<void> {
+    await db.delete(legalDocuments).where(eq(legalDocuments.id, id));
+  }
+  
+  async createDocumentInstance(userId: number, templateId: number, data: any): Promise<any> {
+    const [instance] = await db.insert(documentInstances).values({ ...data, userId, templateId }).returning();
+    return instance;
+  }
+  
+  async getDocumentInstances(userId: number): Promise<any[]> {
+    return await db.select().from(documentInstances).where(eq(documentInstances.userId, userId));
+  }
+  
+  async updateDocumentInstance(id: number, data: any): Promise<any | undefined> {
+    const [instance] = await db.update(documentInstances).set({ ...data, updatedAt: new Date() }).where(eq(documentInstances.id, id)).returning();
+    return instance;
+  }
+  
+  // ============================================================================
+  // PART_3: TRAVEL INTEGRATION IMPLEMENTATIONS
+  // ============================================================================
+  
+  async createTravelPlan(userId: number, data: any): Promise<any> {
+    const [plan] = await db.insert(travelPlans).values({ ...data, userId }).returning();
+    return plan;
+  }
+  
+  async getTravelPlans(userId: number, params?: { status?: string }): Promise<any[]> {
+    let query = db.select().from(travelPlans).where(eq(travelPlans.userId, userId));
+    if (params?.status) {
+      query = query.where(and(eq(travelPlans.userId, userId), eq(travelPlans.status, params.status)));
+    }
+    return await query;
+  }
+  
+  async getTravelPlanById(id: number): Promise<any | undefined> {
+    const [plan] = await db.select().from(travelPlans).where(eq(travelPlans.id, id)).limit(1);
+    return plan;
+  }
+  
+  async updateTravelPlan(id: number, data: any): Promise<any | undefined> {
+    const [plan] = await db.update(travelPlans).set({ ...data, updatedAt: new Date() }).where(eq(travelPlans.id, id)).returning();
+    return plan;
+  }
+  
+  async deleteTravelPlan(id: number): Promise<void> {
+    await db.delete(travelPlans).where(eq(travelPlans.id, id));
+  }
+  
+  async createTravelPlanItem(travelPlanId: number, data: any): Promise<any> {
+    const [item] = await db.insert(travelPlanItems).values({ ...data, travelPlanId }).returning();
+    return item;
+  }
+  
+  async getTravelPlanItems(travelPlanId: number): Promise<any[]> {
+    return await db.select().from(travelPlanItems).where(eq(travelPlanItems.travelPlanId, travelPlanId));
+  }
+  
+  async updateTravelPlanItem(id: number, data: any): Promise<any | undefined> {
+    const [item] = await db.update(travelPlanItems).set({ ...data, updatedAt: new Date() }).where(eq(travelPlanItems.id, id)).returning();
+    return item;
+  }
+  
+  async deleteTravelPlanItem(id: number): Promise<void> {
+    await db.delete(travelPlanItems).where(eq(travelPlanItems.id, id));
+  }
+  
+  async getTravelPreferences(userId: number): Promise<any | undefined> {
+    const [prefs] = await db.select().from(travelPreferencesProfiles).where(eq(travelPreferencesProfiles.userId, userId)).limit(1);
+    return prefs;
+  }
+  
+  async updateTravelPreferences(userId: number, data: any): Promise<any> {
+    const existing = await this.getTravelPreferences(userId);
+    if (existing) {
+      const [prefs] = await db.update(travelPreferencesProfiles).set({ ...data, updatedAt: new Date() }).where(eq(travelPreferencesProfiles.userId, userId)).returning();
+      return prefs;
+    } else {
+      const [prefs] = await db.insert(travelPreferencesProfiles).values({ ...data, userId }).returning();
+      return prefs;
+    }
+  }
+  
+  async getTravelRecommendations(userId: number, params?: { destination?: string }): Promise<any[]> {
+    return [];
+  }
+  
+  async createTravelRecommendation(data: any): Promise<any> {
+    return data;
   }
 }
 
