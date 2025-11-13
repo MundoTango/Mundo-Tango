@@ -120,6 +120,7 @@
     "react-leaflet": "^4.2.1",
     "react-resizable-panels": "^2.1.7",
     "recharts": "^2.15.2",
+    "resend": "^6.4.2",
     "speakeasy": "^2.0.0",
     "stripe": "^19.2.0",
     "swagger-jsdoc": "^6.2.8",
