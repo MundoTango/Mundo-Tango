@@ -7347,6 +7347,1513 @@ export type UpdateFeedActivityProfile = z.infer<typeof updateFeedActivityProfile
 export type SelectFeedActivityProfile = typeof feedActivityProfiles.$inferSelect;
 
 // ============================================================================
+// FINANCIAL MANAGEMENT SYSTEM (Agents #73-105)
+// ============================================================================
+
+// 1. Financial Portfolios - User investment portfolios
+export const financialPortfolios = pgTable("financial_portfolios", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  type: varchar("type", { length: 50 }).notNull(), // personal, business, retirement
+  totalValue: numeric("total_value", { precision: 15, scale: 2 }).default("0").notNull(),
+  cashBalance: numeric("cash_balance", { precision: 15, scale: 2 }).default("0").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("financial_portfolios_user_idx").on(table.userId),
+  typeIdx: index("financial_portfolios_type_idx").on(table.type),
+}));
+
+// 2. Financial Accounts - Connected accounts (Coinbase, Schwab, etc.)
+export const financialAccounts = pgTable("financial_accounts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  provider: varchar("provider", { length: 50 }).notNull(), // coinbase, schwab, puzzle, mercury
+  accountId: varchar("account_id", { length: 255 }).notNull(), // external ID
+  accountType: varchar("account_type", { length: 50 }).notNull(), // brokerage, crypto, banking, business
+  balance: numeric("balance", { precision: 15, scale: 2 }).default("0").notNull(),
+  lastSyncedAt: timestamp("last_synced_at"),
+  credentials: jsonb("credentials"), // encrypted credentials
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("financial_accounts_user_idx").on(table.userId),
+  providerIdx: index("financial_accounts_provider_idx").on(table.provider),
+  accountTypeIdx: index("financial_accounts_account_type_idx").on(table.accountType),
+}));
+
+// 3. Financial Assets - Stocks, crypto, bonds owned
+export const financialAssets = pgTable("financial_assets", {
+  id: serial("id").primaryKey(),
+  portfolioId: integer("portfolio_id").notNull().references(() => financialPortfolios.id, { onDelete: "cascade" }),
+  symbol: varchar("symbol", { length: 50 }).notNull(),
+  assetType: varchar("asset_type", { length: 50 }).notNull(), // stock, crypto, bond, etf, option
+  quantity: numeric("quantity", { precision: 20, scale: 8 }).notNull(),
+  averagePrice: numeric("average_price", { precision: 15, scale: 2 }).notNull(),
+  currentPrice: numeric("current_price", { precision: 15, scale: 2 }).notNull(),
+  totalValue: numeric("total_value", { precision: 15, scale: 2 }).notNull(),
+  lastUpdatedAt: timestamp("last_updated_at").defaultNow().notNull(),
+}, (table) => ({
+  portfolioIdx: index("financial_assets_portfolio_idx").on(table.portfolioId),
+  symbolIdx: index("financial_assets_symbol_idx").on(table.symbol),
+  assetTypeIdx: index("financial_assets_asset_type_idx").on(table.assetType),
+}));
+
+// 4. Financial Trades - All trades executed
+export const financialTrades = pgTable("financial_trades", {
+  id: serial("id").primaryKey(),
+  portfolioId: integer("portfolio_id").notNull().references(() => financialPortfolios.id, { onDelete: "cascade" }),
+  symbol: varchar("symbol", { length: 50 }).notNull(),
+  tradeType: varchar("trade_type", { length: 20 }).notNull(), // buy, sell, transfer
+  quantity: numeric("quantity", { precision: 20, scale: 8 }).notNull(),
+  price: numeric("price", { precision: 15, scale: 2 }).notNull(),
+  totalAmount: numeric("total_amount", { precision: 15, scale: 2 }).notNull(),
+  fees: numeric("fees", { precision: 15, scale: 2 }).default("0").notNull(),
+  strategy: varchar("strategy", { length: 255 }), // which AI agent initiated
+  executedAt: timestamp("executed_at").defaultNow().notNull(),
+  status: varchar("status", { length: 20 }).notNull(), // pending, executed, failed
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  portfolioIdx: index("financial_trades_portfolio_idx").on(table.portfolioId),
+  symbolIdx: index("financial_trades_symbol_idx").on(table.symbol),
+  statusIdx: index("financial_trades_status_idx").on(table.status),
+  executedAtIdx: index("financial_trades_executed_at_idx").on(table.executedAt),
+}));
+
+// 5. Financial Strategies - AI trading strategies
+export const financialStrategies = pgTable("financial_strategies", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  agentId: integer("agent_id").notNull(), // which of agents #73-105
+  strategyType: varchar("strategy_type", { length: 50 }).notNull(), // momentum, value, arbitrage, swing, day_trading
+  riskLevel: varchar("risk_level", { length: 20 }).notNull(), // low, medium, high, aggressive
+  capitalAllocation: numeric("capital_allocation", { precision: 15, scale: 2 }).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  performance: jsonb("performance"), // returns, sharpe ratio, etc.
+  rules: jsonb("rules"), // strategy parameters
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  agentIdx: index("financial_strategies_agent_idx").on(table.agentId),
+  strategyTypeIdx: index("financial_strategies_strategy_type_idx").on(table.strategyType),
+  isActiveIdx: index("financial_strategies_is_active_idx").on(table.isActive),
+}));
+
+// 6. Financial Market Data - Real-time market data cache
+export const financialMarketData = pgTable("financial_market_data", {
+  id: serial("id").primaryKey(),
+  symbol: varchar("symbol", { length: 50 }).notNull(),
+  price: numeric("price", { precision: 15, scale: 2 }).notNull(),
+  volume: numeric("volume", { precision: 20, scale: 2 }),
+  change24h: numeric("change_24h", { precision: 10, scale: 2 }),
+  high24h: numeric("high_24h", { precision: 15, scale: 2 }),
+  low24h: numeric("low_24h", { precision: 15, scale: 2 }),
+  marketCap: numeric("market_cap", { precision: 20, scale: 2 }),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+}, (table) => ({
+  symbolIdx: index("financial_market_data_symbol_idx").on(table.symbol),
+  timestampIdx: index("financial_market_data_timestamp_idx").on(table.timestamp),
+  symbolTimestampIdx: index("financial_market_data_symbol_timestamp_idx").on(table.symbol, table.timestamp),
+}));
+
+// 7. Financial AI Decisions - AI agent decisions log
+export const financialAIDecisions = pgTable("financial_ai_decisions", {
+  id: serial("id").primaryKey(),
+  agentId: integer("agent_id").notNull(), // agents #73-105
+  portfolioId: integer("portfolio_id").notNull().references(() => financialPortfolios.id, { onDelete: "cascade" }),
+  decisionType: varchar("decision_type", { length: 20 }).notNull(), // buy, sell, hold, rebalance
+  symbol: varchar("symbol", { length: 50 }),
+  reasoning: text("reasoning").notNull(), // AI explanation
+  confidence: numeric("confidence", { precision: 3, scale: 2 }).notNull(), // 0-1
+  recommendation: jsonb("recommendation").notNull(),
+  executedTradeId: integer("executed_trade_id").references(() => financialTrades.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  agentIdx: index("financial_ai_decisions_agent_idx").on(table.agentId),
+  portfolioIdx: index("financial_ai_decisions_portfolio_idx").on(table.portfolioId),
+  decisionTypeIdx: index("financial_ai_decisions_decision_type_idx").on(table.decisionType),
+  createdAtIdx: index("financial_ai_decisions_created_at_idx").on(table.createdAt),
+}));
+
+// 8. Financial Risk Metrics - Portfolio risk tracking
+export const financialRiskMetrics = pgTable("financial_risk_metrics", {
+  id: serial("id").primaryKey(),
+  portfolioId: integer("portfolio_id").notNull().references(() => financialPortfolios.id, { onDelete: "cascade" }),
+  sharpeRatio: numeric("sharpe_ratio", { precision: 10, scale: 4 }),
+  maxDrawdown: numeric("max_drawdown", { precision: 10, scale: 4 }),
+  volatility: numeric("volatility", { precision: 10, scale: 4 }),
+  beta: numeric("beta", { precision: 10, scale: 4 }),
+  var95: numeric("var_95", { precision: 15, scale: 2 }), // Value at Risk
+  exposureByAsset: jsonb("exposure_by_asset"),
+  calculatedAt: timestamp("calculated_at").defaultNow().notNull(),
+}, (table) => ({
+  portfolioIdx: index("financial_risk_metrics_portfolio_idx").on(table.portfolioId),
+  calculatedAtIdx: index("financial_risk_metrics_calculated_at_idx").on(table.calculatedAt),
+}));
+
+// 9. Financial Agents - Agent metadata & status
+export const financialAgents = pgTable("financial_agents", {
+  id: serial("id").primaryKey(),
+  agentNumber: integer("agent_number").notNull().unique(), // 73-105
+  name: varchar("name", { length: 255 }).notNull(),
+  tier: integer("tier").notNull(), // 1-6
+  role: varchar("role", { length: 255 }).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  lastRunAt: timestamp("last_run_at"),
+  successRate: numeric("success_rate", { precision: 5, scale: 2 }), // percentage
+  totalDecisions: integer("total_decisions").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  agentNumberIdx: index("financial_agents_agent_number_idx").on(table.agentNumber),
+  tierIdx: index("financial_agents_tier_idx").on(table.tier),
+  isActiveIdx: index("financial_agents_is_active_idx").on(table.isActive),
+}));
+
+// 10. Financial Monitoring - 30-second monitoring logs
+export const financialMonitoring = pgTable("financial_monitoring", {
+  id: serial("id").primaryKey(),
+  agentId: integer("agent_id").notNull().references(() => financialAgents.id, { onDelete: "cascade" }),
+  portfolioId: integer("portfolio_id").references(() => financialPortfolios.id, { onDelete: "cascade" }),
+  checkType: varchar("check_type", { length: 50 }).notNull(), // price, risk, opportunity, alert
+  findings: jsonb("findings").notNull(),
+  actionTaken: boolean("action_taken").default(false).notNull(),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+}, (table) => ({
+  agentIdx: index("financial_monitoring_agent_idx").on(table.agentId),
+  portfolioIdx: index("financial_monitoring_portfolio_idx").on(table.portfolioId),
+  checkTypeIdx: index("financial_monitoring_check_type_idx").on(table.checkType),
+  timestampIdx: index("financial_monitoring_timestamp_idx").on(table.timestamp),
+}));
+
+// ============================================================================
+// FINANCIAL SYSTEM ZOD VALIDATION SCHEMAS
+// ============================================================================
+
+// 1. Financial Portfolios
+export const insertFinancialPortfolioSchema = createInsertSchema(financialPortfolios)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    name: z.string().min(1).max(255),
+    type: z.enum(['personal', 'business', 'retirement']),
+    totalValue: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    cashBalance: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+  });
+export const selectFinancialPortfolioSchema = createSelectSchema(financialPortfolios);
+export type InsertFinancialPortfolio = z.infer<typeof insertFinancialPortfolioSchema>;
+export type SelectFinancialPortfolio = typeof financialPortfolios.$inferSelect;
+
+// 2. Financial Accounts
+export const insertFinancialAccountSchema = createInsertSchema(financialAccounts)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    provider: z.enum(['coinbase', 'schwab', 'puzzle', 'mercury', 'plaid', 'other']),
+    accountType: z.enum(['brokerage', 'crypto', 'banking', 'business']),
+    balance: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    credentials: z.record(z.any()).optional(),
+  });
+export const selectFinancialAccountSchema = createSelectSchema(financialAccounts);
+export type InsertFinancialAccount = z.infer<typeof insertFinancialAccountSchema>;
+export type SelectFinancialAccount = typeof financialAccounts.$inferSelect;
+
+// 3. Financial Assets
+export const insertFinancialAssetSchema = createInsertSchema(financialAssets)
+  .omit({ id: true, lastUpdatedAt: true })
+  .extend({
+    symbol: z.string().min(1).max(50),
+    assetType: z.enum(['stock', 'crypto', 'bond', 'etf', 'option']),
+    quantity: z.string().regex(/^\d+(\.\d{1,8})?$/),
+    averagePrice: z.string().regex(/^\d+(\.\d{1,2})?$/),
+    currentPrice: z.string().regex(/^\d+(\.\d{1,2})?$/),
+    totalValue: z.string().regex(/^\d+(\.\d{1,2})?$/),
+  });
+export const selectFinancialAssetSchema = createSelectSchema(financialAssets);
+export type InsertFinancialAsset = z.infer<typeof insertFinancialAssetSchema>;
+export type SelectFinancialAsset = typeof financialAssets.$inferSelect;
+
+// 4. Financial Trades
+export const insertFinancialTradeSchema = createInsertSchema(financialTrades)
+  .omit({ id: true, createdAt: true })
+  .extend({
+    symbol: z.string().min(1).max(50),
+    tradeType: z.enum(['buy', 'sell', 'transfer']),
+    quantity: z.string().regex(/^\d+(\.\d{1,8})?$/),
+    price: z.string().regex(/^\d+(\.\d{1,2})?$/),
+    totalAmount: z.string().regex(/^\d+(\.\d{1,2})?$/),
+    fees: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    status: z.enum(['pending', 'executed', 'failed']),
+  });
+export const selectFinancialTradeSchema = createSelectSchema(financialTrades);
+export type InsertFinancialTrade = z.infer<typeof insertFinancialTradeSchema>;
+export type SelectFinancialTrade = typeof financialTrades.$inferSelect;
+
+// 5. Financial Strategies
+export const insertFinancialStrategySchema = createInsertSchema(financialStrategies)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    name: z.string().min(1).max(255),
+    agentId: z.number().int().min(73).max(105),
+    strategyType: z.enum(['momentum', 'value', 'arbitrage', 'swing', 'day_trading']),
+    riskLevel: z.enum(['low', 'medium', 'high', 'aggressive']),
+    capitalAllocation: z.string().regex(/^\d+(\.\d{1,2})?$/),
+    performance: z.record(z.any()).optional(),
+    rules: z.record(z.any()).optional(),
+  });
+export const selectFinancialStrategySchema = createSelectSchema(financialStrategies);
+export type InsertFinancialStrategy = z.infer<typeof insertFinancialStrategySchema>;
+export type SelectFinancialStrategy = typeof financialStrategies.$inferSelect;
+
+// 6. Financial Market Data
+export const insertFinancialMarketDataSchema = createInsertSchema(financialMarketData)
+  .omit({ id: true, timestamp: true })
+  .extend({
+    symbol: z.string().min(1).max(50),
+    price: z.string().regex(/^\d+(\.\d{1,2})?$/),
+    volume: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    change24h: z.string().regex(/^-?\d+(\.\d{1,2})?$/).optional(),
+    high24h: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    low24h: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    marketCap: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+  });
+export const selectFinancialMarketDataSchema = createSelectSchema(financialMarketData);
+export type InsertFinancialMarketData = z.infer<typeof insertFinancialMarketDataSchema>;
+export type SelectFinancialMarketData = typeof financialMarketData.$inferSelect;
+
+// 7. Financial AI Decisions
+export const insertFinancialAIDecisionSchema = createInsertSchema(financialAIDecisions)
+  .omit({ id: true, createdAt: true })
+  .extend({
+    agentId: z.number().int().min(73).max(105),
+    decisionType: z.enum(['buy', 'sell', 'hold', 'rebalance']),
+    reasoning: z.string().min(10),
+    confidence: z.string().regex(/^0(\.\d{1,2})?$|^1(\.0{1,2})?$/), // 0.00 to 1.00
+    recommendation: z.record(z.any()),
+  });
+export const selectFinancialAIDecisionSchema = createSelectSchema(financialAIDecisions);
+export type InsertFinancialAIDecision = z.infer<typeof insertFinancialAIDecisionSchema>;
+export type SelectFinancialAIDecision = typeof financialAIDecisions.$inferSelect;
+
+// 8. Financial Risk Metrics
+export const insertFinancialRiskMetricsSchema = createInsertSchema(financialRiskMetrics)
+  .omit({ id: true, calculatedAt: true })
+  .extend({
+    sharpeRatio: z.string().regex(/^-?\d+(\.\d{1,4})?$/).optional(),
+    maxDrawdown: z.string().regex(/^-?\d+(\.\d{1,4})?$/).optional(),
+    volatility: z.string().regex(/^\d+(\.\d{1,4})?$/).optional(),
+    beta: z.string().regex(/^-?\d+(\.\d{1,4})?$/).optional(),
+    var95: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    exposureByAsset: z.record(z.any()).optional(),
+  });
+export const selectFinancialRiskMetricsSchema = createSelectSchema(financialRiskMetrics);
+export type InsertFinancialRiskMetrics = z.infer<typeof insertFinancialRiskMetricsSchema>;
+export type SelectFinancialRiskMetrics = typeof financialRiskMetrics.$inferSelect;
+
+// 9. Financial Agents
+export const insertFinancialAgentSchema = createInsertSchema(financialAgents)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    agentNumber: z.number().int().min(73).max(105),
+    name: z.string().min(1).max(255),
+    tier: z.number().int().min(1).max(6),
+    role: z.string().min(1).max(255),
+    successRate: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+  });
+export const selectFinancialAgentSchema = createSelectSchema(financialAgents);
+export type InsertFinancialAgent = z.infer<typeof insertFinancialAgentSchema>;
+export type SelectFinancialAgent = typeof financialAgents.$inferSelect;
+
+// 10. Financial Monitoring
+export const insertFinancialMonitoringSchema = createInsertSchema(financialMonitoring)
+  .omit({ id: true, timestamp: true })
+  .extend({
+    checkType: z.enum(['price', 'risk', 'opportunity', 'alert']),
+    findings: z.record(z.any()),
+  });
+export const selectFinancialMonitoringSchema = createSelectSchema(financialMonitoring);
+export type InsertFinancialMonitoring = z.infer<typeof insertFinancialMonitoringSchema>;
+export type SelectFinancialMonitoring = typeof financialMonitoring.$inferSelect;
+
+// ============================================================================
+// SOCIAL MEDIA & EVENT SCRAPING (Agents #120-124)
+// ============================================================================
+
+// 1. Scraped Events - Events from 226+ external tango sources
+export const scrapedEvents = pgTable("scraped_events", {
+  id: serial("id").primaryKey(),
+  sourceUrl: varchar("source_url", { length: 500 }).notNull(),
+  sourceName: varchar("source_name", { length: 255 }).notNull(),
+  title: varchar("title", { length: 500 }).notNull(),
+  description: text("description"),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date"),
+  location: varchar("location", { length: 255 }),
+  address: text("address"),
+  organizer: varchar("organizer", { length: 255 }),
+  price: numeric("price", { precision: 10, scale: 2 }),
+  imageUrl: varchar("image_url", { length: 500 }),
+  externalId: varchar("external_id", { length: 255 }),
+  scrapedAt: timestamp("scraped_at").defaultNow().notNull(),
+  status: varchar("status", { length: 20 }).default("pending_review").notNull(),
+  claimedByUserId: integer("claimed_by_user_id").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  sourceIdx: index("scraped_events_source_idx").on(table.sourceName),
+  statusIdx: index("scraped_events_status_idx").on(table.status),
+  startDateIdx: index("scraped_events_start_date_idx").on(table.startDate),
+  claimedIdx: index("scraped_events_claimed_idx").on(table.claimedByUserId),
+}));
+
+// 2. Event Scraping Sources - 226+ tango community sources
+export const eventScrapingSources = pgTable("event_scraping_sources", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  url: varchar("url", { length: 500 }).notNull(),
+  platform: varchar("platform", { length: 50 }).notNull(),
+  country: varchar("country", { length: 100 }),
+  city: varchar("city", { length: 100 }),
+  isActive: boolean("is_active").default(true).notNull(),
+  lastScrapedAt: timestamp("last_scraped_at"),
+  totalEventsScraped: integer("total_events_scraped").default(0),
+  scrapeFrequency: varchar("scrape_frequency", { length: 20 }).default("daily").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  platformIdx: index("scraping_sources_platform_idx").on(table.platform),
+  activeIdx: index("scraping_sources_active_idx").on(table.isActive),
+  cityCountryIdx: index("scraping_sources_city_country_idx").on(table.city, table.country),
+}));
+
+// 3. Facebook Imports - FB profile data imports
+export const facebookImports = pgTable("facebook_imports", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  facebookId: varchar("facebook_id", { length: 100 }).notNull(),
+  importedData: jsonb("imported_data"),
+  importStatus: varchar("import_status", { length: 20 }).default("pending").notNull(),
+  importedAt: timestamp("imported_at").defaultNow(),
+  matchedEvents: integer("matched_events").default(0),
+  matchedUsers: integer("matched_users").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("facebook_imports_user_idx").on(table.userId),
+  statusIdx: index("facebook_imports_status_idx").on(table.importStatus),
+  facebookIdIdx: index("facebook_imports_fb_id_idx").on(table.facebookId),
+}));
+
+// 4. Social Posts - Cross-platform posts
+export const socialPosts = pgTable("social_posts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  mediaUrls: text("media_urls").array(),
+  platforms: text("platforms").array().notNull(),
+  scheduledFor: timestamp("scheduled_for"),
+  status: varchar("status", { length: 20 }).default("draft").notNull(),
+  publishedAt: timestamp("published_at"),
+  engagement: jsonb("engagement"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("social_posts_user_idx").on(table.userId),
+  statusIdx: index("social_posts_status_idx").on(table.status),
+  scheduledIdx: index("social_posts_scheduled_idx").on(table.scheduledFor),
+}));
+
+// 5. Platform Connections - OAuth tokens for social platforms
+export const platformConnections = pgTable("platform_connections", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  platform: varchar("platform", { length: 50 }).notNull(),
+  accessToken: text("access_token").notNull(),
+  refreshToken: text("refresh_token"),
+  expiresAt: timestamp("expires_at"),
+  scope: text("scope").array(),
+  platformUserId: varchar("platform_user_id", { length: 255 }),
+  platformUsername: varchar("platform_username", { length: 255 }),
+  isActive: boolean("is_active").default(true).notNull(),
+  lastUsedAt: timestamp("last_used_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userPlatformIdx: uniqueIndex("platform_connections_user_platform_idx").on(table.userId, table.platform),
+  activeIdx: index("platform_connections_active_idx").on(table.isActive),
+}));
+
+// 6. Social Campaigns - AI marketing campaigns
+export const socialCampaigns = pgTable("social_campaigns", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 255 }).notNull(),
+  objective: varchar("objective", { length: 50 }).notNull(),
+  targetAudience: jsonb("target_audience"),
+  contentType: varchar("content_type", { length: 50 }),
+  platforms: text("platforms").array().notNull(),
+  budget: numeric("budget", { precision: 10, scale: 2 }),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date"),
+  status: varchar("status", { length: 20 }).default("draft").notNull(),
+  aiGenerated: boolean("ai_generated").default(false),
+  performance: jsonb("performance"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("social_campaigns_user_idx").on(table.userId),
+  statusIdx: index("social_campaigns_status_idx").on(table.status),
+  startDateIdx: index("social_campaigns_start_date_idx").on(table.startDate),
+}));
+
+// 7. AI Generated Content - AI-created posts/images/videos
+export const aiGeneratedContent = pgTable("ai_generated_content", {
+  id: serial("id").primaryKey(),
+  campaignId: integer("campaign_id").references(() => socialCampaigns.id, { onDelete: "set null" }),
+  agentId: integer("agent_id").notNull(),
+  contentType: varchar("content_type", { length: 20 }).notNull(),
+  content: text("content"),
+  mediaUrl: varchar("media_url", { length: 500 }),
+  aiModel: varchar("ai_model", { length: 100 }),
+  prompt: text("prompt"),
+  generatedAt: timestamp("generated_at").defaultNow().notNull(),
+  approvalStatus: varchar("approval_status", { length: 20 }).default("pending").notNull(),
+  humanFeedback: text("human_feedback"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  campaignIdx: index("ai_content_campaign_idx").on(table.campaignId),
+  agentIdx: index("ai_content_agent_idx").on(table.agentId),
+  statusIdx: index("ai_content_status_idx").on(table.approvalStatus),
+  typeIdx: index("ai_content_type_idx").on(table.contentType),
+}));
+
+// 8. Event Claims - Venue/organizer event claims
+export const eventClaims = pgTable("event_claims", {
+  id: serial("id").primaryKey(),
+  scrapedEventId: integer("scraped_event_id").notNull().references(() => scrapedEvents.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  claimReason: text("claim_reason").notNull(),
+  verificationStatus: varchar("verification_status", { length: 20 }).default("pending").notNull(),
+  verificationMethod: varchar("verification_method", { length: 20 }),
+  claimedAt: timestamp("claimed_at").defaultNow().notNull(),
+  verifiedAt: timestamp("verified_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  eventIdx: index("event_claims_event_idx").on(table.scrapedEventId),
+  userIdx: index("event_claims_user_idx").on(table.userId),
+  statusIdx: index("event_claims_status_idx").on(table.verificationStatus),
+}));
+
+// 9. Cross Platform Analytics - Unified analytics
+export const crossPlatformAnalytics = pgTable("cross_platform_analytics", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  period: varchar("period", { length: 20 }).notNull(),
+  periodStart: timestamp("period_start").notNull(),
+  periodEnd: timestamp("period_end").notNull(),
+  platformMetrics: jsonb("platform_metrics"),
+  topPosts: jsonb("top_posts"),
+  growth: jsonb("growth"),
+  calculatedAt: timestamp("calculated_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("analytics_user_idx").on(table.userId),
+  periodIdx: index("analytics_period_idx").on(table.period),
+  periodStartIdx: index("analytics_period_start_idx").on(table.periodStart),
+}));
+
+// 10. API Health Logs - Agent #120 monitoring logs
+export const apiHealthLogs = pgTable("api_health_logs", {
+  id: serial("id").primaryKey(),
+  platform: varchar("platform", { length: 50 }).notNull(),
+  endpoint: varchar("endpoint", { length: 255 }).notNull(),
+  responseTime: integer("response_time"),
+  statusCode: integer("status_code"),
+  isHealthy: boolean("is_healthy").notNull(),
+  errorMessage: text("error_message"),
+  checkedAt: timestamp("checked_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  platformIdx: index("api_health_platform_idx").on(table.platform),
+  healthyIdx: index("api_health_healthy_idx").on(table.isHealthy),
+  checkedAtIdx: index("api_health_checked_at_idx").on(table.checkedAt),
+}));
+
+// ============================================================================
+// ZOD VALIDATION SCHEMAS - SOCIAL MEDIA & EVENT SCRAPING
+// ============================================================================
+
+// 1. Scraped Events
+export const insertScrapedEventSchema = createInsertSchema(scrapedEvents)
+  .omit({ id: true, createdAt: true, updatedAt: true, scrapedAt: true })
+  .extend({
+    sourceUrl: z.string().url().max(500),
+    sourceName: z.string().min(1).max(255),
+    title: z.string().min(1).max(500),
+    description: z.string().optional(),
+    location: z.string().max(255).optional(),
+    organizer: z.string().max(255).optional(),
+    price: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    imageUrl: z.string().url().max(500).optional(),
+    externalId: z.string().max(255).optional(),
+    status: z.enum(['pending_review', 'approved', 'rejected']),
+  });
+export const selectScrapedEventSchema = createSelectSchema(scrapedEvents);
+export type InsertScrapedEvent = z.infer<typeof insertScrapedEventSchema>;
+export type SelectScrapedEvent = typeof scrapedEvents.$inferSelect;
+
+// 2. Event Scraping Sources
+export const insertEventScrapingSourceSchema = createInsertSchema(eventScrapingSources)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    name: z.string().min(1).max(255),
+    url: z.string().url().max(500),
+    platform: z.enum(['facebook', 'instagram', 'website', 'eventbrite', 'meetup']),
+    country: z.string().max(100).optional(),
+    city: z.string().max(100).optional(),
+    scrapeFrequency: z.enum(['hourly', 'daily', 'weekly']),
+  });
+export const selectEventScrapingSourceSchema = createSelectSchema(eventScrapingSources);
+export type InsertEventScrapingSource = z.infer<typeof insertEventScrapingSourceSchema>;
+export type SelectEventScrapingSource = typeof eventScrapingSources.$inferSelect;
+
+// 3. Facebook Imports
+export const insertFacebookImportSchema = createInsertSchema(facebookImports)
+  .omit({ id: true, createdAt: true, updatedAt: true, importedAt: true })
+  .extend({
+    facebookId: z.string().min(1).max(100),
+    importedData: z.record(z.any()).optional(),
+    importStatus: z.enum(['pending', 'processing', 'completed', 'failed']),
+  });
+export const selectFacebookImportSchema = createSelectSchema(facebookImports);
+export type InsertFacebookImport = z.infer<typeof insertFacebookImportSchema>;
+export type SelectFacebookImport = typeof facebookImports.$inferSelect;
+
+// 4. Social Posts
+export const insertSocialPostSchema = createInsertSchema(socialPosts)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    content: z.string().min(1),
+    mediaUrls: z.array(z.string().url()).optional(),
+    platforms: z.array(z.string()).min(1),
+    status: z.enum(['draft', 'scheduled', 'publishing', 'published', 'failed']),
+    engagement: z.record(z.any()).optional(),
+  });
+export const selectSocialPostSchema = createSelectSchema(socialPosts);
+export type InsertSocialPost = z.infer<typeof insertSocialPostSchema>;
+export type SelectSocialPost = typeof socialPosts.$inferSelect;
+
+// 5. Platform Connections
+export const insertPlatformConnectionSchema = createInsertSchema(platformConnections)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    platform: z.enum(['facebook', 'instagram', 'linkedin', 'twitter']),
+    accessToken: z.string().min(1),
+    refreshToken: z.string().optional(),
+    scope: z.array(z.string()).optional(),
+    platformUserId: z.string().max(255).optional(),
+    platformUsername: z.string().max(255).optional(),
+  });
+export const selectPlatformConnectionSchema = createSelectSchema(platformConnections);
+export type InsertPlatformConnection = z.infer<typeof insertPlatformConnectionSchema>;
+export type SelectPlatformConnection = typeof platformConnections.$inferSelect;
+
+// 6. Social Campaigns
+export const insertSocialCampaignSchema = createInsertSchema(socialCampaigns)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    name: z.string().min(1).max(255),
+    objective: z.enum(['event_promotion', 'user_growth', 'engagement', 'viral']),
+    targetAudience: z.record(z.any()).optional(),
+    contentType: z.enum(['video', 'image', 'text', 'carousel']).optional(),
+    platforms: z.array(z.string()).min(1),
+    budget: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    status: z.enum(['draft', 'active', 'paused', 'completed']),
+    performance: z.record(z.any()).optional(),
+  });
+export const selectSocialCampaignSchema = createSelectSchema(socialCampaigns);
+export type InsertSocialCampaign = z.infer<typeof insertSocialCampaignSchema>;
+export type SelectSocialCampaign = typeof socialCampaigns.$inferSelect;
+
+// 7. AI Generated Content
+export const insertAIGeneratedContentSchema = createInsertSchema(aiGeneratedContent)
+  .omit({ id: true, createdAt: true, updatedAt: true, generatedAt: true })
+  .extend({
+    agentId: z.number().int().min(120).max(125),
+    contentType: z.enum(['text', 'image', 'video']),
+    content: z.string().optional(),
+    mediaUrl: z.string().url().max(500).optional(),
+    aiModel: z.string().max(100).optional(),
+    prompt: z.string().optional(),
+    approvalStatus: z.enum(['pending', 'approved', 'rejected']),
+    humanFeedback: z.string().optional(),
+  });
+export const selectAIGeneratedContentSchema = createSelectSchema(aiGeneratedContent);
+export type InsertAIGeneratedContent = z.infer<typeof insertAIGeneratedContentSchema>;
+export type SelectAIGeneratedContent = typeof aiGeneratedContent.$inferSelect;
+
+// 8. Event Claims
+export const insertEventClaimSchema = createInsertSchema(eventClaims)
+  .omit({ id: true, createdAt: true, updatedAt: true, claimedAt: true })
+  .extend({
+    claimReason: z.string().min(10),
+    verificationStatus: z.enum(['pending', 'verified', 'rejected']),
+    verificationMethod: z.enum(['email', 'phone', 'document', 'manual']).optional(),
+  });
+export const selectEventClaimSchema = createSelectSchema(eventClaims);
+export type InsertEventClaim = z.infer<typeof insertEventClaimSchema>;
+export type SelectEventClaim = typeof eventClaims.$inferSelect;
+
+// 9. Cross Platform Analytics
+export const insertCrossPlatformAnalyticsSchema = createInsertSchema(crossPlatformAnalytics)
+  .omit({ id: true, createdAt: true, calculatedAt: true })
+  .extend({
+    period: z.enum(['day', 'week', 'month']),
+    platformMetrics: z.record(z.any()).optional(),
+    topPosts: z.record(z.any()).optional(),
+    growth: z.record(z.any()).optional(),
+  });
+export const selectCrossPlatformAnalyticsSchema = createSelectSchema(crossPlatformAnalytics);
+export type InsertCrossPlatformAnalytics = z.infer<typeof insertCrossPlatformAnalyticsSchema>;
+export type SelectCrossPlatformAnalytics = typeof crossPlatformAnalytics.$inferSelect;
+
+// 10. API Health Logs
+export const insertAPIHealthLogSchema = createInsertSchema(apiHealthLogs)
+  .omit({ id: true, createdAt: true, checkedAt: true })
+  .extend({
+    platform: z.enum(['facebook', 'instagram', 'linkedin', 'twitter', 'coinbase', 'schwab']),
+    endpoint: z.string().min(1).max(255),
+    responseTime: z.number().int().optional(),
+    statusCode: z.number().int().optional(),
+    errorMessage: z.string().optional(),
+  });
+export const selectAPIHealthLogSchema = createSelectSchema(apiHealthLogs);
+export type InsertAPIHealthLog = z.infer<typeof insertAPIHealthLogSchema>;
+export type SelectAPIHealthLog = typeof apiHealthLogs.$inferSelect;
+
+// ============================================================================
+// MARKETPLACE SYSTEMS (Agents #158-160) - WAVE 1 STREAM 3
+// ============================================================================
+
+// 1. Funding Campaigns (GoFundMe-style crowdfunding)
+export const fundingCampaigns = pgTable("funding_campaigns", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  story: text("story"),
+  
+  goalAmount: numeric("goal_amount", { precision: 10, scale: 2 }).notNull(),
+  currentAmount: numeric("current_amount", { precision: 10, scale: 2 }).default("0").notNull(),
+  currency: varchar("currency", { length: 3 }).default("USD").notNull(),
+  
+  category: varchar("category", { length: 50 }).notNull(),
+  imageUrl: varchar("image_url", { length: 500 }),
+  videoUrl: varchar("video_url", { length: 500 }),
+  
+  deadline: timestamp("deadline"),
+  status: varchar("status", { length: 20 }).default("draft").notNull(),
+  beneficiaryType: varchar("beneficiary_type", { length: 50 }).notNull(),
+  visibility: varchar("visibility", { length: 20 }).default("public").notNull(),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("funding_campaigns_user_idx").on(table.userId),
+  statusIdx: index("funding_campaigns_status_idx").on(table.status),
+  categoryIdx: index("funding_campaigns_category_idx").on(table.category),
+  createdAtIdx: index("funding_campaigns_created_at_idx").on(table.createdAt),
+}));
+
+// 2. Campaign Donations
+export const campaignDonations = pgTable("campaign_donations", {
+  id: serial("id").primaryKey(),
+  campaignId: integer("campaign_id").notNull().references(() => fundingCampaigns.id, { onDelete: "cascade" }),
+  donorUserId: integer("donor_user_id").references(() => users.id, { onDelete: "set null" }),
+  
+  amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 3 }).default("USD").notNull(),
+  
+  donorName: varchar("donor_name", { length: 255 }),
+  message: text("message"),
+  isAnonymous: boolean("is_anonymous").default(false).notNull(),
+  
+  stripePaymentId: varchar("stripe_payment_id", { length: 255 }),
+  platformFee: numeric("platform_fee", { precision: 10, scale: 2 }).notNull(),
+  netAmount: numeric("net_amount", { precision: 10, scale: 2 }).notNull(),
+  
+  donatedAt: timestamp("donated_at").defaultNow().notNull(),
+  refundStatus: varchar("refund_status", { length: 20 }),
+}, (table) => ({
+  campaignIdx: index("campaign_donations_campaign_idx").on(table.campaignId),
+  donorIdx: index("campaign_donations_donor_idx").on(table.donorUserId),
+  donatedAtIdx: index("campaign_donations_donated_at_idx").on(table.donatedAt),
+}));
+
+// 3. Campaign Updates
+export const campaignUpdates = pgTable("campaign_updates", {
+  id: serial("id").primaryKey(),
+  campaignId: integer("campaign_id").notNull().references(() => fundingCampaigns.id, { onDelete: "cascade" }),
+  
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content").notNull(),
+  imageUrls: text("image_urls").array(),
+  videoUrl: varchar("video_url", { length: 500 }),
+  
+  postedAt: timestamp("posted_at").defaultNow().notNull(),
+}, (table) => ({
+  campaignIdx: index("campaign_updates_campaign_idx").on(table.campaignId),
+  postedAtIdx: index("campaign_updates_posted_at_idx").on(table.postedAt),
+}));
+
+// 4. Legal Documents (Contract templates)
+export const legalDocuments = pgTable("legal_documents", {
+  id: serial("id").primaryKey(),
+  creatorUserId: integer("creator_user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  category: varchar("category", { length: 50 }).notNull(),
+  
+  templateContent: text("template_content").notNull(),
+  requiredFields: jsonb("required_fields"),
+  
+  price: numeric("price", { precision: 10, scale: 2 }),
+  isPremium: boolean("is_premium").default(false).notNull(),
+  downloads: integer("downloads").default(0).notNull(),
+  rating: numeric("rating", { precision: 3, scale: 2 }),
+  
+  status: varchar("status", { length: 20 }).default("draft").notNull(),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  creatorIdx: index("legal_documents_creator_idx").on(table.creatorUserId),
+  categoryIdx: index("legal_documents_category_idx").on(table.category),
+  statusIdx: index("legal_documents_status_idx").on(table.status),
+  isPremiumIdx: index("legal_documents_is_premium_idx").on(table.isPremium),
+}));
+
+// 5. Document Instances (Filled-out documents)
+export const documentInstances = pgTable("document_instances", {
+  id: serial("id").primaryKey(),
+  templateId: integer("template_id").notNull().references(() => legalDocuments.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  filledContent: text("filled_content").notNull(),
+  variables: jsonb("variables"),
+  
+  status: varchar("status", { length: 50 }).default("draft").notNull(),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  templateIdx: index("document_instances_template_idx").on(table.templateId),
+  userIdx: index("document_instances_user_idx").on(table.userId),
+  statusIdx: index("document_instances_status_idx").on(table.status),
+}));
+
+// 6. Document Signatures (E-signatures)
+export const documentSignatures = pgTable("document_signatures", {
+  id: serial("id").primaryKey(),
+  documentInstanceId: integer("document_instance_id").notNull().references(() => documentInstances.id, { onDelete: "cascade" }),
+  signerUserId: integer("signer_user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  signerName: varchar("signer_name", { length: 255 }).notNull(),
+  signerEmail: varchar("signer_email", { length: 255 }).notNull(),
+  signatureData: text("signature_data").notNull(),
+  ipAddress: varchar("ip_address", { length: 45 }),
+  
+  signedAt: timestamp("signed_at").defaultNow().notNull(),
+  verificationMethod: varchar("verification_method", { length: 20 }).notNull(),
+}, (table) => ({
+  documentIdx: index("document_signatures_document_idx").on(table.documentInstanceId),
+  signerIdx: index("document_signatures_signer_idx").on(table.signerUserId),
+  signedAtIdx: index("document_signatures_signed_at_idx").on(table.signedAt),
+}));
+
+// 7. Marketplace Products (Creator digital products)
+export const marketplaceProducts = pgTable("marketplace_products", {
+  id: serial("id").primaryKey(),
+  creatorUserId: integer("creator_user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  category: varchar("category", { length: 50 }).notNull(),
+  
+  price: numeric("price", { precision: 10, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 3 }).default("USD").notNull(),
+  
+  mediaUrls: text("media_urls").array(),
+  downloadUrl: varchar("download_url", { length: 500 }),
+  sampleUrl: varchar("sample_url", { length: 500 }),
+  
+  fileSize: integer("file_size"),
+  fileFormat: varchar("file_format", { length: 50 }),
+  tags: text("tags").array(),
+  
+  difficulty: varchar("difficulty", { length: 20 }),
+  duration: integer("duration"),
+  rating: numeric("rating", { precision: 3, scale: 2 }),
+  
+  totalSales: integer("total_sales").default(0).notNull(),
+  revenue: numeric("revenue", { precision: 10, scale: 2 }).default("0").notNull(),
+  
+  status: varchar("status", { length: 20 }).default("draft").notNull(),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  creatorIdx: index("marketplace_products_creator_idx").on(table.creatorUserId),
+  categoryIdx: index("marketplace_products_category_idx").on(table.category),
+  statusIdx: index("marketplace_products_status_idx").on(table.status),
+  ratingIdx: index("marketplace_products_rating_idx").on(table.rating),
+  createdAtIdx: index("marketplace_products_created_at_idx").on(table.createdAt),
+}));
+
+// 8. Product Purchases
+export const productPurchases = pgTable("product_purchases", {
+  id: serial("id").primaryKey(),
+  productId: integer("product_id").notNull().references(() => marketplaceProducts.id, { onDelete: "cascade" }),
+  buyerUserId: integer("buyer_user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
+  platformFee: numeric("platform_fee", { precision: 10, scale: 2 }).notNull(),
+  creatorPayout: numeric("creator_payout", { precision: 10, scale: 2 }).notNull(),
+  
+  stripePaymentId: varchar("stripe_payment_id", { length: 255 }),
+  downloadCount: integer("download_count").default(0).notNull(),
+  downloadExpiresAt: timestamp("download_expires_at"),
+  
+  purchasedAt: timestamp("purchased_at").defaultNow().notNull(),
+  refundStatus: varchar("refund_status", { length: 20 }),
+}, (table) => ({
+  productIdx: index("product_purchases_product_idx").on(table.productId),
+  buyerIdx: index("product_purchases_buyer_idx").on(table.buyerUserId),
+  purchasedAtIdx: index("product_purchases_purchased_at_idx").on(table.purchasedAt),
+}));
+
+// 9. Product Reviews
+export const productReviews = pgTable("product_reviews", {
+  id: serial("id").primaryKey(),
+  productId: integer("product_id").notNull().references(() => marketplaceProducts.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  rating: integer("rating").notNull(),
+  review: text("review"),
+  isPurchaseVerified: boolean("is_purchase_verified").default(false).notNull(),
+  helpfulCount: integer("helpful_count").default(0).notNull(),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  productIdx: index("product_reviews_product_idx").on(table.productId),
+  userIdx: index("product_reviews_user_idx").on(table.userId),
+  ratingIdx: index("product_reviews_rating_idx").on(table.rating),
+  uniqueReview: uniqueIndex("unique_product_review").on(table.productId, table.userId),
+}));
+
+// 10. Marketplace Analytics
+export const marketplaceAnalytics = pgTable("marketplace_analytics", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  period: varchar("period", { length: 20 }).notNull(),
+  periodStart: timestamp("period_start").notNull(),
+  periodEnd: timestamp("period_end").notNull(),
+  
+  totalRevenue: numeric("total_revenue", { precision: 10, scale: 2 }).notNull(),
+  platformFees: numeric("platform_fees", { precision: 10, scale: 2 }).notNull(),
+  netRevenue: numeric("net_revenue", { precision: 10, scale: 2 }).notNull(),
+  totalSales: integer("total_sales").notNull(),
+  
+  productsSold: jsonb("products_sold"),
+  topProducts: jsonb("top_products"),
+  
+  calculatedAt: timestamp("calculated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("marketplace_analytics_user_idx").on(table.userId),
+  periodIdx: index("marketplace_analytics_period_idx").on(table.period),
+  periodStartIdx: index("marketplace_analytics_period_start_idx").on(table.periodStart),
+}));
+
+// ============================================================================
+// MARKETPLACE SYSTEMS - ZOD VALIDATION SCHEMAS
+// ============================================================================
+
+// 1. Funding Campaigns
+export const insertFundingCampaignSchema = createInsertSchema(fundingCampaigns)
+  .omit({ id: true, createdAt: true, updatedAt: true, currentAmount: true })
+  .extend({
+    title: z.string().min(1).max(255),
+    description: z.string().min(10),
+    story: z.string().optional(),
+    goalAmount: z.string().regex(/^\d+(\.\d{1,2})?$/),
+    currency: z.string().length(3).default("USD"),
+    category: z.enum(['event', 'medical', 'education', 'community', 'travel', 'equipment']),
+    imageUrl: z.string().url().max(500).optional(),
+    videoUrl: z.string().url().max(500).optional(),
+    status: z.enum(['draft', 'active', 'paused', 'completed', 'cancelled']).default('draft'),
+    beneficiaryType: z.enum(['individual', 'organization', 'community']),
+    visibility: z.enum(['public', 'private', 'unlisted']).default('public'),
+  });
+export const selectFundingCampaignSchema = createSelectSchema(fundingCampaigns);
+export type InsertFundingCampaign = z.infer<typeof insertFundingCampaignSchema>;
+export type SelectFundingCampaign = typeof fundingCampaigns.$inferSelect;
+
+// 2. Campaign Donations
+export const insertCampaignDonationSchema = createInsertSchema(campaignDonations)
+  .omit({ id: true, donatedAt: true })
+  .extend({
+    amount: z.string().regex(/^\d+(\.\d{1,2})?$/),
+    currency: z.string().length(3).default("USD"),
+    donorName: z.string().max(255).optional(),
+    message: z.string().optional(),
+    isAnonymous: z.boolean().default(false),
+    platformFee: z.string().regex(/^\d+(\.\d{1,2})?$/),
+    netAmount: z.string().regex(/^\d+(\.\d{1,2})?$/),
+    stripePaymentId: z.string().max(255).optional(),
+    refundStatus: z.enum(['none', 'pending', 'refunded']).optional(),
+  });
+export const selectCampaignDonationSchema = createSelectSchema(campaignDonations);
+export type InsertCampaignDonation = z.infer<typeof insertCampaignDonationSchema>;
+export type SelectCampaignDonation = typeof campaignDonations.$inferSelect;
+
+// 3. Campaign Updates
+export const insertCampaignUpdateSchema = createInsertSchema(campaignUpdates)
+  .omit({ id: true, postedAt: true })
+  .extend({
+    title: z.string().min(1).max(255),
+    content: z.string().min(1),
+    imageUrls: z.array(z.string().url()).optional(),
+    videoUrl: z.string().url().max(500).optional(),
+  });
+export const selectCampaignUpdateSchema = createSelectSchema(campaignUpdates);
+export type InsertCampaignUpdate = z.infer<typeof insertCampaignUpdateSchema>;
+export type SelectCampaignUpdate = typeof campaignUpdates.$inferSelect;
+
+// 4. Legal Documents
+export const insertLegalDocumentSchema = createInsertSchema(legalDocuments)
+  .omit({ id: true, createdAt: true, updatedAt: true, downloads: true, rating: true })
+  .extend({
+    title: z.string().min(1).max(255),
+    description: z.string().min(10),
+    category: z.enum(['contract', 'waiver', 'agreement', 'release', 'nda', 'terms']),
+    templateContent: z.string().min(1),
+    requiredFields: z.array(z.string()).optional(),
+    price: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    isPremium: z.boolean().default(false),
+    status: z.enum(['draft', 'published', 'archived']).default('draft'),
+  });
+export const selectLegalDocumentSchema = createSelectSchema(legalDocuments);
+export type InsertLegalDocument = z.infer<typeof insertLegalDocumentSchema>;
+export type SelectLegalDocument = typeof legalDocuments.$inferSelect;
+
+// 5. Document Instances
+export const insertDocumentInstanceSchema = createInsertSchema(documentInstances)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    filledContent: z.string().min(1),
+    variables: z.record(z.any()).optional(),
+    status: z.enum(['draft', 'pending_signature', 'signed', 'archived']).default('draft'),
+  });
+export const selectDocumentInstanceSchema = createSelectSchema(documentInstances);
+export type InsertDocumentInstance = z.infer<typeof insertDocumentInstanceSchema>;
+export type SelectDocumentInstance = typeof documentInstances.$inferSelect;
+
+// 6. Document Signatures
+export const insertDocumentSignatureSchema = createInsertSchema(documentSignatures)
+  .omit({ id: true, signedAt: true })
+  .extend({
+    signerName: z.string().min(1).max(255),
+    signerEmail: z.string().email().max(255),
+    signatureData: z.string().min(1),
+    ipAddress: z.string().max(45).optional(),
+    verificationMethod: z.enum(['email', 'sms', 'manual']),
+  });
+export const selectDocumentSignatureSchema = createSelectSchema(documentSignatures);
+export type InsertDocumentSignature = z.infer<typeof insertDocumentSignatureSchema>;
+export type SelectDocumentSignature = typeof documentSignatures.$inferSelect;
+
+// 7. Marketplace Products
+export const insertMarketplaceProductSchema = createInsertSchema(marketplaceProducts)
+  .omit({ id: true, createdAt: true, updatedAt: true, totalSales: true, revenue: true, rating: true })
+  .extend({
+    title: z.string().min(1).max(255),
+    description: z.string().min(10),
+    category: z.enum(['course', 'music', 'choreography', 'video', 'ebook', 'template', 'tutorial']),
+    price: z.string().regex(/^\d+(\.\d{1,2})?$/),
+    currency: z.string().length(3).default("USD"),
+    mediaUrls: z.array(z.string().url()).optional(),
+    downloadUrl: z.string().url().max(500).optional(),
+    sampleUrl: z.string().url().max(500).optional(),
+    fileSize: z.number().int().optional(),
+    fileFormat: z.string().max(50).optional(),
+    tags: z.array(z.string()).optional(),
+    difficulty: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
+    duration: z.number().int().optional(),
+    status: z.enum(['draft', 'published', 'archived']).default('draft'),
+  });
+export const selectMarketplaceProductSchema = createSelectSchema(marketplaceProducts);
+export type InsertMarketplaceProduct = z.infer<typeof insertMarketplaceProductSchema>;
+export type SelectMarketplaceProduct = typeof marketplaceProducts.$inferSelect;
+
+// 8. Product Purchases
+export const insertProductPurchaseSchema = createInsertSchema(productPurchases)
+  .omit({ id: true, purchasedAt: true, downloadCount: true })
+  .extend({
+    amount: z.string().regex(/^\d+(\.\d{1,2})?$/),
+    platformFee: z.string().regex(/^\d+(\.\d{1,2})?$/),
+    creatorPayout: z.string().regex(/^\d+(\.\d{1,2})?$/),
+    stripePaymentId: z.string().max(255).optional(),
+    refundStatus: z.enum(['none', 'pending', 'refunded']).optional(),
+  });
+export const selectProductPurchaseSchema = createSelectSchema(productPurchases);
+export type InsertProductPurchase = z.infer<typeof insertProductPurchaseSchema>;
+export type SelectProductPurchase = typeof productPurchases.$inferSelect;
+
+// 9. Product Reviews
+export const insertProductReviewSchema = createInsertSchema(productReviews)
+  .omit({ id: true, createdAt: true, updatedAt: true, helpfulCount: true, isPurchaseVerified: true })
+  .extend({
+    rating: z.number().int().min(1).max(5),
+    review: z.string().optional(),
+  });
+export const selectProductReviewSchema = createSelectSchema(productReviews);
+export type InsertProductReview = z.infer<typeof insertProductReviewSchema>;
+export type SelectProductReview = typeof productReviews.$inferSelect;
+
+// 10. Marketplace Analytics
+export const insertMarketplaceAnalyticsSchema = createInsertSchema(marketplaceAnalytics)
+  .omit({ id: true, calculatedAt: true })
+  .extend({
+    period: z.enum(['day', 'week', 'month']),
+    totalRevenue: z.string().regex(/^\d+(\.\d{1,2})?$/),
+    platformFees: z.string().regex(/^\d+(\.\d{1,2})?$/),
+    netRevenue: z.string().regex(/^\d+(\.\d{1,2})?$/),
+    totalSales: z.number().int().min(0),
+    productsSold: z.record(z.any()).optional(),
+    topProducts: z.record(z.any()).optional(),
+  });
+export const selectMarketplaceAnalyticsSchema = createSelectSchema(marketplaceAnalytics);
+export type InsertMarketplaceAnalytics = z.infer<typeof insertMarketplaceAnalyticsSchema>;
+export type SelectMarketplaceAnalytics = typeof marketplaceAnalytics.$inferSelect;
+
+// ============================================================================
+// TRAVEL INTEGRATION SYSTEM (WAVE 1 - STREAM 4, Agent #157)
+// ============================================================================
+
+// 1. Travel Searches - Search history & preferences
+export const travelSearches = pgTable("travel_searches", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  searchType: varchar("search_type", { length: 50 }).notNull(),
+  origin: varchar("origin", { length: 100 }),
+  destination: varchar("destination", { length: 100 }),
+  departDate: timestamp("depart_date"),
+  returnDate: timestamp("return_date"),
+  passengers: integer("passengers").default(1),
+  cabinClass: varchar("cabin_class", { length: 50 }),
+  budget: numeric("budget", { precision: 10, scale: 2 }),
+  preferences: jsonb("preferences"),
+  relatedEventId: integer("related_event_id").references(() => events.id, { onDelete: "set null" }),
+  searchedAt: timestamp("searched_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("travel_searches_user_idx").on(table.userId),
+  eventIdx: index("travel_searches_event_idx").on(table.relatedEventId),
+  searchedAtIdx: index("travel_searches_searched_at_idx").on(table.searchedAt),
+  typeIdx: index("travel_searches_type_idx").on(table.searchType),
+}));
+
+// 2. Flight Results - Cached flight search results
+export const flightResults = pgTable("flight_results", {
+  id: serial("id").primaryKey(),
+  searchId: integer("search_id").notNull().references(() => travelSearches.id, { onDelete: "cascade" }),
+  apiProvider: varchar("api_provider", { length: 50 }).notNull(),
+  airline: varchar("airline", { length: 100 }),
+  flightNumber: varchar("flight_number", { length: 50 }),
+  departureAirport: varchar("departure_airport", { length: 10 }),
+  arrivalAirport: varchar("arrival_airport", { length: 10 }),
+  departureTime: timestamp("departure_time"),
+  arrivalTime: timestamp("arrival_time"),
+  duration: integer("duration"),
+  stops: integer("stops").default(0),
+  price: numeric("price", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  cabinClass: varchar("cabin_class", { length: 50 }),
+  availableSeats: integer("available_seats"),
+  deepLink: text("deep_link"),
+  rawData: jsonb("raw_data"),
+  cachedAt: timestamp("cached_at").defaultNow(),
+  expiresAt: timestamp("expires_at"),
+}, (table) => ({
+  searchIdx: index("flight_results_search_idx").on(table.searchId),
+  providerIdx: index("flight_results_provider_idx").on(table.apiProvider),
+  priceIdx: index("flight_results_price_idx").on(table.price),
+  expiresIdx: index("flight_results_expires_idx").on(table.expiresAt),
+}));
+
+// 3. Accommodation Results - Cached accommodation results
+export const accommodationResults = pgTable("accommodation_results", {
+  id: serial("id").primaryKey(),
+  searchId: integer("search_id").notNull().references(() => travelSearches.id, { onDelete: "cascade" }),
+  apiProvider: varchar("api_provider", { length: 50 }).notNull(),
+  name: varchar("name", { length: 255 }),
+  address: text("address"),
+  lat: numeric("lat", { precision: 10, scale: 7 }),
+  lng: numeric("lng", { precision: 10, scale: 7 }),
+  rating: numeric("rating", { precision: 3, scale: 2 }),
+  reviewCount: integer("review_count").default(0),
+  pricePerNight: numeric("price_per_night", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  totalPrice: numeric("total_price", { precision: 10, scale: 2 }),
+  checkIn: timestamp("check_in"),
+  checkOut: timestamp("check_out"),
+  roomType: varchar("room_type", { length: 100 }),
+  amenities: text("amenities").array(),
+  imageUrls: text("image_urls").array(),
+  deepLink: text("deep_link"),
+  distanceToEvent: numeric("distance_to_event", { precision: 10, scale: 2 }),
+  rawData: jsonb("raw_data"),
+  cachedAt: timestamp("cached_at").defaultNow(),
+}, (table) => ({
+  searchIdx: index("accommodation_results_search_idx").on(table.searchId),
+  providerIdx: index("accommodation_results_provider_idx").on(table.apiProvider),
+  priceIdx: index("accommodation_results_price_idx").on(table.pricePerNight),
+  ratingIdx: index("accommodation_results_rating_idx").on(table.rating),
+}));
+
+// 4. Trip Plans - User trip itineraries
+export const tripPlans = pgTable("trip_plans", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 255 }).notNull(),
+  destination: varchar("destination", { length: 255 }),
+  startDate: timestamp("start_date"),
+  endDate: timestamp("end_date"),
+  relatedEventIds: integer("related_event_ids").array(),
+  flightBookingId: integer("flight_booking_id"),
+  accommodationBookingId: integer("accommodation_booking_id"),
+  status: varchar("status", { length: 50 }).default("planning"),
+  visibility: varchar("visibility", { length: 50 }).default("private"),
+  budget: numeric("budget", { precision: 10, scale: 2 }),
+  actualSpent: numeric("actual_spent", { precision: 10, scale: 2 }).default("0"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("trip_plans_user_idx").on(table.userId),
+  statusIdx: index("trip_plans_status_idx").on(table.status),
+  datesIdx: index("trip_plans_dates_idx").on(table.startDate, table.endDate),
+}));
+
+// 5. Travel Bookings - Actual bookings (flights + hotels)
+export const travelBookings = pgTable("travel_bookings", {
+  id: serial("id").primaryKey(),
+  tripPlanId: integer("trip_plan_id").references(() => tripPlans.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  bookingType: varchar("booking_type", { length: 50 }).notNull(),
+  provider: varchar("provider", { length: 255 }),
+  confirmationCode: varchar("confirmation_code", { length: 100 }),
+  bookingReference: varchar("booking_reference", { length: 100 }),
+  passengerDetails: jsonb("passenger_details"),
+  price: numeric("price", { precision: 10, scale: 2 }),
+  currency: varchar("currency", { length: 3 }).default("USD"),
+  bookingDate: timestamp("booking_date").defaultNow(),
+  status: varchar("status", { length: 50 }).default("confirmed"),
+  cancellationPolicy: text("cancellation_policy"),
+  rawBookingData: jsonb("raw_booking_data"),
+}, (table) => ({
+  tripIdx: index("travel_bookings_trip_idx").on(table.tripPlanId),
+  userIdx: index("travel_bookings_user_idx").on(table.userId),
+  statusIdx: index("travel_bookings_status_idx").on(table.status),
+  typeIdx: index("travel_bookings_type_idx").on(table.bookingType),
+}));
+
+// 6. Trip Itinerary Items - Daily itinerary items
+export const tripItineraryItems = pgTable("trip_itinerary_items", {
+  id: serial("id").primaryKey(),
+  tripPlanId: integer("trip_plan_id").notNull().references(() => tripPlans.id, { onDelete: "cascade" }),
+  date: timestamp("date").notNull(),
+  time: varchar("time", { length: 10 }),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  location: varchar("location", { length: 255 }),
+  lat: numeric("lat", { precision: 10, scale: 7 }),
+  lng: numeric("lng", { precision: 10, scale: 7 }),
+  itemType: varchar("item_type", { length: 50 }).notNull(),
+  relatedEventId: integer("related_event_id").references(() => events.id, { onDelete: "set null" }),
+  cost: numeric("cost", { precision: 10, scale: 2 }),
+  bookingRequired: boolean("booking_required").default(false),
+  notes: text("notes"),
+  order: integer("order").default(0),
+}, (table) => ({
+  tripIdx: index("trip_itinerary_items_trip_idx").on(table.tripPlanId),
+  dateIdx: index("trip_itinerary_items_date_idx").on(table.date),
+  typeIdx: index("trip_itinerary_items_type_idx").on(table.itemType),
+  eventIdx: index("trip_itinerary_items_event_idx").on(table.relatedEventId),
+}));
+
+// 7. Travel Preferences - User travel preferences
+export const travelPreferences = pgTable("travel_preferences", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  preferredAirlines: text("preferred_airlines").array(),
+  preferredCabinClass: varchar("preferred_cabin_class", { length: 50 }),
+  seatPreference: varchar("seat_preference", { length: 50 }),
+  mealPreference: varchar("meal_preference", { length: 100 }),
+  frequentFlyerNumbers: jsonb("frequent_flyer_numbers"),
+  accommodationPreferences: jsonb("accommodation_preferences"),
+  budgetRange: jsonb("budget_range"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: uniqueIndex("travel_preferences_user_idx").on(table.userId),
+}));
+
+// 8. Travel Buddies - Find travel companions
+export const travelBuddies = pgTable("travel_buddies", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  tripPlanId: integer("trip_plan_id").references(() => tripPlans.id, { onDelete: "set null" }),
+  destination: varchar("destination", { length: 255 }),
+  travelDates: varchar("travel_dates", { length: 100 }),
+  lookingFor: varchar("looking_for", { length: 50 }).notNull(),
+  message: text("message"),
+  status: varchar("status", { length: 50 }).default("active"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("travel_buddies_user_idx").on(table.userId),
+  destinationIdx: index("travel_buddies_destination_idx").on(table.destination),
+  statusIdx: index("travel_buddies_status_idx").on(table.status),
+}));
+
+// 9. Travel Alerts - Price drop alerts
+export const travelAlerts = pgTable("travel_alerts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  searchId: integer("search_id").notNull().references(() => travelSearches.id, { onDelete: "cascade" }),
+  alertType: varchar("alert_type", { length: 50 }).notNull(),
+  targetPrice: numeric("target_price", { precision: 10, scale: 2 }),
+  isActive: boolean("is_active").default(true),
+  lastCheckedAt: timestamp("last_checked_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("travel_alerts_user_idx").on(table.userId),
+  searchIdx: index("travel_alerts_search_idx").on(table.searchId),
+  activeIdx: index("travel_alerts_active_idx").on(table.isActive),
+}));
+
+// 10. Travel API Cache - API response caching
+export const travelApiCache = pgTable("travel_api_cache", {
+  id: serial("id").primaryKey(),
+  cacheKey: varchar("cache_key", { length: 500 }).notNull().unique(),
+  apiProvider: varchar("api_provider", { length: 50 }).notNull(),
+  endpoint: varchar("endpoint", { length: 255 }),
+  requestParams: jsonb("request_params"),
+  response: jsonb("response"),
+  cachedAt: timestamp("cached_at").defaultNow(),
+  expiresAt: timestamp("expires_at"),
+}, (table) => ({
+  keyIdx: uniqueIndex("travel_api_cache_key_idx").on(table.cacheKey),
+  providerIdx: index("travel_api_cache_provider_idx").on(table.apiProvider),
+  expiresIdx: index("travel_api_cache_expires_idx").on(table.expiresAt),
+}));
+
+// ============================================================================
+// TRAVEL INTEGRATION ZOD VALIDATION SCHEMAS
+// ============================================================================
+
+// 1. Travel Searches
+export const insertTravelSearchSchema = createInsertSchema(travelSearches)
+  .omit({ id: true, searchedAt: true })
+  .extend({
+    searchType: z.enum(['flight', 'accommodation', 'package']),
+    origin: z.string().max(100).optional(),
+    destination: z.string().max(100).optional(),
+    departDate: z.coerce.date().optional(),
+    returnDate: z.coerce.date().optional(),
+    passengers: z.number().int().min(1).max(20).default(1),
+    cabinClass: z.enum(['economy', 'premium_economy', 'business', 'first']).optional(),
+    budget: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    preferences: z.record(z.any()).optional(),
+  });
+export const selectTravelSearchSchema = createSelectSchema(travelSearches);
+export type InsertTravelSearch = z.infer<typeof insertTravelSearchSchema>;
+export type SelectTravelSearch = typeof travelSearches.$inferSelect;
+
+// 2. Flight Results
+export const insertFlightResultSchema = createInsertSchema(flightResults)
+  .omit({ id: true, cachedAt: true })
+  .extend({
+    apiProvider: z.enum(['serpapi', 'kiwi', 'amadeus']),
+    airline: z.string().max(100).optional(),
+    flightNumber: z.string().max(50).optional(),
+    departureAirport: z.string().max(10).optional(),
+    arrivalAirport: z.string().max(10).optional(),
+    departureTime: z.coerce.date().optional(),
+    arrivalTime: z.coerce.date().optional(),
+    duration: z.number().int().optional(),
+    stops: z.number().int().min(0).default(0),
+    price: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    currency: z.string().length(3).default("USD"),
+    cabinClass: z.string().max(50).optional(),
+    availableSeats: z.number().int().optional(),
+    deepLink: z.string().url().optional(),
+    rawData: z.record(z.any()).optional(),
+    expiresAt: z.coerce.date().optional(),
+  });
+export const selectFlightResultSchema = createSelectSchema(flightResults);
+export type InsertFlightResult = z.infer<typeof insertFlightResultSchema>;
+export type SelectFlightResult = typeof flightResults.$inferSelect;
+
+// 3. Accommodation Results
+export const insertAccommodationResultSchema = createInsertSchema(accommodationResults)
+  .omit({ id: true, cachedAt: true })
+  .extend({
+    apiProvider: z.enum(['booking', 'airbnb', 'hotels']),
+    name: z.string().max(255).optional(),
+    address: z.string().optional(),
+    lat: z.string().regex(/^-?\d+(\.\d+)?$/).optional(),
+    lng: z.string().regex(/^-?\d+(\.\d+)?$/).optional(),
+    rating: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    reviewCount: z.number().int().min(0).default(0),
+    pricePerNight: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    currency: z.string().length(3).default("USD"),
+    totalPrice: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    checkIn: z.coerce.date().optional(),
+    checkOut: z.coerce.date().optional(),
+    roomType: z.string().max(100).optional(),
+    amenities: z.array(z.string()).optional(),
+    imageUrls: z.array(z.string().url()).optional(),
+    deepLink: z.string().url().optional(),
+    distanceToEvent: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    rawData: z.record(z.any()).optional(),
+  });
+export const selectAccommodationResultSchema = createSelectSchema(accommodationResults);
+export type InsertAccommodationResult = z.infer<typeof insertAccommodationResultSchema>;
+export type SelectAccommodationResult = typeof accommodationResults.$inferSelect;
+
+// 4. Trip Plans
+export const insertTripPlanSchema = createInsertSchema(tripPlans)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    title: z.string().min(1).max(255),
+    destination: z.string().max(255).optional(),
+    startDate: z.coerce.date().optional(),
+    endDate: z.coerce.date().optional(),
+    relatedEventIds: z.array(z.number().int()).optional(),
+    flightBookingId: z.number().int().optional(),
+    accommodationBookingId: z.number().int().optional(),
+    status: z.enum(['planning', 'confirmed', 'in_progress', 'completed', 'cancelled']).default('planning'),
+    visibility: z.enum(['private', 'friends', 'public']).default('private'),
+    budget: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    actualSpent: z.string().regex(/^\d+(\.\d{1,2})?$/).default("0"),
+    notes: z.string().optional(),
+  });
+export const selectTripPlanSchema = createSelectSchema(tripPlans);
+export type InsertTripPlan = z.infer<typeof insertTripPlanSchema>;
+export type SelectTripPlan = typeof tripPlans.$inferSelect;
+
+// 5. Travel Bookings
+export const insertTravelBookingSchema = createInsertSchema(travelBookings)
+  .omit({ id: true, bookingDate: true })
+  .extend({
+    bookingType: z.enum(['flight', 'accommodation', 'package']),
+    provider: z.string().max(255).optional(),
+    confirmationCode: z.string().max(100).optional(),
+    bookingReference: z.string().max(100).optional(),
+    passengerDetails: z.record(z.any()).optional(),
+    price: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    currency: z.string().length(3).default("USD"),
+    status: z.enum(['confirmed', 'pending', 'cancelled', 'completed']).default('confirmed'),
+    cancellationPolicy: z.string().optional(),
+    rawBookingData: z.record(z.any()).optional(),
+  });
+export const selectTravelBookingSchema = createSelectSchema(travelBookings);
+export type InsertTravelBooking = z.infer<typeof insertTravelBookingSchema>;
+export type SelectTravelBooking = typeof travelBookings.$inferSelect;
+
+// 6. Trip Itinerary Items
+export const insertTripItineraryItemSchema = createInsertSchema(tripItineraryItems)
+  .omit({ id: true })
+  .extend({
+    date: z.coerce.date(),
+    time: z.string().max(10).optional(),
+    title: z.string().min(1).max(255),
+    description: z.string().optional(),
+    location: z.string().max(255).optional(),
+    lat: z.string().regex(/^-?\d+(\.\d+)?$/).optional(),
+    lng: z.string().regex(/^-?\d+(\.\d+)?$/).optional(),
+    itemType: z.enum(['flight', 'accommodation', 'event', 'activity', 'meal', 'transport', 'free_time']),
+    cost: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    bookingRequired: z.boolean().default(false),
+    notes: z.string().optional(),
+    order: z.number().int().default(0),
+  });
+export const selectTripItineraryItemSchema = createSelectSchema(tripItineraryItems);
+export type InsertTripItineraryItem = z.infer<typeof insertTripItineraryItemSchema>;
+export type SelectTripItineraryItem = typeof tripItineraryItems.$inferSelect;
+
+// 7. Travel Preferences
+export const insertTravelPreferenceSchema = createInsertSchema(travelPreferences)
+  .omit({ id: true, updatedAt: true })
+  .extend({
+    preferredAirlines: z.array(z.string()).optional(),
+    preferredCabinClass: z.enum(['economy', 'premium_economy', 'business', 'first']).optional(),
+    seatPreference: z.enum(['window', 'aisle', 'any']).optional(),
+    mealPreference: z.string().max(100).optional(),
+    frequentFlyerNumbers: z.record(z.any()).optional(),
+    accommodationPreferences: z.record(z.any()).optional(),
+    budgetRange: z.record(z.any()).optional(),
+  });
+export const selectTravelPreferenceSchema = createSelectSchema(travelPreferences);
+export type InsertTravelPreference = z.infer<typeof insertTravelPreferenceSchema>;
+export type SelectTravelPreference = typeof travelPreferences.$inferSelect;
+
+// 8. Travel Buddies
+export const insertTravelBuddySchema = createInsertSchema(travelBuddies)
+  .omit({ id: true, createdAt: true })
+  .extend({
+    destination: z.string().max(255).optional(),
+    travelDates: z.string().max(100).optional(),
+    lookingFor: z.enum(['roommate', 'travel_companion', 'event_buddy']),
+    message: z.string().optional(),
+    status: z.enum(['active', 'matched', 'inactive']).default('active'),
+  });
+export const selectTravelBuddySchema = createSelectSchema(travelBuddies);
+export type InsertTravelBuddy = z.infer<typeof insertTravelBuddySchema>;
+export type SelectTravelBuddy = typeof travelBuddies.$inferSelect;
+
+// 9. Travel Alerts
+export const insertTravelAlertSchema = createInsertSchema(travelAlerts)
+  .omit({ id: true, createdAt: true, lastCheckedAt: true })
+  .extend({
+    alertType: z.enum(['price_drop', 'availability', 'deal']),
+    targetPrice: z.string().regex(/^\d+(\.\d{1,2})?$/).optional(),
+    isActive: z.boolean().default(true),
+  });
+export const selectTravelAlertSchema = createSelectSchema(travelAlerts);
+export type InsertTravelAlert = z.infer<typeof insertTravelAlertSchema>;
+export type SelectTravelAlert = typeof travelAlerts.$inferSelect;
+
+// 10. Travel API Cache
+export const insertTravelApiCacheSchema = createInsertSchema(travelApiCache)
+  .omit({ id: true, cachedAt: true })
+  .extend({
+    cacheKey: z.string().min(1).max(500),
+    apiProvider: z.enum(['serpapi', 'kiwi', 'amadeus', 'booking']),
+    endpoint: z.string().max(255).optional(),
+    requestParams: z.record(z.any()).optional(),
+    response: z.record(z.any()).optional(),
+    expiresAt: z.coerce.date().optional(),
+  });
+export const selectTravelApiCacheSchema = createSelectSchema(travelApiCache);
+export type InsertTravelApiCache = z.infer<typeof insertTravelApiCacheSchema>;
+export type SelectTravelApiCache = typeof travelApiCache.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
