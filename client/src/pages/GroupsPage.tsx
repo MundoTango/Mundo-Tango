@@ -56,6 +56,12 @@ export default function GroupsPage() {
     queryKey: ["/api/groups"],
   });
 
+  // Fetch user's actual group memberships
+  const { data: myGroupsData, isLoading: isLoadingMyGroups } = useQuery<any[]>({
+    queryKey: ["/api/groups/my-groups"],
+    enabled: !!user,
+  });
+
   // Calculate health scores and distances
   const enrichedGroups = useMemo(() => {
     return (groups || []).map(group => ({
@@ -75,17 +81,18 @@ export default function GroupsPage() {
     return enrichedGroups.filter(g => g.type === "professional");
   }, [enrichedGroups]);
 
-  // My Groups - automatically joined based on user's city/role
+  // My Groups - actual groups user has joined from database
   const myGroups = useMemo(() => {
-    if (!user) return [];
-    return enrichedGroups.filter(g => {
-      // City match
-      if (g.type === "city" && g.city === user.city) return true;
-      // Professional role match (mock - would need user.tangoRoles)
-      if (g.type === "professional") return false; // Add logic when tangoRoles available
-      return false;
-    });
-  }, [enrichedGroups, user]);
+    if (!user || !myGroupsData) return [];
+    return (myGroupsData || []).map(item => ({
+      ...item.group,
+      healthScore: calculateHealthScore(item.group),
+      distance: calculateDistance(item.group.city),
+      isFeatured: (item.memberCount || 0) > 20,
+      memberCount: item.memberCount,
+      membership: item.membership
+    }));
+  }, [myGroupsData, user]);
 
   // Featured groups (algorithm-selected)
   const featuredGroups = useMemo(() => {

@@ -89,6 +89,48 @@ router.get("/", async (req: Request, res: Response) => {
 // GROUP ANALYTICS (must be before /:id routes)
 // ============================================================================
 
+// GET /api/groups/my-groups - Get current user's groups (auth required)
+router.get("/my-groups", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+
+    const userGroups = await db
+      .select({
+        group: groups,
+        membership: {
+          role: groupMembers.role,
+          status: groupMembers.status,
+          joinedAt: groupMembers.joinedAt
+        },
+        creator: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage
+        },
+        memberCount: sql<number>`(
+          SELECT COUNT(*)::int 
+          FROM ${groupMembers} gm
+          WHERE gm.group_id = ${groups.id}
+          AND gm.status = 'active'
+        )`.as('member_count')
+      })
+      .from(groupMembers)
+      .innerJoin(groups, eq(groupMembers.groupId, groups.id))
+      .leftJoin(users, eq(groups.createdBy, users.id))
+      .where(and(
+        eq(groupMembers.userId, userId),
+        eq(groupMembers.status, "active")
+      ))
+      .orderBy(desc(groupMembers.joinedAt));
+
+    res.json(userGroups);
+  } catch (error) {
+    console.error("[Groups] Error fetching user groups:", error);
+    res.status(500).json({ message: "Failed to fetch user groups" });
+  }
+});
+
 // GET /api/groups/analytics/popular - Get popular groups
 router.get("/analytics/popular", async (req: Request, res: Response) => {
   try {
