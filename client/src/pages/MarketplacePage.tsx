@@ -11,7 +11,7 @@ import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
-import marketplaceHeroImage from "@assets/stock_images/modern_professional_e8f4a2d1.jpg";
+import marketplaceHeroImage from "@assets/stock_images/business_team_meetin_caa5de6b.jpg";
 
 export default function MarketplacePage() {
   const [activeTab, setActiveTab] = useState("all");

@@ -6,7 +6,7 @@ import { Apple, Utensils, Droplets, TrendingUp, Target, Flame } from "lucide-rea
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import nutritionHeroImage from "@assets/stock_images/modern_professional_e8f4a2d1.jpg";
+import nutritionHeroImage from "@assets/stock_images/elegant_professional_0956f754.jpg";
 
 export default function NutritionAgentPage() {
   const stats = [
