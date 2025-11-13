@@ -1567,10 +1567,36 @@ export class DbStorage implements IStorage {
     
     const postsData = await query;
     
-    // Transform isSaved to boolean
+    // Fetch reactions for all posts
+    const postIds = postsData.map(p => p.id);
+    let reactionsData: Array<{ postId: number; reactionType: string; count: number }> = [];
+    
+    if (postIds.length > 0) {
+      reactionsData = await db
+        .select({
+          postId: reactions.postId,
+          reactionType: reactions.reactionType,
+          count: sql<number>`count(*)::int`
+        })
+        .from(reactions)
+        .where(inArray(reactions.postId, postIds))
+        .groupBy(reactions.postId, reactions.reactionType);
+    }
+    
+    // Build reactions map: { postId: { reactionType: count } }
+    const reactionsMap = new Map<number, Record<string, number>>();
+    for (const row of reactionsData) {
+      if (!reactionsMap.has(row.postId)) {
+        reactionsMap.set(row.postId, {});
+      }
+      reactionsMap.get(row.postId)![row.reactionType] = row.count;
+    }
+    
+    // Transform isSaved to boolean and add reactions object
     return postsData.map(post => ({
       ...post,
       isSaved: !!post.isSaved,
+      reactions: reactionsMap.get(post.id) || {},
     })) as any;
   }
 

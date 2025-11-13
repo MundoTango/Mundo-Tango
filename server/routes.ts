@@ -2273,7 +2273,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ 
         reactions: reactionsObject,
-        userReaction,
+        currentReaction: userReaction,  // Match field name from GET /api/posts
         totalReactions: totalCount
       });
     } catch (error) {
@@ -2320,7 +2320,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ 
         reactions: reactionsObject,
-        userReaction: null,
+        currentReaction: null,  // Match field name from GET /api/posts
         totalReactions: totalCount
       });
     } catch (error) {

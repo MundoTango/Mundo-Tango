@@ -26,6 +26,7 @@ export interface PostItemData {
   createdAt: string;
   isSaved?: boolean;
   currentReaction?: string | null;
+  reactions?: Record<string, number>;
   user?: {
     id: number;
     name: string;
@@ -152,7 +153,7 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
             postId={post.id}
             currentReaction={post.currentReaction || undefined}
             onReact={handleReaction}
-            reactions={{}}
+            reactions={post.reactions || {}}
             totalCount={post.likes}
           />
 
