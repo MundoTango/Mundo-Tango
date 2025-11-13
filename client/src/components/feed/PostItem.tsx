@@ -25,6 +25,7 @@ export interface PostItemData {
   comments: number;
   createdAt: string;
   isSaved?: boolean;
+  currentReaction?: string | null;
   user?: {
     id: number;
     name: string;
@@ -149,6 +150,7 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
         <div className="px-4 pb-3 flex items-center gap-1 flex-wrap">
           <ReactionSelector
             postId={post.id}
+            currentReaction={post.currentReaction || undefined}
             onReact={handleReaction}
             reactions={{}}
             totalCount={post.likes}

@@ -10,7 +10,7 @@ import {
   insertEventRsvpSchema,
   insertEventCommentSchema
 } from "@shared/schema";
-import { authenticateToken, AuthRequest } from "../middleware/auth";
+import { authenticateToken, optionalAuth, AuthRequest } from "../middleware/auth";
 import { eq, and, desc, gte, lte, sql, or, asc, inArray, count } from "drizzle-orm";
 import { z } from "zod";
 
@@ -21,7 +21,7 @@ const router = Router();
 // ============================================================================
 
 // GET /api/events - List events with filters
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
     const {
       city,
@@ -31,7 +31,9 @@ router.get("/", async (req: Request, res: Response) => {
       endDate,
       status = "published",
       limit = "20",
-      offset = "0"
+      offset = "0",
+      category,
+      upcoming
     } = req.query;
 
     let query = db
@@ -61,6 +63,16 @@ router.get("/", async (req: Request, res: Response) => {
     if (eventType) conditions.push(eq(events.eventType, eventType as string));
     if (startDate) conditions.push(gte(events.startDate, new Date(startDate as string)));
     if (endDate) conditions.push(lte(events.startDate, new Date(endDate as string)));
+
+    // Handle category=my-events: filter by userId if user is authenticated
+    if (category === "my-events" && req.user) {
+      conditions.push(eq(events.userId, req.user.id));
+    }
+
+    // Handle upcoming=true: filter for events starting from now
+    if (upcoming === "true") {
+      conditions.push(gte(events.startDate, new Date()));
+    }
 
     if (conditions.length > 0) {
       query = query.where(and(...conditions));

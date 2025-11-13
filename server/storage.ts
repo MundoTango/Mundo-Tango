@@ -1493,6 +1493,8 @@ export class DbStorage implements IStorage {
         shares: posts.shares,
         createdAt: posts.createdAt,
         updatedAt: posts.updatedAt,
+        currentReaction: reactions.reactionType,
+        isSaved: savedPosts.id,
         user: {
           id: users.id,
           name: users.name,
@@ -1509,6 +1511,20 @@ export class DbStorage implements IStorage {
       })
       .from(posts)
       .leftJoin(users, eq(posts.userId, users.id))
+      .leftJoin(
+        reactions,
+        and(
+          eq(reactions.postId, posts.id),
+          eq(reactions.userId, currentUserId || 0)
+        )
+      )
+      .leftJoin(
+        savedPosts,
+        and(
+          eq(savedPosts.postId, posts.id),
+          eq(savedPosts.userId, currentUserId || 0)
+        )
+      )
       .leftJoin(
         friendships,
         and(
@@ -1548,7 +1564,13 @@ export class DbStorage implements IStorage {
       query = query.offset(params.offset) as any;
     }
     
-    return await query;
+    const postsData = await query;
+    
+    // Transform isSaved to boolean
+    return postsData.map(post => ({
+      ...post,
+      isSaved: !!post.isSaved,
+    })) as any;
   }
 
   async updatePost(id: number, data: Partial<SelectPost>): Promise<SelectPost | undefined> {

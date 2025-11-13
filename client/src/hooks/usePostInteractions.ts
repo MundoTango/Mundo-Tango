@@ -35,16 +35,61 @@ export const useReactToPost = () => {
     mutationFn: async ({ postId, reactionType }: ReactionMutation) => {
       return apiRequest('POST', `/api/posts/${postId}/react`, { reactionType });
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/posts', variables.postId] });
+    onMutate: async ({ postId, reactionType }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/api/posts'] });
+      
+      // Snapshot previous value
+      const previousData = queryClient.getQueryData(['/api/posts']);
+      
+      // Optimistically update the cache
+      queryClient.setQueryData<any>(['/api/posts'], (old: any) => {
+        if (!old) return old;
+        
+        if (old.pages) {
+          // Handle infinite query structure
+          return {
+            ...old,
+            pages: old.pages.map((page: any[]) =>
+              page.map((post: any) => {
+                if (post.id === postId) {
+                  // If removing reaction (empty string), decrement likes
+                  // If adding/changing reaction, keep or increment likes
+                  const likesChange = reactionType === '' ? -1 : 
+                                      (post.currentReaction ? 0 : 1);
+                  
+                  return {
+                    ...post,
+                    likes: Math.max(0, (post.likes || 0) + likesChange),
+                    currentReaction: reactionType === '' ? undefined : reactionType,
+                  };
+                }
+                return post;
+              })
+            ),
+          };
+        }
+        
+        return old;
+      });
+      
+      return { previousData };
     },
-    onError: () => {
+    onError: (error, variables, context) => {
+      // Rollback on error
+      if (context?.previousData) {
+        queryClient.setQueryData(['/api/posts'], context.previousData);
+      }
       toast({
         title: "Reaction failed",
         description: "Could not react to post",
         variant: "destructive",
       });
+    },
+    onSettled: (_, __, variables) => {
+      // Refetch to ensure consistency
+      queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/posts', variables.postId] });
     },
   });
 };

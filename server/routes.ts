@@ -96,6 +96,8 @@ import {
   users,
   events,
   groups,
+  chatMessages,
+  notifications,
   travelPlans,
   travelPlanItems,
   contactSubmissions,
@@ -2841,6 +2843,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/messages/unread-count", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const result = await db.select({
+        count: sql<number>`count(*)::int`
+      })
+      .from(chatMessages)
+      .where(and(
+        eq(chatMessages.receiverId, req.user!.id),
+        eq(chatMessages.isRead, false)
+      ));
+      
+      res.json({ count: result[0]?.count || 0 });
+    } catch (error) {
+      console.error("Get unread message count error:", error);
+      res.status(500).json({ message: "Failed to fetch unread message count" });
+    }
+  });
+
   app.get("/api/notifications", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const { limit = "50" } = req.query;
@@ -2848,6 +2868,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(notifications);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch notifications" });
+    }
+  });
+
+  app.get("/api/notifications/count", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const result = await db.select({
+        count: sql<number>`count(*)::int`
+      })
+      .from(notifications)
+      .where(and(
+        eq(notifications.userId, req.user!.id),
+        eq(notifications.isRead, false)
+      ));
+      
+      res.json({ count: result[0]?.count || 0 });
+    } catch (error) {
+      console.error("Get notification count error:", error);
+      res.status(500).json({ message: "Failed to fetch notification count" });
     }
   });
 
@@ -4317,6 +4355,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Get community stats error:", error);
       res.status(500).json({ message: "Failed to fetch community stats" });
+    }
+  });
+
+  // GET /api/community/global-stats - Get global community statistics for sidebar
+  app.get("/api/community/global-stats", async (req: Request, res: Response) => {
+    try {
+      const stats = await db.select({
+        totalUsers: sql<number>`count(distinct ${users.id})::int`,
+        totalEvents: sql<number>`count(distinct ${events.id})::int`,
+        totalGroups: sql<number>`count(distinct ${groups.id})::int`,
+      })
+      .from(users)
+      .leftJoin(events, eq(events.userId, users.id))
+      .leftJoin(groups, eq(groups.creatorId, users.id))
+      .where(eq(users.isActive, true));
+
+      // Get user city members count if authenticated
+      let userCityMembers = 0;
+      const authHeader = req.headers.authorization;
+      if (authHeader) {
+        // Simple token check without requiring authentication
+        try {
+          const userCity = req.user?.city;
+          const userCountry = req.user?.country;
+          
+          if (userCity && userCountry) {
+            const cityStats = await db.select({
+              count: sql<number>`count(*)::int`
+            })
+            .from(users)
+            .where(and(
+              eq(users.city, userCity),
+              eq(users.country, userCountry),
+              eq(users.isActive, true)
+            ));
+            
+            userCityMembers = cityStats[0]?.count || 0;
+          }
+        } catch (err) {
+          // Ignore auth errors for this optional data
+          console.log("Could not fetch user city stats:", err);
+        }
+      }
+
+      res.json({
+        totalUsers: stats[0]?.totalUsers || 0,
+        totalEvents: stats[0]?.totalEvents || 0,
+        totalGroups: stats[0]?.totalGroups || 0,
+        userCityMembers
+      });
+    } catch (error) {
+      console.error("Get global community stats error:", error);
+      res.status(500).json({ message: "Failed to fetch global community stats" });
     }
   });
 
