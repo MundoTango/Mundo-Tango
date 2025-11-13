@@ -37,23 +37,26 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-function EventCard({ event, index = 0 }: { event: EventWithProfile; index?: number }) {
+function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   const { user } = useAuth();
-  const rsvpMutation = useRSVPEvent(event.id);
-  const { data: attendance } = useEventAttendance(event.id);
+  const rsvpMutation = useRSVPEvent(event.id || event.event?.id);
+  
+  // Extract event data from API response (could be nested as event.event)
+  const eventData = event.event || event;
+  const attendeeCount = event._count || 0;
   
   const { data: eventRsvps } = useQuery<RSVP[]>({
-    queryKey: ["rsvps", event.id],
+    queryKey: ["rsvps", eventData.id],
   });
 
   const userRsvp = eventRsvps?.find((r) => String(r.user_id) === String(user?.id));
   const isRsvped = userRsvp?.status === "going";
-  const isFull = attendance?.capacity && attendance.attending >= attendance.capacity;
+  const isFull = eventData.maxAttendees && attendeeCount >= eventData.maxAttendees;
 
   const handleRSVP = async () => {
     if (!user) return;
     const newStatus = isRsvped ? "not_going" : "going";
-    await rsvpMutation.mutateAsync({ eventId: event.id, status: newStatus });
+    await rsvpMutation.mutateAsync({ eventId: eventData.id, status: newStatus });
   };
 
   const formatEventDateTime = (dateString: string): string => {
@@ -73,6 +76,9 @@ function EventCard({ event, index = 0 }: { event: EventWithProfile; index?: numb
       return dateString;
     }
   };
+  
+  // Determine image URL - use fallback if null
+  const imageUrl = eventData.imageUrl || eventData.image_url || "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=800&auto=format&fit=crop";
 
   return (
     <motion.div
@@ -83,33 +89,33 @@ function EventCard({ event, index = 0 }: { event: EventWithProfile; index?: numb
     >
       <Card 
         className="overflow-hidden hover-elevate" 
-        data-testid={`card-event-${event.id}`}
+        data-testid={`card-event-${eventData.id}`}
       >
         <div className="relative aspect-[16/9] overflow-hidden">
           <motion.img
-            src={event.image_url || "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=800&auto=format&fit=crop"}
-            alt={event.title}
+            src={imageUrl}
+            alt={eventData.title}
             className="w-full h-full object-cover"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.6 }}
-            data-testid={`img-event-${event.id}`}
+            data-testid={`img-event-${eventData.id}`}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
           <div className="absolute top-4 right-4 flex gap-2">
-            {event.category && (
-              <Badge className="bg-white/10 text-white border-white/30 backdrop-blur-sm" data-testid={`badge-category-${event.id}`}>
-                {event.category}
+            {eventData.category && (
+              <Badge className="bg-white/10 text-white border-white/30 backdrop-blur-sm" data-testid={`badge-category-${eventData.id}`}>
+                {eventData.category}
               </Badge>
             )}
             {isFull && (
-              <Badge className="bg-red-500 text-white" data-testid={`badge-full-${event.id}`}>
+              <Badge className="bg-red-500 text-white" data-testid={`badge-full-${eventData.id}`}>
                 Full
               </Badge>
             )}
           </div>
           <div className="absolute bottom-4 left-4 right-4 text-white">
-            <h3 className="text-2xl font-serif font-bold line-clamp-2 mb-2" data-testid={`text-event-title-${event.id}`}>
-              {event.title}
+            <h3 className="text-2xl font-serif font-bold line-clamp-2 mb-2" data-testid={`text-event-title-${eventData.id}`}>
+              {eventData.title}
             </h3>
           </div>
         </div>
@@ -117,31 +123,25 @@ function EventCard({ event, index = 0 }: { event: EventWithProfile; index?: numb
         <CardContent className="p-6 space-y-3">
           <div className="flex items-center gap-2 text-sm">
             <CalendarIcon className="h-4 w-4 flex-shrink-0 text-primary" />
-            <span data-testid={`text-event-date-${event.id}`}>
-              {formatEventDateTime(event.start_date)} • {formatEventTime(event.start_date)}
+            <span data-testid={`text-event-date-${eventData.id}`}>
+              {formatEventDateTime(eventData.startDate || eventData.start_date)} • {formatEventTime(eventData.startDate || eventData.start_date)}
             </span>
           </div>
 
-          {event.location && (
+          {(eventData.location || eventData.venue) && (
             <div className="flex items-center gap-2 text-sm">
               <MapPin className="h-4 w-4 flex-shrink-0 text-primary" />
-              <span className="line-clamp-1" data-testid={`text-event-location-${event.id}`}>
-                {event.location}
+              <span className="line-clamp-1" data-testid={`text-event-location-${eventData.id}`}>
+                {eventData.location || eventData.venue}
               </span>
             </div>
           )}
 
           <div className="flex items-center gap-2 text-sm">
             <Users className="h-4 w-4 flex-shrink-0 text-primary" />
-            <span data-testid={`text-rsvp-count-${event.id}`}>
-              {attendance ? (
-                <>
-                  {attendance.attending} {attendance.attending === 1 ? 'person' : 'people'}
-                  {attendance.capacity && ` / ${attendance.capacity}`}
-                </>
-              ) : (
-                'Loading...'
-              )}
+            <span data-testid={`text-rsvp-count-${eventData.id}`}>
+              {attendeeCount} {attendeeCount === 1 ? 'person' : 'people'}
+              {eventData.maxAttendees && ` / ${eventData.maxAttendees}`}
             </span>
           </div>
         </CardContent>
@@ -152,14 +152,14 @@ function EventCard({ event, index = 0 }: { event: EventWithProfile; index?: numb
             className="flex-1 gap-2"
             onClick={handleRSVP}
             disabled={!user || rsvpMutation.isPending}
-            data-testid={`button-rsvp-${event.id}`}
+            data-testid={`button-rsvp-${eventData.id}`}
           >
             <Users className="h-4 w-4" />
             {rsvpMutation.isPending ? "Loading..." : isRsvped ? "Cancel RSVP" : "RSVP"}
           </Button>
 
-          <Link href={`/events/${event.id}`}>
-            <Button variant="outline" className="gap-2" data-testid={`button-view-event-${event.id}`}>
+          <Link href={`/events/${eventData.id}`}>
+            <Button variant="outline" className="gap-2" data-testid={`button-view-event-${eventData.id}`}>
               Details
               <ChevronRight className="h-4 w-4" />
             </Button>
