@@ -1,21 +1,24 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Heart } from "lucide-react";
+import { 
+  Heart, Smile, Eye, Frown, Angry, 
+  HandMetal, Flame, User, PartyPopper 
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
 
 const REACTIONS = [
-  { emoji: "❤️", name: "heart", label: "Love" },
-  { emoji: "😂", name: "laugh", label: "Funny" },
-  { emoji: "😮", name: "wow", label: "Amazing" },
-  { emoji: "😢", name: "sad", label: "Sad" },
-  { emoji: "😡", name: "angry", label: "Angry" },
-  { emoji: "👏", name: "clap", label: "Appreciation" },
-  { emoji: "🔥", name: "fire", label: "Hot" },
-  { emoji: "💃", name: "dance", label: "Tango!" },
-  { emoji: "🎉", name: "party", label: "Celebrate" },
+  { icon: Heart, name: "heart", label: "Love", color: "#EC4899" },
+  { icon: Smile, name: "laugh", label: "Funny", color: "#FBBF24" },
+  { icon: Eye, name: "wow", label: "Amazing", color: "#3B82F6" },
+  { icon: Frown, name: "sad", label: "Sad", color: "#6B7280" },
+  { icon: Angry, name: "angry", label: "Angry", color: "#EF4444" },
+  { icon: HandMetal, name: "clap", label: "Appreciation", color: "#10B981" },
+  { icon: Flame, name: "fire", label: "Hot", color: "#F97316" },
+  { icon: User, name: "dance", label: "Tango!", color: "#A855F7" },
+  { icon: PartyPopper, name: "party", label: "Celebrate", color: "#F59E0B" },
 ];
 
 interface PostReactionsProps {
@@ -99,9 +102,11 @@ export function PostReactions({ postId, initialReactions = {}, userReaction }: P
             data-testid={`button-reactions-${postId}`}
           >
             {currentUserReaction ? (
-              <span className="text-base">
-                {REACTIONS.find((r) => r.name === currentUserReaction)?.emoji || "❤️"}
-              </span>
+              (() => {
+                const reaction = REACTIONS.find((r) => r.name === currentUserReaction);
+                const IconComponent = reaction?.icon || Heart;
+                return <IconComponent className="h-4 w-4" style={{ color: reaction?.color || '#EC4899' }} />;
+              })()
             ) : (
               <Heart className="h-4 w-4" />
             )}
@@ -112,21 +117,24 @@ export function PostReactions({ postId, initialReactions = {}, userReaction }: P
         </PopoverTrigger>
         <PopoverContent className="w-auto p-2" align="start">
           <div className="flex gap-1">
-            {REACTIONS.map((reaction) => (
-              <Button
-                key={reaction.name}
-                variant="ghost"
-                size="sm"
-                onClick={() => handleReaction(reaction.name)}
-                className={`text-2xl p-2 h-12 w-12 hover:scale-125 transition-transform ${
-                  currentUserReaction === reaction.name ? "bg-muted" : ""
-                }`}
-                title={reaction.label}
-                data-testid={`button-reaction-${reaction.name}-${postId}`}
-              >
-                {reaction.emoji}
-              </Button>
-            ))}
+            {REACTIONS.map((reaction) => {
+              const IconComponent = reaction.icon;
+              return (
+                <Button
+                  key={reaction.name}
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleReaction(reaction.name)}
+                  className={`p-2 h-12 w-12 hover:scale-125 transition-transform ${
+                    currentUserReaction === reaction.name ? "bg-muted" : ""
+                  }`}
+                  title={reaction.label}
+                  data-testid={`button-reaction-${reaction.name}-${postId}`}
+                >
+                  <IconComponent className="w-6 h-6" style={{ color: reaction.color }} />
+                </Button>
+              );
+            })}
           </div>
         </PopoverContent>
       </Popover>
@@ -136,9 +144,10 @@ export function PostReactions({ postId, initialReactions = {}, userReaction }: P
         <div className="flex items-center gap-1 text-sm text-muted-foreground">
           {topReactions.map(([reactionType, count]) => {
             const reaction = REACTIONS.find((r) => r.name === reactionType);
+            const IconComponent = reaction?.icon || Heart;
             return (
               <span key={reactionType} className="flex items-center gap-0.5">
-                <span className="text-base">{reaction?.emoji}</span>
+                <IconComponent className="w-4 h-4" style={{ color: reaction?.color || '#EC4899' }} />
                 <span className="text-xs">{count}</span>
               </span>
             );

@@ -7,32 +7,37 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
-import { ChevronLeft, ChevronRight, MapPin, Camera, Heart, Sparkles } from "lucide-react";
+import { 
+  ChevronLeft, ChevronRight, MapPin, Camera, Heart, Sparkles,
+  User, Users, GraduationCap, Music, Radio, Calendar, Home,
+  Camera as CameraVideo, Palette, PenLine, Building2, Mic,
+  Piano, Eye, Leaf, Sprout, TreeDeciduous, Star
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import heroImage from "@assets/stock_images/elegant_professional_9405e610.jpg";
 
 const tangoRoles = [
-  { id: "dancer", label: "Dancer", emoji: "💃" },
-  { id: "leader", label: "Leader", emoji: "🕺" },
-  { id: "follower", label: "Follower", emoji: "👯" },
-  { id: "teacher", label: "Teacher", emoji: "👨‍🏫" },
-  { id: "dj", label: "DJ", emoji: "🎧" },
-  { id: "organizer", label: "Organizer", emoji: "📅" },
-  { id: "musician", label: "Musician", emoji: "🎻" },
-  { id: "photographer", label: "Photographer", emoji: "📸" },
-  { id: "videographer", label: "Videographer", emoji: "🎥" },
-  { id: "designer", label: "Designer", emoji: "🎨" },
-  { id: "blogger", label: "Blogger", emoji: "✍️" },
-  { id: "host", label: "Host/Venue Owner", emoji: "🏠" },
-  { id: "shoemaker", label: "Shoe Maker", emoji: "👠" },
-  { id: "tailor", label: "Tailor", emoji: "🧵" },
-  { id: "enthusiast", label: "Enthusiast", emoji: "❤️" },
-  { id: "beginner", label: "Beginner", emoji: "🌱" },
-  { id: "intermediate", label: "Intermediate", emoji: "🌿" },
-  { id: "advanced", label: "Advanced", emoji: "🌳" },
-  { id: "professional", label: "Professional", emoji: "⭐" }
+  { id: "dancer", label: "Dancer", icon: User, color: "#EC4899" },
+  { id: "leader", label: "Leader", icon: Users, color: "#1E90FF" },
+  { id: "follower", label: "Follower", icon: User, color: "#F59E0B" },
+  { id: "teacher", label: "Teacher", icon: GraduationCap, color: "#10B981" },
+  { id: "dj", label: "DJ", icon: Radio, color: "#8B5CF6" },
+  { id: "organizer", label: "Organizer", icon: Calendar, color: "#3B82F6" },
+  { id: "musician", label: "Musician", icon: Music, color: "#A855F7" },
+  { id: "photographer", label: "Photographer", icon: Camera, color: "#EF4444" },
+  { id: "videographer", label: "Videographer", icon: CameraVideo, color: "#F97316" },
+  { id: "designer", label: "Designer", icon: Palette, color: "#EC4899" },
+  { id: "blogger", label: "Blogger", icon: PenLine, color: "#14B8A6" },
+  { id: "host", label: "Host/Venue Owner", icon: Home, color: "#6B7280" },
+  { id: "shoemaker", label: "Shoe Maker", icon: Building2, color: "#EC4899" },
+  { id: "tailor", label: "Tailor", icon: Mic, color: "#F59E0B" },
+  { id: "enthusiast", label: "Enthusiast", icon: Heart, color: "#EF4444" },
+  { id: "beginner", label: "Beginner", icon: Sprout, color: "#10B981" },
+  { id: "intermediate", label: "Intermediate", icon: Leaf, color: "#22C55E" },
+  { id: "advanced", label: "Advanced", icon: TreeDeciduous, color: "#16A34A" },
+  { id: "professional", label: "Professional", icon: Star, color: "#FBBF24" }
 ];
 
 export default function OnboardingPage() {
@@ -264,24 +269,31 @@ export default function OnboardingPage() {
                       </div>
 
                       <div className="grid grid-cols-3 md:grid-cols-4 gap-4">
-                        {tangoRoles.map((role, index) => (
-                          <motion.button
-                            key={role.id}
-                            onClick={() => toggleRole(role.id)}
-                            className={`p-4 rounded-xl border-2 transition-all hover-elevate active-elevate-2 ${
-                              selectedRoles.includes(role.id)
-                                ? "border-primary bg-primary/10"
-                                : "border-border"
-                            }`}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.03 }}
-                            data-testid={`button-role-${role.id}`}
-                          >
-                            <div className="text-3xl mb-2">{role.emoji}</div>
-                            <div className="text-xs font-medium leading-tight">{role.label}</div>
-                          </motion.button>
-                        ))}
+                        {tangoRoles.map((role, index) => {
+                          const IconComponent = role.icon;
+                          return (
+                            <motion.button
+                              key={role.id}
+                              onClick={() => toggleRole(role.id)}
+                              className={`p-4 rounded-xl border-2 transition-all hover-elevate active-elevate-2 ${
+                                selectedRoles.includes(role.id)
+                                  ? "border-primary bg-primary/10"
+                                  : "border-border"
+                              }`}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: index * 0.03 }}
+                              data-testid={`button-role-${role.id}`}
+                            >
+                              <div className="flex items-center justify-center mb-2">
+                                <div className="p-3 rounded-full" style={{ backgroundColor: `${role.color}20` }}>
+                                  <IconComponent className="w-6 h-6" style={{ color: role.color }} />
+                                </div>
+                              </div>
+                              <div className="text-xs font-medium leading-tight">{role.label}</div>
+                            </motion.button>
+                          );
+                        })}
                       </div>
 
                       {selectedRoles.length > 0 && (
@@ -301,7 +313,11 @@ export default function OnboardingPage() {
                   {/* Step 5: Guided Tour Intro */}
                   {currentStep === 5 && (
                     <div className="text-center space-y-6">
-                      <div className="text-7xl mb-6">🎯</div>
+                      <div className="flex justify-center mb-6">
+                        <div className="p-8 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20">
+                          <Sparkles className="h-16 w-16" style={{ color: '#40E0D0' }} />
+                        </div>
+                      </div>
                       <h2 className="text-3xl md:text-4xl font-serif font-bold">Ready for a Quick Tour?</h2>
                       <p className="text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
                         We'll show you around the platform so you can start connecting with the tango community right away.
@@ -312,7 +328,16 @@ export default function OnboardingPage() {
                   {/* Step 6: Completion */}
                   {currentStep === 6 && (
                     <div className="text-center space-y-6">
-                      <div className="text-7xl mb-6">🎉</div>
+                      <div className="flex justify-center mb-6">
+                        <motion.div 
+                          className="p-8 rounded-full bg-gradient-to-br from-fuchsia-500/20 to-pink-500/20"
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ type: "spring", duration: 0.6 }}
+                        >
+                          <Sparkles className="h-16 w-16" style={{ color: '#EC4899' }} />
+                        </motion.div>
+                      </div>
                       <h2 className="text-3xl md:text-4xl font-serif font-bold">You're All Set!</h2>
                       <p className="text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
                         Welcome to Mundo Tango. Let's start exploring and connecting with dancers worldwide!

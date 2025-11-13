@@ -43,13 +43,13 @@ interface UnifiedTopBarProps {
   showMenuButton?: boolean;
 }
 
-// Pulse icon for notifications
+// Pulse icon for notifications with turquoise ocean theme
 function PulseIcon({ children, pulseColor }: { children: React.ReactNode; pulseColor?: string }) {
   return (
     <div className="relative">
       <div 
         className="absolute inset-0 rounded-full animate-ping opacity-75" 
-        style={{ background: pulseColor || "rgba(239, 68, 68, 0.4)" }} 
+        style={{ background: pulseColor || "rgba(64, 224, 208, 0.5)" }} 
       />
       {children}
     </div>
@@ -162,35 +162,38 @@ export default function UnifiedTopBar({
 
   return (
     <header 
-      className="fixed top-0 left-0 right-0 z-50 w-full border-b"
+      className="fixed top-0 left-0 right-0 z-50 w-full border-b border-white/10 transition-all duration-200"
       style={{
-        background: 'rgba(255, 255, 255, 0.85)',
-        backdropFilter: 'blur(16px)',
-        borderColor: 'rgba(64, 224, 208, 0.2)',
+        background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.12) 0%, rgba(30, 144, 255, 0.08) 100%)',
+        backdropFilter: 'blur(24px)',
+        boxShadow: '0 4px 24px rgba(64, 224, 208, 0.12)',
       }}
       data-testid="unified-topbar"
     >
-      {/* Ocean gradient overlay */}
+      {/* Enhanced ocean gradient overlay with glassmorphic effect */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-40"
+        className="absolute inset-0 pointer-events-none opacity-50"
         style={{
-          background: 'linear-gradient(90deg, rgba(64, 224, 208, 0.05) 0%, rgba(30, 144, 255, 0.03) 100%)',
+          background: 'linear-gradient(90deg, rgba(64, 224, 208, 0.08) 0%, rgba(30, 144, 255, 0.06) 50%, rgba(64, 224, 208, 0.08) 100%)',
         }}
       />
 
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4 relative z-10">
         {/* Left Section - Menu & Brand */}
         <div className="flex items-center gap-4">
-          {/* Menu button (mobile) */}
+          {/* Menu button (mobile) - MT Ocean styled */}
           {showMenuButton && (
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={onMenuToggle}
-              className="lg:block hover:bg-turquoise-50/50"
+              className="lg:block hover-elevate transition-all duration-200"
+              style={{
+                color: '#40E0D0',
+              }}
               data-testid="button-menu-toggle"
             >
-              <Menu className="h-5 w-5" style={{ color: '#1E90FF' }} />
+              <Menu className="h-5 w-5 transition-colors duration-200" />
             </Button>
           )}
           
@@ -248,11 +251,18 @@ export default function UnifiedTopBar({
             />
           </div>
           
-          {/* Search results dropdown */}
+          {/* Search results dropdown - MT Ocean Glassmorphic */}
           {showSearchResults && searchQuery.trim().length > 2 && (
-            <div className="absolute w-full max-w-2xl mt-2 rounded-xl shadow-2xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 overflow-hidden">
+            <div 
+              className="absolute w-full max-w-2xl mt-2 rounded-xl overflow-hidden border border-white/10"
+              style={{
+                background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.15) 0%, rgba(30, 144, 255, 0.12) 100%)',
+                backdropFilter: 'blur(24px)',
+                boxShadow: '0 8px 32px rgba(64, 224, 208, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+              }}
+            >
               {searchLoading ? (
-                <div className="p-8 text-center text-gray-500">
+                <div className="p-8 text-center" style={{ color: '#40E0D0' }}>
                   {t('search.searching')}
                 </div>
               ) : searchResults?.data ? (
@@ -265,7 +275,7 @@ export default function UnifiedTopBar({
                     <div className="space-y-2">
                       {searchResults.data.posts?.slice(0, 5).map((post: any) => (
                         <Link key={post.id} href={`/post/${post.id}`}>
-                          <div className="text-sm hover:bg-gray-50 dark:hover:bg-slate-700 p-2 rounded cursor-pointer">
+                          <div className="text-sm p-2 rounded cursor-pointer transition-all duration-200 hover-elevate" style={{ color: 'var(--foreground)' }}>
                             {post.content?.substring(0, 50)}...
                           </div>
                         </Link>
@@ -281,7 +291,7 @@ export default function UnifiedTopBar({
                     <div className="space-y-2">
                       {searchResults.data.events?.slice(0, 5).map((event: any) => (
                         <Link key={event.id} href={`/events/${event.id}`}>
-                          <div className="text-sm hover:bg-gray-50 dark:hover:bg-slate-700 p-2 rounded cursor-pointer">
+                          <div className="text-sm p-2 rounded cursor-pointer transition-all duration-200 hover-elevate" style={{ color: 'var(--foreground)' }}>
                             {event.title}
                           </div>
                         </Link>
@@ -297,7 +307,7 @@ export default function UnifiedTopBar({
                     <div className="space-y-2">
                       {searchResults.data.users?.slice(0, 5).map((user: any) => (
                         <Link key={user.id} href={`/profile/${user.username}`}>
-                          <div className="flex items-center gap-2 text-sm hover:bg-gray-50 dark:hover:bg-slate-700 p-2 rounded cursor-pointer">
+                          <div className="flex items-center gap-2 text-sm p-2 rounded cursor-pointer transition-all duration-200 hover-elevate" style={{ color: 'var(--foreground)' }}>
                             <Avatar className="h-6 w-6">
                               <AvatarImage src={user.profileImage} />
                               <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
@@ -317,7 +327,7 @@ export default function UnifiedTopBar({
                     <div className="space-y-2">
                       {searchResults.data.groups?.slice(0, 5).map((group: any) => (
                         <Link key={group.id} href={`/groups/${group.slug}`}>
-                          <div className="text-sm hover:bg-gray-50 dark:hover:bg-slate-700 p-2 rounded cursor-pointer">
+                          <div className="text-sm p-2 rounded cursor-pointer transition-all duration-200 hover-elevate" style={{ color: 'var(--foreground)' }}>
                             {group.name}
                           </div>
                         </Link>
@@ -326,7 +336,7 @@ export default function UnifiedTopBar({
                   </div>
                 </div>
               ) : (
-                <div className="p-8 text-center text-gray-500">
+                <div className="p-8 text-center" style={{ color: 'var(--muted-foreground)' }}>
                   No results found
                 </div>
               )}
@@ -356,30 +366,42 @@ export default function UnifiedTopBar({
             </Button>
           </Link>
 
-          {/* Messages */}
+          {/* Messages - MT Ocean Badge */}
           <Link href="/messages">
-            <Button variant="ghost" size="icon" className="relative" data-testid="button-messages">
-              <MessageSquare className="h-5 w-5" />
+            <Button variant="ghost" size="icon" className="relative transition-all duration-200" data-testid="button-messages">
+              <MessageSquare className="h-5 w-5 transition-colors duration-200" style={{ color: messageCount > 0 ? '#40E0D0' : 'currentColor' }} />
               {messageCount > 0 && (
-                <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                <span 
+                  className="absolute -top-1 -right-1 h-5 w-5 text-white text-xs font-semibold rounded-full flex items-center justify-center shadow-lg animate-pulse"
+                  style={{
+                    background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)',
+                    boxShadow: '0 2px 8px rgba(64, 224, 208, 0.4)',
+                  }}
+                >
                   {messageCount > 9 ? '9+' : messageCount}
                 </span>
               )}
             </Button>
           </Link>
 
-          {/* Notifications */}
+          {/* Notifications - MT Ocean Badge */}
           <Link href="/notifications">
-            <Button variant="ghost" size="icon" className="relative" data-testid="button-notifications">
+            <Button variant="ghost" size="icon" className="relative transition-all duration-200" data-testid="button-notifications">
               {notificationCount > 0 ? (
-                <PulseIcon>
-                  <Bell className="h-5 w-5" />
+                <PulseIcon pulseColor="rgba(64, 224, 208, 0.6)">
+                  <Bell className="h-5 w-5 transition-colors duration-200" style={{ color: '#40E0D0' }} />
                 </PulseIcon>
               ) : (
-                <Bell className="h-5 w-5" />
+                <Bell className="h-5 w-5 transition-colors duration-200" />
               )}
               {notificationCount > 0 && (
-                <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                <span 
+                  className="absolute -top-1 -right-1 h-5 w-5 text-white text-xs font-semibold rounded-full flex items-center justify-center shadow-lg"
+                  style={{
+                    background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)',
+                    boxShadow: '0 2px 8px rgba(64, 224, 208, 0.4)',
+                  }}
+                >
                   {notificationCount > 9 ? '9+' : notificationCount}
                 </span>
               )}
@@ -413,7 +435,13 @@ export default function UnifiedTopBar({
                   @{profile?.username || user?.username || user?.email?.split('@')[0]}
                 </p>
                 {hasAdminAccess && (
-                  <Badge className="mt-2 bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+                  <Badge 
+                    className="mt-2 font-semibold border-none"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.2) 0%, rgba(30, 144, 255, 0.2) 100%)',
+                      color: '#40E0D0',
+                    }}
+                  >
                     {t('common.admin')}
                   </Badge>
                 )}

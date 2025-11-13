@@ -183,7 +183,9 @@ export default function FitnessAgentPage() {
                       />
                     </div>
                     {item.percentage === 100 && (
-                      <p className="text-xs text-green-500 mt-1">🎉 Goal achieved!</p>
+                      <p className="text-xs text-green-500 mt-1 flex items-center gap-1">
+                        <PartyPopper className="w-3 h-3" /> Goal achieved!
+                      </p>
                     )}
                   </div>
                 ))}

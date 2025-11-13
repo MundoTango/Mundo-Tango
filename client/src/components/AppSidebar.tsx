@@ -121,26 +121,49 @@ export function AppSidebar() {
   const isGodAdmin = user?.role === 'god';
 
   return (
-    <Sidebar>
+    <Sidebar 
+      className="border-r border-white/10"
+      style={{
+        background: 'linear-gradient(180deg, rgba(10, 24, 40, 0.95) 0%, rgba(30, 144, 255, 0.12) 100%)',
+        backdropFilter: 'blur(32px)',
+      }}
+    >
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xl font-serif font-bold text-foreground">
+          <SidebarGroupLabel 
+            className="text-xl font-serif font-bold py-4"
+            style={{
+              background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 50%, #0047AB 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
             Mundo Tango
           </SidebarGroupLabel>
         </SidebarGroup>
 
         {/* Core Social Hub */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Social</SidebarGroupLabel>
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Social</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {socialItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                  <SidebarMenuButton 
+                    asChild 
+                    data-active={location === item.url} 
+                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                    className={cn(
+                      "transition-all duration-200 rounded-lg",
+                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+                    )}
+                    style={location === item.url ? { color: '#40E0D0' } : undefined}
+                  >
                     <Link to={item.url}>
                       <>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
+                        <item.icon className="h-5 w-5 transition-colors duration-200" />
+                        <span className="font-medium">{item.title}</span>
                       </>
                     </Link>
                   </SidebarMenuButton>
@@ -151,17 +174,26 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* Community & Connections */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Community</SidebarGroupLabel>
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Community</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {communityItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                  <SidebarMenuButton 
+                    asChild 
+                    data-active={location === item.url} 
+                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                    className={cn(
+                      "transition-all duration-200 rounded-lg",
+                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+                    )}
+                    style={location === item.url ? { color: '#40E0D0' } : undefined}
+                  >
                     <Link to={item.url}>
                       <>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
+                        <item.icon className="h-5 w-5 transition-colors duration-200" />
+                        <span className="font-medium">{item.title}</span>
                       </>
                     </Link>
                   </SidebarMenuButton>
@@ -172,17 +204,26 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* Events & Calendar */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Events</SidebarGroupLabel>
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Events</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {eventsItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                  <SidebarMenuButton 
+                    asChild 
+                    data-active={location === item.url} 
+                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                    className={cn(
+                      "transition-all duration-200 rounded-lg",
+                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+                    )}
+                    style={location === item.url ? { color: '#40E0D0' } : undefined}
+                  >
                     <Link to={item.url}>
                       <>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
+                        <item.icon className="h-5 w-5 transition-colors duration-200" />
+                        <span className="font-medium">{item.title}</span>
                       </>
                     </Link>
                   </SidebarMenuButton>
@@ -193,17 +234,26 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* Tango Resources */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Tango Resources</SidebarGroupLabel>
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Tango Resources</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {tangoItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                  <SidebarMenuButton 
+                    asChild 
+                    data-active={location === item.url} 
+                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                    className={cn(
+                      "transition-all duration-200 rounded-lg",
+                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+                    )}
+                    style={location === item.url ? { color: '#40E0D0' } : undefined}
+                  >
                     <Link to={item.url}>
                       <>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
+                        <item.icon className="h-5 w-5 transition-colors duration-200" />
+                        <span className="font-medium">{item.title}</span>
                       </>
                     </Link>
                   </SidebarMenuButton>
@@ -214,17 +264,26 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* Resources */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Resources</SidebarGroupLabel>
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Resources</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {resourcesItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                  <SidebarMenuButton 
+                    asChild 
+                    data-active={location === item.url} 
+                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                    className={cn(
+                      "transition-all duration-200 rounded-lg",
+                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+                    )}
+                    style={location === item.url ? { color: '#40E0D0' } : undefined}
+                  >
                     <Link to={item.url}>
                       <>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
+                        <item.icon className="h-5 w-5 transition-colors duration-200" />
+                        <span className="font-medium">{item.title}</span>
                       </>
                     </Link>
                   </SidebarMenuButton>
@@ -235,17 +294,26 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* AI & Tools */}
-        <SidebarGroup>
-          <SidebarGroupLabel>AI & Tools</SidebarGroupLabel>
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">AI & Tools</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {toolsItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                  <SidebarMenuButton 
+                    asChild 
+                    data-active={location === item.url} 
+                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                    className={cn(
+                      "transition-all duration-200 rounded-lg",
+                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+                    )}
+                    style={location === item.url ? { color: '#40E0D0' } : undefined}
+                  >
                     <Link to={item.url}>
                       <>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
+                        <item.icon className="h-5 w-5 transition-colors duration-200" />
+                        <span className="font-medium">{item.title}</span>
                       </>
                     </Link>
                   </SidebarMenuButton>
@@ -256,17 +324,26 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* Personal */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Personal</SidebarGroupLabel>
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Personal</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {personalItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                  <SidebarMenuButton 
+                    asChild 
+                    data-active={location === item.url} 
+                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                    className={cn(
+                      "transition-all duration-200 rounded-lg",
+                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+                    )}
+                    style={location === item.url ? { color: '#40E0D0' } : undefined}
+                  >
                     <Link to={item.url}>
                       <>
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
+                        <item.icon className="h-5 w-5 transition-colors duration-200" />
+                        <span className="font-medium">{item.title}</span>
                       </>
                     </Link>
                   </SidebarMenuButton>
@@ -279,18 +356,27 @@ export function AppSidebar() {
         {/* Admin (role-based visibility) */}
         {isAdmin && (
           <>
-            <SidebarSeparator />
-            <SidebarGroup>
-              <SidebarGroupLabel>Admin</SidebarGroupLabel>
+            <SidebarSeparator className="bg-white/10" />
+            <SidebarGroup className="border-b border-white/10 pb-4">
+              <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Admin</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {adminItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                      <SidebarMenuButton 
+                        asChild 
+                        data-active={location === item.url} 
+                        data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                        className={cn(
+                          "transition-all duration-200 rounded-lg",
+                          location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+                        )}
+                        style={location === item.url ? { color: '#40E0D0' } : undefined}
+                      >
                         <Link to={item.url}>
                           <>
-                            <item.icon className="h-5 w-5" />
-                            <span>{item.title}</span>
+                            <item.icon className="h-5 w-5 transition-colors duration-200" />
+                            <span className="font-medium">{item.title}</span>
                           </>
                         </Link>
                       </SidebarMenuButton>
@@ -304,17 +390,26 @@ export function AppSidebar() {
 
         {/* ESA Framework (God/Super Admin only) */}
         {isGodAdmin && (
-          <SidebarGroup>
-            <SidebarGroupLabel>ESA Framework</SidebarGroupLabel>
+          <SidebarGroup className="border-b border-white/10 pb-4">
+            <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">ESA Framework</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {esaItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild data-active={location === item.url} data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}>
+                    <SidebarMenuButton 
+                      asChild 
+                      data-active={location === item.url} 
+                      data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                      className={cn(
+                        "transition-all duration-200 rounded-lg",
+                        location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+                      )}
+                      style={location === item.url ? { color: '#40E0D0' } : undefined}
+                    >
                       <Link to={item.url}>
                         <>
-                          <item.icon className="h-5 w-5" />
-                          <span>{item.title}</span>
+                          <item.icon className="h-5 w-5 transition-colors duration-200" />
+                          <span className="font-medium">{item.title}</span>
                         </>
                       </Link>
                     </SidebarMenuButton>
@@ -326,17 +421,24 @@ export function AppSidebar() {
         )}
       </SidebarContent>
 
-      <SidebarFooter className="p-4 border-t">
+      <SidebarFooter 
+        className="p-4 border-t border-white/10"
+        style={{
+          background: 'linear-gradient(180deg, rgba(64, 224, 208, 0.08) 0%, rgba(30, 144, 255, 0.05) 100%)',
+        }}
+      >
         <div className="flex items-center gap-3 mb-3">
-          <Avatar className="h-10 w-10">
+          <Avatar className="h-10 w-10 ring-2 ring-[#40E0D0]/30">
             <AvatarImage src={avatarUrl || undefined} />
-            <AvatarFallback>{displayName?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+            <AvatarFallback style={{ background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)', color: 'white' }}>
+              {displayName?.charAt(0).toUpperCase() || "U"}
+            </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate" data-testid="text-username">
+            <p className="text-sm font-semibold truncate" data-testid="text-username">
               {displayName}
             </p>
-            <p className="text-xs text-muted-foreground truncate">
+            <p className="text-xs truncate opacity-60">
               @{username}
             </p>
           </div>
@@ -345,7 +447,11 @@ export function AppSidebar() {
           variant="outline"
           size="sm"
           onClick={logout}
-          className="w-full"
+          className="w-full font-medium transition-all duration-200"
+          style={{
+            borderColor: '#40E0D0',
+            color: '#40E0D0',
+          }}
           data-testid="button-logout"
         >
           <LogOut className="h-4 w-4 mr-2" />

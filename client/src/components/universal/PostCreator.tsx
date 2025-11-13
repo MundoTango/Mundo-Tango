@@ -14,37 +14,41 @@ import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker"
 import { 
   MapPin, Hash, Camera, Sparkles, Globe, Users, Lock, 
   Send, Loader2, X, DollarSign, Star, MapPinned,
-  Image as ImageIcon, Video as VideoIcon, FileText
+  Image as ImageIcon, Video as VideoIcon, FileText,
+  Plane, Pizza, Drama, Mountain, Moon, Leaf, Palette,
+  Music, Dumbbell, Camera as PhotoIcon, HeartHandshake,
+  UserPlus, Briefcase, Target, PartyPopper,
+  UtensilsCrossed, Coffee, Hotel, User, Wine
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// 15 predefined tags with emojis
+// 15 predefined tags with Lucide icons
 const MEMORY_TAGS = [
-  { id: "travel", label: "Travel", emoji: "✈️", gradient: "from-cyan-500 to-blue-500" },
-  { id: "food", label: "Food", emoji: "🍕", gradient: "from-orange-500 to-red-500" },
-  { id: "culture", label: "Culture", emoji: "🎭", gradient: "from-purple-500 to-pink-500" },
-  { id: "adventure", label: "Adventure", emoji: "🏔️", gradient: "from-green-500 to-teal-500" },
-  { id: "nightlife", label: "Nightlife", emoji: "🌃", gradient: "from-indigo-500 to-purple-500" },
-  { id: "nature", label: "Nature", emoji: "🌿", gradient: "from-emerald-500 to-green-500" },
-  { id: "art", label: "Art", emoji: "🎨", gradient: "from-pink-500 to-rose-500" },
-  { id: "music", label: "Music", emoji: "🎵", gradient: "from-violet-500 to-purple-500" },
-  { id: "sports", label: "Sports", emoji: "⚽", gradient: "from-blue-500 to-cyan-500" },
-  { id: "photography", label: "Photography", emoji: "📸", gradient: "from-gray-500 to-slate-500" },
-  { id: "family", label: "Family", emoji: "👨‍👩‍👧", gradient: "from-rose-500 to-pink-500" },
-  { id: "friends", label: "Friends", emoji: "👥", gradient: "from-yellow-500 to-orange-500" },
-  { id: "work", label: "Work", emoji: "💼", gradient: "from-slate-500 to-gray-500" },
-  { id: "milestone", label: "Milestone", emoji: "🎯", gradient: "from-red-500 to-orange-500" },
-  { id: "celebration", label: "Celebration", emoji: "🎉", gradient: "from-fuchsia-500 to-pink-500" },
+  { id: "travel", label: "Travel", icon: Plane, gradient: "from-cyan-500 to-blue-500" },
+  { id: "food", label: "Food", icon: Pizza, gradient: "from-orange-500 to-red-500" },
+  { id: "culture", label: "Culture", icon: Drama, gradient: "from-purple-500 to-pink-500" },
+  { id: "adventure", label: "Adventure", icon: Mountain, gradient: "from-green-500 to-teal-500" },
+  { id: "nightlife", label: "Nightlife", icon: Moon, gradient: "from-indigo-500 to-purple-500" },
+  { id: "nature", label: "Nature", icon: Leaf, gradient: "from-emerald-500 to-green-500" },
+  { id: "art", label: "Art", icon: Palette, gradient: "from-pink-500 to-rose-500" },
+  { id: "music", label: "Music", icon: Music, gradient: "from-violet-500 to-purple-500" },
+  { id: "sports", label: "Sports", icon: Dumbbell, gradient: "from-blue-500 to-cyan-500" },
+  { id: "photography", label: "Photography", icon: PhotoIcon, gradient: "from-gray-500 to-slate-500" },
+  { id: "family", label: "Family", icon: HeartHandshake, gradient: "from-rose-500 to-pink-500" },
+  { id: "friends", label: "Friends", icon: UserPlus, gradient: "from-yellow-500 to-orange-500" },
+  { id: "work", label: "Work", icon: Briefcase, gradient: "from-slate-500 to-gray-500" },
+  { id: "milestone", label: "Milestone", icon: Target, gradient: "from-red-500 to-orange-500" },
+  { id: "celebration", label: "Celebration", icon: PartyPopper, gradient: "from-fuchsia-500 to-pink-500" },
 ];
 
-// Recommendation categories
+// Recommendation categories with Lucide icons
 const RECOMMENDATION_CATEGORIES = [
-  { id: "restaurant", label: "Restaurant", emoji: "🍽️" },
-  { id: "cafe", label: "Café", emoji: "☕" },
-  { id: "hotel", label: "Hotel", emoji: "🏨" },
-  { id: "venue", label: "Tango Venue", emoji: "💃" },
-  { id: "activity", label: "Activity", emoji: "🎯" },
-  { id: "bar", label: "Bar", emoji: "🍸" },
+  { id: "restaurant", label: "Restaurant", icon: UtensilsCrossed },
+  { id: "cafe", label: "Café", icon: Coffee },
+  { id: "hotel", label: "Hotel", icon: Hotel },
+  { id: "venue", label: "Tango Venue", icon: User },
+  { id: "activity", label: "Activity", icon: Target },
+  { id: "bar", label: "Bar", icon: Wine },
 ];
 
 // Price ranges
@@ -398,6 +402,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
             <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
               {MEMORY_TAGS.map((tag) => {
                 const isSelected = selectedTags.includes(tag.id);
+                const IconComponent = tag.icon;
                 return (
                   <Button
                     key={tag.id}
@@ -414,7 +419,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
                     className={`justify-start gap-1.5 ${isSelected ? `bg-gradient-to-r ${tag.gradient} text-white border-0` : ''}`}
                     data-testid={`button-tag-${tag.id}`}
                   >
-                    <span>{tag.emoji}</span>
+                    <IconComponent className="w-4 h-4" />
                     <span className="text-xs">{tag.label}</span>
                   </Button>
                 );
@@ -448,14 +453,20 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
               <Label className="text-xs mb-1.5 block">Category</Label>
               <Select value={recommendationType} onValueChange={setRecommendationType}>
                 <SelectTrigger data-testid="select-recommendation-category">
-                  <SelectValue placeholder="📍 Select a category..." />
+                  <SelectValue placeholder="Select a category..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {RECOMMENDATION_CATEGORIES.map(cat => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.emoji} {cat.label}
-                    </SelectItem>
-                  ))}
+                  {RECOMMENDATION_CATEGORIES.map(cat => {
+                    const IconComponent = cat.icon;
+                    return (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        <div className="flex items-center gap-2">
+                          <IconComponent className="w-4 h-4" />
+                          <span>{cat.label}</span>
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>

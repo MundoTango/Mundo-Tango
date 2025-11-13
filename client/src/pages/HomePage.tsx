@@ -38,21 +38,21 @@ export default function HomePage() {
       location: "Buenos Aires, Argentina",
       rating: 5,
       text: "Mundo Tango helped me find my dance family in a new city. The community is warm, welcoming, and truly passionate about tango.",
-      image: "👤"
+      image: null
     },
     {
       name: "James Chen",
       location: "San Francisco, USA",
       rating: 5,
       text: "I've discovered amazing milongas and workshops through this platform. It's become essential to my tango journey.",
-      image: "👤"
+      image: null
     },
     {
       name: "Elena Volkov",
       location: "Moscow, Russia",
       rating: 5,
       text: "The teachers directory helped me find incredible instructors. My dancing has improved tremendously!",
-      image: "👤"
+      image: null
     }
   ];
 

@@ -30,7 +30,9 @@ import {
   CreditCard,
   Plane,
   Phone,
-  MapPinned
+  MapPinned,
+  UserSquare2,
+  User
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -49,19 +51,41 @@ const formatStatNumber = (value: number | undefined, defaultValue: string, local
   return new Intl.NumberFormat(locale).format(value);
 };
 
-// Dance role emoji display
-function RoleEmojiDisplay({ tangoRoles, leaderLevel, followerLevel }: any) {
+// Dance role icon display with MT Ocean styling
+function RoleIconDisplay({ tangoRoles, leaderLevel, followerLevel }: any) {
   if (!tangoRoles || tangoRoles.length === 0) return null;
   
   return (
-    <>
+    <div className="flex gap-2">
       {tangoRoles.includes('leader') && (
-        <span title={`Leader Level: ${leaderLevel || 0}/10`}>👔</span>
+        <div 
+          className="flex items-center gap-1 px-2 py-1 rounded-md"
+          style={{
+            background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.15), rgba(30, 144, 255, 0.15))',
+            backdropFilter: 'blur(8px)',
+            borderColor: 'rgba(64, 224, 208, 0.3)',
+          }}
+          title={`Leader Level: ${leaderLevel || 0}/10`}
+        >
+          <UserSquare2 className="w-4 h-4" style={{ color: '#1E90FF' }} />
+          <span className="text-xs font-medium" style={{ color: '#1E90FF' }}>Leader</span>
+        </div>
       )}
       {tangoRoles.includes('follower') && (
-        <span title={`Follower Level: ${followerLevel || 0}/10`}>👗</span>
+        <div 
+          className="flex items-center gap-1 px-2 py-1 rounded-md"
+          style={{
+            background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(168, 85, 247, 0.15))',
+            backdropFilter: 'blur(8px)',
+            borderColor: 'rgba(236, 72, 153, 0.3)',
+          }}
+          title={`Follower Level: ${followerLevel || 0}/10`}
+        >
+          <User className="w-4 h-4" style={{ color: '#EC4899' }} />
+          <span className="text-xs font-medium" style={{ color: '#EC4899' }}>Follower</span>
+        </div>
       )}
-    </>
+    </div>
   );
 }
 
@@ -280,10 +304,10 @@ export default function Sidebar({ isOpen: externalIsOpen, setIsOpen: externalSet
                 </div>
               </div>
               
-              {/* Dance Role Emojis */}
+              {/* Dance Role Icons */}
               {tangoRoles.length > 0 && (
-                <div className="flex gap-2 text-lg">
-                  <RoleEmojiDisplay 
+                <div className="mt-2">
+                  <RoleIconDisplay 
                     tangoRoles={tangoRoles}
                     leaderLevel={leaderLevel}
                     followerLevel={followerLevel}

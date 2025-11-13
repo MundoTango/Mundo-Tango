@@ -6,10 +6,16 @@ import { Request, Response, NextFunction } from "express";
  */
 export function securityHeaders(req: Request, res: Response, next: NextFunction) {
   // Content Security Policy (CSP)
+  const isDevelopment = process.env.NODE_ENV !== 'production';
   const cspDirectives = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    // Allow unsafe-inline/eval only in development, remove in production for security
+    isDevelopment 
+      ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com"
+      : "script-src 'self' https://cdn.jsdelivr.net https://unpkg.com",
+    isDevelopment
+      ? "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com"
+      : "style-src 'self' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: blob: https: http:",
     "media-src 'self' blob: https: http:",
@@ -20,7 +26,7 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
     "form-action 'self'",
     "frame-ancestors 'none'",
     "upgrade-insecure-requests",
-  ].join("; ");
+  ].filter(Boolean).join("; ");
   
   res.setHeader("Content-Security-Policy", cspDirectives);
   

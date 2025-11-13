@@ -144,14 +144,24 @@ export const generateRefreshToken = (user: SelectUser): string => {
     role: user.role,
   };
 
-  const refreshSecret = process.env.JWT_REFRESH_SECRET || JWT_SECRET;
+  // Require separate refresh secret in production for security
+  const refreshSecret = process.env.JWT_REFRESH_SECRET;
+  if (!refreshSecret && process.env.NODE_ENV === 'production') {
+    throw new Error('JWT_REFRESH_SECRET must be set in production');
+  }
+  const secret = refreshSecret || JWT_SECRET;
+  
   const expiresIn: string = process.env.JWT_REFRESH_EXPIRES_IN || "7d";
-  return jwt.sign(payload, refreshSecret, { expiresIn } as jwt.SignOptions);
+  return jwt.sign(payload, secret, { expiresIn } as jwt.SignOptions);
 };
 
 export const verifyRefreshToken = (token: string): JWTPayload => {
-  const refreshSecret = process.env.JWT_REFRESH_SECRET || JWT_SECRET;
-  return jwt.verify(token, refreshSecret) as JWTPayload;
+  const refreshSecret = process.env.JWT_REFRESH_SECRET;
+  if (!refreshSecret && process.env.NODE_ENV === 'production') {
+    throw new Error('JWT_REFRESH_SECRET must be set in production');
+  }
+  const secret = refreshSecret || JWT_SECRET;
+  return jwt.verify(token, secret) as JWTPayload;
 };
 
 // ============================================================================
