@@ -2234,16 +2234,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Update posts.likes count to reflect current reaction count
-      const reactionCount = await db.select({ count: sql<number>`count(*)::int` })
+      // Get updated reaction counts by type
+      const reactionsByType = await db
+        .select({
+          reactionType: reactions.reactionType,
+          count: sql<number>`count(*)::int`
+        })
         .from(reactions)
-        .where(eq(reactions.postId, postId));
+        .where(eq(reactions.postId, postId))
+        .groupBy(reactions.reactionType);
       
+      // Build reactions object { "love": 5, "fire": 3, ... }
+      const reactionsObject: Record<string, number> = {};
+      let totalCount = 0;
+      for (const row of reactionsByType) {
+        reactionsObject[row.reactionType] = row.count;
+        totalCount += row.count;
+      }
+      
+      // Update posts.likes count to reflect current reaction count
       await db.update(posts)
-        .set({ likes: reactionCount[0]?.count || 0 })
+        .set({ likes: totalCount })
         .where(eq(posts.id, postId));
 
-      res.json({ reacted: reactionType !== '' });
+      // Get user's current reaction
+      const userReactionResult = await db
+        .select()
+        .from(reactions)
+        .where(
+          and(
+            eq(reactions.postId, postId),
+            eq(reactions.userId, req.user!.id)
+          )
+        )
+        .limit(1);
+      
+      const userReaction = userReactionResult[0]?.reactionType || null;
+
+      res.json({ 
+        reactions: reactionsObject,
+        userReaction,
+        totalReactions: totalCount
+      });
     } catch (error) {
       console.error('React to post error:', error);
       res.status(500).json({ message: "Failed to react to post" });

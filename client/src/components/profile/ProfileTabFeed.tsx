@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Heart } from "lucide-react";
-import PostCreator from "@/components/universal/PostCreator";
+import { PostCreator } from "@/components/universal/PostCreator";
 
 interface Post {
   id: number;
