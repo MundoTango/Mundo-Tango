@@ -75,12 +75,14 @@ router.post("/stripe", async (req: Request, res: Response) => {
           const user = await storage.getUserByStripeCustomerId(customerId);
           
           if (user) {
+            // Access current_period_end - using type assertion for SDK compatibility
+            const periodEnd = (subscription as any).current_period_end || subscription.currentPeriodEnd;
             await storage.updateUserSubscription(user.id, {
               stripeSubscriptionId: subscriptionId,
               stripeCustomerId: customerId,
               plan: planTier,
               status: 'active',
-              currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+              currentPeriodEnd: new Date(periodEnd * 1000),
             });
             console.log(`[Stripe] Activated ${planTier} subscription for user ${user.id}`);
           } else {
@@ -98,9 +100,11 @@ router.post("/stripe", async (req: Request, res: Response) => {
         const user = await storage.getUserByStripeCustomerId(customerId);
         
         if (user) {
+          // Access current_period_end - using type assertion for SDK compatibility
+          const periodEnd = (subscription as any).current_period_end || subscription.currentPeriodEnd;
           await storage.updateUserSubscription(user.id, {
             status: subscription.status as 'active' | 'canceled' | 'past_due',
-            currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+            currentPeriodEnd: new Date(periodEnd * 1000),
           });
           console.log(`[Stripe] Updated subscription status to ${subscription.status} for user ${user.id}`);
         }
