@@ -77,6 +77,8 @@ import monitoringRoutes from "./routes/monitoringRoutes";
 import multiAIRoutes from "./routes/multiAIRoutes";
 import documentationGovernanceRoutes from "./routes/documentation-governance-routes";
 import learningIndexRoutes from "./routes/learningIndexRoutes";
+import financialAgentsRoutes from "./routes/financialAgentsRoutes";
+import socialMediaAgentsRoutes from "./routes/socialMediaAgentsRoutes";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
@@ -311,6 +313,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Learning Index API Routes
   app.use("/api/learning", learningIndexRoutes);
+  
+  // Financial Agents Routes (33 AI Agents for Financial Management)
+  app.use("/api/financial/agents", financialAgentsRoutes);
+  
+  // Social Media Agents Routes (5 AI Agents for Social Media Management)
+  app.use("/api/social/agents", socialMediaAgentsRoutes);
   
   // Existing routes
   app.use("/api/auth", authRoutes);
