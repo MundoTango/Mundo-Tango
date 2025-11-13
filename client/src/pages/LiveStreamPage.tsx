@@ -7,7 +7,7 @@ import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
-import liveStreamHeroImage from "@assets/stock_images/creative_professional_7b5e9c3a.jpg";
+import liveStreamHeroImage from "@assets/stock_images/elegant_professional_9405e610.jpg";
 import { SEO } from "@/components/SEO";
 
 export default function LiveStreamPage() {

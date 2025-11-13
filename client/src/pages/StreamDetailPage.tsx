@@ -22,7 +22,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import { useAuthContext } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import LiveStreamChat from "@/components/LiveStreamChat";
 import type { SelectLiveStream } from "@shared/schema";
 import { 
@@ -32,7 +32,7 @@ import {
 
 export default function StreamDetailPage() {
   const { id } = useParams();
-  const { user } = useAuthContext();
+  const { user } = useAuth();
   
   const { data: stream, isLoading } = useQuery<SelectLiveStream>({
     queryKey: ["/api/livestreams", id],
