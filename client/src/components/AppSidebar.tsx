@@ -39,6 +39,13 @@ import {
   Megaphone,
   Plane,
   PlaneTakeoff,
+  Heart,
+  PlusCircle,
+  Folder,
+  FileText,
+  Files,
+  BookTemplate,
+  PenTool,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { cn } from "@/lib/utils";
@@ -115,6 +122,13 @@ const marketplaceItems = [
   { title: "Seller Dashboard", url: "/marketplace/seller", icon: Store },
 ];
 
+// Crowdfunding (3 items)
+const crowdfundingItems = [
+  { title: "Discover", url: "/crowdfunding", icon: Heart },
+  { title: "Create Campaign", url: "/crowdfunding/create", icon: PlusCircle },
+  { title: "My Campaigns", url: "/crowdfunding/my", icon: Folder },
+];
+
 // Social Media (4 items)
 const socialMediaItems = [
   { title: "Dashboard", url: "/social", icon: Share2 },
@@ -130,6 +144,14 @@ const financialItems = [
   { title: "Accounts", url: "/financial/accounts", icon: Building2 },
   { title: "Trading", url: "/financial/trading", icon: TrendingUp },
   { title: "Insights", url: "/financial/insights", icon: Brain },
+];
+
+// Legal (4 items)
+const legalItems = [
+  { title: "Dashboard", url: "/legal", icon: FileText },
+  { title: "Documents", url: "/legal/documents", icon: Files },
+  { title: "Templates", url: "/legal/templates", icon: BookTemplate },
+  { title: "Pending Signatures", url: "/legal/documents?filter=pending", icon: PenTool },
 ];
 
 // Personal (3 items)
@@ -430,6 +452,36 @@ function AppSidebarComponent() {
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {/* Crowdfunding */}
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Crowdfunding</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {crowdfundingItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton 
+                    asChild 
+                    data-active={location === item.url || location.startsWith('/crowdfunding')} 
+                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                    className={cn(
+                      "transition-all duration-200 rounded-lg",
+                      (location === item.url || (item.url === "/crowdfunding" && location.startsWith('/crowdfunding'))) && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+                    )}
+                    style={(location === item.url || (item.url === "/crowdfunding" && location.startsWith('/crowdfunding'))) ? { color: '#40E0D0' } : undefined}
+                  >
+                    <Link to={item.url}>
+                      <>
+                        <item.icon className="h-5 w-5 transition-colors duration-200" />
+                        <span className="font-medium">{item.title}</span>
+                      </>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
         {/* Social Media */}
         <SidebarGroup className="border-b border-white/10 pb-4">
           <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Social Media</SidebarGroupLabel>
@@ -476,6 +528,36 @@ function AppSidebarComponent() {
                       (location === item.url || (item.url === "/financial" && location.startsWith("/financial") && !financialItems.slice(1).some(fi => location === fi.url))) && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
                     )}
                     style={(location === item.url || (item.url === "/financial" && location.startsWith("/financial") && !financialItems.slice(1).some(fi => location === fi.url))) ? { color: '#40E0D0' } : undefined}
+                  >
+                    <Link to={item.url}>
+                      <>
+                        <item.icon className="h-5 w-5 transition-colors duration-200" />
+                        <span className="font-medium">{item.title}</span>
+                      </>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Legal */}
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Legal</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {legalItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton 
+                    asChild 
+                    data-active={location === item.url || (item.url === "/legal" && location.startsWith("/legal"))} 
+                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                    className={cn(
+                      "transition-all duration-200 rounded-lg",
+                      (location === item.url || (item.url === "/legal" && location.startsWith("/legal") && !legalItems.slice(1).some(li => location === li.url))) && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+                    )}
+                    style={(location === item.url || (item.url === "/legal" && location.startsWith("/legal") && !legalItems.slice(1).some(li => location === li.url))) ? { color: '#40E0D0' } : undefined}
                   >
                     <Link to={item.url}>
                       <>

@@ -165,6 +165,13 @@ const FinancialAccountsPage = lazy(() => import("@/pages/FinancialAccountsPage")
 const FinancialTradingPage = lazy(() => import("@/pages/FinancialTradingPage"));
 const FinancialInsightsPage = lazy(() => import("@/pages/FinancialInsightsPage"));
 
+// Legal Document Management
+const LegalDashboardPage = lazy(() => import("@/pages/legal/LegalDashboardPage"));
+const LegalDocumentsPage = lazy(() => import("@/pages/legal/LegalDocumentsPage"));
+const LegalDocumentDetailPage = lazy(() => import("@/pages/legal/LegalDocumentDetailPage"));
+const LegalTemplatesPage = lazy(() => import("@/pages/legal/LegalTemplatesPage"));
+const LegalSignaturePage = lazy(() => import("@/pages/legal/LegalSignaturePage"));
+
 // Settings & Account
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
 const UserSettingsPage = lazy(() => import("@/pages/UserSettingsPage"));
@@ -218,6 +225,12 @@ const BookingConfirmationPage = lazy(() => import("@/pages/BookingConfirmationPa
 const PricingPage = lazy(() => import("@/pages/PricingPage"));
 const SubscriptionsPage = lazy(() => import("@/pages/SubscriptionsPage"));
 const ManageSubscriptionPage = lazy(() => import("@/pages/ManageSubscriptionPage"));
+
+// Crowdfunding
+const CrowdfundingDashboardPage = lazy(() => import("@/pages/crowdfunding/CrowdfundingDashboardPage"));
+const CrowdfundingCampaignDetailPage = lazy(() => import("@/pages/crowdfunding/CrowdfundingCampaignDetailPage"));
+const CrowdfundingCreatePage = lazy(() => import("@/pages/crowdfunding/CrowdfundingCreatePage"));
+const CrowdfundingMyPage = lazy(() => import("@/pages/crowdfunding/CrowdfundingMyPage"));
 
 // Content & Info
 const BlogPage = lazy(() => import("@/pages/BlogPage"));
@@ -665,6 +678,39 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      {/* Crowdfunding */}
+      <Route path="/crowdfunding">
+        <ProtectedRoute>
+          <AppLayout>
+            <CrowdfundingDashboardPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/crowdfunding/campaign/:id">
+        <ProtectedRoute>
+          <AppLayout>
+            <CrowdfundingCampaignDetailPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/crowdfunding/create">
+        <ProtectedRoute>
+          <AppLayout>
+            <CrowdfundingCreatePage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/crowdfunding/my">
+        <ProtectedRoute>
+          <AppLayout>
+            <CrowdfundingMyPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
       {/* Social Media Integration (Wave 2) */}
       <Route path="/social">
         <ProtectedRoute>
@@ -735,6 +781,47 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <FinancialInsightsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* Legal Document Management */}
+      <Route path="/legal">
+        <ProtectedRoute>
+          <AppLayout>
+            <LegalDashboardPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/legal/documents">
+        <ProtectedRoute>
+          <AppLayout>
+            <LegalDocumentsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/legal/documents/:id">
+        <ProtectedRoute>
+          <AppLayout>
+            <LegalDocumentDetailPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/legal/templates">
+        <ProtectedRoute>
+          <AppLayout>
+            <LegalTemplatesPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/legal/sign/:id">
+        <ProtectedRoute>
+          <AppLayout>
+            <LegalSignaturePage />
           </AppLayout>
         </ProtectedRoute>
       </Route>

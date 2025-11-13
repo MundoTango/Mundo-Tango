@@ -67,6 +67,7 @@ import contentProfileRoutes from "./routes/contentProfileRoutes";
 import healthRoutes from "./routes/health";
 import eventRoutes from "./routes/event-routes";
 import groupRoutes from "./routes/group-routes";
+import crowdfundingRoutes from "./routes/crowdfunding-routes";
 console.log("🔍 [DEBUG] About to import agentIntelligenceRoutes...");
 import agentIntelligenceRoutes from "./routes/agentIntelligenceRoutes";
 console.log("✅ [DEBUG] agentIntelligenceRoutes loaded");
@@ -345,6 +346,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/livestreams", livestreamRoutes);
   app.use("/api/marketplace", marketplaceRoutes);
   app.use("/api/subscriptions", subscriptionRoutes);
+  crowdfundingRoutes(app); // GoFundMe-style crowdfunding platform
   
   // Phase D: Community & Engagement Systems
   app.use("/api/reviews", reviewRoutes);
