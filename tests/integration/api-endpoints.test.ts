@@ -25,7 +25,7 @@ test.describe('API Integration Tests', () => {
     authToken = data.token;
   });
   
-  describe('Authentication API', () => {
+  test.describe('Authentication API', () => {
     
   test('POST /api/auth/register - should register new user', async () => {
       const timestamp = Date.now();
@@ -75,7 +75,7 @@ test.describe('API Integration Tests', () => {
     });
   });
   
-  describe('Events API', () => {
+  test.describe('Events API', () => {
     
   test('GET /api/events - should get events list', async () => {
       const response = await fetch(`${BASE_URL}/api/events`, {
@@ -114,7 +114,7 @@ test.describe('API Integration Tests', () => {
     });
   });
   
-  describe('Housing API', () => {
+  test.describe('Housing API', () => {
     
   test('GET /api/housing - should get housing listings', async () => {
       const response = await fetch(`${BASE_URL}/api/housing`, {
@@ -127,7 +127,7 @@ test.describe('API Integration Tests', () => {
     });
   });
   
-  describe('Posts API', () => {
+  test.describe('Posts API', () => {
     
   test('GET /api/posts - should get posts feed', async () => {
       const response = await fetch(`${BASE_URL}/api/posts`, {
@@ -159,7 +159,7 @@ test.describe('API Integration Tests', () => {
     });
   });
   
-  describe('Life CEO API', () => {
+  test.describe('Life CEO API', () => {
     
   test('GET /api/life-ceo/agents - should get all agents', async () => {
       const response = await fetch(`${BASE_URL}/api/life-ceo/agents`, {
@@ -183,7 +183,7 @@ test.describe('API Integration Tests', () => {
     });
   });
   
-  describe('Admin Workflows API', () => {
+  test.describe('Admin Workflows API', () => {
     
   test('GET /api/founder-approval/pending - should get pending features', async () => {
       const response = await fetch(`${BASE_URL}/api/founder-approval/pending`, {
@@ -216,7 +216,7 @@ test.describe('API Integration Tests', () => {
     });
   });
   
-  describe('Protected Routes', () => {
+  test.describe('Protected Routes', () => {
     
   test('should reject requests without auth token', async () => {
       const response = await fetch(`${BASE_URL}/api/posts`);
