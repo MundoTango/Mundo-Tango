@@ -68,6 +68,13 @@ const EventDetailsPage = lazy(() => import("@/pages/EventDetailsPage"));
 const GroupsPage = lazy(() => import("@/pages/GroupsPage"));
 const GroupDetailsPage = lazy(() => import("@/pages/GroupDetailsPage"));
 
+// Travel Integration
+const TravelDashboardPage = lazy(() => import("@/pages/travel/TravelDashboardPage"));
+const TravelTripPlannerPage = lazy(() => import("@/pages/travel/TravelTripPlannerPage"));
+const TravelItineraryPage = lazy(() => import("@/pages/travel/TravelItineraryPage"));
+const TravelExpensesPage = lazy(() => import("@/pages/travel/TravelExpensesPage"));
+const TravelEventCoordinationPage = lazy(() => import("@/pages/travel/TravelEventCoordinationPage"));
+
 // Media & Albums
 const AlbumsPage = lazy(() => import("@/pages/albums"));
 const AlbumDetailPage = lazy(() => import("@/pages/album-detail"));
@@ -198,6 +205,11 @@ const HostHomesPage = lazy(() => import("@/pages/HostHomesPage"));
 // Commerce & Subscriptions
 const MarketplacePage = lazy(() => import("@/pages/MarketplacePage"));
 const MarketplaceItemPage = lazy(() => import("@/pages/MarketplaceItemPage"));
+const MarketplaceProductDetailPage = lazy(() => import("@/pages/MarketplaceProductDetailPage"));
+const MarketplaceCartPage = lazy(() => import("@/pages/MarketplaceCartPage"));
+const MarketplaceCheckoutPage = lazy(() => import("@/pages/MarketplaceCheckoutPage"));
+const MarketplaceSellerDashboardPage = lazy(() => import("@/pages/MarketplaceSellerDashboardPage"));
+const MarketplaceOrdersPage = lazy(() => import("@/pages/MarketplaceOrdersPage"));
 const CheckoutPage = lazy(() => import("@/pages/CheckoutPage"));
 const BillingPage = lazy(() => import("@/pages/BillingPage"));
 const PaymentSuccessPage = lazy(() => import("@/pages/PaymentSuccessPage"));
@@ -415,6 +427,46 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/travel">
+        <ProtectedRoute>
+          <AppLayout>
+            <TravelDashboardPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/travel/planner">
+        <ProtectedRoute>
+          <AppLayout>
+            <TravelTripPlannerPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/travel/trip/:id">
+        <ProtectedRoute>
+          <AppLayout>
+            <TravelItineraryPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/travel/trip/:id/expenses">
+        <ProtectedRoute>
+          <AppLayout>
+            <TravelExpensesPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/travel/events/:eventId">
+        <ProtectedRoute>
+          <AppLayout>
+            <TravelEventCoordinationPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/groups">
         <ProtectedRoute>
           <AppLayout>
@@ -569,6 +621,46 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <MarketplacePage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/marketplace/product/:id">
+        <ProtectedRoute>
+          <AppLayout>
+            <MarketplaceProductDetailPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/marketplace/cart">
+        <ProtectedRoute>
+          <AppLayout>
+            <MarketplaceCartPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/marketplace/checkout">
+        <ProtectedRoute>
+          <AppLayout>
+            <MarketplaceCheckoutPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/marketplace/seller">
+        <ProtectedRoute>
+          <AppLayout>
+            <MarketplaceSellerDashboardPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/marketplace/orders">
+        <ProtectedRoute>
+          <AppLayout>
+            <MarketplaceOrdersPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>

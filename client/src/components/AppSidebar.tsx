@@ -17,6 +17,9 @@ import {
   PlayCircle,
   Brain,
   ShoppingBag,
+  ShoppingCart,
+  Package,
+  Store,
   Bot,
   Bookmark,
   Shield,
@@ -34,6 +37,8 @@ import {
   PenSquare,
   Link,
   Megaphone,
+  Plane,
+  PlaneTakeoff,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { cn } from "@/lib/utils";
@@ -76,6 +81,14 @@ const eventsItems = [
   { title: "Calendar", url: "/calendar", icon: Calendar },
 ];
 
+// Travel (4 items)
+const travelItems = [
+  { title: "Dashboard", url: "/travel", icon: Plane },
+  { title: "Plan Trip", url: "/travel/planner", icon: PlaneTakeoff },
+  { title: "My Trips", url: "/travel", icon: MapPin },
+  { title: "Event Travel", url: "/events", icon: Users },
+];
+
 // Tango Resources (3 items)
 const tangoItems = [
   { title: "Teachers", url: "/teachers", icon: GraduationCap },
@@ -88,11 +101,18 @@ const resourcesItems = [
   { title: "Community Map", url: "/community-world-map", icon: Globe },
 ];
 
-// AI & Tools (3 items)
+// AI & Tools (2 items)
 const toolsItems = [
   { title: "Life CEO", url: "/life-ceo", icon: Brain },
   { title: "Mr Blue AI", url: "/mr-blue-chat", icon: Bot },
-  { title: "Marketplace", url: "/marketplace", icon: ShoppingBag },
+];
+
+// Marketplace (4 items)
+const marketplaceItems = [
+  { title: "Browse Products", url: "/marketplace", icon: ShoppingBag },
+  { title: "Cart", url: "/marketplace/cart", icon: ShoppingCart },
+  { title: "My Orders", url: "/marketplace/orders", icon: Package },
+  { title: "Seller Dashboard", url: "/marketplace/seller", icon: Store },
 ];
 
 // Social Media (4 items)
@@ -260,6 +280,36 @@ function AppSidebarComponent() {
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {/* Travel */}
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Travel</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {travelItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton 
+                    asChild 
+                    data-active={location === item.url} 
+                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                    className={cn(
+                      "transition-all duration-200 rounded-lg",
+                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+                    )}
+                    style={location === item.url ? { color: '#40E0D0' } : undefined}
+                  >
+                    <Link to={item.url}>
+                      <>
+                        <item.icon className="h-5 w-5 transition-colors duration-200" />
+                        <span className="font-medium">{item.title}</span>
+                      </>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
         {/* Tango Resources */}
         <SidebarGroup className="border-b border-white/10 pb-4">
           <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Tango Resources</SidebarGroupLabel>
@@ -336,6 +386,36 @@ function AppSidebarComponent() {
                       location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
                     )}
                     style={location === item.url ? { color: '#40E0D0' } : undefined}
+                  >
+                    <Link to={item.url}>
+                      <>
+                        <item.icon className="h-5 w-5 transition-colors duration-200" />
+                        <span className="font-medium">{item.title}</span>
+                      </>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Marketplace */}
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Marketplace</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {marketplaceItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton 
+                    asChild 
+                    data-active={location === item.url || location.startsWith(item.url + '/')} 
+                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                    className={cn(
+                      "transition-all duration-200 rounded-lg",
+                      (location === item.url || location.startsWith(item.url + '/')) && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+                    )}
+                    style={(location === item.url || location.startsWith(item.url + '/')) ? { color: '#40E0D0' } : undefined}
                   >
                     <Link to={item.url}>
                       <>
