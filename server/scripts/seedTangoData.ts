@@ -141,6 +141,7 @@ async function seedTangoData() {
       // Insert event
       try {
         await db.insert(events).values({
+          userId: 15, // Current user as event creator
           title,
           description,
           eventType: eventType,
