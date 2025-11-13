@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { LanguageSelectorButton } from "@/components/LanguageSelector";
+import { ConnectionStatusBadge } from "@/components/feed/ConnectionStatusBadge";
 import { cn } from "@/lib/utils";
 
 interface UnifiedTopBarProps {
@@ -384,6 +385,9 @@ export default function UnifiedTopBar({
               )}
             </Button>
           </Link>
+
+          {/* Connection Status Badge */}
+          <ConnectionStatusBadge />
 
           {/* User Profile Dropdown */}
           <DropdownMenu>
