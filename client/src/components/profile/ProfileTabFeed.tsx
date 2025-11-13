@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Heart } from "lucide-react";
+import PostCreator from "@/components/universal/PostCreator";
 
 interface Post {
   id: number;
@@ -33,28 +34,39 @@ export default function ProfileTabFeed({ posts, isLoading, isOwnProfile }: Profi
     );
   }
 
-  if (posts.length === 0) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <Card className="overflow-hidden" data-testid="card-no-posts">
-          <CardContent className="py-16 text-center">
-            <p className="text-lg text-muted-foreground">
-              {isOwnProfile 
-                ? "You haven't posted anything yet. Share your tango journey!" 
-                : "No posts yet."}
-            </p>
-          </CardContent>
-        </Card>
-      </motion.div>
-    );
-  }
-
   return (
     <div className="space-y-6">
+      {/* Post Creator - Only show on own profile */}
+      {isOwnProfile && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <PostCreator />
+        </motion.div>
+      )}
+
+      {/* No Posts Message */}
+      {posts.length === 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <Card className="overflow-hidden" data-testid="card-no-posts">
+            <CardContent className="py-16 text-center">
+              <p className="text-lg text-muted-foreground">
+                {isOwnProfile 
+                  ? "You haven't posted anything yet. Share your tango journey!" 
+                  : "No posts yet."}
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+
+      {/* Posts List */}
       {posts.map((post, index) => (
         <motion.div
           key={post.id}

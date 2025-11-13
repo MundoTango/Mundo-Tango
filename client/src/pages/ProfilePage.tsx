@@ -231,7 +231,7 @@ export default function ProfilePage() {
               className="gap-2 text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30"
               onClick={() => removeFriendMutation.mutate()}
               disabled={removeFriendMutation.isPending}
-              data-testid={`button-remove-friend-${profileId}`}
+              data-testid={`button-remove-friend-${user.id}`}
             >
               <UserMinus className="h-4 w-4" />
               {removeFriendMutation.isPending ? 'Removing...' : 'Remove Friend'}
@@ -251,7 +251,7 @@ export default function ProfilePage() {
               className="gap-2 text-white bg-primary/80 backdrop-blur-sm hover:bg-primary"
               onClick={() => sendFriendRequestMutation.mutate()}
               disabled={sendFriendRequestMutation.isPending}
-              data-testid={`button-add-friend-${profileId}`}
+              data-testid={`button-add-friend-${user.id}`}
             >
               <UserPlus className="h-4 w-4" />
               {sendFriendRequestMutation.isPending ? 'Sending...' : 'Add Friend'}
@@ -383,7 +383,7 @@ export default function ProfilePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <ProfileTabTravel profileId={profileId} />
+            <ProfileTabTravel profileId={user.id} />
           </motion.div>
         )}
 
