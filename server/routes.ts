@@ -84,6 +84,7 @@ import marketplaceAgentsRoutes from "./routes/marketplaceAgentsRoutes";
 import travelAgentsRoutes from "./routes/travelAgentsRoutes";
 import userTestingAgentsRoutes from "./routes/userTestingAgentsRoutes";
 import legalAgentsRoutes from "./routes/legalAgentsRoutes";
+import gdprRoutes from "./routes/gdpr";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
 import { cspHeaders } from "./middleware/csp";
@@ -384,8 +385,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/locations", locationSearchRoutes);
   
   // ============================================================================
-  // GDPR COMPLIANCE & SETTINGS ROUTES
+  // GDPR COMPLIANCE & PRIVACY ROUTES
   // ============================================================================
+  
+  // Register GDPR routes (data export, account deletion, consent management)
+  app.use(gdprRoutes);
   
   // Get active user sessions (mock data)
   app.get("/api/settings/sessions", authenticateToken, async (req: AuthRequest, res: Response) => {

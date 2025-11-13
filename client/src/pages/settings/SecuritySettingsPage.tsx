@@ -41,7 +41,7 @@ export default function SecuritySettingsPage() {
   });
 
   const { data: auditLogs, isLoading: logsLoading } = useQuery<AuditLog[]>({
-    queryKey: ['/api/settings/audit-logs'],
+    queryKey: ['/api/security/audit-logs'],
   });
 
   const revokeSessionMutation = useMutation({

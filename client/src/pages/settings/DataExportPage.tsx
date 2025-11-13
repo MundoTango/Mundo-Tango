@@ -27,17 +27,17 @@ export default function DataExportPage() {
   const [selectedFormat, setSelectedFormat] = useState<string>("json");
 
   const { data: exports, isLoading } = useQuery<DataExportRequest[]>({
-    queryKey: ['/api/settings/data-exports'],
+    queryKey: ['/api/gdpr/exports'],
   });
 
   const requestExportMutation = useMutation({
     mutationFn: () =>
-      apiRequest('POST', '/api/settings/request-data-export', { format: selectedFormat }),
+      apiRequest('POST', '/api/gdpr/export', { format: selectedFormat }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/settings/data-exports'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/gdpr/exports'] });
       toast({
-        title: "Export requested",
-        description: "Your data export request has been queued. You'll be notified when it's ready.",
+        title: "Export complete",
+        description: "Your data export is ready. Download will begin automatically.",
       });
     },
     onError: () => {
