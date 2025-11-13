@@ -36,6 +36,8 @@ export function cspHeaders(options: CSPOptions = {}) {
         "'self'",
         "'unsafe-inline'",
         "https://fonts.googleapis.com",
+        "https://unpkg.com",
+        "https://cdn.jsdelivr.net",
       ],
       "img-src": [
         "'self'",
@@ -45,6 +47,9 @@ export function cspHeaders(options: CSPOptions = {}) {
         "https://res.cloudinary.com",
         "https://api.mapbox.com",
         "https://*.tile.openstreetmap.org",
+        "https://unpkg.com",
+        "https://cdn.jsdelivr.net",
+        "https://images.unsplash.com",
       ],
       "font-src": [
         "'self'",
