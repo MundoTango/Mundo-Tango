@@ -132,6 +132,12 @@ const ESACommunicationsPage = lazy(() => import("@/pages/platform/ESACommunicati
 const AgentTasksPage = lazy(() => import("@/pages/AgentTasksPage"));
 const AgentCommunicationsPage = lazy(() => import("@/pages/AgentCommunicationsPage"));
 
+// Social Media Integration (Wave 2)
+const SocialMediaDashboardPage = lazy(() => import("@/pages/SocialMediaDashboardPage"));
+const SocialMediaComposerPage = lazy(() => import("@/pages/SocialMediaComposerPage"));
+const SocialMediaConnectionsPage = lazy(() => import("@/pages/SocialMediaConnectionsPage"));
+const SocialMediaCampaignsPage = lazy(() => import("@/pages/SocialMediaCampaignsPage"));
+
 // Marketing & HR Agents
 const SEOAgentPage = lazy(() => import("@/pages/marketing/SEOAgentPage"));
 const ContentAgentPage = lazy(() => import("@/pages/marketing/ContentAgentPage"));
@@ -144,6 +150,13 @@ const PerformanceAgentPage = lazy(() => import("@/pages/hr/PerformanceAgentPage"
 const RetentionAgentPage = lazy(() => import("@/pages/hr/RetentionAgentPage"));
 const CultureAgentPage = lazy(() => import("@/pages/hr/CultureAgentPage"));
 const H2ACDashboardPage = lazy(() => import("@/pages/H2ACDashboardPage"));
+
+// Financial Management System (Agents #73-105)
+const FinancialDashboardPage = lazy(() => import("@/pages/FinancialDashboardPage"));
+const FinancialPortfoliosPage = lazy(() => import("@/pages/FinancialPortfoliosPage"));
+const FinancialAccountsPage = lazy(() => import("@/pages/FinancialAccountsPage"));
+const FinancialTradingPage = lazy(() => import("@/pages/FinancialTradingPage"));
+const FinancialInsightsPage = lazy(() => import("@/pages/FinancialInsightsPage"));
 
 // Settings & Account
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
@@ -556,6 +569,80 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <MarketplacePage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* Social Media Integration (Wave 2) */}
+      <Route path="/social">
+        <ProtectedRoute>
+          <AppLayout>
+            <SocialMediaDashboardPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/social/compose">
+        <ProtectedRoute>
+          <AppLayout>
+            <SocialMediaComposerPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/social/connections">
+        <ProtectedRoute>
+          <AppLayout>
+            <SocialMediaConnectionsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/social/campaigns">
+        <ProtectedRoute>
+          <AppLayout>
+            <SocialMediaCampaignsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* Financial Management System (Agents #73-105) */}
+      <Route path="/financial">
+        <ProtectedRoute>
+          <AppLayout>
+            <FinancialDashboardPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/financial/portfolios">
+        <ProtectedRoute>
+          <AppLayout>
+            <FinancialPortfoliosPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/financial/accounts">
+        <ProtectedRoute>
+          <AppLayout>
+            <FinancialAccountsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/financial/trading">
+        <ProtectedRoute>
+          <AppLayout>
+            <FinancialTradingPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/financial/insights">
+        <ProtectedRoute>
+          <AppLayout>
+            <FinancialInsightsPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>

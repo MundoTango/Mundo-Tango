@@ -26,6 +26,14 @@ import {
   ListChecks,
   Network,
   Layout,
+  LayoutDashboard,
+  Briefcase,
+  Building2,
+  TrendingUp,
+  Share2,
+  PenSquare,
+  Link,
+  Megaphone,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { cn } from "@/lib/utils";
@@ -85,6 +93,23 @@ const toolsItems = [
   { title: "Life CEO", url: "/life-ceo", icon: Brain },
   { title: "Mr Blue AI", url: "/mr-blue-chat", icon: Bot },
   { title: "Marketplace", url: "/marketplace", icon: ShoppingBag },
+];
+
+// Social Media (4 items)
+const socialMediaItems = [
+  { title: "Dashboard", url: "/social", icon: Share2 },
+  { title: "Compose", url: "/social/compose", icon: PenSquare },
+  { title: "Connections", url: "/social/connections", icon: Link },
+  { title: "Campaigns", url: "/social/campaigns", icon: Megaphone },
+];
+
+// Financial (5 items)
+const financialItems = [
+  { title: "Dashboard", url: "/financial", icon: LayoutDashboard },
+  { title: "Portfolios", url: "/financial/portfolios", icon: Briefcase },
+  { title: "Accounts", url: "/financial/accounts", icon: Building2 },
+  { title: "Trading", url: "/financial/trading", icon: TrendingUp },
+  { title: "Insights", url: "/financial/insights", icon: Brain },
 ];
 
 // Personal (3 items)
@@ -311,6 +336,66 @@ function AppSidebarComponent() {
                       location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
                     )}
                     style={location === item.url ? { color: '#40E0D0' } : undefined}
+                  >
+                    <Link to={item.url}>
+                      <>
+                        <item.icon className="h-5 w-5 transition-colors duration-200" />
+                        <span className="font-medium">{item.title}</span>
+                      </>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Social Media */}
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Social Media</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {socialMediaItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton 
+                    asChild 
+                    data-active={location === item.url} 
+                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                    className={cn(
+                      "transition-all duration-200 rounded-lg",
+                      location === item.url && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+                    )}
+                    style={location === item.url ? { color: '#40E0D0' } : undefined}
+                  >
+                    <Link to={item.url}>
+                      <>
+                        <item.icon className="h-5 w-5 transition-colors duration-200" />
+                        <span className="font-medium">{item.title}</span>
+                      </>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Financial */}
+        <SidebarGroup className="border-b border-white/10 pb-4">
+          <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider opacity-60">Financial</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {financialItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton 
+                    asChild 
+                    data-active={location === item.url || (item.url === "/financial" && location.startsWith("/financial"))} 
+                    data-testid={`sidebar-item-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                    className={cn(
+                      "transition-all duration-200 rounded-lg",
+                      (location === item.url || (item.url === "/financial" && location.startsWith("/financial") && !financialItems.slice(1).some(fi => location === fi.url))) && "bg-gradient-to-r from-[#40E0D0]/20 to-transparent border-l-2 border-[#40E0D0]"
+                    )}
+                    style={(location === item.url || (item.url === "/financial" && location.startsWith("/financial") && !financialItems.slice(1).some(fi => location === fi.url))) ? { color: '#40E0D0' } : undefined}
                   >
                     <Link to={item.url}>
                       <>
