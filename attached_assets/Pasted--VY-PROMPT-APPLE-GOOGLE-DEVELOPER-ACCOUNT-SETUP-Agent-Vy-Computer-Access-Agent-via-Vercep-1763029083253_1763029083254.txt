@@ -1,0 +1,433 @@
+# VY PROMPT: APPLE & GOOGLE DEVELOPER ACCOUNT SETUP
+
+**Agent:** Vy (Computer Access Agent via Vercept)  
+**Objective:** Navigate logged-in Apple Developer and Google Play Console to retrieve account information  
+**Timeline:** 30 minutes  
+**Prerequisites:** User must have already created and paid for both developer accounts
+
+---
+
+## 🎯 MISSION OVERVIEW
+
+**IMPORTANT:** This task complies with Vercept TOS by working with platforms you're **already logged into**. Vy will NOT:
+- ❌ Create new developer accounts
+- ❌ Enter payment information ($99 Apple, $25 Google)
+- ❌ Handle billing or credit card details
+
+**User Must Complete First (Manually):**
+1. Create Apple Developer account at https://developer.apple.com/programs/
+2. Pay $99 enrollment fee (annual)
+3. Create Google Play Developer account at https://play.google.com/console/signup
+4. Pay $25 registration fee (one-time)
+5. Stay logged into both consoles in your browser
+
+**Vy's Role:** Navigate both logged-in consoles and retrieve account information  
+**Replit Agent's Role:** Use account info to configure mobile app deployment
+
+---
+
+## 📋 PHASE 1: APPLE DEVELOPER ACCOUNT VERIFICATION (10 minutes)
+
+### Step 1.1: Verify User is Logged In
+```
+IMPORTANT: Before starting, user must be logged into https://developer.apple.com 
+with an active Apple Developer Program membership ($99/year paid).
+
+If not logged in:
+- STOP and inform user to log in manually first
+- Do NOT attempt to log in (violates Vercept TOS)
+```
+
+---
+
+### Step 1.2: Navigate to Account Information
+```
+1. Navigate to: https://developer.apple.com/account
+2. Confirm user is logged in (see account email in top-right)
+3. Verify membership status:
+   - Look for "Membership" section
+   - Status should show "Active" or "Renewal due on [date]"
+4. Note the following information:
+   - Account Holder Name
+   - Team ID (10-character alphanumeric, e.g., ABC123XYZ)
+   - Organization Name (if organization account)
+   - Membership Type (Individual or Organization)
+   - Membership Expiration Date
+```
+
+---
+
+### Step 1.3: Check Certificates
+```
+1. Navigate to: https://developer.apple.com/account/resources/certificates
+2. Check if any certificates exist:
+   - Development certificates
+   - Distribution certificates
+3. Note how many certificates exist
+4. Do NOT create any certificates (Xcode will do this automatically)
+```
+
+---
+
+### Step 1.4: Verify App IDs Section Access
+```
+1. Navigate to: https://developer.apple.com/account/resources/identifiers
+2. Verify you can see the Identifiers page
+3. Note if any App IDs already exist (likely none for new account)
+4. Do NOT create App IDs yet (will be done during app build)
+```
+
+---
+
+### Step 1.5: Compile Apple Account Information
+```
+Create a text file: apple_developer_info.txt
+
+Apple Developer Account Information
+====================================
+Account Holder: [Name from account]
+Team ID: [10-character ID]
+Organization: [If applicable]
+Membership Type: Individual / Organization
+Membership Status: Active
+Expiration Date: [Date]
+Existing Certificates: [Count]
+Account Email: [Email shown in top-right]
+
+Notes:
+- Membership is active and ready for iOS app deployment
+- Xcode will automatically create necessary certificates and provisioning profiles
+```
+
+**Deliverable:** Apple account information (Team ID, status, etc.)
+
+---
+
+## 📋 PHASE 2: GOOGLE PLAY DEVELOPER ACCOUNT VERIFICATION (10 minutes)
+
+### Step 2.1: Verify User is Logged In
+```
+IMPORTANT: Before starting, user must be logged into https://play.google.com/console
+with a registered Google Play Developer account ($25 one-time fee paid).
+
+If not logged in:
+- STOP and inform user to log in manually first
+- Do NOT attempt to log in (violates Vercept TOS)
+```
+
+---
+
+### Step 2.2: Navigate to Account Information
+```
+1. Navigate to: https://play.google.com/console
+2. Confirm user is logged in (see account name/email in top-right)
+3. If you see "Create app" button, account is active
+4. Click on account icon (top-right) → "Account details"
+5. Note the following information:
+   - Developer Name
+   - Developer Email
+   - Developer ID
+   - Account Type (Individual or Organization)
+   - Registration Date
+```
+
+---
+
+### Step 2.3: Check Play Console Setup
+```
+1. Click "Setup" in left sidebar (or "All apps" if setup complete)
+2. Verify account setup is complete:
+   - [ ] Developer account details
+   - [ ] Payment profile (for paid apps - not applicable if only free apps)
+   - [ ] Data safety form (will complete per app)
+3. Note if any apps already exist (likely none for new account)
+```
+
+---
+
+### Step 2.4: Verify API Access (Optional but Recommended)
+```
+1. Navigate to: https://play.google.com/console → Settings → Developer account → API access
+2. Check if Google Play Android Developer API is enabled
+3. If disabled:
+   - Click "Link" to link to Google Cloud Project
+   - This allows automated uploads via Gradle (optional)
+4. Note API status: Enabled / Not enabled
+```
+
+---
+
+### Step 2.5: Compile Google Play Account Information
+```
+Create a text file: google_play_developer_info.txt
+
+Google Play Developer Account Information
+==========================================
+Developer Name: [Name from account]
+Developer Email: [Email]
+Developer ID: [If visible]
+Account Type: Individual / Organization
+Registration Date: [Date]
+Account Status: Active
+Existing Apps: [Count, likely 0]
+API Access: Enabled / Not enabled
+
+Notes:
+- Account is active and ready for Android app deployment
+- No additional setup needed for first app submission
+```
+
+**Deliverable:** Google Play account information (developer name, email, status)
+
+---
+
+## 📋 PHASE 3: DELIVER ACCOUNT INFORMATION TO REPLIT AGENT (10 minutes)
+
+### Step 3.1: Compile All Information
+```
+Create a combined file: mobile_deployment_account_info.txt
+
+==============================================
+MOBILE APP DEPLOYMENT - ACCOUNT INFORMATION
+==============================================
+
+APPLE DEVELOPER ACCOUNT
+------------------------
+Account Holder: [Name]
+Team ID: [ABC123XYZ]
+Organization: [If applicable]
+Membership Type: Individual / Organization
+Status: Active
+Expiration: [Date]
+Email: [apple_id@example.com]
+
+✅ Ready for iOS deployment
+
+
+GOOGLE PLAY DEVELOPER ACCOUNT
+-------------------------------
+Developer Name: [Name]
+Developer Email: [email@example.com]
+Account Type: Individual / Organization
+Status: Active
+Registration: [Date]
+
+✅ Ready for Android deployment
+
+
+NEXT STEPS FOR REPLIT AGENT
+-----------------------------
+1. Configure Capacitor for iOS (use Team ID above)
+2. Configure Capacitor for Android
+3. Generate app icons and splash screens
+4. Build and archive iOS app in Xcode
+5. Build and sign Android AAB
+6. Create app listings in App Store Connect and Play Console
+7. Submit for review
+
+
+ESTIMATED DEPLOYMENT TIMELINE
+-------------------------------
+iOS: 2-3 weeks (including review time)
+Android: 1-2 weeks (including review time)
+Both can be done in parallel
+```
+
+---
+
+### Step 3.2: Send to Replit Agent
+
+**Option 1: Paste into Replit Chat** (Recommended)
+```
+Send message to Replit Agent:
+
+"Mobile developer accounts verified! ✅
+
+APPLE DEVELOPER:
+- Team ID: [ABC123XYZ]
+- Status: Active (expires [date])
+- Email: [apple_id@example.com]
+
+GOOGLE PLAY DEVELOPER:
+- Developer: [Name]
+- Email: [email@example.com]
+- Status: Active
+
+Both accounts are ready for app deployment. You can now proceed with:
+1. Capacitor configuration
+2. App icon generation
+3. iOS archive + upload
+4. Android AAB build + upload
+5. App Store Connect listing
+6. Play Console listing
+7. Submission for review
+
+Let me know when you're ready to start! 🚀"
+```
+
+**Option 2: Save to File**
+```
+Save mobile_deployment_account_info.txt to a shared location (Google Drive, Dropbox, etc.) 
+and share link with Replit Agent
+```
+
+---
+
+## ✅ SUCCESS VERIFICATION CHECKLIST
+
+Before completing the mission, verify:
+
+**Apple Developer Account:**
+- [ ] User is logged into developer.apple.com
+- [ ] Membership status is "Active"
+- [ ] Team ID retrieved (10-character alphanumeric)
+- [ ] Account expiration date noted
+- [ ] Account information delivered to Replit Agent
+
+**Google Play Developer Account:**
+- [ ] User is logged into play.google.com/console
+- [ ] Account is active and verified
+- [ ] Developer name and email retrieved
+- [ ] Account information delivered to Replit Agent
+
+**Delivery:**
+- [ ] Account information sent to Replit Agent via chat or file
+- [ ] Replit Agent confirmed receipt
+
+**That's it!** Replit Agent will handle all technical work:
+- Capacitor iOS/Android configuration
+- App icon and splash screen generation
+- iOS app build, archive, and upload to App Store Connect
+- Android app build, signing, and upload to Play Console
+- App Store Connect listing (screenshots, description, etc.)
+- Play Console listing (screenshots, description, etc.)
+- Submission for App Review (both platforms)
+- Post-approval monitoring and updates
+
+---
+
+## 🚨 TROUBLESHOOTING
+
+### Issue: User not logged into Apple Developer
+```
+Solution: STOP and inform user to log in manually first
+DO NOT attempt to log in (violates Vercept TOS)
+```
+
+### Issue: Apple Developer membership not active
+```
+Solution: User must pay $99 annual fee at developer.apple.com/programs/
+Vy cannot handle payments (Vercept TOS)
+```
+
+### Issue: Cannot find Team ID
+```
+Solution: 
+1. Go to developer.apple.com/account
+2. Look under "Membership" section
+3. Team ID is shown as 10-character alphanumeric (e.g., ABC123XYZ)
+4. If still not visible, click "Membership details"
+```
+
+### Issue: User not logged into Google Play Console
+```
+Solution: STOP and inform user to log in manually first
+DO NOT attempt to log in (violates Vercept TOS)
+```
+
+### Issue: Google Play account not verified
+```
+Solution: User must complete registration and pay $25 fee
+Vy cannot handle payments (Vercept TOS)
+```
+
+### Issue: Google Play account suspended
+```
+Solution: User must contact Google Play Support
+Account suspension is outside Vy's scope
+```
+
+---
+
+## 💰 PREREQUISITES - USER MUST HAVE ACTIVE ACCOUNTS
+
+**User must have already completed:**
+
+**Apple Developer Program:** $99/year
+- Enrollment at https://developer.apple.com/programs/
+- Payment processed (credit card charged)
+- Account approved (1-2 business days)
+- Membership status: Active
+
+**Google Play Developer:** $25 one-time
+- Registration at https://play.google.com/console/signup
+- Payment processed (one-time fee)
+- Account verified (instant to 48 hours)
+- Status: Active
+
+**Total Investment:** $124 (first year), then $99/year (Apple renewal)
+
+**IMPORTANT:** Vy cannot create accounts or enter payment info (Vercept TOS). User must complete signup and payment manually BEFORE running this prompt.
+
+---
+
+## 📞 SUPPORT CONTACTS
+
+**Apple Developer Support:**
+- https://developer.apple.com/support/
+- Phone: 1-800-633-2152 (US)
+- Email: developer@apple.com
+
+**Google Play Support:**
+- https://support.google.com/googleplay/android-developer
+- No phone support (email/chat only)
+
+**Replit Agent:**
+- Available in Replit project chat for implementation questions
+
+---
+
+## 🎉 MISSION COMPLETE!
+
+Once both accounts are verified and information is delivered to Replit Agent, the mission is complete.
+
+**What Replit Agent Will Do Next:**
+1. Install Capacitor for iOS and Android
+2. Configure `capacitor.config.ts` with app details
+3. Generate app icons and splash screens
+4. Build web app (`npm run build`)
+5. Sync to native projects (`npx cap sync`)
+6. Open Xcode, configure signing with Team ID
+7. Archive iOS app and upload to App Store Connect
+8. Open Android Studio, configure signing with keystore
+9. Build Android AAB and upload to Play Console
+10. Create app listings (screenshots, descriptions) on both stores
+11. Submit both apps for review
+12. Monitor review status and respond to rejections (if any)
+13. Release apps to production after approval
+
+**You've successfully verified the mobile developer accounts to power native iOS and Android apps for Mundo Tango!** 🚀
+
+---
+
+**Estimated Total Time:** 30 minutes  
+**Difficulty:** Very Easy (just navigating logged-in accounts and copying information)  
+**Success Rate:** Very High (straightforward navigation)
+
+---
+
+## 📋 PRE-FLIGHT CHECKLIST FOR USER
+
+Before running this Vy prompt, user must:
+
+- [ ] Created Apple Developer account at https://developer.apple.com/programs/
+- [ ] Paid $99 annual enrollment fee
+- [ ] Received Apple Developer membership approval (1-2 business days)
+- [ ] Logged into developer.apple.com in browser (stay logged in)
+- [ ] Created Google Play Developer account at https://play.google.com/console/signup
+- [ ] Paid $25 one-time registration fee
+- [ ] Received Google Play account verification (instant to 48 hours)
+- [ ] Logged into play.google.com/console in browser (stay logged in)
+
+**Once all boxes are checked, run this Vy prompt to retrieve account information!**
+

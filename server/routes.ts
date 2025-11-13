@@ -79,6 +79,9 @@ import documentationGovernanceRoutes from "./routes/documentation-governance-rou
 import learningIndexRoutes from "./routes/learningIndexRoutes";
 import financialAgentsRoutes from "./routes/financialAgentsRoutes";
 import socialMediaAgentsRoutes from "./routes/socialMediaAgentsRoutes";
+import marketplaceAgentsRoutes from "./routes/marketplaceAgentsRoutes";
+import travelAgentsRoutes from "./routes/travelAgentsRoutes";
+import userTestingAgentsRoutes from "./routes/userTestingAgentsRoutes";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
@@ -319,6 +322,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Social Media Agents Routes (5 AI Agents for Social Media Management)
   app.use("/api/social/agents", socialMediaAgentsRoutes);
+  
+  // Marketplace AI Agents Routes (8 AI Agents for Marketplace Management)
+  app.use("/api/marketplace/agents", marketplaceAgentsRoutes);
+  
+  // Travel AI Agents Routes (6 AI Agents for Travel Management - Agents #175-180)
+  app.use("/api/travel/agents", travelAgentsRoutes);
+  
+  // User Testing AI Agents Routes (4 AI Agents for UX Testing - Agents #163-166)
+  app.use("/api/user-testing/agents", userTestingAgentsRoutes);
   
   // Existing routes
   app.use("/api/auth", authRoutes);
