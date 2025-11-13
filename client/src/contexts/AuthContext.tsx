@@ -301,11 +301,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
+      const csrfToken = getCsrfToken();
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (csrfToken) {
+        headers["x-xsrf-token"] = csrfToken;
+      }
+      
       await fetch(`${API_BASE_URL}/api/auth/logout`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
         credentials: "include",
       });
     } catch (error) {

@@ -21,6 +21,7 @@ import {
   LogOut,
   Trash2,
   ChevronDown,
+  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -458,6 +459,21 @@ function UnifiedTopBar({
                 {t('navigation.settings')}
               </DropdownMenuItem>
               
+              <DropdownMenuItem onClick={() => setLocation('/settings/security')} data-testid="menu-item-security">
+                <Shield className="mr-3 h-4 w-4" />
+                Security
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem onClick={() => setLocation('/settings/privacy-data')} data-testid="menu-item-privacy-data">
+                <FileText className="mr-3 h-4 w-4" />
+                Privacy & Data
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem onClick={() => setLocation('/settings/data-export')} data-testid="menu-item-data-export">
+                <Download className="mr-3 h-4 w-4" />
+                Data Export
+              </DropdownMenuItem>
+              
               <DropdownMenuItem onClick={() => setLocation('/settings/billing')} data-testid="menu-item-billing">
                 <CreditCard className="mr-3 h-4 w-4" />
                 {t('navigation.billing')}
@@ -504,7 +520,7 @@ function UnifiedTopBar({
               </DropdownMenuItem>
               
               <DropdownMenuItem 
-                onClick={() => setLocation('/account/delete')}
+                onClick={() => setLocation('/settings/delete-account')}
                 className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                 data-testid="menu-item-delete-account"
               >

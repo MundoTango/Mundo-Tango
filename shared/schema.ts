@@ -706,6 +706,20 @@ export const twoFactorSecrets = pgTable("two_factor_secrets", {
   userIdx: index("two_factor_secrets_user_idx").on(table.userId),
 }));
 
+export const securityAuditLogs = pgTable("security_audit_logs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
+  action: varchar("action", { length: 100 }).notNull(),
+  ipAddress: varchar("ip_address", { length: 45 }),
+  userAgent: text("user_agent"),
+  metadata: jsonb("metadata"),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("security_audit_logs_user_idx").on(table.userId),
+  actionIdx: index("security_audit_logs_action_idx").on(table.action),
+  timestampIdx: index("security_audit_logs_timestamp_idx").on(table.timestamp),
+}));
+
 // ============================================================================
 // AI INTERACTIONS
 // ============================================================================
@@ -9044,6 +9058,62 @@ export const insertLegalAgreementSchema = createInsertSchema(legalAgreements)
 export const selectLegalAgreementSchema = createSelectSchema(legalAgreements);
 export type InsertLegalAgreement = z.infer<typeof insertLegalAgreementSchema>;
 export type SelectLegalAgreement = typeof legalAgreements.$inferSelect;
+
+// ============================================================================
+// GDPR COMPLIANCE TABLES
+// ============================================================================
+
+export const dataExportRequests = pgTable("data_export_requests", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  status: varchar("status", { length: 50 }).default("pending").notNull(),
+  format: varchar("format", { length: 10 }).default("json").notNull(),
+  fileUrl: text("file_url"),
+  requestedAt: timestamp("requested_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+}, (table) => ({
+  userIdx: index("data_export_requests_user_idx").on(table.userId),
+  statusIdx: index("data_export_requests_status_idx").on(table.status),
+  requestedAtIdx: index("data_export_requests_requested_at_idx").on(table.requestedAt),
+}));
+
+export const userPrivacySettings = pgTable("user_privacy_settings", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  marketingEmails: boolean("marketing_emails").default(true).notNull(),
+  analytics: boolean("analytics").default(true).notNull(),
+  thirdPartySharing: boolean("third_party_sharing").default(false).notNull(),
+  profileVisibility: varchar("profile_visibility", { length: 20 }).default("public").notNull(),
+  searchable: boolean("searchable").default(true).notNull(),
+  showActivity: boolean("show_activity").default(true).notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: uniqueIndex("user_privacy_settings_user_idx").on(table.userId),
+}));
+
+export const insertDataExportRequestSchema = createInsertSchema(dataExportRequests)
+  .omit({ id: true, requestedAt: true })
+  .extend({
+    format: z.enum(['json', 'csv', 'zip']).default('json'),
+    status: z.enum(['pending', 'processing', 'completed', 'failed']).default('pending'),
+  });
+export const selectDataExportRequestSchema = createSelectSchema(dataExportRequests);
+export type InsertDataExportRequest = z.infer<typeof insertDataExportRequestSchema>;
+export type SelectDataExportRequest = typeof dataExportRequests.$inferSelect;
+
+export const insertUserPrivacySettingsSchema = createInsertSchema(userPrivacySettings)
+  .omit({ id: true, updatedAt: true })
+  .extend({
+    profileVisibility: z.enum(['public', 'friends', 'private']).default('public'),
+    marketingEmails: z.boolean().default(true),
+    analytics: z.boolean().default(true),
+    thirdPartySharing: z.boolean().default(false),
+    searchable: z.boolean().default(true),
+    showActivity: z.boolean().default(true),
+  });
+export const selectUserPrivacySettingsSchema = createSelectSchema(userPrivacySettings);
+export type InsertUserPrivacySettings = z.infer<typeof insertUserPrivacySettingsSchema>;
+export type SelectUserPrivacySettings = typeof userPrivacySettings.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)

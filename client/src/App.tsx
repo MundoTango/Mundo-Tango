@@ -187,6 +187,12 @@ const SavedPostsPage = lazy(() => import("@/pages/SavedPostsPage"));
 const BlockedUsersPage = lazy(() => import("@/pages/BlockedUsersPage"));
 const BlockedContentPage = lazy(() => import("@/pages/BlockedContentPage"));
 
+// GDPR Compliance Settings
+const SecuritySettingsPage = lazy(() => import("@/pages/settings/SecuritySettingsPage"));
+const PrivacyPage = lazy(() => import("@/pages/settings/PrivacyPage"));
+const DataExportPage = lazy(() => import("@/pages/settings/DataExportPage"));
+const DeleteAccountPage = lazy(() => import("@/pages/settings/DeleteAccountPage"));
+
 // Auth & Security
 const PasswordResetPage = lazy(() => import("@/pages/PasswordResetPage"));
 const EmailVerificationPage = lazy(() => import("@/pages/EmailVerificationPage"));
@@ -1314,6 +1320,38 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <TwoFactorAuthPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/settings/security">
+        <ProtectedRoute>
+          <AppLayout>
+            <SecuritySettingsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/settings/privacy-data">
+        <ProtectedRoute>
+          <AppLayout>
+            <PrivacyPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/settings/data-export">
+        <ProtectedRoute>
+          <AppLayout>
+            <DataExportPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/settings/delete-account">
+        <ProtectedRoute>
+          <AppLayout>
+            <DeleteAccountPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
