@@ -649,7 +649,7 @@ export const notifications = pgTable("notifications", {
   type: varchar("type").notNull(),
   title: varchar("title").notNull(),
   message: text("message").notNull(),
-  data: text("data").$type<string>(),
+  data: text("data"),
   isRead: boolean("is_read").default(false).notNull(),
   actionUrl: text("action_url"),
   createdAt: timestamp("created_at").defaultNow(),
