@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, memo } from "react";
 import { usePredictiveContext } from "@/providers/PredictiveContextProvider";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -11,7 +11,7 @@ interface PredictiveLinkProps {
   [key: string]: any;
 }
 
-export function PredictiveLink({ to, children, className, ...props }: PredictiveLinkProps) {
+function PredictiveLinkComponent({ to, children, className, ...props }: PredictiveLinkProps) {
   const { predictNextPages, predictions } = usePredictiveContext();
   const { user } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
@@ -76,3 +76,5 @@ export function PredictiveLink({ to, children, className, ...props }: Predictive
     </div>
   );
 }
+
+export const PredictiveLink = memo(PredictiveLinkComponent);

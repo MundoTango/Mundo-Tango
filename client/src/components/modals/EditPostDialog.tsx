@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,7 @@ interface EditPostDialogProps {
   initialContent: string;
 }
 
-export function EditPostDialog({
+function EditPostDialogComponent({
   open,
   onOpenChange,
   postId,
@@ -116,3 +116,5 @@ export function EditPostDialog({
     </Dialog>
   );
 }
+
+export const EditPostDialog = memo(EditPostDialogComponent);

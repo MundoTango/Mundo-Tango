@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,7 +27,7 @@ interface Notification {
   };
 }
 
-export function NotificationBell() {
+function NotificationBellComponent() {
   const { data: notifications = [] } = useQuery<Notification[]>({
     queryKey: ["/api/notifications"],
     refetchInterval: 30000, // Poll every 30 seconds
@@ -119,3 +120,5 @@ export function NotificationBell() {
     </Popover>
   );
 }
+
+export const NotificationBell = memo(NotificationBellComponent);

@@ -264,6 +264,7 @@ export function MrBlueAvatarVideo({
           muted
           playsInline
           autoPlay
+          preload="none"
           onError={handleVideoError}
           onLoadedData={() => console.log('[MrBlueAvatarVideo] Video loaded successfully!', videoStateManager.currentState)}
           onClick={onInteraction}

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, Share2, Heart, TrendingUp, MapPin } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -14,7 +15,7 @@ interface AnalyticsData {
   topCountries?: { name: string; views: number }[];
 }
 
-export function PostAnalytics({ postId }: PostAnalyticsProps) {
+function PostAnalyticsComponent({ postId }: PostAnalyticsProps) {
   const { data: analytics, isLoading } = useQuery<AnalyticsData>({
     queryKey: ['/api/analytics/post', postId],
   });
@@ -105,3 +106,5 @@ export function PostAnalytics({ postId }: PostAnalyticsProps) {
     </Card>
   );
 }
+
+export const PostAnalytics = memo(PostAnalyticsComponent);

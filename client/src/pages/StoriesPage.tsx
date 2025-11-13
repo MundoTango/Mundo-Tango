@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { formatDistanceToNow } from "date-fns";
 import { SEO } from "@/components/SEO";
+import { LazyVideo } from "@/components/LazyVideo";
 
 interface Story {
   id: number;
@@ -261,12 +262,13 @@ export default function StoriesPage() {
                         transition={{ duration: 0.6 }}
                       />
                     ) : story.mediaType === 'video' && story.mediaUrl ? (
-                      <video 
+                      <LazyVideo
                         src={story.mediaUrl} 
                         className="w-full h-full object-cover"
                         muted
                         loop
                         playsInline
+                        showSkeleton={true}
                       />
                     ) : (
                       <div className="flex items-center justify-center h-full p-6 text-center">

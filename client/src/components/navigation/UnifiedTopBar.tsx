@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 import { Link, useLocation } from "wouter";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -56,7 +56,7 @@ function PulseIcon({ children, pulseColor }: { children: React.ReactNode; pulseC
   );
 }
 
-export default function UnifiedTopBar({ 
+function UnifiedTopBar({ 
   onMenuToggle, 
   theme: externalTheme, 
   onThemeToggle: externalThemeToggle,
@@ -518,3 +518,5 @@ export default function UnifiedTopBar({
     </header>
   );
 }
+
+export default memo(UnifiedTopBar);

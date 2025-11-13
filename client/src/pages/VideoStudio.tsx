@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Video, Wand2, Image as ImageIcon, Loader2, Download } from 'lucide-react';
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
+import { LazyVideo } from '@/components/LazyVideo';
 
 type AspectRatio = '16:9' | '9:16' | '1:1';
 
@@ -170,11 +171,12 @@ export default function VideoStudio() {
 
               {generationStatus.state === 'completed' && generationStatus.video && (
                 <div className="space-y-4">
-                  <video
+                  <LazyVideo
                     src={generationStatus.video.url}
                     controls
                     className="w-full rounded-lg"
                     data-testid="video-player"
+                    showSkeleton={false}
                   />
                   <Button
                     onClick={handleDownload}

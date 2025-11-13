@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,7 +14,7 @@ interface ShareModalProps {
   postTitle: string;
 }
 
-export function ShareModal({ open, onOpenChange, postId, postTitle }: ShareModalProps) {
+function ShareModalComponent({ open, onOpenChange, postId, postTitle }: ShareModalProps) {
   const { toast } = useToast();
   const shareUrl = `${window.location.origin}/posts/${postId}`;
   const [shareComment, setShareComment] = useState("");
@@ -184,3 +184,5 @@ export function ShareModal({ open, onOpenChange, postId, postTitle }: ShareModal
     </Dialog>
   );
 }
+
+export const ShareModal = memo(ShareModalComponent);

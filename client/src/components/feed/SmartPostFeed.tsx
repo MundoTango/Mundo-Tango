@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, memo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -58,7 +58,7 @@ const TIME_FILTERS = [
   { value: "year", label: "This Year" },
 ];
 
-export function SmartPostFeed({ posts, onFilterChange, children }: SmartPostFeedProps) {
+function SmartPostFeedComponent({ posts, onFilterChange, children }: SmartPostFeedProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
@@ -369,3 +369,5 @@ export function SmartPostFeed({ posts, onFilterChange, children }: SmartPostFeed
     </div>
   );
 }
+
+export const SmartPostFeed = memo(SmartPostFeedComponent);

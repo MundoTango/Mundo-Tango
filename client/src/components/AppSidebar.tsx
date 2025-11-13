@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { 
   Home, 
   Calendar, 
@@ -27,6 +28,7 @@ import {
   Layout,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
+import { cn } from "@/lib/utils";
 import {
   Sidebar,
   SidebarContent,
@@ -106,7 +108,7 @@ const esaItems = [
   { title: "ESA Comms", url: "/platform/esa/communications", icon: Network },
 ];
 
-export function AppSidebar() {
+function AppSidebarComponent() {
   const [location] = useLocation();
   const { user, profile, logout } = useAuth();
 
@@ -461,3 +463,5 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
+
+export const AppSidebar = memo(AppSidebarComponent);

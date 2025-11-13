@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -27,7 +27,7 @@ interface UpgradeModalProps {
   };
 }
 
-export function UpgradeModal({
+function UpgradeModalComponent({
   open,
   onOpenChange,
   featureName,
@@ -217,3 +217,5 @@ export function UpgradeModal({
     </Dialog>
   );
 }
+
+export const UpgradeModal = memo(UpgradeModalComponent);

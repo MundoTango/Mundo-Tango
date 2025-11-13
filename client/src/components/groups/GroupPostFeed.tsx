@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,7 +37,7 @@ interface GroupPostFeedProps {
   canModerate?: boolean;
 }
 
-export function GroupPostFeed({ groupId, canPost = false, canModerate = false }: GroupPostFeedProps) {
+function GroupPostFeedComponent({ groupId, canPost = false, canModerate = false }: GroupPostFeedProps) {
   const { toast } = useToast();
   const [isCreating, setIsCreating] = useState(false);
 
@@ -291,3 +291,5 @@ export function GroupPostFeed({ groupId, canPost = false, canModerate = false }:
     </div>
   );
 }
+
+export const GroupPostFeed = memo(GroupPostFeedComponent);

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Heart } from "lucide-react";
 import { PostCreator } from "@/components/universal/PostCreator";
+import { LazyVideo } from "@/components/LazyVideo";
 
 interface Post {
   id: number;
@@ -90,11 +91,12 @@ export default function ProfileTabFeed({ posts, isLoading, isOwnProfile }: Profi
                 )}
                 
                 {post.videoUrl && (
-                  <video 
+                  <LazyVideo
                     src={post.videoUrl} 
                     controls 
                     className="w-full h-full object-cover"
                     data-testid={`video-post-${post.id}`}
+                    showSkeleton={true}
                   />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />

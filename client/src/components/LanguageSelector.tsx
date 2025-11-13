@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe } from 'lucide-react';
 import {
@@ -88,7 +89,7 @@ const languages: Language[] = [
   { code: 'mn', name: 'Mongolian', nativeName: 'Монгол', flag: '🇲🇳' },
 ];
 
-export function LanguageSelector() {
+function LanguageSelectorComponent() {
   const { i18n } = useTranslation();
   
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
@@ -131,7 +132,9 @@ export function LanguageSelector() {
   );
 }
 
-export function LanguageSelectorButton() {
+export const LanguageSelector = memo(LanguageSelectorComponent);
+
+function LanguageSelectorButtonComponent() {
   const { i18n } = useTranslation();
   
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
@@ -158,3 +161,5 @@ export function LanguageSelectorButton() {
     </Select>
   );
 }
+
+export const LanguageSelectorButton = memo(LanguageSelectorButtonComponent);

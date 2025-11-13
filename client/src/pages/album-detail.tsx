@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/select";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { LazyVideo } from "@/components/LazyVideo";
 
 interface Album {
   id: number;
@@ -293,10 +294,11 @@ export default function AlbumDetail() {
                 onClick={() => setLightboxIndex(index)}
               >
                 {item.media_type === "video" ? (
-                  <video
+                  <LazyVideo
                     src={item.media_url}
                     className="w-full h-full object-cover"
                     poster={item.media_thumbnail || undefined}
+                    showSkeleton={true}
                   />
                 ) : (
                   <img
@@ -362,12 +364,13 @@ export default function AlbumDetail() {
               )}
 
               {albumMedia[lightboxIndex].media_type === "video" ? (
-                <video
+                <LazyVideo
                   src={albumMedia[lightboxIndex].media_url}
                   controls
                   className="max-w-full max-h-full"
                   autoPlay
                   data-testid="lightbox-video"
+                  showSkeleton={false}
                 />
               ) : (
                 <img
@@ -422,10 +425,11 @@ export default function AlbumDetail() {
                 >
                   <div className="aspect-square bg-muted">
                     {media.type === "video" ? (
-                      <video
+                      <LazyVideo
                         src={media.url}
                         className="w-full h-full object-cover"
                         poster={media.thumbnail || undefined}
+                        showSkeleton={true}
                       />
                     ) : (
                       <img

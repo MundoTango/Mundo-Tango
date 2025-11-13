@@ -8,6 +8,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Image, Video, Heart, MessageCircle, Upload, X, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LazyVideo } from "@/components/LazyVideo";
 
 export default function MediaGalleryPage() {
   const [activeTab, setActiveTab] = useState("all");
@@ -156,11 +157,12 @@ export default function MediaGalleryPage() {
                 <X className="h-4 w-4" />
               </Button>
               {media[lightboxIndex].type === "video" ? (
-                <video 
+                <LazyVideo
                   src={media[lightboxIndex].url} 
                   controls 
                   className="w-full"
                   data-testid="lightbox-video"
+                  showSkeleton={false}
                 />
               ) : (
                 <img 

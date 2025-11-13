@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal } from "lucide-react";
@@ -35,7 +35,7 @@ interface PostActionsProps {
   content?: string;
 }
 
-export function PostActions({
+function PostActionsComponent({
   postId,
   authorId,
   currentUserId,
@@ -271,3 +271,5 @@ export function PostActions({
     </div>
   );
 }
+
+export const PostActions = memo(PostActionsComponent);
