@@ -95,6 +95,7 @@ import {
   agentHealth,
   users,
   events,
+  groups,
   travelPlans,
   travelPlanItems,
   contactSubmissions,
@@ -480,7 +481,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } = req.query;
       
       const profiles = await storage.searchPhotographerProfiles({
-        specialty: specialty as string | undefined,
+        specialties: specialty ? [specialty as string] : undefined,
         city: city as string | undefined,
         minRating: minRating ? parseFloat(minRating as string) : undefined,
         maxRate: maxRate ? parseFloat(maxRate as string) : undefined,
@@ -558,7 +559,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } = req.query;
       
       const profiles = await storage.searchPerformerProfiles({
-        performanceType: performanceType as string | undefined,
+        performanceTypes: performanceType ? [performanceType as string] : undefined,
         style: style as string | undefined,
         city: city as string | undefined,
         minRating: minRating ? parseFloat(minRating as string) : undefined,
@@ -636,7 +637,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } = req.query;
       
       const profiles = await storage.searchVendorProfiles({
-        productCategory: productCategory as string | undefined,
+        productCategories: productCategory ? [productCategory as string] : undefined,
         city: city as string | undefined,
         priceRange: priceRange as string | undefined,
         minRating: minRating ? parseFloat(minRating as string) : undefined,
@@ -963,7 +964,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } = req.query;
       
       const profiles = await storage.searchWellnessProfiles({
-        specialty: specialty as string | undefined,
+        specialties: specialty ? [specialty as string] : undefined,
         city: city as string | undefined,
         minRating: minRating ? parseFloat(minRating as string) : undefined,
         maxRate: maxRate ? parseFloat(maxRate as string) : undefined,
@@ -1044,7 +1045,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const profiles = await storage.searchTourOperatorProfiles({
         destination: destination as string | undefined,
-        tourType: tourType as string | undefined,
+        tourTypes: tourType ? [tourType as string] : undefined,
         city: city as string | undefined,
         minRating: minRating ? parseFloat(minRating as string) : undefined,
         maxPrice: maxPrice ? parseFloat(maxPrice as string) : undefined,
@@ -1124,7 +1125,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const profiles = await storage.searchTangoGuideProfiles({
         city: city as string | undefined,
-        languages: languages ? (Array.isArray(languages) ? languages as string[] : [languages as string]) : undefined,
+        language: languages as string | undefined,
         minRating: minRating ? parseFloat(minRating as string) : undefined,
         maxRate: maxRate ? parseFloat(maxRate as string) : undefined,
         verified: verified === "true" ? true : verified === "false" ? false : undefined,
@@ -1204,11 +1205,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const profiles = await storage.searchTaxiDancerProfiles({
         city: city as string | undefined,
-        role: role as string | undefined,
         minRating: minRating ? parseFloat(minRating as string) : undefined,
         maxRate: maxRate ? parseFloat(maxRate as string) : undefined,
         verified: verified === "true" ? true : verified === "false" ? false : undefined,
-        available: available === "true" ? true : available === "false" ? false : undefined,
+        availability: available as string | undefined,
         limit: parseInt(limit as string),
         offset: parseInt(offset as string),
       });
@@ -1369,7 +1369,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } = req.query;
       
       const profiles = await storage.searchLearningResourceProfiles({
-        resourceType: resourceType as string | undefined,
+        topic: resourceType as string | undefined,
         format: format as string | undefined,
         level: level as string | undefined,
         city: city as string | undefined,
@@ -1450,8 +1450,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } = req.query;
       
       const profiles = await storage.searchOrganizerProfiles({
-        organizationType: organizationType as string | undefined,
         city: city as string | undefined,
+        eventType: organizationType as string | undefined,
         country: country as string | undefined,
         minEventsOrganized: minEventsOrganized ? parseInt(minEventsOrganized as string) : undefined,
         minRating: minRating ? parseFloat(minRating as string) : undefined,
@@ -1971,8 +1971,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             title: 'You were mentioned',
             message: `${author?.name || 'Someone'} mentioned you in a post`,
             data: JSON.stringify({ postId: post.id, relatedType: 'post' }),
-            actionUrl: `/feed#post-${post.id}`,
-            isRead: false
+            actionUrl: `/feed#post-${post.id}`
           });
           
           // Real-time Socket.io notification
@@ -2049,7 +2048,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               name: cityName,
               description: `The official ${cityName} tango community. Connect with dancers, teachers, and events in your city.`,
               type: "city",
-              creatorId: req.user!.id,
+              createdBy: req.user!.id,
               coverImage: cityscapePhoto?.url || "",
               city: cityName,
             });
@@ -2228,8 +2227,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             title: 'New reaction',
             message: `Someone reacted ${reactionType} to your post`,
             data: JSON.stringify({ postId }),
-            actionUrl: `/feed#post-${postId}`,
-            isRead: false
+            actionUrl: `/feed#post-${postId}`
           });
         }
       }
@@ -2277,8 +2275,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             title: 'Post shared',
             message: `Someone shared your post${comment ? ' with a comment' : ''}`,
             data: JSON.stringify({ postId }),
-            actionUrl: `/feed#post-${postId}`,
-            isRead: false
+            actionUrl: `/feed#post-${postId}`
           });
         }
       }
@@ -2322,8 +2319,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               type: 'comment_like',
               title: 'Comment liked',
               message: 'Someone liked your comment',
-              data: JSON.stringify({ commentId }),
-              isRead: false
+              data: JSON.stringify({ commentId })
             });
           }
         } else {
@@ -2905,7 +2901,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/friends/requests", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const { userId } = req.body;
-      const result = await storage.sendFriendRequest(req.user!.id, userId);
+      const result = await storage.sendFriendRequest({ senderId: req.user!.id, receiverId: userId });
       res.status(201).json(result);
     } catch (error) {
       res.status(500).json({ message: "Failed to send friend request" });
@@ -2935,7 +2931,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/friends/request/:userId", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const receiverId = parseInt(req.params.userId);
-      const result = await storage.sendFriendRequest(req.user!.id, receiverId);
+      const result = await storage.sendFriendRequest({ senderId: req.user!.id, receiverId });
       res.status(201).json(result);
     } catch (error) {
       res.status(500).json({ message: "Failed to send friend request" });
@@ -4602,14 +4598,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .from(storyViews)
         .where(and(
           eq(storyViews.storyId, storyId),
-          eq(storyViews.userId, req.user!.id)
+          eq(storyViews.viewerId, req.user!.id)
         ));
 
       if (existingView.length === 0) {
         // Record new view
         await db.insert(storyViews).values({
           storyId,
-          userId: req.user!.id
+          viewerId: req.user!.id
         });
 
         // Increment view count
@@ -4633,13 +4629,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const viewers = await db.select({
         id: users.id,
         name: users.name,
-        profilePicture: users.profilePicture,
-        viewedAt: storyViews.viewedAt
+        profileImage: users.profileImage,
+        viewedAt: storyViews.createdAt
       })
       .from(storyViews)
-      .innerJoin(users, eq(storyViews.userId, users.id))
+      .innerJoin(users, eq(storyViews.viewerId, users.id))
       .where(eq(storyViews.storyId, storyId))
-      .orderBy(desc(storyViews.viewedAt));
+      .orderBy(desc(storyViews.createdAt));
 
       res.json(viewers);
     } catch (error) {
