@@ -2282,6 +2282,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // DELETE reaction
+  app.delete("/api/posts/:id/react", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const postId = parseInt(req.params.id);
+
+      // Remove user's reaction
+      await db.delete(reactions).where(
+        and(
+          eq(reactions.postId, postId),
+          eq(reactions.userId, req.user!.id)
+        )
+      );
+
+      // Get updated reaction counts by type
+      const reactionsByType = await db
+        .select({
+          reactionType: reactions.reactionType,
+          count: sql<number>`count(*)::int`
+        })
+        .from(reactions)
+        .where(eq(reactions.postId, postId))
+        .groupBy(reactions.reactionType);
+      
+      // Build reactions object
+      const reactionsObject: Record<string, number> = {};
+      let totalCount = 0;
+      for (const row of reactionsByType) {
+        reactionsObject[row.reactionType] = row.count;
+        totalCount += row.count;
+      }
+      
+      // Update posts.likes count
+      await db.update(posts)
+        .set({ likes: totalCount })
+        .where(eq(posts.id, postId));
+
+      res.json({ 
+        reactions: reactionsObject,
+        userReaction: null,
+        totalReactions: totalCount
+      });
+    } catch (error) {
+      console.error('Remove reaction error:', error);
+      res.status(500).json({ message: "Failed to remove reaction" });
+    }
+  });
+
   // SHARE - 3 share types: timeline, comment, link
   app.post("/api/posts/:id/share", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
