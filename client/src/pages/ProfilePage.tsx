@@ -76,66 +76,67 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<string>('feed');
   const [viewMode, setViewMode] = useState<'dashboard' | 'customer'>('dashboard');
   
-  const profileId = params?.id ? parseInt(params.id) : currentUser?.id;
+  // Support both numeric ID and username - use username/ID from URL or current user's ID
+  const profileIdentifier = params?.id || currentUser?.id?.toString();
 
   const { data: user, isLoading: userLoading } = useQuery<User>({
-    queryKey: ["user", profileId],
+    queryKey: ["user", profileIdentifier],
     queryFn: async () => {
-      const res = await fetch(`/api/users/${profileId}`);
+      const res = await fetch(`/api/users/${profileIdentifier}`);
       if (!res.ok) throw new Error("User not found");
       return res.json();
     },
-    enabled: !!profileId,
+    enabled: !!profileIdentifier,
   });
 
   const { data: posts = [], isLoading: postsLoading } = useQuery<Post[]>({
-    queryKey: ["user-posts", profileId],
+    queryKey: ["user-posts", user?.id],
     queryFn: async () => {
-      const res = await fetch(`/api/posts?userId=${profileId}&limit=50`);
+      const res = await fetch(`/api/posts?userId=${user?.id}&limit=50`);
       if (!res.ok) throw new Error("Failed to load posts");
       return res.json();
     },
-    enabled: !!profileId,
+    enabled: !!user?.id,
   });
 
   // Fetch friends to check if already friends
   const { data: friends = [] } = useQuery<any[]>({
     queryKey: ['/api/friends'],
-    enabled: !!(currentUser && profileId && currentUser.id !== profileId),
+    enabled: !!(currentUser && user && currentUser.id !== user.id),
   });
 
   // Fetch friend requests to check if pending
   const { data: friendRequests = [] } = useQuery<any[]>({
     queryKey: ['/api/friends/requests'],
-    enabled: !!(currentUser && profileId && currentUser.id !== profileId),
+    enabled: !!(currentUser && user && currentUser.id !== user.id),
   });
 
   // Fetch upcoming travel plans for this user
   const { data: upcomingTravel = [] } = useQuery<any[]>({
-    queryKey: ['/api/travel/plans', profileId],
+    queryKey: ['/api/travel/plans', user?.id],
     queryFn: async () => {
-      const res = await fetch(`/api/travel/plans?userId=${profileId}`);
+      const res = await fetch(`/api/travel/plans?userId=${user?.id}`);
       if (!res.ok) return [];
       const plans = await res.json();
       // Filter for upcoming trips only
       const now = new Date();
       return plans.filter((trip: any) => new Date(trip.startDate) > now).slice(0, 3);
     },
-    enabled: !!profileId,
+    enabled: !!user?.id,
   });
 
-  const isOwnProfile = currentUser?.id === profileId;
+  const isOwnProfile = currentUser?.id === user?.id;
   
   // Check friendship status
-  const isFriend = friends.some((f: any) => f.id === profileId);
+  const isFriend = friends.some((f: any) => f.id === user?.id);
   const hasPendingRequest = friendRequests.some(
-    (r: any) => r.receiverId === profileId && r.status === 'pending'
+    (r: any) => r.receiverId === user?.id && r.status === 'pending'
   );
 
   // Send friend request mutation
   const sendFriendRequestMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('POST', `/api/friends/request/${profileId}`);
+      return await apiRequest('POST', `/api/friends/request/${user?.id}`);
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['/api/friends/requests'] });
@@ -157,7 +158,7 @@ export default function ProfilePage() {
   // Remove friend mutation
   const removeFriendMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('DELETE', `/api/friends/${profileId}`);
+      return await apiRequest('DELETE', `/api/friends/${user?.id}`);
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['/api/friends'] });

@@ -10,6 +10,7 @@ import {
   posts,
   postLikes,
   postComments,
+  reactions,
   follows,
   profileViews,
   events,

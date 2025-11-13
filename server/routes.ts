@@ -2443,8 +2443,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/users/:id", async (req: Request, res: Response) => {
     try {
-      const userId = parseInt(req.params.id);
-      const user = await storage.getUserById(userId);
+      const param = req.params.id;
+      let user: any;
+      
+      // Check if param is a number or a username
+      if (/^\d+$/.test(param)) {
+        // It's a numeric ID
+        user = await storage.getUserById(parseInt(param));
+      } else {
+        // It's a username
+        user = await storage.getUserByUsername(param);
+      }
       
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -2676,10 +2685,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/groups", authenticateToken, validateRequest(insertGroupSchema.omit({ createdBy: true, ownerId: true })), async (req: AuthRequest, res: Response) => {
+  app.post("/api/groups", authenticateToken, validateRequest(insertGroupSchema.omit({ createdBy: true, ownerId: true, slug: true })), async (req: AuthRequest, res: Response) => {
     try {
+      // Generate slug from name if not provided
+      const slug = req.body.slug || req.body.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      
       const group = await storage.createGroup({
         ...req.body,
+        slug,
         createdBy: req.user!.id,
         ownerId: req.user!.id
       });
