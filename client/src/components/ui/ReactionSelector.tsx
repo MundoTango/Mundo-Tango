@@ -1,10 +1,25 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart } from "lucide-react";
+import { 
+  Heart, 
+  Flame, 
+  Flower2, 
+  Smile, 
+  Eye, 
+  PartyPopper, 
+  User, 
+  Users, 
+  Music, 
+  Sparkles, 
+  HandMetal, 
+  Lightbulb, 
+  Frown,
+  type LucideIcon
+} from "lucide-react";
 
 export interface Reaction {
   id: string;
-  emoji: string;
+  icon: LucideIcon;
   label: string;
   color: string;
   category: 'love' | 'joy' | 'tango' | 'support' | 'sad';
@@ -12,27 +27,27 @@ export interface Reaction {
 
 export const REACTION_TYPES: Reaction[] = [
   // Love & Passion (3 types)
-  { id: 'love', emoji: '❤️', label: 'Love', color: '#EF4444', category: 'love' },
-  { id: 'passion', emoji: '🔥', label: 'Passion', color: '#F97316', category: 'love' },
-  { id: 'romance', emoji: '🌹', label: 'Romance', color: '#EC4899', category: 'love' },
+  { id: 'love', icon: Heart, label: 'Love', color: '#EF4444', category: 'love' },
+  { id: 'passion', icon: Flame, label: 'Passion', color: '#F97316', category: 'love' },
+  { id: 'romance', icon: Flower2, label: 'Romance', color: '#EC4899', category: 'love' },
   
   // Joy & Celebration (3 types)
-  { id: 'joy', emoji: '😊', label: 'Joy', color: '#EAB308', category: 'joy' },
-  { id: 'wow', emoji: '😮', label: 'Wow', color: '#3B82F6', category: 'joy' },
-  { id: 'celebration', emoji: '🎉', label: 'Celebration', color: '#A855F7', category: 'joy' },
+  { id: 'joy', icon: Smile, label: 'Joy', color: '#EAB308', category: 'joy' },
+  { id: 'wow', icon: Eye, label: 'Wow', color: '#3B82F6', category: 'joy' },
+  { id: 'celebration', icon: PartyPopper, label: 'Celebration', color: '#A855F7', category: 'joy' },
   
   // Tango-Specific (4 types)
-  { id: 'tango_dancer', emoji: '💃', label: 'Beautiful Dancing', color: '#DB2777', category: 'tango' },
-  { id: 'tango_leader', emoji: '🕺', label: 'Strong Lead', color: '#2563EB', category: 'tango' },
-  { id: 'music', emoji: '🎵', label: 'Great Music', color: '#6366F1', category: 'tango' },
-  { id: 'elegance', emoji: '✨', label: 'Elegance', color: '#F59E0B', category: 'tango' },
+  { id: 'tango_dancer', icon: User, label: 'Beautiful Dancing', color: '#DB2777', category: 'tango' },
+  { id: 'tango_leader', icon: Users, label: 'Strong Lead', color: '#2563EB', category: 'tango' },
+  { id: 'music', icon: Music, label: 'Great Music', color: '#6366F1', category: 'tango' },
+  { id: 'elegance', icon: Sparkles, label: 'Elegance', color: '#F59E0B', category: 'tango' },
   
   // Support & Encouragement (2 types)
-  { id: 'support', emoji: '👏', label: 'Applause', color: '#10B981', category: 'support' },
-  { id: 'inspiration', emoji: '💫', label: 'Inspiring', color: '#06B6D4', category: 'support' },
+  { id: 'support', icon: HandMetal, label: 'Applause', color: '#10B981', category: 'support' },
+  { id: 'inspiration', icon: Lightbulb, label: 'Inspiring', color: '#06B6D4', category: 'support' },
   
   // Sadness (1 type)
-  { id: 'sad', emoji: '😢', label: 'Sad', color: '#6B7280', category: 'sad' }
+  { id: 'sad', icon: Frown, label: 'Sad', color: '#6B7280', category: 'sad' }
 ];
 
 interface ReactionSelectorProps {
@@ -79,10 +94,10 @@ export const ReactionSelector = ({
     return Object.values(reactions).reduce((sum, count) => sum + count, 0);
   };
 
-  const getCurrentReactionEmoji = () => {
+  const getCurrentReactionIcon = () => {
     if (currentReaction) {
       const reaction = REACTION_TYPES.find(r => r.id === currentReaction);
-      return reaction?.emoji || '❤️';
+      return reaction?.icon || Heart;
     }
     return null;
   };
@@ -132,11 +147,17 @@ export const ReactionSelector = ({
         onMouseLeave={handleMouseLeave}
         data-testid={`button-react-${postId}`}
       >
-        {currentReaction ? (
-          <span className="text-lg transition-transform group-hover:scale-110">
-            {getCurrentReactionEmoji()}
-          </span>
-        ) : (
+        {currentReaction ? (() => {
+          const IconComponent = getCurrentReactionIcon();
+          return IconComponent ? (
+            <IconComponent 
+              className="w-5 h-5 transition-transform group-hover:scale-110" 
+              fill="currentColor"
+            />
+          ) : (
+            <Heart className="w-5 h-5 transition-transform group-hover:scale-110" />
+          );
+        })() : (
           <Heart className="w-5 h-5 transition-transform group-hover:scale-110" />
         )}
         {getTotalReactions() > 0 && (
@@ -168,34 +189,40 @@ export const ReactionSelector = ({
             data-testid={`popup-reactions-${postId}`}
           >
             <div className="flex gap-2">
-              {REACTION_TYPES.map((reaction) => (
-                <button
-                  key={reaction.id}
-                  onClick={() => handleReactionClick(reaction.id)}
-                  className="group relative flex flex-col items-center gap-1 p-2 rounded-lg transition-all hover-elevate"
-                  style={{
-                    background: currentReaction === reaction.id 
-                      ? 'rgba(255, 255, 255, 0.3)'
-                      : 'rgba(255, 255, 255, 0.1)',
-                  }}
-                  title={reaction.label}
-                  data-testid={`button-reaction-${reaction.id}-${postId}`}
-                >
-                  <span className="text-2xl transition-transform group-hover:scale-125">
-                    {reaction.emoji}
-                  </span>
-                  <span className="text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    {reaction.label}
-                  </span>
-                  {reactions[reaction.id] && reactions[reaction.id] > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
+              {REACTION_TYPES.map((reaction) => {
+                const IconComponent = reaction.icon;
+                return (
+                  <button
+                    key={reaction.id}
+                    onClick={() => handleReactionClick(reaction.id)}
+                    className="group relative flex flex-col items-center gap-1 p-2 rounded-lg transition-all hover-elevate"
+                    style={{
+                      background: currentReaction === reaction.id 
+                        ? 'rgba(255, 255, 255, 0.3)'
+                        : 'rgba(255, 255, 255, 0.1)',
+                    }}
+                    title={reaction.label}
+                    data-testid={`button-reaction-${reaction.id}-${postId}`}
+                  >
+                    <IconComponent 
+                      className="w-6 h-6 transition-transform group-hover:scale-125"
                       style={{ color: reaction.color }}
-                    >
-                      {reactions[reaction.id]}
+                      fill={currentReaction === reaction.id ? reaction.color : 'none'}
+                      strokeWidth={2}
+                    />
+                    <span className="text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      {reaction.label}
                     </span>
-                  )}
-                </button>
-              ))}
+                    {reactions[reaction.id] && reactions[reaction.id] > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
+                        style={{ color: reaction.color }}
+                      >
+                        {reactions[reaction.id]}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </motion.div>
         )}
@@ -209,9 +236,10 @@ export const ReactionSelector = ({
             .map(([reactionId, count]) => {
               const reaction = REACTION_TYPES.find(r => r.id === reactionId);
               if (!reaction) return null;
+              const IconComponent = reaction.icon;
               return (
                 <span key={reactionId} className="flex items-center gap-0.5">
-                  {reaction.emoji} {count}
+                  <IconComponent className="w-3 h-3" style={{ color: reaction.color }} /> {count}
                 </span>
               );
             })}
