@@ -1,6 +1,6 @@
 import { db } from "@shared/db";
 import { 
-  crowdfundingCampaigns, 
+  fundingCampaigns, 
   campaignDonations,
   campaignUpdates,
   campaignRewards 
@@ -45,8 +45,8 @@ export interface SuccessPrediction {
 
 export class CampaignPredictorAgent {
   async predictCampaignSuccess(campaignId: number): Promise<SuccessPrediction> {
-    const campaign = await db.query.crowdfundingCampaigns.findFirst({
-      where: eq(crowdfundingCampaigns.id, campaignId),
+    const campaign = await db.query.fundingCampaigns.findFirst({
+      where: eq(fundingCampaigns.id, campaignId),
       with: {
         donations: true,
         updates: true,
@@ -82,15 +82,15 @@ export class CampaignPredictorAgent {
     const categoryStats = await db
       .select({
         totalCampaigns: count(),
-        avgGoalAmount: avg(crowdfundingCampaigns.goalAmount),
-        avgCurrentAmount: avg(crowdfundingCampaigns.currentAmount),
-        successfulCampaigns: sql<number>`COUNT(CASE WHEN ${crowdfundingCampaigns.currentAmount} >= ${crowdfundingCampaigns.goalAmount} THEN 1 END)`,
+        avgGoalAmount: avg(fundingCampaigns.goalAmount),
+        avgCurrentAmount: avg(fundingCampaigns.currentAmount),
+        successfulCampaigns: sql<number>`COUNT(CASE WHEN ${fundingCampaigns.currentAmount} >= ${fundingCampaigns.goalAmount} THEN 1 END)`,
       })
-      .from(crowdfundingCampaigns)
+      .from(fundingCampaigns)
       .where(
         and(
-          category ? eq(crowdfundingCampaigns.category, category) : sql`1=1`,
-          gte(crowdfundingCampaigns.createdAt, thirtyDaysAgo)
+          category ? eq(fundingCampaigns.category, category) : sql`1=1`,
+          gte(fundingCampaigns.createdAt, thirtyDaysAgo)
         )
       )
       .then(rows => rows[0]);

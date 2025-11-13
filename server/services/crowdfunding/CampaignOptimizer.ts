@@ -1,5 +1,5 @@
 import { db } from "@shared/db";
-import { crowdfundingCampaigns, campaignRewards, campaignUpdates } from "@shared/schema";
+import { fundingCampaigns, campaignRewards, campaignUpdates } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { OpenAIService } from "../ai/OpenAIService";
 
@@ -57,8 +57,8 @@ export interface OptimizationAnalysis {
 
 export class CampaignOptimizerAgent {
   async optimizeCampaign(campaignId: number): Promise<OptimizationAnalysis> {
-    const campaign = await db.query.crowdfundingCampaigns.findFirst({
-      where: eq(crowdfundingCampaigns.id, campaignId),
+    const campaign = await db.query.fundingCampaigns.findFirst({
+      where: eq(fundingCampaigns.id, campaignId),
       with: {
         rewards: true,
         updates: true,

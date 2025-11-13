@@ -1,6 +1,6 @@
 import { db } from "@shared/db";
 import { 
-  crowdfundingCampaigns,
+  fundingCampaigns,
   campaignDonations,
   users 
 } from "@shared/schema";
@@ -52,8 +52,8 @@ export interface FraudAnalysis {
 
 export class FraudDetectionAgent {
   async analyzeCampaignFraud(campaignId: number): Promise<FraudAnalysis> {
-    const campaign = await db.query.crowdfundingCampaigns.findFirst({
-      where: eq(crowdfundingCampaigns.id, campaignId),
+    const campaign = await db.query.fundingCampaigns.findFirst({
+      where: eq(fundingCampaigns.id, campaignId),
       with: {
         creator: true,
         donations: {
@@ -322,10 +322,10 @@ REASONING: [brief explanation]`;
     story: string,
     userId: number
   ): Promise<any> {
-    const similarCampaigns = await db.query.crowdfundingCampaigns.findMany({
+    const similarCampaigns = await db.query.fundingCampaigns.findMany({
       where: and(
-        eq(crowdfundingCampaigns.userId, userId),
-        sql`${crowdfundingCampaigns.status} != 'completed'`
+        eq(fundingCampaigns.userId, userId),
+        sql`${fundingCampaigns.status} != 'completed'`
       ),
     });
 

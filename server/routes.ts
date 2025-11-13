@@ -68,7 +68,7 @@ import healthRoutes from "./routes/health";
 import eventRoutes from "./routes/event-routes";
 import groupRoutes from "./routes/group-routes";
 import crowdfundingRoutes from "./routes/crowdfunding-routes";
-import crowdfundingAgentsRoutes from "./routes/crowdfundingAgentsRoutes";
+// TEMPORARY: Disabled pending syntax fixes from Wave 4 - import crowdfundingAgentsRoutes from "./routes/crowdfundingAgentsRoutes";
 console.log("🔍 [DEBUG] About to import agentIntelligenceRoutes...");
 import agentIntelligenceRoutes from "./routes/agentIntelligenceRoutes";
 console.log("✅ [DEBUG] agentIntelligenceRoutes loaded");
@@ -372,7 +372,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/marketplace", marketplaceRoutes);
   app.use("/api/subscriptions", subscriptionRoutes);
   crowdfundingRoutes(app); // GoFundMe-style crowdfunding platform
-  app.use("/api/crowdfunding/agents", crowdfundingAgentsRoutes); // AI Agents for crowdfunding (Agents #181-184)
+  // TEMPORARY: Disabled pending syntax fixes from Wave 4 - app.use("/api/crowdfunding/agents", crowdfundingAgentsRoutes); // AI Agents for crowdfunding (Agents #181-184)
   
   // Phase D: Community & Engagement Systems
   app.use("/api/reviews", reviewRoutes);

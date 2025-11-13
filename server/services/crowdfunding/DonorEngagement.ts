@@ -1,6 +1,6 @@
 import { db } from "@shared/db";
 import { 
-  crowdfundingCampaigns,
+  fundingCampaigns,
   campaignDonations,
   users 
 } from "@shared/schema";
@@ -57,8 +57,8 @@ export interface DonorEngagementPlan {
 
 export class DonorEngagementAgent {
   async analyzeAndEngageDonors(campaignId: number): Promise<DonorEngagementPlan> {
-    const campaign = await db.query.crowdfundingCampaigns.findFirst({
-      where: eq(crowdfundingCampaigns.id, campaignId),
+    const campaign = await db.query.fundingCampaigns.findFirst({
+      where: eq(fundingCampaigns.id, campaignId),
     });
 
     if (!campaign) {
@@ -394,8 +394,8 @@ EMAIL_BODY: [body]`;
     donorName: string,
     amount: number
   ): Promise<string> {
-    const campaign = await db.query.crowdfundingCampaigns.findFirst({
-      where: eq(crowdfundingCampaigns.id, campaignId),
+    const campaign = await db.query.fundingCampaigns.findFirst({
+      where: eq(fundingCampaigns.id, campaignId),
     });
 
     if (!campaign) {
