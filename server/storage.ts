@@ -1567,7 +1567,7 @@ export class DbStorage implements IStorage {
   async likePost(postId: number, userId: number): Promise<SelectPostLike | undefined> {
     try {
       const result = await db.insert(postLikes).values({ postId, userId }).returning();
-      await db.update(posts).set({ likes: sqlOp`${posts.likes} + 1` }).where(eq(posts.id, postId));
+      await db.update(posts).set({ likes: sql`${posts.likes} + 1` }).where(eq(posts.id, postId));
       return result[0];
     } catch (error) {
       return undefined;
@@ -1576,7 +1576,7 @@ export class DbStorage implements IStorage {
 
   async unlikePost(postId: number, userId: number): Promise<void> {
     await db.delete(postLikes).where(and(eq(postLikes.postId, postId), eq(postLikes.userId, userId)));
-    await db.update(posts).set({ likes: sqlOp`GREATEST(${posts.likes} - 1, 0)` }).where(eq(posts.id, postId));
+    await db.update(posts).set({ likes: sql`GREATEST(${posts.likes} - 1, 0)` }).where(eq(posts.id, postId));
   }
 
   async isPostLikedByUser(postId: number, userId: number): Promise<boolean> {
@@ -1606,7 +1606,7 @@ export class DbStorage implements IStorage {
 
   async createPostComment(comment: InsertPostComment): Promise<SelectPostComment> {
     const result = await db.insert(postComments).values(comment).returning();
-    await db.update(posts).set({ comments: sqlOp`${posts.comments} + 1` }).where(eq(posts.id, comment.postId));
+    await db.update(posts).set({ comments: sql`${posts.comments} + 1` }).where(eq(posts.id, comment.postId));
     return result[0];
   }
 
@@ -2699,7 +2699,7 @@ export class DbStorage implements IStorage {
       }
       
       const result = await db.insert(groupMembers).values({ groupId, userId }).returning();
-      await db.update(groups).set({ memberCount: sqlOp`${groups.memberCount} + 1` }).where(eq(groups.id, groupId));
+      await db.update(groups).set({ memberCount: sql`${groups.memberCount} + 1` }).where(eq(groups.id, groupId));
       return result[0];
     } catch (error) {
       return undefined;
@@ -2708,7 +2708,7 @@ export class DbStorage implements IStorage {
 
   async leaveGroup(groupId: number, userId: number): Promise<void> {
     await db.delete(groupMembers).where(and(eq(groupMembers.groupId, groupId), eq(groupMembers.userId, userId)));
-    await db.update(groups).set({ memberCount: sqlOp`GREATEST(${groups.memberCount} - 1, 0)` }).where(eq(groups.id, groupId));
+    await db.update(groups).set({ memberCount: sql`GREATEST(${groups.memberCount} - 1, 0)` }).where(eq(groups.id, groupId));
   }
 
   async getGroupMembers(groupId: number): Promise<SelectGroupMember[]> {
