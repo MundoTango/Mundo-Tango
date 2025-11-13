@@ -9203,6 +9203,217 @@ export type InsertSystemLog = z.infer<typeof insertSystemLogSchema>;
 export type SelectSystemLog = typeof systemLogs.$inferSelect;
 
 // ============================================================================
+// TANGO SCRAPING SYSTEM (Track 3 - MB.MD God Level)
+// ============================================================================
+
+export const scrapingSources = pgTable("scraping_sources", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  url: text("url").notNull(),
+  country: text("country").notNull(),
+  city: text("city").notNull(),
+  sourceType: varchar("source_type", { length: 50 }).notNull(),
+  scraperAgent: varchar("scraper_agent", { length: 50 }).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  lastScrapedAt: timestamp("last_scraped_at"),
+  successRate: integer("success_rate").default(100).notNull(),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  cityIdx: index("scraping_sources_city_idx").on(table.city),
+  countryIdx: index("scraping_sources_country_idx").on(table.country),
+  typeIdx: index("scraping_sources_type_idx").on(table.sourceType),
+  activeIdx: index("scraping_sources_active_idx").on(table.isActive),
+}));
+
+export const insertScrapingSourceSchema = createInsertSchema(scrapingSources)
+  .omit({ id: true, createdAt: true });
+
+export const selectScrapingSourceSchema = createSelectSchema(scrapingSources);
+export type InsertScrapingSource = z.infer<typeof insertScrapingSourceSchema>;
+export type SelectScrapingSource = typeof scrapingSources.$inferSelect;
+
+export const scrapedCommunityData = pgTable("scraped_community_data", {
+  id: serial("id").primaryKey(),
+  sourceId: integer("source_id").references(() => scrapingSources.id, { onDelete: "cascade" }).notNull(),
+  communityName: text("community_name"),
+  description: text("description"),
+  history: text("history"),
+  culture: text("culture"),
+  rules: text("rules").array(),
+  dressCode: text("dress_code"),
+  etiquette: text("etiquette").array(),
+  organizers: jsonb("organizers"),
+  contactEmail: varchar("contact_email", { length: 255 }),
+  contactPhone: varchar("contact_phone", { length: 50 }),
+  facebookUrl: text("facebook_url"),
+  facebookGroupId: varchar("facebook_group_id", { length: 100 }),
+  instagramUrl: text("instagram_url"),
+  youtubeUrl: text("youtube_url"),
+  whatsappGroupLink: text("whatsapp_group_link"),
+  websiteUrl: text("website_url"),
+  memberCount: integer("member_count"),
+  foundedYear: integer("founded_year"),
+  isActive: boolean("is_active").default(true).notNull(),
+  coverPhotoUrl: text("cover_photo_url"),
+  logoUrl: text("logo_url"),
+  galleryPhotos: text("gallery_photos").array(),
+  dataQuality: integer("data_quality").default(0).notNull(),
+  scrapedAt: timestamp("scraped_at").defaultNow().notNull(),
+  lastUpdated: timestamp("last_updated"),
+  cityGroupId: integer("city_group_id").references(() => groups.id, { onDelete: "set null" }),
+  approved: boolean("approved").default(false).notNull(),
+  reviewedBy: integer("reviewed_by").references(() => users.id, { onDelete: "set null" }),
+}, (table) => ({
+  sourceIdx: index("scraped_community_source_idx").on(table.sourceId),
+  groupIdx: index("scraped_community_group_idx").on(table.cityGroupId),
+  approvedIdx: index("scraped_community_approved_idx").on(table.approved),
+}));
+
+export const insertScrapedCommunityDataSchema = createInsertSchema(scrapedCommunityData)
+  .omit({ id: true, scrapedAt: true });
+
+export const selectScrapedCommunityDataSchema = createSelectSchema(scrapedCommunityData);
+export type InsertScrapedCommunityData = z.infer<typeof insertScrapedCommunityDataSchema>;
+export type SelectScrapedCommunityData = typeof scrapedCommunityData.$inferSelect;
+
+export const scrapedEvents = pgTable("scraped_events", {
+  id: serial("id").primaryKey(),
+  sourceId: integer("source_id").references(() => scrapingSources.id, { onDelete: "cascade" }),
+  rawData: jsonb("raw_data").notNull(),
+  eventName: text("event_name").notNull(),
+  eventDate: timestamp("event_date").notNull(),
+  location: text("location"),
+  description: text("description"),
+  sourceUrl: text("source_url"),
+  scrapedAt: timestamp("scraped_at").defaultNow().notNull(),
+  processed: boolean("processed").default(false).notNull(),
+  finalEventId: integer("final_event_id").references(() => events.id, { onDelete: "set null" }),
+}, (table) => ({
+  sourceIdx: index("scraped_events_source_idx").on(table.sourceId),
+  dateIdx: index("scraped_events_date_idx").on(table.eventDate),
+  processedIdx: index("scraped_events_processed_idx").on(table.processed),
+  finalEventIdx: index("scraped_events_final_event_idx").on(table.finalEventId),
+}));
+
+export const insertScrapedEventSchema = createInsertSchema(scrapedEvents)
+  .omit({ id: true, scrapedAt: true });
+
+export const selectScrapedEventSchema = createSelectSchema(scrapedEvents);
+export type InsertScrapedEvent = z.infer<typeof insertScrapedEventSchema>;
+export type SelectScrapedEvent = typeof scrapedEvents.$inferSelect;
+
+export const scrapedProfiles = pgTable("scraped_profiles", {
+  id: serial("id").primaryKey(),
+  sourceId: integer("source_id").references(() => scrapingSources.id, { onDelete: "cascade" }),
+  profileType: varchar("profile_type", { length: 50 }).notNull(),
+  name: text("name").notNull(),
+  bio: text("bio"),
+  photoUrl: text("photo_url"),
+  socialLinks: jsonb("social_links"),
+  metadata: jsonb("metadata"),
+  scrapedAt: timestamp("scraped_at").defaultNow().notNull(),
+  claimed: boolean("claimed").default(false).notNull(),
+  claimedBy: integer("claimed_by").references(() => users.id, { onDelete: "set null" }),
+  claimedAt: timestamp("claimed_at"),
+}, (table) => ({
+  typeIdx: index("scraped_profiles_type_idx").on(table.profileType),
+  claimedIdx: index("scraped_profiles_claimed_idx").on(table.claimed),
+  nameIdx: index("scraped_profiles_name_idx").on(table.name),
+}));
+
+export const insertScrapedProfileSchema = createInsertSchema(scrapedProfiles)
+  .omit({ id: true, scrapedAt: true });
+
+export const selectScrapedProfileSchema = createSelectSchema(scrapedProfiles);
+export type InsertScrapedProfile = z.infer<typeof insertScrapedProfileSchema>;
+export type SelectScrapedProfile = typeof scrapedProfiles.$inferSelect;
+
+export const eventSources = pgTable("event_sources", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").references(() => events.id, { onDelete: "cascade" }).notNull(),
+  sourceId: integer("source_id").references(() => scrapingSources.id, { onDelete: "cascade" }).notNull(),
+  sourceUrl: text("source_url"),
+  scrapedAt: timestamp("scraped_at").defaultNow().notNull(),
+  dataQuality: integer("data_quality").default(100).notNull(),
+}, (table) => ({
+  eventIdx: index("event_sources_event_idx").on(table.eventId),
+  sourceIdx: index("event_sources_source_idx").on(table.sourceId),
+}));
+
+export const insertEventSourceSchema = createInsertSchema(eventSources)
+  .omit({ id: true, scrapedAt: true });
+
+export const selectEventSourceSchema = createSelectSchema(eventSources);
+export type InsertEventSource = z.infer<typeof insertEventSourceSchema>;
+export type SelectEventSource = typeof eventSources.$inferSelect;
+
+export const userEventSources = pgTable("user_event_sources", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  city: varchar("city", { length: 255 }).notNull(),
+  sourceId: integer("source_id").references(() => scrapingSources.id, { onDelete: "set null" }),
+  customUrl: text("custom_url"),
+  isPrimary: boolean("is_primary").default(false).notNull(),
+  addedDuringOnboarding: boolean("added_during_onboarding").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_event_sources_user_idx").on(table.userId),
+  cityIdx: index("user_event_sources_city_idx").on(table.city),
+}));
+
+export const insertUserEventSourceSchema = createInsertSchema(userEventSources)
+  .omit({ id: true, createdAt: true });
+
+export const selectUserEventSourceSchema = createSelectSchema(userEventSources);
+export type InsertUserEventSource = z.infer<typeof insertUserEventSourceSchema>;
+export type SelectUserEventSource = typeof userEventSources.$inferSelect;
+
+export const scrapingLogs = pgTable("scraping_logs", {
+  id: serial("id").primaryKey(),
+  sourceId: integer("source_id").references(() => scrapingSources.id, { onDelete: "cascade" }),
+  agentId: varchar("agent_id", { length: 50 }).notNull(),
+  status: varchar("status", { length: 20 }).notNull(),
+  eventsFound: integer("events_found").default(0).notNull(),
+  errorMessage: text("error_message"),
+  duration: integer("duration"),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+}, (table) => ({
+  sourceIdx: index("scraping_logs_source_idx").on(table.sourceId),
+  agentIdx: index("scraping_logs_agent_idx").on(table.agentId),
+  statusIdx: index("scraping_logs_status_idx").on(table.status),
+  timestampIdx: index("scraping_logs_timestamp_idx").on(table.timestamp),
+}));
+
+export const insertScrapingLogSchema = createInsertSchema(scrapingLogs)
+  .omit({ id: true, timestamp: true });
+
+export const selectScrapingLogSchema = createSelectSchema(scrapingLogs);
+export type InsertScrapingLog = z.infer<typeof insertScrapingLogSchema>;
+export type SelectScrapingLog = typeof scrapingLogs.$inferSelect;
+
+export const eventMerges = pgTable("event_merges", {
+  id: serial("id").primaryKey(),
+  scrapedEventId: integer("scraped_event_id").references(() => scrapedEvents.id, { onDelete: "cascade" }).notNull(),
+  finalEventId: integer("final_event_id").references(() => events.id, { onDelete: "cascade" }).notNull(),
+  mergeConfidence: integer("merge_confidence").default(100).notNull(),
+  mergeMethod: varchar("merge_method", { length: 50 }).notNull(),
+  mergedAt: timestamp("merged_at").defaultNow().notNull(),
+  mergedBy: varchar("merged_by", { length: 50 }),
+}, (table) => ({
+  scrapedIdx: index("event_merges_scraped_idx").on(table.scrapedEventId),
+  finalIdx: index("event_merges_final_idx").on(table.finalEventId),
+  confidenceIdx: index("event_merges_confidence_idx").on(table.mergeConfidence),
+}));
+
+export const insertEventMergeSchema = createInsertSchema(eventMerges)
+  .omit({ id: true, mergedAt: true });
+
+export const selectEventMergeSchema = createSelectSchema(eventMerges);
+export type InsertEventMerge = z.infer<typeof insertEventMergeSchema>;
+export type SelectEventMerge = typeof eventMerges.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
