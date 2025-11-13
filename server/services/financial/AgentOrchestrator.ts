@@ -53,7 +53,7 @@ export class Agent105_MasterOrchestrator {
   private strategyEngines: StrategyEnginesCoordinator;
   private executionRisk: ExecutionRiskCoordinator;
   private machineLearning: MachineLearningCoordinator;
-  private monitoring Alerts: MonitoringAlertsCoordinator;
+  private monitoringAlerts: MonitoringAlertsCoordinator;
   private supportingAgents: SupportingAgentsCoordinator;
   private aiOrchestrator?: RateLimitedAIOrchestrator;
 
