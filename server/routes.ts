@@ -4368,7 +4368,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       })
       .from(users)
       .leftJoin(events, eq(events.userId, users.id))
-      .leftJoin(groups, eq(groups.creatorId, users.id))
+      .leftJoin(groups, eq(groups.createdBy, users.id))
       .where(eq(users.isActive, true));
 
       // Get user city members count if authenticated
