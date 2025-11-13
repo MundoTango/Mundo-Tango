@@ -1,0 +1,8 @@
+Contact: mailto:security@mundotango.life
+Contact: https://mundotango.life/security/report
+Expires: 2026-11-13T00:00:00.000Z
+Encryption: https://mundotango.life/.well-known/pgp-key.asc
+Acknowledgments: https://mundotango.life/security/hall-of-fame
+Preferred-Languages: en, es
+Canonical: https://mundotango.life/.well-known/security.txt
+Policy: https://mundotango.life/security/bug-bounty

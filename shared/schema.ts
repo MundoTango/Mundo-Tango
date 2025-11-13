@@ -9116,6 +9116,93 @@ export type InsertUserPrivacySettings = z.infer<typeof insertUserPrivacySettings
 export type SelectUserPrivacySettings = typeof userPrivacySettings.$inferSelect;
 
 // ============================================================================
+// PHASE 2: WEBAUTHN/PASSKEYS (Enterprise Security)
+// ============================================================================
+
+export const webauthnCredentials = pgTable("webauthn_credentials", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  credentialId: text("credential_id").unique().notNull(),
+  publicKey: text("public_key").notNull(),
+  counter: integer("counter").notNull(),
+  deviceType: varchar("device_type", { length: 20 }), // 'platform' or 'cross-platform'
+  deviceName: varchar("device_name", { length: 100 }),
+  transports: jsonb("transports"), // Array of transport methods
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastUsedAt: timestamp("last_used_at"),
+}, (table) => ({
+  userIdx: index("webauthn_credentials_user_idx").on(table.userId),
+  credentialIdx: uniqueIndex("webauthn_credentials_credential_idx").on(table.credentialId),
+}));
+
+export const insertWebauthnCredentialSchema = createInsertSchema(webauthnCredentials);
+
+export const selectWebauthnCredentialSchema = createSelectSchema(webauthnCredentials);
+export type InsertWebauthnCredential = z.infer<typeof insertWebauthnCredentialSchema>;
+export type SelectWebauthnCredential = typeof webauthnCredentials.$inferSelect;
+
+// ============================================================================
+// PHASE 2: ANOMALY DETECTION (Enterprise Security)
+// ============================================================================
+
+export const anomalyDetections = pgTable("anomaly_detections", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
+  type: varchar("type", { length: 50 }).notNull(), // 'failed_login', 'unusual_api_usage', etc.
+  severity: varchar("severity", { length: 20 }).notNull(), // 'low', 'medium', 'high', 'critical'
+  description: text("description").notNull(),
+  metadata: jsonb("metadata"),
+  ipAddress: varchar("ip_address", { length: 45 }),
+  userAgent: text("user_agent"),
+  resolved: boolean("resolved").default(false).notNull(),
+  resolvedAt: timestamp("resolved_at"),
+  resolvedBy: integer("resolved_by").references(() => users.id, { onDelete: "set null" }),
+  detectedAt: timestamp("detected_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("anomaly_detections_user_idx").on(table.userId),
+  typeIdx: index("anomaly_detections_type_idx").on(table.type),
+  severityIdx: index("anomaly_detections_severity_idx").on(table.severity),
+  resolvedIdx: index("anomaly_detections_resolved_idx").on(table.resolved),
+  detectedAtIdx: index("anomaly_detections_detected_at_idx").on(table.detectedAt),
+}));
+
+export const insertAnomalyDetectionSchema = createInsertSchema(anomalyDetections)
+  .omit({ id: true, detectedAt: true });
+
+export const selectAnomalyDetectionSchema = createSelectSchema(anomalyDetections);
+export type InsertAnomalyDetection = z.infer<typeof insertAnomalyDetectionSchema>;
+export type SelectAnomalyDetection = typeof anomalyDetections.$inferSelect;
+
+// ============================================================================
+// PHASE 4: ADVANCED LOGGING (Enterprise Scale)
+// ============================================================================
+
+export const systemLogs = pgTable("system_logs", {
+  id: serial("id").primaryKey(),
+  level: varchar("level", { length: 20 }).notNull(), // 'info', 'warn', 'error', 'debug'
+  category: varchar("category", { length: 50 }).notNull(), // 'application', 'security', 'performance', 'audit'
+  message: text("message").notNull(),
+  metadata: jsonb("metadata"),
+  userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
+  requestId: varchar("request_id", { length: 100 }),
+  ipAddress: varchar("ip_address", { length: 45 }),
+  userAgent: text("user_agent"),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+}, (table) => ({
+  levelIdx: index("system_logs_level_idx").on(table.level),
+  categoryIdx: index("system_logs_category_idx").on(table.category),
+  userIdx: index("system_logs_user_idx").on(table.userId),
+  timestampIdx: index("system_logs_timestamp_idx").on(table.timestamp),
+}));
+
+export const insertSystemLogSchema = createInsertSchema(systemLogs)
+  .omit({ id: true, timestamp: true });
+
+export const selectSystemLogSchema = createSelectSchema(systemLogs);
+export type InsertSystemLog = z.infer<typeof insertSystemLogSchema>;
+export type SelectSystemLog = typeof systemLogs.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
