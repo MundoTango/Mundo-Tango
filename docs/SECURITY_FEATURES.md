@@ -72,6 +72,17 @@ if (token !== cookieToken) {
 
 **Location:** `server/middleware/csp.ts`
 
+**Environment-Aware Implementation:**
+- **Development Mode** (`NODE_ENV === "development"`):
+  - Uses `'unsafe-inline'` and `'unsafe-eval'` for Vite compatibility
+  - NO nonces (allows Hot Module Replacement and dev tooling)
+  - Permissive for developer experience
+  
+- **Production Mode** (all other environments):
+  - Strict nonce-based CSP with crypto-generated tokens
+  - NO `'unsafe-inline'` or `'unsafe-eval'` 
+  - Maximum security hardening
+
 **Protection Against:**
 - Cross-Site Scripting (XSS)
 - Data injection attacks

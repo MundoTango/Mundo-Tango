@@ -12,18 +12,26 @@ export function generateNonce(): string {
 
 export function cspHeaders(options: CSPOptions = {}) {
   return (req: Request, res: Response, next: NextFunction) => {
+    const isDevelopment = process.env.NODE_ENV === "development";
     const nonce = options.nonce || generateNonce();
     res.locals.cspNonce = nonce;
 
     const directives = {
       "default-src": ["'self'"],
-      "script-src": [
-        "'self'",
-        `'nonce-${nonce}'`,
-        "'unsafe-inline'",
-        "https://js.stripe.com",
-        "https://challenges.cloudflare.com",
-      ],
+      "script-src": isDevelopment
+        ? [
+            "'self'",
+            "'unsafe-inline'",
+            "'unsafe-eval'",
+            "https://js.stripe.com",
+            "https://challenges.cloudflare.com",
+          ]
+        : [
+            "'self'",
+            `'nonce-${nonce}'`,
+            "https://js.stripe.com",
+            "https://challenges.cloudflare.com",
+          ],
       "style-src": [
         "'self'",
         "'unsafe-inline'",

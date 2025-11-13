@@ -85,7 +85,7 @@ The platform features a unified **MT Ocean theme** across all pages, characteriz
 
 **Implemented (November 13, 2025):**
 - **CSRF Protection** - Cookie-based double-submit pattern preventing cross-site request forgery
-- **CSP Headers** - Content Security Policy preventing XSS attacks
+- **CSP Headers** - Environment-aware Content Security Policy (development: permissive for Vite, production: strict nonce-based)
 - **Audit Logging** - Comprehensive security event tracking in database
 - **GDPR Compliance UI** - 4 new pages: Security Settings, Privacy & Data, Data Export, Account Deletion
 - **Database Tables** - securityAuditLogs, dataExportRequests, userPrivacySettings
@@ -94,6 +94,8 @@ The platform features a unified **MT Ocean theme** across all pages, characteriz
 - **Documentation** - Complete security features guide (SECURITY_FEATURES.md)
 
 **Design:** All security pages follow MT Ocean glassmorphic theme with dark mode support.
+
+**CSP Fix (November 13, 2025):** Resolved blank white screen caused by CSP blocking Vite inline scripts. CSP middleware now detects `NODE_ENV` and uses development-friendly policy (`'unsafe-inline'`, `'unsafe-eval'`, no nonces) in dev mode while maintaining strict production security (nonce-based CSP with no unsafe directives).
 
 **Blocked Features (Require External Resources):**
 - Row Level Security (RLS) - Needs DB restructure (2 weeks)
