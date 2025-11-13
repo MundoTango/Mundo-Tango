@@ -68,6 +68,7 @@ import healthRoutes from "./routes/health";
 import eventRoutes from "./routes/event-routes";
 import groupRoutes from "./routes/group-routes";
 import crowdfundingRoutes from "./routes/crowdfunding-routes";
+import crowdfundingAgentsRoutes from "./routes/crowdfundingAgentsRoutes";
 console.log("🔍 [DEBUG] About to import agentIntelligenceRoutes...");
 import agentIntelligenceRoutes from "./routes/agentIntelligenceRoutes";
 console.log("✅ [DEBUG] agentIntelligenceRoutes loaded");
@@ -82,6 +83,7 @@ import socialMediaAgentsRoutes from "./routes/socialMediaAgentsRoutes";
 import marketplaceAgentsRoutes from "./routes/marketplaceAgentsRoutes";
 import travelAgentsRoutes from "./routes/travelAgentsRoutes";
 import userTestingAgentsRoutes from "./routes/userTestingAgentsRoutes";
+import legalAgentsRoutes from "./routes/legalAgentsRoutes";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
@@ -332,6 +334,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // User Testing AI Agents Routes (4 AI Agents for UX Testing - Agents #163-166)
   app.use("/api/user-testing/agents", userTestingAgentsRoutes);
   
+  // Legal Document AI Agents Routes (2 AI Agents for Legal Documents - Agents #185-186)
+  app.use("/api/legal/agents", legalAgentsRoutes);
+  
   // Existing routes
   app.use("/api/auth", authRoutes);
   app.use("/api/deployments", deploymentsRoutes);
@@ -367,6 +372,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/marketplace", marketplaceRoutes);
   app.use("/api/subscriptions", subscriptionRoutes);
   crowdfundingRoutes(app); // GoFundMe-style crowdfunding platform
+  app.use("/api/crowdfunding/agents", crowdfundingAgentsRoutes); // AI Agents for crowdfunding (Agents #181-184)
   
   // Phase D: Community & Engagement Systems
   app.use("/api/reviews", reviewRoutes);

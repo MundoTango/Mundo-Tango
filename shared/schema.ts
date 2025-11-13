@@ -8854,6 +8854,198 @@ export type InsertTravelApiCache = z.infer<typeof insertTravelApiCacheSchema>;
 export type SelectTravelApiCache = typeof travelApiCache.$inferSelect;
 
 // ============================================================================
+// LEGAL AI AGENTS SYSTEM - Additional Tables (Agents #185-186)
+// ============================================================================
+
+// 1. Legal Clauses - Clause database for AI recommendations
+export const legalClauses = pgTable("legal_clauses", {
+  id: serial("id").primaryKey(),
+  clauseType: varchar("clause_type", { length: 100 }).notNull(),
+  category: varchar("category", { length: 50 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content").notNull(),
+  description: text("description"),
+  jurisdiction: varchar("jurisdiction", { length: 100 }),
+  industry: varchar("industry", { length: 100 }),
+  riskLevel: varchar("risk_level", { length: 20 }).default("medium"),
+  isRequired: boolean("is_required").default(false),
+  tags: text("tags").array(),
+  alternatives: jsonb("alternatives"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  typeIdx: index("legal_clauses_type_idx").on(table.clauseType),
+  categoryIdx: index("legal_clauses_category_idx").on(table.category),
+  jurisdictionIdx: index("legal_clauses_jurisdiction_idx").on(table.jurisdiction),
+  industryIdx: index("legal_clauses_industry_idx").on(table.industry),
+}));
+
+// 2. Document Reviews - AI agent review results
+export const documentReviews = pgTable("document_reviews", {
+  id: serial("id").primaryKey(),
+  documentId: integer("document_id").references(() => legalDocuments.id, { onDelete: "cascade" }),
+  instanceId: integer("instance_id").references(() => documentInstances.id, { onDelete: "cascade" }),
+  agentType: varchar("agent_type", { length: 50 }).notNull(),
+  
+  riskScore: integer("risk_score").notNull(),
+  completenessScore: integer("completeness_score").notNull(),
+  clarityScore: integer("clarity_score").notNull(),
+  complianceScore: integer("compliance_score").notNull(),
+  overallScore: integer("overall_score").notNull(),
+  
+  identifiedClauses: jsonb("identified_clauses"),
+  missingClauses: jsonb("missing_clauses"),
+  riskFactors: jsonb("risk_factors"),
+  complianceIssues: jsonb("compliance_issues"),
+  suggestions: jsonb("suggestions"),
+  plainLanguageAlternatives: jsonb("plain_language_alternatives"),
+  
+  aiModel: varchar("ai_model", { length: 100 }),
+  processingTimeMs: integer("processing_time_ms"),
+  
+  reviewedAt: timestamp("reviewed_at").defaultNow(),
+}, (table) => ({
+  documentIdx: index("document_reviews_document_idx").on(table.documentId),
+  instanceIdx: index("document_reviews_instance_idx").on(table.instanceId),
+  agentTypeIdx: index("document_reviews_agent_type_idx").on(table.agentType),
+  reviewedAtIdx: index("document_reviews_reviewed_at_idx").on(table.reviewedAt),
+}));
+
+// 3. Document Audit Logs - Action logging for compliance
+export const documentAuditLogs = pgTable("document_audit_logs", {
+  id: serial("id").primaryKey(),
+  documentId: integer("document_id").references(() => legalDocuments.id, { onDelete: "cascade" }),
+  instanceId: integer("instance_id").references(() => documentInstances.id, { onDelete: "cascade" }),
+  userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
+  
+  action: varchar("action", { length: 100 }).notNull(),
+  entityType: varchar("entity_type", { length: 50 }).notNull(),
+  entityId: integer("entity_id"),
+  
+  changes: jsonb("changes"),
+  metadata: jsonb("metadata"),
+  ipAddress: varchar("ip_address", { length: 45 }),
+  userAgent: text("user_agent"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  documentIdx: index("document_audit_logs_document_idx").on(table.documentId),
+  instanceIdx: index("document_audit_logs_instance_idx").on(table.instanceId),
+  userIdx: index("document_audit_logs_user_idx").on(table.userId),
+  actionIdx: index("document_audit_logs_action_idx").on(table.action),
+  createdAtIdx: index("document_audit_logs_created_at_idx").on(table.createdAt),
+}));
+
+// 4. Legal Agreements - Contract terms tracking
+export const legalAgreements = pgTable("legal_agreements", {
+  id: serial("id").primaryKey(),
+  instanceId: integer("instance_id").notNull().references(() => documentInstances.id, { onDelete: "cascade" }),
+  agreementType: varchar("agreement_type", { length: 100 }).notNull(),
+  
+  partyA: jsonb("party_a").notNull(),
+  partyB: jsonb("party_b").notNull(),
+  additionalParties: jsonb("additional_parties"),
+  
+  keyTerms: jsonb("key_terms"),
+  effectiveDate: timestamp("effective_date"),
+  expirationDate: timestamp("expiration_date"),
+  
+  status: varchar("status", { length: 50 }).default("pending").notNull(),
+  executionDate: timestamp("execution_date"),
+  
+  autoRenew: boolean("auto_renew").default(false),
+  renewalTerms: text("renewal_terms"),
+  terminationNotice: integer("termination_notice"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  instanceIdx: index("legal_agreements_instance_idx").on(table.instanceId),
+  typeIdx: index("legal_agreements_type_idx").on(table.agreementType),
+  statusIdx: index("legal_agreements_status_idx").on(table.status),
+  effectiveDateIdx: index("legal_agreements_effective_date_idx").on(table.effectiveDate),
+  expirationDateIdx: index("legal_agreements_expiration_date_idx").on(table.expirationDate),
+}));
+
+// Zod Validation Schemas
+
+export const insertLegalClauseSchema = createInsertSchema(legalClauses)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    clauseType: z.string().min(1).max(100),
+    category: z.string().min(1).max(50),
+    title: z.string().min(1).max(255),
+    content: z.string().min(1),
+    description: z.string().optional(),
+    jurisdiction: z.string().max(100).optional(),
+    industry: z.string().max(100).optional(),
+    riskLevel: z.enum(['low', 'medium', 'high', 'critical']).default('medium'),
+    isRequired: z.boolean().default(false),
+    tags: z.array(z.string()).optional(),
+    alternatives: z.record(z.any()).optional(),
+  });
+export const selectLegalClauseSchema = createSelectSchema(legalClauses);
+export type InsertLegalClause = z.infer<typeof insertLegalClauseSchema>;
+export type SelectLegalClause = typeof legalClauses.$inferSelect;
+
+export const insertDocumentReviewSchema = createInsertSchema(documentReviews)
+  .omit({ id: true, reviewedAt: true })
+  .extend({
+    agentType: z.enum(['document-reviewer', 'contract-assistant', 'compliance-checker']),
+    riskScore: z.number().int().min(0).max(100),
+    completenessScore: z.number().int().min(0).max(100),
+    clarityScore: z.number().int().min(0).max(100),
+    complianceScore: z.number().int().min(0).max(100),
+    overallScore: z.number().int().min(0).max(100),
+    identifiedClauses: z.record(z.any()).optional(),
+    missingClauses: z.record(z.any()).optional(),
+    riskFactors: z.record(z.any()).optional(),
+    complianceIssues: z.record(z.any()).optional(),
+    suggestions: z.record(z.any()).optional(),
+    plainLanguageAlternatives: z.record(z.any()).optional(),
+    aiModel: z.string().max(100).optional(),
+    processingTimeMs: z.number().int().optional(),
+  });
+export const selectDocumentReviewSchema = createSelectSchema(documentReviews);
+export type InsertDocumentReview = z.infer<typeof insertDocumentReviewSchema>;
+export type SelectDocumentReview = typeof documentReviews.$inferSelect;
+
+export const insertDocumentAuditLogSchema = createInsertSchema(documentAuditLogs)
+  .omit({ id: true, createdAt: true })
+  .extend({
+    action: z.string().min(1).max(100),
+    entityType: z.string().min(1).max(50),
+    entityId: z.number().int().optional(),
+    changes: z.record(z.any()).optional(),
+    metadata: z.record(z.any()).optional(),
+    ipAddress: z.string().max(45).optional(),
+    userAgent: z.string().optional(),
+  });
+export const selectDocumentAuditLogSchema = createSelectSchema(documentAuditLogs);
+export type InsertDocumentAuditLog = z.infer<typeof insertDocumentAuditLogSchema>;
+export type SelectDocumentAuditLog = typeof documentAuditLogs.$inferSelect;
+
+export const insertLegalAgreementSchema = createInsertSchema(legalAgreements)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    agreementType: z.string().min(1).max(100),
+    partyA: z.record(z.any()),
+    partyB: z.record(z.any()),
+    additionalParties: z.array(z.record(z.any())).optional(),
+    keyTerms: z.record(z.any()).optional(),
+    effectiveDate: z.coerce.date().optional(),
+    expirationDate: z.coerce.date().optional(),
+    status: z.enum(['pending', 'active', 'expired', 'terminated', 'renewed']).default('pending'),
+    executionDate: z.coerce.date().optional(),
+    autoRenew: z.boolean().default(false),
+    renewalTerms: z.string().optional(),
+    terminationNotice: z.number().int().optional(),
+  });
+export const selectLegalAgreementSchema = createSelectSchema(legalAgreements);
+export type InsertLegalAgreement = z.infer<typeof insertLegalAgreementSchema>;
+export type SelectLegalAgreement = typeof legalAgreements.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
