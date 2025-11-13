@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { crowdfundingOrchestrator } from '../services/crowdfunding/CrowdfundingOrchestrator';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { db } from '@shared/db';
-import { crowdfundingCampaigns } from '@shared/schema';
+import { fundingCampaigns } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
@@ -47,8 +47,8 @@ router.post(
     try {
       const { campaignId } = predictSuccessSchema.parse(req.body);
 
-      const campaign = await db.query.crowdfundingCampaigns.findFirst({
-        where: eq(crowdfundingCampaigns.id, campaignId),
+      const campaign = await db.query.fundingCampaigns.findFirst({
+        where: eq(fundingCampaigns.id, campaignId),
       });
 
       if (!campaign) {
@@ -83,8 +83,8 @@ router.post(
     try {
       const { campaignId } = optimizeCampaignSchema.parse(req.body);
 
-      const campaign = await db.query.crowdfundingCampaigns.findFirst({
-        where: eq(crowdfundingCampaigns.id, campaignId),
+      const campaign = await db.query.fundingCampaigns.findFirst({
+        where: eq(fundingCampaigns.id, campaignId),
       });
 
       if (!campaign) {
@@ -119,8 +119,8 @@ router.post(
     try {
       const { campaignId } = engageDonorsSchema.parse(req.body);
 
-      const campaign = await db.query.crowdfundingCampaigns.findFirst({
-        where: eq(crowdfundingCampaigns.id, campaignId),
+      const campaign = await db.query.fundingCampaigns.findFirst({
+        where: eq(fundingCampaigns.id, campaignId),
       });
 
       if (!campaign) {
@@ -155,8 +155,8 @@ router.post(
     try {
       const { campaignId } = fraudCheckSchema.parse(req.body);
 
-      const campaign = await db.query.crowdfundingCampaigns.findFirst({
-        where: eq(crowdfundingCampaigns.id, campaignId),
+      const campaign = await db.query.fundingCampaigns.findFirst({
+        where: eq(fundingCampaigns.id, campaignId),
       });
 
       if (!campaign) {
@@ -195,8 +195,8 @@ router.get(
         return res.status(400).json({ message: 'Invalid campaign ID' });
       }
 
-      const campaign = await db.query.crowdfundingCampaigns.findFirst({
-        where: eq(crowdfundingCampaigns.id, campaignId),
+      const campaign = await db.query.fundingCampaigns.findFirst({
+        where: eq(fundingCampaigns.id, campaignId),
       });
 
       if (!campaign) {
@@ -235,8 +235,8 @@ router.get(
         return res.status(400).json({ message: 'Invalid campaign ID' });
       }
 
-      const campaign = await db.query.crowdfundingCampaigns.findFirst({
-        where: eq(crowdfundingCampaigns.id, campaignId),
+      const campaign = await db.query.fundingCampaigns.findFirst({
+        where: eq(fundingCampaigns.id, campaignId),
       });
 
       if (!campaign) {
@@ -281,8 +281,8 @@ router.post(
     try {
       const { campaignId, donorName, amount } = thankYouSchema.parse(req.body);
 
-      const campaign = await db.query.crowdfundingCampaigns.findFirst({
-        where: eq(crowdfundingCampaigns.id, campaignId),
+      const campaign = await db.query.fundingCampaigns.findFirst({
+        where: eq(fundingCampaigns.id, campaignId),
       });
 
       if (!campaign) {
@@ -325,8 +325,8 @@ router.post(
     try {
       const { campaignId } = z.object({ campaignId: z.number() }).parse(req.body);
 
-      const campaign = await db.query.crowdfundingCampaigns.findFirst({
-        where: eq(crowdfundingCampaigns.id, campaignId),
+      const campaign = await db.query.fundingCampaigns.findFirst({
+        where: eq(fundingCampaigns.id, campaignId),
       });
 
       if (!campaign) {

@@ -2,7 +2,7 @@ import { Worker, Job } from 'bullmq';
 import IORedis from 'ioredis';
 import { crowdfundingOrchestrator } from '../services/crowdfunding/CrowdfundingOrchestrator';
 import { db } from '@shared/db';
-import { crowdfundingCampaigns } from '@shared/schema';
+import { fundingCampaigns } from '@shared/schema';
 import { eq, and, gte, sql } from 'drizzle-orm';
 
 const connection = new IORedis({
@@ -168,9 +168,9 @@ async function handleNewCampaignCheck(job: Job<CrowdfundingJobData>) {
 
   if (!result.approved) {
     await db
-      .update(crowdfundingCampaigns)
+      .update(fundingCampaigns)
       .set({ status: 'pending_review' })
-      .where(eq(crowdfundingCampaigns.id, campaignId));
+      .where(eq(fundingCampaigns.id, campaignId));
   }
 
   return {
@@ -227,10 +227,10 @@ console.log('🚀 Crowdfunding Agent Worker started successfully');
 export async function scheduleDailyTasks() {
   console.log('[CrowdfundingWorker] Scheduling daily automated tasks...');
 
-  const activeCampaigns = await db.query.crowdfundingCampaigns.findMany({
+  const activeCampaigns = await db.query.fundingCampaigns.findMany({
     where: and(
-      eq(crowdfundingCampaigns.status, 'active'),
-      gte(crowdfundingCampaigns.endDate, new Date())
+      eq(fundingCampaigns.status, 'active'),
+      gte(fundingCampaigns.endDate, new Date())
     ),
   });
 

@@ -70,7 +70,7 @@ export interface DocumentReviewResult {
  * Agent #185: Document Review Agent
  * Analyzes legal documents for completeness, risk, compliance, and clarity
  */
-export class Agent185_DocumentReviewer {
+export class DocumentReviewer {
   private aiOrchestrator?: RateLimitedAIOrchestrator;
 
   constructor(aiOrchestrator?: RateLimitedAIOrchestrator) {
