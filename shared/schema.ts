@@ -9280,6 +9280,161 @@ export type InsertScrapedProfile = z.infer<typeof insertScrapedProfileSchema>;
 export type SelectScrapedProfile = typeof scrapedProfiles.$inferSelect;
 
 // ============================================================================
+// WAVE 4: SECURITY & COMPLIANCE (P0 #6-9)
+// ============================================================================
+
+// Two-Factor Authentication (P0 #7)
+export const userTwoFactor = pgTable("user_two_factor", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  method: varchar("method", { length: 20 }).notNull(), // 'totp', 'sms', 'email'
+  secret: varchar("secret", { length: 255 }), // TOTP secret (encrypted)
+  backupCodes: text("backup_codes").array(), // Encrypted backup codes
+  phoneNumber: varchar("phone_number", { length: 20 }), // For SMS
+  isEnabled: boolean("is_enabled").default(false).notNull(),
+  lastUsedAt: timestamp("last_used_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_two_factor_user_idx").on(table.userId),
+  methodIdx: index("user_two_factor_method_idx").on(table.method),
+}));
+
+export const insertUserTwoFactorSchema = createInsertSchema(userTwoFactor)
+  .omit({ id: true, createdAt: true });
+export const selectUserTwoFactorSchema = createSelectSchema(userTwoFactor);
+export type InsertUserTwoFactor = z.infer<typeof insertUserTwoFactorSchema>;
+export type SelectUserTwoFactor = typeof userTwoFactor.$inferSelect;
+
+// Legal Agreements (P0 #9)
+export const codeOfConductAgreements = pgTable("code_of_conduct_agreements", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  privacyPolicyVersion: varchar("privacy_policy_version", { length: 20 }).notNull(),
+  tosVersion: varchar("tos_version", { length: 20 }).notNull(),
+  cocVersion: varchar("coc_version", { length: 20 }).notNull(),
+  acceptedAt: timestamp("accepted_at").defaultNow().notNull(),
+  ipAddress: varchar("ip_address", { length: 45 }),
+  userAgent: text("user_agent"),
+}, (table) => ({
+  userIdx: index("coc_agreements_user_idx").on(table.userId),
+  acceptedAtIdx: index("coc_agreements_accepted_at_idx").on(table.acceptedAt),
+}));
+
+export const insertCodeOfConductAgreementSchema = createInsertSchema(codeOfConductAgreements)
+  .omit({ id: true, acceptedAt: true });
+export const selectCodeOfConductAgreementSchema = createSelectSchema(codeOfConductAgreements);
+export type InsertCodeOfConductAgreement = z.infer<typeof insertCodeOfConductAgreementSchema>;
+export type SelectCodeOfConductAgreement = typeof codeOfConductAgreements.$inferSelect;
+
+// Housing Revenue Tracking (P0 #4 - Extension)
+export const housingBookingPayments = pgTable("housing_booking_payments", {
+  id: serial("id").primaryKey(),
+  bookingId: integer("booking_id").notNull().references(() => housingBookings.id, { onDelete: "cascade" }),
+  
+  // Pricing breakdown (all in cents)
+  subtotal: integer("subtotal").notNull(), // Listing price * nights
+  cleaningFee: integer("cleaning_fee").default(0).notNull(),
+  guestServiceFee: integer("guest_service_fee").notNull(), // 5% of subtotal
+  hostServiceFee: integer("host_service_fee").notNull(), // 12% of subtotal
+  totalCharged: integer("total_charged").notNull(), // What guest pays
+  
+  // Host payout
+  hostPayout: integer("host_payout").notNull(), // subtotal + cleaning - host fee
+  platformRevenue: integer("platform_revenue").notNull(), // guest fee + host fee
+  
+  // Stripe tracking
+  stripePaymentIntentId: varchar("stripe_payment_intent_id", { length: 255 }),
+  stripeTransferId: varchar("stripe_transfer_id", { length: 255 }),
+  status: varchar("status", { length: 50 }).default("pending").notNull(), // pending, paid, transferred, failed
+  paidAt: timestamp("paid_at"),
+  transferredAt: timestamp("transferred_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  bookingIdx: index("housing_payments_booking_idx").on(table.bookingId),
+  statusIdx: index("housing_payments_status_idx").on(table.status),
+  stripeIdx: index("housing_payments_stripe_idx").on(table.stripePaymentIntentId),
+}));
+
+export const insertHousingBookingPaymentSchema = createInsertSchema(housingBookingPayments)
+  .omit({ id: true, createdAt: true });
+export const selectHousingBookingPaymentSchema = createSelectSchema(housingBookingPayments);
+export type InsertHousingBookingPayment = z.infer<typeof insertHousingBookingPaymentSchema>;
+export type SelectHousingBookingPayment = typeof housingBookingPayments.$inferSelect;
+
+// Event Revenue Tracking (P0 #4 - Extension)
+export const eventTicketPurchases = pgTable("event_ticket_purchases", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  ticketCount: integer("ticket_count").notNull(),
+  
+  // Pricing (all in cents)
+  ticketPrice: integer("ticket_price").notNull(),
+  platformFee: integer("platform_fee").notNull(), // 10% of subtotal
+  totalPaid: integer("total_paid").notNull(),
+  
+  // Organizer payout
+  organizerPayout: integer("organizer_payout").notNull(),
+  
+  // Stripe tracking
+  stripePaymentIntentId: varchar("stripe_payment_intent_id", { length: 255 }),
+  stripeTransferId: varchar("stripe_transfer_id", { length: 255 }),
+  status: varchar("status", { length: 50 }).default("pending").notNull(),
+  paidAt: timestamp("paid_at"),
+  transferredAt: timestamp("transferred_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  eventIdx: index("event_tickets_event_idx").on(table.eventId),
+  userIdx: index("event_tickets_user_idx").on(table.userId),
+  statusIdx: index("event_tickets_status_idx").on(table.status),
+}));
+
+export const insertEventTicketPurchaseSchema = createInsertSchema(eventTicketPurchases)
+  .omit({ id: true, createdAt: true });
+export const selectEventTicketPurchaseSchema = createSelectSchema(eventTicketPurchases);
+export type InsertEventTicketPurchase = z.infer<typeof insertEventTicketPurchaseSchema>;
+export type SelectEventTicketPurchase = typeof eventTicketPurchases.$inferSelect;
+
+// Platform Revenue Aggregation
+export const platformRevenue = pgTable("platform_revenue", {
+  id: serial("id").primaryKey(),
+  transactionType: varchar("transaction_type", { length: 50 }).notNull(), // housing, event_ticket, subscription, ad
+  transactionId: integer("transaction_id").notNull(),
+  amount: integer("amount").notNull(), // Revenue in cents
+  currency: varchar("currency", { length: 3 }).default("USD").notNull(),
+  recordedAt: timestamp("recorded_at").defaultNow().notNull(),
+}, (table) => ({
+  typeIdx: index("platform_revenue_type_idx").on(table.transactionType),
+  recordedIdx: index("platform_revenue_recorded_idx").on(table.recordedAt),
+}));
+
+export const insertPlatformRevenueSchema = createInsertSchema(platformRevenue)
+  .omit({ id: true, recordedAt: true });
+export const selectPlatformRevenueSchema = createSelectSchema(platformRevenue);
+export type InsertPlatformRevenue = z.infer<typeof insertPlatformRevenueSchema>;
+export type SelectPlatformRevenue = typeof platformRevenue.$inferSelect;
+
+// GDPR Data Export Requests (P0 #5)
+export const dataExportRequests = pgTable("data_export_requests", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  status: varchar("status", { length: 50 }).default("pending").notNull(), // pending, processing, completed, failed
+  downloadUrl: text("download_url"),
+  expiresAt: timestamp("expires_at"),
+  requestedAt: timestamp("requested_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+}, (table) => ({
+  userIdx: index("data_export_user_idx").on(table.userId),
+  statusIdx: index("data_export_status_idx").on(table.status),
+}));
+
+export const insertDataExportRequestSchema = createInsertSchema(dataExportRequests)
+  .omit({ id: true, requestedAt: true });
+export const selectDataExportRequestSchema = createSelectSchema(dataExportRequests);
+export type InsertDataExportRequest = z.infer<typeof insertDataExportRequestSchema>;
+export type SelectDataExportRequest = typeof dataExportRequests.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
