@@ -64,11 +64,11 @@ export default function GroupsPage() {
 
   // Calculate health scores and distances
   const enrichedGroups = useMemo(() => {
-    return (groups || []).map(group => ({
-      ...group,
-      healthScore: calculateHealthScore(group),
-      distance: calculateDistance(group.city),
-      isFeatured: (group.memberCount || 0) > 20 && calculateHealthScore(group) > 70
+    return (groups || []).map(item => ({
+      ...item.group,
+      healthScore: calculateHealthScore(item.group),
+      distance: calculateDistance(item.group.city),
+      isFeatured: (item.group.memberCount || 0) > 20 && calculateHealthScore(item.group) > 70
     }));
   }, [groups]);
 
