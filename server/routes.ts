@@ -125,6 +125,9 @@ import {
   groups,
   chatMessages,
   notifications,
+  friendships,
+  follows,
+  profileViews,
   travelPlans,
   travelPlanItems,
   contactSubmissions,
@@ -178,7 +181,7 @@ import {
   agentCommunications
 } from "@shared/platform-schema";
 import { db } from "@shared/db";
-import { eq, and, or, desc, sql, isNotNull, gte } from "drizzle-orm";
+import { eq, and, or, desc, sql, isNotNull, gte, count } from "drizzle-orm";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { cityscapeService } from "./services/cityscape-service";
@@ -2359,6 +2362,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               createdBy: req.user!.id,
               coverImage: cityscapePhoto?.url || "",
               city: cityName,
+              slug: cityName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
             });
 
             await storage.joinGroup(newCityCommunity.id, req.user!.id);
@@ -3280,10 +3284,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         count: sql<number>`count(*)::int`
       })
       .from(chatMessages)
-      .where(and(
-        eq(chatMessages.receiverId, req.user!.id),
-        eq(chatMessages.isRead, false)
-      ));
+      .where(
+        sql`NOT (${req.user!.id}::text = ANY(${chatMessages.readBy}))`
+      );
       
       res.json({ count: result[0]?.count || 0 });
     } catch (error) {
@@ -5667,14 +5670,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const completedFields = profileFields.filter(field => field).length;
       const completionPercentage = Math.round((completedFields / profileFields.length) * 100);
 
+      // Get post and event counts from database
+      const [postsCount] = await db.select({ count: sql<number>`count(*)::int` }).from(posts).where(eq(posts.userId, userId));
+      const [eventsCount] = await db.select({ count: sql<number>`count(*)::int` }).from(events).where(eq(events.userId, userId));
+
       res.json({
         views,
         followers,
         following,
         connections,
         completionPercentage,
-        totalPosts: user.postCount || 0,
-        totalEvents: user.eventCount || 0,
+        totalPosts: postsCount?.count || 0,
+        totalEvents: eventsCount?.count || 0,
       });
     } catch (error) {
       console.error("[Profile API] Error fetching profile stats:", error);
@@ -5790,7 +5797,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/profiles/dj", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const validated = insertDJProfileSchema.parse(req.body);
-      const profile = await storage.createDjProfile({ ...validated, userId: req.user!.id });
+      const profile = await storage.createDJProfile({ ...validated, userId: req.user!.id });
       res.status(201).json(profile);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -5803,7 +5810,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/profiles/dj/:userId", async (req: Request, res: Response) => {
     try {
-      const profile = await storage.getDjProfile(parseInt(req.params.userId));
+      const profile = await storage.getDJProfile(parseInt(req.params.userId));
       if (!profile) return res.status(404).json({ message: "Profile not found" });
       res.json(profile);
     } catch (error) {
@@ -5815,7 +5822,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/profiles/dj", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const validated = insertDJProfileSchema.partial().parse(req.body);
-      const profile = await storage.updateDjProfile(req.user!.id, validated);
+      const profile = await storage.updateDJProfile(req.user!.id, validated);
       res.json(profile);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -5828,7 +5835,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/profiles/dj", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      await storage.deleteDjProfile(req.user!.id);
+      await storage.deleteDJProfile(req.user!.id);
       res.status(204).send();
     } catch (error) {
       console.error("[DJ Profile] Delete error:", error);
@@ -5845,7 +5852,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         styles: req.query.styles as string | undefined, 
         equipmentType: req.query.equipmentType as string | undefined 
       };
-      const results = await storage.searchDjProfiles(filters);
+      const results = await storage.searchDJProfiles(filters);
       res.json(results);
     } catch (error) {
       console.error("[DJ Profile] Search error:", error);

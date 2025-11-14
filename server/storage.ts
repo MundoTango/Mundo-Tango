@@ -692,6 +692,11 @@ export interface IStorage {
   incrementProfileView(userId: number, viewerId: number): Promise<void>;
   getProfileViewStats(userId: number): Promise<any>;
   
+  // Feed Stats
+  getPostsCount(params?: { since?: Date }): Promise<number>;
+  getActiveUsersCount(): Promise<number>;
+  getUpcomingEventsCount(): Promise<number>;
+  
   // ============================================================================
   // BATCH 15: ADVANCED PROFILE SEARCH AND FILTERING
   // ============================================================================
@@ -5242,6 +5247,46 @@ export class DbStorage implements IStorage {
         viewedAt: log.createdAt,
       })),
     };
+  }
+  
+  async getPostsCount(params?: { since?: Date }): Promise<number> {
+    const { since } = params || {};
+    const query = db.select({ count: sql<number>`count(*)::int` }).from(posts);
+    
+    if (since) {
+      const [result] = await query.where(gte(posts.createdAt, since));
+      return result?.count || 0;
+    }
+    
+    const [result] = await query;
+    return result?.count || 0;
+  }
+  
+  async getActiveUsersCount(): Promise<number> {
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const [result] = await db
+      .select({ count: sql<number>`count(DISTINCT ${users.id})::int` })
+      .from(users)
+      .where(and(
+        eq(users.isActive, true),
+        or(
+          gte(users.lastLoginAt, oneDayAgo),
+          gte(users.updatedAt, oneDayAgo)
+        )
+      ));
+    return result?.count || 0;
+  }
+  
+  async getUpcomingEventsCount(): Promise<number> {
+    const now = new Date();
+    const [result] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(events)
+      .where(and(
+        gte(events.startDate, now),
+        eq(events.status, 'published')
+      ));
+    return result?.count || 0;
   }
   
   async getProfileStats(userId: number): Promise<any> {
