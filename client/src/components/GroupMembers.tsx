@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SelectGroupMember } from "@shared/schema";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 
 interface GroupMembersProps {
   members: SelectGroupMember[];
@@ -80,7 +80,7 @@ export function GroupMembers({
                       </Badge>
                     </div>
                     <span className="text-xs text-muted-foreground" data-testid={`text-member-joined-${member.userId}`}>
-                      Joined {formatDistanceToNow(new Date(member.joinedAt || Date.now()), { addSuffix: true })}
+                      Joined {safeDateDistance(member.joinedAt, { addSuffix: true })}
                     </span>
                   </div>
                 </div>

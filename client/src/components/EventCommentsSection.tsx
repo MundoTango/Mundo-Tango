@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SelectEventComment } from "@shared/schema";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { useToast } from "@/hooks/use-toast";
 
 interface EventCommentsSectionProps {
@@ -148,7 +148,7 @@ export function EventCommentsSection({
           
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <span data-testid={`text-comment-time-${comment.id}`}>
-              {formatDistanceToNow(new Date(comment.createdAt || Date.now()), { addSuffix: true })}
+              {safeDateDistance(comment.createdAt, { addSuffix: true })}
             </span>
             {!isReply && (
               <Button 

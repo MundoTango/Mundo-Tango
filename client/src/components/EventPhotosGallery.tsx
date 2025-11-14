@@ -18,7 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SelectEventPhoto } from "@shared/schema";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { useToast } from "@/hooks/use-toast";
 
 interface EventPhotosGalleryProps {
@@ -129,7 +129,7 @@ export function EventPhotosGallery({
                           </Avatar>
                           <div className="text-sm">
                             <p className="text-muted-foreground">
-                              Uploaded {formatDistanceToNow(new Date(photo.createdAt || Date.now()), { addSuffix: true })}
+                              Uploaded {safeDateDistance(photo.createdAt, { addSuffix: true })}
                             </p>
                           </div>
                         </div>
