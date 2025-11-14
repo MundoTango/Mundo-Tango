@@ -16,7 +16,7 @@ import {
   Crown,
   Shield
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { SEO } from "@/components/SEO";
@@ -273,7 +273,7 @@ export default function InvitationsPage() {
                                       Invitation from {invitation.fromUser.name}
                                     </CardTitle>
                                     <CardDescription>
-                                      @{invitation.fromUser.username} • {formatDistanceToNow(new Date(invitation.createdAt), { addSuffix: true })}
+                                      @{invitation.fromUser.username} • {safeDateDistance(invitation.createdAt, { addSuffix: true })}
                                     </CardDescription>
                                   </div>
                                 </div>
@@ -291,7 +291,7 @@ export default function InvitationsPage() {
                               {invitation.expiresAt && (
                                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                   <Clock className="h-4 w-4" />
-                                  Expires {formatDistanceToNow(new Date(invitation.expiresAt), { addSuffix: true })}
+                                  Expires {safeDateDistance(invitation.expiresAt, { addSuffix: true })}
                                 </div>
                               )}
 
@@ -376,7 +376,7 @@ export default function InvitationsPage() {
                                     {invitation.fromUser.name}
                                   </p>
                                   <p className="text-sm text-muted-foreground">
-                                    {formatDistanceToNow(new Date(invitation.createdAt), { addSuffix: true })}
+                                    {safeDateDistance(invitation.createdAt, { addSuffix: true })}
                                   </p>
                                 </div>
                               </div>

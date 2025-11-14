@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, Share2, Bookmark, BookmarkCheck, Users } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { Link } from "wouter";
 import { ReactionSelector } from "@/components/ui/ReactionSelector";
 import { PostActionsMenu } from "@/components/ui/PostActionsMenu";
@@ -108,13 +108,7 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
                 </span>
               </div>
               <p className="text-xs text-muted-foreground">
-                {(() => {
-                  try {
-                    return formatDistanceToNow(new Date(post.createdAt), { addSuffix: true });
-                  } catch {
-                    return 'recently';
-                  }
-                })()}
+                {safeDateDistance(post.createdAt, { addSuffix: true })}
               </p>
             </div>
           </div>

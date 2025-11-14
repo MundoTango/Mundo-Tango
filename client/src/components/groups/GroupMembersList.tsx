@@ -14,7 +14,7 @@ import {
 import { MoreVertical, Shield, UserCog, Users as UsersIcon, Ban } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import type { SelectGroupMember } from "@shared/schema";
 
 interface GroupMembersListProps {
@@ -157,13 +157,7 @@ export function GroupMembersList({ groupId, canModerate = false, currentUserId }
                   </p>
                   <p className="text-sm text-muted-foreground truncate">
                     @{member.user?.username || `user${member.userId}`} · Joined{" "}
-                    {member.joinedAt && (() => {
-                      try {
-                        return formatDistanceToNow(new Date(member.joinedAt), { addSuffix: true });
-                      } catch {
-                        return 'recently';
-                      }
-                    })()}
+                    {member.joinedAt && safeDateDistance(member.joinedAt, { addSuffix: true })}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

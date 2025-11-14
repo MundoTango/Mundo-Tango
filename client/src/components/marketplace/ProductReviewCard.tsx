@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 
 interface ProductReviewCardProps {
   id: number;
@@ -57,7 +57,7 @@ export function ProductReviewCard({
           <div className="flex items-center justify-between gap-2">
             <p className="font-medium text-sm">{reviewerName}</p>
             <p className="text-xs text-muted-foreground">
-              {formatDistanceToNow(new Date(createdAt), { addSuffix: true })}
+              {safeDateDistance(createdAt, { addSuffix: true })}
             </p>
           </div>
           <div className="flex items-center gap-2 mt-1">
