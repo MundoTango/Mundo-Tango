@@ -10,7 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { Link } from "wouter";
 
 interface Notification {
@@ -97,13 +97,7 @@ function NotificationBellComponent() {
                         {notification.message}
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">
-                        {(() => {
-                          try {
-                            return formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true });
-                          } catch {
-                            return 'recently';
-                          }
-                        })()}
+                        {safeDateDistance(notification.createdAt, { addSuffix: true })}
                       </p>
                     </div>
                     {!notification.read && (

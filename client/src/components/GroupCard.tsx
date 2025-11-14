@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Users, Lock, Globe, Calendar } from "lucide-react";
 import { Link } from "wouter";
 import { SelectGroup } from "@shared/schema";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 
 interface GroupCardProps {
   group: SelectGroup;
@@ -81,13 +81,7 @@ export function GroupCard({ group, onJoin, isJoined }: GroupCardProps) {
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
             <Calendar className="h-3 w-3" />
-            Created {(() => {
-              try {
-                return formatDistanceToNow(new Date(group.createdAt || Date.now()), { addSuffix: true });
-              } catch {
-                return 'recently';
-              }
-            })()}
+            Created {safeDateDistance(group.createdAt, { addSuffix: true })}
           </span>
           {(group.postCount || 0) > 0 && (
             <span>{group.postCount || 0} posts</span>

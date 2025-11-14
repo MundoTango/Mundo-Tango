@@ -13,7 +13,7 @@ import {
   Clock,
   BarChart3
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { PageLayout } from "@/components/PageLayout";
 import { PredictionStats } from "@/components/PredictionStats";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
@@ -221,7 +221,7 @@ export default function AdminDashboardPage() {
                       <div>
                         <CardTitle className="text-base">{item.type}</CardTitle>
                         <p className="text-sm text-muted-foreground">
-                          Reported by {item.reportedBy} • {formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}
+                          Reported by {item.reportedBy} • {safeDateDistance(item.createdAt, { addSuffix: true })}
                         </p>
                       </div>
                     </div>
@@ -278,7 +278,7 @@ export default function AdminDashboardPage() {
                       <span className="font-medium">{activity.user}</span> {activity.action}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true })}
+                      {safeDateDistance(activity.timestamp, { addSuffix: true })}
                     </p>
                   </div>
                   <Badge variant="secondary" className="capitalize">

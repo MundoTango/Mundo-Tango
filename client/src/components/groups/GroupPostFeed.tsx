@@ -18,7 +18,7 @@ import {
 import { Heart, MessageCircle, Share2, Pin, MoreVertical, Trash2 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import type { SelectGroupPost } from "@shared/schema";
 import { renderMentionPills } from "@/utils/renderMentionPills";
 const postFormSchema = z.object({
@@ -226,13 +226,7 @@ function GroupPostFeedComponent({ groupId, canPost = false, canModerate = false 
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          {post.createdAt && (() => {
-                            try {
-                              return formatDistanceToNow(new Date(post.createdAt), { addSuffix: true });
-                            } catch {
-                              return 'recently';
-                            }
-                          })()}
+                          {post.createdAt && safeDateDistance(post.createdAt, { addSuffix: true })}
                         </p>
                       </div>
                     </div>

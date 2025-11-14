@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { TrendingUp, Users, Activity, MapPin, BarChart3, Clock } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
 
 export default function AdminAnalyticsPage() {
@@ -257,7 +257,7 @@ export default function AdminAnalyticsPage() {
                             <span>🔄 {post.sharesCount} shares</span>
                           </div>
                           <p className="text-xs text-muted-foreground">
-                            {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+                            {safeDateDistance(post.createdAt, { addSuffix: true })}
                           </p>
                         </div>
                       ))}

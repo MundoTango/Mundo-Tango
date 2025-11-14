@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { UserPlus, Check, X } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import type { SelectGroupInvite } from "@shared/schema";
 
 interface GroupInviteSystemProps {
@@ -140,13 +140,7 @@ export function GroupInviteSystem({ groupId, canInvite = false }: GroupInviteSys
                       User #{invite.inviterId} invited you
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {invite.sentAt && (() => {
-                        try {
-                          return formatDistanceToNow(new Date(invite.sentAt), { addSuffix: true });
-                        } catch {
-                          return 'recently';
-                        }
-                      })()}
+                      {invite.sentAt && safeDateDistance(invite.sentAt, { addSuffix: true })}
                     </p>
                     {invite.message && (
                       <p className="text-sm text-muted-foreground mt-2 italic">
