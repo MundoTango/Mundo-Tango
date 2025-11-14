@@ -2785,7 +2785,7 @@ export class DbStorage implements IStorage {
   }
 
   async getEvents(params: { city?: string; eventType?: string; startDate?: Date; endDate?: Date; search?: string; limit?: number; offset?: number }): Promise<SelectEvent[]> {
-    console.log('🔍 SEARCH FIX LOADED v3 - params:', JSON.stringify(params));
+    console.log('[STORAGE.getEvents] params=', JSON.stringify(params));
     let conditions = [];
     
     if (params.city) {
@@ -2806,6 +2806,7 @@ export class DbStorage implements IStorage {
     
     if (params.search) {
       const searchTerm = `%${params.search}%`;
+      console.log('[STORAGE.getEvents] APPLYING SEARCH FILTER:', searchTerm);
       conditions.push(
         or(
           ilike(events.title, searchTerm),
