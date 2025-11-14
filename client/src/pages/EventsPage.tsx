@@ -9,10 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, Database, Download } from "lucide-react";
 import { format } from "date-fns";
 import { SEO } from "@/components/SEO";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import type { RSVP, EventWithProfile } from "@shared/supabase-types";
 import { PageLayout } from "@/components/PageLayout";
@@ -24,6 +24,8 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 const localizer = momentLocalizer(moment);
 
@@ -172,6 +174,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
 
 export default function EventsPage() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [dateFilter, setDateFilter] = useState<"upcoming" | "past">("upcoming");
@@ -181,6 +184,31 @@ export default function EventsPage() {
     search: searchQuery,
     category: categoryFilter,
     dateFilter,
+  });
+
+  const isSuperAdmin = user?.role === 'super_admin';
+
+  const triggerScrapingMutation = useMutation({
+    mutationFn: async (scrapingType: string) => {
+      return await apiRequest('/api/admin/trigger-scraping', {
+        method: 'POST',
+        body: JSON.stringify({ scrapingType }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Scraping Triggered!",
+        description: data.message || 'Data population workflow started',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || 'Failed to trigger scraping',
+        variant: "destructive",
+      });
+    }
   });
 
   // Convert events to calendar format
@@ -240,11 +268,28 @@ export default function EventsPage() {
                 Find milongas, workshops, and performances near you. Join the global tango community.
               </p>
 
-              <Button size="lg" className="gap-2" data-testid="button-create-event">
-                <Plus className="h-5 w-5" />
-                Create Event
-                <ChevronRight className="h-5 w-5" />
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+                <Button size="lg" className="gap-2" data-testid="button-create-event">
+                  <Plus className="h-5 w-5" />
+                  Create Event
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+                
+                {isSuperAdmin && (
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="gap-2 border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20" 
+                    onClick={() => triggerScrapingMutation.mutate('full')}
+                    disabled={triggerScrapingMutation.isPending}
+                    data-testid="button-trigger-scraping"
+                  >
+                    <Database className="h-5 w-5" />
+                    {triggerScrapingMutation.isPending ? 'Triggering...' : 'Trigger Data Scraping'}
+                    <Download className="h-5 w-5" />
+                  </Button>
+                )}
+              </div>
             </motion.div>
           </div>
         </div>
