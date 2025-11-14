@@ -41,7 +41,7 @@ L.Icon.Default.mergeOptions({
 
 function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   const { user } = useAuth();
-  const rsvpMutation = useRSVPEvent(event.id || event.event?.id);
+  const rsvpMutation = useRSVPEvent();
   
   // Extract event data from API response (could be nested as event.event)
   const eventData = event.event || event;
@@ -126,7 +126,7 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
           <div className="flex items-center gap-2 text-sm">
             <CalendarIcon className="h-4 w-4 flex-shrink-0 text-primary" />
             <span data-testid={`text-event-date-${eventData.id}`}>
-              {formatEventDateTime(eventData.startDate || eventData.start_date)} • {formatEventTime(eventData.startDate || eventData.start_date)}
+              {formatEventDateTime(eventData.date)} • {formatEventTime(eventData.date)}
             </span>
           </div>
 
@@ -236,11 +236,11 @@ export default function EventsPage() {
   // Convert events to calendar format
   const calendarEvents = useMemo(() => {
     if (!events) return [];
-    return events.map(event => ({
+    return events.map((event: any) => ({
       id: event.id,
       title: event.title,
-      start: new Date(event.start_date),
-      end: event.end_date ? new Date(event.end_date) : new Date(new Date(event.start_date).getTime() + 2 * 60 * 60 * 1000), // default 2hr duration
+      start: new Date(event.date || Date.now()),
+      end: new Date((new Date(event.date || Date.now())).getTime() + 2 * 60 * 60 * 1000), // default 2hr duration
       resource: event,
     }));
   }, [events]);
@@ -478,7 +478,7 @@ export default function EventsPage() {
                               <div className="p-2">
                                 <h3 className="font-semibold mb-1">{event.title}</h3>
                                 <p className="text-sm text-muted-foreground mb-2">
-                                  {format(new Date(event.start_date), "MMM dd, yyyy 'at' h:mm a")}
+                                  {format(new Date(event.date || Date.now()), "MMM dd, yyyy 'at' h:mm a")}
                                 </p>
                                 <Link href={`/events/${event.id}`}>
                                   <Button size="sm" className="w-full">View Details</Button>
