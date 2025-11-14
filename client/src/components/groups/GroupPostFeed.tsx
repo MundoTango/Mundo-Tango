@@ -226,7 +226,13 @@ function GroupPostFeedComponent({ groupId, canPost = false, canModerate = false 
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          {post.createdAt && formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+                          {post.createdAt && (() => {
+                            try {
+                              return formatDistanceToNow(new Date(post.createdAt), { addSuffix: true });
+                            } catch {
+                              return 'recently';
+                            }
+                          })()}
                         </p>
                       </div>
                     </div>

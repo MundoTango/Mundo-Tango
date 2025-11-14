@@ -140,7 +140,13 @@ export function GroupInviteSystem({ groupId, canInvite = false }: GroupInviteSys
                       User #{invite.inviterId} invited you
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {invite.sentAt && formatDistanceToNow(new Date(invite.sentAt), { addSuffix: true })}
+                      {invite.sentAt && (() => {
+                        try {
+                          return formatDistanceToNow(new Date(invite.sentAt), { addSuffix: true });
+                        } catch {
+                          return 'recently';
+                        }
+                      })()}
                     </p>
                     {invite.message && (
                       <p className="text-sm text-muted-foreground mt-2 italic">

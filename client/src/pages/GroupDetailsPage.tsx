@@ -28,7 +28,8 @@ export default function GroupDetailsPage() {
     queryFn: async () => {
       const res = await fetch(`/api/groups/${groupIdOrSlug}`, { credentials: "include" });
       if (!res.ok) throw new Error("Failed to fetch group");
-      return res.json();
+      const data = await res.json();
+      return data.group;
     },
   });
 

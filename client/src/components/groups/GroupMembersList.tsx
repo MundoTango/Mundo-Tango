@@ -157,7 +157,13 @@ export function GroupMembersList({ groupId, canModerate = false, currentUserId }
                   </p>
                   <p className="text-sm text-muted-foreground truncate">
                     @{member.user?.username || `user${member.userId}`} · Joined{" "}
-                    {member.joinedAt && formatDistanceToNow(new Date(member.joinedAt), { addSuffix: true })}
+                    {member.joinedAt && (() => {
+                      try {
+                        return formatDistanceToNow(new Date(member.joinedAt), { addSuffix: true });
+                      } catch {
+                        return 'recently';
+                      }
+                    })()}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
