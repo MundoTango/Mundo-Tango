@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { usePosts, useCreatePost, useToggleLike, useComments, useCreateComment, useUpdateComment, useDeleteComment } from "@/hooks/usePosts";
 import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -11,9 +12,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Heart, MessageCircle, Share2, Image as ImageIcon, Globe, Users, Lock, X, Loader2, MoreVertical, Pencil, Trash2, ChevronDown, Music2, Plane, Sparkles, GraduationCap, PartyPopper, Star, Home, Utensils, ShoppingBag, Wrench, Video, MapPin } from "lucide-react";
+import { Heart, MessageCircle, Share2, Image as ImageIcon, Globe, Users, Lock, X, Loader2, MoreVertical, Pencil, Trash2, ChevronDown, Music2, Plane, Sparkles, GraduationCap, PartyPopper, Star, Home, Utensils, ShoppingBag, Wrench, Video, MapPin, Clock } from "lucide-react";
 import { PostReactions } from "@/components/feed/PostReactions";
 import { PostActions } from "@/components/feed/PostActions";
 import { Badge } from "@/components/ui/badge";
@@ -76,6 +78,7 @@ const RECOMMENDATION_CATEGORIES = [
 export default function FeedPage() {
   const [content, setContent] = useState("");
   const [visibility, setVisibility] = useState<"public" | "friends" | "private">("public");
+  const [postType, setPostType] = useState<"post" | "story">("post");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -110,6 +113,12 @@ export default function FeedPage() {
   const videoInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { user } = useAuth();
+  
+  // Fetch stories
+  const { data: stories = [], isLoading: storiesLoading } = useQuery<Post[]>({
+    queryKey: ["/api/posts/stories"],
+  });
+  
   const { 
     data, 
     isLoading, 
@@ -320,6 +329,7 @@ export default function FeedPage() {
       const postData: any = {
         content: content.trim(),
         visibility: visibility,
+        type: postType,
       };
 
       if (imagePreview) {
@@ -345,19 +355,28 @@ export default function FeedPage() {
 
       setContent("");
       setVisibility("public");
+      setPostType("post");
       setSelectedTags([]);
       setRecommendations([]);
       setMentions([]);
       handleRemoveImage();
       handleRemoveVideo();
+      
+      // Invalidate stories query if creating a story
+      if (postType === 'story') {
+        queryClient.invalidateQueries({ queryKey: ["/api/posts/stories"] });
+      }
+      
       toast({
-        title: "Post created!",
-        description: "Your post has been shared with the community.",
+        title: postType === 'story' ? "Story created!" : "Post created!",
+        description: postType === 'story' 
+          ? "Your story will expire in 24 hours."
+          : "Your post has been shared with the community.",
       });
     } catch (error) {
       console.error("Failed to create post:", error);
       toast({
-        title: "Failed to create post",
+        title: postType === 'story' ? "Failed to create story" : "Failed to create post",
         description: error instanceof Error ? error.message : "Please try again",
         variant: "destructive",
       });
@@ -413,6 +432,37 @@ export default function FeedPage() {
           <div className="flex justify-end">
             <ConnectionStatusBadge />
           </div>
+
+          {/* Stories Carousel */}
+          {stories && stories.length > 0 && (
+            <Card className="p-4" data-testid="section-stories-carousel">
+              <div className="flex items-center gap-2 mb-3">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+                <h2 className="text-sm font-semibold">Stories (24h)</h2>
+              </div>
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                {stories.map((story) => (
+                  <Link key={story.id} href={`/posts/${story.id}`}>
+                    <div 
+                      className="flex-shrink-0 cursor-pointer group"
+                      data-testid={`story-${story.id}`}
+                    >
+                      <div className="relative">
+                        <Avatar className="h-16 w-16 ring-2 ring-primary">
+                          <AvatarImage src={story.user?.profileImage || undefined} />
+                          <AvatarFallback>{story.user?.name?.[0] || 'U'}</AvatarFallback>
+                        </Avatar>
+                        <div className="absolute inset-0 rounded-full bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                      <p className="text-xs text-center mt-1 w-16 truncate">
+                        {story.user?.name?.split(' ')[0] || 'User'}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </Card>
+          )}
 
           {/* New Posts Banner */}
           {newPostsAvailable && (

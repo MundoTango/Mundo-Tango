@@ -571,6 +571,8 @@ export const posts = pgTable("posts", {
   formattedAddress: text("formatted_address"),
   visibility: varchar("visibility").default("public"),
   postType: varchar("post_type").default("post"),
+  type: varchar("type", { length: 20 }).notNull().default("post"), // 'post' | 'story'
+  expiresAt: timestamp("expires_at"), // Only set for stories (24 hours from creation)
   likes: integer("likes").default(0),
   comments: integer("comments").default(0),
   shares: integer("shares").default(0),
@@ -581,6 +583,7 @@ export const posts = pgTable("posts", {
   eventIdx: index("posts_event_idx").on(table.eventId),
   createdAtIdx: index("posts_created_at_idx").on(table.createdAt),
   mentionsIdx: index("posts_mentions_idx").using("gin", table.mentions),
+  typeExpiresIdx: index("posts_type_expires_idx").on(table.type, table.expiresAt),
 }));
 
 export const postLikes = pgTable("post_likes", {
@@ -2217,6 +2220,15 @@ export const housingListings = pgTable("housing_listings", {
   amenities: text("amenities").array(),
   houseRules: text("house_rules"),
   images: text("images").array(),
+  photos: jsonb('photos').$type<Array<{
+    id: string;
+    url: string;
+    publicId: string;
+    caption?: string;
+    order: number;
+    isCover: boolean;
+  }>>().default(sql`'[]'::jsonb`),
+  coverPhotoUrl: text('cover_photo_url'),
   status: varchar("status").default("active").notNull(),
   
   // Safety Verification (admin reviews for trust & safety)
@@ -9425,6 +9437,221 @@ export type InsertPlatformRevenue = z.infer<typeof insertPlatformRevenueSchema>;
 export type SelectPlatformRevenue = typeof platformRevenue.$inferSelect;
 
 // GDPR Data Export Requests (P0 #5) - Already defined at line 9067, no duplicate needed
+
+// ============================================================================
+// WAVE 4: ENCRYPTION AT REST FOR SENSITIVE DATA (P0 #8)
+// Financial, Health, Budget, Nutrition Data with AES-256-GCM Encryption
+// ============================================================================
+
+// Financial Goals
+export const financialGoals = pgTable("financial_goals", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  goalType: varchar("goal_type", { length: 50 }).notNull(), // 'savings', 'investment', 'debt_reduction', 'retirement'
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  status: varchar("status", { length: 20 }).default("active").notNull(), // 'active', 'completed', 'abandoned'
+  targetDate: timestamp("target_date"),
+  
+  // ENCRYPTED FIELD: Stores sensitive financial data
+  // {targetAmount: number, currentAmount: number, details: {currency, notes, milestones}}
+  encryptedData: text("encrypted_data").notNull(),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("financial_goals_user_idx").on(table.userId),
+  statusIdx: index("financial_goals_status_idx").on(table.status),
+  typeIdx: index("financial_goals_type_idx").on(table.goalType),
+}));
+
+export const insertFinancialGoalSchema = createInsertSchema(financialGoals)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export const selectFinancialGoalSchema = createSelectSchema(financialGoals);
+export type InsertFinancialGoal = z.infer<typeof insertFinancialGoalSchema>;
+export type SelectFinancialGoal = typeof financialGoals.$inferSelect;
+
+// Budget Entries
+export const budgetEntries = pgTable("budget_entries", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  categoryId: integer("category_id").references(() => users.id), // Will reference budgetCategories
+  entryType: varchar("entry_type", { length: 20 }).notNull(), // 'income', 'expense'
+  date: timestamp("date").notNull(),
+  merchant: varchar("merchant", { length: 255 }),
+  
+  // ENCRYPTED FIELD: Stores sensitive financial transaction data
+  // {amount: number, description: string, notes: string, currency: string}
+  encryptedData: text("encrypted_data").notNull(),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("budget_entries_user_idx").on(table.userId),
+  categoryIdx: index("budget_entries_category_idx").on(table.categoryId),
+  dateIdx: index("budget_entries_date_idx").on(table.date),
+  typeIdx: index("budget_entries_type_idx").on(table.entryType),
+}));
+
+export const insertBudgetEntrySchema = createInsertSchema(budgetEntries)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export const selectBudgetEntrySchema = createSelectSchema(budgetEntries);
+export type InsertBudgetEntry = z.infer<typeof insertBudgetEntrySchema>;
+export type SelectBudgetEntry = typeof budgetEntries.$inferSelect;
+
+// Budget Categories
+export const budgetCategories = pgTable("budget_categories", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 100 }).notNull(),
+  color: varchar("color", { length: 20 }),
+  icon: varchar("icon", { length: 50 }),
+  
+  // ENCRYPTED FIELD: Stores budget limits and targets
+  // {monthlyLimit: number, yearlyTarget: number, notes: string}
+  encryptedData: text("encrypted_data"),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("budget_categories_user_idx").on(table.userId),
+  nameIdx: index("budget_categories_name_idx").on(table.name),
+}));
+
+export const insertBudgetCategorySchema = createInsertSchema(budgetCategories)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export const selectBudgetCategorySchema = createSelectSchema(budgetCategories);
+export type InsertBudgetCategory = z.infer<typeof insertBudgetCategorySchema>;
+export type SelectBudgetCategory = typeof budgetCategories.$inferSelect;
+
+// Health Goals
+export const healthGoals = pgTable("health_goals", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  goalType: varchar("goal_type", { length: 50 }).notNull(), // 'weight_loss', 'muscle_gain', 'endurance', 'flexibility'
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  status: varchar("status", { length: 20 }).default("active").notNull(),
+  targetDate: timestamp("target_date"),
+  
+  // ENCRYPTED FIELD: Stores sensitive health metrics
+  // {targetWeight: number, currentWeight: number, metrics: {bmi, bodyFat, measurements}}
+  encryptedData: text("encrypted_data").notNull(),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("health_goals_user_idx").on(table.userId),
+  statusIdx: index("health_goals_status_idx").on(table.status),
+  typeIdx: index("health_goals_type_idx").on(table.goalType),
+}));
+
+export const insertHealthGoalSchema = createInsertSchema(healthGoals)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export const selectHealthGoalSchema = createSelectSchema(healthGoals);
+export type InsertHealthGoal = z.infer<typeof insertHealthGoalSchema>;
+export type SelectHealthGoal = typeof healthGoals.$inferSelect;
+
+// Health Metrics
+export const healthMetrics = pgTable("health_metrics", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  date: timestamp("date").notNull(),
+  metricType: varchar("metric_type", { length: 50 }).notNull(), // 'weight', 'blood_pressure', 'heart_rate', 'sleep'
+  
+  // ENCRYPTED FIELD: Stores sensitive health measurements
+  // {value: number, unit: string, notes: string, additionalData: object}
+  encryptedData: text("encrypted_data").notNull(),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("health_metrics_user_idx").on(table.userId),
+  dateIdx: index("health_metrics_date_idx").on(table.date),
+  typeIdx: index("health_metrics_type_idx").on(table.metricType),
+}));
+
+export const insertHealthMetricSchema = createInsertSchema(healthMetrics)
+  .omit({ id: true, createdAt: true });
+export const selectHealthMetricSchema = createSelectSchema(healthMetrics);
+export type InsertHealthMetric = z.infer<typeof insertHealthMetricSchema>;
+export type SelectHealthMetric = typeof healthMetrics.$inferSelect;
+
+// Nutrition Logs
+export const nutritionLogs = pgTable("nutrition_logs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  date: timestamp("date").notNull(),
+  mealType: varchar("meal_type", { length: 20 }).notNull(), // 'breakfast', 'lunch', 'dinner', 'snack'
+  foodName: varchar("food_name", { length: 255 }).notNull(),
+  
+  // ENCRYPTED FIELD: Stores sensitive nutrition data
+  // {calories: number, protein: number, carbs: number, fat: number, fiber: number, sugar: number, notes: string}
+  encryptedData: text("encrypted_data").notNull(),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("nutrition_logs_user_idx").on(table.userId),
+  dateIdx: index("nutrition_logs_date_idx").on(table.date),
+  mealTypeIdx: index("nutrition_logs_meal_type_idx").on(table.mealType),
+}));
+
+export const insertNutritionLogSchema = createInsertSchema(nutritionLogs)
+  .omit({ id: true, createdAt: true });
+export const selectNutritionLogSchema = createSelectSchema(nutritionLogs);
+export type InsertNutritionLog = z.infer<typeof insertNutritionLogSchema>;
+export type SelectNutritionLog = typeof nutritionLogs.$inferSelect;
+
+// Fitness Activities
+export const fitnessActivities = pgTable("fitness_activities", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  date: timestamp("date").notNull(),
+  activityType: varchar("activity_type", { length: 100 }).notNull(), // 'running', 'cycling', 'swimming', 'strength_training'
+  duration: integer("duration"), // in minutes (not encrypted - used for queries)
+  
+  // ENCRYPTED FIELD: Stores detailed fitness metrics
+  // {distance: number, pace: number, heartRate: number, calories: number, notes: string, route: object}
+  encryptedData: text("encrypted_data").notNull(),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("fitness_activities_user_idx").on(table.userId),
+  dateIdx: index("fitness_activities_date_idx").on(table.date),
+  typeIdx: index("fitness_activities_type_idx").on(table.activityType),
+}));
+
+export const insertFitnessActivitySchema = createInsertSchema(fitnessActivities)
+  .omit({ id: true, createdAt: true });
+export const selectFitnessActivitySchema = createSelectSchema(fitnessActivities);
+export type InsertFitnessActivity = z.infer<typeof insertFitnessActivitySchema>;
+export type SelectFitnessActivity = typeof fitnessActivities.$inferSelect;
+
+// User Payments (sensitive payment information)
+export const userPayments = pgTable("user_payments", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  paymentType: varchar("payment_type", { length: 50 }).notNull(), // 'subscription', 'event_ticket', 'housing', 'marketplace'
+  status: varchar("status", { length: 20 }).default("pending").notNull(), // 'pending', 'completed', 'failed', 'refunded'
+  stripePaymentIntentId: varchar("stripe_payment_intent_id", { length: 255 }),
+  
+  // ENCRYPTED FIELD: Stores sensitive payment details
+  // {amount: number, currency: string, description: string, metadata: object, billingDetails: object}
+  encryptedData: text("encrypted_data").notNull(),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_payments_user_idx").on(table.userId),
+  statusIdx: index("user_payments_status_idx").on(table.status),
+  typeIdx: index("user_payments_type_idx").on(table.paymentType),
+  stripeIdx: index("user_payments_stripe_idx").on(table.stripePaymentIntentId),
+}));
+
+export const insertUserPaymentSchema = createInsertSchema(userPayments)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export const selectUserPaymentSchema = createSelectSchema(userPayments);
+export type InsertUserPayment = z.infer<typeof insertUserPaymentSchema>;
+export type SelectUserPayment = typeof userPayments.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)

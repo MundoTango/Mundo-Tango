@@ -1,89 +1,166 @@
-import { Request, Response, NextFunction } from "express";
+import helmet from 'helmet';
+import { Request, Response, NextFunction } from 'express';
 
 /**
- * Security Headers Middleware
- * Implements comprehensive security headers for production deployment
+ * Comprehensive Security Headers using Helmet
+ * Environment-aware CSP: Strict in production, permissive in development
  */
-export function securityHeaders(req: Request, res: Response, next: NextFunction) {
-  // Content Security Policy (CSP)
-  const isDevelopment = process.env.NODE_ENV !== 'production';
-  const cspDirectives = [
-    "default-src 'self'",
-    // Allow unsafe-inline/eval only in development, remove in production for security
-    isDevelopment 
-      ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com"
-      : "script-src 'self' https://cdn.jsdelivr.net https://unpkg.com",
-    isDevelopment
-      ? "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com"
-      : "style-src 'self' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com data:",
-    "img-src 'self' data: blob: https: http:",
-    "media-src 'self' blob: https: http:",
-    "connect-src 'self' https://api.stripe.com https://api.groq.com https://api.openai.com wss:",
-    "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "frame-ancestors 'none'",
-    "upgrade-insecure-requests",
-  ].filter(Boolean).join("; ");
+
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
+// ============================================================================
+// HELMET CONFIGURATION WITH ENVIRONMENT-AWARE CSP
+// ============================================================================
+
+export const securityHeaders = helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      
+      // Script sources - allow unsafe-inline/eval only in development
+      scriptSrc: isDevelopment
+        ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://js.stripe.com", "https://cdn.jsdelivr.net", "https://unpkg.com"]
+        : ["'self'", "https://js.stripe.com", "https://cdn.jsdelivr.net", "https://unpkg.com"],
+      
+      // Script element sources (for external scripts)
+      scriptSrcElem: isDevelopment
+        ? ["'self'", "'unsafe-inline'", "https://js.stripe.com", "https://cdn.jsdelivr.net", "https://unpkg.com"]
+        : ["'self'", "https://js.stripe.com", "https://cdn.jsdelivr.net", "https://unpkg.com"],
+      
+      // Style sources - allow unsafe-inline in dev for Vite HMR
+      styleSrc: isDevelopment
+        ? ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://unpkg.com"]
+        : ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://unpkg.com"],
+      
+      // Font sources
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+      
+      // Image sources - allow Cloudinary and other CDNs
+      imgSrc: ["'self'", "data:", "blob:", "https:", "http:"],
+      
+      // Media sources
+      mediaSrc: ["'self'", "blob:", "https:", "http:"],
+      
+      // Connection sources - APIs, WebSocket, Vite HMR
+      connectSrc: isDevelopment
+        ? [
+            "'self'",
+            "https://api.stripe.com",
+            "https://api.groq.com",
+            "https://api.openai.com",
+            "https://api.anthropic.com",
+            "https://generativelanguage.googleapis.com",
+            "https://*.supabase.co",
+            "wss:",
+            "ws:",
+            "ws://localhost:*",
+            "http://localhost:*"
+          ]
+        : [
+            "'self'",
+            "https://api.stripe.com",
+            "https://api.groq.com",
+            "https://api.openai.com",
+            "https://api.anthropic.com",
+            "https://generativelanguage.googleapis.com",
+            "https://*.supabase.co",
+            "wss:"
+          ],
+      
+      // Frame sources - allow Stripe
+      frameSrc: ["'self'", "https://js.stripe.com", "https://hooks.stripe.com"],
+      
+      // Object sources - none
+      objectSrc: ["'none'"],
+      
+      // Base URI
+      baseUri: ["'self'"],
+      
+      // Form actions
+      formAction: ["'self'"],
+      
+      // Frame ancestors - prevent clickjacking
+      frameAncestors: ["'none'"],
+      
+      // Upgrade insecure requests in production only
+      ...(isDevelopment ? {} : { upgradeInsecureRequests: [] }),
+    },
+  },
   
-  res.setHeader("Content-Security-Policy", cspDirectives);
+  // Strict Transport Security (HSTS) - 1 year, include subdomains, preload
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true,
+  },
   
-  // Prevent clickjacking attacks
-  res.setHeader("X-Frame-Options", "DENY");
-  
-  // Prevent MIME type sniffing
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  
-  // Enable XSS protection (legacy but still useful)
-  res.setHeader("X-XSS-Protection", "1; mode=block");
+  // Prevent clickjacking
+  frameguard: {
+    action: 'deny',
+  },
   
   // Referrer Policy
-  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  referrerPolicy: {
+    policy: 'strict-origin-when-cross-origin',
+  },
+  
+  // X-Content-Type-Options
+  noSniff: true,
+  
+  // X-DNS-Prefetch-Control
+  dnsPrefetchControl: {
+    allow: false,
+  },
+  
+  // X-Download-Options
+  ieNoOpen: true,
+  
+  // Hide X-Powered-By
+  hidePoweredBy: true,
+});
+
+// ============================================================================
+// ADDITIONAL SECURITY HEADERS
+// ============================================================================
+
+export function additionalSecurityHeaders(req: Request, res: Response, next: NextFunction) {
+  // X-XSS-Protection (legacy but still useful for older browsers)
+  res.setHeader('X-XSS-Protection', '1; mode=block');
   
   // Permissions Policy (formerly Feature Policy)
+  // Allow microphone/camera for self (Mr. Blue voice features)
   const permissionsPolicy = [
-    "camera=('self')",
-    "microphone=('self')",
-    "geolocation=('self')",
-    "payment=('self')",
+    "camera=(self)",
+    "microphone=(self)",
+    "geolocation=(self)",
+    "payment=(self)",
     "usb=()",
     "magnetometer=()",
     "gyroscope=()",
     "accelerometer=()",
   ].join(", ");
   
-  res.setHeader("Permissions-Policy", permissionsPolicy);
+  res.setHeader('Permissions-Policy', permissionsPolicy);
   
-  // Strict Transport Security (HSTS) - only in production with HTTPS
-  if (process.env.NODE_ENV === "production") {
-    res.setHeader(
-      "Strict-Transport-Security",
-      "max-age=31536000; includeSubDomains; preload"
-    );
+  // Expect-CT (Certificate Transparency) - production only
+  if (!isDevelopment) {
+    res.setHeader('Expect-CT', 'max-age=86400, enforce');
   }
-  
-  // Expect-CT (Certificate Transparency)
-  if (process.env.NODE_ENV === "production") {
-    res.setHeader("Expect-CT", "max-age=86400, enforce");
-  }
-  
-  // Remove powered-by header to hide tech stack
-  res.removeHeader("X-Powered-By");
   
   next();
 }
 
-/**
- * CORS configuration for API endpoints
- */
+// ============================================================================
+// CORS CONFIGURATION
+// ============================================================================
+
 export function corsHeaders(req: Request, res: Response, next: NextFunction) {
   const allowedOrigins = [
     process.env.FRONTEND_URL || "http://localhost:5000",
     "https://mundotango.life",
     "https://www.mundotango.life",
-  ];
+    process.env.REPLIT_DEPLOYMENT_URL,
+  ].filter(Boolean);
   
   const origin = req.headers.origin;
   
@@ -107,9 +184,10 @@ export function corsHeaders(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-/**
- * Sanitize response headers to remove sensitive information
- */
+// ============================================================================
+// SANITIZE HEADERS
+// ============================================================================
+
 export function sanitizeHeaders(req: Request, res: Response, next: NextFunction) {
   // Remove headers that might leak information
   res.removeHeader("X-Powered-By");
@@ -118,11 +196,14 @@ export function sanitizeHeaders(req: Request, res: Response, next: NextFunction)
   next();
 }
 
-/**
- * Combined security middleware
- */
+// ============================================================================
+// COMBINED SECURITY MIDDLEWARE (for backward compatibility)
+// ============================================================================
+
 export function applySecurity(req: Request, res: Response, next: NextFunction) {
-  securityHeaders(req, res, () => {
+  // Note: securityHeaders (Helmet) should be applied separately in server/index.ts
+  // This function maintains backward compatibility
+  additionalSecurityHeaders(req, res, () => {
     sanitizeHeaders(req, res, () => {
       corsHeaders(req, res, next);
     });

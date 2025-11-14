@@ -7,7 +7,8 @@ import { registerRoutes } from "./routes";
 console.log("✅ [DEBUG] ./routes imported");
 import { setupVite, serveStatic, log } from "./vite";
 import { startPreviewExpirationChecker } from "./lib/preview-expiration";
-import { applySecurity, apiRateLimiter } from "./middleware/security";
+import { initStoryExpirationJob } from "./jobs/expireStories";
+import { apiRateLimiter } from "./middleware/security";
 import { compressionMiddleware, performanceMonitoringMiddleware } from "./config/performance";
 import { healthCheckHandler, readinessCheckHandler, livenessCheckHandler } from "./health-check";
 console.log("✅ [DEBUG] All imports complete in server/index.ts");
@@ -25,7 +26,7 @@ import {
   adminRateLimiter,
   searchRateLimiter 
 } from "./middleware/rateLimiter";
-import { securityHeaders } from "./middleware/securityHeaders";
+import { securityHeaders, additionalSecurityHeaders, applySecurity as applySecurityFromHeaders } from "./middleware/securityHeaders";
 import { setCsrfToken, verifyDoubleSubmitCookie } from "./middleware/csrf";
 
 console.log("✅ [DEBUG] All server/index.ts imports completed!");
@@ -56,11 +57,14 @@ app.use(getSentryTracingHandler());
 // Winston + Morgan HTTP request logging
 app.use(morgan('combined', { stream }));
 
-// Apply enhanced security headers
+// Apply Helmet security headers with environment-aware CSP
 app.use(securityHeaders);
 
-// Apply legacy security middleware (CSP, CORS, headers, etc.)
-app.use(applySecurity());
+// Apply additional security headers (X-XSS-Protection, Permissions-Policy, etc.)
+app.use(additionalSecurityHeaders);
+
+// Apply CORS and sanitization headers
+app.use(applySecurityFromHeaders);
 
 // Global rate limiting
 app.use(globalRateLimiter);
@@ -181,5 +185,6 @@ app.use((req, res, next) => {
     log(`serving on port ${port}`);
     
     startPreviewExpirationChecker();
+    initStoryExpirationJob();
   });
 })();

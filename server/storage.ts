@@ -253,7 +253,7 @@ export interface IStorage {
   
   createPost(post: InsertPost): Promise<SelectPost>;
   getPostById(id: number): Promise<SelectPost | undefined>;
-  getPosts(params: { userId?: number; limit?: number; offset?: number }): Promise<SelectPost[]>;
+  getPosts(params: { userId?: number; limit?: number; offset?: number; currentUserId?: number; type?: string }): Promise<SelectPost[]>;
   updatePost(id: number, data: Partial<SelectPost>): Promise<SelectPost | undefined>;
   deletePost(id: number): Promise<void>;
   
@@ -1652,7 +1652,7 @@ export class DbStorage implements IStorage {
     return result[0];
   }
 
-  async getPosts(params: { userId?: number; limit?: number; offset?: number; currentUserId?: number }): Promise<SelectPost[]> {
+  async getPosts(params: { userId?: number; limit?: number; offset?: number; currentUserId?: number; type?: string }): Promise<SelectPost[]> {
     const currentUserId = params.currentUserId;
     
     let query = db
@@ -1732,8 +1732,19 @@ export class DbStorage implements IStorage {
         )
       );
     
+    // Build where conditions
+    const whereConditions = [];
+    
     if (params.userId) {
-      query = query.where(eq(posts.userId, params.userId)) as any;
+      whereConditions.push(eq(posts.userId, params.userId));
+    }
+    
+    if (params.type) {
+      whereConditions.push(eq(posts.type, params.type));
+    }
+    
+    if (whereConditions.length > 0) {
+      query = query.where(and(...whereConditions)) as any;
     }
     
     query = query.orderBy(desc(posts.createdAt)) as any;

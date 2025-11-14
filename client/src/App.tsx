@@ -279,7 +279,6 @@ const AdminReportsPage = lazy(() => import("@/pages/AdminReportsPage"));
 const TeacherProfilePage = lazy(() => import("@/pages/TeacherProfilePage"));
 const MarketplaceItemDetailPage = lazy(() => import("@/pages/MarketplaceItemDetailPage"));
 const BlogDetailPage = lazy(() => import("@/pages/BlogDetailPage"));
-const StoriesPage = lazy(() => import("@/pages/StoriesPage"));
 const VenueRecommendationsPage = lazy(() => import("@/pages/VenueRecommendationsPage"));
 const TermsPage = lazy(() => import("@/pages/TermsPage"));
 const PrivacyPolicyPage = lazy(() => import("@/pages/PrivacyPolicyPage"));
@@ -978,11 +977,6 @@ function Router() {
       <Route path="/privacy" component={PrivacyPolicyPage} />
       <Route path="/terms" component={TermsPage} />
       <Route path="/contact" component={ContactPage} />
-      <Route path="/stories">
-        <ProtectedRoute>
-          <StoriesPage />
-        </ProtectedRoute>
-      </Route>
       <Route path="/venue-recommendations">
         <ProtectedRoute>
           <VenueRecommendationsPage />

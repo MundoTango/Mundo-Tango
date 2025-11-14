@@ -39,6 +39,7 @@ import aiEnhanceRoutes from "./routes/ai-enhance";
 import userSearchRoutes from "./routes/user-search";
 import locationSearchRoutes from "./routes/location-search";
 import housingRoutes from "./routes/housing-routes";
+import housingPhotosRoutes from "./routes/housing-photos-routes";
 import livestreamRoutes from "./routes/livestream-routes";
 import marketplaceRoutes from "./routes/marketplace-routes";
 import subscriptionRoutes from "./routes/subscription-routes";
@@ -627,6 +628,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Phase B: New feature routes
   app.use("/api/housing", housingRoutes);
+  app.use("/api/housing", housingPhotosRoutes);
   app.use("/api/livestreams", livestreamRoutes);
   app.use("/api/marketplace", marketplaceRoutes);
   app.use("/api/subscriptions", subscriptionRoutes);
@@ -2218,10 +2220,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/posts", authenticateToken, validateRequest(createPostBodySchema), async (req: AuthRequest, res: Response) => {
     try {
-      const post = await storage.createPost({
+      const postData: any = {
         ...req.body,
-        userId: req.user!.id
-      });
+        userId: req.user!.id,
+        type: req.body.type || 'post'
+      };
+      
+      // If story, set 24-hour expiration
+      if (postData.type === 'story') {
+        postData.expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+      }
+      
+      const post = await storage.createPost(postData);
 
       // NEW: Handle canonical mention format @user:user_123:maria
       const mentionIds = req.body.mentions || [];
@@ -2359,15 +2369,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get stories (active, non-expired)
+  app.get("/api/posts/stories", async (req: Request & { userId?: number; user?: any }, res: Response) => {
+    try {
+      const currentUserId = req.user?.id;
+      
+      // Get active stories using Drizzle directly
+      const { and, eq, gt } = await import("drizzle-orm");
+      const { posts: postsTable } = await import("@shared/schema");
+      const { db } = await import("./db");
+      
+      const stories = await db.select()
+        .from(postsTable)
+        .where(
+          and(
+            eq(postsTable.type, 'story'),
+            gt(postsTable.expiresAt, new Date())
+          )
+        )
+        .orderBy(postsTable.createdAt)
+        .limit(20);
+      
+      // Enrich with user data
+      const { enrichPostContentWithGroupTypes } = await import("./utils/enrich-mentions");
+      const enrichedStories = await Promise.all(
+        stories.map(async (story: any) => {
+          const user = await storage.getUserById(story.userId);
+          return {
+            ...story,
+            content: await enrichPostContentWithGroupTypes(story.content),
+            user: user ? {
+              id: user.id,
+              name: user.name,
+              username: user.username,
+              profileImage: user.profileImage
+            } : null
+          };
+        })
+      );
+      
+      res.json(enrichedStories);
+    } catch (error) {
+      console.error("[GET /api/posts/stories] Error fetching stories:", error);
+      res.status(500).json({ message: "Failed to fetch stories" });
+    }
+  });
+
   app.get("/api/posts", async (req: Request & { userId?: number; user?: any }, res: Response) => {
     try {
-      const { userId, limit = "20", offset = "0" } = req.query;
+      const { userId, limit = "20", offset = "0", type = "post" } = req.query;
       const currentUserId = req.user?.id; // From auth middleware if authenticated (optional for public route)
+      
+      // Filter by type (default to 'post' to exclude stories from regular feed)
       const posts = await storage.getPosts({
         userId: userId ? parseInt(userId as string) : undefined,
         limit: parseInt(limit as string),
         offset: parseInt(offset as string),
         currentUserId: currentUserId,
+        type: type as string
       });
       
       // Enrich posts with group type information for proper color rendering
@@ -4703,155 +4762,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Submit contact form error:", error);
       res.status(500).json({ message: "Failed to submit contact form" });
-    }
-  });
-
-  // ============================================================================
-  // STORIES SYSTEM APIs (PART 1-11) - 6 endpoints
-  // ============================================================================
-
-  // 1. POST /api/stories - Create a new story
-  app.post("/api/stories", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const expiresAt = new Date();
-      expiresAt.setHours(expiresAt.getHours() + 24); // 24 hours from now
-
-      const [story] = await db.insert(stories)
-        .values({
-          userId: req.user!.id,
-          mediaUrl: req.body.mediaUrl,
-          mediaType: req.body.mediaType,
-          caption: req.body.caption || null,
-          expiresAt,
-          type: req.body.type || 'media', // Default type
-          isActive: true
-        })
-        .returning();
-
-      res.status(201).json(story);
-    } catch (error) {
-      console.error("Create story error:", error);
-      res.status(500).json({ message: "Failed to create story" });
-    }
-  });
-
-  // 2. GET /api/stories - Get all active stories (not expired)
-  app.get("/api/stories", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const activeStories = await db.select()
-        .from(stories)
-        .where(and(
-          gte(stories.expiresAt, new Date()),
-          eq(stories.isActive, true)
-        ))
-        .orderBy(desc(stories.createdAt));
-
-      res.json(activeStories);
-    } catch (error) {
-      console.error("Get stories error:", error);
-      res.status(500).json({ message: "Failed to fetch stories" });
-    }
-  });
-
-  // 3. GET /api/stories/:id - Get story by ID
-  app.get("/api/stories/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const storyId = parseInt(req.params.id);
-      
-      const [story] = await db.select()
-        .from(stories)
-        .where(eq(stories.id, storyId));
-
-      if (!story) {
-        return res.status(404).json({ message: "Story not found" });
-      }
-
-      res.json(story);
-    } catch (error) {
-      console.error("Get story error:", error);
-      res.status(500).json({ message: "Failed to fetch story" });
-    }
-  });
-
-  // 4. DELETE /api/stories/:id - Delete story
-  app.delete("/api/stories/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const storyId = parseInt(req.params.id);
-      
-      const [story] = await db.select()
-        .from(stories)
-        .where(eq(stories.id, storyId));
-
-      if (!story) {
-        return res.status(404).json({ message: "Story not found" });
-      }
-
-      if (story.userId !== req.user!.id) {
-        return res.status(403).json({ message: "Not authorized to delete this story" });
-      }
-
-      await db.delete(stories).where(eq(stories.id, storyId));
-
-      res.json({ message: "Story deleted successfully" });
-    } catch (error) {
-      console.error("Delete story error:", error);
-      res.status(500).json({ message: "Failed to delete story" });
-    }
-  });
-
-  // 5. POST /api/stories/:id/view - Track story view
-  app.post("/api/stories/:id/view", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const storyId = parseInt(req.params.id);
-      
-      // Check if user already viewed this story
-      const existingView = await db.select()
-        .from(storyViews)
-        .where(and(
-          eq(storyViews.storyId, storyId),
-          eq(storyViews.viewerId, req.user!.id)
-        ));
-
-      if (existingView.length === 0) {
-        // Record new view
-        await db.insert(storyViews).values({
-          storyId,
-          viewerId: req.user!.id
-        });
-
-        // Increment view count
-        await db.update(stories)
-          .set({ viewCount: sql`${stories.viewCount} + 1` })
-          .where(eq(stories.id, storyId));
-      }
-
-      res.json({ message: "View recorded" });
-    } catch (error) {
-      console.error("Track story view error:", error);
-      res.status(500).json({ message: "Failed to track view" });
-    }
-  });
-
-  // 6. GET /api/stories/:id/viewers - Get story viewers
-  app.get("/api/stories/:id/viewers", authenticateToken, async (req: AuthRequest, res: Response) => {
-    try {
-      const storyId = parseInt(req.params.id);
-      
-      const viewers = await db.select({
-        id: users.id,
-        name: users.name,
-        profileImage: users.profileImage,
-        viewedAt: storyViews.createdAt
-      })
-      .from(storyViews)
-      .innerJoin(users, eq(storyViews.viewerId, users.id))
-      .where(eq(storyViews.storyId, storyId))
-      .orderBy(desc(storyViews.createdAt));
-
-      res.json(viewers);
-    } catch (error) {
-      console.error("Get story viewers error:", error);
-      res.status(500).json({ message: "Failed to fetch viewers" });
     }
   });
 
