@@ -8,17 +8,14 @@ import { db } from "@shared/db";
 import { users, posts, postReports, events, userReports, roleRequests } from "@shared/schema";
 import { eq, desc, like, or, and, gte, count, sql } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
+import { requireMinimumRole } from "../middleware/tierEnforcement";
 import { storage } from "../storage";
 
 const router = Router();
 
-// Middleware to check admin role
-const requireAdmin = (req: any, res: any, next: any) => {
-  if (req.user?.role !== 'admin' && req.user?.role !== 'super_admin') {
-    return res.status(403).json({ error: 'Admin access required' });
-  }
-  next();
-};
+// TIER ENFORCEMENT: Admin routes require Admin (level 4) or higher
+// Uses 8-tier RBAC system: 8=God, 7=Super Admin, 6=Platform Volunteer, 5=Platform Contributor, 4=Admin
+const requireAdmin = requireMinimumRole(4);
 
 /**
  * GET /api/admin/stats/overview

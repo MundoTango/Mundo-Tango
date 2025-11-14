@@ -11,6 +11,7 @@ import {
   insertEventCommentSchema
 } from "@shared/schema";
 import { authenticateToken, optionalAuth, AuthRequest } from "../middleware/auth";
+import { requireMinimumRole } from "../middleware/tierEnforcement";
 import { eq, and, desc, gte, lte, sql, or, asc, inArray, count } from "drizzle-orm";
 import { z } from "zod";
 
@@ -245,8 +246,10 @@ router.get("/:id", async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/events - Create new event (auth required)
-router.post("/", authenticateToken, async (req: AuthRequest, res: Response) => {
+// POST /api/events - Create new event
+// TIER ENFORCEMENT: Requires Community Leader (level 3) or higher
+// Level 3 = Community Leader, Level 4 = Admin, Level 5+ = Higher tiers
+router.post("/", authenticateToken, requireMinimumRole(3), async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     
