@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Bot, User, MessageSquare, CheckCircle, AlertTriangle, Search, Filter, Eye, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
@@ -393,7 +393,7 @@ export default function AISupportPage() {
                           )}
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
-                          {format(new Date(ticket.createdAt), "MMM d, yyyy")}
+                          {safeDateFormat(ticket.createdAt, "MMM d, yyyy", "N/A")}
                         </TableCell>
                         <TableCell>
                           <Button
@@ -439,7 +439,7 @@ export default function AISupportPage() {
                   </div>
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">Created</label>
-                    <div className="mt-1 text-sm">{format(new Date(selectedTicket.createdAt), "PPP 'at' p")}</div>
+                    <div className="mt-1 text-sm">{safeDateFormat(selectedTicket.createdAt, "PPP 'at' p", "N/A")}</div>
                   </div>
                 </div>
 

@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 
 interface ModerationReport {
   id: number;
@@ -112,7 +112,7 @@ export default function AdminContentModerationDetailPage() {
                 Report #{report.id}
               </h1>
               <p className="text-muted-foreground">
-                Reported {format(new Date(report.createdAt), 'PPP')}
+                Reported {safeDateFormat(report.createdAt, 'PPP', 'recently')}
               </p>
             </div>
           </div>
@@ -154,7 +154,7 @@ export default function AdminContentModerationDetailPage() {
                     </div>
                     <div className="flex items-center gap-1">
                       <Calendar className="h-4 w-4" />
-                      {format(new Date(report.createdAt), 'PPp')}
+                      {safeDateFormat(report.createdAt, 'PPp', 'recently')}
                     </div>
                   </div>
                 </CardContent>

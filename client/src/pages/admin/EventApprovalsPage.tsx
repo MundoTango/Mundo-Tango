@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { AlertCircle, CheckCircle, XCircle, Eye, Calendar, MapPin, Users, DollarSign, Globe, Clock, Search, Filter } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
@@ -382,7 +382,7 @@ export default function EventApprovalsPage() {
                                 </div>
                               </TableCell>
                               <TableCell className="text-sm">
-                                {format(new Date(event.startDate), "MMM d, yyyy")}
+                                {safeDateFormat(event.startDate, "MMM d, yyyy", "TBD")}
                               </TableCell>
                               <TableCell className="text-sm">
                                 <div className="flex items-center gap-1">
@@ -504,7 +504,7 @@ export default function EventApprovalsPage() {
                             Start Date
                           </label>
                           <div className="mt-1 text-sm">
-                            {format(new Date(selectedEvent.startDate), "PPP 'at' p")}
+                            {safeDateFormat(selectedEvent.startDate, "PPP 'at' p", "TBD")}
                           </div>
                         </div>
 
@@ -515,7 +515,7 @@ export default function EventApprovalsPage() {
                               End Date
                             </label>
                             <div className="mt-1 text-sm">
-                              {format(new Date(selectedEvent.endDate), "PPP 'at' p")}
+                              {safeDateFormat(selectedEvent.endDate, "PPP 'at' p", "TBD")}
                             </div>
                           </div>
                         )}

@@ -26,7 +26,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { SignaturePad } from "@/components/legal/SignaturePad";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 
@@ -207,7 +207,7 @@ export default function LegalSignaturePage() {
         </div>
         <h1 className="text-3xl font-bold font-serif">{mockDocument.title}</h1>
         <p className="text-muted-foreground">
-          From {mockDocument.organizer} • Event: {format(mockDocument.eventDate, "MMMM d, yyyy")}
+          From {mockDocument.organizer} • Event: {safeDateFormat(mockDocument.eventDate, "MMMM d, yyyy", "TBD")}
         </p>
         <Badge variant="secondary">{mockDocument.type}</Badge>
       </div>
@@ -410,7 +410,7 @@ export default function LegalSignaturePage() {
               <p className="text-sm font-medium">Document Details:</p>
               <p className="text-sm text-muted-foreground">{mockDocument.title}</p>
               <p className="text-xs text-muted-foreground">
-                Signed on {format(new Date(), "MMMM d, yyyy 'at' h:mm a")}
+                Signed on {safeDateFormat(new Date(), "MMMM d, yyyy 'at' h:mm a", "now")}
               </p>
             </div>
           </div>

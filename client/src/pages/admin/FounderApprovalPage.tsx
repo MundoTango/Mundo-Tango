@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { CheckCircle, XCircle, Clock, AlertTriangle, Search, Filter, FileText, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
@@ -299,7 +299,7 @@ export default function FounderApprovalPage() {
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">{feature.builtBy}</TableCell>
                         <TableCell className="text-sm text-muted-foreground">
-                          {format(new Date(feature.submittedAt), "MMM d, yyyy")}
+                          {safeDateFormat(feature.submittedAt, "MMM d, yyyy", "N/A")}
                         </TableCell>
                         <TableCell>{getStatusBadge(feature.status)}</TableCell>
                         <TableCell>
@@ -352,7 +352,7 @@ export default function FounderApprovalPage() {
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">Submitted</label>
                     <div className="mt-1 text-sm">
-                      {format(new Date(selectedFeature.submittedAt), "PPP 'at' p")}
+                      {safeDateFormat(selectedFeature.submittedAt, "PPP 'at' p", "N/A")}
                     </div>
                   </div>
                   <div>

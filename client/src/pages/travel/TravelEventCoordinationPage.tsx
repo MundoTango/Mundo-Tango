@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EventTravelMatcher } from "@/components/travel/EventTravelMatcher";
 import { TripCard } from "@/components/travel/TripCard";
 import { Calendar, MapPin, Users, Hotel, Car, MessageCircle, Utensils, ArrowLeft } from "lucide-react";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
 
 export default function TravelEventCoordinationPage() {
@@ -143,11 +143,7 @@ export default function TravelEventCoordinationPage() {
   ];
 
   const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "MMM dd, yyyy");
-    } catch {
-      return dateString;
-    }
+    return safeDateFormat(dateString, "MMM dd, yyyy", dateString);
   };
 
   return (

@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertCircle, CheckCircle, XCircle, Eye, AlertTriangle, Ban, MessageSquare, Search, Filter } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
@@ -374,7 +374,7 @@ export default function UserReportsPage() {
                               <TableCell>{getSeverityBadge(report.severity)}</TableCell>
                               <TableCell>{getStatusBadge(report.status)}</TableCell>
                               <TableCell className="text-sm text-muted-foreground">
-                                {format(new Date(report.createdAt), "MMM d, yyyy")}
+                                {safeDateFormat(report.createdAt, "MMM d, yyyy", "N/A")}
                               </TableCell>
                               <TableCell>
                                 <Button

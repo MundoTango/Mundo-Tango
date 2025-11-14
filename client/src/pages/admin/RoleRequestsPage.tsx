@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { AlertCircle, CheckCircle, XCircle, Eye, Music, Users, Calendar, Link as LinkIcon, Search, Filter } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
@@ -365,7 +365,7 @@ export default function RoleRequestsPage() {
                               </TableCell>
                               <TableCell>{getStatusBadge(request.status)}</TableCell>
                               <TableCell className="text-sm text-muted-foreground">
-                                {format(new Date(request.createdAt), "MMM d, yyyy")}
+                                {safeDateFormat(request.createdAt, "MMM d, yyyy", "N/A")}
                               </TableCell>
                               <TableCell>
                                 <Button
