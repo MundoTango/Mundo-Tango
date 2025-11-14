@@ -70,6 +70,7 @@
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
     "bullmq": "^5.63.0",
+    "cheerio": "^1.1.2",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.8.0",
     "clsx": "^2.1.1",

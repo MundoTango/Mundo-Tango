@@ -11,7 +11,7 @@
  */
 
 import { db } from '@shared/db';
-import { scrapedEvents, events, eventSources } from '@shared/schema';
+import { scrapedEvents, events } from '@shared/schema';
 import { eq, and, gte } from 'drizzle-orm';
 import OpenAI from 'openai';
 
@@ -341,11 +341,14 @@ export class Deduplicator {
       .values(mergedData)
       .returning();
 
-    // Track sources
-    await db.insert(eventSources).values([
-      { eventId: canonicalEvent.id, sourceId: match.event1.sourceId },
-      { eventId: canonicalEvent.id, sourceId: match.event2.sourceId }
-    ]);
+    // Mark both scraped events as processed
+    await db.update(scrapedEvents)
+      .set({ finalEventId: canonicalEvent.id, processed: true })
+      .where(eq(scrapedEvents.id, match.event1.id));
+    
+    await db.update(scrapedEvents)
+      .set({ finalEventId: canonicalEvent.id, processed: true })
+      .where(eq(scrapedEvents.id, match.event2.id));
 
     return canonicalEvent;
   }
@@ -387,11 +390,6 @@ export class Deduplicator {
             processed: true 
           })
           .where(eq(scrapedEvents.id, event.id));
-
-        await db.insert(eventSources).values({
-          eventId: canonicalEvent.id,
-          sourceId: event.sourceId
-        });
 
       } catch (error) {
         console.error('[Agent #119] Failed to create canonical event:', error);
