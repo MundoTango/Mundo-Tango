@@ -75,6 +75,20 @@ router.post('/admin/generate-selectors', authenticateToken, async (req: AuthRequ
       try {
         const result = await generateSelectorsForSource(source);
         results.push(result);
+
+        // Save to database if confidence is acceptable (>40%)
+        if (result.confidence > 40) {
+          await db.update(eventScrapingSources)
+            .set({ 
+              customSelectors: result.selectors,
+              updatedAt: new Date()
+            })
+            .where(eq(eventScrapingSources.id, source.id));
+          
+          console.log(`[AI Selector] ✅ Saved selectors for ${source.name} (confidence: ${result.confidence}%)`);
+        } else {
+          console.log(`[AI Selector] ⚠️ Skipped ${source.name} - low confidence (${result.confidence}%)`);
+        }
       } catch (error: any) {
         console.error(`[AI Selector] Failed for ${source.name}:`, error.message);
         results.push({
@@ -98,6 +112,7 @@ router.post('/admin/generate-selectors', authenticateToken, async (req: AuthRequ
     res.json({
       success: true,
       totalProcessed: results.length,
+      saved: results.filter(r => r.confidence > 40).length,
       results,
       timestamp: new Date().toISOString()
     });

@@ -87,14 +87,22 @@ export class StaticScraper {
   private async extractEvents($: cheerio.CheerioAPI, source: any): Promise<ScrapedEventData[]> {
     const events: ScrapedEventData[] = [];
 
-    // Common selectors for tango event sites
-    const selectors = {
-      eventList: ['.event-item', '.milonga-item', 'article.event', '.calendar-event'],
-      title: ['h2', 'h3', '.event-title', '.milonga-name'],
-      date: ['time[datetime]', '.event-date', '.date', '[itemprop="startDate"]'],
-      location: ['.venue-name', '.location', '[itemprop="location"]'],
-      description: ['.event-description', '.description', 'p']
-    };
+    // Use AI-generated custom selectors if available, otherwise fall back to generic
+    let selectors: any;
+    
+    if (source.customSelectors && source.customSelectors.eventList && source.customSelectors.eventList.length > 0) {
+      console.log(`[Agent #116] 🤖 Using AI-generated selectors for ${source.name}`);
+      selectors = source.customSelectors;
+    } else {
+      console.log(`[Agent #116] 📋 Using generic selectors for ${source.name}`);
+      selectors = {
+        eventList: ['.event-item', '.milonga-item', 'article.event', '.calendar-event'],
+        title: ['h2', 'h3', '.event-title', '.milonga-name'],
+        date: ['time[datetime]', '.event-date', '.date', '[itemprop="startDate"]'],
+        location: ['.venue-name', '.location', '[itemprop="location"]'],
+        description: ['.event-description', '.description', 'p']
+      };
+    }
 
     // Try each selector pattern
     for (const listSelector of selectors.eventList) {
