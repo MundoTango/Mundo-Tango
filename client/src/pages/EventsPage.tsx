@@ -208,6 +208,30 @@ export default function EventsPage() {
     }
   });
 
+  const generateSelectorsMutation = useMutation({
+    mutationFn: async () => {
+      // Top 10 high-value websites: Melbourne (2x), Berlin (2x), Athens (2x), São Paulo (2x), Ostsee (2x)
+      // Using sourceIds: 1-10 as placeholder (will need to query actual IDs)
+      const sourceIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      const response = await apiRequest('POST', '/api/admin/generate-selectors', { sourceIds, limit: 10 });
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      const successCount = data.results?.filter((r: any) => r.confidence > 50).length || 0;
+      toast({
+        title: "AI Selector Generation Complete!",
+        description: `Generated selectors for ${data.totalProcessed} sources. ${successCount} with high confidence (>50%).`,
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || 'Failed to generate selectors',
+        variant: "destructive",
+      });
+    }
+  });
+
   // Convert events to calendar format
   const calendarEvents = useMemo(() => {
     if (!events) return [];
@@ -265,7 +289,7 @@ export default function EventsPage() {
                 Find milongas, workshops, and performances near you. Join the global tango community.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+              <div className="flex flex-col sm:flex-row gap-4 items-center justify-center flex-wrap">
                 <Button size="lg" className="gap-2" data-testid="button-create-event">
                   <Plus className="h-5 w-5" />
                   Create Event
@@ -273,18 +297,37 @@ export default function EventsPage() {
                 </Button>
                 
                 {isSuperAdmin && (
-                  <Button 
-                    size="lg" 
-                    variant="outline" 
-                    className="gap-2 border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20" 
-                    onClick={() => triggerScrapingMutation.mutate('full')}
-                    disabled={triggerScrapingMutation.isPending}
-                    data-testid="button-trigger-scraping"
-                  >
-                    <Database className="h-5 w-5" />
-                    {triggerScrapingMutation.isPending ? 'Triggering...' : 'Trigger Data Scraping'}
-                    <Download className="h-5 w-5" />
-                  </Button>
+                  <>
+                    <Button 
+                      size="lg" 
+                      variant="outline" 
+                      className="gap-2 border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20" 
+                      onClick={() => triggerScrapingMutation.mutate('full')}
+                      disabled={triggerScrapingMutation.isPending}
+                      data-testid="button-trigger-scraping"
+                    >
+                      <Database className="h-5 w-5" />
+                      {triggerScrapingMutation.isPending ? 'Triggering...' : 'Trigger Data Scraping'}
+                      <Download className="h-5 w-5" />
+                    </Button>
+
+                    <Button 
+                      size="lg" 
+                      variant="outline" 
+                      className="gap-2 border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20" 
+                      onClick={() => generateSelectorsMutation.mutate()}
+                      disabled={generateSelectorsMutation.isPending}
+                      data-testid="button-ai-selectors"
+                    >
+                      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                      {generateSelectorsMutation.isPending ? 'Generating...' : 'AI Selector Generation'}
+                      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </Button>
+                  </>
                 )}
               </div>
             </motion.div>

@@ -86,6 +86,7 @@ import userTestingAgentsRoutes from "./routes/userTestingAgentsRoutes";
 import legalAgentsRoutes from "./routes/legalAgentsRoutes";
 import gdprRoutes from "./routes/gdpr";
 import scrapingAdminRoutes from "./routes/scraping-admin-routes";
+import aiSelectorRoutes from "./routes/ai-selector-routes";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
 import { cspHeaders } from "./middleware/csp";
@@ -370,6 +371,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/life-ceo", lifeCeoRoutes);
   app.use("/api/admin", adminRoutes);
   app.use("/api", scrapingAdminRoutes);
+  app.use("/api", aiSelectorRoutes);
   app.use("/api", createFriendsRoutes(storage));
   app.use("/api", createAnalyticsRoutes(storage));
   app.use("/api", createBookmarkRoutes(storage));
