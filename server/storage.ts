@@ -4940,13 +4940,13 @@ export class DbStorage implements IStorage {
       : 0;
     
     // Calculate conversion rate (simplified - using event RSVPs as proxy)
-    const events = await db
+    const userEvents = await db
       .select()
       .from(events)
       .where(eq(events.userId, userId));
     
-    const conversionRate = allViews.length > 0 && events.length > 0
-      ? ((events.reduce((sum, e) => sum + (e.currentAttendees || 0), 0)) / allViews.length) * 100
+    const conversionRate = allViews.length > 0 && userEvents.length > 0
+      ? ((userEvents.reduce((sum: number, e: any) => sum + (e.currentAttendees || 0), 0)) / allViews.length) * 100
       : 0;
     
     return {
@@ -5231,7 +5231,7 @@ export class DbStorage implements IStorage {
   }
   
   async getProfileStats(userId: number): Promise<any> {
-    const [followers, following, posts, events] = await Promise.all([
+    const [followers, following, userPosts, userEvents] = await Promise.all([
       db.select().from(follows).where(eq(follows.followingId, userId)),
       db.select().from(follows).where(eq(follows.followerId, userId)),
       db.select().from(posts).where(eq(posts.userId, userId)),
@@ -5241,8 +5241,8 @@ export class DbStorage implements IStorage {
     return {
       followersCount: followers.length,
       followingCount: following.length,
-      postsCount: posts.length,
-      eventsCount: events.length,
+      postsCount: userPosts.length,
+      eventsCount: userEvents.length,
     };
   }
   
