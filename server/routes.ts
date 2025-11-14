@@ -2224,10 +2224,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // WAVE 7 TRACK 4: Encryption at Rest Routes (P0 #8)
   // AES-256-GCM encrypted sensitive financial, health, budget, and nutrition data
-  app.use(authenticateToken, financialGoalsRoutes);
-  app.use(authenticateToken, budgetRoutes);
-  app.use(authenticateToken, healthDataRoutes);
-  app.use(authenticateToken, nutritionRoutes);
+  // Note: Routes handle authentication internally - don't apply global auth middleware
+  app.use(financialGoalsRoutes);
+  app.use(budgetRoutes);
+  app.use(healthDataRoutes);
+  app.use(nutritionRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(createPostBodySchema), async (req: AuthRequest, res: Response) => {
     try {
