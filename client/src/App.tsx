@@ -54,6 +54,13 @@ const FriendshipPage = lazy(() => import("@/pages/FriendshipPage"));
 const FollowingPage = lazy(() => import("@/pages/FollowingPage"));
 const FollowersPage = lazy(() => import("@/pages/FollowersPage"));
 const MessagesPage = lazy(() => import("@/pages/MessagesPage"));
+
+// Messages Platform (P0 #12-16)
+const UnifiedInboxPage = lazy(() => import("@/pages/messages/UnifiedInbox"));
+const ChannelConnectionsPage = lazy(() => import("@/pages/messages/ChannelConnections"));
+const MessageTemplatesPage = lazy(() => import("@/pages/messages/Templates"));
+const MessageAutomationsPage = lazy(() => import("@/pages/messages/Automations"));
+
 const NotificationsPage = lazy(() => import("@/pages/NotificationsPage"));
 const SearchPage = lazy(() => import("@/pages/SearchPage"));
 const MemoriesPage = lazy(() => import("@/pages/MemoriesPage"));
@@ -186,6 +193,12 @@ const ActivityLogPage = lazy(() => import("@/pages/ActivityLogPage"));
 const SavedPostsPage = lazy(() => import("@/pages/SavedPostsPage"));
 const BlockedUsersPage = lazy(() => import("@/pages/BlockedUsersPage"));
 const BlockedContentPage = lazy(() => import("@/pages/BlockedContentPage"));
+
+// Billing & Subscription
+const BillingDashboard = lazy(() => import("@/pages/settings/BillingDashboard"));
+const PaymentHistory = lazy(() => import("@/pages/settings/PaymentHistory"));
+const PaymentMethods = lazy(() => import("@/pages/settings/PaymentMethods"));
+const CheckoutPage = lazy(() => import("@/pages/Checkout"));
 
 // GDPR Compliance Settings
 const SecuritySettingsPage = lazy(() => import("@/pages/settings/SecuritySettingsPage"));
@@ -531,10 +544,33 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      {/* Messages Platform - P0 #12-16 */}
       <Route path="/messages">
         <ProtectedRoute>
+          <UnifiedInboxPage />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/messages/channels">
+        <ProtectedRoute>
           <AppLayout>
-            <MessagesPage />
+            <ChannelConnectionsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/messages/templates">
+        <ProtectedRoute>
+          <AppLayout>
+            <MessageTemplatesPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/messages/automations">
+        <ProtectedRoute>
+          <AppLayout>
+            <MessageAutomationsPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -1381,6 +1417,36 @@ function Router() {
           <AppLayout>
             <LegalStatus />
           </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/settings/billing">
+        <ProtectedRoute>
+          <AppLayout>
+            <BillingDashboard />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/settings/billing/history">
+        <ProtectedRoute>
+          <AppLayout>
+            <PaymentHistory />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/settings/billing/payment-methods">
+        <ProtectedRoute>
+          <AppLayout>
+            <PaymentMethods />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/checkout/:planId">
+        <ProtectedRoute>
+          <CheckoutPage />
         </ProtectedRoute>
       </Route>
 
