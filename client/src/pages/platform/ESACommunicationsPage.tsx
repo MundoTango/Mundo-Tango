@@ -16,7 +16,7 @@ import {
   Filter,
   Search
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -271,7 +271,7 @@ export default function ESACommunicationsPage() {
                             </p>
                             <div className="flex items-center justify-between text-xs text-muted-foreground">
                               <span>
-                                {formatDistanceToNow(new Date(comm.createdAt), { addSuffix: true })}
+                                {safeDateDistance(comm.createdAt, { addSuffix: true })}
                               </span>
                               {comm.metadata?.taskId && (
                                 <span className="font-mono">

@@ -12,7 +12,7 @@ import { Shield, Smartphone, Clock, MapPin, CheckCircle2, XCircle, AlertTriangle
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useState } from "react";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 
 interface Session {
   id: string;
@@ -133,7 +133,7 @@ export default function SecuritySettingsPage() {
                             <div className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
                               <span data-testid={`text-session-lastactive-${session.id}`}>
-                                {formatDistanceToNow(new Date(session.lastActive), { addSuffix: true })}
+                                {safeDateDistance(session.lastActive, { addSuffix: true })}
                               </span>
                             </div>
                           </div>
@@ -220,7 +220,7 @@ export default function SecuritySettingsPage() {
                               {log.action.replace(/_/g, ' ')}
                             </p>
                             <span className="text-xs text-muted-foreground" data-testid={`text-audit-timestamp-${log.id}`}>
-                              {formatDistanceToNow(new Date(log.timestamp), { addSuffix: true })}
+                              {safeDateDistance(log.timestamp, { addSuffix: true })}
                             </span>
                           </div>
                           <p className="text-sm text-muted-foreground">

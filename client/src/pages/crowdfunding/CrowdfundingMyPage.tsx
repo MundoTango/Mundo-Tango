@@ -9,7 +9,7 @@ import { FundingProgressBar } from "@/components/crowdfunding/FundingProgressBar
 import { CampaignStatsPanel } from "@/components/crowdfunding/CampaignStatsPanel";
 import { WithdrawalModal } from "@/components/crowdfunding/WithdrawalModal";
 import { Heart, Plus, Edit, Pause, Play, Trash2, TrendingUp, DollarSign } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 
@@ -263,7 +263,7 @@ export default function CrowdfundingMyPage() {
                             </h4>
                           </Link>
                           <p className="text-sm text-muted-foreground">
-                            Donated {formatDistanceToNow(new Date(donation.createdAt), { addSuffix: true })}
+                            Donated {safeDateDistance(donation.createdAt, { addSuffix: true })}
                           </p>
                           {donation.message && (
                             <p className="text-sm text-muted-foreground italic mt-2">

@@ -11,7 +11,7 @@ import { Download, FileText, Database, Calendar, MessageSquare, Users, CheckCirc
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useState } from "react";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 
 interface DataExportRequest {
   id: number;
@@ -206,11 +206,11 @@ export default function DataExportPage() {
                               </Badge>
                             </div>
                             <p className="text-sm text-muted-foreground">
-                              Requested {formatDistanceToNow(new Date(exportRequest.requestedAt), { addSuffix: true })}
+                              Requested {safeDateDistance(exportRequest.requestedAt, { addSuffix: true })}
                             </p>
                             {exportRequest.completedAt && (
                               <p className="text-xs text-muted-foreground">
-                                Completed {formatDistanceToNow(new Date(exportRequest.completedAt), { addSuffix: true })}
+                                Completed {safeDateDistance(exportRequest.completedAt, { addSuffix: true })}
                               </p>
                             )}
                           </div>

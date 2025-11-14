@@ -9,7 +9,7 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 
 interface FlaggedContent {
   id: number;
@@ -111,7 +111,7 @@ export default function AdminModerationPage() {
                               </p>
                               <p className="text-xs text-muted-foreground">
                                 Reported by User #{report.reporterId} •{" "}
-                                {formatDistanceToNow(new Date(report.createdAt), { addSuffix: true })}
+                                {safeDateDistance(report.createdAt, { addSuffix: true })}
                               </p>
                             </div>
                             {report.status === "pending" && (

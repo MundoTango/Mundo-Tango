@@ -17,7 +17,7 @@ import {
   TrendingUp,
   Activity
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import {
   DropdownMenu,
@@ -266,7 +266,7 @@ export default function ESATasksPage() {
                               </div>
                             </TableCell>
                             <TableCell className="text-sm text-muted-foreground">
-                              {formatDistanceToNow(new Date(task.createdAt), { addSuffix: true })}
+                              {safeDateDistance(task.createdAt, { addSuffix: true })}
                             </TableCell>
                             <TableCell className="text-right">
                               <DropdownMenu>
