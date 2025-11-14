@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Bell, Heart, MessageCircle, UserPlus, Calendar, CheckCheck, Trash2, Filter, ChevronRight } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 import { SEO } from "@/components/SEO";
@@ -236,7 +236,7 @@ export default function NotificationsPage() {
 
                             <div className="flex items-center justify-between">
                               <p className="text-xs text-muted-foreground" data-testid={`text-notification-time-${notification.id}`}>
-                                {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
+                                {safeDateDistance(notification.createdAt, { addSuffix: true })}
                               </p>
 
                               <div className="flex items-center gap-2">

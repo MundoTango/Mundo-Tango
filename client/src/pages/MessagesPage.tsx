@@ -15,7 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Send, MessageCircle, Users, Heart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
@@ -195,7 +195,7 @@ export default function MessagesPage() {
                                 )}
                                 {conversation.lastMessageAt && (
                                   <p className="text-xs text-muted-foreground mt-1" data-testid={`text-timestamp-${conversation.id}`}>
-                                    {formatDistanceToNow(new Date(conversation.lastMessageAt), {
+                                    {safeDateDistance(conversation.lastMessageAt, {
                                       addSuffix: true,
                                     })}
                                   </p>
@@ -386,7 +386,7 @@ function ConversationView({ conversationId }: { conversationId: string }) {
                       className="text-xs text-muted-foreground px-2" 
                       data-testid={`timestamp-${msg.id}`}
                     >
-                      {formatDistanceToNow(new Date(msg.created_at), {
+                      {safeDateDistance(msg.created_at, {
                         addSuffix: true,
                       })}
                     </p>

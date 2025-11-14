@@ -11,7 +11,7 @@ import { Users, MapPin, Calendar, Settings, UserPlus, ArrowLeft } from "lucide-r
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 
 interface Group {
   id: number;
@@ -167,7 +167,7 @@ export default function GroupsDetailPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="w-5 h-5" />
-                  <span>Since {format(new Date(group.createdAt), 'MMM yyyy')}</span>
+                  <span>Since {safeDateFormat(group.createdAt, 'MMM yyyy')}</span>
                 </div>
               </div>
 
@@ -251,7 +251,7 @@ export default function GroupsDetailPage() {
                             {member.role === 'admin' && <Badge variant="outline" className="text-xs">Admin</Badge>}
                             {member.role === 'moderator' && <Badge variant="outline" className="text-xs">Moderator</Badge>}
                             {member.role === 'member' && (
-                              <span>Joined {format(new Date(member.joinedAt), 'MMM yyyy')}</span>
+                              <span>Joined {safeDateFormat(member.joinedAt, 'MMM yyyy')}</span>
                             )}
                           </div>
                         </div>

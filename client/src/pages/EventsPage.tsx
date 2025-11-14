@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, Database, Download } from "lucide-react";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
@@ -478,7 +478,7 @@ export default function EventsPage() {
                               <div className="p-2">
                                 <h3 className="font-semibold mb-1">{event.title}</h3>
                                 <p className="text-sm text-muted-foreground mb-2">
-                                  {format(new Date(event.date || Date.now()), "MMM dd, yyyy 'at' h:mm a")}
+                                  {safeDateFormat(event.date, "MMM dd, yyyy 'at' h:mm a")}
                                 </p>
                                 <Link href={`/events/${event.id}`}>
                                   <Button size="sm" className="w-full">View Details</Button>

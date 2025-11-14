@@ -18,7 +18,7 @@ import { PostReactions } from "@/components/feed/PostReactions";
 import { PostActions } from "@/components/feed/PostActions";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
 import { FeedRightSidebar } from "@/components/FeedRightSidebar";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
@@ -830,7 +830,7 @@ function PostCard({ post }: { post: Post }) {
             </span>
             {post.createdAt && (
               <span className="text-sm text-muted-foreground" data-testid={`text-post-timestamp-${post.id}`}>
-                · {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+                · {safeDateDistance(post.createdAt, { addSuffix: true })}
               </span>
             )}
             {(post as any).isRecommendation && (
@@ -1094,7 +1094,7 @@ function CommentItem({ comment, postId }: { comment: any; postId: number }) {
           </div>
           {comment.created_at && (
             <span className="text-xs text-muted-foreground mt-1 block">
-              {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+              {safeDateDistance(comment.created_at, { addSuffix: true })}
               {isPending && " (sending...)"}
             </span>
           )}

@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight } from "lucide-react";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
 import { PageLayout } from "@/components/PageLayout";
@@ -115,7 +115,7 @@ export default function EventDetailsPage() {
               <div className="flex flex-wrap items-center justify-center gap-6 text-white/90 mb-8">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-5 w-5" />
-                  <span>{event.date && format(new Date(event.date), "MMM dd, yyyy")}</span>
+                  <span>{event.date && safeDateFormat(event.date, "MMM dd, yyyy")}</span>
                 </div>
                 {event.location && (
                   <div className="flex items-center gap-2">
@@ -178,7 +178,7 @@ export default function EventDetailsPage() {
                     <div>
                       <p className="text-lg font-semibold mb-2">Date & Time</p>
                       <p className="text-base text-muted-foreground leading-relaxed">
-                        {event.date && format(new Date(event.date), "PPPP")}
+                        {event.date && safeDateFormat(event.date, "PPPP")}
                         {event.startTime && <> at {event.startTime}</>}
                         {event.endTime && <> - {event.endTime}</>}
                       </p>
