@@ -119,35 +119,36 @@ export class ScrapingOrchestrator {
    * Invoke Agent #116: Static Scraper
    */
   private async invokeStaticScraper(source: any): Promise<number> {
-    // TODO: Import and call StaticScraper class
+    const { staticScraper } = await import('./staticScraper');
     console.log(`[Agent #115 → #116] Scraping static site: ${source.name}`);
-    return 0; // Placeholder
+    return await staticScraper.scrape(source);
   }
 
   /**
    * Invoke Agent #117: JS Scraper
    */
   private async invokeJSScraper(source: any): Promise<number> {
-    // TODO: Import and call JSScraper class
+    const { jsScraper } = await import('./jsScraper');
     console.log(`[Agent #115 → #117] Scraping dynamic site: ${source.name}`);
-    return 0; // Placeholder
+    return await jsScraper.scrape(source);
   }
 
   /**
    * Invoke Agent #118: Social Scraper
    */
   private async invokeSocialScraper(source: any): Promise<number> {
-    // TODO: Import and call SocialScraper class
+    const { socialScraper } = await import('./socialScraper');
     console.log(`[Agent #115 → #118] Scraping social platform: ${source.name}`);
-    return 0; // Placeholder
+    return await socialScraper.scrape(source);
   }
 
   /**
    * Trigger Agent #119: Deduplication
    */
   private async triggerDeduplication(): Promise<void> {
+    const { deduplicator } = await import('./deduplicator');
     console.log('[Agent #115 → #119] Triggering event deduplication...');
-    // TODO: Import and call Deduplicator class
+    await deduplicator.deduplicate();
   }
 
   /**

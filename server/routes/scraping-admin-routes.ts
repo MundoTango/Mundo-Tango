@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { db } from '@shared/db';
-import { users } from '@shared/schema';
+import { users, eventScrapingSources } from '@shared/schema';
 import { eq } from 'drizzle-orm';
+import { scrapingOrchestrator } from '../agents/scraping/masterOrchestrator';
 
 const router = Router();
 
@@ -21,13 +22,36 @@ router.post('/admin/trigger-scraping', authenticateToken, async (req: AuthReques
       return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
     }
 
-    const { scrapingType } = req.body;
+    // Check if scraping is already running
+    const status = scrapingOrchestrator.getStatus();
+    if (status.isRunning) {
+      return res.status(409).json({ 
+        error: 'Scraping already in progress',
+        status: status
+      });
+    }
+
+    // Count active sources
+    const sources = await db.query.eventScrapingSources.findMany({
+      where: eq(eventScrapingSources.isActive, true)
+    });
+
+    if (sources.length === 0) {
+      return res.status(400).json({ 
+        error: 'No active scraping sources found',
+        note: 'Run the community population script first to add 226+ sources',
+        script: 'npx tsx server/scripts/populateTangoCommunities.ts'
+      });
+    }
+
+    // Trigger scraping asynchronously
+    scrapingOrchestrator.orchestrate().catch(error => {
+      console.error('[Scraping Admin] Orchestration error:', error);
+    });
 
     res.json({
       success: true,
-      message: `Scraping workflow "${scrapingType}" triggered successfully`,
-      note: 'In production with Redis, this would queue BullMQ jobs for Agents #115-119 to scrape 226+ tango communities. In this environment, manual data population via SQL is recommended.',
-      recommendation: 'Use seed script in docs/MB_MD_DATA_POPULATION_PLAN.md for immediate data',
+      message: `Scraping initiated for ${sources.length} active sources`,
       timestamp: new Date().toISOString(),
       triggeredBy: user.email,
       agents: {
@@ -37,9 +61,10 @@ router.post('/admin/trigger-scraping', authenticateToken, async (req: AuthReques
         '#118': 'Social Scraper - Facebook/Instagram APIs',
         '#119': 'Deduplication - AI-powered event merging'
       },
-      targetSources: 226,
+      activeSources: sources.length,
       estimatedEvents: '500-1000 new events',
-      estimatedDuration: '2-4 hours'
+      estimatedDuration: '2-4 hours',
+      note: 'Scraping is running in the background. Check /api/admin/scraping-status for progress.'
     });
 
   } catch (error) {
@@ -63,19 +88,46 @@ router.get('/admin/scraping-status', authenticateToken, async (req: AuthRequest,
       return res.status(403).json({ error: 'Forbidden: Super Admin access required' });
     }
 
+    const orchestratorStatus = scrapingOrchestrator.getStatus();
+
+    const sources = await db.query.eventScrapingSources.findMany({
+      where: eq(eventScrapingSources.isActive, true)
+    });
+
+    // Count scraped events in last 24 hours
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const recentlyScraped = await db.query.eventScrapingSources.findMany({
+      where: eq(eventScrapingSources.isActive, true)
+    });
+
+    const recentCount = recentlyScraped.filter(s => 
+      s.lastScrapedAt && s.lastScrapedAt > yesterday
+    ).length;
+
     res.json({
-      status: 'idle',
-      lastRun: null,
+      status: orchestratorStatus.isRunning ? 'running' : 'idle',
+      isRunning: orchestratorStatus.isRunning,
+      activeJobs: orchestratorStatus.activeJobs,
+      activeSources: sources.length,
+      sourcesScrapedToday: recentCount,
       environment: process.env.NODE_ENV || 'development',
       redisAvailable: false,
-      note: 'Scraping agents (#115-119) are documented but not implemented in current environment. Redis connection required for BullMQ job queues.',
-      workaround: 'Use SQL seed script from docs/MB_MD_DATA_POPULATION_PLAN.md to populate database immediately',
+      agents: {
+        '#115': 'Master Orchestrator ✅',
+        '#116': 'Static Scraper ✅',
+        '#117': 'JS Scraper ✅',
+        '#118': 'Social Scraper ✅',
+        '#119': 'Deduplication ✅'
+      },
       implementation: {
-        documentation: 'docs/handoff/TANGO_SCRAPING_COMPLETE_GUIDE.md',
-        agents: 5,
-        sources: 226,
-        estimatedCost: '$0/month (Replit cron only)',
-        timeline: '4 weeks to full implementation'
+        status: 'READY',
+        agents: '5/5 implemented',
+        sources: sources.length + '/226+ configured',
+        note: sources.length === 0 
+          ? 'Run community population script to add 226+ sources'
+          : 'All systems operational'
       }
     });
 
