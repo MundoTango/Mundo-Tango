@@ -7728,6 +7728,7 @@ export const eventScrapingSources = pgTable("event_scraping_sources", {
   country: varchar("country", { length: 100 }),
   city: varchar("city", { length: 100 }),
   isActive: boolean("is_active").default(true).notNull(),
+  customSelectors: jsonb("custom_selectors"),
   lastScrapedAt: timestamp("last_scraped_at"),
   totalEventsScraped: integer("total_events_scraped").default(0),
   scrapeFrequency: varchar("scrape_frequency", { length: 20 }).default("daily").notNull(),
