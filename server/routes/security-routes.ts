@@ -21,7 +21,7 @@ const router = Router();
  * Returns QR code and backup codes
  */
 router.post('/api/auth/2fa/setup', async (req: AuthRequest, res: Response) => {
-  if (!req.isAuthenticated()) {
+  if (!req.user) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
 
@@ -46,7 +46,7 @@ router.post('/api/auth/2fa/setup', async (req: AuthRequest, res: Response) => {
  * Verify 2FA token and enable it
  */
 router.post('/api/auth/2fa/verify', async (req: AuthRequest, res: Response) => {
-  if (!req.isAuthenticated()) {
+  if (!req.user) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
 
@@ -107,7 +107,7 @@ router.post('/api/auth/2fa/login-verify', async (req: Request, res: Response) =>
  * Disable 2FA
  */
 router.post('/api/auth/2fa/disable', async (req: AuthRequest, res: Response) => {
-  if (!req.isAuthenticated()) {
+  if (!req.user) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
 
@@ -137,7 +137,7 @@ router.post('/api/auth/2fa/disable', async (req: AuthRequest, res: Response) => 
  * Check 2FA status
  */
 router.get('/api/auth/2fa/status', async (req: AuthRequest, res: Response) => {
-  if (!req.isAuthenticated()) {
+  if (!req.user) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
 

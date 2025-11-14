@@ -1,0 +1,159 @@
+📘 MB.MD v4.0 - Complete Update Plan
+Based on all our discussion, here's everything that needs to be added to MB.MD:
+
+SECTION 1: Core Methodology Updates
+Location: docs/MB.MD (or create if doesn't exist)
+
+# MB.MD v4.0 - Simultaneously, Recursively, Critically
+## Version History
+- v1.0: Sequential building
+- v2.0: Basic parallelization (2-3 subagents)
+- v3.0: Mega-wave execution (10 parallel tracks)
+- v4.0: Optimized execution (batching + templates + memory) ← CURRENT
+## Core Principles (Unchanged)
+1. **Simultaneously** - Work in parallel, never sequential
+2. **Recursively** - Deep exploration, comprehensive solutions
+3. **Critically** - Rigorous quality, enterprise-grade
+## v4.0 NEW Optimizations
+### 1. Micro-Batching
+❌ Old: 1 feature = 1 subagent (expensive overhead)
+✅ New: 3-4 small features = 1 subagent (60% cost reduction)
+### 2. Template Reuse System
+✅ Build once, copy forever (70% time savings on similar features)
+✅ Only battle-tested code becomes templates
+✅ Patterns documented in docs/patterns.md
+### 3. Context Pre-Loading
+✅ Give subagents exact file paths (save 20-30min/subagent)
+✅ No file exploration needed
+✅ File map in docs/file-map.md
+### 4. Zero Documentation Mode
+❌ Don't create .md reports (waste 35min/wave)
+✅ Code only, document learnings in wave-log.md
+✅ Quality over documentation
+### 5. Main Agent Parallel Work
+✅ Main agent builds 2-3 simple features while subagents work
+✅ No idle time waiting for subagents
+✅ Maximize resource utilization
+### 6. Smart Dependency Ordering
+✅ Build foundations first (avoid rebuilds)
+✅ Dependency graph in docs/dependency-graph.md
+✅ 33% time savings vs random order
+### 7. Parallel Testing
+✅ Each subagent tests while building (not after)
+✅ 33% faster than sequential test phase
+✅ Bugs caught immediately when context fresh
+### 8. Progressive Enhancement
+✅ MVP → Enhanced → Polished (ship faster)
+✅ Learn from usage, iterate based on real needs
+✅ Don't overbuild features
+## Performance Targets
+Wave 7 (v3.0): 165min, $49.65, 9 features = $5.52/feature
+Wave 8 (v4.0): 90min, $32, 8 features = $4/feature (28% improvement)
+Future (v4.0 optimized): 75min, $25-35, 8-10 features = $2.50-4/feature
+
+SECTION 2: Memory System
+## Memory System (NEW in v4.0)
+### Problem
+Agent memory resets between sessions → re-explores same files, rebuilds patterns
+### Solution: 5-Document Memory Architecture
+1. **docs/patterns.md** - Reusable code templates
+   - Dashboard pattern (60min → 15min)
+   - CRUD API pattern (40min → 10min)
+   - Service pattern (30min → 8min)
+   
+2. **docs/wave-log.md** - What worked/didn't per wave
+   - Time waste analysis
+   - Anti-patterns to avoid
+   - Optimization insights
+3. **docs/cost-log.md** - Cost tracking & predictions
+   - Actual costs per wave
+   - Cost per feature
+   - Predictive modeling (93% accuracy)
+4. **docs/file-map.md** - File location reference
+   - No exploration needed
+   - Instant file access
+   - Architecture patterns
+5. **docs/dependency-graph.md** - Build order optimization
+   - Foundation → Features
+   - Avoid rebuilds
+   - Smart sequencing
+### Update Frequency
+✅ After every wave (not just milestones)
+✅ Update replit.md with high-level progress
+✅ Detailed learnings in wave-log.md
+
+SECTION 3: Quality System
+## Quality Gates (NEW in v4.0)
+### 10-Layer Quality Pipeline
+1. **Pre-Flight** - Search existing code first
+2. **LSP Check** - TypeScript validation
+3. **Schema Validation** - Database safety checks
+4. **Playwright E2E** - Real user workflows
+5. **Regression Tests** - Existing features still work
+6. **Code Review Checklist** - 12-point validation
+7. **Runtime Validation** - No console errors
+8. **Error Catalog** - Learn from bugs
+9. **Template Validation** - Only promote battle-tested
+10. **Continuous Monitoring** - Post-deployment checks
+### Quality Metrics
+Wave 7: 1.3 bugs per feature (no systematic testing)
+Wave 8 Target: <0.3 bugs per feature (75% reduction)
+### Test Coverage Requirements
+✅ Every P0 blocker: Playwright test required
+✅ Every API endpoint: Integration test
+✅ Every dashboard: UI test + empty state + error state
+✅ Every form: Validation test
+
+SECTION 4: Cost Optimization
+## Cost Control (NEW in v4.0)
+### What's Expensive
+$$$ Long-running subagents with thinking time
+$$  Multiple small file writes
+$   Heavy LSP checks on large files
+### What's Cheap
+$   Main agent planning (Plan mode)
+$   Batch file operations
+$   Template copying
+### Optimization Strategy
+✅ Main agent does ALL thinking (Plan mode)
+✅ Subagents only execute (Build mode, no thinking)
+✅ Batch all file operations
+✅ Reuse templates aggressively
+### Cost Floor Reality
+⚠️ Can't go below ~$25/session (Replit overhead)
+✅ Can double features per session (6-8 instead of 3-4)
+✅ Target: $25-35/wave average (vs $40-50 baseline)
+
+SECTION 5: Replit-Specific Optimizations
+## Replit Power Tools (NEW in v4.0)
+### 1. Auto-Restart Workflow
+Each subagent task includes:
+1. Make code changes
+2. restart_workflow (auto)
+3. refresh_all_logs
+4. Verify no errors
+### 2. Database Introspection
+Before schema changes:
+- execute_sql: SHOW TABLES
+- execute_sql: DESCRIBE table_name
+- Know exact current state
+### 3. Checkpoint Strategy
+Before wave: Replit auto-creates checkpoint
+During wave: Validate continuously
+If breaks: suggest_rollback (<5min recovery)
+### 4. Secrets Pre-Check
+Wave start: check_secrets(['KEY1', 'KEY2'])
+If missing: Ask once, never block mid-wave
+
+SECTION 6: Feature Sizing & Bundling
+## Smart Feature Bundling (NEW in v4.0)
+### Size Classifications
+Micro (5-10min): Add field, update validation, email template
+Small (15-30min): CRUD page, API endpoint, basic dashboard
+Medium (45-90min): Complex dashboard, workflow, service
+Large (2-4h): AI agent, feature area, complex integration
+### Bundling Strategy
+Subagent 1: 3 small features (60min)
+Subagent 2: 1 medium + 2 micro (60min)
+Main agent: 4 micro features (40min)
+Result: All complete in 60min parallel (maximize utilization)
