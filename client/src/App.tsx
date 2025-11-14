@@ -71,6 +71,7 @@ const FavoritesPage = lazy(() => import("@/pages/FavoritesPage"));
 
 // Events & Groups
 const EventsPage = lazy(() => import("@/pages/EventsPage"));
+const EventSearchPage = lazy(() => import("@/pages/events/EventSearchPage"));
 const EventDetailsPage = lazy(() => import("@/pages/EventDetailsPage"));
 const GroupsPage = lazy(() => import("@/pages/GroupsPage"));
 const GroupDetailsPage = lazy(() => import("@/pages/GroupDetailsPage"));
@@ -133,7 +134,8 @@ const AdminDashboardPage = lazy(() => import("@/pages/AdminDashboardPage"));
 const AdminUsersPage = lazy(() => import("@/pages/AdminUsersPage"));
 const AdminUsersManagementPage = lazy(() => import("@/pages/AdminUsersManagementPage"));
 const AdminModerationPage = lazy(() => import("@/pages/AdminModerationPage"));
-const AdminAnalyticsPage = lazy(() => import("@/pages/AdminAnalyticsPage"));
+const ModerationDashboard = lazy(() => import("@/pages/admin/ModerationDashboard"));
+const AnalyticsDashboard = lazy(() => import("@/pages/admin/AnalyticsDashboard"));
 const ContentModerationPage = lazy(() => import("@/pages/ContentModerationPage"));
 const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
 const PlatformPage = lazy(() => import("@/pages/Platform"));
@@ -183,7 +185,7 @@ const LegalSignaturePage = lazy(() => import("@/pages/legal/LegalSignaturePage")
 // Settings & Account
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
 const UserSettingsPage = lazy(() => import("@/pages/UserSettingsPage"));
-const EmailPreferencesPage = lazy(() => import("@/pages/EmailPreferencesPage"));
+const EmailPreferencesPage = lazy(() => import("@/pages/settings/EmailPreferences"));
 const NotificationSettingsPage = lazy(() => import("@/pages/NotificationSettingsPage"));
 const NotificationPreferencesPage = lazy(() => import("@/pages/NotificationPreferencesPage"));
 const PrivacySettingsPage = lazy(() => import("@/pages/PrivacySettings"));
@@ -231,6 +233,7 @@ const MusicLibraryPage = lazy(() => import("@/pages/MusicLibraryPage"));
 // Travel & Housing
 const TravelPlannerPage = lazy(() => import("@/pages/TravelPlannerPage"));
 const HostHomesPage = lazy(() => import("@/pages/HostHomesPage"));
+const HostHomePage = lazy(() => import("@/pages/housing/HostHomePage"));
 
 // Commerce & Subscriptions
 const MarketplacePage = lazy(() => import("@/pages/MarketplacePage"));
@@ -454,6 +457,14 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <EventsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/events/search">
+        <ProtectedRoute>
+          <AppLayout>
+            <EventSearchPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -968,6 +979,13 @@ function Router() {
           </AppLayout>
         </ProtectedRoute>
       </Route>
+      <Route path="/housing/host/:id">
+        <ProtectedRoute>
+          <AppLayout>
+            <HostHomePage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
       <Route path="/travel-planner" component={TravelPlannerPage} />
       <Route path="/blog" component={BlogPage} />
       <Route path="/blog/:slug" component={BlogPage} />
@@ -1099,7 +1117,7 @@ function Router() {
       <Route path="/admin/moderation">
         <ProtectedRoute>
           <AdminLayout>
-            <ContentModerationPage />
+            <ModerationDashboard />
           </AdminLayout>
         </ProtectedRoute>
       </Route>
@@ -1235,7 +1253,7 @@ function Router() {
       <Route path="/admin/analytics">
         <ProtectedRoute>
           <AdminLayout>
-            <AdminAnalyticsPage />
+            <AnalyticsDashboard />
           </AdminLayout>
         </ProtectedRoute>
       </Route>

@@ -1,123 +1,189 @@
 import helmet from 'helmet';
 import { Request, Response, NextFunction } from 'express';
+import crypto from 'crypto';
 
 /**
  * Comprehensive Security Headers using Helmet
- * Environment-aware CSP: Strict in production, permissive in development
+ * Environment-aware CSP: Strict in production with nonces, permissive in development
+ * 
+ * Source: Part 8: Lines 500-650 - Security Headers & CSP Implementation
+ * Reference: https://securityheaders.com for A+ grade validation
  */
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 // ============================================================================
+// NONCE GENERATION FOR CSP
+// ============================================================================
+
+/**
+ * Generate a cryptographically secure nonce for CSP
+ * Nonces are unique per request to prevent XSS attacks
+ */
+export function generateNonce(): string {
+  return crypto.randomBytes(16).toString('base64');
+}
+
+/**
+ * Middleware to generate and attach CSP nonce to each request
+ * Usage: app.use(cspNonce) before security headers
+ */
+export function cspNonce(req: Request, res: Response, next: NextFunction) {
+  const nonce = generateNonce();
+  res.locals.cspNonce = nonce;
+  next();
+}
+
+// ============================================================================
 // HELMET CONFIGURATION WITH ENVIRONMENT-AWARE CSP
 // ============================================================================
 
-export const securityHeaders = helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      
-      // Script sources - allow unsafe-inline/eval only in development
-      scriptSrc: isDevelopment
-        ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://js.stripe.com", "https://cdn.jsdelivr.net", "https://unpkg.com"]
-        : ["'self'", "https://js.stripe.com", "https://cdn.jsdelivr.net", "https://unpkg.com"],
-      
-      // Script element sources (for external scripts)
-      scriptSrcElem: isDevelopment
-        ? ["'self'", "'unsafe-inline'", "https://js.stripe.com", "https://cdn.jsdelivr.net", "https://unpkg.com"]
-        : ["'self'", "https://js.stripe.com", "https://cdn.jsdelivr.net", "https://unpkg.com"],
-      
-      // Style sources - allow unsafe-inline in dev for Vite HMR
-      styleSrc: isDevelopment
-        ? ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://unpkg.com"]
-        : ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://unpkg.com"],
-      
-      // Font sources
-      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
-      
-      // Image sources - allow Cloudinary and other CDNs
-      imgSrc: ["'self'", "data:", "blob:", "https:", "http:"],
-      
-      // Media sources
-      mediaSrc: ["'self'", "blob:", "https:", "http:"],
-      
-      // Connection sources - APIs, WebSocket, Vite HMR
-      connectSrc: isDevelopment
-        ? [
-            "'self'",
-            "https://api.stripe.com",
-            "https://api.groq.com",
-            "https://api.openai.com",
-            "https://api.anthropic.com",
-            "https://generativelanguage.googleapis.com",
-            "https://*.supabase.co",
-            "wss:",
-            "ws:",
-            "ws://localhost:*",
-            "http://localhost:*"
-          ]
-        : [
-            "'self'",
-            "https://api.stripe.com",
-            "https://api.groq.com",
-            "https://api.openai.com",
-            "https://api.anthropic.com",
-            "https://generativelanguage.googleapis.com",
-            "https://*.supabase.co",
-            "wss:"
-          ],
-      
-      // Frame sources - allow Stripe
-      frameSrc: ["'self'", "https://js.stripe.com", "https://hooks.stripe.com"],
-      
-      // Object sources - none
-      objectSrc: ["'none'"],
-      
-      // Base URI
-      baseUri: ["'self'"],
-      
-      // Form actions
-      formAction: ["'self'"],
-      
-      // Frame ancestors - prevent clickjacking
-      frameAncestors: ["'none'"],
-      
-      // Upgrade insecure requests in production only
-      ...(isDevelopment ? {} : { upgradeInsecureRequests: [] }),
+/**
+ * Security headers middleware with dynamic nonce injection
+ * In production: Uses nonces for inline scripts (strict CSP)
+ * In development: Allows unsafe-inline/eval for Vite HMR
+ */
+export function securityHeaders(req: Request, res: Response, next: NextFunction) {
+  const nonce = res.locals.cspNonce;
+  
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        
+        // Script sources - nonce-based in production, permissive in dev
+        scriptSrc: isDevelopment
+          ? [
+              "'self'",
+              "'unsafe-inline'",
+              "'unsafe-eval'",
+              "https://js.stripe.com",
+              "https://cdn.jsdelivr.net",
+              "https://unpkg.com"
+            ]
+          : [
+              "'self'",
+              `'nonce-${nonce}'`,
+              "https://js.stripe.com",
+              "https://cdn.jsdelivr.net",
+              "https://unpkg.com"
+            ],
+        
+        // Script element sources (for external scripts)
+        scriptSrcElem: isDevelopment
+          ? [
+              "'self'",
+              "'unsafe-inline'",
+              "https://js.stripe.com",
+              "https://cdn.jsdelivr.net",
+              "https://unpkg.com"
+            ]
+          : [
+              "'self'",
+              `'nonce-${nonce}'`,
+              "https://js.stripe.com",
+              "https://cdn.jsdelivr.net",
+              "https://unpkg.com"
+            ],
+        
+        // Style sources - unsafe-inline needed for dynamic styles (Tailwind, emotion, etc.)
+        // Note: Nonces for styles are harder due to CSS-in-JS libraries
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "https://fonts.googleapis.com",
+          "https://unpkg.com"
+        ],
+        
+        // Font sources
+        fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+        
+        // Image sources - allow data URIs, CDNs, and HTTPS
+        imgSrc: ["'self'", "data:", "blob:", "https:", "http:"],
+        
+        // Media sources - allow blob URLs for video/audio
+        mediaSrc: ["'self'", "blob:", "https:", "http:"],
+        
+        // Connection sources - APIs, WebSocket, Vite HMR
+        connectSrc: isDevelopment
+          ? [
+              "'self'",
+              "https://api.stripe.com",
+              "https://api.groq.com",
+              "https://api.openai.com",
+              "https://api.anthropic.com",
+              "https://generativelanguage.googleapis.com",
+              "https://*.supabase.co",
+              "https://*.sentry.io",
+              "wss:",
+              "ws:",
+              "ws://localhost:*",
+              "http://localhost:*"
+            ]
+          : [
+              "'self'",
+              "https://api.stripe.com",
+              "https://api.groq.com",
+              "https://api.openai.com",
+              "https://api.anthropic.com",
+              "https://generativelanguage.googleapis.com",
+              "https://*.supabase.co",
+              "https://*.sentry.io",
+              "wss:"
+            ],
+        
+        // Frame sources - allow Stripe for payment elements
+        frameSrc: ["'self'", "https://js.stripe.com", "https://hooks.stripe.com"],
+        
+        // Object sources - block all plugins (Flash, Java, etc.)
+        objectSrc: ["'none'"],
+        
+        // Base URI - prevent base tag injection
+        baseUri: ["'self'"],
+        
+        // Form actions - only allow same-origin form submissions
+        formAction: ["'self'"],
+        
+        // Frame ancestors - prevent clickjacking (same as X-Frame-Options: DENY)
+        frameAncestors: ["'none'"],
+        
+        // Upgrade insecure requests in production only
+        ...(isDevelopment ? {} : { upgradeInsecureRequests: [] }),
+      },
     },
-  },
-  
-  // Strict Transport Security (HSTS) - 1 year, include subdomains, preload
-  hsts: {
-    maxAge: 31536000,
-    includeSubDomains: true,
-    preload: true,
-  },
-  
-  // Prevent clickjacking
-  frameguard: {
-    action: 'deny',
-  },
-  
-  // Referrer Policy
-  referrerPolicy: {
-    policy: 'strict-origin-when-cross-origin',
-  },
-  
-  // X-Content-Type-Options
-  noSniff: true,
-  
-  // X-DNS-Prefetch-Control
-  dnsPrefetchControl: {
-    allow: false,
-  },
-  
-  // X-Download-Options
-  ieNoOpen: true,
-  
-  // Hide X-Powered-By
-  hidePoweredBy: true,
-});
+    
+    // Strict Transport Security (HSTS) - 1 year, include subdomains, preload
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true,
+    },
+    
+    // Prevent clickjacking (X-Frame-Options: DENY)
+    frameguard: {
+      action: 'deny',
+    },
+    
+    // Referrer Policy - only send origin when crossing origins
+    referrerPolicy: {
+      policy: 'strict-origin-when-cross-origin',
+    },
+    
+    // X-Content-Type-Options - prevent MIME sniffing
+    noSniff: true,
+    
+    // X-DNS-Prefetch-Control - disable DNS prefetching for privacy
+    dnsPrefetchControl: {
+      allow: false,
+    },
+    
+    // X-Download-Options - prevent file downloads in IE
+    ieNoOpen: true,
+    
+    // Hide X-Powered-By header
+    hidePoweredBy: true,
+  })(req, res, next);
+}
 
 // ============================================================================
 // ADDITIONAL SECURITY HEADERS

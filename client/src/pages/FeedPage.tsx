@@ -33,6 +33,7 @@ import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker"
 import { PostItem } from "@/components/feed/PostItem";
 import { EditPostDialog } from "@/components/modals/EditPostDialog";
 import { FeedHeroWelcome } from "@/components/feed/FeedHeroWelcome";
+import { StoriesCarousel } from "@/components/feed/StoriesCarousel";
 import { Link } from "wouter";
 import { FeedAd } from "@/components/ads/FeedAd";
 
@@ -433,36 +434,8 @@ export default function FeedPage() {
             <ConnectionStatusBadge />
           </div>
 
-          {/* Stories Carousel */}
-          {stories && stories.length > 0 && (
-            <Card className="p-4" data-testid="section-stories-carousel">
-              <div className="flex items-center gap-2 mb-3">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                <h2 className="text-sm font-semibold">Stories (24h)</h2>
-              </div>
-              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-                {stories.map((story) => (
-                  <Link key={story.id} href={`/posts/${story.id}`}>
-                    <div 
-                      className="flex-shrink-0 cursor-pointer group"
-                      data-testid={`story-${story.id}`}
-                    >
-                      <div className="relative">
-                        <Avatar className="h-16 w-16 ring-2 ring-primary">
-                          <AvatarImage src={story.user?.profileImage || undefined} />
-                          <AvatarFallback>{story.user?.name?.[0] || 'U'}</AvatarFallback>
-                        </Avatar>
-                        <div className="absolute inset-0 rounded-full bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
-                      <p className="text-xs text-center mt-1 w-16 truncate">
-                        {story.user?.name?.split(' ')[0] || 'User'}
-                      </p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </Card>
-          )}
+          {/* Instagram-style Stories Carousel */}
+          <StoriesCarousel />
 
           {/* New Posts Banner */}
           {newPostsAvailable && (
@@ -487,12 +460,14 @@ export default function FeedPage() {
           <PostCreator
             onPostCreated={() => {
               queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
+              queryClient.invalidateQueries({ queryKey: ['/api/posts/stories'] });
               toast({
                 title: "🎉 Memory shared!",
                 description: "Your memory has been posted to the community.",
               });
             }}
             context={{ type: 'feed' }}
+            showStoryToggle={true}
           />
 
           {/* Smart Post Feed with Search & Filters */}

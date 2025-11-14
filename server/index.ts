@@ -26,7 +26,7 @@ import {
   adminRateLimiter,
   searchRateLimiter 
 } from "./middleware/rateLimiter";
-import { securityHeaders, additionalSecurityHeaders, applySecurity as applySecurityFromHeaders } from "./middleware/securityHeaders";
+import { cspNonce, securityHeaders, additionalSecurityHeaders, applySecurity as applySecurityFromHeaders } from "./middleware/securityHeaders";
 import { setCsrfToken, verifyDoubleSubmitCookie } from "./middleware/csrf";
 
 console.log("✅ [DEBUG] All server/index.ts imports completed!");
@@ -57,7 +57,10 @@ app.use(getSentryTracingHandler());
 // Winston + Morgan HTTP request logging
 app.use(morgan('combined', { stream }));
 
-// Apply Helmet security headers with environment-aware CSP
+// Generate CSP nonce for each request (must be before securityHeaders)
+app.use(cspNonce);
+
+// Apply Helmet security headers with environment-aware CSP and nonces
 app.use(securityHeaders);
 
 // Apply additional security headers (X-XSS-Protection, Permissions-Policy, etc.)

@@ -3,6 +3,7 @@ import { useDropzone } from "react-dropzone";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Loader2, Upload, X, Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -207,6 +208,39 @@ export function PhotoUpload({ listingId, initialPhotos = [], onPhotosChange }: P
     }
   };
 
+  const updateCaption = async (photoId: string, caption: string) => {
+    const previousPhotos = [...photos];
+    const updated = photos.map((p) =>
+      p.id === photoId ? { ...p, caption } : p
+    );
+    updatePhotos(updated);
+
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await fetch(`/api/housing/${listingId}/photos/${photoId}/caption`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        body: JSON.stringify({ caption }),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update caption");
+      }
+    } catch (error) {
+      console.error("Update caption error:", error);
+      toast({
+        title: "Update failed",
+        description: "Failed to update caption. Please try again.",
+        variant: "destructive",
+      });
+      updatePhotos(previousPhotos);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div
@@ -282,7 +316,13 @@ export function PhotoUpload({ listingId, initialPhotos = [], onPhotosChange }: P
                             <X className="h-4 w-4" />
                           </Button>
                         </div>
-                        <div className="p-2">
+                        <div className="p-3 space-y-2">
+                          <Input
+                            placeholder="Add a caption..."
+                            value={photo.caption || ''}
+                            onChange={(e) => updateCaption(photo.id, e.target.value)}
+                            data-testid={`input-caption-${index}`}
+                          />
                           <Button
                             size="sm"
                             variant={photo.isCover ? "default" : "outline"}

@@ -110,6 +110,193 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
 // EVENT ANALYTICS (must be before /:id routes)
 // ============================================================================
 
+// GET /api/events/search - Advanced search with 12 filters
+router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
+  try {
+    const {
+      q,
+      city,
+      dateFrom,
+      dateTo,
+      type,
+      priceMin,
+      priceMax,
+      danceStyle,
+      skillLevel,
+      online,
+      verified,
+      tags,
+      sortBy = "relevance",
+      page = "1",
+      limit = "20"
+    } = req.query;
+
+    const offset = (parseInt(page as string) - 1) * parseInt(limit as string);
+
+    let query = db
+      .select({
+        event: events,
+        organizer: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage,
+          isVerified: users.isVerified
+        },
+        attendeeCount: sql<number>`(
+          SELECT COUNT(*)::int 
+          FROM ${eventRsvps} 
+          WHERE ${eventRsvps.eventId} = ${events.id}
+          AND ${eventRsvps.status} = 'going'
+        )`.as('attendee_count')
+      })
+      .from(events)
+      .leftJoin(users, eq(events.userId, users.id))
+      .$dynamic();
+
+    const conditions = [eq(events.status, "published")];
+
+    // Full-text search using PostgreSQL ts_vector
+    if (q && typeof q === 'string' && q.trim()) {
+      const searchQuery = q.trim();
+      conditions.push(
+        sql`(
+          to_tsvector('english', ${events.title}) @@ plainto_tsquery('english', ${searchQuery})
+          OR to_tsvector('english', ${events.description}) @@ plainto_tsquery('english', ${searchQuery})
+          OR to_tsvector('english', ${events.location}) @@ plainto_tsquery('english', ${searchQuery})
+        )`
+      );
+    }
+
+    // City/location filter
+    if (city && typeof city === 'string') {
+      conditions.push(
+        sql`${events.city} ILIKE ${`%${city}%`}`
+      );
+    }
+
+    // Date range filter
+    if (dateFrom) {
+      conditions.push(gte(events.startDate, new Date(dateFrom as string)));
+    }
+    if (dateTo) {
+      conditions.push(lte(events.startDate, new Date(dateTo as string)));
+    }
+
+    // Event type filter
+    if (type && typeof type === 'string') {
+      conditions.push(eq(events.eventType, type));
+    }
+
+    // Price range filter
+    if (priceMin !== undefined || priceMax !== undefined) {
+      if (priceMin === "0" && priceMax === "0") {
+        conditions.push(eq(events.isFree, true));
+      } else {
+        conditions.push(eq(events.isPaid, true));
+        if (priceMin !== undefined) {
+          conditions.push(sql`CAST(${events.price} AS NUMERIC) >= ${priceMin}`);
+        }
+        if (priceMax !== undefined && priceMax !== "500") {
+          conditions.push(sql`CAST(${events.price} AS NUMERIC) <= ${priceMax}`);
+        }
+      }
+    }
+
+    // Dance style filter
+    if (danceStyle && typeof danceStyle === 'string') {
+      conditions.push(
+        sql`${danceStyle} = ANY(${events.danceStyles})`
+      );
+    }
+
+    // Skill level filter (stored in tags)
+    if (skillLevel && typeof skillLevel === 'string') {
+      conditions.push(
+        sql`${skillLevel} = ANY(${events.tags})`
+      );
+    }
+
+    // Online/in-person toggle
+    if (online === "true") {
+      conditions.push(eq(events.isOnline, true));
+    } else if (online === "false") {
+      conditions.push(eq(events.isOnline, false));
+    }
+
+    // Verified organizer filter
+    if (verified === "true") {
+      conditions.push(eq(users.isVerified, true));
+    }
+
+    // Tags filter
+    if (tags && typeof tags === 'string') {
+      const tagArray = tags.split(',').map(t => t.trim());
+      tagArray.forEach(tag => {
+        conditions.push(
+          sql`${tag} = ANY(${events.tags})`
+        );
+      });
+    }
+
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+
+    // Sorting
+    switch (sortBy) {
+      case "date":
+        query = query.orderBy(asc(events.startDate));
+        break;
+      case "price":
+        query = query.orderBy(asc(sql`CAST(${events.price} AS NUMERIC)`));
+        break;
+      case "relevance":
+      default:
+        if (q) {
+          query = query.orderBy(
+            desc(sql`
+              ts_rank(
+                to_tsvector('english', ${events.title} || ' ' || ${events.description}),
+                plainto_tsquery('english', ${q})
+              )
+            `)
+          );
+        } else {
+          query = query.orderBy(asc(events.startDate));
+        }
+        break;
+    }
+
+    // Get total count for pagination
+    const countQuery = db
+      .select({ count: sql<number>`COUNT(*)::int` })
+      .from(events)
+      .leftJoin(users, eq(events.userId, users.id))
+      .where(conditions.length > 0 ? and(...conditions) : undefined);
+
+    const [{ count: total }] = await countQuery;
+
+    // Get results with pagination
+    const results = await query
+      .limit(parseInt(limit as string))
+      .offset(offset);
+
+    res.json({
+      events: results,
+      pagination: {
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
+        total,
+        totalPages: Math.ceil(total / parseInt(limit as string))
+      }
+    });
+  } catch (error) {
+    console.error("[Events] Error in advanced search:", error);
+    res.status(500).json({ message: "Failed to search events" });
+  }
+});
+
 // GET /api/events/analytics/popular - Get popular events
 router.get("/analytics/popular", async (req: Request, res: Response) => {
   try {

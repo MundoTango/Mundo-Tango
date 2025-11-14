@@ -241,6 +241,24 @@ export const events = pgTable("events", {
   slugIdx: index("events_slug_idx").on(table.slug),
   cityCountryIdx: index("events_city_country_idx").on(table.city, table.country),
   userStartDateIdx: index("events_user_start_date_idx").on(table.userId, table.startDate),
+  // GIN indexes for full-text search
+  titleSearchIdx: index("events_title_search_idx").using(
+    "gin",
+    sql`to_tsvector('english', ${table.title})`
+  ),
+  descriptionSearchIdx: index("events_description_search_idx").using(
+    "gin",
+    sql`to_tsvector('english', ${table.description})`
+  ),
+  locationSearchIdx: index("events_location_search_idx").using(
+    "gin",
+    sql`to_tsvector('english', ${table.location})`
+  ),
+  // Combined search index for title + description (optimized for full-text search)
+  searchIdx: index("events_search_idx").using(
+    "gin", 
+    sql`to_tsvector('english', ${table.title} || ' ' || ${table.description})`
+  ),
 }));
 
 export const eventRsvps = pgTable("event_rsvps", {
@@ -714,6 +732,11 @@ export const twoFactorSecrets = pgTable("two_factor_secrets", {
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
   secret: text("secret").notNull(),
   backupCodes: text("backup_codes").array(),
+  
+  // ENCRYPTED FIELD: Stores sensitive 2FA data
+  // {secret: string, backupCodes: string[], phoneNumber?: string}
+  encryptedData: text("encrypted_data"),
+  
   createdAt: timestamp("created_at").defaultNow(),
 }, (table) => ({
   userIdx: index("two_factor_secrets_user_idx").on(table.userId),
@@ -1851,30 +1874,17 @@ export const userSettings = pgTable("user_settings", {
   allowMessages: varchar("allow_messages").default("everyone"),
   language: varchar("language").default("en"),
   theme: varchar("theme").default("system"),
+  
+  // ENCRYPTED FIELD: Stores sensitive user preferences
+  // {privateSettings: any, securityPreferences: any, sensitiveData: any}
+  encryptedData: text("encrypted_data"),
+  
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => ({
   userIdx: index("user_settings_user_idx").on(table.userId),
 }));
 
-// Moderation Queue (reported content)
-export const moderationQueue = pgTable("moderation_queue", {
-  id: serial("id").primaryKey(),
-  contentType: varchar("content_type").notNull(),
-  contentId: integer("content_id").notNull(),
-  reporterId: integer("reporter_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  reason: varchar("reason").notNull(),
-  details: text("details"),
-  status: varchar("status").default("pending").notNull(),
-  reviewedBy: integer("reviewed_by").references(() => users.id),
-  reviewedAt: timestamp("reviewed_at"),
-  action: varchar("action"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-}, (table) => ({
-  contentIdx: index("moderation_queue_content_idx").on(table.contentType, table.contentId),
-  reporterIdx: index("moderation_queue_reporter_idx").on(table.reporterId),
-  statusIdx: index("moderation_queue_status_idx").on(table.status),
-}));
 
 // Post Shares (track who shared what post)
 export const postShares = pgTable("post_shares", {
@@ -1924,9 +1934,6 @@ export const insertUserSettingsSchema = createInsertSchema(userSettings).omit({ 
 export type InsertUserSettings = z.infer<typeof insertUserSettingsSchema>;
 export type SelectUserSettings = typeof userSettings.$inferSelect;
 
-export const insertModerationQueueSchema = createInsertSchema(moderationQueue).omit({ id: true, createdAt: true, reviewedAt: true });
-export type InsertModerationQueue = z.infer<typeof insertModerationQueueSchema>;
-export type SelectModerationQueue = typeof moderationQueue.$inferSelect;
 
 export const insertPostShareSchema = createInsertSchema(postShares).omit({ id: true, createdAt: true });
 export type InsertPostShare = z.infer<typeof insertPostShareSchema>;
@@ -2237,6 +2244,10 @@ export const housingListings = pgTable("housing_listings", {
   verifiedAt: timestamp("verified_at"),
   safetyNotes: text("safety_notes"),
   rejectionReason: text("rejection_reason"),
+  
+  // ENCRYPTED FIELD: Stores sensitive pricing and financial details
+  // {pricingDetails: any, cleaningFee?: number, securityDeposit?: number, hostPaymentInfo?: any}
+  encryptedData: text("encrypted_data"),
   
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -2656,6 +2667,11 @@ export const subscriptions = pgTable("subscriptions", {
   currentPeriodEnd: timestamp("current_period_end").notNull(),
   cancelAt: timestamp("cancel_at"),
   cancelledAt: timestamp("cancelled_at"),
+  
+  // ENCRYPTED FIELD: Stores sensitive payment and billing details
+  // {paymentMethodDetails: any, billingAddress: any, taxInfo: any, invoiceHistory: any[]}
+  encryptedData: text("encrypted_data"),
+  
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => ({
@@ -3535,53 +3551,6 @@ export const userPoints = pgTable("user_points", {
 }));
 
 // ============================================================================
-// STORIES SYSTEM (Instagram-style)
-// ============================================================================
-
-export const stories = pgTable("stories", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
-  type: varchar("type", { length: 50 }).notNull(),
-  mediaUrl: varchar("media_url", { length: 512 }).notNull(),
-  mediaType: varchar("media_type", { length: 50 }).notNull(),
-  thumbnailUrl: varchar("thumbnail_url", { length: 512 }),
-  caption: text("caption"),
-  duration: integer("duration").default(5),
-  backgroundColor: varchar("background_color", { length: 50 }),
-  fontFamily: varchar("font_family", { length: 100 }),
-  textColor: varchar("text_color", { length: 50 }),
-  viewCount: integer("view_count").default(0),
-  isActive: boolean("is_active").default(true),
-  expiresAt: timestamp("expires_at").notNull(),
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  userIdx: index("idx_stories_user").on(table.userId),
-  activeIdx: index("idx_stories_active").on(table.isActive),
-  expiresIdx: index("idx_stories_expires").on(table.expiresAt),
-}));
-
-export const storyViews = pgTable("story_views", {
-  id: serial("id").primaryKey(),
-  storyId: integer("story_id").references(() => stories.id, { onDelete: 'cascade' }).notNull(),
-  viewerId: integer("viewer_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  uniqueView: unique().on(table.storyId, table.viewerId),
-  storyIdx: index("idx_story_views_story").on(table.storyId),
-  viewerIdx: index("idx_story_views_viewer").on(table.viewerId),
-}));
-
-export const storyReactions = pgTable("story_reactions", {
-  id: serial("id").primaryKey(),
-  storyId: integer("story_id").references(() => stories.id, { onDelete: 'cascade' }).notNull(),
-  userId: integer("user_id").references(() => users.id, { onDelete: 'cascade' }).notNull(),
-  reactionType: varchar("reaction_type", { length: 50 }).notNull(),
-  createdAt: timestamp("created_at").defaultNow()
-}, (table) => ({
-  storyIdx: index("idx_story_reactions_story").on(table.storyId),
-  userIdx: index("idx_story_reactions_user").on(table.userId),
-}));
-// ============================================================================
 // ZOD SCHEMAS & TYPES - TRACK 7 NEW FEATURES
 // ============================================================================
 
@@ -3730,6 +3699,101 @@ export const userReports = pgTable("user_reports", {
   reportedUserIdx: index("idx_user_reports_reported_user").on(table.reportedUserId),
   statusIdx: index("idx_user_reports_status").on(table.status),
   severityIdx: index("idx_user_reports_severity").on(table.severity),
+}));
+
+// ============================================================================
+// CONTENT MODERATION SYSTEM
+// ============================================================================
+
+// Moderation Queue (unified queue for all content types)
+export const moderationQueue = pgTable("moderation_queue", {
+  id: serial("id").primaryKey(),
+  contentType: varchar("content_type", { length: 50 }).notNull(), // 'post' | 'comment' | 'message' | 'user' | 'event' | 'housing'
+  contentId: integer("content_id").notNull(),
+  userId: integer("user_id").references(() => users.id), // Content owner
+  
+  status: varchar("status", { length: 20 }).default("pending"), // 'pending' | 'reviewing' | 'approved' | 'removed' | 'escalated' | 'banned'
+  priority: integer("priority").default(3), // 1=highest, 5=lowest
+  
+  reportReason: varchar("report_reason", { length: 100 }), // 'spam' | 'harassment' | 'inappropriate' | 'hate_speech' | 'violence' | 'misinformation'
+  reportDetails: text("report_details"),
+  reportedBy: integer("reported_by").references(() => users.id),
+  
+  // Legacy fields (backwards compatibility)
+  reason: varchar("reason", { length: 100 }), 
+  description: text("description"),
+  
+  autoFlagged: boolean("auto_flagged").default(false),
+  autoFlagReason: varchar("auto_flag_reason", { length: 100 }),
+  
+  moderatorId: integer("moderator_id").references(() => users.id),
+  moderatedBy: integer("moderated_by").references(() => users.id), // Legacy field
+  moderatorNotes: text("moderator_notes"),
+  actionTaken: varchar("action_taken", { length: 50 }),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  reviewedAt: timestamp("reviewed_at"),
+  moderatedAt: timestamp("moderated_at"), // Legacy field
+}, (table) => ({
+  contentTypeIdx: index("idx_moderation_queue_content_type").on(table.contentType),
+  statusIdx: index("idx_moderation_queue_status").on(table.status),
+  priorityIdx: index("idx_moderation_queue_priority").on(table.priority),
+  createdAtIdx: index("idx_moderation_queue_created_at").on(table.createdAt),
+  compositeIdx: index("idx_moderation_queue_composite").on(table.status, table.priority, table.createdAt),
+  userIdx: index("idx_moderation_queue_user").on(table.userId),
+  autoFlaggedIdx: index("idx_moderation_queue_auto_flagged").on(table.autoFlagged),
+}));
+
+// Moderation Actions (audit log of all moderation actions)
+export const moderationActions = pgTable("moderation_actions", {
+  id: serial("id").primaryKey(),
+  moderatorId: integer("moderator_id").references(() => users.id).notNull(),
+  
+  actionType: varchar("action_type", { length: 50 }).notNull(), // 'approve' | 'remove' | 'ban_user' | 'warn' | 'edit'
+  targetType: varchar("target_type", { length: 50 }).notNull(),
+  targetId: integer("target_id").notNull(),
+  
+  // Legacy fields (backwards compatibility)
+  queueId: integer("queue_id").references(() => moderationQueue.id),
+  action: varchar("action", { length: 50 }),
+  
+  reason: text("reason"),
+  duration: integer("duration"), // For bans (in days)
+  reversible: boolean("reversible").default(true),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  queueIdx: index("idx_moderation_actions_queue").on(table.queueId),
+  moderatorIdx: index("idx_moderation_actions_moderator").on(table.moderatorId),
+  actionIdx: index("idx_moderation_actions_action").on(table.action),
+  actionTypeIdx: index("idx_moderation_actions_action_type").on(table.actionType),
+  targetTypeIdx: index("idx_moderation_actions_target_type").on(table.targetType),
+  createdAtIdx: index("idx_moderation_actions_created_at").on(table.createdAt),
+}));
+
+// Flagged Content (auto-flagging system)
+export const flaggedContent = pgTable("flagged_content", {
+  id: serial("id").primaryKey(),
+  contentType: varchar("content_type", { length: 50 }).notNull(),
+  contentId: integer("content_id").notNull(),
+  
+  flagType: varchar("flag_type", { length: 50 }).notNull(), // 'spam' | 'harassment' | 'hate_speech' | 'violence' | 'misinformation' | 'profanity'
+  severity: integer("severity").notNull(), // 1-10
+  confidence: integer("confidence"), // 0-100 for auto-flags
+  
+  detectionMethod: varchar("detection_method", { length: 50 }), // 'manual' | 'keyword' | 'ai' | 'pattern'
+  
+  // Legacy fields (backwards compatibility)
+  flagReason: varchar("flag_reason", { length: 50 }),
+  autoFlagged: boolean("auto_flagged").default(true),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  contentTypeIdx: index("idx_flagged_content_type").on(table.contentType),
+  flagTypeIdx: index("idx_flagged_content_flag_type").on(table.flagType),
+  flagReasonIdx: index("idx_flagged_content_reason").on(table.flagReason),
+  severityIdx: index("idx_flagged_content_severity").on(table.severity),
+  createdAtIdx: index("idx_flagged_content_created_at").on(table.createdAt),
 }));
 
 // Role Requests (professional role upgrade requests: teacher, DJ, organizer)
@@ -5339,19 +5403,6 @@ export type InsertUserPoints = z.infer<typeof insertUserPointsSchema>;
 export type SelectUserPoints = typeof userPoints.$inferSelect;
 
 // Stories
-export const insertStorySchema = createInsertSchema(stories).omit({ id: true, createdAt: true });
-export type InsertStory = z.infer<typeof insertStorySchema>;
-export type SelectStory = typeof stories.$inferSelect;
-
-// Story Views
-export const insertStoryViewSchema = createInsertSchema(storyViews).omit({ id: true, createdAt: true });
-export type InsertStoryView = z.infer<typeof insertStoryViewSchema>;
-export type SelectStoryView = typeof storyViews.$inferSelect;
-
-// Story Reactions
-export const insertStoryReactionSchema = createInsertSchema(storyReactions).omit({ id: true, createdAt: true });
-export type InsertStoryReaction = z.infer<typeof insertStoryReactionSchema>;
-export type SelectStoryReaction = typeof storyReactions.$inferSelect;
 
 // Content Reports
 export const insertContentReportSchema = createInsertSchema(contentReports).omit({ id: true, createdAt: true, reviewedAt: true });
@@ -5362,6 +5413,21 @@ export type SelectContentReport = typeof contentReports.$inferSelect;
 export const insertUserReportSchema = createInsertSchema(userReports).omit({ id: true, createdAt: true, updatedAt: true, reviewedAt: true });
 export type InsertUserReport = z.infer<typeof insertUserReportSchema>;
 export type SelectUserReport = typeof userReports.$inferSelect;
+
+// Moderation Queue
+export const insertModerationQueueSchema = createInsertSchema(moderationQueue).omit({ id: true, createdAt: true, moderatedAt: true });
+export type InsertModerationQueue = z.infer<typeof insertModerationQueueSchema>;
+export type SelectModerationQueue = typeof moderationQueue.$inferSelect;
+
+// Moderation Actions
+export const insertModerationActionSchema = createInsertSchema(moderationActions).omit({ id: true, createdAt: true });
+export type InsertModerationAction = z.infer<typeof insertModerationActionSchema>;
+export type SelectModerationAction = typeof moderationActions.$inferSelect;
+
+// Flagged Content
+export const insertFlaggedContentSchema = createInsertSchema(flaggedContent).omit({ id: true, createdAt: true });
+export type InsertFlaggedContent = z.infer<typeof insertFlaggedContentSchema>;
+export type SelectFlaggedContent = typeof flaggedContent.$inferSelect;
 
 // Role Requests
 export const insertRoleRequestSchema = createInsertSchema(roleRequests).omit({ id: true, createdAt: true, updatedAt: true, reviewedAt: true });
@@ -9315,6 +9381,11 @@ export const userTwoFactor = pgTable("user_two_factor", {
   phoneNumber: varchar("phone_number", { length: 20 }), // For SMS
   isEnabled: boolean("is_enabled").default(false).notNull(),
   lastUsedAt: timestamp("last_used_at"),
+  
+  // ENCRYPTED FIELD: Stores sensitive 2FA secrets and backup codes
+  // {secret: string, backupCodes: string[], recoveryEmail?: string}
+  encryptedData: text("encrypted_data"),
+  
   createdAt: timestamp("created_at").defaultNow().notNull(),
 }, (table) => ({
   userIdx: index("user_two_factor_user_idx").on(table.userId),
@@ -9652,6 +9723,135 @@ export const insertUserPaymentSchema = createInsertSchema(userPayments)
 export const selectUserPaymentSchema = createSelectSchema(userPayments);
 export type InsertUserPayment = z.infer<typeof insertUserPaymentSchema>;
 export type SelectUserPayment = typeof userPayments.$inferSelect;
+
+// ============================================================================
+// PLATFORM ANALYTICS
+// ============================================================================
+
+export const platformMetrics = pgTable("platform_metrics", {
+  id: serial("id").primaryKey(),
+  metricName: varchar("metric_name", { length: 100 }).notNull(),
+  metricValue: integer("metric_value").notNull(),
+  metricDate: timestamp("metric_date").notNull().defaultNow(),
+  metadata: jsonb("metadata"),
+}, (table) => ({
+  metricNameIdx: index("platform_metrics_metric_name_idx").on(table.metricName),
+  metricDateIdx: index("platform_metrics_metric_date_idx").on(table.metricDate),
+}));
+
+export const insertPlatformMetricSchema = createInsertSchema(platformMetrics)
+  .omit({ id: true });
+export const selectPlatformMetricSchema = createSelectSchema(platformMetrics);
+export type InsertPlatformMetric = z.infer<typeof insertPlatformMetricSchema>;
+export type SelectPlatformMetric = typeof platformMetrics.$inferSelect;
+
+// Daily stats aggregation table for fast analytics queries
+export const dailyStats = pgTable("daily_stats_view", {
+  id: serial("id").primaryKey(),
+  date: timestamp("date").notNull().unique(),
+  totalUsers: integer("total_users").default(0),
+  newUsers: integer("new_users").default(0),
+  activeUsers: integer("active_users").default(0),
+  totalPosts: integer("total_posts").default(0),
+  totalEvents: integer("total_events").default(0),
+  revenue: integer("revenue").default(0), // in cents
+  subscriptions: integer("subscriptions").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  dateIdx: index("daily_stats_date_idx").on(table.date),
+}));
+
+export const insertDailyStatSchema = createInsertSchema(dailyStats)
+  .omit({ id: true, createdAt: true });
+export const selectDailyStatSchema = createSelectSchema(dailyStats);
+export type InsertDailyStat = z.infer<typeof insertDailyStatSchema>;
+export type SelectDailyStat = typeof dailyStats.$inferSelect;
+
+// ============================================================================
+// EMAIL NOTIFICATION SYSTEM
+// ============================================================================
+
+export const emailQueue = pgTable("email_queue", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  toEmail: varchar("to_email", { length: 255 }).notNull(),
+  
+  templateName: varchar("template_name", { length: 100 }).notNull(),
+  subject: varchar("subject", { length: 255 }).notNull(),
+  templateData: jsonb("template_data"),
+  
+  status: varchar("status", { length: 20 }).default('pending'),
+  attempts: integer("attempts").default(0),
+  maxAttempts: integer("max_attempts").default(3),
+  
+  sentAt: timestamp("sent_at"),
+  failedAt: timestamp("failed_at"),
+  errorMessage: text("error_message"),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdIdx: index("email_queue_user_id_idx").on(table.userId),
+  statusIdx: index("email_queue_status_idx").on(table.status),
+  createdAtIdx: index("email_queue_created_at_idx").on(table.createdAt),
+}));
+
+export const insertEmailQueueSchema = createInsertSchema(emailQueue)
+  .omit({ id: true, createdAt: true });
+export const selectEmailQueueSchema = createSelectSchema(emailQueue);
+export type InsertEmailQueue = z.infer<typeof insertEmailQueueSchema>;
+export type SelectEmailQueue = typeof emailQueue.$inferSelect;
+
+export const emailPreferences = pgTable("email_preferences", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull().unique(),
+  
+  // Notification types
+  eventReminders: boolean("event_reminders").default(true),
+  newMessages: boolean("new_messages").default(true),
+  friendRequests: boolean("friend_requests").default(true),
+  postReactions: boolean("post_reactions").default(false),
+  housingBookings: boolean("housing_bookings").default(true),
+  subscriptionUpdates: boolean("subscription_updates").default(true),
+  weeklyDigest: boolean("weekly_digest").default(true),
+  
+  // Global settings
+  emailsEnabled: boolean("emails_enabled").default(true),
+  unsubscribeToken: varchar("unsubscribe_token", { length: 255 }),
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdIdx: index("email_preferences_user_id_idx").on(table.userId),
+  unsubscribeTokenIdx: index("email_preferences_unsubscribe_token_idx").on(table.unsubscribeToken),
+}));
+
+export const insertEmailPreferencesSchema = createInsertSchema(emailPreferences)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export const selectEmailPreferencesSchema = createSelectSchema(emailPreferences);
+export type InsertEmailPreferences = z.infer<typeof insertEmailPreferencesSchema>;
+export type SelectEmailPreferences = typeof emailPreferences.$inferSelect;
+
+export const emailLogs = pgTable("email_logs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  emailType: varchar("email_type", { length: 100 }).notNull(),
+  
+  sentAt: timestamp("sent_at").defaultNow(),
+  opened: boolean("opened").default(false),
+  openedAt: timestamp("opened_at"),
+  clicked: boolean("clicked").default(false),
+  clickedAt: timestamp("clicked_at"),
+}, (table) => ({
+  userIdIdx: index("email_logs_user_id_idx").on(table.userId),
+  emailTypeIdx: index("email_logs_email_type_idx").on(table.emailType),
+  sentAtIdx: index("email_logs_sent_at_idx").on(table.sentAt),
+}));
+
+export const insertEmailLogSchema = createInsertSchema(emailLogs)
+  .omit({ id: true, sentAt: true });
+export const selectEmailLogSchema = createSelectSchema(emailLogs);
+export type InsertEmailLog = z.infer<typeof insertEmailLogSchema>;
+export type SelectEmailLog = typeof emailLogs.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)

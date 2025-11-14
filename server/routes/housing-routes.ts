@@ -9,6 +9,9 @@ import {
 } from "@shared/schema";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { eq, and, desc, gte, lte, sql, or } from "drizzle-orm";
+import multer from "multer";
+import { uploadImage, deleteImage, validateCloudinaryConfig } from "../utils/cloudinary";
+import crypto from "crypto";
 
 const router = Router();
 
@@ -552,6 +555,320 @@ router.delete("/favorites/:listingId", authenticateToken, async (req: AuthReques
   } catch (error) {
     console.error("[Housing] Error removing favorite:", error);
     res.status(500).json({ message: "Failed to remove favorite" });
+  }
+});
+
+// ============================================================================
+// HOUSING PHOTO MANAGEMENT ROUTES
+// ============================================================================
+
+// Configure multer for memory storage
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB max file size
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept only images
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'));
+    }
+  }
+});
+
+// POST /api/housing/photos - Upload photo to Cloudinary (auth required)
+router.post("/photos", authenticateToken, upload.single('file'), async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const file = req.file;
+    const listingId = req.body.listingId;
+
+    if (!file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    if (!listingId) {
+      return res.status(400).json({ message: "Listing ID is required" });
+    }
+
+    // Verify Cloudinary configuration
+    if (!validateCloudinaryConfig()) {
+      return res.status(500).json({ 
+        message: "Cloudinary not configured. Please contact support." 
+      });
+    }
+
+    // Check if listing exists and user owns it
+    const listing = await db
+      .select()
+      .from(housingListings)
+      .where(eq(housingListings.id, parseInt(listingId)))
+      .limit(1);
+
+    if (listing.length === 0) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+
+    if (listing[0].hostId !== userId) {
+      return res.status(403).json({ message: "Not authorized to upload photos for this listing" });
+    }
+
+    // Check photo count limit (max 20)
+    const currentPhotos = listing[0].photos || [];
+    if (currentPhotos.length >= 20) {
+      return res.status(400).json({ message: "Maximum 20 photos allowed per listing" });
+    }
+
+    // Upload to Cloudinary
+    const uploadResult = await uploadImage(
+      file.buffer, 
+      `housing/${listingId}`,
+      undefined
+    );
+
+    // Create photo object
+    const photoId = crypto.randomUUID();
+    const newPhoto = {
+      id: photoId,
+      url: uploadResult.url,
+      publicId: uploadResult.publicId,
+      order: currentPhotos.length,
+      isCover: currentPhotos.length === 0, // First photo is cover by default
+    };
+
+    // Update listing with new photo
+    const updatedPhotos = [...currentPhotos, newPhoto];
+    await db
+      .update(housingListings)
+      .set({ 
+        photos: updatedPhotos,
+        coverPhotoUrl: currentPhotos.length === 0 ? uploadResult.url : listing[0].coverPhotoUrl,
+        updatedAt: new Date()
+      })
+      .where(eq(housingListings.id, parseInt(listingId)));
+
+    res.status(201).json(newPhoto);
+  } catch (error) {
+    console.error("[Housing] Error uploading photo:", error);
+    res.status(500).json({ 
+      message: error instanceof Error ? error.message : "Failed to upload photo" 
+    });
+  }
+});
+
+// DELETE /api/housing/:listingId/photos/:photoId - Delete photo (auth required)
+router.delete("/:listingId/photos/:photoId", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const { listingId, photoId } = req.params;
+
+    // Get listing
+    const listing = await db
+      .select()
+      .from(housingListings)
+      .where(eq(housingListings.id, parseInt(listingId)))
+      .limit(1);
+
+    if (listing.length === 0) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+
+    if (listing[0].hostId !== userId) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    const currentPhotos = listing[0].photos || [];
+    const photoToDelete = currentPhotos.find(p => p.id === photoId);
+
+    if (!photoToDelete) {
+      return res.status(404).json({ message: "Photo not found" });
+    }
+
+    // Verify Cloudinary configuration
+    if (!validateCloudinaryConfig()) {
+      return res.status(500).json({ 
+        message: "Cloudinary not configured. Please contact support." 
+      });
+    }
+
+    // Delete from Cloudinary
+    try {
+      await deleteImage(photoToDelete.publicId);
+    } catch (cloudinaryError) {
+      console.error("[Housing] Cloudinary deletion error:", cloudinaryError);
+      // Continue even if Cloudinary deletion fails
+    }
+
+    // Remove from database
+    const updatedPhotos = currentPhotos
+      .filter(p => p.id !== photoId)
+      .map((p, index) => ({ ...p, order: index }));
+
+    // If deleted photo was cover, set first photo as cover
+    let newCoverPhotoUrl = listing[0].coverPhotoUrl;
+    if (photoToDelete.isCover && updatedPhotos.length > 0) {
+      updatedPhotos[0].isCover = true;
+      newCoverPhotoUrl = updatedPhotos[0].url;
+    } else if (updatedPhotos.length === 0) {
+      newCoverPhotoUrl = null;
+    }
+
+    await db
+      .update(housingListings)
+      .set({ 
+        photos: updatedPhotos,
+        coverPhotoUrl: newCoverPhotoUrl,
+        updatedAt: new Date()
+      })
+      .where(eq(housingListings.id, parseInt(listingId)));
+
+    res.json({ message: "Photo deleted successfully" });
+  } catch (error) {
+    console.error("[Housing] Error deleting photo:", error);
+    res.status(500).json({ message: "Failed to delete photo" });
+  }
+});
+
+// PUT /api/housing/:listingId/photos/reorder - Reorder photos (auth required)
+router.put("/:listingId/photos/reorder", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const { listingId } = req.params;
+    const { photos } = req.body;
+
+    if (!photos || !Array.isArray(photos)) {
+      return res.status(400).json({ message: "Photos array is required" });
+    }
+
+    // Get listing
+    const listing = await db
+      .select()
+      .from(housingListings)
+      .where(eq(housingListings.id, parseInt(listingId)))
+      .limit(1);
+
+    if (listing.length === 0) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+
+    if (listing[0].hostId !== userId) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    // Update order
+    await db
+      .update(housingListings)
+      .set({ 
+        photos: photos,
+        updatedAt: new Date()
+      })
+      .where(eq(housingListings.id, parseInt(listingId)));
+
+    res.json({ message: "Photos reordered successfully", photos });
+  } catch (error) {
+    console.error("[Housing] Error reordering photos:", error);
+    res.status(500).json({ message: "Failed to reorder photos" });
+  }
+});
+
+// PUT /api/housing/:listingId/photos/:photoId/cover - Set cover photo (auth required)
+router.put("/:listingId/photos/:photoId/cover", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const { listingId, photoId } = req.params;
+
+    // Get listing
+    const listing = await db
+      .select()
+      .from(housingListings)
+      .where(eq(housingListings.id, parseInt(listingId)))
+      .limit(1);
+
+    if (listing.length === 0) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+
+    if (listing[0].hostId !== userId) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    const currentPhotos = listing[0].photos || [];
+    const photoIndex = currentPhotos.findIndex(p => p.id === photoId);
+
+    if (photoIndex === -1) {
+      return res.status(404).json({ message: "Photo not found" });
+    }
+
+    // Update cover photo
+    const updatedPhotos = currentPhotos.map(p => ({
+      ...p,
+      isCover: p.id === photoId
+    }));
+
+    await db
+      .update(housingListings)
+      .set({ 
+        photos: updatedPhotos,
+        coverPhotoUrl: currentPhotos[photoIndex].url,
+        updatedAt: new Date()
+      })
+      .where(eq(housingListings.id, parseInt(listingId)));
+
+    res.json({ message: "Cover photo updated successfully" });
+  } catch (error) {
+    console.error("[Housing] Error setting cover photo:", error);
+    res.status(500).json({ message: "Failed to set cover photo" });
+  }
+});
+
+// PUT /api/housing/:listingId/photos/:photoId/caption - Update photo caption (auth required)
+router.put("/:listingId/photos/:photoId/caption", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const { listingId, photoId } = req.params;
+    const { caption } = req.body;
+
+    // Get listing
+    const listing = await db
+      .select()
+      .from(housingListings)
+      .where(eq(housingListings.id, parseInt(listingId)))
+      .limit(1);
+
+    if (listing.length === 0) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+
+    if (listing[0].hostId !== userId) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    const currentPhotos = listing[0].photos || [];
+    const photoIndex = currentPhotos.findIndex(p => p.id === photoId);
+
+    if (photoIndex === -1) {
+      return res.status(404).json({ message: "Photo not found" });
+    }
+
+    // Update caption
+    const updatedPhotos = currentPhotos.map(p =>
+      p.id === photoId ? { ...p, caption } : p
+    );
+
+    await db
+      .update(housingListings)
+      .set({ 
+        photos: updatedPhotos,
+        updatedAt: new Date()
+      })
+      .where(eq(housingListings.id, parseInt(listingId)));
+
+    res.json({ message: "Caption updated successfully" });
+  } catch (error) {
+    console.error("[Housing] Error updating caption:", error);
+    res.status(500).json({ message: "Failed to update caption" });
   }
 });
 

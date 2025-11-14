@@ -216,6 +216,9 @@ if (!process.env.DATABASE_URL) {
 const sqlClient = neon(process.env.DATABASE_URL);
 const db = drizzle(sqlClient);
 
+// Export db for use in other modules
+export { db };
+
 export interface IStorage {
   getUserById(id: number): Promise<SelectUser | undefined>;
   getUserByEmail(email: string): Promise<SelectUser | undefined>;

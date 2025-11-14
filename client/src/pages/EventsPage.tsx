@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, Database, Download } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, Database, Download, ChevronLeft, SlidersHorizontal } from "lucide-react";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -27,6 +27,8 @@ import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { BannerAd } from "@/components/ads/BannerAd";
+import { EventFilters, type EventFilterValues } from "@/components/events/EventFilters";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 const localizer = momentLocalizer(moment);
 
@@ -179,16 +181,46 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
 export default function EventsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("All");
-  const [dateFilter, setDateFilter] = useState<"upcoming" | "past">("upcoming");
   const [viewMode, setViewMode] = useState<"list" | "calendar" | "map">("list");
+  const [filters, setFilters] = useState<EventFilterValues>({});
+  const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState<"relevance" | "date" | "price">("relevance");
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const { data: events, isLoading } = useEvents({
-    search: searchQuery,
-    category: categoryFilter,
-    dateFilter,
+  // Build query params for search
+  const buildSearchParams = () => {
+    const params = new URLSearchParams();
+    if (filters.q) params.append("q", filters.q);
+    if (filters.city) params.append("city", filters.city);
+    if (filters.dateFrom) params.append("dateFrom", filters.dateFrom.toISOString());
+    if (filters.dateTo) params.append("dateTo", filters.dateTo.toISOString());
+    if (filters.type && filters.type !== "all") params.append("type", filters.type);
+    if (filters.priceMin !== undefined) params.append("priceMin", String(filters.priceMin));
+    if (filters.priceMax !== undefined) params.append("priceMax", String(filters.priceMax));
+    if (filters.danceStyle && filters.danceStyle !== "all") params.append("danceStyle", filters.danceStyle);
+    if (filters.skillLevel && filters.skillLevel !== "all") params.append("skillLevel", filters.skillLevel);
+    if (filters.online !== null && filters.online !== undefined) params.append("online", String(filters.online));
+    if (filters.verified) params.append("verified", "true");
+    if (filters.tags && filters.tags.length > 0) params.append("tags", filters.tags.join(","));
+    params.append("sortBy", sortBy);
+    params.append("page", String(page));
+    params.append("limit", "20");
+    return params.toString();
+  };
+
+  // Fetch events with advanced search
+  const { data: searchResults, isLoading } = useQuery({
+    queryKey: ["/api/events/search", filters, page, sortBy],
+    queryFn: async () => {
+      const params = buildSearchParams();
+      const response = await fetch(`/api/events/search?${params}`);
+      if (!response.ok) throw new Error("Failed to fetch events");
+      return response.json();
+    },
   });
+
+  const events = searchResults?.events || [];
+  const pagination = searchResults?.pagination;
 
   const isSuperAdmin = user?.role === 'super_admin';
 
@@ -343,45 +375,79 @@ export default function EventsPage() {
             {/* Ad Banner */}
             <BannerAd placement="events" />
 
-            {/* Search & Filters */}
-            <div className="space-y-4">
-              <div className="flex flex-col md:flex-row gap-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search events..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                    data-testid="input-search-events"
-                  />
-                </div>
-                
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="w-full md:w-48" data-testid="select-category-filter">
-                    <SelectValue placeholder="Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CATEGORIES.map((category) => (
-                      <SelectItem key={category} value={category} data-testid={`option-category-${category.toLowerCase()}`}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={dateFilter} onValueChange={(val) => setDateFilter(val as "upcoming" | "past")}>
-                  <SelectTrigger className="w-full md:w-48" data-testid="select-date-filter">
-                    <SelectValue placeholder="Date" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="upcoming" data-testid="option-date-upcoming">Upcoming</SelectItem>
-                    <SelectItem value="past" data-testid="option-date-past">Past</SelectItem>
-                  </SelectContent>
-                </Select>
+            {/* Search Bar & Controls */}
+            <div className="flex flex-col lg:flex-row gap-4">
+              {/* Quick Search */}
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search events by title, description, or location..."
+                  value={filters.q || ""}
+                  onChange={(e) => {
+                    setFilters({ ...filters, q: e.target.value });
+                    setPage(1);
+                  }}
+                  className="pl-10"
+                  data-testid="input-search-events"
+                />
               </div>
 
-              {/* View Mode Toggle */}
+              {/* Advanced Filters Toggle */}
+              <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="outline" className="gap-2" data-testid="button-open-filters">
+                    <SlidersHorizontal className="h-4 w-4" />
+                    Advanced Filters
+                    {Object.keys(filters).filter(k => k !== "q" && filters[k as keyof EventFilterValues] !== undefined && filters[k as keyof EventFilterValues] !== null).length > 0 && (
+                      <Badge variant="secondary" className="ml-2">
+                        {Object.keys(filters).filter(k => k !== "q" && filters[k as keyof EventFilterValues] !== undefined && filters[k as keyof EventFilterValues] !== null).length}
+                      </Badge>
+                    )}
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-full sm:w-96 overflow-y-auto">
+                  <SheetHeader>
+                    <SheetTitle>Filter Events</SheetTitle>
+                    <SheetDescription>
+                      Refine your search with 12 powerful filters
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div className="mt-6">
+                    <EventFilters 
+                      onFilterChange={(newFilters) => {
+                        setFilters(newFilters);
+                        setPage(1);
+                      }} 
+                      initialFilters={filters}
+                    />
+                  </div>
+                </SheetContent>
+              </Sheet>
+
+              {/* Sort Controls */}
+              <Select value={sortBy} onValueChange={(val: "relevance" | "date" | "price") => {
+                setSortBy(val);
+                setPage(1);
+              }}>
+                <SelectTrigger className="w-full lg:w-48" data-testid="select-sort">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="relevance" data-testid="option-sort-relevance">
+                    Relevance
+                  </SelectItem>
+                  <SelectItem value="date" data-testid="option-sort-date">
+                    Date
+                  </SelectItem>
+                  <SelectItem value="price" data-testid="option-sort-price">
+                    Price
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* View Mode Toggle & Results Count */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <Tabs value={viewMode} onValueChange={(val) => setViewMode(val as any)}>
                 <TabsList>
                   <TabsTrigger value="list" data-testid="tab-list-view">
@@ -398,6 +464,12 @@ export default function EventsPage() {
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
+
+              {pagination && (
+                <p className="text-sm text-muted-foreground" data-testid="text-results-count">
+                  Showing {((pagination.page - 1) * pagination.limit) + 1}-{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} events
+                </p>
+              )}
             </div>
 
             {/* Content */}
@@ -421,15 +493,76 @@ export default function EventsPage() {
                 {viewMode === "list" && (
                   <>
                     {events && events.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {events.map((event, index) => (
-                          <EventCard key={event.id} event={event} index={index} />
-                        ))}
-                      </div>
+                      <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                          {events.map((event, index) => (
+                            <EventCard key={event.id} event={event} index={index} />
+                          ))}
+                        </div>
+
+                        {/* Pagination Controls */}
+                        {pagination && pagination.totalPages > 1 && (
+                          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t">
+                            <div className="text-sm text-muted-foreground">
+                              Page {pagination.page} of {pagination.totalPages}
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setPage(page - 1)}
+                                disabled={page === 1}
+                                data-testid="button-prev-page"
+                              >
+                                <ChevronLeft className="h-4 w-4 mr-1" />
+                                Previous
+                              </Button>
+                              
+                              <div className="flex gap-1">
+                                {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                                  let pageNum;
+                                  if (pagination.totalPages <= 5) {
+                                    pageNum = i + 1;
+                                  } else if (page <= 3) {
+                                    pageNum = i + 1;
+                                  } else if (page >= pagination.totalPages - 2) {
+                                    pageNum = pagination.totalPages - 4 + i;
+                                  } else {
+                                    pageNum = page - 2 + i;
+                                  }
+                                  
+                                  return (
+                                    <Button
+                                      key={pageNum}
+                                      variant={page === pageNum ? "default" : "outline"}
+                                      size="sm"
+                                      onClick={() => setPage(pageNum)}
+                                      data-testid={`button-page-${pageNum}`}
+                                    >
+                                      {pageNum}
+                                    </Button>
+                                  );
+                                })}
+                              </div>
+
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setPage(page + 1)}
+                                disabled={page === pagination.totalPages}
+                                data-testid="button-next-page"
+                              >
+                                Next
+                                <ChevronRight className="h-4 w-4 ml-1" />
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <Card>
                         <CardContent className="py-12 text-center text-muted-foreground">
-                          No events found. Create one to get started!
+                          No events found. Try adjusting your filters or search query.
                         </CardContent>
                       </Card>
                     )}

@@ -10,6 +10,10 @@ import {
   nutritionLogs,
   fitnessActivities,
   userPayments,
+  userSettings,
+  twoFactorSecrets,
+  housingListings,
+  subscriptions,
   type InsertFinancialGoal,
   type SelectFinancialGoal,
   type InsertBudgetEntry,
@@ -27,7 +31,8 @@ import {
   type InsertUserPayment,
   type SelectUserPayment,
 } from "@shared/schema";
-import { encryptObject, decryptObject } from "../utils/encryption";
+import { encryptObject, decryptObject, encryptData, decryptData } from "../utils/encryption";
+import { getDbWithUser } from "./getRLSContext";
 
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL must be set");
@@ -51,41 +56,52 @@ export interface FinancialGoalData {
 export async function createEncryptedFinancialGoal(
   goalData: Omit<InsertFinancialGoal, 'encryptedData'> & { sensitiveData: FinancialGoalData }
 ) {
-  const { sensitiveData, ...publicData } = goalData;
+  const { sensitiveData, userId, ...publicData } = goalData;
   
-  const encryptedData = encryptObject(sensitiveData);
+  // Use new encryptData for key rotation support
+  const encryptedData = encryptData(sensitiveData);
   
-  const result = await db.insert(financialGoals).values({
-    ...publicData,
-    encryptedData,
-  }).returning();
+  const userDb = getDbWithUser(userId);
+  const result = await userDb.execute(async (tx) => {
+    return tx.insert(financialGoals).values({
+      userId,
+      ...publicData,
+      encryptedData,
+    }).returning();
+  });
   
   return result[0];
 }
 
 export async function getDecryptedFinancialGoals(userId: number) {
-  const goals = await db.select()
-    .from(financialGoals)
-    .where(eq(financialGoals.userId, userId))
-    .orderBy(desc(financialGoals.createdAt));
+  const userDb = getDbWithUser(userId);
+  const goals = await userDb.execute(async (tx) => {
+    return tx.select()
+      .from(financialGoals)
+      .where(eq(financialGoals.userId, userId))
+      .orderBy(desc(financialGoals.createdAt));
+  });
   
   return goals.map(goal => ({
     ...goal,
-    sensitiveData: decryptObject<FinancialGoalData>(goal.encryptedData),
+    sensitiveData: decryptData(goal.encryptedData),
   }));
 }
 
 export async function getDecryptedFinancialGoalById(id: number, userId: number) {
-  const goals = await db.select()
-    .from(financialGoals)
-    .where(and(eq(financialGoals.id, id), eq(financialGoals.userId, userId)));
+  const userDb = getDbWithUser(userId);
+  const goals = await userDb.execute(async (tx) => {
+    return tx.select()
+      .from(financialGoals)
+      .where(and(eq(financialGoals.id, id), eq(financialGoals.userId, userId)));
+  });
   
   if (goals.length === 0) return null;
   
   const goal = goals[0];
   return {
     ...goal,
-    sensitiveData: decryptObject<FinancialGoalData>(goal.encryptedData),
+    sensitiveData: decryptData(goal.encryptedData),
   };
 }
 
@@ -98,22 +114,24 @@ export async function updateEncryptedFinancialGoal(
   
   let encryptedData: string | undefined;
   if (sensitiveData) {
-    // Fetch current goal to merge sensitive data
     const current = await getDecryptedFinancialGoalById(id, userId);
     if (!current) return null;
     
     const mergedSensitiveData = { ...current.sensitiveData, ...sensitiveData };
-    encryptedData = encryptObject(mergedSensitiveData);
+    encryptedData = encryptData(mergedSensitiveData);
   }
   
   const updateData = encryptedData 
     ? { ...publicUpdates, encryptedData }
     : publicUpdates;
   
-  const result = await db.update(financialGoals)
-    .set({ ...updateData, updatedAt: new Date() })
-    .where(and(eq(financialGoals.id, id), eq(financialGoals.userId, userId)))
-    .returning();
+  const userDb = getDbWithUser(userId);
+  const result = await userDb.execute(async (tx) => {
+    return tx.update(financialGoals)
+      .set({ ...updateData, updatedAt: new Date() })
+      .where(and(eq(financialGoals.id, id), eq(financialGoals.userId, userId)))
+      .returning();
+  });
   
   return result[0] || null;
 }
@@ -132,13 +150,17 @@ export interface BudgetEntryData {
 export async function createEncryptedBudgetEntry(
   entryData: Omit<InsertBudgetEntry, 'encryptedData'> & { sensitiveData: BudgetEntryData }
 ) {
-  const { sensitiveData, ...publicData } = entryData;
-  const encryptedData = encryptObject(sensitiveData);
+  const { sensitiveData, userId, ...publicData } = entryData;
+  const encryptedData = encryptData(sensitiveData);
   
-  const result = await db.insert(budgetEntries).values({
-    ...publicData,
-    encryptedData,
-  }).returning();
+  const userDb = getDbWithUser(userId);
+  const result = await userDb.execute(async (tx) => {
+    return tx.insert(budgetEntries).values({
+      userId,
+      ...publicData,
+      encryptedData,
+    }).returning();
+  });
   
   return result[0];
 }
@@ -149,15 +171,17 @@ export async function getDecryptedBudgetEntries(userId: number, filters?: {
   categoryId?: number;
   entryType?: string;
 }) {
-  let query = db.select()
-    .from(budgetEntries)
-    .where(eq(budgetEntries.userId, userId));
-  
-  const entries = await query.orderBy(desc(budgetEntries.date));
+  const userDb = getDbWithUser(userId);
+  const entries = await userDb.execute(async (tx) => {
+    return tx.select()
+      .from(budgetEntries)
+      .where(eq(budgetEntries.userId, userId))
+      .orderBy(desc(budgetEntries.date));
+  });
   
   return entries.map(entry => ({
     ...entry,
-    sensitiveData: decryptObject<BudgetEntryData>(entry.encryptedData),
+    sensitiveData: decryptData(entry.encryptedData),
   }));
 }
 
@@ -174,27 +198,34 @@ export interface BudgetCategoryData {
 export async function createEncryptedBudgetCategory(
   categoryData: Omit<InsertBudgetCategory, 'encryptedData'> & { sensitiveData?: BudgetCategoryData }
 ) {
-  const { sensitiveData, ...publicData } = categoryData;
-  const encryptedData = sensitiveData ? encryptObject(sensitiveData) : null;
+  const { sensitiveData, userId, ...publicData } = categoryData;
+  const encryptedData = sensitiveData ? encryptData(sensitiveData) : null;
   
-  const result = await db.insert(budgetCategories).values({
-    ...publicData,
-    encryptedData,
-  }).returning();
+  const userDb = getDbWithUser(userId);
+  const result = await userDb.execute(async (tx) => {
+    return tx.insert(budgetCategories).values({
+      userId,
+      ...publicData,
+      encryptedData,
+    }).returning();
+  });
   
   return result[0];
 }
 
 export async function getDecryptedBudgetCategories(userId: number) {
-  const categories = await db.select()
-    .from(budgetCategories)
-    .where(eq(budgetCategories.userId, userId))
-    .orderBy(desc(budgetCategories.createdAt));
+  const userDb = getDbWithUser(userId);
+  const categories = await userDb.execute(async (tx) => {
+    return tx.select()
+      .from(budgetCategories)
+      .where(eq(budgetCategories.userId, userId))
+      .orderBy(desc(budgetCategories.createdAt));
+  });
   
   return categories.map(category => ({
     ...category,
     sensitiveData: category.encryptedData 
-      ? decryptObject<BudgetCategoryData>(category.encryptedData)
+      ? decryptData(category.encryptedData)
       : null,
   }));
 }
@@ -215,26 +246,33 @@ export interface HealthGoalData {
 export async function createEncryptedHealthGoal(
   goalData: Omit<InsertHealthGoal, 'encryptedData'> & { sensitiveData: HealthGoalData }
 ) {
-  const { sensitiveData, ...publicData } = goalData;
-  const encryptedData = encryptObject(sensitiveData);
+  const { sensitiveData, userId, ...publicData } = goalData;
+  const encryptedData = encryptData(sensitiveData);
   
-  const result = await db.insert(healthGoals).values({
-    ...publicData,
-    encryptedData,
-  }).returning();
+  const userDb = getDbWithUser(userId);
+  const result = await userDb.execute(async (tx) => {
+    return tx.insert(healthGoals).values({
+      userId,
+      ...publicData,
+      encryptedData,
+    }).returning();
+  });
   
   return result[0];
 }
 
 export async function getDecryptedHealthGoals(userId: number) {
-  const goals = await db.select()
-    .from(healthGoals)
-    .where(eq(healthGoals.userId, userId))
-    .orderBy(desc(healthGoals.createdAt));
+  const userDb = getDbWithUser(userId);
+  const goals = await userDb.execute(async (tx) => {
+    return tx.select()
+      .from(healthGoals)
+      .where(eq(healthGoals.userId, userId))
+      .orderBy(desc(healthGoals.createdAt));
+  });
   
   return goals.map(goal => ({
     ...goal,
-    sensitiveData: decryptObject<HealthGoalData>(goal.encryptedData),
+    sensitiveData: decryptData(goal.encryptedData),
   }));
 }
 
@@ -252,13 +290,17 @@ export interface HealthMetricData {
 export async function createEncryptedHealthMetric(
   metricData: Omit<InsertHealthMetric, 'encryptedData'> & { sensitiveData: HealthMetricData }
 ) {
-  const { sensitiveData, ...publicData } = metricData;
-  const encryptedData = encryptObject(sensitiveData);
+  const { sensitiveData, userId, ...publicData } = metricData;
+  const encryptedData = encryptData(sensitiveData);
   
-  const result = await db.insert(healthMetrics).values({
-    ...publicData,
-    encryptedData,
-  }).returning();
+  const userDb = getDbWithUser(userId);
+  const result = await userDb.execute(async (tx) => {
+    return tx.insert(healthMetrics).values({
+      userId,
+      ...publicData,
+      encryptedData,
+    }).returning();
+  });
   
   return result[0];
 }
@@ -287,7 +329,7 @@ export async function getDecryptedHealthMetrics(userId: number, filters?: {
   
   return metrics.map(metric => ({
     ...metric,
-    sensitiveData: decryptObject<HealthMetricData>(metric.encryptedData),
+    sensitiveData: decryptData(metric.encryptedData),
   }));
 }
 
@@ -309,7 +351,7 @@ export async function createEncryptedNutritionLog(
   logData: Omit<InsertNutritionLog, 'encryptedData'> & { sensitiveData: NutritionLogData }
 ) {
   const { sensitiveData, ...publicData } = logData;
-  const encryptedData = encryptObject(sensitiveData);
+  const encryptedData = encryptData(sensitiveData);
   
   const result = await db.insert(nutritionLogs).values({
     ...publicData,
@@ -343,7 +385,7 @@ export async function getDecryptedNutritionLogs(userId: number, filters?: {
   
   return logs.map(log => ({
     ...log,
-    sensitiveData: decryptObject<NutritionLogData>(log.encryptedData),
+    sensitiveData: decryptData(log.encryptedData),
   }));
 }
 
@@ -364,7 +406,7 @@ export async function createEncryptedFitnessActivity(
   activityData: Omit<InsertFitnessActivity, 'encryptedData'> & { sensitiveData: FitnessActivityData }
 ) {
   const { sensitiveData, ...publicData } = activityData;
-  const encryptedData = encryptObject(sensitiveData);
+  const encryptedData = encryptData(sensitiveData);
   
   const result = await db.insert(fitnessActivities).values({
     ...publicData,
@@ -398,7 +440,7 @@ export async function getDecryptedFitnessActivities(userId: number, filters?: {
   
   return activities.map(activity => ({
     ...activity,
-    sensitiveData: decryptObject<FitnessActivityData>(activity.encryptedData),
+    sensitiveData: decryptData(activity.encryptedData),
   }));
 }
 
@@ -418,7 +460,7 @@ export async function createEncryptedUserPayment(
   paymentData: Omit<InsertUserPayment, 'encryptedData'> & { sensitiveData: UserPaymentData }
 ) {
   const { sensitiveData, ...publicData } = paymentData;
-  const encryptedData = encryptObject(sensitiveData);
+  const encryptedData = encryptData(sensitiveData);
   
   const result = await db.insert(userPayments).values({
     ...publicData,
@@ -448,6 +490,207 @@ export async function getDecryptedUserPayments(userId: number, filters?: {
   
   return payments.map(payment => ({
     ...payment,
-    sensitiveData: decryptObject<UserPaymentData>(payment.encryptedData),
+    sensitiveData: decryptData(payment.encryptedData),
+  }));
+}
+
+// ============================================================================
+// USER SETTINGS
+// ============================================================================
+
+export interface UserSettingsData {
+  privateSettings?: Record<string, any>;
+  securityPreferences?: Record<string, any>;
+  sensitiveData?: Record<string, any>;
+}
+
+export async function getDecryptedUserSettings(userId: number) {
+  const userDb = getDbWithUser(userId);
+  const settings = await userDb.execute(async (tx) => {
+    return tx.select()
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId));
+  });
+  
+  if (settings.length === 0) return null;
+  
+  const setting = settings[0];
+  return {
+    ...setting,
+    sensitiveData: setting.encryptedData ? decryptData(setting.encryptedData) : null,
+  };
+}
+
+export async function updateEncryptedUserSettings(
+  userId: number,
+  updates: Partial<{ sensitiveData: UserSettingsData }> & Record<string, any>
+) {
+  const { sensitiveData, ...publicUpdates } = updates;
+  
+  let encryptedData: string | undefined;
+  if (sensitiveData) {
+    const current = await getDecryptedUserSettings(userId);
+    const mergedSensitiveData = current?.sensitiveData 
+      ? { ...current.sensitiveData, ...sensitiveData }
+      : sensitiveData;
+    encryptedData = encryptData(mergedSensitiveData);
+  }
+  
+  const updateData = encryptedData 
+    ? { ...publicUpdates, encryptedData }
+    : publicUpdates;
+  
+  const userDb = getDbWithUser(userId);
+  const result = await userDb.execute(async (tx) => {
+    return tx.update(userSettings)
+      .set({ ...updateData, updatedAt: new Date() })
+      .where(eq(userSettings.userId, userId))
+      .returning();
+  });
+  
+  return result[0] || null;
+}
+
+// ============================================================================
+// TWO-FACTOR AUTHENTICATION
+// ============================================================================
+
+export interface TwoFactorData {
+  secret: string;
+  backupCodes: string[];
+  phoneNumber?: string;
+  recoveryEmail?: string;
+}
+
+export async function createEncryptedTwoFactor(
+  userId: number,
+  sensitiveData: TwoFactorData
+) {
+  const encryptedData = encryptData(sensitiveData);
+  
+  const userDb = getDbWithUser(userId);
+  const result = await userDb.execute(async (tx) => {
+    return tx.insert(twoFactorSecrets).values({
+      userId,
+      secret: sensitiveData.secret,
+      backupCodes: sensitiveData.backupCodes,
+      encryptedData,
+    }).returning();
+  });
+  
+  return result[0];
+}
+
+export async function getDecryptedTwoFactor(userId: number) {
+  const userDb = getDbWithUser(userId);
+  const secrets = await userDb.execute(async (tx) => {
+    return tx.select()
+      .from(twoFactorSecrets)
+      .where(eq(twoFactorSecrets.userId, userId));
+  });
+  
+  if (secrets.length === 0) return null;
+  
+  const secret = secrets[0];
+  return {
+    ...secret,
+    sensitiveData: secret.encryptedData ? decryptData(secret.encryptedData) : null,
+  };
+}
+
+// ============================================================================
+// HOUSING LISTINGS
+// ============================================================================
+
+export interface HousingListingData {
+  pricingDetails?: Record<string, any>;
+  cleaningFee?: number;
+  securityDeposit?: number;
+  hostPaymentInfo?: Record<string, any>;
+  discounts?: Record<string, any>;
+}
+
+export async function updateEncryptedHousingListing(
+  listingId: number,
+  hostId: number,
+  updates: Partial<{ sensitiveData: HousingListingData }> & Record<string, any>
+) {
+  const { sensitiveData, ...publicUpdates } = updates;
+  
+  let encryptedData: string | undefined;
+  if (sensitiveData) {
+    encryptedData = encryptData(sensitiveData);
+  }
+  
+  const updateData = encryptedData 
+    ? { ...publicUpdates, encryptedData }
+    : publicUpdates;
+  
+  const result = await db.update(housingListings)
+    .set({ ...updateData, updatedAt: new Date() })
+    .where(and(eq(housingListings.id, listingId), eq(housingListings.hostId, hostId)))
+    .returning();
+  
+  return result[0] || null;
+}
+
+export async function getDecryptedHousingListing(listingId: number) {
+  const listings = await db.select()
+    .from(housingListings)
+    .where(eq(housingListings.id, listingId));
+  
+  if (listings.length === 0) return null;
+  
+  const listing = listings[0];
+  return {
+    ...listing,
+    sensitiveData: listing.encryptedData ? decryptData(listing.encryptedData) : null,
+  };
+}
+
+// ============================================================================
+// SUBSCRIPTIONS
+// ============================================================================
+
+export interface SubscriptionData {
+  paymentMethodDetails?: Record<string, any>;
+  billingAddress?: Record<string, any>;
+  taxInfo?: Record<string, any>;
+  invoiceHistory?: any[];
+}
+
+export async function updateEncryptedSubscription(
+  subscriptionId: number,
+  userId: number,
+  updates: Partial<{ sensitiveData: SubscriptionData }> & Record<string, any>
+) {
+  const { sensitiveData, ...publicUpdates } = updates;
+  
+  let encryptedData: string | undefined;
+  if (sensitiveData) {
+    encryptedData = encryptData(sensitiveData);
+  }
+  
+  const updateData = encryptedData 
+    ? { ...publicUpdates, encryptedData }
+    : publicUpdates;
+  
+  const result = await db.update(subscriptions)
+    .set({ ...updateData, updatedAt: new Date() })
+    .where(and(eq(subscriptions.id, subscriptionId), eq(subscriptions.userId, userId)))
+    .returning();
+  
+  return result[0] || null;
+}
+
+export async function getDecryptedSubscription(userId: number) {
+  const subs = await db.select()
+    .from(subscriptions)
+    .where(eq(subscriptions.userId, userId))
+    .orderBy(desc(subscriptions.createdAt));
+  
+  return subs.map(sub => ({
+    ...sub,
+    sensitiveData: sub.encryptedData ? decryptData(sub.encryptedData) : null,
   }));
 }

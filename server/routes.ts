@@ -66,6 +66,10 @@ import serviceProfileRoutes from "./routes/serviceProfileRoutes";
 import specialtyProfileRoutes from "./routes/specialtyProfileRoutes";
 import contentProfileRoutes from "./routes/contentProfileRoutes";
 import healthRoutes from "./routes/health";
+import financialGoalsRoutes from "./routes/financial-goals-routes";
+import budgetRoutes from "./routes/budget-routes";
+import healthDataRoutes from "./routes/health-routes";
+import nutritionRoutes from "./routes/nutrition-routes";
 import eventRoutes from "./routes/event-routes";
 import eventRolesRoutes from "./routes/event-roles-routes";
 import groupRoutes from "./routes/group-routes";
@@ -98,7 +102,6 @@ import messagesRoutes from "./routes/messages-routes";
 import adsRoutes from "./routes/ads-routes";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
-import { cspHeaders } from "./middleware/csp";
 import { auditLog, getClientIp } from "./middleware/auditLog";
 import { wsNotificationService } from "./services/websocket-notification-service";
 import { 
@@ -124,12 +127,9 @@ import {
   travelPlans,
   travelPlanItems,
   contactSubmissions,
-  stories,
-  storyViews,
   venueRecommendations,
   insertTravelPlanSchema,
   insertContactSubmissionSchema,
-  insertStorySchema,
   insertVenueRecommendationSchema,
   insertTeacherProfileSchema,
   insertDJProfileSchema,
@@ -309,8 +309,7 @@ async function uploadMediaToCloudinary(
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Security middleware (applied globally)
-  app.use(cspHeaders());
+  // Security middleware (CSP headers already applied in server/index.ts via Helmet)
   app.use(setCsrfToken);
   
   // CSRF token endpoint (must be before verifyCsrfToken)
@@ -2217,6 +2216,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Enhanced Health Check Routes (Production Monitoring)
   app.use(healthRoutes);
+  
+  // WAVE 7 TRACK 4: Encryption at Rest Routes (P0 #8)
+  // AES-256-GCM encrypted sensitive financial, health, budget, and nutrition data
+  app.use(authenticateToken, financialGoalsRoutes);
+  app.use(authenticateToken, budgetRoutes);
+  app.use(authenticateToken, healthDataRoutes);
+  app.use(authenticateToken, nutritionRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(createPostBodySchema), async (req: AuthRequest, res: Response) => {
     try {
@@ -6994,6 +7000,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('[Travel] Get recommendations error:', error);
       res.status(500).json({ message: 'Failed to fetch recommendations' });
+    }
+  });
+
+  // ============================================================================
+  // EMAIL NOTIFICATION SYSTEM
+  // ============================================================================
+
+  // Get email preferences
+  app.get("/api/user/email-preferences", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      let prefs = await db.query.emailPreferences.findFirst({
+        where: eq(emailPreferences.userId, req.user!.id)
+      });
+      
+      // Create default preferences if none exist
+      if (!prefs) {
+        const crypto = await import('crypto');
+        const created = await db.insert(emailPreferences)
+          .values({ 
+            userId: req.user!.id, 
+            unsubscribeToken: crypto.randomBytes(32).toString('hex') 
+          })
+          .returning();
+        prefs = created[0];
+      }
+      
+      res.json(prefs);
+    } catch (error) {
+      console.error('[Email] Get preferences error:', error);
+      res.status(500).json({ message: 'Failed to fetch email preferences' });
+    }
+  });
+
+  // Update email preferences
+  app.patch("/api/user/email-preferences", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const updated = await db.update(emailPreferences)
+        .set({ ...req.body, updatedAt: new Date() })
+        .where(eq(emailPreferences.userId, req.user!.id))
+        .returning();
+      
+      res.json(updated[0]);
+    } catch (error) {
+      console.error('[Email] Update preferences error:', error);
+      res.status(500).json({ message: 'Failed to update email preferences' });
+    }
+  });
+
+  // Unsubscribe via token (from email link)
+  app.get("/api/unsubscribe/:token", async (req: Request, res: Response) => {
+    try {
+      await db.update(emailPreferences)
+        .set({ emailsEnabled: false })
+        .where(eq(emailPreferences.unsubscribeToken, req.params.token));
+      
+      res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+            .container { background: white; padding: 40px; border-radius: 10px; text-align: center; max-width: 500px; }
+            h1 { color: #333; margin-bottom: 20px; }
+            p { color: #666; line-height: 1.6; }
+            a { color: #667eea; text-decoration: none; font-weight: bold; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>✅ Successfully Unsubscribed</h1>
+            <p>You have been unsubscribed from all emails from Mundo Tango.</p>
+            <p>You can update your email preferences anytime in your <a href="/settings/email-preferences">account settings</a>.</p>
+          </div>
+        </body>
+        </html>
+      `);
+    } catch (error) {
+      console.error('[Email] Unsubscribe error:', error);
+      res.status(500).send('Failed to unsubscribe. Please try again later.');
     }
   });
 

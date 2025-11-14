@@ -69,9 +69,10 @@ interface PostCreatorProps {
   editMode?: boolean;
   existingPost?: any;
   className?: string;
+  showStoryToggle?: boolean;
 }
 
-export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMode = false, existingPost, className }: PostCreatorProps) {
+export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMode = false, existingPost, className, showStoryToggle = false }: PostCreatorProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -104,6 +105,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
   const [priceRange, setPriceRange] = useState(existingPost?.priceRange || "");
   const [location, setLocation] = useState(existingPost?.location || "");
   const [coordinates, setCoordinates] = useState<{lat: number; lng: number} | undefined>(existingPost?.coordinates || undefined);
+  const [isStory, setIsStory] = useState(existingPost?.type === 'story' || false);
   
   // AI Enhancement
   const [isEnhancing, setIsEnhancing] = useState(false);
@@ -227,6 +229,15 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
         tags: selectedTags,
         mentions: mentionIds, // Array of IDs: ["user_123", "event_456", "group_789"]
       };
+      
+      // Add story metadata if story mode is active
+      if (isStory) {
+        postData.type = 'story';
+        // Set expiration to 24 hours from now
+        const expiresAt = new Date();
+        expiresAt.setHours(expiresAt.getHours() + 24);
+        postData.expiresAt = expiresAt.toISOString();
+      }
       
       if (isRecommendation && location) {
         postData.location = location;
@@ -739,6 +750,33 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
               )}
             </Button>
           </motion.div>
+
+          {/* Story Mode Toggle */}
+          {showStoryToggle && (
+            <motion.div
+              custom={5}
+              initial="hidden"
+              animate="visible"
+              variants={iconButtonVariants}
+            >
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                onClick={() => setIsStory(!isStory)}
+                className={`relative group ${isStory ? 'bg-gradient-to-br from-pink-500 to-rose-500 text-white' : ''}`}
+                data-testid="button-toggle-story"
+                title={isStory ? "Story Mode (24h)" : "Post Mode (permanent)"}
+              >
+                <Clock className="w-5 h-5 transition-transform group-hover:scale-110" />
+                {isStory && (
+                  <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    24h
+                  </span>
+                )}
+              </Button>
+            </motion.div>
+          )}
         </div>
 
         {/* 6. Share Memory (Large Button) */}
