@@ -66,6 +66,7 @@ import specialtyProfileRoutes from "./routes/specialtyProfileRoutes";
 import contentProfileRoutes from "./routes/contentProfileRoutes";
 import healthRoutes from "./routes/health";
 import eventRoutes from "./routes/event-routes";
+import eventRolesRoutes from "./routes/event-roles-routes";
 import groupRoutes from "./routes/group-routes";
 import crowdfundingRoutes from "./routes/crowdfunding-routes";
 import crowdfundingAgentsRoutes from "./routes/crowdfundingAgentsRoutes";
@@ -646,6 +647,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // AGENT 10: Events & Groups Systems
   app.use("/api/events", eventRoutes);
+  app.use("/api", eventRolesRoutes); // Event participant roles
   app.use("/api/groups", groupRoutes);
 
   // ============================================================================
