@@ -85,14 +85,17 @@ The platform features a unified **MT Ocean theme** across all pages, characteriz
   - **Rationale:** Ensures tests can verify ALL platform features without permission blockers, reduces test flakiness, and provides consistent authenticated state across all test suites
 
 #### Security & Compliance Features
-- **CSRF Protection** - Cookie-based double-submit pattern.
+- **CSRF Protection** - Global double-submit cookie pattern applied to 189+ mutating routes (POST/PUT/DELETE/PATCH). Auto-skips GET/HEAD/OPTIONS and JWT Bearer auth. Full testing guide in `server/security/CSRF_TESTING.md`.
+- **Tier Enforcement System** - 5 middleware functions for role-based access control: `requireMinimumRole`, `requireFeature`, `requireQuota`, `requirePermission`, `requireRoleAndFeature`. Applied to Admin routes (level 4) and Event creation (level 3).
+- **Row Level Security (RLS)** - PostgreSQL RLS policies created for 15+ sensitive tables (users, posts, events, groups, chat messages, notifications). Framework in `server/database/rls-policies.sql` with integration helper in `server/database/rls-integration.ts`.
+- **Revenue Sharing System** - Fully implemented in TransactionMonitor.ts with platform fee calculation, creator payouts, 7-day settlement delay, and `getSettlementStatus()` method for seller payouts.
 - **CSP Headers** - Environment-aware Content Security Policy (development: permissive, production: strict nonce-based).
 - **Audit Logging** - Comprehensive security event tracking in database.
 - **GDPR Compliance UI** - 4 new pages: Security Settings, Privacy & Data, Data Export, Account Deletion.
 - **Database Tables** - securityAuditLogs, dataExportRequests, userPrivacySettings.
 - **API Endpoints** - 8 new endpoints for security and privacy management.
 - **E2E Testing** - 15 comprehensive security feature tests.
-- **Documentation** - Complete security features guide (SECURITY_FEATURES.md).
+- **Documentation** - Complete security features guide (SECURITY_FEATURES.md), CSRF testing guide (CSRF_TESTING.md).
 
 ### External Dependencies
 

@@ -5,7 +5,7 @@
 
 import { Router, Response } from "express";
 import { db } from "@shared/db";
-import { users, posts, postReports, events, userReports, roleRequests } from "@shared/schema";
+import { users, posts, postReports, events, userReports, roleRequests, housingListings } from "@shared/schema";
 import { eq, desc, like, or, and, gte, count, sql } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { requireMinimumRole } from "../middleware/tierEnforcement";
