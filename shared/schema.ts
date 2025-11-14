@@ -14,10 +14,14 @@ import {
   unique,
   numeric,
   primaryKey,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
+
+// Re-export message schemas
+export * from "./messageSchemas";
 
 // ============================================================================
 // USERS & PROFILES (matching existing schema)
