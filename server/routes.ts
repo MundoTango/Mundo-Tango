@@ -85,6 +85,9 @@ import travelAgentsRoutes from "./routes/travelAgentsRoutes";
 import userTestingAgentsRoutes from "./routes/userTestingAgentsRoutes";
 import legalAgentsRoutes from "./routes/legalAgentsRoutes";
 import gdprRoutes from "./routes/gdpr";
+import securityRoutes from "./routes/security-routes";
+import gdprComplianceRoutes from "./routes/gdpr-routes";
+import legalRoutes from "./routes/legal-routes";
 import scrapingAdminRoutes from "./routes/scraping-admin-routes";
 import aiSelectorRoutes from "./routes/ai-selector-routes";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
@@ -400,6 +403,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register GDPR routes (data export, account deletion, consent management)
   app.use(gdprRoutes);
+  app.use(securityRoutes); // P0 #7: 2FA
+  app.use(gdprComplianceRoutes); // P0 #5: Data Export
+  app.use(legalRoutes); // P0 #9: Code of Conduct
   
   // Get active user sessions (mock data)
   app.get("/api/settings/sessions", authenticateToken, async (req: AuthRequest, res: Response) => {
