@@ -97,7 +97,13 @@ function NotificationBellComponent() {
                         {notification.message}
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">
-                        {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
+                        {(() => {
+                          try {
+                            return formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true });
+                          } catch {
+                            return 'recently';
+                          }
+                        })()}
                       </p>
                     </div>
                     {!notification.read && (

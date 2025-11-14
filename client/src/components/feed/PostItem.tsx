@@ -108,7 +108,13 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
                 </span>
               </div>
               <p className="text-xs text-muted-foreground">
-                {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+                {(() => {
+                  try {
+                    return formatDistanceToNow(new Date(post.createdAt), { addSuffix: true });
+                  } catch {
+                    return 'recently';
+                  }
+                })()}
               </p>
             </div>
           </div>

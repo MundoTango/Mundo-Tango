@@ -81,7 +81,13 @@ export function GroupCard({ group, onJoin, isJoined }: GroupCardProps) {
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
             <Calendar className="h-3 w-3" />
-            Created {formatDistanceToNow(new Date(group.createdAt || Date.now()), { addSuffix: true })}
+            Created {(() => {
+              try {
+                return formatDistanceToNow(new Date(group.createdAt || Date.now()), { addSuffix: true });
+              } catch {
+                return 'recently';
+              }
+            })()}
           </span>
           {(group.postCount || 0) > 0 && (
             <span>{group.postCount || 0} posts</span>

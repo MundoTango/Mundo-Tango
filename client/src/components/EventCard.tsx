@@ -56,14 +56,26 @@ export function EventCard({ event, onRSVP, userRSVPStatus }: EventCardProps) {
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
             <span data-testid={`text-event-date-${event.id}`}>
-              {format(new Date(event.startDate || Date.now()), "EEE, MMM d, yyyy")}
+              {(() => {
+                try {
+                  return format(new Date(event.startDate || Date.now()), "EEE, MMM d, yyyy");
+                } catch {
+                  return 'Date TBD';
+                }
+              })()}
             </span>
           </div>
           
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4" />
             <span data-testid={`text-event-time-${event.id}`}>
-              {format(new Date(event.startDate || Date.now()), "h:mm a")} - {format(new Date(event.endDate || Date.now()), "h:mm a")}
+              {(() => {
+                try {
+                  return `${format(new Date(event.startDate || Date.now()), "h:mm a")} - ${format(new Date(event.endDate || Date.now()), "h:mm a")}`;
+                } catch {
+                  return 'Time TBD';
+                }
+              })()}
             </span>
           </div>
           
