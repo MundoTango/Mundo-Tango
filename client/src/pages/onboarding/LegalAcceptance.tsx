@@ -80,17 +80,11 @@ export default function LegalAcceptance() {
   const [tosAccepted, setTosAccepted] = useState(false);
 
   const acceptMutation = useMutation({
-    mutationFn: async () => {
-      return await apiRequest('/api/onboarding/legal', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          privacyPolicyVersion: '1.0',
-          tosVersion: '1.0',
-          cocVersion: '1.0'
-        })
-      });
-    },
+    mutationFn: () => apiRequest('/api/onboarding/legal', 'POST', {
+      privacyPolicyVersion: '1.0',
+      tosVersion: '1.0',
+      cocVersion: '1.0'
+    }),
     onSuccess: () => {
       toast({
         title: 'Legal agreements accepted',
