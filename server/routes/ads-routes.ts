@@ -2,7 +2,7 @@ import { Router, type Request, Response } from "express";
 import { db } from "@shared/db";
 import { platformAds, adImpressions, adRevenue, insertPlatformAdSchema, insertAdImpressionSchema } from "@shared/adSchemas";
 import { users } from "@shared/schema";
-import { authenticateToken, AuthRequest, requireRoleLevel } from "../middleware/auth";
+import { authenticateToken, AuthRequest, requireRole } from "../middleware/auth";
 import { eq, and, desc, sql, gte, lte, isNull, or } from "drizzle-orm";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
@@ -273,7 +273,7 @@ router.post("/click", authenticateToken, async (req: AuthRequest, res: Response)
 
 // GET /api/admin/ads
 // List all ads
-router.get("/admin/ads", authenticateToken, requireRoleLevel("super_admin"), async (req: AuthRequest, res: Response) => {
+router.get("/admin/ads", authenticateToken, requireRole(["super_admin"]), async (req: AuthRequest, res: Response) => {
   try {
     const { placement, active } = req.query;
     
@@ -303,7 +303,7 @@ router.get("/admin/ads", authenticateToken, requireRoleLevel("super_admin"), asy
 
 // POST /api/admin/ads
 // Create new ad
-router.post("/admin/ads", authenticateToken, requireRoleLevel("super_admin"), async (req: AuthRequest, res: Response) => {
+router.post("/admin/ads", authenticateToken, requireRole(["super_admin"]), async (req: AuthRequest, res: Response) => {
   try {
     const validationResult = insertPlatformAdSchema.safeParse(req.body);
     if (!validationResult.success) {
@@ -326,7 +326,7 @@ router.post("/admin/ads", authenticateToken, requireRoleLevel("super_admin"), as
 
 // PATCH /api/admin/ads/:id
 // Update ad
-router.patch("/admin/ads/:id", authenticateToken, requireRoleLevel("super_admin"), async (req: AuthRequest, res: Response) => {
+router.patch("/admin/ads/:id", authenticateToken, requireRole(["super_admin"]), async (req: AuthRequest, res: Response) => {
   try {
     const adId = parseInt(req.params.id);
     if (isNaN(adId)) {
@@ -360,7 +360,7 @@ router.patch("/admin/ads/:id", authenticateToken, requireRoleLevel("super_admin"
 
 // DELETE /api/admin/ads/:id
 // Delete ad
-router.delete("/admin/ads/:id", authenticateToken, requireRoleLevel("super_admin"), async (req: AuthRequest, res: Response) => {
+router.delete("/admin/ads/:id", authenticateToken, requireRole(["super_admin"]), async (req: AuthRequest, res: Response) => {
   try {
     const adId = parseInt(req.params.id);
     if (isNaN(adId)) {
@@ -385,7 +385,7 @@ router.delete("/admin/ads/:id", authenticateToken, requireRoleLevel("super_admin
 
 // GET /api/admin/ads/analytics
 // Get revenue analytics
-router.get("/admin/ads/analytics", authenticateToken, requireRoleLevel("super_admin"), async (req: AuthRequest, res: Response) => {
+router.get("/admin/ads/analytics", authenticateToken, requireRole(["super_admin"]), async (req: AuthRequest, res: Response) => {
   try {
     const { startDate, endDate } = req.query;
     
@@ -434,7 +434,7 @@ router.get("/admin/ads/analytics", authenticateToken, requireRoleLevel("super_ad
 
 // GET /api/admin/ads/:id/performance
 // Get ad performance metrics
-router.get("/admin/ads/:id/performance", authenticateToken, requireRoleLevel("super_admin"), async (req: AuthRequest, res: Response) => {
+router.get("/admin/ads/:id/performance", authenticateToken, requireRole(["super_admin"]), async (req: AuthRequest, res: Response) => {
   try {
     const adId = parseInt(req.params.id);
     if (isNaN(adId)) {

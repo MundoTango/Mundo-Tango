@@ -100,6 +100,7 @@ import billingRoutes from "./routes/billing-routes";
 import onboardingRoutes from "./routes/onboarding-routes";
 import messagesRoutes from "./routes/messages-routes";
 import adsRoutes from "./routes/ads-routes";
+import revenueRoutes from "./routes/revenue-routes";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
 import { auditLog, getClientIp } from "./middleware/auditLog";
@@ -391,6 +392,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/messages", messagesRoutes);
   app.use("/api/ads", adsRoutes);
   app.use("/api/admin/ads", adsRoutes);
+  app.use("/api/revenue", revenueRoutes);
   app.use("/api", createFriendsRoutes(storage));
   app.use("/api", createAnalyticsRoutes(storage));
   app.use("/api", createBookmarkRoutes(storage));

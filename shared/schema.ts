@@ -2474,7 +2474,7 @@ export const insertMediaAlbumSchema = createInsertSchema(mediaAlbums).omit({ id:
 export type InsertMediaAlbum = z.infer<typeof insertMediaAlbumSchema>;
 export type SelectMediaAlbum = typeof mediaAlbums.$inferSelect;
 
-export const insertAlbumMediaSchema = createInsertSchema(albumMedia).omit({ id: true, createdAt: true });
+export const insertAlbumMediaSchema = createInsertSchema(albumMedia).omit({ id: true, addedAt: true });
 export type InsertAlbumMedia = z.infer<typeof insertAlbumMediaSchema>;
 export type SelectAlbumMedia = typeof albumMedia.$inferSelect;
 
@@ -9506,6 +9506,34 @@ export const insertPlatformRevenueSchema = createInsertSchema(platformRevenue)
 export const selectPlatformRevenueSchema = createSelectSchema(platformRevenue);
 export type InsertPlatformRevenue = z.infer<typeof insertPlatformRevenueSchema>;
 export type SelectPlatformRevenue = typeof platformRevenue.$inferSelect;
+
+// Revenue Sharing System (P0 #4)
+export const revenueShares = pgTable("revenue_shares", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  transactionType: varchar("transaction_type", { length: 50 }).notNull(), // housing, event_ticket, workshop, marketplace
+  transactionId: integer("transaction_id").notNull(),
+  role: varchar("role", { length: 50 }).notNull(), // host, organizer, teacher, seller
+  platformFee: integer("platform_fee").notNull(), // Platform's share in cents
+  creatorPayout: integer("creator_payout").notNull(), // Creator's share in cents
+  totalAmount: integer("total_amount").notNull(), // Total transaction amount in cents
+  currency: varchar("currency", { length: 3 }).default("USD").notNull(),
+  status: varchar("status", { length: 20 }).default("pending").notNull(), // pending, paid, failed
+  stripeTransferId: varchar("stripe_transfer_id", { length: 255 }),
+  paidAt: timestamp("paid_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("revenue_shares_user_idx").on(table.userId),
+  typeIdx: index("revenue_shares_type_idx").on(table.transactionType),
+  statusIdx: index("revenue_shares_status_idx").on(table.status),
+  createdIdx: index("revenue_shares_created_idx").on(table.createdAt),
+}));
+
+export const insertRevenueShareSchema = createInsertSchema(revenueShares)
+  .omit({ id: true, createdAt: true });
+export const selectRevenueShareSchema = createSelectSchema(revenueShares);
+export type InsertRevenueShare = z.infer<typeof insertRevenueShareSchema>;
+export type SelectRevenueShare = typeof revenueShares.$inferSelect;
 
 // GDPR Data Export Requests (P0 #5) - Already defined at line 9067, no duplicate needed
 
