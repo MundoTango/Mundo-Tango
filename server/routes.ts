@@ -310,6 +310,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ csrfToken: token });
   });
   
+  // ============================================================================
+  // CSRF PROTECTION: Verify CSRF tokens on all mutating requests (POST/PUT/DELETE/PATCH)
+  // Skips: GET/HEAD/OPTIONS and JWT Bearer auth requests (handled in middleware)
+  // ============================================================================
+  app.use(verifyCsrfToken);
+  
   // Phase 1 & 2 Deployment Blocker Routes
   app.use("/api/rbac", rbacRoutes);
   app.use("/api/feature-flags", featureFlagsRoutes);
