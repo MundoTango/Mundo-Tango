@@ -1,5 +1,6 @@
 import rateLimit from "express-rate-limit";
 import { Request, Response, NextFunction } from "express";
+import { AuthRequest } from "./auth";
 
 // Global rate limiter for all routes
 export const globalRateLimiter = rateLimit({
@@ -13,7 +14,8 @@ export const globalRateLimiter = rateLimit({
     const isDevelopment = process.env.NODE_ENV !== 'production';
     const isAssetRequest = req.path.startsWith('/@') || req.path.startsWith('/src/') || req.path.startsWith('/node_modules/');
     const isWebSocket = req.headers.upgrade === 'websocket';
-    return isDevelopment && (isAssetRequest || isWebSocket);
+    const isHealthCheck = req.path.startsWith('/api/health');
+    return isDevelopment && (isAssetRequest || isWebSocket) || isHealthCheck;
   },
   handler: (req: Request, res: Response) => {
     res.status(429).json({
@@ -78,6 +80,76 @@ export const searchRateLimiter = rateLimit({
   message: "Search rate limit exceeded",
 });
 
+// ============================================================================
+// TIERED SUBSCRIPTION-BASED RATE LIMITING (TRACK 9)
+// ============================================================================
+
+/**
+ * Tiered rate limits based on subscription tier:
+ * - Free tier: 100 requests/hour
+ * - Basic tier: 500 requests/hour
+ * - Plus tier: 2000 requests/hour
+ * - Pro tier: 10000 requests/hour
+ * - God tier: Unlimited
+ */
+export const tieredRateLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: async (req: Request) => {
+    const authReq = req as AuthRequest;
+    
+    // If user is authenticated, check their subscription tier
+    if (authReq.user) {
+      const tier = authReq.user.subscriptionTier || 'free';
+      
+      switch (tier.toLowerCase()) {
+        case 'god':
+          return 999999; // Effectively unlimited
+        case 'pro':
+          return 10000;
+        case 'plus':
+          return 2000;
+        case 'basic':
+          return 500;
+        case 'free':
+        default:
+          return 100;
+      }
+    }
+    
+    // For unauthenticated requests, use free tier limits
+    return 100;
+  },
+  keyGenerator: (req: Request) => {
+    const authReq = req as AuthRequest;
+    // Use user ID if authenticated, otherwise use IP
+    return authReq.user?.id?.toString() || req.ip || 'unknown';
+  },
+  skip: (req: Request) => {
+    // Skip health checks
+    return req.path.startsWith('/api/health');
+  },
+  handler: (req: Request, res: Response) => {
+    const authReq = req as AuthRequest;
+    const tier = authReq.user?.subscriptionTier || 'free';
+    
+    res.status(429).json({
+      error: "Rate limit exceeded",
+      message: `You have exceeded the rate limit for your ${tier} tier subscription.`,
+      tier: tier,
+      retryAfter: (req as any).rateLimit?.resetTime,
+      upgradeMessage: tier === 'free' 
+        ? "Upgrade to Basic tier for 5x more requests per hour!"
+        : tier === 'basic'
+        ? "Upgrade to Plus tier for 4x more requests per hour!"
+        : tier === 'plus'
+        ? "Upgrade to Pro tier for 5x more requests per hour!"
+        : "Contact support for enterprise pricing.",
+    });
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Export all rate limiters
 export const rateLimiters = {
   global: globalRateLimiter,
@@ -87,4 +159,5 @@ export const rateLimiters = {
   admin: adminRateLimiter,
   payment: paymentRateLimiter,
   search: searchRateLimiter,
+  tiered: tieredRateLimiter,
 };

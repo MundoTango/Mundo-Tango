@@ -192,4 +192,56 @@ function cleanupExpiredEntries() {
 // Run cleanup every 5 minutes
 setInterval(cleanupExpiredEntries, 5 * 60 * 1000);
 
+// ============================================================================
+// PRE-CONFIGURED CACHE MIDDLEWARES (TRACK 9)
+// ============================================================================
+
+/**
+ * Cache for leaderboards (5 minute cache)
+ */
+export const leaderboardCache = cacheResponse({
+  ttl: 5 * 60, // 5 minutes
+  condition: (req) => req.path.includes('/leaderboard'),
+});
+
+/**
+ * Cache for badge definitions (1 hour cache)
+ */
+export const badgeCache = cacheResponse({
+  ttl: 60 * 60, // 1 hour
+  condition: (req) => req.path.includes('/badge') && !req.path.includes('/award'),
+});
+
+/**
+ * Cache for knowledge base searches (10 minute cache)
+ */
+export const knowledgeSearchCache = cacheResponse({
+  ttl: 10 * 60, // 10 minutes
+  condition: (req) => req.path.includes('/knowledge/search'),
+});
+
+/**
+ * Cache for tour definitions (1 hour cache)
+ */
+export const tourCache = cacheResponse({
+  ttl: 60 * 60, // 1 hour
+  condition: (req) => req.path.includes('/tour') && req.method === 'GET',
+});
+
+/**
+ * Cache for event listings (5 minute cache)
+ */
+export const eventListCache = cacheResponse({
+  ttl: 5 * 60, // 5 minutes
+  condition: (req) => req.path.includes('/event') && req.method === 'GET',
+});
+
+/**
+ * Cache for group listings (5 minute cache)
+ */
+export const groupListCache = cacheResponse({
+  ttl: 5 * 60, // 5 minutes
+  condition: (req) => req.path.includes('/group') && req.method === 'GET',
+});
+
 export default cacheResponse;

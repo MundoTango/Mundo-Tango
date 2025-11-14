@@ -105,7 +105,11 @@ import messagesRoutes from "./routes/messages-routes";
 import adsRoutes from "./routes/ads-routes";
 import revenueRoutes from "./routes/revenue-routes";
 import volunteerTestingRoutes from "./routes/volunteerTesting";
+import gamificationRoutes from "./routes/gamification";
 import { registerLearningPathwaysRoutes } from "./routes/learningPathways-routes";
+import systemPromptsRoutes from "./routes/systemPrompts";
+import telemetryRoutes from "./routes/telemetry";
+import swaggerRoutes from "./routes/swagger";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
 import { auditLog, getClientIp } from "./middleware/auditLog";
@@ -353,6 +357,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/knowledge", knowledgeRoutes);
   app.use("/api/monitoring", monitoringRoutes);
   
+  // TRACK 9: API Documentation & Core Endpoints
+  app.use("/api/prompts", systemPromptsRoutes);
+  app.use("/api/telemetry", telemetryRoutes);
+  app.use("/api-docs", swaggerRoutes);
+  
   // BATCH 16: Multi-AI Orchestration Routes
   app.use("/api/ai/multi", multiAIRoutes);
   
@@ -379,6 +388,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // TRACK 6: Volunteer Testing System - Scenarios + Recruitment + UI
   app.use("/api/volunteer", volunteerTestingRoutes);
+  
+  // TRACK 8: Gamification System - Points, Badges, Leaderboard, Progressive Autonomy
+  app.use("/api/gamification", gamificationRoutes);
   
   // Legal Document AI Agents Routes (2 AI Agents for Legal Documents - Agents #185-186)
   app.use("/api/legal/agents", legalAgentsRoutes);

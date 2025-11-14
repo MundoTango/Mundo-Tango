@@ -10240,6 +10240,80 @@ export type InsertVolunteerStats = z.infer<typeof insertVolunteerStatsSchema>;
 export type SelectVolunteerStats = typeof volunteerStats.$inferSelect;
 
 // ============================================================================
+// GAMIFICATION SYSTEM
+// ============================================================================
+
+export const gamificationPoints = pgTable("gamification_points", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  action: varchar("action", { length: 100 }).notNull(),
+  pointsAwarded: integer("points_awarded").notNull(),
+  reason: text("reason"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("gamification_points_user_idx").on(table.userId),
+  createdAtIdx: index("gamification_points_created_at_idx").on(table.createdAt),
+  actionIdx: index("gamification_points_action_idx").on(table.action),
+}));
+
+export const insertGamificationPointsSchema = createInsertSchema(gamificationPoints)
+  .omit({ id: true, createdAt: true });
+export const selectGamificationPointsSchema = createSelectSchema(gamificationPoints);
+export type InsertGamificationPoints = z.infer<typeof insertGamificationPointsSchema>;
+export type SelectGamificationPoints = typeof gamificationPoints.$inferSelect;
+
+export const gamificationBadges = pgTable("gamification_badges", {
+  id: serial("id").primaryKey(),
+  badgeId: varchar("badge_id", { length: 50 }).notNull().unique(),
+  name: varchar("name", { length: 100 }).notNull(),
+  description: text("description").notNull(),
+  iconUrl: text("icon_url").notNull(),
+  criteria: jsonb("criteria").notNull(),
+}, (table) => ({
+  badgeIdIdx: index("gamification_badges_badge_id_idx").on(table.badgeId),
+}));
+
+export const insertGamificationBadgeSchema = createInsertSchema(gamificationBadges)
+  .omit({ id: true });
+export const selectGamificationBadgeSchema = createSelectSchema(gamificationBadges);
+export type InsertGamificationBadge = z.infer<typeof insertGamificationBadgeSchema>;
+export type SelectGamificationBadge = typeof gamificationBadges.$inferSelect;
+
+export const userBadges = pgTable("user_badges", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  badgeId: varchar("badge_id", { length: 50 }).notNull().references(() => gamificationBadges.badgeId, { onDelete: "cascade" }),
+  awardedAt: timestamp("awarded_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("user_badges_user_idx").on(table.userId),
+  badgeIdx: index("user_badges_badge_idx").on(table.badgeId),
+  uniqueUserBadge: uniqueIndex("unique_user_badge").on(table.userId, table.badgeId),
+}));
+
+export const insertUserBadgeSchema = createInsertSchema(userBadges)
+  .omit({ id: true, awardedAt: true });
+export const selectUserBadgeSchema = createSelectSchema(userBadges);
+export type InsertUserBadge = z.infer<typeof insertUserBadgeSchema>;
+export type SelectUserBadge = typeof userBadges.$inferSelect;
+
+export const autonomyProgress = pgTable("autonomy_progress", {
+  id: serial("id").primaryKey(),
+  weekNumber: integer("week_number").notNull().unique(),
+  autonomyPercentage: integer("autonomy_percentage").notNull(),
+  capabilities: text("capabilities").array().notNull(),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+}, (table) => ({
+  weekIdx: index("autonomy_progress_week_idx").on(table.weekNumber),
+}));
+
+export const insertAutonomyProgressSchema = createInsertSchema(autonomyProgress)
+  .omit({ id: true });
+export const selectAutonomyProgressSchema = createSelectSchema(autonomyProgress);
+export type InsertAutonomyProgress = z.infer<typeof insertAutonomyProgressSchema>;
+export type SelectAutonomyProgress = typeof autonomyProgress.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 

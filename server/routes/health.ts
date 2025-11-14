@@ -225,4 +225,176 @@ router.get('/api/health/dependencies', async (req, res) => {
   res.status(allRequiredUp ? 200 : 503).json(dependencies);
 });
 
+// ============================================================================
+// AGENT HEALTH STATUS (TRACK 9)
+// ============================================================================
+router.get('/api/health/agents', async (req, res) => {
+  try {
+    // Import here to avoid circular dependencies
+    const { db } = await import('../../shared/db');
+    const { esaAgents } = await import('../../shared/platform-schema');
+    const { desc, sql } = await import('drizzle-orm');
+    
+    // Get all agents with their health metrics
+    const agents = await db.select({
+      id: esaAgents.id,
+      agentCode: esaAgents.agentCode,
+      agentName: esaAgents.agentName,
+      status: esaAgents.status,
+      tasksCompleted: esaAgents.tasksCompleted,
+      tasksSuccess: esaAgents.tasksSuccess,
+      tasksFailed: esaAgents.tasksFailed,
+      averageResponseTime: esaAgents.averageResponseTime,
+      lastActive: esaAgents.lastActive,
+      createdAt: esaAgents.createdAt,
+    })
+    .from(esaAgents)
+    .orderBy(desc(esaAgents.lastActive))
+    .limit(100);
+    
+    // Calculate aggregate statistics
+    const totalAgents = agents.length;
+    const activeAgents = agents.filter(a => a.status === 'active').length;
+    const totalTasksCompleted = agents.reduce((sum, a) => sum + (a.tasksCompleted || 0), 0);
+    const totalTasksSuccess = agents.reduce((sum, a) => sum + (a.tasksSuccess || 0), 0);
+    const totalTasksFailed = agents.reduce((sum, a) => sum + (a.tasksFailed || 0), 0);
+    const successRate = totalTasksCompleted > 0 
+      ? (totalTasksSuccess / totalTasksCompleted) * 100 
+      : 0;
+    
+    // Calculate average response time
+    const avgResponseTimes = agents
+      .filter(a => a.averageResponseTime && a.averageResponseTime > 0)
+      .map(a => a.averageResponseTime || 0);
+    const globalAvgResponseTime = avgResponseTimes.length > 0
+      ? avgResponseTimes.reduce((sum, time) => sum + time, 0) / avgResponseTimes.length
+      : 0;
+    
+    res.json({
+      timestamp: new Date().toISOString(),
+      summary: {
+        totalAgents,
+        activeAgents,
+        inactiveAgents: totalAgents - activeAgents,
+        totalTasksCompleted,
+        totalTasksSuccess,
+        totalTasksFailed,
+        successRate: successRate.toFixed(2) + '%',
+        averageResponseTime: globalAvgResponseTime.toFixed(2) + 'ms',
+      },
+      agents: agents.map(agent => ({
+        ...agent,
+        successRate: agent.tasksCompleted && agent.tasksCompleted > 0
+          ? ((agent.tasksSuccess || 0) / agent.tasksCompleted * 100).toFixed(2) + '%'
+          : '0%',
+        health: agent.status === 'active' && agent.lastActive
+          ? (Date.now() - new Date(agent.lastActive).getTime() < 3600000 ? 'healthy' : 'stale')
+          : 'inactive',
+      })),
+    });
+  } catch (error) {
+    console.error('[Health] Error fetching agent statuses:', error);
+    res.status(500).json({
+      error: 'Failed to fetch agent statuses',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
+// ============================================================================
+// GOD LEVEL QUOTA STATUS (TRACK 9)
+// ============================================================================
+router.get('/api/health/quotas', async (req, res) => {
+  try {
+    // Import here to avoid circular dependencies
+    const { db } = await import('../../shared/db');
+    const { users } = await import('../../shared/schema');
+    const { eq, sql, and, gte } = await import('drizzle-orm');
+    
+    // Get quota usage statistics
+    const quotaStats = await db.select({
+      tier: users.subscriptionTier,
+      userCount: sql<number>`count(*)`,
+      apiUsageToday: sql<number>`coalesce(sum(
+        (${users.createdAt} >= current_date)::int
+      ), 0)`,
+    })
+    .from(users)
+    .groupBy(users.subscriptionTier);
+    
+    // Define quota limits per tier
+    const quotaLimits = {
+      free: {
+        apiRequestsPerHour: 100,
+        apiRequestsPerDay: 1000,
+        storageGB: 1,
+        aiCreditsPerMonth: 100,
+      },
+      basic: {
+        apiRequestsPerHour: 500,
+        apiRequestsPerDay: 10000,
+        storageGB: 10,
+        aiCreditsPerMonth: 1000,
+      },
+      plus: {
+        apiRequestsPerHour: 2000,
+        apiRequestsPerDay: 50000,
+        storageGB: 50,
+        aiCreditsPerMonth: 5000,
+      },
+      pro: {
+        apiRequestsPerHour: 10000,
+        apiRequestsPerDay: 200000,
+        storageGB: 200,
+        aiCreditsPerMonth: 20000,
+      },
+      god: {
+        apiRequestsPerHour: 999999,
+        apiRequestsPerDay: 999999,
+        storageGB: 999999,
+        aiCreditsPerMonth: 999999,
+      },
+    };
+    
+    // Calculate usage percentages
+    const quotaUsage = quotaStats.map(stat => {
+      const tier = (stat.tier || 'free').toLowerCase() as keyof typeof quotaLimits;
+      const limits = quotaLimits[tier] || quotaLimits.free;
+      
+      return {
+        tier: stat.tier,
+        userCount: stat.userCount,
+        limits,
+        usage: {
+          apiRequestsToday: stat.apiUsageToday,
+          apiUsagePercentage: (stat.apiUsageToday / limits.apiRequestsPerDay * 100).toFixed(2) + '%',
+        },
+      };
+    });
+    
+    // Overall system quotas
+    const totalUsers = quotaStats.reduce((sum, stat) => sum + stat.userCount, 0);
+    const godLevelUsers = quotaStats.find(stat => stat.tier === 'god')?.userCount || 0;
+    
+    res.json({
+      timestamp: new Date().toISOString(),
+      systemQuotas: {
+        totalUsers,
+        godLevelUsers,
+        godLevelPercentage: totalUsers > 0 
+          ? (godLevelUsers / totalUsers * 100).toFixed(2) + '%'
+          : '0%',
+      },
+      tierQuotas: quotaUsage,
+      quotaLimits,
+    });
+  } catch (error) {
+    console.error('[Health] Error fetching quota status:', error);
+    res.status(500).json({
+      error: 'Failed to fetch quota status',
+      message: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+});
+
 export default router;

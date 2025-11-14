@@ -869,4 +869,175 @@ router.get("/gaps", authenticateToken, requireRoleLevel(4), async (req: AuthRequ
   }
 });
 
+// ============================================================================
+// MISSING CORE ENDPOINTS (TRACK 9)
+// ============================================================================
+
+/**
+ * POST /api/knowledge/create
+ * Add entry to knowledge base
+ */
+router.post("/create", authenticateToken, requireRoleLevel(5), async (req: AuthRequest, res: Response) => {
+  try {
+    const createSchema = z.object({
+      agentId: z.string().optional(),
+      topic: z.string().min(1),
+      content: z.string().min(1),
+      category: z.string().optional(),
+      tags: z.array(z.string()).optional(),
+      metadata: z.record(z.unknown()).optional(),
+    });
+    
+    const data = createSchema.parse(req.body);
+    const { agentKnowledge } = await import("../../shared/schema");
+    
+    const [entry] = await db.insert(agentKnowledge).values({
+      agentId: data.agentId,
+      topic: data.topic,
+      content: data.content,
+      tags: data.tags || [],
+      metadata: data.metadata || {},
+    }).returning();
+    
+    res.status(201).json({
+      success: true,
+      entry,
+    });
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      const validationError = fromZodError(error);
+      return res.status(400).json({ error: validationError.toString() });
+    }
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /api/knowledge/category/:category
+ * Get knowledge entries by category
+ */
+router.get("/category/:category", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const { category } = req.params;
+    const limit = parseInt(req.query.limit as string) || 50;
+    const offset = parseInt(req.query.offset as string) || 0;
+    
+    // Search in learning patterns
+    const patterns = await db.select()
+      .from(learningPatterns)
+      .where(eq(learningPatterns.category, category as any))
+      .limit(limit)
+      .offset(offset)
+      .orderBy(desc(learningPatterns.createdAt));
+    
+    // Get total count
+    const [{ count: totalCount }] = await db.select({ count: count() })
+      .from(learningPatterns)
+      .where(eq(learningPatterns.category, category as any));
+    
+    res.json({
+      category,
+      results: patterns,
+      totalResults: totalCount,
+      limit,
+      offset,
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * PUT /api/knowledge/:id
+ * Update knowledge entry
+ */
+router.put("/:id", authenticateToken, requireRoleLevel(5), async (req: AuthRequest, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    
+    const updateSchema = z.object({
+      topic: z.string().optional(),
+      content: z.string().optional(),
+      tags: z.array(z.string()).optional(),
+      metadata: z.record(z.unknown()).optional(),
+    });
+    
+    const data = updateSchema.parse(req.body);
+    const { agentKnowledge } = await import("../../shared/schema");
+    
+    // First, check if the entry exists
+    const [existing] = await db.select()
+      .from(agentKnowledge)
+      .where(eq(agentKnowledge.id, id))
+      .limit(1);
+    
+    if (!existing) {
+      return res.status(404).json({ error: "Knowledge entry not found" });
+    }
+    
+    // Update the entry
+    const [updated] = await db.update(agentKnowledge)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(agentKnowledge.id, id))
+      .returning();
+    
+    res.json({
+      success: true,
+      entry: updated,
+    });
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      const validationError = fromZodError(error);
+      return res.status(400).json({ error: validationError.toString() });
+    }
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * DELETE /api/knowledge/:id
+ * Soft delete knowledge entry (mark inactive)
+ */
+router.delete("/:id", authenticateToken, requireRoleLevel(6), async (req: AuthRequest, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { agentKnowledge } = await import("../../shared/schema");
+    
+    // Check if the entry exists
+    const [existing] = await db.select()
+      .from(agentKnowledge)
+      .where(eq(agentKnowledge.id, id))
+      .limit(1);
+    
+    if (!existing) {
+      return res.status(404).json({ error: "Knowledge entry not found" });
+    }
+    
+    // Soft delete by updating metadata
+    const [deleted] = await db.update(agentKnowledge)
+      .set({
+        metadata: {
+          ...(existing.metadata || {}),
+          inactive: true,
+          deletedAt: new Date().toISOString(),
+          deletedBy: req.user?.id,
+        },
+        updatedAt: new Date(),
+      })
+      .where(eq(agentKnowledge.id, id))
+      .returning();
+    
+    res.json({
+      success: true,
+      message: "Knowledge entry marked as inactive",
+      entry: deleted,
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;

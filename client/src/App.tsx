@@ -47,6 +47,7 @@ const CalendarPage = lazy(() => import("@/pages/CalendarPage"));
 // Social & Community
 const DiscoverPage = lazy(() => import("@/pages/DiscoverPage"));
 const VolunteerPage = lazy(() => import("@/pages/VolunteerPage"));
+const GamificationDashboard = lazy(() => import("@/pages/GamificationDashboard"));
 const FeedPage = lazy(() => import("@/pages/FeedPage"));
 const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 const FriendsListPage = lazy(() => import("@/pages/FriendsListPage"));
@@ -341,6 +342,7 @@ function Router() {
       <Route path="/testimonials" component={TestimonialsPage} />
       <Route path="/discover" component={DiscoverPage} />
       <Route path="/volunteer" component={VolunteerPage} />
+      <Route path="/gamification" component={GamificationDashboard} />
       <Route path="/talent-match" component={TalentMatchPage} />
       <Route path="/mr-blue-chat" component={MrBlueChatPage} />
       <Route path="/video-studio" component={VideoStudio} />
