@@ -224,7 +224,7 @@ export default function EventsPage() {
         description: `Processed ${data.totalProcessed} sources. ${savedCount} saved to database. ${successCount} with high confidence (>50%).`,
       });
     },
-    onError: (error: any) {
+    onError: (error: any) => {
       toast({
         title: "Error",
         description: error.message || 'Failed to generate selectors',
