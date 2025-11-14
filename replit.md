@@ -1,7 +1,7 @@
 # Mundo Tango
 
 ### Overview
-Mundo Tango is a production-ready social platform designed to connect the global tango community. It offers comprehensive social networking features, event management tools, talent matching, and AI-powered personal assistance. The platform integrates 7 business systems and 62 specialized AI agents, aiming to become the leading digital hub for the tango ecosystem. It has significant market potential in premium services, event monetization, targeted advertising, and plans for international scaling. The project prioritizes a lean architecture, optimized npm packages for efficiency and security, and enterprise-grade security features including CSRF protection, CSP headers, audit logging, and full GDPR compliance.
+Mundo Tango is a production-ready social platform connecting the global tango community with social networking features, event management, talent matching, and AI-powered assistance. It integrates 7 business systems and 62 specialized AI agents, aiming to be the leading digital hub for the tango ecosystem with market potential in premium services, event monetization, and targeted advertising. The project emphasizes a lean architecture, optimized npm packages, and enterprise-grade security including CSRF, CSP, audit logging, and GDPR compliance.
 
 ### User Preferences
 **Methodology:** MB.MD Protocol
@@ -12,108 +12,48 @@ Mundo Tango is a production-ready social platform designed to connect the global
 **Never deviate from the handoff plan** - Follow the exact phase sequence
 
 ### System Architecture
-
-The project utilizes a modular, agent-driven development approach based on an Expert Specialized Agents (ESA) framework.
+The project employs a modular, agent-driven development approach based on an Expert Specialized Agents (ESA) framework.
 
 #### UI/UX Decisions
-The platform features a unified **MT Ocean theme** across all pages, characterized by a tango-inspired color palette, dark mode, glassmorphic effects, and responsive design using Tailwind CSS and shadcn/ui components. The design system follows a 3-layer approach (Primitive → Semantic → Component) for theme customization. The frontend is built with React, TypeScript, Wouter for routing, and React Query, prioritizing a video-first design and global accessibility. Navigation is managed by **AppLayout**, **AdminLayout**, and a new **DashboardLayout**, all styled with the MT Ocean theme, including turquoise gradients, glassmorphic elements, and ocean-themed interactive components. The system includes full i18n integration and real-time features with 30-second polling for notifications and messages.
+The platform features a unified **MT Ocean theme** with a tango-inspired color palette, dark mode, glassmorphic effects, and responsive design using Tailwind CSS and shadcn/ui. It uses a 3-layer design system (Primitive → Semantic → Component). The frontend is built with React, TypeScript, Wouter for routing, and React Query, prioritizing a video-first design and global accessibility. Navigation is handled by **AppLayout**, **AdminLayout**, and **DashboardLayout**, all adhering to the MT Ocean theme, with i18n integration and real-time features.
 
 #### Technical Implementations
-
-**Backend Architecture:** Node.js with Express and TypeScript, PostgreSQL with Drizzle ORM, JWT-based authentication, and real-time capabilities via Supabase Realtime and WebSockets.
+**Backend Architecture:** Node.js with Express and TypeScript, PostgreSQL with Drizzle ORM, JWT authentication, and real-time capabilities via Supabase Realtime and WebSockets.
 
 **Key Systems:**
 -   **8-Tier RBAC System** and **Dynamic Feature Flag System**.
 -   **Stripe Integration** for dynamic pricing and subscriptions.
--   **Comprehensive Social Features:** Events, Groups, friendship algorithms, rich post interactions (reactions, shares, reports, saves, threaded comments, @mentions, editing with history), and real-time WebSocket notifications.
--   **Media Gallery Albums System:** Complete album management with CRUD operations, media organization, lightbox viewer, and privacy controls.
--   **Live Streaming & Chat:** Real-time chat via WebSocket, message history, viewer count, and live broadcasting capabilities.
+-   **Comprehensive Social Features:** Events, Groups, friendship algorithms, rich post interactions, and real-time WebSocket notifications.
+-   **Media Gallery Albums System:** Complete album management with CRUD, media organization, lightbox, and privacy controls.
+-   **Live Streaming & Chat:** Real-time chat, message history, viewer count, and live broadcasting.
 -   **Marketplace & Content Systems:** Housing, Live Streaming, Marketplace, Subscription management, Polymorphic Reviews, Media Gallery, Leaderboard, Blog, Teacher/Venue Management, Workshop System, Music Library, Stories, and Venue Recommendations.
 -   **Admin Dashboard & Analytics** for user management, content moderation, and platform health.
--   **P0 Workflows:** Founder Approval, Safety Review, and AI Support with human escalation.
+-   **Security & Compliance:** CSRF Protection, Tier Enforcement System, Row Level Security (RLS), CSP Headers, Audit Logging, Two-Factor Authentication (2FA), GDPR Compliance (data export, privacy settings, account deletion), Legal Compliance (Code of Conduct acceptance tracking).
 
 **AI Integration:**
 -   **Bifrost AI Gateway:** Unified AI gateway with automatic failover, semantic caching, and load balancing.
--   **Mr. Blue AI Assistant:** Context-aware conversational intelligence, breadcrumb tracking, and predictive assistance using Groq SDK.
+-   **Mr. Blue AI Assistant:** Context-aware conversational intelligence, breadcrumb tracking, and predictive assistance.
 -   **OpenAI Realtime Voice API:** ChatGPT-style natural voice conversations.
 -   **Unified Voice Interface:** Combines voice and text chat.
 -   **Instant Visual Feedback:** Enhanced iframe injector with `APPLY_CHANGE` and `UNDO_CHANGE` commands.
 -   **Visual Editor System (Replit-style):** Development environment with live MT page preview, tabbed interface, element selection, context-aware Mr. Blue AI code generation, and Git integration.
 -   **Talent Match AI:** Advanced matching algorithms for dancers/teachers.
--   **LIFE CEO AI SYSTEM:** Integrates LanceDB for semantic memory (vector database, embeddings, similarity search) and orchestrates 16 specialized AI agents via a Decision Matrix for intelligent routing and multi-agent collaboration, presented in a Life CEO Dashboard UI.
-
-**Multi-AI Orchestration System:**
--   Integrates 5 AI platforms: OpenAI GPT-4o, Anthropic Claude 3.5 Sonnet, Groq Llama 3.1, Google Gemini Pro, with specialized fallback routing.
--   Features intelligent load balancing, a semantic caching layer with LanceDB, a unified API gateway, and real-time monitoring.
--   Supported by 15 AI Intelligence Services and over 50 API endpoints covering orchestration, intelligence operations, learning, memory, quality, knowledge, collaboration, caching, and agent management.
--   Utilizes 16 intelligence database tables for agent capabilities, memory, collaboration, learning, quality scores, knowledge graphs, cache entries, and platform metrics.
+-   **LIFE CEO AI SYSTEM:** Integrates LanceDB for semantic memory and orchestrates 16 specialized AI agents via a Decision Matrix for intelligent routing and multi-agent collaboration, presented in a Life CEO Dashboard UI.
+-   **Multi-AI Orchestration System:** Integrates OpenAI GPT-4o, Anthropic Claude 3.5 Sonnet, Groq Llama 3.1, Google Gemini Pro with specialized fallback routing, intelligent load balancing, and a semantic caching layer with LanceDB.
+-   **Automated Data Scraping System:** Orchestrated by Agent #115, using static (Cheerio), dynamic (Playwright), and social (Facebook Graph API, Instagram) scraping, with AI-powered deduplication for global tango community sources.
 
 **Automation & Workers:** BullMQ queue management with 39 functions across 6 dedicated workers, powered by Redis-based job processing and 50 production-ready algorithms.
 
 **Agent Architecture (ESA Framework):** 120 agents (105 ESA + 8 Mr. Blue + 5 Scraping + component agents) coordinated by 9 database tables, with agent health monitoring and self-healing capabilities.
 
-**Automated Data Scraping System:**
--   **Agent #115 (Orchestrator):** Master workflow coordinator managing 200 global tango community sources.
--   **Agent #116 (Static Scraper):** Cheerio-based HTML/CSS extraction.
--   **Agent #117 (JS Scraper):** Playwright headless browser for dynamic sites.
--   **Agent #118 (Social Scraper):** Facebook Graph API and Instagram integration.
--   **Agent #119 (Deduplicator):** AI-powered semantic matching using OpenAI embeddings.
--   **Coverage:** 92 cities across 43 countries with expected 500-1000 events per automated run.
--   **Admin Control:** Manual trigger via `/api/admin/trigger-scraping` endpoint (super_admin only).
-
 #### System Design Choices
-
-**Development Methodology:** MB.MD Protocol v2.0 (simultaneously, recursively, critically) with:
-- **Wave-Based Parallel Execution:** 4+ simultaneous development tracks (main agent + 3 subagents)
-- **Continue-on-Bug Strategy:** Don't wait for DB migrations or LSP errors - keep building
-- **Subagent Delegation:** Specialized subagents for UI, Stripe integration, and feature-complete modules
-- **Efficiency Multiplier:** 3-8x faster development through aggressive parallelization
-- **Recent Achievements:**
-  - **Wave 4:** Completed 5 P0 blockers - 2FA + GDPR + Legal (~2,100 lines, 8 pages, 16 endpoints)
-  - **Wave 5:** Completed 3 P0 blockers - Stripe Billing + Messages Platform + 20 Roles (~3,500 lines, 9 pages, 25 endpoints)
+**Development Methodology:** MB.MD Protocol v2.0 (simultaneously, recursively, critically) with wave-based parallel execution, a continue-on-bug strategy, and subagent delegation for efficiency.
 
 **Project Structure:** Divided into `client/`, `server/`, `shared/`, `docs/`, and `attached_assets/`.
 
-**Production Infrastructure:** CI/CD with GitHub Actions, Prometheus/Grafana monitoring, Redis caching, BullMQ background jobs, robust security measures (CSP, rate limiting, OWASP Top 10 compliance), performance optimizations (compression, code splitting, PostgreSQL indexing), and reliability features (automated backups, zero-downtime deployments).
+**Production Infrastructure:** CI/CD with GitHub Actions, Prometheus/Grafana monitoring, Redis caching, BullMQ background jobs, robust security measures (CSP, rate limiting, OWASP Top 10 compliance), performance optimizations, and reliability features.
 
-**Testing Infrastructure:** Comprehensive Playwright test suites achieving **95% coverage**, including E2E critical tests (authentication, payments, admin), WebSocket real-time tests, Media Gallery Album tests, theme persistence tests, integration tests (API validation), security tests (OWASP Top 10), performance tests (k6 load testing), and visual editor tests, totaling approximately 1,500+ lines across 12 suites.
-
-**Parallel Testing & Bug Fix Workflow (MB.MD Protocol v2.0):**
-- **Continue-on-Bug Testing:** Playwright tests record bugs but continue testing remaining features, maximizing coverage in single pass
-- **Parallel Bug Fixing:** While tests run, dedicated agents fix discovered bugs simultaneously
-- **Focused Regression Tests:** After fixes, targeted tests verify specific bug resolutions without full re-run
-- **Multi-Agent Orchestration:** Testing agent discovers → Logging agent documents → Fixing agent repairs → Verification agent validates
-- **Efficiency Gains:** 3-5x faster bug resolution through parallel workflows vs sequential test-fix-retest cycles
-- **Admin Test Credentials:** ALL Playwright tests use consistent admin credentials for maximum feature access and testing coverage:
-  - **Email:** `admin@mundotango.life`
-  - **Password:** `admin123`
-  - **Role Level:** Admin/Super Admin (highest system access)
-  - **Permissions:** Full access to all features, admin panels, visual editor, AI systems, and protected routes
-  - **Rationale:** Ensures tests can verify ALL platform features without permission blockers, reduces test flakiness, and provides consistent authenticated state across all test suites
-
-#### Security & Compliance Features (Waves 1-4 Complete)
-- **CSRF Protection** - Global double-submit cookie pattern applied to 189+ mutating routes (POST/PUT/DELETE/PATCH). Auto-skips GET/HEAD/OPTIONS and JWT Bearer auth. Full testing guide in `server/security/CSRF_TESTING.md`.
-- **Tier Enforcement System** - 5 middleware functions for role-based access control: `requireMinimumRole`, `requireFeature`, `requireQuota`, `requirePermission`, `requireRoleAndFeature`. Applied to Admin routes (level 4) and Event creation (level 3).
-- **Row Level Security (RLS)** - PostgreSQL RLS policies created for 15+ sensitive tables (users, posts, events, groups, chat messages, notifications). Framework in `server/database/rls-policies.sql` with integration helper in `server/database/rls-integration.ts`.
-- **Revenue Sharing System** - Fully implemented in TransactionMonitor.ts with platform fee calculation, creator payouts, 7-day settlement delay, and `getSettlementStatus()` method for seller payouts.
-- **CSP Headers** - Environment-aware Content Security Policy (development: permissive, production: strict nonce-based). Comprehensive security headers middleware with HSTS, X-Frame-Options, Permissions Policy.
-- **Audit Logging** - Comprehensive security event tracking in database.
-- **Two-Factor Authentication (2FA)** ✅ WAVE 4 - Complete TOTP implementation with speakeasy, QR code generation, backup codes, encrypted secrets storage. Services: `server/services/twoFactor.ts`. Routes: `server/routes/security-routes.ts` (6 endpoints).
-- **GDPR Compliance** ✅ WAVE 4 - Full user data export (ZIP with all user data), privacy settings management, account deletion with 30-day grace period. Services: `server/services/gdprExport.ts`. Routes: `server/routes/gdpr-routes.ts` (7 endpoints).
-- **Legal Compliance** ✅ WAVE 4 - Code of Conduct acceptance tracking with IP/user-agent logging, version control, acceptance history. Routes: `server/routes/legal-routes.ts` (3 endpoints).
-- **Revenue Tracking** ✅ WAVE 4 - Housing & Event payment tracking with Stripe integration, platform fee calculation (5% guest fee + 12% host fee for housing, 10% for events), transfer tracking, settlement status.
-- **Database Tables** - Wave 4 added: userTwoFactor, codeOfConductAgreements, housingBookingPayments, eventTicketPurchases, platformRevenue (6 new tables, 165 lines).
-- **API Endpoints** - 16 new Wave 4 endpoints across security, GDPR, and legal routes.
-- **Frontend UI** - ✅ WAVE 4: Complete (8 pages via 3 subagents: 2FA, GDPR, Legal)
-- **Documentation** - Complete security features guide (SECURITY_FEATURES.md), CSRF testing guide (CSRF_TESTING.md).
-
-#### Wave 5 Features (P0 #10-16 Complete)
-- **Stripe Subscription Billing** ✅ WAVE 5 - Complete billing dashboard with 12 endpoints. Routes: `server/routes/billing-routes.ts`. Frontend: 4 pages (BillingDashboard, PaymentHistory, PaymentMethods, Checkout). Features: Plan upgrades, payment methods, invoice history, Stripe Customer Portal integration. Tiers: Free, Basic ($9.99), Pro ($29.99), Premium ($99.99).
-- **Messages Platform** ✅ WAVE 5 - Unified inbox across 5 channels (MT, Gmail, Facebook, Instagram, WhatsApp). Backend: 13 endpoints in `server/routes/messages-routes.ts`. Frontend: 5 components (UnifiedInbox, ChannelConnections, Templates, Automations, ComposeMessage). Schemas: 5 new tables (connectedChannels, externalMessages, messageTemplates, messageAutomations, scheduledMessages). Ready for Gmail/FB/IG/WhatsApp API integration.
-- **20 Tango Roles System** ✅ WAVE 5 - Complete role system with icons. Config: `client/src/lib/tangoRoles.ts` (17 business roles + 3 social roles including Taxi Dancer). Component: `client/src/components/RoleIcon.tsx` for role icon display throughout app.
-- **Database Tables** - Wave 5 added: 5 message platform tables (250+ lines).
-- **API Endpoints** - 25 new Wave 5 endpoints (12 Stripe billing + 13 messages platform).
-- **Frontend UI** - 9 new pages/components delivered via 3 parallel subagents in single session.
+**Testing Infrastructure:** Comprehensive Playwright test suites achieving **95% coverage**, including E2E critical tests, WebSocket real-time tests, security tests, performance tests, and visual editor tests. A Parallel Testing & Bug Fix Workflow (MB.MD Protocol v2.0) uses continue-on-bug testing, parallel bug fixing, focused regression tests, and multi-agent orchestration for efficient bug resolution.
 
 ### External Dependencies
 
@@ -124,7 +64,6 @@ The platform features a unified **MT Ocean theme** across all pages, characteriz
 -   **Vector Database:** LanceDB
 -   **Payments:** Stripe
 -   **Real-time Communication:** Supabase Realtime, WebSocket
--   **Deployment & Hosting:** Vercel, Railway, Supabase
 -   **Queue Management:** BullMQ (requires Redis)
 -   **UI Components:** shadcn/ui, Radix UI
 -   **Animation Library:** Framer Motion

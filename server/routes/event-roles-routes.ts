@@ -4,7 +4,7 @@
  */
 
 import { Router } from "express";
-import { db } from "./db";
+import { db } from "@shared/db";
 import { 
   eventParticipants, 
   eventRoleInvitations, 
@@ -357,7 +357,7 @@ router.post("/events/:id/accept-invitation/:token", authenticateToken, async (re
     }
 
     // Create participant with invited role
-    const rolePermissions = EVENT_ROLE_PERMISSIONS[invitation.role];
+    const rolePermissions = EVENT_ROLE_PERMISSIONS[invitation.role as keyof typeof EVENT_ROLE_PERMISSIONS];
     const [newParticipant] = await db
       .insert(eventParticipants)
       .values({
