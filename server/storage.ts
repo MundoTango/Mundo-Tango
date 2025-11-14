@@ -406,7 +406,7 @@ export interface IStorage {
   
   createEvent(event: InsertEvent): Promise<SelectEvent>;
   getEventById(id: number): Promise<SelectEvent | undefined>;
-  getEvents(params: { city?: string; eventType?: string; startDate?: Date; endDate?: Date; limit?: number; offset?: number }): Promise<SelectEvent[]>;
+  getEvents(params: { city?: string; eventType?: string; startDate?: Date; endDate?: Date; search?: string; limit?: number; offset?: number }): Promise<SelectEvent[]>;
   updateEvent(id: number, data: Partial<SelectEvent>): Promise<SelectEvent | undefined>;
   deleteEvent(id: number): Promise<void>;
   
@@ -2784,7 +2784,7 @@ export class DbStorage implements IStorage {
     return result[0];
   }
 
-  async getEvents(params: { city?: string; eventType?: string; startDate?: Date; endDate?: Date; limit?: number; offset?: number }): Promise<SelectEvent[]> {
+  async getEvents(params: { city?: string; eventType?: string; startDate?: Date; endDate?: Date; search?: string; limit?: number; offset?: number }): Promise<SelectEvent[]> {
     let conditions = [];
     
     if (params.city) {
@@ -2801,6 +2801,18 @@ export class DbStorage implements IStorage {
     
     if (params.endDate) {
       conditions.push(lte(events.startDate, params.endDate));
+    }
+    
+    if (params.search) {
+      const searchTerm = `%${params.search.toLowerCase()}%`;
+      conditions.push(
+        or(
+          sql`LOWER(${events.title}) LIKE ${searchTerm}`,
+          sql`LOWER(${events.description}) LIKE ${searchTerm}`,
+          sql`LOWER(${events.city}) LIKE ${searchTerm}`,
+          sql`LOWER(${events.location}) LIKE ${searchTerm}`
+        )
+      );
     }
     
     let query = db.select().from(events);

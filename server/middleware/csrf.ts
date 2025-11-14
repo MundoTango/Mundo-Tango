@@ -86,6 +86,11 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     return next();
   }
   
+  // Skip CSRF check for API endpoints using JWT (they have their own security)
+  if (req.headers.authorization?.startsWith("Bearer ")) {
+    return next();
+  }
+  
   const cookieToken = req.cookies["XSRF-TOKEN"];
   const headerToken = req.headers["x-xsrf-token"] || req.body?._csrf;
   

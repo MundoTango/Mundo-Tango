@@ -2906,7 +2906,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/events", async (req: Request, res: Response) => {
     try {
-      const { city, eventType, startDate, endDate, limit = "20", offset = "0" } = req.query;
+      const { city, eventType, startDate, endDate, search, limit = "20", offset = "0" } = req.query;
       
       const params: any = {
         limit: parseInt(limit as string),
@@ -2917,6 +2917,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (eventType) params.eventType = eventType as string;
       if (startDate) params.startDate = new Date(startDate as string);
       if (endDate) params.endDate = new Date(endDate as string);
+      if (search) params.search = search as string;
       
       const events = await storage.getEvents(params);
       res.json({ events, total: events.length });
