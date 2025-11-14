@@ -67,8 +67,10 @@ The platform features a unified **MT Ocean theme** across all pages, characteriz
 - **Wave-Based Parallel Execution:** 4+ simultaneous development tracks (main agent + 3 subagents)
 - **Continue-on-Bug Strategy:** Don't wait for DB migrations or LSP errors - keep building
 - **Subagent Delegation:** Specialized subagents for UI, Stripe integration, and feature-complete modules
-- **Efficiency Multiplier:** 3-5x faster development through aggressive parallelization
-- **Recent Achievement (Wave 4):** Completed 5 P0 blockers simultaneously - 960 lines of code in one wave (2FA system, GDPR export, legal compliance, housing/event revenue tracking)
+- **Efficiency Multiplier:** 3-8x faster development through aggressive parallelization
+- **Recent Achievements:**
+  - **Wave 4:** Completed 5 P0 blockers - 2FA + GDPR + Legal (~2,100 lines, 8 pages, 16 endpoints)
+  - **Wave 5:** Completed 3 P0 blockers - Stripe Billing + Messages Platform + 20 Roles (~3,500 lines, 9 pages, 25 endpoints)
 
 **Project Structure:** Divided into `client/`, `server/`, `shared/`, `docs/`, and `attached_assets/`.
 
@@ -102,8 +104,16 @@ The platform features a unified **MT Ocean theme** across all pages, characteriz
 - **Revenue Tracking** ✅ WAVE 4 - Housing & Event payment tracking with Stripe integration, platform fee calculation (5% guest fee + 12% host fee for housing, 10% for events), transfer tracking, settlement status.
 - **Database Tables** - Wave 4 added: userTwoFactor, codeOfConductAgreements, housingBookingPayments, eventTicketPurchases, platformRevenue (6 new tables, 165 lines).
 - **API Endpoints** - 16 new Wave 4 endpoints across security, GDPR, and legal routes.
-- **Frontend UI** - In progress via subagents (2FA setup, privacy settings, legal acceptance).
+- **Frontend UI** - ✅ WAVE 4: Complete (8 pages via 3 subagents: 2FA, GDPR, Legal)
 - **Documentation** - Complete security features guide (SECURITY_FEATURES.md), CSRF testing guide (CSRF_TESTING.md).
+
+#### Wave 5 Features (P0 #10-16 Complete)
+- **Stripe Subscription Billing** ✅ WAVE 5 - Complete billing dashboard with 12 endpoints. Routes: `server/routes/billing-routes.ts`. Frontend: 4 pages (BillingDashboard, PaymentHistory, PaymentMethods, Checkout). Features: Plan upgrades, payment methods, invoice history, Stripe Customer Portal integration. Tiers: Free, Basic ($9.99), Pro ($29.99), Premium ($99.99).
+- **Messages Platform** ✅ WAVE 5 - Unified inbox across 5 channels (MT, Gmail, Facebook, Instagram, WhatsApp). Backend: 13 endpoints in `server/routes/messages-routes.ts`. Frontend: 5 components (UnifiedInbox, ChannelConnections, Templates, Automations, ComposeMessage). Schemas: 5 new tables (connectedChannels, externalMessages, messageTemplates, messageAutomations, scheduledMessages). Ready for Gmail/FB/IG/WhatsApp API integration.
+- **20 Tango Roles System** ✅ WAVE 5 - Complete role system with icons. Config: `client/src/lib/tangoRoles.ts` (17 business roles + 3 social roles including Taxi Dancer). Component: `client/src/components/RoleIcon.tsx` for role icon display throughout app.
+- **Database Tables** - Wave 5 added: 5 message platform tables (250+ lines).
+- **API Endpoints** - 25 new Wave 5 endpoints (12 Stripe billing + 13 messages platform).
+- **Frontend UI** - 9 new pages/components delivered via 3 parallel subagents in single session.
 
 ### External Dependencies
 
