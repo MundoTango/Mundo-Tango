@@ -6,6 +6,26 @@
 **Purpose:** Universal execution protocol for complex tasks  
 **Project:** Mundo Tango (927 features, 47 P0 blockers)
 
+## 🧪 Playwright Test Credentials
+
+**SECURE TEST USER** (stored in Replit Secrets):
+- Email: `process.env.TEST_ADMIN_EMAIL` 
+- Password: `process.env.TEST_ADMIN_PASSWORD`
+- Role: `super_admin`
+- User ID: 106
+- Status: Active, verified
+
+**Usage in Tests:**
+```typescript
+await page.fill('[data-testid="input-email"]', process.env.TEST_ADMIN_EMAIL!);
+await page.fill('[data-testid="input-password"]', process.env.TEST_ADMIN_PASSWORD!);
+```
+
+**Setup Script:** `tsx server/scripts/setup-test-user.ts`
+- Auto-creates/updates test user with god-level permissions
+- Syncs credentials with secrets on every run
+- Safe to run multiple times (idempotent)
+
 ---
 
 ## 📚 Version History
