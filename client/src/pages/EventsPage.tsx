@@ -62,11 +62,11 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   };
 
   const formatEventDateTime = (dateString: string): string => {
-    return safeDateFormat(dateString, "MMM dd, yyyy", dateString);
+    return safeDateFormat(dateString, "MMM dd, yyyy", "Date TBD");
   };
 
   const formatEventTime = (dateString: string): string => {
-    return safeDateFormat(dateString, "h:mm a", dateString);
+    return safeDateFormat(dateString, "h:mm a", "Time TBD");
   };
   
   // Determine image URL - use fallback if null
@@ -116,7 +116,20 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
           <div className="flex items-center gap-2 text-sm">
             <CalendarIcon className="h-4 w-4 flex-shrink-0 text-primary" />
             <span data-testid={`text-event-date-${eventData.id}`}>
-              {formatEventDateTime(eventData.date)} • {formatEventTime(eventData.date)}
+              {(() => {
+                const dateStr = formatEventDateTime(eventData.date);
+                const timeStr = formatEventTime(eventData.date);
+                const isDateValid = dateStr !== "Date TBD";
+                const isTimeValid = timeStr !== "Time TBD";
+                
+                if (isDateValid && isTimeValid) {
+                  return `${dateStr} • ${timeStr}`;
+                } else if (!isDateValid && !isTimeValid) {
+                  return `${dateStr} ${timeStr}`;
+                } else {
+                  return `${dateStr} ${timeStr}`;
+                }
+              })()}
             </span>
           </div>
 
