@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, MapPin, Users, Star, TrendingUp, Clock, ExternalLink, Check, HelpCircle, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import { formatDistanceToNow, format } from "date-fns";
+import { safeDateFormat, safeDateDistance } from "@/lib/safeDateFormat";
 import { Link } from "wouter";
 import {
   DropdownMenu,
@@ -343,22 +343,10 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                           }}
                         >
                           <div className="text-xs font-semibold">
-                            {(() => {
-                              try {
-                                return format(new Date(event.startDate), 'MMM');
-                              } catch {
-                                return 'TBD';
-                              }
-                            })()}
+                            {safeDateFormat(event.startDate, 'MMM', 'TBD')}
                           </div>
                           <div className="text-2xl font-bold">
-                            {(() => {
-                              try {
-                                return format(new Date(event.startDate), 'd');
-                              } catch {
-                                return '?';
-                              }
-                            })()}
+                            {safeDateFormat(event.startDate, 'd', '?')}
                           </div>
                         </div>
                       )}
@@ -374,13 +362,7 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                         
                         <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
                           <Clock className="w-3 h-3" />
-                          {(() => {
-                            try {
-                              return formatDistanceToNow(new Date(event.startDate), { addSuffix: true });
-                            } catch {
-                              return 'upcoming';
-                            }
-                          })()}
+                          {safeDateDistance(event.startDate, { addSuffix: true }, 'upcoming')}
                         </div>
 
                         {event.location && (

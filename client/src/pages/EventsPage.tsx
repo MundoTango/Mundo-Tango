@@ -62,21 +62,11 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   };
 
   const formatEventDateTime = (dateString: string): string => {
-    try {
-      const date = new Date(dateString);
-      return format(date, "MMM dd, yyyy");
-    } catch {
-      return dateString;
-    }
+    return safeDateFormat(dateString, "MMM dd, yyyy", dateString);
   };
 
   const formatEventTime = (dateString: string): string => {
-    try {
-      const date = new Date(dateString);
-      return format(date, "h:mm a");
-    } catch {
-      return dateString;
-    }
+    return safeDateFormat(dateString, "h:mm a", dateString);
   };
   
   // Determine image URL - use fallback if null
