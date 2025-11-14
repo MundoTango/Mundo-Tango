@@ -50,7 +50,7 @@ export class SocialScraper {
       }
 
       // Store events in database
-      await this.storeEvents(events, source.id);
+      await this.storeEvents(events, source);
 
       console.log(`[Agent #118] ✅ Found ${events.length} events from ${source.name}`);
       return events.length;
@@ -163,11 +163,12 @@ export class SocialScraper {
   /**
    * Store scraped events in database
    */
-  private async storeEvents(events: SocialEventData[], sourceId: number): Promise<void> {
+  private async storeEvents(events: SocialEventData[], source: any): Promise<void> {
     for (const event of events) {
       try {
         await db.insert(scrapedEvents).values({
-          sourceId,
+          sourceUrl: source.url,
+          sourceName: source.name,
           title: event.title,
           description: event.description || '',
           startDate: event.startDate,
