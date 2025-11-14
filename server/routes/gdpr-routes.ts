@@ -3,7 +3,8 @@
  * Data export, privacy settings, account deletion
  */
 
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
+import { AuthRequest } from '../middleware/auth';
 import {
   requestDataExport,
   getDataExportStatus,
@@ -18,7 +19,7 @@ const router = Router();
 /**
  * Request full data export
  */
-router.post('/api/gdpr/export', async (req, res) => {
+router.post('/api/gdpr/export', async (req: AuthRequest, res: Response) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
@@ -40,7 +41,7 @@ router.post('/api/gdpr/export', async (req, res) => {
 /**
  * Get data export status
  */
-router.get('/api/gdpr/export/:requestId', async (req, res) => {
+router.get('/api/gdpr/export/:requestId', async (req: AuthRequest, res: Response) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
@@ -64,7 +65,7 @@ router.get('/api/gdpr/export/:requestId', async (req, res) => {
 /**
  * Get all data exports for user
  */
-router.get('/api/gdpr/exports', async (req, res) => {
+router.get('/api/gdpr/exports', async (req: AuthRequest, res: Response) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
@@ -81,7 +82,7 @@ router.get('/api/gdpr/exports', async (req, res) => {
 /**
  * Get privacy settings
  */
-router.get('/api/gdpr/privacy-settings', async (req, res) => {
+router.get('/api/gdpr/privacy-settings', async (req: AuthRequest, res: Response) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
@@ -108,7 +109,7 @@ router.get('/api/gdpr/privacy-settings', async (req, res) => {
 /**
  * Update privacy settings
  */
-router.put('/api/gdpr/privacy-settings', async (req, res) => {
+router.put('/api/gdpr/privacy-settings', async (req: AuthRequest, res: Response) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
@@ -157,7 +158,7 @@ router.put('/api/gdpr/privacy-settings', async (req, res) => {
 /**
  * Request account deletion (30-day grace period)
  */
-router.post('/api/gdpr/delete-account', async (req, res) => {
+router.post('/api/gdpr/delete-account', async (req: AuthRequest, res: Response) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: 'Not authenticated' });
   }

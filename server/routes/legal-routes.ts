@@ -3,7 +3,8 @@
  * Code of Conduct acceptance tracking
  */
 
-import { Router } from 'express';
+import { Router, Response } from 'express';
+import { AuthRequest } from '../middleware/auth';
 import { db } from '@shared/db';
 import { codeOfConductAgreements } from '@shared/schema';
 import { eq } from 'drizzle-orm';
@@ -13,7 +14,7 @@ const router = Router();
 /**
  * Record Code of Conduct acceptance
  */
-router.post('/api/onboarding/legal', async (req, res) => {
+router.post('/api/onboarding/legal', async (req: AuthRequest, res: Response) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
@@ -56,7 +57,7 @@ router.post('/api/onboarding/legal', async (req, res) => {
 /**
  * Check if user has accepted current legal agreements
  */
-router.get('/api/onboarding/legal/status', async (req, res) => {
+router.get('/api/onboarding/legal/status', async (req: AuthRequest, res: Response) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
@@ -102,7 +103,7 @@ router.get('/api/onboarding/legal/status', async (req, res) => {
 /**
  * Get user's legal agreement history
  */
-router.get('/api/onboarding/legal/history', async (req, res) => {
+router.get('/api/onboarding/legal/history', async (req: AuthRequest, res: Response) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: 'Not authenticated' });
   }

@@ -3,7 +3,8 @@
  * Complete 2FA implementation with TOTP
  */
 
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
+import { AuthRequest } from '../middleware/auth';
 import {
   setupTOTP,
   verifyTOTP,
@@ -19,7 +20,7 @@ const router = Router();
  * Setup 2FA for authenticated user
  * Returns QR code and backup codes
  */
-router.post('/api/auth/2fa/setup', async (req, res) => {
+router.post('/api/auth/2fa/setup', async (req: AuthRequest, res: Response) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
@@ -44,7 +45,7 @@ router.post('/api/auth/2fa/setup', async (req, res) => {
 /**
  * Verify 2FA token and enable it
  */
-router.post('/api/auth/2fa/verify', async (req, res) => {
+router.post('/api/auth/2fa/verify', async (req: AuthRequest, res: Response) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
@@ -79,7 +80,7 @@ router.post('/api/auth/2fa/verify', async (req, res) => {
 /**
  * Verify 2FA during login
  */
-router.post('/api/auth/2fa/login-verify', async (req, res) => {
+router.post('/api/auth/2fa/login-verify', async (req: Request, res: Response) => {
   const { userId, token, backupCode } = req.body;
 
   if (!userId || (!token && !backupCode)) {
@@ -105,7 +106,7 @@ router.post('/api/auth/2fa/login-verify', async (req, res) => {
 /**
  * Disable 2FA
  */
-router.post('/api/auth/2fa/disable', async (req, res) => {
+router.post('/api/auth/2fa/disable', async (req: AuthRequest, res: Response) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
@@ -135,7 +136,7 @@ router.post('/api/auth/2fa/disable', async (req, res) => {
 /**
  * Check 2FA status
  */
-router.get('/api/auth/2fa/status', async (req, res) => {
+router.get('/api/auth/2fa/status', async (req: AuthRequest, res: Response) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
