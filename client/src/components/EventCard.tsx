@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Calendar, Clock, Users, Music } from "lucide-react";
 import { Link } from "wouter";
 import { SelectEvent } from "@shared/schema";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 
 interface EventCardProps {
   event: SelectEvent;
@@ -56,26 +56,17 @@ export function EventCard({ event, onRSVP, userRSVPStatus }: EventCardProps) {
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />
             <span data-testid={`text-event-date-${event.id}`}>
-              {(() => {
-                try {
-                  return format(new Date(event.startDate || Date.now()), "EEE, MMM d, yyyy");
-                } catch {
-                  return 'Date TBD';
-                }
-              })()}
+              {safeDateFormat(event.startDate, "EEE, MMM d, yyyy", "Date TBD")}
             </span>
           </div>
           
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4" />
             <span data-testid={`text-event-time-${event.id}`}>
-              {(() => {
-                try {
-                  return `${format(new Date(event.startDate || Date.now()), "h:mm a")} - ${format(new Date(event.endDate || Date.now()), "h:mm a")}`;
-                } catch {
-                  return 'Time TBD';
-                }
-              })()}
+              {event.startDate && event.endDate 
+                ? `${safeDateFormat(event.startDate, "h:mm a", "")} - ${safeDateFormat(event.endDate, "h:mm a", "")}`
+                : 'Time TBD'
+              }
             </span>
           </div>
           

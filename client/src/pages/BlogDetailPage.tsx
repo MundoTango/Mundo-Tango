@@ -7,7 +7,7 @@ import { SEO } from "@/components/SEO";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, Clock, Heart, Share2, BookmarkPlus, ArrowLeft, BookOpen } from "lucide-react";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
 
 interface BlogPost {
@@ -101,7 +101,7 @@ export default function BlogDetailPage() {
                 <span>•</span>
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
-                  {format(new Date(post.publishedAt), 'MMMM dd, yyyy')}
+                  {safeDateFormat(post.publishedAt, 'MMMM dd, yyyy', 'recently')}
                 </div>
                 <span>•</span>
                 <div className="flex items-center gap-1">
@@ -133,7 +133,7 @@ export default function BlogDetailPage() {
                   <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
-                      {format(new Date(post.publishedAt), 'MMMM dd, yyyy')}
+                      {safeDateFormat(post.publishedAt, 'MMMM dd, yyyy', 'recently')}
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4" />

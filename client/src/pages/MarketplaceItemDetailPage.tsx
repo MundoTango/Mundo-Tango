@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ShoppingCart, Heart, Share2, MapPin, Package, Shield, ArrowLeft } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
 
 interface MarketplaceItem {
@@ -160,7 +160,7 @@ export default function MarketplaceItemDetailPage() {
                         <div>
                           <span className="text-muted-foreground">Posted:</span>
                           <span className="ml-2 font-semibold text-foreground">
-                            {format(new Date(item.postedAt), 'MMM dd, yyyy')}
+                            {safeDateFormat(item.postedAt, 'MMM dd, yyyy', 'recently')}
                           </span>
                         </div>
                       </div>

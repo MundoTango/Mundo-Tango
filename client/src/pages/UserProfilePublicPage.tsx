@@ -17,7 +17,7 @@ import {
   Award,
   Music
 } from "lucide-react";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
 
@@ -138,7 +138,7 @@ export default function UserProfilePublicPage() {
                         )}
                         <div className="flex items-center gap-1.5">
                           <Calendar className="h-4 w-4 text-primary" />
-                          Joined {format(new Date(profile.joinedAt), 'MMMM yyyy')}
+                          Joined {safeDateFormat(profile.joinedAt, 'MMMM yyyy', 'recently')}
                         </div>
                         {profile.danceLevel && (
                           <div className="flex items-center gap-1.5">
@@ -240,7 +240,7 @@ export default function UserProfilePublicPage() {
                     <CardContent>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Calendar className="h-4 w-4" />
-                        {format(new Date(event.startDate), 'PPP')}
+                        {safeDateFormat(event.startDate, 'PPP', 'TBD')}
                       </div>
                       {event.location && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
@@ -280,7 +280,7 @@ export default function UserProfilePublicPage() {
                   )}
                   <div>
                     <h4 className="font-semibold text-foreground mb-2">Member Since</h4>
-                    <p className="text-muted-foreground">{format(new Date(profile.joinedAt), 'MMMM d, yyyy')}</p>
+                    <p className="text-muted-foreground">{safeDateFormat(profile.joinedAt, 'MMMM d, yyyy', 'recently')}</p>
                   </div>
                 </CardContent>
               </Card>

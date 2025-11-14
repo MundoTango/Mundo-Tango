@@ -31,7 +31,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Link } from "wouter";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 
 interface Subscription {
   id: number;
@@ -162,11 +162,7 @@ export default function ManageSubscriptionPage() {
   };
 
   const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "MMM dd, yyyy");
-    } catch {
-      return dateString;
-    }
+    return safeDateFormat(dateString, "MMM dd, yyyy", dateString);
   };
 
   const getBillingInterval = (metadata: any) => {

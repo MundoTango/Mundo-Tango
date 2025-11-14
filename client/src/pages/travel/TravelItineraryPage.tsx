@@ -12,7 +12,7 @@ import { BudgetCalculator } from "@/components/travel/BudgetCalculator";
 import { TravelDocumentUpload } from "@/components/travel/TravelDocumentUpload";
 import { ParticipantAvatar } from "@/components/travel/ParticipantAvatar";
 import { Calendar, MapPin, Users, DollarSign, FileText, Map, ArrowLeft, Plus } from "lucide-react";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -69,11 +69,7 @@ export default function TravelItineraryPage() {
   }
 
   const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "MMM dd, yyyy");
-    } catch {
-      return dateString;
-    }
+    return safeDateFormat(dateString, "MMM dd, yyyy", dateString);
   };
 
   const items = trip.items || [];

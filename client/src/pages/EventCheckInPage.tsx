@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, QrCode, Search, UserCheck, Calendar, MapPin, ArrowLeft, Users } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
 
@@ -131,7 +131,7 @@ export default function EventCheckInPage() {
               <div className="flex flex-wrap items-center justify-center gap-6 text-white/80 text-lg mb-4">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-5 w-5" />
-                  <span>{format(new Date(event.date), 'PPP')}</span>
+                  <span>{safeDateFormat(event.date, 'PPP', 'TBD')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <MapPin className="h-5 w-5" />
@@ -244,7 +244,7 @@ export default function EventCheckInPage() {
                           <div className="text-sm text-muted-foreground">{rsvp.userEmail}</div>
                           {rsvp.checkedIn && rsvp.checkedInAt && (
                             <div className="text-xs text-muted-foreground mt-1">
-                              Checked in at {format(new Date(rsvp.checkedInAt), 'p')}
+                              Checked in at {safeDateFormat(rsvp.checkedInAt, 'p', 'recently')}
                             </div>
                           )}
                         </div>
