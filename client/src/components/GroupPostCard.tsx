@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SelectGroupPost } from "@shared/schema";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { renderMentionPills } from "@/utils/renderMentionPills";
 
 interface GroupPostCardProps {
@@ -59,7 +59,7 @@ export function GroupPostCard({
                 )}
               </div>
               <span className="text-xs text-muted-foreground" data-testid={`text-post-time-${post.id}`}>
-                {formatDistanceToNow(new Date(post.createdAt || Date.now()), { addSuffix: true })}
+                {safeDateDistance(post.createdAt, { addSuffix: true })}
               </span>
             </div>
           </div>

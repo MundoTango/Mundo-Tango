@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Heart, MessageCircle, Trash2, Loader2 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 
 export interface CommentData {
   id: number;
@@ -102,7 +102,7 @@ export const CommentItem = ({
               {comment.user?.name || comment.user?.username || "Unknown User"}
             </span>
             <span className="text-xs text-muted-foreground">
-              {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+              {safeDateDistance(comment.createdAt, { addSuffix: true })}
             </span>
           </div>
           

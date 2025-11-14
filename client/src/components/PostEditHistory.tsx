@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";
 import { Clock, User } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 
 interface PostEditHistoryProps {
   postId: number;
@@ -40,7 +40,7 @@ export function PostEditHistory({ postId, open, onOpenChange }: PostEditHistoryP
                       <div className="flex-1">
                         <p className="text-sm font-medium">{edit.userName}</p>
                         <p className="text-xs text-muted-foreground">
-                          {formatDistanceToNow(new Date(edit.createdAt), { addSuffix: true })}
+                          {safeDateDistance(edit.createdAt, { addSuffix: true })}
                         </p>
                       </div>
                       {index === 0 && (

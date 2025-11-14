@@ -110,7 +110,7 @@ export function EventCard({ event, onRSVP, userRSVPStatus }: EventCardProps) {
           <div className="flex items-center gap-2 text-sm">
             <Users className="h-4 w-4" />
             <span className="text-muted-foreground" data-testid={`text-event-attendees-${event.id}`}>
-              {event.attendingCount || 0} attending
+              {event.currentAttendees || 0} attending
             </span>
             {event.maxAttendees && (
               <span className="text-muted-foreground">/ {event.maxAttendees}</span>
