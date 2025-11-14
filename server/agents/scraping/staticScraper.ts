@@ -128,7 +128,7 @@ export class StaticScraper {
   /**
    * Parse individual event element
    */
-  private parseEventElement($: cheerio.CheerioAPI, elem: cheerio.Cheerio, selectors: any): ScrapedEventData {
+  private parseEventElement($: cheerio.CheerioAPI, elem: cheerio.Cheerio<any>, selectors: any): ScrapedEventData {
     let title = '';
     let dateStr = '';
     let location = '';
@@ -241,10 +241,13 @@ export class StaticScraper {
    * Store scraped events in database
    */
   private async storeEvents(events: ScrapedEventData[], sourceId: number): Promise<void> {
+    // Note: sourceId parameter not used - would need to query source details
+    // For now, storing with sourceUrl and sourceName from event data
     for (const event of events) {
       try {
         await db.insert(scrapedEvents).values({
-          sourceId,
+          sourceUrl: event.externalId || 'unknown',
+          sourceName: 'Static Scraper',
           title: event.title,
           description: event.description || '',
           startDate: event.startDate,
@@ -252,10 +255,9 @@ export class StaticScraper {
           location: event.location,
           address: event.address,
           organizer: event.organizer,
-          price: event.price,
+          price: event.price ? event.price.toString() : null,
           imageUrl: event.imageUrl,
           externalId: event.externalId,
-          scrapedAt: new Date(),
           status: 'pending_review'
         });
       } catch (err) {
