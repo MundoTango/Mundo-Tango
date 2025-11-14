@@ -2907,6 +2907,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/events", async (req: Request, res: Response) => {
     try {
       const { city, eventType, startDate, endDate, search, limit = "20", offset = "0" } = req.query;
+      console.log('🔍 ROUTES: search param =', search);
       
       const params: any = {
         limit: parseInt(limit as string),
