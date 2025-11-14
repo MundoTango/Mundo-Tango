@@ -90,7 +90,7 @@ async function verifyRBACSystem() {
       { email: 'test-platform-contributor@rbac.test', roleLevel: 5 },
       { email: 'test-platform-volunteer@rbac.test', roleLevel: 6 },
       { email: 'test-super-admin@rbac.test', roleLevel: 7 },
-      { email: 'test-god@rbac.test', roleLevel: 8 },
+      { email: 'admin@mundotango.life', roleLevel: 8 },
     ];
 
     // Create test users

@@ -77,10 +77,10 @@ The platform features a unified **MT Ocean theme** across all pages, characteriz
 - **Focused Regression Tests:** After fixes, targeted tests verify specific bug resolutions without full re-run
 - **Multi-Agent Orchestration:** Testing agent discovers → Logging agent documents → Fixing agent repairs → Verification agent validates
 - **Efficiency Gains:** 3-5x faster bug resolution through parallel workflows vs sequential test-fix-retest cycles
-- **God-Level Test Credentials:** ALL Playwright tests use consistent super-admin credentials for maximum feature access and testing coverage:
-  - **Email:** `test-god@rbac.test`
-  - **Password:** (stored in test fixtures)
-  - **Role Level:** 8 (God Mode - highest system access)
+- **Admin Test Credentials:** ALL Playwright tests use consistent admin credentials for maximum feature access and testing coverage:
+  - **Email:** `admin@mundotango.life`
+  - **Password:** `admin123`
+  - **Role Level:** Admin/Super Admin (highest system access)
   - **Permissions:** Full access to all features, admin panels, visual editor, AI systems, and protected routes
   - **Rationale:** Ensures tests can verify ALL platform features without permission blockers, reduces test flakiness, and provides consistent authenticated state across all test suites
 
