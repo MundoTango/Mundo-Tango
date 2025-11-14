@@ -9414,25 +9414,7 @@ export const selectPlatformRevenueSchema = createSelectSchema(platformRevenue);
 export type InsertPlatformRevenue = z.infer<typeof insertPlatformRevenueSchema>;
 export type SelectPlatformRevenue = typeof platformRevenue.$inferSelect;
 
-// GDPR Data Export Requests (P0 #5)
-export const dataExportRequests = pgTable("data_export_requests", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  status: varchar("status", { length: 50 }).default("pending").notNull(), // pending, processing, completed, failed
-  downloadUrl: text("download_url"),
-  expiresAt: timestamp("expires_at"),
-  requestedAt: timestamp("requested_at").defaultNow().notNull(),
-  completedAt: timestamp("completed_at"),
-}, (table) => ({
-  userIdx: index("data_export_user_idx").on(table.userId),
-  statusIdx: index("data_export_status_idx").on(table.status),
-}));
-
-export const insertDataExportRequestSchema = createInsertSchema(dataExportRequests)
-  .omit({ id: true, requestedAt: true });
-export const selectDataExportRequestSchema = createSelectSchema(dataExportRequests);
-export type InsertDataExportRequest = z.infer<typeof insertDataExportRequestSchema>;
-export type SelectDataExportRequest = typeof dataExportRequests.$inferSelect;
+// GDPR Data Export Requests (P0 #5) - Already defined at line 9067, no duplicate needed
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
