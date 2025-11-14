@@ -23,6 +23,7 @@ import mrblueVideoRoutes from "./routes/mrblue-video-routes";
 import mrBlueRoutes from "./routes/mrBlue";
 import mrBlueEnhancedRoutes from "./routes/mr-blue-enhanced";
 import mrBlueAgentsRoutes from "./routes/mrBlueAgents";
+import premiumMediaRoutes from "./routes/premiumMedia";
 import learningIntelligenceRoutes from "./routes/learningIntelligence";
 import visualEditorRoutes from "./routes/visualEditor";
 import whisperRoutes from "./routes/whisper";
@@ -103,6 +104,8 @@ import onboardingRoutes from "./routes/onboarding-routes";
 import messagesRoutes from "./routes/messages-routes";
 import adsRoutes from "./routes/ads-routes";
 import revenueRoutes from "./routes/revenue-routes";
+import volunteerTestingRoutes from "./routes/volunteerTesting";
+import { registerLearningPathwaysRoutes } from "./routes/learningPathways-routes";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
 import { auditLog, getClientIp } from "./middleware/auditLog";
@@ -374,6 +377,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // User Testing AI Agents Routes (4 AI Agents for UX Testing - Agents #163-166)
   app.use("/api/user-testing", userTestingAgentsRoutes);
   
+  // TRACK 6: Volunteer Testing System - Scenarios + Recruitment + UI
+  app.use("/api/volunteer", volunteerTestingRoutes);
+  
   // Legal Document AI Agents Routes (2 AI Agents for Legal Documents - Agents #185-186)
   app.use("/api/legal/agents", legalAgentsRoutes);
   
@@ -382,6 +388,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // TRACK 3: Learning Intelligence Agents (#206-208) - Orchestrator + Pathways
   app.use("/api/learning", learningIntelligenceRoutes);
+  
+  // TRACK 7: Learning Pathways - 10 Data Collection Pathways
+  registerLearningPathwaysRoutes(app);
   
   // Existing routes
   app.use("/api/auth", authRoutes);
@@ -416,6 +425,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/whisper", authenticateToken, whisperRoutes);
   app.use("/api/realtime", authenticateToken, realtimeVoiceRoutes);
   app.use("/api/openai-realtime", authenticateToken, openaiRealtimeRoutes);
+  app.use("/api/premium", premiumMediaRoutes);
   app.use("/api/ai", aiEnhanceRoutes);
   app.use("/api/user", userSearchRoutes);
   app.use("/api/locations", locationSearchRoutes);

@@ -2,6 +2,16 @@ import { db } from "@db";
 import { mrBlueKnowledgeBase, sessionBugsFound, userTelemetry, visualEditorAiSuggestions } from "@shared/schema";
 import { eq, desc, and, gte, sql } from "drizzle-orm";
 import OpenAI from "openai";
+import { chatFeedbackPathway } from "../pathways/chatFeedbackPathway";
+import { volunteerTestingPathway } from "../pathways/volunteerTestingPathway";
+import { liveSessionPathway } from "../pathways/liveSessionPathway";
+import { visualEditorPathway } from "../pathways/visualEditorPathway";
+import { telemetryPathway } from "../pathways/telemetryPathway";
+import { codeGenerationPathway } from "../pathways/codeGenerationPathway";
+import { tourCompletionPathway } from "../pathways/tourCompletionPathway";
+import { featureUsagePathway } from "../pathways/featureUsagePathway";
+import { errorPatternPathway } from "../pathways/errorPatternPathway";
+import { socialSentimentPathway } from "../pathways/socialSentimentPathway";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -455,7 +465,261 @@ const learningPathways: LearningPathway[] = [
 // LEARNING COORDINATOR - Agent #206
 // ============================================================================
 
+export interface PathwayResults {
+  pathwayId: number;
+  pathwayName: string;
+  status: 'success' | 'error';
+  dataCollected: number;
+  insights: any[];
+  error?: string;
+}
+
 export class LearningCoordinator {
+  /**
+   * Run all 10 pathways and collect results
+   */
+  async runAllPathways(): Promise<PathwayResults[]> {
+    const results: PathwayResults[] = [];
+
+    // Pathway 1: Chat Feedback
+    try {
+      const sentiment = await chatFeedbackPathway.analyzeSentiment({
+        start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        end: new Date()
+      });
+      const bugReports = await chatFeedbackPathway.getBugReports(50);
+      
+      results.push({
+        pathwayId: 1,
+        pathwayName: "Chat Feedback",
+        status: 'success',
+        dataCollected: bugReports.length,
+        insights: [{ sentiment, bugReports: bugReports.length }]
+      });
+    } catch (error) {
+      results.push({
+        pathwayId: 1,
+        pathwayName: "Chat Feedback",
+        status: 'error',
+        dataCollected: 0,
+        insights: [],
+        error: (error as Error).message
+      });
+    }
+
+    // Pathway 2: Volunteer Testing
+    try {
+      const stats = await volunteerTestingPathway.getBugStatistics(7);
+      const stuckPoints = await volunteerTestingPathway.findCommonStuckPoints();
+      
+      results.push({
+        pathwayId: 2,
+        pathwayName: "Volunteer Testing",
+        status: 'success',
+        dataCollected: stats.total,
+        insights: [{ stats, stuckPoints: stuckPoints.length }]
+      });
+    } catch (error) {
+      results.push({
+        pathwayId: 2,
+        pathwayName: "Volunteer Testing",
+        status: 'error',
+        dataCollected: 0,
+        insights: [],
+        error: (error as Error).message
+      });
+    }
+
+    // Pathway 3: Live Sessions
+    try {
+      const sessions = await liveSessionPathway.getRecentSessions(10);
+      const trends = await liveSessionPathway.compareSessionsOverTime();
+      
+      results.push({
+        pathwayId: 3,
+        pathwayName: "Live Sessions",
+        status: 'success',
+        dataCollected: sessions.length,
+        insights: [{ sessions: sessions.length, trends: trends.length }]
+      });
+    } catch (error) {
+      results.push({
+        pathwayId: 3,
+        pathwayName: "Live Sessions",
+        status: 'error',
+        dataCollected: 0,
+        insights: [],
+        error: (error as Error).message
+      });
+    }
+
+    // Pathway 4: Visual Editor
+    try {
+      const usageStats = await visualEditorPathway.getUsageStatistics(7);
+      const problematicElements = await visualEditorPathway.findProblematicElements();
+      
+      results.push({
+        pathwayId: 4,
+        pathwayName: "Visual Editor",
+        status: 'success',
+        dataCollected: usageStats.totalEdits,
+        insights: [{ usageStats, problematicElements: problematicElements.length }]
+      });
+    } catch (error) {
+      results.push({
+        pathwayId: 4,
+        pathwayName: "Visual Editor",
+        status: 'error',
+        dataCollected: 0,
+        insights: [],
+        error: (error as Error).message
+      });
+    }
+
+    // Pathway 5: Telemetry
+    try {
+      const summary = await telemetryPathway.getTelemetrySummary(7);
+      const deadEnds = await telemetryPathway.findDeadEnds();
+      const rageClicks = await telemetryPathway.detectRageClicks();
+      
+      results.push({
+        pathwayId: 5,
+        pathwayName: "Telemetry",
+        status: 'success',
+        dataCollected: summary.totalEvents,
+        insights: [{ summary, deadEnds: deadEnds.length, rageClicks: rageClicks.length }]
+      });
+    } catch (error) {
+      results.push({
+        pathwayId: 5,
+        pathwayName: "Telemetry",
+        status: 'error',
+        dataCollected: 0,
+        insights: [],
+        error: (error as Error).message
+      });
+    }
+
+    // Pathway 6: Code Generation
+    try {
+      const feedbackStats = await codeGenerationPathway.getFeedbackStatistics(7);
+      const failurePatterns = await codeGenerationPathway.identifyFailurePatterns();
+      
+      results.push({
+        pathwayId: 6,
+        pathwayName: "Code Generation",
+        status: 'success',
+        dataCollected: feedbackStats.total,
+        insights: [{ feedbackStats, failurePatterns }]
+      });
+    } catch (error) {
+      results.push({
+        pathwayId: 6,
+        pathwayName: "Code Generation",
+        status: 'error',
+        dataCollected: 0,
+        insights: [],
+        error: (error as Error).message
+      });
+    }
+
+    // Pathway 7: Tour Completion
+    try {
+      const analytics = await tourCompletionPathway.getTourAnalytics('main-tour', 7);
+      const abandonmentPoints = await tourCompletionPathway.findAbandonmentPoints();
+      
+      results.push({
+        pathwayId: 7,
+        pathwayName: "Tour Completion",
+        status: 'success',
+        dataCollected: analytics.totalStarts,
+        insights: [{ analytics, abandonmentPoints: abandonmentPoints.length }]
+      });
+    } catch (error) {
+      results.push({
+        pathwayId: 7,
+        pathwayName: "Tour Completion",
+        status: 'error',
+        dataCollected: 0,
+        insights: [],
+        error: (error as Error).message
+      });
+    }
+
+    // Pathway 8: Feature Usage
+    try {
+      const featureUsage = await featureUsagePathway.getFeatureUsage();
+      const unusedFeatures = await featureUsagePathway.findUnusedFeatures();
+      const churnPredictions = await featureUsagePathway.predictChurn();
+      
+      results.push({
+        pathwayId: 8,
+        pathwayName: "Feature Usage",
+        status: 'success',
+        dataCollected: featureUsage.length,
+        insights: [{ features: featureUsage.length, unusedFeatures: unusedFeatures.length, churn: churnPredictions.length }]
+      });
+    } catch (error) {
+      results.push({
+        pathwayId: 8,
+        pathwayName: "Feature Usage",
+        status: 'error',
+        dataCollected: 0,
+        insights: [],
+        error: (error as Error).message
+      });
+    }
+
+    // Pathway 9: Error Patterns
+    try {
+      const errorStats = await errorPatternPathway.getErrorStatistics(7);
+      const prioritizedErrors = await errorPatternPathway.prioritizeErrors();
+      
+      results.push({
+        pathwayId: 9,
+        pathwayName: "Error Patterns",
+        status: 'success',
+        dataCollected: errorStats.total,
+        insights: [{ errorStats, prioritizedErrors: prioritizedErrors.length }]
+      });
+    } catch (error) {
+      results.push({
+        pathwayId: 9,
+        pathwayName: "Error Patterns",
+        status: 'error',
+        dataCollected: 0,
+        insights: [],
+        error: (error as Error).message
+      });
+    }
+
+    // Pathway 10: Social Sentiment
+    try {
+      const sentimentAnalysis = await socialSentimentPathway.analyzePosts(50);
+      const frustrationData = await socialSentimentPathway.detectFrustration();
+      const featureRequests = await socialSentimentPathway.extractFeatureRequests();
+      
+      results.push({
+        pathwayId: 10,
+        pathwayName: "Social Sentiment",
+        status: 'success',
+        dataCollected: 50,
+        insights: [{ sentimentAnalysis, frustration: frustrationData.length, featureRequests: featureRequests.length }]
+      });
+    } catch (error) {
+      results.push({
+        pathwayId: 10,
+        pathwayName: "Social Sentiment",
+        status: 'error',
+        dataCollected: 0,
+        insights: [],
+        error: (error as Error).message
+      });
+    }
+
+    return results;
+  }
+
   /**
    * Analyze feedback from a specific user across all pathways
    */
