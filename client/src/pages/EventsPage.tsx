@@ -190,11 +190,8 @@ export default function EventsPage() {
 
   const triggerScrapingMutation = useMutation({
     mutationFn: async (scrapingType: string) => {
-      return await apiRequest('/api/admin/trigger-scraping', {
-        method: 'POST',
-        body: JSON.stringify({ scrapingType }),
-        headers: { 'Content-Type': 'application/json' }
-      });
+      const response = await apiRequest('POST', '/api/admin/trigger-scraping', { scrapingType });
+      return await response.json();
     },
     onSuccess: (data) => {
       toast({
