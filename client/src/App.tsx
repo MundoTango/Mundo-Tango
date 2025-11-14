@@ -182,6 +182,9 @@ const LegalDocumentDetailPage = lazy(() => import("@/pages/legal/LegalDocumentDe
 const LegalTemplatesPage = lazy(() => import("@/pages/legal/LegalTemplatesPage"));
 const LegalSignaturePage = lazy(() => import("@/pages/legal/LegalSignaturePage"));
 
+// User Testing & QA
+const UserTestingPage = lazy(() => import("@/pages/UserTestingPage"));
+
 // Settings & Account
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
 const UserSettingsPage = lazy(() => import("@/pages/UserSettingsPage"));
@@ -883,6 +886,15 @@ function Router() {
           <AppLayout>
             <LegalSignaturePage />
           </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* User Testing & QA */}
+      <Route path="/admin/user-testing">
+        <ProtectedRoute>
+          <AdminLayout>
+            <UserTestingPage />
+          </AdminLayout>
         </ProtectedRoute>
       </Route>
 

@@ -22,6 +22,8 @@ import videoRoutes from "./routes/videoRoutes";
 import mrblueVideoRoutes from "./routes/mrblue-video-routes";
 import mrBlueRoutes from "./routes/mrBlue";
 import mrBlueEnhancedRoutes from "./routes/mr-blue-enhanced";
+import mrBlueAgentsRoutes from "./routes/mrBlueAgents";
+import learningIntelligenceRoutes from "./routes/learningIntelligence";
 import visualEditorRoutes from "./routes/visualEditor";
 import whisperRoutes from "./routes/whisper";
 import openaiRealtimeRoutes from "./routes/openai-realtime";
@@ -370,10 +372,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/travel/agents", travelAgentsRoutes);
   
   // User Testing AI Agents Routes (4 AI Agents for UX Testing - Agents #163-166)
-  app.use("/api/user-testing/agents", userTestingAgentsRoutes);
+  app.use("/api/user-testing", userTestingAgentsRoutes);
   
   // Legal Document AI Agents Routes (2 AI Agents for Legal Documents - Agents #185-186)
   app.use("/api/legal/agents", legalAgentsRoutes);
+  
+  // TRACK 2: Mr. Blue Core Agents Routes (#201-205) - Service + Routes + Frontend
+  app.use("/api/mr-blue/agents", mrBlueAgentsRoutes);
+  
+  // TRACK 3: Learning Intelligence Agents (#206-208) - Orchestrator + Pathways
+  app.use("/api/learning", learningIntelligenceRoutes);
   
   // Existing routes
   app.use("/api/auth", authRoutes);

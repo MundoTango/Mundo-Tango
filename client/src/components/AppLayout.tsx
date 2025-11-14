@@ -1,13 +1,17 @@
 import { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import UnifiedTopBar from "./navigation/UnifiedTopBar";
+import TourGuide from "./mrBlue/TourGuide";
+import { useQuery } from "@tanstack/react-query";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  // Start with sidebar open on desktop, closed on mobile
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const { data: user } = useQuery<{ id: number; role: string }>({
+    queryKey: ['/api/auth/me']
+  });
+
   useEffect(() => {
-    // Auto-open on desktop
     if (window.innerWidth >= 1024) {
       setSidebarOpen(true);
     }
@@ -15,13 +19,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="relative flex h-screen w-full bg-background">
-      {/* TopBar spans full width above everything */}
       <UnifiedTopBar 
         onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
         showMenuButton={true}
       />
       
-      {/* Sidebar and content below topbar */}
       <div className="flex w-full h-full pt-16">
         <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
         <main 
@@ -33,6 +35,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           {children}
         </main>
       </div>
+
+      {user && (
+        <TourGuide
+          feature="app-onboarding"
+          userId={user.id}
+          autoStart={false}
+        />
+      )}
     </div>
   );
 }

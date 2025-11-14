@@ -13,6 +13,7 @@ import { MrBlueVoiceInterface } from "@/components/MrBlueVoiceInterface";
 import { VisualEditorDebug } from "@/components/visual-editor/VisualEditorDebug";
 import { type SelectedComponent } from "@/components/visual-editor/ComponentSelector";
 import { EditControls } from "@/components/visual-editor/EditControls";
+import Avatar3D from "@/components/mrBlue/Avatar3D";
 import { visualEditorTracker } from "@/lib/visualEditorTracker";
 import { useToast } from "@/hooks/use-toast";
 import { injectSelectionScript, applyInstantChange } from "@/lib/iframeInjector";
@@ -384,42 +385,57 @@ export default function VisualEditorPage() {
                 </TabsList>
 
                 {/* Mr. Blue Chat Tab - Voice + Streaming AI */}
-                <TabsContent value="mrblue" className="flex-1 m-0 overflow-hidden p-4">
-                  {user && (
-                    <MrBlueVoiceInterface 
-                      userId={user.id}
-                      role={user.role}
-                      mode="visual_editor"
-                      page={previewUrl}
-                      context={{
-                        currentPage: previewUrl,
-                        selectedElement: selectedComponent ? {
-                          id: selectedComponent.id,
-                          tagName: selectedComponent.tagName,
-                          testId: selectedComponent.element.getAttribute('data-testid'),
-                          className: selectedComponent.className,
-                          text: selectedComponent.text
-                        } : null,
-                        editsCount: visualEditorTracker.getAllEdits().length,
-                        recentEdits: visualEditorTracker.getRecentEdits(5)
-                      }}
-                      className="h-full"
-                      onApplyChange={(change) => {
-                        // Apply instant DOM change via iframe
-                        if (iframeRef.current) {
-                          applyInstantChange(iframeRef.current, change);
-                        }
-                      }}
-                      onCodeGenerated={(code) => {
-                        // Handle generated code
+                <TabsContent value="mrblue" className="flex-1 m-0 overflow-hidden flex flex-col">
+                  <div className="h-48 p-4 border-b border-ocean-divider">
+                    <Avatar3D 
+                      emotion="idle" 
+                      autoRotate={true}
+                      onActivate={() => {
                         toast({
-                          title: "Code Generated",
-                          description: "Code has been generated and is ready to save",
-                          duration: 3000
+                          title: "Mr. Blue Activated",
+                          description: "Hello! I'm ready to help with your visual editor.",
+                          duration: 2000
                         });
                       }}
                     />
-                  )}
+                  </div>
+                  <div className="flex-1 overflow-hidden p-4">
+                    {user && (
+                      <MrBlueVoiceInterface 
+                        userId={user.id}
+                        role={user.role}
+                        mode="visual_editor"
+                        page={previewUrl}
+                        context={{
+                          currentPage: previewUrl,
+                          selectedElement: selectedComponent ? {
+                            id: selectedComponent.id,
+                            tagName: selectedComponent.tagName,
+                            testId: selectedComponent.element.getAttribute('data-testid'),
+                            className: selectedComponent.className,
+                            text: selectedComponent.text
+                          } : null,
+                          editsCount: visualEditorTracker.getAllEdits().length,
+                          recentEdits: visualEditorTracker.getRecentEdits(5)
+                        }}
+                        className="h-full"
+                        onApplyChange={(change) => {
+                          // Apply instant DOM change via iframe
+                          if (iframeRef.current) {
+                            applyInstantChange(iframeRef.current, change);
+                          }
+                        }}
+                        onCodeGenerated={(code) => {
+                          // Handle generated code
+                          toast({
+                            title: "Code Generated",
+                            description: "Code has been generated and is ready to save",
+                            duration: 3000
+                          });
+                        }}
+                      />
+                    )}
+                  </div>
                 </TabsContent>
 
                 {/* Git Tab */}
