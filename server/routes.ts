@@ -2904,31 +2904,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/events", async (req: Request, res: Response) => {
-    try {
-      const { city, eventType, startDate, endDate, search, limit = "20", offset = "0" } = req.query;
-      console.log('[ROUTES /api/events] query params:', { city, eventType, startDate, endDate, search, limit, offset });
-      
-      const params: any = {
-        limit: parseInt(limit as string),
-        offset: parseInt(offset as string)
-      };
-      
-      if (city) params.city = city as string;
-      if (eventType) params.eventType = eventType as string;
-      if (startDate) params.startDate = new Date(startDate as string);
-      if (endDate) params.endDate = new Date(endDate as string);
-      if (search) params.search = search as string;
-      
-      console.log('[ROUTES /api/events] calling storage.getEvents with:', JSON.stringify(params));
-      
-      const events = await storage.getEvents(params);
-      res.json({ events, total: events.length });
-    } catch (error) {
-      console.error("Error fetching events:", error);
-      res.status(500).json({ message: "Failed to fetch events" });
-    }
-  });
+  // NOTE: /api/events routes are now handled by event-routes.ts router (line 627)
+  // This section was left as a placeholder for reference
 
   app.get("/api/events/my-rsvps", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
@@ -3968,36 +3945,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   console.log("[WebSocket] Livestream chat initialized on /ws/stream/:streamId");
 
   // ============================================================================
-  // GROUPS - Additional routes (main routes are above around line 579)
+  // GROUPS - Additional routes removed (duplicates - using group-routes.ts instead)
   // ============================================================================
-
-  // Get Group by ID
-  app.get("/api/groups/:id", async (req: Request, res: Response) => {
-    try {
-      const group = await storage.getGroupById(parseInt(req.params.id));
-      if (!group) return res.status(404).json({ message: "Group not found" });
-      res.json(group);
-    } catch (error) {
-      console.error("Get group error:", error);
-      res.status(500).json({ message: "Failed to fetch group" });
-    }
-  });
-
-  // Search Groups
-  app.get("/api/groups", async (req: Request, res: Response) => {
-    try {
-      const { search, limit, offset } = req.query;
-      const groups = await storage.getGroups({
-        search: search as string,
-        limit: limit ? parseInt(limit as string) : undefined,
-        offset: offset ? parseInt(offset as string) : undefined,
-      });
-      res.json(groups);
-    } catch (error) {
-      console.error("Search groups error:", error);
-      res.status(500).json({ message: "Failed to search groups" });
-    }
-  });
 
   // Update Group
   app.put("/api/groups/:id", authenticateToken, async (req: AuthRequest, res: Response) => {

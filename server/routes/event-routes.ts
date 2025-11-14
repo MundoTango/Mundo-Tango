@@ -33,7 +33,8 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
       limit = "20",
       offset = "0",
       category,
-      upcoming
+      upcoming,
+      search
     } = req.query;
 
     let query = db
@@ -63,6 +64,20 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
     if (eventType) conditions.push(eq(events.eventType, eventType as string));
     if (startDate) conditions.push(gte(events.startDate, new Date(startDate as string)));
     if (endDate) conditions.push(lte(events.startDate, new Date(endDate as string)));
+
+    // Handle search parameter - search in title, description, venue, address, city
+    if (search && typeof search === 'string' && search.trim()) {
+      const searchTerm = `%${search.trim()}%`;
+      conditions.push(
+        or(
+          sql`${events.title} ILIKE ${searchTerm}`,
+          sql`${events.description} ILIKE ${searchTerm}`,
+          sql`${events.venue} ILIKE ${searchTerm}`,
+          sql`${events.address} ILIKE ${searchTerm}`,
+          sql`${events.city} ILIKE ${searchTerm}`
+        )!
+      );
+    }
 
     // Handle category=my-events: filter by userId if user is authenticated
     if (category === "my-events" && req.user) {
