@@ -14,7 +14,7 @@ import { Plus, Eye, Clock, Trash2, Image as ImageIcon, Video, Type } from "lucid
 import { AppLayout } from "@/components/AppLayout";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
 import { LazyVideo } from "@/components/LazyVideo";
 
@@ -288,7 +288,7 @@ export default function StoriesPage() {
                         </Badge>
                         <Badge variant="outline" className="border-white/30 bg-white/10 backdrop-blur-sm">
                           <Clock className="w-3 h-3 mr-1" />
-                          {formatDistanceToNow(new Date(story.createdAt), { addSuffix: true })}
+                          {safeDateDistance(story.createdAt, { addSuffix: true })}
                         </Badge>
                       </div>
                       {story.caption && story.mediaType !== 'text' && (

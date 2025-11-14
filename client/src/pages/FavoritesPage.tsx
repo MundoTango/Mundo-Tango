@@ -14,7 +14,7 @@ import {
   BookmarkCheck,
   X 
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
@@ -107,7 +107,7 @@ export default function FavoritesPage() {
                       {favorite.itemType}
                     </Badge>
                     <span className="text-sm text-muted-foreground">
-                      Saved {formatDistanceToNow(new Date(favorite.createdAt), { addSuffix: true })}
+                      Saved {safeDateDistance(favorite.createdAt, { addSuffix: true })}
                     </span>
                   </div>
                   <CardTitle className="line-clamp-2 font-serif" data-testid={`text-favorite-title-${favorite.id}`}>

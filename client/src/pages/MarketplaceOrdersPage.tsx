@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { OrderStatusBadge } from "@/components/marketplace/OrderStatusBadge";
 import { Package, Download, Star, RefreshCw } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 
 export default function MarketplaceOrdersPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -131,7 +131,7 @@ export default function MarketplaceOrdersPage() {
                     <div>
                       <CardTitle className="text-lg">Order {order.id}</CardTitle>
                       <p className="text-sm text-muted-foreground">
-                        Placed {formatDistanceToNow(new Date(order.date), { addSuffix: true })}
+                        Placed {safeDateDistance(order.date, { addSuffix: true })}
                       </p>
                     </div>
                     <OrderStatusBadge status={order.status} />

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { AppLayout } from "@/components/AppLayout";
 import { LoadingFallback } from "@/components/LoadingFallback";
 import { Users, Calendar, MessageCircle, Heart, MapPin, UserCheck, ChevronRight } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
 import tangoHeroImage from "@assets/IMG_9144-Mejorado-NR_1762013255726.jpg";
 
@@ -125,7 +125,7 @@ export default function FriendshipPage() {
                 </p>
                 {friendshipStats?.lastInteraction && (
                   <p className="text-xs text-muted-foreground">
-                    Last interaction {formatDistanceToNow(new Date(friendshipStats.lastInteraction), { addSuffix: true })}
+                    Last interaction {safeDateDistance(friendshipStats.lastInteraction, { addSuffix: true })}
                   </p>
                 )}
               </CardContent>

@@ -17,7 +17,7 @@ import {
   Plus,
   Sparkles
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { PageLayout } from "@/components/PageLayout";
@@ -274,7 +274,7 @@ export default function MemoriesPage() {
                                             {memory.type}
                                           </Badge>
                                           <span className="text-sm text-muted-foreground">
-                                            {formatDistanceToNow(new Date(memory.date), { addSuffix: true })}
+                                            {safeDateDistance(memory.date, { addSuffix: true })}
                                           </span>
                                         </div>
                                         <CardTitle className="text-2xl font-serif" data-testid={`text-memory-title-${memory.id}`}>

@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { formatDistanceToNow } from "date-fns";
+import { safeDateDistance } from "@/lib/safeDateFormat";
 
 interface UserDetail {
   id: number;
@@ -220,13 +220,13 @@ export default function AdminUserDetailPage() {
                   
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span>Joined {formatDistanceToNow(new Date(user.createdAt))} ago</span>
+                    <span>Joined {safeDateDistance(user.createdAt)} ago</span>
                   </div>
                   
                   {user.lastLoginAt && (
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-muted-foreground" />
-                      <span>Last login {formatDistanceToNow(new Date(user.lastLoginAt))} ago</span>
+                      <span>Last login {safeDateDistance(user.lastLoginAt)} ago</span>
                     </div>
                   )}
                 </div>
@@ -324,9 +324,9 @@ export default function AdminUserDetailPage() {
                     Activity Log
                   </h3>
                   <div className="space-y-2 text-sm text-muted-foreground">
-                    <p>• Created account {formatDistanceToNow(new Date(user.createdAt))} ago</p>
+                    <p>• Created account {safeDateDistance(user.createdAt)} ago</p>
                     {user.lastLoginAt && (
-                      <p>• Last login {formatDistanceToNow(new Date(user.lastLoginAt))} ago</p>
+                      <p>• Last login {safeDateDistance(user.lastLoginAt)} ago</p>
                     )}
                     <p>• Current status: {user.isActive ? "Active" : "Inactive"}</p>
                     {user.suspended && <p className="text-destructive">• Account suspended</p>}
