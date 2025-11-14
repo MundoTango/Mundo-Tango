@@ -343,10 +343,22 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                           }}
                         >
                           <div className="text-xs font-semibold">
-                            {format(new Date(event.startDate), 'MMM')}
+                            {(() => {
+                              try {
+                                return format(new Date(event.startDate), 'MMM');
+                              } catch {
+                                return 'TBD';
+                              }
+                            })()}
                           </div>
                           <div className="text-2xl font-bold">
-                            {format(new Date(event.startDate), 'd')}
+                            {(() => {
+                              try {
+                                return format(new Date(event.startDate), 'd');
+                              } catch {
+                                return '?';
+                              }
+                            })()}
                           </div>
                         </div>
                       )}
@@ -362,7 +374,13 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
                         
                         <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
                           <Clock className="w-3 h-3" />
-                          {formatDistanceToNow(new Date(event.startDate), { addSuffix: true })}
+                          {(() => {
+                            try {
+                              return formatDistanceToNow(new Date(event.startDate), { addSuffix: true });
+                            } catch {
+                              return 'upcoming';
+                            }
+                          })()}
                         </div>
 
                         {event.location && (

@@ -71,6 +71,13 @@ The platform features a unified **MT Ocean theme** across all pages, characteriz
 
 **Testing Infrastructure:** Comprehensive Playwright test suites achieving **95% coverage**, including E2E critical tests (authentication, payments, admin), WebSocket real-time tests, Media Gallery Album tests, theme persistence tests, integration tests (API validation), security tests (OWASP Top 10), performance tests (k6 load testing), and visual editor tests, totaling approximately 1,500+ lines across 12 suites.
 
+**Parallel Testing & Bug Fix Workflow (MB.MD Protocol):**
+- **Continue-on-Bug Testing:** Playwright tests record bugs but continue testing remaining features, maximizing coverage in single pass
+- **Parallel Bug Fixing:** While tests run, dedicated agents fix discovered bugs simultaneously
+- **Focused Regression Tests:** After fixes, targeted tests verify specific bug resolutions without full re-run
+- **Multi-Agent Orchestration:** Testing agent discovers → Logging agent documents → Fixing agent repairs → Verification agent validates
+- **Efficiency Gains:** 3-5x faster bug resolution through parallel workflows vs sequential test-fix-retest cycles
+
 #### Security & Compliance Features
 - **CSRF Protection** - Cookie-based double-submit pattern.
 - **CSP Headers** - Environment-aware Content Security Policy (development: permissive, production: strict nonce-based).
