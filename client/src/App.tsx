@@ -178,7 +178,7 @@ const UserSettingsPage = lazy(() => import("@/pages/UserSettingsPage"));
 const EmailPreferencesPage = lazy(() => import("@/pages/EmailPreferencesPage"));
 const NotificationSettingsPage = lazy(() => import("@/pages/NotificationSettingsPage"));
 const NotificationPreferencesPage = lazy(() => import("@/pages/NotificationPreferencesPage"));
-const PrivacySettingsPage = lazy(() => import("@/pages/PrivacySettingsPage"));
+const PrivacySettingsPage = lazy(() => import("@/pages/PrivacySettings"));
 const AccountSettingsPage = lazy(() => import("@/pages/AccountSettingsPage"));
 const AdminUserDetailPage = lazy(() => import("@/pages/admin/AdminUserDetailPage"));
 const ProfileEditPage = lazy(() => import("@/pages/ProfileEditPage"));
@@ -190,13 +190,16 @@ const BlockedContentPage = lazy(() => import("@/pages/BlockedContentPage"));
 // GDPR Compliance Settings
 const SecuritySettingsPage = lazy(() => import("@/pages/settings/SecuritySettingsPage"));
 const PrivacyPage = lazy(() => import("@/pages/settings/PrivacyPage"));
-const DataExportPage = lazy(() => import("@/pages/settings/DataExportPage"));
-const DeleteAccountPage = lazy(() => import("@/pages/settings/DeleteAccountPage"));
+const DataExportPage = lazy(() => import("@/pages/DataExport"));
+const DeleteAccountPage = lazy(() => import("@/pages/AccountDeletion"));
 
 // Auth & Security
 const PasswordResetPage = lazy(() => import("@/pages/PasswordResetPage"));
 const EmailVerificationPage = lazy(() => import("@/pages/EmailVerificationPage"));
 const TwoFactorAuthPage = lazy(() => import("@/pages/TwoFactorAuthPage"));
+const SecuritySettings = lazy(() => import("@/pages/SecuritySettings"));
+const TwoFactorSetup = lazy(() => import("@/pages/TwoFactorSetup"));
+const TwoFactorVerify = lazy(() => import("@/pages/TwoFactorVerify"));
 
 // Tango Resources
 const TeachersPage = lazy(() => import("@/pages/TeachersPage"));
@@ -277,6 +280,10 @@ const CitySelectionPage = lazy(() => import("@/pages/onboarding/CitySelectionPag
 const PhotoUploadPage = lazy(() => import("@/pages/onboarding/PhotoUploadPage"));
 const TangoRolesPage = lazy(() => import("@/pages/onboarding/TangoRolesPage"));
 const GuidedTourPage = lazy(() => import("@/pages/onboarding/GuidedTourPage"));
+const LegalAcceptance = lazy(() => import("@/pages/onboarding/LegalAcceptance"));
+
+// Legal / Settings
+const LegalStatus = lazy(() => import("@/pages/settings/LegalStatus"));
 
 // Moderation & Reports
 const ReportUserPage = lazy(() => import("@/pages/ReportUserPage"));
@@ -982,6 +989,7 @@ function Router() {
       <Route path="/onboarding/step-2" component={PhotoUploadPage} />
       <Route path="/onboarding/step-3" component={TangoRolesPage} />
       <Route path="/onboarding/step-4" component={GuidedTourPage} />
+      <Route path="/onboarding/legal" component={LegalAcceptance} />
       <Route path="/welcome" component={WelcomeTourPage} />
       
       <Route path="/live-streams">
@@ -1324,10 +1332,22 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/settings/2fa/setup">
+        <ProtectedRoute>
+          <AppLayout>
+            <TwoFactorSetup />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/auth/2fa/verify">
+        <TwoFactorVerify />
+      </Route>
+
       <Route path="/settings/security">
         <ProtectedRoute>
           <AppLayout>
-            <SecuritySettingsPage />
+            <SecuritySettings />
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -1352,6 +1372,14 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <DeleteAccountPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/settings/legal">
+        <ProtectedRoute>
+          <AppLayout>
+            <LegalStatus />
           </AppLayout>
         </ProtectedRoute>
       </Route>
