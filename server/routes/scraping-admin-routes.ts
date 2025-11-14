@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { isAuthenticated } from '../replitAuth';
-import { db } from '../db';
+import { authenticateToken, AuthRequest } from '../middleware/auth';
+import { db } from '@shared/db';
 import { users } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
 const router = Router();
 
-router.post('/admin/trigger-scraping', isAuthenticated, async (req, res) => {
+router.post('/admin/trigger-scraping', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const userId = req.user?.id;
     if (!userId) {
@@ -48,7 +48,7 @@ router.post('/admin/trigger-scraping', isAuthenticated, async (req, res) => {
   }
 });
 
-router.get('/admin/scraping-status', isAuthenticated, async (req, res) => {
+router.get('/admin/scraping-status', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const userId = req.user?.id;
     if (!userId) {
