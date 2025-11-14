@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, MapPin, Users, Plane } from "lucide-react";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 import { motion } from "framer-motion";
 
 interface TripCardProps {
@@ -26,11 +26,7 @@ interface TripCardProps {
 
 export function TripCard({ trip, participants = [], eventName, index = 0 }: TripCardProps) {
   const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "MMM dd, yyyy");
-    } catch {
-      return dateString;
-    }
+    return safeDateFormat(dateString, "MMM dd, yyyy", dateString);
   };
 
   const statusColors: Record<string, string> = {

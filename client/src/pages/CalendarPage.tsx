@@ -10,6 +10,7 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
 import { Link } from "wouter";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 
 export default function CalendarPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -213,7 +214,7 @@ export default function CalendarPage() {
                         <CardContent className="p-4 space-y-2">
                           <div className="flex items-center gap-2 text-sm">
                             <CalendarIcon className="h-4 w-4 text-primary" />
-                            <span>{(event.startDate || event.start_date) && format(new Date(event.startDate || event.start_date || event.date), "MMM dd, yyyy")}</span>
+                            <span>{safeDateFormat(event.startDate || event.start_date || event.date, "MMM dd, yyyy", "Date TBD")}</span>
                           </div>
                           {event.location && (
                             <div className="flex items-center gap-2 text-sm">

@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, MapPin, Users, MessageCircle, Hotel } from "lucide-react";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 
 interface EventTraveler {
   id: number;
@@ -42,11 +42,7 @@ export function EventTravelMatcher({
   onConnect,
 }: EventTravelMatcherProps) {
   const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "MMM dd");
-    } catch {
-      return dateString;
-    }
+    return safeDateFormat(dateString, "MMM dd", dateString);
   };
 
   const needsAccommodation = travelers.filter((t) => t.trip.needsAccommodation);

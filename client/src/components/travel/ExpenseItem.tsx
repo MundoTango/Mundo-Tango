@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Receipt, DollarSign, Users, Edit, Trash2 } from "lucide-react";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 
 interface ExpenseItemProps {
   expense: {
@@ -42,11 +42,7 @@ export function ExpenseItem({ expense, onEdit, onDelete }: ExpenseItemProps) {
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return null;
-    try {
-      return format(new Date(dateString), "MMM dd, yyyy");
-    } catch {
-      return dateString;
-    }
+    return safeDateFormat(dateString, "MMM dd, yyyy", dateString);
   };
 
   return (

@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, MapPin, DollarSign, Check, Edit, Trash2 } from "lucide-react";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 
 interface ItineraryItem {
   id: number;
@@ -43,11 +43,7 @@ const typeColors: Record<string, string> = {
 export function ItineraryTimeline({ items, onEdit, onDelete }: ItineraryTimelineProps) {
   const formatDate = (dateString?: string) => {
     if (!dateString) return null;
-    try {
-      return format(new Date(dateString), "EEE, MMM dd, yyyy");
-    } catch {
-      return dateString;
-    }
+    return safeDateFormat(dateString, "EEE, MMM dd, yyyy", dateString);
   };
 
   // Group items by date

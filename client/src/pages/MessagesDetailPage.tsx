@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, MoreVertical, Phone, Video, Info, ArrowLeft } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 import { Link } from "wouter";
 
 interface Message {
@@ -175,7 +175,7 @@ export default function MessagesDetailPage() {
                           <p className="text-base">{message.content}</p>
                         </div>
                         <span className="text-xs text-muted-foreground mt-1.5 px-2">
-                          {format(new Date(message.createdAt), 'p')}
+                          {safeDateFormat(message.createdAt, 'p', '')}
                         </span>
                       </div>
                     </div>
