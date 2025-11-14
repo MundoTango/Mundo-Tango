@@ -423,7 +423,7 @@ export interface IStorage {
   
   // Search methods for @mentions autocomplete
   searchUsers(query: string, limit: number): Promise<any[]>;
-  searchEvents(query: string, limit: number): Promise<any[]>;
+  searchEventsSimple(query: string, limit: number): Promise<any[]>;
   searchGroups(query: string, limit: number): Promise<any[]>;
   searchCommunities(query: string, limit: number): Promise<any[]>;
   getCommunityById(id: number): Promise<any | undefined>;
@@ -3598,7 +3598,7 @@ export class DbStorage implements IStorage {
     return results;
   }
 
-  async searchEvents(query: string, limit: number): Promise<any[]> {
+  async searchEventsSimple(query: string, limit: number): Promise<any[]> {
     const lowerQuery = `%${query.toLowerCase()}%`;
     const results = await db.select({
       id: events.id,
