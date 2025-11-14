@@ -9882,6 +9882,286 @@ export type InsertEmailLog = z.infer<typeof insertEmailLogSchema>;
 export type SelectEmailLog = typeof emailLogs.$inferSelect;
 
 // ============================================================================
+// VISUAL EDITOR + MR. BLUE - UI TESTING & INTELLIGENCE TABLES
+// ============================================================================
+
+// Batch 1: UI Testing Tables
+
+export const uiTestScenarios = pgTable("ui_test_scenarios", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  difficulty: varchar("difficulty", { length: 20 }),
+  estimatedMinutes: integer("estimated_minutes"),
+  steps: jsonb("steps"),
+  expectedBehavior: text("expected_behavior"),
+  createdBy: integer("created_by").references(() => users.id),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  createdByIdx: index("ui_test_scenarios_created_by_idx").on(table.createdBy),
+  isActiveIdx: index("ui_test_scenarios_is_active_idx").on(table.isActive),
+  difficultyIdx: index("ui_test_scenarios_difficulty_idx").on(table.difficulty),
+}));
+
+export const insertUiTestScenarioSchema = createInsertSchema(uiTestScenarios)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export const selectUiTestScenarioSchema = createSelectSchema(uiTestScenarios);
+export type InsertUiTestScenario = z.infer<typeof insertUiTestScenarioSchema>;
+export type SelectUiTestScenario = typeof uiTestScenarios.$inferSelect;
+
+export const uiTestResults = pgTable("ui_test_results", {
+  id: serial("id").primaryKey(),
+  scenarioId: integer("scenario_id").references(() => uiTestScenarios.id, { onDelete: "cascade" }),
+  volunteerId: integer("volunteer_id").references(() => users.id),
+  sessionId: integer("session_id").references(() => userTestingSessions.id, { onDelete: "cascade" }),
+  completedSteps: integer("completed_steps"),
+  totalSteps: integer("total_steps"),
+  timeSpentSeconds: integer("time_spent_seconds"),
+  stuckPoints: jsonb("stuck_points"),
+  feedbackText: text("feedback_text"),
+  difficultyRating: integer("difficulty_rating"),
+  clarityRating: integer("clarity_rating"),
+  status: varchar("status", { length: 20 }),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  scenarioIdIdx: index("ui_test_results_scenario_id_idx").on(table.scenarioId),
+  volunteerIdIdx: index("ui_test_results_volunteer_id_idx").on(table.volunteerId),
+  sessionIdIdx: index("ui_test_results_session_id_idx").on(table.sessionId),
+  statusIdx: index("ui_test_results_status_idx").on(table.status),
+}));
+
+export const insertUiTestResultSchema = createInsertSchema(uiTestResults)
+  .omit({ id: true, createdAt: true });
+export const selectUiTestResultSchema = createSelectSchema(uiTestResults);
+export type InsertUiTestResult = z.infer<typeof insertUiTestResultSchema>;
+export type SelectUiTestResult = typeof uiTestResults.$inferSelect;
+
+export const volunteerStats = pgTable("volunteer_stats", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }).unique(),
+  totalSessionsCompleted: integer("total_sessions_completed").default(0),
+  totalMinutesTested: integer("total_minutes_tested").default(0),
+  bugsFound: integer("bugs_found").default(0),
+  averageCompletionRate: real("average_completion_rate").default(0),
+  skillLevel: varchar("skill_level", { length: 20 }),
+  lastActiveAt: timestamp("last_active_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdIdx: index("volunteer_stats_user_id_idx").on(table.userId),
+  skillLevelIdx: index("volunteer_stats_skill_level_idx").on(table.skillLevel),
+  lastActiveAtIdx: index("volunteer_stats_last_active_at_idx").on(table.lastActiveAt),
+}));
+
+export const insertVolunteerStatsSchema = createInsertSchema(volunteerStats)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export const selectVolunteerStatsSchema = createSelectSchema(volunteerStats);
+export type InsertVolunteerStats = z.infer<typeof insertVolunteerStatsSchema>;
+export type SelectVolunteerStats = typeof volunteerStats.$inferSelect;
+
+// Batch 2: Session Management Tables
+
+export const userTestingSessions = pgTable("user_testing_sessions", {
+  id: serial("id").primaryKey(),
+  volunteerId: integer("volunteer_id").references(() => users.id),
+  scenarioId: integer("scenario_id").references(() => uiTestScenarios.id),
+  sessionType: varchar("session_type", { length: 20 }),
+  dailyRoomUrl: text("daily_room_url"),
+  status: varchar("status", { length: 20 }),
+  scheduledStartAt: timestamp("scheduled_start_at"),
+  actualStartAt: timestamp("actual_start_at"),
+  actualEndAt: timestamp("actual_end_at"),
+  recordingUrl: text("recording_url"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  volunteerIdIdx: index("user_testing_sessions_volunteer_id_idx").on(table.volunteerId),
+  scenarioIdIdx: index("user_testing_sessions_scenario_id_idx").on(table.scenarioId),
+  statusIdx: index("user_testing_sessions_status_idx").on(table.status),
+  sessionTypeIdx: index("user_testing_sessions_session_type_idx").on(table.sessionType),
+}));
+
+export const insertUserTestingSessionSchema = createInsertSchema(userTestingSessions)
+  .omit({ id: true, createdAt: true });
+export const selectUserTestingSessionSchema = createSelectSchema(userTestingSessions);
+export type InsertUserTestingSession = z.infer<typeof insertUserTestingSessionSchema>;
+export type SelectUserTestingSession = typeof userTestingSessions.$inferSelect;
+
+export const sessionInteractions = pgTable("session_interactions", {
+  id: serial("id").primaryKey(),
+  sessionId: integer("session_id").references(() => userTestingSessions.id, { onDelete: "cascade" }),
+  timestamp: timestamp("timestamp").notNull(),
+  interactionType: varchar("interaction_type", { length: 50 }),
+  elementSelector: text("element_selector"),
+  elementText: text("element_text"),
+  value: text("value"),
+  screenshotUrl: text("screenshot_url"),
+  metadata: jsonb("metadata"),
+}, (table) => ({
+  sessionIdIdx: index("session_interactions_session_id_idx").on(table.sessionId),
+  timestampIdx: index("session_interactions_timestamp_idx").on(table.timestamp),
+  interactionTypeIdx: index("session_interactions_interaction_type_idx").on(table.interactionType),
+}));
+
+export const insertSessionInteractionSchema = createInsertSchema(sessionInteractions)
+  .omit({ id: true });
+export const selectSessionInteractionSchema = createSelectSchema(sessionInteractions);
+export type InsertSessionInteraction = z.infer<typeof insertSessionInteractionSchema>;
+export type SelectSessionInteraction = typeof sessionInteractions.$inferSelect;
+
+export const sessionBugsFound = pgTable("session_bugs_found", {
+  id: serial("id").primaryKey(),
+  sessionId: integer("session_id").references(() => userTestingSessions.id, { onDelete: "cascade" }),
+  volunteerId: integer("volunteer_id").references(() => users.id),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  severity: varchar("severity", { length: 20 }),
+  status: varchar("status", { length: 20 }),
+  reproSteps: jsonb("repro_steps"),
+  screenshotUrls: text("screenshot_urls").array(),
+  assignedTo: integer("assigned_to").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  sessionIdIdx: index("session_bugs_found_session_id_idx").on(table.sessionId),
+  volunteerIdIdx: index("session_bugs_found_volunteer_id_idx").on(table.volunteerId),
+  severityIdx: index("session_bugs_found_severity_idx").on(table.severity),
+  statusIdx: index("session_bugs_found_status_idx").on(table.status),
+  assignedToIdx: index("session_bugs_found_assigned_to_idx").on(table.assignedTo),
+}));
+
+export const insertSessionBugFoundSchema = createInsertSchema(sessionBugsFound)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export const selectSessionBugFoundSchema = createSelectSchema(sessionBugsFound);
+export type InsertSessionBugFound = z.infer<typeof insertSessionBugFoundSchema>;
+export type SelectSessionBugFound = typeof sessionBugsFound.$inferSelect;
+
+export const sessionUxPatterns = pgTable("session_ux_patterns", {
+  id: serial("id").primaryKey(),
+  sessionId: integer("session_id").references(() => userTestingSessions.id, { onDelete: "cascade" }),
+  patternType: varchar("pattern_type", { length: 50 }),
+  confidence: real("confidence"),
+  description: text("description"),
+  timestamp: timestamp("timestamp"),
+  elementPath: text("element_path"),
+  suggestedFix: text("suggested_fix"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  sessionIdIdx: index("session_ux_patterns_session_id_idx").on(table.sessionId),
+  patternTypeIdx: index("session_ux_patterns_pattern_type_idx").on(table.patternType),
+  confidenceIdx: index("session_ux_patterns_confidence_idx").on(table.confidence),
+}));
+
+export const insertSessionUxPatternSchema = createInsertSchema(sessionUxPatterns)
+  .omit({ id: true, createdAt: true });
+export const selectSessionUxPatternSchema = createSelectSchema(sessionUxPatterns);
+export type InsertSessionUxPattern = z.infer<typeof insertSessionUxPatternSchema>;
+export type SelectSessionUxPattern = typeof sessionUxPatterns.$inferSelect;
+
+// Batch 3: Visual Editor AI Tables
+
+export const visualEditorAiSuggestions = pgTable("visual_editor_ai_suggestions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  context: jsonb("context"),
+  suggestionType: varchar("suggestion_type", { length: 50 }),
+  generatedCode: text("generated_code").notNull(),
+  language: varchar("language", { length: 20 }),
+  appliedAt: timestamp("applied_at"),
+  wasHelpful: boolean("was_helpful"),
+  feedbackText: text("feedback_text"),
+  agentId: integer("agent_id"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdIdx: index("visual_editor_ai_suggestions_user_id_idx").on(table.userId),
+  suggestionTypeIdx: index("visual_editor_ai_suggestions_suggestion_type_idx").on(table.suggestionType),
+  agentIdIdx: index("visual_editor_ai_suggestions_agent_id_idx").on(table.agentId),
+  wasHelpfulIdx: index("visual_editor_ai_suggestions_was_helpful_idx").on(table.wasHelpful),
+}));
+
+export const insertVisualEditorAiSuggestionSchema = createInsertSchema(visualEditorAiSuggestions)
+  .omit({ id: true, createdAt: true });
+export const selectVisualEditorAiSuggestionSchema = createSelectSchema(visualEditorAiSuggestions);
+export type InsertVisualEditorAiSuggestion = z.infer<typeof insertVisualEditorAiSuggestionSchema>;
+export type SelectVisualEditorAiSuggestion = typeof visualEditorAiSuggestions.$inferSelect;
+
+export const userTelemetry = pgTable("user_telemetry", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  sessionId: varchar("session_id", { length: 100 }),
+  eventType: varchar("event_type", { length: 50 }),
+  pagePath: text("page_path"),
+  elementId: text("element_id"),
+  value: text("value"),
+  metadata: jsonb("metadata"),
+  userAgent: text("user_agent"),
+  ipAddress: varchar("ip_address", { length: 45 }),
+  timestamp: timestamp("timestamp").defaultNow(),
+}, (table) => ({
+  userIdIdx: index("user_telemetry_user_id_idx").on(table.userId),
+  sessionIdIdx: index("user_telemetry_session_id_idx").on(table.sessionId),
+  eventTypeIdx: index("user_telemetry_event_type_idx").on(table.eventType),
+  timestampIdx: index("user_telemetry_timestamp_idx").on(table.timestamp),
+}));
+
+export const insertUserTelemetrySchema = createInsertSchema(userTelemetry)
+  .omit({ id: true, timestamp: true });
+export const selectUserTelemetrySchema = createSelectSchema(userTelemetry);
+export type InsertUserTelemetry = z.infer<typeof insertUserTelemetrySchema>;
+export type SelectUserTelemetry = typeof userTelemetry.$inferSelect;
+
+// Batch 4: Mr. Blue Knowledge Tables
+
+export const mrBlueKnowledgeBase = pgTable("mr_blue_knowledge_base", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  category: varchar("category", { length: 50 }),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content").notNull(),
+  embedding: text("embedding"),
+  tags: text("tags").array(),
+  useCount: integer("use_count").default(0),
+  lastUsedAt: timestamp("last_used_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdIdx: index("mr_blue_knowledge_base_user_id_idx").on(table.userId),
+  categoryIdx: index("mr_blue_knowledge_base_category_idx").on(table.category),
+  useCountIdx: index("mr_blue_knowledge_base_use_count_idx").on(table.useCount),
+}));
+
+export const insertMrBlueKnowledgeBaseSchema = createInsertSchema(mrBlueKnowledgeBase)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export const selectMrBlueKnowledgeBaseSchema = createSelectSchema(mrBlueKnowledgeBase);
+export type InsertMrBlueKnowledgeBase = z.infer<typeof insertMrBlueKnowledgeBaseSchema>;
+export type SelectMrBlueKnowledgeBase = typeof mrBlueKnowledgeBase.$inferSelect;
+
+export const mrBlueSystemPrompts = pgTable("mr_blue_system_prompts", {
+  id: serial("id").primaryKey(),
+  agentId: integer("agent_id").notNull(),
+  version: integer("version").notNull(),
+  promptText: text("prompt_text").notNull(),
+  isActive: boolean("is_active").default(false),
+  performanceScore: real("performance_score"),
+  activatedAt: timestamp("activated_at"),
+  deactivatedAt: timestamp("deactivated_at"),
+  createdBy: integer("created_by").references(() => users.id),
+  changeNotes: text("change_notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  agentIdIdx: index("mr_blue_system_prompts_agent_id_idx").on(table.agentId),
+  isActiveIdx: index("mr_blue_system_prompts_is_active_idx").on(table.isActive),
+  uniqueAgentVersion: uniqueIndex("unique_agent_version").on(table.agentId, table.version),
+}));
+
+export const insertMrBlueSystemPromptSchema = createInsertSchema(mrBlueSystemPrompts)
+  .omit({ id: true, createdAt: true });
+export const selectMrBlueSystemPromptSchema = createSelectSchema(mrBlueSystemPrompts);
+export type InsertMrBlueSystemPrompt = z.infer<typeof insertMrBlueSystemPromptSchema>;
+export type SelectMrBlueSystemPrompt = typeof mrBlueSystemPrompts.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
