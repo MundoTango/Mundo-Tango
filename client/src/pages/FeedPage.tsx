@@ -32,6 +32,7 @@ import { PostItem } from "@/components/feed/PostItem";
 import { EditPostDialog } from "@/components/modals/EditPostDialog";
 import { FeedHeroWelcome } from "@/components/feed/FeedHeroWelcome";
 import { Link } from "wouter";
+import { FeedAd } from "@/components/ads/FeedAd";
 
 type Post = {
   id: number;
@@ -463,21 +464,24 @@ export default function FeedPage() {
                 </>
               ) : allPosts.length > 0 ? (
                 <>
-                  {allPosts.map((post) => (
-                    <PostItem 
-                      key={post.id} 
-                      post={post}
-                      onEdit={(postId) => {
-                        const postToEdit = allPosts.find(p => p.id === postId);
-                        if (postToEdit) {
-                          setEditingPostId(postId);
-                          setEditingPostContent(postToEdit.content);
-                        }
-                      }}
-                      onDelete={(postId) => {
-                        setDeletingPostId(postId);
-                      }}
-                    />
+                  {allPosts.map((post, index) => (
+                    <>
+                      <PostItem 
+                        key={post.id} 
+                        post={post}
+                        onEdit={(postId) => {
+                          const postToEdit = allPosts.find(p => p.id === postId);
+                          if (postToEdit) {
+                            setEditingPostId(postId);
+                            setEditingPostContent(postToEdit.content);
+                          }
+                        }}
+                        onDelete={(postId) => {
+                          setDeletingPostId(postId);
+                        }}
+                      />
+                      {(index + 1) % 5 === 0 && <FeedAd key={`ad-${index}`} />}
+                    </>
                   ))}
                   
                   {hasNextPage && (

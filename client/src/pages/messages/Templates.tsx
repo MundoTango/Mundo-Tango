@@ -260,7 +260,7 @@ export default function Templates() {
                 />
               </FormControl>
               <FormDescription>
-                Use variables like {{"{name}"}} or {{"{eventName}"}}
+                Use variables like {`{{name}}`} or {`{{eventName}}`}
               </FormDescription>
               <FormMessage />
             </FormItem>

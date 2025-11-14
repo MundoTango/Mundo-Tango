@@ -71,10 +71,11 @@ const platformItems = [
   { title: "API Logs", url: "/platform/logs", icon: FileText },
 ];
 
-// Business & Finance (3 items)
+// Business & Finance (4 items)
 const businessItems = [
   { title: "Pricing Manager", url: "/admin/pricing-manager", icon: DollarSign },
   { title: "Billing", url: "/admin/billing", icon: DollarSign },
+  { title: "Ads Manager", url: "/admin/ads", icon: TrendingUp },
   { title: "Metrics", url: "/admin/metrics", icon: TrendingUp },
 ];
 

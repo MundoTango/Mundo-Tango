@@ -26,6 +26,7 @@ import L from 'leaflet';
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { BannerAd } from "@/components/ads/BannerAd";
 
 const localizer = momentLocalizer(moment);
 
@@ -339,6 +340,8 @@ export default function EventsPage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-6 py-12 space-y-8">
+            {/* Ad Banner */}
+            <BannerAd placement="events" />
 
             {/* Search & Filters */}
             <div className="space-y-4">

@@ -23,6 +23,12 @@ import { z } from "zod";
 // Re-export message schemas
 export * from "./messageSchemas";
 
+// Re-export event roles schemas
+export * from "./eventRolesSchemas";
+
+// Re-export ad schemas
+export * from "./adSchemas";
+
 // ============================================================================
 // USERS & PROFILES (matching existing schema)
 // ============================================================================

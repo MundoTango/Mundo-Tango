@@ -123,6 +123,7 @@ const RoleRequestsPage = lazy(() => import("@/pages/admin/RoleRequestsPage"));
 const EventApprovalsPage = lazy(() => import("@/pages/admin/EventApprovalsPage"));
 const HousingReviewsPage = lazy(() => import("@/pages/admin/HousingReviewsPage"));
 const AgentHealthDashboard = lazy(() => import("@/pages/admin/AgentHealthDashboard"));
+const AdsManager = lazy(() => import("@/pages/admin/AdsManager"));
 
 // P0 Workflow Pages
 const FounderApprovalPage = lazy(() => import("@/pages/admin/FounderApprovalPage"));
@@ -239,7 +240,6 @@ const MarketplaceCartPage = lazy(() => import("@/pages/MarketplaceCartPage"));
 const MarketplaceCheckoutPage = lazy(() => import("@/pages/MarketplaceCheckoutPage"));
 const MarketplaceSellerDashboardPage = lazy(() => import("@/pages/MarketplaceSellerDashboardPage"));
 const MarketplaceOrdersPage = lazy(() => import("@/pages/MarketplaceOrdersPage"));
-const CheckoutPage = lazy(() => import("@/pages/CheckoutPage"));
 const BillingPage = lazy(() => import("@/pages/BillingPage"));
 const PaymentSuccessPage = lazy(() => import("@/pages/PaymentSuccessPage"));
 const PaymentFailedPage = lazy(() => import("@/pages/PaymentFailedPage"));
@@ -294,6 +294,7 @@ const PhotoUploadPage = lazy(() => import("@/pages/onboarding/PhotoUploadPage"))
 const TangoRolesPage = lazy(() => import("@/pages/onboarding/TangoRolesPage"));
 const GuidedTourPage = lazy(() => import("@/pages/onboarding/GuidedTourPage"));
 const LegalAcceptance = lazy(() => import("@/pages/onboarding/LegalAcceptance"));
+const SubscriptionOnboarding = lazy(() => import("@/pages/onboarding/SubscriptionOnboarding"));
 
 // Legal / Settings
 const LegalStatus = lazy(() => import("@/pages/settings/LegalStatus"));
@@ -1026,6 +1027,7 @@ function Router() {
       <Route path="/onboarding/step-3" component={TangoRolesPage} />
       <Route path="/onboarding/step-4" component={GuidedTourPage} />
       <Route path="/onboarding/legal" component={LegalAcceptance} />
+      <Route path="/onboarding/subscription" component={SubscriptionOnboarding} />
       <Route path="/welcome" component={WelcomeTourPage} />
       
       <Route path="/live-streams">
@@ -1168,6 +1170,14 @@ function Router() {
         <ProtectedRoute>
           <AdminLayout>
             <AgentHealthDashboard />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/ads">
+        <ProtectedRoute>
+          <AdminLayout>
+            <AdsManager />
           </AdminLayout>
         </ProtectedRoute>
       </Route>
