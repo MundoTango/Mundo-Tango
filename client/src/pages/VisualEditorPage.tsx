@@ -684,40 +684,49 @@ export default function VisualEditorPage() {
 
           {/* Status & Progress */}
           {isExecuting && (
-            <div className="border-t p-3 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-medium">Status</span>
-                <Badge variant="secondary" className="text-xs">
-                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                  {wsProgress?.step || currentTask?.status}
-                </Badge>
+            <>
+              <div className="p-3 space-y-2">
+                <h3 className="text-xs font-semibold">Task Progress</h3>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium">Status</span>
+                  <Badge variant="secondary" className="text-xs">
+                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                    {wsProgress?.step || currentTask?.status}
+                  </Badge>
+                </div>
+                {wsProgress?.progress !== undefined && (
+                  <Progress value={wsProgress.progress * 100} className="h-1" />
+                )}
               </div>
-              {wsProgress?.progress !== undefined && (
-                <Progress value={wsProgress.progress * 100} className="h-1" />
-              )}
-            </div>
+              <Separator />
+            </>
           )}
 
           {/* Voice Mode Toggle */}
           {voiceSupported && (
-            <div className="border-t p-4">
-              <VoiceModeToggle
-                isListening={isListening}
-                onToggle={(enabled) => {
-                  setVoiceModeEnabled(enabled);
-                  if (enabled) {
-                    startListening();
-                  } else {
-                    stopListening();
-                  }
-                }}
-                className="w-full"
-              />
-            </div>
+            <>
+              <div className="p-4">
+                <h3 className="text-xs font-semibold mb-2">Voice Mode</h3>
+                <VoiceModeToggle
+                  isListening={isListening}
+                  onToggle={(enabled) => {
+                    setVoiceModeEnabled(enabled);
+                    if (enabled) {
+                      startListening();
+                    } else {
+                      stopListening();
+                    }
+                  }}
+                  className="w-full"
+                />
+              </div>
+              <Separator />
+            </>
           )}
 
           {/* Input Area */}
-          <div className="border-t p-4 space-y-2">
+          <div className="p-4 space-y-2">
+            <h2 className="text-sm font-semibold">Prompt Input</h2>
             <div className="relative">
               <Textarea
                 data-testid="input-vibe-prompt"
@@ -797,33 +806,36 @@ export default function VisualEditorPage() {
               )}
             </div>
           </div>
-        </div>
+        </section>
 
         {/* Right Panel: Live Preview / Code View / History */}
-        <div className="flex-1 flex flex-col">
+        <section className="flex-1 flex flex-col" role="region" aria-label="Preview panel">
           {/* View Mode Toggle */}
-          <div className="border-b p-2 flex items-center justify-between">
-            <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as any)}>
-              <TabsList>
-                <TabsTrigger value="preview" data-testid="tab-preview">
-                  <Eye className="h-4 w-4 mr-2" />
-                  Live Preview
-                </TabsTrigger>
-                <TabsTrigger value="code" data-testid="tab-code">
-                  <Code2 className="h-4 w-4 mr-2" />
-                  Generated Code
-                </TabsTrigger>
-                <TabsTrigger value="history" data-testid="tab-history">
-                  <History className="h-4 w-4 mr-2" />
-                  History
-                  {changeHistory.length > 0 && (
-                    <Badge variant="secondary" className="ml-2 text-xs">
-                      {changeHistory.length}
-                    </Badge>
-                  )}
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
+          <header className="border-b p-3 flex items-center justify-between">
+            <div>
+              <h2 className="text-sm font-semibold mb-2">Visual Editor</h2>
+              <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as any)}>
+                <TabsList>
+                  <TabsTrigger value="preview" data-testid="tab-preview">
+                    <Eye className="h-4 w-4 mr-2" />
+                    Live Preview
+                  </TabsTrigger>
+                  <TabsTrigger value="code" data-testid="tab-code">
+                    <Code2 className="h-4 w-4 mr-2" />
+                    Generated Code
+                  </TabsTrigger>
+                  <TabsTrigger value="history" data-testid="tab-history">
+                    <History className="h-4 w-4 mr-2" />
+                    History
+                    {changeHistory.length > 0 && (
+                      <Badge variant="secondary" className="ml-2 text-xs">
+                        {changeHistory.length}
+                      </Badge>
+                    )}
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
 
             <div className="flex gap-2">
               {currentTask?.status === 'awaiting_approval' && (
@@ -852,7 +864,9 @@ export default function VisualEditorPage() {
                 </Button>
               )}
             </div>
-          </div>
+          </header>
+
+          <Separator />
 
           {/* Preview Content */}
           <div className="flex-1 overflow-auto bg-muted/20 relative">
@@ -864,6 +878,7 @@ export default function VisualEditorPage() {
                   className="w-full h-full border-0"
                   title="Live Preview"
                   data-testid="iframe-preview"
+                  aria-label="Live preview of your Mundo Tango application"
                 />
                 
                 {/* Smart Suggestions Panel (only in preview mode) */}
@@ -882,6 +897,7 @@ export default function VisualEditorPage() {
               </>
             ) : viewMode === 'history' ? (
               <div className="h-full p-4">
+                <h3 className="text-base font-semibold mb-4">Change History</h3>
                 <ChangeTimeline
                   changes={changeHistory}
                   onRestore={handleRestore}
@@ -891,6 +907,7 @@ export default function VisualEditorPage() {
             ) : (
               <ScrollArea className="h-full">
                 <div className="p-4 space-y-4">
+                  <h3 className="text-base font-semibold mb-2">Generated Code</h3>
                   {currentTask?.generatedFiles && currentTask.generatedFiles.length > 0 ? (
                     currentTask.generatedFiles.map((file: any, idx: number) => (
                       <Card key={idx}>
@@ -921,8 +938,8 @@ export default function VisualEditorPage() {
               </ScrollArea>
             )}
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
     </>
   );
 }
