@@ -343,25 +343,87 @@ export default function VisualEditorPage() {
     },
   });
 
-  // Handle submit (auto-detect if it's a style change or full task)
+  // Chat mutation (conversational responses without code generation)
+  const chatMutation = useMutation({
+    mutationFn: async (message: string) => {
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch('/api/mrblue/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
+        },
+        body: JSON.stringify({
+          message,
+          context: {
+            page: currentIframeUrl,
+            selectedElement: selectedElement,
+            viewMode,
+            conversationHistory: conversationHistory.slice(-6)
+          },
+          conversationHistory: conversationHistory.slice(-6)
+        })
+      });
+      const data = await response.json();
+      if (!data.success) throw new Error(data.message || 'Chat request failed');
+      return data;
+    },
+    onSuccess: (data) => {
+      const responseText = data.response || 'I can help with that!';
+      setConversationHistory(prev => [
+        ...prev,
+        { role: 'user', content: prompt },
+        { role: 'assistant', content: responseText }
+      ]);
+      setPrompt("");
+      toast({
+        title: "Response",
+        description: responseText.slice(0, 100) + (responseText.length > 100 ? '...' : ''),
+      });
+      
+      // Voice response
+      if (voiceModeEnabled && ttsSupported) {
+        speak(responseText);
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Chat Failed",
+        description: error.message || "Could not get response",
+      });
+    },
+  });
+
+  // Handle submit (auto-detect if it's a chat message, style change, or full build task)
   const handleSubmit = async () => {
     if (!prompt.trim()) return;
 
-    // Capture screenshot before change
-    await captureBeforeScreenshot();
-
-    const trimmedPrompt = prompt.trim().toLowerCase();
+    const trimmedPrompt = prompt.trim();
+    const lowerPrompt = trimmedPrompt.toLowerCase();
+    
+    // FIXED ROUTING: Only route to autonomous for SPECIFIC build phrases
+    // Avoid matching common words like "make" which appear in normal conversation
+    const isBuildRequest = /\b(build|create|add)\s+(a|an|the|this|that|new)?\s*(feature|component|section|page)/i.test(trimmedPrompt) ||
+                          /\b(generate|scaffold|implement)\s/i.test(trimmedPrompt);
     
     // Check if it's a simple style change
     const styleKeywords = ['make', 'change', 'color', 'size', 'bigger', 'smaller', 'blue', 'red', 'center', 'font'];
-    const isStyleOnly = styleKeywords.some(kw => trimmedPrompt.includes(kw)) && trimmedPrompt.split(' ').length < 15;
+    const isStyleOnly = styleKeywords.some(kw => lowerPrompt.includes(kw)) && trimmedPrompt.split(' ').length < 15;
 
     if (isStyleOnly && selectedElement) {
+      // Capture screenshot before style change
+      await captureBeforeScreenshot();
       // Fast path: instant CSS change
-      quickStyleMutation.mutate(prompt.trim());
-    } else {
+      quickStyleMutation.mutate(trimmedPrompt);
+    } else if (isBuildRequest) {
+      // Capture screenshot before build
+      await captureBeforeScreenshot();
       // Full path: autonomous code generation
-      executeMutation.mutate(prompt.trim());
+      executeMutation.mutate(trimmedPrompt);
+    } else {
+      // Simple chat: Send to chat endpoint for conversational responses
+      chatMutation.mutate(trimmedPrompt);
     }
   };
 

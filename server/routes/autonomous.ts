@@ -107,15 +107,15 @@ function estimateCost(prompt: string, decompositionSize?: number): number {
 async function logAuditAction(
   userId: number,
   action: string,
-  details: string,
+  resourceId: string,
   metadata?: any
 ): Promise<void> {
   try {
     await db.insert(auditLogs).values({
       userId,
       action,
-      details,
       resourceType: 'autonomous_task',
+      resourceId,
       ipAddress: '127.0.0.1', // TODO: Get from request
       userAgent: 'Mr. Blue Autonomous Agent',
       metadata: metadata || null
@@ -236,8 +236,8 @@ router.post("/quick-style",
       await logAuditAction(
         userId,
         'autonomous_quick_style',
-        `Quick style generated: "${prompt}" → ${styleResult.selector}`,
-        { prompt, selector: styleResult.selector, css: styleResult.css, responseTime }
+        `style-${userId}`,
+        { prompt, selector: styleResult.selector, css: styleResult.css, responseTime, description: `Quick style generated: "${prompt}" → ${styleResult.selector}` }
       );
 
       console.log(`[Autonomous] Quick-style completed in ${responseTime}ms`);
@@ -328,8 +328,8 @@ router.post("/execute",
           await logAuditAction(
             userId,
             'autonomous_style_fast_path',
-            `Style-only request completed: "${prompt.substring(0, 100)}" → ${styleResult.selector}`,
-            { prompt: prompt.substring(0, 100), selector: styleResult.selector, css: styleResult.css, responseTime }
+            `style-${userId}`,
+            { prompt: prompt.substring(0, 100), selector: styleResult.selector, css: styleResult.css, responseTime, description: `Style-only request completed: "${prompt.substring(0, 100)}" → ${styleResult.selector}` }
           );
 
           console.log(`[Autonomous] Style-only completed in ${responseTime}ms (fast path)`);
@@ -371,8 +371,8 @@ router.post("/execute",
           await logAuditAction(
             req.userId!,
             'autonomous_task_rate_limit_exceeded',
-            `User attempted to create task but exceeded rate limit (${RATE_LIMIT_MAX_TASKS} tasks/${RATE_LIMIT_WINDOW_HOURS}h)`,
-            { prompt: prompt.substring(0, 100) }
+            `rate-limit-${req.userId}`,
+            { prompt: prompt.substring(0, 100), description: `User attempted to create task but exceeded rate limit (${RATE_LIMIT_MAX_TASKS} tasks/${RATE_LIMIT_WINDOW_HOURS}h)` }
           );
 
           return res.status(429).json({
@@ -415,8 +415,8 @@ router.post("/execute",
       await logAuditAction(
         req.userId!,
         'autonomous_task_created',
-        `User created autonomous task: "${prompt.substring(0, 100)}..."`,
-        { taskId, estimatedCost, autoApprove }
+        taskId,
+        { prompt: prompt.substring(0, 100), estimatedCost, autoApprove, description: `User created autonomous task: "${prompt.substring(0, 100)}..."` }
       );
 
       // Persist to DB
@@ -431,7 +431,7 @@ router.post("/execute",
           task.error = error.message || 'Unknown error';
           task.updatedAt = new Date();
           persistTaskToDB(task); // Persist failure
-          logAuditAction(req.userId!, 'autonomous_task_failed', `Task ${taskId} failed: ${error.message}`, { taskId });
+          logAuditAction(req.userId!, 'autonomous_task_failed', taskId, { error: error.message, description: `Task ${taskId} failed: ${error.message}` });
           
           // Emit failure event
           broadcastToUser(req.userId!, 'autonomous:failed', {
@@ -562,8 +562,8 @@ router.post("/approve/:taskId",
         await logAuditAction(
           req.userId!,
           'autonomous_task_approved',
-          `User approved and applied task ${taskId}`,
-          { taskId, filesModified: results.filesModified }
+          taskId,
+          { filesModified: results.filesModified, description: `User approved and applied task ${taskId}` }
         );
 
         // Persist completion to DB
@@ -583,8 +583,8 @@ router.post("/approve/:taskId",
         await logAuditAction(
           req.userId!,
           'autonomous_task_apply_failed',
-          `Task ${taskId} approval failed during application`,
-          { taskId, error: results.error }
+          taskId,
+          { error: results.error, description: `Task ${taskId} approval failed during application` }
         );
 
         // Persist failure to DB
@@ -646,8 +646,8 @@ router.post("/rollback/:taskId",
       await logAuditAction(
         req.userId!,
         'autonomous_task_rollback',
-        `User rolled back task ${taskId}`,
-        { taskId, snapshotId: task.snapshotId }
+        taskId,
+        { snapshotId: task.snapshotId, description: `User rolled back task ${taskId}` }
       );
 
       res.json({
@@ -1050,8 +1050,8 @@ router.get("/analyze",
       await logAuditAction(
         userId,
         'autonomous_page_analyze',
-        `Analyzed page: ${url}`,
-        { url, pageScore: report.pageScore, suggestionsCount: report.suggestions.length }
+        url,
+        { pageScore: report.pageScore, suggestionsCount: report.suggestions.length, description: `Analyzed page: ${url}` }
       );
 
       console.log(`[Autonomous] Analysis complete: ${report.suggestions.length} suggestions, score ${report.pageScore}/100`);
@@ -1108,12 +1108,12 @@ router.post("/analyze",
       await logAuditAction(
         userId,
         'autonomous_page_analyze',
-        `Analyzed page HTML: ${url}`,
+        url,
         { 
-          url, 
           pageScore: report.pageScore, 
           suggestionsCount: report.suggestions.length,
-          htmlSize: html.length 
+          htmlSize: html.length,
+          description: `Analyzed page HTML: ${url}` 
         }
       );
 
@@ -1187,12 +1187,12 @@ router.post("/commit",
       await logAuditAction(
         userId,
         'autonomous_git_commit',
-        `Created Git commit: "${result.message}"`,
+        result.commitHash || 'unknown',
         { 
           files, 
-          commitHash: result.commitHash,
           pushed: result.pushed,
-          description 
+          userDescription: description,
+          description: `Created Git commit: "${result.message}"` 
         }
       );
 
@@ -1304,12 +1304,12 @@ router.post("/atomic-apply",
       await logAuditAction(
         userId,
         'autonomous_atomic_apply',
-        `Applied atomic change group: "${description}"`,
+        group.getId(),
         { 
-          groupId: group.getId(),
           changesCount: changes.length,
           success: result.success,
-          rolledBack: result.rolledBack
+          rolledBack: result.rolledBack,
+          description: `Applied atomic change group: "${description}"` 
         }
       );
 
