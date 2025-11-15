@@ -78,12 +78,19 @@ ON CONFLICT (email) DO UPDATE SET role = 'god', is_verified = true, is_active = 
 
 ## Quick Reference
 
-**Usage:** Prefix any task with "Use MB.MD:" to execute using this methodology.
+**Usage:** 
+- **Manual:** Prefix any task with "Use MB.MD:" to execute using this methodology
+- **Mr. Blue Visual Editor:** ALL prompts automatically use MB.MD (auto-appended behind the scenes)
 
 **The Three Pillars:**
 1. **SIMULTANEOUSLY** - Execute all independent operations in parallel
 2. **RECURSIVELY** - Deep-dive into every subsystem until atomic level
 3. **CRITICALLY** - Apply rigorous quality standards at every step
+
+**⚙️ Auto-Enabled Contexts:**
+- ✅ Mr. Blue Visual Chat (`MrBlueVisualChat.tsx` line 166)
+- ✅ All Visual Editor code generation requests
+- 🔄 Future: Global Mr. Blue, Autonomous Agent, ESA System
 
 ---
 

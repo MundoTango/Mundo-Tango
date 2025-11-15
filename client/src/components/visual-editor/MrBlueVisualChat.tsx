@@ -151,15 +151,19 @@ Just tell me what you want to change!`;
     setIsLoading(true);
 
     try {
-      // Build context-aware prompt
+      // Build context-aware prompt with MB.MD methodology auto-appended
       let contextualPrompt = originalInput;
       
       if (contextInfo.selectedElement) {
         contextualPrompt = `USER REQUEST: ${originalInput}\n\nCONTEXT:\n- Page: ${contextInfo.page}\n- Selected element: ${contextInfo.selectedElement.tagName} (testId: ${contextInfo.selectedElement.testId || 'none'})\n- Element class: ${contextInfo.selectedElement.className}\n- Element text: ${contextInfo.selectedElement.text}\n- Total edits so far: ${contextInfo.editsCount}`;
       }
 
-      // Call code generation with context
-      const result = await onGenerateCode(contextualPrompt);
+      // CRITICAL: Auto-append "use mb.md" to enable MB.MD methodology
+      // All Mr. Blue prompts use simultaneously/recursively/critically approach
+      const mbmdPrompt = `use mb.md: ${contextualPrompt}`;
+
+      // Call code generation with MB.MD methodology enabled
+      const result = await onGenerateCode(mbmdPrompt);
 
       const response = `✅ **Code generated successfully!**\n\n${result.explanation || 'I\'ve analyzed your request and generated the necessary code changes.'}\n\nYou can preview the changes in the live preview panel.`;
       
