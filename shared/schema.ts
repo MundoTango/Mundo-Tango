@@ -10261,6 +10261,58 @@ export type InsertAutonomyProgress = z.infer<typeof insertAutonomyProgressSchema
 export type SelectAutonomyProgress = typeof autonomyProgress.$inferSelect;
 
 // ============================================================================
+// MR. BLUE AUTONOMOUS AGENT SYSTEM
+// ============================================================================
+
+export const autonomousTasks = pgTable("autonomous_tasks", {
+  id: varchar("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  prompt: text("prompt").notNull(),
+  status: varchar("status", { length: 50 }).notNull().default("pending"),
+  decomposition: jsonb("decomposition"),
+  generatedFiles: jsonb("generated_files"),
+  validationReport: jsonb("validation_report"),
+  error: text("error"),
+  snapshotId: varchar("snapshot_id"),
+  estimatedCost: numeric("estimated_cost", { precision: 10, scale: 2 }).default("0.00"),
+  actualCost: numeric("actual_cost", { precision: 10, scale: 2 }).default("0.00"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+}, (table) => ({
+  userIdx: index("autonomous_tasks_user_idx").on(table.userId),
+  statusIdx: index("autonomous_tasks_status_idx").on(table.status),
+  createdAtIdx: index("autonomous_tasks_created_at_idx").on(table.createdAt),
+}));
+
+export const insertAutonomousTaskSchema = createInsertSchema(autonomousTasks)
+  .omit({ createdAt: true, updatedAt: true });
+export const selectAutonomousTaskSchema = createSelectSchema(autonomousTasks);
+export type InsertAutonomousTask = z.infer<typeof insertAutonomousTaskSchema>;
+export type SelectAutonomousTask = typeof autonomousTasks.$inferSelect;
+
+export const autonomousTaskFiles = pgTable("autonomous_task_files", {
+  id: serial("id").primaryKey(),
+  taskId: varchar("task_id").notNull().references(() => autonomousTasks.id, { onDelete: "cascade" }),
+  filePath: text("file_path").notNull(),
+  operation: varchar("operation", { length: 20 }).notNull(),
+  contentBefore: text("content_before"),
+  contentAfter: text("content_after"),
+  diff: text("diff"),
+  appliedAt: timestamp("applied_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  taskIdx: index("autonomous_task_files_task_idx").on(table.taskId),
+  filePathIdx: index("autonomous_task_files_path_idx").on(table.filePath),
+}));
+
+export const insertAutonomousTaskFileSchema = createInsertSchema(autonomousTaskFiles)
+  .omit({ id: true, createdAt: true });
+export const selectAutonomousTaskFileSchema = createSelectSchema(autonomousTaskFiles);
+export type InsertAutonomousTaskFile = z.infer<typeof insertAutonomousTaskFileSchema>;
+export type SelectAutonomousTaskFile = typeof autonomousTaskFiles.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
