@@ -1,18 +1,36 @@
 /**
- * Visual Editor - Replit-style Development Environment
- * Full Backend Integration: Autonomous Agent with Real-time Status Polling
+ * Visual Editor - Mr. Blue Autonomous Vibe Coding Agent
+ * Cursor/Lovable/Bolt.new-style conversational code generation
+ * 
+ * Features:
+ * - Live preview with real-time iframe updates
+ * - Conversational iteration ("make it bigger" → instant change)
+ * - Natural language element selection
+ * - WebSocket real-time progress (no polling)
+ * - Quick style mode for instant CSS changes
+ * - Full autonomous workflow integration
  */
 
-import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect, useRef } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import { useAutonomousProgress } from "@/hooks/useAutonomousProgress";
+import { injectSelectionScript, applyInstantChange, undoLastChange } from "@/lib/iframeInjector";
 import { SEO } from "@/components/SEO";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShieldAlert, Crown, Bot, Cpu, GitBranch, Key, Rocket, Database, Terminal, Bug, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
-import { apiRequest } from "@/lib/queryClient";
+import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { 
+  ShieldAlert, Crown, Bot, Cpu, Loader2, CheckCircle2, AlertCircle,
+  Play, Eye, Code2, Palette, Undo2, Sparkles, Zap, FileCode
+} from "lucide-react";
 
 type User = {
   id: number;
@@ -21,9 +39,10 @@ type User = {
   role: string;
 };
 
-type TaskStatus = 'pending' | 'decomposing' | 'generating' | 'validating' | 'awaiting_approval' | 'completed' | 'failed';
+type TaskStatus = 'pending' | 'decomposing' | 'generating' | 'validating' | 'awaiting_approval' | 'applying' | 'completed' | 'failed';
 
 type AutonomousTask = {
+  id: string;
   taskId: string;
   status: TaskStatus;
   prompt?: string;
@@ -34,10 +53,18 @@ type AutonomousTask = {
 };
 
 export default function VisualEditorPage() {
-  const [activeTab, setActiveTab] = useState("autonomous");
+  // State
   const [prompt, setPrompt] = useState("");
   const [currentTask, setCurrentTask] = useState<AutonomousTask | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [viewMode, setViewMode] = useState<'preview' | 'code'>('preview');
+  const [selectedElement, setSelectedElement] = useState<any>(null);
+  const [conversationHistory, setConversationHistory] = useState<Array<{role: string; content: string}>>([]);
+  
+  // Refs
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   // Fetch current user
   const { data: authResponse, isLoading } = useQuery<{ user: User }>({
@@ -47,101 +74,209 @@ export default function VisualEditorPage() {
   const user = authResponse?.user;
   const isGodLevel = user?.role === 'god';
 
-  // Real-time status polling (Phase 2)
+  // WebSocket real-time progress
+  const { isConnected: wsConnected, progress: wsProgress } = useAutonomousProgress({
+    userId: user?.id || 0,
+    taskId: currentTask?.taskId || undefined,
+    autoConnect: !!user?.id && !!currentTask?.taskId
+  });
+
+  // Fallback polling if WebSocket disconnects
+  const { data: taskData } = useQuery<{ success: boolean; task: AutonomousTask }>({
+    queryKey: ['/api/autonomous/status', currentTask?.taskId],
+    enabled: !!currentTask?.taskId && !wsConnected,
+    refetchInterval: (query) => {
+      if (!query?.state?.data?.task) return false;
+      const activeStatuses = ['pending', 'decomposing', 'generating', 'validating', 'applying'];
+      return activeStatuses.includes(query.state.data.task.status) ? 5000 : false;
+    },
+  });
+
+  // Sync task data
   useEffect(() => {
-    if (!currentTask?.taskId || currentTask.status === 'completed' || currentTask.status === 'failed') {
-      return;
+    if (taskData?.task) {
+      setCurrentTask(taskData.task);
+      if (taskData.task.status === 'completed' || taskData.task.status === 'failed') {
+        setIsExecuting(false);
+      }
     }
+  }, [taskData]);
 
-    const pollStatus = async () => {
-      try {
-        // Use same auth pattern as apiRequest (Authorization header from localStorage)
-        const token = localStorage.getItem('accessToken');
-        const headers: Record<string, string> = {};
-        
-        if (token) {
-          headers["Authorization"] = `Bearer ${token}`;
-        }
-        
-        const response = await fetch(`/api/autonomous/status/${currentTask.taskId}`, {
-          headers,
-          credentials: 'include'
+  // Auto-inject generated files to iframe
+  useEffect(() => {
+    if (wsProgress?.files && viewMode === 'preview' && iframeRef.current) {
+      console.log('[VisualEditor] Auto-injecting generated files:', wsProgress.files);
+      // Files will be injected via iframe hot reload
+      // For now, just trigger a reload
+      const currentSrc = iframeRef.current.src;
+      if (currentSrc) {
+        iframeRef.current.src = currentSrc + '?t=' + Date.now();
+      }
+    }
+  }, [wsProgress?.files, viewMode]);
+
+  // Inject selection script when iframe loads
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+
+    const handleLoad = () => {
+      console.log('[VisualEditor] Iframe loaded, injecting selection script');
+      injectSelectionScript(iframe);
+    };
+
+    iframe.addEventListener('load', handleLoad);
+    
+    // Listen for iframe messages
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'IFRAME_ELEMENT_SELECTED') {
+        setSelectedElement(event.data.component);
+        toast({
+          title: "Element Selected",
+          description: `<${event.data.component.tagName}> ${event.data.component.testId ? `[${event.data.component.testId}]` : ''}`,
         });
-        
-        if (!response.ok) {
-          console.error(`Status poll failed: ${response.status} ${response.statusText}`);
-          return;
-        }
-        
-        const data = await response.json();
-        
-        setCurrentTask(prev => ({
-          ...prev!,
-          status: data.status,
-          subtasks: data.subtasks,
-          generatedFiles: data.generatedFiles,
-          validationReport: data.validationReport,
-          error: data.error
-        }));
-
-        if (data.status === 'completed' || data.status === 'failed') {
-          setIsExecuting(false);
-        }
-      } catch (error) {
-        console.error('Status polling error:', error);
       }
     };
 
-    // Poll every 2 seconds
-    const interval = setInterval(pollStatus, 2000);
-    pollStatus(); // Initial poll
+    window.addEventListener('message', handleMessage);
 
-    return () => clearInterval(interval);
-  }, [currentTask?.taskId, currentTask?.status]);
+    return () => {
+      iframe.removeEventListener('load', handleLoad);
+      window.removeEventListener('message', handleMessage);
+    };
+  }, [toast]);
 
-  // Execute autonomous task (Phase 1)
-  const handleExecuteTask = async () => {
-    if (!prompt.trim()) return;
-
-    setIsExecuting(true);
-    
-    try {
+  // Execute full autonomous task
+  const executeMutation = useMutation({
+    mutationFn: async (taskPrompt: string) => {
       const response = await apiRequest('POST', '/api/autonomous/execute', {
-        prompt: prompt.trim(),
-        autoApprove: false
+        prompt: taskPrompt,
+        autoApprove: false,
+        selectedElement: selectedElement?.testId
       });
-
       const data = await response.json();
-      
+      if (!data.success) throw new Error(data.message);
+      return data;
+    },
+    onSuccess: (data) => {
       setCurrentTask({
+        id: data.taskId,
         taskId: data.taskId,
         status: 'pending',
         prompt: prompt.trim()
       });
-    } catch (error: any) {
-      setCurrentTask({
-        taskId: 'error',
-        status: 'failed',
-        error: error.message || 'Failed to start task'
+      setIsExecuting(true);
+      setConversationHistory(prev => [...prev, { role: 'user', content: prompt }, { role: 'assistant', content: 'Starting task...' }]);
+      setPrompt("");
+      toast({
+        title: "Task Started",
+        description: "Mr. Blue is analyzing your request...",
       });
+    },
+    onError: (error: any) => {
       setIsExecuting(false);
+      toast({
+        variant: "destructive",
+        title: "Failed to Start Task",
+        description: error.message || "An error occurred",
+      });
+    },
+  });
+
+  // Quick style mutation (instant CSS changes)
+  const quickStyleMutation = useMutation({
+    mutationFn: async (stylePrompt: string) => {
+      const response = await apiRequest('POST', '/api/autonomous/quick-style', {
+        prompt: stylePrompt,
+        selectedElement: selectedElement?.testId
+      });
+      const data = await response.json();
+      if (!data.success) throw new Error(data.message);
+      return data;
+    },
+    onSuccess: (data) => {
+      // Apply CSS to iframe immediately
+      if (data.css && iframeRef.current) {
+        applyInstantChange(iframeRef.current, {
+          type: 'style',
+          selector: data.selector,
+          property: Object.keys(data.css)[0],
+          value: Object.values(data.css)[0]
+        });
+      }
+      setConversationHistory(prev => [
+        ...prev,
+        { role: 'user', content: prompt },
+        { role: 'assistant', content: `Applied: ${JSON.stringify(data.css)}` }
+      ]);
+      setPrompt("");
+      toast({
+        title: "Style Applied",
+        description: "CSS changed instantly!",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Style Change Failed",
+        description: error.message || "An error occurred",
+      });
+    },
+  });
+
+  // Handle submit (auto-detect if it's a style change or full task)
+  const handleSubmit = async () => {
+    if (!prompt.trim()) return;
+
+    const trimmedPrompt = prompt.trim().toLowerCase();
+    
+    // Check if it's a simple style change
+    const styleKeywords = ['make', 'change', 'color', 'size', 'bigger', 'smaller', 'blue', 'red', 'center', 'font'];
+    const isStyleOnly = styleKeywords.some(kw => trimmedPrompt.includes(kw)) && trimmedPrompt.split(' ').length < 15;
+
+    if (isStyleOnly && selectedElement) {
+      // Fast path: instant CSS change
+      quickStyleMutation.mutate(prompt.trim());
+    } else {
+      // Full path: autonomous code generation
+      executeMutation.mutate(prompt.trim());
     }
   };
 
-  // Approve task (Phase 3)
-  const handleApproveTask = async () => {
-    if (!currentTask?.taskId) return;
-
-    try {
-      await apiRequest('POST', `/api/autonomous/approve/${currentTask.taskId}`);
-      
-      setCurrentTask(prev => ({
-        ...prev!,
-        status: 'completed'
-      }));
+  // Approve generated code
+  const approveMutation = useMutation({
+    mutationFn: async (taskId: string) => {
+      const response = await apiRequest('POST', `/api/autonomous/approve/${taskId}`, {});
+      const data = await response.json();
+      if (!data.success) throw new Error(data.message);
+      return data;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Code Applied",
+        description: "Changes saved to codebase!",
+      });
+      setCurrentTask(prev => prev ? { ...prev, status: 'completed' } : null);
       setIsExecuting(false);
-    } catch (error) {
-      console.error('Approve error:', error);
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Apply Failed",
+        description: error.message,
+      });
+    },
+  });
+
+  // Undo last change
+  const handleUndo = () => {
+    if (iframeRef.current) {
+      undoLastChange(iframeRef.current);
+      setConversationHistory(prev => prev.slice(0, -2)); // Remove last exchange
+      toast({
+        title: "Undone",
+        description: "Last change reverted",
+      });
     }
   };
 
@@ -151,16 +286,10 @@ export default function VisualEditorPage() {
       <>
         <SEO 
           title="Visual Editor - Mundo Tango"
-          description="Replit-style development environment with AI assistance"
+          description="AI-powered vibe coding with Mr. Blue"
         />
         <div className="h-screen w-full bg-background flex items-center justify-center">
-          <Card className="w-96">
-            <CardContent className="pt-6">
-              <p className="text-sm text-muted-foreground text-center">
-                Loading Visual Editor...
-              </p>
-            </CardContent>
-          </Card>
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       </>
     );
@@ -185,7 +314,7 @@ export default function VisualEditorPage() {
             <CardContent>
               <Alert variant="destructive">
                 <AlertDescription>
-                  The Visual Editor requires God Level (Tier 8) access.
+                  Visual Editor requires God Level (Tier 8) access.
                   {user ? ` Your current role: ${user.role}` : ' Please log in.'}
                 </AlertDescription>
               </Alert>
@@ -196,363 +325,214 @@ export default function VisualEditorPage() {
     );
   }
 
-  // Render status badge (Phase 4)
-  const renderStatusBadge = () => {
-    if (!currentTask) return null;
-
-    const statusConfig: Record<TaskStatus, { label: string; variant: any; icon: any }> = {
-      pending: { label: 'Pending', variant: 'secondary', icon: Loader2 },
-      decomposing: { label: 'Decomposing', variant: 'default', icon: Loader2 },
-      generating: { label: 'Generating', variant: 'default', icon: Loader2 },
-      validating: { label: 'Validating', variant: 'default', icon: Loader2 },
-      awaiting_approval: { label: 'Awaiting Approval', variant: 'default', icon: AlertCircle },
-      completed: { label: 'Completed', variant: 'default', icon: CheckCircle2 },
-      failed: { label: 'Failed', variant: 'destructive', icon: AlertCircle }
-    };
-
-    const config = statusConfig[currentTask.status];
-    const Icon = config.icon;
-
-    return (
-      <Badge 
-        variant={config.variant}
-        data-testid={`badge-status-${currentTask.status}`}
-        className="flex items-center gap-1"
-      >
-        <Icon className={`h-3 w-3 ${currentTask.status !== 'completed' && currentTask.status !== 'failed' ? 'animate-spin' : ''}`} />
-        {config.label}
-      </Badge>
-    );
-  };
-
-  // God Level access confirmed - Full Visual Editor
+  // Main Visual Editor UI
   return (
     <>
       <SEO 
-        title="Visual Editor - Mundo Tango"
-        description="Replit-style development environment with AI assistance"
+        title="Visual Editor - Mr. Blue Vibe Coding"
+        description="Natural language to code with live visual feedback"
       />
       
-      <div className="h-screen w-full bg-background flex flex-col">
-        {/* Header */}
-        <div className="border-b p-4">
-          <div className="flex items-center justify-between">
+      <div className="h-screen w-full bg-background flex">
+        {/* Left Sidebar: Conversation & Controls */}
+        <div className="w-96 border-r flex flex-col">
+          {/* Header */}
+          <div className="border-b p-4">
             <div className="flex items-center gap-2">
-              <Crown className="h-5 w-5 text-primary" />
-              <h1 className="text-xl font-semibold">Visual Editor</h1>
+              <Sparkles className="h-5 w-5 text-primary" />
+              <h1 className="text-lg font-semibold">Mr. Blue Vibe Coding</h1>
             </div>
-            <div className="flex items-center gap-3">
-              {renderStatusBadge()}
-              <div className="text-sm text-muted-foreground">
-                {user.name} (God Level)
+            <p className="text-xs text-muted-foreground mt-1">God Level Access</p>
+          </div>
+
+          {/* Conversation History */}
+          <ScrollArea className="flex-1 p-4">
+            <div className="space-y-4">
+              {conversationHistory.length === 0 ? (
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="text-center space-y-2">
+                      <Bot className="h-12 w-12 mx-auto text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">
+                        Tell me what you want to build or change!
+                      </p>
+                      <div className="text-xs text-muted-foreground space-y-1">
+                        <p>• "Make the header blue"</p>
+                        <p>• "Add a hero section"</p>
+                        <p>• "Center that button"</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                conversationHistory.map((msg, idx) => (
+                  <div key={idx} className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[85%] rounded-lg p-3 ${
+                      msg.role === 'user' 
+                        ? 'bg-primary text-primary-foreground' 
+                        : 'bg-muted'
+                    }`}>
+                      <p className="text-sm">{msg.content}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </ScrollArea>
+
+          {/* Selected Element Info */}
+          {selectedElement && (
+            <div className="border-t p-3 bg-muted/50">
+              <div className="text-xs font-medium mb-1">Selected Element</div>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="text-xs">
+                  &lt;{selectedElement.tagName}&gt;
+                </Badge>
+                {selectedElement.testId && (
+                  <Badge variant="secondary" className="text-xs">
+                    {selectedElement.testId}
+                  </Badge>
+                )}
               </div>
+            </div>
+          )}
+
+          {/* Status & Progress */}
+          {isExecuting && (
+            <div className="border-t p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium">Status</span>
+                <Badge variant="secondary" className="text-xs">
+                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                  {wsProgress?.step || currentTask?.status}
+                </Badge>
+              </div>
+              {wsProgress?.progress !== undefined && (
+                <Progress value={wsProgress.progress * 100} className="h-1" />
+              )}
+            </div>
+          )}
+
+          {/* Input Area */}
+          <div className="border-t p-4 space-y-2">
+            <Textarea
+              data-testid="input-vibe-prompt"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                  e.preventDefault();
+                  handleSubmit();
+                }
+              }}
+              placeholder={selectedElement 
+                ? `Change this ${selectedElement.tagName}...` 
+                : "Describe what you want..."
+              }
+              className="min-h-[80px] resize-none"
+              disabled={isExecuting}
+            />
+            <div className="flex gap-2">
+              <Button
+                data-testid="button-vibe-submit"
+                onClick={handleSubmit}
+                disabled={!prompt.trim() || isExecuting}
+                className="flex-1"
+              >
+                {isExecuting ? (
+                  <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Working...</>
+                ) : (
+                  <><Zap className="h-4 w-4 mr-2" /> Generate</>
+                )}
+              </Button>
+              {conversationHistory.length > 0 && (
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleUndo}
+                  disabled={isExecuting}
+                  data-testid="button-undo"
+                >
+                  <Undo2 className="h-4 w-4" />
+                </Button>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Tab Navigation */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-          <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0 h-auto">
-            <TabsTrigger 
-              value="mr-blue" 
-              data-testid="tab-mr-blue"
-              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
-            >
-              <Bot className="h-4 w-4 mr-2" />
-              Mr. Blue
-            </TabsTrigger>
-            <TabsTrigger 
-              value="autonomous" 
-              data-testid="tab-autonomous"
-              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
-            >
-              <Cpu className="h-4 w-4 mr-2" />
-              Autonomous
-            </TabsTrigger>
-            <TabsTrigger 
-              value="git" 
-              data-testid="tab-git"
-              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
-            >
-              <GitBranch className="h-4 w-4 mr-2" />
-              Git
-            </TabsTrigger>
-            <TabsTrigger 
-              value="secrets" 
-              data-testid="tab-secrets"
-              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
-            >
-              <Key className="h-4 w-4 mr-2" />
-              Secrets
-            </TabsTrigger>
-            <TabsTrigger 
-              value="deploy" 
-              data-testid="tab-deploy"
-              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
-            >
-              <Rocket className="h-4 w-4 mr-2" />
-              Deploy
-            </TabsTrigger>
-            <TabsTrigger 
-              value="database" 
-              data-testid="tab-database"
-              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
-            >
-              <Database className="h-4 w-4 mr-2" />
-              Database
-            </TabsTrigger>
-            <TabsTrigger 
-              value="console" 
-              data-testid="tab-console"
-              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
-            >
-              <Terminal className="h-4 w-4 mr-2" />
-              Console
-            </TabsTrigger>
-            <TabsTrigger 
-              value="debug" 
-              data-testid="tab-debug"
-              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
-            >
-              <Bug className="h-4 w-4 mr-2" />
-              Debug
-            </TabsTrigger>
-          </TabsList>
+        {/* Right Panel: Live Preview / Code View */}
+        <div className="flex-1 flex flex-col">
+          {/* View Mode Toggle */}
+          <div className="border-b p-2 flex items-center justify-between">
+            <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as any)}>
+              <TabsList>
+                <TabsTrigger value="preview" data-testid="tab-preview">
+                  <Eye className="h-4 w-4 mr-2" />
+                  Live Preview
+                </TabsTrigger>
+                <TabsTrigger value="code" data-testid="tab-code">
+                  <Code2 className="h-4 w-4 mr-2" />
+                  Generated Code
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
 
-          {/* Tab Content */}
-          <div className="flex-1 overflow-auto">
-            <TabsContent value="mr-blue" className="h-full m-0 p-4">
-              <Alert>
-                <AlertDescription>
-                  🤖 Mr. Blue AI Assistant - Coming Soon
-                </AlertDescription>
-              </Alert>
-            </TabsContent>
+            {currentTask?.status === 'awaiting_approval' && (
+              <Button
+                onClick={() => approveMutation.mutate(currentTask.taskId)}
+                disabled={approveMutation.isPending}
+                data-testid="button-approve-code"
+              >
+                <CheckCircle2 className="h-4 w-4 mr-2" />
+                Apply to Codebase
+              </Button>
+            )}
+          </div>
 
-            {/* AUTONOMOUS TAB - Full Integration */}
-            <TabsContent value="autonomous" className="h-full m-0 p-4">
-              <div data-testid="autonomous-workflow-panel" className="h-full flex flex-col gap-4">
-                
-                {/* Task Input */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Autonomous Task Execution</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <label htmlFor="autonomous-prompt" className="text-sm font-medium mb-2 block">
-                        Describe what you want Mr. Blue to build:
-                      </label>
-                      <textarea
-                        id="autonomous-prompt"
-                        data-testid="input-autonomous-prompt"
-                        value={prompt}
-                        onChange={(e) => setPrompt(e.target.value)}
-                        disabled={isExecuting}
-                        placeholder="Example: Add a file upload component with image preview thumbnails..."
-                        className="w-full min-h-[120px] p-3 border rounded-md resize-y disabled:opacity-50"
-                      />
-                    </div>
-                    <Button
-                      data-testid="button-start-autonomous"
-                      onClick={handleExecuteTask}
-                      disabled={isExecuting || !prompt.trim()}
-                      className="w-full"
-                    >
-                      {isExecuting ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Executing...
-                        </>
-                      ) : (
-                        'Execute Autonomous Task'
-                      )}
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                {/* Task Status & Progress */}
-                {currentTask && (
-                  <>
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-sm">Task Progress</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">Status:</span>
-                          {renderStatusBadge()}
-                        </div>
-                        
-                        {currentTask.prompt && (
-                          <div className="text-sm">
-                            <span className="font-medium">Prompt:</span>
-                            <p className="text-muted-foreground mt-1">{currentTask.prompt}</p>
-                          </div>
-                        )}
-
-                        {currentTask.error && (
-                          <Alert variant="destructive">
-                            <AlertDescription>{currentTask.error}</AlertDescription>
-                          </Alert>
-                        )}
-
-                        <Alert>
-                          <AlertDescription className="text-sm">
-                            🎯 God Level: Unlimited operations, no rate limits, no cost caps
-                          </AlertDescription>
-                        </Alert>
-                      </CardContent>
-                    </Card>
-
-                    {/* Validation Report (Phase 3) */}
-                    {currentTask.validationReport && (
-                      <Card data-testid="validation-report">
+          {/* Preview Content */}
+          <div className="flex-1 overflow-auto bg-muted/20">
+            {viewMode === 'preview' ? (
+              <iframe
+                ref={iframeRef}
+                src="/"
+                className="w-full h-full border-0"
+                title="Live Preview"
+                data-testid="iframe-preview"
+              />
+            ) : (
+              <ScrollArea className="h-full">
+                <div className="p-4 space-y-4">
+                  {currentTask?.generatedFiles && currentTask.generatedFiles.length > 0 ? (
+                    currentTask.generatedFiles.map((file: any, idx: number) => (
+                      <Card key={idx}>
                         <CardHeader>
-                          <CardTitle className="text-sm">Validation Report</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                          <div className="text-sm">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="font-medium">LSP Diagnostics:</span>
-                              <Badge variant={currentTask.validationReport.lspErrors?.length > 0 ? 'destructive' : 'default'}>
-                                {currentTask.validationReport.lspErrors?.length || 0} errors
-                              </Badge>
-                            </div>
-                            {currentTask.validationReport.summary && (
-                              <p className="text-muted-foreground">{currentTask.validationReport.summary}</p>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-
-                    {/* File Diffs (Phase 3) */}
-                    {currentTask.generatedFiles && currentTask.generatedFiles.length > 0 && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-sm">Generated Files</CardTitle>
+                          <CardTitle className="text-sm font-mono">{file.filePath}</CardTitle>
+                          {file.explanation && (
+                            <CardDescription className="text-xs">{file.explanation}</CardDescription>
+                          )}
                         </CardHeader>
                         <CardContent>
-                          <Tabs defaultValue="files" data-testid="tab-files">
-                            <TabsList>
-                              <TabsTrigger value="files">Files ({currentTask.generatedFiles.length})</TabsTrigger>
-                            </TabsList>
-                            <TabsContent value="files" className="space-y-2 mt-4">
-                              {currentTask.generatedFiles.map((file: any, idx: number) => (
-                                <div key={idx} className="p-3 border rounded-md">
-                                  <div className="font-mono text-sm font-medium">{file.path}</div>
-                                  <div className="text-xs text-muted-foreground mt-1">
-                                    {file.operation || 'modified'}
-                                  </div>
-                                </div>
-                              ))}
-                            </TabsContent>
-                          </Tabs>
+                          <pre className="text-xs bg-muted p-3 rounded-md overflow-auto">
+                            <code>{file.content || file.diff || 'No content'}</code>
+                          </pre>
                         </CardContent>
                       </Card>
-                    )}
-
-                    {/* Approval Buttons (Phase 3) */}
-                    {currentTask.status === 'awaiting_approval' && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-sm">Review & Approve</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                          <Alert>
-                            <AlertDescription>
-                              Review the validation report and generated files above. 
-                              Click "Approve & Apply" to merge the changes into your codebase.
-                            </AlertDescription>
-                          </Alert>
-                          <div className="flex gap-2">
-                            <Button
-                              data-testid="button-approve-apply"
-                              onClick={handleApproveTask}
-                              className="flex-1"
-                            >
-                              <CheckCircle2 className="h-4 w-4 mr-2" />
-                              Approve & Apply
-                            </Button>
-                            <Button
-                              variant="outline"
-                              onClick={() => {
-                                setCurrentTask(null);
-                                setIsExecuting(false);
-                              }}
-                              className="flex-1"
-                            >
-                              Cancel
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-
-                    {/* Completion Message */}
-                    {currentTask.status === 'completed' && (
-                      <Alert>
-                        <CheckCircle2 className="h-4 w-4" />
-                        <AlertDescription>
-                          Task completed successfully! All changes have been applied to your codebase.
-                        </AlertDescription>
-                      </Alert>
-                    )}
-                  </>
-                )}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="git" className="h-full m-0 p-4">
-              <Alert>
-                <AlertDescription>
-                  🌿 Git Integration - Coming Soon
-                </AlertDescription>
-              </Alert>
-            </TabsContent>
-
-            <TabsContent value="secrets" className="h-full m-0 p-4">
-              <Alert>
-                <AlertDescription>
-                  🔐 Secrets Management - Coming Soon
-                </AlertDescription>
-              </Alert>
-            </TabsContent>
-
-            <TabsContent value="deploy" className="h-full m-0 p-4">
-              <Alert>
-                <AlertDescription>
-                  🚀 Deployment Controls - Coming Soon
-                </AlertDescription>
-              </Alert>
-            </TabsContent>
-
-            <TabsContent value="database" className="h-full m-0 p-4">
-              <Alert>
-                <AlertDescription>
-                  💾 Database Operations - Coming Soon
-                </AlertDescription>
-              </Alert>
-            </TabsContent>
-
-            <TabsContent value="console" className="h-full m-0 p-4">
-              <Alert>
-                <AlertDescription>
-                  💻 Shell Console - Coming Soon
-                </AlertDescription>
-              </Alert>
-            </TabsContent>
-
-            <TabsContent value="debug" className="h-full m-0 p-4">
-              <Alert>
-                <AlertDescription>
-                  🐛 Debug Tools - Coming Soon
-                </AlertDescription>
-              </Alert>
-            </TabsContent>
+                    ))
+                  ) : (
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="text-center text-muted-foreground">
+                          <FileCode className="h-12 w-12 mx-auto mb-2" />
+                          <p className="text-sm">No code generated yet</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              </ScrollArea>
+            )}
           </div>
-        </Tabs>
+        </div>
       </div>
     </>
   );
