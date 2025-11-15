@@ -19,6 +19,7 @@ interface UseStreamingChatReturn {
   messages: StreamMessage[];
   generatedCode: string;
   error: string | null;
+  isTyping: boolean;
   sendMessage: (message: string, context?: any, mode?: string) => Promise<void>;
   clear: () => void;
 }
@@ -29,6 +30,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
   const [messages, setMessages] = useState<StreamMessage[]>([]);
   const [generatedCode, setGeneratedCode] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [isTyping, setIsTyping] = useState(false);
 
   const eventSourceRef = useRef<EventSource | null>(null);
 
@@ -38,6 +40,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
   const sendMessage = useCallback(async (message: string, context?: any, mode: string = 'chat') => {
     try {
       setIsStreaming(true);
+      setIsTyping(true);
       setError(null);
       setMessages([]);
       setGeneratedCode('');
@@ -84,6 +87,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
         
         if (done) {
           setIsStreaming(false);
+          setIsTyping(false);
           setCurrentStatus('Done');
           break;
         }
@@ -111,6 +115,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
       console.error('[StreamingChat] Error:', err);
       setError(err.message || 'Failed to send message');
       setIsStreaming(false);
+      setIsTyping(false);
       setCurrentStatus('Error');
     }
   }, []);
@@ -137,12 +142,14 @@ export function useStreamingChat(): UseStreamingChatReturn {
       case 'completion':
         setCurrentStatus(msg.message || 'Done');
         setIsStreaming(false);
+        setIsTyping(false);
         break;
 
       case 'error':
         setError(msg.message || 'Unknown error');
         setCurrentStatus('Error');
         setIsStreaming(false);
+        setIsTyping(false);
         break;
     }
   }, []);
@@ -168,6 +175,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
     messages,
     generatedCode,
     error,
+    isTyping,
     sendMessage,
     clear
   };

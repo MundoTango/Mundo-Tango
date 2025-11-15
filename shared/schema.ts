@@ -783,8 +783,10 @@ export const mrBlueConversations = pgTable("mr_blue_conversations", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   title: text("title"),
+  contextWindow: integer("context_window").default(10),
   lastMessageAt: timestamp("last_message_at"),
   createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => ({
   userIdx: index("mr_blue_conversations_user_idx").on(table.userId),
 }));
@@ -792,12 +794,44 @@ export const mrBlueConversations = pgTable("mr_blue_conversations", {
 export const mrBlueMessages = pgTable("mr_blue_messages", {
   id: serial("id").primaryKey(),
   conversationId: integer("conversation_id").notNull().references(() => mrBlueConversations.id, { onDelete: "cascade" }),
-  role: varchar("role").notNull(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  role: varchar("role", { length: 20 }).notNull(),
   content: text("content").notNull(),
   metadata: jsonb("metadata"),
+  readAt: timestamp("read_at"),
+  readBy: integer("read_by").array(),
+  isEdited: boolean("is_edited").default(false),
+  editedAt: timestamp("edited_at"),
+  deletedAt: timestamp("deleted_at"),
   createdAt: timestamp("created_at").defaultNow(),
 }, (table) => ({
   conversationIdx: index("mr_blue_messages_conversation_idx").on(table.conversationId),
+  conversationCreatedIdx: index("mr_blue_messages_conv_created_idx").on(table.conversationId, table.createdAt),
+  userIdx: index("mr_blue_messages_user_idx").on(table.userId),
+}));
+
+export const messageReactions = pgTable("message_reactions", {
+  id: serial("id").primaryKey(),
+  messageId: integer("message_id").notNull().references(() => mrBlueMessages.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  emoji: varchar("emoji", { length: 10 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  messageIdx: index("message_reactions_message_idx").on(table.messageId),
+  userIdx: index("message_reactions_user_idx").on(table.userId),
+  uniqueReaction: uniqueIndex("unique_message_user_emoji").on(table.messageId, table.userId, table.emoji),
+}));
+
+export const messageBookmarks = pgTable("message_bookmarks", {
+  id: serial("id").primaryKey(),
+  messageId: integer("message_id").notNull().references(() => mrBlueMessages.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  note: text("note"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  messageIdx: index("message_bookmarks_message_idx").on(table.messageId),
+  userIdx: index("message_bookmarks_user_idx").on(table.userId),
+  uniqueBookmark: uniqueIndex("unique_message_user_bookmark").on(table.messageId, table.userId),
 }));
 
 export const lifeCeoConversations = pgTable("life_ceo_conversations", {
