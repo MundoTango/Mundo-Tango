@@ -72,7 +72,14 @@ The platform features a unified **MT Ocean theme** with a tango-inspired color p
 
 **AI Integration:**
 -   **Bifrost AI Gateway:** Unified AI gateway with automatic failover, semantic caching, and load balancing.
--   **Mr. Blue AI Assistant:** Context-aware conversational intelligence, breadcrumb tracking, and predictive assistance.
+-   **Mr. Blue AI Assistant - Unified Interface:** 4 integrated modes for comprehensive AI assistance:
+    - **Text Chat**: Traditional chat interface with typing indicators, message actions, conversation persistence
+    - **Voice Chat**: Continuous voice mode with VAD (Voice Activity Detection), studio-quality audio metrics (SNR, THD), 50+ voice commands
+    - **Vibecoding**: Context-aware code generation with instant style changes, natural language commands, and visual preview
+    - **Visual Editor**: Full visual editor with element selection, change timeline, screenshot replay, Git integration
+    - **Key Features**: Seamless mode switching with auto-configuration, voice input available in all modes, vibecoding router active in vibecoding/visual editor modes, unified conversation history across modes, real-time audio quality metrics, command suggestions in vibecoding mode
+    - **Technical Stack**: React/TypeScript, Wouter routing, @ricky0123/vad-web for voice, OpenAI GPT-4 for code generation, IframeInjector + html2canvas for visual editor, shadcn/ui components
+    - **Route**: `/mr-blue` provides unified access to all 4 modes
 -   **Mr. Blue Autonomous Agent System (PRODUCTION):** Full autonomous development capabilities with:
     - **MB.MD Protocol Engine:** Task decomposition with parallel/recursive/critical methodology
     - **AI Code Generator:** 850+ line GROQ Llama-3.1-70b powered multi-file generator

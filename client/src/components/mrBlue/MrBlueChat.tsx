@@ -12,9 +12,11 @@ import { breadcrumbTracker } from "@/lib/mrBlue/breadcrumbTracker";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
 import { MessageActions } from "./MessageActions";
+import { CommandSuggestions } from "./CommandSuggestions";
 import { useVoiceInput } from "@/hooks/useVoiceInput";
 import { VibecodingRouter } from "@/lib/vibecodingRouter";
 import { useToast } from "@/hooks/use-toast";
+import type { MrBlueMode } from "./ModeSwitcher";
 
 interface Message {
   id: string;
@@ -28,7 +30,13 @@ interface Message {
   reactions?: Array<{ emoji: string; count: number; users: number[] }>;
 }
 
-export function MrBlueChat() {
+interface MrBlueChatProps {
+  enableVoice?: boolean;
+  enableVibecoding?: boolean;
+  mode?: MrBlueMode;
+}
+
+export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode = 'text' }: MrBlueChatProps = {}) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -42,11 +50,16 @@ export function MrBlueChat() {
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
+  const [showCommands, setShowCommands] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [location, navigate] = useLocation();
   const messageCountRef = useRef(0);
   const vibeRouterRef = useRef<VibecodingRouter | null>(null);
   const { toast } = useToast();
+  
+  // Show mode-specific UI
+  const showVoiceControls = enableVoice || mode === 'voice';
+  const showVibecodingFeatures = enableVibecoding || mode === 'vibecoding';
 
   // Handle voice input result
   const handleVoiceResult = (text: string) => {
@@ -73,25 +86,34 @@ export function MrBlueChat() {
     onResult: handleVoiceResult,
   });
 
-  // Initialize vibecoding router
+  // Auto-enable continuous mode for voice mode
   useEffect(() => {
-    vibeRouterRef.current = new VibecodingRouter({
-      navigate: (path: string) => {
-        navigate(path);
-      },
-      setViewMode: (mode: 'preview' | 'code' | 'history') => {
-        console.log('[MrBlue] View mode changed:', mode);
-      },
-      handleUndo: () => {
-        console.log('[MrBlue] Undo action');
-      },
-      handleRedo: () => {
-        console.log('[MrBlue] Redo action');
-      },
-    });
-    
-    console.log('[MrBlue] Vibecoding router initialized');
-  }, [navigate]);
+    if (enableVoice && mode === 'voice') {
+      enableContinuousMode();
+    }
+  }, [enableVoice, mode, enableContinuousMode]);
+  
+  // Auto-enable vibecoding router for vibecoding mode
+  useEffect(() => {
+    if (enableVibecoding) {
+      vibeRouterRef.current = new VibecodingRouter({
+        navigate: (path: string) => {
+          navigate(path);
+        },
+        setViewMode: (mode: 'preview' | 'code' | 'history') => {
+          console.log('[MrBlue] View mode changed:', mode);
+        },
+        handleUndo: () => {
+          console.log('[MrBlue] Undo action');
+        },
+        handleRedo: () => {
+          console.log('[MrBlue] Redo action');
+        },
+      });
+      
+      console.log('[MrBlue] Vibecoding router initialized');
+    }
+  }, [enableVibecoding, navigate]);
 
   // Track page context
   useEffect(() => {
@@ -322,6 +344,77 @@ export function MrBlueChat() {
 
   return (
     <div className="flex flex-col h-full">
+      {/* Voice controls (only in voice/vibecoding modes) */}
+      {showVoiceControls && (
+        <div className="p-4 border-b bg-muted/20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant={continuousMode ? "default" : "outline"}
+                onClick={continuousMode ? disableContinuousMode : enableContinuousMode}
+                data-testid="button-toggle-continuous-voice"
+              >
+                {continuousMode ? <ToggleRight className="w-4 h-4 mr-2" /> : <ToggleLeft className="w-4 h-4 mr-2" />}
+                Continuous Voice
+              </Button>
+              
+              {continuousMode && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Badge variant={isListening ? "default" : "secondary"}>
+                    {isListening ? "Listening..." : "Waiting"}
+                  </Badge>
+                </div>
+              )}
+            </div>
+            
+            {/* Audio quality metrics */}
+            {continuousMode && (
+              <div className="flex gap-2">
+                <Badge variant="outline" data-testid="metric-snr">SNR: {audioMetrics.snr.toFixed(1)} dB</Badge>
+                <Badge variant="outline" data-testid="metric-thd">THD: {audioMetrics.thd.toFixed(2)}%</Badge>
+              </div>
+            )}
+          </div>
+          
+          {/* Noise threshold slider */}
+          {continuousMode && (
+            <div className="mt-4">
+              <Label>Noise Threshold: {noiseThreshold} dB</Label>
+              <Slider
+                value={[noiseThreshold]}
+                onValueChange={([value]) => setNoiseThreshold(value)}
+                min={-60}
+                max={-20}
+                step={1}
+                className="mt-2"
+                data-testid="slider-noise-threshold"
+              />
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* Voice commands help (in vibecoding mode) */}
+      {showVibecodingFeatures && (
+        <div className="p-4 border-b">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setShowCommands(!showCommands)}
+            data-testid="button-toggle-commands"
+          >
+            {showCommands ? 'Hide' : 'Show'} Voice Commands
+          </Button>
+          
+          {showCommands && (
+            <div className="mt-4">
+              <CommandSuggestions />
+            </div>
+          )}
+        </div>
+      )}
+      
       {/* Messages */}
       <ScrollArea ref={scrollRef} className="flex-1 p-4">
         <div className="space-y-4">
@@ -470,79 +563,36 @@ export function MrBlueChat() {
         </div>
       </ScrollArea>
 
-      {/* Input */}
-      <div className="p-4 border-t space-y-2">
-        <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            variant={continuousMode ? "default" : "outline"}
-            onClick={continuousMode ? disableContinuousMode : enableContinuousMode}
-            data-testid="button-toggle-continuous-voice"
-          >
-            {continuousMode ? (
-              <>
-                <ToggleRight className="w-4 h-4 mr-2" />
-                Continuous Voice
-              </>
-            ) : (
-              <>
-                <ToggleLeft className="w-4 h-4 mr-2" />
-                Continuous Voice
-              </>
-            )}
-          </Button>
-          {isListening && (
-            <Badge variant="secondary" className="animate-pulse" data-testid="badge-listening">
-              <Mic className="w-3 h-3 mr-1" />
-              Listening...
-            </Badge>
-          )}
-        </div>
-
-        {/* Audio Quality Metrics */}
-        {continuousMode && (
-          <div className="flex flex-col gap-2 p-3 bg-muted rounded-md" data-testid="audio-quality-panel">
-            <Label className="text-xs font-semibold">Audio Quality</Label>
-            <div className="flex items-center gap-3 text-xs">
-              <Badge variant="outline" data-testid="metric-snr">
-                SNR: {audioMetrics.snr.toFixed(1)} dB
-              </Badge>
-              <Badge variant="outline" data-testid="metric-thd">
-                THD: {audioMetrics.thd.toFixed(2)}%
-              </Badge>
-              <Badge variant="outline" data-testid="metric-level">
-                Level: {audioMetrics.level.toFixed(1)} dB
-              </Badge>
-            </div>
-            
-            <div className="space-y-1">
-              <Label htmlFor="noise-threshold" className="text-xs">
-                Noise Threshold: {noiseThreshold} dB
-              </Label>
-              <Slider
-                id="noise-threshold"
-                value={[noiseThreshold]}
-                onValueChange={([value]) => setNoiseThreshold(value)}
-                min={-60}
-                max={-20}
-                step={1}
-                className="w-full"
-                data-testid="slider-noise-threshold"
-              />
-            </div>
-          </div>
-        )}
-
+      {/* Input area */}
+      <div className="p-4 border-t">
         <div className="flex gap-2">
           <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ask me anything..."
+            placeholder={
+              mode === 'voice' 
+                ? "Speak or type your message..."
+                : mode === 'vibecoding'
+                ? "Try: make it blue, create a button, go to home..."
+                : "Ask me anything..."
+            }
             className="resize-none"
             rows={2}
             data-testid="input-mr-blue-message"
           />
+          
+          {showVoiceControls && (
+            <Button
+              size="icon"
+              variant={isListening ? "default" : "outline"}
+              onClick={isListening ? stopListening : startListening}
+              data-testid="button-voice-input"
+            >
+              <Mic className="w-4 h-4" />
+            </Button>
+          )}
+          
           <Button
             onClick={sendMessage}
             disabled={!input.trim() || isLoading}

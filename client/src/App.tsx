@@ -17,6 +17,7 @@ import { MrBlueWidget } from "./components/MrBlueWidget";
 import { GlobalMrBlue } from "./components/mrblue/GlobalMrBlue";
 import { ChatSidePanel } from "./components/mrblue/ChatSidePanel";
 import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
+import { UnifiedMrBlue } from "./components/mrBlue/UnifiedMrBlue";
 import { LoadingFallback } from "./components/LoadingFallback";
 import { VisualEditorSplitPane } from "./components/visual-editor/VisualEditorSplitPane";
 
@@ -349,6 +350,7 @@ function Router() {
       <Route path="/volunteer" component={VolunteerPage} />
       <Route path="/gamification" component={GamificationDashboard} />
       <Route path="/talent-match" component={TalentMatchPage} />
+      <Route path="/mr-blue" component={UnifiedMrBlue} />
       <Route path="/mr-blue-chat" component={MrBlueChatPage} />
       <Route path="/video-studio" component={VideoStudio} />
       <Route path="/mr-blue-demo" component={MrBlueVideoDemo} />
