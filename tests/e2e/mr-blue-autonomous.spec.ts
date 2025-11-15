@@ -17,12 +17,12 @@ import { navigateToPage, verifyOnPage } from '../helpers/navigation';
 import { fillForm, submitForm } from '../helpers/forms';
 
 /**
- * God Level user (from TEST_ADMIN secrets)
+ * God Level user
  * This user has NO rate limits or cost caps
  */
 const godUser = {
-  email: process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life',
-  password: process.env.TEST_ADMIN_PASSWORD || 'admin123',
+  email: 'admin@mundotango.life',
+  password: 'admin123',
 };
 
 test.describe('Mr. Blue Autonomous Agent', () => {
@@ -32,14 +32,17 @@ test.describe('Mr. Blue Autonomous Agent', () => {
     await navigateToPage(page, '/login');
     
     await fillForm(page, {
-      'input-username': godUser.email,
+      'input-email': godUser.email,
       'input-password': godUser.password,
     });
     
     await submitForm(page, 'button-login');
     
-    // Wait for redirect to dashboard/feed
-    await page.waitForURL(/\/(feed|dashboard)/, { timeout: 10000 });
+    // Wait for successful login and redirect (goes to "/" root)
+    await page.waitForURL(/^(?!.*\/login)/, { timeout: 10000 });
+    
+    // Give time for auth state to settle
+    await page.waitForTimeout(1000);
   });
 
   test('should autonomously add file upload preview feature', async ({ page }) => {
@@ -47,8 +50,8 @@ test.describe('Mr. Blue Autonomous Agent', () => {
     
     // 1. Navigate to Visual Editor
     console.log('Step 1: Navigating to Visual Editor...');
-    await navigateToPage(page, '/visual-editor');
-    await verifyOnPage(page, '/visual-editor');
+    await navigateToPage(page, '/admin/visual-editor');
+    await verifyOnPage(page, '/admin/visual-editor');
     
     // Wait for page to load
     await page.waitForTimeout(2000);

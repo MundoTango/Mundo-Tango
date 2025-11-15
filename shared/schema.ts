@@ -82,12 +82,6 @@ export const users = pgTable("users", {
   customerJourneyState: varchar("customer_journey_state").default("J1"),
   lastJourneyUpdate: timestamp("last_journey_update"),
   role: varchar("role").default("user").notNull(),
-  
-  godLevelApproved: boolean("god_level_approved").default(false),
-  godLevelRequestedAt: timestamp("god_level_requested_at"),
-  godLevelApprovedAt: timestamp("god_level_approved_at"),
-  godLevelApprovedBy: integer("god_level_approved_by").references(() => users.id),
-  godLevelRejectionReason: text("god_level_rejection_reason"),
 }, (table) => ({
   emailIdx: index("users_email_idx").on(table.email),
   usernameIdx: index("users_username_idx").on(table.username),
