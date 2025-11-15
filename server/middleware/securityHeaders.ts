@@ -55,7 +55,8 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
   res.setHeader('Surrogate-Control', 'no-store');
   
   // CSP Version header to force browser cache refresh (change this when CSP changes)
-  res.setHeader('X-CSP-Version', '2024-11-15-v2');
+  // Updated to force refresh after disabling Sentry CSP injection
+  res.setHeader('X-CSP-Version', '2024-11-15-v3-no-sentry-csp');
   
   helmet({
     contentSecurityPolicy: {

@@ -25,6 +25,11 @@ export function initializeSentry(app: Express) {
     // Set profilesSampleRate to capture profiling data
     profilesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
     
+    // CRITICAL: Disable Sentry's automatic CSP headers to prevent conflicts
+    // Sentry injects 'unsafe-dynamic', 'report-uri', and query strings which violate CSP
+    // We manage CSP exclusively through Helmet in server/middleware/securityHeaders.ts
+    autoSessionTracking: false,
+    
     // Integrations
     integrations: [
       // Enable profiling

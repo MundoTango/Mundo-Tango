@@ -19,6 +19,8 @@ interface UseVoiceInputReturn {
   startListening: () => void;
   stopListening: () => void;
   resetTranscript: () => void;
+  enableContinuousMode: () => void;
+  disableContinuousMode: () => void;
 }
 
 export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInputReturn {
@@ -27,6 +29,7 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
   const [transcript, setTranscript] = useState('');
   const [isSupported, setIsSupported] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const continuousModeRef = useRef(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -77,7 +80,19 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
       };
 
       recognition.onend = () => {
-        setIsListening(false);
+        // If in continuous mode, automatically restart
+        if (continuousModeRef.current) {
+          console.log('[Voice] Recognition ended, restarting in continuous mode...');
+          try {
+            recognition.start();
+            setIsListening(true);
+          } catch (error) {
+            console.error('[Voice] Failed to restart recognition:', error);
+            setIsListening(false);
+          }
+        } else {
+          setIsListening(false);
+        }
       };
 
       recognitionRef.current = recognition;
@@ -106,6 +121,7 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
 
   const stopListening = useCallback(() => {
     if (recognitionRef.current && isListening) {
+      continuousModeRef.current = false; // Disable continuous mode when manually stopping
       recognitionRef.current.stop();
       setIsListening(false);
     }
@@ -115,12 +131,24 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
     setTranscript('');
   }, []);
 
+  const enableContinuousMode = useCallback(() => {
+    continuousModeRef.current = true;
+    console.log('[Voice] Continuous mode enabled');
+  }, []);
+
+  const disableContinuousMode = useCallback(() => {
+    continuousModeRef.current = false;
+    console.log('[Voice] Continuous mode disabled');
+  }, []);
+
   return {
     isListening,
     isSupported,
     transcript,
     startListening,
     stopListening,
-    resetTranscript
+    resetTranscript,
+    enableContinuousMode,
+    disableContinuousMode
   };
 }

@@ -125,7 +125,9 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
     transcript, 
     startListening, 
     stopListening,
-    resetTranscript 
+    resetTranscript,
+    enableContinuousMode,
+    disableContinuousMode
   } = useVoiceInput();
 
   const {
@@ -205,7 +207,7 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
       silenceTimerRef.current = setTimeout(() => {
         if (transcript.trim()) {
           console.log('[Voice] Silence detected, auto-submitting:', transcript);
-          stopListening();
+          // DON'T stop listening - continuous mode!
           sendMessage();
         }
       }, 2000);
@@ -239,35 +241,26 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
     const originalInput = input;
     setInput("");
     resetTranscript();
-    stopListening();
+    // DON'T stop listening if in continuous mode - let it keep listening!
     setIsLoading(true);
     setCurrentStreamingMessage("");
 
     try {
-      // Smart routing: Detect if this is iteration feedback or execution request
-      const isIterationFeedback = 
-        /feedback|revise|improve|plan|scored|missing|need.*revision|comprehensive|address/i.test(originalInput) ||
-        /thank you.*plan|however.*need|please.*address/i.test(originalInput);
+      // Simple routing heuristic: Check if this is a complex build request
+      const isBuildRequest = /build|create|make|add feature/i.test(originalInput);
 
-      const isExecutionRequest = 
-        /use mb\.md|implement|build autonomously|create.*autonomous|execute.*plan|deploy/i.test(originalInput) &&
-        !isIterationFeedback;
-
-      if (isExecutionRequest) {
-        // EXECUTION MODE: Use autonomous API with MB.MD methodology
+      if (isBuildRequest) {
+        // AUTONOMOUS MODE: Complex build requests go to autonomous API
         let contextualPrompt = originalInput;
         
         if (contextInfo.selectedElement) {
           contextualPrompt = `USER REQUEST: ${originalInput}\n\nCONTEXT:\n- Page: ${contextInfo.page}\n- Selected element: ${contextInfo.selectedElement.tagName} (testId: ${contextInfo.selectedElement.testId || 'none'})\n- Element class: ${contextInfo.selectedElement.className}\n- Element text: ${contextInfo.selectedElement.text}\n- Total edits so far: ${contextInfo.editsCount}`;
         }
 
-        // Auto-append "use mb.md" for MB.MD methodology
-        const mbmdPrompt = `use mb.md: ${contextualPrompt}`;
-
         // Call autonomous code generation
-        const result = await onGenerateCode(mbmdPrompt);
+        const result = await onGenerateCode(contextualPrompt);
 
-        const response = `✅ **Autonomous execution started!**\n\n${result.explanation || 'I\'ve decomposed the task and am generating code...'}\n\nWatch the Autonomous Workflow panel for progress.`;
+        const response = `✅ **Build request started!**\n\n${result.explanation || 'I\'ve started working on your build request...'}\n\nWatch the Autonomous Workflow panel for progress.`;
         
         const assistantMessage: Message = {
           id: (Date.now() + 1).toString(),
@@ -279,21 +272,67 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
         setMessages(prev => [...prev, assistantMessage]);
 
         if (ttsEnabled && ttsSupported) {
-          speak("Autonomous execution started! Check the workflow panel.");
+          speak("Build request started! Check the workflow panel.");
         }
         setIsLoading(false);
       } else {
-        // STREAMING MODE: Use streaming chat for conversational response
-        await sendStreamingMessage(originalInput, {
-          page: contextInfo.page,
-          selectedElement: contextInfo.selectedElement,
-          editsCount: contextInfo.editsCount
-        }, 'visual_editor');
+        // SIMPLE CHAT MODE: Conversational messages go to chat endpoint
+        const token = localStorage.getItem('accessToken');
         
+        // Build conversation history from existing messages
+        const conversationHistory = messages
+          .filter(m => m.role !== 'assistant' || !m.content.includes('✅ **Build request'))
+          .slice(-6)
+          .map(m => ({
+            role: m.role,
+            content: m.content
+          }));
+
+        const response = await fetch('/api/mrblue/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token ? `Bearer ${token}` : ''
+          },
+          body: JSON.stringify({
+            message: originalInput,
+            context: {
+              page: contextInfo.page,
+              selectedElement: contextInfo.selectedElement,
+              editsCount: contextInfo.editsCount,
+              recentEdits: contextInfo.recentEdits.map(e => e.description)
+            },
+            conversationHistory
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.message || 'Chat request failed');
+        }
+
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: data.response,
+          timestamp: new Date()
+        };
+
+        setMessages(prev => [...prev, assistantMessage]);
+
+        if (ttsEnabled && ttsSupported) {
+          speak(data.response);
+        }
+
         setIsLoading(false);
       }
     } catch (error: any) {
-      const errorResponse = `❌ **I had trouble with that request.**\n\n${error.message || 'Could you try rephrasing? Make sure to describe what you want to change clearly.'}\n\n**Tips:**\n• For feedback: "Please revise the plan to include..."\n• For execution: "Use mb.md to implement..."\n• For questions: Just ask normally!`;
+      const errorResponse = `❌ **I had trouble with that request.**\n\n${error.message || 'Could you try rephrasing?'}\n\n**Tips:**\n• For simple questions: Just ask naturally!\n• For building features: Use words like "build", "create", "make"`;
       
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -320,15 +359,21 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
 
   const toggleVoiceInput = () => {
     if (isListening) {
+      // User manually stops - disable continuous mode and stop
+      disableContinuousMode();
       stopListening();
       // Don't auto-send on manual stop
       if (silenceTimerRef.current) {
         clearTimeout(silenceTimerRef.current);
       }
+      console.log('[Voice] Continuous listening stopped by user');
     } else {
+      // User starts - enable continuous mode
       resetTranscript();
       setInput("");
+      enableContinuousMode();
       startListening();
+      console.log('[Voice] Continuous listening started');
     }
   };
 
@@ -356,7 +401,7 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
             <div>
               <h3 className="font-semibold">Mr. Blue - Visual Editor</h3>
               <p className="text-xs text-muted-foreground">
-                {isListening ? '🎤 Listening...' : isSpeaking ? '🔊 Speaking...' : isStreaming ? '⚡ Streaming...' : 'Voice-powered editing'}
+                {isListening ? '🎤 Listening continuously...' : isSpeaking ? '🔊 Speaking...' : isStreaming ? '⚡ Streaming...' : 'Voice-powered editing'}
               </p>
             </div>
           </div>
@@ -430,7 +475,7 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
                 </Card>
                 {transcript && (
                   <p className="text-xs text-muted-foreground mt-2">
-                    💡 I'll automatically send this after 2 seconds of silence, or click Send
+                    💡 I'll send after 2 seconds of silence, then keep listening for your next command
                   </p>
                 )}
               </div>
@@ -677,7 +722,13 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
 
         {voiceSupported && !isListening && (
           <p className="text-xs text-muted-foreground mt-2 text-center">
-            💡 Tip: Click the microphone to speak naturally. I'll show the full transcript!
+            💡 Tip: Click the microphone for continuous listening. Speak multiple commands without clicking again!
+          </p>
+        )}
+        
+        {isListening && (
+          <p className="text-xs text-primary mt-2 text-center font-medium">
+            🎤 Continuous mode ON - Click mic to stop listening
           </p>
         )}
       </div>
