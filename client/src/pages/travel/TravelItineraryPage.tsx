@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useLocation, Link } from "wouter";
-import { useQuery, useMutation, queryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +22,7 @@ export default function TravelItineraryPage() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("itinerary");
+  const queryClient = useQueryClient();
 
   const { data: trip, isLoading } = useQuery({
     queryKey: ["/api/travel/plans", id],

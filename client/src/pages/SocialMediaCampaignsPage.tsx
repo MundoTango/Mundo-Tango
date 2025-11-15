@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery, useMutation, queryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,7 @@ export default function SocialMediaCampaignsPage() {
     startDate: new Date().toISOString().split("T")[0],
     endDate: "",
   });
+  const queryClient = useQueryClient();
 
   const { data: campaigns, isLoading } = useQuery<SelectSocialCampaign[]>({
     queryKey: ["/api/social/campaigns"],

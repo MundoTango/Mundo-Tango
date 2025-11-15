@@ -1,4 +1,4 @@
-import { useQuery, useMutation, queryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import type { SelectPlatformConnection } from "@shared/schema";
 export default function SocialMediaConnectionsPage() {
   const [, navigate] = useNavigate();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: connections, isLoading } = useQuery<SelectPlatformConnection[]>({
     queryKey: ["/api/social/connections"],

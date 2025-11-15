@@ -24,7 +24,7 @@ import { Card } from "@/components/ui/card";
 import { MessageCircle, Mail, Send, Clock, X } from "lucide-react";
 import { SiFacebook, SiInstagram, SiWhatsapp } from "react-icons/si";
 import { useToast } from "@/hooks/use-toast";
-import { useMutation, useQuery, queryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
