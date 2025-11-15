@@ -176,6 +176,9 @@ const FinancialAccountsPage = lazy(() => import("@/pages/FinancialAccountsPage")
 const FinancialTradingPage = lazy(() => import("@/pages/FinancialTradingPage"));
 const FinancialInsightsPage = lazy(() => import("@/pages/FinancialInsightsPage"));
 
+// Premium Features
+const GodLevelDashboard = lazy(() => import("@/pages/GodLevelDashboard"));
+
 // Legal Document Management
 const LegalDashboardPage = lazy(() => import("@/pages/legal/LegalDashboardPage"));
 const LegalDocumentsPage = lazy(() => import("@/pages/legal/LegalDocumentsPage"));
@@ -1021,6 +1024,16 @@ function Router() {
       <Route path="/checkout">
         <ProtectedRoute>
           <CheckoutPage />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/god-level">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <GodLevelDashboard />
+            </Suspense>
+          </AppLayout>
         </ProtectedRoute>
       </Route>
 

@@ -25,6 +25,7 @@ import mrBlueEnhancedRoutes from "./routes/mr-blue-enhanced";
 import mrBlueAgentsRoutes from "./routes/mrBlueAgents";
 import premiumMediaRoutes from "./routes/premiumMedia";
 import learningIntelligenceRoutes from "./routes/learningIntelligence";
+import godLevelRoutes from "./routes/godLevel";
 import visualEditorRoutes from "./routes/visualEditor";
 import whisperRoutes from "./routes/whisper";
 import openaiRealtimeRoutes from "./routes/openai-realtime";
@@ -438,6 +439,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/realtime", authenticateToken, realtimeVoiceRoutes);
   app.use("/api/openai-realtime", authenticateToken, openaiRealtimeRoutes);
   app.use("/api/premium", premiumMediaRoutes);
+  app.use("/api/god-level", authenticateToken, godLevelRoutes);
   app.use("/api/ai", aiEnhanceRoutes);
   app.use("/api/user", userSearchRoutes);
   app.use("/api/locations", locationSearchRoutes);

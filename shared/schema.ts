@@ -82,12 +82,37 @@ export const users = pgTable("users", {
   customerJourneyState: varchar("customer_journey_state").default("J1"),
   lastJourneyUpdate: timestamp("last_journey_update"),
   role: varchar("role").default("user").notNull(),
+  
+  godLevelApproved: boolean("god_level_approved").default(false),
+  godLevelRequestedAt: timestamp("god_level_requested_at"),
+  godLevelApprovedAt: timestamp("god_level_approved_at"),
+  godLevelApprovedBy: integer("god_level_approved_by").references(() => users.id),
+  godLevelRejectionReason: text("god_level_rejection_reason"),
 }, (table) => ({
   emailIdx: index("users_email_idx").on(table.email),
   usernameIdx: index("users_username_idx").on(table.username),
   cityCountryIdx: index("users_city_country_idx").on(table.city, table.country),
   activeIdx: index("users_active_idx").on(table.isActive),
   citiesIdx: index("users_cities_idx").on(table.city, table.country, table.isActive),
+}));
+
+// ============================================================================
+// GOD LEVEL QUOTAS
+// ============================================================================
+
+export const godLevelQuotas = pgTable("god_level_quotas", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().unique().references(() => users.id, { onDelete: "cascade" }),
+  videoQuotaUsed: integer("video_quota_used").default(0).notNull(),
+  videoQuotaLimit: integer("video_quota_limit").default(5).notNull(),
+  voiceQuotaUsed: integer("voice_quota_used").default(0).notNull(),
+  voiceQuotaLimit: integer("voice_quota_limit").default(5).notNull(),
+  quotaResetDate: timestamp("quota_reset_date").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("god_level_quotas_user_idx").on(table.userId),
+  resetDateIdx: index("god_level_quotas_reset_date_idx").on(table.quotaResetDate),
 }));
 
 // ============================================================================

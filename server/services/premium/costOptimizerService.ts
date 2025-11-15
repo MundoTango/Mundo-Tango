@@ -1,6 +1,7 @@
 import { db } from '../../db';
 import { users, userTelemetry } from '../../../shared/schema';
 import { eq, and, gte, sql } from 'drizzle-orm';
+import { quotaService, QuotaType } from '../godLevel/quotaService';
 
 type ServiceType = 'did' | 'elevenlabs' | 'openai-realtime' | 'openai-tts';
 type MediaType = 'video' | 'voice';
@@ -160,59 +161,45 @@ export class CostOptimizerService {
   /**
    * Check and enforce usage quotas
    * @param userId - User ID to check
+   * @param quotaType - Type of quota to check (video or voice)
    * @returns Current usage and whether quota is exceeded
    */
-  async checkQuota(userId: number): Promise<{
+  async checkQuota(userId: number, quotaType?: QuotaType): Promise<{
     allowed: boolean;
     usage: UsageQuota;
     limits: typeof this.QUOTAS;
   }> {
     try {
-      // Get usage for current month
-      const startOfMonth = new Date();
-      startOfMonth.setDate(1);
-      startOfMonth.setHours(0, 0, 0, 0);
+      if (quotaType) {
+        const quotaCheck = await quotaService.checkQuota(userId, quotaType);
+        const otherType = quotaType === 'video' ? 'voice' : 'video';
+        const otherQuota = await quotaService.checkQuota(userId, otherType);
+        
+        return {
+          allowed: quotaCheck.available,
+          usage: {
+            videos: quotaType === 'video' ? quotaCheck.used : otherQuota.used,
+            voiceCalls: quotaType === 'voice' ? quotaCheck.used : otherQuota.used,
+            totalCost: 0
+          },
+          limits: this.QUOTAS
+        };
+      }
 
-      const usageRecords = await db.query.userTelemetry.findMany({
-        where: and(
-          eq(userTelemetry.userId, userId),
-          gte(userTelemetry.timestamp, startOfMonth)
-        )
-      });
-
-      let videosUsed = 0;
-      let voiceCallsUsed = 0;
-      let totalCost = 0;
-
-      usageRecords.forEach(record => {
-        const metadata = record.metadata as any;
-        if (metadata?.cost) {
-          totalCost += parseFloat(metadata.cost);
-        }
-
-        if (record.eventType === 'premium_video_creation') {
-          videosUsed++;
-        } else if (record.eventType?.includes('voice') || record.eventType?.includes('tts')) {
-          voiceCallsUsed++;
-        }
-      });
-
-      const allowed = 
-        videosUsed < this.QUOTAS.videosPerMonth &&
-        voiceCallsUsed < this.QUOTAS.voiceCallsPerMonth;
+      const videoQuota = await quotaService.checkQuota(userId, 'video');
+      const voiceQuota = await quotaService.checkQuota(userId, 'voice');
 
       return {
-        allowed,
+        allowed: videoQuota.available && voiceQuota.available,
         usage: {
-          videos: videosUsed,
-          voiceCalls: voiceCallsUsed,
-          totalCost
+          videos: videoQuota.used,
+          voiceCalls: voiceQuota.used,
+          totalCost: 0
         },
         limits: this.QUOTAS
       };
     } catch (error) {
       console.error('[CostOptimizer] Error checking quota:', error);
-      // On error, allow the request (fail open)
       return {
         allowed: true,
         usage: { videos: 0, voiceCalls: 0, totalCost: 0 },
