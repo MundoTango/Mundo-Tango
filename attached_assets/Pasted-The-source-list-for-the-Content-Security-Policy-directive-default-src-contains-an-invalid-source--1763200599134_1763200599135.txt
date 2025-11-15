@@ -1,0 +1,1638 @@
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+MundoTango:1 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+MundoTango:1 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+MundoTango:1 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+ [Coframe] Replit Enterprise watcher loaded
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_monitoring/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/session_result/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+ Download the Apollo DevTools for a better development experience: https://chrome.google.com/webstore/detail/apollo-client-developer-t/jdkknkkbebbapilgoeccciglkfbmbnfm
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763197585055&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ [LaunchDarkly] LaunchDarkly client initialized
+ content loaded
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763197585308&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ Content Script: Initializing
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763197585711&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763197585830&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763197586790&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+ Unrecognized feature: 'ambient-light-sensor'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'battery'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'execution-while-not-rendered'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'execution-while-out-of-viewport'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'layout-animations'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'legacy-image-formats'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'navigation-override'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'oversized-images'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'publickey-credentials'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'speaker-selection'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'unoptimized-images'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'unsized-media'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'pointer-lock'.
+z @ ed1e693c96a75807.js:2
+ Allow attribute will take precedence over 'allowfullscreen'.
+z @ ed1e693c96a75807.js:2
+ Allow attribute will take precedence over 'allowpaymentrequest'.
+z @ ed1e693c96a75807.js:2
+logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Abeacon%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3A14757828&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=11b8df6a-92ad-4e5d-884d-f747023578be:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_monitoring/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763197587539&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763197588552&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763197588553&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763197590538&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763197593543&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763197593543&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763197593543&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763197593543&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2&gz=1. TypeError: Failed to fetch 
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763197595554&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763197595554&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198052810&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=513&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198053474&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=513&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198055481&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=513&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198059986&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=513&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198059986&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=513&gz=1. TypeError: Failed to fetch 
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198065044&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198065547&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198067559&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198072064&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198072064&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198082409&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Abeacon%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3A14757828&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=81f4df93-1c8e-4226-a262-af7b0babcb42:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198083555&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198085555&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198086554&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198086557&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198089553&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198091563&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198091563&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2&gz=1. TypeError: Failed to fetch 
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198094555&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198094555&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198161073&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1518&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198161655&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1518&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198163660&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1518&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198168170&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1518&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198168170&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1518&gz=1. TypeError: Failed to fetch 
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198184304&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=3&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198184833&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=3&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198186844&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=3&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198191347&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=3&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198191347&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=3&gz=1. TypeError: Failed to fetch 
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198199226&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2021&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198199766&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2021&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198201771&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2021&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198206278&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2021&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198206278&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2021&gz=1. TypeError: Failed to fetch 
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ c75c2f758afe2793.js:2
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198255044&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198255550&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198257555&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198262058&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198262058&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198375042&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198375546&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198377550&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198382052&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198382052&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Abeacon%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3A14757828&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=d61d7af8-f6c5-4120-8a6f-3496612c8f60:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198506001&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2023&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198506559&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2023&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198508569&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2023&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198513072&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2023&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763198513072&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2023&gz=1. TypeError: Failed to fetch 
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ c75c2f758afe2793.js:2
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Abeacon%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3A14757828&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=4f722ee1-a141-4def-aa23-6996ffee2710:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199008592&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199009588&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199011590&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199016589&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199016589&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199221642&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2030&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199222268&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2030&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199224277&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2030&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199228788&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2030&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199228788&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2030&gz=1. TypeError: Failed to fetch 
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ c75c2f758afe2793.js:2
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199845122&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199845628&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199847636&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199852147&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199852147&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5910)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5910)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5910)
+    at content.js:10:5622
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199905126&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=3&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199905636&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=3&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199907643&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=3&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199912153&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=3&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+c75c2f758afe2793.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199912153&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=3&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at c75c2f758afe2793.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at 92790bc2ef649c16.js:2:42706
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199915119&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199915625&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199917628&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199922134&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+c75c2f758afe2793.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763199922134&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at c75c2f758afe2793.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at 92790bc2ef649c16.js:2:42706
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Abeacon%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3A14757828&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=19ec66b1-08d5-4255-babd-2e46755c6161:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar2ue%3A:32 Unrecognized feature: 'ambient-light-sensor'.
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar2ue%3A:32 Unrecognized feature: 'battery'.
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar2ue%3A:32 Unrecognized feature: 'execution-while-not-rendered'.
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar2ue%3A:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar2ue%3A:32 Unrecognized feature: 'layout-animations'.
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar2ue%3A:32 Unrecognized feature: 'legacy-image-formats'.
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar2ue%3A:32 Unrecognized feature: 'navigation-override'.
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar2ue%3A:32 Unrecognized feature: 'oversized-images'.
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar2ue%3A:32 Unrecognized feature: 'publickey-credentials'.
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar2ue%3A:32 Unrecognized feature: 'speaker-selection'.
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar2ue%3A:32 Unrecognized feature: 'unoptimized-images'.
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar2ue%3A:32 Unrecognized feature: 'unsized-media'.
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar2ue%3A:32 Allow attribute will take precedence over 'allowfullscreen'.
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar2ue%3A:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/?token=PoDhzZEwtCxg' failed: 
+setupWebSocket @ client:536
+ Creating a worker from 'blob:https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/a873af95-f93b-4998-8978-1e70fa1959ac' violates the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://cdn.jsdelivr.net https://unpkg.com". Note that 'worker-src' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.
+supportsWorkers @ @react-three_drei.js?v=0752cabe:80834
+ Loading the script 'https://replit.com/public/js/beacon.js' violates the following Content Security Policy directive: "script-src-elem 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net https://unpkg.com". The action has been blocked.
+onIframeLoad @ e0001089-5956-480e-9…F&id=%3Ar2ue%3A:142
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/v1/report-bug:1  Failed to load resource: the server responded with a status of 403 (Forbidden)
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/mr-blue/agents/tour/app-onboarding:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/mr-blue/agents/tour/app-onboarding:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200080638&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2037&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200081291&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2037&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200083302&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2037&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200087811&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2037&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+c75c2f758afe2793.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200087811&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2037&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at c75c2f758afe2793.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at 92790bc2ef649c16.js:2:42706
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ c75c2f758afe2793.js:2
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/messages/unread-count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications/count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/messages/unread-count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications/count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+content.js:10 Uncaught 
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200145140&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200145649&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200147659&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200152172&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+c75c2f758afe2793.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200152172&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at c75c2f758afe2793.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at 92790bc2ef649c16.js:2:42706
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/messages/unread-count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications/count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200155123&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200155628&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+c75c2f758afe2793.js:2 Unknown query {
+  "kind": "Document",
+  "definitions": [
+    {
+      "kind": "OperationDefinition",
+      "operation": "query",
+      "name": {
+        "kind": "Name",
+        "value": "UsageOverviewCurrentUser"
+      },
+      "variableDefinitions": [],
+      "directives": [],
+      "selectionSet": {
+        "kind": "SelectionSet",
+        "selections": [
+          {
+            "kind": "Field",
+            "name": {
+              "kind": "Name",
+              "value": "currentUser"
+            },
+            "arguments": [],
+            "directives": [],
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [
+                {
+                  "kind": "Field",
+                  "name": {
+                    "kind": "Name",
+                    "value": "id"
+                  },
+                  "arguments": [],
+                  "directives": []
+                },
+                {
+                  "kind": "Field",
+                  "name": {
+                    "kind": "Name",
+                    "value": "username"
+                  },
+                  "arguments": [],
+                  "directives": []
+                },
+                {
+                  "kind": "Field",
+                  "name": {
+                    "kind": "Name",
+                    "value": "timeCreated"
+                  },
+                  "arguments": [],
+                  "directives": []
+                },
+                {
+                  "kind": "FragmentSpread",
+                  "name": {
+                    "kind": "Name",
+                    "value": "UsageOverviewCurrentUser"
+                  },
+                  "directives": []
+                },
+                {
+                  "kind": "Field",
+                  "name": {
+                    "kind": "Name",
+                    "value": "__typename"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "FragmentDefinition",
+      "name": {
+        "kind": "Name",
+        "value": "UsageOverviewCurrentUser"
+      },
+      "typeCondition": {
+        "kind": "NamedType",
+        "name": {
+          "kind": "Name",
+          "value": "CurrentUser"
+        }
+      },
+      "directives": [],
+      "selectionSet": {
+        "kind": "SelectionSet",
+        "selections": [
+          {
+            "kind": "Field",
+            "name": {
+              "kind": "Name",
+              "value": "id"
+            },
+            "arguments": [],
+            "directives": []
+          },
+          {
+            "kind": "FragmentSpread",
+            "name": {
+              "kind": "Name",
+              "value": "UsageOverviewCurrentUserPlanStatus"
+            },
+            "directives": []
+          },
+          {
+            "kind": "Field",
+            "name": {
+              "kind": "Name",
+              "value": "usageBasedBillingAlerts"
+            },
+            "arguments": [],
+            "directives": [],
+            "selectionSet": {
+              "kind": "SelectionSet",
+              "selections": [
+                {
+                  "kind": "InlineFragment",
+                  "typeCondition": {
+                    "kind": "NamedType",
+                    "name": {
+                      "kind": "Name",
+                      "value": "UsageBasedBillingAlertsConfig"
+                    }
+                  },
+                  "directives": [],
+                  "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [
+                      {
+                        "kind": "FragmentSpread",
+                        "name": {
+                          "kind": "Name",
+                          "value": "TotalUsageBillingAlertsConfig"
+                        },
+                        "directives": []
+                      },
+                      {
+                        "kind": "Field",
+                        "name": {
+                          "kind": "Name",
+                          "value": "__typename"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "InlineFragment",
+                  "typeCondition": {
+                    "kind": "NamedType",
+                    "name": {
+                      "kind": "Name",
+                      "value": "Error"
+                    }
+                  },
+                  "directives": [],
+                  "selectionSet": {
+                    "kind": "SelectionSet",
+                    "selections": [
+                      {
+                        "kind": "Field",
+                        "name": {
+                          "kind": "Name",
+                          "value": "message"
+                        },
+                        "arguments": [],
+                        "directives": []
+                      },
+                      {
+                        "kind"
+(anonymous) @ c75c2f758afe2793.js:2
+ba697728dee94038.js:2 Uncaught (in promise) ApolloError: Notification alert not found
+    at new t (ba697728dee94038.js:2:39654)
+    at ac9ae10a4bb9a825.js:2:66718
+    at t (ac9ae10a4bb9a825.js:2:39052)
+    at ac9ae10a4bb9a825.js:2:38978
+    at new Promise (<anonymous>)
+    at Object.then (ac9ae10a4bb9a825.js:2:38945)
+    at Object.next (ac9ae10a4bb9a825.js:2:39062)
+    at m (1b224bbc8db79db2.js:2:2609)
+    at _ (1b224bbc8db79db2.js:2:3131)
+    at r.next (1b224bbc8db79db2.js:2:3632)
+    at ac9ae10a4bb9a825.js:2:39465
+    at Array.forEach (<anonymous>)
+    at H (ac9ae10a4bb9a825.js:2:39434)
+    at Object.next (ac9ae10a4bb9a825.js:2:39975)
+    at m (1b224bbc8db79db2.js:2:2609)
+    at _ (1b224bbc8db79db2.js:2:3131)
+    at r.next (1b224bbc8db79db2.js:2:3632)
+    at m (1b224bbc8db79db2.js:2:2609)
+    at _ (1b224bbc8db79db2.js:2:3131)
+    at r.next (1b224bbc8db79db2.js:2:3632)
+    at Object.onNext [as next] (ac9ae10a4bb9a825.js:2:139264)
+    at m (1b224bbc8db79db2.js:2:2609)
+    at _ (1b224bbc8db79db2.js:2:3131)
+    at r.next (1b224bbc8db79db2.js:2:3632)
+    at Object.next (ac9ae10a4bb9a825.js:2:138280)
+    at m (1b224bbc8db79db2.js:2:2609)
+    at _ (1b224bbc8db79db2.js:2:3131)
+    at r.next (1b224bbc8db79db2.js:2:3632)
+    at ac9ae10a4bb9a825.js:2:134488
+    at Array.forEach (<anonymous>)
+    at ac9ae10a4bb9a825.js:2:134461
+    at Array.forEach (<anonymous>)
+    at Object.next (ac9ae10a4bb9a825.js:2:134428)
+    at m (1b224bbc8db79db2.js:2:2609)
+    at _ (1b224bbc8db79db2.js:2:3131)
+    at r.next (1b224bbc8db79db2.js:2:3632)
+    at ac9ae10a4bb9a825.js:2:137297
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200157634&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200162144&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+c75c2f758afe2793.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200162144&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at c75c2f758afe2793.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at 92790bc2ef649c16.js:2:42706
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/messages/unread-count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications/count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/messages/unread-count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications/count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/messages/unread-count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications/count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/messages/unread-count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications/count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200292581&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2040&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200293114&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2040&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200295124&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2040&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200299630&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2040&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+c75c2f758afe2793.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200299630&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2040&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at c75c2f758afe2793.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at 92790bc2ef649c16.js:2:42706
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ c75c2f758afe2793.js:2
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/messages/unread-count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications/count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Abeacon%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3A14757828&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=f7909d70-f3eb-42e9-b289-492813b193f2:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200341066&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2040&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/mr-blue/agents/tour/app-onboarding:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200341651&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2040&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200343664&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2040&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200348175&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2040&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+c75c2f758afe2793.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200348175&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2040&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at c75c2f758afe2793.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at 92790bc2ef649c16.js:2:42706
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ c75c2f758afe2793.js:2
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/messages/unread-count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications/count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:43
+ConnectionStatusBadge.tsx:38 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:38
+ConnectionStatusBadge.tsx:38 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:38
+ConnectionStatusBadge.tsx:38 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:38
+ConnectionStatusBadge.tsx:38 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:38
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ConnectionStatusBadge.tsx:38 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:38
+ConnectionStatusBadge.tsx:38 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:38
+ConnectionStatusBadge.tsx:38 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:38
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5910)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+ConnectionStatusBadge.tsx:38 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:38
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5910)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5910)
+    at content.js:10:5622
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/messages/unread-count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications/count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200395125&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200395669&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ConnectionStatusBadge.tsx:38 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:38
+c75c2f758afe2793.js:2 Invalid href 'https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev//visual-editor' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+(anonymous) @ c75c2f758afe2793.js:2
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200397680&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+client:536 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/?token=PoDhzZEwtCxg' failed: 
+setupWebSocket @ client:536
+@react-three_drei.js?v=0752cabe:80834 Creating a worker from 'blob:https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/26ad1d55-00ff-4a47-a655-d7cb2c8b0599' violates the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://cdn.jsdelivr.net https://unpkg.com". Note that 'worker-src' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.
+supportsWorkers @ @react-three_drei.js?v=0752cabe:80834
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200402189&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+c75c2f758afe2793.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200402189&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at c75c2f758afe2793.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at 92790bc2ef649c16.js:2:42706
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/auth/me:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ Loading the script 'https://replit.com/public/js/beacon.js' violates the following Content Security Policy directive: "script-src-elem 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net https://unpkg.com". The action has been blocked.
+onIframeLoad @ e0001089-5956-480e-9…r&id=%3Ar2ue%3A:142
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200405130&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200405641&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200407650&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+content.js:10 Uncaught 
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200412159&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+c75c2f758afe2793.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200412159&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at c75c2f758afe2793.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at 92790bc2ef649c16.js:2:42706
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+c75c2f758afe2793.js:2 [Coframe] Mutation callback infinite loop protection triggered, disconnecting mutation observer Object
+(anonymous) @ c75c2f758afe2793.js:2
+ingest.app.coframe.com/ingest/v2/batched_monitoring/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Abeacon%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3A14757828&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=0c0c5616-d4b3-4d24-b0fe-0923d9ddf666:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200482250&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2042&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200482795&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2042&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200484807&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2042&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200489318&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2042&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+c75c2f758afe2793.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200489318&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2042&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at c75c2f758afe2793.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at 92790bc2ef649c16.js:2:42706
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ c75c2f758afe2793.js:2
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5910)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5910)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5910)
+    at content.js:10:5622
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+c75c2f758afe2793.js:2 Invalid href 'https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev//visual-editor' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+(anonymous) @ c75c2f758afe2793.js:2
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+client:536 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/?token=PoDhzZEwtCxg' failed: 
+setupWebSocket @ client:536
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=PoDhzZEwtCxg' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200565130&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200565639&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+@react-three_drei.js?v=0752cabe:80834 Creating a worker from 'blob:https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ad55475c-ffa6-4f11-9ad8-6ee93c59b4df' violates the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://cdn.jsdelivr.net https://unpkg.com". Note that 'worker-src' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.
+supportsWorkers @ @react-three_drei.js?v=0752cabe:80834
+workspace_iframe.html?initialPath=%2Fadmin%2Fvisual-editor&id=%3Ar2ue%3A:142 Loading the script 'https://replit.com/public/js/beacon.js' violates the following Content Security Policy directive: "script-src-elem 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net https://unpkg.com". The action has been blocked.
+onIframeLoad @ workspace_iframe.html?initialPath=%2Fadmin%2Fvisual-editor&id=%3Ar2ue%3A:142
+injected.js:27 i18next::backendConnector: loaded namespace common for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace errors for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace navigation for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace pages for language en Object
+injected.js:27 i18next: languageChanged en
+injected.js:27 i18next: initialized Object
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200567648&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+client:536 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/?token=PoDhzZEwtCxg' failed: 
+setupWebSocket @ client:536
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=PoDhzZEwtCxg' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+@react-three_drei.js?v=0752cabe:80834 Creating a worker from 'blob:https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/afe1c025-5ac6-4c96-adf6-2a3ac70241de' violates the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://cdn.jsdelivr.net https://unpkg.com". Note that 'worker-src' was not explicitly set, so 'script-src' is used as a fallback. The action has been blocked.
+supportsWorkers @ @react-three_drei.js?v=0752cabe:80834
+injected.js:27 i18next::backendConnector: loaded namespace pages for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace errors for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace common for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace navigation for language en Object
+injected.js:27 i18next: languageChanged en
+injected.js:27 i18next: initialized Object
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200572156&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+c75c2f758afe2793.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200572156&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at c75c2f758afe2793.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at 92790bc2ef649c16.js:2:42706
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+PostCreator.tsx:771 Uncaught ReferenceError: Clock is not defined
+    at PostCreator (PostCreator.tsx:771:18)
+    at renderWithHooks (chunk-NFC5BX5N.js?v=0752cabe:11548:26)
+    at mountIndeterminateComponent (chunk-NFC5BX5N.js?v=0752cabe:14926:21)
+    at beginWork (chunk-NFC5BX5N.js?v=0752cabe:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-NFC5BX5N.js?v=0752cabe:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-NFC5BX5N.js?v=0752cabe:3699:24)
+    at invokeGuardedCallback (chunk-NFC5BX5N.js?v=0752cabe:3733:39)
+    at beginWork$1 (chunk-NFC5BX5N.js?v=0752cabe:19765:15)
+    at performUnitOfWork (chunk-NFC5BX5N.js?v=0752cabe:19198:20)
+    at workLoopConcurrent (chunk-NFC5BX5N.js?v=0752cabe:19189:13)
+PostCreator.tsx:771 Uncaught ReferenceError: Clock is not defined
+    at PostCreator (PostCreator.tsx:771:18)
+    at renderWithHooks (chunk-NFC5BX5N.js?v=0752cabe:11548:26)
+    at mountIndeterminateComponent (chunk-NFC5BX5N.js?v=0752cabe:14926:21)
+    at beginWork (chunk-NFC5BX5N.js?v=0752cabe:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-NFC5BX5N.js?v=0752cabe:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-NFC5BX5N.js?v=0752cabe:3699:24)
+    at invokeGuardedCallback (chunk-NFC5BX5N.js?v=0752cabe:3733:39)
+    at beginWork$1 (chunk-NFC5BX5N.js?v=0752cabe:19765:15)
+    at performUnitOfWork (chunk-NFC5BX5N.js?v=0752cabe:19198:20)
+    at workLoopSync (chunk-NFC5BX5N.js?v=0752cabe:19137:13)
+injected.js:27 The above error occurred in the <PostCreator> component:
+
+    at PostCreator (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/universal/PostCreator.tsx:94:31)
+    at div
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:74:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:23:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=0752cabe:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=0752cabe:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-XOUBXFGS.js?v=0752cabe:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=0752cabe:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:77:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=0752cabe:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=X4Vu4fad2mQ_KdLIn9ySN:3448:55)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, SelfHealingErrorBoundary.
+(anonymous) @ injected.js:27
+injected.js:27 [Self-Healing Boundary] Error on Feed: ReferenceError: Clock is not defined
+    at PostCreator (PostCreator.tsx:771:18)
+    at renderWithHooks (chunk-NFC5BX5N.js?v=0752cabe:11548:26)
+    at mountIndeterminateComponent (chunk-NFC5BX5N.js?v=0752cabe:14926:21)
+    at beginWork (chunk-NFC5BX5N.js?v=0752cabe:15914:22)
+    at beginWork$1 (chunk-NFC5BX5N.js?v=0752cabe:19753:22)
+    at performUnitOfWork (chunk-NFC5BX5N.js?v=0752cabe:19198:20)
+    at workLoopSync (chunk-NFC5BX5N.js?v=0752cabe:19137:13)
+    at renderRootSync (chunk-NFC5BX5N.js?v=0752cabe:19116:15)
+    at recoverFromConcurrentError (chunk-NFC5BX5N.js?v=0752cabe:18736:28)
+    at performConcurrentWorkOnRoot (chunk-NFC5BX5N.js?v=0752cabe:18684:30) Object
+(anonymous) @ injected.js:27
+injected.js:27 [Self-Healing] Recovery attempt 1/3 (persisted to localStorage)
+injected.js:27 [ERROR] Self-Healing Boundary caught error Object
+(anonymous) @ injected.js:27
+injected.js:27 [Self-Healing] 🤖 Sending to Mr Blue AI for analysis...
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/v1/report-bug:1  Failed to load resource: the server responded with a status of 403 (Forbidden)
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/mr-blue/agents/tour/app-onboarding:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connected to notification service
+ConnectionStatusBadge.tsx:38 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:38
+injected.js:27 [WS] WebSocket error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from notification service
+injected.js:27 Warning: Each child in a list should have a unique "key" prop.
+
+Check the render method of `FeedPage`. See https://reactjs.org/link/warning-keys for more information.
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:74:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:23:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=0752cabe:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=0752cabe:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-XOUBXFGS.js?v=0752cabe:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=0752cabe:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:77:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=0752cabe:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=X4Vu4fad2mQ_KdLIn9ySN:3448:55)
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connected to notification service
+ConnectionStatusBadge.tsx:38 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:38
+injected.js:27 [WS] WebSocket error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from notification service
+injected.js:27 [WS] Connected to notification service
+ConnectionStatusBadge.tsx:38 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:38
+injected.js:27 [WS] WebSocket error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from notification service
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200582475&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2043&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught Error: Extension context invalidated.
+    at o (content.js:10:5711)
+    at content.js:10:5622
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200583023&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2043&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+injected.js:27 [WS] Connected to notification service
+ConnectionStatusBadge.tsx:38 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:38
+injected.js:27 [WS] WebSocket error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from notification service
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200585033&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2043&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+injected.js:27 [WS] Connected to notification service
+ConnectionStatusBadge.tsx:38 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:38
+injected.js:27 [WS] WebSocket error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from notification service
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200589544&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2043&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+c75c2f758afe2793.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763200589544&sid=365a8767-15e4-40cd-9e81-09693d34982c&ec=2043&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at c75c2f758afe2793.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at 92790bc2ef649c16.js:2:42706
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ c75c2f758afe2793.js:2
+c75c2f758afe2793.js:2   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ c75c2f758afe2793.js:2
+injected.js:27 [WS] Connected to notification service
+ConnectionStatusBadge.tsx:38 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:38
+injected.js:27 [WS] WebSocket error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from notification service
+injected.js:27 [WS] Connected to notification service
+ConnectionStatusBadge.tsx:38 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:38
+injected.js:27 [WS] WebSocket error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+(anonymous) @ injected.js:27
+console.error @ chunk-VFFDY6BG.js?v=0752cabe:49447
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+ws.onerror @ ConnectionStatusBadge.tsx:78
+injected.js:27 [WS] Disconnected from notification service
+injected.js:27 [WS] Connected to notification service
+ConnectionStatusBadge.tsx:38 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?userId=15' failed: Invalid frame header
+connectWebSocket @ ConnectionStatusBadge.tsx:38
+injected.js:27 [WS] WebSocket error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+(anonymous) @ injected.js:27
+console.error @ chunk-VFFDY6BG.js?v=0752cabe:49447
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+ws.onerror @ ConnectionStatusBadge.tsx:78
+injected.js:27 [WS] Disconnected from notification service
