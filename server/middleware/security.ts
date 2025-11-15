@@ -2,39 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import rateLimit from 'express-rate-limit';
 
 // ============================================================================
-// CONTENT SECURITY POLICY (CSP)
+// NOTE: CSP is configured in server/middleware/securityHeaders.ts via Helmet
+// This file only contains rate limiting and other security utilities
 // ============================================================================
-// Fixes CSP errors from attached file - removes double quotes, adds semicolons
-
-export const cspMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  // FIXED: CSP properly formatted without 'unsafe-dynamic' or 'report-uri' source expressions
-  // All sources use single quotes, directives separated by semicolons
-  const cspDirectives = [
-    "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://cdn.jsdelivr.net",
-    "script-src-elem 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com",
-    "font-src 'self' https://fonts.gstatic.com data:",
-    "img-src 'self' data: https: blob:",
-    "connect-src 'self' https://*.supabase.co https://api.stripe.com https://api.groq.com https://api.openai.com wss://*.supabase.co wss:",
-    "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "frame-ancestors 'none'",
-    "upgrade-insecure-requests"
-  ];
-
-  // Set CSP header with proper semicolon separation (no trailing semicolon)
-  res.setHeader('Content-Security-Policy', cspDirectives.join('; '));
-  
-  // Add cache-busting to ensure CSP updates immediately
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
-  
-  next();
-};
 
 // ============================================================================
 // RATE LIMITING
@@ -187,8 +157,6 @@ export const applySecurity = () => {
   return [
     ipBlockingMiddleware,
     corsMiddleware,
-    cspMiddleware,
-    securityHeadersMiddleware,
     sanitizeRequest,
   ];
 };

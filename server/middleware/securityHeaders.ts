@@ -42,12 +42,26 @@ export function cspNonce(req: Request, res: Response, next: NextFunction) {
  * Security headers middleware with dynamic nonce injection
  * In production: Uses nonces for inline scripts (strict CSP)
  * In development: Allows unsafe-inline/eval for Vite HMR
+ * 
+ * CACHE BUSTING: Super-strong headers to force immediate CSP updates
  */
 export function securityHeaders(req: Request, res: Response, next: NextFunction) {
   const nonce = res.locals.cspNonce;
   
+  // SUPER STRONG CACHE-BUSTING: Force browsers to refresh CSP immediately
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.setHeader('Surrogate-Control', 'no-store');
+  
+  // CSP Version header to force browser cache refresh (change this when CSP changes)
+  res.setHeader('X-CSP-Version', '2024-11-15-v2');
+  
   helmet({
     contentSecurityPolicy: {
+      // IMPORTANT: Do NOT use reportUri or report-uri
+      // These are deprecated and cause CSP errors
+      useDefaults: false,
       directives: {
         defaultSrc: ["'self'"],
         
@@ -105,6 +119,7 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
         mediaSrc: ["'self'", "blob:", "https:", "http:"],
         
         // Connection sources - APIs, WebSocket, Vite HMR
+        // NOTE: Sentry domains included without query strings (CSP doesn't support query params)
         connectSrc: isDevelopment
           ? [
               "'self'",
@@ -115,6 +130,7 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
               "https://generativelanguage.googleapis.com",
               "https://*.supabase.co",
               "https://*.sentry.io",
+              "https://o4509669501698048.ingest.us.sentry.io",
               "wss:",
               "ws:",
               "ws://localhost:*",
@@ -129,6 +145,7 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
               "https://generativelanguage.googleapis.com",
               "https://*.supabase.co",
               "https://*.sentry.io",
+              "https://o4509669501698048.ingest.us.sentry.io",
               "wss:"
             ],
         

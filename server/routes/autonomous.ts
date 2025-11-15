@@ -115,6 +115,7 @@ async function logAuditAction(
       userId,
       action,
       details,
+      resourceType: 'autonomous_task',
       ipAddress: '127.0.0.1', // TODO: Get from request
       userAgent: 'Mr. Blue Autonomous Agent',
       metadata: metadata || null
