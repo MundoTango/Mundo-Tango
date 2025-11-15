@@ -83,39 +83,23 @@ function UnifiedTopBar({
   // Check if user has admin access
   const hasAdminAccess = user?.role && ['god', 'super_admin', 'admin', 'moderator'].includes(user.role);
 
-  // Fetch notification count
-  const { data: notificationCountData } = useQuery({
+  // Fetch notification count - uses default queryFn which includes auth headers
+  const { data: notificationData } = useQuery<{ count: number }>({
     queryKey: ['/api/notifications/count'],
-    queryFn: async () => {
-      const response = await fetch('/api/notifications/count', {
-        credentials: 'include'
-      });
-      if (!response.ok) throw new Error('Failed to fetch notification count');
-      const data = await response.json();
-      return data.count || 0;
-    },
     refetchInterval: 30000, // Refetch every 30 seconds
     enabled: !!user,
   });
 
-  const notificationCount = notificationCountData || 0;
+  const notificationCount = notificationData?.count || 0;
 
-  // Fetch message count
-  const { data: messageCountData } = useQuery({
+  // Fetch message count - uses default queryFn which includes auth headers
+  const { data: messageData } = useQuery<{ count: number }>({
     queryKey: ['/api/messages/unread-count'],
-    queryFn: async () => {
-      const response = await fetch('/api/messages/unread-count', {
-        credentials: 'include'
-      });
-      if (!response.ok) throw new Error('Failed to fetch message count');
-      const data = await response.json();
-      return data.count || 0;
-    },
     refetchInterval: 30000,
     enabled: !!user,
   });
 
-  const messageCount = messageCountData || 0;
+  const messageCount = messageData?.count || 0;
 
   // Global search
   const { data: searchResults, isLoading: searchLoading } = useQuery({

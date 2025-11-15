@@ -7,9 +7,11 @@ import { useQuery } from "@tanstack/react-query";
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const { data: user } = useQuery<{ id: number; role: string }>({
+  const { data: userData } = useQuery<{ user: { id: number; role: string } }>({
     queryKey: ['/api/auth/me']
   });
+
+  const user = userData?.user;
 
   useEffect(() => {
     if (window.innerWidth >= 1024) {

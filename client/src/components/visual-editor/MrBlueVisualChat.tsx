@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, useRef } from "react";
-import { Send, Sparkles, History, Lightbulb, Mic, MicOff, Volume2, VolumeX } from "lucide-react";
+import { Send, Sparkles, History, Lightbulb, Mic, MicOff, Volume2, VolumeX, Box } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -13,6 +13,7 @@ import { visualEditorTracker, type VisualEdit } from "@/lib/visualEditorTracker"
 import { useVoiceInput } from "@/hooks/useVoiceInput";
 import { useTextToSpeech } from "@/hooks/useTextToSpeech";
 import { MrBlueAvatar } from "./MrBlueAvatar";
+import MrBlueAvatar3D from "@/components/mrblue/MrBlueAvatar3D";
 
 interface Message {
   id: string;
@@ -52,6 +53,7 @@ export function MrBlueVisualChat({
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [ttsEnabled, setTtsEnabled] = useState(false);
+  const [use3D, setUse3D] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const hasSpokenGreeting = useRef(false);
 
@@ -227,7 +229,14 @@ Just tell me what you want to change!`;
       <div className="p-4 border-b border-ocean-divider">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <MrBlueAvatar isSpeaking={isSpeaking} isListening={isListening} />
+            {use3D ? (
+              <MrBlueAvatar3D 
+                size={56}
+                expression={isSpeaking ? 'excited' : isListening ? 'curious' : 'friendly'}
+              />
+            ) : (
+              <MrBlueAvatar isSpeaking={isSpeaking} isListening={isListening} />
+            )}
             <div>
               <h3 className="font-semibold">Mr. Blue - Visual Editor</h3>
               <p className="text-xs text-muted-foreground">
@@ -237,6 +246,16 @@ Just tell me what you want to change!`;
           </div>
 
           <div className="flex gap-1">
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => setUse3D(!use3D)}
+              data-testid="button-toggle-3d-avatar"
+              title={use3D ? "Switch to 2D avatar" : "Switch to 3D avatar"}
+              className={use3D ? 'bg-primary/10' : ''}
+            >
+              <Box className="h-4 w-4" />
+            </Button>
             {ttsSupported && (
               <Button
                 size="icon"
@@ -279,7 +298,11 @@ Just tell me what you want to change!`;
             >
               {message.role === 'assistant' && (
                 <div className="flex-shrink-0">
-                  <MrBlueAvatar isSpeaking={false} isListening={false} />
+                  {use3D ? (
+                    <MrBlueAvatar3D size={56} expression="friendly" />
+                  ) : (
+                    <MrBlueAvatar isSpeaking={false} isListening={false} />
+                  )}
                 </div>
               )}
               
@@ -301,7 +324,11 @@ Just tell me what you want to change!`;
           {isLoading && (
             <div className="flex gap-3 justify-start">
               <div className="flex-shrink-0">
-                <MrBlueAvatar isSpeaking={false} isListening={false} />
+                {use3D ? (
+                  <MrBlueAvatar3D size={56} expression="thinking" />
+                ) : (
+                  <MrBlueAvatar isSpeaking={false} isListening={false} />
+                )}
               </div>
               <div className="bg-muted rounded-lg p-3">
                 <div className="flex gap-1">

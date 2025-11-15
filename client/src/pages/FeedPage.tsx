@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Heart, MessageCircle, Share2, Image as ImageIcon, Globe, Users, Lock, X, Loader2, MoreVertical, Pencil, Trash2, ChevronDown, Music2, Plane, Sparkles, GraduationCap, PartyPopper, Star, Home, Utensils, ShoppingBag, Wrench, Video, MapPin, Clock } from "lucide-react";
+import { Heart, MessageCircle, Share2, Image as ImageIcon, Globe, Users, Lock, X, Loader2, MoreVertical, Pencil, Trash2, ChevronDown, Music2, Plane, Sparkles, GraduationCap, PartyPopper, Star, Home, Utensils, ShoppingBag, Wrench, Video, MapPin, Clock, AlertCircle, RefreshCw } from "lucide-react";
 import { PostReactions } from "@/components/feed/PostReactions";
 import { PostActions } from "@/components/feed/PostActions";
 import { Badge } from "@/components/ui/badge";
@@ -122,12 +122,15 @@ export default function FeedPage() {
   
   const { 
     data, 
-    isLoading, 
+    isLoading,
+    isError,
+    error,
     isFetchingNextPage, 
     hasNextPage, 
     fetchNextPage,
     newPostsAvailable,
-    loadNewPosts 
+    loadNewPosts,
+    refetch
   } = usePosts();
   const createPost = useCreatePost();
   const { toast } = useToast();
@@ -476,7 +479,7 @@ export default function FeedPage() {
               {isLoading ? (
                 <>
                   {[1, 2, 3].map((i) => (
-                    <Card key={i} className="p-6">
+                    <Card key={i} className="p-6" data-testid={`skeleton-post-${i}`}>
                       <div className="flex items-start gap-4">
                         <Skeleton className="h-12 w-12 rounded-full" />
                         <div className="flex-1 space-y-2">
@@ -487,6 +490,35 @@ export default function FeedPage() {
                     </Card>
                   ))}
                 </>
+              ) : isError ? (
+                <Card className="p-12 text-center" data-testid="card-feed-error">
+                  <div className="max-w-md mx-auto space-y-4">
+                    <div className="w-16 h-16 mx-auto rounded-full bg-destructive/10 flex items-center justify-center">
+                      <AlertCircle className="w-8 h-8 text-destructive" />
+                    </div>
+                    <h3 className="text-lg font-semibold" data-testid="text-error-title">
+                      {!user ? "Authentication Required" : "Unable to Load Feed"}
+                    </h3>
+                    <p className="text-sm text-muted-foreground" data-testid="text-error-message">
+                      {!user 
+                        ? "Please log in to view the community feed and connect with other dancers."
+                        : "We're having trouble loading posts. This might be a temporary issue."
+                      }
+                    </p>
+                    <div className="flex gap-2 justify-center">
+                      {!user ? (
+                        <Button asChild data-testid="button-login">
+                          <Link href="/auth/login">Log In</Link>
+                        </Button>
+                      ) : (
+                        <Button onClick={() => refetch()} data-testid="button-retry">
+                          <RefreshCw className="w-4 h-4 mr-2" />
+                          Try Again
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </Card>
               ) : allPosts.length > 0 ? (
                 <>
                   {allPosts.map((post, index) => (

@@ -76,9 +76,28 @@ export function usePosts() {
     queryFn: async ({ pageParam = 0 }) => {
       const limit = 10;
       const offset = pageParam as number;
-      const res = await fetch(`/api/posts?limit=${limit}&offset=${offset}`);
-      if (!res.ok) throw new Error('Failed to fetch posts');
-      return await res.json();
+      
+      try {
+        const res = await fetch(`/api/posts?limit=${limit}&offset=${offset}`);
+        
+        // Handle authentication errors gracefully
+        if (res.status === 401 || res.status === 403) {
+          console.log('[usePosts] Authentication required - returning empty array');
+          return [];
+        }
+        
+        // Handle other errors
+        if (!res.ok) {
+          console.error('[usePosts] Failed to fetch posts:', res.status, res.statusText);
+          return [];
+        }
+        
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      } catch (error) {
+        console.error('[usePosts] Network error fetching posts:', error);
+        return [];
+      }
     },
     getNextPageParam: (lastPage, allPages) => {
       if (!lastPage || !Array.isArray(lastPage) || lastPage.length < 10) {
@@ -87,6 +106,8 @@ export function usePosts() {
       return allPages.length * 10;
     },
     initialPageParam: 0,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000),
   });
 
   return {
