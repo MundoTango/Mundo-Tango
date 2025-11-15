@@ -28,6 +28,7 @@ import { SmartSuggestions } from "@/components/visual-editor/SmartSuggestions";
 import { StreamingStatusPanel } from "@/components/visual-editor/StreamingStatusPanel";
 import type { ChangeMetadata } from "@/components/visual-editor/VisualDiffViewer";
 import { SEO } from "@/components/SEO";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -40,7 +41,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Separator } from "@/components/ui/separator";
 import { 
   ShieldAlert, Crown, Bot, Cpu, Loader2, CheckCircle2, AlertCircle,
-  Play, Eye, Code2, Palette, Undo2, Sparkles, Zap, FileCode, History, Mic, MicOff, Lightbulb
+  Play, Eye, Code2, Palette, Undo2, Sparkles, Zap, FileCode, History, Mic, MicOff, Lightbulb, RefreshCw
 } from "lucide-react";
 
 type User = {
@@ -63,7 +64,7 @@ type AutonomousTask = {
   error?: string;
 };
 
-export default function VisualEditorPage() {
+function VisualEditorPageContent() {
   // State
   const [prompt, setPrompt] = useState("");
   const [currentTask, setCurrentTask] = useState<AutonomousTask | null>(null);
@@ -75,6 +76,8 @@ export default function VisualEditorPage() {
   const [beforeScreenshot, setBeforeScreenshot] = useState<string | null>(null);
   const [voiceModeEnabled, setVoiceModeEnabled] = useState(false);
   const [currentIframeUrl, setCurrentIframeUrl] = useState<string>('/');
+  const [iframeLoading, setIframeLoading] = useState(true);
+  const [iframeError, setIframeError] = useState(false);
   
   // Refs
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -220,10 +223,24 @@ export default function VisualEditorPage() {
 
     const handleLoad = () => {
       console.log('[VisualEditor] Iframe loaded, injecting selection script');
+      setIframeLoading(false);
+      setIframeError(false);
       injectSelectionScript(iframe);
     };
 
+    const handleError = () => {
+      console.error('[VisualEditor] Iframe failed to load');
+      setIframeLoading(false);
+      setIframeError(true);
+      toast({
+        variant: "destructive",
+        title: "Preview Failed to Load",
+        description: "The preview iframe could not be loaded. Try refreshing the page.",
+      });
+    };
+
     iframe.addEventListener('load', handleLoad);
+    iframe.addEventListener('error', handleError);
     
     // Listen for iframe messages
     const handleMessage = (event: MessageEvent) => {
@@ -250,6 +267,7 @@ export default function VisualEditorPage() {
 
     return () => {
       iframe.removeEventListener('load', handleLoad);
+      iframe.removeEventListener('error', handleError);
       window.removeEventListener('message', handleMessage);
     };
   }, [toast]);

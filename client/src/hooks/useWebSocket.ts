@@ -35,6 +35,8 @@ export function useWebSocket(options: UseWebSocketOptions) {
   const retriesRef = useRef(0);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
   const heartbeatIntervalRef = useRef<NodeJS.Timeout>();
+  const connectionTimeoutRef = useRef<NodeJS.Timeout>();
+  const authTimeoutRef = useRef<NodeJS.Timeout>();
   const isManualClose = useRef(false);
 
   const cleanup = useCallback(() => {
@@ -45,6 +47,14 @@ export function useWebSocket(options: UseWebSocketOptions) {
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current);
       reconnectTimeoutRef.current = undefined;
+    }
+    if (connectionTimeoutRef.current) {
+      clearTimeout(connectionTimeoutRef.current);
+      connectionTimeoutRef.current = undefined;
+    }
+    if (authTimeoutRef.current) {
+      clearTimeout(authTimeoutRef.current);
+      authTimeoutRef.current = undefined;
     }
   }, []);
 
@@ -73,24 +83,70 @@ export function useWebSocket(options: UseWebSocketOptions) {
       const ws = new WebSocket(wsUrl);
       wsRef.current = ws;
 
+      // Set 5-second connection timeout
+      connectionTimeoutRef.current = setTimeout(() => {
+        if (ws.readyState === WebSocket.CONNECTING) {
+          console.log('[WS] ⏰ Connection timeout - closing connection');
+          ws.close();
+          setStatus('error');
+          
+          // Trigger retry logic if reconnect is enabled
+          if (reconnect && retriesRef.current < maxRetries) {
+            const delay = Math.min(1000 * Math.pow(2, retriesRef.current), 30000);
+            console.log(`[WS] Reconnecting after timeout in ${delay}ms (attempt ${retriesRef.current + 1}/${maxRetries})...`);
+            
+            reconnectTimeoutRef.current = setTimeout(() => {
+              retriesRef.current++;
+              connect();
+            }, delay);
+          }
+        }
+      }, 5000);
+
       ws.onopen = () => {
-        console.log(`[WS] Connected to ${path} for user ${user.id}`);
+        console.log(`[WS] ✅ Connection established to ${path} for user ${user.id}`);
         console.log(`[WS] WebSocket readyState: ${ws.readyState}`);
         
-        // Send authentication message IMMEDIATELY on open
-        try {
-          const authMessage = JSON.stringify({
-            type: 'auth',
-            userId: user.id
-          });
-          console.log(`[WS] Sending auth message:`, authMessage);
-          ws.send(authMessage);
-          console.log(`[WS] ✅ Auth message sent successfully for user ${user.id}`);
-        } catch (error) {
-          console.error(`[WS] ❌ Failed to send auth message:`, error);
+        // Clear connection timeout since we're connected
+        if (connectionTimeoutRef.current) {
+          clearTimeout(connectionTimeoutRef.current);
+          connectionTimeoutRef.current = undefined;
         }
         
-        // Note: status will be set to 'connected' when we receive confirmation
+        // Small delay to ensure connection is fully stable before sending auth
+        // This helps prevent Code 1006 errors on some browsers/networks
+        const sendAuthDelay = setTimeout(() => {
+          if (ws.readyState !== WebSocket.OPEN) {
+            console.error(`[WS] ❌ Connection closed before auth could be sent (readyState: ${ws.readyState})`);
+            return;
+          }
+
+          try {
+            const authMessage = JSON.stringify({
+              type: 'auth',
+              userId: user.id
+            });
+            console.log(`[WS] 📤 Sending auth message:`, authMessage);
+            ws.send(authMessage);
+            console.log(`[WS] ✅ Auth message sent for user ${user.id}`);
+            
+            // Set 5-second timeout for auth response
+            authTimeoutRef.current = setTimeout(() => {
+              if (status !== 'connected') {
+                console.log('[WS] ⏰ Auth response timeout - closing connection');
+                ws.close(4002, 'Auth response timeout');
+              }
+            }, 5000);
+          } catch (error) {
+            console.error(`[WS] ❌ Failed to send auth message:`, error);
+            ws.close(4000, 'Auth send failed');
+          }
+        }, 50);
+        
+        // Store timeout reference for cleanup
+        connectionTimeoutRef.current = sendAuthDelay as any;
+        
+        // Note: status will be set to 'connected' when we receive auth_success/connected message
       };
 
       ws.onmessage = (event) => {
@@ -102,10 +158,22 @@ export function useWebSocket(options: UseWebSocketOptions) {
             return;
           }
 
-          // Handle connected confirmation - NOW we're truly connected
-          // Support both 'connected' and legacy 'auth_success' for backward compatibility
-          if (message.type === 'connected' || message.type === 'auth_success') {
-            console.log(`[WS] Authenticated as user ${message.userId}`);
+          // Handle auth success - server confirms authentication
+          // Primary: auth_success, Fallback: connected (for backward compatibility)
+          if (message.type === 'auth_success' || message.type === 'connected') {
+            console.log(`[WS] 🎉 Authentication successful for user ${message.userId}`);
+            console.log(`[WS] 📨 Received message type: ${message.type}`);
+            
+            // Clear all pending timeouts
+            if (connectionTimeoutRef.current) {
+              clearTimeout(connectionTimeoutRef.current);
+              connectionTimeoutRef.current = undefined;
+            }
+            if (authTimeoutRef.current) {
+              clearTimeout(authTimeoutRef.current);
+              authTimeoutRef.current = undefined;
+            }
+            
             setStatus('connected');
             retriesRef.current = 0;
             isManualClose.current = false;

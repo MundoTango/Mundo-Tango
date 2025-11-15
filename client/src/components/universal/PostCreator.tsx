@@ -18,7 +18,7 @@ import {
   Plane, Pizza, Drama, Mountain, Moon, Leaf, Palette,
   Music, Dumbbell, Camera as PhotoIcon, HeartHandshake,
   UserPlus, Briefcase, Target, PartyPopper,
-  UtensilsCrossed, Coffee, Hotel, User, Wine
+  UtensilsCrossed, Coffee, Hotel, User, Wine, Clock
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
