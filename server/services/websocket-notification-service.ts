@@ -87,7 +87,7 @@ export class WebSocketNotificationService {
 
             // Add authenticated client
             this.addClient(userId, ws);
-            ws.send(JSON.stringify({ type: "auth_success", userId }));
+            ws.send(JSON.stringify({ type: "connected", userId }));
             console.log(`[WS Server] ✅ User ${userId} authenticated and connected`);
             console.log(`[WS Server] 📊 Total authenticated users: ${this.clients.size}`);
             

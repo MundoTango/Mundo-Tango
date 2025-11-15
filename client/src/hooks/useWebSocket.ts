@@ -74,17 +74,20 @@ export function useWebSocket(options: UseWebSocketOptions) {
       wsRef.current = ws;
 
       ws.onopen = () => {
-        console.log(`[WS] Connected to ${path} - sending auth...`);
+        console.log(`[WS] Connected to ${path} for user ${user.id}`);
+        console.log(`[WS] WebSocket readyState: ${ws.readyState}`);
         
-        // Send authentication message immediately
+        // Send authentication message IMMEDIATELY on open
         try {
-          ws.send(JSON.stringify({
+          const authMessage = JSON.stringify({
             type: 'auth',
             userId: user.id
-          }));
-          console.log(`[WS] Auth message sent for user ${user.id}`);
+          });
+          console.log(`[WS] Sending auth message:`, authMessage);
+          ws.send(authMessage);
+          console.log(`[WS] ✅ Auth message sent successfully for user ${user.id}`);
         } catch (error) {
-          console.error(`[WS] Failed to send auth message:`, error);
+          console.error(`[WS] ❌ Failed to send auth message:`, error);
         }
         
         // Note: status will be set to 'connected' when we receive confirmation
@@ -100,7 +103,8 @@ export function useWebSocket(options: UseWebSocketOptions) {
           }
 
           // Handle connected confirmation - NOW we're truly connected
-          if (message.type === 'connected') {
+          // Support both 'connected' and legacy 'auth_success' for backward compatibility
+          if (message.type === 'connected' || message.type === 'auth_success') {
             console.log(`[WS] Authenticated as user ${message.userId}`);
             setStatus('connected');
             retriesRef.current = 0;
