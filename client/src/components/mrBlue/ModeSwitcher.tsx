@@ -21,6 +21,7 @@ export function ModeSwitcher({ currentMode, onModeChange }: ModeSwitcherProps) {
           onClick={() => onModeChange(mode.id)}
           className="flex items-center gap-2"
           data-testid={`button-mode-${mode.id}`}
+          aria-label={`Switch to ${mode.label.toLowerCase()}`}
         >
           <mode.icon className="w-4 h-4" />
           <span className="hidden md:inline">{mode.label}</span>

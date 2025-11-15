@@ -105,6 +105,7 @@ export function MrBlueWidget() {
             className="h-14 px-6 rounded-full shadow-2xl bg-gradient-to-r from-primary to-secondary hover:shadow-primary/50 transition-all duration-300 hover:scale-105"
             onClick={() => setIsExpanded(true)}
             data-testid="button-open-mr-blue"
+            aria-label="Open Mr. Blue AI assistant"
           >
             <MessageSquare className="h-5 w-5 mr-2" />
             Ask Mr Blue
@@ -138,6 +139,7 @@ export function MrBlueWidget() {
                 className="h-8 w-8 text-white hover:bg-white/20"
                 onClick={() => setIsExpanded(false)}
                 data-testid="button-minimize-mr-blue"
+                aria-label="Minimize Mr. Blue assistant"
               >
                 <Minimize2 className="h-4 w-4" />
               </Button>
@@ -147,6 +149,7 @@ export function MrBlueWidget() {
                 className="h-8 w-8 text-white hover:bg-white/20"
                 onClick={() => setIsExpanded(false)}
                 data-testid="button-close-mr-blue"
+                aria-label="Close Mr. Blue assistant"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -229,6 +232,7 @@ export function MrBlueWidget() {
                 className="resize-none min-h-[44px] max-h-[120px]"
                 disabled={isLoading}
                 data-testid="input-mr-blue-message"
+                aria-label="Type your message to Mr. Blue"
               />
               <Button
                 size="icon"
@@ -236,6 +240,7 @@ export function MrBlueWidget() {
                 disabled={!message.trim() || isLoading}
                 data-testid="button-send-mr-blue"
                 className="h-11 w-11"
+                aria-label="Send message to Mr. Blue"
               >
                 <Send className="h-4 w-4" />
               </Button>

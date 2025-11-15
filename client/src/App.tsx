@@ -17,9 +17,11 @@ import { MrBlueWidget } from "./components/MrBlueWidget";
 import { GlobalMrBlue } from "./components/mrblue/GlobalMrBlue";
 import { ChatSidePanel } from "./components/mrblue/ChatSidePanel";
 import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
-import { UnifiedMrBlue } from "./components/mrBlue/UnifiedMrBlue";
 import { LoadingFallback } from "./components/LoadingFallback";
-import { VisualEditorSplitPane } from "./components/visual-editor/VisualEditorSplitPane";
+
+// Lazy load heavy components
+const UnifiedMrBlue = lazy(() => import("./components/mrBlue/UnifiedMrBlue"));
+const VisualEditorSplitPane = lazy(() => import("./components/visual-editor/VisualEditorSplitPane"));
 
 // Core Pages (loaded immediately for fast initial render)
 import NotFound from "@/pages/not-found";
@@ -1632,10 +1634,14 @@ function App() {
                   <GlobalMrBlue />
                   <ChatSidePanel />
                   {!isOnVisualEditorPage && <MrBlueFloatingButton />}
-                  <VisualEditorSplitPane 
-                    isOpen={isVisualEditorOpen} 
-                    onClose={() => setIsVisualEditorOpen(false)} 
-                  />
+                  {isVisualEditorOpen && (
+                    <Suspense fallback={<LoadingFallback />}>
+                      <VisualEditorSplitPane 
+                        isOpen={isVisualEditorOpen} 
+                        onClose={() => setIsVisualEditorOpen(false)} 
+                      />
+                    </Suspense>
+                  )}
                 </TooltipProvider>
               </MrBlueProvider>
             </PredictiveContextProvider>

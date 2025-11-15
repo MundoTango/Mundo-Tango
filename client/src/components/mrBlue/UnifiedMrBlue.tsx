@@ -23,12 +23,15 @@ export function UnifiedMrBlue() {
   
   return (
     <div className="h-full flex flex-col">
+      {/* Screen-reader-only h1 for accessibility */}
+      <h1 className="sr-only">Mr. Blue AI Assistant</h1>
+      
       {/* Mode switcher header */}
       <div className="p-4 border-b">
         <ModeSwitcher currentMode={mode} onModeChange={handleModeChange} />
       </div>
       
-      {/* Content area */}
+      {/* Content area - each child component handles its own main landmark */}
       <div className="flex-1 overflow-hidden">
         {mode === 'visual_editor' ? (
           <VisualEditorPage />

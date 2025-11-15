@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useGLTF } from '@react-three/drei';
-import * as THREE from 'three';
+import type { Mesh } from 'three';
 import { apiRequest } from '@/lib/queryClient';
 
 interface AvatarProps {
@@ -11,7 +11,7 @@ interface AvatarProps {
 }
 
 function Avatar({ emotion = 'idle', autoRotate = true, onClick }: AvatarProps) {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<Mesh>(null);
   const [rotation, setRotation] = useState(0);
 
   useFrame((state, delta) => {

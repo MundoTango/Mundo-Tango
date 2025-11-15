@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Environment, useGLTF } from '@react-three/drei';
-import * as THREE from 'three';
+import type { Group } from 'three';
 
 interface MrBlueAvatar3DProps {
   size?: number;
@@ -15,7 +15,7 @@ interface MrBlueAvatar3DProps {
  * Renders the Luma AI generated 3D model with animations and expressions
  */
 function MrBlueModel({ expression, modelUrl }: { expression: string; modelUrl?: string }) {
-  const meshRef = useRef<THREE.Group>(null);
+  const meshRef = useRef<Group>(null);
   const [rotation, setRotation] = useState(0);
 
   // Load 3D model if available

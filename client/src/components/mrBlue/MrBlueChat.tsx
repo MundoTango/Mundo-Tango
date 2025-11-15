@@ -343,7 +343,7 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <main role="main" className="flex flex-col h-full">
       {/* Voice controls (only in voice/vibecoding modes) */}
       {showVoiceControls && (
         <div className="p-4 border-b bg-muted/20">
@@ -417,7 +417,12 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
       
       {/* Messages */}
       <ScrollArea ref={scrollRef} className="flex-1 p-4">
-        <div className="space-y-4">
+        <div 
+          className="space-y-4"
+          aria-live="polite"
+          aria-relevant="additions"
+          aria-label="Chat conversation with Mr. Blue"
+        >
           {messages.map(message => {
             if (message.deletedAt) {
               return (
@@ -580,6 +585,7 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
             className="resize-none"
             rows={2}
             data-testid="input-mr-blue-message"
+            aria-label="Type your message to Mr. Blue"
           />
           
           {showVoiceControls && (
@@ -598,11 +604,12 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
             disabled={!input.trim() || isLoading}
             size="icon"
             data-testid="button-send-message"
+            aria-label="Send message to Mr. Blue"
           >
             <Send className="h-4 w-4" />
           </Button>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

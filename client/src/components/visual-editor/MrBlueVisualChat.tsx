@@ -7,7 +7,7 @@
  * - "Mr. Blue is thinking..." states
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Sparkles, History, Lightbulb, Mic, MicOff, Volume2, VolumeX, Box, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,9 @@ import { useVoiceInput } from "@/hooks/useVoiceInput";
 import { useTextToSpeech } from "@/hooks/useTextToSpeech";
 import { useStreamingChat } from "@/hooks/useStreamingChat";
 import { MrBlueAvatar } from "./MrBlueAvatar";
-import MrBlueAvatar3D from "@/components/mrblue/MrBlueAvatar3D";
+
+// Lazy load 3D avatar component (heavy Three.js dependency)
+const MrBlueAvatar3D = lazy(() => import("@/components/mrblue/MrBlueAvatar3D"));
 
 interface Message {
   id: string;
@@ -394,10 +396,12 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             {use3D ? (
-              <MrBlueAvatar3D 
-                size={56}
-                expression={isSpeaking ? 'excited' : isListening ? 'curious' : 'friendly'}
-              />
+              <Suspense fallback={<div className="w-14 h-14 animate-pulse bg-muted rounded-full" />}>
+                <MrBlueAvatar3D 
+                  size={56}
+                  expression={isSpeaking ? 'excited' : isListening ? 'curious' : 'friendly'}
+                />
+              </Suspense>
             ) : (
               <MrBlueAvatar isSpeaking={isSpeaking} isListening={isListening} />
             )}
@@ -502,7 +506,9 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
               {message.role === 'assistant' && (
                 <div className="flex-shrink-0">
                   {use3D ? (
-                    <MrBlueAvatar3D size={56} expression="friendly" />
+                    <Suspense fallback={<div className="w-14 h-14 animate-pulse bg-muted rounded-full" />}>
+                      <MrBlueAvatar3D size={56} expression="friendly" />
+                    </Suspense>
                   ) : (
                     <MrBlueAvatar isSpeaking={false} isListening={false} />
                   )}
@@ -529,7 +535,9 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
             <div className="flex gap-3 justify-start">
               <div className="flex-shrink-0">
                 {use3D ? (
-                  <MrBlueAvatar3D size={56} expression="thinking" />
+                  <Suspense fallback={<div className="w-14 h-14 animate-pulse bg-muted rounded-full" />}>
+                    <MrBlueAvatar3D size={56} expression="thinking" />
+                  </Suspense>
                 ) : (
                   <MrBlueAvatar isSpeaking={false} isListening={false} />
                 )}
