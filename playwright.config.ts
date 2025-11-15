@@ -6,6 +6,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: 1,
+  timeout: 180000,
   reporter: [
     ['html', { outputFolder: 'test-results/html-report' }],
     ['json', { outputFile: 'test-results/results.json' }],
@@ -14,10 +15,10 @@ export default defineConfig({
   
   use: {
     baseURL: 'http://localhost:5000',
-    trace: 'retain-on-failure',
-    screenshot: 'only-on-failure',
+    trace: 'on',
+    screenshot: 'on',
     video: {
-      mode: 'retain-on-failure',
+      mode: 'on',
       size: { width: 1920, height: 1080 }
     },
     viewport: { width: 1920, height: 1080 },
