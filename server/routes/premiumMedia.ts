@@ -298,6 +298,64 @@ router.post(
 );
 
 // =============================================================================
+// USAGE & COST TRACKING ENDPOINTS
+// =============================================================================
+
+/**
+ * GET /api/premium/usage/stats
+ * Get user's premium usage statistics and cost tracking
+ */
+router.get(
+  '/usage/stats',
+  authenticateToken,
+  requireGodLevel,
+  async (req: Request, res: Response) => {
+    try {
+      const userId = req.user!.id;
+      const now = new Date();
+      
+      // Get monthly spend from cost tracker
+      const monthlySpend = await costOptimizerService.getMonthlySpend(userId);
+      const history = await costOptimizerService.getUserSpendHistory(userId, 3);
+      const prediction = await costOptimizerService.predictMonthlyBill(userId);
+      
+      // God Level quota is $100/month
+      const quotaLimit = 100;
+      const quotaRemaining = Math.max(0, quotaLimit - monthlySpend);
+      
+      // Break down by service
+      const currentMonth = history.filter(h => {
+        const [year, month] = h.month.split('-');
+        return year === String(now.getFullYear()) && month === String(now.getMonth() + 1).padStart(2, '0');
+      });
+      
+      const serviceBreakdown = {
+        did: currentMonth.find(h => h.service === 'did')?.totalCost || 0,
+        elevenlabs: currentMonth.find(h => h.service === 'elevenlabs')?.totalCost || 0,
+        openaiRealtime: currentMonth.find(h => h.service === 'openai-realtime')?.totalCost || 0,
+      };
+      
+      res.json({
+        currentMonth: {
+          total: monthlySpend,
+          ...serviceBreakdown
+        },
+        quotaLimit,
+        quotaRemaining,
+        prediction,
+        history
+      });
+    } catch (error: any) {
+      console.error('[Premium Usage] Stats error:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || 'Failed to fetch usage stats'
+      });
+    }
+  }
+);
+
+// =============================================================================
 // REALTIME VOICE ENDPOINTS (OpenAI Realtime)
 // =============================================================================
 

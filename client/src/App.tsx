@@ -94,6 +94,7 @@ const MrBlueChatPage = lazy(() => import("@/pages/MrBlueChatPage"));
 const VideoStudio = lazy(() => import("@/pages/VideoStudio"));
 const MrBlueVideoDemo = lazy(() => import("@/pages/mr-blue-video-demo"));
 const AvatarDesignerPage = lazy(() => import("@/pages/AvatarDesignerPage"));
+const PremiumFeaturesPage = lazy(() => import("@/pages/PremiumFeaturesPage"));
 
 // Life CEO Suite (16 agents)
 const LifeCEODashboardPage = lazy(() => import("@/pages/LifeCEODashboardPage"));
@@ -351,6 +352,7 @@ function Router() {
       <Route path="/video-studio" component={VideoStudio} />
       <Route path="/mr-blue-demo" component={MrBlueVideoDemo} />
       <Route path="/avatar-designer" component={AvatarDesignerPage} />
+      <Route path="/premium-features" component={PremiumFeaturesPage} />
       <Route path="/life-ceo" component={LifeCEODashboardPage} />
       <Route path="/life-ceo/health" component={HealthAgentPage} />
       <Route path="/life-ceo/finance" component={FinanceAgentPage} />
