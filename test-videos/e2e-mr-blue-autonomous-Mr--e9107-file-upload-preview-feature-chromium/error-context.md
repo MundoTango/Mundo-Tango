@@ -4,10 +4,51 @@
 - generic [ref=e2]:
   - region "Notifications (F8)":
     - list
-  - generic [ref=e4]:
-    - generic [ref=e6]:
-      - img [ref=e7]
-      - text: Access Denied
-    - alert [ref=e10]:
-      - generic [ref=e11]: "The Visual Editor requires God Level (Tier 8) access. Your current role: super_admin"
+  - generic [ref=e3]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - img [ref=e7]
+        - heading "Visual Editor" [level=1] [ref=e9]
+      - generic [ref=e10]: Test Admin User (God Level)
+    - generic [ref=e11]:
+      - tablist [ref=e12]:
+        - tab "Mr. Blue" [ref=e13] [cursor=pointer]:
+          - img [ref=e14]
+          - text: Mr. Blue
+        - tab "Autonomous" [selected] [ref=e17] [cursor=pointer]:
+          - img [ref=e18]
+          - text: Autonomous
+        - tab "Git" [ref=e21] [cursor=pointer]:
+          - img [ref=e22]
+          - text: Git
+        - tab "Secrets" [ref=e26] [cursor=pointer]:
+          - img [ref=e27]
+          - text: Secrets
+        - tab "Deploy" [ref=e31] [cursor=pointer]:
+          - img [ref=e32]
+          - text: Deploy
+        - tab "Database" [ref=e37] [cursor=pointer]:
+          - img [ref=e38]
+          - text: Database
+        - tab "Console" [ref=e42] [cursor=pointer]:
+          - img [ref=e43]
+          - text: Console
+        - tab "Debug" [ref=e45] [cursor=pointer]:
+          - img [ref=e46]
+          - text: Debug
+      - tabpanel "Autonomous" [ref=e56]:
+        - generic [ref=e57]:
+          - generic [ref=e58]:
+            - generic [ref=e60]: Autonomous Task Execution
+            - generic [ref=e61]:
+              - generic [ref=e62]:
+                - generic [ref=e63]: "Describe what you want Mr. Blue to build:"
+                - textbox "Describe what you want Mr. Blue to build:" [ref=e64]:
+                  - /placeholder: "Example: Add a file upload component with image preview thumbnails..."
+                  - text: Add image preview thumbnails when uploading files in the Visual Editor file upload component. When a user selects an image file, show a 100x100px preview thumbnail next to the filename. Use proper React/TypeScript patterns and follow MT Ocean design system.
+              - button "Execute Autonomous Task" [active] [ref=e65] [cursor=pointer]
+          - generic [ref=e66]:
+            - generic [ref=e68]: Task Status
+            - alert [ref=e70]:
+              - generic [ref=e71]: "🎯 God Level: Unlimited operations, no rate limits, no cost caps"
 ```

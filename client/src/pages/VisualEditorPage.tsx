@@ -184,11 +184,45 @@ export default function VisualEditorPage() {
             </TabsContent>
 
             <TabsContent value="autonomous" className="h-full m-0 p-4">
-              <Alert>
-                <AlertDescription>
-                  🚀 Autonomous Agent Panel - Building in Phase 4
-                </AlertDescription>
-              </Alert>
+              <div data-testid="autonomous-workflow-panel" className="h-full flex flex-col gap-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Autonomous Task Execution</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <label htmlFor="autonomous-prompt" className="text-sm font-medium mb-2 block">
+                        Describe what you want Mr. Blue to build:
+                      </label>
+                      <textarea
+                        id="autonomous-prompt"
+                        data-testid="input-autonomous-prompt"
+                        placeholder="Example: Add a file upload component with image preview thumbnails..."
+                        className="w-full min-h-[120px] p-3 border rounded-md resize-y"
+                      />
+                    </div>
+                    <button
+                      data-testid="button-start-autonomous"
+                      className="w-full bg-primary text-primary-foreground hover-elevate active-elevate-2 rounded-md px-4 py-2 font-medium"
+                    >
+                      Execute Autonomous Task
+                    </button>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm">Task Status</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Alert>
+                      <AlertDescription className="text-sm">
+                        🎯 God Level: Unlimited operations, no rate limits, no cost caps
+                      </AlertDescription>
+                    </Alert>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
 
             <TabsContent value="git" className="h-full m-0 p-4">
