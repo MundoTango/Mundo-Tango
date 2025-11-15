@@ -19,21 +19,11 @@ export function initializeRedis(): Redis | null {
 
   try {
     redisClient = new Redis(process.env.REDIS_URL, {
-      maxRetriesPerRequest: 3,
-      retryStrategy: (times) => {
-        if (times > 3) {
-          console.warn('⚠️ Redis connection failed after 3 retries');
-          return null; // Stop retrying
-        }
-        return Math.min(times * 100, 2000); // Exponential backoff
-      },
-      reconnectOnError: (err) => {
-        const targetError = 'READONLY';
-        if (err.message.includes(targetError)) {
-          return true;
-        }
-        return false;
-      },
+      maxRetriesPerRequest: 0, // No retries
+      retryStrategy: () => null, // Never retry
+      enableOfflineQueue: false,
+      reconnectOnError: () => false, // Don't reconnect on errors
+      lazyConnect: true,
     });
 
     redisClient.on('connect', () => {

@@ -68,18 +68,24 @@ let redisAvailable = false;
 const inMemoryQueues = new Map<string, InMemoryQueue>();
 
 async function testRedisConnection(): Promise<boolean> {
+  // If REDIS_URL is not set, don't even attempt connection
+  if (!process.env.REDIS_URL) {
+    return false;
+  }
+  
   try {
     const testClient = new IORedis({
       host: REDIS_HOST,
       port: REDIS_PORT,
-      maxRetriesPerRequest: 1,
-      retryStrategy: () => null, // Don't retry
+      maxRetriesPerRequest: 0,
+      retryStrategy: () => null,
       enableOfflineQueue: false,
-      lazyConnect: true, // Don't connect immediately
+      lazyConnect: true,
+      connectTimeout: 1000,
     });
 
     // Add error handler to prevent unhandled error events
-    testClient.on('error', (err) => {
+    testClient.on('error', () => {
       // Silently ignore errors during connection test
     });
 

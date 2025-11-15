@@ -16,22 +16,18 @@ const REDIS_ENABLED = Boolean(process.env.REDIS_URL);
 
 export function getRedisClient(): Redis | null {
   if (!REDIS_ENABLED) {
+    console.log('ℹ️ Redis cache disabled (REDIS_URL not set) - using in-memory fallback');
     return null;
   }
   
   if (!redisClient) {
     try {
       redisClient = new Redis(process.env.REDIS_URL!, {
-        maxRetriesPerRequest: 1,
-        retryStrategy: (times) => {
-          if (times > 1) {
-            redisAvailable = false;
-            return null; // Stop retrying after 1 attempt
-          }
-          return 100;
-        },
+        maxRetriesPerRequest: 0, // No retries
+        retryStrategy: () => null, // Never retry
         enableOfflineQueue: false,
         lazyConnect: true, // Don't connect until needed
+        enableReadyCheck: false,
       });
       
       redisClient.on('error', (err) => {
