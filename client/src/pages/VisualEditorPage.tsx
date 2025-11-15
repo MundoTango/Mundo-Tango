@@ -5,6 +5,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { SEO } from "@/components/SEO";
@@ -19,7 +20,6 @@ import { useToast } from "@/hooks/use-toast";
 import { injectSelectionScript, applyInstantChange } from "@/lib/iframeInjector";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
-import { AutonomousWorkflowPanel } from "@/components/autonomous/AutonomousWorkflowPanel";
 
 export default function VisualEditorPage() {
   const [selectedComponent, setSelectedComponent] = useState<SelectedComponent | null>(null);
@@ -33,7 +33,7 @@ export default function VisualEditorPage() {
   const { toast } = useToast();
 
   // Get current user info including God Level status
-  const { data: authResponse, isLoading: userLoading } = useQuery<{ 
+  const { data: authResponse, isLoading: userLoading, error: userError } = useQuery<{ 
     user: {
       id: number; 
       role: string;
@@ -42,10 +42,18 @@ export default function VisualEditorPage() {
     queryKey: ['/api/auth/me']
   });
 
+  // Debug logging
+  console.log('[VisualEditor] Auth response:', authResponse);
+  console.log('[VisualEditor] User loading:', userLoading);
+  console.log('[VisualEditor] User error:', userError);
+
   const user = authResponse?.user;
   
   // Check if user is God Level (Tier 8 - role === 'god')
   const isGodLevel = user?.role === 'god';
+  
+  console.log('[VisualEditor] User:', user);
+  console.log('[VisualEditor] Is God Level:', isGodLevel);
 
   // Listen for messages from iframe
   useEffect(() => {
@@ -457,8 +465,16 @@ export default function VisualEditorPage() {
 
                 {/* Autonomous Workflow Tab - God Level Only */}
                 {isGodLevel && (
-                  <TabsContent value="autonomous" className="flex-1 m-0 overflow-hidden">
-                    <AutonomousWorkflowPanel />
+                  <TabsContent value="autonomous" className="flex-1 m-0 overflow-hidden p-4">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Autonomous Mode</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p>Autonomous workflow panel - God Level access detected</p>
+                        <p className="text-sm text-muted-foreground mt-2">User role: {user?.role}</p>
+                      </CardContent>
+                    </Card>
                   </TabsContent>
                 )}
 
