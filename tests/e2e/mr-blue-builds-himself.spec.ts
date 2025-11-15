@@ -1,14 +1,23 @@
 /**
  * Mr. Blue Builds Himself - Meta Autonomous Test
  * 
- * This test validates the entire autonomous vibe coding workflow:
- * 1. Replit AI instructs Mr. Blue to integrate his own 3D avatar system
- * 2. Mr. Blue creates an MB.MD plan
- * 3. Replit AI validates the plan iteratively until satisfied
- * 4. Mr. Blue autonomously executes the integration
- * 5. Verification that 3D avatars are working
+ * This test validates the entire autonomous "vibe coding agent" workflow where
+ * Mr. Blue BUILDS new features from conversational prompts (like Cursor/Lovable/Bolt.new):
  * 
- * **VIDEO RECORDING ENABLED** - For marketing purposes
+ * 1. Replit AI gives Mr. Blue conversational requirements for 3 new features:
+ *    - Animation System (walking, idle, emotion-based movements)
+ *    - Speech Synthesis Integration (TTS, mouth sync, voice queue)
+ *    - Personality Traits System (emotion detection, reactions, customization)
+ * 
+ * 2. Mr. Blue creates a detailed MB.MD plan (simultaneously/recursively/critically)
+ * 
+ * 3. Replit AI validates the plan iteratively until comprehensive enough
+ * 
+ * 4. Mr. Blue autonomously executes the plan (writes code, modifies files, integrates)
+ * 
+ * 5. Verification that all 3 features are working (animations, speech, personality)
+ * 
+ * **VIDEO RECORDING ENABLED** - For marketing demo of autonomous vibe coding
  */
 
 import { test, expect, Page } from '@playwright/test';
@@ -123,21 +132,40 @@ async function validateMBMDPlan(responseText: string, iteration: number): Promis
       name: 'References VisualEditorPage.tsx integration point'
     },
     
-    // Feature requirements
-    mentionsToggle: {
-      test: /toggle|switch|2d.*3d|3d.*2d|button.*switch/i.test(responseText),
-      weight: 1,
-      name: 'Includes 2D/3D toggle functionality'
+    // Feature 1: Animation System
+    mentionsAnimationSystem: {
+      test: /walking|idle.*animation|emotion.*movement|bounce|tilt|sway/i.test(responseText),
+      weight: 2,
+      name: 'Feature 1: Includes animation system (walking, idle, emotion movements)'
     },
-    mentionsAnimations: {
-      test: /animation|isSpeaking|isListening|voice.*state/i.test(responseText),
-      weight: 1,
-      name: 'Connects animations to voice/speech states'
+    mentionsAnimationStates: {
+      test: /animation.*state|transition|speaking.*animation|listening.*animation/i.test(responseText),
+      weight: 1.5,
+      name: 'Feature 1: Connects animations to voice states with transitions'
     },
-    mentionsRendering: {
-      test: /render|display|show|appear|canvas|three\.js/i.test(responseText),
-      weight: 1,
-      name: 'Addresses rendering implementation'
+    
+    // Feature 2: Speech Synthesis
+    mentionsSpeechSynthesis: {
+      test: /text-to-speech|TTS|speech.*synthesis|voice.*output|speak/i.test(responseText),
+      weight: 2,
+      name: 'Feature 2: Includes speech synthesis integration'
+    },
+    mentionsMouthSync: {
+      test: /mouth.*movement|lip.*sync|sync.*speech|vocal.*tone/i.test(responseText),
+      weight: 1.5,
+      name: 'Feature 2: Syncs mouth movements with speech'
+    },
+    
+    // Feature 3: Personality Traits
+    mentionsPersonalitySystem: {
+      test: /personality|emotion.*detection|trait|friendly|professional|playful/i.test(responseText),
+      weight: 2,
+      name: 'Feature 3: Includes personality traits system'
+    },
+    mentionsEmotionReactions: {
+      test: /emotion.*state|reaction|visual.*feedback|context.*detection/i.test(responseText),
+      weight: 1.5,
+      name: 'Feature 3: Implements emotion-based reactions'
     },
     
     // File operations
@@ -232,21 +260,38 @@ async function askMrBlueForPlan(page: Page, iteration: number, previousFeedback?
   let prompt = '';
   
   if (iteration === 1) {
-    // First iteration - give the full instruction
-    prompt = `Hi Mr. Blue! I need you to integrate your 3D avatar system into this Visual Editor interface.
+    // First iteration - give the full instruction to BUILD NEW FEATURES
+    prompt = `Hi Mr. Blue! I need you to autonomously enhance your 3D avatar system with three major features:
 
-**Requirements:**
-1. Read the existing VisualEditorPage.tsx file to understand current structure
-2. Import and integrate the 3D avatar components:
-   - client/src/components/mrblue/MrBlueAvatar3D.tsx
-   - client/src/components/avatar/MrBlue3DModel.tsx
-3. Add a toggle button to switch between 2D and 3D avatar views
-4. Connect the 3D avatar animations to the isSpeaking and isListening states
-5. Replace the current 2D avatar with a container that can render either version
-6. Ensure the 3D avatar appears in the Visual Editor interface
-7. Test the rendering works correctly with Three.js Canvas
+**Feature 1: Animation System**
+- Implement walking/idle animations for the 3D avatar
+- Create emotion-based movements (excited bounce, curious tilt, thinking sway)
+- Connect animations to voice activity states (speaking, listening, idle)
+- Add smooth transitions between animation states
 
-**Important:** Please create a detailed MB.MD plan using simultaneously/recursively/critically methodology. Break down the work into specific tasks with exact file paths and implementation details.`;
+**Feature 2: Speech Synthesis Integration**
+- Integrate text-to-speech output with 3D avatar expressions
+- Sync mouth movements with speech output
+- Map different vocal tones to avatar expressions
+- Implement voice queue system for multiple messages
+
+**Feature 3: Personality Traits System**
+- Add emotion detection from conversation context
+- Implement personality-driven avatar reactions (friendly, professional, playful)
+- Create visual feedback for different emotional states
+- Build trait configuration system for customization
+
+**Technical Constraints:**
+- Work with existing files:
+  - client/src/components/mrblue/MrBlueAvatar3D.tsx (current implementation)
+  - client/src/components/avatar/MrBlue3DModel.tsx (3D model)
+  - client/src/hooks/useTextToSpeech.ts (TTS hook)
+  - client/src/components/visual-editor/MrBlueVisualChat.tsx (integration point)
+- Use Three.js for animations
+- Maintain 56x56px canvas size
+- Keep performance optimized (60 FPS target)
+
+**Important:** Create a detailed MB.MD plan using simultaneously/recursively/critically methodology. Break down the work into parallel subagent tasks with exact file paths, implementation details, and integration steps. These are NEW features you will BUILD, not just integrate existing code.`;
   } else {
     // Subsequent iterations - provide feedback
     prompt = `Thank you for the plan. However, I need you to revise it to be more comprehensive.
@@ -348,40 +393,73 @@ async function monitorAutonomousWork(page: Page): Promise<void> {
 }
 
 /**
- * Verify 3D avatar integration
+ * Verify new features: Animation System, Speech Synthesis, Personality Traits
  */
 async function verify3DAvatarIntegration(page: Page): Promise<void> {
-  console.log('\n🔍 Verifying 3D avatar integration...');
+  console.log('\n🔍 Verifying new features (Animation, Speech, Personality)...');
   
   // Reload the page to see changes
   await page.reload();
   await page.waitForLoadState('networkidle');
   
-  // Look for Canvas element (Three.js renders to canvas)
+  const results = {
+    canvas: false,
+    animations: false,
+    speechSynthesis: false,
+    personalityTraits: false
+  };
+  
+  // Check 1: Canvas element (Three.js 3D rendering)
   const canvas = page.locator('canvas');
-  const canvasExists = await canvas.count() > 0;
+  results.canvas = await canvas.count() > 0;
+  console.log(`${results.canvas ? '✅' : '❌'} Canvas element (3D rendering)`);
   
-  if (canvasExists) {
-    console.log('✅ Canvas element found (Three.js 3D rendering)');
-  } else {
-    console.log('⚠️  Canvas element not found - checking for toggle button');
+  // Check 2: Animation system (look for animation-related attributes/classes)
+  const animationIndicators = await page.locator('[class*="animat"], [data-animation], [class*="bounce"], [class*="sway"]').count();
+  results.animations = animationIndicators > 0;
+  console.log(`${results.animations ? '✅' : '❌'} Animation system indicators found (${animationIndicators} elements)`);
+  
+  // Check 3: Speech synthesis (check console for TTS-related logs)
+  const consoleLogs = page.context().on('console', msg => {
+    if (msg.text().includes('speech') || msg.text().includes('TTS') || msg.text().includes('synthesis')) {
+      results.speechSynthesis = true;
+    }
+  });
+  
+  // Trigger speech by sending a test message
+  console.log('🗣️  Testing speech synthesis...');
+  const textarea = page.locator('[data-testid="input-vibe-prompt"]');
+  if (await textarea.count() > 0) {
+    await textarea.fill('Hello, can you speak?');
+    const sendButton = page.locator('[data-testid="button-vibe-submit"]');
+    if (await sendButton.count() > 0) {
+      await sendButton.click();
+      await page.waitForTimeout(5000); // Give time for speech to start
+    }
   }
+  console.log(`${results.speechSynthesis ? '✅' : '⚠️'} Speech synthesis (check audio output)`);
   
-  // Look for toggle button
-  const toggleButton = page.locator('button').filter({ hasText: /2d|3d|toggle|avatar/i });
-  const toggleExists = await toggleButton.count() > 0;
+  // Check 4: Personality traits (look for emotion/personality indicators)
+  const personalityElements = await page.locator('[class*="emotion"], [class*="personality"], [data-emotion], [class*="friendly"], [class*="playful"]').count();
+  results.personalityTraits = personalityElements > 0;
+  console.log(`${results.personalityTraits ? '✅' : '❌'} Personality trait indicators (${personalityElements} elements)`);
   
-  if (toggleExists) {
-    console.log('✅ Toggle button found');
+  // Check for 3D avatar visibility
+  if (results.canvas) {
+    console.log('✅ 3D avatar is rendering');
     
-    // Try to click it
-    await toggleButton.first().click();
-    await page.waitForTimeout(2000);
-    
-    // Check for canvas again
-    const canvasAfterToggle = await page.locator('canvas').count() > 0;
-    if (canvasAfterToggle) {
-      console.log('✅ Canvas appeared after toggle - 3D avatar is working!');
+    // Try to find toggle button to test states
+    const toggleButton = page.locator('button').filter({ hasText: /2d|3d|toggle|avatar/i });
+    if (await toggleButton.count() > 0) {
+      console.log('🔄 Testing avatar state changes...');
+      await toggleButton.first().click();
+      await page.waitForTimeout(2000);
+      
+      // Take screenshot of different state
+      await page.screenshot({ 
+        path: 'tests/screenshots/mr-blue-avatar-toggled.png', 
+        fullPage: true 
+      });
     }
   }
   
@@ -390,6 +468,10 @@ async function verify3DAvatarIntegration(page: Page): Promise<void> {
   await page.screenshot({ path: finalScreenshot, fullPage: true });
   testReport.screenshots.push(finalScreenshot);
   
+  // Summary
+  const passedChecks = Object.values(results).filter(v => v).length;
+  const totalChecks = Object.keys(results).length;
+  console.log(`\n📊 Feature Verification: ${passedChecks}/${totalChecks} checks passed`);
   console.log('✅ Verification complete');
 }
 
@@ -421,9 +503,13 @@ function generateTestReport(): void {
 // ============================================================================
 
 test.describe('Mr. Blue Builds Himself - Meta Autonomous Test', () => {
-  test('should autonomously integrate 3D avatar system', async ({ page }) => {
-    console.log('\n🚀 Starting: Mr. Blue Builds Himself Meta Test');
-    console.log('🎥 Video recording enabled for marketing');
+  test('should autonomously BUILD 3 new features (Animation, Speech, Personality)', async ({ page }) => {
+    console.log('\n🚀 Starting: Mr. Blue Autonomous Feature Building Test');
+    console.log('🎯 Goal: Mr. Blue will BUILD 3 new features from conversational prompts');
+    console.log('   - Feature 1: Animation System');
+    console.log('   - Feature 2: Speech Synthesis Integration');
+    console.log('   - Feature 3: Personality Traits System');
+    console.log('🎥 Video recording enabled for marketing demo');
     
     try {
       // Phase 1: Login and Navigate (10%)
