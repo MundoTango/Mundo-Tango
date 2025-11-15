@@ -6,6 +6,54 @@
 import html2canvas from 'html2canvas';
 import localforage from 'localforage';
 
+export class ScreenshotCapture {
+  async captureElement(element: HTMLElement): Promise<string> {
+    try {
+      const canvas = await html2canvas(element, {
+        backgroundColor: null,
+        scale: 2,
+        logging: false,
+        useCORS: true,
+      });
+      
+      return canvas.toDataURL('image/png');
+    } catch (error) {
+      console.error('[Screenshot] Capture failed:', error);
+      return '';
+    }
+  }
+  
+  async captureIframe(iframe: HTMLIFrameElement): Promise<string> {
+    try {
+      const iframeDoc = iframe.contentDocument;
+      if (!iframeDoc || !iframeDoc.body) {
+        return '';
+      }
+      
+      const canvas = await html2canvas(iframeDoc.body, {
+        backgroundColor: '#ffffff',
+        scale: 1.5,
+        logging: false,
+        useCORS: true,
+        windowWidth: iframe.clientWidth,
+        windowHeight: iframe.clientHeight,
+      });
+      
+      return canvas.toDataURL('image/png');
+    } catch (error) {
+      console.error('[Screenshot] Iframe capture failed:', error);
+      return '';
+    }
+  }
+  
+  async downloadScreenshot(dataUrl: string, filename: string) {
+    const link = document.createElement('a');
+    link.href = dataUrl;
+    link.download = filename;
+    link.click();
+  }
+}
+
 const screenshotStore = localforage.createInstance({
   name: 'visual-editor-screenshots',
   driver: localforage.INDEXEDDB,

@@ -4,6 +4,8 @@
  * Solves cross-origin security issues
  */
 
+import { ScreenshotCapture } from './screenshotCapture';
+
 export interface StyleChangeRequest {
   type: 'style' | 'class';
   property: string;
@@ -11,11 +13,19 @@ export interface StyleChangeRequest {
 }
 
 export interface StyleChange {
+  id: string;
   selector: string;
   property: string;
   previousValue: string;
   newValue: string;
   timestamp: number;
+  screenshot?: string;
+  description?: string;
+}
+
+export interface IframeCallbacks {
+  onElementSelected?: (element: HTMLElement) => void;
+  onChangeApplied?: (change: StyleChange) => void;
 }
 
 export class IframeInjector {
@@ -23,6 +33,40 @@ export class IframeInjector {
   private selectedElement: HTMLElement | null = null;
   private changeHistory: StyleChange[] = [];
   private changeIndex: number = -1;
+  private onElementSelected?: (element: HTMLElement) => void;
+  private onChangeApplied?: (change: StyleChange) => void;
+  private messageListener?: (event: MessageEvent) => void;
+  private screenshotCapture = new ScreenshotCapture();
+  
+  initialize(iframe: HTMLIFrameElement, callbacks: IframeCallbacks) {
+    this.iframe = iframe;
+    this.onElementSelected = callbacks.onElementSelected;
+    this.onChangeApplied = callbacks.onChangeApplied;
+    
+    // Set up message listener for iframe events
+    this.messageListener = (event: MessageEvent) => {
+      if (event.data.type === 'IFRAME_ELEMENT_SELECTED') {
+        const component = event.data.component;
+        
+        // Get the actual element from iframe
+        const iframeDoc = iframe.contentDocument;
+        if (iframeDoc) {
+          const element = iframeDoc.getElementById(component.id) || 
+                         iframeDoc.querySelector(`[data-testid="${component.testId}"]`);
+          
+          if (element) {
+            this.selectedElement = element as HTMLElement;
+            this.onElementSelected?.(element as HTMLElement);
+          }
+        }
+      } else if (event.data.type === 'IFRAME_CHANGE_APPLIED' && this.onChangeApplied) {
+        this.onChangeApplied(event.data.change);
+      }
+    };
+    
+    window.addEventListener('message', this.messageListener);
+    console.log('[IframeInjector] Initialized with callbacks');
+  }
   
   setIframe(iframe: HTMLIFrameElement) {
     this.iframe = iframe;
@@ -30,6 +74,52 @@ export class IframeInjector {
   
   setSelectedElement(element: HTMLElement | null) {
     this.selectedElement = element;
+  }
+  
+  selectElement(element: HTMLElement) {
+    // Remove previous selection outline
+    if (this.selectedElement) {
+      this.selectedElement.style.outline = '';
+    }
+    
+    this.selectedElement = element;
+    
+    // Notify callback
+    this.onElementSelected?.(element);
+    
+    // Notify parent window
+    this.notifyParent('ELEMENT_SELECTED', {
+      tagName: element.tagName,
+      id: element.id,
+      className: element.className,
+      textContent: element.textContent?.slice(0, 50),
+    });
+  }
+  
+  getSelectedElement(): HTMLElement | null {
+    return this.selectedElement;
+  }
+  
+  destroy() {
+    if (this.messageListener) {
+      window.removeEventListener('message', this.messageListener);
+    }
+    
+    const iframeDoc = this.iframe?.contentDocument;
+    if (iframeDoc) {
+      // Clean up any inline styles we added
+      if (this.selectedElement) {
+        this.selectedElement.style.outline = '';
+      }
+    }
+    
+    this.iframe = null;
+    this.selectedElement = null;
+    this.onElementSelected = undefined;
+    this.onChangeApplied = undefined;
+    this.messageListener = undefined;
+    
+    console.log('[IframeInjector] Destroyed and cleaned up');
   }
   
   async applyChange(change: StyleChangeRequest): Promise<void> {
@@ -66,13 +156,22 @@ export class IframeInjector {
       }
     }
     
+    // Capture screenshot after change
+    let screenshot = '';
+    if (this.iframe) {
+      screenshot = await this.screenshotCapture.captureIframe(this.iframe);
+    }
+    
     // Add to history
     const styleChange: StyleChange = {
+      id: `change-${Date.now()}`,
       selector,
       property: change.property,
       previousValue,
       newValue: change.value,
       timestamp: Date.now(),
+      screenshot,
+      description: `Changed ${change.property} from ${previousValue} to ${change.value}`,
     };
     
     // Remove any changes after current index (for redo)
@@ -82,9 +181,6 @@ export class IframeInjector {
     
     // Send update to parent
     this.notifyParent('CHANGE_APPLIED', styleChange);
-    
-    // Take screenshot
-    await this.captureScreenshot();
   }
   
   async undo(): Promise<void> {

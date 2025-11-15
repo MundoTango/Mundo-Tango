@@ -4,15 +4,23 @@
  * RIGHT (40%): Mr. Blue AI chat for conversational editing
  */
 
-import { useState, useEffect, useCallback } from "react";
-import { X, Maximize2, Code, Play } from "lucide-react";
+import { useState, useEffect, useCallback, Suspense, lazy, useRef } from "react";
+import { X, Maximize2, Code, Play, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { ComponentSelector, type SelectedComponent } from "./ComponentSelector";
 import { DragDropHandler } from "./DragDropHandler";
 import { EditControls } from "./EditControls";
+import { SelectionOverlay } from "./SelectionOverlay";
+import { ElementInspector } from "./ElementInspector";
 import { MrBlueVisualChat } from "./MrBlueVisualChat";
 import { visualEditorTracker } from "@/lib/visualEditorTracker";
+import { VisualEditorErrorBoundary } from "./ErrorBoundary";
+import { IframeLoading, ChatPaneLoading, CodePreviewLoading } from "./LoadingStates";
+import { IframeInjector, type IframeCallbacks } from "@/lib/iframeInjector";
+
+const CodePreview = lazy(() => import('./CodePreview').then(module => ({ default: module.CodePreview })));
 
 interface VisualEditorSplitPaneProps {
   isOpen: boolean;
@@ -21,18 +29,96 @@ interface VisualEditorSplitPaneProps {
 
 export function VisualEditorSplitPane({ isOpen, onClose }: VisualEditorSplitPaneProps) {
   const [selectedComponent, setSelectedComponent] = useState<SelectedComponent | null>(null);
+  const [selectedIframeElement, setSelectedIframeElement] = useState<HTMLElement | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [splitRatio, setSplitRatio] = useState(60); // 60% left, 40% right
+  const [previewError, setPreviewError] = useState<string | null>(null);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+  const [showInspector, setShowInspector] = useState(false);
   const { toast } = useToast();
+  const iframeInjectorRef = useRef<IframeInjector | null>(null);
 
   const currentPage = window.location.pathname;
+  
+  // Initialize IframeInjector with callbacks
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    const iframeCallbacks: IframeCallbacks = {
+      onElementSelected: (element) => {
+        setSelectedIframeElement(element);
+        setShowInspector(true);
+        toast({
+          title: "Element Selected",
+          description: `${element.tagName} - ${element.id || 'No ID'}`,
+          duration: 2000
+        });
+      },
+      onChangeApplied: (change) => {
+        visualEditorTracker.track({
+          elementId: change.selector,
+          elementTestId: '',
+          changeType: 'style',
+          changes: { [change.property]: { before: change.previousValue, after: change.newValue } },
+          description: `Applied ${change.property} change`
+        });
+      },
+    };
+    
+    // Create and initialize injector
+    if (!iframeInjectorRef.current) {
+      iframeInjectorRef.current = new IframeInjector();
+    }
+    
+    return () => {
+      if (iframeInjectorRef.current) {
+        iframeInjectorRef.current.destroy();
+        iframeInjectorRef.current = null;
+      }
+    };
+  }, [isOpen, toast]);
 
   useEffect(() => {
     if (!isOpen) {
       setSelectedComponent(null);
+      setSelectedIframeElement(null);
+      setShowInspector(false);
       visualEditorTracker.clear();
     }
   }, [isOpen]);
+  
+  // Handlers for SelectionOverlay toolbar actions
+  const handleInspect = useCallback((element: HTMLElement) => {
+    setShowInspector(true);
+    toast({
+      title: "Inspecting Element",
+      description: `${element.tagName} - ${element.id || 'No ID'}`,
+      duration: 2000
+    });
+  }, [toast]);
+  
+  const handleEdit = useCallback((element: HTMLElement) => {
+    // Convert to SelectedComponent format for EditControls
+    const component: SelectedComponent = {
+      id: element.id || `element-${Date.now()}`,
+      tagName: element.tagName.toLowerCase(),
+      element: element
+    };
+    setSelectedComponent(component);
+  }, []);
+  
+  const handleDelete = useCallback((element: HTMLElement) => {
+    if (confirm('Are you sure you want to delete this element?')) {
+      element.remove();
+      setSelectedIframeElement(null);
+      setShowInspector(false);
+      toast({
+        title: "Element Deleted",
+        description: "The element has been removed from the page.",
+        duration: 2000
+      });
+    }
+  }, [toast]);
 
   const handleComponentSelect = useCallback((component: SelectedComponent | null) => {
     setSelectedComponent(component);
@@ -121,148 +207,213 @@ export function VisualEditorSplitPane({ isOpen, onClose }: VisualEditorSplitPane
   if (!isOpen) return null;
 
   return (
-    <div 
-      className="fixed inset-0 z-[100] bg-background"
-      data-visual-editor="split-pane"
-    >
-      {/* Top Bar */}
-      <div className="h-14 border-b border-ocean-divider bg-card flex items-center justify-between px-4">
-        <div className="flex items-center gap-4">
-          <h2 className="font-semibold">Visual Editor</h2>
-          <span className="text-sm text-muted-foreground">{currentPage}</span>
-          {isGenerating && (
-            <div className="flex items-center gap-2 text-primary">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-              <span className="text-xs">Generating code...</span>
-            </div>
-          )}
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => handleGenerateCode("Generate code for all visual changes")}
-            disabled={isGenerating || visualEditorTracker.getAllEdits().length === 0}
-            data-testid="button-generate-all-code"
-          >
-            <Code className="h-4 w-4 mr-2" />
-            Generate Code
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            data-testid="button-preview"
-          >
-            <Play className="h-4 w-4 mr-2" />
-            Preview
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            data-testid="button-fullscreen"
-          >
-            <Maximize2 className="h-4 w-4" />
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={onClose}
-            data-testid="button-close-visual-editor"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      {/* Split Pane Container */}
-      <div className="flex h-[calc(100vh-3.5rem)]">
-        {/* LEFT SIDE: Live Preview (60%) */}
-        <div 
-          className="relative bg-muted/30"
-          style={{ width: `${splitRatio}%` }}
-          data-testid="preview-pane"
-        >
-          {/* Iframe Container for actual site */}
-          <div className="absolute inset-0">
-            {/* Component Selector */}
-            <ComponentSelector
-              enabled={isOpen}
-              onSelect={handleComponentSelect}
-            />
-
-            {/* Drag & Drop Handler */}
-            <DragDropHandler
-              enabled={isOpen}
-              selectedElement={selectedComponent?.element || null}
-              onDragEnd={handleDragEnd}
-            />
-
-            {/* Edit Controls (overlay on preview) */}
-            {selectedComponent && (
-              <EditControls
-                component={selectedComponent}
-                onClose={() => setSelectedComponent(null)}
-                onChange={handleComponentChange}
-              />
+    <VisualEditorErrorBoundary>
+      <div 
+        className="fixed inset-0 z-[100] bg-background"
+        data-visual-editor="split-pane"
+      >
+        {/* Top Bar */}
+        <div className="h-14 border-b border-ocean-divider bg-card flex items-center justify-between px-4">
+          <div className="flex items-center gap-4">
+            <h2 className="font-semibold">Visual Editor</h2>
+            <span className="text-sm text-muted-foreground">{currentPage}</span>
+            {isGenerating && (
+              <div className="flex items-center gap-2 text-primary">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                <span className="text-xs">Generating code...</span>
+              </div>
             )}
-
-            {/* Helper Text */}
-            <div className="absolute top-4 left-4 glass-card rounded-lg p-3 max-w-xs">
-              <p className="text-xs text-muted-foreground">
-                <strong>Click</strong> any element to select it, or
-                <strong> drag</strong> to reposition. Or just ask Mr. Blue!
-              </p>
-            </div>
           </div>
-
-          {/* Resize Handle */}
-          <div
-            className="absolute top-0 right-0 w-1 h-full bg-ocean-divider hover:bg-primary cursor-col-resize z-10"
-            onMouseDown={(e) => {
-              const startX = e.clientX;
-              const startRatio = splitRatio;
-              
-              const handleMouseMove = (e: MouseEvent) => {
-                const delta = ((e.clientX - startX) / window.innerWidth) * 100;
-                const newRatio = Math.min(Math.max(startRatio + delta, 40), 80);
-                setSplitRatio(newRatio);
-              };
-
-              const handleMouseUp = () => {
-                document.removeEventListener('mousemove', handleMouseMove);
-                document.removeEventListener('mouseup', handleMouseUp);
-              };
-
-              document.addEventListener('mousemove', handleMouseMove);
-              document.addEventListener('mouseup', handleMouseUp);
-            }}
-          />
+          
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => handleGenerateCode("Generate code for all visual changes")}
+              disabled={isGenerating || visualEditorTracker.getAllEdits().length === 0}
+              data-testid="button-generate-all-code"
+            >
+              <Code className="h-4 w-4 mr-2" />
+              Generate Code
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              data-testid="button-preview"
+            >
+              <Play className="h-4 w-4 mr-2" />
+              Preview
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              data-testid="button-fullscreen"
+            >
+              <Maximize2 className="h-4 w-4" />
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={onClose}
+              data-testid="button-close-visual-editor"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
-        {/* RIGHT SIDE: Mr. Blue Chat (40%) */}
-        <div 
-          style={{ width: `${100 - splitRatio}%` }}
-          data-testid="chat-pane"
-        >
-          <MrBlueVisualChat
-            currentPage={currentPage}
-            selectedElement={selectedComponent?.element.getAttribute('data-testid') || null}
-            onGenerateCode={handleGenerateCode}
-            contextInfo={{
-              page: currentPage,
-              selectedElement: selectedComponent ? {
-                tagName: selectedComponent.tagName,
-                testId: selectedComponent.element.getAttribute('data-testid'),
-                className: selectedComponent.element.className,
-                text: selectedComponent.element.textContent?.slice(0, 100) || ''
-              } : null,
-              editsCount: visualEditorTracker.getAllEdits().length,
-              recentEdits: visualEditorTracker.getAllEdits().slice(0, 5)
-            }}
-          />
+        {/* Split Pane Container */}
+        <div className="flex h-[calc(100vh-3.5rem)]">
+          {/* LEFT SIDE: Live Preview (60%) */}
+          <VisualEditorErrorBoundary>
+            <div 
+              className="relative bg-muted/30"
+              style={{ width: `${splitRatio}%` }}
+              data-testid="preview-pane"
+            >
+              {/* Error State */}
+              {previewError && (
+                <div className="absolute inset-0 flex items-center justify-center bg-background z-20">
+                  <Card className="p-6 max-w-md">
+                    <CardTitle className="flex items-center gap-2 text-destructive mb-4">
+                      <AlertTriangle className="w-5 h-5" />
+                      Preview Error
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground mb-4">{previewError}</p>
+                    <Button 
+                      onClick={() => {
+                        setPreviewError(null);
+                        setIsPreviewLoading(true);
+                      }}
+                      data-testid="button-retry-preview"
+                    >
+                      Retry
+                    </Button>
+                  </Card>
+                </div>
+              )}
+
+              {/* Loading State */}
+              {isPreviewLoading && !previewError && <IframeLoading />}
+
+              {/* Iframe Container for actual site */}
+              {!previewError && (
+                <div className="absolute inset-0">
+                  {/* Component Selector */}
+                  <ComponentSelector
+                    enabled={isOpen}
+                    onSelect={handleComponentSelect}
+                  />
+
+                  {/* Drag & Drop Handler */}
+                  <DragDropHandler
+                    enabled={isOpen}
+                    selectedElement={selectedComponent?.element || null}
+                    onDragEnd={handleDragEnd}
+                  />
+
+                  {/* Edit Controls (overlay on preview) */}
+                  {selectedComponent && (
+                    <EditControls
+                      component={selectedComponent}
+                      onClose={() => setSelectedComponent(null)}
+                      onChange={handleComponentChange}
+                    />
+                  )}
+                  
+                  {/* Selection Overlay with toolbar */}
+                  <SelectionOverlay
+                    selectedElement={selectedIframeElement}
+                    onInspect={handleInspect}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                  />
+
+                  {/* Helper Text */}
+                  <div className="absolute top-4 left-4 glass-card rounded-lg p-3 max-w-xs">
+                    <p className="text-xs text-muted-foreground">
+                      <strong>Click</strong> any element to select it, or
+                      <strong> drag</strong> to reposition. Or just ask Mr. Blue!
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Resize Handle */}
+              <div
+                className="absolute top-0 right-0 w-1 h-full bg-ocean-divider hover:bg-primary cursor-col-resize z-10"
+                onMouseDown={(e) => {
+                  const startX = e.clientX;
+                  const startRatio = splitRatio;
+                  
+                  const handleMouseMove = (e: MouseEvent) => {
+                    const delta = ((e.clientX - startX) / window.innerWidth) * 100;
+                    const newRatio = Math.min(Math.max(startRatio + delta, 40), 80);
+                    setSplitRatio(newRatio);
+                  };
+
+                  const handleMouseUp = () => {
+                    document.removeEventListener('mousemove', handleMouseMove);
+                    document.removeEventListener('mouseup', handleMouseUp);
+                  };
+
+                  document.addEventListener('mousemove', handleMouseMove);
+                  document.addEventListener('mouseup', handleMouseUp);
+                }}
+              />
+            </div>
+          </VisualEditorErrorBoundary>
+
+          {/* RIGHT SIDE: Inspector + Chat (40%) */}
+          <VisualEditorErrorBoundary>
+            <div 
+              className="flex flex-col"
+              style={{ width: `${100 - splitRatio}%` }}
+              data-testid="chat-pane"
+            >
+              {/* Element Inspector Panel (collapsible) */}
+              {showInspector && (
+                <div className="border-b border-ocean-divider p-4 max-h-96 overflow-auto">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold text-sm">Inspector</h3>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setShowInspector(false)}
+                      data-testid="button-close-inspector"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <ElementInspector element={selectedIframeElement} />
+                </div>
+              )}
+              
+              {/* Mr. Blue Chat */}
+              <div className="flex-1 overflow-hidden">
+                <Suspense fallback={<ChatPaneLoading />}>
+                  <MrBlueVisualChat
+                    currentPage={currentPage}
+                    selectedElement={selectedComponent?.element.getAttribute('data-testid') || null}
+                    onGenerateCode={handleGenerateCode}
+                    contextInfo={{
+                      page: currentPage,
+                      selectedElement: selectedComponent ? {
+                        tagName: selectedComponent.tagName,
+                        testId: selectedComponent.element.getAttribute('data-testid'),
+                        className: selectedComponent.element.className,
+                        text: selectedComponent.element.textContent?.slice(0, 100) || ''
+                      } : null,
+                      editsCount: visualEditorTracker.getAllEdits().length,
+                      recentEdits: visualEditorTracker.getAllEdits().slice(0, 5)
+                    }}
+                  />
+                </Suspense>
+              </div>
+            </div>
+          </VisualEditorErrorBoundary>
         </div>
       </div>
-    </div>
+    </VisualEditorErrorBoundary>
   );
 }

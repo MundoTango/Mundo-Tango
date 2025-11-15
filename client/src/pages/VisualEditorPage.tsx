@@ -78,10 +78,13 @@ function VisualEditorPageContent() {
   const [currentIframeUrl, setCurrentIframeUrl] = useState<string>('/');
   const [iframeLoading, setIframeLoading] = useState(true);
   const [iframeError, setIframeError] = useState(false);
+  const [isReplaying, setIsReplaying] = useState(false);
+  const [currentChangeIndex, setCurrentChangeIndex] = useState(-1);
   
   // Refs
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const voiceCommandProcessorRef = useRef<VoiceCommandProcessor | null>(null);
+  const replayIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -623,6 +626,77 @@ function VisualEditorPageContent() {
     });
   };
 
+  // Replay System Functions
+  const startReplay = () => {
+    if (changeHistory.length === 0) return;
+    
+    setIsReplaying(true);
+    let index = 0;
+    
+    replayIntervalRef.current = setInterval(() => {
+      if (index >= changeHistory.length) {
+        stopReplay();
+        return;
+      }
+      
+      jumpToChange(index);
+      index++;
+    }, 2000); // 2 seconds per change
+  };
+
+  const stopReplay = () => {
+    setIsReplaying(false);
+    if (replayIntervalRef.current) {
+      clearInterval(replayIntervalRef.current);
+      replayIntervalRef.current = null;
+    }
+  };
+
+  const stepForward = () => {
+    if (currentChangeIndex < changeHistory.length - 1) {
+      jumpToChange(currentChangeIndex + 1);
+    }
+  };
+
+  const stepBack = () => {
+    if (currentChangeIndex > 0) {
+      jumpToChange(currentChangeIndex - 1);
+    }
+  };
+
+  const jumpToChange = (index: number) => {
+    if (index < 0 || index >= changeHistory.length) return;
+    
+    // Update visual indicator
+    setCurrentChangeIndex(index);
+    
+    toast({
+      title: "Jumped to Change",
+      description: `Showing change ${index + 1} of ${changeHistory.length}`,
+    });
+  };
+
+  const handleDownloadScreenshot = async (screenshot: string, filename: string) => {
+    const link = document.createElement('a');
+    link.href = screenshot;
+    link.download = filename;
+    link.click();
+    
+    toast({
+      title: "Screenshot Downloaded",
+      description: filename,
+    });
+  };
+
+  // Cleanup replay interval on unmount
+  useEffect(() => {
+    return () => {
+      if (replayIntervalRef.current) {
+        clearInterval(replayIntervalRef.current);
+      }
+    };
+  }, []);
+
   // Undo last change
   const handleUndo = () => {
     if (iframeRef.current) {
@@ -1091,11 +1165,18 @@ function VisualEditorPageContent() {
               </>
             ) : viewMode === 'history' ? (
               <div className="h-full p-4">
-                <h3 className="text-base font-semibold mb-4">Change History</h3>
                 <ChangeTimeline
                   changes={changeHistory}
+                  currentIndex={currentChangeIndex}
+                  isReplaying={isReplaying}
                   onRestore={handleRestore}
                   onDelete={handleDeleteChange}
+                  onReplay={startReplay}
+                  onPause={stopReplay}
+                  onStepForward={stepForward}
+                  onStepBack={stepBack}
+                  onJumpTo={jumpToChange}
+                  onDownload={handleDownloadScreenshot}
                 />
               </div>
             ) : (

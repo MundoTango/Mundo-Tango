@@ -1,6 +1,6 @@
 /**
  * Change Timeline Component
- * Chronological history of all visual editor changes with restore functionality
+ * Chronological history of all visual editor changes with restore and replay functionality
  */
 
 import { useState, useEffect } from 'react';
@@ -35,15 +35,40 @@ import {
   Trash2,
   ChevronRight,
   Image as ImageIcon,
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  Download,
 } from 'lucide-react';
 
 interface ChangeTimelineProps {
   changes: ChangeMetadata[];
+  currentIndex?: number;
+  isReplaying?: boolean;
   onRestore?: (changeId: string) => void;
   onDelete?: (changeId: string) => void;
+  onReplay?: () => void;
+  onPause?: () => void;
+  onStepForward?: () => void;
+  onStepBack?: () => void;
+  onJumpTo?: (index: number) => void;
+  onDownload?: (screenshot: string, filename: string) => void;
 }
 
-export function ChangeTimeline({ changes, onRestore, onDelete }: ChangeTimelineProps) {
+export function ChangeTimeline({ 
+  changes, 
+  currentIndex = -1,
+  isReplaying = false,
+  onRestore, 
+  onDelete,
+  onReplay,
+  onPause,
+  onStepForward,
+  onStepBack,
+  onJumpTo,
+  onDownload,
+}: ChangeTimelineProps) {
   const [expandedChange, setExpandedChange] = useState<string | null>(null);
   const [restoreDialogOpen, setRestoreDialogOpen] = useState(false);
   const [selectedChangeId, setSelectedChangeId] = useState<string | null>(null);
@@ -106,53 +131,105 @@ export function ChangeTimeline({ changes, onRestore, onDelete }: ChangeTimelineP
             <CardTitle className="flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <Clock className="h-5 w-5" />
-                Change History
+                Change Timeline
               </span>
-              <Badge variant="secondary">
-                {changes.length} change{changes.length !== 1 ? 's' : ''}
-              </Badge>
+              <div className="flex items-center gap-2">
+                {/* Replay Controls */}
+                {(onReplay || onPause || onStepForward || onStepBack) && (
+                  <>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={onStepBack}
+                      disabled={!onStepBack || currentIndex <= 0}
+                      data-testid="button-step-back"
+                    >
+                      <SkipBack className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={isReplaying ? onPause : onReplay}
+                      disabled={changes.length === 0 || (!onReplay && !onPause)}
+                      data-testid="button-replay"
+                    >
+                      {isReplaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={onStepForward}
+                      disabled={!onStepForward || currentIndex >= changes.length - 1}
+                      data-testid="button-step-forward"
+                    >
+                      <SkipForward className="w-4 h-4" />
+                    </Button>
+                    <Separator orientation="vertical" className="h-6 mx-1" />
+                  </>
+                )}
+                <Badge variant="secondary">
+                  {changes.length} change{changes.length !== 1 ? 's' : ''}
+                </Badge>
+              </div>
             </CardTitle>
           </CardHeader>
         </Card>
 
         <ScrollArea className="h-[calc(100vh-16rem)]">
           <div className="space-y-4 pr-4">
-            {sortedChanges.map((change, index) => (
-              <div key={change.id} className="relative">
-                {/* Timeline connector line */}
-                {index < sortedChanges.length - 1 && (
-                  <div className="absolute left-6 top-20 bottom-0 w-px bg-border" />
-                )}
+            {sortedChanges.map((change, index) => {
+              const reverseIndex = sortedChanges.length - 1 - index;
+              const isCurrentChange = reverseIndex === currentIndex;
+              const isPastChange = reverseIndex <= currentIndex;
+              
+              return (
+                <div 
+                  key={change.id} 
+                  className="relative"
+                  onClick={() => onJumpTo && onJumpTo(reverseIndex)}
+                >
+                  {/* Timeline connector line */}
+                  {index < sortedChanges.length - 1 && (
+                    <div className="absolute left-6 top-20 bottom-0 w-px bg-border" />
+                  )}
 
-                <Card className="relative overflow-hidden hover-elevate">
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />
-                  
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 space-y-1">
-                        <div className="flex items-center gap-2">
-                          <div className="h-3 w-3 rounded-full bg-primary" />
-                          <span className="text-xs text-muted-foreground">
-                            {format(new Date(change.timestamp), 'PPp')}
-                          </span>
+                  <Card className={`relative overflow-hidden hover-elevate cursor-pointer transition-all ${
+                    isPastChange ? 'opacity-100' : 'opacity-50'
+                  }`}>
+                    <div className={`absolute left-0 top-0 bottom-0 w-1 ${
+                      isCurrentChange ? 'bg-primary' : 'bg-primary/30'
+                    }`} />
+                    
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full -translate-x-1/2 ${
+                              isCurrentChange
+                                ? 'bg-primary scale-150'
+                                : 'bg-primary/50'
+                            }`} />
+                            <span className="text-xs text-muted-foreground">
+                              {format(new Date(change.timestamp), 'PPp')}
+                            </span>
+                          </div>
+                          <p className="text-sm font-medium line-clamp-2">
+                            {change.prompt}
+                          </p>
                         </div>
-                        <p className="text-sm font-medium line-clamp-2">
-                          {change.prompt}
-                        </p>
+
+                        {/* Thumbnail */}
+                        {thumbnails[change.id] && (
+                          <div className="shrink-0 w-24 h-16 border rounded overflow-hidden bg-muted">
+                            <img
+                              src={thumbnails[change.id]}
+                              alt="Change preview"
+                              className="w-full h-full object-cover"
+                              data-testid={`timeline-thumbnail-${change.id}`}
+                            />
+                          </div>
+                        )}
                       </div>
-
-                      {/* Thumbnail */}
-                      {thumbnails[change.id] && (
-                        <div className="shrink-0 w-24 h-16 border rounded overflow-hidden bg-muted">
-                          <img
-                            src={thumbnails[change.id]}
-                            alt="Change preview"
-                            className="w-full h-full object-cover"
-                            data-testid={`timeline-thumbnail-${change.id}`}
-                          />
-                        </div>
-                      )}
-                    </div>
 
                     {/* Quick stats */}
                     <div className="flex gap-2 pt-2">
@@ -192,11 +269,27 @@ export function ChangeTimeline({ changes, onRestore, onDelete }: ChangeTimelineP
                       </Accordion>
 
                       <div className="flex gap-2">
+                        {thumbnails[change.id] && onDownload && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDownload(thumbnails[change.id], `change-${index}.png`);
+                            }}
+                            data-testid={`button-download-screenshot-${index}`}
+                          >
+                            <Download className="h-4 w-4" />
+                          </Button>
+                        )}
                         {onRestore && (
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleRestoreClick(change.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRestoreClick(change.id);
+                            }}
                             data-testid={`button-restore-${change.id}`}
                           >
                             <RotateCcw className="h-4 w-4" />
@@ -206,7 +299,10 @@ export function ChangeTimeline({ changes, onRestore, onDelete }: ChangeTimelineP
                           <Button
                             size="sm"
                             variant="ghost"
-                            onClick={() => onDelete(change.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDelete(change.id);
+                            }}
                             data-testid={`button-delete-${change.id}`}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -217,7 +313,8 @@ export function ChangeTimeline({ changes, onRestore, onDelete }: ChangeTimelineP
                   </CardContent>
                 </Card>
               </div>
-            ))}
+              );
+            })}
           </div>
         </ScrollArea>
       </div>
