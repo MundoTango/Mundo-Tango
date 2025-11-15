@@ -150,10 +150,10 @@ test.describe('OWASP Top 10 Security Tests', () => {
     });
     
     test('should invalidate sessions on logout', async ({ page, context }) => {
-      // Login
+      // Login using environment secrets
       await page.goto('/login');
-      await page.fill('[data-testid="input-email"]', 'admin@mundotango.life');
-      await page.fill('[data-testid="input-password"]', 'admin123');
+      await page.fill('[data-testid="input-email"]', process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life');
+      await page.fill('[data-testid="input-password"]', process.env.TEST_ADMIN_PASSWORD || 'admin123');
       await page.click('[data-testid="button-login"]');
       
       await expect(page).toHaveURL(/\/feed/);
@@ -175,8 +175,8 @@ test.describe('OWASP Top 10 Security Tests', () => {
     
     test('should validate file uploads', async ({ page }) => {
       await page.goto('/login');
-      await page.fill('[data-testid="input-email"]', 'admin@mundotango.life');
-      await page.fill('[data-testid="input-password"]', 'admin123');
+      await page.fill('[data-testid="input-email"]', process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life');
+      await page.fill('[data-testid="input-password"]', process.env.TEST_ADMIN_PASSWORD || 'admin123');
       await page.click('[data-testid="button-login"]');
       
       // Try to upload executable file
@@ -191,7 +191,7 @@ test.describe('OWASP Top 10 Security Tests', () => {
     test('should log failed login attempts', async ({ request }) => {
       await request.post('/api/auth/login', {
         data: {
-          email: 'admin@mundotango.life',
+          email: process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life',
           password: 'wrongpassword'
         }
       });

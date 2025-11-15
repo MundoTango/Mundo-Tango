@@ -50,8 +50,8 @@ test.describe('Authentication - Complete Flow', () => {
     test('should prevent duplicate email registration', async ({ page }) => {
       await page.goto('/register');
       
-      // Use known existing email (admin)
-      await page.fill('[data-testid="input-email"]', 'admin@mundotango.life');
+      // Use known existing email (admin) from environment secrets
+      await page.fill('[data-testid="input-email"]', process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life');
       await page.fill('[data-testid="input-password"]', 'SecurePass123!');
       await page.fill('[data-testid="input-username"]', `user${Date.now()}`);
       await page.click('[data-testid="button-register"]');
@@ -65,8 +65,8 @@ test.describe('Authentication - Complete Flow', () => {
     test('should login with valid credentials', async ({ page }) => {
       await page.goto('/login');
       
-      await page.fill('[data-testid="input-email"]', 'admin@mundotango.life');
-      await page.fill('[data-testid="input-password"]', 'admin123');
+      await page.fill('[data-testid="input-email"]', process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life');
+      await page.fill('[data-testid="input-password"]', process.env.TEST_ADMIN_PASSWORD || 'admin123');
       await page.click('[data-testid="button-login"]');
       
       // Should redirect to feed
@@ -79,7 +79,7 @@ test.describe('Authentication - Complete Flow', () => {
     test('should show error for invalid credentials', async ({ page }) => {
       await page.goto('/login');
       
-      await page.fill('[data-testid="input-email"]', 'admin@mundotango.life');
+      await page.fill('[data-testid="input-email"]', process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life');
       await page.fill('[data-testid="input-password"]', 'wrongpassword');
       await page.click('[data-testid="button-login"]');
       
@@ -97,10 +97,10 @@ test.describe('Authentication - Complete Flow', () => {
     });
     
     test('should persist session across page reloads', async ({ page }) => {
-      // Login
+      // Login using environment secrets
       await page.goto('/login');
-      await page.fill('[data-testid="input-email"]', 'admin@mundotango.life');
-      await page.fill('[data-testid="input-password"]', 'admin123');
+      await page.fill('[data-testid="input-email"]', process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life');
+      await page.fill('[data-testid="input-password"]', process.env.TEST_ADMIN_PASSWORD || 'admin123');
       await page.click('[data-testid="button-login"]');
       
       await expect(page).toHaveURL(/\/feed/);
@@ -119,7 +119,7 @@ test.describe('Authentication - Complete Flow', () => {
     test('should send password reset email', async ({ page }) => {
       await page.goto('/reset-password');
       
-      await page.fill('[data-testid="input-email"]', 'admin@mundotango.life');
+      await page.fill('[data-testid="input-email"]', process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life');
       await page.click('[data-testid="button-reset-password"]');
       
       await expect(page.locator('text=/email.*sent/i')).toBeVisible();

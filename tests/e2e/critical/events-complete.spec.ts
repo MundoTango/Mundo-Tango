@@ -8,8 +8,8 @@ import { test, expect } from '@playwright/test';
 // Helper to login before tests
 async function loginAsAdmin(page: any) {
   await page.goto('/login');
-  await page.fill('[data-testid="input-email"]', 'admin@mundotango.life');
-  await page.fill('[data-testid="input-password"]', 'admin123');
+  await page.fill('[data-testid="input-email"]', process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life');
+  await page.fill('[data-testid="input-password"]', process.env.TEST_ADMIN_PASSWORD || 'admin123');
   await page.click('[data-testid="button-login"]');
   await page.waitForURL(/\/feed/);
 }
