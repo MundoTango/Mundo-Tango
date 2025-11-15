@@ -408,13 +408,13 @@ GUIDELINES:
       }
 
       // Generate fixes for each file
-      for (const [file, fileErrors] of errorsByFile.entries()) {
+      for (const [file, fileErrors] of Array.from(errorsByFile.entries())) {
         try {
           // Read file content
           const fileContent = await autonomousAgent.readFile(file);
 
           // Build context for AI
-          const errorContext = fileErrors.map(e =>
+          const errorContext = fileErrors.map((e: any) =>
             `Line ${e.line}, Column ${e.column}: ${e.message} [${e.code}]`
           ).join('\n');
 
@@ -531,11 +531,11 @@ GUIDELINES:
 
     try {
       // Apply fixes file by file
-      for (const [file, fileFixes] of fixesByFile.entries()) {
+      for (const [file, fileFixes] of Array.from(fixesByFile.entries())) {
         console.log(`[Validator] Applying ${fileFixes.length} fixes to ${file}`);
 
         // Sort by confidence (apply highest confidence first)
-        fileFixes.sort((a, b) => b.confidence - a.confidence);
+        fileFixes.sort((a: any, b: any) => b.confidence - a.confidence);
 
         for (const fix of fileFixes) {
           try {
@@ -647,7 +647,7 @@ GUIDELINES:
     }
 
     try {
-      for (const [file, content] of snapshot.entries()) {
+      for (const [file, content] of Array.from(snapshot.entries())) {
         await autonomousAgent.writeFile(file, content);
         console.log(`[Validator] ✓ Restored ${file}`);
       }
@@ -747,7 +747,7 @@ GUIDELINES:
 
     // Step 2: Collect all errors
     const allErrors: DiagnosticError[] = [];
-    for (const fileErrors of beforeReport.files.values()) {
+    for (const fileErrors of Array.from(beforeReport.files.values())) {
       allErrors.push(...fileErrors);
     }
 

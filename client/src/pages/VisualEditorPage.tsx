@@ -55,8 +55,17 @@ export default function VisualEditorPage() {
 
     const pollStatus = async () => {
       try {
+        // Use same auth pattern as apiRequest (Authorization header from localStorage)
+        const token = localStorage.getItem('accessToken');
+        const headers: Record<string, string> = {};
+        
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+        
         const response = await fetch(`/api/autonomous/status/${currentTask.taskId}`, {
-          credentials: 'include' // Include JWT cookie for authentication
+          headers,
+          credentials: 'include'
         });
         
         if (!response.ok) {

@@ -271,8 +271,8 @@ export class CodeGenerator {
       ],
       model: "llama-3.3-70b-versatile", // Updated from 3.1 (decommissioned Jan 2025)
       temperature: 0.3, // Low for consistent code
-      max_tokens: 4000,
-      timeout: 30000, // 30s timeout
+      max_tokens: 4000
+      // Note: timeout parameter removed (unsupported in llama-3.3)
     });
 
     const generatedCode = completion.choices[0]?.message?.content || '';
