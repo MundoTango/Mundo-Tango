@@ -725,87 +725,162 @@ export default function VisualEditorPage() {
           )}
 
           {/* Input Area */}
-          <div className="p-4 space-y-2">
-            <h2 className="text-sm font-semibold">Prompt Input</h2>
-            <div className="relative">
-              <Textarea
-                data-testid="input-vibe-prompt"
-                value={prompt || transcript}
-                onChange={(e) => setPrompt(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-                    e.preventDefault();
-                    handleSubmit();
-                  }
-                }}
-                placeholder={selectedElement 
-                  ? `Change this ${selectedElement.tagName}...` 
-                  : "Describe what you want..."
-                }
-                className="min-h-[80px] resize-none pr-12"
-                disabled={isExecuting}
-              />
-              
-              {/* Recording indicator (pulsing red dot) */}
-              {isListening && (
-                <div className="absolute top-3 right-3 flex items-center gap-2" data-testid="recording-indicator">
-                  <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-                  <span className="text-xs text-muted-foreground">Recording...</span>
-                </div>
-              )}
-            </div>
-
-            <div className="flex gap-2">
-              <Button
-                data-testid="button-vibe-submit"
-                onClick={handleSubmit}
-                disabled={!prompt.trim() || isExecuting}
-                className="flex-1"
-              >
-                {isExecuting ? (
-                  <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Working...</>
-                ) : (
-                  <><Zap className="h-4 w-4 mr-2" /> Generate</>
-                )}
-              </Button>
-
-              {/* Microphone Button */}
-              {voiceSupported && !voiceModeEnabled && (
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => {
-                    if (isListening) {
-                      stopListening();
-                    } else {
-                      startListening();
+          <Card className="m-4">
+            <CardHeader>
+              <CardTitle className="text-sm">Prompt Input</CardTitle>
+              <CardDescription className="text-xs">
+                Tell Mr. Blue what you want to build or change
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="relative">
+                <Textarea
+                  data-testid="input-vibe-prompt"
+                  value={prompt || transcript}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                      e.preventDefault();
+                      handleSubmit();
                     }
                   }}
+                  placeholder={selectedElement 
+                    ? `Change this ${selectedElement.tagName}...` 
+                    : "Describe what you want..."
+                  }
+                  className="min-h-[80px] resize-none pr-12"
                   disabled={isExecuting}
-                  data-testid="button-microphone"
-                  className={isListening ? 'bg-red-500/10 border-red-500' : ''}
+                />
+                
+                {/* Recording indicator (pulsing red dot) */}
+                {isListening && (
+                  <div className="absolute top-3 right-3 flex items-center gap-2" data-testid="recording-indicator">
+                    <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                    <span className="text-xs text-muted-foreground">Recording...</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Interactive Quick Actions */}
+              <Accordion type="single" collapsible className="border rounded-md">
+                <AccordionItem value="examples" className="border-0">
+                  <AccordionTrigger className="px-3 py-2 text-xs hover:no-underline">
+                    <div className="flex items-center gap-2">
+                      <Lightbulb className="h-3 w-3" />
+                      <span>Quick Examples</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="px-3 pb-3">
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPrompt("Make the header bigger")}
+                        disabled={isExecuting}
+                        className="text-xs justify-start"
+                        data-testid="button-example-1"
+                      >
+                        Make header bigger
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPrompt("Add a hero section")}
+                        disabled={isExecuting}
+                        className="text-xs justify-start"
+                        data-testid="button-example-2"
+                      >
+                        Add hero section
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPrompt("Center that button")}
+                        disabled={isExecuting}
+                        className="text-xs justify-start"
+                        data-testid="button-example-3"
+                      >
+                        Center button
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPrompt("Change color to blue")}
+                        disabled={isExecuting}
+                        className="text-xs justify-start"
+                        data-testid="button-example-4"
+                      >
+                        Change to blue
+                      </Button>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+
+              <div className="flex gap-2">
+                <Button
+                  data-testid="button-vibe-submit"
+                  onClick={handleSubmit}
+                  disabled={!prompt.trim() || isExecuting}
+                  className="flex-1"
                 >
-                  {isListening ? (
-                    <Mic className="h-4 w-4 text-red-500" />
+                  {isExecuting ? (
+                    <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Working...</>
                   ) : (
-                    <MicOff className="h-4 w-4" />
+                    <><Zap className="h-4 w-4 mr-2" /> Generate</>
                   )}
                 </Button>
-              )}
 
-              {conversationHistory.length > 0 && (
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleUndo}
-                  disabled={isExecuting}
-                  data-testid="button-undo"
-                >
-                  <Undo2 className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-          </div>
+                {/* Microphone Button */}
+                {voiceSupported && !voiceModeEnabled && (
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => {
+                      if (isListening) {
+                        stopListening();
+                      } else {
+                        startListening();
+                      }
+                    }}
+                    disabled={isExecuting}
+                    data-testid="button-microphone"
+                    className={isListening ? 'bg-red-500/10 border-red-500' : ''}
+                  >
+                    {isListening ? (
+                      <Mic className="h-4 w-4 text-red-500" />
+                    ) : (
+                      <MicOff className="h-4 w-4" />
+                    )}
+                  </Button>
+                )}
+
+                {conversationHistory.length > 0 && (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleUndo}
+                      disabled={isExecuting}
+                      data-testid="button-undo"
+                    >
+                      <Undo2 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setConversationHistory([])}
+                      disabled={isExecuting}
+                      data-testid="button-clear-conversation"
+                      className="text-xs"
+                    >
+                      Clear Chat
+                    </Button>
+                  </>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </section>
 
         {/* Right Panel: Live Preview / Code View / History */}
