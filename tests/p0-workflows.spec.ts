@@ -5,10 +5,10 @@ import { test, expect, Page } from '@playwright/test';
  * Tests for Founder Approval, Safety Review, and AI Support admin pages
  */
 
-// Test credentials
+// Test credentials using environment secrets
 const ADMIN_CREDENTIALS = {
-  email: 'admin@mundotango.life',
-  password: 'admin123',
+  email: process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life',
+  password: process.env.TEST_ADMIN_PASSWORD || 'admin123',
 };
 
 // Helper to login

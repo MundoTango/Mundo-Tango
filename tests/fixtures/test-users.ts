@@ -63,8 +63,8 @@ export const predefinedTestUsers: TestUser[] = [
 
 export const adminUser: TestUser = {
   username: 'admin',
-  email: 'admin@mundotango.life',
-  password: 'admin123',
+  email: process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life',
+  password: process.env.TEST_ADMIN_PASSWORD || 'admin123',
   name: 'Admin User',
   role: 'admin',
   city: 'Buenos Aires',

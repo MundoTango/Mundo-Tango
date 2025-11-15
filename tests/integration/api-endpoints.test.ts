@@ -11,13 +11,13 @@ let authToken: string;
 test.describe('API Integration Tests', () => {
   
   test.beforeAll(async () => {
-    // Login to get auth token
+    // Login to get auth token using environment secrets
     const response = await fetch(`${BASE_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        email: 'admin@mundotango.life',
-        password: 'admin123'
+        email: process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life',
+        password: process.env.TEST_ADMIN_PASSWORD || 'admin123'
       })
     });
     
@@ -50,8 +50,8 @@ test.describe('API Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: 'admin@mundotango.life',
-          password: 'admin123'
+          email: process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life',
+          password: process.env.TEST_ADMIN_PASSWORD || 'admin123'
         })
       });
       
@@ -66,7 +66,7 @@ test.describe('API Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: 'admin@mundotango.life',
+          email: process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life',
           password: 'wrongpassword'
         })
       });

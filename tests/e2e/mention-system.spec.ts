@@ -7,11 +7,11 @@ import { nanoid } from 'nanoid';
  * Uses programmatic authentication - no manual login required
  */
 
-// Auto-login helper
+// Auto-login helper using environment secrets
 async function loginAsTestUser(page: any) {
   const testUser = {
-    email: 'admin@mundotango.life',
-    password: 'admin123',
+    email: process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life',
+    password: process.env.TEST_ADMIN_PASSWORD || 'admin123',
   };
 
   await page.goto('/');

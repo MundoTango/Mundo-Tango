@@ -21,10 +21,10 @@ import { eq, desc } from 'drizzle-orm';
  * - Database: PostgreSQL with Drizzle ORM
  */
 
-// Test credentials
+// Test credentials using environment secrets
 const TEST_USER = {
-  email: 'admin@mundotango.life',
-  password: 'admin123',
+  email: process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life',
+  password: process.env.TEST_ADMIN_PASSWORD || 'admin123',
   userId: 1, // Assuming admin is user ID 1
 };
 
