@@ -84,7 +84,7 @@ async function loginAndNavigateToVisualEditor(page: Page) {
   await page.waitForLoadState('networkidle');
   
   // Wait for editor to be ready
-  await page.waitForSelector('textarea[placeholder*="describe"]', { timeout: 15000 });
+  await page.waitForSelector('[data-testid="input-vibe-prompt"]', { timeout: 15000 });
   
   console.log('✅ Visual Editor loaded');
 }
@@ -258,7 +258,7 @@ Please provide an improved MB.MD plan with more specific details, exact file pat
   }
   
   // Find the textarea
-  const textarea = page.locator('textarea').first();
+  const textarea = page.locator('[data-testid="input-vibe-prompt"]');
   await textarea.clear();
   await textarea.fill(prompt);
   
@@ -270,7 +270,7 @@ Please provide an improved MB.MD plan with more specific details, exact file pat
   console.log('📸 Screenshot captured');
   
   // Send the message
-  const sendButton = page.locator('button[type="submit"]').first();
+  const sendButton = page.locator('[data-testid="button-vibe-submit"]');
   await sendButton.click();
   
   console.log('📤 Message sent to Mr. Blue');
@@ -474,11 +474,13 @@ test.describe('Mr. Blue Builds Himself - Meta Autonomous Test', () => {
       // Phase 3: Approve and Execute (60%)
       console.log('\n📍 Progress: 60% - Approving plan and starting execution');
       
-      // Look for approve/send button
-      const approveButton = page.locator('button').filter({ hasText: /approve|execute|start|go/i });
+      // Look for approve button
+      const approveButton = page.locator('[data-testid="button-approve-code"]');
       if (await approveButton.count() > 0) {
-        await approveButton.first().click();
+        await approveButton.click();
         console.log('✅ Execution approved');
+      } else {
+        console.log('⚠️  Approve button not found - plan may execute automatically');
       }
       
       // Phase 4: Monitor Progress (70%)
