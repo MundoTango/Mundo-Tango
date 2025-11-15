@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'mundo-tango'
+    environment: 'development'
+
+scrape_configs:
+  - job_name: 'mb-md-metrics'
+    static_configs:
+      - targets: ['host.docker.internal:5000']
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+    scrape_timeout: 3s
+    honor_labels: true
+
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']

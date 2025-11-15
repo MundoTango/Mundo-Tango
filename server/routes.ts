@@ -326,6 +326,19 @@ async function uploadMediaToCloudinary(
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // MB.MD Metrics endpoint (must be before CSRF middleware for Prometheus scraping)
+  const { mbmdMetrics } = await import("./services/mb-md-metrics");
+  app.get("/metrics", async (req: Request, res: Response) => {
+    try {
+      const metrics = await mbmdMetrics.getMetrics();
+      res.set('Content-Type', 'text/plain; version=0.0.4');
+      res.send(metrics);
+    } catch (error) {
+      console.error('[MB.MD Metrics] Error generating metrics:', error);
+      res.status(500).send('Error generating metrics');
+    }
+  });
+
   // Security middleware (CSP headers already applied in server/index.ts via Helmet)
   app.use(setCsrfToken);
   
