@@ -122,7 +122,8 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
   const { 
     isListening, 
     isSupported: voiceSupported, 
-    transcript, 
+    transcript,
+    isContinuousMode,
     startListening, 
     stopListening,
     resetTranscript,
@@ -246,8 +247,10 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
     setCurrentStreamingMessage("");
 
     try {
-      // Simple routing heuristic: Check if this is a complex build request
-      const isBuildRequest = /build|create|make|add feature/i.test(originalInput);
+      // FIXED ROUTING: Only route to autonomous for SPECIFIC build phrases
+      // Avoid matching common words like "make" which appear in normal conversation
+      const isBuildRequest = /\b(build|create|add)\s+(a|an|the|this|that|new)?\s*(feature|component|section|page)/i.test(originalInput) ||
+                            /\b(generate|scaffold|implement)\s/i.test(originalInput);
 
       if (isBuildRequest) {
         // AUTONOMOUS MODE: Complex build requests go to autonomous API
@@ -402,6 +405,9 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
               <h3 className="font-semibold">Mr. Blue - Visual Editor</h3>
               <p className="text-xs text-muted-foreground">
                 {isListening ? '🎤 Listening continuously...' : isSpeaking ? '🔊 Speaking...' : isStreaming ? '⚡ Streaming...' : 'Voice-powered editing'}
+              </p>
+              <p className="text-xs mt-0.5" data-testid="text-voice-mode-status">
+                Voice Mode: {isContinuousMode ? '✅ Continuous' : '❌ No continuous'}
               </p>
             </div>
           </div>

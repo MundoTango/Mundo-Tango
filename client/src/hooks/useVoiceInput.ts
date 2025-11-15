@@ -16,6 +16,7 @@ interface UseVoiceInputReturn {
   isListening: boolean;
   isSupported: boolean;
   transcript: string;
+  isContinuousMode: boolean;
   startListening: () => void;
   stopListening: () => void;
   resetTranscript: () => void;
@@ -28,6 +29,7 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [isSupported, setIsSupported] = useState(false);
+  const [isContinuousMode, setIsContinuousMode] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const continuousModeRef = useRef(false);
   const { toast } = useToast();
@@ -133,11 +135,13 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
 
   const enableContinuousMode = useCallback(() => {
     continuousModeRef.current = true;
+    setIsContinuousMode(true);
     console.log('[Voice] Continuous mode enabled');
   }, []);
 
   const disableContinuousMode = useCallback(() => {
     continuousModeRef.current = false;
+    setIsContinuousMode(false);
     console.log('[Voice] Continuous mode disabled');
   }, []);
 
@@ -145,6 +149,7 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
     isListening,
     isSupported,
     transcript,
+    isContinuousMode,
     startListening,
     stopListening,
     resetTranscript,

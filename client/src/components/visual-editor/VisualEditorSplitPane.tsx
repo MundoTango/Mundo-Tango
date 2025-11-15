@@ -249,6 +249,17 @@ export function VisualEditorSplitPane({ isOpen, onClose }: VisualEditorSplitPane
             currentPage={currentPage}
             selectedElement={selectedComponent?.element.getAttribute('data-testid') || null}
             onGenerateCode={handleGenerateCode}
+            contextInfo={{
+              page: currentPage,
+              selectedElement: selectedComponent ? {
+                tagName: selectedComponent.tagName,
+                testId: selectedComponent.element.getAttribute('data-testid'),
+                className: selectedComponent.element.className,
+                text: selectedComponent.element.textContent?.slice(0, 100) || ''
+              } : null,
+              editsCount: visualEditorTracker.getAllEdits().length,
+              recentEdits: visualEditorTracker.getAllEdits().slice(0, 5)
+            }}
           />
         </div>
       </div>
