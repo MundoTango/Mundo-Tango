@@ -52,7 +52,7 @@ The platform features a unified **MT Ocean theme** with a tango-inspired color p
     - **MB.MD Protocol Engine:** Task decomposition with parallel/recursive/critical methodology
     - **AI Code Generator:** 850+ line GROQ Llama-3.1-70b powered multi-file generator
     - **Validator Service:** 798-line LSP diagnostics, snapshot/rollback, file safety validation
-    - **Production Safety:** Rate limiting (5 tasks/hour), cost caps ($10/task), audit logging to `auditLogs` table, database persistence to `autonomousTasks` table
+    - **Production Safety:** Rate limiting (5 tasks/hour for non-God users), cost caps ($10/task for non-God users), **God Level (Tier 8) users have NO limits**, audit logging to `auditLogs` table, database persistence to `autonomousTasks` table
     - **Visual Editor Integration:** AutonomousWorkflowPanel with real-time polling, task decomposition tree, file diffs, validation reports, approve/reject controls
     - **God Level (Tier 8) Security:** RBAC enforcement, path validation, SQL sanitization, command filtering
     - **API Endpoints:** `/api/autonomous/execute`, `/api/autonomous/status/:taskId`, `/api/autonomous/approve/:taskId`, `/api/autonomous/rollback/:taskId`, `/api/autonomous/validate`

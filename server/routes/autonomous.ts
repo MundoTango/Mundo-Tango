@@ -179,31 +179,42 @@ router.post("/execute",
         });
       }
 
-      // SAFETY CHECK 1: Rate Limiting
-      const rateLimit = await checkRateLimit(req.userId!);
-      if (rateLimit.exceeded) {
-        await logAuditAction(
-          req.userId!,
-          'autonomous_task_rate_limit_exceeded',
-          `User attempted to create task but exceeded rate limit (${RATE_LIMIT_MAX_TASKS} tasks/${RATE_LIMIT_WINDOW_HOURS}h)`,
-          { prompt: prompt.substring(0, 100) }
-        );
+      // Get user's role level (God Level = 8)
+      const userRoleLevel = req.user?.role === 'god' ? 8 : 0; // God Level users have no limits
+      
+      // SAFETY CHECK 1: Rate Limiting (skip for God Level)
+      let rateLimitRemaining = RATE_LIMIT_MAX_TASKS;
+      if (userRoleLevel < 8) {
+        const rateLimit = await checkRateLimit(req.userId!);
+        rateLimitRemaining = rateLimit.remaining;
+        if (rateLimit.exceeded) {
+          await logAuditAction(
+            req.userId!,
+            'autonomous_task_rate_limit_exceeded',
+            `User attempted to create task but exceeded rate limit (${RATE_LIMIT_MAX_TASKS} tasks/${RATE_LIMIT_WINDOW_HOURS}h)`,
+            { prompt: prompt.substring(0, 100) }
+          );
 
-        return res.status(429).json({
-          success: false,
-          message: `Rate limit exceeded. You can create ${RATE_LIMIT_MAX_TASKS} autonomous tasks per ${RATE_LIMIT_WINDOW_HOURS} hour(s). Try again later.`,
-          rateLimitRemaining: 0,
-          rateLimitResetsIn: `${RATE_LIMIT_WINDOW_HOURS} hour(s)`
-        });
+          return res.status(429).json({
+            success: false,
+            message: `Rate limit exceeded. You can create ${RATE_LIMIT_MAX_TASKS} autonomous tasks per ${RATE_LIMIT_WINDOW_HOURS} hour(s). Try again later.`,
+            rateLimitRemaining: 0,
+            rateLimitResetsIn: `${RATE_LIMIT_WINDOW_HOURS} hour(s)`
+          });
+        }
+      } else {
+        console.log('[Autonomous] God Level user - skipping rate limit');
       }
 
-      // SAFETY CHECK 2: Cost Estimation
+      // SAFETY CHECK 2: Cost Estimation (skip for God Level)
       const estimatedCost = estimateCost(prompt.trim());
-      if (estimatedCost > MAX_COST_PER_TASK) {
+      if (userRoleLevel < 8 && estimatedCost > MAX_COST_PER_TASK) {
         return res.status(400).json({
           success: false,
           message: `Estimated cost ($${estimatedCost.toFixed(2)}) exceeds maximum allowed ($${MAX_COST_PER_TASK.toFixed(2)}). Please simplify your request.`
         });
+      } else if (userRoleLevel >= 8) {
+        console.log('[Autonomous] God Level user - skipping cost cap');
       }
 
       // Create task
@@ -249,7 +260,8 @@ router.post("/execute",
         taskId,
         status: task.status,
         estimatedCost: estimatedCost.toFixed(2),
-        rateLimitRemaining: rateLimit.remaining - 1,
+        rateLimitRemaining: userRoleLevel >= 8 ? 999 : rateLimitRemaining - 1,
+        godLevelUnlimited: userRoleLevel >= 8,
         message: "Task started. Use /api/autonomous/status/:taskId to check progress"
       });
     } catch (error: any) {
