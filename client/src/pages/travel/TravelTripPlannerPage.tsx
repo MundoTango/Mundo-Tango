@@ -57,17 +57,14 @@ export default function TravelTripPlannerPage() {
 
   const createTripMutation = useMutation({
     mutationFn: async (data: TripPlannerForm) => {
-      return await apiRequest("/api/travel/plans", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...data,
-          startDate: data.startDate.toISOString(),
-          endDate: data.endDate.toISOString(),
-        }),
+      const res = await apiRequest("POST", "/api/travel/plans", {
+        ...data,
+        startDate: data.startDate.toISOString(),
+        endDate: data.endDate.toISOString(),
       });
+      return await res.json();
     },
-    onSuccess: (trip) => {
+    onSuccess: (trip: any) => {
       queryClient.invalidateQueries({ queryKey: ["/api/travel/plans"] });
       toast({
         title: "Trip created!",
