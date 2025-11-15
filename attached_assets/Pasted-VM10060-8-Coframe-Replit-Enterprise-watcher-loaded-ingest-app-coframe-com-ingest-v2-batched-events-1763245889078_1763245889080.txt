@@ -1,0 +1,994 @@
+VM10060:8 [Coframe] Replit Enterprise watcher loaded
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_monitoring/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/session_result/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+MundoTango:1 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+MundoTango:1 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+MundoTango:1 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+d865173a1cb9aa9f.js:2 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+d865173a1cb9aa9f.js:2 Download the Apollo DevTools for a better development experience: https://chrome.google.com/webstore/detail/apollo-client-developer-t/jdkknkkbebbapilgoeccciglkfbmbnfm
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245845551&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245845553&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2036&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+index.js:1 content loaded
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245845708&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+index.59b2ae62.js:3 Content Script: Initializing
+d865173a1cb9aa9f.js:2 [LaunchDarkly] LaunchDarkly client initialized
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245846322&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2036&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245846397&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245846423&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'ambient-light-sensor'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'battery'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'execution-while-not-rendered'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'execution-while-out-of-viewport'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'layout-animations'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'legacy-image-formats'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'navigation-override'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'oversized-images'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'publickey-credentials'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'speaker-selection'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'unoptimized-images'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'unsized-media'.
+z @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'pointer-lock'.
+z @ ed1e693c96a75807.js:2
+ Allow attribute will take precedence over 'allowfullscreen'.
+z @ ed1e693c96a75807.js:2
+ Allow attribute will take precedence over 'allowpaymentrequest'.
+z @ ed1e693c96a75807.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar23%3A:32 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+workspace_iframe.html?initialPath=%2F&id=%3Ar23%3A:32 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar23%3A:32 Unrecognized feature: 'battery'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar23%3A:32 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar23%3A:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar23%3A:32 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar23%3A:32 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar23%3A:32 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar23%3A:32 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar23%3A:32 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar23%3A:32 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar23%3A:32 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar23%3A:32 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar23%3A:32 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar23%3A:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245848390&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2036&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245848408&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245848429&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/?token=jvZPNeYvwqz9' failed: 
+setupWebSocket @ client:536
+client:536 Uncaught (in promise) 
+ i18next::backendConnector: loaded namespace common for language en Object
+ i18next::backendConnector: loaded namespace navigation for language en Object
+ i18next::backendConnector: loaded namespace pages for language en Object
+ i18next::backendConnector: loaded namespace errors for language en Object
+ i18next: languageChanged en
+ i18next: initialized Object
+ Loading the script 'https://replit.com/public/js/beacon.js' violates the following Content Security Policy directive: "script-src-elem 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net https://unpkg.com". The action has been blocked.
+onIframeLoad @ workspace_iframe.htm…2F&id=%3Ar23%3A:142
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245852897&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2036&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+d865173a1cb9aa9f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245852897&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2036&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at d865173a1cb9aa9f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ d865173a1cb9aa9f.js:2
+d865173a1cb9aa9f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ d865173a1cb9aa9f.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245852909&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+d865173a1cb9aa9f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245852909&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at d865173a1cb9aa9f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ d865173a1cb9aa9f.js:2
+d865173a1cb9aa9f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ d865173a1cb9aa9f.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245852936&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+d865173a1cb9aa9f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245852936&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at d865173a1cb9aa9f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ d865173a1cb9aa9f.js:2
+d865173a1cb9aa9f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ d865173a1cb9aa9f.js:2
+web-client-content-script.js:2 Uncaught TypeError: Failed to execute 'observe' on 'MutationObserver': parameter 1 is not of type 'Node'.
+    at HTMLIFrameElement.<anonymous> (web-client-content-script.js:2:1434139)
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] Connecting to /ws/notifications for user 15...
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ Warning: Each child in a list should have a unique "key" prop.
+
+Check the render method of `UpcomingEventsSidebar`. See https://reactjs.org/link/warning-keys for more information.
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=9596c3f7:6536:40)
+    at UpcomingEventsSidebar (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/feed/UpcomingEventsSidebar.tsx:38:41)
+    at aside
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:74:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:23:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=9596c3f7:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=9596c3f7:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-XOUBXFGS.js?v=9596c3f7:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=9596c3f7:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:77:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=9596c3f7:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=a4mz_Ej6sYgiRkhfO2Nz6:3456:55)
+(anonymous) @ injected.js:27
+ [WS] Connected to notification service
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connect @ UpcomingEventsSidebar.tsx:156
+ [WS] WebSocket error: Event
+ [WS] Disconnected from notification service
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/mr-blue/agents/tour/app-onboarding:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+ [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245855275&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ [WS] ✅ Connection established to /ws/notifications for user 15
+ [WS] WebSocket readyState: 1
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:54
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245855778&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ [WS] ✅ Connection established to /ws/notifications for user 15
+ [WS] WebSocket readyState: 1
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:54
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ Warning: Each child in a list should have a unique "key" prop.
+
+Check the render method of `FeedPage`. See https://reactjs.org/link/warning-keys for more information.
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:74:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:23:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=9596c3f7:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=9596c3f7:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-XOUBXFGS.js?v=9596c3f7:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=9596c3f7:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:77:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=9596c3f7:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=a4mz_Ej6sYgiRkhfO2Nz6:3456:55)
+(anonymous) @ injected.js:27
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] Connecting to /ws/notifications for user 15...
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/ads/display?placement=feed:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [WS] ✅ Connection established to /ws/notifications for user 15
+ [WS] WebSocket readyState: 1
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:54
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/ads/display?placement=feed:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [WS] ✅ Connection established to /ws/notifications for user 15
+ [WS] WebSocket readyState: 1
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:54
+ [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+ [WS] Connection error: Event
+(anonymous) @ injected.js:27
+ [WS] Disconnected from /ws/notifications Object
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245857780&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245862289&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+d865173a1cb9aa9f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245862289&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at d865173a1cb9aa9f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ d865173a1cb9aa9f.js:2
+d865173a1cb9aa9f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ d865173a1cb9aa9f.js:2
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/?token=jvZPNeYvwqz9' failed: 
+setupWebSocket @ client:536
+client:536 Uncaught (in promise) 
+ [VisualEditor] Iframe loaded, injecting selection script
+ [VisualEditor] DOM is complete, injecting now
+ [VisualEditor] Selection script injected + Mr. Blue buttons hidden
+injected.js:27 [VisualEditor] ✅ Script injected successfully into HEAD
+injected.js:27 i18next::backendConnector: loaded namespace common for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace navigation for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace pages for language en Object
+injected.js:27 i18next::backendConnector: loaded namespace errors for language en Object
+injected.js:27 i18next: languageChanged en
+injected.js:27 i18next: initialized Object
+injected.js:27 [VisualEditor] Script element exists after injection: true
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 Warning: Each child in a list should have a unique "key" prop.
+
+Check the render method of `FeedPage`. See https://reactjs.org/link/warning-keys for more information.
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:74:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:23:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=9596c3f7:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=9596c3f7:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-XOUBXFGS.js?v=9596c3f7:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=9596c3f7:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:77:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=9596c3f7:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=s4HwGrt8DQitL3u-uInv8:3456:55)
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/mr-blue/agents/tour/app-onboarding:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] Connected to notification service
+injected.js:27 [ERROR] Query failed Object
+(anonymous) @ injected.js:27
+UpcomingEventsSidebar.tsx:177 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connect @ UpcomingEventsSidebar.tsx:177
+injected.js:27 Warning: Each child in a list should have a unique "key" prop.
+
+Check the render method of `UpcomingEventsSidebar`. See https://reactjs.org/link/warning-keys for more information.
+    at MotionComponent (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/framer-motion.js?v=9596c3f7:6536:40)
+    at UpcomingEventsSidebar (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/feed/UpcomingEventsSidebar.tsx:38:41)
+    at aside
+    at div
+    at SelfHealingErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/SelfHealingErrorBoundary.tsx:12:5)
+    at FeedPage (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/pages/FeedPage.tsx:74:33)
+    at main
+    at div
+    at div
+    at AppLayout (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/AppLayout.tsx:23:29)
+    at ProtectedRoute (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ProtectedRoute.tsx:21:34)
+    at Route (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=9596c3f7:191:16)
+    at Switch (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=9596c3f7:247:17)
+    at Router
+    at Suspense
+    at Provider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-XOUBXFGS.js?v=9596c3f7:38:15)
+    at TooltipProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=9596c3f7:64:5)
+    at MrBlueProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/providers/PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/AuthContext.tsx:77:32)
+    at ThemeProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/contexts/theme-context.tsx:34:33)
+    at QueryClientProvider (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=9596c3f7:2805:3)
+    at ErrorBoundary (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/components/ErrorBoundary.tsx:11:5)
+    at App (https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=s4HwGrt8DQitL3u-uInv8:3456:55)
+(anonymous) @ injected.js:27
+injected.js:27 [WS] WebSocket error: Event
+injected.js:27 [WS] Disconnected from notification service
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/ads/display?placement=feed:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/ads/display?placement=feed:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:27 [WS] ✅ Connection established to /ws/notifications for user 15
+injected.js:27 [WS] WebSocket readyState: 1
+useWebSocket.ts:83 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:83
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+injected.js:27 [WS] ✅ Connection established to /ws/notifications for user 15
+injected.js:27 [WS] WebSocket readyState: 1
+useWebSocket.ts:83 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:83
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Connection error: Event
+(anonymous) @ injected.js:27
+injected.js:27 [WS] Disconnected from /ws/notifications Object
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245877632&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=504&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245878152&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=504&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245880211&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=504&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+ws.onerror @ useWebSocket.ts:205
+injected.js:27 [WS] Connection error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+onError @ ConnectionStatusBadge.tsx:24
+ws.onerror @ useWebSocket.ts:209
+injected.js:27 [WS] Disconnected from /ws/notifications {code: 1006, reason: '', wasClean: false}
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+ws.onerror @ useWebSocket.ts:205
+injected.js:27 [WS] Connection error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+onError @ ConnectionStatusBadge.tsx:24
+ws.onerror @ useWebSocket.ts:209
+injected.js:27 [WS] Disconnected from /ws/notifications {code: 1006, reason: '', wasClean: false}
+injected.js:27 [WS] Connecting to /ws/notifications for user 15...
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+ws.onerror @ useWebSocket.ts:205
+injected.js:27 [WS] Connection error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+onError @ ConnectionStatusBadge.tsx:24
+ws.onerror @ useWebSocket.ts:209
+injected.js:27 [WS] Disconnected from /ws/notifications {code: 1006, reason: '', wasClean: false}
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+ws.onerror @ useWebSocket.ts:205
+injected.js:27 [WS] Connection error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+onError @ ConnectionStatusBadge.tsx:24
+ws.onerror @ useWebSocket.ts:209
+injected.js:27 [WS] Disconnected from /ws/notifications {code: 1006, reason: '', wasClean: false}
+injected.js:27 [WS] ✅ Connection established to /ws/notifications for user 15
+injected.js:27 [WS] WebSocket readyState: 1
+useWebSocket.ts:83 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:83
+(anonymous) @ useWebSocket.ts:277
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+injected.js:27 [WS] WebSocket error on /ws/notifications: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+ws.onerror @ useWebSocket.ts:205
+injected.js:27 [WS] Connection error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+onError @ ConnectionStatusBadge.tsx:24
+ws.onerror @ useWebSocket.ts:209
+injected.js:27 [WS] Disconnected from /ws/notifications {code: 1006, reason: '', wasClean: false}
+d865173a1cb9aa9f.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245884724&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=504&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ d865173a1cb9aa9f.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+d865173a1cb9aa9f.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763245884724&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=504&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at d865173a1cb9aa9f.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ d865173a1cb9aa9f.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+d865173a1cb9aa9f.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ d865173a1cb9aa9f.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
