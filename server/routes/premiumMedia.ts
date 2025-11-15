@@ -1,5 +1,5 @@
 import { Router, type Request, Response } from 'express';
-import { isAuthenticated } from '../middleware/auth';
+import { authenticateToken } from '../middleware/auth';
 import { didVideoService } from '../services/premium/didVideoService';
 import { elevenlabsVoiceService } from '../services/premium/elevenlabsVoiceService';
 import { openaiRealtimeService } from '../services/premium/openaiRealtimeService';
@@ -71,7 +71,7 @@ async function checkQuota(req: Request, res: Response, next: Function) {
  */
 router.post(
   '/video/create',
-  isAuthenticated,
+  authenticateToken,
   requireGodLevel,
   checkQuota,
   async (req: Request, res: Response) => {
@@ -117,7 +117,7 @@ router.post(
  */
 router.get(
   '/video/:id/status',
-  isAuthenticated,
+  authenticateToken,
   requireGodLevel,
   async (req: Request, res: Response) => {
     try {
@@ -145,7 +145,7 @@ router.get(
  */
 router.delete(
   '/video/:id',
-  isAuthenticated,
+  authenticateToken,
   requireGodLevel,
   async (req: Request, res: Response) => {
     try {
@@ -177,7 +177,7 @@ router.delete(
  */
 router.post(
   '/voice/tts',
-  isAuthenticated,
+  authenticateToken,
   requireGodLevel,
   checkQuota,
   async (req: Request, res: Response) => {
@@ -229,7 +229,7 @@ router.post(
  */
 router.get(
   '/voice/voices',
-  isAuthenticated,
+  authenticateToken,
   requireGodLevel,
   async (req: Request, res: Response) => {
     try {
@@ -255,7 +255,7 @@ router.get(
  */
 router.post(
   '/voice/clone',
-  isAuthenticated,
+  authenticateToken,
   requireGodLevel,
   async (req: Request, res: Response) => {
     try {
@@ -307,7 +307,7 @@ router.post(
  */
 router.post(
   '/realtime/start',
-  isAuthenticated,
+  authenticateToken,
   requireGodLevel,
   checkQuota,
   async (req: Request, res: Response) => {
@@ -338,7 +338,7 @@ router.post(
  */
 router.post(
   '/realtime/end',
-  isAuthenticated,
+  authenticateToken,
   requireGodLevel,
   async (req: Request, res: Response) => {
     try {
@@ -373,7 +373,7 @@ router.post(
  */
 router.post(
   '/realtime/audio',
-  isAuthenticated,
+  authenticateToken,
   requireGodLevel,
   async (req: Request, res: Response) => {
     try {
@@ -413,7 +413,7 @@ router.post(
  */
 router.post(
   '/cost/estimate',
-  isAuthenticated,
+  authenticateToken,
   requireGodLevel,
   async (req: Request, res: Response) => {
     try {
@@ -448,7 +448,7 @@ router.post(
  */
 router.get(
   '/cost/history/:userId',
-  isAuthenticated,
+  authenticateToken,
   requireGodLevel,
   async (req: Request, res: Response) => {
     try {
@@ -489,7 +489,7 @@ router.get(
  */
 router.get(
   '/quota',
-  isAuthenticated,
+  authenticateToken,
   requireGodLevel,
   async (req: Request, res: Response) => {
     try {

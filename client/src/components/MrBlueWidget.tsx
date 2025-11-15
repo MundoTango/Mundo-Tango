@@ -47,11 +47,13 @@ export function MrBlueWidget() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/v1/chat", {
+      const response = await fetch("/api/mrblue/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // Include cookies for CSRF token
         body: JSON.stringify({
-          messages: [...messages, userMessage].map(m => ({
+          message: message,
+          conversationHistory: [...messages, userMessage].map(m => ({
             role: m.role,
             content: m.content
           }))

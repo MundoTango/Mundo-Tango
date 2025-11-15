@@ -91,6 +91,16 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     return next();
   }
   
+  // Skip CSRF for public Mr. Blue endpoints (no auth required)
+  const publicMrBlueEndpoints = [
+    "/api/mrblue/chat",
+    "/api/mrblue/stream",
+    "/api/mr-blue/agents"
+  ];
+  if (publicMrBlueEndpoints.some(endpoint => req.path.startsWith(endpoint))) {
+    return next();
+  }
+  
   const cookieToken = req.cookies["XSRF-TOKEN"];
   const headerToken = req.headers["x-xsrf-token"] || req.body?._csrf;
   

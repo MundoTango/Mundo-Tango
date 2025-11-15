@@ -1,5 +1,4 @@
 import OpenAI from 'openai';
-import Filter from 'bad-words';
 import { db } from "@db";
 import { mrBlueKnowledgeBase } from "@shared/schema";
 
@@ -7,7 +6,25 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || '',
 });
 
-const profanityFilter = new Filter();
+// Simple profanity filter (basic word list)
+const profanityWords = [
+  'fuck', 'shit', 'damn', 'bitch', 'asshole', 'bastard', 'crap',
+  'dick', 'pussy', 'cock', 'cunt', 'fag', 'nigger', 'retard'
+];
+
+function isProfane(text: string): boolean {
+  const lowerText = text.toLowerCase();
+  return profanityWords.some(word => lowerText.includes(word));
+}
+
+function cleanProfanity(text: string): string {
+  let cleaned = text;
+  profanityWords.forEach(word => {
+    const regex = new RegExp(word, 'gi');
+    cleaned = cleaned.replace(regex, '****');
+  });
+  return cleaned;
+}
 
 export interface ValidationResult {
   isValid: boolean;
@@ -39,7 +56,7 @@ export interface CodeQualityReport {
 
 export class QualityValidatorAgent {
   async validatePostContent(text: string): Promise<ValidationResult> {
-    const containsProfanity = profanityFilter.isProfane(text);
+    const containsProfanity = isProfane(text);
     const isSpam = await this.detectSpam(text);
     const issues: string[] = [];
     const suggestions: string[] = [];
@@ -237,7 +254,7 @@ Return a JSON object with:
   }
 
   cleanProfanity(text: string): string {
-    return profanityFilter.clean(text);
+    return cleanProfanity(text);
   }
 
   async batchValidate(texts: string[]): Promise<ValidationResult[]> {

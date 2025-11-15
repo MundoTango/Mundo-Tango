@@ -2,6 +2,14 @@ import rateLimit from "express-rate-limit";
 import { Request, Response, NextFunction } from "express";
 import { AuthRequest } from "./auth";
 
+// Helper to properly handle IPv6 addresses
+function getKeyFromIP(req: Request): string {
+  // Use req.ip which is already normalized by Express
+  const ip = req.ip || 'unknown';
+  // Convert IPv6-mapped IPv4 addresses to IPv4
+  return ip.replace(/^::ffff:/, '');
+}
+
 // Global rate limiter for all routes
 export const globalRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -121,8 +129,8 @@ export const tieredRateLimiter = rateLimit({
   },
   keyGenerator: (req: Request) => {
     const authReq = req as AuthRequest;
-    // Use user ID if authenticated, otherwise use IP
-    return authReq.user?.id?.toString() || req.ip || 'unknown';
+    // Use user ID if authenticated, otherwise use IP (properly normalized for IPv6)
+    return authReq.user?.id?.toString() || getKeyFromIP(req);
   },
   skip: (req: Request) => {
     // Skip health checks

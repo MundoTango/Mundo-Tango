@@ -72,17 +72,21 @@ export default function MrBlueChatPage() {
     setIsLoading(true);
 
     try {
-      // Call Groq API
-      const response = await fetch("/api/v1/chat", {
+      // Call Mr. Blue AI chat endpoint
+      const response = await fetch("/api/mrblue/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // Include cookies for CSRF token
         body: JSON.stringify({
-          messages: [...messages, userMessage].map(m => ({
+          message: input,
+          conversationHistory: [...messages, userMessage].map(m => ({
             role: m.role,
             content: m.content
           })),
-          sessionId,
-          volunteerId
+          context: {
+            sessionId,
+            volunteerId
+          }
         })
       });
 
