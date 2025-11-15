@@ -1,5 +1,8 @@
 import { Router, type Request, Response } from "express";
 import Groq from "groq-sdk";
+import { OpenAI } from "openai";
+import multer from "multer";
+import fs from "fs";
 import { streamingService } from "../services/streamingService";
 import { traceRoute, traceAIOperation } from "../metrics/tracing";
 import { db } from "../db";
@@ -10,11 +13,90 @@ import { getConversationContext, saveMessageToHistory } from "../services/chat-c
 
 const router = Router();
 
+// Configure multer for audio uploads
+const upload = multer({
+  dest: '/tmp/mr-blue-audio/',
+  limits: { fileSize: 25 * 1024 * 1024 }, // 25MB limit
+  fileFilter: (req: Request, file: Express.Multer.File, cb: any) => {
+    const allowedMimes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/webm', 'audio/ogg', 'audio/m4a', 'audio/mp4'];
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid audio format'));
+    }
+  }
+});
+
 // Bifrost AI Gateway integration - MB.MD Protocol Implementation
 // Groq SDK supports baseURL for routing through Bifrost gateway
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY || '',
   baseURL: process.env.BIFROST_BASE_URL || undefined,
+});
+
+// OpenAI for transcription
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+  baseURL: process.env.BIFROST_BASE_URL || undefined,
+});
+
+// Voice Transcription for Mr. Blue Continuous Voice Mode
+router.post("/transcribe", upload.single('audio'), async (req: Request, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'No audio file provided'
+      });
+    }
+
+    console.log('[MrBlue] Transcribing audio for continuous voice mode');
+
+    // Check if OpenAI API key is configured
+    if (!process.env.OPENAI_API_KEY) {
+      console.warn('[MrBlue] OPENAI_API_KEY not configured, returning demo response');
+      fs.unlinkSync(req.file.path);
+      return res.json({
+        success: true,
+        transcript: 'This is a demo transcription. Configure OPENAI_API_KEY for real transcription.'
+      });
+    }
+
+    // Create a read stream from the uploaded file
+    const audioFile = fs.createReadStream(req.file.path);
+
+    // Call Whisper API
+    const transcription = await openai.audio.transcriptions.create({
+      file: audioFile,
+      model: "whisper-1",
+      language: "en",
+      response_format: "json",
+      temperature: 0.2
+    });
+
+    // Clean up uploaded file
+    fs.unlinkSync(req.file.path);
+
+    console.log('[MrBlue] Transcription successful:', transcription.text.substring(0, 50));
+
+    res.json({
+      success: true,
+      transcript: transcription.text
+    });
+
+  } catch (error: any) {
+    console.error('[MrBlue] Transcription error:', error);
+
+    // Clean up file if it exists
+    if (req.file?.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to transcribe audio'
+    });
+  }
 });
 
 // Mr. Blue Chat

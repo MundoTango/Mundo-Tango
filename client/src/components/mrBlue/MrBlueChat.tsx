@@ -1,15 +1,18 @@
 import { useState, useEffect, useRef } from "react";
-import { Send, Sparkles, Loader2, X, Check } from "lucide-react";
+import { Send, Sparkles, Loader2, X, Check, Mic, ToggleLeft, ToggleRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import { useLocation } from "wouter";
 import { breadcrumbTracker } from "@/lib/mrBlue/breadcrumbTracker";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
 import { MessageActions } from "./MessageActions";
+import { useVoiceInput } from "@/hooks/useVoiceInput";
 
 interface Message {
   id: string;
@@ -40,6 +43,31 @@ export function MrBlueChat() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [location] = useLocation();
   const messageCountRef = useRef(0);
+
+  // Handle voice input result
+  const handleVoiceResult = (text: string) => {
+    console.log('[Voice] Received transcript:', text);
+    setInput(text);
+    // Auto-send after voice input
+    setTimeout(() => {
+      if (text.trim()) {
+        sendMessage();
+      }
+    }, 100);
+  };
+
+  // Initialize voice input with continuous mode support and audio quality monitoring
+  const { 
+    continuousMode, 
+    isListening,
+    audioMetrics,
+    noiseThreshold,
+    enableContinuousMode, 
+    disableContinuousMode,
+    setNoiseThreshold 
+  } = useVoiceInput({
+    onResult: handleVoiceResult,
+  });
 
   // Track page context
   useEffect(() => {
@@ -379,7 +407,68 @@ export function MrBlueChat() {
       </ScrollArea>
 
       {/* Input */}
-      <div className="p-4 border-t">
+      <div className="p-4 border-t space-y-2">
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant={continuousMode ? "default" : "outline"}
+            onClick={continuousMode ? disableContinuousMode : enableContinuousMode}
+            data-testid="button-toggle-continuous-voice"
+          >
+            {continuousMode ? (
+              <>
+                <ToggleRight className="w-4 h-4 mr-2" />
+                Continuous Voice
+              </>
+            ) : (
+              <>
+                <ToggleLeft className="w-4 h-4 mr-2" />
+                Continuous Voice
+              </>
+            )}
+          </Button>
+          {isListening && (
+            <Badge variant="secondary" className="animate-pulse" data-testid="badge-listening">
+              <Mic className="w-3 h-3 mr-1" />
+              Listening...
+            </Badge>
+          )}
+        </div>
+
+        {/* Audio Quality Metrics */}
+        {continuousMode && (
+          <div className="flex flex-col gap-2 p-3 bg-muted rounded-md" data-testid="audio-quality-panel">
+            <Label className="text-xs font-semibold">Audio Quality</Label>
+            <div className="flex items-center gap-3 text-xs">
+              <Badge variant="outline" data-testid="metric-snr">
+                SNR: {audioMetrics.snr.toFixed(1)} dB
+              </Badge>
+              <Badge variant="outline" data-testid="metric-thd">
+                THD: {audioMetrics.thd.toFixed(2)}%
+              </Badge>
+              <Badge variant="outline" data-testid="metric-level">
+                Level: {audioMetrics.level.toFixed(1)} dB
+              </Badge>
+            </div>
+            
+            <div className="space-y-1">
+              <Label htmlFor="noise-threshold" className="text-xs">
+                Noise Threshold: {noiseThreshold} dB
+              </Label>
+              <Slider
+                id="noise-threshold"
+                value={[noiseThreshold]}
+                onValueChange={([value]) => setNoiseThreshold(value)}
+                min={-60}
+                max={-20}
+                step={1}
+                className="w-full"
+                data-testid="slider-noise-threshold"
+              />
+            </div>
+          </div>
+        )}
+
         <div className="flex gap-2">
           <Textarea
             value={input}

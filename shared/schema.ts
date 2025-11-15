@@ -1903,19 +1903,6 @@ export const friendshipMedia = pgTable("friendship_media", {
   uploaderIdx: index("friendship_media_uploader_idx").on(table.uploaderId),
 }));
 
-// Message Reactions (emoji reactions to chat messages)
-export const messageReactions = pgTable("message_reactions", {
-  id: serial("id").primaryKey(),
-  messageId: integer("message_id").notNull().references(() => chatMessages.id, { onDelete: "cascade" }),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  emoji: varchar("emoji").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-}, (table) => ({
-  messageIdx: index("message_reactions_message_idx").on(table.messageId),
-  userIdx: index("message_reactions_user_idx").on(table.userId),
-  uniqueReaction: uniqueIndex("unique_message_reaction").on(table.messageId, table.userId, table.emoji),
-}));
-
 // User Settings (privacy, notifications, preferences)
 export const userSettings = pgTable("user_settings", {
   id: serial("id").primaryKey(),
