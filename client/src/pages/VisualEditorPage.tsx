@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { SEO } from "@/components/SEO";
-import { Code, Save, GitBranch, Key, Rocket, Database, Terminal, ExternalLink, MessageSquare, Bug } from "lucide-react";
+import { Code, Save, GitBranch, Key, Rocket, Database, Terminal, ExternalLink, MessageSquare, Bug, Bot } from "lucide-react";
 import { MrBlueVoiceInterface } from "@/components/MrBlueVoiceInterface";
 import { VisualEditorDebug } from "@/components/visual-editor/VisualEditorDebug";
 import { type SelectedComponent } from "@/components/visual-editor/ComponentSelector";
@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { injectSelectionScript, applyInstantChange } from "@/lib/iframeInjector";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
+import { AutonomousWorkflowPanel } from "@/components/autonomous/AutonomousWorkflowPanel";
 
 export default function VisualEditorPage() {
   const [selectedComponent, setSelectedComponent] = useState<SelectedComponent | null>(null);
@@ -31,10 +32,17 @@ export default function VisualEditorPage() {
   const selectedElementRef = useRef<any>(null);
   const { toast } = useToast();
 
-  // Get current user info
-  const { data: user, isLoading: userLoading } = useQuery<{ id: number; role: string }>({
+  // Get current user info including God Level status
+  const { data: user, isLoading: userLoading } = useQuery<{ 
+    id: number; 
+    role: string;
+    godLevelApproved?: boolean;
+  }>({
     queryKey: ['/api/auth/me']
   });
+
+  // Check if user is God Level (Tier 8)
+  const isGodLevel = user?.godLevelApproved === true;
 
   // Listen for messages from iframe
   useEffect(() => {
@@ -358,6 +366,12 @@ export default function VisualEditorPage() {
                     <MessageSquare className="h-4 w-4" />
                     Mr. Blue
                   </TabsTrigger>
+                  {isGodLevel && (
+                    <TabsTrigger value="autonomous" className="gap-2" data-testid="tab-autonomous">
+                      <Bot className="h-4 w-4" />
+                      Autonomous
+                    </TabsTrigger>
+                  )}
                   <TabsTrigger value="git" className="gap-2" data-testid="tab-git">
                     <GitBranch className="h-4 w-4" />
                     Git
@@ -437,6 +451,13 @@ export default function VisualEditorPage() {
                     )}
                   </div>
                 </TabsContent>
+
+                {/* Autonomous Workflow Tab - God Level Only */}
+                {isGodLevel && (
+                  <TabsContent value="autonomous" className="flex-1 m-0 overflow-hidden">
+                    <AutonomousWorkflowPanel />
+                  </TabsContent>
+                )}
 
                 {/* Git Tab */}
                 <TabsContent value="git" className="flex-1 m-0 p-4">
