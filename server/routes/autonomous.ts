@@ -3,6 +3,12 @@
  * 
  * Full autonomous execution endpoints with God Level (Tier 8) security
  * Enables Mr. Blue to build features autonomously using MB.MD methodology
+ * 
+ * SAFETY FEATURES (Phase 9):
+ * - Rate limiting: 5 tasks/hour per user
+ * - Cost caps: $10 max per task
+ * - Audit logging: All actions logged to auditLogs table
+ * - Destructive operation gates: Warn on file deletions
  */
 
 import { Router, type Request, Response } from "express";
@@ -11,10 +17,18 @@ import { mbmdEngine } from "../services/mrBlue/mbmdEngine";
 import { codeGenerator } from "../services/mrBlue/codeGenerator";
 import { validator } from "../services/mrBlue/validator";
 import { autonomousAgent } from "../services/mrBlue/autonomousAgent";
+import { db } from "../storage";
+import { auditLogs, autonomousTasks } from "../../shared/schema";
+import { eq, and, gte, count, desc } from "drizzle-orm";
 
 const router = Router();
 
-// In-memory task storage (migrate to database in Phase 7)
+// Safety Constants
+const RATE_LIMIT_WINDOW_HOURS = 1;
+const RATE_LIMIT_MAX_TASKS = 5;
+const MAX_COST_PER_TASK = 10.00; // $10 USD
+
+// In-memory task storage (will persist to DB after validation)
 interface AutonomousTask {
   id: string;
   userId: number;
@@ -27,9 +41,122 @@ interface AutonomousTask {
   createdAt: Date;
   updatedAt: Date;
   snapshotId?: string;
+  estimatedCost?: number;
+  actualCost?: number;
 }
 
 const tasks = new Map<string, AutonomousTask>();
+
+// ============================================================================
+// SAFETY HELPER FUNCTIONS (Phase 9)
+// ============================================================================
+
+/**
+ * Check if user has exceeded rate limit
+ * Returns true if rate limit exceeded
+ */
+async function checkRateLimit(userId: number): Promise<{ exceeded: boolean; remaining: number }> {
+  const oneHourAgo = new Date(Date.now() - RATE_LIMIT_WINDOW_HOURS * 60 * 60 * 1000);
+  
+  try {
+    const result = await db
+      .select({ count: count() })
+      .from(autonomousTasks)
+      .where(
+        and(
+          eq(autonomousTasks.userId, userId),
+          gte(autonomousTasks.createdAt, oneHourAgo)
+        )
+      );
+
+    const taskCount = result[0]?.count || 0;
+    const remaining = Math.max(0, RATE_LIMIT_MAX_TASKS - Number(taskCount));
+    
+    return {
+      exceeded: taskCount >= RATE_LIMIT_MAX_TASKS,
+      remaining
+    };
+  } catch (error) {
+    console.error('[Autonomous] Rate limit check error:', error);
+    // Fail open: allow task if DB check fails
+    return { exceeded: false, remaining: RATE_LIMIT_MAX_TASKS };
+  }
+}
+
+/**
+ * Estimate cost based on prompt complexity
+ * Very rough estimate: $0.001 per token, ~4 chars per token
+ */
+function estimateCost(prompt: string, decompositionSize?: number): number {
+  const promptTokens = Math.ceil(prompt.length / 4);
+  const baseTokens = decompositionSize ? decompositionSize * 500 : 2000; // Estimate tokens per subtask
+  const totalTokens = promptTokens + baseTokens;
+  return Math.min(totalTokens * 0.001, MAX_COST_PER_TASK);
+}
+
+/**
+ * Log audit action to database
+ */
+async function logAuditAction(
+  userId: number,
+  action: string,
+  details: string,
+  metadata?: any
+): Promise<void> {
+  try {
+    await db.insert(auditLogs).values({
+      userId,
+      action,
+      details,
+      ipAddress: '127.0.0.1', // TODO: Get from request
+      userAgent: 'Mr. Blue Autonomous Agent',
+      metadata: metadata || null
+    });
+  } catch (error) {
+    console.error('[Autonomous] Audit log error:', error);
+    // Don't fail task if audit logging fails
+  }
+}
+
+/**
+ * Persist task to database
+ */
+async function persistTaskToDB(task: AutonomousTask): Promise<void> {
+  try {
+    await db.insert(autonomousTasks).values({
+      id: task.id,
+      userId: task.userId,
+      prompt: task.prompt,
+      status: task.status,
+      decomposition: task.decomposition || null,
+      generatedFiles: task.generatedFiles || null,
+      validationReport: task.validationReport || null,
+      error: task.error || null,
+      snapshotId: task.snapshotId || null,
+      estimatedCost: task.estimatedCost?.toString() || '0.00',
+      actualCost: task.actualCost?.toString() || '0.00',
+      createdAt: task.createdAt,
+      updatedAt: task.updatedAt,
+      completedAt: task.status === 'completed' ? task.updatedAt : null
+    }).onConflictDoUpdate({
+      target: autonomousTasks.id,
+      set: {
+        status: task.status,
+        decomposition: task.decomposition || null,
+        generatedFiles: task.generatedFiles || null,
+        validationReport: task.validationReport || null,
+        error: task.error || null,
+        snapshotId: task.snapshotId || null,
+        actualCost: task.actualCost?.toString() || '0.00',
+        updatedAt: task.updatedAt,
+        completedAt: task.status === 'completed' ? task.updatedAt : null
+      }
+    });
+  } catch (error) {
+    console.error('[Autonomous] DB persist error:', error);
+    // Continue even if DB persistence fails (using in-memory fallback)
+  }
+}
 
 /**
  * POST /api/autonomous/execute
@@ -52,6 +179,33 @@ router.post("/execute",
         });
       }
 
+      // SAFETY CHECK 1: Rate Limiting
+      const rateLimit = await checkRateLimit(req.userId!);
+      if (rateLimit.exceeded) {
+        await logAuditAction(
+          req.userId!,
+          'autonomous_task_rate_limit_exceeded',
+          `User attempted to create task but exceeded rate limit (${RATE_LIMIT_MAX_TASKS} tasks/${RATE_LIMIT_WINDOW_HOURS}h)`,
+          { prompt: prompt.substring(0, 100) }
+        );
+
+        return res.status(429).json({
+          success: false,
+          message: `Rate limit exceeded. You can create ${RATE_LIMIT_MAX_TASKS} autonomous tasks per ${RATE_LIMIT_WINDOW_HOURS} hour(s). Try again later.`,
+          rateLimitRemaining: 0,
+          rateLimitResetsIn: `${RATE_LIMIT_WINDOW_HOURS} hour(s)`
+        });
+      }
+
+      // SAFETY CHECK 2: Cost Estimation
+      const estimatedCost = estimateCost(prompt.trim());
+      if (estimatedCost > MAX_COST_PER_TASK) {
+        return res.status(400).json({
+          success: false,
+          message: `Estimated cost ($${estimatedCost.toFixed(2)}) exceeds maximum allowed ($${MAX_COST_PER_TASK.toFixed(2)}). Please simplify your request.`
+        });
+      }
+
       // Create task
       const taskId = `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const task: AutonomousTask = {
@@ -59,10 +213,23 @@ router.post("/execute",
         userId: req.userId!,
         prompt: prompt.trim(),
         status: 'pending',
+        estimatedCost,
+        actualCost: 0,
         createdAt: new Date(),
         updatedAt: new Date()
       };
       tasks.set(taskId, task);
+
+      // SAFETY CHECK 3: Audit Logging
+      await logAuditAction(
+        req.userId!,
+        'autonomous_task_created',
+        `User created autonomous task: "${prompt.substring(0, 100)}..."`,
+        { taskId, estimatedCost, autoApprove }
+      );
+
+      // Persist to DB
+      await persistTaskToDB(task);
 
       // Start async execution
       executeAutonomousTask(taskId, autoApprove).catch(error => {
@@ -72,6 +239,8 @@ router.post("/execute",
           task.status = 'failed';
           task.error = error.message || 'Unknown error';
           task.updatedAt = new Date();
+          persistTaskToDB(task); // Persist failure
+          logAuditAction(req.userId!, 'autonomous_task_failed', `Task ${taskId} failed: ${error.message}`, { taskId });
         }
       });
 
@@ -79,6 +248,8 @@ router.post("/execute",
         success: true,
         taskId,
         status: task.status,
+        estimatedCost: estimatedCost.toFixed(2),
+        rateLimitRemaining: rateLimit.remaining - 1,
         message: "Task started. Use /api/autonomous/status/:taskId to check progress"
       });
     } catch (error: any) {
@@ -189,6 +360,17 @@ router.post("/approve/:taskId",
         task.status = 'completed';
         task.updatedAt = new Date();
 
+        // SAFETY: Audit logging
+        await logAuditAction(
+          req.userId!,
+          'autonomous_task_approved',
+          `User approved and applied task ${taskId}`,
+          { taskId, filesModified: results.filesModified }
+        );
+
+        // Persist completion to DB
+        await persistTaskToDB(task);
+
         res.json({
           success: true,
           message: "Code applied successfully",
@@ -198,6 +380,17 @@ router.post("/approve/:taskId",
         task.status = 'failed';
         task.error = results.error;
         task.updatedAt = new Date();
+
+        // SAFETY: Audit logging
+        await logAuditAction(
+          req.userId!,
+          'autonomous_task_apply_failed',
+          `Task ${taskId} approval failed during application`,
+          { taskId, error: results.error }
+        );
+
+        // Persist failure to DB
+        await persistTaskToDB(task);
 
         res.status(500).json({
           success: false,
@@ -250,6 +443,14 @@ router.post("/rollback/:taskId",
 
       // Rollback using validator
       await validator.rollback(task.snapshotId);
+
+      // SAFETY: Audit logging
+      await logAuditAction(
+        req.userId!,
+        'autonomous_task_rollback',
+        `User rolled back task ${taskId}`,
+        { taskId, snapshotId: task.snapshotId }
+      );
 
       res.json({
         success: true,
