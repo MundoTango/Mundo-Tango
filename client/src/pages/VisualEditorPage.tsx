@@ -33,16 +33,19 @@ export default function VisualEditorPage() {
   const { toast } = useToast();
 
   // Get current user info including God Level status
-  const { data: user, isLoading: userLoading } = useQuery<{ 
-    id: number; 
-    role: string;
-    godLevelApproved?: boolean;
+  const { data: authResponse, isLoading: userLoading } = useQuery<{ 
+    user: {
+      id: number; 
+      role: string;
+    }
   }>({
     queryKey: ['/api/auth/me']
   });
 
-  // Check if user is God Level (Tier 8)
-  const isGodLevel = user?.godLevelApproved === true;
+  const user = authResponse?.user;
+  
+  // Check if user is God Level (Tier 8 - role === 'god')
+  const isGodLevel = user?.role === 'god';
 
   // Listen for messages from iframe
   useEffect(() => {

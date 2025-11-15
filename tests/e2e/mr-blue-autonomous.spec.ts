@@ -56,27 +56,16 @@ test.describe('Mr. Blue Autonomous Agent', () => {
     // Wait for page to load
     await page.waitForTimeout(2000);
     
-    // 2. Open autonomous mode panel
-    console.log('Step 2: Opening autonomous mode panel...');
-    const autonomousButton = page.getByTestId('button-autonomous-mode');
+    // 2. Click the Autonomous tab (only visible to God Level users)
+    console.log('Step 2: Clicking Autonomous tab...');
+    const autonomousTab = page.getByTestId('tab-autonomous');
+    await expect(autonomousTab).toBeVisible({ timeout: 5000 });
+    await autonomousTab.click();
+    await page.waitForTimeout(1000);
     
-    // If autonomous button doesn't exist, check for alternative UI
-    const autonomousExists = await autonomousButton.isVisible().catch(() => false);
-    
-    if (!autonomousExists) {
-      console.log('⚠️ Autonomous mode button not found - checking for alternative UI...');
-      
-      // Try clicking Mr. Blue chat toggle
-      await page.getByTestId('button-mr-blue-chat')?.click().catch(() => {});
-      await page.waitForTimeout(500);
-      
-      // Try clicking autonomous tab
-      await page.getByTestId('tab-autonomous')?.click().catch(() => {});
-      await page.waitForTimeout(500);
-    } else {
-      await autonomousButton.click();
-      await page.waitForTimeout(1000);
-    }
+    // Verify autonomous panel is visible
+    const autonomousPanel = page.getByTestId('autonomous-workflow-panel');
+    await expect(autonomousPanel).toBeVisible({ timeout: 3000 });
     
     // 3. Submit autonomous prompt
     console.log('Step 3: Submitting autonomous prompt...');
