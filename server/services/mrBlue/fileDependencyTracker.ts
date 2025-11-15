@@ -109,7 +109,7 @@ export class FileDependencyTracker {
       const stats = await fs.stat(filePath);
 
       // Extract dependencies (imports)
-      const dependsOn = this.extractImports(content, filePath);
+      const dependsOn = await this.extractImports(content, filePath);
       
       // Extract affected elements and routes
       const affects = this.extractAffects(content, filePath, fileType);
@@ -154,7 +154,7 @@ export class FileDependencyTracker {
   /**
    * Extract import statements from file
    */
-  private extractImports(content: string, filePath: string): string[] {
+  private async extractImports(content: string, filePath: string): Promise<string[]> {
     const imports: string[] = [];
     const dir = path.dirname(filePath);
 
