@@ -7,8 +7,8 @@ import rateLimit from 'express-rate-limit';
 // Fixes CSP errors from attached file - removes double quotes, adds semicolons
 
 export const cspMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  // Fix: Remove double quotes from 'unsafe-dynamic' and add proper semicolons
-  // Updated to allow Leaflet CSS from unpkg.com and OpenAI API
+  // FIXED: CSP properly formatted without 'unsafe-dynamic' or 'report-uri' source expressions
+  // All sources use single quotes, directives separated by semicolons
   const cspDirectives = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://cdn.jsdelivr.net",
@@ -22,11 +22,16 @@ export const cspMiddleware = (req: Request, res: Response, next: NextFunction) =
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
-    "upgrade-insecure-requests",
+    "upgrade-insecure-requests"
   ];
 
-  // Set CSP header with proper semicolon separation
+  // Set CSP header with proper semicolon separation (no trailing semicolon)
   res.setHeader('Content-Security-Policy', cspDirectives.join('; '));
+  
+  // Add cache-busting to ensure CSP updates immediately
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   
   next();
 };
