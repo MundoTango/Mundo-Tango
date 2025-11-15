@@ -53,7 +53,7 @@ const MODEL_CONFIG: Record<string, {
  * Model aliases for easier use
  */
 export const GROQ_MODELS = {
-  LLAMA_70B: 'llama-3.1-70b-versatile',
+  LLAMA_70B: 'llama-3.3-70b-versatile', // Updated from 3.1 (decommissioned Jan 2025)
   LLAMA_8B: 'llama-3.1-8b-instant',
   LLAMA_70B_LATEST: 'llama-3.3-70b-versatile',
 } as const;

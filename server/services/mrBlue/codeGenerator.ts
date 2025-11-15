@@ -263,13 +263,13 @@ export class CodeGenerator {
     // Build system prompt (MB.MD Protocol)
     const systemPrompt = this.buildSystemPrompt(contextString, context.guidelines, task);
 
-    // Call GROQ API with llama-3.1-70b-versatile
+    // Call GROQ API with llama-3.3-70b-versatile
     const completion = await this.groq.chat.completions.create({
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: task.description }
       ],
-      model: "llama-3.1-70b-versatile",
+      model: "llama-3.3-70b-versatile", // Updated from 3.1 (decommissioned Jan 2025)
       temperature: 0.3, // Low for consistent code
       max_tokens: 4000,
       timeout: 30000, // 30s timeout

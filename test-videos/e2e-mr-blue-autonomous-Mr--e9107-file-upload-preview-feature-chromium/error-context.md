@@ -1,66 +1,15 @@
 # Page snapshot
 
 ```yaml
-- generic [ref=e2]:
-  - region "Notifications (F8)":
-    - list
-  - generic [ref=e3]:
-    - generic [ref=e5]:
-      - generic [ref=e6]:
-        - img [ref=e7]
-        - heading "Visual Editor" [level=1] [ref=e9]
-      - generic [ref=e10]:
-        - generic [ref=e11]:
-          - img [ref=e12]
-          - text: Failed
-        - generic [ref=e14]: Test Admin User (God Level)
-    - generic [ref=e15]:
-      - tablist [ref=e16]:
-        - tab "Mr. Blue" [ref=e17] [cursor=pointer]:
-          - img [ref=e18]
-          - text: Mr. Blue
-        - tab "Autonomous" [selected] [ref=e21] [cursor=pointer]:
-          - img [ref=e22]
-          - text: Autonomous
-        - tab "Git" [ref=e25] [cursor=pointer]:
-          - img [ref=e26]
-          - text: Git
-        - tab "Secrets" [ref=e30] [cursor=pointer]:
-          - img [ref=e31]
-          - text: Secrets
-        - tab "Deploy" [ref=e35] [cursor=pointer]:
-          - img [ref=e36]
-          - text: Deploy
-        - tab "Database" [ref=e41] [cursor=pointer]:
-          - img [ref=e42]
-          - text: Database
-        - tab "Console" [ref=e46] [cursor=pointer]:
-          - img [ref=e47]
-          - text: Console
-        - tab "Debug" [ref=e49] [cursor=pointer]:
-          - img [ref=e50]
-          - text: Debug
-      - tabpanel "Autonomous" [ref=e60]:
-        - generic [ref=e61]:
-          - generic [ref=e62]:
-            - generic [ref=e64]: Autonomous Task Execution
-            - generic [ref=e65]:
-              - generic [ref=e66]:
-                - generic [ref=e67]: "Describe what you want Mr. Blue to build:"
-                - textbox "Describe what you want Mr. Blue to build:" [ref=e68]:
-                  - /placeholder: "Example: Add a file upload component with image preview thumbnails..."
-                  - text: Add image preview thumbnails when uploading files in the Visual Editor file upload component. When a user selects an image file, show a 100x100px preview thumbnail next to the filename. Use proper React/TypeScript patterns and follow MT Ocean design system.
-              - button "Execute Autonomous Task" [ref=e69] [cursor=pointer]
-          - generic [ref=e70]:
-            - generic [ref=e72]: Task Progress
-            - generic [ref=e73]:
-              - generic [ref=e74]:
-                - generic [ref=e75]: "Status:"
-                - generic [ref=e76]:
-                  - img [ref=e77]
-                  - text: Failed
-              - alert [ref=e79]:
-                - generic [ref=e80]: "403: {\"message\":\"Insufficient role level\",\"required\":8,\"current\":1}"
-              - alert [ref=e81]:
-                - generic [ref=e82]: "🎯 God Level: Unlimited operations, no rate limits, no cost caps"
+- generic [ref=e4]:
+  - generic [ref=e6]:
+    - img [ref=e8]
+    - generic [ref=e10]:
+      - generic [ref=e11]: Oops! Something went wrong
+      - generic [ref=e12]: We encountered an unexpected error
+  - generic [ref=e13]:
+    - paragraph [ref=e14]: The application ran into a problem and couldn't continue. Please try reloading the page.
+    - group [ref=e15]:
+      - generic "Error details (for debugging)" [ref=e16] [cursor=pointer]
+    - button "Reload Page" [ref=e17] [cursor=pointer]
 ```

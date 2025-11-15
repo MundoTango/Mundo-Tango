@@ -459,7 +459,7 @@ GUIDELINES:
             messages: [
               { role: 'system', content: systemPrompt }
             ],
-            model: 'llama-3.1-70b-versatile', // Larger model for code generation
+            model: 'llama-3.3-70b-versatile', // Updated from 3.1 (decommissioned Jan 2025)
             temperature: 0.1, // Very low temperature for precise code
             max_tokens: 2000,
             response_format: { type: 'json_object' }

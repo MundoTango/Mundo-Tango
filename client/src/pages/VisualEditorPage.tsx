@@ -55,7 +55,15 @@ export default function VisualEditorPage() {
 
     const pollStatus = async () => {
       try {
-        const response = await fetch(`/api/autonomous/status/${currentTask.taskId}`);
+        const response = await fetch(`/api/autonomous/status/${currentTask.taskId}`, {
+          credentials: 'include' // Include JWT cookie for authentication
+        });
+        
+        if (!response.ok) {
+          console.error(`Status poll failed: ${response.status} ${response.statusText}`);
+          return;
+        }
+        
         const data = await response.json();
         
         setCurrentTask(prev => ({
