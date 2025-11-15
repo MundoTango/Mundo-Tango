@@ -48,6 +48,14 @@ The platform features a unified **MT Ocean theme** with a tango-inspired color p
 **AI Integration:**
 -   **Bifrost AI Gateway:** Unified AI gateway with automatic failover, semantic caching, and load balancing.
 -   **Mr. Blue AI Assistant:** Context-aware conversational intelligence, breadcrumb tracking, and predictive assistance.
+-   **Mr. Blue Autonomous Agent System (PRODUCTION):** Full autonomous development capabilities with:
+    - **MB.MD Protocol Engine:** Task decomposition with parallel/recursive/critical methodology
+    - **AI Code Generator:** 850+ line GROQ Llama-3.1-70b powered multi-file generator
+    - **Validator Service:** 798-line LSP diagnostics, snapshot/rollback, file safety validation
+    - **Production Safety:** Rate limiting (5 tasks/hour), cost caps ($10/task), audit logging to `auditLogs` table, database persistence to `autonomousTasks` table
+    - **Visual Editor Integration:** AutonomousWorkflowPanel with real-time polling, task decomposition tree, file diffs, validation reports, approve/reject controls
+    - **God Level (Tier 8) Security:** RBAC enforcement, path validation, SQL sanitization, command filtering
+    - **API Endpoints:** `/api/autonomous/execute`, `/api/autonomous/status/:taskId`, `/api/autonomous/approve/:taskId`, `/api/autonomous/rollback/:taskId`, `/api/autonomous/validate`
 -   **OpenAI Realtime Voice API:** ChatGPT-style natural voice conversations.
 -   **Unified Voice Interface:** Combines voice and text chat.
 -   **Instant Visual Feedback:** Enhanced iframe injector with `APPLY_CHANGE` and `UNDO_CHANGE` commands.
