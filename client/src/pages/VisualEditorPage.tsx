@@ -12,6 +12,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ShieldAlert, Crown, Bot, Cpu, GitBranch, Key, Rocket, Database, Terminal, Bug, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
 
 type User = {
   id: number;
@@ -88,36 +89,23 @@ export default function VisualEditorPage() {
     setIsExecuting(true);
     
     try {
-      const response = await fetch('/api/autonomous/execute', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          prompt: prompt.trim(),
-          autoApprove: false 
-        })
+      const response = await apiRequest('POST', '/api/autonomous/execute', {
+        prompt: prompt.trim(),
+        autoApprove: false
       });
 
       const data = await response.json();
       
-      if (response.ok) {
-        setCurrentTask({
-          taskId: data.taskId,
-          status: 'pending',
-          prompt: prompt.trim()
-        });
-      } else {
-        setCurrentTask({
-          taskId: 'error',
-          status: 'failed',
-          error: data.message || 'Failed to start task'
-        });
-        setIsExecuting(false);
-      }
+      setCurrentTask({
+        taskId: data.taskId,
+        status: 'pending',
+        prompt: prompt.trim()
+      });
     } catch (error: any) {
       setCurrentTask({
         taskId: 'error',
         status: 'failed',
-        error: error.message || 'Network error'
+        error: error.message || 'Failed to start task'
       });
       setIsExecuting(false);
     }
@@ -128,17 +116,13 @@ export default function VisualEditorPage() {
     if (!currentTask?.taskId) return;
 
     try {
-      const response = await fetch(`/api/autonomous/approve/${currentTask.taskId}`, {
-        method: 'POST'
-      });
-
-      if (response.ok) {
-        setCurrentTask(prev => ({
-          ...prev!,
-          status: 'completed'
-        }));
-        setIsExecuting(false);
-      }
+      await apiRequest('POST', `/api/autonomous/approve/${currentTask.taskId}`);
+      
+      setCurrentTask(prev => ({
+        ...prev!,
+        status: 'completed'
+      }));
+      setIsExecuting(false);
     } catch (error) {
       console.error('Approve error:', error);
     }
