@@ -5,11 +5,20 @@ import { db } from '@shared/db';
 import { fundingCampaigns } from '@shared/schema';
 import { eq, and, gte, sql } from 'drizzle-orm';
 
-const connection = new IORedis({
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379'),
+// Only create Redis connection if REDIS_URL is configured
+const connection = process.env.REDIS_URL ? new IORedis(process.env.REDIS_URL, {
   maxRetriesPerRequest: null,
-});
+  enableOfflineQueue: false,
+  lazyConnect: true,
+  reconnectOnError: () => false,
+}) : null;
+
+// Suppress Redis errors for graceful degradation
+if (connection) {
+  connection.on('error', () => {
+    // Silently ignore - worker will be disabled without Redis
+  });
+}
 
 export interface CrowdfundingJobData {
   type: 'predict-success' | 'optimize-campaign' | 'engage-donors' | 'detect-fraud' | 'comprehensive-analysis' | 'new-campaign-check' | 'new-donation-process';
@@ -20,7 +29,7 @@ export interface CrowdfundingJobData {
   goalAmount?: number;
 }
 
-export const crowdfundingAgentWorker = new Worker<CrowdfundingJobData>(
+export const crowdfundingAgentWorker = connection ? new Worker<CrowdfundingJobData>(
   'crowdfunding-agents',
   async (job: Job<CrowdfundingJobData>) => {
     console.log(`[CrowdfundingWorker] Processing job ${job.id}: ${job.data.type}`);
@@ -62,7 +71,7 @@ export const crowdfundingAgentWorker = new Worker<CrowdfundingJobData>(
     removeOnComplete: { count: 100 },
     removeOnFail: { count: 50 },
   }
-);
+) : null;
 
 async function handlePredictSuccess(job: Job<CrowdfundingJobData>) {
   const { campaignId } = job.data;

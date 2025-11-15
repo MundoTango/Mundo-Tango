@@ -2,11 +2,20 @@ import { Worker, Job } from 'bullmq';
 import IORedis from 'ioredis';
 import { legalOrchestrator } from '../services/legal/LegalOrchestrator';
 
-const connection = new IORedis({
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379'),
+// Only create Redis connection if REDIS_URL is configured
+const connection = process.env.REDIS_URL ? new IORedis(process.env.REDIS_URL, {
   maxRetriesPerRequest: null,
-});
+  enableOfflineQueue: false,
+  lazyConnect: true,
+  reconnectOnError: () => false,
+}) : null;
+
+// Suppress Redis errors for graceful degradation
+if (connection) {
+  connection.on('error', () => {
+    // Silently ignore - worker will be disabled without Redis
+  });
+}
 
 export interface LegalJobData {
   type: 'review-document' | 'assist-contract' | 'check-compliance' | 'compare-templates' | 'score-template';
@@ -23,7 +32,7 @@ export interface LegalJobData {
   templateIdB?: number;
 }
 
-export const legalAgentWorker = new Worker<LegalJobData>(
+export const legalAgentWorker = connection ? new Worker<LegalJobData>(
   'legal-agents',
   async (job: Job<LegalJobData>) => {
     console.log(`[LegalAgentWorker] Processing job ${job.id}: ${job.data.type}`);
@@ -59,7 +68,7 @@ export const legalAgentWorker = new Worker<LegalJobData>(
     removeOnComplete: { count: 100 },
     removeOnFail: { count: 50 },
   }
-);
+) : null;
 
 async function handleReviewDocument(job: Job<LegalJobData>) {
   await job.updateProgress(10);

@@ -5,6 +5,7 @@
 
 import { Router, Request, Response } from "express";
 import { Queue } from "bullmq";
+import IORedis from "ioredis";
 import { storage } from "../storage";
 import { authenticateToken, type AuthRequest } from "../middleware/auth";
 import { Agent105_MasterOrchestrator } from "../services/financial/AgentOrchestrator";
@@ -12,13 +13,23 @@ import { RateLimitedAIOrchestrator } from "../services/ai/integration/rate-limit
 
 const router = Router();
 
-// Initialize queues
-const financialAgentQueue = new Queue("financial-agents", {
-  connection: {
-    host: process.env.REDIS_HOST || "localhost",
-    port: parseInt(process.env.REDIS_PORT || "6379")
-  }
-});
+// Only create Redis connection if REDIS_URL is configured
+const connection = process.env.REDIS_URL ? new IORedis(process.env.REDIS_URL, {
+  maxRetriesPerRequest: null,
+  enableOfflineQueue: false,
+  lazyConnect: true,
+  reconnectOnError: () => false,
+}) : null;
+
+// Suppress Redis errors for graceful degradation
+if (connection) {
+  connection.on('error', () => {
+    // Silently ignore - queue will be disabled without Redis
+  });
+}
+
+// Initialize queues (only if Redis is available)
+const financialAgentQueue = connection ? new Queue("financial-agents", { connection }) : null;
 
 // Initialize orchestrator for direct status queries
 const aiOrchestrator = new RateLimitedAIOrchestrator();

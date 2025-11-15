@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { Queue } from 'bullmq';
-import { redisConnection } from '../config/redis';
+import IORedis from 'ioredis';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { contentGenerator } from '../services/social/ContentGenerator';
 import { postingTimeOptimizer } from '../services/social/PostingTimeOptimizer';
@@ -11,9 +11,22 @@ import type { SocialMediaJobData } from '../workers/socialMediaAgentWorker';
 
 const router = Router();
 
-const socialMediaQueue = new Queue<SocialMediaJobData>('social-media-agents', {
-  connection: redisConnection,
-});
+// Only create Redis connection if REDIS_URL is configured
+const connection = process.env.REDIS_URL ? new IORedis(process.env.REDIS_URL, {
+  maxRetriesPerRequest: null,
+  enableOfflineQueue: false,
+  lazyConnect: true,
+  reconnectOnError: () => false,
+}) : null;
+
+// Suppress Redis errors for graceful degradation
+if (connection) {
+  connection.on('error', () => {
+    // Silently ignore - queue will be disabled without Redis
+  });
+}
+
+const socialMediaQueue = connection ? new Queue<SocialMediaJobData>('social-media-agents', { connection }) : null;
 
 router.post('/generate-content', authenticateToken, async (req: AuthRequest, res) => {
   try {

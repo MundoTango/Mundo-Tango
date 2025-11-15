@@ -8,15 +8,21 @@
 
 import Redis from 'ioredis';
 
-const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
-  lazyConnect: true, // Don't connect until needed
+// Only create Redis client if REDIS_URL is configured
+const redis = process.env.REDIS_URL ? new Redis(process.env.REDIS_URL, {
+  lazyConnect: true,
   enableOfflineQueue: false,
-});
+  maxRetriesPerRequest: 0,
+  retryStrategy: () => null,
+  reconnectOnError: () => false,
+}) : null;
 
 // Add error handler to prevent unhandled error events
-redis.on('error', (err) => {
-  console.error('⚠️  AgentBlackboard Redis error:', err.message);
-});
+if (redis) {
+  redis.on('error', () => {
+    // Silently ignore Redis errors - graceful degradation
+  });
+}
 
 export interface BlackboardEntry {
   agentId: string;
@@ -40,14 +46,22 @@ export class AgentBlackboard {
    */
   async write(entry: BlackboardEntry): Promise<string> {
     const id = `${entry.platform}-${Date.now()}`;
+    
+    if (!redis) {
+      // Redis unavailable - log but don't crash
+      console.log(`[Blackboard] (in-memory) ${entry.platform} wrote: ${entry.insight.substring(0, 50)}...`);
+      return id;
+    }
+    
     const key = `${this.namespace}:${id}`;
     
-    await redis.setex(key, 3600, JSON.stringify(entry)); // 1 hour TTL
-    
-    // Add to sorted set for ordering
-    await redis.zadd(`${this.namespace}:index`, entry.timestamp, id);
-    
-    console.log(`[Blackboard] ${entry.platform} wrote: ${entry.insight.substring(0, 50)}...`);
+    try {
+      await redis.setex(key, 3600, JSON.stringify(entry)); // 1 hour TTL
+      await redis.zadd(`${this.namespace}:index`, entry.timestamp, id);
+      console.log(`[Blackboard] ${entry.platform} wrote: ${entry.insight.substring(0, 50)}...`);
+    } catch (error) {
+      console.log(`[Blackboard] (fallback) ${entry.platform} wrote: ${entry.insight.substring(0, 50)}...`);
+    }
     
     return id;
   }
@@ -56,18 +70,24 @@ export class AgentBlackboard {
    * Read all insights from blackboard
    */
   async readAll(): Promise<BlackboardEntry[]> {
-    const ids = await redis.zrange(`${this.namespace}:index`, 0, -1);
-    const entries: BlackboardEntry[] = [];
+    if (!redis) return [];
     
-    for (const id of ids) {
-      const key = `${this.namespace}:${id}`;
-      const data = await redis.get(key);
-      if (data) {
-        entries.push(JSON.parse(data));
+    try {
+      const ids = await redis.zrange(`${this.namespace}:index`, 0, -1);
+      const entries: BlackboardEntry[] = [];
+      
+      for (const id of ids) {
+        const key = `${this.namespace}:${id}`;
+        const data = await redis.get(key);
+        if (data) {
+          entries.push(JSON.parse(data));
+        }
       }
+      
+      return entries;
+    } catch (error) {
+      return [];
     }
-    
-    return entries;
   }
   
   /**

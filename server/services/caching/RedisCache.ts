@@ -6,16 +6,21 @@
 import Redis from 'ioredis';
 import type { AIResponse } from '../ai/UnifiedAIOrchestrator';
 
-// Initialize Redis client
-const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
-  lazyConnect: true, // Don't connect until needed
+// Only create Redis client if REDIS_URL is configured
+const redis = process.env.REDIS_URL ? new Redis(process.env.REDIS_URL, {
+  lazyConnect: true,
   enableOfflineQueue: false,
-});
+  maxRetriesPerRequest: 0,
+  retryStrategy: () => null,
+  reconnectOnError: () => false,
+}) : null;
 
 // Add error handler to prevent unhandled error events
-redis.on('error', (err) => {
-  console.error('⚠️  RedisCache error:', err.message);
-});
+if (redis) {
+  redis.on('error', () => {
+    // Silently ignore Redis errors - graceful degradation
+  });
+}
 
 // Cache statistics
 let cacheHits = 0;
@@ -25,6 +30,11 @@ let cacheMisses = 0;
  * Get cached AI response
  */
 export async function getCachedAIResponse(cacheKey: string): Promise<AIResponse | null> {
+  if (!redis) {
+    cacheMisses++;
+    return null;
+  }
+  
   try {
     const cached = await redis.get(cacheKey);
     if (!cached) {
@@ -37,7 +47,6 @@ export async function getCachedAIResponse(cacheKey: string): Promise<AIResponse 
     console.log(`[Cache HIT] ${cacheKey}`);
     return parsed;
   } catch (error) {
-    console.error('[Cache Error]', error);
     cacheMisses++;
     return null;
   }
@@ -51,11 +60,13 @@ export async function cacheAIResponse(
   response: AIResponse,
   ttl: number = 86400 // 24 hours default
 ): Promise<void> {
+  if (!redis) return;
+  
   try {
     await redis.setex(cacheKey, ttl, JSON.stringify(response));
     console.log(`[Cache SET] ${cacheKey} (TTL: ${ttl}s)`);
   } catch (error) {
-    console.error('[Cache Error]', error);
+    // Silently fail - caching is optional
   }
 }
 
@@ -63,11 +74,13 @@ export async function cacheAIResponse(
  * Invalidate cached response
  */
 export async function invalidateCachedResponse(cacheKey: string): Promise<void> {
+  if (!redis) return;
+  
   try {
     await redis.del(cacheKey);
     console.log(`[Cache DEL] ${cacheKey}`);
   } catch (error) {
-    console.error('[Cache Error]', error);
+    // Silently fail
   }
 }
 
@@ -99,6 +112,8 @@ export function resetCacheStats(): void {
  * Clear all AI cache
  */
 export async function clearAllAICache(): Promise<void> {
+  if (!redis) return;
+  
   try {
     const keys = await redis.keys('ai:cache:*');
     if (keys.length > 0) {

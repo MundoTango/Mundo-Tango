@@ -88,20 +88,29 @@ async function checkDatabase(): Promise<HealthCheck> {
 async function checkRedis(): Promise<HealthCheck> {
   const start = Date.now();
   try {
-    // Dynamically import ioredis only if Redis is configured
-    const Redis = (await import('ioredis')).default;
-    const redis = new Redis(process.env.REDIS_URL!, {
-      lazyConnect: true, // Don't connect immediately
-    });
+    // Use existing Redis client from redis-optional (don't create new connections)
+    const { getRedisClient, isRedisConnected } = await import('./config/redis-optional');
+    const redis = getRedisClient();
     
-    // Add error handler to prevent unhandled error events
-    redis.on('error', (err) => {
-      // Silently ignore errors during health check
-    });
+    if (!redis) {
+      return {
+        status: 'down',
+        responseTime: Date.now() - start,
+        message: 'Redis not configured',
+      };
+    }
     
-    await redis.connect();
+    // Check if already connected
+    if (!isRedisConnected()) {
+      return {
+        status: 'down',
+        responseTime: Date.now() - start,
+        message: 'Redis not connected',
+      };
+    }
+    
+    // Quick ping test (reuses existing connection)
     await redis.ping();
-    await redis.quit();
     
     return {
       status: 'up',

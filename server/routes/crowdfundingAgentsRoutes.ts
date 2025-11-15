@@ -10,13 +10,22 @@ import { z } from 'zod';
 
 const router = Router();
 
-const connection = new IORedis({
-  host: process.env.REDIS_HOST || 'localhost',
-  port: parseInt(process.env.REDIS_PORT || '6379'),
+// Only create Redis connection if REDIS_URL is configured
+const connection = process.env.REDIS_URL ? new IORedis(process.env.REDIS_URL, {
   maxRetriesPerRequest: null,
-});
+  enableOfflineQueue: false,
+  lazyConnect: true,
+  reconnectOnError: () => false,
+}) : null;
 
-const crowdfundingQueue = new Queue('crowdfunding-agents', { connection });
+// Suppress Redis errors for graceful degradation
+if (connection) {
+  connection.on('error', () => {
+    // Silently ignore - queue will be disabled without Redis
+  });
+}
+
+const crowdfundingQueue = connection ? new Queue('crowdfunding-agents', { connection }) : null;
 
 const predictSuccessSchema = z.object({
   campaignId: z.number().positive(),
