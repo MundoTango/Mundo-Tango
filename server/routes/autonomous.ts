@@ -570,7 +570,17 @@ async function executeAutonomousTask(taskId: string, autoApprove: boolean): Prom
     task.updatedAt = new Date();
     console.log(`[Autonomous] Generating code for ${decomposition.subtasks.length} subtasks...`);
 
-    const generatedFiles = await codeGenerator.generateMultipleFiles(decomposition.subtasks);
+    // Convert MB.MD subtasks (files: string[]) to CodeGenerator format (filePath: string)
+    const codeGenTasks = decomposition.subtasks.flatMap(subtask => 
+      subtask.files.map(filePath => ({
+        description: subtask.description,
+        filePath,
+        dependencies: subtask.dependencies,
+        type: subtask.type === 'code_generation' ? 'component' : 'service'
+      }))
+    );
+
+    const generatedFiles = await codeGenerator.generateMultipleFiles(codeGenTasks as any);
     task.generatedFiles = generatedFiles;
     task.updatedAt = new Date();
 
