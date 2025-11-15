@@ -2,19 +2,17 @@ import { Worker, Job, Queue } from "bullmq";
 import Redis from "ioredis";
 import { MarketplaceOrchestrator } from "../services/marketplace/MarketplaceOrchestrator";
 
+// Only create Redis connection if REDIS_URL is explicitly set
 const connection = process.env.REDIS_URL 
   ? new Redis(process.env.REDIS_URL, {
-      maxRetriesPerRequest: null,
-      retryStrategy: (times) => Math.min(times * 50, 2000)
+      maxRetriesPerRequest: 0,
+      retryStrategy: () => null,
+      enableOfflineQueue: false,
+      lazyConnect: true,
     })
-  : new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
-      maxRetriesPerRequest: null,
-      retryStrategy: (times) => Math.min(times * 50, 2000)
-    });
+  : null;
 
-export const marketplaceAgentQueue = new Queue('marketplace-agents', {
+export const marketplaceAgentQueue = connection ? new Queue('marketplace-agents', {
   connection,
   defaultJobOptions: {
     attempts: 3,
@@ -25,7 +23,7 @@ export const marketplaceAgentQueue = new Queue('marketplace-agents', {
     removeOnComplete: 100,
     removeOnFail: 50
   }
-});
+}) : null;
 
 interface MarketplaceAgentJob {
   type: 'fraud-check' | 'price-optimize' | 'recommend-products' | 'analyze-reviews' | 
@@ -35,7 +33,7 @@ interface MarketplaceAgentJob {
   data: any;
 }
 
-export const marketplaceAgentWorker = new Worker<MarketplaceAgentJob>(
+export const marketplaceAgentWorker = connection ? new Worker<MarketplaceAgentJob>(
   'marketplace-agents',
   async (job: Job<MarketplaceAgentJob>) => {
     const { type, priority = 'medium', data } = job.data;
@@ -153,10 +151,19 @@ export const marketplaceAgentWorker = new Worker<MarketplaceAgentJob>(
       max: 10,
       duration: 1000
     }
+  },
+  {
+    connection,
+    concurrency: 5,
+    limiter: {
+      max: 10,
+      duration: 1000
+    }
   }
-);
+) : null;
 
-marketplaceAgentWorker.on('completed', (job) => {
+if (marketplaceAgentWorker) {
+  marketplaceAgentWorker.on('completed', (job) => {
   console.log(`[MarketplaceAgentWorker] Job ${job.id} completed`);
 });
 
@@ -165,10 +172,15 @@ marketplaceAgentWorker.on('failed', (job, error) => {
 });
 
 marketplaceAgentWorker.on('error', (error) => {
-  console.error('[MarketplaceAgentWorker] Worker error:', error);
-});
+    console.error('[MarketplaceAgentWorker] Worker error:', error);
+  });
+}
 
 export async function scheduleDailyMaintenance() {
+  if (!marketplaceAgentQueue) {
+    console.log('ℹ️ Marketplace workers disabled (Redis not configured)');
+    return;
+  }
   await marketplaceAgentQueue.add(
     'daily-maintenance',
     {
@@ -196,6 +208,7 @@ export async function queueFraudCheck(data: {
   ipAddress?: string;
   stripePaymentId?: string;
 }): Promise<void> {
+  if (!marketplaceAgentQueue) return;
   await marketplaceAgentQueue.add('fraud-check', {
     type: 'fraud-check',
     priority: 'critical',
@@ -207,6 +220,7 @@ export async function queuePriceOptimization(data: {
   productId?: number;
   sellerId?: number;
 }): Promise<void> {
+  if (!marketplaceAgentQueue) return;
   await marketplaceAgentQueue.add('price-optimization', {
     type: 'price-optimize',
     priority: 'medium',
@@ -220,6 +234,7 @@ export async function queueRecommendations(data: {
   category?: string;
   limit?: number;
 }): Promise<void> {
+  if (!marketplaceAgentQueue) return;
   await marketplaceAgentQueue.add('recommendations', {
     type: 'recommend-products',
     priority: 'low',
@@ -232,6 +247,7 @@ export async function queueReviewAnalysis(data: {
   reviewText?: string;
   reviewId?: number;
 }): Promise<void> {
+  if (!marketplaceAgentQueue) return;
   await marketplaceAgentQueue.add('review-analysis', {
     type: 'analyze-reviews',
     priority: 'medium',
@@ -242,6 +258,7 @@ export async function queueReviewAnalysis(data: {
 export async function queueInventoryCheck(data: {
   sellerId: number;
 }): Promise<void> {
+  if (!marketplaceAgentQueue) return;
   await marketplaceAgentQueue.add('inventory-check', {
     type: 'monitor-inventory',
     priority: 'low',
@@ -253,6 +270,7 @@ export async function queueSellerSupport(data: {
   sellerId: number;
   period?: 'day' | 'week' | 'month' | 'quarter';
 }): Promise<void> {
+  if (!marketplaceAgentQueue) return;
   await marketplaceAgentQueue.add('seller-support', {
     type: 'support-seller',
     priority: 'low',
@@ -264,6 +282,7 @@ export async function queueTransactionTracking(data: {
   purchaseId?: number;
   sellerId?: number;
 }): Promise<void> {
+  if (!marketplaceAgentQueue) return;
   await marketplaceAgentQueue.add('transaction-tracking', {
     type: 'track-transaction',
     priority: 'high',
@@ -275,6 +294,7 @@ export async function queueQAReview(data: {
   productId?: number;
   autoApprove?: boolean;
 }): Promise<void> {
+  if (!marketplaceAgentQueue) return;
   await marketplaceAgentQueue.add('qa-review', {
     type: 'qa-review',
     priority: 'high',
@@ -282,4 +302,8 @@ export async function queueQAReview(data: {
   });
 }
 
-console.log('[MarketplaceAgentWorker] Worker initialized and ready');
+if (connection) {
+  console.log('✅ [MarketplaceAgentWorker] Worker initialized and ready');
+} else {
+  console.log('ℹ️ [MarketplaceAgentWorker] Disabled (REDIS_URL not set)');
+}
