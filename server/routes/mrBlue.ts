@@ -10,6 +10,7 @@ import { mrBlueConversations, mrBlueMessages, messageReactions, messageBookmarks
 import { eq, and, desc, sql, isNull } from "drizzle-orm";
 import { authenticateToken, type AuthRequest } from "../middleware/auth";
 import { getConversationContext, saveMessageToHistory } from "../services/chat-context";
+import { CodeGenerator } from "../services/codeGenerator";
 
 const router = Router();
 
@@ -807,6 +808,54 @@ router.post("/messages/:id/share", authenticateToken, async (req: AuthRequest, r
   } catch (error: any) {
     console.error('[MrBlue] Share message error:', error);
     res.status(500).json({ error: 'Failed to generate share URL' });
+  }
+});
+
+// ============================================================================
+// CODE GENERATION
+// ============================================================================
+
+const codeGenerator = new CodeGenerator();
+
+// Generate code endpoint
+router.post("/generate-code", async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    const { prompt, context } = req.body;
+    
+    const result = await codeGenerator.generateComponent(prompt, context);
+    
+    res.json(result);
+  } catch (error: any) {
+    console.error('[Code Generation] Error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// Modify code endpoint
+router.post("/modify-code", async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    const { originalCode, modification } = req.body;
+    
+    const result = await codeGenerator.modifyCode(originalCode, modification);
+    
+    res.json(result);
+  } catch (error: any) {
+    console.error('[Code Modification] Error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
 });
 

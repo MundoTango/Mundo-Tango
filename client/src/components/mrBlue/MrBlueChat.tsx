@@ -13,6 +13,8 @@ import { apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
 import { MessageActions } from "./MessageActions";
 import { useVoiceInput } from "@/hooks/useVoiceInput";
+import { VibecodingRouter } from "@/lib/vibecodingRouter";
+import { useToast } from "@/hooks/use-toast";
 
 interface Message {
   id: string;
@@ -41,8 +43,10 @@ export function MrBlueChat() {
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const messageCountRef = useRef(0);
+  const vibeRouterRef = useRef<VibecodingRouter | null>(null);
+  const { toast } = useToast();
 
   // Handle voice input result
   const handleVoiceResult = (text: string) => {
@@ -68,6 +72,26 @@ export function MrBlueChat() {
   } = useVoiceInput({
     onResult: handleVoiceResult,
   });
+
+  // Initialize vibecoding router
+  useEffect(() => {
+    vibeRouterRef.current = new VibecodingRouter({
+      navigate: (path: string) => {
+        navigate(path);
+      },
+      setViewMode: (mode: 'preview' | 'code' | 'history') => {
+        console.log('[MrBlue] View mode changed:', mode);
+      },
+      handleUndo: () => {
+        console.log('[MrBlue] Undo action');
+      },
+      handleRedo: () => {
+        console.log('[MrBlue] Redo action');
+      },
+    });
+    
+    console.log('[MrBlue] Vibecoding router initialized');
+  }, [navigate]);
 
   // Track page context
   useEffect(() => {
@@ -139,16 +163,16 @@ export function MrBlueChat() {
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return;
 
+    const messageText = input;
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: input,
+      content: messageText,
       timestamp: new Date()
     };
 
     setMessages(prev => [...prev, userMessage]);
     setInput("");
-    setIsLoading(true);
 
     // Track interaction
     breadcrumbTracker.track({
@@ -156,16 +180,56 @@ export function MrBlueChat() {
       action: 'input',
       page: location,
       target: 'mr-blue-chat',
-      value: { messageLength: input.length },
+      value: { messageLength: messageText.length },
       success: true
     });
+
+    // First, route the message through vibecoding router
+    if (vibeRouterRef.current) {
+      try {
+        const routeResult = await vibeRouterRef.current.route(messageText);
+        console.log('[MrBlue] Route result:', routeResult);
+        
+        // If routing was successful and doesn't require AI
+        if (routeResult.success && !routeResult.requiresAI) {
+          // Show success toast
+          toast({
+            title: 'Success',
+            description: routeResult.message,
+          });
+          
+          // Add assistant confirmation message
+          const confirmMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            role: 'assistant',
+            content: routeResult.message,
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, confirmMessage]);
+          
+          return; // Don't send to AI
+        }
+        
+        // If routing failed or requires AI, continue to AI processing
+        if (!routeResult.success && !routeResult.requiresAI) {
+          // Show info that we're sending to AI
+          console.log('[MrBlue] Routing failed, sending to AI:', routeResult.message);
+        }
+      } catch (error) {
+        console.error('[MrBlue] Routing error:', error);
+        // Continue to AI if routing fails
+      }
+    }
+
+    // Send to AI for processing
+    setIsLoading(true);
 
     try {
       const response = await fetch('/api/mrblue/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: input,
+          message: messageText,
           pageContext: {
             page: location,
             breadcrumbs: breadcrumbTracker.getRecentActions(5)

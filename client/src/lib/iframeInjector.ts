@@ -4,6 +4,207 @@
  * Solves cross-origin security issues
  */
 
+export interface StyleChangeRequest {
+  type: 'style' | 'class';
+  property: string;
+  value: string;
+}
+
+export interface StyleChange {
+  selector: string;
+  property: string;
+  previousValue: string;
+  newValue: string;
+  timestamp: number;
+}
+
+export class IframeInjector {
+  private iframe: HTMLIFrameElement | null = null;
+  private selectedElement: HTMLElement | null = null;
+  private changeHistory: StyleChange[] = [];
+  private changeIndex: number = -1;
+  
+  setIframe(iframe: HTMLIFrameElement) {
+    this.iframe = iframe;
+  }
+  
+  setSelectedElement(element: HTMLElement | null) {
+    this.selectedElement = element;
+  }
+  
+  async applyChange(change: StyleChangeRequest): Promise<void> {
+    if (!this.iframe || !this.selectedElement) {
+      console.warn('[IframeInjector] No iframe or selected element');
+      return;
+    }
+    
+    const iframeDoc = this.iframe.contentDocument;
+    if (!iframeDoc) return;
+    
+    // Get the equivalent element in iframe
+    const selector = this.getElementSelector(this.selectedElement);
+    const targetElement = iframeDoc.querySelector(selector) as HTMLElement;
+    
+    if (!targetElement) {
+      console.warn('[IframeInjector] Target element not found');
+      return;
+    }
+    
+    // Store previous value for undo
+    const previousValue = targetElement.style[change.property as any];
+    
+    // Apply the change
+    if (change.type === 'style') {
+      targetElement.style[change.property as any] = change.value;
+    } else if (change.type === 'class') {
+      if (change.value.startsWith('+')) {
+        targetElement.classList.add(change.value.slice(1));
+      } else if (change.value.startsWith('-')) {
+        targetElement.classList.remove(change.value.slice(1));
+      } else {
+        targetElement.className = change.value;
+      }
+    }
+    
+    // Add to history
+    const styleChange: StyleChange = {
+      selector,
+      property: change.property,
+      previousValue,
+      newValue: change.value,
+      timestamp: Date.now(),
+    };
+    
+    // Remove any changes after current index (for redo)
+    this.changeHistory = this.changeHistory.slice(0, this.changeIndex + 1);
+    this.changeHistory.push(styleChange);
+    this.changeIndex++;
+    
+    // Send update to parent
+    this.notifyParent('CHANGE_APPLIED', styleChange);
+    
+    // Take screenshot
+    await this.captureScreenshot();
+  }
+  
+  async undo(): Promise<void> {
+    if (this.changeIndex < 0) {
+      console.log('[IframeInjector] Nothing to undo');
+      return;
+    }
+    
+    const change = this.changeHistory[this.changeIndex];
+    
+    const iframeDoc = this.iframe?.contentDocument;
+    if (!iframeDoc) return;
+    
+    const targetElement = iframeDoc.querySelector(change.selector) as HTMLElement;
+    if (targetElement) {
+      targetElement.style[change.property as any] = change.previousValue;
+    }
+    
+    this.changeIndex--;
+    this.notifyParent('CHANGE_UNDONE', change);
+    
+    await this.captureScreenshot();
+  }
+  
+  async redo(): Promise<void> {
+    if (this.changeIndex >= this.changeHistory.length - 1) {
+      console.log('[IframeInjector] Nothing to redo');
+      return;
+    }
+    
+    this.changeIndex++;
+    const change = this.changeHistory[this.changeIndex];
+    
+    const iframeDoc = this.iframe?.contentDocument;
+    if (!iframeDoc) return;
+    
+    const targetElement = iframeDoc.querySelector(change.selector) as HTMLElement;
+    if (targetElement) {
+      targetElement.style[change.property as any] = change.newValue;
+    }
+    
+    this.notifyParent('CHANGE_REDONE', change);
+    
+    await this.captureScreenshot();
+  }
+  
+  async jumpToChange(index: number): Promise<void> {
+    if (index < -1 || index >= this.changeHistory.length) {
+      console.warn('[IframeInjector] Invalid change index');
+      return;
+    }
+    
+    // Undo to the beginning
+    while (this.changeIndex > index) {
+      await this.undo();
+    }
+    
+    // Redo to the target index
+    while (this.changeIndex < index) {
+      await this.redo();
+    }
+  }
+  
+  getHistory(): StyleChange[] {
+    return this.changeHistory;
+  }
+  
+  getCurrentIndex(): number {
+    return this.changeIndex;
+  }
+  
+  canUndo(): boolean {
+    return this.changeIndex >= 0;
+  }
+  
+  canRedo(): boolean {
+    return this.changeIndex < this.changeHistory.length - 1;
+  }
+  
+  private getElementSelector(element: HTMLElement): string {
+    // Generate unique CSS selector for element
+    if (element.id) {
+      return `#${element.id}`;
+    }
+    
+    const classes = Array.from(element.classList).join('.');
+    const tag = element.tagName.toLowerCase();
+    
+    if (classes) {
+      return `${tag}.${classes}`;
+    }
+    
+    // Use nth-child if no id or classes
+    const parent = element.parentElement;
+    if (parent) {
+      const children = Array.from(parent.children);
+      const index = children.indexOf(element);
+      return `${this.getElementSelector(parent)} > ${tag}:nth-child(${index + 1})`;
+    }
+    
+    return tag;
+  }
+  
+  private async captureScreenshot(): Promise<void> {
+    // Use html2canvas to capture screenshot
+    const iframeDoc = this.iframe?.contentDocument;
+    if (!iframeDoc) return;
+    
+    // Send message to capture screenshot
+    this.notifyParent('CAPTURE_SCREENSHOT', null);
+  }
+  
+  private notifyParent(type: string, data: any) {
+    window.parent.postMessage({
+      type: `IFRAME_${type}`,
+      data,
+    }, '*');
+  }
+}
+
 export const IFRAME_SELECTION_SCRIPT = `
 (function() {
   let hoveredElement = null;
