@@ -86,12 +86,13 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
     onResult: handleVoiceResult,
   });
 
-  // Auto-enable continuous mode for voice mode
+  // Don't auto-enable continuous mode - let user trigger it manually
+  // This prevents permission errors and follows browser best practices
   useEffect(() => {
     if (enableVoice && mode === 'voice') {
-      enableContinuousMode();
+      console.log('[MrBlue] Voice mode active - use toggle button to start listening');
     }
-  }, [enableVoice, mode, enableContinuousMode]);
+  }, [enableVoice, mode]);
   
   // Auto-enable vibecoding router for vibecoding mode
   useEffect(() => {

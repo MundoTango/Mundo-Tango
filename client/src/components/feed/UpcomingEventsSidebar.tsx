@@ -178,6 +178,13 @@ export function UpcomingEventsSidebar({ className }: UpcomingEventsSidebarProps)
         
         ws.onopen = () => {
           console.log('[WS] Connected to notification service');
+          // Send auth message
+          if (ws && accessToken) {
+            ws.send(JSON.stringify({
+              type: 'auth',
+              token: accessToken
+            }));
+          }
         };
 
         ws.onmessage = (event) => {

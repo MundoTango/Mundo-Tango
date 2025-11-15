@@ -30,6 +30,36 @@ const enhancedChatSchema = z.object({
 });
 
 /**
+ * Simple chat endpoint for basic Mr. Blue interactions
+ */
+router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
+  try {
+    const { message, conversationId } = req.body;
+    
+    if (!message || typeof message !== 'string') {
+      return res.status(400).json({ error: 'Message is required' });
+    }
+    
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    // Simple AI-like response for now
+    const response = {
+      role: 'assistant',
+      content: `I received your message: "${message}". I'm Mr. Blue, your AI companion. How can I help you today?`,
+      timestamp: new Date().toISOString(),
+    };
+    
+    res.json(response);
+  } catch (error: any) {
+    console.error('[Mr. Blue Chat] Error:', error);
+    res.status(500).json({ error: 'Failed to process chat message' });
+  }
+});
+
+/**
  * Enhanced chat endpoint with automatic error detection and legal intelligence
  */
 router.post('/api/mr-blue/chat-enhanced', authenticateToken, async (req, res) => {
