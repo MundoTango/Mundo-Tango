@@ -19,10 +19,11 @@ import { fillForm, submitForm } from '../helpers/forms';
 /**
  * God Level user
  * This user has NO rate limits or cost caps
+ * Uses environment variables for security
  */
 const godUser = {
-  email: 'admin@mundotango.life',
-  password: 'admin123',
+  email: process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life',
+  password: process.env.TEST_ADMIN_PASSWORD || 'admin123',
 };
 
 test.describe('Mr. Blue Autonomous Agent', () => {

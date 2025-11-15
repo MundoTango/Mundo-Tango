@@ -9,5 +9,5 @@
       - img [ref=e7]
       - text: Access Denied
     - alert [ref=e10]:
-      - generic [ref=e11]: "The Visual Editor requires God Level (Tier 8) access. Your current role: undefined"
+      - generic [ref=e11]: "The Visual Editor requires God Level (Tier 8) access. Your current role: super_admin"
 ```
