@@ -14,8 +14,10 @@ import {
   type TroubleshootingIssue 
 } from '../knowledge/mr-blue-troubleshooting-kb';
 import { legalOrchestrator } from '../services/legal/LegalOrchestrator';
+import { ElevenLabsVoiceService } from '../services/premium/elevenlabsVoiceService';
 
 const router = Router();
+const elevenlabsService = new ElevenLabsVoiceService();
 
 // Schema for enhanced chat with auto-troubleshooting
 const enhancedChatSchema = z.object({
@@ -31,10 +33,11 @@ const enhancedChatSchema = z.object({
 
 /**
  * Context-aware chat endpoint for Mr. Blue interactions
+ * Now supports ElevenLabs TTS for human-sounding voice responses
  */
 router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
   try {
-    const { message, context } = req.body;
+    const { message, context, voiceEnabled, selectedVoiceId } = req.body;
     
     if (!message || typeof message !== 'string') {
       return res.status(400).json({ error: 'Message is required' });
@@ -104,7 +107,32 @@ router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
       content: responseContent,
       timestamp: new Date().toISOString(),
       contextUsed: !!context,
+      audioUrl: null as string | null,
+      characterCount: responseContent.length,
     };
+    
+    // If voice is enabled, convert response to speech using ElevenLabs
+    if (voiceEnabled) {
+      try {
+        console.log('[Mr. Blue] Generating TTS with ElevenLabs...');
+        const voiceId = selectedVoiceId || '21m00Tcm4TlvDq8ikWAM'; // Default: Rachel
+        
+        const voiceResult = await elevenlabsService.textToSpeech(
+          responseContent,
+          voiceId,
+          userId
+        );
+        
+        response.audioUrl = voiceResult.audioUrl;
+        response.characterCount = voiceResult.characterCount;
+        
+        console.log(`[Mr. Blue] TTS generated: ${voiceResult.characterCount} characters`);
+      } catch (error: any) {
+        console.error('[Mr. Blue] TTS error:', error);
+        // Graceful fallback - return text-only response if TTS fails
+        console.log('[Mr. Blue] Continuing with text-only response');
+      }
+    }
     
     res.json(response);
   } catch (error: any) {

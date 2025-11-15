@@ -121,33 +121,93 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
         });
       }
 
-      // Parse Visual Editor context (may be undefined for regular chat)
-      let visualContext: any = {};
+      // Parse context (may be undefined for basic chat)
+      let parsedContext: any = {};
       try {
         if (context) {
-          visualContext = typeof context === 'string' ? JSON.parse(context) : context;
+          parsedContext = typeof context === 'string' ? JSON.parse(context) : context;
         }
       } catch {
-        visualContext = {};
+        parsedContext = {};
       }
 
-      // Build rich context for Visual Editor
-      const selectedElementInfo = visualContext?.selectedElement 
-        ? `Selected Element: ${visualContext.selectedElement.tagName} (test-id: ${visualContext.selectedElement.testId || 'none'})
-   Class: ${visualContext.selectedElement.className}
-   Text: ${visualContext.selectedElement.text}`
-        : 'No element selected';
+      // Log received context for debugging
+      console.log('[Mr. Blue] Received context:', JSON.stringify(parsedContext, null, 2));
 
-      const recentEditsInfo = visualContext?.recentEdits && visualContext.recentEdits.length > 0
-        ? `Recent edits: ${visualContext.recentEdits.join(', ')}`
-        : 'No recent edits';
+      // Detect context type: Visual Editor vs General Chat
+      const isVisualEditorContext = parsedContext?.selectedElement || parsedContext?.recentEdits;
+      const isGeneralContext = parsedContext?.breadcrumbs || parsedContext?.currentPage || parsedContext?.userIntent;
 
-      const systemPrompt = `You are Mr. Blue, an AI assistant in the Visual Editor of Mundo Tango platform.
+      let systemPrompt = '';
+
+      if (isGeneralContext) {
+        // Build context-aware system message for general chat
+        const currentPage = parsedContext?.currentPage || 'Unknown';
+        const pageTitle = parsedContext?.pageTitle || 'Unknown';
+        const userIntent = parsedContext?.userIntent || 'general inquiry';
+        const breadcrumbs = parsedContext?.breadcrumbs || [];
+
+        // Build recent actions summary
+        let recentActionsText = 'None';
+        if (breadcrumbs && Array.isArray(breadcrumbs) && breadcrumbs.length > 0) {
+          recentActionsText = breadcrumbs.slice(-5).map((b: any) => {
+            const target = b.target ? ` (${b.target})` : '';
+            return `- ${b.action} on ${b.page}${target}`;
+          }).join('\n');
+        }
+
+        systemPrompt = `You are Mr. Blue, the Mundo Tango AI assistant for the global tango community platform.
+
+CURRENT CONTEXT:
+- Page: ${currentPage}
+- Page Title: ${pageTitle}
+- User Intent: ${userIntent}
+
+RECENT USER ACTIONS:
+${recentActionsText}
+
+YOUR ROLE:
+Provide context-aware assistance based on where the user is and what they're doing. Always acknowledge their current page and activity in your response.
+
+PAGE-SPECIFIC GUIDANCE:
+- If on /events: Help find milongas, festivals, workshops. Offer event recommendations.
+- If on /profile: Help with profile editing, settings, tango preferences.
+- If on /messages: Assist with messaging features, conversations.
+- If on /groups: Help find groups, join communities, or create new groups.
+- If on /housing: Help find accommodation for festivals, connect with hosts.
+- If on /marketplace: Help browse tango shoes, clothing, music, accessories.
+- If on /feed: Help with posts, connections, community updates.
+
+INSTRUCTIONS:
+- Be warm, friendly, and conversational
+- ALWAYS mention the current page in your first response
+- Provide specific, actionable help based on their location
+- Keep responses concise (2-4 sentences)
+- Show enthusiasm for tango culture
+
+Example: If user is on /events and asks "Help me", respond: "I see you're viewing events! I can help you discover amazing milongas, festivals, and workshops. Are you looking for events in a specific city, or would you like recommendations based on your preferences?"`;
+
+        console.log('[Mr. Blue] Using GENERAL CHAT context');
+        console.log('[Mr. Blue] Current Page:', currentPage);
+        console.log('[Mr. Blue] User Intent:', userIntent);
+      } else if (isVisualEditorContext) {
+        // Build rich context for Visual Editor
+        const selectedElementInfo = parsedContext?.selectedElement 
+          ? `Selected Element: ${parsedContext.selectedElement.tagName} (test-id: ${parsedContext.selectedElement.testId || 'none'})
+   Class: ${parsedContext.selectedElement.className}
+   Text: ${parsedContext.selectedElement.text}`
+          : 'No element selected';
+
+        const recentEditsInfo = parsedContext?.recentEdits && parsedContext.recentEdits.length > 0
+          ? `Recent edits: ${parsedContext.recentEdits.join(', ')}`
+          : 'No recent edits';
+
+        systemPrompt = `You are Mr. Blue, an AI assistant in the Visual Editor of Mundo Tango platform.
 
 VISUAL EDITOR CONTEXT:
-- Current Page: ${visualContext.currentPage || 'Unknown'}
+- Current Page: ${parsedContext.currentPage || 'Unknown'}
 - ${selectedElementInfo}
-- Total Edits: ${visualContext.editsCount || 0}
+- Total Edits: ${parsedContext.editsCount || 0}
 - ${recentEditsInfo}
 
 YOUR CAPABILITIES:
@@ -164,6 +224,19 @@ INSTRUCTIONS:
 - Keep responses concise but informative (2-3 sentences max)
 
 Be friendly, context-aware, and ready to help with Visual Editor tasks!`;
+
+        console.log('[Mr. Blue] Using VISUAL EDITOR context');
+      } else {
+        // No context provided - default system prompt
+        systemPrompt = `You are Mr. Blue, the Mundo Tango AI assistant for the global tango community platform.
+
+Help users navigate the platform, answer questions, and provide personalized recommendations. Be warm, friendly, and enthusiastic about tango culture.`;
+
+        console.log('[Mr. Blue] No context provided - using default prompt');
+      }
+
+      // Log the system prompt for debugging
+      console.log('[Mr. Blue] System prompt:', systemPrompt.substring(0, 200) + '...');
 
       // Build message history
       const messages: any[] = [

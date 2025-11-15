@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Send, Sparkles, Loader2, X, Check, Mic, ToggleLeft, ToggleRight } from "lucide-react";
+import { Send, Sparkles, Loader2, X, Check, Mic, ToggleLeft, ToggleRight, Phone, PhoneOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLocation } from "wouter";
 import { breadcrumbTracker } from "@/lib/mrBlue/breadcrumbTracker";
 import { apiRequest } from "@/lib/queryClient";
@@ -14,6 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { MessageActions } from "./MessageActions";
 import { CommandSuggestions } from "./CommandSuggestions";
 import { useVoiceInput } from "@/hooks/useVoiceInput";
+import { useOpenAIRealtime } from "@/hooks/useOpenAIRealtime";
 import { VibecodingRouter } from "@/lib/vibecodingRouter";
 import { useToast } from "@/hooks/use-toast";
 import type { MrBlueMode } from "./ModeSwitcher";
@@ -23,6 +25,8 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  audioUrl?: string | null;
+  characterCount?: number;
   readAt?: Date | null;
   isEdited?: boolean;
   editedAt?: Date | null;
@@ -51,7 +55,12 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
   const [showCommands, setShowCommands] = useState(false);
+  const [voiceMode, setVoiceMode] = useState<'vad' | 'realtime'>('vad');
+  const [selectedVoice, setSelectedVoice] = useState<'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer'>('alloy');
+  const [elevenLabsVoiceEnabled, setElevenLabsVoiceEnabled] = useState(false);
+  const [selectedElevenLabsVoice, setSelectedElevenLabsVoice] = useState('21m00Tcm4TlvDq8ikWAM'); // Rachel
   const scrollRef = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [location, navigate] = useLocation();
   const messageCountRef = useRef(0);
   const vibeRouterRef = useRef<VibecodingRouter | null>(null);
@@ -86,6 +95,73 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
   } = useVoiceInput({
     onResult: handleVoiceResult,
   });
+
+  // Build context-aware instructions for OpenAI Realtime
+  const realtimeInstructions = `You are Mr. Blue, the Mundo Tango AI assistant.
+
+CURRENT CONTEXT:
+- Page: ${location}
+- Page Title: ${typeof document !== 'undefined' ? document.title : 'Mundo Tango'}
+- User Journey: ${breadcrumbTracker.getRecentActions(5).map(b => b.page).join(' → ')}
+
+MB.MD Methodology: Work Simultaneously, Recursively, Critically.
+
+Provide natural, conversational assistance based on where the user is in the platform. Be concise and helpful.`;
+
+  // Initialize OpenAI Realtime hook for ChatGPT-style voice conversations
+  const {
+    isConnected: isRealtimeConnected,
+    isRecording: isRealtimeRecording,
+    messages: realtimeMessages,
+    error: realtimeError,
+    connect: connectRealtime,
+    disconnect: disconnectRealtime,
+    sendMessage: sendRealtimeMessage,
+  } = useOpenAIRealtime({
+    instructions: realtimeInstructions,
+    voice: selectedVoice,
+    turnDetection: {
+      type: 'server_vad',
+      threshold: 0.5,
+      prefix_padding_ms: 300,
+      silence_duration_ms: 500, // AI waits 500ms of silence before responding
+    },
+  });
+
+  // Show realtime error toast
+  useEffect(() => {
+    if (realtimeError) {
+      toast({
+        title: 'Realtime Voice Error',
+        description: realtimeError,
+        variant: 'destructive',
+      });
+    }
+  }, [realtimeError, toast]);
+
+  // Sync realtime messages to main messages state
+  useEffect(() => {
+    if (voiceMode === 'realtime' && realtimeMessages.length > 0) {
+      // Convert realtime messages to main messages format
+      const convertedMessages: Message[] = realtimeMessages.map((msg, idx) => ({
+        id: `realtime-${msg.timestamp}-${idx}`,
+        role: msg.role as 'user' | 'assistant',
+        content: msg.content,
+        timestamp: new Date(msg.timestamp),
+      }));
+      
+      // Only update if different from current messages (avoid infinite loop)
+      setMessages(prev => {
+        const lastMessage = prev[prev.length - 1];
+        const lastRealtimeMessage = convertedMessages[convertedMessages.length - 1];
+        
+        if (!lastMessage || !lastRealtimeMessage || lastMessage.id !== lastRealtimeMessage.id) {
+          return [...prev.slice(0, 1), ...convertedMessages]; // Keep welcome message
+        }
+        return prev;
+      });
+    }
+  }, [realtimeMessages, voiceMode]);
 
   // Don't auto-enable continuous mode - let user trigger it manually
   // This prevents permission errors and follows browser best practices
@@ -311,7 +387,9 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
             currentPage,
             pageTitle,
             userIntent
-          }
+          },
+          voiceEnabled: elevenLabsVoiceEnabled,
+          selectedVoiceId: selectedElevenLabsVoice
         })
       });
 
@@ -321,10 +399,23 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: data.response || data.content || "I'm sorry, I couldn't process that request. Please try again.",
-        timestamp: new Date()
+        timestamp: new Date(),
+        audioUrl: data.audioUrl || null,
+        characterCount: data.characterCount
       };
 
       setMessages(prev => [...prev, assistantMessage]);
+
+      // Auto-play audio if available
+      if (data.audioUrl && audioRef.current) {
+        try {
+          audioRef.current.src = data.audioUrl;
+          await audioRef.current.play();
+          console.log('[MrBlue] Playing TTS audio');
+        } catch (error) {
+          console.error('[MrBlue] Audio playback error:', error);
+        }
+      }
     } catch (error) {
       console.error('[MrBlueChat] Error:', error);
       
@@ -400,63 +491,198 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
 
   return (
     <main role="main" className="flex flex-col h-full">
+      {/* ElevenLabs TTS Controls - ALWAYS visible for human voice */}
+      <div className="p-4 border-b bg-muted/20 space-y-4">
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-2">
+            <Label className="whitespace-nowrap font-semibold">🎙️ Human Voice (ElevenLabs):</Label>
+            <Button
+              size="sm"
+              variant={elevenLabsVoiceEnabled ? "default" : "outline"}
+              onClick={() => setElevenLabsVoiceEnabled(!elevenLabsVoiceEnabled)}
+              data-testid="button-toggle-elevenlabs-voice"
+            >
+              {elevenLabsVoiceEnabled ? <ToggleRight className="w-4 h-4 mr-2" /> : <ToggleLeft className="w-4 h-4 mr-2" />}
+              {elevenLabsVoiceEnabled ? 'Enabled' : 'Disabled'}
+            </Button>
+          </div>
+
+          {elevenLabsVoiceEnabled && (
+            <div className="flex items-center gap-2">
+              <Label className="whitespace-nowrap">Select Voice:</Label>
+              <Select value={selectedElevenLabsVoice} onValueChange={setSelectedElevenLabsVoice} data-testid="select-elevenlabs-voice">
+                <SelectTrigger className="w-[240px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="21m00Tcm4TlvDq8ikWAM">Rachel (Professional Female)</SelectItem>
+                  <SelectItem value="AZnzlk1XvdvUeBnXmlld">Domi (Strong Male)</SelectItem>
+                  <SelectItem value="EXAVITQu4vr4xnSDxMaL">Bella (Soft Female)</SelectItem>
+                  <SelectItem value="ErXwobaYiN019PkySvjV">Antoni (Well-Rounded Male)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+        </div>
+
+        {elevenLabsVoiceEnabled && (
+          <div className="text-sm text-muted-foreground">
+            ✨ Responses will play with natural human voice (ElevenLabs TTS)
+          </div>
+        )}
+      </div>
+
       {/* Voice controls (only in voice/vibecoding modes) */}
       {showVoiceControls && (
-        <div className="p-4 border-b bg-muted/20">
-          <div className="flex items-center justify-between">
+        <div className="p-4 border-b bg-muted/20 space-y-4">
+          {/* Voice Mode Selection */}
+          <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
-              <Button
-                size="sm"
-                variant={continuousMode ? "default" : "outline"}
-                onClick={continuousMode ? disableContinuousMode : enableContinuousMode}
-                disabled={isInitializing}
-                data-testid="button-toggle-continuous-voice"
-              >
-                {isInitializing ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Initializing...
-                  </>
-                ) : (
-                  <>
-                    {continuousMode ? <ToggleRight className="w-4 h-4 mr-2" /> : <ToggleLeft className="w-4 h-4 mr-2" />}
-                    Continuous Voice
-                  </>
-                )}
-              </Button>
-              
-              {continuousMode && (
-                <div className="flex items-center gap-2 text-sm">
-                  <Badge variant={isListening ? "default" : "secondary"}>
-                    {isListening ? "Listening..." : "Waiting"}
-                  </Badge>
-                </div>
-              )}
+              <Label className="whitespace-nowrap">Voice Mode:</Label>
+              <Select value={voiceMode} onValueChange={(v) => setVoiceMode(v as 'vad' | 'realtime')} data-testid="select-voice-mode">
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="vad">VAD (Manual Send)</SelectItem>
+                  <SelectItem value="realtime">Realtime (Continuous)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             
-            {/* Audio quality metrics */}
-            {continuousMode && (
-              <div className="flex gap-2">
-                <Badge variant="outline" data-testid="metric-snr">SNR: {audioMetrics.snr.toFixed(1)} dB</Badge>
-                <Badge variant="outline" data-testid="metric-thd">THD: {audioMetrics.thd.toFixed(2)}%</Badge>
+            {/* Voice Selection (only in Realtime mode) */}
+            {voiceMode === 'realtime' && (
+              <div className="flex items-center gap-2">
+                <Label className="whitespace-nowrap">Voice:</Label>
+                <Select value={selectedVoice} onValueChange={(v) => setSelectedVoice(v as any)} data-testid="select-voice">
+                  <SelectTrigger className="w-[160px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="alloy">Alloy (Neutral)</SelectItem>
+                    <SelectItem value="echo">Echo (Masculine)</SelectItem>
+                    <SelectItem value="fable">Fable (British)</SelectItem>
+                    <SelectItem value="onyx">Onyx (Deep)</SelectItem>
+                    <SelectItem value="nova">Nova (Energetic)</SelectItem>
+                    <SelectItem value="shimmer">Shimmer (Soft)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             )}
           </div>
           
-          {/* Noise threshold slider */}
-          {continuousMode && (
-            <div className="mt-4">
-              <Label>Noise Threshold: {noiseThreshold} dB</Label>
-              <Slider
-                value={[noiseThreshold]}
-                onValueChange={([value]) => setNoiseThreshold(value)}
-                min={-60}
-                max={-20}
-                step={1}
-                className="mt-2"
-                data-testid="slider-noise-threshold"
-              />
+          {/* Realtime Mode UI */}
+          {voiceMode === 'realtime' ? (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {!isRealtimeConnected ? (
+                  <Button
+                    onClick={connectRealtime}
+                    variant="default"
+                    size="sm"
+                    data-testid="button-start-realtime-chat"
+                  >
+                    <Phone className="w-4 h-4 mr-2" />
+                    Start Realtime Voice Chat
+                  </Button>
+                ) : (
+                  <>
+                    <Badge variant="default">
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse mr-1.5" />
+                      Live Voice Chat - Speak Naturally
+                    </Badge>
+                    <Button
+                      onClick={disconnectRealtime}
+                      variant="destructive"
+                      size="sm"
+                      data-testid="button-end-realtime-chat"
+                    >
+                      <PhoneOff className="w-4 h-4 mr-2" />
+                      End Voice Chat
+                    </Button>
+                  </>
+                )}
+              </div>
+              
+              {/* Show recording indicator */}
+              {isRealtimeRecording && (
+                <Badge variant="outline">
+                  <div className="flex gap-1 mr-2">
+                    {[1, 2, 3, 4, 5].map(i => (
+                      <div
+                        key={i}
+                        className="w-1 bg-gradient-to-t from-blue-500 to-purple-600 rounded-full"
+                        style={{ 
+                          height: `${Math.random() * 12 + 6}px`,
+                          animation: `pulse ${Math.random() * 0.5 + 0.5}s ease-in-out infinite`,
+                          animationDelay: `${i * 0.1}s` 
+                        }}
+                      />
+                    ))}
+                  </div>
+                  Recording...
+                </Badge>
+              )}
             </div>
+          ) : (
+            /* VAD Mode UI */
+            <>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant={continuousMode ? "default" : "outline"}
+                    onClick={continuousMode ? disableContinuousMode : enableContinuousMode}
+                    disabled={isInitializing}
+                    data-testid="button-toggle-continuous-voice"
+                  >
+                    {isInitializing ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Initializing...
+                      </>
+                    ) : (
+                      <>
+                        {continuousMode ? <ToggleRight className="w-4 h-4 mr-2" /> : <ToggleLeft className="w-4 h-4 mr-2" />}
+                        Continuous Voice
+                      </>
+                    )}
+                  </Button>
+                  
+                  {continuousMode && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <Badge variant={isListening ? "default" : "secondary"}>
+                        {isListening ? "Listening..." : "Waiting"}
+                      </Badge>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Audio quality metrics */}
+                {continuousMode && (
+                  <div className="flex gap-2">
+                    <Badge variant="outline" data-testid="metric-snr">SNR: {audioMetrics.snr.toFixed(1)} dB</Badge>
+                    <Badge variant="outline" data-testid="metric-thd">THD: {audioMetrics.thd.toFixed(2)}%</Badge>
+                  </div>
+                )}
+              </div>
+              
+              {/* Noise threshold slider */}
+              {continuousMode && (
+                <div className="mt-4">
+                  <Label>Noise Threshold: {noiseThreshold} dB</Label>
+                  <Slider
+                    value={[noiseThreshold]}
+                    onValueChange={([value]) => setNoiseThreshold(value)}
+                    min={-60}
+                    max={-20}
+                    step={1}
+                    className="mt-2"
+                    data-testid="slider-noise-threshold"
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
@@ -561,6 +787,16 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
                       ) : (
                         <>
                           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                          
+                          {/* Audio playback for assistant messages with TTS */}
+                          {message.role === 'assistant' && message.audioUrl && (
+                            <div className="mt-2 flex items-center gap-2">
+                              <Badge variant="outline" className="text-xs">
+                                🎙️ Voice ({message.characterCount} chars)
+                              </Badge>
+                            </div>
+                          )}
+                          
                           <div className="flex items-center gap-2 mt-1">
                             <span className="text-xs opacity-70">
                               {message.timestamp.toLocaleTimeString()}
@@ -636,46 +872,82 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
 
       {/* Input area */}
       <div className="p-4 border-t">
-        <div className="flex gap-2">
-          <Textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder={
-              mode === 'voice' 
-                ? "Speak or type your message..."
-                : mode === 'vibecoding'
-                ? "Try: make it blue, create a button, go to home..."
-                : "Ask me anything..."
-            }
-            className="resize-none"
-            rows={2}
-            data-testid="input-mr-blue-message"
-            aria-label="Type your message to Mr. Blue"
-          />
-          
-          {showVoiceControls && (
+        {voiceMode === 'realtime' && isRealtimeConnected ? (
+          /* In Realtime mode, show text input option but no send button (voice-first) */
+          <div className="flex gap-2">
+            <Textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Or type a message while in voice chat..."
+              className="resize-none"
+              rows={2}
+              data-testid="input-mr-blue-message"
+              aria-label="Type your message to Mr. Blue"
+            />
             <Button
+              onClick={() => {
+                if (input.trim()) {
+                  sendRealtimeMessage(input);
+                  setInput("");
+                }
+              }}
+              disabled={!input.trim()}
               size="icon"
-              variant={isListening ? "default" : "outline"}
-              onClick={isListening ? stopListening : startListening}
-              data-testid="button-voice-input"
+              data-testid="button-send-text-realtime"
+              aria-label="Send text message during voice chat"
             >
-              <Mic className="w-4 h-4" />
+              <Send className="h-4 w-4" />
             </Button>
-          )}
-          
-          <Button
-            onClick={sendMessage}
-            disabled={!input.trim() || isLoading}
-            size="icon"
-            data-testid="button-send-message"
-            aria-label="Send message to Mr. Blue"
-          >
-            <Send className="h-4 w-4" />
-          </Button>
-        </div>
+          </div>
+        ) : (
+          /* VAD mode or Realtime not connected - standard input */
+          <div className="flex gap-2">
+            <Textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder={
+                mode === 'voice' 
+                  ? "Speak or type your message..."
+                  : mode === 'vibecoding'
+                  ? "Try: make it blue, create a button, go to home..."
+                  : "Ask me anything..."
+              }
+              className="resize-none"
+              rows={2}
+              data-testid="input-mr-blue-message"
+              aria-label="Type your message to Mr. Blue"
+            />
+            
+            {showVoiceControls && voiceMode === 'vad' && (
+              <Button
+                size="icon"
+                variant={continuousMode ? "default" : "outline"}
+                onClick={continuousMode ? disableContinuousMode : enableContinuousMode}
+                disabled={isInitializing}
+                data-testid="button-voice-input"
+                aria-label="Toggle voice input"
+              >
+                <Mic className="w-4 h-4" />
+              </Button>
+            )}
+            
+            <Button
+              onClick={sendMessage}
+              disabled={!input.trim() || isLoading}
+              size="icon"
+              data-testid="button-send-message"
+              aria-label="Send message to Mr. Blue"
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </div>
+
+      {/* Hidden audio element for TTS playback */}
+      <audio ref={audioRef} style={{ display: 'none' }} />
     </main>
   );
 }

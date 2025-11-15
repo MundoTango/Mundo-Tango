@@ -1,0 +1,1175 @@
+injected.js:27 [Voice] Button clicked - starting voice mode activation
+injected.js:27 [Voice] Step 1/4: Requesting microphone permission...
+injected.js:27 [Voice] ✅ Microphone permission granted
+injected.js:27 [Voice] Step 2/4: Initializing audio processing pipeline...
+injected.js:27 [Voice] ✅ Audio processing pipeline initialized
+injected.js:27 [Voice] Step 3/4: Initializing Voice Activity Detector (VAD)...
+injected.js:27 VAD | debug > initializing vad
+voiceActivityDetection.ts:32  GET https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/ort-wasm-simd-threaded.mjs?import net::ERR_ABORTED 404 (Not Found)
+Mn @ @ricky0123_vad-web.js?v=9596c3f7:9677
+en @ @ricky0123_vad-web.js?v=9596c3f7:9691
+Oe @ @ricky0123_vad-web.js?v=9596c3f7:9730
+ln @ @ricky0123_vad-web.js?v=9596c3f7:10388
+init @ @ricky0123_vad-web.js?v=9596c3f7:10532
+Dn @ @ricky0123_vad-web.js?v=9596c3f7:9074
+ht @ @ricky0123_vad-web.js?v=9596c3f7:9084
+create @ @ricky0123_vad-web.js?v=9596c3f7:9523
+SileroLegacy.new @ @ricky0123_vad-web.js?v=9596c3f7:8619
+await in SileroLegacy.new
+new @ @ricky0123_vad-web.js?v=9596c3f7:10897
+initialize @ voiceActivityDetection.ts:32
+(anonymous) @ useVoiceInput.ts:266
+await in (anonymous)
+onToggle @ VisualEditorPage.tsx:888
+handleToggle @ VoiceModeToggle.tsx:88
+callCallback2 @ chunk-NFC5BX5N.js?v=9596c3f7:3674
+invokeGuardedCallbackDev @ chunk-NFC5BX5N.js?v=9596c3f7:3699
+invokeGuardedCallback @ chunk-NFC5BX5N.js?v=9596c3f7:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-NFC5BX5N.js?v=9596c3f7:3736
+executeDispatch @ chunk-NFC5BX5N.js?v=9596c3f7:7014
+processDispatchQueueItemsInOrder @ chunk-NFC5BX5N.js?v=9596c3f7:7034
+processDispatchQueue @ chunk-NFC5BX5N.js?v=9596c3f7:7043
+dispatchEventsForPlugins @ chunk-NFC5BX5N.js?v=9596c3f7:7051
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:7174
+batchedUpdates$1 @ chunk-NFC5BX5N.js?v=9596c3f7:18913
+batchedUpdates @ chunk-NFC5BX5N.js?v=9596c3f7:3579
+dispatchEventForPluginEventSystem @ chunk-NFC5BX5N.js?v=9596c3f7:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-NFC5BX5N.js?v=9596c3f7:5478
+dispatchEvent @ chunk-NFC5BX5N.js?v=9596c3f7:5472
+dispatchDiscreteEvent @ chunk-NFC5BX5N.js?v=9596c3f7:5449
+injected.js:27 Encountered an error while loading model file ./silero_vad_legacy.onnx
+(anonymous) @ injected.js:27
+new @ @ricky0123_vad-web.js?v=9596c3f7:10899
+await in new
+initialize @ voiceActivityDetection.ts:32
+(anonymous) @ useVoiceInput.ts:266
+await in (anonymous)
+onToggle @ VisualEditorPage.tsx:888
+handleToggle @ VoiceModeToggle.tsx:88
+callCallback2 @ chunk-NFC5BX5N.js?v=9596c3f7:3674
+invokeGuardedCallbackDev @ chunk-NFC5BX5N.js?v=9596c3f7:3699
+invokeGuardedCallback @ chunk-NFC5BX5N.js?v=9596c3f7:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-NFC5BX5N.js?v=9596c3f7:3736
+executeDispatch @ chunk-NFC5BX5N.js?v=9596c3f7:7014
+processDispatchQueueItemsInOrder @ chunk-NFC5BX5N.js?v=9596c3f7:7034
+processDispatchQueue @ chunk-NFC5BX5N.js?v=9596c3f7:7043
+dispatchEventsForPlugins @ chunk-NFC5BX5N.js?v=9596c3f7:7051
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:7174
+batchedUpdates$1 @ chunk-NFC5BX5N.js?v=9596c3f7:18913
+batchedUpdates @ chunk-NFC5BX5N.js?v=9596c3f7:3579
+dispatchEventForPluginEventSystem @ chunk-NFC5BX5N.js?v=9596c3f7:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-NFC5BX5N.js?v=9596c3f7:5478
+dispatchEvent @ chunk-NFC5BX5N.js?v=9596c3f7:5472
+dispatchDiscreteEvent @ chunk-NFC5BX5N.js?v=9596c3f7:5449
+injected.js:27 [Voice] ❌ Failed to enable continuous mode: Error: no available backend found. ERR: [wasm] TypeError: Failed to fetch dynamically imported module: https://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/ort-wasm-simd-threaded.mjs?import, [cpu] Error: previous call to 'initWasm()' failed.
+    at ht (@ricky0123_vad-web.js?v=9596c3f7:9087:25)
+    at async e.create (@ricky0123_vad-web.js?v=9596c3f7:9523:26)
+    at async SileroLegacy.new (@ricky0123_vad-web.js?v=9596c3f7:8619:24)
+    at async _MicVAD.new (@ricky0123_vad-web.js?v=9596c3f7:10897:19)
+    at async VoiceActivityDetector.initialize (voiceActivityDetection.ts:32:16)
+    at async useVoiceInput.ts:266:9
+(anonymous) @ injected.js:27
+(anonymous) @ useVoiceInput.ts:318
+await in (anonymous)
+onToggle @ VisualEditorPage.tsx:888
+handleToggle @ VoiceModeToggle.tsx:88
+callCallback2 @ chunk-NFC5BX5N.js?v=9596c3f7:3674
+invokeGuardedCallbackDev @ chunk-NFC5BX5N.js?v=9596c3f7:3699
+invokeGuardedCallback @ chunk-NFC5BX5N.js?v=9596c3f7:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-NFC5BX5N.js?v=9596c3f7:3736
+executeDispatch @ chunk-NFC5BX5N.js?v=9596c3f7:7014
+processDispatchQueueItemsInOrder @ chunk-NFC5BX5N.js?v=9596c3f7:7034
+processDispatchQueue @ chunk-NFC5BX5N.js?v=9596c3f7:7043
+dispatchEventsForPlugins @ chunk-NFC5BX5N.js?v=9596c3f7:7051
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:7174
+batchedUpdates$1 @ chunk-NFC5BX5N.js?v=9596c3f7:18913
+batchedUpdates @ chunk-NFC5BX5N.js?v=9596c3f7:3579
+dispatchEventForPluginEventSystem @ chunk-NFC5BX5N.js?v=9596c3f7:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-NFC5BX5N.js?v=9596c3f7:5478
+dispatchEvent @ chunk-NFC5BX5N.js?v=9596c3f7:5472
+dispatchDiscreteEvent @ chunk-NFC5BX5N.js?v=9596c3f7:5449
+injected.js:27 [Voice] Received transcript: test hello can you hear me
+injected.js:27 [VoiceCommand] No command matched for: test hello can you hear me
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248749697&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2012&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+r._notifyVisibilityChanged @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+t.HTMLElement.focus @ f3c0d223fc3a7754.js:2
+H @ fa82eb0d68e09b4b.js:2
+(anonymous) @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+eG.mousedown @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+o @ 9f40922f17cfd15c.js:2
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248750227&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2012&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+r._notifyVisibilityChanged @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+t.HTMLElement.focus @ f3c0d223fc3a7754.js:2
+H @ fa82eb0d68e09b4b.js:2
+(anonymous) @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+eG.mousedown @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+o @ 9f40922f17cfd15c.js:2
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248752234&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2012&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1763247294088%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252F%2540admin3304%252FMundoTango%2522%252C%2522trackingOnly%2522%253Atrue%257D:10  POST https://ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/ net::ERR_BLOCKED_BY_CLIENT
+q @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1763247294088%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252F%2540admin3304%252FMundoTango%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+M @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1763247294088%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252F%2540admin3304%252FMundoTango%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+(anonymous) @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1763247294088%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252F%2540admin3304%252FMundoTango%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248756740&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2012&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+9f40922f17cfd15c.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248756740&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2012&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at 9f40922f17cfd15c.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ 9f40922f17cfd15c.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+9f40922f17cfd15c.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ 9f40922f17cfd15c.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+9f40922f17cfd15c.js:2   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ 9f40922f17cfd15c.js:2
+value @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+9f40922f17cfd15c.js:2  POST https://events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 9f40922f17cfd15c.js:2
+promise @ 14fa18ba79750466.js:2
+(anonymous) @ 14fa18ba79750466.js:2
+r.httpRequest @ 14fa18ba79750466.js:2
+e @ 14fa18ba79750466.js:2
+i.sendChunk @ 14fa18ba79750466.js:2
+i.sendEvents @ 14fa18ba79750466.js:2
+s.flush @ 14fa18ba79750466.js:2
+t @ 14fa18ba79750466.js:2
+o @ 9f40922f17cfd15c.js:2
+setTimeout
+(anonymous) @ 9f40922f17cfd15c.js:2
+t @ 14fa18ba79750466.js:2
+o @ 9f40922f17cfd15c.js:2
+9f40922f17cfd15c.js:2  POST https://events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 9f40922f17cfd15c.js:2
+promise @ 14fa18ba79750466.js:2
+(anonymous) @ 14fa18ba79750466.js:2
+r.httpRequest @ 14fa18ba79750466.js:2
+e @ 14fa18ba79750466.js:2
+(anonymous) @ 14fa18ba79750466.js:2
+Promise.catch
+e @ 14fa18ba79750466.js:2
+i.sendChunk @ 14fa18ba79750466.js:2
+i.sendEvents @ 14fa18ba79750466.js:2
+s.flush @ 14fa18ba79750466.js:2
+t @ 14fa18ba79750466.js:2
+o @ 9f40922f17cfd15c.js:2
+setTimeout
+(anonymous) @ 9f40922f17cfd15c.js:2
+t @ 14fa18ba79750466.js:2
+o @ 9f40922f17cfd15c.js:2
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248858910&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2012&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+r._notifyVisibilityChanged @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+t.HTMLElement.focus @ f3c0d223fc3a7754.js:2
+H @ fa82eb0d68e09b4b.js:2
+(anonymous) @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+eG.mousedown @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+o @ 9f40922f17cfd15c.js:2
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248859443&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2012&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+r._notifyVisibilityChanged @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+t.HTMLElement.focus @ f3c0d223fc3a7754.js:2
+H @ fa82eb0d68e09b4b.js:2
+(anonymous) @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+eG.mousedown @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+o @ 9f40922f17cfd15c.js:2
+cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1763247294088%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252F%2540admin3304%252FMundoTango%2522%252C%2522trackingOnly%2522%253Atrue%257D:10  POST https://ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/ net::ERR_BLOCKED_BY_CLIENT
+q @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1763247294088%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252F%2540admin3304%252FMundoTango%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+M @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1763247294088%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252F%2540admin3304%252FMundoTango%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+(anonymous) @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1763247294088%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252F%2540admin3304%252FMundoTango%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248861446&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2012&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+r._notifyVisibilityChanged @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+t.HTMLElement.focus @ f3c0d223fc3a7754.js:2
+H @ fa82eb0d68e09b4b.js:2
+(anonymous) @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+eG.mousedown @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+o @ 9f40922f17cfd15c.js:2
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248865952&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2012&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+9f40922f17cfd15c.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248865952&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2012&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at 9f40922f17cfd15c.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ 9f40922f17cfd15c.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+9f40922f17cfd15c.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ 9f40922f17cfd15c.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+9f40922f17cfd15c.js:2   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ 9f40922f17cfd15c.js:2
+value @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248866083&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+t @ 92790bc2ef649c16.js:2
+o @ 9f40922f17cfd15c.js:2
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248866586&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+t @ 92790bc2ef649c16.js:2
+o @ 9f40922f17cfd15c.js:2
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248868589&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248873095&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+9f40922f17cfd15c.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248873095&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at 9f40922f17cfd15c.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ 9f40922f17cfd15c.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+9f40922f17cfd15c.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ 9f40922f17cfd15c.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+injected.js:27 [Voice] Continuous mode disabled and audio processing cleaned up
+injected.js:27 [Voice] Button clicked - starting voice mode activation
+injected.js:27 [Voice] Step 1/4: Requesting microphone permission...
+injected.js:27 [Voice] ✅ Microphone permission granted
+injected.js:27 [Voice] Step 2/4: Initializing audio processing pipeline...
+injected.js:27 [Voice] ✅ Audio processing pipeline initialized
+injected.js:27 [Voice] Step 3/4: Initializing Voice Activity Detector (VAD)...
+injected.js:27 [Voice] Step 4/4: Starting continuous listening mode...
+injected.js:27 [Voice] ✅ Voice mode activated successfully!
+injected.js:27 [Voice] Continuous mode enabled with VAD and audio processing
+injected.js:27 [Voice] Received transcript: what page are we on
+injected.js:27 [VoiceCommand] No command matched for: what page are we on
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248892068&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2013&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+r._notifyVisibilityChanged @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+t.HTMLElement.focus @ f3c0d223fc3a7754.js:2
+H @ fa82eb0d68e09b4b.js:2
+(anonymous) @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+eG.mousedown @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+o @ 9f40922f17cfd15c.js:2
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248892599&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2013&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+r._notifyVisibilityChanged @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+t.HTMLElement.focus @ f3c0d223fc3a7754.js:2
+H @ fa82eb0d68e09b4b.js:2
+(anonymous) @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+eG.mousedown @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+o @ 9f40922f17cfd15c.js:2
+cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1763247294088%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252F%2540admin3304%252FMundoTango%2522%252C%2522trackingOnly%2522%253Atrue%257D:10  POST https://ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/ net::ERR_BLOCKED_BY_CLIENT
+q @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1763247294088%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252F%2540admin3304%252FMundoTango%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+M @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1763247294088%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252F%2540admin3304%252FMundoTango%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+(anonymous) @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1763247294088%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252F%2540admin3304%252FMundoTango%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248894606&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2013&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248896084&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+t @ 92790bc2ef649c16.js:2
+o @ 9f40922f17cfd15c.js:2
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248896590&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+t @ 92790bc2ef649c16.js:2
+o @ 9f40922f17cfd15c.js:2
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248898596&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=1&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248899109&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2013&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+9f40922f17cfd15c.js:2  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763248899109&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=2013&gz=1. TypeError: Failed to fetch TypeError: Failed to fetch
+    at 9f40922f17cfd15c.js:2:106527
+    at t.<anonymous> (92790bc2ef649c16.js:2:45850)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at 92790bc2ef649c16.js:2:42952
+    at new Promise (<anonymous>)
+    at u (92790bc2ef649c16.js:2:42706)
+    at t.value (92790bc2ef649c16.js:2:44940)
+    at 92790bc2ef649c16.js:2:31768
+    at e.value (92790bc2ef649c16.js:2:32175)
+    at e.<computed> [as _sendRequest] (92790bc2ef649c16.js:2:31708)
+    at t.<anonymous> (92790bc2ef649c16.js:2:47326)
+    at Object.next (38fbf6bc561fd0b5.js:2:4987)
+    at s (92790bc2ef649c16.js:2:42762)
+(anonymous) @ 9f40922f17cfd15c.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+9f40922f17cfd15c.js:2   WARN  [Statsig] Failed to flush events.
+(anonymous) @ 9f40922f17cfd15c.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+9f40922f17cfd15c.js:2   WARN  [Statsig] Unable to save failed logs to storage
+(anonymous) @ 9f40922f17cfd15c.js:2
+value @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
