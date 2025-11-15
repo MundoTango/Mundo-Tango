@@ -180,7 +180,9 @@ router.post("/execute",
       }
 
       // Get user's role level (God Level = 8)
-      const userRoleLevel = req.user?.role === 'god' ? 8 : 0; // God Level users have no limits
+      // Check both godLevelApproved flag and 'god' role
+      const isGodLevel = req.user?.godLevelApproved === true || req.user?.role === 'god';
+      const userRoleLevel = isGodLevel ? 8 : 0; // God Level users have no limits
       
       // SAFETY CHECK 1: Rate Limiting (skip for God Level)
       let rateLimitRemaining = RATE_LIMIT_MAX_TASKS;
