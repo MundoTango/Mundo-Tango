@@ -23,22 +23,33 @@ router.post("/chat", async (req: Request, res: Response) => {
         });
       }
 
-      // Parse Visual Editor context
-      let visualContext;
+      // Check if GROQ_API_KEY is configured
+      if (!process.env.GROQ_API_KEY) {
+        console.error('[MrBlue] GROQ_API_KEY not configured');
+        return res.json({
+          success: true,
+          response: "I'm currently in demo mode. For full AI capabilities, please configure the GROQ_API_KEY environment variable. How can I help you explore Mundo Tango?"
+        });
+      }
+
+      // Parse Visual Editor context (may be undefined for regular chat)
+      let visualContext: any = {};
       try {
-        visualContext = typeof context === 'string' ? JSON.parse(context) : context;
+        if (context) {
+          visualContext = typeof context === 'string' ? JSON.parse(context) : context;
+        }
       } catch {
         visualContext = {};
       }
 
       // Build rich context for Visual Editor
-      const selectedElementInfo = visualContext.selectedElement 
+      const selectedElementInfo = visualContext?.selectedElement 
         ? `Selected Element: ${visualContext.selectedElement.tagName} (test-id: ${visualContext.selectedElement.testId || 'none'})
    Class: ${visualContext.selectedElement.className}
    Text: ${visualContext.selectedElement.text}`
         : 'No element selected';
 
-      const recentEditsInfo = visualContext.recentEdits && visualContext.recentEdits.length > 0
+      const recentEditsInfo = visualContext?.recentEdits && visualContext.recentEdits.length > 0
         ? `Recent edits: ${visualContext.recentEdits.join(', ')}`
         : 'No recent edits';
 
@@ -92,11 +103,24 @@ Be friendly, context-aware, and ready to help with Visual Editor tasks!`;
         success: true,
         response
       });
-    } catch (error) {
-      console.error('[MrBlue] Chat error:', error);
+    } catch (error: any) {
+      console.error('[MrBlue] Chat error:', {
+        message: error.message,
+        status: error.status,
+        type: error.type,
+        full: error
+      });
+      
+      // Provide helpful error message based on error type
+      const errorMessage = error.status === 401 
+        ? "API authentication failed. Please check GROQ_API_KEY configuration."
+        : error.status === 429
+        ? "API rate limit exceeded. Please try again later."
+        : error.message || "Failed to process chat request";
+      
       res.status(500).json({
         success: false,
-        message: "Failed to process chat request"
+        message: errorMessage
       });
     }
   });
@@ -110,6 +134,15 @@ router.post("/stream", async (req: Request, res: Response) => {
       return res.status(400).json({
         success: false,
         message: "Message is required"
+      });
+    }
+
+    // Check if GROQ_API_KEY is configured
+    if (!process.env.GROQ_API_KEY) {
+      console.error('[MrBlue] GROQ_API_KEY not configured for streaming');
+      return res.json({
+        success: true,
+        response: "I'm currently in demo mode. For full AI streaming capabilities, please configure the GROQ_API_KEY environment variable."
       });
     }
 

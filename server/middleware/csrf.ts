@@ -45,6 +45,16 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     return next();
   }
   
+  // Skip CSRF for public Mr. Blue endpoints (no auth required)
+  const publicMrBlueEndpoints = [
+    "/api/mrblue/chat",
+    "/api/mrblue/stream",
+    "/api/mr-blue/agents"
+  ];
+  if (publicMrBlueEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
   const sessionId = (req as any).session?.id || req.ip;
   const storedToken = csrfTokens.get(sessionId);
   
@@ -97,7 +107,7 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     "/api/mrblue/stream",
     "/api/mr-blue/agents"
   ];
-  if (publicMrBlueEndpoints.some(endpoint => req.path.startsWith(endpoint))) {
+  if (publicMrBlueEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
     return next();
   }
   
