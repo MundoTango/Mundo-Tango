@@ -1,0 +1,468 @@
+🚀 CORE EDITING INTERFACE
+1. Replit Agent-Style Split Pane
+
+60% live preview (your ACTUAL MT site)
+40% Mr Blue AI chat
+Access: Add ?edit=true to any page URL
+Exactly like Replit's interface!
+2. Click-to-Select Any Element
+
+Purple outline on hover
+Solid purple border when selected
+Element inspector shows component details
+Works with all data-testid elements
+3. Drag & Drop Repositioning (Figma-like)
+
+Drag selected elements to new positions
+Real-time position tracking
+Alignment guides & snap-to-grid
+Visual repositioning (no X/Y coordinates needed)
+Powered by @dnd-kit/core
+4. Edit Controls (4 Tabs)
+
+Position Tab: X, Y, alignment (center, left, right), flexbox/grid
+Size Tab: Width, height, aspect ratio lock, min/max dimensions
+Style Tab: Colors, fonts, borders, shadows, opacity, padding, margin
+Text Tab: Content, font family, alignment, line height
+5. GrapesJS Visual Page Builder
+
+Full WYSIWYG page editing
+Pre-built component library
+Drag-drop from component library
+No-code page creation
+Template system
+Package: grapesjs: ^0.22.13
+6. Rich Text Editor (Quill)
+
+WYSIWYG content editing
+Formatting toolbar
+Image insertion
+Link management
+Package: quill: ^2.0.3
+🤖 AI-POWERED FEATURES
+7. Conversational Editing (Vibe Coding)
+
+Natural language commands
+"Make this button bigger"
+"Change heading to turquoise"
+"Move this card to the center"
+Mr Blue understands context
+8. AI Code Generation (GPT-4o)
+
+Converts visual changes → React/Tailwind code
+Shows before/after code diff
+Explains what changed
+Identifies affected files
+Production-ready TypeScript/React output
+Context-aware (knows full component code + design system)
+9. AI Suggestions & Proactive Help
+
+Smart component recommendations
+Pattern-based suggestions
+Confidence scores (0-100%)
+Known bug warnings
+Accept/reject/modify workflow
+Learning from user edits
+10. Cost Tracking & Optimization
+
+Real-time GPT-4o token usage
+Running cost estimates in USD
+Budget alerts
+Session summary reports
+Per-change cost attribution
+FinOps integration
+💾 VERSION CONTROL & DEPLOYMENT
+11. Git Workflow Integration
+
+Auto-creates branches: visual-edit-{timestamp}
+Automatic file backups (.backup files)
+Commits with descriptive messages
+Pushes to remote repository
+Creates GitHub Pull Requests
+Full Git rollback capability
+12. Deployment Pipeline
+
+Preview: Shareable staging URL (24-hour validity)
+Production: Auto-merge if Playwright tests pass
+Safe deployment gates
+Preview URL generation
+Test-gated production merge
+13. Change Tracking & History
+
+Full edit history with timestamps
+Undo/redo functionality
+Diff visualization (before/after)
+Individual change rollback
+Export as Git patch file
+localStorage draft sessions
+🖥️ COMPUTER CONTROL & AUTOMATION
+14. Browser Automation (Playwright)
+
+Headless browser control
+Facebook event scraping (226+ sources)
+Automated navigation & interaction
+Form filling & clicking
+Screenshot capture
+Session cookie management
+Bot detection handling
+Package: playwright: ^1.55.0
+15. n8n Workflow Automation (8 Workflows)
+
+New User Onboarding - Welcome emails, auto-assign city groups
+Event Sync - Google Calendar integration
+Multi-Channel Notifications - Email, push, SMS routing
+Friend Request Processing - Auto-accept, notifications
+Goal Progress Tracking - Milestone alerts
+Housing Alert System - New listing notifications
+Volunteer Onboarding - Talent Match automation
+Event Promotion - Cross-posting to social media
+16. Task Automation & Workflows
+
+Automated data entry
+Scheduled jobs (cron)
+API integration workflows
+Multi-step processes
+Conditional logic
+Error handling & retries
+🎯 ADVANCED FEATURES
+17. Responsive Design Tools
+
+Mobile/tablet/desktop preview toggle
+Breakpoint-specific editing
+Hide/show on different screen sizes
+Device simulation
+18. Component Library Integration
+
+Pre-built shadcn/ui components
+Material-UI admin components
+Custom MT Ocean theme components
+Reusable block system
+19. Global Theme Updates
+
+Design token management
+Pattern-based updates (all buttons, all headings)
+Theme variable changes
+Consistent styling enforcement
+20. Code Sandboxing & Preview
+
+Live code editing (Monaco Editor)
+CodeSandbox integration (@codesandbox/sandpack-react)
+Safe code execution
+Real-time preview updates
+Syntax highlighting
+21. Security & Access Control
+
+Admin-only access (Super Admin role)
+God Level tier required ($99/mo)
+Manual approval by Scott
+Usage quotas per user
+Secure code generation
+Input sanitization
+Rate limiting
+📊 MONITORING & ANALYTICS
+22. Visual Editor Analytics Dashboard
+
+Edit session tracking
+Usage statistics
+Popular edits
+Error rates
+Performance metrics
+23. Learning & Improvement
+
+User feedback tracking
+Accepted vs rejected suggestions
+Confidence score updates
+Pattern learning
+Knowledge base enrichment
+🤖 MR BLUE AI COMPANION - COMPLETE COMPREHENSIVE FEATURE LIST
+Found in: Part 5, Part 8, Part 9, VISUAL_EDITOR_MR_BLUE_COMPLETE_FEATURES_HANDOFF.md
+
+🎭 CORE AGENTS (8 Agents #73-80)
+Agent #73: Role-Based Content Adapter
+
+Adapts content based on user tier (Free/Basic/Pro/God)
+Context-aware responses
+Personalized recommendations
+Multi-language support (68 languages via i18next)
+Subscription tier awareness
+Agent #74: Interactive 3D Avatar
+
+SYSTEM A: 3D Interactive Avatar (React Three Fiber)
+
+Real-time 3D character animation
+Voice-to-motion sync
+Emotion expressions (happy, sad, thinking, excited)
+Clippy-style behaviors
+Interactive help tooltips
+Floating button on all pages
+Ready Player Me integration
+Mixamo animations
+Packages: three, @react-three/fiber, @react-three/drei
+SYSTEM B: AI Video Avatar (D-ID + ElevenLabs)
+
+God Level tier required with manual approval
+Cost: $57/month (vs HeyGen $99/month = 42% savings)
+Usage quotas: 5 videos/month, 5 voice calls/month per user
+Three Use Cases:
+
+Marketing Videos ($0.10/video)
+
+Talking avatar with Scott's appearance
+Turquoise hair & jewelry preserved
+YouTube/Facebook publishing
+Script-to-video generation
+D-ID API integration
+UX Interview Videos ($0.10/video + $0.006/min transcription)
+
+Pre-recorded interview questions
+User response collection
+Whisper transcription
+Pattern analysis
+User testing automation
+Real-Time Voice Conversations ($0.04/10min)
+
+ChatGPT-style interface
+Scott's cloned voice (ElevenLabs)
+Low latency (<75ms)
+Natural conversation flow
+Life coaching/dance advice
+WebSocket communication
+94% savings vs OpenAI Realtime API
+Agent #75: Interactive Tour Guide
+
+Onboarding tours for new users
+Feature walkthroughs
+Context-sensitive help
+Step-by-step guidance
+Progress tracking
+Shepherd.js integration
+Interactive tooltips
+Skip/resume functionality
+Agent #76: Subscription Feature Manager
+
+Explains tier differences (Free/Basic/Pro/God)
+Upsell recommendations
+Feature availability checks
+Upgrade prompts with pricing
+Payment assistance
+Tier comparison tables
+ROI calculations for upgrades
+Agent #77: Content Quality Validator
+
+Validates user inputs
+Suggests improvements
+Checks for errors
+Quality scores
+Best practice recommendations
+Grammar/spelling checks
+Profanity filtering
+Agent #78: Learning Coordinator
+Master orchestrator for 10 learning pathways
+
+📚 10 LEARNING PATHWAYS (Progressive Autonomy)
+Pathway 1: Direct Chat Feedback
+
+Floating Mr Blue button on all pages
+Context-aware responses (knows current page)
+<3 second response time
+Thumbs up/down rating system
+Feedback collection when unhelpful
+Nightly pattern analysis
+Knowledge base auto-updates
+Improved response generation
+Pathway 2: UI Volunteer Testing
+
+Test scenario creation system
+Volunteer recruitment & onboarding
+Test execution with time tracking
+Difficulty/clarity ratings (1-5 scale)
+Stuck point auto-detection (>30s on one step)
+Feedback with optional comments
+AI analyzes when 10+ volunteers complete
+Pattern identification
+Points & badges gamification
+Leaderboard system
+Pathway 3: Live Testing Sessions (Agents #163-166)
+
+Agent #163: Session Scheduler
+
+Admin schedules testing sessions
+Daily.co room auto-creation
+Email invitations to testers
+Calendar integration
+Session management dashboard
+Agent #164: Live Video Observer (Mr Blue Watches)
+
+Joins Daily.co sessions in "observer mode" (invisible)
+Real-time Whisper transcription
+Emotion detection from speech patterns
+Watches tester interactions
+Learns from Scott's guidance
+Session recording
+Timestamp markers for key moments
+Agent #165: Auto Bug Detector
+
+Error signature monitoring
+Console error detection
+Network failure detection
+UI glitch recognition
+Auto-creates tickets in The Plan (Agent #65)
+Severity classification (P0/P1/P2)
+Reproduction steps extraction
+Video timestamp linking
+Agent #166: UX Pattern Recognizer
+
+Confusion pattern detection
+Hesitation tracking
+Repeated action detection
+Abandonment analysis
+Behavioral analysis
+Recommendation generation
+Heatmap visualization
+Pathway 4: Visual Editor Integration
+
+AI code suggestions based on context
+Confidence scores on suggestions
+Accept/reject/modify tracking
+Proactive bug warnings
+Smart component recommendations
+Context-aware help
+Pattern learning from edits
+Template promotion
+Pathway 5: Passive Telemetry
+
+Action tracking (clicks, page views, scrolls)
+Performance metrics (load times, API response)
+Error rate analysis per page
+Abandonment point detection (<10s on page)
+Daily aggregation at midnight
+High-error page flagging
+Weekly telemetry reports
+Insights auto-added to knowledge base
+Pathways 6-10: (Additional advanced methods documented but not detailed)
+
+Progressive Autonomy Timeline:
+
+Week 0: 0% autonomous (100% Scott)
+Week 5: 25% autonomous
+Week 10: 50% autonomous
+Week 15: 75% autonomous
+Week 20: 95% autonomous (Scott reviews edge cases only)
+Agent #79: Collaborative Intelligence (Error Analysis)
+
+Root cause analysis
+Error pattern detection across pages
+Cross-system correlation
+Knowledge sharing with Agent #80
+Learning from failures
+Bug prediction
+Severity assessment
+Agent #80: Collaborative Intelligence (Solution Suggester)
+
+Solution recommendations based on patterns
+Pattern-based fixes
+Success rate tracking
+Continuous learning
+Inter-agent coordination
+H2AC protocol (Human-to-Agent Communication)
+Proactive problem prevention
+🗄️ DATABASE & INFRASTRUCTURE
+13 Database Tables:
+
+mrBlueInteractions - Chat history & feedback
+uiTestScenarios - Test definitions
+uiTestResults - Volunteer test results
+volunteerStats - Gamification (points, badges, rank)
+userTestingSessions - Live testing sessions
+sessionInteractions - Session events log
+sessionBugsFound - Auto-detected bugs
+sessionUxPatterns - UX patterns discovered
+visualEditorSessions - Editor usage tracking
+visualEditorAiSuggestions - AI suggestions & feedback
+userTelemetry - Passive behavior tracking
+mrBlueKnowledgeBase - Central learning repository
+mrBlueSystemPrompts - Version control for AI
+40+ API Endpoints:
+
+Chat & feedback endpoints
+Volunteer testing management
+Live session control
+Video generation
+Voice conversation handling
+Telemetry collection
+Knowledge base queries
+Analytics & reporting
+🔧 AI SERVICES & INTEGRATIONS
+AI Provider Stack:
+
+OpenAI GPT-4o - Chat, code generation, analysis
+Whisper - Audio transcription
+D-ID - Video avatar generation ($0.10/video)
+ElevenLabs - Voice cloning & conversations ($0.04/10min)
+LanceDB - Vector database for semantic search
+Semantic caching - Cost optimization
+External Integrations:
+
+Daily.co - Live video sessions, screen sharing, recording
+The Plan (Agent #65) - Auto-ticket creation
+TrustCloud - Compliance evidence, CVE alerts
+GitHub - Code repository, PR creation
+n8n - Workflow automation
+💰 COST OPTIMIZATION
+D-ID vs HeyGen: 89% savings ($35 vs $300/month)
+ElevenLabs vs OpenAI Realtime: 94% savings ($0.04 vs $3/10min)
+Total Monthly Cost: $57 vs $99 (42% savings overall)
+
+Budget Controls:
+
+$100/user/month automatic cutoff
+Real-time cost tracking
+Usage quota enforcement
+Alert system
+🎨 ADDITIONAL FEATURES
+Voice Control:
+
+Web Speech API integration
+Voice commands for editing
+Natural language parsing
+Multi-language voice recognition (68 languages)
+Text-to-speech responses (ElevenLabs)
+Context Awareness:
+
+Knows current page
+Tracks recent actions
+Monitors for errors
+Understands user tier
+Remembers conversation history
+Cross-page context preservation
+Proactive Features:
+
+Detects struggle (drag-drop issues)
+Offers help before asking
+Suggests next steps
+Predicts user needs
+Error prevention warnings
+📊 IMPLEMENTATION STATUS SUMMARY
+Visual Editor:
+
+Backend: ✅ 100% complete
+Frontend: ⏳ 55% complete (component missing)
+GrapesJS: 📦 Installed, needs integration
+Git workflow: ✅ Complete
+Cost tracking: ✅ Complete
+Browser automation: ✅ Complete (Playwright)
+Total Effort: 60 hours
+Mr Blue (Core 8 Agents):
+
+Documentation: ✅ 100% complete
+Database schema: ✅ 100% complete (13 tables)
+API routes: ✅ 100% documented, 40% implemented
+3D Avatar: 📦 Ready (React Three Fiber + Ready Player Me)
+Video/Voice: ⏳ Pending API keys (D-ID + ElevenLabs)
+Learning pathways: ⏳ 0% implemented
+Total Effort: 238 hours (140 core + 98 testing)
+n8n Automation:
+
+Workflows documented: ✅ 8/8 complete
+Implementation: ⏳ 0% (requires n8n platform setup)
+Total Effort: 40 hours
