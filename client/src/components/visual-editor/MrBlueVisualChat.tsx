@@ -153,36 +153,116 @@ Just tell me what you want to change!`;
     setIsLoading(true);
 
     try {
-      // Build context-aware prompt with MB.MD methodology auto-appended
-      let contextualPrompt = originalInput;
-      
-      if (contextInfo.selectedElement) {
-        contextualPrompt = `USER REQUEST: ${originalInput}\n\nCONTEXT:\n- Page: ${contextInfo.page}\n- Selected element: ${contextInfo.selectedElement.tagName} (testId: ${contextInfo.selectedElement.testId || 'none'})\n- Element class: ${contextInfo.selectedElement.className}\n- Element text: ${contextInfo.selectedElement.text}\n- Total edits so far: ${contextInfo.editsCount}`;
-      }
+      // Smart routing: Detect if this is iteration feedback or execution request
+      const isIterationFeedback = 
+        /feedback|revise|improve|plan|scored|missing|need.*revision|comprehensive|address/i.test(originalInput) ||
+        /thank you.*plan|however.*need|please.*address/i.test(originalInput);
 
-      // CRITICAL: Auto-append "use mb.md" to enable MB.MD methodology
-      // All Mr. Blue prompts use simultaneously/recursively/critically approach
-      const mbmdPrompt = `use mb.md: ${contextualPrompt}`;
+      const isExecutionRequest = 
+        /use mb\.md|implement|build autonomously|create.*autonomous|execute.*plan|deploy/i.test(originalInput) &&
+        !isIterationFeedback;
 
-      // Call code generation with MB.MD methodology enabled
-      const result = await onGenerateCode(mbmdPrompt);
+      if (isIterationFeedback) {
+        // ITERATION MODE: Use chat API for conversational response
+        const chatResponse = await fetch('/api/mrblue/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            message: originalInput,
+            context: {
+              page: contextInfo.page,
+              selectedElement: contextInfo.selectedElement,
+              editsCount: contextInfo.editsCount
+            }
+          })
+        });
 
-      const response = `✅ **Code generated successfully!**\n\n${result.explanation || 'I\'ve analyzed your request and generated the necessary code changes.'}\n\nYou can preview the changes in the live preview panel.`;
-      
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: response,
-        timestamp: new Date()
-      };
+        if (!chatResponse.ok) {
+          throw new Error('Failed to get response from Mr. Blue');
+        }
 
-      setMessages(prev => [...prev, assistantMessage]);
+        const chatData = await chatResponse.json();
+        const response = chatData.response || "I've reviewed your feedback. Here's my revised plan...";
+        
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: response,
+          timestamp: new Date()
+        };
 
-      if (ttsEnabled && ttsSupported) {
-        speak("Code generated successfully! Check the preview panel to see your changes.");
+        setMessages(prev => [...prev, assistantMessage]);
+
+        if (ttsEnabled && ttsSupported) {
+          speak("I've revised my plan based on your feedback.");
+        }
+      } else if (isExecutionRequest) {
+        // EXECUTION MODE: Use autonomous API with MB.MD methodology
+        let contextualPrompt = originalInput;
+        
+        if (contextInfo.selectedElement) {
+          contextualPrompt = `USER REQUEST: ${originalInput}\n\nCONTEXT:\n- Page: ${contextInfo.page}\n- Selected element: ${contextInfo.selectedElement.tagName} (testId: ${contextInfo.selectedElement.testId || 'none'})\n- Element class: ${contextInfo.selectedElement.className}\n- Element text: ${contextInfo.selectedElement.text}\n- Total edits so far: ${contextInfo.editsCount}`;
+        }
+
+        // Auto-append "use mb.md" for MB.MD methodology
+        const mbmdPrompt = `use mb.md: ${contextualPrompt}`;
+
+        // Call autonomous code generation
+        const result = await onGenerateCode(mbmdPrompt);
+
+        const response = `✅ **Autonomous execution started!**\n\n${result.explanation || 'I\'ve decomposed the task and am generating code...'}\n\nWatch the Autonomous Workflow panel for progress.`;
+        
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: response,
+          timestamp: new Date()
+        };
+
+        setMessages(prev => [...prev, assistantMessage]);
+
+        if (ttsEnabled && ttsSupported) {
+          speak("Autonomous execution started! Check the workflow panel.");
+        }
+      } else {
+        // DEFAULT MODE: Conversational chat for questions/discussion
+        const chatResponse = await fetch('/api/mrblue/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            message: originalInput,
+            context: {
+              page: contextInfo.page,
+              selectedElement: contextInfo.selectedElement,
+              editsCount: contextInfo.editsCount
+            }
+          })
+        });
+
+        if (!chatResponse.ok) {
+          throw new Error('Failed to get response from Mr. Blue');
+        }
+
+        const chatData = await chatResponse.json();
+        const response = chatData.response || "How can I help you with the visual editor?";
+        
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: response,
+          timestamp: new Date()
+        };
+
+        setMessages(prev => [...prev, assistantMessage]);
+
+        if (ttsEnabled && ttsSupported) {
+          speak(chatData.response || "How can I help?");
+        }
       }
     } catch (error: any) {
-      const errorResponse = `❌ **I had trouble with that request.**\n\n${error.message || 'Could you try rephrasing? Make sure to describe what you want to change clearly.'}\n\n**Tips:**\n• Be specific (e.g., "Make the title larger" instead of "Change it")\n• Select an element first for better context\n• Try simpler requests if it's complex`;
+      const errorResponse = `❌ **I had trouble with that request.**\n\n${error.message || 'Could you try rephrasing? Make sure to describe what you want to change clearly.'}\n\n**Tips:**\n• For feedback: "Please revise the plan to include..."\n• For execution: "Use mb.md to implement..."\n• For questions: Just ask normally!`;
       
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
