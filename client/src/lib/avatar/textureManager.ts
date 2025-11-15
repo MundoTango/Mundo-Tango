@@ -90,9 +90,9 @@ class TextureCache {
   getMemoryUsage(): number {
     let totalMemory = 0;
     this.cache.forEach(texture => {
-      if (texture.image) {
-        const width = texture.image.width || 0;
-        const height = texture.image.height || 0;
+      if (texture.image && typeof texture.image === 'object' && 'width' in texture.image && 'height' in texture.image) {
+        const width = (texture.image as any).width || 0;
+        const height = (texture.image as any).height || 0;
         // Estimate: RGBA = 4 bytes per pixel
         totalMemory += width * height * 4;
       }
@@ -198,8 +198,8 @@ export class TextureManager {
       
       // Build texture maps
       results.forEach(([key, texture]) => {
-        if (texture) {
-          maps[key as keyof TextureMaps] = texture;
+        if (texture && typeof texture !== 'string') {
+          maps[key as keyof TextureMaps] = texture as Texture;
         }
       });
 
@@ -256,28 +256,29 @@ export class TextureManager {
         ? mesh.material[0] 
         : mesh.material;
 
-      // Apply PBR textures
+      // Apply PBR textures (type assertion for MeshStandardMaterial properties)
       if (material.type === 'MeshStandardMaterial' || material.type === 'MeshPhysicalMaterial') {
+        const pbrMaterial = material as any; // Type assertion for PBR material properties
         if (textureSet.maps.baseColor) {
-          material.map = textureSet.maps.baseColor;
+          pbrMaterial.map = textureSet.maps.baseColor;
         }
         if (textureSet.maps.normal) {
-          material.normalMap = textureSet.maps.normal;
+          pbrMaterial.normalMap = textureSet.maps.normal;
         }
         if (textureSet.maps.metallic) {
-          material.metalnessMap = textureSet.maps.metallic;
+          pbrMaterial.metalnessMap = textureSet.maps.metallic;
         }
         if (textureSet.maps.roughness) {
-          material.roughnessMap = textureSet.maps.roughness;
+          pbrMaterial.roughnessMap = textureSet.maps.roughness;
         }
         if (textureSet.maps.ao) {
-          material.aoMap = textureSet.maps.ao;
+          pbrMaterial.aoMap = textureSet.maps.ao;
         }
         if (textureSet.maps.emissive) {
-          material.emissiveMap = textureSet.maps.emissive;
+          pbrMaterial.emissiveMap = textureSet.maps.emissive;
         }
 
-        material.needsUpdate = true;
+        pbrMaterial.needsUpdate = true;
       }
     });
 
@@ -325,8 +326,9 @@ export class TextureManager {
    */
   private getTextureResolution(maps: TextureMaps): number {
     const baseColor = maps.baseColor;
-    if (baseColor?.image) {
-      return Math.max(baseColor.image.width, baseColor.image.height);
+    if (baseColor?.image && typeof baseColor.image === 'object' && 'width' in baseColor.image && 'height' in baseColor.image) {
+      const img = baseColor.image as any;
+      return Math.max(img.width, img.height);
     }
     return 1024; // Default
   }
@@ -338,9 +340,10 @@ export class TextureManager {
     let totalBytes = 0;
     
     Object.values(maps).forEach(texture => {
-      if (texture?.image) {
-        const width = texture.image.width || 0;
-        const height = texture.image.height || 0;
+      if (texture?.image && typeof texture.image === 'object' && 'width' in texture.image && 'height' in texture.image) {
+        const img = texture.image as any;
+        const width = img.width || 0;
+        const height = img.height || 0;
         totalBytes += width * height * 4; // RGBA
       }
     });

@@ -296,8 +296,9 @@ export class LODManager {
         // Disable expensive features at lower LOD
         if (this.config.currentLevel >= 2) {
           // Low quality: disable normal maps, AO, etc.
-          material.normalMap = null;
-          material.aoMap = null;
+          const pbrMaterial = material as any; // Type assertion for PBR material properties
+          pbrMaterial.normalMap = null;
+          pbrMaterial.aoMap = null;
         }
       }
     });
