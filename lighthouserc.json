@@ -3,7 +3,10 @@
     "collect": {
       "numberOfRuns": 3,
       "startServerCommand": "npm run start",
-      "url": ["http://localhost:5000"],
+      "url": [
+        "http://localhost:5000/mr-blue",
+        "http://localhost:5000/visual-editor"
+      ],
       "settings": {
         "preset": "desktop",
         "onlyCategories": ["performance", "accessibility", "best-practices", "seo"]

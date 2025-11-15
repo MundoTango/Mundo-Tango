@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ModeSwitcher, type MrBlueMode } from './ModeSwitcher';
 import { MrBlueChat } from './MrBlueChat';
-import { VisualEditorPage } from '@/pages/VisualEditorPage';
+import VisualEditorPage from '@/pages/VisualEditorPage';
 
 export function UnifiedMrBlue() {
   const [mode, setMode] = useState<MrBlueMode>('text');

@@ -1218,3 +1218,7 @@ function VisualEditorPageContent() {
     </>
   );
 }
+
+export default function VisualEditorPage() {
+  return <VisualEditorPageContent />;
+}

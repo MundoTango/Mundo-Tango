@@ -1,0 +1,57 @@
+# Bundle Size Analysis Report
+Generated: $(date)
+
+## Total Bundle Size
+79M
+
+## Top 15 Largest JavaScript Chunks
+3.8M  index-7jp3FIsI.js
+632K  CodePreview-FKbHGZgK.js
+600K  ProfilePage-XFqt8yiT.js
+324K  generateCategoricalChart-sBz9K0PE.js
+292K  UserTestingPage-jLW8fUWh.js
+228K  EventsPage-XfjeUVWS.js
+204K  HostHomePage-D3CkgxUw.js
+184K  MessagesPage-DjTwQp-0.js
+128K  Platform-0rClMNlF.js
+92K   GroupDetailsPage-BMoe4kLn.js
+80K   types-Bf1_j93n.js
+64K   AutonomousPage-D3xO5LrX.js
+56K   GroupsPage-8XD9u0nq.js
+52K   SubscriptionOnboarding-B1bf-aUN.js
+52K   PostItem-mRGHInY9.js
+
+## Analysis
+- Main bundle (index-7jp3FIsI.js): 3891 KB
+- Status: ⚠️ EXCEEDS 500KB TARGET by 3391 KB (678% over target)
+- Total assets: 79M (including all resources)
+
+## Critical Issues
+1. Main bundle is 7.8x larger than target
+2. Multiple large page chunks (>500KB)
+3. No apparent code splitting for Visual Editor or Mr. Blue
+
+## Recommendations (Priority Order)
+1. CRITICAL: Implement aggressive code splitting
+   - Lazy load all pages except landing/login
+   - Split vendor chunks (React, Three.js, charts)
+   - Separate Visual Editor into its own bundle
+
+2. HIGH: Remove/optimize heavy dependencies
+   - Review need for all chart libraries
+   - Consider lighter alternatives to Three.js
+   - Audit unused dependencies
+
+3. MEDIUM: Enable tree shaking
+   - Review imports for side effects
+   - Use ES6 imports exclusively
+   - Remove unused exports
+
+4. MEDIUM: Enable compression
+   - Implement gzip/brotli on server
+   - Pre-compress assets during build
+
+5. LOW: Asset optimization
+   - Minify additional assets
+   - Optimize images and videos
+   - Consider CDN for static assets
