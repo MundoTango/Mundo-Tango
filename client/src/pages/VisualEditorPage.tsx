@@ -35,6 +35,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Separator } from "@/components/ui/separator";
 import { 
   ShieldAlert, Crown, Bot, Cpu, Loader2, CheckCircle2, AlertCircle,
   Play, Eye, Code2, Palette, Undo2, Sparkles, Zap, FileCode, History, Mic, MicOff
@@ -588,68 +589,97 @@ export default function VisualEditorPage() {
         description="Natural language to code with live visual feedback"
       />
       
-      <div className="h-screen w-full bg-background flex">
+      <main className="h-screen w-full bg-background flex">
         {/* Left Sidebar: Conversation & Controls */}
-        <div className="w-96 border-r flex flex-col">
+        <section className="w-96 border-r flex flex-col" role="region" aria-label="Conversation panel">
           {/* Header */}
-          <div className="border-b p-4">
+          <header className="border-b p-4">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary" />
-              <h1 className="text-lg font-semibold">Mr. Blue Vibe Coding</h1>
+              <Sparkles className="h-5 w-5 text-primary" aria-hidden="true" />
+              <h1 className="text-lg font-semibold">Mr. Blue Visual Editor</h1>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">God Level Access</p>
-          </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              AI-Powered Conversational Code Generation
+            </p>
+            <Badge variant="outline" className="mt-2 text-xs">
+              <Crown className="h-3 w-3 mr-1" />
+              God Level Access
+            </Badge>
+          </header>
+
+          <Separator />
 
           {/* Conversation History */}
-          <ScrollArea className="flex-1 p-4">
-            <div className="space-y-4">
-              {conversationHistory.length === 0 ? (
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="text-center space-y-2">
-                      <Bot className="h-12 w-12 mx-auto text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">
-                        Tell me what you want to build or change!
-                      </p>
-                      <div className="text-xs text-muted-foreground space-y-1">
-                        <p>• "Make the header blue"</p>
-                        <p>• "Add a hero section"</p>
-                        <p>• "Center that button"</p>
+          <div className="flex-1 overflow-hidden flex flex-col">
+            <div className="p-3 pb-2">
+              <h2 className="text-sm font-semibold">Conversation History</h2>
+              <p className="text-xs text-muted-foreground">Your chat with Mr. Blue</p>
+            </div>
+            
+            <ScrollArea className="flex-1 px-4">
+              <div className="space-y-4 pb-4">
+                {conversationHistory.length === 0 ? (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 text-base">
+                        <Bot className="h-5 w-5" />
+                        Getting Started
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <p className="text-sm text-muted-foreground">
+                          Tell me what you want to build or change!
+                        </p>
+                        <Separator />
+                        <div className="space-y-1">
+                          <h3 className="text-xs font-semibold">Examples:</h3>
+                          <div className="text-xs text-muted-foreground space-y-1 pl-2">
+                            <p>• "Make the header blue"</p>
+                            <p>• "Add a hero section"</p>
+                            <p>• "Center that button"</p>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  conversationHistory.map((msg, idx) => (
+                    <div key={idx} className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[85%] rounded-lg p-3 ${
+                        msg.role === 'user' 
+                          ? 'bg-primary text-primary-foreground' 
+                          : 'bg-muted'
+                      }`}>
+                        <p className="text-sm">{msg.content}</p>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ) : (
-                conversationHistory.map((msg, idx) => (
-                  <div key={idx} className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[85%] rounded-lg p-3 ${
-                      msg.role === 'user' 
-                        ? 'bg-primary text-primary-foreground' 
-                        : 'bg-muted'
-                    }`}>
-                      <p className="text-sm">{msg.content}</p>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </ScrollArea>
+                  ))
+                )}
+              </div>
+            </ScrollArea>
+          </div>
+
+          <Separator />
 
           {/* Selected Element Info */}
           {selectedElement && (
-            <div className="border-t p-3 bg-muted/50">
-              <div className="text-xs font-medium mb-1">Selected Element</div>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">
-                  &lt;{selectedElement.tagName}&gt;
-                </Badge>
-                {selectedElement.testId && (
-                  <Badge variant="secondary" className="text-xs">
-                    {selectedElement.testId}
+            <>
+              <div className="p-3 bg-muted/50">
+                <h3 className="text-xs font-semibold mb-2">Selected Element</h3>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">
+                    &lt;{selectedElement.tagName}&gt;
                   </Badge>
-                )}
+                  {selectedElement.testId && (
+                    <Badge variant="secondary" className="text-xs">
+                      {selectedElement.testId}
+                    </Badge>
+                  )}
+                </div>
               </div>
-            </div>
+              <Separator />
+            </>
           )}
 
           {/* Status & Progress */}
