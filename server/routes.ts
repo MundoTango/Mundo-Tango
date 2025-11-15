@@ -23,6 +23,7 @@ import mrblueVideoRoutes from "./routes/mrblue-video-routes";
 import mrBlueRoutes from "./routes/mrBlue";
 import mrBlueEnhancedRoutes from "./routes/mr-blue-enhanced";
 import mrBlueAgentsRoutes from "./routes/mrBlueAgents";
+import autonomousRoutes from "./routes/autonomous";
 import premiumMediaRoutes from "./routes/premiumMedia";
 import learningIntelligenceRoutes from "./routes/learningIntelligence";
 import godLevelRoutes from "./routes/godLevel";
@@ -434,6 +435,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/mrblue", mrblueVideoRoutes);
   app.use("/api/mrblue", mrBlueRoutes);
   app.use(mrBlueEnhancedRoutes); // Enhanced Mr. Blue with troubleshooting KB
+  app.use("/api/autonomous", autonomousRoutes); // Mr. Blue Autonomous Agent (God Level)
   app.use("/api/visual-editor", authenticateToken, visualEditorRoutes);
   app.use("/api/whisper", authenticateToken, whisperRoutes);
   app.use("/api/realtime", authenticateToken, realtimeVoiceRoutes);
