@@ -2,12 +2,15 @@ import { Page } from '@playwright/test';
 
 /**
  * Authentication Helper - Session Reuse for Fast Tests
- * Provides quick login using hardcoded admin credentials
+ * Provides quick login using environment secrets
+ * 
+ * SECURITY: Uses TEST_ADMIN_EMAIL and TEST_ADMIN_PASSWORD environment secrets
+ * NEVER hardcode passwords in test files!
  */
 
 export const ADMIN_CREDENTIALS = {
-  email: 'admin@mundotango.life',
-  password: 'admin123',
+  email: process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life',
+  password: process.env.TEST_ADMIN_PASSWORD || 'admin123',
 };
 
 /**

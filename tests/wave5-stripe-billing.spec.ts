@@ -18,10 +18,10 @@ const STRIPE_TEST_CARDS = {
   '3d_secure': '4000002760003184'
 };
 
-// Admin credentials for all tests
+// Admin credentials for all tests (using environment secrets)
 const ADMIN_CREDENTIALS = {
-  email: 'admin@mundotango.life',
-  password: 'admin123'
+  email: process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life',
+  password: process.env.TEST_ADMIN_PASSWORD || 'admin123'
 };
 
 // Helper function to login as admin

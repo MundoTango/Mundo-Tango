@@ -2,10 +2,10 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Visual Editor - Mr. Blue AI Assistant', () => {
   test.beforeEach(async ({ page }) => {
-    // Login as admin
+    // Login as admin using environment secrets
     await page.goto('/');
-    await page.fill('[data-testid="input-email"]', 'admin@mundotango.life');
-    await page.fill('[data-testid="input-password"]', 'admin123');
+    await page.fill('[data-testid="input-email"]', process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life');
+    await page.fill('[data-testid="input-password"]', process.env.TEST_ADMIN_PASSWORD || 'admin123');
     await page.click('[data-testid="button-login"]');
     await page.waitForURL('/');
     

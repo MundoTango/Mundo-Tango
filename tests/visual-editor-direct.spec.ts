@@ -24,11 +24,11 @@ test.describe('Visual Editor - Direct Access Tests', () => {
 test.describe('After Login - Visual Editor Features', () => {
   
   test.beforeEach(async ({ page }) => {
-    // Login
+    // Login using environment secrets
     await page.goto('/login');
     await page.waitForSelector('[data-testid="input-email"]', { timeout: 15000 });
-    await page.fill('[data-testid="input-email"]', 'admin@mundotango.life');
-    await page.fill('[data-testid="input-password"]', 'admin123');
+    await page.fill('[data-testid="input-email"]', process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life');
+    await page.fill('[data-testid="input-password"]', process.env.TEST_ADMIN_PASSWORD || 'admin123');
     
     // Click login and wait
     await page.click('[data-testid="button-login"]');

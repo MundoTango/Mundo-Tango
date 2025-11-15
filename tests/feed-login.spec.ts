@@ -24,9 +24,9 @@ test.describe('Feed Page Login and Access', () => {
     await page.click('button:has-text("Login")');
     await page.waitForSelector('input[type="email"]');
 
-    // Fill login form
-    await page.fill('input[type="email"]', 'admin@mundotango.life');
-    await page.fill('input[type="password"]', 'admin123');
+    // Fill login form using environment secrets
+    await page.fill('input[type="email"]', process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life');
+    await page.fill('input[type="password"]', process.env.TEST_ADMIN_PASSWORD || 'admin123');
 
     // Submit login
     await page.click('button[type="submit"]:has-text("Login")');

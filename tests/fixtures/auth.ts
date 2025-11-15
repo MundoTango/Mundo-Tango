@@ -2,13 +2,16 @@ import { test as base } from '@playwright/test';
 
 /**
  * Authentication Fixture for Mundo Tango Tests
- * Provides automatic login with hardcoded admin credentials
+ * Provides automatic login using environment secrets
  * No manual login required - tests start on /feed ready to go
+ * 
+ * SECURITY: Uses TEST_ADMIN_EMAIL and TEST_ADMIN_PASSWORD environment secrets
+ * NEVER hardcode passwords in test files!
  */
 
 export const ADMIN_CREDENTIALS = {
-  email: 'admin@mundotango.life',
-  password: 'admin123',
+  email: process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life',
+  password: process.env.TEST_ADMIN_PASSWORD || 'admin123',
 };
 
 export const test = base.extend({

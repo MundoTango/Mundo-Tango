@@ -2,12 +2,12 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Visual Editor - Full Functionality Tests', () => {
   test.beforeEach(async ({ page }) => {
-    // Login as admin
+    // Login as admin using environment secrets
     await page.goto('/login');
     await page.waitForLoadState('networkidle');
     
-    await page.fill('[data-testid="input-email"]', 'admin@mundotango.life');
-    await page.fill('[data-testid="input-password"]', 'admin123');
+    await page.fill('[data-testid="input-email"]', process.env.TEST_ADMIN_EMAIL || 'admin@mundotango.life');
+    await page.fill('[data-testid="input-password"]', process.env.TEST_ADMIN_PASSWORD || 'admin123');
     
     // Press Enter to submit form and wait for navigation
     await Promise.all([
