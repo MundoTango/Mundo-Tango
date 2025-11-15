@@ -100,20 +100,24 @@ const EMBEDDING_COST_PER_1M_TOKENS = 0.02;
 // REDIS CLIENT & OPENAI CLIENT
 // ============================================================================
 
-const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
-  maxRetriesPerRequest: 3,
-  retryStrategy: (times) => {
-    if (times > 3) return null;
-    return Math.min(times * 100, 2000);
-  },
-  lazyConnect: true, // Don't connect until needed
-  enableOfflineQueue: false,
-});
+const redis = process.env.REDIS_URL
+  ? new Redis(process.env.REDIS_URL, {
+      maxRetriesPerRequest: 3,
+      retryStrategy: (times) => {
+        if (times > 3) return null;
+        return Math.min(times * 100, 2000);
+      },
+      lazyConnect: true, // Don't connect until needed
+      enableOfflineQueue: false,
+    })
+  : null;
 
 // Add error handler to prevent unhandled error events
-redis.on('error', (err) => {
-  console.error('⚠️  SemanticCacheService Redis error:', err.message);
-});
+if (redis) {
+  redis.on('error', (err) => {
+    console.error('⚠️  SemanticCacheService Redis error:', err.message);
+  });
+}
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || '',
@@ -183,7 +187,7 @@ function normalizeVector(vec: number[]): number[] {
 export async function generateEmbedding(prompt: string): Promise<number[]> {
   try {
     const startTime = Date.now();
-    
+
     const response = await openai.embeddings.create({
       model: EMBEDDING_MODEL,
       input: prompt,
@@ -248,6 +252,11 @@ export async function searchSemanticCache(
     maxTokens,
   } = options;
 
+  // If Redis is not available, skip caching
+  if (!redis) {
+    return { found: false, reason: 'no_entries' };
+  }
+
   try {
     const startTime = Date.now();
 
@@ -256,7 +265,7 @@ export async function searchSemanticCache(
 
     // Get all cache entries
     const cacheKeys = await redis.keys(`${CACHE_KEY_PREFIX}*`);
-    
+
     if (cacheKeys.length === 0) {
       cacheMisses++;
       console.log('[Semantic Cache] MISS - No cached entries');
@@ -382,6 +391,11 @@ export async function storeInSemanticCache(
     maxTokens = 1000,
   } = options;
 
+  // If Redis is not available, skip caching
+  if (!redis) {
+    return '';
+  }
+
   try {
     // Generate embedding
     const embedding = await generateEmbedding(prompt);
@@ -429,6 +443,11 @@ export async function storeInSemanticCache(
  * Invalidate specific cache entry
  */
 export async function invalidateCacheEntry(cacheKey: string): Promise<void> {
+  // If Redis is not available, skip caching
+  if (!redis) {
+    return;
+  }
+
   try {
     await redis.del(cacheKey);
     console.log(`[Semantic Cache] 🗑️  DELETED - ${cacheKey}`);
@@ -441,6 +460,11 @@ export async function invalidateCacheEntry(cacheKey: string): Promise<void> {
  * Clear all semantic cache entries
  */
 export async function clearSemanticCache(): Promise<number> {
+  // If Redis is not available, skip caching
+  if (!redis) {
+    return 0;
+  }
+
   try {
     const keys = await redis.keys(`${CACHE_KEY_PREFIX}*`);
     if (keys.length > 0) {
@@ -458,6 +482,11 @@ export async function clearSemanticCache(): Promise<number> {
  * Remove expired cache entries
  */
 export async function cleanupExpiredEntries(): Promise<number> {
+  // If Redis is not available, skip caching
+  if (!redis) {
+    return 0;
+  }
+
   try {
     const keys = await redis.keys(`${CACHE_KEY_PREFIX}*`);
     let deletedCount = 0;
@@ -489,6 +518,11 @@ export async function cleanupExpiredEntries(): Promise<number> {
  * Get cache size (number of entries)
  */
 export async function getCacheSize(): Promise<number> {
+  // If Redis is not available, return 0
+  if (!redis) {
+    return 0;
+  }
+
   try {
     const keys = await redis.keys(`${CACHE_KEY_PREFIX}*`);
     return keys.length;
@@ -540,6 +574,11 @@ export function resetCacheStats(): void {
  * Get detailed cache entry information
  */
 export async function getCacheEntryDetails(cacheKey: string): Promise<SemanticCacheEntry | null> {
+  // If Redis is not available, return null
+  if (!redis) {
+    return null;
+  }
+
   try {
     const data = await redis.get(cacheKey);
     if (!data) return null;
@@ -554,6 +593,11 @@ export async function getCacheEntryDetails(cacheKey: string): Promise<SemanticCa
  * List all cache entries with metadata
  */
 export async function listAllCacheEntries(): Promise<Array<{ key: string; entry: SemanticCacheEntry }>> {
+  // If Redis is not available, return empty array
+  if (!redis) {
+    return [];
+  }
+
   try {
     const keys = await redis.keys(`${CACHE_KEY_PREFIX}*`);
     const entries: Array<{ key: string; entry: SemanticCacheEntry }> = [];
@@ -583,6 +627,11 @@ export async function listAllCacheEntries(): Promise<Array<{ key: string; entry:
  * Test Redis connection
  */
 export async function testRedisConnection(): Promise<boolean> {
+  // If Redis is not configured, return false
+  if (!redis) {
+    return false;
+  }
+
   try {
     await redis.ping();
     return true;
@@ -633,24 +682,24 @@ export const SemanticCacheService = {
   search: searchSemanticCache,
   store: storeInSemanticCache,
   generateEmbedding,
-  
+
   // Management
   invalidate: invalidateCacheEntry,
   clear: clearSemanticCache,
   cleanup: cleanupExpiredEntries,
-  
+
   // Analytics
   getStats: getSemanticCacheStats,
   resetStats: resetCacheStats,
   getSize: getCacheSize,
   getEntry: getCacheEntryDetails,
   listAll: listAllCacheEntries,
-  
+
   // Health
   healthCheck,
   testRedis: testRedisConnection,
   testEmbeddings: testEmbeddingAPI,
-  
+
   // Constants
   EMBEDDING_MODEL,
   DEFAULT_SIMILARITY_THRESHOLD,
