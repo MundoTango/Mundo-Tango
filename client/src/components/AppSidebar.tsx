@@ -134,7 +134,7 @@ const crowdfundingItems = [
 const socialMediaItems = [
   { title: "Dashboard", url: "/social", icon: Share2 },
   { title: "Compose", url: "/social/compose", icon: PenSquare },
-  { title: "Connections", url: "/social/connections", icon: Link },
+  { title: "Connections", url: "/social/connections", icon: LinkIcon },
   { title: "Campaigns", url: "/social/campaigns", icon: Megaphone },
 ];
 

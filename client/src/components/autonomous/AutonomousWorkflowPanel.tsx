@@ -15,11 +15,14 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/hooks/use-user";
+import { useAutonomousProgress } from "@/hooks/useAutonomousProgress";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { 
@@ -108,15 +111,23 @@ export function AutonomousWorkflowPanel() {
   const [selectedFileIndex, setSelectedFileIndex] = useState(0);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useUser();
 
-  // Poll for task status every 2 seconds when task is active
+  // WebSocket-based real-time progress updates (replaces polling)
+  const { isConnected: wsConnected, progress: wsProgress, error: wsError } = useAutonomousProgress({
+    userId: user?.id || 0,
+    taskId: currentTaskId || undefined,
+    autoConnect: !!user?.id && !!currentTaskId
+  });
+
+  // Fallback polling if WebSocket disconnects (every 5 seconds instead of 2)
   const { data: taskData, isLoading: isLoadingTask } = useQuery<{ success: boolean; task: AutonomousTask }>({
     queryKey: ['/api/autonomous/status', currentTaskId],
-    enabled: !!currentTaskId,
+    enabled: !!currentTaskId && !wsConnected, // Only poll if WebSocket is disconnected
     refetchInterval: (query) => {
       if (!query?.state?.data?.task) return false;
       const activeStatuses = ['pending', 'decomposing', 'generating', 'validating', 'applying'];
-      return activeStatuses.includes(query.state.data.task.status) ? 2000 : false;
+      return activeStatuses.includes(query.state.data.task.status) ? 5000 : false; // Reduced from 2s to 5s
     },
     refetchIntervalInBackground: true,
   });
@@ -294,6 +305,44 @@ export function AutonomousWorkflowPanel() {
                 </div>
               )}
             </div>
+
+            {/* Real-time WebSocket Progress (replaces polling) */}
+            {wsProgress && wsProgress.progress < 1 && wsProgress.status !== 'complete' && (
+              <div className="mt-4 space-y-3 px-6 pb-2">
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                    <span className="font-medium text-foreground">{wsProgress.step}</span>
+                    {wsConnected && (
+                      <Badge variant="outline" className="text-xs">
+                        Live
+                      </Badge>
+                    )}
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {Math.round(wsProgress.progress * 100)}%
+                  </span>
+                </div>
+                <Progress 
+                  value={wsProgress.progress * 100} 
+                  className="h-2"
+                  data-testid="progress-bar"
+                />
+                {wsProgress.message && (
+                  <p className="text-xs text-muted-foreground">{wsProgress.message}</p>
+                )}
+              </div>
+            )}
+
+            {/* WebSocket connection status */}
+            {!wsConnected && currentTaskId && task?.status && ['pending', 'decomposing', 'generating', 'validating', 'applying'].includes(task.status) && (
+              <div className="mt-4 px-6 pb-2">
+                <Badge variant="outline" className="text-xs">
+                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                  Fallback to polling (WebSocket disconnected)
+                </Badge>
+              </div>
+            )}
           </CardHeader>
           
           <CardContent className="flex-1 overflow-hidden pt-2">

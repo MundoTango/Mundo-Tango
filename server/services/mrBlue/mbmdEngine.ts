@@ -335,8 +335,13 @@ export class MBMDEngine {
 
   /**
    * Decompose a user task using MB.MD methodology
+   * @param userPrompt - The task description from the user
+   * @param progressCallback - Optional callback to report progress (0-1)
    */
-  async decomposeTask(userPrompt: string): Promise<TaskDecomposition> {
+  async decomposeTask(
+    userPrompt: string, 
+    progressCallback?: (progress: number) => void
+  ): Promise<TaskDecomposition> {
     // Ensure initialized
     if (!this.initialized) {
       await this.initialize();
@@ -347,12 +352,17 @@ export class MBMDEngine {
     }
 
     console.log(`[MBMDEngine] Decomposing task: ${userPrompt.substring(0, 100)}...`);
+    
+    // Report initial progress
+    progressCallback?.(0.1); // 10% - Starting decomposition
 
     try {
       // Build system prompt with MB.MD methodology
       const systemPrompt = this.buildDecompositionSystemPrompt();
+      progressCallback?.(0.25); // 25% - System prompt built
 
       // Query GROQ AI for task decomposition
+      progressCallback?.(0.3); // 30% - Starting AI query
       const response = await GroqService.query({
         prompt: `Decompose this task using MB.MD methodology:\n\n${userPrompt}\n\n**CRITICAL: The "files" array must contain ACTUAL FILE PATHS, NOT task IDs!**
 
@@ -388,20 +398,27 @@ Provide a JSON response with the following structure:
 
       // Parse AI response
       const decomposition = this.parseDecompositionResponse(response.content, userPrompt);
+      progressCallback?.(0.5); // 50% - Subtask analysis complete
 
       // Build dependency graph
       const dependencyGraph = this.buildDependencyGraph(decomposition.subtasks);
+      progressCallback?.(0.65); // 65% - Dependency graph created
 
       // Identify parallel tracks
       const parallelTracks = this.identifyParallelTracks(decomposition.subtasks, dependencyGraph);
+      progressCallback?.(0.75); // 75% - Parallel tracks identified
 
       // Match against known patterns
       const matchedPatterns = await this.matchPatterns(userPrompt);
+      progressCallback?.(0.85); // 85% - Pattern matching complete
 
       // Calculate total estimated time (accounting for parallelization)
       const estimatedTime = this.calculateEstimatedTime(decomposition.subtasks, parallelTracks);
+      progressCallback?.(0.95); // 95% - Estimation complete
 
       console.log(`[MBMDEngine] Task decomposed into ${decomposition.subtasks.length} subtasks (${parallelTracks.length} parallel tracks)`);
+
+      progressCallback?.(1.0); // 100% - Decomposition complete
 
       return {
         mainTask: decomposition.mainTask,

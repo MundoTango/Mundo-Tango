@@ -116,6 +116,7 @@ import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/a
 import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
 import { auditLog, getClientIp } from "./middleware/auditLog";
 import { wsNotificationService } from "./services/websocket-notification-service";
+import { wsService as autonomousWsService } from "./services/websocket";
 import { 
   insertPostSchema, 
   insertPostCommentSchema,
@@ -4071,6 +4072,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize Livestream Chat WebSocket
   initLivestreamWebSocket(httpServer);
   console.log("[WebSocket] Livestream chat initialized on /ws/stream/:streamId");
+
+  // Initialize Autonomous Workflow WebSocket
+  autonomousWsService.initialize(httpServer);
+  console.log("[WebSocket] Autonomous workflow service initialized on /ws/autonomous");
 
   // ============================================================================
   // GROUPS - Additional routes removed (duplicates - using group-routes.ts instead)

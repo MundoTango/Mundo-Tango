@@ -501,9 +501,13 @@ Begin code generation:`;
   /**
    * Generate multiple files in parallel
    * @param tasks - Array of sub-tasks to generate
+   * @param progressCallback - Optional callback to report progress for each file (fileIndex, filePath)
    * @returns Array of generated code results
    */
-  async generateMultipleFiles(tasks: SubTask[]): Promise<GeneratedCode[]> {
+  async generateMultipleFiles(
+    tasks: SubTask[],
+    progressCallback?: (fileIndex: number, filePath: string) => void
+  ): Promise<GeneratedCode[]> {
     console.log('[CodeGenerator] Generating multiple files:', tasks.length);
 
     // Sort tasks by dependencies (base files first)
@@ -516,13 +520,21 @@ Begin code generation:`;
     // Generate in parallel batches (respect dependencies)
     const batches = this.createDependencyBatches(sortedTasks);
     const results: GeneratedCode[] = [];
+    let fileIndex = 0;
 
     for (const batch of batches) {
       console.log(`[CodeGenerator] Processing batch of ${batch.length} files`);
       
       // Generate batch in parallel (MB.MD: SIMULTANEOUSLY)
       const batchResults = await Promise.all(
-        batch.map(task => this.generateCode(task, context))
+        batch.map(async (task) => {
+          const result = await this.generateCode(task, context);
+          
+          // Report progress for this file
+          progressCallback?.(fileIndex++, task.filePath);
+          
+          return result;
+        })
       );
       
       results.push(...batchResults);

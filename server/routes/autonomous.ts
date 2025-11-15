@@ -17,6 +17,7 @@ import { mbmdEngine } from "../services/mrBlue/mbmdEngine";
 import { codeGenerator } from "../services/mrBlue/codeGenerator";
 import { validator } from "../services/mrBlue/validator";
 import { autonomousAgent } from "../services/mrBlue/autonomousAgent";
+import { broadcastToUser } from "../services/websocket";
 import { db } from "../storage";
 import { auditLogs, autonomousTasks } from "../../shared/schema";
 import { eq, and, gte, count, desc } from "drizzle-orm";
@@ -245,7 +246,7 @@ router.post("/execute",
       await persistTaskToDB(task);
 
       // Start async execution
-      executeAutonomousTask(taskId, autoApprove).catch(error => {
+      executeAutonomousTask(taskId, autoApprove, req.userId!).catch(error => {
         console.error(`[Autonomous] Task ${taskId} failed:`, error);
         const task = tasks.get(taskId);
         if (task) {
@@ -254,6 +255,12 @@ router.post("/execute",
           task.updatedAt = new Date();
           persistTaskToDB(task); // Persist failure
           logAuditAction(req.userId!, 'autonomous_task_failed', `Task ${taskId} failed: ${error.message}`, { taskId });
+          
+          // Emit failure event
+          broadcastToUser(req.userId!, 'autonomous:failed', {
+            taskId,
+            error: error.message || 'Unknown error'
+          });
         }
       });
 
@@ -547,23 +554,63 @@ router.post("/validate",
 /**
  * Execute autonomous task workflow
  */
-async function executeAutonomousTask(taskId: string, autoApprove: boolean): Promise<void> {
+async function executeAutonomousTask(taskId: string, autoApprove: boolean, userId: number): Promise<void> {
   const task = tasks.get(taskId);
   if (!task) throw new Error("Task not found");
 
   try {
     console.log(`[Autonomous] Starting task ${taskId}: "${task.prompt}"`);
 
+    // Emit started event
+    broadcastToUser(userId, 'autonomous:started', {
+      taskId,
+      prompt: task.prompt,
+      status: 'pending'
+    });
+
     // Phase 1: Task Decomposition (MB.MD)
     task.status = 'decomposing';
     task.updatedAt = new Date();
     console.log(`[Autonomous] Decomposing task...`);
 
-    const decomposition = await mbmdEngine.decomposeTask(task.prompt);
+    // Emit decomposition progress
+    broadcastToUser(userId, 'autonomous:progress', {
+      taskId,
+      status: 'decomposing',
+      step: 'decomposition',
+      progress: 10,
+      message: 'Analyzing task structure using MB.MD methodology...'
+    });
+
+    const decomposition = await mbmdEngine.decomposeTask(task.prompt, (progress) => {
+      // Progress callback from MB.MD engine
+      broadcastToUser(userId, 'autonomous:progress', {
+        taskId,
+        status: 'decomposing',
+        step: 'decomposition',
+        progress: 10 + (progress * 0.3), // 10-40%
+        message: 'Analyzing task structure...'
+      });
+    });
+
     task.decomposition = decomposition;
     task.updatedAt = new Date();
 
     console.log(`[Autonomous] Task decomposed into ${decomposition.subtasks.length} subtasks`);
+
+    // Emit decomposition complete
+    broadcastToUser(userId, 'autonomous:progress', {
+      taskId,
+      status: 'decomposing',
+      step: 'decomposition',
+      progress: 40,
+      message: `Decomposed into ${decomposition.subtasks.length} subtasks`,
+      subtasks: decomposition.subtasks.map(st => ({
+        id: st.id,
+        description: st.description,
+        files: st.files
+      }))
+    });
 
     // Phase 2: Code Generation
     task.status = 'generating';
@@ -580,16 +627,65 @@ async function executeAutonomousTask(taskId: string, autoApprove: boolean): Prom
       }))
     );
 
-    const generatedFiles = await codeGenerator.generateMultipleFiles(codeGenTasks as any);
+    // Emit generation start
+    broadcastToUser(userId, 'autonomous:progress', {
+      taskId,
+      status: 'generating',
+      step: 'generation',
+      progress: 45,
+      message: `Generating ${codeGenTasks.length} files...`
+    });
+
+    const generatedFiles = await codeGenerator.generateMultipleFiles(
+      codeGenTasks as any,
+      (fileIndex, filePath) => {
+        // Progress callback from code generator
+        const fileProgress = (fileIndex / codeGenTasks.length) * 40; // 45-85%
+        broadcastToUser(userId, 'autonomous:progress', {
+          taskId,
+          status: 'generating',
+          step: 'generation',
+          progress: 45 + fileProgress,
+          message: `Generating file ${fileIndex + 1}/${codeGenTasks.length}: ${filePath}`
+        });
+
+        // Emit individual file generated event
+        broadcastToUser(userId, 'autonomous:file_generated', {
+          taskId,
+          filePath,
+          fileIndex,
+          totalFiles: codeGenTasks.length
+        });
+      }
+    );
+
     task.generatedFiles = generatedFiles;
     task.updatedAt = new Date();
 
     console.log(`[Autonomous] Generated ${generatedFiles.length} files`);
 
+    // Emit generation complete
+    broadcastToUser(userId, 'autonomous:progress', {
+      taskId,
+      status: 'generating',
+      step: 'generation',
+      progress: 85,
+      message: `Generated ${generatedFiles.length} files successfully`
+    });
+
     // Phase 3: Validation
     task.status = 'validating';
     task.updatedAt = new Date();
     console.log(`[Autonomous] Validating generated code...`);
+
+    // Emit validation start
+    broadcastToUser(userId, 'autonomous:progress', {
+      taskId,
+      status: 'validating',
+      step: 'validation',
+      progress: 90,
+      message: 'Running LSP diagnostics and validation...'
+    });
 
     // Save snapshot before making any changes
     const filePaths = generatedFiles.map(f => f.filePath);
@@ -608,25 +704,72 @@ async function executeAutonomousTask(taskId: string, autoApprove: boolean): Prom
 
     console.log(`[Autonomous] Validation complete: ${lspReport.totalErrors} errors, ${lspReport.totalWarnings} warnings`);
 
+    // Emit validation complete
+    broadcastToUser(userId, 'autonomous:validation_complete', {
+      taskId,
+      status: 'validating',
+      step: 'validation',
+      progress: 95,
+      message: `Validation complete: ${lspReport.totalErrors} errors, ${lspReport.totalWarnings} warnings`,
+      validationReport: {
+        totalErrors: lspReport.totalErrors,
+        totalWarnings: lspReport.totalWarnings,
+        success: lspReport.success
+      }
+    });
+
     // If auto-approve and validation passes, apply immediately
     if (autoApprove && lspReport.success) {
       console.log(`[Autonomous] Auto-approving task...`);
       task.status = 'applying';
       task.updatedAt = new Date();
 
+      // Emit applying progress
+      broadcastToUser(userId, 'autonomous:progress', {
+        taskId,
+        status: 'applying',
+        step: 'applying',
+        progress: 98,
+        message: 'Applying generated code to filesystem...'
+      });
+
       const results = await applyGeneratedFiles(task);
       if (results.success) {
         task.status = 'completed';
         console.log(`[Autonomous] Task ${taskId} completed successfully`);
+
+        // Emit completed event
+        broadcastToUser(userId, 'autonomous:completed', {
+          taskId,
+          status: 'completed',
+          progress: 100,
+          message: 'Task completed successfully!',
+          filesModified: results.filesModified
+        });
       } else {
         task.status = 'failed';
         task.error = results.error;
         console.error(`[Autonomous] Task ${taskId} failed:`, results.error);
+
+        // Emit failed event
+        broadcastToUser(userId, 'autonomous:failed', {
+          taskId,
+          error: results.error
+        });
       }
     } else {
       // Wait for approval
       task.status = 'awaiting_approval';
       console.log(`[Autonomous] Task ${taskId} awaiting approval`);
+
+      // Emit awaiting approval event
+      broadcastToUser(userId, 'autonomous:progress', {
+        taskId,
+        status: 'awaiting_approval',
+        step: 'awaiting_approval',
+        progress: 100,
+        message: 'Code generation complete. Awaiting approval...'
+      });
     }
 
     task.updatedAt = new Date();
@@ -635,6 +778,13 @@ async function executeAutonomousTask(taskId: string, autoApprove: boolean): Prom
     task.status = 'failed';
     task.error = error.message || 'Unknown error';
     task.updatedAt = new Date();
+
+    // Emit failed event
+    broadcastToUser(userId, 'autonomous:failed', {
+      taskId,
+      error: error.message || 'Unknown error'
+    });
+
     throw error;
   }
 }
