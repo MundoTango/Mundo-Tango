@@ -12,12 +12,17 @@ import { apiRateLimiter } from "./middleware/security";
 import { compressionMiddleware, performanceMonitoringMiddleware } from "./config/performance";
 import { healthCheckHandler, readinessCheckHandler, livenessCheckHandler } from "./health-check";
 console.log("✅ [DEBUG] All imports complete in server/index.ts");
-import { 
-  initializeSentry, 
-  getSentryRequestHandler, 
-  getSentryTracingHandler,
-  getSentryErrorHandler 
-} from "./config/sentry";
+// ============================================================================
+// SENTRY DISABLED: CSP VIOLATIONS FIX (MB.MD SUBAGENT 3)
+// Sentry was injecting 'unsafe-dynamic' and 'report-uri' causing 4891 CSP errors
+// Better to have no error tracking than broken CSP
+// ============================================================================
+// import { 
+//   initializeSentry, 
+//   getSentryRequestHandler, 
+//   getSentryTracingHandler,
+//   getSentryErrorHandler 
+// } from "./config/sentry";
 import logger, { stream } from "./middleware/logger";
 import { 
   globalRateLimiter, 
@@ -34,9 +39,10 @@ console.log("✅ [DEBUG] All server/index.ts imports completed!");
 const app = express();
 
 // ============================================================================
-// SENTRY INITIALIZATION
+// SENTRY INITIALIZATION - DISABLED (CSP FIX)
 // ============================================================================
-initializeSentry(app);
+// initializeSentry(app);
+console.log("⚠️  Sentry disabled to fix CSP violations (MB.MD SUBAGENT 3)");
 
 // ============================================================================
 // TRUST PROXY CONFIGURATION
@@ -48,11 +54,11 @@ app.set('trust proxy', 1);
 // SECURITY & PERFORMANCE MIDDLEWARE
 // ============================================================================
 
-// Sentry request handler (must be first)
-app.use(getSentryRequestHandler());
+// Sentry request handler (must be first) - DISABLED (CSP FIX)
+// app.use(getSentryRequestHandler());
 
-// Sentry tracing handler
-app.use(getSentryTracingHandler());
+// Sentry tracing handler - DISABLED (CSP FIX)
+// app.use(getSentryTracingHandler());
 
 // Winston + Morgan HTTP request logging
 app.use(morgan('combined', { stream }));
@@ -149,8 +155,8 @@ app.use((req, res, next) => {
   
   const server = await registerRoutes(app);
 
-  // Sentry error handler (must be before other error handlers)
-  app.use(getSentryErrorHandler());
+  // Sentry error handler (must be before other error handlers) - DISABLED (CSP FIX)
+  // app.use(getSentryErrorHandler());
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

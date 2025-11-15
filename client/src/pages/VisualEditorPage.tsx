@@ -114,7 +114,17 @@ export default function VisualEditorPage() {
     }, 500);
   }, []);
 
-  const { isListening, isSupported: voiceSupported, transcript, startListening, stopListening, resetTranscript } = useVoiceInput({
+  const { 
+    isListening, 
+    isSupported: voiceSupported, 
+    transcript, 
+    isContinuousMode,
+    startListening, 
+    stopListening, 
+    resetTranscript,
+    enableContinuousMode,
+    disableContinuousMode
+  } = useVoiceInput({
     onResult: handleVoiceResult,
     continuous: voiceModeEnabled,
     interimResults: true
@@ -783,13 +793,25 @@ export default function VisualEditorPage() {
                   onToggle={(enabled) => {
                     setVoiceModeEnabled(enabled);
                     if (enabled) {
+                      enableContinuousMode();
                       startListening();
                     } else {
+                      disableContinuousMode();
                       stopListening();
                     }
                   }}
                   className="w-full"
                 />
+                {/* Show continuous mode status */}
+                {voiceModeEnabled && isContinuousMode && (
+                  <div className="mt-2 text-xs text-muted-foreground">
+                    <Badge variant="default" className="text-xs">
+                      <Mic className="h-3 w-3 mr-1" />
+                      Continuous Mode Active
+                    </Badge>
+                    <p className="mt-1">Just start speaking - no wake word needed!</p>
+                  </div>
+                )}
               </div>
               <Separator />
             </>

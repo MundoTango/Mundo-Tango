@@ -120,7 +120,7 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
         mediaSrc: ["'self'", "blob:", "https:", "http:"],
         
         // Connection sources - APIs, WebSocket, Vite HMR
-        // NOTE: Sentry domains included without query strings (CSP doesn't support query params)
+        // NOTE: Sentry URLs removed (Sentry disabled in MB.MD SUBAGENT 3 - CSP FIX)
         connectSrc: isDevelopment
           ? [
               "'self'",
@@ -130,8 +130,6 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
               "https://api.anthropic.com",
               "https://generativelanguage.googleapis.com",
               "https://*.supabase.co",
-              "https://*.sentry.io",
-              "https://o4509669501698048.ingest.us.sentry.io",
               "wss:",
               "ws:",
               "ws://localhost:*",
@@ -145,8 +143,6 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
               "https://api.anthropic.com",
               "https://generativelanguage.googleapis.com",
               "https://*.supabase.co",
-              "https://*.sentry.io",
-              "https://o4509669501698048.ingest.us.sentry.io",
               "wss:"
             ],
         
