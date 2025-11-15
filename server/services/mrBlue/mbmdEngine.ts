@@ -354,7 +354,12 @@ export class MBMDEngine {
 
       // Query GROQ AI for task decomposition
       const response = await GroqService.query({
-        prompt: `Decompose this task using MB.MD methodology:\n\n${userPrompt}\n\nProvide a JSON response with the following structure:
+        prompt: `Decompose this task using MB.MD methodology:\n\n${userPrompt}\n\n**CRITICAL: The "files" array must contain ACTUAL FILE PATHS, NOT task IDs!**
+
+Example CORRECT: "files": ["client/src/components/ImagePreview.tsx", "client/src/hooks/useImageUpload.ts"]
+Example WRONG: "files": ["task-1", "task-2"]
+
+Provide a JSON response with the following structure:
 {
   "mainTask": "brief description",
   "complexity": "simple|medium|complex|very-complex",
@@ -364,7 +369,7 @@ export class MBMDEngine {
       "description": "what to do",
       "type": "file_operation|code_generation|validation|test|infrastructure|documentation",
       "dependencies": ["task-id-1", "task-id-2"],
-      "files": ["path/to/file.ts"],
+      "files": ["client/src/path/to/actual/file.tsx"],
       "estimatedMinutes": 15,
       "priority": "critical|high|medium|low",
       "canRunInParallel": true
@@ -372,7 +377,9 @@ export class MBMDEngine {
   ],
   "recommendedApproach": "brief strategy description",
   "qualityFocus": ["quality gate 1", "quality gate 2"]
-}`,
+}
+
+**REMEMBER: "files" must be real file paths (with full directories like client/src/... or server/...), NOT task IDs!**`,
         model: GROQ_MODELS.LLAMA_70B,
         systemPrompt,
         temperature: 0.3,
