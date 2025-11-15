@@ -38,7 +38,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Separator } from "@/components/ui/separator";
 import { 
   ShieldAlert, Crown, Bot, Cpu, Loader2, CheckCircle2, AlertCircle,
-  Play, Eye, Code2, Palette, Undo2, Sparkles, Zap, FileCode, History, Mic, MicOff
+  Play, Eye, Code2, Palette, Undo2, Sparkles, Zap, FileCode, History, Mic, MicOff, Lightbulb
 } from "lucide-react";
 
 type User = {
