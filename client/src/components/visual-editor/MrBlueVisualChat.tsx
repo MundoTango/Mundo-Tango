@@ -126,6 +126,7 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
     isSupported: voiceSupported, 
     transcript,
     isContinuousMode,
+    isInitializing,
     startListening, 
     stopListening,
     resetTranscript,
@@ -661,6 +662,7 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
                     ? 'bg-primary shadow-lg' 
                     : 'bg-background hover:bg-primary/10'
                 }`}
+                disabled={isInitializing}
                 data-testid="button-voice-input-large"
               >
                 <motion.div
@@ -673,7 +675,9 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
                     duration: 1.5
                   } : {}}
                 >
-                  {isListening ? (
+                  {isInitializing ? (
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  ) : isListening ? (
                     <MicOff className="h-8 w-8" />
                   ) : (
                     <Mic className="h-8 w-8" />
@@ -702,10 +706,13 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
                 onClick={toggleVoiceInput}
                 variant={isListening ? "default" : "ghost"}
                 size="icon"
+                disabled={isInitializing}
                 data-testid="button-voice-input"
-                title={isListening ? "Stop listening" : "Start voice input"}
+                title={isInitializing ? "Initializing..." : isListening ? "Stop listening" : "Start voice input"}
               >
-                {isListening ? (
+                {isInitializing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : isListening ? (
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ repeat: Infinity, duration: 1.5 }}

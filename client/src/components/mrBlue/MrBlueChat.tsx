@@ -79,6 +79,7 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
     isListening,
     audioMetrics,
     noiseThreshold,
+    isInitializing,
     enableContinuousMode, 
     disableContinuousMode,
     setNoiseThreshold 
@@ -183,6 +184,52 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
     saveConversation();
   }, [messages.length, currentConversationId]);
 
+  // Infer user intent from recent breadcrumbs
+  const inferUserIntent = (breadcrumbs: any[]): string => {
+    if (breadcrumbs.length === 0) return 'general inquiry';
+    
+    const recentPages = breadcrumbs.slice(-5).map(b => b.page);
+    const recentActions = breadcrumbs.slice(-5).map(b => b.action);
+    
+    // Detect patterns in user behavior
+    if (recentPages.some(p => p.includes('/events'))) {
+      if (recentActions.includes('click')) return 'exploring events';
+      return 'viewing events';
+    }
+    
+    if (recentPages.some(p => p.includes('/profile'))) {
+      if (recentActions.includes('input')) return 'editing profile';
+      return 'viewing profile';
+    }
+    
+    if (recentPages.some(p => p.includes('/messages'))) {
+      return 'messaging';
+    }
+    
+    if (recentPages.some(p => p.includes('/groups'))) {
+      return 'exploring groups';
+    }
+    
+    if (recentPages.some(p => p.includes('/housing'))) {
+      return 'searching for housing';
+    }
+    
+    if (recentPages.some(p => p.includes('/marketplace'))) {
+      return 'browsing marketplace';
+    }
+    
+    // Check for repeated actions indicating specific intent
+    if (recentActions.filter(a => a === 'click').length >= 3) {
+      return 'exploring the platform';
+    }
+    
+    if (recentActions.filter(a => a === 'input').length >= 2) {
+      return 'entering information';
+    }
+    
+    return 'general navigation';
+  };
+
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return;
 
@@ -248,14 +295,22 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
     setIsLoading(true);
 
     try {
+      // Gather comprehensive context
+      const breadcrumbs = breadcrumbTracker.getRecentActions(10);
+      const currentPage = window.location.pathname;
+      const pageTitle = document.title;
+      const userIntent = inferUserIntent(breadcrumbs);
+
       const response = await fetch('/api/mrblue/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: messageText,
-          pageContext: {
-            page: location,
-            breadcrumbs: breadcrumbTracker.getRecentActions(5)
+          context: {
+            breadcrumbs,
+            currentPage,
+            pageTitle,
+            userIntent
           }
         })
       });
@@ -265,7 +320,7 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.response || "I'm sorry, I couldn't process that request. Please try again.",
+        content: data.response || data.content || "I'm sorry, I couldn't process that request. Please try again.",
         timestamp: new Date()
       };
 
@@ -354,10 +409,20 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
                 size="sm"
                 variant={continuousMode ? "default" : "outline"}
                 onClick={continuousMode ? disableContinuousMode : enableContinuousMode}
+                disabled={isInitializing}
                 data-testid="button-toggle-continuous-voice"
               >
-                {continuousMode ? <ToggleRight className="w-4 h-4 mr-2" /> : <ToggleLeft className="w-4 h-4 mr-2" />}
-                Continuous Voice
+                {isInitializing ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Initializing...
+                  </>
+                ) : (
+                  <>
+                    {continuousMode ? <ToggleRight className="w-4 h-4 mr-2" /> : <ToggleLeft className="w-4 h-4 mr-2" />}
+                    Continuous Voice
+                  </>
+                )}
               </Button>
               
               {continuousMode && (

@@ -30,6 +30,7 @@ interface UseVoiceInputReturn {
   continuousMode: boolean;
   audioMetrics: AudioQualityMetrics;
   noiseThreshold: number;
+  isInitializing: boolean;
   startListening: () => void;
   stopListening: () => void;
   resetTranscript: () => void;
@@ -45,6 +46,7 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
   const [isSupported, setIsSupported] = useState(false);
   const [isContinuousMode, setIsContinuousMode] = useState(false);
   const [continuousMode, setContinuousMode] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
   const [audioMetrics, setAudioMetrics] = useState<AudioQualityMetrics>({
     snr: 0,
     thd: 0,
@@ -191,8 +193,17 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
   }, []);
 
   const enableContinuousMode = useCallback(async () => {
+    console.log('[Voice] Button clicked - starting voice mode activation');
+    setIsInitializing(true);
+    
     try {
-      // Initialize audio processing pipeline
+      // Step 1: Request microphone permission
+      console.log('[Voice] Step 1/4: Requesting microphone permission...');
+      toast({
+        title: 'Initializing Voice Mode',
+        description: 'Step 1/4: Requesting microphone permission...',
+      });
+      
       if (!audioProcessorRef.current) {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: {
@@ -202,6 +213,14 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
             sampleRate: 48000,
             channelCount: 1,
           }
+        });
+        console.log('[Voice] ✅ Microphone permission granted');
+
+        // Step 2: Initialize audio processing
+        console.log('[Voice] Step 2/4: Initializing audio processing pipeline...');
+        toast({
+          title: 'Initializing Voice Mode',
+          description: 'Step 2/4: Setting up audio processing...',
         });
 
         audioProcessorRef.current = new AudioProcessor();
@@ -232,8 +251,15 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
           }
         }, 100); // Update metrics every 100ms
 
-        console.log('[Audio] Processing pipeline initialized');
+        console.log('[Voice] ✅ Audio processing pipeline initialized');
       }
+
+      // Step 3: Initialize VAD (Voice Activity Detector)
+      console.log('[Voice] Step 3/4: Initializing Voice Activity Detector (VAD)...');
+      toast({
+        title: 'Initializing Voice Mode',
+        description: 'Step 3/4: Loading voice detection AI model...',
+      });
 
       if (!vadRef.current) {
         vadRef.current = new VoiceActivityDetector();
@@ -266,23 +292,54 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
             });
           },
         });
+        console.log('[Voice] ✅ VAD initialized successfully');
       }
       
+      // Step 4: Start listening
+      console.log('[Voice] Step 4/4: Starting continuous listening mode...');
+      toast({
+        title: 'Initializing Voice Mode',
+        description: 'Step 4/4: Activating continuous listening...',
+      });
+
       await vadRef.current.start();
       setContinuousMode(true);
       setIsContinuousMode(true);
+      setIsInitializing(false);
+      
+      console.log('[Voice] ✅ Voice mode activated successfully!');
       console.log('[Voice] Continuous mode enabled with VAD and audio processing');
       
       toast({
-        title: 'Continuous Voice Active',
+        title: '🎤 Voice Mode Active!',
         description: 'Start speaking naturally - I\'m listening with studio-quality audio!',
       });
-    } catch (error) {
-      console.error('[Voice] Failed to enable continuous mode:', error);
+    } catch (error: any) {
+      console.error('[Voice] ❌ Failed to enable continuous mode:', error);
+      setIsInitializing(false);
+      
+      // Provide specific error messages based on error type
+      let errorTitle = 'Activation Failed';
+      let errorDescription = 'Could not enable continuous voice mode.';
+      
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        errorTitle = 'Microphone Permission Denied';
+        errorDescription = 'Please allow microphone access in your browser settings and try again.';
+      } else if (error.name === 'NotFoundError') {
+        errorTitle = 'No Microphone Found';
+        errorDescription = 'Please connect a microphone and try again.';
+      } else if (error.message?.includes('VAD') || error.message?.includes('vad')) {
+        errorTitle = 'Voice Detection Failed';
+        errorDescription = 'Could not load voice detection model. Check your internet connection and try again.';
+      } else if (error.message?.includes('AudioProcessor')) {
+        errorTitle = 'Audio Processing Error';
+        errorDescription = 'Failed to initialize audio processing. Please refresh and try again.';
+      }
+      
       toast({
         variant: 'destructive',
-        title: 'Activation Failed',
-        description: 'Could not enable continuous voice mode. Please check microphone permissions.',
+        title: errorTitle,
+        description: errorDescription,
       });
     }
   }, [onResult, transcribeAudio, toast, noiseThreshold]);
@@ -353,6 +410,7 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
     continuousMode,
     audioMetrics,
     noiseThreshold,
+    isInitializing,
     startListening,
     stopListening,
     resetTranscript,

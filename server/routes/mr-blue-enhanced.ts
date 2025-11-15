@@ -30,11 +30,11 @@ const enhancedChatSchema = z.object({
 });
 
 /**
- * Simple chat endpoint for basic Mr. Blue interactions
+ * Context-aware chat endpoint for Mr. Blue interactions
  */
 router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
   try {
-    const { message, conversationId } = req.body;
+    const { message, context } = req.body;
     
     if (!message || typeof message !== 'string') {
       return res.status(400).json({ error: 'Message is required' });
@@ -45,11 +45,65 @@ router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
       return res.status(401).json({ error: 'Unauthorized' });
     }
     
-    // Simple AI-like response for now
+    // Build context-aware system message
+    let systemMessage = 'You are Mr. Blue, the tango community AI assistant.';
+    
+    if (context) {
+      const { currentPage, pageTitle, breadcrumbs, userIntent } = context;
+      
+      // Add page context
+      if (currentPage) {
+        systemMessage += `\n\nCurrent Page: ${currentPage}`;
+      }
+      
+      if (pageTitle) {
+        systemMessage += `\nPage Title: ${pageTitle}`;
+      }
+      
+      // Add user intent
+      if (userIntent) {
+        systemMessage += `\n\nUser Intent: ${userIntent}`;
+      }
+      
+      // Add recent user actions
+      if (breadcrumbs && Array.isArray(breadcrumbs) && breadcrumbs.length > 0) {
+        systemMessage += '\n\nRecent User Actions:';
+        breadcrumbs.slice(-5).forEach((b: any) => {
+          const target = b.target ? ` (${b.target})` : '';
+          systemMessage += `\n- ${b.action} on ${b.page}${target}`;
+        });
+      }
+      
+      systemMessage += '\n\nProvide context-aware assistance based on what the user is currently doing.';
+    }
+    
+    // Generate context-aware response based on page and intent
+    let responseContent = '';
+    
+    if (context?.currentPage?.includes('/events')) {
+      responseContent = `I see you're viewing events! ${message.toLowerCase().includes('help') ? 'I can help you find milongas, festivals, and workshops. Would you like me to show you upcoming events in your area, or help you search for specific types of tango events?' : 'What would you like to know about the events?'}`;
+    } else if (context?.currentPage?.includes('/profile')) {
+      responseContent = `I notice you're on a profile page. ${message.toLowerCase().includes('help') ? 'I can help you edit your profile, manage your tango preferences, or explain any profile features. What would you like to do?' : 'How can I assist you with profiles?'}`;
+    } else if (context?.currentPage?.includes('/messages')) {
+      responseContent = `I see you're in the messages section. ${message.toLowerCase().includes('help') ? 'I can help you send messages, manage conversations, or explain messaging features. What do you need?' : 'What can I help you with regarding messages?'}`;
+    } else if (context?.currentPage?.includes('/groups')) {
+      responseContent = `You're exploring groups! ${message.toLowerCase().includes('help') ? 'I can help you find tango groups, join communities, or create your own group. What interests you?' : 'What would you like to know about groups?'}`;
+    } else if (context?.currentPage?.includes('/housing')) {
+      responseContent = `I see you're looking at housing options. ${message.toLowerCase().includes('help') ? 'I can help you find accommodation for tango festivals, connect with hosts, or list your own space. What are you looking for?' : 'How can I assist with housing?'}`;
+    } else if (context?.currentPage?.includes('/marketplace')) {
+      responseContent = `You're browsing the marketplace! ${message.toLowerCase().includes('help') ? 'I can help you find tango shoes, clothing, music, or other items. What are you shopping for?' : 'What interests you in the marketplace?'}`;
+    } else if (context?.userIntent === 'exploring the platform') {
+      responseContent = `I notice you're exploring the platform. ${message.toLowerCase().includes('help') ? 'I can give you a tour of the features, explain how things work, or help you find specific content. What would you like to know?' : 'What would you like to discover?'}`;
+    } else {
+      // Default response
+      responseContent = `I'm Mr. Blue, your AI companion for the tango community. ${message.toLowerCase().includes('help') ? 'I can help you navigate the platform, find events, connect with dancers, and much more. What are you interested in?' : `You asked: "${message}". How can I help you today?`}`;
+    }
+    
     const response = {
       role: 'assistant',
-      content: `I received your message: "${message}". I'm Mr. Blue, your AI companion. How can I help you today?`,
+      content: responseContent,
       timestamp: new Date().toISOString(),
+      contextUsed: !!context,
     };
     
     res.json(response);
