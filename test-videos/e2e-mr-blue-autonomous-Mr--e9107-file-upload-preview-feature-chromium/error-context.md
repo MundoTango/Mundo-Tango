@@ -5,8 +5,9 @@
   - region "Notifications (F8)":
     - list
   - generic [ref=e4]:
-    - generic [ref=e6]: Visual Editor - Minimal Test
-    - generic [ref=e7]:
-      - paragraph [ref=e8]: "Phase 1: Basic page structure is working ✅"
-      - paragraph [ref=e9]: "Next: Add authentication and God Level detection"
+    - generic [ref=e6]:
+      - img [ref=e7]
+      - text: Access Denied
+    - alert [ref=e10]:
+      - generic [ref=e11]: "The Visual Editor requires God Level (Tier 8) access. Your current role: undefined"
 ```
