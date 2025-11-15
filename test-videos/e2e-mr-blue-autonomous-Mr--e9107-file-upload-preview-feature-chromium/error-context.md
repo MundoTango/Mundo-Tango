@@ -1,15 +1,12 @@
 # Page snapshot
 
 ```yaml
-- generic [ref=e4]:
-  - generic [ref=e6]:
-    - img [ref=e8]
-    - generic [ref=e10]:
-      - generic [ref=e11]: Oops! Something went wrong
-      - generic [ref=e12]: We encountered an unexpected error
-  - generic [ref=e13]:
-    - paragraph [ref=e14]: The application ran into a problem and couldn't continue. Please try reloading the page.
-    - group [ref=e15]:
-      - generic "Error details (for debugging)" [ref=e16] [cursor=pointer]
-    - button "Reload Page" [ref=e17] [cursor=pointer]
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=e4]:
+    - generic [ref=e6]: Visual Editor - Minimal Test
+    - generic [ref=e7]:
+      - paragraph [ref=e8]: "Phase 1: Basic page structure is working ✅"
+      - paragraph [ref=e9]: "Next: Add authentication and God Level detection"
 ```
