@@ -89,11 +89,11 @@ async function loginAndNavigateToVisualEditor(page: Page) {
   
   // Navigate to Visual Editor
   console.log('🎨 Navigating to Visual Editor...');
-  await page.goto('/visual-editor');
+  await page.goto('/admin/visual-editor');
   await page.waitForLoadState('networkidle');
   
   // Wait for editor to be ready
-  await page.waitForSelector('[data-testid="input-vibe-prompt"]', { timeout: 15000 });
+  await page.waitForSelector('[data-visual-editor="root"]', { timeout: 15000 });
   
   console.log('✅ Visual Editor loaded');
 }
