@@ -101,7 +101,7 @@ export function VoiceModeToggle({
           'w-full gap-2',
           voiceMode && 'bg-primary'
         )}
-        data-testid="button-voice-mode-toggle"
+        data-testid="button-enable-voice"
       >
         {voiceMode ? (
           <>

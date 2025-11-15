@@ -1,0 +1,75 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list [ref=e4]:
+      - status [ref=e5]:
+        - generic [ref=e6]:
+          - generic [ref=e7]: Response
+          - generic [ref=e8]: Hello! Welcome to the Visual Editor of Mundo Tango. I'm Mr. Blue, your AI assistant here to help you...
+        - button [ref=e9] [cursor=pointer]:
+          - img [ref=e10]
+  - main [ref=e14]:
+    - region "Conversation panel" [ref=e15]:
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - img [ref=e18]
+          - heading "Mr. Blue Visual Editor" [level=1] [ref=e20]
+        - paragraph [ref=e21]: AI-Powered Conversational Code Generation
+        - generic [ref=e22]:
+          - img [ref=e23]
+          - text: God Level Access
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - heading "Conversation History" [level=2] [ref=e27]
+          - paragraph [ref=e28]: Your chat with Mr. Blue
+        - generic [ref=e32]:
+          - paragraph [ref=e35]: hello
+          - paragraph [ref=e38]: Hello! Welcome to the Visual Editor of Mundo Tango. I'm Mr. Blue, your AI assistant here to help you with any design-related questions or tasks. What can I assist you with today?
+      - generic [ref=e39]:
+        - heading "Voice Mode" [level=3] [ref=e40]
+        - button "Enable Voice Mode" [ref=e42] [cursor=pointer]:
+          - img
+          - text: Enable Voice Mode
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - generic [ref=e45]: Prompt Input
+          - generic [ref=e46]: Tell Mr. Blue what you want to build or change
+        - generic [ref=e47]:
+          - textbox "Describe what you want..." [ref=e49]
+          - heading "Quick Examples" [level=3] [ref=e52]:
+            - button "Quick Examples" [ref=e53] [cursor=pointer]:
+              - generic [ref=e54]:
+                - img [ref=e55]
+                - generic [ref=e57]: Quick Examples
+              - img [ref=e58]
+          - generic [ref=e60]:
+            - button "Generate" [disabled]:
+              - img
+              - text: Generate
+            - button [ref=e61] [cursor=pointer]:
+              - img
+            - button [ref=e62] [cursor=pointer]:
+              - img
+            - button "Clear Chat" [ref=e63] [cursor=pointer]
+    - region "Preview panel" [ref=e64]:
+      - generic [ref=e66]:
+        - heading "Visual Editor" [level=2] [ref=e67]
+        - tablist [ref=e69]:
+          - tab "Live Preview" [selected] [ref=e70] [cursor=pointer]:
+            - img [ref=e71]
+            - text: Live Preview
+          - tab "Generated Code" [ref=e74] [cursor=pointer]:
+            - img [ref=e75]
+            - text: Generated Code
+          - tab "History" [ref=e79] [cursor=pointer]:
+            - img [ref=e80]
+            - text: History
+      - generic [ref=e84]:
+        - iframe [ref=e85]:
+          
+        - generic [ref=e86]:
+          - button [disabled]:
+            - img
+```

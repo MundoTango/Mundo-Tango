@@ -828,7 +828,7 @@ export default function VisualEditorPage() {
             <CardContent className="space-y-3">
               <div className="relative">
                 <Textarea
-                  data-testid="input-vibe-prompt"
+                  data-testid="input-chat"
                   value={prompt || transcript}
                   onChange={(e) => setPrompt(e.target.value)}
                   onKeyDown={(e) => {
@@ -912,7 +912,7 @@ export default function VisualEditorPage() {
 
               <div className="flex gap-2">
                 <Button
-                  data-testid="button-vibe-submit"
+                  data-testid="button-send"
                   onClick={handleSubmit}
                   disabled={!prompt.trim() || isExecuting}
                   className="flex-1"
