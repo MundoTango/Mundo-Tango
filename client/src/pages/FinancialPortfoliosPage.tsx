@@ -26,7 +26,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Briefcase, Plus, Filter } from "lucide-react";
 import { PortfolioCard } from "@/components/financial/PortfolioCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import type { SelectFinancialPortfolio } from "@shared/schema";
 
 const portfolioFormSchema = z.object({
@@ -42,7 +42,7 @@ export default function FinancialPortfoliosPage() {
   const [filterType, setFilterType] = useState<string>('all');
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const [, navigate] = useLocation();
 
   const { data: portfolios, isLoading } = useQuery<SelectFinancialPortfolio[]>({
     queryKey: ['/api/financial/portfolios'],

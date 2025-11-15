@@ -8,11 +8,11 @@ import { PlatformHealthBadge } from "@/components/social/PlatformHealthBadge";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, RefreshCw, Activity } from "lucide-react";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import type { SelectPlatformConnection } from "@shared/schema";
 
 export default function SocialMediaConnectionsPage() {
-  const [, navigate] = useNavigate();
+  const [, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 

@@ -18,12 +18,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PlatformCheckbox } from "@/components/social/PlatformCheckbox";
 import { ArrowLeft, Plus, Target, TrendingUp, Users, Calendar } from "lucide-react";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import { SiFacebook, SiInstagram, SiLinkedin, SiX } from "react-icons/si";
 import type { SelectSocialCampaign, InsertSocialCampaign } from "@shared/schema";
 
 export default function SocialMediaCampaignsPage() {
-  const [, navigate] = useNavigate();
+  const [, navigate] = useLocation();
   const { toast } = useToast();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [newCampaign, setNewCampaign] = useState({

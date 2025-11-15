@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -12,7 +12,7 @@ import { ArrowLeft, Send, Calendar } from "lucide-react";
 import type { InsertSocialPost } from "@shared/schema";
 
 export default function SocialMediaComposerPage() {
-  const [, navigate] = useNavigate();
+  const [, navigate] = useLocation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"compose" | "schedule">("compose");
   const [postData, setPostData] = useState<{

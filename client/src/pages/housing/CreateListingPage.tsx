@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -48,7 +48,7 @@ const createListingSchema = z.object({
 type CreateListingFormData = z.infer<typeof createListingSchema>;
 
 export default function CreateListingPage() {
-  const [, navigate] = useNavigate();
+  const [, navigate] = useLocation();
   const [createdListingId, setCreatedListingId] = useState<number | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();

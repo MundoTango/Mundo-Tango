@@ -13,11 +13,11 @@ import {
 import { PortfolioCard } from "@/components/financial/PortfolioCard";
 import { AssetAllocationChart } from "@/components/financial/AssetAllocationChart";
 import { MarketDataTicker } from "@/components/financial/MarketDataTicker";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import type { SelectFinancialPortfolio, SelectFinancialAsset, SelectFinancialTrade } from "@shared/schema";
 
 export default function FinancialDashboardPage() {
-  const navigate = useNavigate();
+  const [, navigate] = useLocation();
 
   const { data: portfolios, isLoading: portfoliosLoading } = useQuery<SelectFinancialPortfolio[]>({
     queryKey: ['/api/financial/portfolios'],
