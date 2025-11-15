@@ -8,23 +8,58 @@
 
 ## 🧪 Playwright Test Credentials
 
-**SECURE TEST USER** (stored in Replit Secrets):
+**⚠️ CRITICAL: NEVER ASK USER FOR PASSWORDS**
+
+**ALWAYS use these environment secrets for ALL Playwright tests:**
 - Email: `process.env.TEST_ADMIN_EMAIL` 
 - Password: `process.env.TEST_ADMIN_PASSWORD`
-- Role: `super_admin`
-- User ID: 106
-- Status: Active, verified
+- Role: `god` (God Level - full platform access)
+- Status: Active, verified, onboarding complete
 
-**Usage in Tests:**
+**Mandatory Usage Pattern in ALL Playwright Tests:**
 ```typescript
-await page.fill('[data-testid="input-email"]', process.env.TEST_ADMIN_EMAIL!);
-await page.fill('[data-testid="input-password"]', process.env.TEST_ADMIN_PASSWORD!);
+// Phase 1: Authentication Setup
+// [New Context] Create a new browser context
+// [Browser] Navigate to /login
+// [Browser] Fill email input with process.env.TEST_ADMIN_EMAIL
+// [Browser] Fill password input with process.env.TEST_ADMIN_PASSWORD
+// [Browser] Click login button
+// [Verify] Assert successful login
+
+// Example implementation:
+const email = process.env.TEST_ADMIN_EMAIL!;
+const password = process.env.TEST_ADMIN_PASSWORD!;
+
+await page.goto('/login');
+await page.fill('[data-testid="input-email"]', email);
+await page.fill('[data-testid="input-password"]', password);
+await page.click('[data-testid="button-login"]');
+await page.waitForURL(/\/(?!login)/); // Wait for redirect away from login
 ```
 
-**Setup Script:** `tsx server/scripts/setup-test-user.ts`
-- Auto-creates/updates test user with god-level permissions
-- Syncs credentials with secrets on every run
-- Safe to run multiple times (idempotent)
+**Database Setup (if needed):**
+```sql
+-- Ensure test user exists with God role
+INSERT INTO users (email, username, password, name, role, is_verified, is_active, is_onboarding_complete)
+VALUES (
+  'your-test-email@test.com',
+  'playwright-god-test',
+  '$2b$10$rFqKx5R9LBYx5zYJZ4xqHuK9vY4p7Z0x8Qq4Zj3X1Y2W3vE4R5T6a',
+  'Playwright God Test',
+  'god',
+  true,
+  true,
+  true
+)
+ON CONFLICT (email) DO UPDATE SET role = 'god', is_verified = true, is_active = true;
+```
+
+**Rules:**
+1. ✅ ALWAYS use `process.env.TEST_ADMIN_EMAIL` and `process.env.TEST_ADMIN_PASSWORD`
+2. ❌ NEVER ask user for credentials
+3. ❌ NEVER hardcode emails/passwords in test plans
+4. ✅ Include authentication setup in EVERY test that requires login
+5. ✅ Use the exact pattern above for consistency
 
 ---
 
