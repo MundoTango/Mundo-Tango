@@ -21,6 +21,7 @@ import avatarRoutes from "./routes/avatarRoutes";
 import videoRoutes from "./routes/videoRoutes";
 import mrblueVideoRoutes from "./routes/mrblue-video-routes";
 import mrBlueRoutes from "./routes/mrBlue";
+import mrBlueStreamRoutes from "./routes/mrblue-stream";
 import mrBlueEnhancedRoutes from "./routes/mr-blue-enhanced";
 import mrBlueAgentsRoutes from "./routes/mrBlueAgents";
 import autonomousRoutes from "./routes/autonomous";
@@ -434,6 +435,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/avatar", avatarRoutes);
   app.use("/api/videos", videoRoutes);
   app.use("/api/mrblue", mrblueVideoRoutes);
+  app.use("/api/mrblue", mrBlueStreamRoutes); // Streaming SSE endpoint
   app.use("/api/mrblue", mrBlueRoutes);
   app.use(mrBlueEnhancedRoutes); // Enhanced Mr. Blue with troubleshooting KB
   app.use("/api/autonomous", autonomousRoutes); // Mr. Blue Autonomous Agent (God Level)

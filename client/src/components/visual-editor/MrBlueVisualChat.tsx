@@ -1,17 +1,24 @@
 /**
- * Mr. Blue Visual Chat - CONTEXT-AWARE EDITION
- * Right-side chat panel for conversational editing with full app context
- * WITH VOICE INPUT + TTS OUTPUT
+ * Mr. Blue Visual Chat - ChatGPT-STYLE VOICE MODE EDITION
+ * Features:
+ * - Prominent, centered microphone button with pulsing animation
+ * - Full transcript display panel
+ * - Streaming AI responses (token-by-token)
+ * - "Mr. Blue is thinking..." states
  */
 
 import { useState, useEffect, useRef } from "react";
-import { Send, Sparkles, History, Lightbulb, Mic, MicOff, Volume2, VolumeX, Box } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Send, Sparkles, History, Lightbulb, Mic, MicOff, Volume2, VolumeX, Box, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { visualEditorTracker, type VisualEdit } from "@/lib/visualEditorTracker";
 import { useVoiceInput } from "@/hooks/useVoiceInput";
 import { useTextToSpeech } from "@/hooks/useTextToSpeech";
+import { useStreamingChat } from "@/hooks/useStreamingChat";
 import { MrBlueAvatar } from "./MrBlueAvatar";
 import MrBlueAvatar3D from "@/components/mrblue/MrBlueAvatar3D";
 
@@ -20,6 +27,7 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  isStreaming?: boolean;
 }
 
 interface SelectedElementInfo {
@@ -54,8 +62,21 @@ export function MrBlueVisualChat({
   const [isLoading, setIsLoading] = useState(false);
   const [ttsEnabled, setTtsEnabled] = useState(false);
   const [use3D, setUse3D] = useState(false);
+  const [currentStreamingMessage, setCurrentStreamingMessage] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const hasSpokenGreeting = useRef(false);
+  const silenceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Streaming hook
+  const {
+    isStreaming,
+    currentStatus,
+    messages: streamMessages,
+    generatedCode,
+    error: streamError,
+    sendMessage: sendStreamingMessage,
+    clear: clearStream
+  } = useStreamingChat();
 
   // Initialize greeting with context
   useEffect(() => {
@@ -72,7 +93,8 @@ export function MrBlueVisualChat({
 • Add/modify content and styling
 • Generate production-ready code
 
-Just tell me what you want to change!`;
+**Voice Mode:**
+Click the microphone to speak naturally! I'll show you exactly what I heard.`;
 
     setMessages([{
       id: '1',
@@ -116,11 +138,85 @@ Just tell me what you want to change!`;
   // Speak greeting when TTS first enabled
   useEffect(() => {
     if (ttsEnabled && ttsSupported && !hasSpokenGreeting.current && messages.length > 0) {
-      const greeting = "Hi! I'm Mr. Blue. I have full context of your page and can help you make changes. Click the microphone to use voice commands, or type your request below.";
+      const greeting = "Hi! I'm Mr. Blue. Click the large microphone button to speak to me. I'll show you the full transcript and stream my response back in real-time.";
       speak(greeting);
       hasSpokenGreeting.current = true;
     }
   }, [ttsEnabled, ttsSupported, messages.length, speak]);
+
+  // Auto-scroll to bottom
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, currentStreamingMessage]);
+
+  // Handle streaming messages
+  useEffect(() => {
+    if (streamMessages.length > 0) {
+      const latestMessage = streamMessages[streamMessages.length - 1];
+      
+      if (latestMessage.type === 'completion' && latestMessage.message) {
+        // Final message received
+        setCurrentStreamingMessage("");
+        const assistantMessage: Message = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: latestMessage.message,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, assistantMessage]);
+        
+        if (ttsEnabled && ttsSupported) {
+          speak(latestMessage.message);
+        }
+      } else if (latestMessage.type === 'progress' && latestMessage.message) {
+        // Stream progress
+        setCurrentStreamingMessage(latestMessage.message);
+      } else if (latestMessage.type === 'visual_change' && latestMessage.data) {
+        // Apply visual change to iframe in real-time!
+        console.log('[MrBlueVisualChat] Applying visual change:', latestMessage.data);
+        
+        // Get iframe from parent page
+        const iframe = document.querySelector('iframe[data-visual-editor="true"]') as HTMLIFrameElement;
+        if (iframe && iframe.contentWindow) {
+          iframe.contentWindow.postMessage({
+            type: 'APPLY_CHANGE',
+            change: latestMessage.data.change
+          }, '*');
+          
+          console.log('[MrBlueVisualChat] ✅ Visual change sent to iframe');
+        } else {
+          console.warn('[MrBlueVisualChat] Iframe not found for visual change');
+        }
+      }
+    }
+  }, [streamMessages, ttsEnabled, ttsSupported, speak]);
+
+  // Auto-send on silence detection (2 seconds of no speech)
+  useEffect(() => {
+    if (isListening && transcript) {
+      // Clear existing timer
+      if (silenceTimerRef.current) {
+        clearTimeout(silenceTimerRef.current);
+      }
+
+      // Set new timer - auto-send after 2 seconds of silence
+      silenceTimerRef.current = setTimeout(() => {
+        if (transcript.trim()) {
+          console.log('[Voice] Silence detected, auto-submitting:', transcript);
+          stopListening();
+          sendMessage();
+        }
+      }, 2000);
+    }
+
+    return () => {
+      if (silenceTimerRef.current) {
+        clearTimeout(silenceTimerRef.current);
+      }
+    };
+  }, [transcript, isListening]);
 
   // Update input with voice transcript
   useEffect(() => {
@@ -128,12 +224,6 @@ Just tell me what you want to change!`;
       setInput(transcript);
     }
   }, [transcript]);
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
 
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return;
@@ -151,6 +241,7 @@ Just tell me what you want to change!`;
     resetTranscript();
     stopListening();
     setIsLoading(true);
+    setCurrentStreamingMessage("");
 
     try {
       // Smart routing: Detect if this is iteration feedback or execution request
@@ -162,42 +253,7 @@ Just tell me what you want to change!`;
         /use mb\.md|implement|build autonomously|create.*autonomous|execute.*plan|deploy/i.test(originalInput) &&
         !isIterationFeedback;
 
-      if (isIterationFeedback) {
-        // ITERATION MODE: Use chat API for conversational response
-        const chatResponse = await fetch('/api/mrblue/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            message: originalInput,
-            context: {
-              page: contextInfo.page,
-              selectedElement: contextInfo.selectedElement,
-              editsCount: contextInfo.editsCount
-            }
-          })
-        });
-
-        if (!chatResponse.ok) {
-          throw new Error('Failed to get response from Mr. Blue');
-        }
-
-        const chatData = await chatResponse.json();
-        const response = chatData.response || "I've reviewed your feedback. Here's my revised plan...";
-        
-        const assistantMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: response,
-          timestamp: new Date()
-        };
-
-        setMessages(prev => [...prev, assistantMessage]);
-
-        if (ttsEnabled && ttsSupported) {
-          speak("I've revised my plan based on your feedback.");
-        }
-      } else if (isExecutionRequest) {
+      if (isExecutionRequest) {
         // EXECUTION MODE: Use autonomous API with MB.MD methodology
         let contextualPrompt = originalInput;
         
@@ -225,41 +281,16 @@ Just tell me what you want to change!`;
         if (ttsEnabled && ttsSupported) {
           speak("Autonomous execution started! Check the workflow panel.");
         }
+        setIsLoading(false);
       } else {
-        // DEFAULT MODE: Conversational chat for questions/discussion
-        const chatResponse = await fetch('/api/mrblue/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            message: originalInput,
-            context: {
-              page: contextInfo.page,
-              selectedElement: contextInfo.selectedElement,
-              editsCount: contextInfo.editsCount
-            }
-          })
-        });
-
-        if (!chatResponse.ok) {
-          throw new Error('Failed to get response from Mr. Blue');
-        }
-
-        const chatData = await chatResponse.json();
-        const response = chatData.response || "How can I help you with the visual editor?";
+        // STREAMING MODE: Use streaming chat for conversational response
+        await sendStreamingMessage(originalInput, {
+          page: contextInfo.page,
+          selectedElement: contextInfo.selectedElement,
+          editsCount: contextInfo.editsCount
+        }, 'visual_editor');
         
-        const assistantMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: response,
-          timestamp: new Date()
-        };
-
-        setMessages(prev => [...prev, assistantMessage]);
-
-        if (ttsEnabled && ttsSupported) {
-          speak(chatData.response || "How can I help?");
-        }
+        setIsLoading(false);
       }
     } catch (error: any) {
       const errorResponse = `❌ **I had trouble with that request.**\n\n${error.message || 'Could you try rephrasing? Make sure to describe what you want to change clearly.'}\n\n**Tips:**\n• For feedback: "Please revise the plan to include..."\n• For execution: "Use mb.md to implement..."\n• For questions: Just ask normally!`;
@@ -276,7 +307,6 @@ Just tell me what you want to change!`;
       if (ttsEnabled && ttsSupported) {
         speak("I had trouble with that request. Please try rephrasing it.");
       }
-    } finally {
       setIsLoading(false);
     }
   };
@@ -291,7 +321,13 @@ Just tell me what you want to change!`;
   const toggleVoiceInput = () => {
     if (isListening) {
       stopListening();
+      // Don't auto-send on manual stop
+      if (silenceTimerRef.current) {
+        clearTimeout(silenceTimerRef.current);
+      }
     } else {
+      resetTranscript();
+      setInput("");
       startListening();
     }
   };
@@ -320,7 +356,7 @@ Just tell me what you want to change!`;
             <div>
               <h3 className="font-semibold">Mr. Blue - Visual Editor</h3>
               <p className="text-xs text-muted-foreground">
-                {isListening ? 'Listening...' : isSpeaking ? 'Speaking...' : 'Context-aware editing assistant'}
+                {isListening ? '🎤 Listening...' : isSpeaking ? '🔊 Speaking...' : isStreaming ? '⚡ Streaming...' : 'Voice-powered editing'}
               </p>
             </div>
           </div>
@@ -367,6 +403,42 @@ Just tell me what you want to change!`;
         </div>
       </div>
 
+      {/* Voice Transcript Display - Prominent when listening */}
+      <AnimatePresence>
+        {(isListening || transcript) && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="p-4 border-b border-ocean-divider bg-primary/5"
+          >
+            <div className="flex items-start gap-2">
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ repeat: Infinity, duration: 1.5 }}
+              >
+                <Mic className="h-4 w-4 text-primary mt-1" />
+              </motion.div>
+              <div className="flex-1">
+                <p className="text-xs font-medium text-primary mb-1">You said:</p>
+                <Card className="bg-background/50">
+                  <CardContent className="p-3">
+                    <p className="text-sm">
+                      {transcript || 'Listening...'}
+                    </p>
+                  </CardContent>
+                </Card>
+                {transcript && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    💡 I'll automatically send this after 2 seconds of silence, or click Send
+                  </p>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Messages */}
       <ScrollArea ref={scrollRef} className="flex-1 p-4">
         <div className="space-y-4">
@@ -401,7 +473,8 @@ Just tell me what you want to change!`;
             </div>
           ))}
 
-          {isLoading && (
+          {/* Streaming AI Response */}
+          {(isLoading || isStreaming || currentStreamingMessage) && (
             <div className="flex gap-3 justify-start">
               <div className="flex-shrink-0">
                 {use3D ? (
@@ -410,12 +483,44 @@ Just tell me what you want to change!`;
                   <MrBlueAvatar isSpeaking={false} isListening={false} />
                 )}
               </div>
-              <div className="bg-muted rounded-lg p-3">
-                <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
-                  <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce delay-75" />
-                  <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce delay-150" />
-                </div>
+              <div className="bg-muted rounded-lg p-3 max-w-[80%]">
+                {currentStreamingMessage ? (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <p className="text-sm whitespace-pre-wrap">{currentStreamingMessage}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Loader2 className="h-3 w-3 animate-spin text-primary" />
+                      <span className="text-xs text-muted-foreground">Streaming...</span>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <div>
+                    <Badge variant="outline" className="mb-2">
+                      <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                      Mr. Blue is thinking...
+                    </Badge>
+                    <div className="flex gap-1">
+                      <motion.div
+                        className="w-2 h-2 bg-primary rounded-full"
+                        animate={{ opacity: [0.3, 1, 0.3] }}
+                        transition={{ repeat: Infinity, duration: 1, delay: 0 }}
+                      />
+                      <motion.div
+                        className="w-2 h-2 bg-primary rounded-full"
+                        animate={{ opacity: [0.3, 1, 0.3] }}
+                        transition={{ repeat: Infinity, duration: 1, delay: 0.2 }}
+                      />
+                      <motion.div
+                        className="w-2 h-2 bg-primary rounded-full"
+                        animate={{ opacity: [0.3, 1, 0.3] }}
+                        transition={{ repeat: Infinity, duration: 1, delay: 0.4 }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -440,7 +545,7 @@ Just tell me what you want to change!`;
       )}
 
       {/* Suggestions */}
-      {contextInfo.selectedElement && (
+      {contextInfo.selectedElement && !isListening && (
         <div className="p-3 border-t border-ocean-divider bg-muted/30">
           <div className="flex items-center gap-2 mb-2">
             <Lightbulb className="h-4 w-4 text-muted-foreground" />
@@ -479,20 +584,61 @@ Just tell me what you want to change!`;
         </div>
       )}
 
-      {/* Input */}
+      {/* Input Area */}
       <div className="p-4 border-t border-ocean-divider">
+        {/* Prominent Microphone Button - ChatGPT Style */}
+        {voiceSupported && !input && messages.length <= 1 && (
+          <div className="flex justify-center mb-4">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button
+                onClick={toggleVoiceInput}
+                variant={isListening ? "default" : "outline"}
+                size="icon"
+                className={`h-16 w-16 rounded-full ${
+                  isListening 
+                    ? 'bg-primary shadow-lg' 
+                    : 'bg-background hover:bg-primary/10'
+                }`}
+                data-testid="button-voice-input-large"
+              >
+                <motion.div
+                  animate={isListening ? {
+                    scale: [1, 1.3, 1],
+                    opacity: [0.5, 1, 0.5]
+                  } : {}}
+                  transition={isListening ? {
+                    repeat: Infinity,
+                    duration: 1.5
+                  } : {}}
+                >
+                  {isListening ? (
+                    <MicOff className="h-8 w-8" />
+                  ) : (
+                    <Mic className="h-8 w-8" />
+                  )}
+                </motion.div>
+              </Button>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Text Input */}
         <div className="flex gap-2">
           <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder={isListening ? "Listening..." : "Ask me to make changes..."}
+            placeholder={isListening ? "Listening..." : "Ask me to make changes or click the mic..."}
             className="resize-none"
             rows={2}
             data-testid="input-mr-blue-visual-chat"
+            disabled={isListening}
           />
           <div className="flex flex-col gap-2">
-            {voiceSupported && (
+            {voiceSupported && (input || messages.length > 1) && (
               <Button
                 onClick={toggleVoiceInput}
                 variant={isListening ? "default" : "ghost"}
@@ -501,7 +647,12 @@ Just tell me what you want to change!`;
                 title={isListening ? "Stop listening" : "Start voice input"}
               >
                 {isListening ? (
-                  <MicOff className="h-4 w-4" />
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ repeat: Infinity, duration: 1.5 }}
+                  >
+                    <MicOff className="h-4 w-4" />
+                  </motion.div>
                 ) : (
                   <Mic className="h-4 w-4" />
                 )}
@@ -509,7 +660,7 @@ Just tell me what you want to change!`;
             )}
             <Button
               onClick={sendMessage}
-              disabled={!input.trim() || isLoading}
+              disabled={!input.trim() || isLoading || isStreaming}
               size="icon"
               data-testid="button-send-visual-chat"
             >
@@ -521,6 +672,12 @@ Just tell me what you want to change!`;
         {!voiceSupported && !ttsSupported && (
           <p className="text-xs text-muted-foreground mt-2">
             Voice features not supported in this browser
+          </p>
+        )}
+
+        {voiceSupported && !isListening && (
+          <p className="text-xs text-muted-foreground mt-2 text-center">
+            💡 Tip: Click the microphone to speak naturally. I'll show the full transcript!
           </p>
         )}
       </div>

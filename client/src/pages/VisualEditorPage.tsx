@@ -18,12 +18,14 @@ import { useToast } from "@/hooks/use-toast";
 import { useVoiceInput } from "@/hooks/useVoiceInput";
 import { useTextToSpeech } from "@/hooks/useTextToSpeech";
 import { useAutonomousProgress } from "@/hooks/useAutonomousProgress";
+import { useStreamingChat } from "@/hooks/useStreamingChat";
 import { injectSelectionScript, applyInstantChange, undoLastChange } from "@/lib/iframeInjector";
 import { captureIframeScreenshot, saveScreenshot } from "@/lib/screenshotCapture";
 import { ChangeTimeline } from "@/components/visual-editor/ChangeTimeline";
 import { VoiceModeToggle } from "@/components/visual-editor/VoiceModeToggle";
 import { VoiceCommandProcessor } from "@/components/visual-editor/VoiceCommandProcessor";
 import { SmartSuggestions } from "@/components/visual-editor/SmartSuggestions";
+import { StreamingStatusPanel } from "@/components/visual-editor/StreamingStatusPanel";
 import type { ChangeMetadata } from "@/components/visual-editor/VisualDiffViewer";
 import { SEO } from "@/components/SEO";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
@@ -79,6 +81,13 @@ export default function VisualEditorPage() {
   const voiceCommandProcessorRef = useRef<VoiceCommandProcessor | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Import streaming chat hook
+  const { 
+    isStreaming: streamIsActive,
+    currentStatus: streamStatus,
+    messages: streamMessages 
+  } = useStreamingChat();
 
   // Fetch current user
   const { data: authResponse, isLoading } = useQuery<{ user: User }>({
@@ -952,8 +961,16 @@ export default function VisualEditorPage() {
                   src="/"
                   className="w-full h-full border-0"
                   title="Live Preview"
+                  data-visual-editor="true"
                   data-testid="iframe-preview"
                   aria-label="Live preview of your Mundo Tango application"
+                />
+                
+                {/* Streaming Status Panel - Real-time "Mr. Blue is working..." */}
+                <StreamingStatusPanel
+                  currentStatus={streamStatus}
+                  isStreaming={streamIsActive}
+                  streamingMessages={streamMessages}
                 />
                 
                 {/* Smart Suggestions Panel (only in preview mode) */}
