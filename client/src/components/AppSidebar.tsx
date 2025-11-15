@@ -35,7 +35,7 @@ import {
   TrendingUp,
   Share2,
   PenSquare,
-  Link,
+  Link as LinkIcon,
   Megaphone,
   Plane,
   PlaneTakeoff,
@@ -112,6 +112,7 @@ const resourcesItems = [
 const toolsItems = [
   { title: "Life CEO", url: "/life-ceo", icon: Brain },
   { title: "Mr Blue AI", url: "/mr-blue-chat", icon: Bot },
+  { title: "Autonomous Dev", url: "/autonomous", icon: Brain },
 ];
 
 // Marketplace (4 items)

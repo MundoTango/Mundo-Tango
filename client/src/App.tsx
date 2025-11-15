@@ -179,6 +179,7 @@ const FinancialInsightsPage = lazy(() => import("@/pages/FinancialInsightsPage")
 
 // Premium Features
 const GodLevelDashboard = lazy(() => import("@/pages/GodLevelDashboard"));
+const AutonomousPage = lazy(() => import("@/pages/AutonomousPage"));
 
 // Legal Document Management
 const LegalDashboardPage = lazy(() => import("@/pages/legal/LegalDashboardPage"));
@@ -1034,6 +1035,16 @@ function Router() {
           <AppLayout>
             <Suspense fallback={<LoadingFallback />}>
               <GodLevelDashboard />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/autonomous">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <AutonomousPage />
             </Suspense>
           </AppLayout>
         </ProtectedRoute>
