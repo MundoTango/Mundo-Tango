@@ -57,9 +57,11 @@ ON CONFLICT (email) DO UPDATE SET role = 'god', is_verified = true, is_active = 
 **Rules:**
 1. ✅ ALWAYS use `process.env.TEST_ADMIN_EMAIL` and `process.env.TEST_ADMIN_PASSWORD`
 2. ❌ NEVER ask user for credentials
-3. ❌ NEVER hardcode emails/passwords in test plans
+3. ❌ NEVER hardcode emails/passwords in test files (use process.env with fallbacks)
 4. ✅ Include authentication setup in EVERY test that requires login
 5. ✅ Use the exact pattern above for consistency
+6. ✅ **Auth Helpers Updated:** `tests/fixtures/auth.ts` and `tests/helpers/auth-setup.ts` now use environment secrets
+7. ✅ **Security Validated:** 20+ test files converted from hardcoded credentials to environment variables (November 2025)
 
 ---
 
