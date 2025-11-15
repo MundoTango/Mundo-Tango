@@ -24,6 +24,9 @@ import { broadcastToUser } from "../services/websocket";
 import { db } from "../storage";
 import { auditLogs, autonomousTasks } from "../../shared/schema";
 import { eq, and, gte, count, desc } from "drizzle-orm";
+import { commitChanges, hasUncommittedChanges, getCommitHistory } from "../services/mrBlue/gitCommitGenerator";
+import { changeGroupManager, AtomicChangeGroup } from "../services/mrBlue/atomicChanges";
+import { fileDependencyTracker } from "../services/mrBlue/fileDependencyTracker";
 
 const router = Router();
 
@@ -1007,5 +1010,380 @@ async function applyGeneratedFiles(task: AutonomousTask): Promise<{ success: boo
     return { success: false, error: error.message || 'Failed to apply files' };
   }
 }
+
+/**
+ * GET /api/autonomous/analyze
+ * Analyze current page structure and generate AI suggestions
+ * 
+ * Query params:
+ * - url: Current page URL (optional, defaults to 'current-page')
+ * 
+ * Returns: { success: boolean, report: SuggestionsReport }
+ */
+router.get("/analyze",
+  authenticateToken,
+  requireRoleLevel(8), // God Level only
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const url = (req.query.url as string) || 'current-page';
+      const userId = req.userId!;
+
+      console.log(`[Autonomous] Analyzing page: ${url}`);
+
+      // Import services (lazy load to avoid circular deps)
+      const { pageAnalyzer } = await import('../services/mrBlue/pageAnalyzer');
+      const { designSuggestions } = await import('../services/mrBlue/designSuggestions');
+
+      // Get HTML content from request body or fetch from iframe
+      // In real usage, the frontend will send the HTML via POST
+      // For now, we'll analyze based on URL pattern
+      const htmlContent = req.body?.html || '<html><body><h1>Sample Page</h1></body></html>';
+
+      // Analyze page structure
+      const analysis = await pageAnalyzer.analyzePage(htmlContent, url);
+
+      // Generate design suggestions
+      const report = await designSuggestions.generateSuggestions(analysis);
+
+      // Audit log
+      await logAuditAction(
+        userId,
+        'autonomous_page_analyze',
+        `Analyzed page: ${url}`,
+        { url, pageScore: report.pageScore, suggestionsCount: report.suggestions.length }
+      );
+
+      console.log(`[Autonomous] Analysis complete: ${report.suggestions.length} suggestions, score ${report.pageScore}/100`);
+
+      res.json({
+        success: true,
+        report
+      });
+    } catch (error: any) {
+      console.error('[Autonomous] Page analysis error:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || "Failed to analyze page"
+      });
+    }
+  }
+);
+
+/**
+ * POST /api/autonomous/analyze
+ * Analyze HTML content and generate suggestions
+ * 
+ * Body: { html: string, url?: string }
+ * Returns: { success: boolean, report: SuggestionsReport }
+ */
+router.post("/analyze",
+  authenticateToken,
+  requireRoleLevel(8),
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const { html, url = 'current-page' } = req.body;
+      const userId = req.userId!;
+
+      if (!html || typeof html !== 'string') {
+        return res.status(400).json({
+          success: false,
+          message: "HTML content is required"
+        });
+      }
+
+      console.log(`[Autonomous] Analyzing page HTML (${html.length} chars)`);
+
+      // Import services
+      const { pageAnalyzer } = await import('../services/mrBlue/pageAnalyzer');
+      const { designSuggestions } = await import('../services/mrBlue/designSuggestions');
+
+      // Analyze page structure
+      const analysis = await pageAnalyzer.analyzePage(html, url);
+
+      // Generate design suggestions
+      const report = await designSuggestions.generateSuggestions(analysis);
+
+      // Audit log
+      await logAuditAction(
+        userId,
+        'autonomous_page_analyze',
+        `Analyzed page HTML: ${url}`,
+        { 
+          url, 
+          pageScore: report.pageScore, 
+          suggestionsCount: report.suggestions.length,
+          htmlSize: html.length 
+        }
+      );
+
+      console.log(`[Autonomous] Analysis complete: ${report.suggestions.length} suggestions, score ${report.pageScore}/100`);
+
+      res.json({
+        success: true,
+        report
+      });
+    } catch (error: any) {
+      console.error('[Autonomous] Page analysis error:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || "Failed to analyze page"
+      });
+    }
+  }
+);
+
+/**
+ * POST /api/autonomous/commit
+ * Create Git commit with AI-generated message
+ * 
+ * Body: { 
+ *   files: string[], 
+ *   description?: string,
+ *   autoPush?: boolean 
+ * }
+ * Returns: { 
+ *   success: boolean, 
+ *   message: string, 
+ *   commitHash?: string,
+ *   pushed?: boolean 
+ * }
+ */
+router.post("/commit",
+  authenticateToken,
+  requireRoleLevel(8),
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const { files, description, autoPush = false } = req.body;
+      const userId = req.userId!;
+
+      if (!files || !Array.isArray(files) || files.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Files array is required and must not be empty"
+        });
+      }
+
+      console.log(`[Autonomous] Creating commit for ${files.length} files...`);
+
+      // Check for uncommitted changes
+      const hasChanges = await hasUncommittedChanges();
+      if (!hasChanges) {
+        return res.status(400).json({
+          success: false,
+          message: "No uncommitted changes to commit"
+        });
+      }
+
+      // Create commit with AI-generated message
+      const result = await commitChanges({
+        files,
+        description,
+        userId,
+        autoPush
+      });
+
+      // Audit log
+      await logAuditAction(
+        userId,
+        'autonomous_git_commit',
+        `Created Git commit: "${result.message}"`,
+        { 
+          files, 
+          commitHash: result.commitHash,
+          pushed: result.pushed,
+          description 
+        }
+      );
+
+      if (!result.success) {
+        return res.status(500).json({
+          success: false,
+          message: result.error || 'Commit failed'
+        });
+      }
+
+      console.log(`[Autonomous] Commit created: ${result.commitHash}`);
+
+      res.json({
+        success: true,
+        message: result.message,
+        commitHash: result.commitHash,
+        pushed: result.pushed
+      });
+    } catch (error: any) {
+      console.error('[Autonomous] Commit error:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || "Failed to create commit"
+      });
+    }
+  }
+);
+
+/**
+ * GET /api/autonomous/commit/history
+ * Get Git commit history
+ * 
+ * Query: { limit?: number }
+ * Returns: { success: boolean, commits: Array<CommitInfo> }
+ */
+router.get("/commit/history",
+  authenticateToken,
+  requireRoleLevel(8),
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 10;
+      
+      const commits = await getCommitHistory(limit);
+
+      res.json({
+        success: true,
+        commits
+      });
+    } catch (error: any) {
+      console.error('[Autonomous] Get commit history error:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || "Failed to get commit history"
+      });
+    }
+  }
+);
+
+/**
+ * POST /api/autonomous/atomic-apply
+ * Apply multiple file changes atomically with validation and rollback
+ * 
+ * Body: { 
+ *   changes: Array<{ filePath: string, content: string, operation?: 'create' | 'update' | 'delete' }>,
+ *   description: string,
+ *   skipValidation?: boolean
+ * }
+ * Returns: { 
+ *   success: boolean,
+ *   changesApplied: number,
+ *   groupId: string,
+ *   errors?: string[]
+ * }
+ */
+router.post("/atomic-apply",
+  authenticateToken,
+  requireRoleLevel(8),
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const { changes, description, skipValidation = false } = req.body;
+      const userId = req.userId!;
+
+      if (!changes || !Array.isArray(changes) || changes.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Changes array is required and must not be empty"
+        });
+      }
+
+      if (!description || typeof description !== 'string') {
+        return res.status(400).json({
+          success: false,
+          message: "Description is required"
+        });
+      }
+
+      console.log(`[Autonomous] Creating atomic change group: ${description}`);
+
+      // Create change group
+      const group = changeGroupManager.createGroup(description, userId);
+
+      // Add all changes
+      group.addMultiple(changes);
+
+      // Apply atomically
+      const result = await changeGroupManager.applyGroup(group.getId(), skipValidation);
+
+      // Audit log
+      await logAuditAction(
+        userId,
+        'autonomous_atomic_apply',
+        `Applied atomic change group: "${description}"`,
+        { 
+          groupId: group.getId(),
+          changesCount: changes.length,
+          success: result.success,
+          rolledBack: result.rolledBack
+        }
+      );
+
+      if (!result.success) {
+        return res.status(500).json({
+          success: false,
+          message: 'Atomic apply failed',
+          changesApplied: result.changesApplied,
+          errors: result.errors,
+          rolledBack: result.rolledBack
+        });
+      }
+
+      console.log(`[Autonomous] Atomic apply successful: ${result.changesApplied} changes`);
+
+      res.json({
+        success: true,
+        changesApplied: result.changesApplied,
+        groupId: group.getId(),
+        message: 'Changes applied successfully'
+      });
+    } catch (error: any) {
+      console.error('[Autonomous] Atomic apply error:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || "Failed to apply changes atomically"
+      });
+    }
+  }
+);
+
+/**
+ * GET /api/autonomous/dependencies
+ * Get file dependency graph and impact analysis
+ * 
+ * Query: { files?: string[] }
+ * Returns: { 
+ *   success: boolean,
+ *   graph?: DependencyGraph,
+ *   impact?: ImpactAnalysis
+ * }
+ */
+router.get("/dependencies",
+  authenticateToken,
+  requireRoleLevel(8),
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const filesParam = req.query.files as string | undefined;
+      const files = filesParam ? filesParam.split(',') : undefined;
+
+      // Build dependency graph if not already built
+      const graph = await fileDependencyTracker.buildDependencyGraph();
+
+      // If files specified, analyze impact
+      let impact;
+      if (files && files.length > 0) {
+        impact = await fileDependencyTracker.analyzeImpact(files);
+      }
+
+      res.json({
+        success: true,
+        graph: {
+          nodeCount: graph.nodes.size,
+          edgeCount: graph.edges.length
+        },
+        impact
+      });
+    } catch (error: any) {
+      console.error('[Autonomous] Dependencies error:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || "Failed to get dependencies"
+      });
+    }
+  }
+);
 
 export default router;

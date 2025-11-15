@@ -6,6 +6,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
+interface UseVoiceInputOptions {
+  onResult?: (text: string) => void;
+  continuous?: boolean;
+  interimResults?: boolean;
+}
+
 interface UseVoiceInputReturn {
   isListening: boolean;
   isSupported: boolean;
@@ -15,7 +21,8 @@ interface UseVoiceInputReturn {
   resetTranscript: () => void;
 }
 
-export function useVoiceInput(): UseVoiceInputReturn {
+export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInputReturn {
+  const { onResult, continuous = true, interimResults = true } = options;
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [isSupported, setIsSupported] = useState(false);
@@ -30,8 +37,8 @@ export function useVoiceInput(): UseVoiceInputReturn {
       setIsSupported(true);
       
       const recognition = new SpeechRecognition();
-      recognition.continuous = true;
-      recognition.interimResults = true;
+      recognition.continuous = continuous;
+      recognition.interimResults = interimResults;
       recognition.lang = 'en-US';
 
       recognition.onresult = (event: SpeechRecognitionEvent) => {
@@ -47,7 +54,13 @@ export function useVoiceInput(): UseVoiceInputReturn {
           }
         }
 
-        setTranscript(finalTranscript || interimTranscript);
+        const fullTranscript = finalTranscript || interimTranscript;
+        setTranscript(fullTranscript);
+
+        // Call onResult callback when we have a final transcript
+        if (finalTranscript && onResult) {
+          onResult(finalTranscript.trim());
+        }
       };
 
       recognition.onerror = (event: any) => {
@@ -77,7 +90,7 @@ export function useVoiceInput(): UseVoiceInputReturn {
         recognitionRef.current.stop();
       }
     };
-  }, [toast]);
+  }, [toast, continuous, interimResults, onResult]);
 
   const startListening = useCallback(() => {
     if (recognitionRef.current && !isListening) {
