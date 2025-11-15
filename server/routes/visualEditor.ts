@@ -6,6 +6,7 @@
 import { Router, type Request, Response } from "express";
 import { aiCodeGenerator } from "../services/aiCodeGenerator";
 import { gitService } from "../services/gitService";
+import { traceRoute } from "../metrics/tracing";
 import * as path from "path";
 
 const router = Router();
@@ -81,7 +82,7 @@ router.get("/page-info", async (req: Request, res: Response) => {
 });
 
 // Generate code using AI
-router.post("/generate", async (req: Request, res: Response) => {
+router.post("/generate", traceRoute("visual-editor-generate"), async (req: Request, res: Response) => {
   try {
     const { prompt, pagePath, currentCode, componentId, changeType } = req.body;
 
@@ -123,7 +124,7 @@ router.post("/generate", async (req: Request, res: Response) => {
 });
 
 // Apply instant change (for live preview)
-router.post("/apply-change", async (req: Request, res: Response) => {
+router.post("/apply-change", traceRoute("visual-editor-apply-change"), async (req: Request, res: Response) => {
   try {
     const { change, pagePath } = req.body;
 

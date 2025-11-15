@@ -1,6 +1,34 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+echo "🔍 Running pre-commit checks..."
+
+# Type checking
+echo "📝 Running type check..."
+npm run type-check
+if [ $? -ne 0 ]; then
+  echo "❌ Type check failed!"
+  exit 1
+fi
+
+# Lint staged files
+echo "🔍 Running lint-staged..."
+npx lint-staged
+if [ $? -ne 0 ]; then
+  echo "❌ Lint-staged failed!"
+  exit 1
+fi
+
+# Secret scanning
+echo "🔒 Scanning for secrets..."
+if command -v detect-secrets &> /dev/null; then
+  detect-secrets scan --baseline .secrets.baseline
+  if [ $? -ne 0 ]; then
+    echo "⚠️  Potential secrets detected! Review carefully."
+    echo "To update baseline: detect-secrets scan > .secrets.baseline"
+  fi
+fi
+
 # Documentation Governance - Pre-commit Hook
 # Validates documentation before allowing commits
 # Based on APPENDIX P governance rules
@@ -32,4 +60,5 @@ else
   echo "ℹ️  No documentation files modified, skipping validation."
 fi
 
+echo "✅ All pre-commit checks passed!"
 exit 0

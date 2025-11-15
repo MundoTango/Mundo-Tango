@@ -13,6 +13,7 @@
 
 import { Router, type Request, Response } from "express";
 import { authenticateToken, requireRoleLevel, type AuthRequest } from "../middleware/auth";
+import { traceRoute } from "../metrics/tracing";
 import { mbmdEngine } from "../services/mrBlue/mbmdEngine";
 import { codeGenerator } from "../services/mrBlue/codeGenerator";
 import { validator } from "../services/mrBlue/validator";
@@ -268,7 +269,7 @@ router.post("/quick-style",
  * Body: { prompt: string, autoApprove?: boolean, element?: string }
  * Returns: { taskId, status, decomposition } OR { type: 'style', css: object } for style-only
  */
-router.post("/execute", 
+router.post("/execute", traceRoute("autonomous-execute"), 
   authenticateToken, 
   requireRoleLevel(8), // God Level only
   async (req: AuthRequest, res: Response) => {
@@ -464,7 +465,7 @@ router.post("/execute",
  * GET /api/autonomous/status/:taskId
  * Get task status and progress
  */
-router.get("/status/:taskId",
+router.get("/status/:taskId", traceRoute("autonomous-status"),
   authenticateToken,
   requireRoleLevel(8),
   async (req: AuthRequest, res: Response) => {

@@ -1,3 +1,8 @@
+// ============================================================================
+// OPENTELEMETRY INSTRUMENTATION - MUST BE FIRST IMPORT
+// ============================================================================
+import './instrumentation';
+
 console.log("🔍 [DEBUG] Starting server/index.ts imports...");
 import express, { type Request, Response, NextFunction } from "express";
 import cookieParser from "cookie-parser";

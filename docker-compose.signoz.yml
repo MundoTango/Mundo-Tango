@@ -1,0 +1,54 @@
+version: "3.8"
+
+# SigNoz Observability Platform - Docker Compose Configuration
+# NOTE: Docker is not available in Replit environment
+# This file is for documentation and future local development
+# For Replit deployment, use cloud-hosted SigNoz or fallback to existing Prometheus metrics
+
+services:
+  signoz-otel-collector:
+    image: signoz/signoz-otel-collector:0.88.11
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./signoz-otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317"  # gRPC endpoint
+      - "4318:4318"  # HTTP endpoint
+    environment:
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=mundo-tango
+
+  signoz-query-service:
+    image: signoz/query-service:0.38.0
+    ports:
+      - "8080:8080"
+    depends_on:
+      - signoz-otel-collector
+    environment:
+      - ClickHouseUrl=tcp://clickhouse:9000
+
+  signoz-frontend:
+    image: signoz/frontend:0.38.0
+    ports:
+      - "3301:3301"
+    depends_on:
+      - signoz-query-service
+    environment:
+      - FRONTEND_API_ENDPOINT=http://signoz-query-service:8080
+
+  # ClickHouse for storing traces and metrics
+  clickhouse:
+    image: clickhouse/clickhouse-server:23.7
+    ports:
+      - "9000:9000"
+      - "8123:8123"
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+
+volumes:
+  clickhouse-data:
+
+# REPLIT DEPLOYMENT NOTES:
+# 1. Use SigNoz Cloud (https://signoz.io/teams/) for hosted solution
+# 2. Set OTEL_EXPORTER_OTLP_ENDPOINT environment variable to cloud endpoint
+# 3. Fallback: Continue using existing Prometheus metrics at /metrics endpoint
+# 4. OpenTelemetry instrumentation works with both cloud and local deployments

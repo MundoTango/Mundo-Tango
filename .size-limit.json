@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Client Bundle",
+    "path": "dist/public/assets/**/*.js",
+    "limit": "500 KB",
+    "gzip": true
+  },
+  {
+    "name": "Main CSS",
+    "path": "dist/public/assets/**/*.css",
+    "limit": "100 KB",
+    "gzip": true
+  }
+]

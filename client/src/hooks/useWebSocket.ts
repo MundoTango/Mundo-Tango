@@ -25,7 +25,7 @@ export function useWebSocket(options: UseWebSocketOptions) {
     onMessage,
     onError,
     reconnect = true,
-    maxRetries = 5,
+    maxRetries = 10,
     heartbeatInterval = 30000,
   } = options;
 
@@ -113,7 +113,7 @@ export function useWebSocket(options: UseWebSocketOptions) {
           connectionTimeoutRef.current = undefined;
         }
         
-        // Small delay to ensure connection is fully stable before sending auth
+        // 100ms stabilization delay to ensure connection is fully stable before sending auth
         // This helps prevent Code 1006 errors on some browsers/networks
         const sendAuthDelay = setTimeout(() => {
           if (ws.readyState !== WebSocket.OPEN) {
@@ -141,7 +141,7 @@ export function useWebSocket(options: UseWebSocketOptions) {
             console.error(`[WS] ❌ Failed to send auth message:`, error);
             ws.close(4000, 'Auth send failed');
           }
-        }, 50);
+        }, 100);
         
         // Store timeout reference for cleanup
         connectionTimeoutRef.current = sendAuthDelay as any;

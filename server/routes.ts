@@ -113,6 +113,7 @@ import { registerLearningPathwaysRoutes } from "./routes/learningPathways-routes
 import systemPromptsRoutes from "./routes/systemPrompts";
 import telemetryRoutes from "./routes/telemetry";
 import swaggerRoutes from "./routes/swagger";
+import tracesRoutes from "./routes/traces";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
 import { auditLog, getClientIp } from "./middleware/auditLog";
@@ -377,6 +378,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // TRACK 9: API Documentation & Core Endpoints
   app.use("/api/prompts", systemPromptsRoutes);
   app.use("/api/telemetry", telemetryRoutes);
+  app.use("/api/traces", tracesRoutes);
   app.use("/api-docs", swaggerRoutes);
   
   // BATCH 16: Multi-AI Orchestration Routes

@@ -1,6 +1,7 @@
 import { Router, type Request, Response } from "express";
 import Groq from "groq-sdk";
 import { streamingService } from "../services/streamingService";
+import { traceRoute, traceAIOperation } from "../metrics/tracing";
 
 const router = Router();
 
@@ -12,7 +13,7 @@ const groq = new Groq({
 });
 
 // Mr. Blue Chat
-router.post("/chat", async (req: Request, res: Response) => {
+router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Response) => {
     try {
       const { message, context, conversationHistory } = req.body;
 
