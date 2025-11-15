@@ -170,7 +170,7 @@ export const verifyRefreshToken = (token: string): JWTPayload => {
 
 /**
  * Require minimum role level (1-8)
- * Tier 8: God (Owner)
+ * Tier 8: God (Owner) - Identified by role === 'god'
  * Tier 7: Super Admin
  * Tier 6: Platform Volunteer
  * Tier 5: Platform Contributor
@@ -186,6 +186,13 @@ export const requireRoleLevel = (minimumLevel: number) => {
     }
 
     try {
+      // God Level users (role === 'god') automatically have level 8
+      const isGodLevel = req.user.role === 'god';
+      if (isGodLevel) {
+        console.log('[RBAC] God Level user detected - granting access');
+        return next();
+      }
+
       const hasAccess = await RBACService.hasMinimumRoleLevel(req.userId, minimumLevel);
 
       if (!hasAccess) {
