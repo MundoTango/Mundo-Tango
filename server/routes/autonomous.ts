@@ -17,6 +17,9 @@ import { mbmdEngine } from "../services/mrBlue/mbmdEngine";
 import { codeGenerator } from "../services/mrBlue/codeGenerator";
 import { validator } from "../services/mrBlue/validator";
 import { autonomousAgent } from "../services/mrBlue/autonomousAgent";
+import { conversationContext } from "../services/mrBlue/conversationContext";
+import { styleGenerator } from "../services/mrBlue/styleGenerator";
+import { elementSelector } from "../services/mrBlue/elementSelector";
 import { broadcastToUser } from "../services/websocket";
 import { db } from "../storage";
 import { auditLogs, autonomousTasks } from "../../shared/schema";
@@ -160,24 +163,194 @@ async function persistTaskToDB(task: AutonomousTask): Promise<void> {
 }
 
 /**
- * POST /api/autonomous/execute
- * Execute autonomous development task
+ * POST /api/autonomous/quick-style
+ * FAST PATH: Instant CSS style changes using GPT-4o (<500ms)
  * 
- * Body: { prompt: string, autoApprove?: boolean }
- * Returns: { taskId, status, decomposition }
+ * Body: { prompt: string, element?: string }
+ * Returns: { type: 'style', selector: string, css: object }
  */
-router.post("/execute", 
-  authenticateToken, 
-  requireRoleLevel(8), // God Level only
+router.post("/quick-style",
+  authenticateToken,
+  requireRoleLevel(8),
   async (req: AuthRequest, res: Response) => {
     try {
-      const { prompt, autoApprove = false } = req.body;
+      const { prompt, element } = req.body;
+      const userId = req.userId!;
 
       if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
         return res.status(400).json({
           success: false,
           message: "Prompt is required and must be a non-empty string"
         });
+      }
+
+      const startTime = Date.now();
+
+      // Resolve element reference if provided
+      let resolvedSelector = element;
+      if (element && typeof element === 'string') {
+        const selectorResult = await elementSelector.parseElementReference(element, userId);
+        resolvedSelector = selectorResult.selector;
+      } else {
+        // Try to get last selected element from context
+        const lastElement = conversationContext.getLastSelectedElement(userId);
+        if (lastElement) {
+          resolvedSelector = lastElement;
+        }
+      }
+
+      // Generate CSS from natural language
+      const styleResult = await styleGenerator.quickStyle(prompt, resolvedSelector);
+
+      const responseTime = Date.now() - startTime;
+
+      if (!styleResult) {
+        // Not a style-only request
+        return res.json({
+          success: false,
+          isStyleOnly: false,
+          message: "This request requires code generation. Use /api/autonomous/execute instead.",
+          responseTime
+        });
+      }
+
+      // Log to conversation context
+      conversationContext.addEntry(userId, {
+        timestamp: Date.now(),
+        prompt,
+        response: styleResult,
+        filesChanged: [],
+        selectedElement: styleResult.selector,
+        responseType: 'style',
+        metadata: {
+          cssChanges: styleResult.css,
+          selector: styleResult.selector
+        }
+      });
+
+      // Audit log
+      await logAuditAction(
+        userId,
+        'autonomous_quick_style',
+        `Quick style generated: "${prompt}" → ${styleResult.selector}`,
+        { prompt, selector: styleResult.selector, css: styleResult.css, responseTime }
+      );
+
+      console.log(`[Autonomous] Quick-style completed in ${responseTime}ms`);
+
+      res.json({
+        success: true,
+        isStyleOnly: true,
+        ...styleResult,
+        responseTime,
+        message: `Style generated in ${responseTime}ms (fast path)`
+      });
+    } catch (error: any) {
+      console.error('[Autonomous] Quick-style error:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || "Failed to generate style"
+      });
+    }
+  }
+);
+
+/**
+ * POST /api/autonomous/execute
+ * Execute autonomous development task
+ * 
+ * PHASE 2 UPDATE: Checks for style-only requests first (fast path)
+ * 
+ * Body: { prompt: string, autoApprove?: boolean, element?: string }
+ * Returns: { taskId, status, decomposition } OR { type: 'style', css: object } for style-only
+ */
+router.post("/execute", 
+  authenticateToken, 
+  requireRoleLevel(8), // God Level only
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const { prompt, autoApprove = false, element } = req.body;
+
+      if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: "Prompt is required and must be a non-empty string"
+        });
+      }
+
+      const userId = req.userId!;
+      const startTime = Date.now();
+
+      // PHASE 2: Check if this is a style-only request (FAST PATH)
+      console.log('[Autonomous] Checking if style-only request...');
+      const styleDetection = await styleGenerator.detectStyleOnly(prompt.trim());
+
+      if (styleDetection.isStyleOnly && styleDetection.confidence > 0.7) {
+        console.log('[Autonomous] Style-only request detected - using fast path');
+
+        // Resolve element reference
+        let resolvedSelector = element;
+        if (element && typeof element === 'string') {
+          const selectorResult = await elementSelector.parseElementReference(element, userId);
+          resolvedSelector = selectorResult.selector;
+        } else {
+          // Try to get last selected element from context
+          const lastElement = conversationContext.getLastSelectedElement(userId);
+          if (lastElement) {
+            resolvedSelector = lastElement;
+          }
+        }
+
+        // Generate CSS
+        const styleResult = await styleGenerator.generateStyle(prompt.trim(), resolvedSelector);
+        const responseTime = Date.now() - startTime;
+
+        if (styleResult) {
+          // Log to conversation context
+          conversationContext.addEntry(userId, {
+            timestamp: Date.now(),
+            prompt: prompt.trim(),
+            response: styleResult,
+            filesChanged: [],
+            selectedElement: styleResult.selector,
+            responseType: 'style',
+            metadata: {
+              cssChanges: styleResult.css,
+              selector: styleResult.selector
+            }
+          });
+
+          // Audit log
+          await logAuditAction(
+            userId,
+            'autonomous_style_fast_path',
+            `Style-only request completed: "${prompt.substring(0, 100)}" → ${styleResult.selector}`,
+            { prompt: prompt.substring(0, 100), selector: styleResult.selector, css: styleResult.css, responseTime }
+          );
+
+          console.log(`[Autonomous] Style-only completed in ${responseTime}ms (fast path)`);
+
+          return res.json({
+            success: true,
+            fastPath: true,
+            ...styleResult,
+            responseTime,
+            message: `Style generated in ${responseTime}ms (no code generation needed)`
+          });
+        }
+      }
+
+      // Not style-only or detection failed - proceed with full MB.MD pipeline
+      console.log('[Autonomous] Full code generation required');
+
+      // PHASE 2: Get conversation context to enhance prompt
+      const contextSummary = conversationContext.getContextSummary(userId);
+      const formattedContext = conversationContext.getFormattedContext(userId);
+      
+      let enhancedPrompt = prompt.trim();
+      if (formattedContext && formattedContext !== 'No previous conversation context.') {
+        enhancedPrompt = `${formattedContext}\n\nCurrent request: ${prompt.trim()}`;
+        console.log('[Autonomous] Enhanced prompt with conversation context');
       }
 
       // Get user's role level (God Level = 8)
@@ -582,7 +755,9 @@ async function executeAutonomousTask(taskId: string, autoApprove: boolean, userI
       message: 'Analyzing task structure using MB.MD methodology...'
     });
 
-    const decomposition = await mbmdEngine.decomposeTask(task.prompt, (progress) => {
+    // PHASE 2: Use enhanced prompt with conversation context
+    const promptToUse = task.prompt; // Original prompt stored in task
+    const decomposition = await mbmdEngine.decomposeTask(promptToUse, (progress) => {
       // Progress callback from MB.MD engine
       broadcastToUser(userId, 'autonomous:progress', {
         taskId,
@@ -737,6 +912,15 @@ async function executeAutonomousTask(taskId: string, autoApprove: boolean, userI
       if (results.success) {
         task.status = 'completed';
         console.log(`[Autonomous] Task ${taskId} completed successfully`);
+
+        // PHASE 2: Log to conversation context
+        conversationContext.addEntry(userId, {
+          timestamp: Date.now(),
+          prompt: task.prompt,
+          response: { task: taskId, status: 'completed' },
+          filesChanged: results.filesModified || [],
+          responseType: 'code'
+        });
 
         // Emit completed event
         broadcastToUser(userId, 'autonomous:completed', {
