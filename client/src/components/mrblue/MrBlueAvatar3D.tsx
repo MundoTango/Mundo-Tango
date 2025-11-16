@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Environment, useGLTF } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, useGLTF } from '@react-three/drei';
 import type { Group } from 'three';
 
 interface MrBlueAvatar3DProps {
@@ -236,9 +236,6 @@ export default function MrBlueAvatar3D({
         <directionalLight position={[5, 5, 5]} intensity={0.8} castShadow />
         <directionalLight position={[-3, 3, -3]} intensity={0.4} />
         <pointLight position={[0, 2, 1]} intensity={0.6} color="#00FFFF" />
-        
-        {/* Environment for reflections */}
-        <Environment preset="city" />
         
         {/* The 3D model */}
         <MrBlueModel expression={expression} modelUrl={modelUrl} />

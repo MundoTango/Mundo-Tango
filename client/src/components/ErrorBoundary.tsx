@@ -1,7 +1,7 @@
 import { Component, ReactNode } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, RefreshCw } from "lucide-react";
 import { logger } from "@/lib/logger";
 
 interface Props {
@@ -11,27 +11,89 @@ interface Props {
 interface State {
   hasError: boolean;
   error: Error | null;
+  errorCount: number;
+  autoRecoveryAttempted: boolean;
 }
 
+/**
+ * SELF-HEALING ERROR BOUNDARY (Enhanced November 16, 2025)
+ * 
+ * Automatically attempts recovery after React errors:
+ * - First error: Auto-reset after 3 seconds (silent)
+ * - Second error: Auto-reset after 5 seconds (shows warning)
+ * - Third error: Shows error UI with manual recovery
+ */
 export class ErrorBoundary extends Component<Props, State> {
+  private resetTimeout: NodeJS.Timeout | null = null;
+
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { 
+      hasError: false, 
+      error: null,
+      errorCount: 0,
+      autoRecoveryAttempted: false,
+    };
   }
 
-  static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): Partial<State> {
     return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    const { errorCount } = this.state;
+    
     console.error("Error caught by boundary:", error, errorInfo);
     logger.error('React Error Boundary caught error', error, {
-      component: errorInfo.componentStack || ''
+      component: errorInfo.componentStack || '',
+      errorCount: errorCount + 1,
     });
+
+    // Update error count
+    this.setState(prev => ({ errorCount: prev.errorCount + 1 }));
+
+    // AUTO-RECOVERY LOGIC (MB.MD Protocol v7.1 - Self-Healing)
+    if (errorCount === 0) {
+      // First error: Silent auto-recovery after 3s
+      console.log('[ErrorBoundary] 🔄 First error detected. Auto-recovery in 3 seconds...');
+      this.resetTimeout = setTimeout(() => {
+        console.log('[ErrorBoundary] ✅ Auto-recovery attempt 1/3');
+        this.handleAutoReset();
+      }, 3000);
+    } else if (errorCount === 1) {
+      // Second error: Slower auto-recovery after 5s
+      console.log('[ErrorBoundary] ⚠️ Second error detected. Auto-recovery in 5 seconds...');
+      this.resetTimeout = setTimeout(() => {
+        console.log('[ErrorBoundary] ✅ Auto-recovery attempt 2/3');
+        this.handleAutoReset();
+      }, 5000);
+    } else {
+      // Third+ error: Show error UI, no auto-recovery
+      console.error('[ErrorBoundary] ❌ Max errors reached (3). Manual intervention required.');
+    }
   }
 
+  componentWillUnmount() {
+    if (this.resetTimeout) {
+      clearTimeout(this.resetTimeout);
+    }
+  }
+
+  handleAutoReset = () => {
+    if (this.resetTimeout) {
+      clearTimeout(this.resetTimeout);
+      this.resetTimeout = null;
+    }
+
+    this.setState({
+      hasError: false,
+      error: null,
+      autoRecoveryAttempted: true,
+    });
+  };
+
   handleReload = () => {
-    this.setState({ hasError: false, error: null });
+    this.setState({ hasError: false, error: null, errorCount: 0 });
     window.location.reload();
   };
 

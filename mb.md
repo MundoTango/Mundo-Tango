@@ -118,6 +118,326 @@ By Week 8, you now have:
 - **VibeAudits.com**: Human security audit - before System 8 completion
 - **Reddit r/ChatGPTCoding**: Cursor + Claude recommended for autonomy
 
+---
+
+## 🛡️ SELF-HEALING & COMPREHENSIVE TESTING FRAMEWORK
+
+**Version**: 1.1 (Enhanced November 16, 2025)  
+**Purpose**: Mr Blue auto-detection, error recovery, and autonomous bug fixing
+
+### **Core Principle: Mr Blue Should Never Show Errors to Users**
+
+Every error must be caught, logged, self-healed, and only escalated to humans after 3 auto-fix attempts fail.
+
+### **Self-Healing Architecture** (MB.MD v7.1 Protocol)
+
+#### **Layer 1: React Error Boundaries** (IMPLEMENTED)
+
+**Location**: `client/src/components/ErrorBoundary.tsx`
+
+**Behavior**:
+1. **First Error**: Auto-reset after 3 seconds (silent recovery)
+2. **Second Error**: Auto-reset after 5 seconds (warning logged)
+3. **Third Error**: Show error UI + manual recovery required
+
+**Implementation**:
+```typescript
+componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  if (errorCount === 0) {
+    // Silent 3s auto-recovery
+    setTimeout(() => this.handleAutoReset(), 3000);
+  } else if (errorCount === 1) {
+    // 5s auto-recovery with warning
+    setTimeout(() => this.handleAutoReset(), 5000);
+  } else {
+    // Show error UI, no auto-recovery
+    console.error('[ErrorBoundary] Manual intervention required');
+  }
+}
+```
+
+**Coverage**:
+- Wraps ALL major routes (/mr-blue-studio, /feed, /events, etc.)
+- Catches React rendering errors
+- Prevents white screen of death
+- Logs to Sentry for production monitoring
+
+---
+
+#### **Layer 2: WebGL Error Detection** (IMPLEMENTED)
+
+**Problem**: React Three Fiber errors (Environment component, undefined properties)
+
+**Detection**:
+```typescript
+// Check WebGL support before rendering 3D
+const canvas = document.createElement('canvas');
+const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+if (!gl) {
+  setWebglAvailable(false); // Use 2D fallback
+}
+```
+
+**Self-Healing Fixes** (November 16, 2025):
+1. ✅ Removed `Environment` component from ALL avatar components
+   - `client/src/components/mr-blue/AvatarCanvas.tsx`
+   - `client/src/components/mrblue/MrBlueAvatar3D.tsx`
+2. ✅ Removed unused `Environment` import
+3. ✅ Added 2D emoji fallback for WebGL-unavailable browsers
+4. ✅ Added error boundary around all Canvas components
+
+**Verification**:
+- E2E test: Load /mr-blue-studio → Verify avatar renders without crash
+- Console check: Zero "Cannot read properties of undefined" errors
+- Fallback check: 2D emoji shows if WebGL disabled
+
+---
+
+#### **Layer 3: API Error Resilience** (REQUIRED)
+
+**Pattern**: All API calls must have graceful fallbacks
+
+**Good Example**:
+```typescript
+async function getEvents() {
+  try {
+    const response = await apiRequest('/api/events');
+    return response.events;
+  } catch (error) {
+    console.error('[getEvents] API failed:', error);
+    
+    // FALLBACK 1: Return cached data if available
+    const cached = localStorage.getItem('events_cache');
+    if (cached) {
+      console.log('[getEvents] Using cached data');
+      return JSON.parse(cached);
+    }
+    
+    // FALLBACK 2: Return empty array (don't crash)
+    toast.error('Failed to load events. Showing offline data.');
+    return [];
+  }
+}
+```
+
+**Bad Example** (NEVER DO THIS):
+```typescript
+// ❌ NO ERROR HANDLING - WILL CRASH
+const response = await fetch('/api/events');
+const data = await response.json();
+return data.events;
+```
+
+**Requirements**:
+- Every API call wrapped in try-catch
+- Every API call has fallback strategy
+- User-facing error messages (no stack traces)
+- Sentry logging in production
+
+---
+
+#### **Layer 4: Database Connection Recovery** (IMPLEMENTED)
+
+**Scenario**: Neon database temporarily disabled
+
+**Detection**:
+```
+NeonDbError: The endpoint has been disabled. Enable it using Neon API and retry.
+```
+
+**Self-Healing**:
+1. Catch database errors in route handlers
+2. Return 503 (Service Temporarily Unavailable) instead of 500
+3. Frontend shows "Reconnecting..." instead of crashing
+4. Auto-retry every 30 seconds
+5. Use cached data from localStorage if available
+
+**Implementation**:
+```typescript
+// server/routes.ts
+app.get('/api/events', async (req, res) => {
+  try {
+    const events = await db.select().from(events);
+    res.json({ events });
+  } catch (error) {
+    if (error.message.includes('endpoint has been disabled')) {
+      // Database temporarily down
+      res.status(503).json({ 
+        message: 'Database reconnecting. Please try again shortly.',
+        retryAfter: 30 
+      });
+    } else {
+      // Unknown error
+      logger.error('Database error', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+});
+```
+
+---
+
+### **Comprehensive Testing Requirements** (10-Layer System)
+
+**See**: `docs/VIBE_CODING_QUALITY_GUARDRAILS.md` for full 10-layer quality pipeline
+
+**Quick Reference**:
+
+1. **Pre-Coding Validation**: Requirement parsing, dependency detection
+2. **LSP & Type Safety**: Zero TypeScript/ESLint errors
+3. **Code Quality**: Complexity <10, no duplication, DRY principles
+4. **Security**: OWASP Top 10, no hardcoded secrets, input validation
+5. **Performance**: API <200ms, page load <3s, no N+1 queries
+6. **E2E Testing**: Playwright full user flows (REQUIRED for UI changes)
+7. **Accessibility**: WCAG 2.1 AA, keyboard nav, screen reader
+8. **Error Handling**: Try-catch everywhere, graceful degradation
+9. **Documentation**: JSDoc, API docs, 100% data-testid coverage
+10. **Deploy Check**: Migrations ready, feature flags, rollback plan
+
+**Target Quality Score**: 99/100 (up from 97/100)
+
+---
+
+### **Mr Blue Auto-Fix Protocol** (Autonomous Self-Healing)
+
+**When Mr Blue builds a feature, it must**:
+
+1. **Detect Errors Automatically**:
+   - LSP diagnostics after every file edit
+   - Console errors in browser after every component change
+   - API 500 errors after backend changes
+   - WebGL errors after Three.js changes
+
+2. **Auto-Fix Common Issues** (90%+ success rate):
+   - Missing imports → Auto-add from similar files
+   - Type mismatches → Auto-infer from usage
+   - Hardcoded secrets → Move to env vars
+   - N+1 queries → Auto-refactor to JOINs
+   - Missing error handling → Auto-wrap in try-catch
+
+3. **Self-Validate Before Deployment**:
+   - Run LSP diagnostics → Fix all errors
+   - Run E2E tests → Verify user flows work
+   - Check console → Zero React errors
+   - Performance check → All APIs <200ms
+
+4. **Escalate Only After 3 Failed Attempts**:
+   - Attempt 1: Auto-fix obvious issues
+   - Attempt 2: Use AI reasoning to debug
+   - Attempt 3: Try alternative implementation
+   - If all fail → Create detailed bug report for human
+
+---
+
+### **Testing Checklist for ALL Changes**
+
+**Before deploying ANY change, verify**:
+
+- [ ] **LSP Clean**: `get_latest_lsp_diagnostics` shows zero errors
+- [ ] **Console Clean**: Browser console has zero React errors
+- [ ] **E2E Pass**: `run_test` tool passes for changed features
+- [ ] **Error Boundaries**: All new routes wrapped in ErrorBoundary
+- [ ] **Try-Catch**: All async operations have error handling
+- [ ] **Fallbacks**: All API calls have graceful fallback strategies
+- [ ] **Data-TestIDs**: All interactive elements have unique test IDs
+- [ ] **Performance**: New APIs respond in <200ms
+- [ ] **Security**: No hardcoded secrets, all inputs validated
+- [ ] **Accessibility**: Keyboard nav works, screen reader compatible
+
+---
+
+### **Critical Bug Patterns to AUTO-DETECT**
+
+Mr Blue MUST automatically detect and fix these patterns:
+
+#### **Pattern 1: React Three Fiber Crashes**
+
+**Error**: `Cannot read properties of undefined (reading 'replit')`  
+**Root Cause**: Incompatible `@react-three/drei` components (Environment, Lightformer, ContactShadows)  
+**Auto-Fix**:
+1. Search codebase for `Environment`, `Lightformer`, `ContactShadows` imports
+2. Remove these components from all files
+3. Use basic lighting instead (ambientLight + directionalLight)
+4. Add WebGL fallback (2D emoji if WebGL unavailable)
+5. Wrap in ErrorBoundary
+
+**Detection Script**:
+```bash
+grep -r "Environment\|Lightformer\|ContactShadows" client/src/components --include="*.tsx"
+```
+
+---
+
+#### **Pattern 2: Missing Error Boundaries**
+
+**Error**: White screen after component crash  
+**Root Cause**: No ErrorBoundary wrapping component  
+**Auto-Fix**:
+1. Wrap all route components in `<ErrorBoundary>`
+2. Add fallback UI for graceful degradation
+3. Log errors to Sentry
+
+**Example**:
+```typescript
+// ❌ BAD: No error boundary
+<Route path="/mr-blue-studio" component={MrBlueStudio} />
+
+// ✅ GOOD: Error boundary protection
+<Route path="/mr-blue-studio">
+  <ErrorBoundary>
+    <MrBlueStudio />
+  </ErrorBoundary>
+</Route>
+```
+
+---
+
+#### **Pattern 3: Unhandled Promise Rejections**
+
+**Error**: `Unhandled Promise rejection: 500`  
+**Root Cause**: No try-catch around async API calls  
+**Auto-Fix**:
+```typescript
+// ❌ BAD: No error handling
+const data = await apiRequest('/api/events');
+
+// ✅ GOOD: Comprehensive error handling
+try {
+  const data = await apiRequest('/api/events');
+  return data;
+} catch (error) {
+  console.error('[loadEvents] Failed:', error);
+  toast.error('Failed to load events');
+  return getCachedEvents(); // Fallback
+}
+```
+
+---
+
+### **Self-Healing Success Metrics**
+
+**Week 9** (First autonomous week):
+- Auto-fix rate: 85%+ (15% need human review)
+- Error detection time: <30 seconds after deployment
+- Recovery time: <5 minutes for auto-fixable issues
+
+**Week 10** (Learning phase):
+- Auto-fix rate: 92%+ (8% need human review)
+- Zero user-facing crashes
+- All errors logged to Sentry
+
+**Week 11** (Maturity phase):
+- Auto-fix rate: 97%+ (3% need human review)
+- Proactive error prevention (LSP before commit)
+- Performance optimizations auto-applied
+
+**Week 12** (Full autonomy):
+- Auto-fix rate: 99%+ (1% edge cases only)
+- Scott involvement: 0% (monitoring only)
+- Production-grade quality maintained
+
+---
+
 ### Week 9-12: Autonomous Feature Build (927 features)
 - **Week 9**: Social Features P1 (186 features) - Scott 20% involvement
 - **Week 10**: AI Systems (60 features) - Scott 10% involvement
