@@ -739,6 +739,124 @@ await page.waitForURL(/\/(?!login)/);
 
 ---
 
+## 🌐 PUBLIC API RESOURCES FOR AUTONOMOUS DEVELOPMENT
+
+**Source**: [public-apis/public-apis](https://github.com/public-apis/public-apis) (379K+ ⭐, Nov 2025)
+
+**Purpose**: When Mr Blue autonomously builds Mundo Tango features (Weeks 9-12), these free APIs provide instant capabilities without building from scratch. Use these to accelerate development, add rich functionality, and integrate external services.
+
+### 🎯 **Priority APIs for Mundo Tango**
+
+**CRITICAL**: Always check CORS support before using browser-side. Prefer server-side API calls for security.
+
+#### **Social & Communication** (Core MT Features)
+- **Twilio** - SMS, voice, video calls (first 10K/month free)
+  - Use for: Event reminders, teacher notifications, venue updates
+- **Mailgun** - Email API (first 10K emails/month free)
+  - Use for: User notifications, event invites, newsletter
+- **Discord API** - Community chat integration
+  - Use for: Tango community channels, real-time discussions
+
+#### **Media & Content** (Visual Platform)
+- **Unsplash API** - High-quality stock photos (5K requests/hour free)
+  - Use for: Event backgrounds, profile placeholders, venue imagery
+- **Giphy API** - GIF library
+  - Use for: Reactions, animations, tango celebration GIFs
+- **Cloudinary** - Image/video hosting & transformation
+  - Use for: Media uploads, automatic optimization, CDN delivery
+
+#### **Geolocation & Maps** (Event Discovery)
+- **ipgeolocation.io** - IP geolocation (15K requests/hour free)
+  - Use for: Auto-detect user location, show nearby events
+- **Geocodio** - Address autocomplete & geocoding
+  - Use for: Venue address validation, location search
+- **OpenStreetMap Nominatim** - Free geocoding (no API key)
+  - Use for: Map pins, venue coordinates
+
+#### **Finance & Payments** (Already using Stripe)
+- **CoinGecko** - Cryptocurrency prices (no auth)
+  - Use for: Optional crypto payment pricing
+- **Currency Scoop** - Real-time exchange rates (168+ currencies)
+  - Use for: Multi-currency event pricing
+
+#### **AI & Machine Learning** (Enhance Mr Blue)
+- **Hugging Face Inference API** - Pre-trained ML models
+  - Use for: Sentiment analysis on posts, image classification
+- **Clarifai** - Computer vision & NLP
+  - Use for: Auto-tagging photos, content moderation
+
+#### **Entertainment & Music** (Tango Culture)
+- **Spotify API** - Music streaming data
+  - Use for: Tango playlist curation, DJ features
+- **YouTube Data API** - Video metadata
+  - Use for: Tango tutorial embedding, performance videos
+- **Musixmatch** - Lyrics database
+  - Use for: Tango song lyrics, music education
+
+#### **Weather** (Event Planning)
+- **Weatherstack** - Real-time weather (JSON format)
+  - Use for: Outdoor milonga weather alerts
+- **Open-Meteo** - 14-day forecasts (100+ variables, no auth)
+  - Use for: Long-term event planning
+
+#### **Calendar & Scheduling** (Event Management)
+- **Google Calendar API** - Calendar integration
+  - Use for: Auto-add events to user calendars
+- **Calendly API** - Appointment scheduling
+  - Use for: Teacher/student lesson booking
+
+#### **Government & Open Data** (Compliance & Insights)
+- **USA.gov API** - U.S. government programs
+  - Use for: Business license lookups for venues
+- **Open Data portals** - City-specific event regulations
+  - Use for: Venue permit compliance
+
+### 📊 **API Categories Available** (40+ categories)
+
+**Full List**: Animals, Anime, Anti-Malware, Art & Design, Authentication, Blockchain, Books, Business, Calendar, Cloud Storage, CI/CD, Cryptocurrency, Currency, Data Validation, Development, Dictionaries, Documents, Email, Entertainment, Environment, Events, Finance, Food & Drink, Games & Comics, Geocoding, Government, Health, Jobs, Machine Learning, Music, News, Open Data, Patent, Personality, Phone, Photography, Science & Math, Security, Shopping, Social, Sports, Test Data, Text Analysis, Tracking, Transportation, URL Shorteners, Vehicle, Video, Weather
+
+### 🛠️ **Alternative API Collections**
+
+- **public-api-lists/public-api-lists** (12.8K ⭐) - Another curated list
+- **RapidAPI Hub** - Unified marketplace (freemium tiers)
+- **Public-APIs.io** - Web interface for browsing
+
+### 🎓 **Mr Blue API Integration Guidelines**
+
+**When building autonomously (Weeks 9-12), follow these rules:**
+
+1. **Check Rate Limits**: Always review API documentation for free tier limits
+2. **Cache Aggressively**: Store responses to minimize API calls (use Redis)
+3. **Server-Side First**: Make API calls from backend, not browser (security + CORS)
+4. **Error Handling**: Graceful fallbacks if API fails (show cached/default data)
+5. **API Key Management**: Store in Replit Secrets, never hardcode
+6. **CORS Check**: Verify CORS support before browser-side integration
+7. **Authentication**: Prefer OAuth over API keys when available
+8. **Cost Monitoring**: Track usage, warn user before paid tier threshold
+9. **Compliance**: Review ToS for commercial use, attribution requirements
+10. **Testing**: E2E tests must mock API responses (don't spam real APIs)
+
+### 💡 **Vibe Coding API Commands**
+
+**Mr Blue understands these natural language requests:**
+
+- "Add Twilio SMS for event reminders" → Installs Twilio SDK, creates SMS service
+- "Integrate Unsplash for event photos" → API client, image picker UI
+- "Use ipgeolocation to show nearby events" → Location detection, radius search
+- "Connect Spotify for tango playlists" → OAuth flow, playlist embedding
+- "Add weather alerts for outdoor milongas" → Weather API + notification system
+
+### 🔗 **Quick Links**
+
+- **Main Repo**: [github.com/public-apis/public-apis](https://github.com/public-apis/public-apis)
+- **Discord**: Community updates & Q&A
+- **APILayer**: Premium APIs (if free tier insufficient)
+
+**Last Updated**: November 16, 2025  
+**Mr Blue Access**: Full context-aware browsing of all 379K+ APIs
+
+---
+
 ## 📚 KEY DOCUMENTS REFERENCE
 
 **Primary Sources:**
