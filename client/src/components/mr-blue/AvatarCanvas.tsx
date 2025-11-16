@@ -26,6 +26,7 @@ export function AvatarCanvas({
 }: AvatarCanvasProps) {
   const [webglAvailable, setWebglAvailable] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [contextLost, setContextLost] = useState(false);
 
   // Check for WebGL support
   useEffect(() => {
@@ -35,7 +36,22 @@ export function AvatarCanvas({
       if (!gl) {
         console.warn('[AvatarCanvas] WebGL not available, using fallback');
         setWebglAvailable(false);
+        return;
       }
+
+      // Handle WebGL context loss and restoration
+      canvas.addEventListener('webglcontextlost', (e) => {
+        e.preventDefault();
+        console.warn('[AvatarCanvas] WebGL context lost, preventing default and using fallback');
+        setContextLost(true);
+        setWebglAvailable(false);
+      });
+
+      canvas.addEventListener('webglcontextrestored', () => {
+        console.log('[AvatarCanvas] WebGL context restored');
+        setContextLost(false);
+        setWebglAvailable(true);
+      });
     } catch (e) {
       console.warn('[AvatarCanvas] WebGL check failed, using fallback:', e);
       setWebglAvailable(false);
@@ -49,8 +65,8 @@ export function AvatarCanvas({
     setWebglAvailable(false);
   };
 
-  // Fallback 2D avatar when WebGL is unavailable
-  if (!webglAvailable || error) {
+  // Fallback 2D avatar when WebGL is unavailable or context is lost
+  if (!webglAvailable || error || contextLost) {
     const stateColors: Record<AvatarState, string> = {
       idle: 'bg-blue-500',
       listening: 'bg-green-500',
@@ -97,13 +113,27 @@ export function AvatarCanvas({
     >
       <Canvas
         onError={handleError}
-        dpr={[1, 2]} // Pixel ratio for performance
-        gl={{
-          antialias: true,
-          alpha: true,
-          powerPreference: 'high-performance',
+        onCreated={({ gl }) => {
+          // Handle WebGL context loss at renderer level
+          gl.domElement.addEventListener('webglcontextlost', (e) => {
+            e.preventDefault();
+            console.warn('[AvatarCanvas] Renderer context lost');
+            setContextLost(true);
+            setWebglAvailable(false);
+          });
+          gl.domElement.addEventListener('webglcontextrestored', () => {
+            console.log('[AvatarCanvas] Renderer context restored');
+            setContextLost(false);
+            setWebglAvailable(true);
+          });
         }}
-        shadows
+        dpr={[1, 1.5]} // Lower DPR for better performance
+        gl={{
+          antialias: false, // Disable antialiasing for better performance
+          alpha: true,
+          powerPreference: 'default', // Use 'default' instead of 'high-performance'
+        }}
+        shadows={false} // Disable shadows for better performance
       >
         <Suspense fallback={null}>
           {/* Camera setup */}
