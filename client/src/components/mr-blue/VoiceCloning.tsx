@@ -256,6 +256,74 @@ export function VoiceCloning() {
         </p>
       </div>
 
+      {/* Scott's Voice Status Card */}
+      <Card className="border-primary/50 bg-primary/5">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Mic className="h-5 w-5 text-primary" />
+            Scott Boddye's Voice - Mundo Tango Founder
+          </CardTitle>
+          <CardDescription>
+            Official voice of Mr Blue, representing the warmth and passion of the tango community
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Status</p>
+              <Badge variant="secondary" className="gap-1">
+                <Clock className="h-3 w-3" />
+                Ready for Setup
+              </Badge>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Training Data</p>
+              <p className="font-semibold">2.5 minutes</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Audio Files</p>
+              <p className="font-semibold">5 samples</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Quality</p>
+              <p className="font-semibold">128kbps MP3</p>
+            </div>
+          </div>
+
+          <div className="p-4 bg-muted/50 rounded-lg space-y-2">
+            <p className="text-sm font-semibold flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-green-500" />
+              Training Audio Ready
+            </p>
+            <p className="text-sm text-muted-foreground">
+              High-quality podcast excerpts from "Free Heeling with Scott Boddye" (Humans of Tango)
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Source files located in: <code className="text-xs bg-background px-2 py-1 rounded">attached_assets/voice_training/</code>
+            </p>
+          </div>
+
+          <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg space-y-2">
+            <p className="text-sm font-semibold flex items-center gap-2 text-yellow-600 dark:text-yellow-500">
+              <Clock className="h-4 w-4" />
+              Setup Required
+            </p>
+            <p className="text-sm text-muted-foreground">
+              To activate Scott's voice, upgrade your ElevenLabs plan to Creator ($22/mo) or higher, then run the training command.
+            </p>
+            <p className="text-sm">
+              <a 
+                href="/attached_assets/voice_training/SCOTT_VOICE_SETUP.md" 
+                target="_blank"
+                className="text-primary hover:underline font-medium"
+              >
+                View Setup Instructions →
+              </a>
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Current Voice Status */}
       {voicesData?.userVoiceId && (
         <Card>

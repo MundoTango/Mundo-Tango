@@ -23,6 +23,11 @@ import { eq } from 'drizzle-orm';
 const execAsync = promisify(exec);
 const isElevenLabsConfigured = Boolean(process.env.ELEVENLABS_API_KEY);
 
+// Scott Boddye's voice configuration (Mundo Tango founder)
+// Set SCOTT_VOICE_ID environment variable after creating voice clone
+const SCOTT_VOICE_ID = process.env.SCOTT_VOICE_ID || null;
+const DEFAULT_VOICE_NAME = 'Scott Boddye - Mundo Tango';
+
 // Supported languages for ElevenLabs multilingual v2 model
 export const SUPPORTED_LANGUAGES = [
   { code: 'en', name: 'English' },
@@ -362,6 +367,46 @@ export class VoiceCloningService {
       console.error('[VoiceClone] ❌ Speech generation error:', error);
       return { success: false, error };
     }
+  }
+
+  /**
+   * Get Scott Boddye's voice ID
+   * Returns configured SCOTT_VOICE_ID or throws error if not set
+   */
+  getScottVoiceId(): string | null {
+    return SCOTT_VOICE_ID;
+  }
+
+  /**
+   * Check if Scott's voice is configured
+   */
+  isScottVoiceConfigured(): boolean {
+    return SCOTT_VOICE_ID !== null;
+  }
+
+  /**
+   * Generate speech using Scott's voice (convenience method)
+   * Falls back to provided voiceId if Scott's voice is not configured
+   */
+  async generateSpeechWithScott(
+    text: string,
+    options?: VoiceGenerationOptions & { fallbackVoiceId?: string }
+  ): Promise<{ success: boolean; audio?: Buffer; error?: any; usingScottVoice?: boolean }> {
+    const voiceId = SCOTT_VOICE_ID || options?.fallbackVoiceId;
+    
+    if (!voiceId) {
+      return {
+        success: false,
+        error: 'No voice ID available. Please configure SCOTT_VOICE_ID or provide fallbackVoiceId',
+        usingScottVoice: false
+      };
+    }
+
+    const result = await this.generateSpeech(voiceId, text, options);
+    return {
+      ...result,
+      usingScottVoice: voiceId === SCOTT_VOICE_ID
+    };
   }
 
   /**

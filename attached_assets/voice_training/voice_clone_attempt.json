@@ -1,0 +1,20 @@
+{
+  "status": "blocked",
+  "error": "API key missing voices_write permission",
+  "required_plan": "ElevenLabs Creator ($22/mo) or higher",
+  "attempted_configuration": {
+    "name": "Scott Boddye - Mundo Tango",
+    "description": "Scott 'Skoot' Boddye - Founder of Mundo Tango. Warm, approachable, expressive teaching style with distinctive personality.",
+    "training_files": [
+      "sample_1.mp3 (30s)",
+      "sample_2.mp3 (30s)",
+      "sample_3.mp3 (30s)",
+      "sample_4.mp3 (30s)",
+      "sample_5.mp3 (30s)"
+    ],
+    "total_training_duration": "2.5 minutes",
+    "audio_quality": "128kbps MP3, 44.1kHz stereo",
+    "source": "Humans of Tango Podcast - Free Heeling with Scott Boddye"
+  },
+  "next_steps": "Upgrade ElevenLabs plan to Creator tier to enable voice cloning, then run the training command"
+}
