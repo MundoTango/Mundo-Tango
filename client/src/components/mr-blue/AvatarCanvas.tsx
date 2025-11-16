@@ -134,9 +134,6 @@ export function AvatarCanvas({
             color="#00D4FF"
           />
 
-          {/* Environment for reflections */}
-          <Environment preset="city" />
-
           {/* The Pixar Avatar */}
           <PixarAvatar state={state} audioLevel={audioLevel} />
 
