@@ -1984,6 +1984,79 @@ export const insertReactionSchema = createInsertSchema(reactions).omit({ id: tru
 export type InsertReaction = z.infer<typeof insertReactionSchema>;
 export type SelectReaction = typeof reactions.$inferSelect;
 
+// ============================================================================
+// FACEBOOK DATA IMPORT (System 0 - MB.MD Protocol)
+// ============================================================================
+
+// Facebook Import Sessions (track import operations from FB accounts)
+export const facebookImports = pgTable("facebook_imports", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  accountName: varchar("account_name").notNull(), // @sboddye or @mundotango1
+  dataType: varchar("data_type").notNull(), // profile, posts, friends, events, groups, photos
+  status: varchar("status").default("pending").notNull(), // pending, in_progress, completed, failed
+  itemsImported: integer("items_imported").default(0),
+  itemsFailed: integer("items_failed").default(0),
+  errorLog: text("error_log"),
+  jsonData: jsonb("json_data"), // Full import metadata
+  importDate: timestamp("import_date").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+}, (table) => ({
+  userIdx: index("facebook_imports_user_idx").on(table.userId),
+  accountIdx: index("facebook_imports_account_idx").on(table.accountName),
+  statusIdx: index("facebook_imports_status_idx").on(table.status),
+  dateIdx: index("facebook_imports_date_idx").on(table.importDate),
+}));
+
+// Facebook Posts (imported posts from FB accounts)
+export const facebookPosts = pgTable("facebook_posts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  fbPostId: varchar("fb_post_id").notNull().unique(), // Original Facebook post ID
+  content: text("content"),
+  mediaUrls: text("media_urls").array(),
+  likes: integer("likes").default(0),
+  comments: integer("comments").default(0),
+  shares: integer("shares").default(0),
+  fbCreatedAt: timestamp("fb_created_at"), // Original FB timestamp
+  importedAt: timestamp("imported_at").defaultNow().notNull(),
+  mappedPostId: integer("mapped_post_id").references(() => posts.id), // Link to MT post if imported
+}, (table) => ({
+  userIdx: index("facebook_posts_user_idx").on(table.userId),
+  fbPostIdIdx: index("facebook_posts_fb_post_id_idx").on(table.fbPostId),
+  mappedIdx: index("facebook_posts_mapped_idx").on(table.mappedPostId),
+}));
+
+// Facebook Friends (imported friends from FB accounts)
+export const facebookFriends = pgTable("facebook_friends", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  friendName: varchar("friend_name").notNull(),
+  friendFbId: varchar("friend_fb_id"), // FB user ID if available
+  friendProfileUrl: text("friend_profile_url"),
+  mutualFriends: integer("mutual_friends").default(0),
+  relationship: varchar("relationship"), // close_friend, acquaintance, family, etc
+  importedAt: timestamp("imported_at").defaultNow().notNull(),
+  mappedUserId: integer("mapped_user_id").references(() => users.id), // Link to MT user if they exist
+}, (table) => ({
+  userIdx: index("facebook_friends_user_idx").on(table.userId),
+  friendFbIdIdx: index("facebook_friends_fb_id_idx").on(table.friendFbId),
+  mappedIdx: index("facebook_friends_mapped_idx").on(table.mappedUserId),
+}));
+
+// Zod Schemas for Facebook Import Tables
+export const insertFacebookImportSchema = createInsertSchema(facebookImports).omit({ id: true, importDate: true, completedAt: true });
+export type InsertFacebookImport = z.infer<typeof insertFacebookImportSchema>;
+export type SelectFacebookImport = typeof facebookImports.$inferSelect;
+
+export const insertFacebookPostSchema = createInsertSchema(facebookPosts).omit({ id: true, importedAt: true });
+export type InsertFacebookPost = z.infer<typeof insertFacebookPostSchema>;
+export type SelectFacebookPost = typeof facebookPosts.$inferSelect;
+
+export const insertFacebookFriendSchema = createInsertSchema(facebookFriends).omit({ id: true, importedAt: true });
+export type InsertFacebookFriend = z.infer<typeof insertFacebookFriendSchema>;
+export type SelectFacebookFriend = typeof facebookFriends.$inferSelect;
+
 // Life CEO System
 export const insertLifeCeoDomainSchema = createInsertSchema(lifeCeoDomains).omit({ id: true, createdAt: true });
 export type InsertLifeCeoDomain = z.infer<typeof insertLifeCeoDomainSchema>;
@@ -7869,25 +7942,7 @@ export const eventScrapingSources = pgTable("event_scraping_sources", {
   cityCountryIdx: index("scraping_sources_city_country_idx").on(table.city, table.country),
 }));
 
-// 3. Facebook Imports - FB profile data imports
-export const facebookImports = pgTable("facebook_imports", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  facebookId: varchar("facebook_id", { length: 100 }).notNull(),
-  importedData: jsonb("imported_data"),
-  importStatus: varchar("import_status", { length: 20 }).default("pending").notNull(),
-  importedAt: timestamp("imported_at").defaultNow(),
-  matchedEvents: integer("matched_events").default(0),
-  matchedUsers: integer("matched_users").default(0),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-}, (table) => ({
-  userIdx: index("facebook_imports_user_idx").on(table.userId),
-  statusIdx: index("facebook_imports_status_idx").on(table.importStatus),
-  facebookIdIdx: index("facebook_imports_fb_id_idx").on(table.facebookId),
-}));
-
-// 4. Social Posts - Cross-platform posts
+// 3. Social Posts - Cross-platform posts
 export const socialPosts = pgTable("social_posts", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
@@ -8062,19 +8117,7 @@ export const selectEventScrapingSourceSchema = createSelectSchema(eventScrapingS
 export type InsertEventScrapingSource = z.infer<typeof insertEventScrapingSourceSchema>;
 export type SelectEventScrapingSource = typeof eventScrapingSources.$inferSelect;
 
-// 3. Facebook Imports
-export const insertFacebookImportSchema = createInsertSchema(facebookImports)
-  .omit({ id: true, createdAt: true, updatedAt: true, importedAt: true })
-  .extend({
-    facebookId: z.string().min(1).max(100),
-    importedData: z.record(z.any()).optional(),
-    importStatus: z.enum(['pending', 'processing', 'completed', 'failed']),
-  });
-export const selectFacebookImportSchema = createSelectSchema(facebookImports);
-export type InsertFacebookImport = z.infer<typeof insertFacebookImportSchema>;
-export type SelectFacebookImport = typeof facebookImports.$inferSelect;
-
-// 4. Social Posts
+// 3. Social Posts
 export const insertSocialPostSchema = createInsertSchema(socialPosts)
   .omit({ id: true, createdAt: true, updatedAt: true })
   .extend({
@@ -10327,71 +10370,6 @@ export const insertAutonomousTaskFileSchema = createInsertSchema(autonomousTaskF
 export const selectAutonomousTaskFileSchema = createSelectSchema(autonomousTaskFiles);
 export type InsertAutonomousTaskFile = z.infer<typeof insertAutonomousTaskFileSchema>;
 export type SelectAutonomousTaskFile = typeof autonomousTaskFiles.$inferSelect;
-
-// ============================================================================
-// FACEBOOK IMPORT SYSTEM (SYSTEM 0 DATA PIPELINE)
-// ============================================================================
-
-export const facebookImports = pgTable("facebook_imports", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }),
-  accountName: varchar("account_name", { length: 100 }),
-  importDate: timestamp("import_date").defaultNow(),
-  dataType: varchar("data_type", { length: 50 }),
-  jsonData: jsonb("json_data"),
-  status: varchar("status", { length: 20 }).default("pending"),
-  errorMessage: text("error_message"),
-}, (table) => ({
-  userIdx: index("facebook_imports_user_idx").on(table.userId),
-  statusIdx: index("facebook_imports_status_idx").on(table.status),
-  accountIdx: index("facebook_imports_account_idx").on(table.accountName),
-}));
-
-export const insertFacebookImportSchema = createInsertSchema(facebookImports)
-  .omit({ id: true, importDate: true });
-export const selectFacebookImportSchema = createSelectSchema(facebookImports);
-export type InsertFacebookImport = z.infer<typeof insertFacebookImportSchema>;
-export type SelectFacebookImport = typeof facebookImports.$inferSelect;
-
-export const facebookPosts = pgTable("facebook_posts", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }),
-  fbPostId: varchar("fb_post_id", { length: 100 }),
-  content: text("content"),
-  mediaUrls: text("media_urls").array(),
-  likes: integer("likes").default(0),
-  comments: integer("comments").default(0),
-  shares: integer("shares").default(0),
-  createdAt: timestamp("created_at"),
-}, (table) => ({
-  userIdx: index("facebook_posts_user_idx").on(table.userId),
-  fbPostIdIdx: index("facebook_posts_fb_post_id_idx").on(table.fbPostId),
-}));
-
-export const insertFacebookPostSchema = createInsertSchema(facebookPosts)
-  .omit({ id: true });
-export const selectFacebookPostSchema = createSelectSchema(facebookPosts);
-export type InsertFacebookPost = z.infer<typeof insertFacebookPostSchema>;
-export type SelectFacebookPost = typeof facebookPosts.$inferSelect;
-
-export const facebookFriends = pgTable("facebook_friends", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }),
-  friendName: varchar("friend_name", { length: 200 }),
-  friendFbId: varchar("friend_fb_id", { length: 100 }),
-  mutualFriends: integer("mutual_friends").default(0),
-  relationship: varchar("relationship", { length: 50 }),
-  importedAt: timestamp("imported_at").defaultNow(),
-}, (table) => ({
-  userIdx: index("facebook_friends_user_idx").on(table.userId),
-  friendFbIdIdx: index("facebook_friends_fb_id_idx").on(table.friendFbId),
-}));
-
-export const insertFacebookFriendSchema = createInsertSchema(facebookFriends)
-  .omit({ id: true, importedAt: true });
-export const selectFacebookFriendSchema = createSelectSchema(facebookFriends);
-export type InsertFacebookFriend = z.infer<typeof insertFacebookFriendSchema>;
-export type SelectFacebookFriend = typeof facebookFriends.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
