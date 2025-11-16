@@ -24,6 +24,7 @@ import mrBlueRoutes from "./routes/mrBlue";
 import mrBlueStreamRoutes from "./routes/mrblue-stream";
 import mrBlueEnhancedRoutes from "./routes/mr-blue-enhanced";
 import mrBlueAgentsRoutes from "./routes/mrBlueAgents";
+import mrBlueContextRoutes from "./routes/mrblue-context-routes";
 import autonomousRoutes from "./routes/autonomous";
 import premiumMediaRoutes from "./routes/premiumMedia";
 import learningIntelligenceRoutes from "./routes/learningIntelligence";
@@ -453,6 +454,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/mrblue", mrblueVideoRoutes);
   app.use("/api/mrblue", mrBlueStreamRoutes); // Streaming SSE endpoint
   app.use("/api/mrblue", mrBlueRoutes);
+  app.use("/api/mrblue/context", mrBlueContextRoutes); // System 1: Context Service with LanceDB
   app.use(mrBlueEnhancedRoutes); // Enhanced Mr. Blue with troubleshooting KB
   app.use("/api/autonomous", autonomousRoutes); // Mr. Blue Autonomous Agent (God Level)
   app.use("/api/visual-editor", authenticateToken, visualEditorRoutes);
