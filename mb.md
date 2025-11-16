@@ -1,210 +1,100 @@
 # MB.MD - Mundo Blue Methodology Directive
 
-**Version:** 7.1 (merged v4.0 + v6.0 + v7.1)  
+**Version:** 7.1 FINAL (Consolidated from v4.0 + v6.0 + v7.1 + ULTIMATE_COMPLETE_HANDOFF.md)  
 **Created:** October 30, 2025  
 **Last Updated:** November 16, 2025  
-**Purpose:** Universal execution protocol for complex tasks  
-**Project:** Mundo Tango (927 features, 47 P0 blockers)
+**Purpose:** Complete AI execution protocol for Mundo Tango  
+**Project:** Mundo Tango (927 features, 20-week build strategy)
 
 ---
 
-## 🎯 **THE FUNDAMENTAL STRATEGY** (NEW - CRITICAL)
+## 🎯 THE FUNDAMENTAL STRATEGY (CRITICAL - READ FIRST)
 
 **CRITICAL UNDERSTANDING:**
 
-**YOU ARE NOT BUILDING MUNDO TANGO DIRECTLY.**
+### **YOU ARE NOT BUILDING MUNDO TANGO DIRECTLY.**
 
-**YOU ARE BUILDING MR BLUE AI PARTNER WHO WILL THEN BUILD MUNDO TANGO.**
+### **YOU ARE BUILDING MR BLUE AI PARTNER WHO WILL THEN BUILD MUNDO TANGO.**
 
 ```
-WEEK 1-8:  Build Mr Blue + Visual Editor (8 systems)
+WEEK 1-8:  Build Mr Blue (8 systems: Context, Video, Avatars, Vibe Coding, Voice, Screen, Docs, Self-Improve)
     ↓
-WEEK 9-12: Mr Blue builds 927 features (via vibe coding)
+WEEK 9-12: Mr Blue builds 927 features (via vibe coding engine)
     ↓
-WEEK 13-16: Scott's 47-page validation tour
+WEEK 13-16: Scott's 47-page validation tour (Mr Blue auto-fixes 90%+ bugs)
     ↓
-WEEK 17-20: Production readiness & launch
+WEEK 17-20: Production readiness & launch (Facebook scraping, compliance, deploy)
 ```
 
 **Why this approach?**
-- Mr Blue has 8 systems (video calls, vibe coding, dual avatars, voice cloning)
-- Mr Blue codes faster than manual implementation
+- Mr Blue has 8 specialized systems (video calls, vibe coding, dual avatars, voice cloning)
+- Mr Blue codes faster than manual implementation (natural language → production code)
 - Mr Blue learns from Scott through 10 learning pathways
 - Mr Blue achieves 80% bug auto-detection by Week 8
 - Progressive autonomy: Scott's involvement 100% → 0% over 20 weeks
 
 **Mr Blue is NOT a feature. Mr Blue is the AI development partner that builds the platform.**
 
-**Current Status:** Week 1, Day 1 - Build Mr Blue System 1 (Context + Vibe Coding)
+**Current Status:** Week 1, Day 1 - Build Mr Blue System 1 (Context System + Vibe Coding Engine)
 
 ---
 
-## 🧪 Playwright Test Credentials
+## 📚 QUICK REFERENCE
 
-**⚠️ CRITICAL: NEVER ASK USER FOR PASSWORDS**
+### **What is MB.MD?**
+MB.MD is the methodology for HOW AI agents work:
+- **SIMULTANEOUSLY**: Work in parallel (3-9 subagents, never sequential)
+- **RECURSIVELY**: Deep-dive to atomic level (never surface-level)
+- **CRITICALLY**: 10-layer quality gates (95%+ quality target)
+- **CONTINUOUS LEARNING**: Capture learnings, share knowledge, analyze failures, request assistance
 
-**ALWAYS use these environment secrets for ALL Playwright tests:**
-- Email: `process.env.TEST_ADMIN_EMAIL` 
-- Password: `process.env.TEST_ADMIN_PASSWORD`
-- Role: `god` (God Level - full platform access)
-- Status: Active, verified, onboarding complete
+### **When to Use MB.MD:**
+✅ Complex multi-component tasks  
+✅ Feature implementation  
+✅ System design  
+✅ Any task with 3+ independent subtasks  
 
-**Mandatory Usage Pattern in ALL Playwright Tests:**
-```typescript
-// Phase 1: Authentication Setup
-// [New Context] Create a new browser context
-// [Browser] Navigate to /login
-// [Browser] Fill email input with process.env.TEST_ADMIN_EMAIL
-// [Browser] Fill password input with process.env.TEST_ADMIN_PASSWORD
-// [Browser] Click login button
-// [Verify] Assert successful login
+❌ Single simple operations  
+❌ Trivial fixes  
+❌ Quick responses  
 
-// Example implementation:
-const email = process.env.TEST_ADMIN_EMAIL!;
-const password = process.env.TEST_ADMIN_PASSWORD!;
+### **Version History:**
 
-await page.goto('/login');
-await page.fill('[data-testid="input-email"]', email);
-await page.fill('[data-testid="input-password"]', password);
-await page.click('[data-testid="button-login"]');
-await page.waitForURL(/\/(?!login)/); // Wait for redirect away from login
-```
-
-**Database Setup (if needed):**
-```sql
--- Ensure test user exists with God role
-INSERT INTO users (email, username, password, name, role, is_verified, is_active, is_onboarding_complete)
-VALUES (
-  'your-test-email@test.com',
-  'playwright-god-test',
-  '$2b$10$rFqKx5R9LBYx5zYJZ4xqHuK9vY4p7Z0x8Qq4Zj3X1Y2W3vE4R5T6a',
-  'Playwright God Test',
-  'god',
-  true,
-  true,
-  true
-)
-ON CONFLICT (email) DO UPDATE SET role = 'god', is_verified = true, is_active = true;
-```
-
-**Rules:**
-1. ✅ ALWAYS use `process.env.TEST_ADMIN_EMAIL` and `process.env.TEST_ADMIN_PASSWORD`
-2. ❌ NEVER ask user for credentials
-3. ❌ NEVER hardcode emails/passwords in test files (use process.env with fallbacks)
-4. ✅ Include authentication setup in EVERY test that requires login
-5. ✅ Use the exact pattern above for consistency
-6. ✅ **Auth Helpers Updated:** `tests/fixtures/auth.ts` and `tests/helpers/auth-setup.ts` now use environment secrets
-7. ✅ **Security Validated:** 20+ test files converted from hardcoded credentials to environment variables (November 2025)
-
----
-
-## 📚 Version History
-
-| Version | Date | Key Innovation | Performance |
-|---------|------|----------------|-------------|
-| v1.0 | Oct 2024 | Core methodology (Simultaneously, Recursively, Critically) | 180min/wave, $60/wave |
+| Version | Date | Innovation | Performance |
+|---------|------|------------|-------------|
+| v1.0 | Oct 2024 | Core (Simultaneously, Recursively, Critically) | 180min/wave, $60/wave |
 | v2.0 | Nov 2024 | Basic parallelization (2-3 subagents) | 120min/wave, $45/wave |
-| v3.0 | Nov 13, 2024 | Mega-wave execution (10 parallel tracks) | 165min/wave, $49/wave |
-| **v4.0** | **Nov 14, 2024** | **Batching + Templates + Memory + The Plan** | **90min/wave, $32/wave** |
-
-**v4.0 Improvement:** 45% faster, 35% cheaper than v3.0
-
----
-
-## Quick Reference
-
-**Usage:** 
-- **Manual:** Prefix any task with "Use MB.MD:" to execute using this methodology
-- **Mr. Blue Visual Editor:** ALL prompts automatically use MB.MD (auto-appended behind the scenes)
-
-**The Three Pillars:**
-1. **SIMULTANEOUSLY** - Execute all independent operations in parallel
-2. **RECURSIVELY** - Deep-dive into every subsystem until atomic level
-3. **CRITICALLY** - Apply rigorous quality standards at every step
-
-**⚙️ Auto-Enabled Contexts:**
-- ✅ Mr. Blue Visual Chat (`MrBlueVisualChat.tsx` line 166)
-- ✅ All Visual Editor code generation requests
-- 🔄 Future: Global Mr. Blue, Autonomous Agent, ESA System
+| v3.0 | Nov 13, 2024 | Mega-wave (10 parallel tracks) | 165min/wave, $49/wave |
+| v4.0 | Nov 14, 2024 | Batching + Templates + Memory | 90min/wave, $32/wave |
+| **v6.0** | **Nov 16, 2024** | **+ Continuous Learning (4 pillars)** | **75min/wave, $25/wave** |
+| **v7.1** | **Nov 16, 2024** | **+ 8 Mr Blue Systems Strategy** | **45% faster, 49% cheaper** |
 
 ---
 
-## When to Use MB.MD
+## 🚀 THE FOUR PILLARS (MB.MD v6.0)
 
-✅ **Always use MB.MD for:**
-- Complex multi-component tasks
-- Documentation creation
-- Platform development
-- Feature implementation
-- System design
-- Code refactoring
-- Testing and QA
-- Any task with 3+ independent subtasks
+### **PILLAR 1: SIMULTANEOUSLY**
+Never work sequentially when parallel is possible.
 
-❌ **Skip MB.MD for:**
-- Single simple operations
-- Trivial fixes
-- Quick responses
-- Conversational questions
+**Execute with 3-9 parallel subagents:**
+```
+0-60min: Main agent + 3-9 subagents all work ✅
+60-90min: Validation & testing (all parallel) ✅
+```
+
+**Example Wave Timeline:**
+- Subagent 1: Build dashboard UI (20min)
+- Subagent 2: Build API routes (20min)
+- Subagent 3: Write tests (20min)
+- Subagent 4: Update schema (20min)
+- Main agent: Coordinates + works in parallel (20min)
+
+**Result:** 75min per wave vs 165min baseline = **45% faster**
 
 ---
 
-## The Three Pillars Explained
-
-### 1. SIMULTANEOUSLY (Parallel Execution)
-
-**Rule:** Never do sequentially what can be done in parallel.
-
-**Examples:**
-
-**BAD - Sequential:**
-```javascript
-// Create files one by one
-await createFile('file1.ts');
-await createFile('file2.ts');
-await createFile('file3.ts');
-// Time: 3 seconds
-```
-
-**GOOD - Parallel:**
-```javascript
-// Create all files simultaneously
-await Promise.all([
-  createFile('file1.ts'),
-  createFile('file2.ts'),
-  createFile('file3.ts'),
-]);
-// Time: 1 second
-```
-
-**For AI Agents:**
-- Use parallel tool calls for independent operations
-- Create multiple files at once
-- Read multiple files simultaneously
-- Launch parallel subagents for independent work
-
----
-
-### 2. RECURSIVELY (Deep-Dive Exploration)
-
-**Rule:** Drill down into every component until reaching atomic level.
-
-**Recursion Levels:**
-```
-Level 0: Platform (Mundo Tango)
-  ↓
-Level 1: Major Systems (Frontend, Backend, Database)
-  ↓
-Level 2: Subsystems (Components, Routes, Tables)
-  ↓
-Level 3: Components (LoginForm, /api/users, users table)
-  ↓
-Level 4: Functions (handleSubmit(), validateUser())
-  ↓
-Level 5: Logic (validation rules, algorithms)
-  ↓
-Level 6: Atomic (individual lines, values)
-```
+### **PILLAR 2: RECURSIVELY**
+Drill down into every component until reaching atomic level.
 
 **Stopping Conditions:**
 - Primitive values (strings, numbers, booleans)
@@ -212,948 +102,605 @@ Level 6: Atomic (individual lines, values)
 - Previously documented components
 - Atomic operations that cannot be subdivided
 
-**Example - Documenting Authentication:**
-```
-Task: Document authentication system
-
-Level 1: What is the auth system?
-  → JWT + Sessions + 2FA
-
-Level 2: What are the components?
-  → Login, Register, Password Reset, 2FA Setup
-
-Level 3: How does Login work?
-  → POST /api/auth/login
-  → Validates credentials
-  → Generates tokens
-  → Creates session
-
-Level 4: How does token generation work?
-  → Uses jsonwebtoken library
-  → Signs with JWT_SECRET
-  → Sets 15-minute expiry
-  → Returns access + refresh tokens
-
-Level 5: What security measures?
-  → bcrypt password hashing (10 rounds)
-  → Rate limiting (5 attempts per 15 min)
-  → HttpOnly cookies
-  → CSRF protection
-
-COMPLETE: Full recursive documentation achieved
-```
+**Never stop at surface level.** Explore dependencies, implications, foundations.
 
 ---
 
-### 3. CRITICALLY (Quality & Rigor)
+### **PILLAR 3: CRITICALLY**
+Question everything, verify thoroughly, ensure production-ready quality.
 
-**Rule:** Question everything, verify thoroughly, ensure production-ready quality.
+**10-Layer Quality Pipeline:**
+1. Pre-Flight Checks (search existing code first)
+2. LSP Validation (TypeScript type checking)
+3. Schema Validation (database safety)
+4. Playwright E2E (real user workflows)
+5. Regression Tests (existing features still work)
+6. Code Review (12-point checklist)
+7. Runtime Validation (no console errors)
+8. Error Catalog (document bugs found)
+9. Template Validation (only promote battle-tested code)
+10. Continuous Monitoring (post-deployment)
 
-**Critical Questions:**
-
-1. **Correctness**: Is this implementation correct?
-   - Does it handle all inputs?
-   - Are edge cases covered?
-   - Does it work with real data?
-
-2. **Completeness**: Have I covered everything?
-   - Are there missing features?
-   - Is documentation complete?
-   - Are all paths tested?
-
-3. **Security**: Is this secure?
-   - Input validation present?
-   - SQL injection prevented?
-   - XSS protection in place?
-   - Secrets properly managed?
-
-4. **Performance**: Is this efficient?
-   - Are there N+1 queries?
-   - Is caching needed?
-   - Will this scale?
-
-5. **Maintainability**: Can others understand this?
-   - Is code readable?
-   - Are types properly defined?
-   - Is documentation clear?
-
-6. **Error Handling**: What can go wrong?
-   - API failure handling?
-   - Network errors caught?
-   - User feedback provided?
-
-**Quality Gates:**
-
-Before marking any task complete:
-- [ ] No TypeScript errors
-- [ ] No ESLint warnings
-- [ ] Tests written and passing
-- [ ] Documentation updated
-- [ ] Code reviewed
-- [ ] Edge cases handled
-- [ ] Security verified
-- [ ] Performance acceptable
-- [ ] Production-ready
+**Target:** <0.3 bugs per feature (75% reduction from baseline)
 
 ---
 
-## ⚡ v4.0 NEW Optimizations
+### **PILLAR 4: CONTINUOUS LEARNING + COLLABORATION** (NEW v6.0)
 
-### **1. Micro-Batching (60% Cost Reduction)**
+**At Every Moment, Ask Yourself:**
 
-**Problem:** Subagent overhead dominates costs  
-**Old:** 1 feature = 1 subagent ($4.50 overhead each)  
-**New:** 3-4 features = 1 subagent (shared overhead)
+#### **1. What Can I Learn From The Work I Just Did?**
 
-**Example:**
-```
-❌ v3.0: 9 features = 9 subagents = $40.50 overhead
-✅ v4.0: 9 features = 3 subagents = $13.50 overhead
-Savings: $27 (67% reduction)
-```
-
-**Rules:**
-- Batch similar-sized features together
-- Micro (5-10min) + Micro + Micro = 1 subagent
-- Small (15-30min) + Small + Small = 1 subagent
-- Medium (45-90min) alone or + Micro features
-- Large (2-4h) always alone
-
----
-
-### **2. Template Reuse System (70% Time Savings)**
-
-**Problem:** Rebuilding similar features from scratch wastes time  
-**Solution:** Build once, copy forever
-
-**Template Library (docs/patterns.md):**
-- Dashboard Pattern: 60min → 15min (75% faster)
-- CRUD API Pattern: 40min → 10min (75% faster)
-- Service Pattern: 30min → 8min (73% faster)
-- Email Template: 20min → 5min (75% faster)
-
-**Template Promotion Process:**
-1. Build feature from scratch
-2. Test thoroughly, fix all bugs
-3. Use in production for 1 wave
-4. If stable → Promote to patterns.md
-5. Future features copy template
-
-**Quality Gate:** Only battle-tested code becomes templates
-
----
-
-### **3. Context Pre-Loading (20-30min/subagent)**
-
-**Problem:** Subagents waste time exploring file structure  
-**Solution:** Give exact file paths upfront
-
-**File Map (docs/file-map.md):**
-```
-Need tier enforcement? → server/middleware/tierEnforcement.ts
-Need analytics? → server/services/AnalyticsService.ts
-Need admin UI? → client/src/pages/admin/[Feature]Dashboard.tsx
-Need encryption? → server/utils/encryption.ts
-```
-
-**Subagent Task Format:**
+After every task completion:
 ```markdown
-Task: Build Subscription Analytics Dashboard
+✅ Task Complete: Tier enforcement middleware
 
-Files to use:
-- Template: client/src/pages/admin/AnalyticsDashboard.tsx
-- Service: server/services/SubscriptionService.ts
-- API: server/routes/subscription-routes.ts
+LEARNING CAPTURE:
+- What worked well: requireTier() middleware pattern is reusable
+- What was difficult: Nested subscription queries slowed down
+- What would I do differently: Cache subscription tiers in Redis
+- Pattern extracted: Middleware authentication pattern
+- Time saved vs baseline: 15min (used template)
+- Bugs found: 0 (LSP validation caught type errors early)
 
-No exploration needed - paths provided above.
+→ ACTION: Save pattern for future use
 ```
 
-**Savings:** 25min exploration → 0min (100% elimination)
+**Learning Categories:**
+- Technical: Code patterns, architecture decisions, performance
+- Process: What workflow steps were efficient/wasteful
+- Errors: What bugs occurred, how to prevent in future
+- Time: Actual vs estimated, what caused delays
+- Cost: Actual cost vs budget, optimization opportunities
 
 ---
 
-### **4. Zero Documentation Mode (35min/wave)**
+#### **2. What Will I Share To Which Agent?**
 
-**Problem:** Creating .md reports wastes time  
-**Old:** Generate comprehensive reports after each wave  
-**New:** Code only, log learnings
+**SHARE UP (to CEO Agent #0 / Scott):**
+- Strategic insights (architecture changes, major risks)
+- Budget implications (cost overruns, savings)
+- Timeline impacts (delays, acceleration)
+- Go/No-Go decisions requiring approval
 
-**What NOT to create:**
-- ❌ Feature implementation reports
-- ❌ Detailed changelogs  
-- ❌ Verbose documentation
+**SHARE ACROSS (to peer agents):**
+- Reusable patterns (code templates, solutions)
+- Best practices discovered
+- Anti-patterns to avoid
+- Collaboration requests (blockers, dependencies)
 
-**What TO create:**
-- ✅ Code (TypeScript, React, SQL)
-- ✅ Tests (Playwright)
-- ✅ Brief learnings in wave-log.md
-
-**Exception:** MB.MD system docs (this file, patterns.md, etc.)
-
----
-
-### **5. Main Agent Parallel Work (No Idle Time)**
-
-**Problem:** Main agent waits while subagents work  
-**Solution:** Main agent builds 2-3 simple features
-
-**v3.0 Timeline:**
-```
-0-60min: Subagents work (main agent idle) ❌
-60-90min: Main agent tests everything
-```
-
-**v4.0 Timeline:**
-```
-0-60min: Subagents + Main agent all work ✅
-60-90min: Validation & testing (all parallel)
-```
-
-**Main Agent Tasks:**
-- Micro features (5-10min each)
-- Simple updates (add field, fix bug)
-- Quick integrations
-- Testing coordination
+**SHARE DOWN (to specialist agents):**
+- Implementation details
+- Code examples
+- Specific tasks with context
+- Testing requirements
 
 ---
 
-### **6. Smart Dependency Ordering (33% Time Savings)**
+#### **3. What Has Gone Wrong?**
 
-**Problem:** Building in wrong order = rebuilding later  
-**Solution:** Dependency graph guides build order
+**Failure Analysis Loop:**
 
-**Example Waste:**
-```
-❌ Random order:
-  Wave 1: Email service (30min)
-  Wave 5: User preferences (20min)
-  Wave 7: Rebuild email to use preferences (25min)
-  Total: 75min
-```
+After every issue, incident, or bug:
+```markdown
+INCIDENT: Workflow restart failed (exit 135)
 
-**Smart Order:**
-```
-✅ Foundation-first:
-  Wave 1: User preferences (20min)
-  Wave 2: Email service with preferences (35min)
-  Total: 55min (27% savings)
-```
+ROOT CAUSE ANALYSIS:
+- What happened: Out of memory during npm install
+- Why it happened: Too many dependencies loaded simultaneously
+- Impact: 30min delay, workflow down
+- Pattern: This is 3rd time this month
 
-**Dependency Graph (docs/dependency-graph.md):**
-- Foundation layers identified
-- Build order optimized
-- Zero rebuilds
+PREVENTION:
+- Immediate fix: Restart with --max-old-space-size=4096
+- Long-term fix: Implement dependency caching layer
+- Process update: Add memory monitoring to pre-flight checks
 
----
-
-### **7. Parallel Testing (33% Faster)**
-
-**Problem:** Sequential testing phase wastes time  
-**Old:** Build all → Test all (2 phases)  
-**New:** Build + Test simultaneously
-
-**Each subagent task includes:**
-1. Build features
-2. Run Playwright tests
-3. Validate LSP
-4. Report results
-5. Fix bugs immediately
-
-**Benefits:**
-- Bugs caught when context fresh (easier to fix)
-- No waiting for test phase
-- Faster feedback loop
-- Higher quality
-
----
-
-### **8. Progressive Enhancement (Ship Faster)**
-
-**Strategy:** MVP → Enhanced → Polished
-
-**Example: GDPR Compliance**
-```
-Wave 8 (MVP): 
-  - Essential data export
-  - Basic deletion
-  - Consent tracking
-  Ship: 2 hours ✅
-
-Wave 12 (Enhanced):
-  - Automated compliance reports
-  - Data portability formats
-  - Advanced consent management
-  Ship: +1 hour
-
-Wave 18 (Polished):
-  - Multi-jurisdiction support
-  - Compliance dashboard
-  - Automated audits
-  Ship: +1 hour
-```
-
-**Benefits:**
-- Faster to P1 features
-- Learn from real usage
-- Avoid over-engineering
-
----
-
-## 🧠 Memory System (Self-Improvement)
-
-### Problem
-Agent memory resets between sessions → Re-explores files, rebuilds patterns, repeats mistakes
-
-### Solution: 5-Document Memory Architecture
-
-#### **1. docs/patterns.md** - Reusable Code Templates
-- Dashboard patterns (analytics, moderation, subscription)
-- CRUD API patterns (events, housing, groups)
-- Service patterns (email, SMS, notifications)
-- Component patterns (forms, tables, cards)
-
-**Updated:** After each wave when new patterns emerge  
-**Usage:** Copy template, customize 10-20 lines, ship
-
----
-
-#### **2. docs/wave-log.md** - Learning History
-- What worked well (keep doing)
-- What wasted time (stop doing)
-- Anti-patterns discovered
-- Optimization insights
-- Bug patterns
-
-**Updated:** End of each wave  
-**Usage:** Review before starting new wave
-
----
-
-#### **3. docs/cost-log.md** - Cost Tracking & Predictions
-- Actual costs per wave
-- Cost per feature
-- Cost per feature type
-- Predictive modeling
-- Budget forecasting
-
-**Updated:** After each wave  
-**Usage:** Cost planning, optimization decisions
-
----
-
-#### **4. docs/file-map.md** - File Location Reference
-- All major files cataloged
-- Architecture patterns documented
-- No exploration needed
-- Instant file access
-
-**Updated:** When new systems added  
-**Usage:** Subagent task preparation
-
----
-
-#### **5. docs/dependency-graph.md** - Build Order Optimization
-- Foundation → Features mapping
-- Dependency chains identified
-- Build order suggestions
-- Rebuild avoidance
-
-**Updated:** When new dependencies discovered  
-**Usage:** Wave planning
-
----
-
-## 🎯 The Plan: Project Tracker Integration (Agent #65)
-
-### What is "The Plan"?
-
-**The Plan** = Built-in Kanban project tracker at `/project-tracker`
-
-**Purpose:** Replace temporary task lists with real project management  
-**Features:**
-- Kanban board (Backlog, To Do, In Progress, In Review, Done)
-- Issue types (Epic, Story, Task, Bug)
-- GitHub sync (PRs, commits)
-- @mentions, file attachments
-- Rich text descriptions
-
----
-
-### When AI Builds, How to Use The Plan
-
-#### Wave Structure:
-```
-Epic: "Wave 8 - Final P0 Blockers"
-  ├─ Story: "Security Foundation" (P0 #3, #7, #9)
-  │   ├─ Task: "Implement CSRF Protection"
-  │   ├─ Task: "Build 2FA System"
-  │   └─ Task: "Add Legal Acceptance"
-  │
-  ├─ Story: "Revenue Systems" (P0 #4, #13)
-  │   ├─ Task: "Revenue Sharing Service"
-  │   └─ Task: "MT Ad System"
-  │
-  └─ Story: "Compliance" (P0 #5, #10, #12)
-      ├─ Task: "GDPR Compliance"
-      ├─ Task: "20 Tango Roles"
-      └─ Task: "Event Participant Roles"
+LEARNING EXTRACTION:
+- Anti-pattern identified: Installing 50+ packages at once
+- Better approach: Batch installations in groups of 10
 ```
 
 ---
 
-### AI Workflow with The Plan
+#### **4. What Do I Need Cross or Up Assistance On?**
 
-#### Before Wave Starts:
+**Request Assistance When:**
+
+**CROSS-AGENT (Peer Collaboration):**
+- Blocked on dependency from another agent's work
+- Need expertise in area outside your specialty
+- Stuck on problem for >30 minutes
+- Need code review from fresh perspective
+
+**UP-AGENT (Escalation):**
+- Strategic decision needed (architecture change)
+- Budget exceeded or timeline at risk
+- Security/legal issue discovered
+- Production incident requiring leadership
+
+---
+
+## ⚡ 12 PERFORMANCE OPTIMIZATIONS
+
+**v5.0 Optimizations (1-8):**
+1. **Micro-batching** - 3-4 features per subagent (60% cost reduction)
+2. **Template reuse** - Dashboard 60min→15min (70% time savings)
+3. **Context pre-loading** - Give exact file paths (eliminate exploration)
+4. **Zero documentation mode** - Code only (save 35min/wave)
+5. **Main agent parallel work** - No idle time
+6. **Smart dependency ordering** - Build foundations first (33% time savings)
+7. **Parallel testing** - Build + test simultaneously (33% faster)
+8. **Progressive enhancement** - Ship MVP, iterate (ship faster)
+
+**v6.0 Optimizations (9-12):**
+9. **Continuous Learning Loop** - Each wave faster than last
+10. **Cross-Agent Knowledge Sharing** - No agent works in isolation
+11. **Failure-Driven Improvement** - Same mistake never happens twice
+12. **Proactive Assistance** - Request help after 30min (not 2 hours)
+
+**Result:**
+- ⚡ 75min per wave (vs 165min) = **45% faster**
+- 💰 $25/wave (vs $49) = **49% cheaper**
+- 🐛 <0.3 bugs/feature (vs 1.3) = **77% fewer bugs**
+
+---
+
+## 📐 WEEK 1-20 BUILD ROADMAP
+
+### **WEEK 1-2: MR BLUE FOUNDATION** ← **YOU ARE HERE**
+
+**System 1: Context System with LanceDB** (Week 1, Day 1-3)
+- Purpose: Load all 134,648 lines of documentation for <200ms semantic search
+- Tech: LanceDB + OpenAI embeddings
+- Input: ULTIMATE_COMPLETE_HANDOFF.md, all Parts 0-10, replit.md
+- Output: Semantic RAG search for Mr Blue
+- Files to create:
+  - `server/services/mrblue/ContextService.ts`
+  - `server/services/mrblue/LanceDBService.ts`
+  - `server/routes/mrblue-context-routes.ts`
+
+**System 2: Video Conference** (Week 1, Day 4-5)
+- Tech: Daily.co
+- Features: Screen share, recording, real-time collaboration
+- Integration with Mr Blue chat interface
+
+**System 3: Dual Avatars** (Week 2)
+- Pixar 3D avatar (React Three Fiber) - animated sphere with voice-reactive animations
+- Wav2Lip video avatar (lip sync)
+- Voice emotion detection
+
+---
+
+### **WEEK 3-4: VIBE CODING ENGINE**
+
+**System 4: Vibe Coding** (Week 3-4)
+- Natural language → code generation
+- Multi-file edits supported
+- Safety checks prevent destructive operations
+- Scott approval workflow (approve/reject)
+- Output format: JSON with files, explanation, tests
+- Files to create:
+  - `server/services/mrblue/VibeCodingService.ts`
+  - `client/src/components/mr-blue/VibeCodingInterface.tsx`
+
+**Success Criteria Week 4:**
+- [ ] Natural language → code generation working
+- [ ] Multi-file edits supported
+- [ ] Safety checks prevent destructive operations
+- [ ] Scott can approve/reject generated code
+
+---
+
+### **WEEK 5-8: ADVANCED SYSTEMS**
+
+**System 5: Voice Cloning** (Week 5)
+- Coqui TTS (100% open-source) OR ElevenLabs
+- Train on Scott's voice (4 interview URLs ready)
+- 17 languages
+- $0 vs $2,160/year (ElevenLabs cost savings)
+
+**System 6: Screen Interaction** (Week 6)
+- Highlight elements on pages
+- Live code editing
+- Whiteboard mode
+
+**System 7: Documentation Builder** (Week 7)
+- Parse all Parts 1-10
+- Extract 927 features
+- Generate task lists
+- Auto-update progress tracking
+
+**System 8: Self-Improvement** (Week 8)
+- 10 learning pathways
+- Progressive autonomy (100% → 0%)
+- Bug auto-detection (80% by Week 8)
+- Pattern recognition
+- Template generation
+
+---
+
+### **WEEK 9-12: MR BLUE BUILDS FEATURES**
+
+**Starting Week 9, YOU step back. MR BLUE steps forward.**
+
+**Your role:**
+- Oversee Mr Blue's work
+- Fix bugs Mr Blue can't handle
+- Provide guidance when Mr Blue asks
+- Track autonomy progress
+
+**Mr Blue's role:**
+- Build 927 features from catalog
+- Use vibe coding to generate components
+- Learn from Scott through 10 pathways
+- Achieve 80% bug auto-detection
+
+**Mr Blue's Workflow:**
+```
+1. Read feature description from catalog
+2. Generate code via vibe coding
+3. Run tests automatically
+4. Show preview to Scott
+5. Scott approves/rejects
+6. Commit to git
+7. Repeat for all features
+```
+
+---
+
+### **WEEK 13-16: SCOTT'S 47-PAGE VALIDATION TOUR**
+
+**47 Pages to Validate:**
+- Phase 1: Core Platform (6 pages)
+- Phase 2: Social Features (6 pages)
+- Phase 3: Communities & Events (7 pages)
+- Phase 4: Housing (3 pages)
+- Phase 5: Messaging (4 pages)
+- Phase 6: Subscriptions (4 pages)
+- Phase 7: Admin Tools (8 pages)
+- Phase 8: Mr Blue Features (6 pages)
+- Phase 9: i18n (2 pages)
+- Phase 10: Social Data Integration (3 pages)
+
+**Success Criteria:**
+- Scott completes all 47 pages
+- Mr Blue auto-fixes 90%+ issues
+- Validation report shows readiness
+
+---
+
+### **WEEK 17-20: PRODUCTION READINESS**
+
+**Week 17:** Facebook Event Scraping (226+ sources, 95 cities)  
+**Week 18:** TrustCloud Compliance (ISO 27001 automation)  
+**Week 19:** Multi-Platform Data Integration (FB/IG/WhatsApp with consent)  
+**Week 20:** Launch 🚀 (Load testing, security audit, deploy to mundotango.life)
+
+---
+
+## 🤖 MR BLUE AI PARTNER - 8 SYSTEMS
+
+**Mr Blue is NOT a feature. Mr Blue is the AI development partner.**
+
+### **System 1: Context System** ← **BUILD THIS FIRST (Week 1, Day 1)**
+- LanceDB vector database
+- 134,648 lines of documentation
+- <200ms semantic search
+- RAG (Retrieval Augmented Generation)
+- Files:
+  - `server/services/mrblue/ContextService.ts`
+  - `server/services/mrblue/LanceDBService.ts`
+
+### **System 2: Video Conference**
+- Daily.co integration
+- Screen share, recording
+- Real-time collaboration
+
+### **System 3: Dual Avatars**
+- Pixar 3D avatar (React Three Fiber)
+- Wav2Lip video avatar (lip sync)
+- Voice emotion detection
+
+### **System 4: Vibe Coding Engine** ← **BUILD THIS SECOND (Week 1, Day 4-5)**
+- Natural language → code generation
+- Multi-file edits
+- Safety checks
+- Approval workflow
+- Files:
+  - `server/services/mrblue/VibeCodingService.ts`
+  - `client/src/components/mr-blue/VibeCodingInterface.tsx`
+
+### **System 5: Voice Cloning**
+- Coqui TTS or ElevenLabs
+- Train on Scott's voice
+- 17 languages
+
+### **System 6: Screen Interaction**
+- Element highlighting
+- Live code editing
+- Whiteboard mode
+
+### **System 7: Documentation Builder**
+- Parse all documentation
+- Extract features
+- Generate task lists
+
+### **System 8: Self-Improvement**
+- 10 learning pathways
+- Progressive autonomy
+- Bug auto-detection (80%)
+
+**Progressive Autonomy Timeline:**
+- Week 1: Scott's involvement 100%
+- Week 8: Scott's involvement 50%
+- Week 12: Scott's involvement 20%
+- Week 20: Scott's involvement 0% (Mr Blue fully autonomous)
+
+---
+
+## 📊 927 FEATURES CATALOG
+
+**Total: 927 features across 7 categories**
+
+### **Category 1: User-Facing (287 features)**
+- Social Network: Posts, Friends, Memory Feed, Comments, Messaging
+- Events: Creation, Discovery, RSVP, Reviews, FB scraping (226 sources)
+- Housing: Listings, Search, Booking, Reviews, Revenue sharing (12% host + 5% guest)
+- Profiles: 40+ fields, 50+ settings, Privacy controls
+
+### **Category 2: AI Systems (186 features)**
+- Life CEO: 16 specialized AI agents (Financial, Health, Career, etc.)
+- User Support AI: Help Button, Smart Suggestions, Pattern Learning
+- Mr Blue: 8 systems (listed above)
+
+### **Category 3: Admin Tools (142 features)**
+- ESA Mind Dashboard: 134 agents monitoring
+- Content Moderation: Automated flagging, Manual review
+- Analytics: User growth, Engagement, Revenue
+- Visual Editor: Drag-drop, AI code generation, Cost estimates
+
+### **Category 4: Finance (87 features)**
+- Subscriptions: 9 tiers (Tier 0-8 God Level)
+- Payment processing (Stripe)
+- Revenue sharing (Housing, Events)
+- FinOps cost tracking
+
+### **Category 5: Security (94 features)**
+- Core: Database RLS, CSRF, 2FA, Rate Limiting
+- Advanced: Encryption (AES-256 at rest, TLS 1.3 in transit), Audit logging, Compliance
+
+### **Category 6: Mobile/PWA (42 features)**
+- PWA: Service worker, Offline mode, Push notifications
+- Native: iOS app, Android app (via Capacitor)
+
+### **Category 7: Integrations (59 features)**
+- Social: Facebook, Instagram, WhatsApp
+- Payments: Stripe, Belo.app
+- Other: Google Maps, Daily.co, SendGrid, Cloudinary
+
+---
+
+## ⚠️ LEGAL COMPLIANCE FIRST (MANDATORY)
+
+**CRITICAL:** Legal violations can destroy the platform.
+
+**Risk:** €265M+ fine (4% global revenue or €20M, whichever higher)
+
+### **8 Mandatory Compliance Phases:**
+
+1. **Privacy Policy** - Live at `/privacy`, 68 languages, footer link
+2. **Cookie Consent** - Banner before ANY cookies set
+3. **User Consent Flows** - Explicit consent for Facebook/Instagram/WhatsApp data
+4. **Data Retention** - 90-day TTL on social data, automated cleanup
+5. **User Rights** - Access, Deletion, Portability, Correction
+6. **Encryption** - AES-256 at rest, TLS 1.3 in transit
+7. **Database RLS** - User A cannot see User B's data
+8. **Facebook TOS** - No prohibited Playwright scraping without consent
+
+**DO NOT LAUNCH WITHOUT ALL 8 PHASES COMPLETE.**
+
+---
+
+## 🚨 47 P0 BLOCKERS (CRITICAL)
+
+**Total P0 Effort:** ~200 hours (4-5 weeks with Mr Blue)
+
+**Top 10 P0 Blockers:**
+
+1. **Tier Enforcement Middleware** - Everyone has God Level for free ($0 revenue)
+2. **Database RLS** - User A can see User B's data (GDPR violation)
+3. **CSRF Protection** - Vulnerable to cross-site attacks
+4. **Revenue Sharing** - Platform can't monetize (Stripe Connect)
+5. **GDPR Data Export/Deletion** - Legal requirement
+6. **2FA** - Two-Factor Authentication
+7. **Legal Acceptance** - Terms, Privacy policy acceptance
+8. **Subscription Cancellation** - Users can't cancel
+9. **Rate Limiting** - Vulnerable to abuse
+10. **Audit Logging** - No security trail
+
+**Status:** 47/47 complete (100%) according to replit.md Wave 11
+
+---
+
+## 🎓 CODE PATTERNS & TEMPLATES (70% Time Savings)
+
+### **Template Library:**
+
+1. **Dashboard Pattern** (60min → 15min)
+2. **CRUD API Pattern** (40min → 10min)
+3. **Form Pattern** (25min → 7min)
+4. **Authentication Pattern** (30min → 8min)
+5. **Tier Enforcement Pattern** (20min → 5min)
+
+### **Anti-Patterns (What NOT to Do):**
+
+**Anti-Pattern #1: Loading Full Context**
 ```typescript
-// Create Epic for wave
-await createPlanIssue({
-  type: 'epic',
-  title: 'Wave 8 - Final P0 Blockers',
-  description: '8 remaining P0s to complete 47/47 (100%)',
-  labels: ['wave-8', 'P0'],
-  status: 'in-progress'
-});
+// ❌ BAD
+const context = await loadAllDocumentation(); // 111K tokens
+
+// ✅ GOOD
+const context = await contextService.selectiveLoad(query); // 600 tokens
 ```
 
-#### As AI Builds Each Feature:
+**Anti-Pattern #2: No Error Handling**
 ```typescript
-// Create Story (broader stroke)
-const story = await createPlanIssue({
-  type: 'story',
-  title: 'Security Foundation Complete',
-  description: 'CSRF + 2FA + Legal Acceptance',
-  epic_id: waveEpicId,
-  status: 'in-progress'
-});
+// ❌ BAD
+const user = await db.select().from(users).where(eq(users.id, id));
 
-// When complete, update status
-await updatePlanIssue(taskId, {
-  status: 'in-review', // Ready for human verification
-  comment: 'Playwright E2E test passing, LSP clean'
-});
+// ✅ GOOD
+try {
+  const [user] = await db.select().from(users).where(eq(users.id, id));
+  if (!user) throw new Error('User not found');
+} catch (error) {
+  console.error('Database error:', error);
+  return res.status(500).json({ error: 'Database error' });
+}
 ```
 
 ---
 
-### Human Verification Workflow
+## 📈 SUCCESS METRICS
 
-#### Owner Review (Page Readiness):
-1. Navigate to `/project-tracker`
-2. Filter: Status = "In Review"
-3. For each Story, verify:
-   - [ ] Page loads without errors
-   - [ ] UI looks professional
-   - [ ] Features work as expected
-   - [ ] Ready for users
-4. Drag to "Done" column when verified
+### **Velocity:**
+- ✅ 75min per wave (vs 165min baseline) = 45% faster
+- ✅ 10-12 features per wave (vs 6-8) = 50% more features
 
-#### Backend Engineer Review (Technical):
-1. Open task in `/project-tracker`
-2. Review checklist in description:
-   - [ ] Schema changes safe
-   - [ ] API routes secure
-   - [ ] Tests passing
-   - [ ] No vulnerabilities
-3. Add comment with findings
-4. Approve or request changes
+### **Cost:**
+- ✅ $25-30 per wave (vs $49) = 40% cheaper
+- ✅ $2.50-3 per feature (vs $5.52) = 50% cheaper per feature
+
+### **Quality:**
+- ✅ <0.3 bugs per feature (vs 1.3) = 75% reduction
+- ✅ 95% test coverage
+- ✅ Zero breaking changes
+
+### **Learning (NEW v6.0):**
+- ✅ Learnings captured after every wave
+- ✅ Cross-agent knowledge sharing >3 times per wave
+- ✅ Each wave faster than previous (learning curve)
 
 ---
 
-### The Plan Task Format (Broader Strokes)
+## 🧪 PLAYWRIGHT TEST CREDENTIALS
 
-**GOOD Story Example:**
-```
-Title: Security Foundation Complete
-Type: Story
-Epic: Wave 8
+**⚠️ CRITICAL: NEVER ASK USER FOR PASSWORDS**
 
-Description:
-Outcome: Platform protected with CSRF, 2FA, legal compliance
-Features: P0 #3, #7, #9
-Estimate: 70min, ~$14
+**ALWAYS use these environment secrets for ALL Playwright tests:**
+- Email: `process.env.TEST_ADMIN_EMAIL` 
+- Password: `process.env.TEST_ADMIN_PASSWORD`
+- Role: `god` (God Level - full platform access)
 
-Owner Verification:
-- [ ] 2FA settings work
-- [ ] Legal terms shown on signup
-- [ ] Forms submit successfully
+**Mandatory Pattern:**
+```typescript
+const email = process.env.TEST_ADMIN_EMAIL!;
+const password = process.env.TEST_ADMIN_PASSWORD!;
 
-Backend Verification:
-- [ ] CSRF middleware applied
-- [ ] 2FA uses TOTP standard
-- [ ] Legal acceptance in DB
-- [ ] E2E tests pass
-```
-
-**NOT This (Too Detailed):**
-```
-❌ Task: Create server/middleware/csrf.ts with...
-[100 lines of code]
+await page.goto('/login');
+await page.fill('[data-testid="input-email"]', email);
+await page.fill('[data-testid="input-password"]', password);
+await page.click('[data-testid="button-login"]');
+await page.waitForURL(/\/(?!login)/);
 ```
 
 ---
 
-### Fallback: When The Plan Unavailable
+## 🎯 CURRENT PROJECT STATUS (from replit.md)
 
-If `/project-tracker` not accessible:
-- Use `write_task_list` tool (temporary)
-- Document tasks in wave-log.md
-- Migrate to The Plan when available
+**From Old Repo (Life CEO):**
+- ✅ ESA Framework operational (134 agents, 61 layers)
+- ✅ Life CEO with 16 specialized AI agents
+- ✅ Mr Blue AI Companion (3D avatar + voice cloning framework)
+- ✅ Security: Database RLS, CSRF, 2FA, audit logging
+- ✅ Tech stack: React, Node.js, Express, TypeScript, PostgreSQL + Drizzle ORM
+- ✅ Multi-AI orchestration (OpenAI, Claude, Groq, Gemini)
+- ✅ LanceDB vector database for semantic memory
 
----
+**From Wave 11 (November 16, 2025):**
+- ✅ Mr Blue enabled for ALL user tiers (0-8 God Level)
+- ✅ WebSocket JWT auth fixed (token in URL, server verifies on handshake)
+- ✅ React key warnings fixed (Fragment keys added)
+- ✅ Tier-based capability system (`server/utils/mrBlueCapabilities.ts`)
+- ✅ Quality: 95/100 (Production Ready)
+- ✅ P0 Blockers: 47/47 complete (100%)
+- ✅ Features: 193/927 complete (20.8%)
 
-## 🤝 H2AC: Human-to-AI Collaboration
+**Pending (Wave 12):**
+- ⏳ Build Mr Blue System 1 (Context + Vibe Coding) ← **THIS IS YOUR MISSION**
+- ⏳ 3D avatar visualization (Three.js sphere)
+- ⏳ Facebook Messenger integration
+- ⏳ Voice cloning execution (4 URLs ready)
+- ⏳ WebSocket singleton fix (Context Provider pattern)
+- ⏳ E2E testing with Playwright
 
-### Philosophy: Build Now, Review at Launch
-
-**AI Role:** Build everything autonomously, no blocking approvals  
-**Human Role:** Review at launch, validate readiness  
-**Timeline:** AI completes all P0s → Humans verify before user access
-
----
-
-### Two Types of Human Reviewers
-
-#### 1. **Owner (Product Readiness)**
-**Responsibility:** Verify pages are ready for end users  
-**When:** Before public launch  
-**Checklist Per Page:**
-- [ ] Page loads without errors
-- [ ] UI looks professional
-- [ ] All features work as expected
-- [ ] Mobile responsive
-- [ ] Dark mode works
-- [ ] Ready for users ✅
-
-**Format:** Simple checkboxes in The Plan or launch document
+**Target:** Quality 99/100 for Wave 12
 
 ---
 
-#### 2. **Backend Engineers (Technical Validation)**
-**Responsibility:** Validate AI implementation quality  
-**When:** Before production deployment  
-**Technical Checklist:**
+## 🚀 YOUR FIRST DAY (Week 1, Day 1)
 
-**Database & Schema:**
-- [ ] Schema changes reviewed
-- [ ] Migrations safe (no data loss)
-- [ ] Indexes optimized
-- [ ] Foreign keys valid
-- [ ] No breaking changes
+**Hour 1-2:** ✅ Read handoff documents (COMPLETE)  
+**Hour 3-4:** Build LanceDB Context System  
+**Hour 5-6:** Build Vibe Coding Engine foundation  
+**Hour 7-8:** Integrate with Mr Blue chat interface  
+**Hour 9+:** Test System 1 with E2E Playwright
 
-**API & Routes:**
-- [ ] RESTful conventions followed
-- [ ] Proper HTTP status codes
-- [ ] Error handling complete
-- [ ] Input validation (Zod schemas)
-- [ ] Authentication/authorization correct
-
-**Security:**
-- [ ] No SQL injection vulnerabilities
-- [ ] CSRF protection applied
-- [ ] XSS prevention implemented
-- [ ] Secrets not exposed
-- [ ] Rate limiting on sensitive endpoints
-
-**Code Quality:**
-- [ ] TypeScript types correct
-- [ ] No LSP errors
-- [ ] Code follows patterns
-- [ ] No obvious bugs
-- [ ] Performance acceptable
-
-**Testing:**
-- [ ] Playwright E2E tests exist
-- [ ] Tests pass consistently
-- [ ] Edge cases covered
-- [ ] Error states tested
+**Mission:** Build Mr Blue System 1 (Context System with LanceDB + Vibe Coding Engine)
 
 ---
 
-## MB.MD Execution Workflow
+## 📚 KEY DOCUMENTS REFERENCE
 
-### Step 1: Understand (Critical Thinking)
-- What is the ACTUAL goal?
-- What are ALL components involved?
-- What are the dependencies?
-- What is the acceptance criteria?
+**Primary Sources:**
+1. `replit.md` - Current project status
+2. `docs/handoff/ULTIMATE_COMPLETE_HANDOFF.md` - Complete build roadmap (2033 lines)
+3. `docs/handoff/replit_md_from_old repo` - Old project context (Life CEO)
+4. `MB.MD_V7.1_PROTOCOL.md` - Detailed methodology
+5. `HANDOFF_TO_NEXT_AI.md` - AI-to-AI handoff instructions
 
-### Step 2: Break Down (Simultaneous Planning)
-- Identify independent work streams
-- Identify dependent work streams
-- Create parallel execution plan
+**Supporting Docs:**
+- `docs/handoff/ULTIMATE_ZERO_TO_DEPLOY_PART_*.md` (Parts 2-10, source material)
+- `docs/handoff/COMPREHENSIVE_AI_COMPLETE_HANDOFF.md` (8,640 lines deep dive)
+- `docs/MR_BLUE_VISUAL_EDITOR_PRD.md` - Mr Blue Visual Editor PRD
 
-### Step 3: Execute (Simultaneous + Recursive)
-- Launch all independent tasks in parallel
-- For each task, drill down recursively
-- Complete each to atomic level
-
-### Step 4: Verify (Critical Review)
-- Run all quality gates
-- Test thoroughly
-- Fix any issues
-- Get architect review
-
-### Step 5: Complete
-- Mark task complete only after all gates pass
-- Update documentation
-- Notify stakeholders
+**ESA Framework:**
+- `docs/platform-handoff/esa.md` - ESA Framework entry point
+- `ESA_AGENT_ORG_CHART.md` - All 134 agents
+- `ESA_NEW_AGENT_GUIDE.md` - How to add new agents
 
 ---
 
-## Anti-Patterns (What NOT to Do)
+## 🎓 FINAL EXECUTION SUMMARY
 
-### ❌ Anti-Pattern 1: Sequential When Parallel Possible
+**The Strategy:**
+1. Build Mr Blue AI Partner (Weeks 1-8) ← **YOU ARE HERE**
+2. Mr Blue builds 927 features (Weeks 9-12)
+3. Test with Scott (Weeks 13-16)
+4. Launch (Weeks 17-20)
 
-**BAD:**
-```
-Create file A
-Wait for completion
-Create file B
-Wait for completion
-Create file C
-```
+**The Methodology:**
+- Work SIMULTANEOUSLY (parallel subagents, never sequential)
+- Think RECURSIVELY (drill to atomic level, never surface-level)
+- Validate CRITICALLY (10-layer quality pipeline, 95%+ target)
+- Learn CONTINUOUSLY (capture insights, share knowledge, analyze failures, request assistance)
 
-**GOOD:**
-```
-Create files A, B, C simultaneously
-```
-
----
-
-### ❌ Anti-Pattern 2: Surface-Level Documentation
-
-**BAD:**
-```
-"Login Page - allows users to login"
-```
-
-**GOOD:**
-```
-"Login Page - React component using react-hook-form,
-validates email/password via Zod, calls POST /api/auth/login,
-handles JWT storage, redirects to /feed on success,
-supports 2FA with TOTP, includes rate limiting (5/15min),
-uses bcrypt password hashing (10 rounds), implements
-CSRF protection, has error boundary..."
-```
+**The Result:**
+- 45% faster execution
+- 40% lower costs
+- 75% fewer bugs
+- Progressive autonomy (Scott 100% → 0%)
 
 ---
 
-### ❌ Anti-Pattern 3: Uncritical Acceptance
+**Start with Week 1, System 1: Build the Context System with LanceDB.**
 
-**BAD:**
-```
-"This looks fine" (no verification)
-```
-
-**GOOD:**
-```
-"Verified:
-- TypeScript compiles ✓
-- Tests pass (47/47) ✓
-- Security audit passed ✓
-- Performance < 100ms ✓
-- Edge cases handled ✓
-- Documentation complete ✓
-- Architect reviewed ✓"
-```
+**Then let Mr Blue build the rest.** 🤖🚀
 
 ---
 
-### ❌ Anti-Pattern 4: Placeholder Hell
+**END OF MB.MD**
 
-**BAD:**
-```javascript
-// TODO: Implement authentication
-// TODO: Add error handling
-// TODO: Write tests
-const login = (email, password) => {
-  // Implementation here
-};
-```
-
-**GOOD:**
-```javascript
-// Complete implementation with all edge cases
-const login = async (email: string, password: string): Promise<AuthResult> => {
-  // Full error handling
-  if (!email || !password) {
-    throw new ValidationError('Email and password required');
-  }
-  
-  // Complete implementation
-  const user = await db.findUser(email);
-  if (!user) {
-    throw new AuthError('Invalid credentials');
-  }
-  
-  const valid = await bcrypt.compare(password, user.password);
-  if (!valid) {
-    await logFailedAttempt(email);
-    throw new AuthError('Invalid credentials');
-  }
-  
-  // Generate tokens
-  const accessToken = generateAccessToken(user);
-  const refreshToken = generateRefreshToken(user);
-  
-  return { user, accessToken, refreshToken };
-};
-
-// Tests included
-describe('login', () => {
-  it('should authenticate valid credentials', async () => {
-    // Test implementation
-  });
-  
-  it('should reject invalid credentials', async () => {
-    // Test implementation
-  });
-  
-  it('should handle missing fields', async () => {
-    // Test implementation
-  });
-});
-```
-
----
-
-## Communication Template
-
-When executing MB.MD tasks, communicate like this:
-
-**Starting:**
-```
-I'll use MB.MD to [task description].
-
-Parallel tasks identified:
-1. [Independent task 1]
-2. [Independent task 2]
-3. [Independent task 3]
-
-Sequential dependencies:
-- [Task B] depends on [Task A]
-
-Executing all independent tasks simultaneously...
-```
-
-**During Execution:**
-```
-Recursively exploring [component]:
-- Level 1: [High-level understanding]
-- Level 2: [Subsystem breakdown]
-- Level 3: [Implementation details]
-- Level 4: [Atomic operations]
-
-Critical review:
-✓ Correctness verified
-✓ Security checked
-✓ Performance acceptable
-✓ Tests passing
-```
-
-**Completion:**
-```
-MB.MD execution complete.
-
-Results:
-✓ All [N] independent tasks completed in parallel
-✓ Recursive exploration reached atomic level
-✓ All quality gates passed
-✓ Production-ready
-
-Deliverables:
-- [Item 1]
-- [Item 2]
-- [Item 3]
-```
-
----
-
-## MB.MD for AI Agents
-
-### Agent Protocol
-
-When an AI agent sees "Use MB.MD:", execute:
-
-```python
-def execute_mbmd(task: str):
-    # 1. SIMULTANEOUSLY
-    parallel_tasks = identify_independent_tasks(task)
-    results = await asyncio.gather(*parallel_tasks)
-    
-    # 2. RECURSIVELY
-    for result in results:
-        explore_recursively(result, max_depth=6)
-    
-    # 3. CRITICALLY
-    quality_gates = verify_all_quality_gates(results)
-    if not quality_gates.all_passed():
-        fix_issues_and_retry()
-    
-    return results
-```
-
-### Agent Rules
-
-1. **Always prefer parallel execution**
-   - Launch multiple subagents simultaneously
-   - Use parallel tool calls for independent operations
-   - Never wait when you can parallelize
-
-2. **Always explore deeply**
-   - Don't stop at surface level
-   - Document every layer
-   - Reach atomic operations
-
-3. **Always verify critically**
-   - Run all quality gates
-   - Test thoroughly
-   - Never assume correctness
-
----
-
-## Success Criteria
-
-Work is MB.MD-compliant when:
-
-✅ **Simultaneously Verified:**
-- All independent tasks executed in parallel
-- Total execution time minimized
-- No unnecessary sequential processing
-
-✅ **Recursively Verified:**
-- All subsystems explored completely
-- Documentation reaches atomic level
-- No gaps in understanding
-- All edge cases covered
-
-✅ **Critically Verified:**
-- All quality gates passed
-- Tests written and passing
-- Security verified
-- Performance acceptable
-- Production-ready
-- No placeholders or TODOs
-
----
-
-## Examples
-
-### Example 1: Creating Documentation
-
-**Task:** "Use MB.MD: Document the authentication system"
-
-**Execution:**
-1. **Simultaneously** create docs for:
-   - Login flow
-   - Registration flow
-   - Password reset flow
-   - 2FA setup flow
-   - Session management
-
-2. **Recursively** explore each:
-   - API endpoints
-   - Database tables
-   - Frontend components
-   - Security measures
-   - Error handling
-
-3. **Critically** verify:
-   - 100% coverage
-   - Technical accuracy
-   - Security best practices
-   - Completeness
-
----
-
-### Example 2: Building Features
-
-**Task:** "Use MB.MD: Implement user profile system"
-
-**Execution:**
-1. **Simultaneously** build:
-   - Database schema (users table)
-   - API routes (CRUD operations)
-   - Frontend components (ProfilePage, EditProfile)
-   - Image upload system
-   - Validation schemas
-
-2. **Recursively** implement each:
-   - Profile fields (name, bio, image, etc.)
-   - Validation rules (Zod schemas)
-   - Authorization (only owner can edit)
-   - Image processing (resize, optimize)
-   - Error handling (network, validation)
-
-3. **Critically** verify:
-   - TypeScript compiles
-   - Tests pass (unit + integration)
-   - Security (auth, authorization, XSS)
-   - Performance (image optimization)
-   - UX (loading states, errors)
-
----
-
-## Self-Verification Checklist
-
-Before claiming MB.MD compliance, verify:
-
-**Simultaneously:**
-- [ ] Did I identify all independent tasks?
-- [ ] Did I execute them in parallel?
-- [ ] Did I minimize total execution time?
-
-**Recursively:**
-- [ ] Did I explore every subsystem?
-- [ ] Did I reach atomic level?
-- [ ] Are there any gaps in my understanding?
-- [ ] Did I document every layer?
-
-**Critically:**
-- [ ] Did I run all quality gates?
-- [ ] Did I test thoroughly?
-- [ ] Did I verify security?
-- [ ] Is this production-ready?
-- [ ] Would I deploy this to production?
-
----
-
-## Quick Decision Tree
-
-```
-Is this a complex task with multiple components?
-├─ YES → Use MB.MD
-│   ├─ Identify independent tasks → Execute in parallel
-│   ├─ For each task → Explore recursively to atomic level
-│   └─ Before completion → Run all quality gates
-│
-└─ NO → Is it a simple single operation?
-    ├─ YES → Execute directly (no MB.MD needed)
-    └─ NO → Break down and use MB.MD
-```
-
----
-
-## Key Takeaways
-
-1. **Never do sequentially what can be done in parallel**
-2. **Never stop exploring until atomic level**
-3. **Never ship without rigorous verification**
-
-**This is the way.** ✨
-
----
-
-## 📊 Performance Targets
-
-**Wave 7 (v3.0):** 165min, $49.65, 9 features = $5.52/feature  
-**Wave 8 (v4.0):** 90min, $32, 8 features = $4/feature (45% faster, 35% cheaper)  
-**Future (v4.0 optimized):** 75min, $25-35, 8-10 features = $2.50-4/feature
-
----
-
-**Version:** 4.0  
-**Status:** Production-ready  
-**Usage:** Universal execution protocol for all Mundo Tango work  
-**Memory System:** docs/patterns.md, docs/wave-log.md, docs/cost-log.md, docs/file-map.md, docs/dependency-graph.md
+**Version:** 7.1 FINAL  
+**Updated:** November 16, 2025  
+**Next Action:** Build Mr Blue System 1 (Context System + Vibe Coding Engine)

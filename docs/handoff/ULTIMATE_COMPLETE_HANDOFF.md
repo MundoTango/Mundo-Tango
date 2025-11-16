@@ -370,23 +370,23 @@ import { useState, useEffect } from 'react';
 
 export function CookieConsentBanner() {
   const [show, setShow] = useState(false);
-
+  
   useEffect(() => {
     const consent = localStorage.getItem('cookie-consent');
     if (!consent) setShow(true);
   }, []);
-
+  
   const acceptAll = () => {
     localStorage.setItem('cookie-consent', 'all');
     enableAnalytics();
     setShow(false);
   };
-
+  
   const rejectNonEssential = () => {
     localStorage.setItem('cookie-consent', 'essential-only');
     setShow(false);
   };
-
+  
   return show ? (
     <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t p-4">
       <p>We use cookies to enhance your experience...</p>
@@ -475,14 +475,14 @@ import { lt } from 'drizzle-orm';
 export async function cleanupOldData() {
   const ninetyDaysAgo = new Date();
   ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
-
+  
   const oneYearAgo = new Date();
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-
+  
   // Delete old social messages
   await db.delete(socialMessages)
     .where(lt(socialMessages.createdAt, ninetyDaysAgo));
-
+  
   // Archive old events
   await db.update(events)
     .set({ archived: true })
@@ -504,18 +504,18 @@ job.start();
 // server/routes/user-data.ts
 router.get('/api/user/:id/download-data', async (req, res) => {
   const userId = req.params.id;
-
+  
   if (req.user.id !== parseInt(userId)) {
     return res.status(403).json({ error: 'Unauthorized' });
   }
-
+  
   const userData = {
     profile: await db.query.users.findFirst({ where: eq(users.id, userId) }),
     posts: await db.query.posts.findMany({ where: eq(posts.userId, userId) }),
     messages: await db.query.messages.findMany({ where: eq(messages.senderId, userId) }),
     // ... all other data
   };
-
+  
   res.json(userData);
 });
 ```
@@ -524,18 +524,18 @@ router.get('/api/user/:id/download-data', async (req, res) => {
 ```typescript
 router.delete('/api/user/:id/delete-data', async (req, res) => {
   const userId = parseInt(req.params.id);
-
+  
   if (req.user.id !== userId) {
     return res.status(403).json({ error: 'Unauthorized' });
   }
-
+  
   await db.transaction(async (tx) => {
     await tx.delete(posts).where(eq(posts.userId, userId));
     await tx.delete(messages).where(eq(messages.senderId, userId));
     await tx.delete(socialMessages).where(eq(socialMessages.userId, userId));
     await tx.delete(users).where(eq(users.id, userId));
   });
-
+  
   res.json({ success: true, message: 'Account deleted' });
 });
 ```
@@ -669,18 +669,18 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 export class ContextService {
   private db: any;
   private table: any;
-
+  
   async initialize() {
     this.db = await connect('data/lancedb');
-
+    
     // Load all documentation
     const docs = await this.loadAllDocumentation();
     const embeddings = await this.createEmbeddings(docs);
     this.table = await this.db.createTable('docs', embeddings);
-
+    
     console.log('Context system initialized with 134,648 lines');
   }
-
+  
   async loadAllDocumentation() {
     const parts = [
       'docs/handoff/ULTIMATE_ZERO_TO_DEPLOY_PART_10.md',
@@ -688,7 +688,7 @@ export class ContextService {
       'docs/handoff/ULTIMATE_ZERO_TO_DEPLOY_PART_8.md',
       // ... all parts
     ];
-
+    
     const documents = [];
     for (const partPath of parts) {
       const content = fs.readFileSync(partPath, 'utf-8');
@@ -703,7 +703,7 @@ export class ContextService {
     }
     return documents;
   }
-
+  
   async createEmbeddings(documents: any[]) {
     const embeddings = [];
     for (const doc of documents) {
@@ -712,21 +712,21 @@ export class ContextService {
     }
     return embeddings;
   }
-
+  
   async search(query: string, limit: number = 5) {
     const queryEmbedding = await this.getEmbedding(query);
     const results = await this.table
       .search(queryEmbedding)
       .limit(limit)
       .execute();
-
+    
     return results.map(r => ({
       text: r.text,
       source: r.source,
       score: r.score
     }));
   }
-
+  
   private chunkDocument(text: string, chunkSize: number): string[] {
     const chunks = [];
     for (let i = 0; i < text.length; i += chunkSize) {
@@ -734,7 +734,7 @@ export class ContextService {
     }
     return chunks;
   }
-
+  
   private async getEmbedding(text: string): Promise<number[]> {
     const response = await openai.embeddings.create({
       model: 'text-embedding-3-small',
@@ -805,7 +805,7 @@ export class VideoService {
         }
       })
     });
-
+    
     const room = await response.json();
     return room.url;
   }
@@ -821,7 +821,7 @@ import { useState } from 'react';
 export function VideoConference() {
   const [roomUrl, setRoomUrl] = useState('');
   const [inCall, setInCall] = useState(false);
-
+  
   const startCall = async () => {
     const response = await fetch('/api/mr-blue/video/create-room', {
       method: 'POST',
@@ -830,7 +830,7 @@ export function VideoConference() {
     setRoomUrl(url);
     setInCall(true);
   };
-
+  
   return (
     <div>
       {!inCall ? (
@@ -877,15 +877,15 @@ export function PixarAvatar3D({ emotion = 'neutral' }: { emotion?: string }) {
 
 function MrBlueModel({ emotion }: { emotion: string }) {
   const { scene } = useGLTF('/models/mr-blue-pixar.glb');
-
+  
   const animations = {
     happy: { scale: 1.1, rotation: [0, 0.2, 0] },
     neutral: { scale: 1.0, rotation: [0, 0, 0] },
     thinking: { scale: 1.0, rotation: [0.1, 0, 0] },
   };
-
+  
   const anim = animations[emotion as keyof typeof animations] || animations.neutral;
-
+  
   return (
     <primitive 
       object={scene} 
@@ -915,7 +915,7 @@ export class AvatarService {
       --face "${facePath}" \
       --audio "${audioPath}" \
       --outfile "${outputPath}"`;
-
+    
     await execAsync(command);
     return outputPath;
   }
@@ -952,18 +952,18 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export class VibeCodingEngine {
   private contextService: ContextService;
-
+  
   constructor(contextService: ContextService) {
     this.contextService = contextService;
   }
-
+  
   async generateCode(naturalLanguage: string, currentFile: string | null = null) {
     // Step 1: Get relevant documentation
     const relevantDocs = await this.contextService.search(naturalLanguage, 5);
-
+    
     // Step 2: Get current file content
     const currentCode = currentFile ? fs.readFileSync(currentFile, 'utf-8') : '';
-
+    
     // Step 3: Generate code via GPT-4o
     const prompt = `
 You are Mr Blue, an AI development partner for Mundo Tango.
@@ -999,46 +999,46 @@ OUTPUT FORMAT (JSON):
   "tests": "..."
 }
 `;
-
+    
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',
       messages: [{ role: 'user', content: prompt }],
       response_format: { type: 'json_object' },
       temperature: 0.3,
     });
-
+    
     const result = JSON.parse(response.choices[0].message.content!);
-
+    
     // Step 4: Safety checks
     const safetyPassed = await this.runSafetyChecks(result);
-
+    
     if (!safetyPassed) {
       throw new Error('Safety checks failed. Manual review required.');
     }
-
+    
     return result;
   }
-
+  
   async applyCode(result: any, approve: boolean = false) {
     if (!approve) {
       return { status: 'pending_approval', result };
     }
-
+    
     for (const file of result.files) {
       const fullPath = path.join(process.cwd(), file.path);
       fs.writeFileSync(fullPath, file.content);
     }
-
+    
     if (result.tests) {
       await this.runTests(result.tests);
     }
-
+    
     return { status: 'applied', files: result.files };
   }
-
+  
   private async runSafetyChecks(result: any): Promise<boolean> {
     const destructive = ['DROP', 'DELETE FROM', 'TRUNCATE', 'rm -rf'];
-
+    
     for (const file of result.files) {
       for (const keyword of destructive) {
         if (file.content.includes(keyword)) {
@@ -1047,7 +1047,7 @@ OUTPUT FORMAT (JSON):
         }
       }
     }
-
+    
     return true;
   }
 }
@@ -1065,7 +1065,7 @@ export function VibeCodingInterface() {
   const [input, setInput] = useState('');
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-
+  
   const generate = async () => {
     setLoading(true);
     const response = await fetch('/api/mr-blue/vibe-code/generate', {
@@ -1077,7 +1077,7 @@ export function VibeCodingInterface() {
     setResult(data);
     setLoading(false);
   };
-
+  
   const apply = async () => {
     await fetch('/api/mr-blue/vibe-code/apply', {
       method: 'POST',
@@ -1087,7 +1087,7 @@ export function VibeCodingInterface() {
     alert('Code applied!');
     setResult(null);
   };
-
+  
   return (
     <div className="vibe-coding">
       <Textarea
@@ -1096,16 +1096,16 @@ export function VibeCodingInterface() {
         onChange={(e) => setInput(e.target.value)}
         rows={4}
       />
-
+      
       <Button onClick={generate} disabled={loading}>
         {loading ? 'Generating...' : 'Generate Code'}
       </Button>
-
+      
       {result && (
         <Card className="mt-4 p-4">
           <h3>Generated Code:</h3>
           <pre>{JSON.stringify(result, null, 2)}</pre>
-
+          
           <div className="mt-4">
             <Button onClick={apply}>✅ Approve & Apply</Button>
             <Button onClick={() => setResult(null)} variant="outline">❌ Reject</Button>
@@ -1190,7 +1190,7 @@ export class MrBlueSelfHealService {
   async loadAllDocumentation() {
     // Load all Parts 1-10
   }
-
+  
   async validatePage(pageUrl: string) {
     // 1. Identify page being tested
     // 2. Find relevant documentation sections
@@ -1447,17 +1447,17 @@ import { eq } from 'drizzle-orm';
 
 export function requireTier(minTier: string) {
   const tierLevels = { free: 0, basic: 1, premium: 2, god_level: 3 };
-
+  
   return async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user?.id;
-
+    
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-
+    
     const [user] = await db.select().from(users).where(eq(users.id, userId));
     const userTier = user.tier || 'free';
-
+    
     if (tierLevels[userTier as keyof typeof tierLevels] < tierLevels[minTier as keyof typeof tierLevels]) {
       return res.status(403).json({
         error: 'Tier required',
@@ -1466,7 +1466,7 @@ export function requireTier(minTier: string) {
         upgradeUrl: '/pricing'
       });
     }
-
+    
     next();
   };
 }
@@ -1527,11 +1527,11 @@ export class PaymentService {
     const booking = await db.query.bookings.findFirst({
       where: eq(bookings.id, bookingId)
     });
-
+    
     const hostFee = booking.amount * 0.12; // 12% host fee
     const guestFee = booking.amount * 0.05; // 5% guest fee
     const platformFee = hostFee + guestFee;
-
+    
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round((booking.amount + guestFee) * 100),
       currency: 'usd',
@@ -1540,7 +1540,7 @@ export class PaymentService {
         destination: booking.hostStripeAccountId,
       },
     });
-
+    
     return paymentIntent;
   }
 }
@@ -1579,22 +1579,22 @@ export default function FeatureDashboard() {
   const { data: stats, isLoading } = useQuery({
     queryKey: ['/api/admin/feature/stats'],
   });
-
+  
   if (isLoading) return <DashboardSkeleton />;
-
+  
   return (
     <div className="dashboard">
       <div className="mb-6">
         <h1 className="text-3xl font-bold">Feature Dashboard</h1>
       </div>
-
+      
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <StatsCard title="Total" value={stats?.total} icon="👥" />
         <StatsCard title="Active" value={stats?.active} icon="⚡" />
         <StatsCard title="Revenue" value={`$${stats?.revenue}`} icon="💰" />
         <StatsCard title="Growth" value={`${stats?.growth}%`} icon="📈" />
       </div>
-
+      
       <Card>
         <CardHeader><CardTitle>Chart</CardTitle></CardHeader>
         <CardContent>
@@ -1657,11 +1657,11 @@ const router = Router();
 router.post('/api/features', requireAuth, requireTier('basic'), async (req, res) => {
   try {
     const validated = insertFeatureSchema.parse(req.body);
-
+    
     const [feature] = await db.insert(features)
       .values({ ...validated, userId: req.user.id })
       .returning();
-
+    
     res.status(201).json(feature);
   } catch (error) {
     res.status(400).json({ error: 'Invalid input' });
@@ -1679,11 +1679,11 @@ router.get('/api/features', requireAuth, async (req, res) => {
 router.get('/api/features/:id', requireAuth, async (req, res) => {
   const [feature] = await db.select().from(features)
     .where(eq(features.id, parseInt(req.params.id)));
-
+  
   if (!feature || feature.userId !== req.user.id) {
     return res.status(404).json({ error: 'Not found' });
   }
-
+  
   res.json(feature);
 });
 
@@ -1691,16 +1691,16 @@ router.get('/api/features/:id', requireAuth, async (req, res) => {
 router.patch('/api/features/:id', requireAuth, async (req, res) => {
   const [feature] = await db.select().from(features)
     .where(eq(features.id, parseInt(req.params.id)));
-
+  
   if (!feature || feature.userId !== req.user.id) {
     return res.status(404).json({ error: 'Not found' });
   }
-
+  
   const [updated] = await db.update(features)
     .set(req.body)
     .where(eq(features.id, parseInt(req.params.id)))
     .returning();
-
+  
   res.json(updated);
 });
 
@@ -1708,14 +1708,14 @@ router.patch('/api/features/:id', requireAuth, async (req, res) => {
 router.delete('/api/features/:id', requireAuth, async (req, res) => {
   const [feature] = await db.select().from(features)
     .where(eq(features.id, parseInt(req.params.id)));
-
+  
   if (!feature || feature.userId !== req.user.id) {
     return res.status(404).json({ error: 'Not found' });
   }
-
+  
   await db.delete(features)
     .where(eq(features.id, parseInt(req.params.id)));
-
+  
   res.status(204).send();
 });
 
@@ -1748,12 +1748,12 @@ type FormData = z.infer<typeof formSchema>;
 export function FeatureForm({ initialData, onSuccess }: any) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-
+  
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || { title: '', description: '' },
   });
-
+  
   const mutation = useMutation({
     mutationFn: async (data: FormData) => {
       if (initialData?.id) {
@@ -1774,7 +1774,7 @@ export function FeatureForm({ initialData, onSuccess }: any) {
       onSuccess?.();
     },
   });
-
+  
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(data => mutation.mutate(data))} className="space-y-4">
@@ -1791,7 +1791,7 @@ export function FeatureForm({ initialData, onSuccess }: any) {
             </FormItem>
           )}
         />
-
+        
         <Button type="submit" disabled={mutation.isPending}>
           {mutation.isPending ? 'Saving...' : 'Save'}
         </Button>
