@@ -353,19 +353,6 @@ export class FeedAlgorithmService {
             username: users.username,
             profileImage: users.profileImage,
           },
-          likesCount: sql<number>`(
-            SELECT COUNT(*)::int FROM ${reactions}
-            WHERE ${reactions.postId} = ${posts.id}
-            AND ${reactions.type} = 'like'
-          )`,
-          commentsCount: sql<number>`(
-            SELECT COUNT(*)::int FROM ${postComments}
-            WHERE ${postComments.postId} = ${posts.id}
-          )`,
-          sharesCount: sql<number>`(
-            SELECT COUNT(*)::int FROM ${postShares}
-            WHERE ${postShares.postId} = ${posts.id}
-          )`,
         })
         .from(posts)
         .innerJoin(users, eq(posts.userId, users.id))
@@ -376,18 +363,15 @@ export class FeedAlgorithmService {
           )
         );
 
-      // Calculate trending score
-      const scoredPosts = trendingCandidates.map(({ post, user: postUser, likesCount, commentsCount, sharesCount }) => {
+      // Calculate trending score using post's existing counts
+      const scoredPosts = trendingCandidates.map(({ post, user: postUser }) => {
         const ageHours = Math.max((Date.now() - new Date(post.createdAt).getTime()) / (1000 * 60 * 60), 0.1);
-        const trendingScore = (likesCount * 1 + commentsCount * 2 + sharesCount * 3) / ageHours;
+        const trendingScore = ((post.likes || 0) * 1 + (post.comments || 0) * 2 + (post.shares || 0) * 3) / ageHours;
 
         return {
           post: {
             ...post,
             user: postUser,
-            likes: likesCount,
-            comments: commentsCount,
-            shares: sharesCount,
           },
           score: trendingScore,
         };
