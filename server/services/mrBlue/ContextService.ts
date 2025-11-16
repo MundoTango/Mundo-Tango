@@ -139,7 +139,20 @@ export class ContextService {
         return { indexed: true, documentCount: stats.recordCount };
       }
 
-      console.log('[MrBlue Context] No index found - indexing required');
+      // Auto-index on first use if not already indexed
+      console.log('[MrBlue Context] 📚 No index found - starting auto-indexing in background...');
+      
+      // Start indexing in background (don't block initialization)
+      this.indexDocumentation().then(result => {
+        if (result.success) {
+          console.log(`[MrBlue Context] ✅ Auto-indexing complete: ${result.chunksIndexed} chunks indexed`);
+        } else {
+          console.error('[MrBlue Context] ❌ Auto-indexing failed:',result.errors);
+        }
+      }).catch(error => {
+        console.error('[MrBlue Context] ❌ Auto-indexing error:', error);
+      });
+
       return { indexed: false, documentCount: 0 };
     } catch (error) {
       console.error('[MrBlue Context] Error initializing:', error);
