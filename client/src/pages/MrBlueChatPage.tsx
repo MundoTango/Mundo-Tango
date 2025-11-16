@@ -133,7 +133,7 @@ export default function MrBlueChatPage() {
         description="Chat with Mr Blue, your AI-powered assistant for code analysis, debugging, and task management."
       />
 
-      <div className="h-screen flex flex-col">
+      <div className="h-screen flex flex-col" data-testid="page-mr-blue">
         {/* Header */}
         <div className="border-b glass-topbar p-4">
           <div className="container mx-auto max-w-4xl">

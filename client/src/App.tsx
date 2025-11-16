@@ -352,8 +352,16 @@ function Router() {
       <Route path="/volunteer" component={VolunteerPage} />
       <Route path="/gamification" component={GamificationDashboard} />
       <Route path="/talent-match" component={TalentMatchPage} />
-      <Route path="/mr-blue" component={UnifiedMrBlue} />
-      <Route path="/mr-blue-chat" component={MrBlueChatPage} />
+      <Route path="/mr-blue">
+        <Suspense fallback={<LoadingFallback />}>
+          <MrBlueChatPage />
+        </Suspense>
+      </Route>
+      <Route path="/mr-blue-chat">
+        <Suspense fallback={<LoadingFallback />}>
+          <MrBlueChatPage />
+        </Suspense>
+      </Route>
       <Route path="/video-studio" component={VideoStudio} />
       <Route path="/mr-blue-demo" component={MrBlueVideoDemo} />
       <Route path="/avatar-designer" component={AvatarDesignerPage} />

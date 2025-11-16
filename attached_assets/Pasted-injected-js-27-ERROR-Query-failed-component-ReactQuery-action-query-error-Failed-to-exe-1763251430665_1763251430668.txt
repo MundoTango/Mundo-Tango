@@ -1,0 +1,2089 @@
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+injected.js:27 [ERROR] Query failed {component: 'ReactQuery', action: 'query', error: `Failed to execute 'json' on 'Response': Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, stack: `SyntaxError: Unexpected token '<', "<!DOCTYPE "...…yjzl.worf.replit.dev/src/lib/queryClient.ts:67:20`}
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+(anonymous) @ injected.js:27
+log @ logger.ts:28
+error @ logger.ts:65
+onError @ queryClient.ts:103
+onError @ @tanstack_react-query.js?v=9596c3f7:867
+reject @ @tanstack_react-query.js?v=9596c3f7:465
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:508
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:519
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:515
+Promise.catch
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19416
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18895
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+(anonymous) @ chunk-NFC5BX5N.js?v=9596c3f7:18627
+setTimeout
+scheduleFn @ @tanstack_react-query.js?v=9596c3f7:555
+flush @ @tanstack_react-query.js?v=9596c3f7:569
+batch @ @tanstack_react-query.js?v=9596c3f7:587
+dispatch_fn @ @tanstack_react-query.js?v=9596c3f7:996
+setData @ @tanstack_react-query.js?v=9596c3f7:696
+onSuccess @ @tanstack_react-query.js?v=9596c3f7:897
+resolve @ @tanstack_react-query.js?v=9596c3f7:456
+Promise.then
+run @ @tanstack_react-query.js?v=9596c3f7:498
+start @ @tanstack_react-query.js?v=9596c3f7:536
+fetch @ @tanstack_react-query.js?v=9596c3f7:926
+executeFetch_fn @ @tanstack_react-query.js?v=9596c3f7:2211
+onSubscribe @ @tanstack_react-query.js?v=9596c3f7:1898
+subscribe @ @tanstack_react-query.js?v=9596c3f7:24
+(anonymous) @ @tanstack_react-query.js?v=9596c3f7:3022
+subscribeToStore @ chunk-NFC5BX5N.js?v=9596c3f7:11984
+commitHookEffectListMount @ chunk-NFC5BX5N.js?v=9596c3f7:16915
+commitPassiveMountOnFiber @ chunk-NFC5BX5N.js?v=9596c3f7:18156
+commitPassiveMountEffects_complete @ chunk-NFC5BX5N.js?v=9596c3f7:18129
+commitPassiveMountEffects_begin @ chunk-NFC5BX5N.js?v=9596c3f7:18119
+commitPassiveMountEffects @ chunk-NFC5BX5N.js?v=9596c3f7:18109
+flushPassiveEffectsImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19490
+flushPassiveEffects @ chunk-NFC5BX5N.js?v=9596c3f7:19447
+performSyncWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18868
+flushSyncCallbacks @ chunk-NFC5BX5N.js?v=9596c3f7:9119
+commitRootImpl @ chunk-NFC5BX5N.js?v=9596c3f7:19432
+commitRoot @ chunk-NFC5BX5N.js?v=9596c3f7:19277
+finishConcurrentRender @ chunk-NFC5BX5N.js?v=9596c3f7:18805
+performConcurrentWorkOnRoot @ chunk-NFC5BX5N.js?v=9596c3f7:18718
+workLoop @ chunk-NFC5BX5N.js?v=9596c3f7:197
+flushWork @ chunk-NFC5BX5N.js?v=9596c3f7:176
+performWorkUntilDeadline @ chunk-NFC5BX5N.js?v=9596c3f7:384
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763251424823&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=504&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+r._notifyVisibilityChanged @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+t.HTMLElement.focus @ f3c0d223fc3a7754.js:2
+H @ fa82eb0d68e09b4b.js:2
+(anonymous) @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+eG.mousedown @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+o @ 9f40922f17cfd15c.js:2
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763251425352&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=504&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+r._notifyVisibilityChanged @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+t.HTMLElement.focus @ f3c0d223fc3a7754.js:2
+H @ fa82eb0d68e09b4b.js:2
+(anonymous) @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+eG.mousedown @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+o @ 9f40922f17cfd15c.js:2
+cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1763251347489%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252F%2540admin3304%252FMundoTango%2522%252C%2522trackingOnly%2522%253Atrue%257D:10  POST https://ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/ net::ERR_BLOCKED_BY_CLIENT
+q @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1763251347489%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252F%2540admin3304%252FMundoTango%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+M @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1763251347489%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252F%2540admin3304%252FMundoTango%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+(anonymous) @ cf.js?config=%257B%2522projectId%2522%253A%252268c9ad4d4cddb58cf3a1f93d%2522%252C%2522startTime%2522%253A1763251347489%252C%2522timeoutMs%2522%253A1000%252C%2522currentUrl%2522%253A%2522https%253A%252F%252Freplit.com%252F%2540admin3304%252FMundoTango%2522%252C%2522trackingOnly%2522%253Atrue%257D:10
+9f40922f17cfd15c.js:2  POST https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763251427357&sid=4e584707-80b2-4955-b77a-c96d3486c72c&ec=504&gz=1 net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ 9f40922f17cfd15c.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+s @ 92790bc2ef649c16.js:2
+Promise.then
+l @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+u @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 38fbf6bc561fd0b5.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+l @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+e.<computed> @ 92790bc2ef649c16.js:2
+value @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+r._notifyVisibilityChanged @ 92790bc2ef649c16.js:2
+(anonymous) @ 92790bc2ef649c16.js:2
+t.HTMLElement.focus @ f3c0d223fc3a7754.js:2
+H @ fa82eb0d68e09b4b.js:2
+(anonymous) @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+eG.mousedown @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+value @ fa82eb0d68e09b4b.js:2
+o @ 9f40922f17cfd15c.js:2

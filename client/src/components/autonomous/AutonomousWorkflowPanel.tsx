@@ -105,13 +105,34 @@ const STATUS_ICONS: Record<string, React.ReactNode> = {
   failed: <XCircle className="h-3 w-3" />,
 };
 
-export function AutonomousWorkflowPanel() {
+interface AutonomousWorkflowPanelProps {
+  externalTaskId?: string | null;
+  onClose?: () => void;
+  onApprove?: (taskId: string) => Promise<void>;
+  onReject?: (taskId: string) => Promise<void>;
+  hidePromptInput?: boolean;
+}
+
+export function AutonomousWorkflowPanel({
+  externalTaskId,
+  onClose,
+  onApprove: externalOnApprove,
+  onReject: externalOnReject,
+  hidePromptInput = false
+}: AutonomousWorkflowPanelProps = {}) {
   const [prompt, setPrompt] = useState("");
-  const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
+  const [currentTaskId, setCurrentTaskId] = useState<string | null>(externalTaskId || null);
   const [selectedFileIndex, setSelectedFileIndex] = useState(0);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useUser();
+
+  // Sync external task ID
+  useEffect(() => {
+    if (externalTaskId) {
+      setCurrentTaskId(externalTaskId);
+    }
+  }, [externalTaskId]);
 
   // WebSocket-based real-time progress updates (replaces polling)
   const { isConnected: wsConnected, progress: wsProgress, error: wsError } = useAutonomousProgress({
@@ -165,6 +186,10 @@ export function AutonomousWorkflowPanel() {
   // Approve task mutation
   const approveMutation = useMutation({
     mutationFn: async (taskId: string) => {
+      if (externalOnApprove) {
+        await externalOnApprove(taskId);
+        return { success: true };
+      }
       const response = await apiRequest('POST', `/api/autonomous/approve/${taskId}`, {});
       const data = await response.json();
       if (!data.success) throw new Error(data.message);
@@ -189,6 +214,10 @@ export function AutonomousWorkflowPanel() {
   // Rollback task mutation
   const rollbackMutation = useMutation({
     mutationFn: async (taskId: string) => {
+      if (externalOnReject) {
+        await externalOnReject(taskId);
+        return { success: true };
+      }
       const response = await apiRequest('POST', `/api/autonomous/rollback/${taskId}`, {});
       const data = await response.json();
       if (!data.success) throw new Error(data.message);
@@ -199,7 +228,11 @@ export function AutonomousWorkflowPanel() {
         title: "Changes Rolled Back",
         description: "All changes have been reverted to the previous state.",
       });
-      setCurrentTaskId(null); // Clear task after rollback
+      if (onClose) {
+        onClose();
+      } else {
+        setCurrentTaskId(null); // Clear task after rollback
+      }
       queryClient.invalidateQueries({ queryKey: ['/api/autonomous/status', currentTaskId] });
     },
     onError: (error: any) => {
@@ -229,7 +262,22 @@ export function AutonomousWorkflowPanel() {
 
   return (
     <div className="h-full flex flex-col gap-6 p-6" data-testid="autonomous-workflow-panel">
+      {/* Close Button (if external control) */}
+      {onClose && (
+        <div className="flex justify-end">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            data-testid="button-close-panel"
+          >
+            Close Panel
+          </Button>
+        </div>
+      )}
+
       {/* Prompt Input Section */}
+      {!hidePromptInput && (
       <Card className="hover-elevate">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -274,6 +322,7 @@ export function AutonomousWorkflowPanel() {
           </div>
         </CardContent>
       </Card>
+      )}
 
       {/* Task Status & Details */}
       {task && (

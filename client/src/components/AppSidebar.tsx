@@ -108,10 +108,10 @@ const resourcesItems = [
   { title: "Community Map", url: "/community-world-map", icon: Globe },
 ];
 
-// AI & Tools (2 items)
+// AI & Tools (3 items)
 const toolsItems = [
   { title: "Life CEO", url: "/life-ceo", icon: Brain },
-  { title: "Mr Blue AI", url: "/mr-blue-chat", icon: Bot },
+  { title: "Mr Blue AI", url: "/mr-blue", icon: Bot },
   { title: "Autonomous Dev", url: "/autonomous", icon: Brain },
 ];
 

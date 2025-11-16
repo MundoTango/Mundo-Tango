@@ -20,6 +20,8 @@ import { useVoiceInput } from "@/hooks/useVoiceInput";
 import { useTextToSpeech } from "@/hooks/useTextToSpeech";
 import { useStreamingChat } from "@/hooks/useStreamingChat";
 import { MrBlueAvatar } from "./MrBlueAvatar";
+import { AutonomousWorkflowPanel } from "@/components/autonomous/AutonomousWorkflowPanel";
+import { apiRequest } from "@/lib/queryClient";
 
 // Lazy load 3D avatar component (heavy Three.js dependency)
 const MrBlueAvatar3D = lazy(() => import("@/components/mrblue/MrBlueAvatar3D"));
@@ -65,6 +67,8 @@ export function MrBlueVisualChat({
   const [ttsEnabled, setTtsEnabled] = useState(false);
   const [use3D, setUse3D] = useState(false);
   const [currentStreamingMessage, setCurrentStreamingMessage] = useState("");
+  const [showWorkflowPanel, setShowWorkflowPanel] = useState(false);
+  const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const hasSpokenGreeting = useRef(false);
   const silenceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -231,6 +235,42 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
     }
   }, [transcript]);
 
+  // Helper to detect code change requests vs normal chat
+  const isCodeChangeRequest = (message: string): boolean => {
+    const lowerMessage = message.toLowerCase();
+    
+    // Strong indicators of code generation requests
+    const strongIndicators = [
+      /\b(build|create|add|generate|make)\s+(a|an|the|this|that|some|new)?\s*(feature|component|page|section|button|form|input|card|table|list|menu|header|footer|sidebar|modal|dialog|panel|widget)/i,
+      /\b(generate|create|add|make)\s+(test|sample|mock|dummy)\s+(data|users|products|items|posts|comments)/i,
+      /\badd\s+.*\b(button|input|form|card|section|component)/i,
+      /\bchange.*\b(color|background|style|layout|design)/i,
+      /\bmake.*\b(bigger|smaller|blue|red|centered|responsive)/i,
+      /\bmodify\s+/i,
+      /\bupdate\s+.*\b(component|page|section)/i,
+      /\bimplement\s+/i,
+      /\brefactor\s+/i,
+    ];
+
+    // Check strong indicators first
+    if (strongIndicators.some(pattern => pattern.test(lowerMessage))) {
+      return true;
+    }
+
+    // Weaker signals - only count if multiple present
+    const weakSignals = [
+      lowerMessage.includes('make'),
+      lowerMessage.includes('change'),
+      lowerMessage.includes('fix'),
+      lowerMessage.includes('style'),
+      lowerMessage.includes('edit'),
+      /\b(button|form|input|div|component|element)\b/i.test(lowerMessage),
+    ];
+
+    const weakSignalCount = weakSignals.filter(Boolean).length;
+    return weakSignalCount >= 2;
+  };
+
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return;
 
@@ -250,35 +290,70 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
     setCurrentStreamingMessage("");
 
     try {
-      // FIXED ROUTING: Only route to autonomous for SPECIFIC build phrases
-      // Avoid matching common words like "make" which appear in normal conversation
-      const isBuildRequest = /\b(build|create|add)\s+(a|an|the|this|that|new)?\s*(feature|component|section|page)/i.test(originalInput) ||
-                            /\b(generate|scaffold|implement)\s/i.test(originalInput);
+      // Detect if this is a code change request
+      const isCodeRequest = isCodeChangeRequest(originalInput);
 
-      if (isBuildRequest) {
-        // AUTONOMOUS MODE: Complex build requests go to autonomous API
-        let contextualPrompt = originalInput;
+      if (isCodeRequest) {
+        // AUTONOMOUS MODE: Code generation requests go to autonomous API
+        console.log('[MrBlueVisualChat] Code request detected, calling autonomous API');
+        
+        let contextualPrompt = `USER REQUEST: ${originalInput}\n\nCONTEXT:\n- Page: ${contextInfo.page}`;
         
         if (contextInfo.selectedElement) {
-          contextualPrompt = `USER REQUEST: ${originalInput}\n\nCONTEXT:\n- Page: ${contextInfo.page}\n- Selected element: ${contextInfo.selectedElement.tagName} (testId: ${contextInfo.selectedElement.testId || 'none'})\n- Element class: ${contextInfo.selectedElement.className}\n- Element text: ${contextInfo.selectedElement.text}\n- Total edits so far: ${contextInfo.editsCount}`;
+          contextualPrompt += `\n- Selected element: ${contextInfo.selectedElement.tagName} (testId: ${contextInfo.selectedElement.testId || 'none'})\n- Element class: ${contextInfo.selectedElement.className}\n- Element text: ${contextInfo.selectedElement.text?.substring(0, 100) || 'N/A'}`;
+        }
+        
+        contextualPrompt += `\n- Total edits so far: ${contextInfo.editsCount}`;
+        
+        if (contextInfo.recentEdits.length > 0) {
+          contextualPrompt += `\n- Recent edits: ${contextInfo.recentEdits.slice(0, 3).map(e => e.description).join(', ')}`;
         }
 
-        // Call autonomous code generation
-        const result = await onGenerateCode(contextualPrompt);
+        // Call autonomous code generation API directly
+        const token = localStorage.getItem('accessToken');
+        const response = await fetch('/api/autonomous/execute', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token ? `Bearer ${token}` : ''
+          },
+          body: JSON.stringify({
+            prompt: contextualPrompt,
+            autoApprove: false,
+            selectedElement: contextInfo.selectedElement?.testId || null,
+            context: {
+              page: contextInfo.page,
+              editsCount: contextInfo.editsCount,
+              recentEdits: contextInfo.recentEdits.slice(0, 5)
+            }
+          })
+        });
 
-        const response = `✅ **Build request started!**\n\n${result.explanation || 'I\'ve started working on your build request...'}\n\nWatch the Autonomous Workflow panel for progress.`;
-        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.message || 'Failed to start autonomous task');
+        }
+
+        // Show workflow panel
+        setCurrentTaskId(data.taskId);
+        setShowWorkflowPanel(true);
+
         const assistantMessage: Message = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: response,
+          content: `✅ **I'm working on that!**\n\nTask ID: ${data.taskId}\n\n**Next steps:**\n1. Decomposing your request into subtasks\n2. Generating code changes\n3. Validating the code\n4. Waiting for your approval\n\nWatch the **Autonomous Workflow Panel** on the right for real-time progress!`,
           timestamp: new Date()
         };
 
         setMessages(prev => [...prev, assistantMessage]);
 
         if (ttsEnabled && ttsSupported) {
-          speak("Build request started! Check the workflow panel.");
+          speak("I'm working on that! Check the workflow panel for progress.");
         }
         setIsLoading(false);
       } else {
@@ -390,8 +465,111 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
     setTtsEnabled(!ttsEnabled);
   };
 
+  // Handlers for autonomous workflow
+  const handleApproveTask = async (taskId: string) => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch(`/api/autonomous/approve/${taskId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to approve task');
+      }
+
+      // Add success message
+      const successMessage: Message = {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: '✅ **Code changes applied successfully!**\n\nThe generated code has been applied to your codebase. Refresh to see the changes.',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, successMessage]);
+
+      if (ttsEnabled && ttsSupported) {
+        speak("Code changes applied successfully!");
+      }
+
+      // Close panel after a short delay
+      setTimeout(() => {
+        setShowWorkflowPanel(false);
+        setCurrentTaskId(null);
+      }, 1000);
+    } catch (error: any) {
+      console.error('[MrBlueVisualChat] Failed to approve task:', error);
+      const errorMessage: Message = {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: `❌ **Failed to apply changes:**\n\n${error.message}`,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    }
+  };
+
+  const handleRejectTask = async (taskId: string) => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch(`/api/autonomous/rollback/${taskId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to rollback task');
+      }
+
+      // Add rollback message
+      const rollbackMessage: Message = {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: '❌ **Changes rolled back**\n\nThe code changes have been reverted. Feel free to try again with a different approach!',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, rollbackMessage]);
+
+      if (ttsEnabled && ttsSupported) {
+        speak("Changes rolled back. Try again!");
+      }
+
+      // Close panel
+      setShowWorkflowPanel(false);
+      setCurrentTaskId(null);
+    } catch (error: any) {
+      console.error('[MrBlueVisualChat] Failed to rollback task:', error);
+      const errorMessage: Message = {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: `❌ **Failed to rollback:**\n\n${error.message}`,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    }
+  };
+
   return (
-    <div className="flex flex-col h-full bg-card">
+    <div className="flex h-full relative">
+      {/* Main Chat Panel */}
+      <div className={`flex flex-col h-full bg-card transition-all ${showWorkflowPanel ? 'w-1/2' : 'w-full'}`}>
       {/* Header */}
       <div className="p-4 border-b border-ocean-divider">
         <div className="flex items-center justify-between gap-2">
@@ -753,6 +931,23 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
           </p>
         )}
       </div>
+      </div>
+
+      {/* Autonomous Workflow Panel - Side by side */}
+      {showWorkflowPanel && currentTaskId && (
+        <div className="w-1/2 h-full border-l border-ocean-divider bg-background overflow-auto">
+          <AutonomousWorkflowPanel
+            externalTaskId={currentTaskId}
+            onClose={() => {
+              setShowWorkflowPanel(false);
+              setCurrentTaskId(null);
+            }}
+            onApprove={handleApproveTask}
+            onReject={handleRejectTask}
+            hidePromptInput={true}
+          />
+        </div>
+      )}
     </div>
   );
 }
