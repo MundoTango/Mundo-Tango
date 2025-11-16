@@ -1,7 +1,8 @@
-import { Suspense } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei';
 import { PixarAvatar, type AvatarState } from './PixarAvatar';
+import { Sparkles } from 'lucide-react';
 
 interface AvatarCanvasProps {
   state?: AvatarState;
@@ -14,6 +15,7 @@ interface AvatarCanvasProps {
 /**
  * Canvas wrapper for the Pixar Avatar
  * Handles lighting, camera, and performance optimization
+ * Falls back to 2D representation if WebGL is unavailable
  */
 export function AvatarCanvas({
   state = 'idle',
@@ -22,6 +24,71 @@ export function AvatarCanvas({
   enableControls = false,
   className = '',
 }: AvatarCanvasProps) {
+  const [webglAvailable, setWebglAvailable] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  // Check for WebGL support
+  useEffect(() => {
+    try {
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if (!gl) {
+        console.warn('[AvatarCanvas] WebGL not available, using fallback');
+        setWebglAvailable(false);
+      }
+    } catch (e) {
+      console.warn('[AvatarCanvas] WebGL check failed, using fallback:', e);
+      setWebglAvailable(false);
+    }
+  }, []);
+
+  // Handle canvas errors
+  const handleError = (err: Error) => {
+    console.error('[AvatarCanvas] Canvas error:', err);
+    setError(err);
+    setWebglAvailable(false);
+  };
+
+  // Fallback 2D avatar when WebGL is unavailable
+  if (!webglAvailable || error) {
+    const stateColors: Record<AvatarState, string> = {
+      idle: 'bg-blue-500',
+      listening: 'bg-green-500',
+      speaking: 'bg-purple-500',
+      thinking: 'bg-yellow-500',
+      happy: 'bg-pink-500',
+      error: 'bg-red-500',
+    };
+
+    const stateEmojis: Record<AvatarState, string> = {
+      idle: '😌',
+      listening: '👂',
+      speaking: '💬',
+      thinking: '🤔',
+      happy: '😊',
+      error: '⚠️',
+    };
+
+    return (
+      <div
+        className={`rounded-full overflow-hidden ${className} ${stateColors[state]} flex items-center justify-center relative`}
+        style={{ width: size, height: size }}
+        data-testid="avatar-canvas-fallback"
+      >
+        <div className="text-center">
+          <div className="text-6xl mb-2">{stateEmojis[state]}</div>
+          <Sparkles className="h-8 w-8 mx-auto text-white/80 animate-pulse" />
+        </div>
+        {audioLevel > 0 && (
+          <div
+            className="absolute inset-0 bg-white/20 rounded-full animate-ping"
+            style={{ animationDuration: '1s' }}
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div
       className={`rounded-full overflow-hidden ${className}`}
@@ -29,6 +96,7 @@ export function AvatarCanvas({
       data-testid="avatar-canvas"
     >
       <Canvas
+        onError={handleError}
         dpr={[1, 2]} // Pixel ratio for performance
         gl={{
           antialias: true,
