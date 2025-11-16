@@ -97,6 +97,7 @@ const MrBlueChatPage = lazy(() => import("@/pages/MrBlueChatPage"));
 const VideoStudio = lazy(() => import("@/pages/VideoStudio"));
 const MrBlueVideoDemo = lazy(() => import("@/pages/mr-blue-video-demo"));
 const MrBlueAvatarDemo = lazy(() => import("@/pages/mr-blue-avatar-demo"));
+const MrBlueStudioPage = lazy(() => import("@/pages/mr-blue-studio"));
 const AvatarDesignerPage = lazy(() => import("@/pages/AvatarDesignerPage"));
 const PremiumFeaturesPage = lazy(() => import("@/pages/PremiumFeaturesPage"));
 
@@ -366,6 +367,7 @@ function Router() {
       <Route path="/video-studio" component={VideoStudio} />
       <Route path="/mr-blue-demo" component={MrBlueVideoDemo} />
       <Route path="/mr-blue-avatar-demo" component={MrBlueAvatarDemo} />
+      <Route path="/mr-blue-studio" component={MrBlueStudioPage} />
       <Route path="/avatar-designer" component={AvatarDesignerPage} />
       <Route path="/premium-features" component={PremiumFeaturesPage} />
       <Route path="/life-ceo" component={LifeCEODashboardPage} />
