@@ -86,6 +86,8 @@ interface RateLimitTracker {
 export class FacebookScraperService {
   private browser: Browser | null = null;
   private context: BrowserContext | null = null;
+  private currentPage: Page | null = null;
+  private currentAccountName: string = '';
   private rateLimiter: RateLimitTracker = {
     requests: [],
     maxRequestsPerHour: 100
@@ -795,10 +797,88 @@ export class FacebookScraperService {
       if (this.browser) await this.browser.close();
       this.context = null;
       this.browser = null;
+      this.currentPage = null;
+      this.currentAccountName = '';
       console.log('[Facebook Scraper] Browser closed');
     } catch (error: any) {
       console.error('[Facebook Scraper] Error during cleanup:', error.message);
     }
+  }
+
+  // ===========================
+  // WRAPPER API FOR ROUTES
+  // ===========================
+
+  /**
+   * Initialize browser (wrapper for routes)
+   */
+  async initialize(headless: boolean = false): Promise<void> {
+    await this.initBrowser(headless);
+  }
+
+  /**
+   * Login to Facebook (wrapper for routes)
+   */
+  async login(username: string, password: string, accountName?: string): Promise<void> {
+    this.currentAccountName = accountName || username;
+    this.currentPage = await this.loginToFacebook(username, password, this.currentAccountName);
+  }
+
+  /**
+   * Scrape profile without page parameter (wrapper for routes)
+   */
+  async scrapeProfileSimple(accountName: string): Promise<ProfileData> {
+    if (!this.currentPage) {
+      throw new Error('Must call login() first');
+    }
+    return await this.scrapeProfile(this.currentPage, accountName);
+  }
+
+  /**
+   * Scrape posts without page parameter (wrapper for routes)
+   */
+  async scrapePostsSimple(accountName: string, limit: number = 20): Promise<PostData[]> {
+    if (!this.currentPage) {
+      throw new Error('Must call login() first');
+    }
+    return await this.scrapePosts(this.currentPage, accountName, limit);
+  }
+
+  /**
+   * Scrape friends without page parameter (wrapper for routes)
+   */
+  async scrapeFriendsSimple(accountName: string, limit: number = 50): Promise<FriendData[]> {
+    if (!this.currentPage) {
+      throw new Error('Must call login() first');
+    }
+    return await this.scrapeFriends(this.currentPage, accountName, limit);
+  }
+
+  /**
+   * Scrape events without page parameter (wrapper for routes)
+   */
+  async scrapeEventsSimple(accountName: string): Promise<EventData[]> {
+    if (!this.currentPage) {
+      throw new Error('Must call login() first');
+    }
+    return await this.scrapeEvents(this.currentPage, accountName);
+  }
+
+  /**
+   * Scrape groups without page parameter (wrapper for routes)
+   */
+  async scrapeGroupsSimple(accountName: string): Promise<GroupData[]> {
+    if (!this.currentPage) {
+      throw new Error('Must call login() first');
+    }
+    return await this.scrapeGroups(this.currentPage, accountName);
+  }
+
+  /**
+   * Close browser (wrapper for routes)
+   */
+  async close(): Promise<void> {
+    await this.cleanup();
   }
 }
 

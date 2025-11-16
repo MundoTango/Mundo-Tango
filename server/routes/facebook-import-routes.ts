@@ -64,11 +64,11 @@ router.post('/start', authenticateToken, requireRoleLevel(2), async (req: AuthRe
         }
 
         // Initialize scraper
-        await facebookScraper.initialize();
-        await facebookScraper.login(username, password);
+        await facebookScraper.initialize(false);
+        await facebookScraper.login(username, password, accountName);
 
         // Update progress: profile
-        const profile = await facebookScraper.scrapeProfile(accountName);
+        const profile = await facebookScraper.scrapeProfileSimple(accountName);
         await storage.updateFacebookImport(importRecord.id, {
           jsonData: {
             ...importRecord.jsonData,
@@ -78,7 +78,7 @@ router.post('/start', authenticateToken, requireRoleLevel(2), async (req: AuthRe
         });
 
         // Update progress: posts
-        const posts = await facebookScraper.scrapePosts(accountName, 50);
+        const posts = await facebookScraper.scrapePostsSimple(accountName, 50);
         await storage.updateFacebookImport(importRecord.id, {
           jsonData: {
             ...importRecord.jsonData,
@@ -88,7 +88,7 @@ router.post('/start', authenticateToken, requireRoleLevel(2), async (req: AuthRe
         });
 
         // Update progress: friends
-        const friends = await facebookScraper.scrapeFriends(accountName);
+        const friends = await facebookScraper.scrapeFriendsSimple(accountName);
         await storage.updateFacebookImport(importRecord.id, {
           jsonData: {
             ...importRecord.jsonData,
@@ -98,7 +98,7 @@ router.post('/start', authenticateToken, requireRoleLevel(2), async (req: AuthRe
         });
 
         // Update progress: events
-        const events = await facebookScraper.scrapeEvents(accountName);
+        const events = await facebookScraper.scrapeEventsSimple(accountName);
         await storage.updateFacebookImport(importRecord.id, {
           jsonData: {
             ...importRecord.jsonData,
@@ -108,7 +108,7 @@ router.post('/start', authenticateToken, requireRoleLevel(2), async (req: AuthRe
         });
 
         // Update progress: groups
-        const groups = await facebookScraper.scrapeGroups(accountName);
+        const groups = await facebookScraper.scrapeGroupsSimple(accountName);
         await storage.updateFacebookImport(importRecord.id, {
           jsonData: {
             ...importRecord.jsonData,
