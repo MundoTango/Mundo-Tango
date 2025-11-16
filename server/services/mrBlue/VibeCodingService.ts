@@ -181,7 +181,7 @@ Provide a JSON response with:
 Respond ONLY with valid JSON, no additional text.`;
 
     const completion = await groq.chat.completions.create({
-      model: 'llama-3.1-70b-versatile',
+      model: 'llama-3.3-70b-versatile',
       messages: [
         {
           role: 'user',

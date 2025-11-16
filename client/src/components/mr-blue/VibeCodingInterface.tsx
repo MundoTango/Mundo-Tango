@@ -69,13 +69,12 @@ export function VibeCodingInterface() {
   // Generate code mutation
   const generateMutation = useMutation({
     mutationFn: async (naturalLanguage: string) => {
-      const res = await apiRequest('/api/mrblue/vibecode/generate', {
-        method: 'POST',
-        body: JSON.stringify({ naturalLanguage }),
+      const res = await apiRequest('POST', '/api/mrblue/vibecode/generate', { 
+        naturalLanguage 
       });
-      return res.json();
+      return await res.json();
     },
-    onSuccess: (data) => {
+    onSuccess: (data: { success: boolean; data: VibeCodeResult }) => {
       if (data.success) {
         setResult(data.data);
       }
@@ -85,13 +84,12 @@ export function VibeCodingInterface() {
   // Apply changes mutation
   const applyMutation = useMutation({
     mutationFn: async (sessionId: string) => {
-      const res = await apiRequest('/api/mrblue/vibecode/apply', {
-        method: 'POST',
-        body: JSON.stringify({ sessionId }),
+      const res = await apiRequest('POST', '/api/mrblue/vibecode/apply', { 
+        sessionId 
       });
-      return res.json();
+      return await res.json();
     },
-    onSuccess: (data) => {
+    onSuccess: (data: { success: boolean }) => {
       if (data.success) {
         setResult(null);
         setRequest('');

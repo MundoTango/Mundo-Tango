@@ -46,7 +46,6 @@ export class VideoConferenceService {
           privacy: "private",
           properties: {
             enable_screenshare: true,
-            enable_recording: "cloud",
             enable_chat: true,
             start_video_off: false,
             start_audio_off: false,
@@ -86,7 +85,6 @@ export class VideoConferenceService {
             user_name: `User ${userId}`,
             is_owner: isOwner,
             enable_screenshare: true,
-            enable_recording: true,
             exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour expiry
           },
         },
