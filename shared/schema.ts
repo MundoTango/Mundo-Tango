@@ -7178,6 +7178,247 @@ export type InsertAIPerformance = z.infer<typeof insertAIPerformanceSchema>;
 export type SelectAIPerformance = typeof aiPerformance.$inferSelect;
 
 // ============================================================================
+// AI ARBITRAGE SYSTEM - Intelligent Routing & Cost Optimization
+// ============================================================================
+
+/**
+ * Routing Decisions Table - Track all AI routing decisions for analysis and DPO training
+ * Stores: query classification, model selection, performance metrics, user feedback
+ */
+export const routingDecisions = pgTable("routing_decisions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // Query details
+  query: text("query").notNull(),
+  context: text("context"),
+  
+  // Classification results
+  classification: jsonb("classification").notNull(), // { complexity, domain, requiredQuality, estimatedTokens }
+  
+  // Model selection
+  modelUsed: varchar("model_used", { length: 100 }).notNull(),
+  platform: varchar("platform", { length: 50 }).notNull(),
+  tierUsed: integer("tier_used").notNull(), // 1 (cheapest), 2 (mid), 3 (premium)
+  
+  // Performance metrics
+  cost: numeric("cost", { precision: 10, scale: 6 }).notNull(),
+  latency: integer("latency").notNull(), // milliseconds
+  confidence: numeric("confidence", { precision: 5, scale: 4 }), // 0.0000-1.0000
+  quality: numeric("quality", { precision: 5, scale: 4 }), // 0.0000-1.0000
+  
+  // Cascade execution
+  escalated: boolean("escalated").default(false),
+  escalationReason: text("escalation_reason"),
+  previousTiersAttempted: jsonb("previous_tiers_attempted"), // [{ tier, model, reason }]
+  
+  // User feedback (for DPO training)
+  userFeedback: varchar("user_feedback", { length: 20 }), // thumbs_up, thumbs_down, neutral
+  feedbackComment: text("feedback_comment"),
+  
+  // Cost savings vs premium model
+  savingsAmount: numeric("savings_amount", { precision: 10, scale: 6 }),
+  savingsPercentage: numeric("savings_percentage", { precision: 5, scale: 2 }),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("routing_decisions_user_idx").on(table.userId),
+  platformModelIdx: index("routing_decisions_platform_model_idx").on(table.platform, table.modelUsed),
+  tierIdx: index("routing_decisions_tier_idx").on(table.tierUsed),
+  createdAtIdx: index("routing_decisions_created_at_idx").on(table.createdAt),
+  userFeedbackIdx: index("routing_decisions_user_feedback_idx").on(table.userFeedback),
+  escalatedIdx: index("routing_decisions_escalated_idx").on(table.escalated),
+}));
+
+/**
+ * AI Spend Tracking Table - Real-time spend tracking per user and platform
+ * Enables budget enforcement, cost analytics, and billing
+ */
+export const aiSpendTracking = pgTable("ai_spend_tracking", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // Platform & Model
+  platform: varchar("platform", { length: 50 }).notNull(),
+  model: varchar("model", { length: 100 }).notNull(),
+  
+  // Usage metrics
+  cost: numeric("cost", { precision: 10, scale: 6 }).notNull(),
+  tokens: integer("tokens").notNull(),
+  inputTokens: integer("input_tokens"),
+  outputTokens: integer("output_tokens"),
+  
+  // Request details
+  requestType: varchar("request_type", { length: 50 }), // chat, code, reasoning, bulk
+  useCase: varchar("use_case", { length: 100 }), // mr_blue_chat, vibe_coding, etc
+  
+  // Billing period
+  billingMonth: varchar("billing_month", { length: 7 }).notNull(), // YYYY-MM
+  
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("ai_spend_tracking_user_idx").on(table.userId),
+  platformModelIdx: index("ai_spend_tracking_platform_model_idx").on(table.platform, table.model),
+  billingMonthIdx: index("ai_spend_tracking_billing_month_idx").on(table.billingMonth),
+  userBillingIdx: index("ai_spend_tracking_user_billing_idx").on(table.userId, table.billingMonth),
+  timestampIdx: index("ai_spend_tracking_timestamp_idx").on(table.timestamp),
+}));
+
+/**
+ * Cost Budgets Table - Define monthly spending limits per user tier
+ * Used for budget enforcement and threshold alerting
+ */
+export const costBudgets = pgTable("cost_budgets", {
+  id: serial("id").primaryKey(),
+  
+  // Tier definition
+  tier: varchar("tier", { length: 50 }).notNull().unique(), // free, basic, pro, enterprise
+  
+  // Budget limits
+  monthlyLimit: numeric("monthly_limit", { precision: 10, scale: 2 }).notNull(), // USD
+  alertThreshold: numeric("alert_threshold", { precision: 5, scale: 2 }).notNull(), // Percentage 0.00-100.00
+  
+  // Per-request limits (optional)
+  maxCostPerRequest: numeric("max_cost_per_request", { precision: 10, scale: 6 }),
+  maxTokensPerRequest: integer("max_tokens_per_request"),
+  
+  // Rate limits
+  maxRequestsPerMinute: integer("max_requests_per_minute"),
+  maxRequestsPerDay: integer("max_requests_per_day"),
+  
+  // Features
+  allowPremiumModels: boolean("allow_premium_models").default(false),
+  allowCascadeEscalation: boolean("allow_cascade_escalation").default(true),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  tierIdx: uniqueIndex("cost_budgets_tier_idx").on(table.tier),
+}));
+
+// AI Arbitrage Zod Schemas & Types
+export const insertRoutingDecisionSchema = createInsertSchema(routingDecisions).omit({ id: true, createdAt: true });
+export type InsertRoutingDecision = z.infer<typeof insertRoutingDecisionSchema>;
+export type SelectRoutingDecision = typeof routingDecisions.$inferSelect;
+
+export const insertAISpendTrackingSchema = createInsertSchema(aiSpendTracking).omit({ id: true, timestamp: true });
+export type InsertAISpendTracking = z.infer<typeof insertAISpendTrackingSchema>;
+export type SelectAISpendTracking = typeof aiSpendTracking.$inferSelect;
+
+export const insertCostBudgetSchema = createInsertSchema(costBudgets).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertCostBudget = z.infer<typeof insertCostBudgetSchema>;
+export type SelectCostBudget = typeof costBudgets.$inferSelect;
+
+// ============================================================================
+// AI LEARNING SYSTEMS (DPO, Curriculum, GEPA, LIMI)
+// ============================================================================
+
+/**
+ * DPO Training Data - Direct Preference Optimization
+ * Stores (CHOSEN, REJECTED) pairs for training TaskClassifier
+ */
+export const dpoTrainingData = pgTable("dpo_training_data", {
+  id: serial("id").primaryKey(),
+  query: text("query").notNull(),
+  chosenModel: varchar("chosen_model", { length: 100 }).notNull(),
+  chosenCost: numeric("chosen_cost", { precision: 10, scale: 6 }).notNull(),
+  rejectedModel: varchar("rejected_model", { length: 100 }).notNull(),
+  rejectedCost: numeric("rejected_cost", { precision: 10, scale: 6 }).notNull(),
+  qualityDelta: numeric("quality_delta", { precision: 5, scale: 4 }),
+  domain: varchar("domain", { length: 50 }), // chat, code, reasoning, etc
+  complexity: numeric("complexity", { precision: 5, scale: 4 }), // 0-1 score
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  domainIdx: index("dpo_training_data_domain_idx").on(table.domain),
+  createdAtIdx: index("dpo_training_data_created_at_idx").on(table.createdAt),
+}));
+
+/**
+ * Curriculum Levels - Progressive difficulty scaling per user
+ * Tracks user progression: basic → intermediate → advanced → expert
+ */
+export const curriculumLevels = pgTable("curriculum_levels", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().unique().references(() => users.id, { onDelete: "cascade" }),
+  level: varchar("level", { length: 50 }).notNull().default("basic"), // basic, intermediate, advanced, expert
+  successRate: numeric("success_rate", { precision: 5, scale: 4 }).default("0"), // 0-1 score
+  taskCount: integer("task_count").default(0).notNull(),
+  consecutiveSuccesses: integer("consecutive_successes").default(0).notNull(),
+  consecutiveFailures: integer("consecutive_failures").default(0).notNull(),
+  lastPromotionAt: timestamp("last_promotion_at"),
+  lastDemotionAt: timestamp("last_demotion_at"),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("curriculum_levels_user_idx").on(table.userId),
+  levelIdx: index("curriculum_levels_level_idx").on(table.level),
+  successRateIdx: index("curriculum_levels_success_rate_idx").on(table.successRate),
+}));
+
+/**
+ * GEPA Experiments - Self-evolution experiments
+ * Stores proposed improvements and A/B test results
+ */
+export const gepaExperiments = pgTable("gepa_experiments", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  hypothesis: text("hypothesis").notNull(),
+  config: jsonb("config").notNull(), // { strategy, parameters, constraints }
+  results: jsonb("results"), // { cost, quality, successRate, sampleSize }
+  status: varchar("status", { length: 50 }).notNull().default("running"), // running, completed, adopted, rejected
+  controlGroup: jsonb("control_group"), // Baseline performance metrics
+  experimentGroup: jsonb("experiment_group"), // Test performance metrics
+  trafficPercentage: integer("traffic_percentage").default(10), // % of traffic for A/B test
+  startedAt: timestamp("started_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  statusIdx: index("gepa_experiments_status_idx").on(table.status),
+  createdAtIdx: index("gepa_experiments_created_at_idx").on(table.createdAt),
+}));
+
+/**
+ * Golden Examples - Curated routing examples for training
+ * 78 high-quality, diverse, cost-effective examples for DPO training
+ */
+export const goldenExamples = pgTable("golden_examples", {
+  id: serial("id").primaryKey(),
+  query: text("query").notNull(),
+  classification: jsonb("classification").notNull(), // { complexity, domain, requiredQuality }
+  modelUsed: varchar("model_used", { length: 100 }).notNull(),
+  platform: varchar("platform", { length: 50 }).notNull(),
+  cost: numeric("cost", { precision: 10, scale: 6 }).notNull(),
+  quality: numeric("quality", { precision: 5, scale: 4 }).notNull(), // 0-1 score
+  savingsPercentage: numeric("savings_percentage", { precision: 5, scale: 2 }), // vs premium model
+  reasoning: text("reasoning"), // Why this is a golden example
+  tags: text("tags").array(), // [edge_case, cost_effective, high_quality, diverse]
+  userRating: integer("user_rating"), // 1-5 stars
+  domain: varchar("domain", { length: 50 }), // For diversity tracking
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  domainIdx: index("golden_examples_domain_idx").on(table.domain),
+  qualityIdx: index("golden_examples_quality_idx").on(table.quality),
+  tagsIdx: index("golden_examples_tags_idx").on(table.tags),
+  createdAtIdx: index("golden_examples_created_at_idx").on(table.createdAt),
+}));
+
+// AI Learning Zod Schemas & Types
+export const insertDpoTrainingDataSchema = createInsertSchema(dpoTrainingData).omit({ id: true, createdAt: true });
+export type InsertDpoTrainingData = z.infer<typeof insertDpoTrainingDataSchema>;
+export type SelectDpoTrainingData = typeof dpoTrainingData.$inferSelect;
+
+export const insertCurriculumLevelSchema = createInsertSchema(curriculumLevels).omit({ id: true, updatedAt: true });
+export type InsertCurriculumLevel = z.infer<typeof insertCurriculumLevelSchema>;
+export type SelectCurriculumLevel = typeof curriculumLevels.$inferSelect;
+
+export const insertGepaExperimentSchema = createInsertSchema(gepaExperiments).omit({ id: true, createdAt: true, startedAt: true });
+export type InsertGepaExperiment = z.infer<typeof insertGepaExperimentSchema>;
+export type SelectGepaExperiment = typeof gepaExperiments.$inferSelect;
+
+export const insertGoldenExampleSchema = createInsertSchema(goldenExamples).omit({ id: true, createdAt: true });
+export type InsertGoldenExample = z.infer<typeof insertGoldenExampleSchema>;
+export type SelectGoldenExample = typeof goldenExamples.$inferSelect;
+
+// ============================================================================
 // PROFILE MEDIA & ANALYTICS (BATCH 13-14)
 // ============================================================================
 

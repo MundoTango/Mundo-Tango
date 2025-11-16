@@ -52,6 +52,8 @@ import predictiveContextRoutes from "./routes/predictive-context-routes";
 import aiEnhanceRoutes from "./routes/ai-enhance";
 import userSearchRoutes from "./routes/user-search";
 import locationSearchRoutes from "./routes/location-search";
+import { registerAIArbitrageRoutes } from "./routes/ai-arbitrage-routes";
+import { registerDPOTrainingRoutes } from "./routes/dpo-training-routes";
 import housingRoutes from "./routes/housing-routes";
 import housingPhotosRoutes from "./routes/housing-photos-routes";
 import livestreamRoutes from "./routes/livestream-routes";
@@ -396,6 +398,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // BATCH 16: Multi-AI Orchestration Routes
   app.use("/api/ai/multi", multiAIRoutes);
+  
+  // AI ARBITRAGE: Intelligent Routing & Cost Optimization (50-90% savings)
+  registerAIArbitrageRoutes(app);
+  
+  // AI LEARNING SYSTEMS: DPO Training, Curriculum, GEPA, LIMI
+  registerDPOTrainingRoutes(app);
   
   // BATCH 29: Documentation Governance System
   app.use("/api/documentation", documentationGovernanceRoutes);

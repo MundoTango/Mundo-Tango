@@ -282,6 +282,196 @@ export function getCostStats() {
 }
 
 /**
+ * AI ARBITRAGE - Intelligent Routing with Cascade Execution
+ * 
+ * Complete end-to-end intelligent routing:
+ * 1. Classify query complexity using TaskClassifier (Llama 3 8B)
+ * 2. Select 3-tier cascade using ModelSelector
+ * 3. Execute with progressive escalation using CascadeExecutor
+ * 4. Track spend and budget using CostTracker
+ * 5. Record routing decision for DPO training
+ * 
+ * Goal: 50-90% cost savings vs always using premium models
+ */
+
+import { TaskClassifier } from './TaskClassifier';
+import { ModelSelector } from './ModelSelector';
+import { CascadeExecutor } from './CascadeExecutor';
+import { CostTracker } from './CostTracker';
+import { db } from '../../db';
+import { routingDecisions } from '@shared/schema';
+
+export interface ArbitrageQueryOptions {
+  query: string;
+  context?: string;
+  userId: number;
+  systemPrompt?: string;
+  temperature?: number;
+  maxTokens?: number;
+  userTier?: 'free' | 'basic' | 'pro' | 'enterprise';
+}
+
+export interface ArbitrageQueryResult {
+  content: string;
+  tierUsed: 1 | 2 | 3;
+  platform: string;
+  model: string;
+  confidence: number;
+  cost: number;
+  latency: number;
+  escalated: boolean;
+  escalationReason?: string;
+  classification: any;
+  budgetStatus: any;
+  routingDecisionId: number;
+  usage: {
+    inputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+  };
+}
+
+/**
+ * Execute AI query with full arbitrage pipeline
+ */
+export async function queryWithArbitrage(options: ArbitrageQueryOptions): Promise<ArbitrageQueryResult> {
+  const {
+    query,
+    context = '',
+    userId,
+    systemPrompt,
+    temperature = 0.7,
+    maxTokens = 1000,
+    userTier = 'free',
+  } = options;
+
+  console.log(`\n========================================`);
+  console.log(`[Arbitrage] Starting intelligent routing for user ${userId}`);
+  console.log(`[Arbitrage] Query: "${query.slice(0, 100)}${query.length > 100 ? '...' : ''}"`);
+  console.log(`========================================\n`);
+
+  const pipelineStartTime = Date.now();
+
+  try {
+    // STEP 1: Check budget before execution
+    console.log(`[Arbitrage] STEP 1: Budget Check`);
+    const budgetStatus = await CostTracker.checkBudget(userId, 0.10); // Estimate $0.10 max
+
+    if (budgetStatus.isOverBudget) {
+      throw new Error(
+        `Budget exceeded: ${budgetStatus.percentageUsed.toFixed(1)}% used ` +
+        `($${budgetStatus.currentSpend.toFixed(2)}/$${budgetStatus.monthlyLimit.toFixed(2)}). ` +
+        `Please upgrade your plan to continue using AI features.`
+      );
+    }
+
+    if (budgetStatus.isNearingLimit) {
+      console.warn(`[Arbitrage] ⚠️  ${budgetStatus.alertMessage}`);
+    }
+
+    // STEP 2: Classify query complexity
+    console.log(`[Arbitrage] STEP 2: Task Classification`);
+    const classification = await TaskClassifier.classify({
+      query,
+      context,
+      userTier,
+      maxBudget: budgetStatus.remaining,
+    });
+
+    console.log(
+      `[Arbitrage] Classification: Complexity=${classification.complexity.toFixed(2)} | ` +
+      `Domain=${classification.domain} | Quality=${classification.requiredQuality.toFixed(2)} | ` +
+      `Tokens=${classification.estimatedTokens} | Budget=$${classification.budgetConstraint}`
+    );
+
+    // STEP 3: Select cascade chain
+    console.log(`[Arbitrage] STEP 3: Model Selection`);
+    const cascadeChain = ModelSelector.selectCascadeChain(classification);
+
+    // STEP 4: Execute cascade with progressive escalation
+    console.log(`[Arbitrage] STEP 4: Cascade Execution`);
+    const executionResult = await CascadeExecutor.execute(
+      query,
+      cascadeChain,
+      systemPrompt,
+      temperature,
+      maxTokens
+    );
+
+    // STEP 5: Track spend
+    console.log(`[Arbitrage] STEP 5: Spend Tracking`);
+    await CostTracker.trackSpend({
+      userId,
+      platform: executionResult.platform,
+      model: executionResult.model,
+      cost: executionResult.cost,
+      tokens: executionResult.usage.totalTokens,
+      inputTokens: executionResult.usage.inputTokens,
+      outputTokens: executionResult.usage.outputTokens,
+      requestType: classification.domain,
+      useCase: 'ai_arbitrage',
+    });
+
+    // STEP 6: Record routing decision for DPO training
+    console.log(`[Arbitrage] STEP 6: Recording Decision`);
+    
+    // Calculate savings vs premium model (tier 3)
+    const premiumCost = cascadeChain.tier3.estimatedCost;
+    const actualCost = executionResult.cost;
+    const savingsAmount = premiumCost - actualCost;
+    const savingsPercentage = (savingsAmount / premiumCost) * 100;
+
+    const recorded = await db
+      .insert(routingDecisions)
+      .values({
+        userId,
+        query,
+        context: context || null,
+        classification: classification as any,
+        modelUsed: executionResult.model,
+        platform: executionResult.platform,
+        tierUsed: executionResult.tierUsed,
+        cost: executionResult.cost.toString(),
+        latency: executionResult.latency,
+        confidence: executionResult.confidence.toString(),
+        quality: null, // Will be set by user feedback
+        escalated: executionResult.escalated,
+        escalationReason: executionResult.escalationReason || null,
+        previousTiersAttempted: executionResult.previousTiersAttempted as any,
+        userFeedback: null,
+        feedbackComment: null,
+        savingsAmount: savingsAmount.toString(),
+        savingsPercentage: savingsPercentage.toString(),
+      })
+      .returning({ id: routingDecisions.id });
+
+    const routingDecisionId = recorded[0].id;
+
+    const pipelineTotalTime = Date.now() - pipelineStartTime;
+
+    console.log(`\n========================================`);
+    console.log(`[Arbitrage] ✅ PIPELINE COMPLETE`);
+    console.log(`[Arbitrage] Tier Used: ${executionResult.tierUsed} (${executionResult.platform}/${executionResult.model})`);
+    console.log(`[Arbitrage] Confidence: ${executionResult.confidence.toFixed(2)}`);
+    console.log(`[Arbitrage] Cost: $${executionResult.cost.toFixed(6)}`);
+    console.log(`[Arbitrage] Savings: $${savingsAmount.toFixed(6)} (${savingsPercentage.toFixed(1)}%)`);
+    console.log(`[Arbitrage] Latency: ${executionResult.latency}ms (execution) + ${pipelineTotalTime - executionResult.latency}ms (overhead)`);
+    console.log(`[Arbitrage] Total Time: ${pipelineTotalTime}ms`);
+    console.log(`========================================\n`);
+
+    return {
+      ...executionResult,
+      classification,
+      budgetStatus,
+      routingDecisionId,
+    };
+  } catch (error: any) {
+    console.error(`[Arbitrage] ❌ Pipeline failed:`, error.message);
+    throw error;
+  }
+}
+
+/**
  * Export services for direct access
  */
 export {
