@@ -1,18 +1,21 @@
 /**
- * CascadeExecutor - Progressive Escalation Strategy
+ * CascadeExecutor - Progressive Escalation Strategy with Tier-0 Local Models
  * 
- * Executes AI requests using 3-tier cascade with automatic escalation:
- * - Tier 1: Try cheapest model → if confidence >0.8, accept; else escalate
+ * Executes AI requests using 4-tier cascade with automatic escalation:
+ * - Tier 0: Try local model (Ollama/LM Studio) → if confidence >0.85, accept; else escalate
+ * - Tier 1: Try cheapest cloud model → if confidence >0.8, accept; else escalate
  * - Tier 2: Try mid-tier model → if confidence >0.9, accept; else escalate  
  * - Tier 3: Try premium model → always accept (no further escalation)
  * 
- * Confidence Calculation:
- * - Response length vs expected (0-0.3 weight)
- * - Token usage efficiency (0-0.2 weight)
- * - Error-free execution (0-0.3 weight)
- * - Model quality score (0-0.2 weight)
+ * Confidence Calculation (6 factors):
+ * - Response completeness (0-0.25 weight)
+ * - Response length appropriateness (0-0.15 weight)
+ * - Error-free content (0-0.25 weight)
+ * - Model quality baseline (0-0.15 weight)
+ * - Technical term presence (0-0.10 weight) [NEW]
+ * - Code block completeness (0-0.10 weight) [NEW]
  * 
- * Goal: 80%+ tier-1 success rate (most tasks handled by cheap models)
+ * Goal: 80%+ tier-0/tier-1 success rate (most tasks handled by free/cheap models)
  */
 
 import { GroqService } from './GroqService';
@@ -29,7 +32,7 @@ import { executeWithRetry, executeWithCircuitBreaker, classifyError } from '../E
 
 export interface CascadeExecutionResult {
   content: string;
-  tierUsed: 1 | 2 | 3;
+  tierUsed: 0 | 1 | 2 | 3;
   platform: string;
   model: string;
   confidence: number;
@@ -71,11 +74,18 @@ interface ExecutionAttempt {
 // CONFIGURATION
 // ============================================================================
 
+const TIER0_CONFIDENCE_THRESHOLD = 0.85; // 85% confidence to accept tier 0 (local)
 const TIER1_CONFIDENCE_THRESHOLD = 0.80; // 80% confidence to accept tier 1
 const TIER2_CONFIDENCE_THRESHOLD = 0.90; // 90% confidence to accept tier 2
 const TIER3_ALWAYS_ACCEPT = true;        // Always accept tier 3 (no escalation)
+const TIER0_ENABLED = false;             // Tier 0 stub (future Ollama integration)
 
 const MODEL_QUALITY_SCORES: Record<string, number> = {
+  // Local models (Tier 0)
+  'llama3.1:8b': 0.68,
+  'mistral:7b': 0.65,
+  
+  // Cloud models
   'llama-3.1-8b-instant': 0.65,
   'llama-3.3-70b-versatile': 0.75,
   'gemini-2.5-flash-lite': 0.70,
@@ -93,7 +103,7 @@ const MODEL_QUALITY_SCORES: Record<string, number> = {
 
 export class CascadeExecutor {
   /**
-   * Execute cascade strategy with progressive escalation
+   * Execute cascade strategy with progressive escalation (Tier 0 → 1 → 2 → 3)
    */
   static async execute(
     query: string,
@@ -107,7 +117,54 @@ export class CascadeExecutor {
     const attempts: ExecutionAttempt[] = [];
     const startTime = Date.now();
 
-    // TIER 1: Cheapest model
+    // TIER 0: Local model (Ollama/LM Studio) - 100% FREE
+    if (TIER0_ENABLED) {
+      try {
+        const tier0Result = await this.executeTier0Stub(
+          query,
+          systemPrompt,
+          temperature,
+          maxTokens
+        );
+        
+        attempts.push(tier0Result);
+
+        if (tier0Result.confidence >= TIER0_CONFIDENCE_THRESHOLD) {
+          console.log(
+            `[CascadeExecutor] ✅ TIER 0 SUCCESS (LOCAL) | ${tier0Result.platform}/${tier0Result.model} | ` +
+            `Confidence: ${tier0Result.confidence.toFixed(2)} | Cost: $0.00 (FREE) | ` +
+            `${tier0Result.latency}ms`
+          );
+
+          return {
+            ...tier0Result,
+            tierUsed: 0,
+            escalated: false,
+            previousTiersAttempted: [],
+          };
+        }
+
+        console.log(
+          `[CascadeExecutor] ⬆️  TIER 0 ESCALATE | Confidence: ${tier0Result.confidence.toFixed(2)} < ${TIER0_CONFIDENCE_THRESHOLD} | ` +
+          `Escalating to Tier 1 (cloud)...`
+        );
+      } catch (error: any) {
+        console.error(`[CascadeExecutor] ❌ TIER 0 FAILED: ${error.message}`);
+        attempts.push({
+          tier: 0,
+          platform: 'ollama',
+          model: 'llama3.1:8b',
+          content: '',
+          confidence: 0,
+          cost: 0,
+          latency: 0,
+          usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0 },
+          reason: `Error: ${error.message}`,
+        });
+      }
+    }
+
+    // TIER 1: Cheapest cloud model
     try {
       const tier1Result = await this.executeTier(
         cascadeChain.tier1,
@@ -246,7 +303,7 @@ export class CascadeExecutor {
         console.warn(`[CascadeExecutor] ⚠️  Returning last successful attempt (Tier ${successfulAttempt.tier})`);
         return {
           ...successfulAttempt,
-          tierUsed: successfulAttempt.tier as 1 | 2 | 3,
+          tierUsed: successfulAttempt.tier as 0 | 1 | 2 | 3,
           escalated: true,
           escalationReason: 'All higher tiers failed',
           previousTiersAttempted: [],
@@ -258,7 +315,44 @@ export class CascadeExecutor {
   }
 
   /**
-   * Execute single tier with error recovery
+   * Execute Tier 0 - Local Ollama/LM Studio (STUB for future integration)
+   * 
+   * This is a stub implementation for future integration with local Ollama server.
+   * When enabled, it will execute queries on local models for 100% free inference.
+   * 
+   * Models: llama3.1:8b, mistral:7b
+   * Cost: $0.00 (runs locally)
+   * Latency: ~50-200ms (depends on hardware)
+   * 
+   * TODO: Integrate with Ollama HTTP API (http://localhost:11434)
+   */
+  private static async executeTier0Stub(
+    query: string,
+    systemPrompt?: string,
+    temperature: number = 0.7,
+    maxTokens: number = 1000
+  ): Promise<ExecutionAttempt> {
+    console.log(`[CascadeExecutor] 🔧 TIER 0 STUB | Ollama integration not yet implemented`);
+    
+    // Simulate local model execution (stub)
+    const startTime = Date.now();
+    
+    // TODO: Replace with actual Ollama API call:
+    // const response = await fetch('http://localhost:11434/api/generate', {
+    //   method: 'POST',
+    //   body: JSON.stringify({
+    //     model: 'llama3.1:8b',
+    //     prompt: query,
+    //     system: systemPrompt,
+    //     options: { temperature, num_predict: maxTokens }
+    //   })
+    // });
+    
+    throw new Error('Tier 0 (Ollama) not yet implemented - escalating to Tier 1');
+  }
+
+  /**
+   * Execute single tier with error recovery (retry + circuit breaker)
    */
   private static async executeTier(
     tier: ModelTier,
@@ -271,9 +365,12 @@ export class CascadeExecutor {
     const { platform, model } = tier;
     const serviceKey = `${platform}:${model}`;
     
+    console.log(`[CascadeExecutor] 🔄 Executing ${platform}/${model} with error recovery...`);
+    
     // Execute with circuit breaker and retry logic
     const recoveryResult = await executeWithCircuitBreaker(
       async () => {
+        console.log(`[CascadeExecutor] 🔁 Circuit breaker check passed for ${serviceKey}`);
         return await executeWithRetry(
           async () => {
             // Route to appropriate service
@@ -334,13 +431,17 @@ export class CascadeExecutor {
     );
     
     if (!recoveryResult.success) {
+      console.error(`[CascadeExecutor] ❌ Recovery failed for ${serviceKey}: ${recoveryResult.error?.message}`);
+      console.error(`[CascadeExecutor] 📊 Recovery stats: ${recoveryResult.attempts} attempts, ${recoveryResult.totalLatency}ms total latency`);
       throw recoveryResult.error || new Error(`${platform} execution failed`);
     }
+    
+    console.log(`[CascadeExecutor] ✅ Recovery successful for ${serviceKey} | Strategy: ${recoveryResult.recoveryStrategy} | Attempts: ${recoveryResult.attempts} | Fallback used: ${recoveryResult.fallbackUsed}`);
     
     const result = recoveryResult.data?.data || recoveryResult.data;
     const latency = Date.now() - startTime;
 
-    // Calculate confidence score
+    // Calculate confidence score (6 factors)
     const confidence = this.calculateConfidence({
       content: result.content,
       usage: result.usage,
@@ -362,7 +463,9 @@ export class CascadeExecutor {
   }
 
   /**
-   * Calculate confidence score (0.0-1.0)
+   * Calculate confidence score (0.0-1.0) using 6 factors
+   * 
+   * Enhanced confidence calculation with technical term and code detection
    */
   private static calculateConfidence({
     content,
@@ -379,44 +482,112 @@ export class CascadeExecutor {
   }): number {
     let confidenceScore = 0;
 
-    // Factor 1: Response completeness (0-0.3 weight)
+    // Factor 1: Response completeness (0-0.25 weight)
     // Check if response looks complete (not truncated)
     const outputTokenRatio = usage.outputTokens / maxTokens;
     if (outputTokenRatio < 0.9) {
       // Not hitting token limit = likely complete
-      confidenceScore += 0.3;
+      confidenceScore += 0.25;
     } else if (content.trim().endsWith('.') || content.trim().endsWith('!') || content.trim().endsWith('?')) {
       // Hitting limit but ends with punctuation = possibly complete
-      confidenceScore += 0.2;
+      confidenceScore += 0.18;
     } else {
       // Hitting limit and no ending punctuation = likely truncated
-      confidenceScore += 0.1;
+      confidenceScore += 0.10;
     }
 
-    // Factor 2: Response length appropriateness (0-0.2 weight)
+    // Factor 2: Response length appropriateness (0-0.15 weight)
     // Neither too short nor too long
     const contentLength = content.length;
     if (contentLength >= 50 && contentLength <= 5000) {
-      confidenceScore += 0.2;
+      confidenceScore += 0.15;
     } else if (contentLength >= 20 && contentLength <= 10000) {
-      confidenceScore += 0.1;
+      confidenceScore += 0.10;
+    } else if (contentLength >= 10) {
+      confidenceScore += 0.05;
     }
 
-    // Factor 3: Error-free content (0-0.3 weight)
+    // Factor 3: Error-free content (0-0.25 weight)
     // Check for common error patterns
     const hasErrorPatterns = /error|failed|unable|cannot|sorry|apologize/i.test(content);
     if (!hasErrorPatterns) {
-      confidenceScore += 0.3;
+      confidenceScore += 0.25;
     } else {
-      confidenceScore += 0.1; // Partial credit
+      confidenceScore += 0.10; // Partial credit
     }
 
-    // Factor 4: Model quality baseline (0-0.2 weight)
+    // Factor 4: Model quality baseline (0-0.15 weight)
     const modelQuality = MODEL_QUALITY_SCORES[model] || 0.5;
-    confidenceScore += modelQuality * 0.2;
+    confidenceScore += modelQuality * 0.15;
+
+    // Factor 5: Technical term presence (0-0.10 weight) [NEW]
+    // Higher confidence if response contains domain-specific technical terms
+    const technicalTerms = [
+      // Programming
+      'function', 'class', 'method', 'variable', 'array', 'object', 'interface', 'async', 'await',
+      'import', 'export', 'const', 'let', 'return', 'typeof', 'instanceof',
+      // Web/API
+      'api', 'endpoint', 'request', 'response', 'http', 'json', 'database', 'query',
+      // Architecture
+      'component', 'service', 'module', 'middleware', 'controller', 'model', 'schema',
+      // General tech
+      'algorithm', 'implementation', 'optimization', 'configuration', 'parameter'
+    ];
+    
+    const lowerContent = content.toLowerCase();
+    const matchedTerms = technicalTerms.filter(term => lowerContent.includes(term));
+    const technicalTermRatio = Math.min(matchedTerms.length / 5, 1); // Max 5 terms = 100%
+    confidenceScore += technicalTermRatio * 0.10;
+
+    // Factor 6: Code block completeness (0-0.10 weight) [NEW]
+    // Higher confidence if code blocks are properly formatted and complete
+    const codeBlockMatches = content.match(/```[\s\S]*?```/g) || [];
+    const inlineCodeMatches = content.match(/`[^`]+`/g) || [];
+    
+    let codeScore = 0;
+    if (codeBlockMatches.length > 0) {
+      // Has code blocks - check for completeness
+      const allBlocksComplete = codeBlockMatches.every(block => {
+        const lines = block.split('\n');
+        // Check for matching opening/closing markers
+        const hasOpening = lines[0].includes('```');
+        const hasClosing = lines[lines.length - 1].includes('```');
+        // Check for reasonable content
+        const hasContent = lines.length > 2;
+        return hasOpening && hasClosing && hasContent;
+      });
+      
+      if (allBlocksComplete) {
+        codeScore = 0.10; // Full credit for complete code blocks
+      } else {
+        codeScore = 0.05; // Partial credit for incomplete blocks
+      }
+    } else if (inlineCodeMatches.length > 0) {
+      // Has inline code - give partial credit
+      codeScore = 0.06;
+    } else if (lowerContent.includes('code') || lowerContent.includes('example')) {
+      // Mentions code but doesn't have formatted blocks - minimal credit
+      codeScore = 0.03;
+    }
+    
+    confidenceScore += codeScore;
 
     // Ensure confidence is in [0, 1] range
-    return Math.max(0, Math.min(1, confidenceScore));
+    const finalConfidence = Math.max(0, Math.min(1, confidenceScore));
+    
+    // Debug logging
+    console.log(
+      `[CascadeExecutor] 📊 Confidence breakdown: ` +
+      `completeness=${(outputTokenRatio < 0.9 ? 0.25 : 0.18).toFixed(2)} | ` +
+      `length=${(contentLength >= 50 && contentLength <= 5000 ? 0.15 : 0.10).toFixed(2)} | ` +
+      `error-free=${(hasErrorPatterns ? 0.10 : 0.25).toFixed(2)} | ` +
+      `model=${(modelQuality * 0.15).toFixed(2)} | ` +
+      `tech-terms=${(technicalTermRatio * 0.10).toFixed(2)} | ` +
+      `code=${codeScore.toFixed(2)} | ` +
+      `TOTAL=${finalConfidence.toFixed(2)}`
+    );
+    
+    return finalConfidence;
   }
 
   /**

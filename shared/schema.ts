@@ -7401,6 +7401,47 @@ export const insertCostBudgetSchema = createInsertSchema(costBudgets).omit({ id:
 export type InsertCostBudget = z.infer<typeof insertCostBudgetSchema>;
 export type SelectCostBudget = typeof costBudgets.$inferSelect;
 
+/**
+ * Budget Alerts Table - Real-time budget warning history
+ * Stores alerts sent to users when approaching/exceeding budget limits
+ */
+export const budgetAlerts = pgTable("budget_alerts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // Alert details
+  alertType: varchar("alert_type", { length: 50 }).notNull(), // budget-warning (80%), budget-critical (95%), budget-exceeded (100%)
+  threshold: numeric("threshold", { precision: 5, scale: 2 }).notNull(), // Percentage 0.00-100.00
+  
+  // Budget status at alert time
+  currentSpend: numeric("current_spend", { precision: 10, scale: 6 }).notNull(),
+  monthlyLimit: numeric("monthly_limit", { precision: 10, scale: 2 }).notNull(),
+  percentageUsed: numeric("percentage_used", { precision: 5, scale: 2 }).notNull(),
+  
+  // Billing period
+  billingMonth: varchar("billing_month", { length: 7 }).notNull(), // YYYY-MM
+  
+  // Notification delivery
+  notificationSent: boolean("notification_sent").default(false),
+  notificationMethod: varchar("notification_method", { length: 20 }), // websocket, email, push
+  
+  // User response tracking
+  acknowledged: boolean("acknowledged").default(false),
+  acknowledgedAt: timestamp("acknowledged_at"),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("budget_alerts_user_idx").on(table.userId),
+  alertTypeIdx: index("budget_alerts_type_idx").on(table.alertType),
+  billingMonthIdx: index("budget_alerts_billing_month_idx").on(table.billingMonth),
+  userBillingIdx: index("budget_alerts_user_billing_idx").on(table.userId, table.billingMonth),
+  createdAtIdx: index("budget_alerts_created_at_idx").on(table.createdAt),
+}));
+
+export const insertBudgetAlertSchema = createInsertSchema(budgetAlerts).omit({ id: true, createdAt: true });
+export type InsertBudgetAlert = z.infer<typeof insertBudgetAlertSchema>;
+export type SelectBudgetAlert = typeof budgetAlerts.$inferSelect;
+
 // ============================================================================
 // AI LEARNING SYSTEMS (DPO, Curriculum, GEPA, LIMI)
 // ============================================================================

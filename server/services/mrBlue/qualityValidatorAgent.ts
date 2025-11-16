@@ -309,6 +309,182 @@ Return a JSON object with:
     return Math.max(0, score);
   }
 
+  /**
+   * Detect security vulnerabilities (Learning #44)
+   * Scans code for SQL injection, XSS, exposed secrets, CSRF issues
+   */
+  async detectSecurityVulnerabilities(code: string, language: string): Promise<{
+    score: number;
+    vulnerabilities: Array<{
+      type: 'sql_injection' | 'xss' | 'exposed_secret' | 'csrf' | 'insecure_crypto';
+      severity: 'critical' | 'high' | 'medium' | 'low';
+      description: string;
+      location?: string;
+      fix: string;
+      canAutoFix: boolean;
+    }>;
+  }> {
+    const vulnerabilities: any[] = [];
+    let score = 100;
+
+    // SQL Injection Detection
+    if (code.match(/\$\{.*\}.*\bSELECT\b|\bSELECT\b.*\$\{.*\}/i)) {
+      vulnerabilities.push({
+        type: 'sql_injection',
+        severity: 'critical',
+        description: 'Potential SQL injection vulnerability detected',
+        location: 'Template literal in SQL query',
+        fix: 'Use parameterized queries with db.select() or prepared statements',
+        canAutoFix: false
+      });
+      score -= 40;
+    }
+
+    if (code.match(/query\([`'"]\s*SELECT.*\+|SELECT.*\+.*[`'"]|query\s*\(\s*[^`'"]/i)) {
+      vulnerabilities.push({
+        type: 'sql_injection',
+        severity: 'critical',
+        description: 'String concatenation in SQL query',
+        location: 'SQL query construction',
+        fix: 'Use ORM methods or parameterized queries instead of string concatenation',
+        canAutoFix: false
+      });
+      score -= 40;
+    }
+
+    // XSS Detection
+    if (code.match(/innerHTML\s*=|dangerouslySetInnerHTML/)) {
+      vulnerabilities.push({
+        type: 'xss',
+        severity: 'high',
+        description: 'Potential XSS vulnerability with innerHTML',
+        location: 'DOM manipulation',
+        fix: 'Use textContent or sanitize HTML with DOMPurify',
+        canAutoFix: false
+      });
+      score -= 30;
+    }
+
+    // Exposed Secrets Detection
+    const secretPatterns = [
+      { pattern: /api[_-]?key\s*[=:]\s*['"][^'"]{20,}['"]/, name: 'API key' },
+      { pattern: /password\s*[=:]\s*['"][^'"]+['"]/, name: 'Password' },
+      { pattern: /secret\s*[=:]\s*['"][^'"]{20,}['"]/, name: 'Secret' },
+      { pattern: /token\s*[=:]\s*['"][^'"]{20,}['"]/, name: 'Token' },
+      { pattern: /sk_live_[a-zA-Z0-9]{24,}/, name: 'Stripe secret key' },
+      { pattern: /AIza[a-zA-Z0-9_-]{35}/, name: 'Google API key' },
+    ];
+
+    for (const { pattern, name } of secretPatterns) {
+      if (code.match(pattern)) {
+        vulnerabilities.push({
+          type: 'exposed_secret',
+          severity: 'critical',
+          description: `Hardcoded ${name} detected`,
+          location: 'Code contains sensitive credentials',
+          fix: `Move ${name} to environment variables (process.env.${name.toUpperCase().replace(/\s/g, '_')})`,
+          canAutoFix: true
+        });
+        score -= 50;
+      }
+    }
+
+    // CSRF Detection
+    if (language === 'typescript' || language === 'javascript') {
+      if (code.match(/router\.(post|put|delete|patch)/i) && !code.match(/csrf|csurf|csrfProtection/i)) {
+        vulnerabilities.push({
+          type: 'csrf',
+          severity: 'medium',
+          description: 'Mutating endpoint without CSRF protection',
+          location: 'API route handler',
+          fix: 'Add CSRF protection middleware to POST/PUT/DELETE routes',
+          canAutoFix: false
+        });
+        score -= 15;
+      }
+    }
+
+    // Insecure Crypto
+    if (code.match(/createHash\(['"]md5['"]|createHash\(['"]sha1['"]/)) {
+      vulnerabilities.push({
+        type: 'insecure_crypto',
+        severity: 'medium',
+        description: 'Using insecure hashing algorithm (MD5/SHA1)',
+        location: 'Crypto operation',
+        fix: 'Use SHA-256 or bcrypt for password hashing',
+        canAutoFix: true
+      });
+      score -= 20;
+    }
+
+    return {
+      score: Math.max(0, score),
+      vulnerabilities
+    };
+  }
+
+  /**
+   * Generate automated fix suggestions (Learning #42)
+   * Returns specific code fixes for detected issues
+   */
+  async generateAutomatedFixes(code: string, language: string): Promise<{
+    issues: Array<{
+      issue: string;
+      severity: 'error' | 'warning' | 'info';
+      suggestedFix: string;
+      canAutoFix: boolean;
+      autoFixCode?: string;
+    }>;
+  }> {
+    const issues: any[] = [];
+
+    // Use CodeOptimizationService to detect issues
+    const optimizations = await this.detectPerformanceIssues(code, language);
+    
+    for (const opt of optimizations) {
+      issues.push({
+        issue: opt.description,
+        severity: opt.severity === 'critical' || opt.severity === 'high' ? 'error' : 'warning',
+        suggestedFix: opt.suggestion,
+        canAutoFix: opt.autoFixAvailable,
+        autoFixCode: opt.autoFix
+      });
+    }
+
+    // Add security fixes
+    const security = await this.detectSecurityVulnerabilities(code, language);
+    for (const vuln of security.vulnerabilities) {
+      issues.push({
+        issue: vuln.description,
+        severity: vuln.severity === 'critical' || vuln.severity === 'high' ? 'error' : 'warning',
+        suggestedFix: vuln.fix,
+        canAutoFix: vuln.canAutoFix,
+        autoFixCode: vuln.canAutoFix ? this.generateSecurityAutoFix(vuln) : undefined
+      });
+    }
+
+    return { issues };
+  }
+
+  /**
+   * Generate auto-fix code for security vulnerabilities
+   */
+  private generateSecurityAutoFix(vuln: any): string {
+    if (vuln.type === 'exposed_secret') {
+      const secretName = vuln.description.match(/Hardcoded ([^d]+) detected/)?.[1];
+      if (secretName) {
+        const envVar = secretName.toUpperCase().replace(/\s/g, '_');
+        return `process.env.${envVar}`;
+      }
+    }
+
+    if (vuln.type === 'insecure_crypto') {
+      return `crypto.createHash('sha256')`;
+    }
+
+    return vuln.fix;
+  }
+
   private async detectSpam(text: string): Promise<boolean> {
     const spamIndicators = [
       /click here/gi,

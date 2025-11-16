@@ -20,6 +20,7 @@ import { db } from '../../db';
 import { routingDecisions, dpoTrainingData, goldenExamples } from '@shared/schema';
 import { eq, desc, count, and, gte, sql } from 'drizzle-orm';
 import type { SelectRoutingDecision } from '@shared/schema';
+import { CurriculumManager, type CurriculumLevel } from './CurriculumManager';
 
 // ============================================================================
 // TYPES
@@ -34,6 +35,19 @@ export interface PreferencePair {
   qualityDelta: number;
   domain: string;
   complexity: number;
+  curriculumLevel?: CurriculumLevel;
+  confidence?: number;
+  requiresFeedback?: boolean;
+}
+
+export interface UncertainDecision {
+  routingDecisionId: number;
+  query: string;
+  confidence: number;
+  tierUsed: number;
+  modelUsed: string;
+  timestamp: Date;
+  priority: number;
 }
 
 export interface DPOStats {
@@ -52,6 +66,11 @@ export interface DPOStats {
 const TRAINING_THRESHOLD = 1000; // Retrain every 1,000 new decisions
 const MIN_QUALITY_DELTA = 0.1; // Minimum quality difference to create pair
 const MAX_COST_MULTIPLIER = 3.0; // Reject if cost is >3x chosen model
+
+// Active Learning constants
+const UNCERTAIN_CONFIDENCE_MIN = 0.4;
+const UNCERTAIN_CONFIDENCE_MAX = 0.6;
+const UNCERTAIN_DECISION_PRIORITY_THRESHOLD = 10;
 
 // Model tier hierarchy (for generating alternatives)
 const MODEL_TIERS = {
@@ -308,6 +327,150 @@ export class DPOTrainer {
     } catch (error: any) {
       console.error('[DPOTrainer] ❌ Training failed:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Identify uncertain decisions for active learning (Learning #13)
+   * Returns decisions with confidence between 0.4-0.6 for manual review
+   */
+  static async identifyUncertainDecisions(limit = 20): Promise<UncertainDecision[]> {
+    try {
+      // Fetch recent decisions with uncertain confidence
+      const uncertainDecisions = await db
+        .select()
+        .from(routingDecisions)
+        .where(
+          and(
+            sql`${routingDecisions.confidence} >= ${UNCERTAIN_CONFIDENCE_MIN}`,
+            sql`${routingDecisions.confidence} <= ${UNCERTAIN_CONFIDENCE_MAX}`,
+            sql`${routingDecisions.userFeedback} IS NULL` // Not yet reviewed
+          )
+        )
+        .orderBy(desc(routingDecisions.createdAt))
+        .limit(limit);
+
+      return uncertainDecisions.map(decision => ({
+        routingDecisionId: decision.id,
+        query: decision.query,
+        confidence: decision.confidence || 0.5,
+        tierUsed: decision.tierUsed,
+        modelUsed: decision.modelUsed,
+        timestamp: decision.createdAt || new Date(),
+        priority: this.calculateUncertaintyPriority(decision)
+      }));
+    } catch (error: any) {
+      console.error('[DPOTrainer] Failed to identify uncertain decisions:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Calculate priority for uncertain decisions (higher = more important to review)
+   */
+  private static calculateUncertaintyPriority(decision: any): number {
+    let priority = 5; // Base priority
+
+    // Higher priority for higher-tier models (more expensive mistakes)
+    priority += decision.tierUsed * 2;
+
+    // Higher priority for higher costs
+    const cost = parseFloat(decision.cost || '0');
+    if (cost > 0.001) priority += 2;
+    if (cost > 0.01) priority += 3;
+
+    // Higher priority for recent decisions
+    const ageHours = decision.createdAt ? 
+      (Date.now() - new Date(decision.createdAt).getTime()) / (1000 * 60 * 60) : 999;
+    if (ageHours < 24) priority += 2;
+
+    return priority;
+  }
+
+  /**
+   * Generate curriculum-aware preference pairs (Learning #14)
+   * Weights examples by user skill level for better training
+   */
+  static async generateCurriculumAwarePairs(userId: number, limit = 50): Promise<PreferencePair[]> {
+    try {
+      // Get user's curriculum level
+      const userLevel = await CurriculumManager.getUserLevel(userId);
+      
+      // Fetch decisions from users at similar skill levels
+      const decisions = await db
+        .select()
+        .from(routingDecisions)
+        .where(
+          and(
+            sql`${routingDecisions.tierUsed} < 3`,
+            sql`${routingDecisions.userFeedback} = 'thumbs_up'`
+          )
+        )
+        .orderBy(desc(routingDecisions.createdAt))
+        .limit(limit * 2); // Get 2x, filter by curriculum match
+
+      const pairs: PreferencePair[] = [];
+
+      for (const decision of decisions) {
+        // Determine appropriate curriculum level for this decision
+        const complexity = decision.classification ? 
+          (JSON.parse(decision.classification as string).complexity || 0.5) : 0.5;
+        
+        let decisionLevel: CurriculumLevel;
+        if (complexity < 0.3) decisionLevel = 'basic';
+        else if (complexity < 0.6) decisionLevel = 'intermediate';
+        else if (complexity < 0.85) decisionLevel = 'advanced';
+        else decisionLevel = 'expert';
+
+        // Weight pairs matching user's level higher
+        const levelMatch = decisionLevel === userLevel;
+        if (levelMatch || Math.random() > 0.5) { // Include all matches + 50% of others
+          const pair = await this.generatePreferencePairFromDecision(decision.id);
+          if (pair) {
+            pair.curriculumLevel = decisionLevel;
+            pair.confidence = decision.confidence || 0.7;
+            pairs.push(pair);
+          }
+        }
+
+        if (pairs.length >= limit) break;
+      }
+
+      console.log(`[DPOTrainer] Generated ${pairs.length} curriculum-aware pairs for level: ${userLevel}`);
+      return pairs;
+    } catch (error: any) {
+      console.error('[DPOTrainer] Failed to generate curriculum-aware pairs:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Request feedback on uncertain decisions (Active Learning - Learning #13)
+   * Returns high-priority uncertain decisions for manual labeling
+   */
+  static async requestFeedbackOnUncertain(limit = 10): Promise<UncertainDecision[]> {
+    try {
+      const uncertain = await this.identifyUncertainDecisions(50);
+      
+      // Sort by priority, return top N
+      const prioritized = uncertain
+        .filter(d => d.priority >= UNCERTAIN_DECISION_PRIORITY_THRESHOLD)
+        .sort((a, b) => b.priority - a.priority)
+        .slice(0, limit);
+
+      // Mark these as requiring feedback
+      for (const decision of prioritized) {
+        await db
+          .update(routingDecisions)
+          .set({ requiresFeedback: true })
+          .where(eq(routingDecisions.id, decision.routingDecisionId));
+      }
+
+      console.log(`[DPOTrainer] Identified ${prioritized.length} high-priority uncertain decisions for feedback`);
+      return prioritized;
+    } catch (error: any) {
+      console.error('[DPOTrainer] Failed to request feedback on uncertain decisions:', error);
+      return [];
     }
   }
 
