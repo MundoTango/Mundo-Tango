@@ -160,7 +160,7 @@ export function MemoryDashboard() {
               </div>
               <div className="space-y-1">
                 <div className="text-sm text-muted-foreground">Avg Importance</div>
-                <div className="text-2xl font-bold">{stats.avgImportance.toFixed(1)}</div>
+                <div className="text-2xl font-bold">{(stats.avgImportance ?? 0).toFixed(1)}</div>
               </div>
             </div>
           )}
