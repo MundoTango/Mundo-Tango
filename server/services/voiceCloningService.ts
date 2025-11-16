@@ -9,12 +9,157 @@
 
 import FormData from 'form-data';
 import fs from 'fs';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import path from 'path';
+import { promises as fsPromises } from 'fs';
 
+const execAsync = promisify(exec);
 const isElevenLabsConfigured = Boolean(process.env.ELEVENLABS_API_KEY);
+
+interface VoiceCloneRequest {
+  audioUrls: string[];
+  voiceName: string;
+  userId: number;
+}
 
 export class VoiceCloningService {
   private apiKey = process.env.ELEVENLABS_API_KEY;
   private baseUrl = 'https://api.elevenlabs.io/v1';
+  private outputDir = path.join(process.cwd(), 'attached_assets', 'voice_samples');
+
+  /**
+   * Download audio from YouTube
+   */
+  async downloadAudioFromYouTube(url: string, outputPath: string): Promise<string> {
+    const command = `yt-dlp -x --audio-format mp3 --audio-quality 0 -o "${outputPath}" "${url}"`;
+    
+    try {
+      console.log(`[VoiceClone] Downloading YouTube audio: ${url}`);
+      await execAsync(command);
+      console.log(`[VoiceClone] Downloaded to: ${outputPath}`);
+      return outputPath;
+    } catch (error) {
+      console.error('[VoiceClone] Failed to download:', url, error);
+      throw new Error(`Failed to download audio from ${url}`);
+    }
+  }
+
+  /**
+   * Download audio from Podbean podcast
+   */
+  async downloadAudioFromPodcast(url: string, outputPath: string): Promise<string> {
+    try {
+      console.log(`[VoiceClone] Downloading podcast audio: ${url}`);
+      const response = await fetch(url);
+      const html = await response.text();
+      
+      // Extract MP3 URL from Podbean page
+      const mp3Match = html.match(/https:\/\/[^"]+\.mp3/);
+      if (!mp3Match) {
+        throw new Error('Could not find audio URL in podcast page');
+      }
+      
+      const audioUrl = mp3Match[0];
+      console.log(`[VoiceClone] Found audio URL: ${audioUrl}`);
+      const audioResponse = await fetch(audioUrl);
+      const buffer = await audioResponse.arrayBuffer();
+      
+      await fsPromises.writeFile(outputPath, Buffer.from(buffer));
+      console.log(`[VoiceClone] Downloaded to: ${outputPath}`);
+      return outputPath;
+    } catch (error) {
+      console.error('[VoiceClone] Failed to download podcast:', url, error);
+      throw new Error(`Failed to download podcast from ${url}`);
+    }
+  }
+
+  /**
+   * Extract voice sample from audio file using ffmpeg
+   */
+  async extractVoiceSample(audioPath: string, startTime: number = 30, duration: number = 120): Promise<string> {
+    const outputPath = audioPath.replace('.mp3', '_sample.mp3');
+    const command = `ffmpeg -i "${audioPath}" -ss ${startTime} -t ${duration} -q:a 0 "${outputPath}" -y`;
+    
+    try {
+      console.log(`[VoiceClone] Extracting sample from ${audioPath} (${startTime}s-${startTime+duration}s)`);
+      await execAsync(command);
+      console.log(`[VoiceClone] Extracted sample to: ${outputPath}`);
+      return outputPath;
+    } catch (error) {
+      console.error('[VoiceClone] Failed to extract sample:', error);
+      throw new Error('Failed to extract voice sample');
+    }
+  }
+
+  /**
+   * Clone user voice from interview URLs
+   */
+  async cloneUserVoice(request: VoiceCloneRequest): Promise<string> {
+    console.log('[VoiceClone] Starting voice cloning process...');
+    
+    // Ensure output directory exists
+    await fsPromises.mkdir(this.outputDir, { recursive: true });
+    
+    const downloadedFiles: string[] = [];
+    
+    // Download all audio sources
+    for (let index = 0; index < request.audioUrls.length; index++) {
+      const url = request.audioUrls[index];
+      const filename = `audio_${request.userId}_${index}.mp3`;
+      const outputPath = path.join(this.outputDir, filename);
+      
+      try {
+        if (url.includes('youtube.com') || url.includes('youtu.be')) {
+          await this.downloadAudioFromYouTube(url, outputPath);
+        } else if (url.includes('podbean.com')) {
+          await this.downloadAudioFromPodcast(url, outputPath);
+        } else {
+          console.warn('[VoiceClone] Unknown URL type:', url);
+          continue;
+        }
+        
+        downloadedFiles.push(outputPath);
+      } catch (error) {
+        console.error('[VoiceClone] Failed to download:', url, error);
+        // Continue with other files
+      }
+    }
+    
+    if (downloadedFiles.length === 0) {
+      throw new Error('Failed to download any audio files');
+    }
+    
+    console.log(`[VoiceClone] Downloaded ${downloadedFiles.length} audio files`);
+    
+    // Extract voice samples (first 2 minutes of each file, skipping first 30 seconds to avoid intros)
+    const sampleFiles = await Promise.all(
+      downloadedFiles.map(file => this.extractVoiceSample(file, 30, 120))
+    );
+    
+    console.log(`[VoiceClone] Extracted ${sampleFiles.length} voice samples`);
+    
+    // Clone voice with ElevenLabs
+    const result = await this.cloneVoice(request.voiceName, sampleFiles);
+    
+    if (!result.success || !result.voiceId) {
+      throw new Error(`Voice cloning failed: ${result.error}`);
+    }
+    
+    console.log('[VoiceClone] Successfully cloned voice! Voice ID:', result.voiceId);
+    
+    // Clean up temporary files
+    try {
+      for (const file of [...downloadedFiles, ...sampleFiles]) {
+        await fsPromises.unlink(file);
+      }
+      console.log('[VoiceClone] Cleaned up temporary files');
+    } catch (error) {
+      console.warn('[VoiceClone] Failed to clean up some files:', error);
+    }
+    
+    return result.voiceId;
+  }
 
   /**
    * Clone voice from audio samples
@@ -50,7 +195,7 @@ export class VoiceCloningService {
           'xi-api-key': this.apiKey!,
           ...formData.getHeaders()
         },
-        body: formData
+        body: formData as any
       });
 
       if (!response.ok) {

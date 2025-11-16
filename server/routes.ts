@@ -32,6 +32,7 @@ import visualEditorRoutes from "./routes/visualEditor";
 import whisperRoutes from "./routes/whisper";
 import openaiRealtimeRoutes from "./routes/openai-realtime";
 import realtimeVoiceRoutes, { initRealtimeVoiceWebSocket } from "./routes/realtimeVoice";
+import { registerVoiceCloningRoutes } from "./routes/voiceCloning";
 import { initLivestreamWebSocket } from "./services/livestream-websocket";
 import rbacRoutes from "./routes/rbac-routes";
 import featureFlagsRoutes from "./routes/feature-flags-routes";
@@ -458,6 +459,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/whisper", authenticateToken, whisperRoutes);
   app.use("/api/realtime", authenticateToken, realtimeVoiceRoutes);
   app.use("/api/openai-realtime", authenticateToken, openaiRealtimeRoutes);
+  registerVoiceCloningRoutes(app); // Voice cloning for Mr. Blue custom voices
   app.use("/api/premium", premiumMediaRoutes);
   app.use("/api/god-level", authenticateToken, godLevelRoutes);
   app.use("/api/ai", aiEnhanceRoutes);

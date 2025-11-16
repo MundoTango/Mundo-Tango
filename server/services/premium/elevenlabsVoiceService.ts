@@ -40,10 +40,35 @@ export class ElevenLabsVoiceService {
   }
 
   /**
+   * Get user's custom voice ID or fallback to default
+   */
+  async getUserVoiceId(userId: number, defaultVoiceId?: string): Promise<string> {
+    try {
+      const { users } = await import('../../../shared/schema');
+      const { eq } = await import('drizzle-orm');
+      
+      const [user] = await db.select()
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+
+      if (user?.customVoiceId) {
+        console.log(`[ElevenLabs] Using custom voice for user ${userId}: ${user.customVoiceId}`);
+        return user.customVoiceId;
+      }
+    } catch (error) {
+      console.warn('[ElevenLabs] Failed to fetch custom voice, using default:', error);
+    }
+
+    return defaultVoiceId || '21m00Tcm4TlvDq8ikWAM'; // Rachel voice as default
+  }
+
+  /**
    * Convert text to speech using ElevenLabs
+   * Automatically uses custom voice if user has one
    * Falls back to OpenAI TTS if ElevenLabs fails
    * @param text - Text to convert to speech
-   * @param voiceId - ElevenLabs voice ID (default: Rachel)
+   * @param voiceId - ElevenLabs voice ID (optional, will use custom voice if available)
    * @param userId - User ID for cost tracking
    * @returns Audio URL and character count
    */
@@ -52,10 +77,13 @@ export class ElevenLabsVoiceService {
     voiceId: string = '21m00Tcm4TlvDq8ikWAM', // Rachel voice
     userId: number
   ): Promise<{ audioUrl: string; characterCount: number }> {
+    // Get user's custom voice if they have one
+    const actualVoiceId = await this.getUserVoiceId(userId, voiceId);
+
     // Try ElevenLabs first
     if (this.apiKey) {
       try {
-        return await this.elevenLabsTTS(text, voiceId, userId);
+        return await this.elevenLabsTTS(text, actualVoiceId, userId);
       } catch (error) {
         console.error('[ElevenLabs] TTS failed, falling back to OpenAI:', error);
       }

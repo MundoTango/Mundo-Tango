@@ -82,6 +82,7 @@ export const users = pgTable("users", {
   customerJourneyState: varchar("customer_journey_state").default("J1"),
   lastJourneyUpdate: timestamp("last_journey_update"),
   role: varchar("role").default("user").notNull(),
+  customVoiceId: varchar("custom_voice_id", { length: 255 }),
 }, (table) => ({
   emailIdx: index("users_email_idx").on(table.email),
   usernameIdx: index("users_username_idx").on(table.username),
