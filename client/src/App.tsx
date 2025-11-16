@@ -77,8 +77,15 @@ const FavoritesPage = lazy(() => import("@/pages/FavoritesPage"));
 const EventsPage = lazy(() => import("@/pages/EventsPage"));
 const EventSearchPage = lazy(() => import("@/pages/events/EventSearchPage"));
 const EventDetailsPage = lazy(() => import("@/pages/EventDetailsPage"));
+const CreateEventPage = lazy(() => import("@/pages/CreateEventPage"));
+const MyEventsPage = lazy(() => import("@/pages/MyEventsPage"));
 const GroupsPage = lazy(() => import("@/pages/GroupsPage"));
 const GroupDetailsPage = lazy(() => import("@/pages/GroupDetailsPage"));
+
+// Week 9 Day 5: Stories, Live Streams, Saved Posts
+const StoriesPage = lazy(() => import("@/pages/StoriesPage"));
+const LiveStreamPage = lazy(() => import("@/pages/LiveStreamPage"));
+const SavedPostsPage = lazy(() => import("@/pages/SavedPostsPage"));
 
 // Travel Integration
 const TravelDashboardPage = lazy(() => import("@/pages/travel/TravelDashboardPage"));
@@ -144,6 +151,8 @@ const AdminModerationPage = lazy(() => import("@/pages/AdminModerationPage"));
 const ModerationDashboard = lazy(() => import("@/pages/admin/ModerationDashboard"));
 const AnalyticsDashboard = lazy(() => import("@/pages/admin/AnalyticsDashboard"));
 const AdminFacebookImport = lazy(() => import("@/pages/admin/AdminFacebookImport"));
+const AnalyticsDashboardPage = lazy(() => import("@/pages/AnalyticsDashboardPage"));
+const UserAnalyticsPage = lazy(() => import("@/pages/UserAnalyticsPage"));
 const ContentModerationPage = lazy(() => import("@/pages/ContentModerationPage"));
 const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
 const PlatformPage = lazy(() => import("@/pages/Platform"));
@@ -495,6 +504,47 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <EventSearchPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/events/create">
+        <ProtectedRoute>
+          <AppLayout>
+            <CreateEventPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/my-events">
+        <ProtectedRoute>
+          <AppLayout>
+            <MyEventsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* Week 9 Day 5: Stories, Live Streams, Saved Posts */}
+      <Route path="/stories">
+        <ProtectedRoute>
+          <AppLayout>
+            <StoriesPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/live">
+        <ProtectedRoute>
+          <AppLayout>
+            <LiveStreamPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/saved">
+        <ProtectedRoute>
+          <AppLayout>
+            <SavedPostsPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -1322,6 +1372,26 @@ function Router() {
           <AdminLayout>
             <AnalyticsDashboard />
           </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/analytics-dashboard">
+        <ProtectedRoute>
+          <AdminLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <AnalyticsDashboardPage />
+            </Suspense>
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/my-analytics">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <UserAnalyticsPage />
+            </Suspense>
+          </AppLayout>
         </ProtectedRoute>
       </Route>
 

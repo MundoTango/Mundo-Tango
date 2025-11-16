@@ -3,6 +3,9 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import authRoutes from "./routes/auth";
+import storiesRoutes from "./routes/stories-routes";
+import liveRoutes from "./routes/live-routes";
+import socialActionsRoutes from "./routes/social-actions-routes";
 import deploymentsRoutes from "./routes/deployments";
 import secretsRoutes from "./routes/secrets";
 import previewsRoutes from "./routes/previews";
@@ -90,7 +93,9 @@ import eventRoutes from "./routes/event-routes";
 import eventRolesRoutes from "./routes/event-roles-routes";
 import groupRoutes from "./routes/group-routes";
 import crowdfundingRoutes from "./routes/crowdfunding-routes";
+import recommendationRoutes from "./routes/recommendation-routes";
 import crowdfundingAgentsRoutes from "./routes/crowdfundingAgentsRoutes";
+import analyticsModerationRoutes from "./routes/analytics-moderation-routes";
 console.log("🔍 [DEBUG] About to import agentIntelligenceRoutes...");
 import agentIntelligenceRoutes from "./routes/agentIntelligenceRoutes";
 console.log("✅ [DEBUG] agentIntelligenceRoutes loaded");
@@ -738,6 +743,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/events", eventRoutes);
   app.use("/api", eventRolesRoutes); // Event participant roles
   app.use("/api/groups", groupRoutes);
+  app.use("/api/recommendations", recommendationRoutes); // MB.MD Week 9 Day 3: Recommendation Engine
+  app.use("/api", analyticsModerationRoutes); // MB.MD Week 9 Day 4: Analytics & Moderation
+  
+  // MB.MD Week 9 Day 5: Stories, Live Streams, Social Actions
+  app.use("/api/stories", storiesRoutes);
+  app.use("/api/live", liveRoutes);
+  app.use("/api", socialActionsRoutes);
 
   // ============================================================================
   // BATCH 15: UNIFIED PROFILE SEARCH

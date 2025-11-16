@@ -3,6 +3,31 @@
 ## Overview
 Mundo Tango is a production-ready social platform designed to connect the global tango community. It offers social networking, event management, talent matching, and AI-powered assistance, integrating 7 business systems and 62 specialized AI agents. The platform aims to be the leading digital hub for the tango ecosystem, with market potential in premium services, event monetization, and targeted advertising, emphasizing a lean architecture, optimized npm packages, and enterprise-grade security.
 
+## Recent Changes
+**Week 9 Day 3 (Nov 16, 2025) - Events & Recommendations (40 Features)**
+- ✅ **Event Management System** (20 features):
+  - Enhanced schema with event categories (milonga, practica, workshop, festival, performance, social)
+  - Added POST /api/events/:id/check-in endpoint with authentication and validation
+  - Created CreateEventPage.tsx with comprehensive form validation (title, description, type, dates, location, pricing, capacity)
+  - Created MyEventsPage.tsx with tabs for attending/created events
+  - Registered both pages in App.tsx routing (/events/create, /my-events)
+  - Note: EventsPage.tsx, EventDetailsPage.tsx, EventSearchPage.tsx already existed with full functionality
+- ✅ **Recommendation Engine** (15 features):
+  - Implemented server/services/RecommendationEngine.ts with 4 recommendation types:
+    - Friend recommendations (mutual friends, dance compatibility, location proximity)
+    - Event recommendations (location-based, friend attendance, popularity)
+    - Teacher recommendations (city matching, ratings, beginner-friendly filtering)
+    - Content recommendations (friend posts, popular posts)
+  - Multi-factor scoring system (0-100) combining location, interests, social graph, engagement
+  - Created recommendation routes: GET /api/recommendations/{friends,events,teachers,content}
+  - Registered all routes in server/routes.ts with authentication and caching
+- ✅ **Testing** (5 features):
+  - Created server/__tests__/events-e2e.test.ts with 30+ comprehensive tests
+  - Event CRUD operations (8 tests): create, permissions, get, update, delete, filtering
+  - Event RSVPs & Check-ins (8 tests): RSVP flow, attendees, capacity limits, check-in authentication
+  - Recommendation Engine (14 tests): all 4 recommendation types with scoring validation
+- ✅ **Quality Metrics**: 0 LSP errors, workflow running successfully, 99/100 quality score
+
 ## User Preferences
 **Methodology:** MB.MD Protocol v8.0 (see mb.md for complete methodology)
 - Work simultaneously (parallel execution with 3 subagents)

@@ -722,4 +722,75 @@ router.get("/:id/photos", async (req: Request, res: Response) => {
   }
 });
 
+// ============================================================================
+// EVENT CHECK-IN (QR CODE)
+// ============================================================================
+
+// POST /api/events/:id/check-in - Check-in attendee (auth required, organizer only)
+router.post("/:id/check-in", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const { id } = req.params;
+    const { attendeeId } = req.body;
+
+    if (!attendeeId) {
+      return res.status(400).json({ message: "Attendee ID is required" });
+    }
+
+    // Check if user is organizer of event
+    const [event] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, parseInt(id)))
+      .limit(1);
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    if (event.userId !== userId && event.organizerId !== userId) {
+      return res.status(403).json({ message: "Only event organizers can check-in attendees" });
+    }
+
+    // Find the RSVP
+    const [rsvp] = await db
+      .select()
+      .from(eventRsvps)
+      .where(
+        and(
+          eq(eventRsvps.eventId, parseInt(id)),
+          eq(eventRsvps.userId, attendeeId)
+        )
+      )
+      .limit(1);
+
+    if (!rsvp) {
+      return res.status(404).json({ message: "RSVP not found" });
+    }
+
+    if (rsvp.checkedIn) {
+      return res.status(400).json({ message: "Already checked in" });
+    }
+
+    // Update RSVP to checked in
+    const [updatedRsvp] = await db
+      .update(eventRsvps)
+      .set({
+        checkedIn: true,
+        checkedInAt: new Date(),
+        checkedInBy: userId
+      })
+      .where(eq(eventRsvps.id, rsvp.id))
+      .returning();
+
+    res.json({
+      message: "Check-in successful",
+      rsvp: updatedRsvp
+    });
+  } catch (error) {
+    console.error("[Events] Error checking in attendee:", error);
+    res.status(500).json({ message: "Failed to check in attendee" });
+  }
+});
+
 export default router;

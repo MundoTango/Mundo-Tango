@@ -216,6 +216,30 @@ export const reportedProfiles = pgTable("reported_profiles", {
 // EVENTS (matching existing schema + extensions)
 // ============================================================================
 
+// Event Categories enum
+export const eventCategoryEnum = pgEnum("event_category", [
+  "milonga",
+  "workshop",
+  "festival",
+  "practice",
+  "concert",
+  "class",
+  "performance",
+  "social",
+  "other"
+]);
+
+// Event Ticket Types enum
+export const eventTicketTypeEnum = pgEnum("event_ticket_type", [
+  "general",
+  "vip",
+  "earlybird",
+  "group",
+  "student",
+  "couple",
+  "single"
+]);
+
 export const events = pgTable("events", {
   id: serial("id").primaryKey(),
   
@@ -1601,16 +1625,49 @@ export const reviews = pgTable("reviews", {
 // Live Streams
 export const liveStreams = pgTable("live_streams", {
   id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   title: varchar("title").notNull(),
   host: varchar("host").notNull(),
   thumbnail: text("thumbnail"),
+  streamUrl: text("stream_url"),
+  status: varchar("status", { length: 20 }).default("scheduled"), // scheduled, live, ended
   isLive: boolean("is_live").default(false),
   viewers: integer("viewers").default(0),
+  viewerCount: integer("viewer_count").default(0),
   scheduledDate: varchar("scheduled_date"),
   registrations: integer("registrations").default(0),
   createdAt: timestamp("created_at").defaultNow(),
+  startedAt: timestamp("started_at"),
+  endedAt: timestamp("ended_at"),
 }, (table) => ({
+  userIdx: index("live_streams_user_idx").on(table.userId),
   liveIdx: index("live_streams_live_idx").on(table.isLive),
+  statusIdx: index("live_streams_status_idx").on(table.status),
+}));
+
+// Story Views
+export const storyViews = pgTable("story_views", {
+  id: serial("id").primaryKey(),
+  storyId: integer("story_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
+  viewerId: integer("viewer_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  storyIdx: index("story_views_story_idx").on(table.storyId),
+  viewerIdx: index("story_views_viewer_idx").on(table.viewerId),
+  uniqueView: uniqueIndex("unique_story_view").on(table.storyId, table.viewerId),
+}));
+
+// Stream Viewers
+export const streamViewers = pgTable("stream_viewers", {
+  id: serial("id").primaryKey(),
+  streamId: integer("stream_id").notNull().references(() => liveStreams.id, { onDelete: "cascade" }),
+  viewerId: integer("viewer_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  joinedAt: timestamp("joined_at").defaultNow().notNull(),
+  leftAt: timestamp("left_at"),
+}, (table) => ({
+  streamIdx: index("stream_viewers_stream_idx").on(table.streamId),
+  viewerIdx: index("stream_viewers_viewer_idx").on(table.viewerId),
+  activeIdx: index("stream_viewers_active_idx").on(table.streamId, table.leftAt),
 }));
 
 // Live Stream Messages
@@ -10933,6 +10990,55 @@ export const insertMessengerMessageSchema = createInsertSchema(messengerMessages
 export const selectMessengerMessageSchema = createSelectSchema(messengerMessages);
 export type InsertMessengerMessage = z.infer<typeof insertMessengerMessageSchema>;
 export type SelectMessengerMessage = typeof messengerMessages.$inferSelect;
+
+// ============================================================================
+// WEEK 9 DAY 4: ANALYTICS & MODERATION (NEW TABLES ONLY)
+// ============================================================================
+// Note: analyticsEvents, userAnalytics, platformMetrics, and moderationActions already exist above
+
+// Moderation Reports - User-generated content reports
+export const moderationReports = pgTable("moderation_reports", {
+  id: serial("id").primaryKey(),
+  reporterId: integer("reporter_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  contentType: varchar("content_type", { length: 50 }).notNull(),
+  contentId: integer("content_id").notNull(),
+  reason: text("reason").notNull(),
+  status: varchar("status", { length: 50 }).notNull().default("pending"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  resolvedAt: timestamp("resolved_at"),
+  resolvedBy: integer("resolved_by").references(() => users.id, { onDelete: "set null" }),
+}, (table) => ({
+  reporterIdx: index("moderation_reports_reporter_idx").on(table.reporterId),
+  contentIdx: index("moderation_reports_content_idx").on(table.contentType, table.contentId),
+  statusIdx: index("moderation_reports_status_idx").on(table.status),
+  createdAtIdx: index("moderation_reports_created_at_idx").on(table.createdAt),
+}));
+
+export const insertModerationReportSchema = createInsertSchema(moderationReports)
+  .omit({ id: true, createdAt: true });
+export type InsertModerationReport = z.infer<typeof insertModerationReportSchema>;
+export type SelectModerationReport = typeof moderationReports.$inferSelect;
+
+// User Violations - Track user policy violations
+export const userViolations = pgTable("user_violations", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  violationType: varchar("violation_type", { length: 100 }).notNull(),
+  severity: varchar("severity", { length: 20 }).notNull(),
+  description: text("description"),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+  appealStatus: varchar("appeal_status", { length: 50 }).default("none"),
+  appealReason: text("appeal_reason"),
+}, (table) => ({
+  userIdx: index("user_violations_user_idx").on(table.userId),
+  severityIdx: index("user_violations_severity_idx").on(table.severity),
+  timestampIdx: index("user_violations_timestamp_idx").on(table.timestamp),
+}));
+
+export const insertUserViolationSchema = createInsertSchema(userViolations)
+  .omit({ id: true, timestamp: true });
+export type InsertUserViolation = z.infer<typeof insertUserViolationSchema>;
+export type SelectUserViolation = typeof userViolations.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
