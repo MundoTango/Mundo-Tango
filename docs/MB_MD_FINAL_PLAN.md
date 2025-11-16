@@ -215,17 +215,26 @@ facebookFriends: {
 
 ### **Testing Strategy for Mr Blue**:
 
+**NEW: 10-Layer Quality Guardrails System** (See `docs/VIBE_CODING_QUALITY_GUARDRAILS.md`)
+
 **Quality Gates (Enhanced)**:
-1. **LSP Validation**: Zero type/linter errors (existing)
-2. **cubic.dev PR Review**: Automated code review on all vibe-coded PRs
-3. **Continue.dev Agents**: Headless CI/CD testing in background
-4. **E2E Testing**: Playwright with admin@mundotango.life/admin123
-5. **VibeAudits.com**: Final human security audit before launch
-6. **Performance**: <200ms API, <3s page load (existing)
-7. **Security**: OWASP Top 10 compliance (existing)
-8. **Accessibility**: WCAG 2.1 AA (existing)
-9. **Code Quality**: cubic.dev score >95/100
-10. **Production Readiness**: VibeAudits.com approval
+1. **Pre-Coding Validation**: Feature spec parsing, dependency detection, breaking change analysis
+2. **LSP & Type Safety**: Zero TypeScript/ESLint errors, Drizzle-Zod alignment
+3. **Code Quality Metrics**: Complexity <10, file length <500 lines, DRY code, no anti-patterns
+4. **Security Scanning**: OWASP Top 10, no hardcoded secrets, input validation, CSRF protection
+5. **Performance Validation**: API <200ms, page load <3s, no N+1 queries, Lighthouse >90
+6. **E2E Testing**: Playwright with admin@mundotango.life/admin123, full user flows
+7. **Accessibility (A11y)**: WCAG 2.1 AA, keyboard nav, screen reader, color contrast
+8. **Error Handling & Resilience**: Try-catch, graceful degradation, retry logic, Sentry
+9. **Documentation & data-testid**: JSDoc, API docs, 100% testid coverage on interactive elements
+10. **Deploy Check**: All layers passed, migrations ready, feature flags, rollback plan
+
+**Target Quality Score**: 99/100 (up from 97/100)
+
+**Autonomous Workflow** (Weeks 9-12):
+- Feature request → 10-layer validation → Auto-fix 90%+ issues → Deploy
+- Total time: 35-55 minutes per feature (fully autonomous)
+- Human escalation only if 3 iterations fail or critical security issue
 
 **MB.MD Testing Workflow**:
 - After each system build → LSP + E2E tests
@@ -433,11 +442,36 @@ Once Systems 1-8 are complete, **Mr Blue autonomously builds all 927 Mundo Tango
 - Prometheus/Grafana Monitoring
 - Redis Caching
 
+### **Public API Resources** (NEW - November 16, 2025)
+
+**Source**: [public-apis/public-apis](https://github.com/public-apis/public-apis) (379K+ ⭐)  
+**Documentation**: `mb.md` → Public API Resources section
+
+**Purpose**: Accelerate autonomous development with 379,000+ free APIs across 40+ categories
+
+**Priority APIs for Mundo Tango**:
+- **Twilio**: SMS/voice for event reminders (10K free/month)
+- **Unsplash**: Stock photos for events (5K req/hour)
+- **Weatherstack**: Weather alerts for outdoor milongas
+- **Spotify**: Tango playlist curation & DJ features
+- **Geocodio**: Address validation for venues
+- **Mailgun**: Email notifications (10K emails/month free)
+
+**Mr Blue Integration**:
+- Natural language API commands: "Add Twilio SMS for event reminders" → Full implementation
+- Server-side API calls (security + CORS compliance)
+- Automatic caching, error handling, rate limit monitoring
+- E2E test mocking (no real API spam during testing)
+
+**See `mb.md` for complete API catalog and integration guidelines.**
+
+---
+
 ### Autonomous Build Process:
 
 **Week 9**: Social Features (P1) - 186 features
-- Mr Blue autonomously builds using vibe coding
-- Self-validates with LSP + E2E tests
+- Mr Blue autonomously builds using vibe coding + public APIs
+- Self-validates with 10-layer quality guardrails
 - Commits to Git with detailed messages
 - Scott involvement: 20% (review only)
 
