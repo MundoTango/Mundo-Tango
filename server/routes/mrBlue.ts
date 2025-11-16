@@ -12,6 +12,7 @@ import { authenticateToken, type AuthRequest } from "../middleware/auth";
 import { getConversationContext, saveMessageToHistory } from "../services/chat-context";
 import { CodeGenerator } from "../services/codeGenerator";
 import { getMrBlueCapabilities, getTierName } from '../utils/mrBlueCapabilities';
+import { contextService } from "../services/mrBlue/ContextService";
 
 const router = Router();
 
@@ -239,9 +240,30 @@ Help users navigate the platform, answer questions, and provide personalized rec
       // Log the system prompt for debugging
       console.log('[Mr. Blue] System prompt:', systemPrompt.substring(0, 200) + '...');
 
+      // SYSTEM 1: Context Service - RAG with LanceDB semantic search
+      // Search documentation for relevant context based on user message
+      let ragContext = '';
+      try {
+        await contextService.initialize(); // Ensure indexed
+        const searchResults = await contextService.search(message, 3); // Top 3 relevant chunks
+        
+        if (searchResults.length > 0) {
+          ragContext = '\n\nRELEVANT DOCUMENTATION:\n' + searchResults.map((result, idx) => 
+            `[${idx + 1}] ${result.metadata.source} (${result.metadata.fileType}):\n${result.content.substring(0, 300)}...`
+          ).join('\n\n');
+          
+          console.log(`[Mr. Blue] 📚 Found ${searchResults.length} relevant docs (avg similarity: ${
+            (searchResults.reduce((sum, r) => sum + r.similarity, 0) / searchResults.length).toFixed(3)
+          })`);
+        }
+      } catch (error) {
+        console.error('[Mr. Blue] Context search failed:', error);
+        // Continue without RAG context - non-blocking
+      }
+
       // Build message history
       const messages: any[] = [
-        { role: "system", content: systemPrompt }
+        { role: "system", content: systemPrompt + ragContext }
       ];
 
       // Get conversation context from database if conversationId provided
