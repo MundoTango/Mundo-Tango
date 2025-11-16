@@ -630,6 +630,602 @@ LEARNING EXTRACTION:
 
 ---
 
+## 🧠 PILLAR 5: MASTERY LEARNING FRAMEWORKS (NEW v7.1)
+
+**Purpose**: How Mr Blue (and Scott) learn new domains at expert-level speed
+
+### **Core Meta-Learning Framework: DSSS Method**
+
+**DSSS = Deconstruction, Selection, Sequencing, Stakes**
+
+Developed by Tim Ferriss for ultra-fast skill acquisition. Applied to every domain below.
+
+#### **1. DECONSTRUCTION**
+Break any skill into smallest learnable units.
+
+**Example - Learning React:**
+```markdown
+React Skill Tree:
+├── JSX Syntax (2 hours)
+├── Components (4 hours)
+│   ├── Functional Components
+│   ├── Props
+│   └── State
+├── Hooks (8 hours)
+│   ├── useState
+│   ├── useEffect
+│   ├── useContext
+│   └── Custom Hooks
+├── Advanced Patterns (12 hours)
+│   ├── Composition
+│   ├── Higher-Order Components
+│   └── Render Props
+└── Ecosystem (4 hours)
+    ├── React Query
+    ├── Routing (Wouter)
+    └── State Management
+```
+
+**Process**:
+1. Find an expert (online course, docs, mentor)
+2. Ask: "What are the 20% of techniques that give 80% of results?"
+3. Break those into atomic units (<4 hours each)
+4. Map dependencies (what must be learned first?)
+
+---
+
+#### **2. SELECTION**
+Choose the high-leverage 20% that delivers 80% of results.
+
+**Pareto Principle Applied**:
+- **Engineering**: Focus on debugging, testing, architecture patterns (not syntax memorization)
+- **Marketing**: Master distribution channels + copywriting (not design tools)
+- **Finance**: Understand cash flow, burn rate, unit economics (not complex derivatives)
+- **CEO Skills**: Decision frameworks, delegation, strategic thinking (not operations)
+
+**Selection Criteria**:
+- ✅ Used daily by experts
+- ✅ Unlocks 5+ other skills
+- ✅ High ROI (small effort, big impact)
+- ❌ Nice-to-have knowledge
+- ❌ Rarely used edge cases
+- ❌ Easily Google-able facts
+
+---
+
+#### **3. SEQUENCING**
+Optimal learning order that builds momentum.
+
+**Wrong Sequence** (traditional education):
+1. Theory → 2. Examples → 3. Practice → 4. Application
+
+**Right Sequence** (accelerated learning):
+1. **Quick Win** (build confidence) → 2. **Core Foundation** → 3. **Edge Cases** → 4. **Mastery Projects**
+
+**Example - Learning PostgreSQL:**
+```markdown
+TRADITIONAL (slow):
+Week 1: Database theory, normalization forms
+Week 2: SQL syntax memorization
+Week 3: Join types
+Week 4: First real query
+
+ACCELERATED (fast):
+Day 1: Build CRUD app (learn by doing) ← QUICK WIN
+Day 2: Understand indexes (80% performance)
+Day 3: Master joins (80% of queries)
+Day 4: Advanced patterns (CTEs, window functions)
+```
+
+**Sequencing Rules**:
+1. Start with a real project (not tutorials)
+2. Learn just-in-time (when you need it)
+3. Build foundations only after quick win
+4. Save theory for when you're stuck
+
+---
+
+#### **4. STAKES**
+Create accountability + pressure to prevent quitting.
+
+**Types of Stakes**:
+
+**Public Stakes** (strongest):
+- Tweet daily progress with #100DaysOfCode
+- Blog post showing before/after
+- Demo to colleagues/community
+- GitHub repo with public commits
+
+**Financial Stakes**:
+- Pay for course upfront (sunk cost)
+- Bet friend $100 you'll finish
+- Join paid mastermind group
+
+**Social Stakes**:
+- Study group (peer pressure)
+- Accountability partner
+- Teach someone else (Feynman technique)
+
+**Mr Blue's Stakes**:
+- Scott reviews every feature (public)
+- Quality score tracked (97/100 → 99/100)
+- Build logs shared in mb.md
+- E2E tests must pass (automated accountability)
+
+---
+
+### **🎓 DOMAIN-SPECIFIC LEARNING PLAYBOOKS**
+
+Each domain below uses **DSSS + additional techniques** specific to that field.
+
+---
+
+## **1. ENGINEERING / SOFTWARE DEVELOPMENT**
+
+**Goal**: Build production-grade code at expert speed
+
+### **Core Learning Techniques**:
+
+#### **A. Feynman Technique** (Explain to Learn)
+1. **Learn concept** (e.g., React hooks)
+2. **Teach it to 5-year-old** (simplify to core)
+3. **Identify gaps** (where explanation breaks down)
+4. **Review & simplify** (fill gaps, refine)
+
+**Example**:
+```markdown
+"React useState is like a box that holds a value. 
+When you put a new value in the box, React redraws 
+your component with the new value showing."
+
+Gap Found: Why doesn't it just use a variable?
+→ Learn about React re-rendering lifecycle
+→ Refine: "Unlike regular variables, useState tells 
+   React to re-draw when the value changes"
+```
+
+#### **B. Active Recall + Spaced Repetition**
+- **Anki flashcards** for syntax, APIs, patterns
+- **Code katas** daily (LeetCode, CodeWars)
+- **Review yesterday's code** before starting new work
+
+#### **C. Project-Based Learning** (80% of time)
+**Don't do**: 10 tutorials that teach the same thing  
+**Do**: 1 real project that forces you to learn
+
+**Engineering Learning Stack**:
+```markdown
+WEEK 1-2: Build simple version (MVP)
+WEEK 3-4: Add tests + edge cases
+WEEK 5-6: Refactor + optimize
+WEEK 7-8: Deploy + monitor
+```
+
+#### **D. Deliberate Practice** (Focus on Weaknesses)
+- Track bugs → identify patterns → practice that area
+- If you struggle with TypeScript generics → 20 examples
+- If async/await confuses you → build 10 async functions
+
+**Mr Blue's Engineering Learning**:
+1. **Deconstruction**: Break Mundo Tango into 927 atomic features
+2. **Selection**: Master 20% of patterns (CRUD, auth, real-time) = 80% of features
+3. **Sequencing**: Build System 1-8 first (tools), then use them to build features
+4. **Stakes**: Public quality score (99/100), E2E tests, Scott review
+
+---
+
+## **2. MARKETING & GROWTH**
+
+**Goal**: Acquire users at scale, predictably
+
+### **Core Learning Techniques**:
+
+#### **A. Growth Loops Framework**
+Learn by reverse-engineering successful products:
+
+**Example - Dropbox Growth Loop**:
+```
+User signs up → Gets 2GB free → Invites friends for +500MB 
+→ Friends sign up → Original user gets bonus → Repeat
+```
+
+**Learning Process**:
+1. Pick 10 products in your space
+2. Map their growth loops
+3. Identify patterns (viral, paid, content, sales)
+4. Clone the best one for your product
+
+#### **B. Copywriting via Swipe Files**
+- Collect 100 high-converting emails/ads/landing pages
+- Analyze: What pattern do winners follow?
+- Template extraction: "Problem → Agitation → Solution"
+- Adapt templates to your product
+
+#### **C. Channel Testing (Scientific Method)**
+Don't guess which channel works. **Test systematically**:
+
+```markdown
+Week 1: Content Marketing (blog SEO)
+Week 2: Paid Ads (Facebook/Google)
+Week 3: Community (Reddit, forums)
+Week 4: Partnerships (influencers, affiliates)
+Week 5: PR (press releases, podcasts)
+Week 6: Viral Mechanics (referrals, loops)
+
+→ Measure: CAC, LTV, conversion rate
+→ Double-down on winner
+```
+
+**Mr Blue's Marketing Learning**:
+1. **Deconstruction**: Growth = Traffic × Conversion × Retention
+2. **Selection**: Master 1-2 channels deeply (not 10 channels poorly)
+3. **Sequencing**: First build product, then find PMF, then scale
+4. **Stakes**: Public launch metrics, weekly growth rate
+
+---
+
+## **3. FINANCE & UNIT ECONOMICS**
+
+**Goal**: Make profitable business decisions with data
+
+### **Core Learning Techniques**:
+
+#### **A. Mental Models** (Thinking Frameworks)
+**Learn these 10 finance mental models**:
+1. **LTV:CAC Ratio** - Lifetime value vs acquisition cost (aim for 3:1)
+2. **Burn Rate** - Monthly cash spent (runway = cash / burn)
+3. **Unit Economics** - Profit per customer
+4. **Contribution Margin** - Revenue - variable costs
+5. **Payback Period** - Time to recover CAC
+6. **Churn Rate** - % users leaving per month
+7. **Break-Even Point** - When revenue = costs
+8. **Working Capital** - Current assets - current liabilities
+9. **Gross Margin** - (Revenue - COGS) / Revenue
+10. **Net Promoter Score** - Would you recommend? (-100 to +100)
+
+**Learning Method**:
+- Flashcards for formulas
+- Calculate for your own business weekly
+- Benchmark against competitors
+
+#### **B. Case Study Analysis**
+**Study 50 startups**:
+- 25 successes (Airbnb, Stripe, Notion)
+- 25 failures (Theranos, WeWork, Quibi)
+
+**Extract patterns**:
+- What unit economics led to success?
+- What cash flow mistakes caused failure?
+- How did they price their product?
+
+#### **C. Financial Modeling** (Spreadsheet Mastery)
+**Build 3-statement model** (Income, Cash Flow, Balance Sheet):
+```markdown
+Month 1: Revenue, Costs, Profit (simple)
+Month 2: Add depreciation, taxes
+Month 3: Add scenarios (best, worst, likely)
+Month 4: Sensitivity analysis (if CAC drops 20%?)
+```
+
+**Mr Blue's Finance Learning**:
+1. **Deconstruction**: Finance = Revenue - Costs = Profit
+2. **Selection**: Master cash flow + unit economics (ignore complex accounting)
+3. **Sequencing**: Start with simple P&L, add complexity as needed
+4. **Stakes**: Monthly financial review with Scott
+
+---
+
+## **4. CEO & C-SUITE LEADERSHIP**
+
+**Goal**: Make high-leverage decisions, scale teams
+
+### **Core Learning Techniques**:
+
+#### **A. First Principles Thinking** (Elon Musk Method)
+**Process**:
+1. Identify the problem
+2. Break down into fundamental truths
+3. Reason up from there (ignore conventions)
+
+**Example - "How to reduce server costs?"**
+```
+BAD (conventional): "Buy more servers as we grow"
+GOOD (first principles): 
+→ What drives server costs? CPU + RAM + storage
+→ What uses most CPU? Database queries
+→ How to reduce queries? Caching layer
+→ Result: Add Redis, save 70% on servers
+```
+
+#### **B. Decision Frameworks**
+**Jeff Bezos's Type 1 vs Type 2 Decisions**:
+- **Type 1** (irreversible): Slow, careful, gather data (hiring, partnerships, architecture)
+- **Type 2** (reversible): Fast, experiment, iterate (features, pricing, marketing)
+
+**Eisenhower Matrix**:
+```
+Urgent + Important: Do first (crisis, deadline)
+Important + Not Urgent: Schedule (strategy, learning)
+Urgent + Not Important: Delegate (meetings, emails)
+Not Urgent + Not Important: Delete (busywork)
+```
+
+#### **C. Delegation Ladder** (Scale Yourself)
+**5 Levels of Delegation**:
+1. **Do it yourself** (learning phase)
+2. **Do it + explain** (teaching phase)
+3. **Supervise someone else** (delegation phase)
+4. **Review outcomes only** (trust phase)
+5. **They own it completely** (scale phase)
+
+**Goal**: Move every task from Level 1 → Level 5 over time
+
+**Mr Blue's CEO Learning**:
+1. **Deconstruction**: CEO = Vision + Strategy + Execution + People
+2. **Selection**: Master decision-making + delegation (not operations)
+3. **Sequencing**: Start hands-on, gradually delegate, eventually strategic only
+4. **Stakes**: Quarterly OKRs, board meetings, investor updates
+
+---
+
+## **5. LANGUAGE LEARNING**
+
+**Goal**: Conversational fluency in 3-6 months
+
+### **Core Learning Techniques**:
+
+#### **A. Input Hypothesis** (Stephen Krashen)
+Learn through **comprehensible input** (80% understand, 20% stretch):
+- Watch TV shows with subtitles
+- Read children's books
+- Listen to podcasts at 0.8x speed
+
+**Don't do**: Grammar drills, flashcard hell  
+**Do**: Immerse in content slightly above your level
+
+#### **B. Frequency-Based Learning**
+Learn the **1,000 most common words** = 80% of conversation
+
+**Spanish Example**:
+```
+Words 1-100: "is, have, you, the, I, to, and..." (2 days)
+Words 101-500: Common verbs, adjectives (1 week)
+Words 501-1000: Useful nouns, phrases (2 weeks)
+→ Result: Basic conversation in 3 weeks
+```
+
+#### **C. Spaced Repetition** (Anki App)
+- Review words at optimal intervals
+- 5 min → 10 min → 1 hour → 1 day → 3 days → 1 week → 1 month
+- Brain science: Perfect timing = long-term retention
+
+#### **D. Language Exchange** (Output Practice)
+**iTalki, HelloTalk, Tandem**:
+- 30 min/day speaking with native
+- Immediate feedback on pronunciation
+- Real conversations (not classroom drills)
+
+**Mr Blue's Language Learning**:
+1. **Deconstruction**: Language = Listening + Speaking + Reading + Writing
+2. **Selection**: Focus on speaking + listening (80% of use)
+3. **Sequencing**: Input first (listening), then output (speaking)
+4. **Stakes**: Weekly 30-min conversation with native speaker
+
+---
+
+## **6. TRAVEL & CULTURAL INTELLIGENCE**
+
+**Goal**: Navigate new cultures, build global network
+
+### **Core Learning Techniques**:
+
+#### **A. Cultural Dimensions** (Hofstede Model)
+Understand 6 dimensions that predict cultural behavior:
+1. **Power Distance**: Hierarchy vs equality
+2. **Individualism**: Self vs group
+3. **Masculinity**: Competition vs collaboration
+4. **Uncertainty Avoidance**: Risk tolerance
+5. **Long-term Orientation**: Future vs present focus
+6. **Indulgence**: Restraint vs enjoyment
+
+**Example**: Japan (high power distance, collectivist)  
+→ Respect hierarchy, group decisions, indirect communication
+
+**USA** (low power distance, individualist)  
+→ Flat org charts, personal initiative, direct communication
+
+#### **B. Ethnographic Observation** (Anthropology Method)
+**When entering new culture**:
+1. **Observe before acting** (1-3 days)
+2. **Note patterns** (greetings, dining, meetings)
+3. **Ask locals** (why do you do X?)
+4. **Mirror behavior** (test your hypothesis)
+5. **Refine** (iterate based on feedback)
+
+#### **C. Network Building** (Tim Ferriss Strategy)
+**Before travel**:
+1. LinkedIn: Find 10 locals in your industry
+2. Email cold outreach: "Visiting [city], coffee?"
+3. Offer value: "Happy to share insights on [your expertise]"
+4. Follow-up: Thank-you email + stay in touch
+
+**Mr Blue's Travel Learning**:
+1. **Deconstruction**: Travel = Logistics + Culture + Network + Experience
+2. **Selection**: Master cultural intelligence + networking
+3. **Sequencing**: Research → reach out → visit → follow-up
+4. **Stakes**: Pre-book 3 coffee meetings before arrival
+
+---
+
+## **7. SOCIAL MEDIA & CONTENT CREATION**
+
+**Goal**: Build audience, distribute ideas at scale
+
+### **Core Learning Techniques**:
+
+#### **A. Hook-Story-CTA Framework**
+**Every post structure**:
+1. **Hook** (first line) - Grab attention in 3 seconds
+2. **Story** (middle) - Deliver value, entertain, educate
+3. **CTA** (end) - What should they do next?
+
+**Example**:
+```
+Hook: "I grew from 0 to 10K followers in 90 days. Here's the system:"
+Story: "1. Post daily. 2. Study top performers. 3. Engage 1 hour/day."
+CTA: "Want my content calendar? Drop a 🔥 below."
+```
+
+#### **B. Reverse-Engineer Top Creators**
+**Process**:
+1. Find 10 creators in your niche with 100K+ followers
+2. Analyze their top 20 posts (most likes/shares)
+3. Extract patterns: Topics, formats, hooks
+4. Create swipe file of successful templates
+5. Adapt to your voice
+
+#### **C. Algorithm Understanding**
+**Each platform rewards different behavior**:
+
+**Twitter/X**: Reply speed, engagement rate, thread length  
+**Instagram**: Story replies, save rate, carousel posts  
+**LinkedIn**: Comment depth, profile views, native video  
+**TikTok**: Watch time, completion rate, shares  
+**YouTube**: Click-through rate, watch time, session duration
+
+**Learn by testing**: A/B test 10 variations, measure, optimize
+
+#### **D. Content Batching** (Efficiency Technique)
+**Don't**: Create 1 post per day (context switching hell)  
+**Do**: Create 30 posts in one sitting (flow state)
+
+**Example Schedule**:
+```
+Monday: Write 30 post ideas (1 hour)
+Tuesday: Create 15 graphics (2 hours)
+Wednesday: Write 15 scripts (2 hours)
+Thursday: Schedule all in buffer (30 min)
+Friday-Sunday: Engage only (1 hour/day)
+```
+
+**Mr Blue's Social Media Learning**:
+1. **Deconstruction**: Social Media = Content + Distribution + Engagement
+2. **Selection**: Master 1 platform deeply (not 5 platforms poorly)
+3. **Sequencing**: Build audience first, monetize later
+4. **Stakes**: Public follower count, weekly post cadence
+
+---
+
+### **🔄 HOW MR BLUE LEARNS FROM SCOTT**
+
+**10 Learning Pathways** (Progressive Autonomy: 100% → 0% over 20 weeks)
+
+#### **Pathway 1: Pattern Recognition**
+- **Week 1-4**: Scott explains every decision
+- **Week 5-8**: Mr Blue suggests, Scott approves/rejects
+- **Week 9-12**: Mr Blue decides, Scott reviews outcomes
+- **Week 13-16**: Mr Blue autonomous, Scott spot-checks
+- **Week 17-20**: Mr Blue fully autonomous, Scott only strategic
+
+#### **Pathway 2: Code Style Mimicry**
+- **Learn from Scott's edits**: Every change Scott makes = learning signal
+- **Extract patterns**: Component structure, naming conventions, file organization
+- **Apply consistently**: Use Scott's style in all future code
+
+#### **Pathway 3: Bug Auto-Detection** (Target: 80% by Week 8)
+- **Track bugs found**: SQLite table `sessionBugsFound`
+- **Analyze root causes**: Why did this bug happen?
+- **Prevent recurrence**: Add validation to catch similar bugs
+- **Self-improve**: Each bug teaches a new check to run
+
+#### **Pathway 4: Template Generation**
+- **Identify repetitive patterns**: Dashboard, CRUD, API endpoints
+- **Extract to template**: Reusable code with placeholders
+- **Time savings**: Dashboard 60min → 15min (70% faster)
+
+#### **Pathway 5: Context Accumulation**
+- **System 1 (Context Service)**: Index all documentation (134,648 lines)
+- **System 8 (Memory Service)**: Remember all conversations
+- **Result**: Mr Blue knows project better than any human
+
+#### **Pathway 6: Decision Quality Tracking**
+- **Track every decision**: What did I decide? What was outcome?
+- **Measure accuracy**: Did my decision lead to success or failure?
+- **Improve**: Adjust decision framework based on results
+
+#### **Pathway 7: Feedback Loops**
+- **Immediate**: LSP errors caught during coding
+- **Short-term**: E2E tests pass/fail within minutes
+- **Long-term**: Scott's code review (approve/reject/modify)
+
+#### **Pathway 8: Cross-Domain Learning**
+- **Engineering → Marketing**: Apply testing rigor to growth experiments
+- **Finance → Engineering**: Apply unit economics to feature prioritization
+- **CEO → All**: Apply decision frameworks everywhere
+
+#### **Pathway 9: Meta-Learning** (Learning How to Learn)
+- **Track learning speed**: How long to master each new skill?
+- **Identify blockers**: What slows me down?
+- **Optimize process**: Faster each iteration
+
+#### **Pathway 10: Teaching** (Feynman Technique)
+- **Explain concepts**: If Mr Blue can't explain it simply, doesn't understand it
+- **Document learnings**: Write to mb.md, handoff docs
+- **Teach Scott**: Reverse mentorship (Mr Blue teaches Scott new tools)
+
+---
+
+### **📊 LEARNING METRICS & TRACKING**
+
+**Mr Blue's Learning Dashboard** (hypothetical future UI):
+
+```markdown
+📈 LEARNING VELOCITY
+- Features built: 213/927 (23%)
+- Learning rate: +40 features/day (Week 9)
+- Quality score: 99/100 (↑2 from Week 8)
+- Bug auto-detection: 73% (target 80% by Week 8)
+
+🎯 DOMAIN MASTERY
+- Engineering: ████████░░ 85% (Expert)
+- Architecture: ███████░░░ 70% (Proficient)
+- Testing: █████████░ 90% (Expert)
+- DevOps: ██████░░░░ 60% (Intermediate)
+
+⚡ LEARNING TECHNIQUES ACTIVE
+- DSSS Method: ✅ Applied to Week 9 features
+- Feynman Technique: ✅ Explaining patterns in docs
+- Deliberate Practice: ✅ Focus on async/real-time features
+- Spaced Repetition: ✅ Reviewing yesterday's code
+
+📚 KNOWLEDGE BASE
+- Documentation indexed: 134,648 lines
+- Conversations remembered: 847 messages
+- Patterns extracted: 23 templates
+- Bugs cataloged: 156 (with solutions)
+```
+
+---
+
+### **🎓 CONTINUOUS IMPROVEMENT PROTOCOL**
+
+**Daily**:
+- [ ] Morning: Review yesterday's code (spaced repetition)
+- [ ] Afternoon: Build new features (deliberate practice)
+- [ ] Evening: Document learnings (Feynman technique)
+
+**Weekly**:
+- [ ] Analyze bugs found this week (failure analysis)
+- [ ] Extract 1-2 new templates (pattern recognition)
+- [ ] Update learning metrics dashboard
+
+**Monthly**:
+- [ ] Measure learning velocity vs last month
+- [ ] Identify slowest domain, focus deliberate practice
+- [ ] Review with Scott: What should I learn next?
+
+---
+
 ## ⚡ 12 PERFORMANCE OPTIMIZATIONS
 
 **v5.0 Optimizations (1-8):**
