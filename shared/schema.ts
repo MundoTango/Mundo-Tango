@@ -83,12 +83,22 @@ export const users = pgTable("users", {
   lastJourneyUpdate: timestamp("last_journey_update"),
   role: varchar("role").default("user").notNull(),
   customVoiceId: varchar("custom_voice_id", { length: 255 }),
+  
+  // WEEK 9 DAY 2: User Profile & Networking Features
+  interests: text("interests").array(),
+  socialLinks: jsonb("social_links"),
+  availability: jsonb("availability"),
+  customUrl: varchar("custom_url", { length: 100 }).unique(),
+  privacySettings: jsonb("privacy_settings"),
+  verificationBadge: boolean("verification_badge").default(false),
+  portfolioUrls: text("portfolio_urls").array(),
 }, (table) => ({
   emailIdx: index("users_email_idx").on(table.email),
   usernameIdx: index("users_username_idx").on(table.username),
   cityCountryIdx: index("users_city_country_idx").on(table.city, table.country),
   activeIdx: index("users_active_idx").on(table.isActive),
   citiesIdx: index("users_cities_idx").on(table.city, table.country, table.isActive),
+  customUrlIdx: index("users_custom_url_idx").on(table.customUrl),
 }));
 
 // ============================================================================
@@ -126,6 +136,92 @@ export const follows = pgTable("follows", {
 }));
 
 // ============================================================================
+// MESSAGING SYSTEM (WEEK 9 DAY 2)
+// ============================================================================
+
+// Chats table - Represents conversations (1-on-1 or group)
+export const chats = pgTable("chats", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }), // For group chats
+  type: varchar("type", { length: 20 }).notNull().default("private"), // private, group
+  creatorId: integer("creator_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  isArchived: boolean("is_archived").default(false),
+  isPinned: boolean("is_pinned").default(false),
+  lastMessageAt: timestamp("last_message_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  typeIdx: index("chats_type_idx").on(table.type),
+  creatorIdx: index("chats_creator_idx").on(table.creatorId),
+  lastMessageIdx: index("chats_last_message_idx").on(table.lastMessageAt),
+  archivedIdx: index("chats_archived_idx").on(table.isArchived),
+  pinnedIdx: index("chats_pinned_idx").on(table.isPinned),
+}));
+
+// Chat participants - Who is in each chat
+export const chatParticipants = pgTable("chat_participants", {
+  id: serial("id").primaryKey(),
+  chatId: integer("chat_id").notNull().references(() => chats.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  role: varchar("role", { length: 20 }).default("member"), // member, admin
+  joinedAt: timestamp("joined_at").defaultNow().notNull(),
+  leftAt: timestamp("left_at"),
+  lastReadAt: timestamp("last_read_at"),
+}, (table) => ({
+  chatIdx: index("chat_participants_chat_idx").on(table.chatId),
+  userIdx: index("chat_participants_user_idx").on(table.userId),
+  uniqueParticipant: uniqueIndex("unique_chat_user").on(table.chatId, table.userId),
+}));
+
+// Messages table - Individual messages
+export const userMessages = pgTable("user_messages", {
+  id: serial("id").primaryKey(),
+  chatId: integer("chat_id").notNull().references(() => chats.id, { onDelete: "cascade" }),
+  senderId: integer("sender_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  messageType: varchar("message_type", { length: 20 }).notNull().default("text"), // text, image, video, voice, file
+  threadId: integer("thread_id").references(() => userMessages.id), // For threaded replies
+  mediaUrls: text("media_urls").array(),
+  voiceUrl: text("voice_url"),
+  forwardedFrom: integer("forwarded_from").references(() => userMessages.id),
+  isDeleted: boolean("is_deleted").default(false),
+  deletedAt: timestamp("deleted_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  chatIdx: index("user_messages_chat_idx").on(table.chatId),
+  senderIdx: index("user_messages_sender_idx").on(table.senderId),
+  threadIdx: index("user_messages_thread_idx").on(table.threadId),
+  createdAtIdx: index("user_messages_created_at_idx").on(table.createdAt),
+  chatCreatedIdx: index("user_messages_chat_created_idx").on(table.chatId, table.createdAt),
+}));
+
+// Message read receipts
+export const userMessageReadReceipts = pgTable("user_message_read_receipts", {
+  id: serial("id").primaryKey(),
+  messageId: integer("message_id").notNull().references(() => userMessages.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  readAt: timestamp("read_at").defaultNow().notNull(),
+}, (table) => ({
+  messageIdx: index("user_message_receipts_message_idx").on(table.messageId),
+  userIdx: index("user_message_receipts_user_idx").on(table.userId),
+  uniqueReceipt: uniqueIndex("unique_user_message_receipt").on(table.messageId, table.userId),
+}));
+
+// Message reactions (reusing existing but creating specific for user messages)
+export const userMessageReactions = pgTable("user_message_reactions", {
+  id: serial("id").primaryKey(),
+  messageId: integer("message_id").notNull().references(() => userMessages.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  emoji: varchar("emoji", { length: 50 }).notNull(), // Allow emoji names like "like", "love", "laugh", "angry"
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  messageIdx: index("user_message_reactions_message_idx").on(table.messageId),
+  userIdx: index("user_message_reactions_user_idx").on(table.userId),
+  uniqueReaction: uniqueIndex("unique_user_message_user_emoji").on(table.messageId, table.userId, table.emoji),
+}));
+
+// ============================================================================
 // PROFILE ANALYTICS
 // ============================================================================
 
@@ -142,6 +238,64 @@ export const profileViews = pgTable("profile_views", {
   createdAtIdx: index("profile_views_created_at_idx").on(table.createdAt),
   profileTypeIdx: index("profile_views_profile_type_idx").on(table.profileType),
   compositeIdx: index("profile_views_composite_idx").on(table.profileUserId, table.createdAt),
+}));
+
+// ============================================================================
+// USER SKILLS & ENDORSEMENTS (WEEK 9 DAY 2)
+// ============================================================================
+
+export const userSkills = pgTable("user_skills", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  skillName: varchar("skill_name", { length: 100 }).notNull(),
+  level: varchar("level", { length: 50 }), // beginner, intermediate, advanced, expert
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_skills_user_idx").on(table.userId),
+  skillIdx: index("user_skills_skill_idx").on(table.skillName),
+  uniqueUserSkill: uniqueIndex("unique_user_skill").on(table.userId, table.skillName),
+}));
+
+export const skillEndorsements = pgTable("skill_endorsements", {
+  id: serial("id").primaryKey(),
+  skillId: integer("skill_id").notNull().references(() => userSkills.id, { onDelete: "cascade" }),
+  endorserId: integer("endorser_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  skillIdx: index("skill_endorsements_skill_idx").on(table.skillId),
+  endorserIdx: index("skill_endorsements_endorser_idx").on(table.endorserId),
+  uniqueEndorsement: uniqueIndex("unique_skill_endorsement").on(table.skillId, table.endorserId),
+}));
+
+// ============================================================================
+// BLOCKED USERS & REPORTS (WEEK 9 DAY 2)
+// ============================================================================
+
+export const blockedUsers = pgTable("blocked_users", {
+  id: serial("id").primaryKey(),
+  blockerId: integer("blocker_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  blockedId: integer("blocked_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  blockerIdx: index("blocked_users_blocker_idx").on(table.blockerId),
+  blockedIdx: index("blocked_users_blocked_idx").on(table.blockedId),
+  uniqueBlock: uniqueIndex("unique_block").on(table.blockerId, table.blockedId),
+}));
+
+export const reportedProfiles = pgTable("reported_profiles", {
+  id: serial("id").primaryKey(),
+  reporterId: integer("reporter_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  reportedUserId: integer("reported_user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  reason: text("reason").notNull(),
+  status: varchar("status", { length: 20 }).default("pending"), // pending, reviewed, resolved, dismissed
+  adminNotes: text("admin_notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  reviewedAt: timestamp("reviewed_at"),
+  reviewedBy: integer("reviewed_by").references(() => users.id),
+}, (table) => ({
+  reporterIdx: index("reported_profiles_reporter_idx").on(table.reporterId),
+  reportedIdx: index("reported_profiles_reported_idx").on(table.reportedUserId),
+  statusIdx: index("reported_profiles_status_idx").on(table.status),
 }));
 
 // ============================================================================
@@ -1552,18 +1706,6 @@ export const activityLogs = pgTable("activity_logs", {
   createdAtIdx: index("activity_logs_created_at_idx").on(table.createdAt),
 }));
 
-// Blocked Users
-export const blockedUsers = pgTable("blocked_users", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  blockedUserId: integer("blocked_user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-}, (table) => ({
-  userIdx: index("blocked_users_user_idx").on(table.userId),
-  blockedIdx: index("blocked_users_blocked_idx").on(table.blockedUserId),
-  uniqueBlock: uniqueIndex("unique_blocked_user").on(table.userId, table.blockedUserId),
-}));
-
 // Blocked Content
 export const blockedContent = pgTable("blocked_content", {
   id: serial("id").primaryKey(),
@@ -1727,6 +1869,18 @@ export type SelectActivityLog = typeof activityLogs.$inferSelect;
 export const insertBlockedUserSchema = createInsertSchema(blockedUsers).omit({ id: true, createdAt: true });
 export type InsertBlockedUser = z.infer<typeof insertBlockedUserSchema>;
 export type SelectBlockedUser = typeof blockedUsers.$inferSelect;
+
+export const insertUserSkillSchema = createInsertSchema(userSkills).omit({ id: true, createdAt: true });
+export type InsertUserSkill = z.infer<typeof insertUserSkillSchema>;
+export type SelectUserSkill = typeof userSkills.$inferSelect;
+
+export const insertSkillEndorsementSchema = createInsertSchema(skillEndorsements).omit({ id: true, createdAt: true });
+export type InsertSkillEndorsement = z.infer<typeof insertSkillEndorsementSchema>;
+export type SelectSkillEndorsement = typeof skillEndorsements.$inferSelect;
+
+export const insertReportedProfileSchema = createInsertSchema(reportedProfiles).omit({ id: true, createdAt: true, reviewedAt: true });
+export type InsertReportedProfile = z.infer<typeof insertReportedProfileSchema>;
+export type SelectReportedProfile = typeof reportedProfiles.$inferSelect;
 
 export const insertBlockedContentSchema = createInsertSchema(blockedContent).omit({ id: true, createdAt: true });
 export type InsertBlockedContent = z.infer<typeof insertBlockedContentSchema>;
