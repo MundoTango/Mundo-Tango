@@ -143,6 +143,7 @@ const AdminUsersManagementPage = lazy(() => import("@/pages/AdminUsersManagement
 const AdminModerationPage = lazy(() => import("@/pages/AdminModerationPage"));
 const ModerationDashboard = lazy(() => import("@/pages/admin/ModerationDashboard"));
 const AnalyticsDashboard = lazy(() => import("@/pages/admin/AnalyticsDashboard"));
+const AdminFacebookImport = lazy(() => import("@/pages/admin/AdminFacebookImport"));
 const ContentModerationPage = lazy(() => import("@/pages/ContentModerationPage"));
 const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
 const PlatformPage = lazy(() => import("@/pages/Platform"));
@@ -1208,6 +1209,14 @@ function Router() {
         <ProtectedRoute>
           <AdminLayout>
             <HousingReviewsPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/facebook-import">
+        <ProtectedRoute>
+          <AdminLayout>
+            <AdminFacebookImport />
           </AdminLayout>
         </ProtectedRoute>
       </Route>

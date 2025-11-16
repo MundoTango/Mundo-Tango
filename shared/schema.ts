@@ -10329,6 +10329,71 @@ export type InsertAutonomousTaskFile = z.infer<typeof insertAutonomousTaskFileSc
 export type SelectAutonomousTaskFile = typeof autonomousTaskFiles.$inferSelect;
 
 // ============================================================================
+// FACEBOOK IMPORT SYSTEM (SYSTEM 0 DATA PIPELINE)
+// ============================================================================
+
+export const facebookImports = pgTable("facebook_imports", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }),
+  accountName: varchar("account_name", { length: 100 }),
+  importDate: timestamp("import_date").defaultNow(),
+  dataType: varchar("data_type", { length: 50 }),
+  jsonData: jsonb("json_data"),
+  status: varchar("status", { length: 20 }).default("pending"),
+  errorMessage: text("error_message"),
+}, (table) => ({
+  userIdx: index("facebook_imports_user_idx").on(table.userId),
+  statusIdx: index("facebook_imports_status_idx").on(table.status),
+  accountIdx: index("facebook_imports_account_idx").on(table.accountName),
+}));
+
+export const insertFacebookImportSchema = createInsertSchema(facebookImports)
+  .omit({ id: true, importDate: true });
+export const selectFacebookImportSchema = createSelectSchema(facebookImports);
+export type InsertFacebookImport = z.infer<typeof insertFacebookImportSchema>;
+export type SelectFacebookImport = typeof facebookImports.$inferSelect;
+
+export const facebookPosts = pgTable("facebook_posts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }),
+  fbPostId: varchar("fb_post_id", { length: 100 }),
+  content: text("content"),
+  mediaUrls: text("media_urls").array(),
+  likes: integer("likes").default(0),
+  comments: integer("comments").default(0),
+  shares: integer("shares").default(0),
+  createdAt: timestamp("created_at"),
+}, (table) => ({
+  userIdx: index("facebook_posts_user_idx").on(table.userId),
+  fbPostIdIdx: index("facebook_posts_fb_post_id_idx").on(table.fbPostId),
+}));
+
+export const insertFacebookPostSchema = createInsertSchema(facebookPosts)
+  .omit({ id: true });
+export const selectFacebookPostSchema = createSelectSchema(facebookPosts);
+export type InsertFacebookPost = z.infer<typeof insertFacebookPostSchema>;
+export type SelectFacebookPost = typeof facebookPosts.$inferSelect;
+
+export const facebookFriends = pgTable("facebook_friends", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }),
+  friendName: varchar("friend_name", { length: 200 }),
+  friendFbId: varchar("friend_fb_id", { length: 100 }),
+  mutualFriends: integer("mutual_friends").default(0),
+  relationship: varchar("relationship", { length: 50 }),
+  importedAt: timestamp("imported_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("facebook_friends_user_idx").on(table.userId),
+  friendFbIdIdx: index("facebook_friends_fb_id_idx").on(table.friendFbId),
+}));
+
+export const insertFacebookFriendSchema = createInsertSchema(facebookFriends)
+  .omit({ id: true, importedAt: true });
+export const selectFacebookFriendSchema = createSelectSchema(facebookFriends);
+export type InsertFacebookFriend = z.infer<typeof insertFacebookFriendSchema>;
+export type SelectFacebookFriend = typeof facebookFriends.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 

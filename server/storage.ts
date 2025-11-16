@@ -66,6 +66,9 @@ import {
   roleInvitations,
   favorites,
   communityStats,
+  facebookImports,
+  facebookPosts,
+  facebookFriends,
   type SelectUser,
   type InsertUser,
   type SelectRefreshToken,
@@ -1494,6 +1497,17 @@ export interface IStorage {
   // Travel Recommendations
   getTravelRecommendations(userId: number, params?: { destination?: string }): Promise<any[]>;
   createTravelRecommendation(data: any): Promise<any>;
+  
+  // Facebook Import System
+  createFacebookImport(data: any): Promise<any>;
+  getFacebookImports(userId?: number): Promise<any[]>;
+  getFacebookImportById(id: number): Promise<any | undefined>;
+  updateFacebookImport(id: number, data: any): Promise<any | undefined>;
+  deleteFacebookImport(id: number): Promise<void>;
+  createFacebookPost(data: any): Promise<any>;
+  createFacebookFriend(data: any): Promise<any>;
+  getFacebookPostsByUserId(userId: number): Promise<any[]>;
+  getFacebookFriendsByUserId(userId: number): Promise<any[]>;
 }
 
 export class DbStorage implements IStorage {
@@ -7338,6 +7352,51 @@ export class DbStorage implements IStorage {
   
   async createTravelRecommendation(data: any): Promise<any> {
     return data;
+  }
+  
+  // Facebook Import System
+  async createFacebookImport(data: any): Promise<any> {
+    const result = await db.insert(facebookImports).values(data).returning();
+    return result[0];
+  }
+
+  async getFacebookImports(userId?: number): Promise<any[]> {
+    if (userId) {
+      return await db.select().from(facebookImports).where(eq(facebookImports.userId, userId));
+    }
+    return await db.select().from(facebookImports).orderBy(desc(facebookImports.importDate));
+  }
+
+  async getFacebookImportById(id: number): Promise<any | undefined> {
+    const result = await db.select().from(facebookImports).where(eq(facebookImports.id, id)).limit(1);
+    return result[0];
+  }
+
+  async updateFacebookImport(id: number, data: any): Promise<any | undefined> {
+    const result = await db.update(facebookImports).set(data).where(eq(facebookImports.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteFacebookImport(id: number): Promise<void> {
+    await db.delete(facebookImports).where(eq(facebookImports.id, id));
+  }
+
+  async createFacebookPost(data: any): Promise<any> {
+    const result = await db.insert(facebookPosts).values(data).returning();
+    return result[0];
+  }
+
+  async createFacebookFriend(data: any): Promise<any> {
+    const result = await db.insert(facebookFriends).values(data).returning();
+    return result[0];
+  }
+
+  async getFacebookPostsByUserId(userId: number): Promise<any[]> {
+    return await db.select().from(facebookPosts).where(eq(facebookPosts.userId, userId));
+  }
+
+  async getFacebookFriendsByUserId(userId: number): Promise<any[]> {
+    return await db.select().from(facebookFriends).where(eq(facebookFriends.userId, userId));
   }
 }
 

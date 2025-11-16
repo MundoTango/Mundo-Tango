@@ -106,6 +106,8 @@ import securityRoutes from "./routes/security-routes";
 import gdprComplianceRoutes from "./routes/gdpr-routes";
 import legalRoutes from "./routes/legal-routes";
 import scrapingAdminRoutes from "./routes/scraping-admin-routes";
+import facebookScraperRoutes from "./routes/facebook-scraper-routes";
+import facebookImportRoutes from "./routes/facebook-import-routes";
 import aiSelectorRoutes from "./routes/ai-selector-routes";
 import billingRoutes from "./routes/billing-routes";
 import onboardingRoutes from "./routes/onboarding-routes";
@@ -442,6 +444,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/life-ceo", lifeCeoRoutes);
   app.use("/api/admin", adminRoutes);
   app.use("/api", scrapingAdminRoutes);
+  app.use("/api/scraper/facebook", facebookScraperRoutes);
+  app.use("/api/facebook", facebookImportRoutes);
   app.use("/api", aiSelectorRoutes);
   app.use("/api/billing", billingRoutes);
   app.use("/api/onboarding", onboardingRoutes);
