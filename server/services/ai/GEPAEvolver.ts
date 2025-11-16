@@ -168,15 +168,22 @@ export class GEPAEvolver {
         avgCost: parseFloat(row.avg_cost) || 0,
       }));
 
+      const budgetExceededResult = await db.execute(sql`
+        SELECT COUNT(*) as count
+        FROM routing_decisions
+        WHERE escalation_reason ILIKE '%budget%' OR escalation_reason ILIKE '%exceeded%'
+      `);
+      const budgetExceededCount = parseInt(budgetExceededResult.rows?.[0]?.count || '0');
+
       console.log(
         `[GEPA Evolver] ✅ Failure analysis complete: ` +
-        `${totalFailures} total, ${lowQualityCount} low quality, ${escalationCount} escalations`
+        `${totalFailures} total, ${lowQualityCount} low quality, ${budgetExceededCount} budget exceeded, ${escalationCount} escalations`
       );
 
       return {
         totalFailures,
         lowQualityCount,
-        budgetExceededCount: 0, // TODO: Track budget exceeded
+        budgetExceededCount,
         escalationCount,
         commonPatterns,
       };

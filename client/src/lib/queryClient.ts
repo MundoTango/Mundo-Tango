@@ -97,9 +97,29 @@ export const getQueryFn: <T>(options: {
     return await res.json();
   };
 
+let unauthorizedHandled = false;
+
+function handleUnauthorizedError() {
+  if (unauthorizedHandled) return;
+  unauthorizedHandled = true;
+  
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('user');
+  
+  const currentPath = window.location.pathname;
+  if (currentPath !== '/login' && currentPath !== '/register') {
+    window.location.href = '/login?expired=true';
+  }
+}
+
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error: any) => {
+      if (error?.status === 401) {
+        handleUnauthorizedError();
+        return;
+      }
+      
       logger.error('Query failed', error, {
         component: 'ReactQuery',
         action: 'query',
@@ -108,6 +128,11 @@ export const queryClient = new QueryClient({
   }),
   mutationCache: new MutationCache({
     onError: (error: any) => {
+      if (error?.status === 401) {
+        handleUnauthorizedError();
+        return;
+      }
+      
       logger.error('Mutation failed', error, {
         component: 'ReactQuery',
         action: 'mutation',
@@ -118,20 +143,18 @@ export const queryClient = new QueryClient({
     queries: {
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
-      // Network-aware refetching
       refetchOnWindowFocus: true,
       refetchOnReconnect: true,
       refetchOnMount: true,
-      // Stale-while-revalidate strategy
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 30, // 30 minutes (formerly cacheTime in v4)
-      // Retry logic with exponential backoff
+      staleTime: 1000 * 60 * 5,
+      gcTime: 1000 * 60 * 30,
       retry: (failureCount, error: any) => {
-        // Don't retry on 4xx errors (client errors)
+        if (error?.status === 401) {
+          return false;
+        }
         if (error?.status >= 400 && error?.status < 500) {
           return false;
         }
-        // Retry up to 3 times for network/server errors
         return failureCount < 3;
       },
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),

@@ -390,6 +390,11 @@ export const eventRsvps = pgTable("event_rsvps", {
   userIdx: index("event_rsvps_user_idx").on(table.userId),
   uniqueRsvp: uniqueIndex("unique_rsvp").on(table.eventId, table.userId),
   statusIdx: index("event_rsvps_status_idx").on(table.status),
+  checkedInByIdx: index("event_rsvps_checked_in_by_idx").on(table.checkedInBy),
+  paymentStatusIdx: index("event_rsvps_payment_status_idx").on(table.paymentStatus),
+  eventStatusIdx: index("event_rsvps_event_status_idx").on(table.eventId, table.status),
+  userStatusIdx: index("event_rsvps_user_status_idx").on(table.userId, table.status),
+  rsvpedAtIdx: index("event_rsvps_rsvped_at_idx").on(table.rsvpedAt),
 }));
 
 export const eventPhotos = pgTable("event_photos", {
@@ -525,6 +530,10 @@ export const groups = pgTable("groups", {
   typeIdx: index("groups_type_idx").on(table.type),
   cityIdx: index("groups_city_idx").on(table.city),
   visibilityIdx: index("groups_visibility_idx").on(table.visibility),
+  createdByIdx: index("groups_created_by_idx").on(table.createdBy),
+  ownerIdIdx: index("groups_owner_id_idx").on(table.ownerId),
+  lastActivityIdx: index("groups_last_activity_idx").on(table.lastActivityAt),
+  cityCountryVisibleIdx: index("groups_city_country_visible_idx").on(table.city, table.country, table.visibility),
 }));
 
 export const groupMembers = pgTable("group_members", {
@@ -571,6 +580,11 @@ export const groupMembers = pgTable("group_members", {
   uniqueMember: uniqueIndex("unique_member").on(table.groupId, table.userId),
   roleIdx: index("group_members_role_idx").on(table.role),
   statusIdx: index("group_members_status_idx").on(table.status),
+  invitedByIdx: index("group_members_invited_by_idx").on(table.invitedBy),
+  approvedByIdx: index("group_members_approved_by_idx").on(table.approvedBy),
+  joinedAtIdx: index("group_members_joined_at_idx").on(table.joinedAt),
+  groupRoleIdx: index("group_members_group_role_idx").on(table.groupId, table.role),
+  userJoinedIdx: index("group_members_user_joined_idx").on(table.userId, table.joinedAt),
 }));
 
 export const groupInvites = pgTable("group_invites", {
@@ -634,6 +648,12 @@ export const groupPosts = pgTable("group_posts", {
   idxStatus: index("group_posts_status_idx").on(table.status),
   idxPinned: index("group_posts_pinned_idx").on(table.isPinned),
   idxCreated: index("group_posts_created_idx").on(table.createdAt),
+  linkedEventIdx: index("group_posts_linked_event_idx").on(table.linkedEventId),
+  pinnedByIdx: index("group_posts_pinned_by_idx").on(table.pinnedBy),
+  approvedByIdx: index("group_posts_approved_by_idx").on(table.approvedBy),
+  groupCreatedIdx: index("group_posts_group_created_idx").on(table.groupId, table.createdAt),
+  authorCreatedIdx: index("group_posts_author_created_idx").on(table.authorId, table.createdAt),
+  groupStatusIdx: index("group_posts_group_status_idx").on(table.groupId, table.status),
 }));
 
 export const groupCategories = pgTable("group_categories", {
@@ -696,6 +716,11 @@ export const posts = pgTable("posts", {
   mentionsIdx: index("posts_mentions_idx").using("gin", table.mentions),
   typeExpiresIdx: index("posts_type_expires_idx").on(table.type, table.expiresAt),
   statusScheduledIdx: index("posts_status_scheduled_idx").on(table.status, table.scheduledFor),
+  visibilityIdx: index("posts_visibility_idx").on(table.visibility),
+  statusIdx: index("posts_status_idx").on(table.status),
+  userCreatedIdx: index("posts_user_created_idx").on(table.userId, table.createdAt),
+  userVisibleIdx: index("posts_user_visible_idx").on(table.userId, table.visibility),
+  visibleCreatedIdx: index("posts_visible_created_idx").on(table.visibility, table.createdAt),
 }));
 
 export const postLikes = pgTable("post_likes", {
@@ -784,6 +809,8 @@ export const chatMessages = pgTable("chat_messages", {
   chatRoomIdx: index("chat_messages_room_idx").on(table.chatRoomId),
   userIdx: index("chat_messages_user_idx").on(table.userId),
   createdAtIdx: index("chat_messages_created_at_idx").on(table.createdAt),
+  roomCreatedIdx: index("chat_messages_room_created_idx").on(table.chatRoomId, table.createdAt),
+  mediaTypeIdx: index("chat_messages_media_type_idx").on(table.mediaType),
 }));
 
 // ============================================================================
@@ -804,6 +831,10 @@ export const notifications = pgTable("notifications", {
   userIdx: index("notifications_user_idx").on(table.userId),
   readIdx: index("notifications_read_idx").on(table.isRead),
   createdAtIdx: index("notifications_created_at_idx").on(table.createdAt),
+  typeIdx: index("notifications_type_idx").on(table.type),
+  userReadIdx: index("notifications_user_read_idx").on(table.userId, table.isRead),
+  userCreatedIdx: index("notifications_user_created_idx").on(table.userId, table.createdAt),
+  userTypeIdx: index("notifications_user_type_idx").on(table.userId, table.type),
 }));
 
 // ============================================================================
@@ -1455,6 +1486,10 @@ export const friendRequests = pgTable("friend_requests", {
   receiverIdx: index("friend_requests_receiver_idx").on(table.receiverId),
   statusIdx: index("friend_requests_status_idx").on(table.status),
   snoozedIdx: index("friend_requests_snoozed_idx").on(table.snoozedUntil),
+  danceEventIdx: index("friend_requests_dance_event_idx").on(table.danceEventId),
+  createdAtIdx: index("friend_requests_created_at_idx").on(table.createdAt),
+  senderStatusIdx: index("friend_requests_sender_status_idx").on(table.senderId, table.status),
+  receiverStatusIdx: index("friend_requests_receiver_status_idx").on(table.receiverId, table.status),
   uniqueRequest: uniqueIndex("unique_friend_request").on(table.senderId, table.receiverId),
 }));
 
