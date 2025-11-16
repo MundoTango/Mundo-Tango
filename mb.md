@@ -1,11 +1,13 @@
 # MB.MD - Mundo Blue Methodology Directive
 
-**Version:** 7.2 ENHANCED (Week 9 Learnings: Audit-First + Enhancement-Only Development)  
+**Version:** 8.0 ULTIMATE (AI Learning + 5 Development Pillars)  
 **Created:** October 30, 2025  
-**Last Updated:** November 16, 2025 (Week 9 Duplicate Cleanup)  
+**Last Updated:** November 16, 2025 (AI Training Research Complete)  
 **Purpose:** Complete AI execution protocol for Mundo Tango  
 **Project:** Mundo Tango (927 features, 20-week build strategy)  
-**New in v7.2:** 5 critical principles added to PILLAR 3 (Audit Existing, Duplicate Detection, Code Reuse, Database Sync, Enhancement-Only)
+**New in v8.0:** 
+- PILLAR 6: AI AGENT LEARNING (Data-Centric AI, DPO, Curriculum Training, Agentic CPT, GEPA, LIMI)
+- 5 Development Principles (Security-First, Error-First, Performance-First, Mobile-First, Accessibility-First)
 
 ---
 
@@ -630,6 +632,473 @@ class NewMessagingService { ... }
 
 **Target:** <0.3 bugs per feature (75% reduction from baseline)  
 **Week 9 Result:** 0 regressions, 99/100 quality (ENHANCED methodology working!)
+
+---
+
+## 🛡️ PILLAR 3 EXTENDED: 5 DEVELOPMENT-FIRST PRINCIPLES (NEW v8.0)
+
+### **PRINCIPLE 1: SECURITY-FIRST DEVELOPMENT** 🔒
+
+**Rule**: Threat modeling before building, security by design (not bolt-on)
+
+**Protocol**:
+```markdown
+Before building ANY feature:
+□ Identify sensitive data (PII, credentials, payments)
+□ Define threat model (who attacks, what they want, how)
+□ Design security controls (auth, authorization, encryption)
+□ Implement least privilege (RBAC, RLS)
+□ Validate ALL inputs (Zod schemas, SQL parameterization)
+□ Audit logging for sensitive operations
+□ GDPR/CCPA compliance check
+```
+
+**Security Checklist**:
+```markdown
+✅ All routes protected with authentication middleware
+✅ All mutations validated with Zod schemas
+✅ SQL queries use parameterized statements (NO string interpolation)
+✅ Secrets stored in environment variables (NEVER hardcoded)
+✅ CSRF tokens on all state-changing requests
+✅ CSP headers configured
+✅ Rate limiting on public endpoints
+✅ Audit logs for admin actions
+```
+
+**Example - Building Login Feature**:
+```typescript
+// ❌ BAD - Security vulnerabilities
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body; // No validation!
+  const user = await db.query(`SELECT * FROM users WHERE email = '${email}'`); // SQL injection!
+  if (user.password === password) { // Plaintext comparison!
+    res.json({ token: user.id }); // No JWT, no expiry!
+  }
+});
+
+// ✅ GOOD - Security-first approach
+import { z } from 'zod';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
+const loginSchema = z.object({
+  email: z.string().email().max(255),
+  password: z.string().min(8).max(100),
+});
+
+app.post('/login', async (req, res) => {
+  // 1. Validate input
+  const { email, password } = loginSchema.parse(req.body);
+  
+  // 2. Parameterized query
+  const [user] = await db.select().from(users).where(eq(users.email, email));
+  
+  // 3. Bcrypt password check
+  if (!user || !await bcrypt.compare(password, user.passwordHash)) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+  
+  // 4. JWT with expiry
+  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, { expiresIn: '24h' });
+  
+  // 5. Audit log
+  await db.insert(auditLogs).values({
+    userId: user.id,
+    action: 'login',
+    ipAddress: req.ip,
+    timestamp: new Date(),
+  });
+  
+  res.json({ token });
+});
+```
+
+**Why P0 (Critical)**:
+- Legal requirement (GDPR, HIPAA)
+- Prevents data breaches ($4.5M average cost)
+- Builds user trust
+- Easier to design secure than retrofit
+
+---
+
+### **PRINCIPLE 2: ERROR-FIRST DEVELOPMENT** ⚠️
+
+**Rule**: Plan error handling BEFORE happy path, fail gracefully always
+
+**Protocol**:
+```markdown
+Before writing happy path:
+□ List all possible errors (network, validation, auth, not found, server)
+□ Design error states UI (friendly messages, recovery actions)
+□ Implement try-catch with specific error types
+□ Log errors with context (user ID, request ID, stack trace)
+□ Show user-friendly messages (NEVER raw error objects)
+□ Provide recovery actions (retry, go back, contact support)
+□ Track error rates in monitoring
+```
+
+**Error Handling Patterns**:
+```typescript
+// ❌ BAD - Generic error handling
+try {
+  const post = await fetchPost(id);
+  return <Post data={post} />;
+} catch (error) {
+  console.log(error); // Not helpful!
+  return <div>Error</div>; // Not actionable!
+}
+
+// ✅ GOOD - Error-first approach
+try {
+  const post = await fetchPost(id);
+  return <Post data={post} />;
+} catch (error) {
+  // Specific error handling
+  if (error.code === 'NOT_FOUND') {
+    return (
+      <NotFound 
+        resource="post"
+        message="This post doesn't exist or has been deleted"
+        action={<Button onClick={() => navigate('/feed')}>Back to Feed</Button>}
+      />
+    );
+  }
+  
+  if (error.code === 'UNAUTHORIZED') {
+    return <Login redirect={`/posts/${id}`} message="Please login to view this post" />;
+  }
+  
+  if (error.code === 'NETWORK_ERROR') {
+    return (
+      <ErrorState 
+        message="Connection lost. Please check your internet."
+        onRetry={() => refetch()}
+        retryable
+      />
+    );
+  }
+  
+  // Log unknown errors with context
+  console.error('Unexpected post fetch error:', {
+    postId: id,
+    userId: currentUser?.id,
+    error: error.message,
+    stack: error.stack,
+  });
+  
+  // Send to error tracking (Sentry)
+  Sentry.captureException(error, {
+    tags: { feature: 'post-view' },
+    extra: { postId: id },
+  });
+  
+  // User-friendly fallback
+  return (
+    <ErrorState 
+      message="Something went wrong loading this post"
+      onRetry={() => refetch()}
+      onBack={() => navigate('/feed')}
+    />
+  );
+}
+```
+
+**Error States UI Components**:
+```typescript
+<ErrorState 
+  message="Clear, helpful error message"
+  onRetry={() => refetch()} // Recovery action
+  onBack={() => navigate('/')} // Alternative action
+  supportLink="/help" // Last resort
+/>
+
+<Toast 
+  variant="error"
+  title="Post failed to save"
+  description="Your draft has been saved. Try again?"
+  action={<Button onClick={retry}>Retry</Button>}
+/>
+```
+
+**Why P0 (Critical)**:
+- Critical for user experience (good errors > perfect happy path)
+- Reduces support tickets (80% of tickets are error-related)
+- Faster debugging (detailed error logs)
+- Professional appearance
+
+---
+
+### **PRINCIPLE 3: PERFORMANCE-FIRST DEVELOPMENT** ⚡
+
+**Rule**: Profile before optimizing, measure before scaling
+
+**Protocol**:
+```markdown
+Before optimizing:
+□ Profile with Chrome DevTools (frontend) or Node --inspect (backend)
+□ Measure baseline metrics (load time, API latency, memory)
+□ Identify actual bottlenecks (not assumed ones)
+□ Optimize top 3 bottlenecks ONLY
+□ Re-measure to verify improvement (target 2x faster minimum)
+□ Document: What was slow, why, what fixed it
+```
+
+**Performance Budget**:
+```markdown
+FRONTEND:
+- LCP (Largest Contentful Paint): <2.5s
+- FID (First Input Delay): <100ms
+- CLS (Cumulative Layout Shift): <0.1
+- Time to Interactive: <3.5s
+
+BACKEND:
+- API response time: <200ms (p95)
+- Database queries: <50ms (p95)
+- Memory usage: <512MB per process
+- CPU usage: <70% average
+```
+
+**Optimization Patterns**:
+```typescript
+// ❌ BAD - Premature optimization
+const posts = await db.select().from(posts).all(); // Load all posts!
+const filtered = posts.filter(p => p.userId === userId); // Filter in JS!
+const sorted = filtered.sort((a, b) => b.createdAt - a.createdAt); // Sort in JS!
+
+// ✅ GOOD - Database-level optimization
+const posts = await db
+  .select()
+  .from(posts)
+  .where(eq(posts.userId, userId)) // Filter in database
+  .orderBy(desc(posts.createdAt)) // Sort in database
+  .limit(20); // Pagination
+
+// 🔥 BETTER - Add index for common query
+// shared/schema.ts
+export const posts = pgTable("posts", {
+  userId: integer("user_id").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdIdx: index("posts_user_id_idx").on(table.userId),
+  createdAtIdx: index("posts_created_at_idx").on(table.createdAt),
+}));
+```
+
+**Caching Strategy**:
+```typescript
+// React Query caching (frontend)
+const { data: posts } = useQuery({
+  queryKey: ['/api/posts', userId],
+  staleTime: 60000, // 1min cache
+  gcTime: 300000, // 5min garbage collection
+});
+
+// Redis caching (backend)
+const getCachedPosts = async (userId: number) => {
+  const cacheKey = `posts:user:${userId}`;
+  
+  // Try cache first
+  const cached = await redis.get(cacheKey);
+  if (cached) return JSON.parse(cached);
+  
+  // Cache miss - fetch from DB
+  const posts = await db.select().from(posts).where(eq(posts.userId, userId));
+  
+  // Cache for 5min
+  await redis.setex(cacheKey, 300, JSON.stringify(posts));
+  
+  return posts;
+};
+```
+
+**Tools**:
+- Chrome DevTools Performance tab
+- Lighthouse CI (automated)
+- Prometheus/Grafana (backend metrics)
+- React Profiler
+- SQL EXPLAIN ANALYZE
+
+**Why P1 (Important)**:
+- Important for scale (handles 10x traffic)
+- User retention (53% leave if >3s load)
+- SEO ranking (Google penalizes slow sites)
+- Cost savings (efficient = cheaper hosting)
+
+---
+
+### **PRINCIPLE 4: MOBILE-FIRST DEVELOPMENT** 📱
+
+**Rule**: Responsive design by default, mobile breakpoints first
+
+**Protocol**:
+```markdown
+For every page/component:
+□ Design mobile layout FIRST (375px width)
+□ Test on real devices (iPhone, Android) not just Chrome DevTools
+□ Touch targets 44x44px minimum (not 24x24px)
+□ No hover-only interactions (use click/tap)
+□ Responsive typography (rem units, not px)
+□ Images optimized for mobile (WebP, lazy loading)
+□ Mobile performance budget (<3s LCP, <100ms FID)
+```
+
+**Mobile Breakpoints** (Tailwind):
+```css
+/* Default: Mobile-first (375px) */
+.button {
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+/* sm: 640px (mobile landscape) */
+@media (min-width: 640px) {
+  .button {
+    padding: 12px 20px;
+  }
+}
+
+/* md: 768px (tablet portrait) */
+@media (min-width: 768px) {
+  .button {
+    padding: 14px 24px;
+    font-size: 16px;
+  }
+}
+
+/* lg: 1024px (tablet landscape / small laptop) */
+@media (min-width: 1024px) {
+  .button {
+    padding: 16px 28px;
+  }
+}
+```
+
+**Responsive Patterns**:
+```tsx
+// ❌ BAD - Desktop-first, hard to adapt
+<div className="grid grid-cols-4 gap-4"> // 4 columns on mobile? Unreadable!
+  {posts.map(post => <PostCard {...post} />)}
+</div>
+
+// ✅ GOOD - Mobile-first responsive
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+  {/* Mobile: 1 column, Tablet: 2 cols, Desktop: 3-4 cols */}
+  {posts.map(post => <PostCard {...post} />)}
+</div>
+
+// Touch target sizing
+<Button 
+  className="min-h-[44px] min-w-[44px]" // iOS recommended touch target
+  data-testid="button-like"
+>
+  <Heart className="w-5 h-5" />
+</Button>
+```
+
+**Mobile Optimization**:
+```tsx
+// Lazy load images
+<img 
+  src={post.imageUrl} 
+  loading="lazy" // Native lazy loading
+  srcSet={`${post.imageUrl}?w=400 400w, ${post.imageUrl}?w=800 800w`}
+  sizes="(max-width: 640px) 400px, 800px"
+/>
+
+// Responsive videos
+<video 
+  className="w-full h-auto" // Maintain aspect ratio
+  preload="metadata" // Don't auto-download on mobile
+  controls
+/>
+```
+
+**Why P1 (Important)**:
+- 60%+ traffic from mobile devices (2025)
+- Google mobile-first indexing (SEO)
+- Better UX for everyone
+- Harder to scale down desktop → mobile than up
+
+---
+
+### **PRINCIPLE 5: ACCESSIBILITY-FIRST DEVELOPMENT** ♿
+
+**Rule**: WCAG 2.1 AA compliance from day 1 (not afterthought)
+
+**Protocol**:
+```markdown
+For every UI component:
+□ Semantic HTML (use <button>, <nav>, <main>, not <div onClick>)
+□ ARIA labels for icons and interactive elements
+□ Keyboard navigation (Tab, Enter, Escape, arrows)
+□ Focus indicators visible (outline, ring)
+□ Color contrast 4.5:1 minimum (text on background)
+□ Screen reader testing (VoiceOver, NVDA)
+□ Alternative text for images
+□ Form labels and error messages
+```
+
+**Accessibility Patterns**:
+```tsx
+// ❌ BAD - Not accessible
+<div onClick={handleClick}> // Not keyboard accessible
+  <img src="/icon.svg" /> // No alt text
+  Submit
+</div>
+
+// ✅ GOOD - Accessible
+<button 
+  onClick={handleClick}
+  aria-label="Submit form"
+  data-testid="button-submit"
+  className="focus:ring-2 focus:ring-primary" // Visible focus
+>
+  <img src="/icon.svg" alt="Submit icon" />
+  Submit
+</button>
+
+// Form accessibility
+<form>
+  <label htmlFor="email" className="sr-only">Email Address</label>
+  <input 
+    id="email"
+    type="email"
+    aria-required="true"
+    aria-describedby="email-error"
+    placeholder="Email"
+  />
+  <div id="email-error" role="alert" aria-live="polite">
+    {error && <span className="text-destructive">{error}</span>}
+  </div>
+</form>
+
+// Skip navigation link
+<a href="#main-content" className="sr-only focus:not-sr-only">
+  Skip to main content
+</a>
+```
+
+**Color Contrast** (WCAG AA):
+```css
+/* ❌ BAD - Low contrast */
+.text-gray-400 on bg-white /* 2.5:1 contrast - FAIL */
+
+/* ✅ GOOD - High contrast */
+.text-gray-700 on bg-white /* 4.6:1 contrast - PASS */
+.text-white on bg-primary /* 7.2:1 contrast - AAA */
+```
+
+**Tools**:
+- axe DevTools (Chrome extension)
+- Lighthouse accessibility audit
+- Screen readers (VoiceOver on Mac, NVDA on Windows)
+- Color contrast checker
+
+**Why P2 (Can Retrofit)**:
+- 15% of users have disabilities
+- Legal requirement (ADA, Section 508)
+- Better UX for everyone (not just disabled)
+- Can be added post-launch (but harder)
 
 ---
 
@@ -1665,6 +2134,225 @@ try {
 
 ---
 
+## 🤖 PILLAR 6: AI AGENT LEARNING (NEW v8.0)
+
+**Purpose**: How Replit AI and Mr Blue learn, train, and continuously improve
+
+**Source**: Latest 2024-2025 AI/LLM training research (See docs/MB_MD_V8_AI_LEARNING_RESEARCH.md for full details)
+
+---
+
+### **Core Methodology: DATA-CENTRIC AI**
+
+**Principle**: "Better data beats better algorithms" (2025 paradigm shift)
+
+**Key Insights**:
+- ✅ Quality > Quantity (78 curated examples > 10,000 random ones)
+- ✅ Domain-specific data outperforms generic (Mundo Tango patterns > generic React)
+- ✅ Small models (<10B params) sufficient with high-quality data
+- ✅ Focus on curation, not collection
+
+---
+
+### **Training Methodologies**
+
+#### **1. DPO (Direct Preference Optimization)** ⭐ PRIMARY METHOD
+
+**Why DPO over RLHF**:
+- 3x faster training
+- 50% cheaper compute
+- Simpler implementation
+- Comparable or better performance
+
+**Protocol**:
+```markdown
+For each feature built:
+1. Capture working code (CHOSEN) vs broken code (REJECTED)
+2. Train on preference pairs
+3. Optimize model to prefer CHOSEN patterns
+4. Continuous learning loop
+
+Sources of preferences:
+- Scott's feedback (manual reviews)
+- E2E test results (pass vs fail)
+- LSP diagnostics (clean vs errors)
+- Production metrics (fast vs slow)
+```
+
+#### **2. Curriculum-Based Training**
+
+**Protocol**: Simple → Complex (Week 9-12 roadmap)
+
+```markdown
+Week 9: ENHANCEMENTS (simple)
+├─ Add columns to existing tables
+├─ Extend existing components
+└─ Polish existing algorithms
+
+Week 10: NEW FEATURES (medium)
+├─ Build marketplace
+├─ Implement stories
+└─ Add live streaming
+
+Week 11: INFRASTRUCTURE (complex)
+├─ Security hardening
+├─ Performance optimization
+└─ Multi-AI orchestration
+
+Week 12: AUTONOMY (expert)
+├─ Self-testing
+├─ Self-fixing bugs
+└─ 100% autonomous deployment
+```
+
+#### **3. GEPA: Self-Evolving Agents**
+
+**Genetic-Pareto Optimization for Continuous Improvement**
+
+**Protocol**:
+```markdown
+After each failure/bug:
+1. REFLECT: "What went wrong? Why?"
+2. PROPOSE: Generate 5-10 alternative approaches
+3. TEST: Validate each variant
+4. SELECT: Keep best performing
+5. UPDATE MB.MD: Document learning
+
+EXAMPLE (Week 9):
+Failure → Duplicate messaging tables created
+Reflection → "Failed to audit existing schema"
+Proposal → "Always grep shared/schema.ts first"
+Test → Applied to next 10 features
+Result → 0 duplicates (100% success)
+Update → Added to mb.md v7.2 PILLAR 3 Layer 1 ✅
+```
+
+#### **4. LIMI: "Less Is More" Curation**
+
+**Research Insight**: 78 carefully curated examples > 10,000 random examples
+
+**What Makes a Golden Example**:
+```markdown
+✅ Full workflow (user request → mb.md application → production code)
+✅ Shows edge cases + error handling
+✅ Multi-step reasoning explicit
+✅ Tool integration (APIs, databases)
+✅ Recovery from failures
+
+❌ Simple input-output pairs
+❌ Only happy path scenarios
+❌ Missing context/reasoning
+❌ No tool interactions
+```
+
+**Mr Blue's 78 Golden Examples** (Week 9-12):
+- Curate best implementations from each week
+- Each example: Problem → mb.md methodology → Solution
+- Include: Audit existing, database sync, testing, deployment
+- Use for training future AI agents
+
+---
+
+### **Prompt Engineering Best Practices**
+
+**5 Core Principles**:
+
+1. **Be Specific**: Define task, audience, tone, format, length
+   ```
+   ❌ "Add a feature"
+   ✅ "Add 'Saved Posts' feature to FeedPage using existing posts table, create UI component with heart icon, save to savedPosts table with user_id + post_id"
+   ```
+
+2. **Provide Context**: Include relevant mb.md sections
+   ```
+   "You are Mr Blue following mb.md v8.0 methodology.
+   PILLAR 3 Layer 1: Audit existing implementations first.
+   Search: grep -r 'saved\|bookmark' shared/schema.ts"
+   ```
+
+3. **Use Examples**: Show 2-3 similar past implementations
+
+4. **Structure Prompts**:
+   - Context: Background info
+   - Data: Input to process
+   - Task: What to do
+   - Format: How to return it
+
+5. **Iterate**: Start simple, refine based on output
+
+**Advanced Techniques**:
+- **Chain-of-Thought**: "Let's think step by step"
+- **Self-Consistency**: Generate multiple paths, select best
+- **Prompt Chaining**: Link multiple prompts for complex tasks
+
+---
+
+### **Evaluation Benchmarks**
+
+**Mr Blue Metrics** (Week 9-12):
+
+| Metric | Baseline | Target | Week 9 Result |
+|--------|----------|--------|---------------|
+| Feature Velocity | 10-15/day | 20-30/day | 20 features ✅ |
+| Quality Score | 95/100 | 99/100 | 99/100 ✅ |
+| Duplicates | 2-3/wave | 0/wave | 0 ✅ |
+| Bug Rate | 0.5/feature | <0.3/feature | 0/20 ✅ |
+| Autonomy | 0% | 100% | Week 9: 50% |
+
+---
+
+### **Continuous Learning Loop**
+
+**After Every Task**:
+```markdown
+✅ CAPTURE LEARNINGS:
+- What worked well?
+- What was difficult?
+- What would I do differently?
+- Pattern extracted for reuse?
+- Time saved vs baseline?
+- Bugs found (0 is good!)?
+
+✅ UPDATE MB.MD:
+- Add new patterns to PILLAR library
+- Refine existing principles
+- Document anti-patterns to avoid
+- Update benchmarks
+
+✅ SHARE KNOWLEDGE:
+- UP (to Scott): Strategic insights, budget, timeline
+- ACROSS (to peers): Reusable patterns, best practices
+- DOWN (to specialists): Implementation details, code examples
+```
+
+---
+
+### **AI Frameworks Used**
+
+| Framework | Mr Blue System | Purpose |
+|-----------|----------------|---------|
+| **LangGraph** | Mr Blue Studio | Stateful workflows, 6-tab interface |
+| **CrewAI** | Parallel Subagents | Role-based team coordination |
+| **AutoGen** | Autonomous Engine | Multi-agent systems |
+| **LlamaIndex** | Context Service | RAG data orchestration |
+| **OpenAI Agents SDK** | Vibe Coding | Code generation |
+
+---
+
+### **Key Learning Resources**
+
+**Used to build mb.md v8.0**:
+- OpenAI: "Learning to Reason with LLMs" (o1 methodology)
+- Sakana AI: DiscoPOP (AI-discovered loss functions)
+- LIMI Research: "78 examples are enough" (AgencyBench 73.5%)
+- Anthropic: "Building Effective Agents" (2024 best practices)
+- Berkeley LLM Agents MOOC (llmagents-learning.org)
+- Microsoft AI Agents for Beginners (GitHub 12-lesson course)
+
+**See docs/MB_MD_V8_AI_LEARNING_RESEARCH.md** for comprehensive research details (40+ pages)
+
+---
+
 ## 📈 SUCCESS METRICS
 
 ### **Velocity:**
@@ -1684,6 +2372,13 @@ try {
 - ✅ Learnings captured after every wave
 - ✅ Cross-agent knowledge sharing >3 times per wave
 - ✅ Each wave faster than previous (learning curve)
+
+### **AI Agent Learning (NEW v8.0):**
+- ✅ DPO training on preference pairs
+- ✅ Curriculum-based progression (simple → complex)
+- ✅ GEPA self-evolution from failures
+- ✅ 78 golden examples curated
+- ✅ Continuous improvement loop
 
 ---
 
