@@ -64,10 +64,22 @@ By Week 5, you now have:
 
 **See**: `docs/MB_MD_FINAL_PLAN.md` for complete 20-week roadmap
 
+### System 0: Facebook Data Pipeline (45min - 2 parallel subagents) **[NEXT]**
+- **Phase 1**: Login automation for @sboddye + @mundotango1 accounts
+- **Phase 2**: Data extraction (profiles, posts, friends, events, groups)
+- **Phase 3**: Import to MT database (proper mapping, no duplicates)
+- **Phase 4**: Advanced scraping (tango events, groups, competitor analysis)
+
 ### Week 6-8: Systems 6-8 (40min parallel build)
 - **System 6**: Facebook Messenger Integration (@mundotango1 page)
 - **System 7**: Autonomous Coding Engine (Mr Blue builds features autonomously)
 - **System 8**: Advanced Memory System (long-term user memory)
+
+### Testing & Analysis (Ongoing)
+- **cubic.dev**: AI PR review ($30/dev/mo) - automated code quality
+- **Continue.dev**: Open-source AI assistant - CI/CD automation
+- **VibeAudits.com**: Human security audit before production
+- **Reddit r/ChatGPTCoding**: Cursor + Claude combo for System 7
 
 ### Week 9-12: Autonomous Feature Build (927 features)
 - **Week 9**: Social Features P1 (186 features) - Scott 20% involvement

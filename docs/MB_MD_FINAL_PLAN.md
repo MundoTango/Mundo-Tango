@@ -60,7 +60,178 @@
 - **Build Time**: 5 minutes
 
 **TOTAL WEEK 1-5 BUILD TIME**: 65 minutes (4 parallel subagents)  
-**Quality Score**: 95/100 (Production Ready)
+**Quality Score**: 95/100 (Production Ready)  
+**E2E Testing**: ✅ PASSED (Video calls, Vibe coding, Context, Voice, Avatar)
+
+---
+
+## 🔄 SYSTEM 0: FACEBOOK DATA PIPELINE (Prerequisite)
+
+**Goal**: Import Mundo Tango user data from Facebook accounts (@sboddye, @mundotango1) into MT platform
+
+### **Phase 1: Facebook Login Automation**
+**Credentials Available** (via Replit Secrets):
+- `facebook_sboddye_username` / `facebook_sboddye_password`
+- `facebook_mundotango_username` / `facebook_mundotango_password`
+
+**Technical Approach**:
+- Playwright-based browser automation for FB login
+- Cookie persistence for session management
+- 2FA handling (if enabled)
+- Anti-bot detection bypass (headless=false, realistic delays)
+
+### **Phase 2: Data Extraction**
+**Data to Extract**:
+1. **Profile Data**:
+   - User info (name, bio, location, contact)
+   - Profile photos & cover images
+   - About sections (work, education, life events)
+
+2. **Social Graph**:
+   - Friends list (names, mutual friends, relationship)
+   - Followers/Following counts
+   - Group memberships
+
+3. **Content Data**:
+   - Posts (text, images, videos, links)
+   - Photos & Albums
+   - Check-ins & location data
+   - Events (created, attending, interested)
+
+4. **Engagement Data**:
+   - Likes, comments, shares (outgoing)
+   - Reactions received (incoming)
+   - Page likes & interests
+
+**Storage Format**:
+- JSON files per data type: `fb_profile_sboddye.json`, `fb_posts_mundotango.json`
+- Media files: `attached_assets/facebook_import/{username}/`
+
+### **Phase 3: Data Import to MT Database**
+**Database Migrations**:
+```typescript
+// New tables in shared/schema.ts
+facebookImports: {
+  id, userId, accountName, importDate, dataType, jsonData, status
+}
+
+facebookPosts: {
+  id, userId, fbPostId, content, mediaUrls, likes, comments, shares, createdAt
+}
+
+facebookFriends: {
+  id, userId, friendName, friendFbId, mutualFriends, relationship, importedAt
+}
+```
+
+**Mapping Strategy**:
+- Facebook posts → MT posts (preserving timestamps, media, engagement)
+- Facebook friends → MT friend requests/connections
+- Facebook events → MT events
+- Facebook groups → MT groups (create if not exist)
+
+### **Phase 4: Facebook Scraping (Detailed Work)**
+**Advanced Scraping Targets**:
+1. **Public Pages** (@mundotango1 page insights if available)
+2. **Event attendees** (tango events in target cities)
+3. **Group members** (tango-related groups)
+4. **Competitor analysis** (other tango platforms/communities)
+
+**Use Cases**:
+- Seed MT with real tango community data
+- Identify potential users for outreach
+- Populate events calendar with real tango events
+- Build initial social graph
+
+**Deliverables**:
+1. `server/services/FacebookScraperService.ts` - Login, scraping, extraction
+2. `server/routes/facebook-import-routes.ts` - API endpoints for triggering imports
+3. `server/migrations/` - Database schema for FB data
+4. `client/src/pages/AdminFacebookImport.tsx` - Admin UI for managing imports
+5. Automated import scheduler (daily background job)
+
+**Success Criteria**:
+- Both accounts logged in successfully
+- All profile data extracted (JSON + media files)
+- Data imported to MT database with proper user mapping
+- No duplicate data issues
+- Admin dashboard shows import status/logs
+
+**Estimated Build Time**: 45 minutes (2 parallel subagents)
+
+**Security Notes**:
+- Facebook credentials stored in Replit Secrets (never logged)
+- Rate limiting to avoid account bans (max 100 req/hour)
+- User consent recorded in database before import
+- GDPR compliance (data deletion on user request)
+
+---
+
+## 🧪 TESTING & ANALYSIS FRAMEWORK
+
+**Research Completed**: Analyzed industry-leading AI coding tools and testing platforms
+
+### **Tools & Platforms Researched**:
+
+#### **1. cubic.dev - AI Code Review**
+- **Type**: Automated PR review platform ($30/dev/month)
+- **Capabilities**: 
+  - Catches bugs, tech debt, architectural issues
+  - Generates fixes (not just flags)
+  - Navigates codebases like a developer
+  - 28-30% faster PR merges
+- **Use for MT**: Automated code review for Mr Blue's vibe-coded features
+
+#### **2. Continue.dev - Open-Source AI Assistant**
+- **Type**: Free IDE extension + CLI
+- **Capabilities**:
+  - Chat, autocomplete, inline editing
+  - Terminal-native TUI for CI/CD
+  - Multi-LLM support (GPT-4, Claude, Llama)
+  - Headless agents for automation
+- **Use for MT**: Integrate into Mr Blue's autonomous coding workflow
+
+#### **3. VibeAudits.com - Human Code Audit**
+- **Type**: Manual security review for AI-generated code
+- **Capabilities**:
+  - Identifies JWT issues, hardcoded secrets, SQL injection
+  - Human expert validation of vibe-coded apps
+  - "You Vibe-Code, We Audit"
+- **Use for MT**: Final security audit before production deployment
+
+#### **4. Reddit r/ChatGPTCoding Consensus**
+**Top Tools (2025)**:
+- **Cursor**: Best full-codebase context, agent mode
+- **Claude 4**: Superior coding reasoning, large context window
+- **Windsurf**: Free alternative with pro features
+- **GitHub Copilot X**: Multi-model flexibility (GPT-4o, Claude, o3)
+
+**Use for MT**: Adopt Cursor + Claude combo for System 7 (Autonomous Engine)
+
+#### **5. Additional Research**:
+- **Warren Laine-Naida**: Vibe code audit expert, digital marketing consultant
+- **Vibe Consulting (Forbes)**: UAE-based tax advisory (unrelated to vibe coding)
+- **SoftTeco, Tempo Labs, CodeConductor.ai, Eliya.io**: No active results (new/private tools)
+
+### **Testing Strategy for Mr Blue**:
+
+**Quality Gates (Enhanced)**:
+1. **LSP Validation**: Zero type/linter errors (existing)
+2. **cubic.dev PR Review**: Automated code review on all vibe-coded PRs
+3. **Continue.dev Agents**: Headless CI/CD testing in background
+4. **E2E Testing**: Playwright with admin@mundotango.life/admin123
+5. **VibeAudits.com**: Final human security audit before launch
+6. **Performance**: <200ms API, <3s page load (existing)
+7. **Security**: OWASP Top 10 compliance (existing)
+8. **Accessibility**: WCAG 2.1 AA (existing)
+9. **Code Quality**: cubic.dev score >95/100
+10. **Production Readiness**: VibeAudits.com approval
+
+**MB.MD Testing Workflow**:
+- After each system build → LSP + E2E tests
+- After System 7 (Autonomous) → cubic.dev integration
+- Before System 8 (Memory) → VibeAudits.com security audit
+- Before Week 9-12 (927 features) → Continue.dev CI/CD agents
 
 ---
 
