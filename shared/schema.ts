@@ -599,7 +599,9 @@ export const posts = pgTable("posts", {
   plainText: text("plain_text"),
   imageUrl: text("image_url"),
   videoUrl: text("video_url"),
+  videoThumbnail: text("video_thumbnail"),
   mediaEmbeds: jsonb("media_embeds"),
+  mediaGallery: jsonb("media_gallery"), // Array of {url: string, type: 'image'|'video', order: number}
   mentions: text("mentions").array().default(sql`ARRAY[]::text[]`),
   hashtags: text("hashtags").array(),
   tags: text("tags").array(),
@@ -610,6 +612,9 @@ export const posts = pgTable("posts", {
   visibility: varchar("visibility").default("public"),
   postType: varchar("post_type").default("post"),
   type: varchar("type", { length: 20 }).notNull().default("post"), // 'post' | 'story'
+  status: varchar("status", { length: 20 }).default("published"), // 'draft' | 'scheduled' | 'published'
+  scheduledFor: timestamp("scheduled_for"),
+  wordCount: integer("word_count").default(0),
   expiresAt: timestamp("expires_at"), // Only set for stories (24 hours from creation)
   likes: integer("likes").default(0),
   comments: integer("comments").default(0),
@@ -622,6 +627,7 @@ export const posts = pgTable("posts", {
   createdAtIdx: index("posts_created_at_idx").on(table.createdAt),
   mentionsIdx: index("posts_mentions_idx").using("gin", table.mentions),
   typeExpiresIdx: index("posts_type_expires_idx").on(table.type, table.expiresAt),
+  statusScheduledIdx: index("posts_status_scheduled_idx").on(table.status, table.scheduledFor),
 }));
 
 export const postLikes = pgTable("post_likes", {
@@ -648,6 +654,28 @@ export const postComments = pgTable("post_comments", {
   postIdx: index("post_comments_post_idx").on(table.postId),
   userIdx: index("post_comments_user_idx").on(table.userId),
   parentIdx: index("post_comments_parent_idx").on(table.parentCommentId),
+}));
+
+export const postDrafts = pgTable("post_drafts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  content: text("content"),
+  richContent: jsonb("rich_content"),
+  mediaGallery: jsonb("media_gallery"),
+  videoUrl: text("video_url"),
+  videoThumbnail: text("video_thumbnail"),
+  mentions: text("mentions").array(),
+  hashtags: text("hashtags").array(),
+  tags: text("tags").array(),
+  location: text("location"),
+  coordinates: jsonb("coordinates"),
+  visibility: varchar("visibility").default("public"),
+  lastSaved: timestamp("last_saved").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("post_drafts_user_idx").on(table.userId),
+  lastSavedIdx: index("post_drafts_last_saved_idx").on(table.lastSaved),
 }));
 
 // ============================================================================

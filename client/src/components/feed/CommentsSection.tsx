@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useComments, useCreateComment, useDeleteComment } from "@/hooks/usePosts";
 import { useLikeComment } from "@/hooks/usePostInteractions";
 import { CommentItem, CommentData } from "@/components/ui/CommentItem";
@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, MessageCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useEngagementWebSocket } from "@/hooks/useEngagementWebSocket";
+import { queryClient } from "@/lib/queryClient";
 
 interface CommentsSectionProps {
   postId: number;
@@ -18,6 +20,16 @@ export const CommentsSection = ({ postId }: CommentsSectionProps) => {
   const createComment = useCreateComment();
   const deleteComment = useDeleteComment();
   const likeComment = useLikeComment();
+  const typingTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Feature 20: WebSocket for live comments and typing indicators
+  const { typingUsers, sendTypingIndicator } = useEngagementWebSocket({
+    postId,
+    onNewComment: useCallback((newComment: any) => {
+      // Invalidate comments query to refetch with new comment
+      queryClient.invalidateQueries({ queryKey: ['/api/posts', postId, 'comments'] });
+    }, [postId]),
+  });
 
   const handleCreateComment = async () => {
     if (!newCommentContent.trim()) return;
@@ -88,12 +100,39 @@ export const CommentsSection = ({ postId }: CommentsSectionProps) => {
 
   return (
     <div className="space-y-4" data-testid={`comments-section-${postId}`}>
+      {/* Feature 20: Typing Indicator */}
+      {typingUsers.length > 0 && (
+        <div className="text-xs text-muted-foreground px-2 py-1 flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <div className="flex gap-1">
+            <span className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+            <span className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+            <span className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+          </div>
+          <span>
+            {typingUsers.join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing...
+          </span>
+        </div>
+      )}
+
       {/* New Comment Input */}
       <div className="space-y-2">
         <Textarea
           placeholder="Write a comment..."
           value={newCommentContent}
-          onChange={(e) => setNewCommentContent(e.target.value)}
+          onChange={(e) => {
+            setNewCommentContent(e.target.value);
+            
+            // Feature 20: Send typing indicator (debounced)
+            if (typingTimeoutRef.current) {
+              clearTimeout(typingTimeoutRef.current);
+            }
+            if (user?.name && e.target.value.trim()) {
+              sendTypingIndicator(user.name);
+              typingTimeoutRef.current = setTimeout(() => {
+                // Stop sending after 3 seconds of no input
+              }, 3000);
+            }
+          }}
           rows={3}
           disabled={createComment.isPending}
           data-testid={`textarea-new-comment-${postId}`}

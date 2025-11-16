@@ -124,10 +124,12 @@ import systemPromptsRoutes from "./routes/systemPrompts";
 import telemetryRoutes from "./routes/telemetry";
 import swaggerRoutes from "./routes/swagger";
 import tracesRoutes from "./routes/traces";
+import postsEnhancedRoutes from "./routes/posts-enhanced";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
 import { auditLog, getClientIp } from "./middleware/auditLog";
 import { wsNotificationService } from "./services/websocket-notification-service";
+import { wsEngagementService } from "./services/websocket-engagement-service";
 import { wsService as autonomousWsService } from "./services/websocket";
 import { 
   insertPostSchema, 
@@ -209,6 +211,7 @@ import { eq, and, or, desc, sql, isNotNull, gte, count } from "drizzle-orm";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { cityscapeService } from "./services/cityscape-service";
+import { feedAlgorithmService } from "./services/feedAlgorithm";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 
@@ -2301,6 +2304,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use(budgetRoutes);
   app.use(healthDataRoutes);
   app.use(nutritionRoutes);
+  
+  // Enhanced Posts Routes (Rich Text, Multiple Images, Videos, Scheduling, Drafts, etc.)
+  app.use("/api/posts", postsEnhancedRoutes);
 
   app.post("/api/posts", authenticateToken, validateRequest(createPostBodySchema), async (req: AuthRequest, res: Response) => {
     try {
@@ -2530,6 +2536,101 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ============================================================================
+  // FEED ALGORITHM ENDPOINTS (Features 11-18)
+  // ============================================================================
+  
+  // Feature 11: Personalized Feed
+  app.get("/api/feed/personalized", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { limit = "20", offset = "0" } = req.query;
+      const result = await feedAlgorithmService.getPersonalizedFeed(
+        req.user!.id,
+        parseInt(limit as string),
+        parseInt(offset as string)
+      );
+      res.json(result);
+    } catch (error) {
+      console.error("[GET /api/feed/personalized] Error:", error);
+      res.status(500).json({ message: "Failed to fetch personalized feed" });
+    }
+  });
+
+  // Feature 13: Following Feed
+  app.get("/api/feed/following", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { limit = "20", offset = "0" } = req.query;
+      const result = await feedAlgorithmService.getFollowingFeed(
+        req.user!.id,
+        parseInt(limit as string),
+        parseInt(offset as string)
+      );
+      res.json(result);
+    } catch (error) {
+      console.error("[GET /api/feed/following] Error:", error);
+      res.status(500).json({ message: "Failed to fetch following feed" });
+    }
+  });
+
+  // Feature 13: Discover Feed
+  app.get("/api/feed/discover", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { limit = "20", offset = "0" } = req.query;
+      const result = await feedAlgorithmService.getDiscoverFeed(
+        req.user!.id,
+        parseInt(limit as string),
+        parseInt(offset as string)
+      );
+      res.json(result);
+    } catch (error) {
+      console.error("[GET /api/feed/discover] Error:", error);
+      res.status(500).json({ message: "Failed to fetch discover feed" });
+    }
+  });
+
+  // Feature 16: Trending Posts
+  app.get("/api/feed/trending", async (req: Request, res: Response) => {
+    try {
+      const { limit = "5" } = req.query;
+      const posts = await feedAlgorithmService.getTrendingPosts(parseInt(limit as string));
+      res.json(posts);
+    } catch (error) {
+      console.error("[GET /api/feed/trending] Error:", error);
+      res.status(500).json({ message: "Failed to fetch trending posts" });
+    }
+  });
+
+  // Feature 17: Recently Active Users
+  app.get("/api/feed/active-users", async (req: Request, res: Response) => {
+    try {
+      const { limit = "10" } = req.query;
+      const users = await feedAlgorithmService.getRecentlyActiveUsers(parseInt(limit as string));
+      res.json(users);
+    } catch (error) {
+      console.error("[GET /api/feed/active-users] Error:", error);
+      res.status(500).json({ message: "Failed to fetch active users" });
+    }
+  });
+
+  // Feature 18: AI-Powered Recommendations
+  app.get("/api/feed/recommended", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { limit = "10" } = req.query;
+      const posts = await feedAlgorithmService.getRecommendedPosts(
+        req.user!.id,
+        parseInt(limit as string)
+      );
+      res.json(posts);
+    } catch (error) {
+      console.error("[GET /api/feed/recommended] Error:", error);
+      res.status(500).json({ message: "Failed to fetch recommended posts" });
+    }
+  });
+
+  // ============================================================================
+  // EXISTING POSTS ENDPOINTS
+  // ============================================================================
+
   app.get("/api/posts/:id", async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id);
@@ -2703,6 +2804,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const userReaction = userReactionResult[0]?.reactionType || null;
 
+      // Feature 19: Broadcast reaction update via WebSocket
+      wsEngagementService.broadcastLikeUpdate(
+        postId,
+        req.user!.id,
+        req.user!.name || req.user!.email,
+        reactionsObject,
+        userReaction,
+        totalCount
+      );
+
       res.json({ 
         reactions: reactionsObject,
         currentReaction: userReaction,  // Match field name from GET /api/posts
@@ -2749,6 +2860,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await db.update(posts)
         .set({ likes: totalCount })
         .where(eq(posts.id, postId));
+
+      // Feature 19: Broadcast reaction update via WebSocket
+      wsEngagementService.broadcastLikeUpdate(
+        postId,
+        req.user!.id,
+        req.user!.name || req.user!.email,
+        reactionsObject,
+        null, // User removed their reaction
+        totalCount
+      );
 
       res.json({ 
         reactions: reactionsObject,
@@ -2904,6 +3025,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         postId,
         userId: req.user!.id
       });
+
+      // Feature 20: Broadcast new comment via WebSocket
+      wsEngagementService.broadcastNewComment(postId, comment);
+
       res.status(201).json(comment);
     } catch (error) {
       console.error("Create comment error:", error);
@@ -4113,6 +4238,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize Autonomous Workflow WebSocket
   autonomousWsService.initialize(httpServer);
   console.log("[WebSocket] Autonomous workflow service initialized on /ws/autonomous");
+
+  // Initialize Engagement WebSocket (Features 19 & 20: Live likes and comments)
+  wsEngagementService.initialize(httpServer);
+  console.log("[WebSocket] Engagement service initialized on /ws/engagement");
 
   // ============================================================================
   // GROUPS - Additional routes removed (duplicates - using group-routes.ts instead)

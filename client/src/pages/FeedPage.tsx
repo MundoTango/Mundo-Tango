@@ -34,6 +34,13 @@ import { PostItem } from "@/components/feed/PostItem";
 import { EditPostDialog } from "@/components/modals/EditPostDialog";
 import { FeedHeroWelcome } from "@/components/feed/FeedHeroWelcome";
 import { StoriesCarousel } from "@/components/feed/StoriesCarousel";
+import { FeedFilters } from "@/components/feed/FeedFilters";
+import { FeedTabs } from "@/components/feed/FeedTabs";
+import { InfiniteScrollFeed } from "@/components/feed/InfiniteScrollFeed";
+import { NewPostsBanner } from "@/components/feed/NewPostsBanner";
+import { TrendingPosts } from "@/components/feed/TrendingPosts";
+import { ActiveUsersSidebar } from "@/components/feed/ActiveUsersSidebar";
+import { RecommendedPosts } from "@/components/feed/RecommendedPosts";
 import { Link } from "wouter";
 import { FeedAd } from "@/components/ads/FeedAd";
 
@@ -77,6 +84,11 @@ const RECOMMENDATION_CATEGORIES = [
 ];
 
 export default function FeedPage() {
+  // Feed algorithm state (Features 12-13)
+  const [feedType, setFeedType] = useState<"following" | "discover">("following");
+  const [filter, setFilter] = useState<"all" | "friends" | "public" | "saved" | "my-posts" | "mentions">("all");
+  const [refreshKey, setRefreshKey] = useState(0);
+  
   const [content, setContent] = useState("");
   const [visibility, setVisibility] = useState<"public" | "friends" | "private">("public");
   const [postType, setPostType] = useState<"post" | "story">("post");
@@ -426,9 +438,15 @@ export default function FeedPage() {
         </div>
       </div>
 
-      <div className="flex gap-8 px-6 py-12 max-w-7xl mx-auto">
+      {/* 3-Column Grid Layout */}
+      <div className="grid grid-cols-12 gap-6 px-6 py-12 max-w-7xl mx-auto">
+        {/* Left Sidebar - Recently Active Users (Feature 17) */}
+        <aside className="hidden lg:block lg:col-span-3 space-y-6">
+          <ActiveUsersSidebar />
+        </aside>
+
         {/* Main Feed Column */}
-        <div className="flex-1 max-w-3xl space-y-8">
+        <main className="col-span-12 lg:col-span-6 space-y-6">
           {/* Hero Welcome Section */}
           <FeedHeroWelcome />
           
@@ -440,30 +458,22 @@ export default function FeedPage() {
           {/* Instagram-style Stories Carousel */}
           <StoriesCarousel />
 
-          {/* New Posts Banner */}
-          {newPostsAvailable && (
-            <Card className="p-4 bg-primary/10 border-primary" data-testid="banner-new-posts">
-              <div className="flex items-center justify-between gap-4">
-                <p className="text-sm font-medium">New posts available</p>
-                <Button
-                  onClick={loadNewPosts}
-                  size="sm"
-                  variant="default"
-                  className="hover-elevate active-elevate-2"
-                  data-testid="button-load-new-posts"
-                >
-                  <ChevronDown className="h-4 w-4 mr-2" />
-                  Load New Posts
-                </Button>
-              </div>
-            </Card>
-          )}
+          {/* Feed Tabs - Following vs Discover (Feature 13) */}
+          <FeedTabs value={feedType} onChange={setFeedType} />
+
+          {/* Feed Filters (Feature 12) */}
+          <FeedFilters value={filter} onChange={setFilter} />
+
+          {/* New Posts Banner (Feature 15) */}
+          <NewPostsBanner onLoadNewPosts={() => setRefreshKey(prev => prev + 1)} />
 
           {/* Post Creator */}
           <PostCreator
             onPostCreated={() => {
               queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
               queryClient.invalidateQueries({ queryKey: ['/api/posts/stories'] });
+              queryClient.invalidateQueries({ queryKey: ['infinite-feed'] });
+              setRefreshKey(prev => prev + 1);
               toast({
                 title: "🎉 Memory shared!",
                 description: "Your memory has been posted to the community.",
@@ -473,113 +483,21 @@ export default function FeedPage() {
             showStoryToggle={true}
           />
 
-          {/* Smart Post Feed with Search & Filters */}
-          <SmartPostFeed posts={allPosts}>
-            <div className="space-y-4">
-              {isLoading ? (
-                <>
-                  {[1, 2, 3].map((i) => (
-                    <Card key={i} className="p-6" data-testid={`skeleton-post-${i}`}>
-                      <div className="flex items-start gap-4">
-                        <Skeleton className="h-12 w-12 rounded-full" />
-                        <div className="flex-1 space-y-2">
-                          <Skeleton className="h-4 w-32" />
-                          <Skeleton className="h-20 w-full" />
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                </>
-              ) : isError ? (
-                <Card className="p-12 text-center" data-testid="card-feed-error">
-                  <div className="max-w-md mx-auto space-y-4">
-                    <div className="w-16 h-16 mx-auto rounded-full bg-destructive/10 flex items-center justify-center">
-                      <AlertCircle className="w-8 h-8 text-destructive" />
-                    </div>
-                    <h3 className="text-lg font-semibold" data-testid="text-error-title">
-                      {!user ? "Authentication Required" : "Unable to Load Feed"}
-                    </h3>
-                    <p className="text-sm text-muted-foreground" data-testid="text-error-message">
-                      {!user 
-                        ? "Please log in to view the community feed and connect with other dancers."
-                        : "We're having trouble loading posts. This might be a temporary issue."
-                      }
-                    </p>
-                    <div className="flex gap-2 justify-center">
-                      {!user ? (
-                        <Button asChild data-testid="button-login">
-                          <Link href="/auth/login">Log In</Link>
-                        </Button>
-                      ) : (
-                        <Button onClick={() => refetch()} data-testid="button-retry">
-                          <RefreshCw className="w-4 h-4 mr-2" />
-                          Try Again
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </Card>
-              ) : allPosts.length > 0 ? (
-                <>
-                  {allPosts.map((post, index) => (
-                    <Fragment key={post.id}>
-                      <PostItem 
-                        post={post}
-                        onEdit={(postId) => {
-                          const postToEdit = allPosts.find(p => p.id === postId);
-                          if (postToEdit) {
-                            setEditingPostId(postId);
-                            setEditingPostContent(postToEdit.content);
-                          }
-                        }}
-                        onDelete={(postId) => {
-                          setDeletingPostId(postId);
-                        }}
-                      />
-                      {(index + 1) % 5 === 0 && <FeedAd />}
-                    </Fragment>
-                  ))}
-                  
-                  {hasNextPage && (
-                    <div className="flex justify-center pt-4" data-testid="section-load-more">
-                      <Button
-                        onClick={() => fetchNextPage()}
-                        disabled={isFetchingNextPage}
-                        variant="outline"
-                        size="lg"
-                        className="hover-elevate active-elevate-2"
-                        data-testid="button-load-more"
-                      >
-                        {isFetchingNextPage ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Loading...
-                          </>
-                        ) : (
-                          <>
-                            <ChevronDown className="h-4 w-4 mr-2" />
-                            Load More
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <Card className="p-6">
-                  <div className="text-center text-muted-foreground" data-testid="text-empty-state">
-                    No posts yet. Share your tango journey!
-                  </div>
-                </Card>
-              )}
-            </div>
-          </SmartPostFeed>
-        </div>
+          {/* Infinite Scroll Feed (Feature 14) */}
+          <InfiniteScrollFeed 
+            feedType={feedType} 
+            filter={filter}
+            onRefresh={refreshKey > 0 ? () => {} : undefined}
+          />
 
-        {/* Right Sidebar */}
-        <aside className="hidden lg:block w-80 space-y-6 sticky top-20 h-fit">
+          {/* AI-Powered Recommendations (Feature 18) */}
+          {user && <RecommendedPosts />}
+        </main>
+
+        {/* Right Sidebar - Trending Posts (Feature 16) */}
+        <aside className="hidden lg:block lg:col-span-3 space-y-6">
+          <TrendingPosts />
           <UpcomingEventsSidebar />
-          <FeedRightSidebar />
         </aside>
       </div>
 
