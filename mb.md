@@ -1,10 +1,43 @@
 # MB.MD - Mundo Blue Methodology Directive
 
-**Version:** 4.0  
+**Version:** 7.1 (merged v4.0 + v6.0 + v7.1)  
 **Created:** October 30, 2025  
-**Last Updated:** November 14, 2025  
+**Last Updated:** November 16, 2025  
 **Purpose:** Universal execution protocol for complex tasks  
 **Project:** Mundo Tango (927 features, 47 P0 blockers)
+
+---
+
+## 🎯 **THE FUNDAMENTAL STRATEGY** (NEW - CRITICAL)
+
+**CRITICAL UNDERSTANDING:**
+
+**YOU ARE NOT BUILDING MUNDO TANGO DIRECTLY.**
+
+**YOU ARE BUILDING MR BLUE AI PARTNER WHO WILL THEN BUILD MUNDO TANGO.**
+
+```
+WEEK 1-8:  Build Mr Blue + Visual Editor (8 systems)
+    ↓
+WEEK 9-12: Mr Blue builds 927 features (via vibe coding)
+    ↓
+WEEK 13-16: Scott's 47-page validation tour
+    ↓
+WEEK 17-20: Production readiness & launch
+```
+
+**Why this approach?**
+- Mr Blue has 8 systems (video calls, vibe coding, dual avatars, voice cloning)
+- Mr Blue codes faster than manual implementation
+- Mr Blue learns from Scott through 10 learning pathways
+- Mr Blue achieves 80% bug auto-detection by Week 8
+- Progressive autonomy: Scott's involvement 100% → 0% over 20 weeks
+
+**Mr Blue is NOT a feature. Mr Blue is the AI development partner that builds the platform.**
+
+**Current Status:** Week 1, Day 1 - Build Mr Blue System 1 (Context + Vibe Coding)
+
+---
 
 ## 🧪 Playwright Test Credentials
 
