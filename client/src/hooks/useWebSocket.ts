@@ -76,10 +76,19 @@ export function useWebSocket(options: UseWebSocketOptions) {
       console.log(`[WS] Connecting to ${path} for user ${user.id}...`);
       setStatus('connecting');
 
+      // Get JWT token from localStorage
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        console.error('[WS] No access token found - cannot connect');
+        setStatus('error');
+        return;
+      }
+
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      // Don't send userId in URL - will authenticate via message after connection
-      const wsUrl = `${protocol}//${window.location.host}${path}`;
+      // Send JWT token in URL query parameter for authentication
+      const wsUrl = `${protocol}//${window.location.host}${path}?token=${encodeURIComponent(token)}`;
       
+      console.log(`[WS] Connecting with JWT token authentication...`);
       const ws = new WebSocket(wsUrl);
       wsRef.current = ws;
 
@@ -113,40 +122,9 @@ export function useWebSocket(options: UseWebSocketOptions) {
           connectionTimeoutRef.current = undefined;
         }
         
-        // 100ms stabilization delay to ensure connection is fully stable before sending auth
-        // This helps prevent Code 1006 errors on some browsers/networks
-        const sendAuthDelay = setTimeout(() => {
-          if (ws.readyState !== WebSocket.OPEN) {
-            console.error(`[WS] ❌ Connection closed before auth could be sent (readyState: ${ws.readyState})`);
-            return;
-          }
-
-          try {
-            const authMessage = JSON.stringify({
-              type: 'auth',
-              userId: user.id
-            });
-            console.log(`[WS] 📤 Sending auth message:`, authMessage);
-            ws.send(authMessage);
-            console.log(`[WS] ✅ Auth message sent for user ${user.id}`);
-            
-            // Set 5-second timeout for auth response
-            authTimeoutRef.current = setTimeout(() => {
-              if (status !== 'connected') {
-                console.log('[WS] ⏰ Auth response timeout - closing connection');
-                ws.close(4002, 'Auth response timeout');
-              }
-            }, 5000);
-          } catch (error) {
-            console.error(`[WS] ❌ Failed to send auth message:`, error);
-            ws.close(4000, 'Auth send failed');
-          }
-        }, 100);
-        
-        // Store timeout reference for cleanup
-        connectionTimeoutRef.current = sendAuthDelay as any;
-        
-        // Note: status will be set to 'connected' when we receive auth_success/connected message
+        // Authentication happens via JWT token in URL during handshake
+        // Wait for server's auth_success/connected message to confirm
+        console.log('[WS] Waiting for server authentication confirmation...');
       };
 
       ws.onmessage = (event) => {
@@ -272,6 +250,7 @@ export function useWebSocket(options: UseWebSocketOptions) {
   }, []);
 
   // Connect on mount if user is authenticated
+  // Only reconnect when user ID changes (login/logout), not when user object updates
   useEffect(() => {
     if (user) {
       connect();
@@ -285,7 +264,8 @@ export function useWebSocket(options: UseWebSocketOptions) {
         wsRef.current = null;
       }
     };
-  }, [user, connect, cleanup]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   return {
     status,

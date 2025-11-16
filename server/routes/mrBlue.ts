@@ -11,6 +11,7 @@ import { eq, and, desc, sql, isNull } from "drizzle-orm";
 import { authenticateToken, type AuthRequest } from "../middleware/auth";
 import { getConversationContext, saveMessageToHistory } from "../services/chat-context";
 import { CodeGenerator } from "../services/codeGenerator";
+import { getMrBlueCapabilities, getTierName } from '../utils/mrBlueCapabilities';
 
 const router = Router();
 
@@ -929,6 +930,30 @@ router.post("/modify-code", async (req, res) => {
       success: false,
       error: error.message,
     });
+  }
+});
+
+// ============================================================================
+// TIER-BASED CAPABILITIES
+// ============================================================================
+
+// Get user's Mr. Blue capabilities based on tier
+router.get("/capabilities", async (req, res) => {
+  try {
+    // Default to tier 0 if no user (guest access)
+    const userTier = (req.user as any)?.tier || 0;
+    const capabilities = getMrBlueCapabilities(userTier);
+    const tierName = getTierName(userTier);
+    
+    res.json({
+      tier: userTier,
+      tierName,
+      capabilities,
+      upgradeUrl: userTier < 8 ? '/premium' : null
+    });
+  } catch (error: any) {
+    console.error('[MrBlue] Capabilities error:', error);
+    res.status(500).json({ error: 'Failed to get capabilities' });
   }
 });
 

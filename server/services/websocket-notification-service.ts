@@ -1,9 +1,24 @@
 /**
  * WEBSOCKET NOTIFICATION SERVICE
  * Real-time notification delivery via WebSocket
+ * 
+ * AUTHENTICATION: JWT token verified from URL query parameter on handshake
  */
 
 import { WebSocketServer, WebSocket } from "ws";
+import jwt from "jsonwebtoken";
+
+if (!process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET must be set");
+}
+
+const JWT_SECRET = process.env.JWT_SECRET;
+
+interface JWTPayload {
+  userId: number;
+  email: string;
+  role: string;
+}
 
 interface ConnectedClient {
   userId: number;
@@ -13,7 +28,6 @@ interface ConnectedClient {
 
 export class WebSocketNotificationService {
   private clients: Map<number, ConnectedClient[]> = new Map();
-  private pendingClients: Map<WebSocket, { timeout: NodeJS.Timeout }> = new Map();
   private wss: WebSocketServer | null = null;
 
   initialize(server: any) {
@@ -46,55 +60,64 @@ export class WebSocketNotificationService {
     });
 
     this.wss.on("connection", (ws: WebSocket, req: any) => {
-      console.log("[WS Server] ✅✅✅ NEW CONNECTION ESTABLISHED ✅✅✅");
+      console.log("[WS Server] ✅ NEW CONNECTION ATTEMPT");
       console.log("[WS Server] Client address:", req.socket.remoteAddress);
       console.log("[WS Server] Request URL:", req.url);
-      console.log("[WS Server] User-Agent:", req.headers['user-agent']);
-      console.log("[WS Server] Waiting for auth message...");
       
-      // Set 10-second timeout for authentication
-      const authTimeout = setTimeout(() => {
-        if (this.pendingClients.has(ws)) {
-          console.log("[WS Server] ⏰ Auth timeout - closing connection");
-          ws.close(4001, "Authentication timeout");
-          this.pendingClients.delete(ws);
+      try {
+        // Extract token from URL query parameter
+        const url = new URL(req.url || '', `http://${req.headers.host}`);
+        const token = url.searchParams.get('token');
+        
+        if (!token) {
+          console.error('[WS Server] ❌ No token provided in URL');
+          ws.close(1008, 'Authentication required');
+          return;
         }
-      }, 10000);
-
-      this.pendingClients.set(ws, { timeout: authTimeout });
+        
+        // Verify JWT token
+        let decoded: JWTPayload;
+        try {
+          decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
+        } catch (error) {
+          console.error('[WS Server] ❌ Invalid token:', error);
+          ws.close(1008, 'Invalid authentication token');
+          return;
+        }
+        
+        if (!decoded || !decoded.userId) {
+          console.error('[WS Server] ❌ Token missing userId');
+          ws.close(1008, 'Invalid authentication token');
+          return;
+        }
+        
+        const userId = decoded.userId;
+        
+        // Add authenticated client immediately
+        this.addClient(userId, ws);
+        
+        // Send authentication success message
+        ws.send(JSON.stringify({ 
+          type: 'auth_success', 
+          userId,
+          message: 'WebSocket authenticated successfully'
+        }));
+        
+        console.log(`[WS Server] ✅ User ${userId} (${decoded.email}) authenticated and connected`);
+        console.log(`[WS Server] 📊 Total authenticated users: ${this.clients.size}`);
+        
+      } catch (error) {
+        console.error('[WS Server] ❌ Auth error:', error);
+        ws.close(1008, 'Authentication failed');
+        return;
+      }
 
       ws.on("message", (data: string) => {
         try {
           const message = JSON.parse(data.toString());
-          console.log("[WS Server] 📨 Received message:", JSON.stringify(message));
           
-          // Handle authentication
-          if (message.type === "auth") {
-            const userId = message.userId;
-            
-            if (!userId || typeof userId !== 'number') {
-              console.error("[WS Server] ❌ Invalid auth message - no userId");
-              ws.close(4001, "Invalid authentication");
-              return;
-            }
-
-            // Clear auth timeout
-            const pending = this.pendingClients.get(ws);
-            if (pending) {
-              clearTimeout(pending.timeout);
-              this.pendingClients.delete(ws);
-            }
-
-            // Add authenticated client
-            this.addClient(userId, ws);
-            
-            // Send auth_success acknowledgment
-            ws.send(JSON.stringify({ type: "auth_success", userId }));
-            console.log(`[WS Server] ✅ User ${userId} authenticated and connected`);
-            console.log(`[WS Server] 📊 Total authenticated users: ${this.clients.size}`);
-            
-          } else if (message.type === "ping") {
-            // Find userId for this websocket
+          // Handle heartbeat ping
+          if (message.type === "ping") {
             const userId = this.findUserIdByWs(ws);
             if (userId) {
               this.updatePing(userId, ws);
@@ -109,21 +132,12 @@ export class WebSocketNotificationService {
       ws.on("close", (code, reason) => {
         console.log(`[WS Server] 🔌 Connection closed - Code: ${code}, Reason: ${reason.toString()}`);
         
-        // Clean up pending auth
-        const pending = this.pendingClients.get(ws);
-        if (pending) {
-          clearTimeout(pending.timeout);
-          this.pendingClients.delete(ws);
-        }
-        
         // Remove authenticated client
         const userId = this.findUserIdByWs(ws);
         if (userId) {
           this.removeClient(userId, ws);
           console.log(`[WS Server] 👤 User ${userId} disconnected`);
           console.log(`[WS Server] 📊 Remaining authenticated users: ${this.clients.size}`);
-        } else {
-          console.log("[WS Server] Unauthenticated client disconnected");
         }
       });
 

@@ -71,6 +71,281 @@ Mr. Blue generates realistic test data for databases, forms, or UI components.
 
 ---
 
+## 🎖️ **Mr. Blue Capabilities by User Tier**
+
+**Critical Design Principle:** ALL users (Tier 0-8) have access to Mr. Blue's core features: text chat, audio chat, and context awareness. Advanced capabilities unlock progressively as users upgrade tiers.
+
+---
+
+### **Tier 0-2: Free/Basic/Starter** 🆓
+
+**Available Features:**
+- ✅ **Text Chat:** 10-50 messages/hour
+- ✅ **Audio Chat:** Basic TTS with 6 preset voices (Alloy, Echo, Fable, Onyx, Nova, Shimmer)
+- ✅ **Context Awareness:** Current page, selected element, breadcrumbs
+- ✅ **Code Explanations:** Read-only analysis of your code
+- ✅ **Basic Guidance:** How-to questions, feature explanations
+
+**Audio:** 5-15 minutes/day
+
+**Locked Features:**
+- ❌ Voice cloning (requires Premium Tier 6+)
+- ❌ Autonomous code generation (requires Elite Tier 7+)
+- ❌ Real-time audio chat (requires Pro Tier 5+)
+- ❌ Premium ElevenLabs voices (requires Core Tier 4+)
+
+**Upgrade Prompts:**
+- "Want to generate code? Upgrade to Bronze Tier 3 for 1 code generation/day"
+- "Clone your voice with Premium Tier 6+"
+- "Unlock real-time voice chat with Pro Tier 5+"
+
+**Use Cases:**
+- Learning the Mundo Tango platform
+- Getting help with navigation
+- Understanding what features do
+- Planning what to build
+
+---
+
+### **Tier 3: Bronze** 🥉
+
+**New Capabilities:**
+- ✅ **1 Code Generation/Day:** Simple UI tweaks (color changes, text edits, button additions)
+- ✅ **100 Messages/Hour:** More conversation capacity
+- ✅ **30 Audio Minutes/Day:** Extended voice interaction
+
+**Workflow:**
+1. User: "Create 5 test users"
+2. Mr. Blue: Generates code + shows preview
+3. User approves → Code executes
+4. Daily limit: 1/1 used (resets in 24 hours)
+
+**Use Cases:**
+- Small UI adjustments
+- Test data generation (small datasets 5-10 items)
+- Learning vibe coding
+- Experimenting with Mr. Blue's capabilities
+
+---
+
+### **Tier 4: Core** 💼
+
+**New Capabilities:**
+- ✅ **3 Code Generations/Day:** Multiple daily tweaks
+- ✅ **4 Premium ElevenLabs Voices:** Rachel, Domi, Bella, Antoni (studio-quality, human-like)
+- ✅ **200 Messages/Hour:** Professional-level conversation
+- ✅ **60 Audio Minutes/Day:** Extended voice sessions
+- ✅ **Full Edit History:** Last 50 changes tracked
+
+**Voice Quality Upgrade:**
+- **Before (Tier 0-3):** OpenAI voices (robotic, limited emotion)
+- **After (Tier 4+):** ElevenLabs voices (99% human-like, emotional range, natural pauses)
+
+**Use Cases:**
+- Regular development tasks
+- Professional client demos (high-quality voice)
+- Consistent styling across pages
+- Building small features (forms, modals, components)
+
+---
+
+### **Tier 5: Pro** 🚀
+
+**New Capabilities:**
+- ✅ **Real-Time Audio Chat:** OpenAI Realtime API (ChatGPT Advanced Voice Mode experience)
+- ✅ **5 Code Generations/Day:** Daily development workflow
+- ✅ **500 Messages/Hour:** Power user capacity
+- ✅ **120 Audio Minutes/Day:** Full workday voice support
+- ✅ **Screenshot Context:** Visual AI understanding (Mr. Blue "sees" your UI)
+
+**Voice Experience:**
+- **Continuous Conversation:** No manual send button, just talk naturally
+- **Interruptions:** Can interrupt Mr. Blue mid-response
+- **Low Latency:** ~500ms response time (like real conversation)
+- **Emotional Tone:** Detects your mood, responds empathetically
+
+**Screenshot Context Example:**
+```
+User: "Make this button align with that text"
+         [Mr. Blue captures screenshot]
+Mr. Blue: "I see the button is 40px from the top and the text is at 60px. 
+          I'll align them both to 50px. Sound good?"
+```
+
+**Use Cases:**
+- Hands-free coding (voice-first workflow)
+- Visual debugging ("Fix the layout on this page")
+- Rapid prototyping
+- Multi-tasking (code while on calls)
+
+---
+
+### **Tier 6: Premium** 💎
+
+**New Capabilities:**
+- ✅ **Voice Cloning:** Mr. Blue speaks in YOUR voice (cloned from interviews/recordings)
+- ✅ **10 Code Generations/Day:** Daily feature development
+- ✅ **1,000 Messages/Hour:** Heavy usage capacity
+- ✅ **240 Audio Minutes/Day:** Half-day voice support
+- ✅ **Database Schema Awareness:** Mr. Blue knows your tables, columns, relationships
+- ✅ **API Endpoint Documentation:** Mr. Blue knows available routes
+
+**Voice Cloning Workflow:**
+1. Upload 1-5 minutes of clear speech (interview, podcast, recording)
+2. ElevenLabs processes voice sample (5-10 minutes)
+3. Voice ID saved to your profile
+4. Mr. Blue now responds in YOUR voice automatically
+
+**Database Awareness Example:**
+```
+User: "Create 50 test events"
+Mr. Blue: "I see your events table has: title, date, location, organizerId, ticketPrice.
+          I'll generate 50 events across 10 cities with realistic tango event names.
+          Price range: $10-$50. Sound good?"
+User: "Yes"
+Mr. Blue: [Generates INSERT statements] "✅ 50 events created!"
+```
+
+**Use Cases:**
+- Personalized Mr. Blue (hear YOUR voice)
+- Complex database operations
+- Multi-file refactoring
+- Client presentations (your voice, your brand)
+
+---
+
+### **Tier 7: Elite** 👑
+
+**New Capabilities:**
+- ✅ **Autonomous Vibe Coding:** Full 850-line AI code generation pipeline
+- ✅ **20 Code Generations/Day:** Multi-feature daily development
+- ✅ **2,000 Messages/Hour:** Enterprise-level capacity
+- ✅ **480 Audio Minutes/Day:** Full workday voice support
+- ✅ **Git Integration:** Auto-commit, rollback, version control
+- ✅ **Full Page DOM Access:** Complete HTML tree, all elements, all styles
+- ✅ **LSP Diagnostics:** Real-time TypeScript error detection
+
+**Autonomous Workflow:**
+```
+User: "Create a complete user dashboard with charts"
+    ↓
+Mr. Blue: 
+  - Decomposes into 5 subtasks
+  - Generates UserDashboard.tsx (150 lines)
+  - Generates DashboardCharts.tsx (80 lines)
+  - Generates useDashboardData.ts hook (40 lines)
+  - Generates API route /api/dashboard/stats (60 lines)
+  - Adds to App.tsx routing
+    ↓
+Shows diff viewer: 5 files, 330 lines changed
+    ↓
+User approves → All changes applied instantly
+    ↓
+Git auto-commit: "Add user dashboard with charts"
+    ↓
+Mr. Blue: "✅ Dashboard live at /dashboard. Want to add filters?"
+```
+
+**LSP Integration:**
+- Real-time syntax error detection
+- Type checking before code execution
+- Import resolution validation
+- Zero broken deployments
+
+**Use Cases:**
+- "Create a complete authentication system"
+- Multi-component features
+- Production-grade code generation
+- Full-stack features (frontend + backend + database)
+
+---
+
+### **Tier 8: God Level** 🌟
+
+**New Capabilities:**
+- ✅ **UNLIMITED Everything:** No rate limits, no caps, no restrictions
+- ✅ **Backend Code Generation:** Server routes, database migrations, infrastructure
+- ✅ **Advanced AI Routing:** GPT-4o, Claude 3.5 Sonnet, Groq Llama-3.1-70b (automatic fallback)
+- ✅ **Priority Support:** Instant response, dedicated channel
+- ✅ **99.9% SLA:** Guaranteed uptime, enterprise reliability
+
+**Backend Code Generation Examples:**
+
+**Example 1: Database Migration**
+```
+User: "Add email verification to users table"
+Mr. Blue:
+  1. Modifies shared/schema.ts (adds emailVerified, verificationToken)
+  2. Creates server/routes/emailVerification.ts (120 lines)
+  3. Generates email template (HTML + text)
+  4. Adds middleware to protect unverified users
+  5. Creates /api/verify-email endpoint
+  6. Runs: npm run db:push --force
+     ✅ Schema updated successfully
+```
+
+**Example 2: New API Endpoint**
+```
+User: "Create payment webhook handler for Stripe"
+Mr. Blue:
+  1. Creates server/routes/webhooks.ts
+  2. Adds Stripe signature verification
+  3. Implements event handlers (payment_intent.succeeded, etc.)
+  4. Logs to auditLogs table
+  5. Sends user notifications
+  6. Registers route in server/routes.ts
+     ✅ Webhook endpoint live at /api/webhooks/stripe
+```
+
+**Advanced AI Routing:**
+- **GPT-4o:** Complex reasoning, multi-step planning
+- **Claude 3.5 Sonnet:** Large codebases, refactoring
+- **Groq Llama-3.1-70b:** Fast iterations, simple tasks
+- **Automatic Fallback:** If one AI fails, switches to backup instantly
+
+**No Limits:**
+| Feature | Other Tiers | God Level |
+|---------|-------------|-----------|
+| Messages/Hour | 10-2,000 | ♾️ Unlimited |
+| Code Gen/Day | 0-20 | ♾️ Unlimited |
+| Audio Minutes/Day | 5-480 | ♾️ Unlimited |
+| Cost Cap/Task | $1-$10 | ♾️ No Cap |
+| Backend Access | ❌ No | ✅ Yes |
+
+**Use Cases:**
+- Full-stack autonomous development
+- Complex architectural changes
+- Production infrastructure modifications
+- "Build a complete booking system with payment processing"
+- "Refactor authentication to use OAuth2"
+- "Migrate database from MySQL to PostgreSQL"
+
+---
+
+## 📊 **Tier Comparison Matrix**
+
+| Feature | Tier 0-2 | Tier 3 | Tier 4 | Tier 5 | Tier 6 | Tier 7 | Tier 8 |
+|---------|----------|--------|--------|--------|--------|--------|--------|
+| **Text Chat** | ✅ 10-50/hr | ✅ 100/hr | ✅ 200/hr | ✅ 500/hr | ✅ 1000/hr | ✅ 2000/hr | ✅ ∞ |
+| **Audio Chat** | ✅ Basic | ✅ Basic | ✅ Premium | ✅ Realtime | ✅ Realtime | ✅ Realtime | ✅ ∞ |
+| **Context Awareness** | ✅ Basic | ✅ Basic | ✅ Full | ✅ + Screenshot | ✅ + DB | ✅ + DOM | ✅ + LSP |
+| **Code Generation** | ❌ | ✅ 1/day | ✅ 3/day | ✅ 5/day | ✅ 10/day | ✅ 20/day | ✅ ∞ |
+| **Voice Cloning** | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| **Autonomous Vibe Coding** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+| **Backend Code Gen** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| **Git Integration** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+| **Audio Minutes/Day** | 5-15 | 30 | 60 | 120 | 240 | 480 | ∞ |
+
+**Upgrade Incentives:**
+- **Tier 0→3:** Unlock code generation (1/day)
+- **Tier 3→4:** Premium voices (studio quality)
+- **Tier 4→5:** Real-time voice (ChatGPT Advanced Voice Mode)
+- **Tier 5→6:** Clone YOUR voice + database awareness
+- **Tier 6→7:** Autonomous multi-file coding
+- **Tier 7→8:** Unlimited everything + backend access
+
+---
+
 ### **3. Context-Aware AI Assistant**
 
 **What Mr. Blue Knows:**

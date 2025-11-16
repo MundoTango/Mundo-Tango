@@ -4,12 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
 import { useToast } from "@/hooks/use-toast";
-import { Send, Bot, User, Sparkles, Home } from "lucide-react";
+import { Send, Bot, User, Sparkles, Home, Mic, Code, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
+import { useQuery } from "@tanstack/react-query";
+import { getMrBlueCapabilities, getTierName } from "@/lib/mrBlueCapabilities";
 
 interface Message {
   id: string;
@@ -37,6 +40,12 @@ export default function MrBlueChatPage() {
   const params = new URLSearchParams(location.split('?')[1] || '');
   const sessionId = params.get('session');
   const volunteerId = params.get('volunteer');
+  
+  // Fetch user data
+  const { data: user } = useQuery({ queryKey: ['/api/auth/me'] });
+  const userTier = user?.tier || 0;
+  const capabilities = getMrBlueCapabilities(userTier);
+  const tierName = getTierName(userTier);
 
   useEffect(() => {
     // If coming from talent match, add context message
@@ -137,12 +146,17 @@ export default function MrBlueChatPage() {
         {/* Header */}
         <div className="border-b glass-topbar p-4">
           <div className="container mx-auto max-w-4xl">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mb-3">
               <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                 <Bot className="h-6 w-6 text-primary" />
               </div>
               <div className="flex-1">
-                
+                <div className="flex items-center gap-2">
+                  <h1 className="text-lg font-semibold">Mr. Blue AI</h1>
+                  <Badge variant="secondary" data-testid="badge-tier">
+                    {tierName}
+                  </Badge>
+                </div>
                 <p className="text-sm text-muted-foreground">
                   {sessionId ? "Volunteer Interview Session" : "Your intelligent assistant"}
                 </p>
@@ -157,6 +171,75 @@ export default function MrBlueChatPage() {
                 <Home className="h-5 w-5" />
               </Button>
             </div>
+
+            {/* Feature Buttons */}
+            <div className="flex gap-2 flex-wrap">
+              <Button
+                variant={capabilities.realtimeVoice ? "default" : "secondary"}
+                size="sm"
+                disabled={!capabilities.realtimeVoice}
+                data-testid="button-voice-chat"
+                className="gap-1"
+              >
+                <Mic className="h-4 w-4" />
+                Voice Chat
+                {!capabilities.realtimeVoice && (
+                  <Badge className="ml-1" variant="outline">
+                    Pro Tier 5+
+                  </Badge>
+                )}
+              </Button>
+              
+              <Button
+                variant={capabilities.autonomousVibeCoding ? "default" : "secondary"}
+                size="sm"
+                disabled={!capabilities.autonomousVibeCoding}
+                data-testid="button-autonomous-coding"
+                className="gap-1"
+              >
+                <Code className="h-4 w-4" />
+                Autonomous Coding
+                {!capabilities.autonomousVibeCoding && (
+                  <Badge className="ml-1" variant="outline">
+                    Elite Tier 7+
+                  </Badge>
+                )}
+              </Button>
+              
+              <Button
+                variant={capabilities.voiceCloning ? "default" : "secondary"}
+                size="sm"
+                disabled={!capabilities.voiceCloning}
+                data-testid="button-voice-clone"
+                className="gap-1"
+              >
+                <Zap className="h-4 w-4" />
+                Voice Clone
+                {!capabilities.voiceCloning && (
+                  <Badge className="ml-1" variant="outline">
+                    Premium Tier 6+
+                  </Badge>
+                )}
+              </Button>
+            </div>
+
+            {/* Rate Limits Display */}
+            {capabilities.messagesPerHour !== Infinity && (
+              <div className="text-xs text-muted-foreground mt-2" data-testid="rate-limits">
+                <span>Messages: {messages.length - 1}/{capabilities.messagesPerHour}/hour</span>
+                {capabilities.codeGenPerDay > 0 && (
+                  <span className="ml-4">Code Gen: 0/{capabilities.codeGenPerDay}/day</span>
+                )}
+                {capabilities.audioMinutesPerDay < Infinity && (
+                  <span className="ml-4">Audio: 0/{capabilities.audioMinutesPerDay} min/day</span>
+                )}
+                {userTier < 8 && (
+                  <a href="/premium" className="ml-4 text-primary hover:underline">
+                    Upgrade for more →
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

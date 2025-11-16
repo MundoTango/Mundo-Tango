@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, Fragment } from "react";
 import { usePosts, useCreatePost, useToggleLike, useComments, useCreateComment, useUpdateComment, useDeleteComment } from "@/hooks/usePosts";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
@@ -522,9 +522,8 @@ export default function FeedPage() {
               ) : allPosts.length > 0 ? (
                 <>
                   {allPosts.map((post, index) => (
-                    <>
+                    <Fragment key={post.id}>
                       <PostItem 
-                        key={post.id} 
                         post={post}
                         onEdit={(postId) => {
                           const postToEdit = allPosts.find(p => p.id === postId);
@@ -537,8 +536,8 @@ export default function FeedPage() {
                           setDeletingPostId(postId);
                         }}
                       />
-                      {(index + 1) % 5 === 0 && <FeedAd key={`ad-${index}`} />}
-                    </>
+                      {(index + 1) % 5 === 0 && <FeedAd />}
+                    </Fragment>
                   ))}
                   
                   {hasNextPage && (
