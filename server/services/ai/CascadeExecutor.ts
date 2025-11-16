@@ -21,6 +21,7 @@ import { AnthropicService } from './AnthropicService';
 import { GeminiService } from './GeminiService';
 import { OpenRouterService } from './OpenRouterService';
 import type { ModelTier, CascadeChain } from './ModelSelector';
+import { executeWithRetry, executeWithCircuitBreaker, classifyError } from '../ErrorRecoveryService';
 
 // ============================================================================
 // TYPES
@@ -257,7 +258,7 @@ export class CascadeExecutor {
   }
 
   /**
-   * Execute single tier
+   * Execute single tier with error recovery
    */
   private static async executeTier(
     tier: ModelTier,
@@ -267,55 +268,76 @@ export class CascadeExecutor {
     maxTokens: number = 1000
   ): Promise<ExecutionAttempt> {
     const startTime = Date.now();
-    
-    let result: any;
     const { platform, model } = tier;
-
-    // Route to appropriate service
-    if (platform === 'groq') {
-      result = await GroqService.query({
-        prompt: query,
-        model,
-        systemPrompt,
-        temperature,
-        maxTokens,
-      });
-    } else if (platform === 'openai') {
-      result = await OpenAIService.query({
-        prompt: query,
-        model,
-        systemPrompt,
-        temperature,
-        maxTokens,
-      });
-    } else if (platform === 'anthropic') {
-      result = await AnthropicService.query({
-        prompt: query,
-        model,
-        systemPrompt,
-        temperature,
-        maxTokens,
-      });
-    } else if (platform === 'gemini') {
-      result = await GeminiService.query({
-        prompt: query,
-        model,
-        systemPrompt,
-        temperature,
-        maxTokens,
-      });
-    } else if (platform === 'openrouter') {
-      result = await OpenRouterService.query({
-        prompt: query,
-        model,
-        systemPrompt,
-        temperature,
-        maxTokens,
-      });
-    } else {
-      throw new Error(`Unknown platform: ${platform}`);
+    const serviceKey = `${platform}:${model}`;
+    
+    // Execute with circuit breaker and retry logic
+    const recoveryResult = await executeWithCircuitBreaker(
+      async () => {
+        return await executeWithRetry(
+          async () => {
+            // Route to appropriate service
+            if (platform === 'groq') {
+              return await GroqService.query({
+                prompt: query,
+                model,
+                systemPrompt,
+                temperature,
+                maxTokens,
+              });
+            } else if (platform === 'openai') {
+              return await OpenAIService.query({
+                prompt: query,
+                model,
+                systemPrompt,
+                temperature,
+                maxTokens,
+              });
+            } else if (platform === 'anthropic') {
+              return await AnthropicService.query({
+                prompt: query,
+                model,
+                systemPrompt,
+                temperature,
+                maxTokens,
+              });
+            } else if (platform === 'gemini') {
+              return await GeminiService.query({
+                prompt: query,
+                model,
+                systemPrompt,
+                temperature,
+                maxTokens,
+              });
+            } else if (platform === 'openrouter') {
+              return await OpenRouterService.query({
+                prompt: query,
+                model,
+                systemPrompt,
+                temperature,
+                maxTokens,
+              });
+            } else {
+              throw new Error(`Unknown platform: ${platform}`);
+            }
+          },
+          {
+            maxAttempts: 2,
+            initialDelayMs: 500,
+            maxDelayMs: 3000,
+            retryableErrors: ['transient', 'timeout', 'network', 'rate_limit']
+          },
+          `${platform}_${model}`
+        );
+      },
+      serviceKey
+    );
+    
+    if (!recoveryResult.success) {
+      throw recoveryResult.error || new Error(`${platform} execution failed`);
     }
-
+    
+    const result = recoveryResult.data?.data || recoveryResult.data;
     const latency = Date.now() - startTime;
 
     // Calculate confidence score

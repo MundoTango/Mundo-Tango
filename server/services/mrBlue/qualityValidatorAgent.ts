@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import { db } from "@db";
 import { mrBlueKnowledgeBase } from "@shared/schema";
+import * as CodeOptimization from '../CodeOptimizationService';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || '',
@@ -52,6 +53,8 @@ export interface CodeQualityReport {
   }>;
   strengths: string[];
   recommendations: string[];
+  optimizations?: CodeOptimization.OptimizationIssue[];
+  performanceScore?: number;
 }
 
 export class QualityValidatorAgent {
@@ -183,11 +186,16 @@ Return a JSON object with:
 
       const result = JSON.parse(completion.choices[0]?.message?.content || '{}');
 
+      const optimizations = await this.detectPerformanceIssues(code, language);
+      const performanceScore = this.calculatePerformanceScore(optimizations);
+
       return {
         score: result.score || 75,
         issues: result.issues || [],
         strengths: result.strengths || ['Code is functional'],
-        recommendations: result.recommendations || []
+        recommendations: result.recommendations || [],
+        optimizations,
+        performanceScore
       };
     } catch (error) {
       console.error('[QualityValidator] Code quality check failed:', error);
@@ -199,6 +207,106 @@ Return a JSON object with:
         recommendations: ['Consider adding comments for clarity']
       };
     }
+  }
+
+  async detectPerformanceIssues(code: string, language: string): Promise<CodeOptimization.OptimizationIssue[]> {
+    const issues: CodeOptimization.OptimizationIssue[] = [];
+
+    if (language === 'typescript' || language === 'javascript') {
+      if (code.includes('SELECT *')) {
+        issues.push({
+          type: 'slow_query',
+          severity: 'medium',
+          location: { file: 'code' },
+          description: 'Using SELECT * can be inefficient',
+          impact: {
+            performance: 'medium',
+            userExperience: 'low',
+            estimatedSavings: '20-50ms per query'
+          },
+          suggestion: 'Select only the columns you need',
+          autoFixAvailable: true,
+          autoFix: 'Replace SELECT * with specific column names',
+          detectedAt: new Date()
+        });
+      }
+
+      if (code.match(/\.map\([^)]+\)\s*\.filter\(/)) {
+        issues.push({
+          type: 'inefficient_loop',
+          severity: 'low',
+          location: { file: 'code' },
+          description: 'Chaining .map().filter() is inefficient',
+          impact: {
+            performance: 'low',
+            userExperience: 'low',
+            estimatedSavings: 'Reduced memory allocation'
+          },
+          suggestion: 'Use .reduce() or combine operations',
+          autoFixAvailable: false,
+          detectedAt: new Date()
+        });
+      }
+
+      if (code.match(/for\s*\([^)]*\)\s*{\s*await/)) {
+        issues.push({
+          type: 'blocking_operation',
+          severity: 'high',
+          location: { file: 'code' },
+          description: 'Sequential async operations in loop',
+          impact: {
+            performance: 'high',
+            userExperience: 'high',
+            estimatedSavings: 'Could be 10x faster with parallel execution'
+          },
+          suggestion: 'Use Promise.all() for parallel execution',
+          autoFixAvailable: true,
+          autoFix: 'Replace with: await Promise.all(items.map(async item => ...))',
+          detectedAt: new Date()
+        });
+      }
+
+      if (code.match(/useState\([^)]*\)/g)?.length && code.match(/useState\([^)]*\)/g)!.length > 10) {
+        issues.push({
+          type: 'unnecessary_rerender',
+          severity: 'medium',
+          location: { file: 'code', function: 'React component' },
+          description: 'Too many useState hooks may cause excessive re-renders',
+          impact: {
+            performance: 'medium',
+            userExperience: 'medium'
+          },
+          suggestion: 'Consider using useReducer or combining related state',
+          autoFixAvailable: false,
+          detectedAt: new Date()
+        });
+      }
+    }
+
+    return issues;
+  }
+
+  calculatePerformanceScore(optimizations: CodeOptimization.OptimizationIssue[]): number {
+    let score = 100;
+    
+    for (const issue of optimizations) {
+      switch (issue.severity) {
+        case 'critical':
+          score -= 25;
+          break;
+        case 'high':
+          score -= 15;
+          break;
+        case 'medium':
+          score -= 8;
+          break;
+        case 'low':
+          score -= 3;
+          break;
+      }
+    }
+    
+    return Math.max(0, score);
   }
 
   private async detectSpam(text: string): Promise<boolean> {
