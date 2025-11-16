@@ -776,6 +776,172 @@ GUIDELINES:
       metrics
     };
   }
+
+  // ==================== AUTONOMOUS-SPECIFIC VALIDATION ====================
+
+  /**
+   * Validate files before applying changes (autonomous mode)
+   * @param files - Array of file paths to validate
+   * @returns Validation results with errors and warnings
+   */
+  async validateBeforeApply(files: { filePath: string; content: string }[]): Promise<{
+    passed: boolean;
+    errors: string[];
+    warnings: string[];
+    filesAnalyzed: number;
+  }> {
+    console.log(`[Validator] Validating ${files.length} files before apply...`);
+
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    for (const file of files) {
+      // Check file path safety
+      if (file.filePath.includes('..')) {
+        errors.push(`Unsafe file path detected: ${file.filePath}`);
+        continue;
+      }
+
+      // Check for critical files
+      const criticalFiles = ['package.json', 'drizzle.config.ts', 'vite.config.ts', '.env'];
+      if (criticalFiles.some(f => file.filePath.includes(f))) {
+        warnings.push(`Critical file modification detected: ${file.filePath}`);
+      }
+
+      // Check for destructive operations
+      if (file.content.includes('DROP TABLE') || file.content.includes('DELETE FROM')) {
+        warnings.push(`Potentially destructive operation in ${file.filePath}`);
+      }
+
+      // Basic syntax validation for TypeScript/JavaScript
+      if (file.filePath.match(/\.(ts|tsx|js|jsx)$/)) {
+        // Check for basic syntax errors (unclosed braces, etc.)
+        const openBraces = (file.content.match(/\{/g) || []).length;
+        const closeBraces = (file.content.match(/\}/g) || []).length;
+        
+        if (openBraces !== closeBraces) {
+          errors.push(`Syntax error in ${file.filePath}: Unmatched braces (${openBraces} open, ${closeBraces} close)`);
+        }
+
+        // Check for unclosed strings
+        const singleQuotes = (file.content.match(/'/g) || []).length;
+        const doubleQuotes = (file.content.match(/"/g) || []).length;
+        const backticks = (file.content.match(/`/g) || []).length;
+
+        if (singleQuotes % 2 !== 0) {
+          warnings.push(`Possible unclosed string in ${file.filePath}: Odd number of single quotes`);
+        }
+        if (doubleQuotes % 2 !== 0) {
+          warnings.push(`Possible unclosed string in ${file.filePath}: Odd number of double quotes`);
+        }
+        if (backticks % 2 !== 0) {
+          warnings.push(`Possible unclosed template literal in ${file.filePath}: Odd number of backticks`);
+        }
+      }
+    }
+
+    const passed = errors.length === 0;
+
+    console.log(`[Validator] Pre-apply validation: ${passed ? 'PASSED' : 'FAILED'} (${errors.length} errors, ${warnings.length} warnings)`);
+
+    return {
+      passed,
+      errors,
+      warnings,
+      filesAnalyzed: files.length,
+    };
+  }
+
+  /**
+   * Check for breaking changes in API endpoints and types
+   * @param files - Array of file paths to check
+   * @returns Breaking changes detected
+   */
+  async checkBreakingChanges(files: { filePath: string; oldContent: string; newContent: string }[]): Promise<{
+    hasBreakingChanges: boolean;
+    changes: string[];
+    severity: 'none' | 'minor' | 'major';
+  }> {
+    console.log(`[Validator] Checking for breaking changes in ${files.length} files...`);
+
+    const changes: string[] = [];
+    let severity: 'none' | 'minor' | 'major' = 'none';
+
+    for (const file of files) {
+      // Check for API route changes
+      if (file.filePath.includes('routes') || file.filePath.includes('api')) {
+        // Check for removed endpoints
+        const oldEndpoints = file.oldContent.match(/\.(get|post|put|delete|patch)\(['"]([^'"]+)['"]/g) || [];
+        const newEndpoints = file.newContent.match(/\.(get|post|put|delete|patch)\(['"]([^'"]+)['"]/g) || [];
+
+        const removedEndpoints = oldEndpoints.filter(ep => !newEndpoints.includes(ep));
+        if (removedEndpoints.length > 0) {
+          changes.push(`Removed API endpoints in ${file.filePath}: ${removedEndpoints.join(', ')}`);
+          severity = 'major';
+        }
+      }
+
+      // Check for schema changes (database)
+      if (file.filePath.includes('schema')) {
+        // Check for dropped columns or tables
+        if (file.newContent.includes('DROP TABLE') || file.newContent.includes('DROP COLUMN')) {
+          changes.push(`Database schema breaking change in ${file.filePath}: DROP detected`);
+          severity = 'major';
+        }
+
+        // Check for removed fields
+        const oldFields = file.oldContent.match(/(\w+):\s*(varchar|text|integer|boolean|timestamp)/g) || [];
+        const newFields = file.newContent.match(/(\w+):\s*(varchar|text|integer|boolean|timestamp)/g) || [];
+        const removedFields = oldFields.filter(field => !newFields.includes(field));
+
+        if (removedFields.length > 0) {
+          changes.push(`Removed schema fields in ${file.filePath}: ${removedFields.join(', ')}`);
+          severity = severity === 'major' ? 'major' : 'minor';
+        }
+      }
+
+      // Check for type changes (TypeScript)
+      if (file.filePath.match(/\.(ts|tsx)$/)) {
+        // Check for removed exports
+        const oldExports = file.oldContent.match(/export\s+(interface|type|class|const|function)\s+(\w+)/g) || [];
+        const newExports = file.newContent.match(/export\s+(interface|type|class|const|function)\s+(\w+)/g) || [];
+        const removedExports = oldExports.filter(exp => !newExports.includes(exp));
+
+        if (removedExports.length > 0) {
+          changes.push(`Removed exports in ${file.filePath}: ${removedExports.join(', ')}`);
+          severity = severity === 'major' ? 'major' : 'minor';
+        }
+      }
+    }
+
+    const hasBreakingChanges = changes.length > 0;
+
+    console.log(`[Validator] Breaking changes check: ${hasBreakingChanges ? `FOUND (${severity})` : 'NONE'}`);
+    if (changes.length > 0) {
+      console.log(`[Validator] Changes:\n${changes.map(c => `  - ${c}`).join('\n')}`);
+    }
+
+    return {
+      hasBreakingChanges,
+      changes,
+      severity,
+    };
+  }
+
+  /**
+   * Run E2E tests for a specific feature (autonomous mode)
+   * @param feature - Feature name or test pattern
+   * @returns Test results
+   */
+  async runE2ETests(feature: string): Promise<TestResults> {
+    console.log(`[Validator] Running E2E tests for feature: ${feature}`);
+
+    // Convert feature name to test pattern
+    // e.g., "notifications" -> "tests/e2e/**/notifications.spec.ts"
+    const testPattern = `tests/e2e/**/*${feature}*.spec.ts`;
+
+    return await this.runTests(testPattern);
+  }
 }
 
 // ==================== UTILITY FUNCTIONS ====================

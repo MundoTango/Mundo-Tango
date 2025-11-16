@@ -13,6 +13,7 @@ import { getConversationContext, saveMessageToHistory } from "../services/chat-c
 import { CodeGenerator } from "../services/codeGenerator";
 import { getMrBlueCapabilities, getTierName } from '../utils/mrBlueCapabilities';
 import { contextService } from "../services/mrBlue/ContextService";
+import { memoryService } from "../services/mrBlue/MemoryService";
 
 const router = Router();
 
@@ -261,9 +262,55 @@ Help users navigate the platform, answer questions, and provide personalized rec
         // Continue without RAG context - non-blocking
       }
 
+      // SYSTEM 8: Memory System - Retrieve relevant user memories
+      let memoryContext = '';
+      if (userId && process.env.OPENAI_API_KEY) {
+        try {
+          await memoryService.initialize();
+          const memories = await memoryService.retrieveMemories(userId, message, {
+            limit: 3,
+            minSimilarity: 0.7
+          });
+          
+          if (memories.length > 0) {
+            const preferences = memories.filter(m => m.memory.memoryType === 'preference');
+            const facts = memories.filter(m => m.memory.memoryType === 'fact');
+            const pastFeedback = memories.filter(m => m.memory.memoryType === 'feedback');
+            
+            let memoryParts: string[] = [];
+            
+            if (preferences.length > 0) {
+              memoryParts.push('USER PREFERENCES:\n' + preferences.map(m => 
+                `- ${m.memory.content}`
+              ).join('\n'));
+            }
+            
+            if (facts.length > 0) {
+              memoryParts.push('USER FACTS:\n' + facts.map(m => 
+                `- ${m.memory.content}`
+              ).join('\n'));
+            }
+            
+            if (pastFeedback.length > 0) {
+              memoryParts.push('PAST FEEDBACK:\n' + pastFeedback.map(m => 
+                `- ${m.memory.content}`
+              ).join('\n'));
+            }
+            
+            if (memoryParts.length > 0) {
+              memoryContext = '\n\nWHAT I REMEMBER ABOUT YOU:\n' + memoryParts.join('\n\n');
+              console.log(`[Mr. Blue] 💭 Retrieved ${memories.length} memories for user ${userId}`);
+            }
+          }
+        } catch (error) {
+          console.error('[Mr. Blue] Memory retrieval failed:', error);
+          // Continue without memory context - non-blocking
+        }
+      }
+
       // Build message history
       const messages: any[] = [
-        { role: "system", content: systemPrompt + ragContext }
+        { role: "system", content: systemPrompt + ragContext + memoryContext }
       ];
 
       // Get conversation context from database if conversationId provided
@@ -301,6 +348,53 @@ Help users navigate the platform, answer questions, and provide personalized rec
         try {
           await saveMessageToHistory(conversationId, userId, 'user', message);
           await saveMessageToHistory(conversationId, userId, 'assistant', response);
+          
+          // SYSTEM 8: Store conversation in memory
+          if (process.env.OPENAI_API_KEY) {
+            try {
+              // Store user message
+              await memoryService.storeMemory(
+                userId,
+                `User: ${message}\nMr Blue: ${response}`,
+                'conversation',
+                {
+                  importance: 5,
+                  metadata: {
+                    conversationId,
+                    timestamp: Date.now()
+                  }
+                }
+              );
+              
+              // Get conversation history to check if we should extract preferences or summarize
+              const conversationMessages = await getConversationContext(conversationId, 100);
+              
+              // Extract preferences every 10 messages
+              if (conversationMessages.length > 0 && conversationMessages.length % 10 === 0) {
+                memoryService.extractPreferences(userId, conversationMessages)
+                  .then(prefs => {
+                    if (prefs.length > 0) {
+                      console.log(`[Mr. Blue] 🎯 Extracted ${prefs.length} preferences`);
+                    }
+                  })
+                  .catch(err => console.error('[Mr. Blue] Preference extraction failed:', err));
+              }
+              
+              // Summarize conversation after 50 messages
+              if (conversationMessages.length >= 50 && conversationMessages.length % 50 === 0) {
+                memoryService.summarizeConversation(userId, conversationMessages, conversationId.toString())
+                  .then(result => {
+                    if (result.success) {
+                      console.log('[Mr. Blue] 📝 Conversation summarized');
+                    }
+                  })
+                  .catch(err => console.error('[Mr. Blue] Summarization failed:', err));
+              }
+            } catch (error) {
+              console.error('[Mr. Blue] Memory storage failed:', error);
+              // Non-blocking - continue even if memory storage fails
+            }
+          }
         } catch (error) {
           console.error('[MrBlue] Failed to save messages to history:', error);
         }

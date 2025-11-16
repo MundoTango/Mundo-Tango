@@ -835,6 +835,63 @@ export const messageBookmarks = pgTable("message_bookmarks", {
   uniqueBookmark: uniqueIndex("unique_message_user_bookmark").on(table.messageId, table.userId),
 }));
 
+// ============================================================================
+// MR BLUE MEMORY SYSTEM (System 8)
+// ============================================================================
+
+export const userMemories = pgTable("user_memories", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  memoryType: varchar("memory_type", { length: 50 }).notNull(), // conversation, preference, fact, feedback, decision
+  importance: integer("importance").default(5).notNull(), // 1-10 scale
+  metadata: jsonb("metadata"), // {source, conversationId, tags, etc}
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastAccessedAt: timestamp("last_accessed_at").defaultNow().notNull(),
+  accessCount: integer("access_count").default(0).notNull(),
+}, (table) => ({
+  userIdx: index("user_memories_user_idx").on(table.userId),
+  typeIdx: index("user_memories_type_idx").on(table.memoryType),
+  userTypeIdx: index("user_memories_user_type_idx").on(table.userId, table.memoryType),
+  createdIdx: index("user_memories_created_idx").on(table.createdAt),
+  importanceIdx: index("user_memories_importance_idx").on(table.importance),
+}));
+
+export const conversationSummaries = pgTable("conversation_summaries", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  conversationId: integer("conversation_id").references(() => mrBlueConversations.id, { onDelete: "cascade" }),
+  startTime: timestamp("start_time").notNull(),
+  endTime: timestamp("end_time").notNull(),
+  summary: text("summary").notNull(),
+  messageCount: integer("message_count").default(0).notNull(),
+  topics: text("topics").array(),
+  keyDecisions: text("key_decisions").array(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("conversation_summaries_user_idx").on(table.userId),
+  conversationIdx: index("conversation_summaries_conv_idx").on(table.conversationId),
+  timeIdx: index("conversation_summaries_time_idx").on(table.startTime, table.endTime),
+}));
+
+export const userPreferences = pgTable("user_preferences", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  preferenceKey: varchar("preference_key", { length: 100 }).notNull(),
+  preferenceValue: text("preference_value").notNull(),
+  confidence: real("confidence").default(0.5).notNull(), // 0-1 scale
+  extractedFrom: text("extracted_from"), // Source conversation snippet
+  metadata: jsonb("metadata"), // Additional context
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_preferences_user_idx").on(table.userId),
+  keyIdx: index("user_preferences_key_idx").on(table.preferenceKey),
+  userKeyIdx: index("user_preferences_user_key_idx").on(table.userId, table.preferenceKey),
+  confidenceIdx: index("user_preferences_confidence_idx").on(table.confidence),
+  uniqueUserKey: uniqueIndex("unique_user_preference_key").on(table.userId, table.preferenceKey),
+}));
+
 export const lifeCeoConversations = pgTable("life_ceo_conversations", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
@@ -1194,6 +1251,44 @@ export const insertMrBlueMessageSchema = createInsertSchema(mrBlueMessages).omit
 });
 export type InsertMrBlueMessage = z.infer<typeof insertMrBlueMessageSchema>;
 export type SelectMrBlueMessage = typeof mrBlueMessages.$inferSelect;
+
+// User Memories (System 8)
+export const insertUserMemorySchema = createInsertSchema(userMemories, {
+  content: z.string().min(1),
+  memoryType: z.enum(['conversation', 'preference', 'fact', 'feedback', 'decision']),
+  importance: z.number().min(1).max(10),
+}).omit({
+  id: true,
+  createdAt: true,
+  lastAccessedAt: true,
+  accessCount: true,
+});
+export type InsertUserMemory = z.infer<typeof insertUserMemorySchema>;
+export type SelectUserMemory = typeof userMemories.$inferSelect;
+
+// Conversation Summaries
+export const insertConversationSummarySchema = createInsertSchema(conversationSummaries, {
+  summary: z.string().min(1),
+  messageCount: z.number().min(0),
+}).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertConversationSummary = z.infer<typeof insertConversationSummarySchema>;
+export type SelectConversationSummary = typeof conversationSummaries.$inferSelect;
+
+// User Preferences
+export const insertUserPreferenceSchema = createInsertSchema(userPreferences, {
+  preferenceKey: z.string().min(1).max(100),
+  preferenceValue: z.string().min(1),
+  confidence: z.number().min(0).max(1),
+}).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertUserPreference = z.infer<typeof insertUserPreferenceSchema>;
+export type SelectUserPreference = typeof userPreferences.$inferSelect;
 
 // Life CEO Conversations
 export const insertLifeCeoConversationSchema = createInsertSchema(lifeCeoConversations).omit({ 
@@ -10370,6 +10465,102 @@ export const insertAutonomousTaskFileSchema = createInsertSchema(autonomousTaskF
 export const selectAutonomousTaskFileSchema = createSelectSchema(autonomousTaskFiles);
 export type InsertAutonomousTaskFile = z.infer<typeof insertAutonomousTaskFileSchema>;
 export type SelectAutonomousTaskFile = typeof autonomousTaskFiles.$inferSelect;
+
+export const autonomousSessions = pgTable("autonomous_sessions", {
+  id: varchar("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userRequest: text("user_request").notNull(),
+  status: varchar("status", { length: 50 }).notNull().default("pending"),
+  totalTasks: integer("total_tasks").default(0).notNull(),
+  completedTasks: integer("completed_tasks").default(0).notNull(),
+  failedTasks: integer("failed_tasks").default(0).notNull(),
+  cost: numeric("cost", { precision: 10, scale: 2 }).default("0.00"),
+  startedAt: timestamp("started_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+  errorLog: jsonb("error_log"),
+}, (table) => ({
+  userIdx: index("autonomous_sessions_user_idx").on(table.userId),
+  statusIdx: index("autonomous_sessions_status_idx").on(table.status),
+  startedAtIdx: index("autonomous_sessions_started_at_idx").on(table.startedAt),
+}));
+
+export const insertAutonomousSessionSchema = createInsertSchema(autonomousSessions)
+  .omit({ startedAt: true });
+export const selectAutonomousSessionSchema = createSelectSchema(autonomousSessions);
+export type InsertAutonomousSession = z.infer<typeof insertAutonomousSessionSchema>;
+export type SelectAutonomousSession = typeof autonomousSessions.$inferSelect;
+
+export const autonomousSessionTasks = pgTable("autonomous_session_tasks", {
+  id: serial("id").primaryKey(),
+  sessionId: varchar("session_id").notNull().references(() => autonomousSessions.id, { onDelete: "cascade" }),
+  taskNumber: integer("task_number").notNull(),
+  description: text("description").notNull(),
+  status: varchar("status", { length: 50 }).notNull().default("pending"),
+  code: jsonb("code"),
+  validationResults: jsonb("validation_results"),
+  attempts: integer("attempts").default(0).notNull(),
+  cost: numeric("cost", { precision: 10, scale: 2 }).default("0.00"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  sessionIdx: index("autonomous_session_tasks_session_idx").on(table.sessionId),
+  statusIdx: index("autonomous_session_tasks_status_idx").on(table.status),
+  sessionTaskIdx: uniqueIndex("unique_session_task").on(table.sessionId, table.taskNumber),
+}));
+
+export const insertAutonomousSessionTaskSchema = createInsertSchema(autonomousSessionTasks)
+  .omit({ id: true, createdAt: true });
+export const selectAutonomousSessionTaskSchema = createSelectSchema(autonomousSessionTasks);
+export type InsertAutonomousSessionTask = z.infer<typeof insertAutonomousSessionTaskSchema>;
+export type SelectAutonomousSessionTask = typeof autonomousSessionTasks.$inferSelect;
+
+// ============================================================================
+// FACEBOOK MESSENGER INTEGRATION
+// ============================================================================
+
+export const messengerConnections = pgTable("messenger_connections", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  pageId: varchar("page_id", { length: 255 }).notNull(),
+  pageName: varchar("page_name", { length: 255 }).notNull(),
+  accessToken: text("access_token").notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  connectedAt: timestamp("connected_at").defaultNow().notNull(),
+  lastSyncAt: timestamp("last_sync_at"),
+}, (table) => ({
+  userIdx: index("messenger_connections_user_idx").on(table.userId),
+  pageIdx: index("messenger_connections_page_idx").on(table.pageId),
+  activeIdx: index("messenger_connections_active_idx").on(table.isActive),
+}));
+
+export const insertMessengerConnectionSchema = createInsertSchema(messengerConnections)
+  .omit({ id: true, connectedAt: true });
+export const selectMessengerConnectionSchema = createSelectSchema(messengerConnections);
+export type InsertMessengerConnection = z.infer<typeof insertMessengerConnectionSchema>;
+export type SelectMessengerConnection = typeof messengerConnections.$inferSelect;
+
+export const messengerMessages = pgTable("messenger_messages", {
+  id: serial("id").primaryKey(),
+  connectionId: integer("connection_id").notNull().references(() => messengerConnections.id, { onDelete: "cascade" }),
+  conversationId: varchar("conversation_id", { length: 255 }).notNull(),
+  senderId: varchar("sender_id", { length: 255 }).notNull(),
+  recipientId: varchar("recipient_id", { length: 255 }).notNull(),
+  message: text("message").notNull(),
+  messageType: varchar("message_type", { length: 50 }).default("text").notNull(),
+  sentAt: timestamp("sent_at").defaultNow().notNull(),
+  deliveredAt: timestamp("delivered_at"),
+  readAt: timestamp("read_at"),
+}, (table) => ({
+  connectionIdx: index("messenger_messages_connection_idx").on(table.connectionId),
+  conversationIdx: index("messenger_messages_conversation_idx").on(table.conversationId),
+  sentAtIdx: index("messenger_messages_sent_at_idx").on(table.sentAt),
+}));
+
+export const insertMessengerMessageSchema = createInsertSchema(messengerMessages)
+  .omit({ id: true, sentAt: true });
+export const selectMessengerMessageSchema = createSelectSchema(messengerMessages);
+export type InsertMessengerMessage = z.infer<typeof insertMessengerMessageSchema>;
+export type SelectMessengerMessage = typeof messengerMessages.$inferSelect;
 
 // ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
