@@ -398,7 +398,88 @@ facebookFriends: {
 
 ## 📊 PHASE 3: WEEKS 9-12 (927 Features - Autonomous Build)
 
-Once Systems 1-8 are complete, **Mr Blue autonomously builds all 927 Mundo Tango features** using vibe coding.
+**STATUS**: ✅ Systems 1-8 COMPLETE | ⏳ Week 9 Autonomous Building STARTING  
+**Methodology**: MB.MD v7.2 (Enhanced with Audit-First + Enhancement-Only Development)
+
+### 🎯 CRITICAL: WEEK 9 METHODOLOGY UPGRADE
+
+**New Principles from Week 9 Duplicate Cleanup** (Added to mb.md v7.2):
+
+1. **ALWAYS AUDIT EXISTING IMPLEMENTATIONS FIRST** (5-10min before every feature)
+   - Search schema.ts, routes/, components/, services/
+   - Check replit.md Recent Changes
+   - Verify database columns exist
+   - **ROI**: 12x-24x (saves 2+ hours avoiding duplicates)
+
+2. **DUPLICATE DETECTION** (Before/after every wave)
+   - Scan for duplicate tables, routes, components, services
+   - Red flags: Similar names, same domain, duplicate endpoints
+
+3. **CODE REUSE CHECKLIST** (Before spawning subagents)
+   - Identify existing services, components, routes, types, utilities
+   - Extend existing vs create new
+
+4. **DATABASE SYNCHRONIZATION PROTOCOL** (100% sync always)
+   - Update schema → Run SQL migration → Test endpoints immediately
+   - Verify: LSP clean, server running, endpoints return 200
+
+5. **ENHANCEMENT-ONLY DEVELOPMENT** (Default to enhancing vs rebuilding)
+   - Feature exists with 80%+ → ENHANCE (add missing 20%)
+   - Feature broken → FIX + ENHANCE
+   - Feature doesn't exist → BUILD NEW
+
+**Week 9 Result**: 84 duplicate lines removed, 15 columns added, 0 regressions, 99/100 quality ✅
+
+---
+
+### 🚀 AUTONOMOUS BUILDING STRATEGY (Week 9-12)
+
+**How Mr Blue Will Build 927 Features**:
+
+```markdown
+For each feature request:
+1. ✅ AUDIT EXISTING (5-10min - mb.md v7.2 Layer 1)
+   - Search codebase for similar implementations
+   - Identify reusable components/services
+   
+2. ✅ ENHANCEMENT vs BUILD DECISION (mb.md v7.2 Layer 3)
+   - If exists: ENHANCE existing code
+   - If missing: BUILD NEW feature
+   
+3. ✅ VIBE CODING (System 4 - Natural Language → Code)
+   - Use context service (System 1) for documentation
+   - Generate production code with LSP validation
+   
+4. ✅ DATABASE SYNC (mb.md v7.2 Layer 2)
+   - Update schema.ts
+   - Run SQL migration
+   - Test endpoints
+   
+5. ✅ AUTONOMOUS TESTING (System 7)
+   - Self-validate with LSP
+   - Run Playwright E2E tests
+   - Fix bugs automatically (80%+ success rate)
+   
+6. ✅ DEPLOYMENT
+   - Commit to Git
+   - Update replit.md
+   - Quality check (target 99/100)
+```
+
+**Progressive Autonomy** (Week 9-12):
+- Week 9: Scott reviews 50% of features
+- Week 10: Scott reviews 30% of features
+- Week 11: Scott reviews 10% of features
+- Week 12: Scott reviews 0% of features (100% autonomous)
+
+**Target Metrics**:
+- **Velocity**: 20-30 features/day (vs 10-15 manual baseline)
+- **Quality**: 99/100 (maintained via mb.md v7.2 principles)
+- **Duplicates**: 0 (Audit-First prevents)
+- **Regressions**: <0.3 bugs/feature
+- **Time Saved**: 2+ hours per wave avoiding duplicates
+
+---
 
 ### Feature Categories:
 
@@ -409,19 +490,27 @@ Once Systems 1-8 are complete, **Mr Blue autonomously builds all 927 Mundo Tango
   - ✅ Real-time Notifications, Messages
   - ✅ Media Gallery, Admin Dashboard
 
-- **P1 Features** (186 features):
-  - Live Streaming & Chat
-  - Stories
-  - Marketplace
-  - Reviews & Ratings
-  - Leaderboard & Gamification
-  - Teacher/Venue Management
-  - Workshop System
-  - Music Library
-  - Travel Integration
+- **P1 Features** (186 features) - WEEK 9-10 TARGET:
+  - Live Streaming & Chat (20 features)
+  - Stories (15 features)
+  - Marketplace (25 features)
+  - Reviews & Ratings (18 features)
+  - Leaderboard & Gamification (22 features)
+  - Teacher/Venue Management (30 features)
+  - Workshop System (20 features)
+  - Music Library (18 features)
+  - Travel Integration (18 features)
 
-#### 2. AI Systems (60 features)
+**Approach**: ENHANCEMENT-ONLY for existing systems (feed, posts, profiles), BUILD NEW for marketplace/workshops
+
+#### 2. AI Systems (60 features) - WEEK 10-11 TARGET
 - LIFE CEO AI System (16 specialized agents)
+- Talent Match AI (12 features)
+- Advanced Memory (8 features - extends System 8)
+- Multi-AI Orchestration (15 features)
+- AI-Powered Recommendations (9 features)
+
+**Approach**: Extend existing Mr Blue systems (Context, Memory, Vibe Coding) with domain-specific features
 - Talent Match AI
 - Multi-AI Orchestration (OpenAI, Claude, Groq, Gemini)
 - Automated Data Scraping
