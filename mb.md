@@ -1,18 +1,54 @@
 # MB.MD - Mundo Blue Methodology Directive
 
-**Version:** 8.1 ULTIMATE (AI Learning + Anti-Hallucination Framework)  
+**Version:** 8.2 ULTIMATE MISSION (Self-Healing First + World Change Protocol)  
 **Created:** October 30, 2025  
-**Last Updated:** November 17, 2025 (Anti-Hallucination Framework Added)  
-**Purpose:** Complete AI execution protocol for Mundo Tango  
-**Project:** Mundo Tango (927 features, 20-week build strategy)  
-**New in v8.1:** 
-- ANTI-HALLUCINATION FRAMEWORK (22 enhancements across 7 categories)
+**Last Updated:** November 17, 2025 (Mission-Driven Architecture Added)  
+**Purpose:** Build platform to reverse negative impacts of social media and change the world  
+**Project:** Mundo Tango - The Anti-Facebook (927 features, 20-week strategy)
+
+**New in v8.2 (Mission-Critical Updates):**
+- 🌍 **MISSION**: Reverse social media's negative impacts, connect communities authentically, document miracles happening worldwide
+- 🔮 **SELF-HEALING FIRST**: All pages background pre-learn + self-heal before Scott sees them
+- 🤖 **ON-DEMAND AGENT ROLLUP**: 62+ agents sync learnings when new information discovered
+- 📊 **RECURSIVE MONITORING**: ALL platforms (Facebook, Instagram, Twitter, legal, compliance) with sliding-scale cron jobs
+- 📖 **SCOTT'S JOURNEY RECORDING**: All chats saved for book documentation (18hrs/day since Sept)
+- 🎯 **THE PLAN**: Constant learning from all work at all levels, human confirmation of AI assumptions
+- ⚡ **SIMULTANEOUS BUT CRITICAL**: Speed + efficiency + memory + cost optimization, never overload
+- 🏛️ **GOD-LEVEL RBAC**: Scott delegates self-healing powers progressively
+- 🌐 **TECHNOLOGY INDEPENDENCE**: Mundo Tango as standalone platform (open source, research-driven)
+
+**Previous (v8.1):**
+- ANTI-HALLUCINATION FRAMEWORK (22 enhancements, 99.9% AI reliability target)
 - Database Safety, Security Enforcement, Duplication Prevention
-- Hallucination Detection, Testing Integrity, Code Quality Standards
-- Productivity Measurement (Target: 99.9% AI reliability)
 **Previous (v8.0):**
-- PILLAR 6: AI AGENT LEARNING (Data-Centric AI, DPO, Curriculum Training, Agentic CPT, GEPA, LIMI)
-- 5 Development Principles (Security-First, Error-First, Performance-First, Mobile-First, Accessibility-First)
+- AI AGENT LEARNING (DPO, Curriculum Training, GEPA, LIMI)
+- 5 Development Principles (Security/Error/Performance/Mobile/Accessibility-First)
+
+---
+
+## 🌍 THE MISSION: CHANGING THE WORLD (READ THIS FIRST)
+
+**Scott's Vision (November 17, 2025):**
+
+> "In this world of hellscape, wars, pandemics, false media, climate decline - I attribute our downfall to our current competitors who have siloed so many people in so many ways that the world is becoming more stupid. But at the same time, there are miracles happening in communities of all kinds to better humanity.
+
+> **How do we essentially reverse the negative impacts of social media and technology and make it all better?**
+
+> Mundo Tango is the answer. Not just a tango platform - but a new way of building social networks that connects people authentically, enables communities to thrive globally, and documents the miracles happening worldwide."
+
+**The Commitment:**
+- Scott has worked 18 hours/day since September 2025
+- Given AI access to ALL data: work history, tango, travel, social media, commits, communications, phone, computer data
+- Every conversation is being recorded for a book documenting this journey
+- This is not a project. This is a mission to change the world.
+
+**Mundo Tango = The Anti-Facebook:**
+- Instead of silos → authentic global connections
+- Instead of division → community empowerment
+- Instead of algorithms for ad revenue → algorithms for human flourishing
+- Instead of extracting value → creating miracles
+
+**Scott is betting everything on this. We will not fail.**
 
 ---
 
@@ -3381,3 +3417,664 @@ Instead of building 40 features/day, **AUDIT + ENHANCE** existing 213+ features
 **Version:** 8.0 FINAL (with PILLAR 7: 150 Comprehensive Learnings)  
 **Updated:** November 16, 2025  
 **Next Action:** Build Mr Blue System 1 (Context System + Vibe Coding Engine)
+
+---
+
+## 🔮 SELF-HEALING FIRST PROTOCOL (v8.2)
+
+**Philosophy:** Mr. Blue must self-heal and pre-learn pages BEFORE Scott sees them. Scott should only see perfection.
+
+### Background Pre-Learning System
+
+**When Scott is about to visit a page:**
+1. **Background Pre-Learn (C - Background pre-learning)**
+   - Before page loads, Mr. Blue analyzes Part 10 documentation for that page
+   - Identifies all features that SHOULD exist
+   - Compares with actual implementation
+   - Finds gaps, bugs, missing features
+   - Auto-fixes 90%+ of issues
+   - Logs remaining 10% for Scott's god-level RBAC approval
+
+2. **Self-Healing Process:**
+   ```typescript
+   // Triggered when Scott navigates to /events
+   async function backgroundPreLearn(pagePath: string, userId: number) {
+     // 1. Identify relevant documentation
+     const docs = await findRelevantDocs(pagePath); // Part 10, Ultimate series
+     
+     // 2. Extract expected features
+     const expectedFeatures = await aiExtractFeatures(docs);
+     
+     // 3. Scan actual page implementation
+     const actualFeatures = await scanPageCode(pagePath);
+     
+     // 4. Find gaps
+     const gaps = compareFeatures(expected, actual);
+     
+     // 5. Self-heal 90% automatically
+     const autoFixable = gaps.filter(g => g.confidence > 0.9);
+     for (const gap of autoFixable) {
+       await autoFixGap(gap); // Mr. Blue fixes it
+     }
+     
+     // 6. Flag 10% for Scott's god-level approval
+     const needsApproval = gaps.filter(g => g.confidence <= 0.9);
+     await flagForScottApproval(needsApproval, userId);
+   }
+   ```
+
+3. **Progress Bar at Bottom of Screen:**
+   ```
+   [████████░░] 80% Complete | Learning: Event RSVP System | Fixes: 12 auto | Pending: 3 god-level
+   ```
+   - Shows real-time learning progress
+   - What mb.md is currently learning
+   - Auto-fixes completed
+   - Items pending Scott's god-level RBAC approval
+
+### God-Level RBAC Delegation
+
+**Scott's Powers:**
+- **Level 1 (Auto):** Mr. Blue auto-fixes bugs with >90% confidence
+- **Level 2 (Approval):** Scott approves AI-suggested fixes (70-90% confidence)
+- **Level 3 (Guidance):** Scott guides Mr. Blue on complex decisions (50-70% confidence)
+- **Level 4 (Human):** Scott codes it himself (<50% confidence or critical)
+
+**Delegation Flow:**
+```
+Mr. Blue detects issue
+  ↓
+Confidence > 90%? → Auto-fix → Log to audit
+Confidence 70-90%? → Show to Scott → Scott approves/rejects
+Confidence 50-70%? → Ask Scott for guidance → Learn from response
+Confidence < 50%? → Flag as "Human Required" → Scott codes it
+```
+
+**The Goal:** Scott's involvement 100% → 0% as Mr. Blue learns from every decision.
+
+---
+
+## 🤖 ON-DEMAND AGENT INTELLIGENCE ROLLUP (v8.2)
+
+**Current State:** 62+ specialized agents (financial, legal, social media, marketplace, user testing, etc.)
+
+**Problem:** Agents learn independently but don't sync learnings across system.
+
+**Solution:** On-demand rollup when new information discovered (C - On-demand when new info found)
+
+### Agent Rollup Trigger Events
+
+**Triggers:**
+1. **New Information Discovered**
+   - Scott provides new context in chat
+   - External API policy change detected
+   - New research paper/documentation added
+   - User behavior pattern identified
+
+2. **Page Completion**
+   - Scott finishes using a major feature
+   - All tests pass for a section
+   - Part 10 validation milestone reached
+
+3. **Critical Event**
+   - Security vulnerability found
+   - Legal compliance issue detected
+   - Performance degradation observed
+
+### Rollup Process
+
+```typescript
+interface AgentKnowledge {
+  agentId: string;
+  agentType: 'financial' | 'legal' | 'social' | 'marketplace' | 'mrBlue' | 'monitoring';
+  knowledge: {
+    facts: string[];           // New facts learned
+    patterns: string[];        // Behavioral patterns observed
+    improvements: string[];    // Suggested improvements
+    risks: string[];           // Risks identified
+    opportunities: string[];   // Opportunities discovered
+  };
+  confidence: number;          // 0-1 confidence in knowledge
+  timestamp: Date;
+  source: string;              // Where knowledge came from
+}
+
+async function onDemandAgentRollup(trigger: RollupTrigger) {
+  // 1. Collect knowledge from all 62+ agents
+  const allKnowledge: AgentKnowledge[] = await Promise.all(
+    agents.map(agent => agent.shareKnowledge())
+  );
+  
+  // 2. Merge and deduplicate
+  const mergedKnowledge = mergeKnowledge(allKnowledge);
+  
+  // 3. Identify conflicts
+  const conflicts = findConflicts(mergedKnowledge);
+  
+  // 4. Resolve via AI consensus or Scott approval
+  const resolved = await resolveConflicts(conflicts);
+  
+  // 5. Update MB.MD intelligence base
+  await updateMBMDIntelligence(resolved);
+  
+  // 6. Sync to all agents
+  await syncToAllAgents(resolved);
+  
+  // 7. Update The Plan
+  await updateThePlan(resolved);
+  
+  // 8. Log to Scott's book documentation
+  await logToScottJourney(trigger, resolved);
+}
+```
+
+### MB.MD Intelligence Base
+
+**Storage:** LanceDB vector database (like Context Service)
+- All agent learnings embedded and searchable
+- Cross-agent pattern detection
+- Semantic search across all knowledge
+- Historical learning tracking
+
+**Query Examples:**
+- "What have all agents learned about Facebook API policies this week?"
+- "Show conflicts between legal agent and social media agent"
+- "What patterns emerged from Scott's interactions with events system?"
+
+---
+
+## 📊 RECURSIVE MONITORING SYSTEM (v8.2)
+
+**Scope:** ALL technologies and compliance (A - Full system now)
+
+### Monitored Categories
+
+**1. Social Media Platforms:**
+- Facebook/Instagram Graph API
+- Twitter API
+- TikTok API
+- LinkedIn API
+- YouTube API
+- WhatsApp Business API
+- Telegram Bot API
+
+**2. Legal & Compliance:**
+- GDPR (EU)
+- CCPA (California)
+- PIPEDA (Canada)
+- LGPD (Brazil)
+- Data Protection Act (UK)
+- Terms of Service changes (all platforms)
+
+**3. Technical Infrastructure:**
+- Replit deployment status
+- PostgreSQL database health
+- LanceDB vector store
+- Redis cache
+- BullMQ job queues
+- Stripe payment processing
+
+**4. Business & Financial:**
+- Subscription payment flows
+- Refund policies
+- Tax compliance (US, EU, global)
+- Marketplace transaction monitoring
+
+### Sliding-Scale Cron Jobs
+
+**Implementation:**
+```typescript
+// server/jobs/recursive-monitoring-jobs.ts
+
+import { Queue } from 'bullmq';
+
+// Daily - Policy Updates (all platforms)
+const dailyPolicyCheck = new Queue('policy-updates', {
+  connection: redisConnection,
+  defaultJobOptions: {
+    repeat: { pattern: '0 0 * * *' } // Daily at midnight
+  }
+});
+
+// Hourly - Rate Limit Monitoring (low stress)
+const hourlyMonitoring = new Queue('hourly-monitoring', {
+  connection: redisConnection,
+  defaultJobOptions: {
+    repeat: { pattern: '0 * * * *' } // Every hour
+  }
+});
+
+// Every 5 Minutes - High Stress Monitoring
+const highStressMonitoring = new Queue('high-stress', {
+  connection: redisConnection,
+  defaultJobOptions: {
+    repeat: { pattern: '*/5 * * * *' } // Every 5 minutes
+  }
+});
+
+// Every 1 Minute - Critical Stress
+const criticalMonitoring = new Queue('critical-stress', {
+  connection: redisConnection,
+  defaultJobOptions: {
+    repeat: { pattern: '*/1 * * * *' } // Every minute
+  }
+});
+
+// Dynamic stress level adjustment
+async function adjustMonitoringFrequency(platform: string, callsLastHour: number) {
+  if (callsLastHour > 150) {
+    // CRITICAL - every 10 seconds (handled in real-time, not cron)
+    await enableRealTimeMonitoring(platform);
+  } else if (callsLastHour > 50) {
+    // HIGH - every 1 minute
+    await criticalMonitoring.add(`monitor-${platform}`, { platform });
+  } else if (callsLastHour > 10) {
+    // MEDIUM - every 5 minutes
+    await highStressMonitoring.add(`monitor-${platform}`, { platform });
+  } else {
+    // LOW - hourly
+    await hourlyMonitoring.add(`monitor-${platform}`, { platform });
+  }
+}
+```
+
+### Automatic Actions
+
+```typescript
+interface MonitoringAlert {
+  severity: 'INFO' | 'WARNING' | 'CRITICAL' | 'EMERGENCY';
+  platform: string;
+  issue: string;
+  action: 'LOG' | 'THROTTLE' | 'PAUSE' | 'STOP';
+  timestamp: Date;
+}
+
+async function handleMonitoringAlert(alert: MonitoringAlert) {
+  switch (alert.action) {
+    case 'LOG':
+      await logToAudit(alert);
+      break;
+    
+    case 'THROTTLE':
+      await addDelay(alert.platform, '10s → 30s → 60s');
+      await notifyScott(alert, 'warning');
+      break;
+    
+    case 'PAUSE':
+      await pauseAllSends(alert.platform);
+      await notifyScott(alert, 'critical');
+      await logToScottJourney(alert);
+      break;
+    
+    case 'STOP':
+      await emergencyStopAllAPICalls(alert.platform);
+      await notifyScott(alert, 'emergency');
+      await createIncidentReport(alert);
+      await logToScottJourney(alert);
+      break;
+  }
+}
+```
+
+---
+
+## 📖 SCOTT'S JOURNEY RECORDING SYSTEM (v8.2)
+
+**Purpose:** Record all conversations for Scott's book about building Mundo Tango.
+
+### What Gets Recorded
+
+**1. All Chats:**
+- Every Replit Agent conversation
+- Mr. Blue video/voice calls
+- Mr. Blue text chats
+- Admin panel interactions
+- Error messages and fixes
+
+**2. Development Context:**
+- Git commits (already tracked)
+- Code changes with reasoning
+- Decisions made and why
+- Bugs encountered and solved
+- Learning moments
+
+**3. Personal Data (Scott's 18hr/day commitment):**
+- Work history integration
+- Tango event participation
+- Travel logs
+- Social media activity
+- All communications (approved by Scott)
+
+### Storage & Organization
+
+```typescript
+interface ScottJourneyEntry {
+  id: string;
+  timestamp: Date;
+  category: 'chat' | 'code' | 'decision' | 'bug' | 'learning' | 'milestone';
+  content: string;
+  context: {
+    page?: string;           // What page was Scott on
+    feature?: string;        // What feature was being worked on
+    partReference?: string;  // Part 10, etc.
+    mood?: string;           // Detected from text/voice
+  };
+  participants: string[];    // Scott, Mr. Blue, other agents
+  tags: string[];            // Auto-tagged for book chapters
+  bookChapter?: string;      // Suggested chapter
+  significance: number;      // 1-10 how important for book
+}
+
+// Store in LanceDB for semantic search
+await lanceDb.insert('scotts-journey', entries);
+
+// Query examples for book writing:
+// "Show me all conversations about Facebook API challenges"
+// "Find moments when Scott expressed frustration"
+// "Get timeline of mr-blue.md evolution"
+```
+
+### Book Chapter Auto-Generation
+
+```typescript
+// Suggested chapters based on journey data
+const suggestedChapters = [
+  {
+    title: "Chapter 1: The Vision - Why Mundo Tango Must Exist",
+    entries: entriesAbout('mission', 'vision', 'world-change'),
+    keyMoments: ['First 18-hour day', 'Deciding to give AI everything']
+  },
+  {
+    title: "Chapter 2: Building Mr. Blue - The AI Development Partner",
+    entries: entriesAbout('mr-blue', 'systems-1-8', 'vibe-coding'),
+    keyMoments: ['First voice clone', 'Autonomous agent working']
+  },
+  {
+    title: "Chapter 3: The Facebook API Challenge",
+    entries: entriesAbout('facebook', 'safety-research', 'rate-limits'),
+    keyMoments: ['Discovering 7 critical gaps', 'Building safety protocol']
+  },
+  // ... 20+ chapters auto-generated
+];
+```
+
+---
+
+## 🎯 THE PLAN: CONSTANT LEARNING PROTOCOL (v8.2)
+
+**Philosophy:** The Plan (Part 10 validation tour) must constantly learn from ALL work at all levels.
+
+### Human Confirmation Points
+
+**What AI Can Do Automatically:**
+- ✅ Bug fixes with >90% confidence
+- ✅ Code generation following established patterns
+- ✅ Database queries and CRUD operations
+- ✅ UI component creation
+- ✅ Test case generation
+- ✅ Documentation updates
+
+**What Requires Human (Scott) Confirmation:**
+```typescript
+interface HumanConfirmationRequired {
+  category: 'CRITICAL_BUSINESS_LOGIC' | 'LEGAL_COMPLIANCE' | 'SECURITY_DECISION' | 
+            'MAJOR_ARCHITECTURE_CHANGE' | 'USER_EXPERIENCE_FLOW' | 'FINANCIAL_TRANSACTION';
+  reason: string;
+  aiConfidence: number;  // 0-1
+  recommendation: string;
+  alternatives: string[];
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+}
+
+// Example: AI detects this needs human confirmation
+{
+  category: 'LEGAL_COMPLIANCE',
+  reason: 'GDPR data deletion request - permanent data loss',
+  aiConfidence: 0.65,  // Not confident enough to auto-execute
+  recommendation: 'Delete user data and create audit log',
+  alternatives: ['Anonymize instead of delete', 'Archive for 30 days first'],
+  riskLevel: 'HIGH'
+} → Show to Scott for approval
+```
+
+**The Learning Loop:**
+1. AI makes recommendation
+2. Scott confirms/rejects/modifies
+3. AI learns from Scott's decision
+4. AI confidence increases for similar situations
+5. Eventually AI can handle automatically
+
+**Goal:** Keep Mundo Tango on bleeding edge of AI by learning from high-level experts (Scott, advisors, community).
+
+### Progress Tracking
+
+**Every Page in Part 10:**
+- Background pre-learn status
+- Features implemented vs. expected
+- Bugs auto-fixed
+- Items pending Scott approval
+- Learning progress percentage
+- Next learning priority
+
+**Progress Bar Bottom of Screen:**
+```
+╔════════════════════════════════════════════════════════════╗
+║ [████████████████░░░░] 80% Events System Complete          ║
+║ Learning: RSVP Functionality | Fixes: 12 | Pending: 3      ║
+║ Next: Event Check-in System (Part 10 Section 3.2.5)        ║
+╚════════════════════════════════════════════════════════════╝
+```
+
+---
+
+## ⚡ SIMULTANEOUS BUT CRITICAL: OPTIMIZATION PROTOCOL (v8.2)
+
+**Challenge:** Execute everything simultaneously WITHOUT overloading systems.
+
+### Resource Management
+
+**Speed Optimization:**
+- Parallel subagent execution (3-5 simultaneous)
+- Batch database operations
+- Async/await everywhere
+- Request deduplication
+- Smart caching (Redis + LanceDB)
+
+**Efficiency Optimization:**
+- Code generation templates (reuse patterns)
+- Component libraries (shadcn/ui)
+- Zero documentation mode (code is documentation)
+- Micro-batching (small focused changes)
+
+**Memory Optimization:**
+- Stream responses (don't load everything)
+- Lazy loading (load on demand)
+- Cleanup completed tasks
+- Vector embeddings (compressed knowledge)
+
+**Cost Optimization:**
+- Use cheaper models when possible (Llama 3 8B for simple tasks)
+- AI Arbitrage System (tier-1 free, tier-2 mid, tier-3 premium)
+- Cache expensive operations
+- Batch API calls
+
+### Never Overload Protocol
+
+```typescript
+interface SystemLoad {
+  cpu: number;       // 0-100%
+  memory: number;    // 0-100%
+  disk: number;      // 0-100%
+  network: number;   // 0-100%
+  aiCalls: number;   // calls/minute
+  dbQueries: number; // queries/second
+}
+
+async function checkSystemLoad(): Promise<boolean> {
+  const load = await getSystemLoad();
+  
+  // Traffic light system
+  if (load.cpu > 90 || load.memory > 90) {
+    return false; // RED - stop new work
+  }
+  
+  if (load.cpu > 75 || load.memory > 75) {
+    await throttleOperations(); // YELLOW - slow down
+    return true;
+  }
+  
+  return true; // GREEN - proceed normally
+}
+
+// Before starting any major operation
+if (!(await checkSystemLoad())) {
+  await waitForResourcesAvailable();
+}
+```
+
+---
+
+## 🌐 TECHNOLOGY INDEPENDENCE PROTOCOL (v8.2)
+
+**Goal:** Mundo Tango must be fully standalone, not reliant on any external technology.
+
+### Open Source Alternatives
+
+**Current Dependencies → Future Independence:**
+- Facebook API → Self-hosted social scraper (Playwright)
+- OpenAI API → Open source LLMs (Llama 3, Mixtral)
+- ElevenLabs → Open source TTS (Coqui, Bark)
+- Stripe → Custom payment processor (open source gateway)
+- Daily.co → WebRTC self-hosted (mediasoup)
+- LanceDB → Could self-host vector DB
+
+### Research-Driven Development
+
+**Mr. Blue Constant Learning Sources:**
+- ArXiv papers (AI/ML research)
+- GitHub trending repositories
+- Hacker News discussions
+- Academic conference proceedings
+- Open source community forums
+- Replit community knowledge
+
+**Auto-Research System:**
+```typescript
+// Daily background research
+async function dailyResearchCycle() {
+  const topics = [
+    'latest social media API changes',
+    'new open source alternatives to our dependencies',
+    'AI model improvements',
+    'legal compliance updates',
+    'tango community growth patterns'
+  ];
+  
+  for (const topic of topics) {
+    const research = await conductResearch(topic);
+    await updateMBMDIntelligence(research);
+    await notifyIfCritical(research);
+  }
+}
+
+// Run daily at 3 AM
+schedule('0 3 * * *', dailyResearchCycle);
+```
+
+---
+
+## 📊 FINAL MB.MD v8.2 EXECUTION PLAN
+
+**Timeline:** 2-3 hours for full recursive monitoring + Facebook invite send
+
+### Phase 0: Build Foundation Systems (0% → 20%) - 45 min
+
+**Subagent A: Recursive Monitoring System**
+- Build SocialMediaPolicyMonitor.ts
+- Build RateLimitTracker.ts
+- Build PolicyComplianceChecker.ts
+- Create BullMQ workers + cron jobs
+- Test with Facebook (sliding scale)
+
+**Subagent B: On-Demand Agent Rollup**
+- Build AgentKnowledgeSync.ts
+- Integrate with existing 62+ agents
+- LanceDB knowledge base
+- Rollup trigger system
+
+**Subagent C: Scott's Journey Recording**
+- Build JourneyRecorder.ts
+- Chat history integration
+- Book chapter auto-generation
+- LanceDB storage
+
+**Progress Updates:** Every 10 minutes (5%, 10%, 15%, 20%)
+
+### Phase 1: Facebook Token Validation (20% → 30%) - 15 min
+
+- Fix P0 issues (env var + validateToken)
+- Test token validity
+- **CHECKPOINT:** Report to Scott
+
+### Phase 2: Connection Test (30% → 40%) - 10 min
+
+- Add P1 safety features
+- Test connection
+- Monitor rate limits
+- **CHECKPOINT:** Report rate limit status
+
+### Phase 3: Message Generation (40% → 60%) - 15 min
+
+- Generate personalized invite
+- Show preview
+- **CHECKPOINT:** Get Scott approval
+
+### Phase 4: Tester Role (60% → 70%) - 10 min
+
+- Scott adds sboddye as Tester
+- **CHECKPOINT:** Confirm addition
+
+### Phase 5: Send Invite (70% → 95%) - 10 min
+
+- **USER APPROVAL REQUIRED**
+- Send test message
+- Monitor response
+- **CHECKPOINT:** Report send status
+
+### Phase 6: Automated E2E Verification (95% → 100%) - 15 min
+
+**USE PLAYWRIGHT TO VERIFY FULL JOURNEY:**
+
+**Part 1: Verify Invite Receipt (5 min)**
+- Playwright logs into Facebook as sboddye@gmail.com
+- Navigates to Messenger
+- Verifies invite message exists from admin@mundotango.life
+- Takes screenshot
+- **CHECKPOINT:** Show screenshot to Scott
+
+**Part 2: Verify Invite Link Works (5 min)**
+- Playwright clicks invite link in message
+- Verifies redirect to Mundo Tango platform
+- Verifies lands on login/signup page (Part 10 beginning)
+- Takes screenshot
+- **CHECKPOINT:** Show screenshot to Scott
+
+**Part 3: Verify Login Flow (5 min)**
+- Playwright logs in as scott@boddye.com / admin123
+- Verifies successful login
+- Verifies progress bar appears at bottom of screen
+- Takes screenshot of first page with progress bar
+- **CHECKPOINT:** Show to Scott
+
+**Result:** Fully automated E2E test proving:
+✅ Invite sent successfully
+✅ Invite received in sboddye Messenger
+✅ Invite link works
+✅ Link takes to Mundo Tango platform
+✅ Scott can log in
+✅ Progress bar system working
+
+**TOTAL:** 125 minutes (2 hours 5 minutes)
+
+**Progress Updates:** % every 5 minutes throughout
+

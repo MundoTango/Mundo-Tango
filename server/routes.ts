@@ -106,6 +106,7 @@ import agentCommunicationRoutes from "./routes/agentCommunicationRoutes";
 import knowledgeRoutes from "./routes/knowledgeRoutes";
 import monitoringRoutes from "./routes/monitoringRoutes";
 import multiAIRoutes from "./routes/multiAIRoutes";
+import agentRollupRoutes from "./routes/agent-rollup-routes";
 import documentationGovernanceRoutes from "./routes/documentation-governance-routes";
 import learningIndexRoutes from "./routes/learningIndexRoutes";
 import financialAgentsRoutes from "./routes/financialAgentsRoutes";
@@ -124,6 +125,7 @@ import facebookImportRoutes from "./routes/facebook-import-routes";
 import facebookMessengerRoutes from "./routes/facebook-messenger-routes";
 import socialIntegrationRoutes from "./routes/social-integration-routes";
 import aiSelectorRoutes from "./routes/ai-selector-routes";
+import journeyRoutes from "./routes/journey-routes";
 import billingRoutes from "./routes/billing-routes";
 import onboardingRoutes from "./routes/onboarding-routes";
 import messagesRoutes from "./routes/messages-routes";
@@ -401,6 +403,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/knowledge", knowledgeRoutes);
   app.use("/api/monitoring", monitoringRoutes);
   
+  // PHASE 0B: Agent Knowledge Rollup System
+  app.use("/api/agent-rollup", agentRollupRoutes);
+  
   // TRACK 9: API Documentation & Core Endpoints
   app.use("/api/prompts", systemPromptsRoutes);
   app.use("/api/telemetry", telemetryRoutes);
@@ -418,6 +423,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // BATCH 29: Documentation Governance System
   app.use("/api/documentation", documentationGovernanceRoutes);
+  
+  // PHASE 0C: Journey Recording System for Scott's Book
+  app.use("/api/journey", journeyRoutes);
   
   // Learning Index API Routes
   app.use("/api/learning", learningIndexRoutes);

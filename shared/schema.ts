@@ -11742,6 +11742,150 @@ export type InsertInvoice = z.infer<typeof insertInvoiceSchema>;
 export type SelectInvoice = typeof invoices.$inferSelect;
 
 // ============================================================================
+// MONITORING ALERTS (PHASE 0A - RECURSIVE MONITORING SYSTEM)
+// ============================================================================
+
+export const monitoringAlertSeverityEnum = pgEnum("monitoring_alert_severity", [
+  "info",
+  "warning",
+  "critical"
+]);
+
+export const monitoringAlertStatusEnum = pgEnum("monitoring_alert_status", [
+  "new",
+  "acknowledged",
+  "resolved",
+  "ignored"
+]);
+
+export const monitoringAlerts = pgTable("monitoring_alerts", {
+  id: serial("id").primaryKey(),
+  platform: varchar("platform", { length: 50 }).notNull(), // 'facebook', 'instagram', 'twitter', 'tiktok', 'linkedin', 'youtube', 'whatsapp'
+  alertType: varchar("alert_type", { length: 100 }).notNull(), // 'rate_limit', 'spam_flag', 'policy_change', 'compliance_issue', 'api_error'
+  severity: varchar("severity", { length: 20 }).notNull().default("info"), // 'info', 'warning', 'critical'
+  status: varchar("status", { length: 20 }).notNull().default("new"), // 'new', 'acknowledged', 'resolved', 'ignored'
+  message: text("message").notNull(),
+  details: jsonb("details"), // Additional context (error codes, rate limit %, policy changes, etc.)
+  rateLimitPercentage: integer("rate_limit_percentage"), // Current rate limit usage %
+  actionTaken: text("action_taken"), // 'throttled', 'paused', 'stopped', 'notified'
+  notifiedUsers: integer("notified_users").array(), // User IDs who were notified
+  resolvedBy: integer("resolved_by").references(() => users.id),
+  resolvedAt: timestamp("resolved_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  platformIdx: index("monitoring_alerts_platform_idx").on(table.platform),
+  alertTypeIdx: index("monitoring_alerts_alert_type_idx").on(table.alertType),
+  severityIdx: index("monitoring_alerts_severity_idx").on(table.severity),
+  statusIdx: index("monitoring_alerts_status_idx").on(table.status),
+  createdAtIdx: index("monitoring_alerts_created_at_idx").on(table.createdAt),
+}));
+
+export const insertMonitoringAlertSchema = createInsertSchema(monitoringAlerts)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertMonitoringAlert = z.infer<typeof insertMonitoringAlertSchema>;
+export type SelectMonitoringAlert = typeof monitoringAlerts.$inferSelect;
+
+// ============================================================================
+// JOURNEY RECORDING SYSTEM (PHASE 0C - Scott's Book Documentation)
+// ============================================================================
+
+export const journeyCategoryEnum = pgEnum("journey_category", [
+  "chat",
+  "code",
+  "decision",
+  "bug",
+  "learning",
+  "milestone"
+]);
+
+export const journeyEntries = pgTable("journey_entries", {
+  id: serial("id").primaryKey(),
+  entryId: varchar("entry_id", { length: 100 }).notNull().unique(), // UUID for vector DB sync
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+  category: varchar("category", { length: 20 }).notNull(), // 'chat', 'code', 'decision', 'bug', 'learning', 'milestone'
+  content: text("content").notNull(),
+  
+  // Context information
+  context: jsonb("context"), // { page?, feature?, partReference?, filesPaths?, codeSnippets? }
+  
+  // Participants and metadata
+  participants: text("participants").array(), // ['Scott', 'Replit Agent', 'Mr. Blue']
+  tags: text("tags").array(), // ['facebook', 'authentication', 'deployment']
+  
+  // Book organization
+  bookChapter: varchar("book_chapter", { length: 255 }), // Suggested chapter title
+  significance: integer("significance").default(5).notNull(), // 1-10 importance rating
+  
+  // Auto-detected metadata
+  toolsUsed: text("tools_used").array(), // ['LanceDB', 'Drizzle', 'OpenAI']
+  aiModelsUsed: text("ai_models_used").array(), // ['GPT-4', 'Claude']
+  duration: integer("duration"), // Duration in seconds (for conversations)
+  
+  // Relationships
+  relatedEntryIds: text("related_entry_ids").array(), // Links to related entries
+  gitCommitHash: varchar("git_commit_hash", { length: 255 }),
+  
+  // Search and categorization
+  searchableText: text("searchable_text"), // Generated text for full-text search
+  emotionalTone: varchar("emotional_tone", { length: 50 }), // 'frustrated', 'excited', 'confused', 'breakthrough'
+  
+  // Metadata
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  categoryIdx: index("journey_entries_category_idx").on(table.category),
+  timestampIdx: index("journey_entries_timestamp_idx").on(table.timestamp),
+  significanceIdx: index("journey_entries_significance_idx").on(table.significance),
+  bookChapterIdx: index("journey_entries_book_chapter_idx").on(table.bookChapter),
+  entryIdIdx: index("journey_entries_entry_id_idx").on(table.entryId),
+  searchIdx: index("journey_entries_search_idx").using(
+    "gin",
+    sql`to_tsvector('english', ${table.content} || ' ' || COALESCE(${table.searchableText}, ''))`
+  ),
+}));
+
+export const insertJourneyEntrySchema = createInsertSchema(journeyEntries)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertJourneyEntry = z.infer<typeof insertJourneyEntrySchema>;
+export type SelectJourneyEntry = typeof journeyEntries.$inferSelect;
+
+export const bookChapters = pgTable("book_chapters", {
+  id: serial("id").primaryKey(),
+  chapterId: varchar("chapter_id", { length: 100 }).notNull().unique(),
+  chapterNumber: integer("chapter_number").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Content organization
+  entryCount: integer("entry_count").default(0).notNull(),
+  startDate: timestamp("start_date"),
+  endDate: timestamp("end_date"),
+  
+  // AI-generated content
+  summary: text("summary"), // AI-generated chapter summary
+  keyLearnings: text("key_learnings").array(),
+  challenges: text("challenges").array(),
+  breakthroughs: text("breakthroughs").array(),
+  
+  // Metadata
+  status: varchar("status", { length: 50 }).default("draft"), // 'draft', 'in_progress', 'completed'
+  wordCount: integer("word_count").default(0),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  chapterNumberIdx: index("book_chapters_number_idx").on(table.chapterNumber),
+  statusIdx: index("book_chapters_status_idx").on(table.status),
+  chapterIdIdx: index("book_chapters_chapter_id_idx").on(table.chapterId),
+}));
+
+export const insertBookChapterSchema = createInsertSchema(bookChapters)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertBookChapter = z.infer<typeof insertBookChapterSchema>;
+export type SelectBookChapter = typeof bookChapters.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 

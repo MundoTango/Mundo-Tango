@@ -124,9 +124,12 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
   // Production uses additional security: rate limiting, bot detection, CAPTCHA
   const isDev = process.env.NODE_ENV === 'development';
   const authEndpoints = ["/api/auth/login", "/api/auth/register", "/api/auth/refresh"];
-  const shouldBypass = authEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
+  const journeyEndpoints = ["/api/journey"]; // Internal API for recording development progress
+  const isAuthEndpoint = authEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
+  const isJourneyEndpoint = journeyEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint));
+  const shouldBypass = isAuthEndpoint || isJourneyEndpoint;
   
-  console.log(`[CSRF DEBUG] isDev=${isDev}, url=${req.originalUrl}, shouldBypass=${shouldBypass}`);
+  console.log(`[CSRF DEBUG] isDev=${isDev}, url=${req.originalUrl}, isAuthEndpoint=${isAuthEndpoint}, isJourneyEndpoint=${isJourneyEndpoint}, shouldBypass=${shouldBypass}`);
   
   if (isDev && shouldBypass) {
     console.log(`[CSRF BYPASS] Skipping CSRF for ${req.originalUrl} in development`);

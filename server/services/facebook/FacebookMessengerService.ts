@@ -2,9 +2,13 @@
  * Facebook Messenger Service
  * Handles sending messages via Facebook Graph API
  * Based on Part 10 specifications
+ * PHASE 0A: Integrated with Recursive Monitoring System
  */
 
 import axios from 'axios';
+import { RateLimitTracker } from '../monitoring/RateLimitTracker';
+import { SocialMediaPolicyMonitor } from '../monitoring/SocialMediaPolicyMonitor';
+import { PolicyComplianceChecker } from '../monitoring/PolicyComplianceChecker';
 
 export interface FacebookSendParams {
   recipientId?: string;
@@ -31,7 +35,10 @@ export interface RateLimitStatus {
 
 export class FacebookMessengerService {
   private static readonly GRAPH_API_URL = 'https://graph.facebook.com/v18.0';
-  private static readonly accessToken = process.env.FACEBOOK_ACCESS_TOKEN || '';
+  private static readonly accessToken = 
+    process.env.FACEBOOK_PAGE_ACCESS_TOKEN || 
+    process.env.FACEBOOK_ACCESS_TOKEN || 
+    '';
 
   // Rate limiting (Phase 1: Scott only)
   private static readonly DAILY_LIMIT = 5;
@@ -39,6 +46,9 @@ export class FacebookMessengerService {
 
   // In-memory rate limit tracking (should be moved to database for production)
   private static invitesSentToday: Map<number, number[]> = new Map();
+  
+  // PHASE 0A: Monitoring integration flag
+  private static monitoringEnabled = true;
 
   /**
    * Send message via Facebook Messenger
@@ -97,6 +107,11 @@ export class FacebookMessengerService {
         }
       );
 
+      // PHASE 0A: Process response headers for rate limit monitoring
+      if (this.monitoringEnabled && response.headers) {
+        await this.processResponseHeaders(response.headers);
+      }
+
       return {
         success: true,
         messageId: response.data.message_id,
@@ -105,6 +120,11 @@ export class FacebookMessengerService {
       };
     } catch (error: any) {
       console.error('[Facebook] Failed to send message:', error);
+      
+      // PHASE 0A: Check for spam flags and rate limit errors
+      if (this.monitoringEnabled) {
+        await this.handleAPIError(error);
+      }
       
       return {
         success: false,
@@ -215,5 +235,70 @@ export class FacebookMessengerService {
       console.error('[Facebook] Failed to get page info:', error);
       throw new Error(error.response?.data?.error?.message || error.message);
     }
+  }
+
+  /**
+   * PHASE 0A: Process response headers for rate limit monitoring
+   */
+  private static async processResponseHeaders(headers: Record<string, any>): Promise<void> {
+    try {
+      // Track API call
+      RateLimitTracker.trackCall('facebook');
+
+      // Process rate limit headers
+      await SocialMediaPolicyMonitor.processAPIResponse('facebook', headers);
+
+      console.log('[Facebook] Rate limit monitoring processed');
+    } catch (error) {
+      console.error('[Facebook] Failed to process monitoring headers:', error);
+    }
+  }
+
+  /**
+   * PHASE 0A: Handle API errors including spam flags
+   */
+  private static async handleAPIError(error: any): Promise<void> {
+    const errorCode = error.response?.data?.error?.code?.toString() || '';
+    const errorMessage = error.response?.data?.error?.message || error.message;
+    const errorSubcode = error.response?.data?.error?.error_subcode?.toString() || '';
+
+    // Check for spam flags (#368, #551 subcode 1545041)
+    if (errorCode === '368' || (errorCode === '551' && errorSubcode === '1545041')) {
+      console.error('[Facebook] SPAM FLAG DETECTED!', { errorCode, errorSubcode, errorMessage });
+      await SocialMediaPolicyMonitor.handleSpamFlag('facebook', errorCode, errorMessage);
+      return;
+    }
+
+    // Check for rate limit errors (#4, #17, #613)
+    if (['4', '17', '613'].includes(errorCode)) {
+      console.warn('[Facebook] Rate limit error detected:', { errorCode, errorMessage });
+      // Rate limit errors are already tracked via headers
+      return;
+    }
+
+    // Log other errors
+    console.error('[Facebook] API Error:', { errorCode, errorSubcode, errorMessage });
+  }
+
+  /**
+   * PHASE 0A: Enable/disable monitoring integration
+   */
+  static setMonitoringEnabled(enabled: boolean): void {
+    this.monitoringEnabled = enabled;
+    console.log(`[Facebook] Monitoring ${enabled ? 'enabled' : 'disabled'}`);
+  }
+
+  /**
+   * PHASE 0A: Get current monitoring status
+   */
+  static getMonitoringStatus(): {
+    enabled: boolean;
+    activityMetrics: any;
+  } {
+    const metrics = RateLimitTracker.getActivityMetrics('facebook');
+    return {
+      enabled: this.monitoringEnabled,
+      activityMetrics: metrics,
+    };
   }
 }

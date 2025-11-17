@@ -16,6 +16,7 @@ import { initStoryExpirationJob } from "./jobs/expireStories";
 import { apiRateLimiter } from "./middleware/security";
 import { compressionMiddleware, performanceMonitoringMiddleware } from "./config/performance";
 import { healthCheckHandler, readinessCheckHandler, livenessCheckHandler } from "./health-check";
+import { PolicyMonitoringJobs } from "./jobs/policy-monitoring-jobs";
 console.log("✅ [DEBUG] All imports complete in server/index.ts");
 // ============================================================================
 // SENTRY DISABLED: CSP VIOLATIONS FIX (MB.MD SUBAGENT 3)
@@ -195,10 +196,19 @@ app.use((req, res, next) => {
     port,
     host: "0.0.0.0",
     reusePort: true,
-  }, () => {
+  }, async () => {
     log(`serving on port ${port}`);
     
     startPreviewExpirationChecker();
     initStoryExpirationJob();
+    
+    // PHASE 0A: Initialize Policy Monitoring System
+    try {
+      log('🔍 Initializing Policy Monitoring System...');
+      await PolicyMonitoringJobs.initialize();
+      log('✅ Policy Monitoring System initialized successfully');
+    } catch (error) {
+      logger.error('❌ Failed to initialize Policy Monitoring System:', error);
+    }
   });
 })();
