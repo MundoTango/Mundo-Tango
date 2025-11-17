@@ -28,16 +28,16 @@ async function main() {
   console.log('  6. Save to environment\n');
   
   // Get credentials from environment
-  const email = process.env.FACEBOOK_EMAIL;
-  const password = process.env.FACEBOOK_PASSWORD;
+  const email = process.env.facebook_mundotango_username || process.env.FACEBOOK_EMAIL;
+  const password = process.env.facebook_mundotango_password || process.env.FACEBOOK_PASSWORD;
   const pageId = process.env.FACEBOOK_PAGE_ID;
   const appSecret = process.env.FACEBOOK_APP_SECRET;
   
   if (!email || !password) {
     console.error('❌ Missing credentials!\n');
     console.log('Required secrets:');
-    console.log('  • FACEBOOK_EMAIL - Your Facebook account email');
-    console.log('  • FACEBOOK_PASSWORD - Your Facebook account password');
+    console.log('  • facebook_mundotango_username - Your Facebook account username/email');
+    console.log('  • facebook_mundotango_password - Your Facebook account password');
     console.log('\nAdd these to Replit Secrets (lock icon in sidebar)\n');
     process.exit(1);
   }
