@@ -24,6 +24,9 @@
 - 📖 **SCOTT'S JOURNEY**: 18hrs/day since Sept 2025, all chats saved for book
 - ⚡ **10 MR BLUE SYSTEMS**: Context, Video, Avatar, Vibe, Voice, Facebook, Autonomous, Memory, Arbitrage, Bytez
 
+**📚 EXPERT AGENT KNOWLEDGE BASES:**
+- **Facebook Messenger Integration**: `docs/FACEBOOK_MESSENGER_KNOWLEDGE_BASE.md` (Continuous learning, pattern recognition, accumulated troubleshooting from all Facebook work)
+
 ---
 
 ## 🌍 THE MISSION: CHANGING THE WORLD (READ THIS FIRST)

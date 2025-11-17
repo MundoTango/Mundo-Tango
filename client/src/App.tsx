@@ -1312,6 +1312,10 @@ function Router() {
       <Route path="/community-guidelines" component={CommunityGuidelinesPage} />
       <Route path="/privacy" component={PrivacyPolicyPage} />
       <Route path="/terms" component={TermsPage} />
+      {/* Facebook App Required Pages */}
+      <Route path="/privacy_policy" component={PrivacyPolicyPage} />
+      <Route path="/terms_of_service" component={TermsPage} />
+      <Route path="/user_data_deletion" component={DeleteAccountPage} />
       <Route path="/contact" component={ContactPage} />
       <Route path="/venue-recommendations">
         <ProtectedRoute>
