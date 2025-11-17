@@ -17,6 +17,7 @@ import { MrBlueWidget } from "./components/MrBlueWidget";
 import { GlobalMrBlue } from "./components/mrblue/GlobalMrBlue";
 import { ChatSidePanel } from "./components/mrblue/ChatSidePanel";
 import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
+import { BlitzNowButton } from "./components/BlitzNowButton";
 import { LoadingFallback } from "./components/LoadingFallback";
 
 // Lazy load heavy components
@@ -1733,6 +1734,7 @@ function App() {
                   <GlobalMrBlue />
                   <ChatSidePanel />
                   {!isOnVisualEditorPage && <MrBlueFloatingButton />}
+                  {!isOnVisualEditorPage && <BlitzNowButton />}
                   {isVisualEditorOpen && (
                     <Suspense fallback={<LoadingFallback />}>
                       <VisualEditorSplitPane 
