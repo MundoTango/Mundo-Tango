@@ -162,6 +162,170 @@ Subagents reported "47 pages built successfully" but application was BROKEN:
 - 0 LSP errors
 - User can navigate and use all features
 
+### LESSON LEARNED (November 17, 2025): FACEBOOK API SAFETY PROTOCOL
+
+**CONTEXT:**
+Before implementing Facebook Messenger invite functionality, conducted comprehensive safety research using 5 parallel web searches + code audit.
+
+**FINDINGS (Critical):**
+1. ⚠️ Development apps: ~200 calls/hour limit (very strict)
+2. ⚠️ 24-hour window rule: Can only message engaged users
+3. 🔴 **Our code had 7 critical gaps** (no token validation, no header monitoring, no delays)
+4. ✅ X-App-Usage header provides real-time rate limit data
+5. ✅ Tester role bypasses 24h window (safe testing path)
+
+**MANDATORY FACEBOOK API SAFETY PROTOCOL:**
+
+**Before ANY Facebook API Call:**
+1. ✅ Validate token using /debug_token endpoint
+2. ✅ Verify user is Tester role (for testing) or within 24h window
+3. ✅ Check rate limit usage <75%
+4. ✅ Confirm all env vars correct (FACEBOOK_PAGE_ACCESS_TOKEN not FACEBOOK_ACCESS_TOKEN)
+
+**During EVERY API Call:**
+1. ✅ Parse X-App-Usage header on response
+2. ✅ Log rate limit percentage (call_count, total_time, total_cputime)
+3. ✅ Throttle at 75%, pause at 90%, stop at 100%
+4. ✅ Implement 10-second mandatory delay after sends
+5. ✅ Handle spam errors (#368, #551) - immediate stop
+6. ✅ Implement exponential backoff for rate limits (#4, #17, #613)
+
+**Error Code Actions:**
+- **#368 or #551(1545041)** → Spam flag → STOP ALL SENDS → Alert user
+- **#4, #17, #613** → Rate limit → Wait with exponential backoff (10s → 30s → 90s)
+- **#190** → Auth error → Re-validate token
+- **Any error** → Log full context + stop if unknown
+
+**6-Phase Safe Implementation:**
+- Phase A (Validation): Test token validity only
+- Phase B (Connection): Single read-only call + header monitoring
+- Phase C (Generation): AI message generation (no API calls)
+- Phase D (Tester Role): Manual verification by user
+- Phase E (Send): Single test message with all safety measures
+- Phase F (Verification): User confirms receipt
+
+**User Approval Required:**
+- ✅ Before Phase E (sending actual message)
+- ✅ After seeing generated message preview
+- ✅ After confirming Tester role added
+
+**Zero Tolerance:**
+- No sends without token validation
+- No sends without rate limit monitoring
+- No sends without delays
+- No sends to non-Testers outside 24h window
+- No identical messages to multiple users
+
+**Documentation:** Full research saved to docs/FB_SAFETY_RESEARCH.md (6,500+ words, 16 sections)
+
+### RECURSIVE SOCIAL MEDIA POLICY COMPLIANCE SYSTEM (November 17, 2025)
+
+**PROBLEM:** Social media APIs (Facebook, Instagram, Twitter, TikTok, etc.) have strict policies that change frequently. Violations can result in permanent bans.
+
+**SOLUTION:** Recursive monitoring system with sliding-scale frequency based on activity level.
+
+**MONITORING FREQUENCY (Sliding Scale):**
+```
+IDLE (no API activity):
+  - Every 24 hours (Daily) - Check for policy updates
+
+LOW STRESS (1-10 calls/hour):
+  - Every 1 hour (Hourly) - Monitor rate limits
+  - Every 24 hours (Daily) - Policy check
+
+MEDIUM STRESS (11-50 calls/hour):
+  - Every 5 minutes (5M) - Rate limit monitoring
+  - Every 1 hour (Hourly) - Compliance check
+  - Every 24 hours (Daily) - Policy update check
+
+HIGH STRESS (51-150 calls/hour):
+  - Every 1 minute (1M) - Real-time rate monitoring
+  - Every 15 minutes (15M) - Compliance audit
+  - Every 1 hour (Hourly) - Alert check
+  - Every 24 hours (Daily) - Policy update
+
+CRITICAL STRESS (>150 calls/hour or approaching limits):
+  - Every 10 seconds (10S) - Real-time monitoring
+  - Every 1 minute (1M) - Rate limit check
+  - Every 5 minutes (5M) - Throttle decisions
+  - Every 15 minutes (15M) - Alert check
+  - Every 1 hour (Hourly) - Compliance report
+```
+
+**CRON JOB SCHEDULE:**
+```typescript
+// Daily (policy updates)
+'0 0 * * *' → Check for API policy changes
+
+// Hourly (standard monitoring)
+'0 * * * *' → Monitor rate limits
+
+// Every 15 minutes (medium stress)
+'*/15 * * * *' → Compliance check
+
+// Every 5 minutes (high stress)
+'*/5 * * * *' → Rate limit monitoring
+
+// Every 1 minute (critical stress)
+'*/1 * * * *' → Real-time monitoring
+```
+
+**MONITORED PLATFORMS:**
+- Facebook/Instagram Graph API
+- Twitter API
+- TikTok API
+- LinkedIn API
+- YouTube API
+- WhatsApp Business API
+
+**AUTOMATIC ACTIONS:**
+```typescript
+if (rateLimitUsage > 90%) {
+  action: 'PAUSE_ALL_SENDS',
+  alert: 'CRITICAL',
+  notify: 'user + admin'
+}
+
+if (spamFlagDetected) {
+  action: 'STOP_ALL_API_CALLS',
+  alert: 'EMERGENCY',
+  notify: 'user + admin + log_incident'
+}
+
+if (rateLimitUsage > 75%) {
+  action: 'THROTTLE',
+  delay: '10s → 30s → 60s (exponential)'
+}
+
+if (policyViolationDetected) {
+  action: 'STOP_FEATURE',
+  alert: 'HIGH',
+  review: 'required'
+}
+```
+
+**IMPLEMENTATION:**
+- BullMQ recurring jobs for each time scale
+- Redis-backed job queue for reliability
+- Automatic stress level detection based on API call frequency
+- Sliding scale adjusts monitoring frequency dynamically
+- Alert system (console + user notification + audit log)
+
+**FILES TO CREATE:**
+- `server/services/monitoring/SocialMediaPolicyMonitor.ts` - Main monitoring service
+- `server/services/monitoring/RateLimitTracker.ts` - Rate limit tracking
+- `server/services/monitoring/PolicyComplianceChecker.ts` - Policy validation
+- `server/workers/policy-monitor-worker.ts` - BullMQ worker
+- `server/jobs/policy-compliance-jobs.ts` - Cron job definitions
+
+**QUALITY GATE:**
+- ✅ No API call without policy check
+- ✅ No send without rate limit under 75%
+- ✅ Automatic throttling at 75%
+- ✅ Automatic pause at 90%
+- ✅ Emergency stop at spam flag
+- ✅ Daily policy update checks
+
 ## 🚀 THE MB.MD PROMISE - DELIVERED (ALL 8 SYSTEMS)
 
 By Week 8, you now have:
