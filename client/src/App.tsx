@@ -72,7 +72,10 @@ const CommunityWorldMapPage = lazy(() => import("@/pages/CommunityWorldMapPage")
 const RecommendationsPage = lazy(() => import("@/pages/RecommendationsPage"));
 const InvitationsPage = lazy(() => import("@/pages/InvitationsPage"));
 const FacebookInvites = lazy(() => import("@/pages/FacebookInvites"));
+const FacebookDataImport = lazy(() => import("@/pages/FacebookDataImport"));
+const ClosenessMetrics = lazy(() => import("@/pages/ClosenessMetrics"));
 const FavoritesPage = lazy(() => import("@/pages/FavoritesPage"));
+const ReputationProfile = lazy(() => import("@/pages/ReputationProfile"));
 
 // Events & Groups
 const EventsPage = lazy(() => import("@/pages/EventsPage"));
@@ -479,6 +482,26 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/facebook-data-import">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <FacebookDataImport />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/closeness-metrics">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <ClosenessMetrics />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/favorites">
         <ProtectedRoute>
           <AppLayout>
@@ -506,6 +529,11 @@ function Router() {
       <Route path="/profile/:id">
         <AppLayout>
           <ProfilePage />
+        </AppLayout>
+      </Route>
+      <Route path="/reputation/:userId">
+        <AppLayout>
+          <ReputationProfile />
         </AppLayout>
       </Route>
 

@@ -34,6 +34,7 @@ import mrBlueVoiceRoutes from "./routes/mrblue-voice-routes";
 import mrBlueMessengerRoutes from "./routes/mrblue-messenger-routes";
 import mrBlueAutonomousRoutes from "./routes/mrblue-autonomous-routes";
 import mrBlueMemoryRoutes from "./routes/mrblue-memory-routes";
+import mrBluePlanRoutes from "./routes/mr-blue-plan-routes";
 import autonomousRoutes from "./routes/autonomous";
 import premiumMediaRoutes from "./routes/premiumMedia";
 import learningIntelligenceRoutes from "./routes/learningIntelligence";
@@ -75,6 +76,7 @@ import workshopRoutes from "./routes/workshop-routes";
 import musicRoutes from "./routes/music-routes";
 import travelRoutes from "./routes/travel-routes";
 import achievementRoutes from "./routes/achievement-routes";
+import reputationRoutes from "./routes/reputation-routes";
 import profileRoutes from "./routes/profileRoutes";
 import profileMediaRoutes from "./routes/profileMediaRoutes";
 import profileAnalyticsRoutes from "./routes/profileAnalyticsRoutes";
@@ -119,6 +121,7 @@ import scrapingAdminRoutes from "./routes/scraping-admin-routes";
 import facebookScraperRoutes from "./routes/facebook-scraper-routes";
 import facebookImportRoutes from "./routes/facebook-import-routes";
 import facebookMessengerRoutes from "./routes/facebook-messenger-routes";
+import socialIntegrationRoutes from "./routes/social-integration-routes";
 import aiSelectorRoutes from "./routes/ai-selector-routes";
 import billingRoutes from "./routes/billing-routes";
 import onboardingRoutes from "./routes/onboarding-routes";
@@ -423,6 +426,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Social Media Agents Routes (5 AI Agents for Social Media Management)
   app.use("/api/social/agents", socialMediaAgentsRoutes);
   
+  // Social Integration Routes (Part 10: Multi-Platform Data Integration & Closeness Calculator)
+  app.use("/api/social", socialIntegrationRoutes);
+  
   // Marketplace AI Agents Routes (8 AI Agents for Marketplace Management)
   app.use("/api/marketplace/agents", marketplaceAgentsRoutes);
   
@@ -489,6 +495,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/mrblue/messenger", mrBlueMessengerRoutes); // System 6: Facebook Messenger Integration
   app.use("/api/mrblue/autonomous", mrBlueAutonomousRoutes); // System 7: Autonomous Coding Engine
   app.use("/api/mrblue/memory", mrBlueMemoryRoutes); // System 8: Advanced Memory System
+  app.use("/api/mrblue/plan", mrBluePlanRoutes); // Plan Roadmap Tracker (47-page validation system)
   app.use(mrBlueEnhancedRoutes); // Enhanced Mr. Blue with troubleshooting KB
   app.use("/api/autonomous", autonomousRoutes); // Mr. Blue Autonomous Agent (God Level)
   app.use("/api/visual-editor", authenticateToken, visualEditorRoutes);
@@ -2292,6 +2299,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/music", musicRoutes);
   app.use("/api/travel", travelRoutes);
   app.use("/api/achievements", achievementRoutes);
+  app.use("/api/endorsements", reputationRoutes);
+  app.use("/api/reputation", reputationRoutes);
   app.use("/api/profile", profileRoutes);
   
   // BATCH 13-14: Profile Media & Analytics Routes

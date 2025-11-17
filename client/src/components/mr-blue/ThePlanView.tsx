@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Target, 
   CheckCircle2, 
@@ -10,8 +11,11 @@ import {
   Sparkles,
   Code,
   Users,
-  Zap
+  Zap,
+  ListChecks
 } from 'lucide-react';
+import { PlanProgressTracker } from './PlanProgressTracker';
+import { useQuery } from '@tanstack/react-query';
 
 /**
  * THE PLAN VIEW - Roadmap visualization
@@ -81,12 +85,32 @@ const CURRENT_TASKS = [
   { title: '3D Creator + AI Video Deploy', status: 'pending', progress: 0 },
 ];
 
+interface RoadmapStats {
+  total: number;
+  validated: number;
+  inProgress: number;
+  pending: number;
+  issuesFound: number;
+  percentComplete: number;
+}
+
 export function ThePlanView() {
+  const userId = 1; // TODO: Get from auth context
   const totalFeatures = PLAN_PHASES.reduce((sum, phase) => sum + phase.features, 0);
   const completedFeatures = PLAN_PHASES
     .filter(p => p.status === 'complete')
     .reduce((sum, phase) => sum + phase.features, 0);
   const overallProgress = (completedFeatures / totalFeatures) * 100;
+
+  // Fetch real-time progress from API
+  const { data: liveStats } = useQuery<RoadmapStats>({
+    queryKey: ['/api/mrblue/plan/stats', userId],
+    queryFn: async () => {
+      const response = await fetch(`/api/mrblue/plan/stats?userId=${userId}`);
+      if (!response.ok) return null;
+      return response.json();
+    },
+  });
 
   return (
     <div className="space-y-6 p-6" data-testid="view-the-plan">
@@ -227,20 +251,95 @@ export function ThePlanView() {
         </CardContent>
       </Card>
 
-      {/* Next Steps */}
-      <div className="text-center space-y-4">
-        <h3 className="text-lg font-semibold">Next Steps</h3>
-        <div className="flex flex-wrap justify-center gap-2">
-          <Button variant="default" data-testid="button-chat-about-plan">
-            <Users className="h-4 w-4 mr-2" />
-            Chat with Mr Blue About The Plan
-          </Button>
-          <Button variant="outline" data-testid="button-view-full-plan">
-            <Target className="h-4 w-4 mr-2" />
-            View Full Documentation
-          </Button>
-        </div>
-      </div>
+      {/* Part 10 Validation Progress */}
+      {liveStats && (
+        <Card className="border-blue-500/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ListChecks className="h-5 w-5 text-blue-500" />
+              Part 10: Page Validation Progress
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">
+                    {liveStats.validated} / {liveStats.total} pages validated
+                  </span>
+                  <Badge variant="default">
+                    {liveStats.percentComplete}% Complete
+                  </Badge>
+                </div>
+                <Progress value={liveStats.percentComplete} className="h-3" />
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Validated</p>
+                  <p className="text-xl font-bold text-green-500">{liveStats.validated}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">In Progress</p>
+                  <p className="text-xl font-bold text-blue-500">{liveStats.inProgress}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Pending</p>
+                  <p className="text-xl font-bold text-muted-foreground">{liveStats.pending}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Issues</p>
+                  <p className="text-xl font-bold text-orange-500">{liveStats.issuesFound}</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Detailed Progress Tracker */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Detailed Validation Tracker</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="w-full justify-start border-b rounded-none h-auto p-0">
+              <TabsTrigger 
+                value="overview" 
+                className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary"
+                data-testid="tab-overview"
+              >
+                Overview
+              </TabsTrigger>
+              <TabsTrigger 
+                value="tracker" 
+                className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary"
+                data-testid="tab-tracker"
+              >
+                47-Page Tracker
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="overview" className="p-6 space-y-4">
+              <div className="text-center space-y-4">
+                <h3 className="text-lg font-semibold">Next Steps</h3>
+                <div className="flex flex-wrap justify-center gap-2">
+                  <Button variant="default" data-testid="button-chat-about-plan">
+                    <Users className="h-4 w-4 mr-2" />
+                    Chat with Mr Blue About The Plan
+                  </Button>
+                  <Button variant="outline" data-testid="button-view-full-plan">
+                    <Target className="h-4 w-4 mr-2" />
+                    View Full Documentation
+                  </Button>
+                </div>
+              </div>
+            </TabsContent>
+            <TabsContent value="tracker" className="p-0">
+              <PlanProgressTracker />
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
     </div>
   );
 }

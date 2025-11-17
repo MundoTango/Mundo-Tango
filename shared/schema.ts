@@ -11667,6 +11667,37 @@ export type InsertTourSentiment = z.infer<typeof insertTourSentimentSchema>;
 export type SelectTourSentiment = typeof tourSentiment.$inferSelect;
 
 // ============================================================================
+// PLAN PROGRESS TRACKER - Track validation of 47 pages
+// ============================================================================
+
+export const planProgress = pgTable("plan_progress", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  pageName: varchar("page_name", { length: 100 }).notNull(),
+  pageUrl: varchar("page_url", { length: 255 }).notNull(),
+  category: varchar("category", { length: 50 }).notNull(), // 'core', 'community', 'messaging', 'admin', 'ai'
+  validated: boolean("validated").default(false),
+  validatedAt: timestamp("validated_at"),
+  notes: text("notes"),
+  issuesFound: integer("issues_found").default(0),
+  status: varchar("status", { length: 50 }).default("pending"), // 'pending', 'in_progress', 'completed', 'issues_found'
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("plan_progress_user_idx").on(table.userId),
+  pageNameIdx: index("plan_progress_page_name_idx").on(table.pageName),
+  categoryIdx: index("plan_progress_category_idx").on(table.category),
+  statusIdx: index("plan_progress_status_idx").on(table.status),
+  validatedIdx: index("plan_progress_validated_idx").on(table.validated),
+  uniquePage: unique().on(table.userId, table.pageName),
+}));
+
+export const insertPlanProgressSchema = createInsertSchema(planProgress)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertPlanProgress = z.infer<typeof insertPlanProgressSchema>;
+export type SelectPlanProgress = typeof planProgress.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
