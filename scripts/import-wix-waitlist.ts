@@ -107,12 +107,11 @@ async function importWixWaitlist() {
       await db.insert(users).values({
         email: email.toLowerCase(),
         username: username,
-        name: name || null,
-        password: null, // No password until they sign up
+        name: name || 'Wix User',
+        password: 'temp_password_will_reset', // Temporary password
         waitlist: true,
         waitlistDate: waitlistDate,
-        bio: 'Imported from Wix waitlist',
-        createdAt: waitlistDate
+        bio: 'Imported from Wix waitlist'
       });
       
       console.log(`✅ Row ${index + 1}: ${email} - Imported successfully`);
