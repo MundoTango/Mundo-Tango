@@ -285,7 +285,6 @@ const CrowdfundingMyPage = lazy(() => import("@/pages/crowdfunding/CrowdfundingM
 // Content & Info
 const BlogPage = lazy(() => import("@/pages/BlogPage"));
 const NewsletterPage = lazy(() => import("@/pages/NewsletterPage"));
-const LiveStreamPage = lazy(() => import("@/pages/LiveStreamPage"));
 const StreamDetailPage = lazy(() => import("@/pages/StreamDetailPage"));
 const ReviewsPage = lazy(() => import("@/pages/ReviewsPage"));
 const MediaGalleryPage = lazy(() => import("@/pages/MediaGalleryPage"));
