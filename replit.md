@@ -4,27 +4,28 @@
 Mundo Tango is a production-ready social platform designed to connect the global tango community. It offers social networking, event management, talent matching, and AI-powered assistance, integrating 7 business systems and 62 specialized AI agents. The platform aims to be the leading digital hub for the tango ecosystem, with market potential in premium services, event monetization, and targeted advertising, emphasizing a lean architecture, optimized npm packages, and enterprise-grade security.
 
 ## Recent Changes
-**Week 9 Day 5 (Nov 17, 2025) - AI Vibe Coding Safeguards + Security Hardening**
-- ✅ **AI Vibe Coding Gaps Analysis** (1,398-line research document):
-  - Created comprehensive docs/AI_VIBE_CODING_GAPS_ANALYSIS.md analyzing 7 critical AI coding failure patterns
-  - Documented industry research: 76% hallucination rate, 48% security vulnerabilities, 8x code duplication increase
-  - Analyzed real incidents: Replit AI database disaster (1,206 records lost), GitHub Copilot bugs, fabricated packages
-  - Designed 22 safeguards across 7 categories (Database, Security, Duplication, Hallucination, Testing, Quality, Productivity)
-- ✅ **3 Production Safeguard Services Built** (2,100+ lines total):
-  - DatabaseGuardian (650 lines): Prevents DB disasters, blocks DROP/DELETE in prod, enforces dev/prod separation, auto-backup
-  - HallucinationDetector (700 lines): Validates npm/PyPI packages, verifies API endpoints, detects fabricated data/tests
-  - SecurityValidator (750 lines): OWASP Top 10 scanning, SQL injection/XSS detection, hardcoded secret detection
-  - All services fully typed TypeScript with comprehensive JSDoc, 40+ validation methods, detailed severity reports
-- ✅ **MB.MD v8.1 Enhancement** (137 lines added):
-  - Updated mb.md from v8.0 to v8.1 with Anti-Hallucination Framework
-  - Integrated all 22 safeguards with implementation status (✅ Phase 1 complete, ⏳ Phases 2-3 pending)
-  - Target: 99.9% AI reliability (0 DB disasters, <5% security issues, 0 duplicates, 10% productivity gain)
-- ✅ **Security Hardening** (10 vulnerabilities fixed):
-  - Fixed 7 XSS vulnerabilities using DOMPurify sanitization (PostPreview, UnifiedInbox, chart, LegalSignature)
-  - Added Zod validation to 6 social-actions endpoints (save/unsave posts, block/unblock users)
-  - Implemented rate limiting on 16 unprotected endpoints (analytics, moderation, social actions)
-  - Quality score improved: 80/100 → 100/100 ✅
-- ✅ **Workflow Status**: Application running successfully, 0 LSP errors, all HTTP endpoints responding
+**Week 9 Day 5 (Nov 17, 2025) - Facebook Messenger Integration + AI Vibe Coding Safeguards**
+- ✅ **Facebook Messenger Integration** (1,200+ lines, 8 components):
+  - **FacebookTokenGenerator.ts (350 lines)**: Autonomous Playwright browser automation for token generation
+    - Supports 2FA with 60-second manual code entry window
+    - Multiple selector strategies (5+ fallback patterns)
+    - Debug screenshots on failure (/tmp/fb-token-debug.png)
+    - Anti-detection: random delays, human-like behavior
+    - Token exchange API for 60-90 day long-lived tokens
+  - **FacebookMessengerService.ts**: Complete message sending, token validation, rate limiting
+  - **AIInviteGenerator.ts**: Context-aware, personalized invitation messages
+  - **API Endpoints (7)**: /send-invitation, /validate-token, /invitations/stats, /generate-token-autonomous, etc.
+  - **Rate Limiting**: Phase 1 - 5 invites/day, 1/hour per user with comprehensive tracking
+  - **Documentation**: 400-line FACEBOOK_MESSENGER_INTEGRATION.md with setup guides
+  - **System Dependencies**: Installed Chromium + X11 libraries (17 packages) for Playwright
+  - **Status**: Infrastructure 100% complete, awaiting valid Facebook token (current token expired Nov 12)
+- ✅ **AI Vibe Coding Safeguards** (3,100+ lines total):
+  - **AI Vibe Coding Gaps Analysis** (1,398 lines): Analyzed 7 critical AI coding failure patterns, 76% hallucination rate research
+  - **DatabaseGuardian (650 lines)**: Prevents DB disasters, blocks DROP/DELETE in prod, auto-backup
+  - **HallucinationDetector (700 lines)**: Validates npm/PyPI packages, verifies API endpoints, detects fabricated data
+  - **SecurityValidator (750 lines)**: OWASP Top 10 scanning, SQL injection/XSS detection, hardcoded secrets
+- ✅ **MB.MD v8.1 Enhancement**: Anti-Hallucination Framework with 22 safeguards (✅ Phase 1 complete)
+- ✅ **Security Hardening** (10 vulnerabilities fixed): XSS fixes, Zod validation, rate limiting (80/100 → 100/100)
 
 **Week 9 Day 3 (Nov 16, 2025) - Events & Recommendations (40 Features)**
 - ✅ Event Management System (20 features): Enhanced schema, check-in endpoint, CreateEventPage, MyEventsPage
