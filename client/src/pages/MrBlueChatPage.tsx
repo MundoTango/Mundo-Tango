@@ -147,7 +147,7 @@ export default function MrBlueChatPage() {
       <div className="h-screen flex flex-col" data-testid="page-mr-blue">
         {/* Header */}
         <div className="border-b glass-topbar p-4">
-          <div className="container mx-auto max-w-4xl">
+          <div className="container mx-auto max-w-6xl">
             <div className="flex items-center gap-3 mb-3">
               <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                 <Bot className="h-6 w-6 text-primary" />
@@ -160,7 +160,7 @@ export default function MrBlueChatPage() {
                   </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  {sessionId ? "Volunteer Interview Session" : "Your intelligent assistant"}
+                  {sessionId ? "Volunteer Interview Session" : "Your intelligent assistant with Computer Use automation"}
                 </p>
               </div>
               <Sparkles className="h-5 w-5 text-primary" />
@@ -245,9 +245,28 @@ export default function MrBlueChatPage() {
           </div>
         </div>
 
-        {/* Messages */}
-        <ScrollArea className="flex-1 p-4">
-          <div className="container mx-auto max-w-4xl space-y-4">
+        {/* Main Content with Tabs */}
+        <div className="flex-1 overflow-hidden">
+          <Tabs defaultValue="chat" className="h-full flex flex-col">
+            <div className="border-b px-4">
+              <div className="container mx-auto max-w-6xl">
+                <TabsList className="w-full justify-start">
+                  <TabsTrigger value="chat" className="gap-2" data-testid="tab-chat">
+                    <Bot className="h-4 w-4" />
+                    AI Chat
+                  </TabsTrigger>
+                  <TabsTrigger value="automation" className="gap-2" data-testid="tab-automation">
+                    <Computer className="h-4 w-4" />
+                    Computer Use
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+            </div>
+
+            {/* Chat Tab */}
+            <TabsContent value="chat" className="flex-1 overflow-hidden mt-0 data-[state=active]:flex data-[state=active]:flex-col">
+              <ScrollArea className="flex-1 p-4">
+                <div className="container mx-auto max-w-4xl space-y-4">
             {messages.map((message, idx) => (
               <motion.div
                 key={message.id}
@@ -302,38 +321,50 @@ export default function MrBlueChatPage() {
               </motion.div>
             )}
             
-            <div ref={scrollRef} />
-          </div>
-        </ScrollArea>
+                  <div ref={scrollRef} />
+                </div>
+              </ScrollArea>
 
-        {/* Input */}
-        <div className="border-t glass-card p-4">
-          <div className="container mx-auto max-w-4xl">
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSend();
-              }}
-              className="flex gap-2"
-            >
-              <Input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask Mr Blue anything..."
-                disabled={isLoading}
-                className="flex-1"
-                data-testid="input-chat"
-              />
-              <Button
-                type="submit"
-                disabled={!input.trim() || isLoading}
-                size="icon"
-                data-testid="button-send"
-              >
-                <Send className="h-4 w-4" />
-              </Button>
-            </form>
-          </div>
+              {/* Chat Input */}
+              <div className="border-t glass-card p-4">
+                <div className="container mx-auto max-w-4xl">
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleSend();
+                    }}
+                    className="flex gap-2"
+                  >
+                    <Input
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      placeholder="Ask Mr Blue anything..."
+                      disabled={isLoading}
+                      className="flex-1"
+                      data-testid="input-chat"
+                    />
+                    <Button
+                      type="submit"
+                      disabled={!input.trim() || isLoading}
+                      size="icon"
+                      data-testid="button-send"
+                    >
+                      <Send className="h-4 w-4" />
+                    </Button>
+                  </form>
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* Computer Use Tab */}
+            <TabsContent value="automation" className="flex-1 overflow-hidden mt-0">
+              <ScrollArea className="h-full p-4">
+                <div className="container mx-auto max-w-6xl">
+                  <ComputerUseAutomation />
+                </div>
+              </ScrollArea>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </>
