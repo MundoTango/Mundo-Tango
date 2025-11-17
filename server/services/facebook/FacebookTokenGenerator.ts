@@ -1,14 +1,26 @@
 /**
- * FACEBOOK TOKEN GENERATOR - AUTONOMOUS BROWSER AUTOMATION
- * Uses Playwright to automate Facebook Developer Console token generation
+ * FACEBOOK TOKEN GENERATOR - AUTONOMOUS BROWSER AUTOMATION (STEALTH MODE)
+ * Uses Playwright Extra + Stealth Plugin to bypass Facebook's bot detection
  * Leverages Mr. Blue's "computer use" capabilities for autonomous setup
+ * 
+ * STEALTH FEATURES:
+ * - Removes navigator.webdriver flag
+ * - Custom User-Agent + browser fingerprint masking
+ * - Human-like behavioral simulation (random delays, mouse movements, typing cadence)
+ * - Canvas/WebGL fingerprint randomization
+ * - Residential proxy support
  * 
  * Security: Credentials stored in environment variables, never logged
  * 2FA Support: Manual code entry when prompted
  * Token Persistence: Auto-saves to environment variables
  */
 
-import { chromium, Browser, Page, BrowserContext } from 'playwright';
+import { chromium as playwrightChromium } from 'playwright-extra';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+import type { Browser, Page, BrowserContext } from 'playwright';
+
+// Add stealth plugin to bypass Facebook detection
+playwrightChromium.use(StealthPlugin());
 
 interface TokenGenerationResult {
   success: boolean;
@@ -41,48 +53,175 @@ export class FacebookTokenGenerator {
   }
 
   /**
-   * Initialize Playwright browser
+   * Simulate human-like mouse movements
+   */
+  private async simulateHumanMouseMovement(): Promise<void> {
+    if (!this.page) return;
+
+    const x = Math.floor(Math.random() * 800) + 200;
+    const y = Math.floor(Math.random() * 600) + 100;
+    const steps = Math.floor(Math.random() * 10) + 5;
+
+    await this.page.mouse.move(x, y, { steps });
+    await this.delay(200, 500);
+  }
+
+  /**
+   * Simulate human-like scrolling
+   */
+  private async simulateHumanScroll(): Promise<void> {
+    if (!this.page) return;
+
+    const scrollAmount = Math.floor(Math.random() * 300) + 100;
+    await this.page.evaluate((amount) => {
+      window.scrollBy({ top: amount, behavior: 'smooth' });
+    }, scrollAmount);
+    await this.delay(500, 1500);
+  }
+
+  /**
+   * Initialize Playwright browser with STEALTH MODE
    */
   private async initBrowser(headless: boolean = false): Promise<void> {
-    this.log('Initializing browser...');
-    this.browser = await chromium.launch({
+    this.log('Initializing browser with stealth mode...');
+    
+    // Launch with stealth plugin + anti-detection args
+    this.browser = await playwrightChromium.launch({
       headless,
       args: [
         '--disable-blink-features=AutomationControlled',
         '--no-sandbox',
-        '--disable-setuid-sandbox'
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--window-size=1920,1080',
+        '--disable-web-security',
+        '--disable-features=IsolateOrigins,site-per-process'
       ]
     });
 
+    // Create context with realistic browser fingerprint
     this.context = await this.browser.newContext({
-      viewport: { width: 1280, height: 720 },
-      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
+      viewport: { width: 1920, height: 1080 },
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      locale: 'en-US',
+      timezoneId: 'America/New_York',
+      permissions: ['geolocation'],
+      extraHTTPHeaders: {
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'Upgrade-Insecure-Requests': '1'
+      }
     });
 
     this.page = await this.context.newPage();
-    this.log('Browser initialized successfully');
+    
+    // Inject anti-detection scripts
+    await this.injectStealthScripts();
+    
+    this.log('✅ Browser initialized with stealth mode (Facebook detection bypass active)');
   }
 
   /**
-   * Login to Facebook with 2FA support
+   * Inject stealth scripts to mask automation
+   */
+  private async injectStealthScripts(): Promise<void> {
+    if (!this.page) return;
+
+    // Remove webdriver flag
+    await this.page.addInitScript(() => {
+      Object.defineProperty(navigator, 'webdriver', {
+        get: () => undefined
+      });
+    });
+
+    // Mask Chrome automation
+    await this.page.addInitScript(() => {
+      // @ts-ignore
+      window.navigator.chrome = {
+        runtime: {}
+      };
+    });
+
+    // Randomize Canvas fingerprint
+    await this.page.addInitScript(() => {
+      const originalToDataURL = HTMLCanvasElement.prototype.toDataURL;
+      HTMLCanvasElement.prototype.toDataURL = function(...args) {
+        const dataURL = originalToDataURL.apply(this, args);
+        const noise = Math.random() * 0.0001;
+        return dataURL.slice(0, -10) + noise + dataURL.slice(-10);
+      };
+    });
+
+    // Mask WebGL fingerprint
+    await this.page.addInitScript(() => {
+      const getParameter = WebGLRenderingContext.prototype.getParameter;
+      WebGLRenderingContext.prototype.getParameter = function(parameter) {
+        if (parameter === 37445) {
+          return 'Intel Inc.';
+        }
+        if (parameter === 37446) {
+          return 'Intel Iris OpenGL Engine';
+        }
+        return getParameter.call(this, parameter);
+      };
+    });
+
+    this.log('Anti-detection scripts injected');
+  }
+
+  /**
+   * Login to Facebook with 2FA support + HUMAN-LIKE BEHAVIOR
    */
   private async loginToFacebook(email: string, password: string): Promise<boolean> {
     if (!this.page) throw new Error('Browser not initialized');
 
     try {
       this.log('Navigating to Facebook...');
-      await this.page.goto('https://www.facebook.com/login', { waitUntil: 'domcontentloaded' });
-      await this.delay(2000, 3000);
+      await this.page.goto('https://www.facebook.com/login', { waitUntil: 'networkidle' });
+      await this.delay(2000, 4000);
 
-      this.log('Entering credentials...');
-      await this.page.fill('input[name="email"]', email);
+      // Random mouse movement before interaction
+      await this.simulateHumanMouseMovement();
+
+      this.log('Entering credentials with human-like typing...');
+      
+      // Click email field
+      const emailField = await this.page.locator('input[name="email"]');
+      await emailField.click();
+      await this.delay(300, 700);
+      
+      // Type email with random delays between characters (human-like)
+      for (const char of email) {
+        await this.page.keyboard.type(char);
+        await this.delay(50, 150);
+      }
       await this.delay(500, 1000);
-      await this.page.fill('input[name="pass"]', password);
-      await this.delay(500, 1000);
+
+      // Random mouse movement
+      await this.simulateHumanMouseMovement();
+
+      // Click password field
+      const passField = await this.page.locator('input[name="pass"]');
+      await passField.click();
+      await this.delay(300, 700);
+      
+      // Type password with random delays
+      for (const char of password) {
+        await this.page.keyboard.type(char);
+        await this.delay(50, 150);
+      }
+      await this.delay(700, 1500);
+
+      // Random mouse movement before clicking login
+      await this.simulateHumanMouseMovement();
 
       this.log('Clicking login button...');
       await this.page.click('button[name="login"]');
-      await this.delay(3000, 5000);
+      await this.delay(4000, 6000);
 
       // Check for 2FA prompt
       const has2FA = await this.page.locator('text=/code|verification|two.*factor/i').count() > 0;
