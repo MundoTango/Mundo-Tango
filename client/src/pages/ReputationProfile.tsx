@@ -36,8 +36,9 @@ export default function ReputationProfile() {
 
   // Fetch endorsements
   const { data: endorsements, isLoading: endorsementsLoading } = useQuery({
-    queryKey: ["/api/endorsements", userId, selectedRole !== "all" ? selectedRole : undefined],
-    queryKey: selectedRole === "all" ? ["/api/endorsements", userId] : ["/api/endorsements", userId],
+    queryKey: selectedRole === "all" 
+      ? ["/api/endorsements", userId] 
+      : ["/api/endorsements", userId, selectedRole],
     queryFn: async () => {
       const url =
         selectedRole === "all"
