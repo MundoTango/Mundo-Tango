@@ -293,6 +293,52 @@ router.post("/railway", async (req: Request, res: Response) => {
   }
 });
 
+// Facebook Messenger Webhook Handler
+// Receives messages from Facebook Messenger to capture PSIDs
+router.get("/facebook", (req: Request, res: Response) => {
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+  
+  const VERIFY_TOKEN = process.env.FACEBOOK_VERIFY_TOKEN || 'MUNDO_TANGO_VERIFY_TOKEN';
+  
+  if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+    console.log('✅ [Facebook Webhook] Verified!');
+    res.status(200).send(challenge);
+  } else {
+    console.error('❌ [Facebook Webhook] Verification failed');
+    res.sendStatus(403);
+  }
+});
+
+router.post("/facebook", (req: Request, res: Response) => {
+  const body = req.body;
+  
+  if (body.object === 'page') {
+    body.entry?.forEach((entry: any) => {
+      const webhookEvent = entry.messaging?.[0];
+      
+      if (webhookEvent?.message) {
+        const senderPSID = webhookEvent.sender.id;
+        const messageText = webhookEvent.message.text;
+        
+        console.log('\n🎉 [Facebook Webhook] MESSAGE RECEIVED!');
+        console.log('═══════════════════════════════════════════');
+        console.log('Sender PSID:', senderPSID);
+        console.log('Message:', messageText);
+        console.log('═══════════════════════════════════════════\n');
+        console.log('✅ TO SEND INVITATION, RUN:');
+        console.log(`npx tsx scripts/send-invitation-direct.ts ${process.env.FACEBOOK_PAGE_ACCESS_TOKEN?.substring(0, 20)}... ${senderPSID}`);
+        console.log('');
+      }
+    });
+    
+    res.status(200).send('EVENT_RECEIVED');
+  } else {
+    res.sendStatus(404);
+  }
+});
+
 // Health check endpoint
 router.get("/health", (req: Request, res: Response) => {
   res.json({ status: 'ok', message: 'Webhook handlers are running' });
