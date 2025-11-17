@@ -92,6 +92,11 @@ export const users = pgTable("users", {
   privacySettings: jsonb("privacy_settings"),
   verificationBadge: boolean("verification_badge").default(false),
   portfolioUrls: text("portfolio_urls").array(),
+  
+  // WEEK 9 DAY 5: Facebook Messenger Integration
+  facebookPSID: varchar("facebook_psid", { length: 100 }).unique(),
+  facebookMessengerOptIn: boolean("facebook_messenger_opt_in").default(false),
+  facebookLastMessageAt: timestamp("facebook_last_message_at"),
 }, (table) => ({
   emailIdx: index("users_email_idx").on(table.email),
   usernameIdx: index("users_username_idx").on(table.username),

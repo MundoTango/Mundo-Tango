@@ -123,6 +123,7 @@ import scrapingAdminRoutes from "./routes/scraping-admin-routes";
 import facebookScraperRoutes from "./routes/facebook-scraper-routes";
 import facebookImportRoutes from "./routes/facebook-import-routes";
 import facebookMessengerRoutes from "./routes/facebook-messenger-routes";
+import facebookWebhooksRoutes from "./routes/facebook-webhooks";
 import socialIntegrationRoutes from "./routes/social-integration-routes";
 import aiSelectorRoutes from "./routes/ai-selector-routes";
 import journeyRoutes from "./routes/journey-routes";
@@ -483,6 +484,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/scraper/facebook", facebookScraperRoutes);
   app.use("/api/facebook", facebookImportRoutes);
   app.use("/api/facebook", facebookMessengerRoutes);
+  app.use("", facebookWebhooksRoutes); // Facebook Messenger Platform webhooks (no /api prefix)
   app.use("/api", aiSelectorRoutes);
   app.use("/api/billing", billingRoutes);
   app.use("/api/onboarding", onboardingRoutes);
