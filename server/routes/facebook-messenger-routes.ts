@@ -16,6 +16,44 @@ import crypto from 'crypto';
 const router = Router();
 
 // ============================================================================
+// PHASE 1: TOKEN VALIDATION (P0 CRITICAL)
+// ============================================================================
+
+router.get('/validate-token', async (req, res) => {
+  try {
+    console.log('[API] Testing Facebook token validation...');
+    const result = await FacebookMessengerService.validateToken();
+    
+    if (result.isValid) {
+      return res.json({
+        success: true,
+        message: '✅ Facebook token is VALID',
+        token: {
+          appId: result.appId,
+          userId: result.userId,
+          expiresAt: result.expiresAt,
+          scopes: result.scopes,
+          neverExpires: !result.expiresAt
+        }
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: '❌ Facebook token is INVALID',
+        error: result.error,
+        details: result.details
+      });
+    }
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      message: 'Token validation failed',
+      error: error.message
+    });
+  }
+});
+
+// ============================================================================
 // GENERATE INVITE MESSAGE
 // ============================================================================
 

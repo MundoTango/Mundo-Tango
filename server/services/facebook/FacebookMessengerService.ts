@@ -188,6 +188,91 @@ export class FacebookMessengerService {
   }
 
   /**
+   * PHASE 1: Validate Facebook token (P0 CRITICAL)
+   * Uses /debug_token endpoint to verify token validity, expiration, scopes
+   */
+  static async validateToken(): Promise<{
+    isValid: boolean;
+    appId?: string;
+    expiresAt?: Date;
+    scopes?: string[];
+    userId?: string;
+    error?: string;
+    details?: any;
+  }> {
+    if (!this.accessToken) {
+      return {
+        isValid: false,
+        error: 'FACEBOOK_PAGE_ACCESS_TOKEN not configured in environment variables'
+      };
+    }
+
+    try {
+      // Use debug_token endpoint to validate
+      const response = await axios.get(
+        `${this.GRAPH_API_URL}/debug_token`,
+        {
+          params: {
+            input_token: this.accessToken,
+            access_token: this.accessToken
+          }
+        }
+      );
+
+      const data = response.data.data;
+
+      // Check if token is valid
+      if (!data.is_valid) {
+        return {
+          isValid: false,
+          error: 'Token is marked as invalid by Facebook',
+          details: data
+        };
+      }
+
+      // Check expiration (0 = never expires, otherwise timestamp)
+      let expiresAt: Date | undefined;
+      if (data.expires_at && data.expires_at > 0) {
+        expiresAt = new Date(data.expires_at * 1000);
+        
+        // Check if already expired
+        if (expiresAt < new Date()) {
+          return {
+            isValid: false,
+            error: `Token expired on ${expiresAt.toISOString()}`,
+            expiresAt,
+            details: data
+          };
+        }
+      }
+
+      console.log('[Facebook] Token validation SUCCESS:', {
+        appId: data.app_id,
+        userId: data.user_id,
+        scopes: data.scopes,
+        expiresAt: expiresAt ? expiresAt.toISOString() : 'Never',
+        type: data.type
+      });
+
+      return {
+        isValid: true,
+        appId: data.app_id,
+        expiresAt,
+        scopes: data.scopes || [],
+        userId: data.user_id,
+        details: data
+      };
+    } catch (error: any) {
+      console.error('[Facebook] Token validation FAILED:', error.response?.data || error.message);
+      return {
+        isValid: false,
+        error: error.response?.data?.error?.message || error.message,
+        details: error.response?.data
+      };
+    }
+  }
+
+  /**
    * Verify Facebook API connection
    */
   static async verifyConnection(): Promise<boolean> {
@@ -208,9 +293,21 @@ export class FacebookMessengerService {
       );
 
       console.log('[Facebook] Connection verified:', response.data);
+      
+      // PHASE 0A: Process response headers
+      if (this.monitoringEnabled && response.headers) {
+        await this.processResponseHeaders(response.headers);
+      }
+      
       return true;
     } catch (error: any) {
       console.error('[Facebook] Connection verification failed:', error.response?.data || error.message);
+      
+      // PHASE 0A: Handle API error
+      if (this.monitoringEnabled) {
+        await this.handleAPIError(error);
+      }
+      
       return false;
     }
   }
