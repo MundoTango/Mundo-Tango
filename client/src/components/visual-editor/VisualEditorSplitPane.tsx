@@ -25,9 +25,10 @@ const CodePreview = lazy(() => import('./CodePreview').then(module => ({ default
 interface VisualEditorSplitPaneProps {
   isOpen: boolean;
   onClose: () => void;
+  embeddedMode?: boolean;
 }
 
-export function VisualEditorSplitPane({ isOpen, onClose }: VisualEditorSplitPaneProps) {
+export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }: VisualEditorSplitPaneProps) {
   const [selectedComponent, setSelectedComponent] = useState<SelectedComponent | null>(null);
   const [selectedIframeElement, setSelectedIframeElement] = useState<HTMLElement | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);

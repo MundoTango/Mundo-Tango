@@ -17,11 +17,10 @@ import { MrBlueWidget } from "./components/MrBlueWidget";
 import { GlobalMrBlue } from "./components/mrblue/GlobalMrBlue";
 import { ChatSidePanel } from "./components/mrblue/ChatSidePanel";
 import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
-import { BlitzNowButton } from "./components/BlitzNowButton";
 import { LoadingFallback } from "./components/LoadingFallback";
 
-// Lazy load heavy components
-const UnifiedMrBlue = lazy(() => import("./components/mrBlue/UnifiedMrBlue"));
+// Lazy load heavy components - Updated to use new unified interface
+const UnifiedMrBlue = lazy(() => import("./components/mr-blue/UnifiedMrBlue"));
 const VisualEditorSplitPane = lazy(() => import("./components/visual-editor/VisualEditorSplitPane"));
 
 // Core Pages (loaded immediately for fast initial render)
@@ -72,6 +71,7 @@ const MemoriesPage = lazy(() => import("@/pages/MemoriesPage"));
 const CommunityWorldMapPage = lazy(() => import("@/pages/CommunityWorldMapPage"));
 const RecommendationsPage = lazy(() => import("@/pages/RecommendationsPage"));
 const InvitationsPage = lazy(() => import("@/pages/InvitationsPage"));
+const FacebookInvites = lazy(() => import("@/pages/FacebookInvites"));
 const FavoritesPage = lazy(() => import("@/pages/FavoritesPage"));
 
 // Events & Groups
@@ -369,8 +369,8 @@ function Router() {
       <Route path="/gamification" component={GamificationDashboard} />
       <Route path="/talent-match" component={TalentMatchPage} />
       <Route path="/mr-blue">
-        <Suspense fallback={<LoadingFallback />}>
-          <MrBlueChatPage />
+        <Suspense fallback={<LoadingFallback message="Loading Mr Blue..." />}>
+          <UnifiedMrBlue />
         </Suspense>
       </Route>
       <Route path="/mr-blue-chat">
@@ -467,6 +467,14 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <InvitationsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/facebook-invites">
+        <ProtectedRoute>
+          <AppLayout>
+            <FacebookInvites />
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -1734,7 +1742,6 @@ function App() {
                   <GlobalMrBlue />
                   <ChatSidePanel />
                   {!isOnVisualEditorPage && <MrBlueFloatingButton />}
-                  {!isOnVisualEditorPage && <BlitzNowButton />}
                   {isVisualEditorOpen && (
                     <Suspense fallback={<LoadingFallback />}>
                       <VisualEditorSplitPane 

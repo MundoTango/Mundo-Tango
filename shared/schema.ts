@@ -11499,6 +11499,38 @@ export type InsertSecurityAlert = z.infer<typeof insertSecurityAlertSchema>;
 export type SelectSecurityAlert = typeof securityAlerts.$inferSelect;
 
 // ============================================================================
+// FACEBOOK MESSENGER INVITE SYSTEM (Part 10)
+// ============================================================================
+
+export const friendInvitations = pgTable("friend_invitations", {
+  id: serial("id").primaryKey(),
+  invitedBy: integer("invited_by").notNull().references(() => users.id, { onDelete: "cascade" }),
+  invitedFriendName: varchar("invited_friend_name", { length: 255 }).notNull(),
+  invitedFriendEmail: varchar("invited_friend_email", { length: 255 }),
+  invitedFriendFacebookId: varchar("invited_friend_facebook_id", { length: 100 }),
+  inviteCode: varchar("invite_code", { length: 50 }).notNull().unique(),
+  inviteMessage: text("invite_message"),
+  sentVia: varchar("sent_via", { length: 50 }), // "facebook_messenger", "email"
+  sentAt: timestamp("sent_at").defaultNow(),
+  opened: boolean("opened").default(false),
+  openedAt: timestamp("opened_at"),
+  registered: boolean("registered").default(false),
+  registeredAt: timestamp("registered_at"),
+  closenessScore: integer("closeness_score"),
+}, (table) => ({
+  invitedByIdx: index("friend_invitations_invited_by_idx").on(table.invitedBy),
+  inviteCodeIdx: uniqueIndex("friend_invitations_invite_code_idx").on(table.inviteCode),
+  emailIdx: index("friend_invitations_email_idx").on(table.invitedFriendEmail),
+  facebookIdIdx: index("friend_invitations_facebook_id_idx").on(table.invitedFriendFacebookId),
+  sentAtIdx: index("friend_invitations_sent_at_idx").on(table.sentAt),
+}));
+
+export const insertFriendInvitationSchema = createInsertSchema(friendInvitations)
+  .omit({ id: true, sentAt: true });
+export type InsertFriendInvitation = z.infer<typeof insertFriendInvitationSchema>;
+export type SelectFriendInvitation = typeof friendInvitations.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
