@@ -26,6 +26,7 @@ const VisualEditorSplitPane = lazy(() => import("./components/visual-editor/Visu
 // Core Pages (loaded immediately for fast initial render)
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/HomePage";
+import LandingPage from "@/pages/LandingPage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import MarketingPrototype from "@/pages/MarketingPrototype";
@@ -66,6 +67,17 @@ const UnifiedInboxPage = lazy(() => import("@/pages/messages/UnifiedInbox"));
 const ChannelConnectionsPage = lazy(() => import("@/pages/messages/ChannelConnections"));
 const MessageTemplatesPage = lazy(() => import("@/pages/messages/Templates"));
 const MessageAutomationsPage = lazy(() => import("@/pages/messages/Automations"));
+
+// New Messaging Pages (Pages 21-24)
+const DirectMessagesPage = lazy(() => import("@/pages/messages/DirectMessages"));
+const GroupChatPage = lazy(() => import("@/pages/messages/GroupChat"));
+const MessageThreadsPage = lazy(() => import("@/pages/messages/MessageThreads"));
+
+// Subscription & Billing Pages (Pages 25-28)
+const SubscriptionPlansPage = lazy(() => import("@/pages/SubscriptionPlans"));
+const PaymentIntegrationPage = lazy(() => import("@/pages/PaymentIntegration"));
+const BillingHistoryPage = lazy(() => import("@/pages/BillingHistory"));
+const InvoiceManagementPage = lazy(() => import("@/pages/InvoiceManagement"));
 
 const NotificationsPage = lazy(() => import("@/pages/NotificationsPage"));
 const SearchPage = lazy(() => import("@/pages/SearchPage"));
@@ -358,10 +370,22 @@ const VisualEditorPage = lazy(() => import("@/pages/VisualEditorPage"));
 function Router() {
   return (
     <Switch>
-      <Route path="/">
+      <Route path="/" component={LandingPage} />
+      <Route path="/dashboard">
         <ProtectedRoute>
           <AppLayout>
-            <FeedPage />
+            <Suspense fallback={<LoadingFallback />}>
+              <FeedPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/feed">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <FeedPage />
+            </Suspense>
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -795,6 +819,27 @@ function Router() {
           <AppLayout>
             <MessageAutomationsPage />
           </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* New Messaging Pages (Pages 22-24) */}
+      <Route path="/messages/threads">
+        <ProtectedRoute>
+          <AppLayout>
+            <MessageThreadsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/messages/direct/:userId">
+        <ProtectedRoute>
+          <DirectMessagesPage />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/messages/group/:groupId">
+        <ProtectedRoute>
+          <GroupChatPage />
         </ProtectedRoute>
       </Route>
 
@@ -1269,6 +1314,40 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <BillingPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* New Billing Pages (Pages 27-28) */}
+      <Route path="/billing/history">
+        <ProtectedRoute>
+          <AppLayout>
+            <BillingHistoryPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/billing/invoice/:invoiceId">
+        <ProtectedRoute>
+          <AppLayout>
+            <InvoiceManagementPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* Subscription Pages (Pages 25-26) */}
+      <Route path="/subscription">
+        <ProtectedRoute>
+          <AppLayout>
+            <SubscriptionPlansPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/payment/:planId">
+        <ProtectedRoute>
+          <AppLayout>
+            <PaymentIntegrationPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>

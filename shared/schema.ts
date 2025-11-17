@@ -11698,6 +11698,50 @@ export type InsertPlanProgress = z.infer<typeof insertPlanProgressSchema>;
 export type SelectPlanProgress = typeof planProgress.$inferSelect;
 
 // ============================================================================
+// SUBSCRIPTION & BILLING (PAGES 25-28)
+// ============================================================================
+
+export const subscriptionPlans = pgTable("subscription_plans", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 50 }).notNull(),
+  price: integer("price").notNull(), // cents
+  billingCycle: varchar("billing_cycle", { length: 20 }).notNull(), // 'monthly', 'annual'
+  features: jsonb("features"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  nameIdx: index("subscription_plans_name_idx").on(table.name),
+  activeIdx: index("subscription_plans_active_idx").on(table.isActive),
+}));
+
+export const insertSubscriptionPlanSchema = createInsertSchema(subscriptionPlans)
+  .omit({ id: true, createdAt: true });
+export type InsertSubscriptionPlan = z.infer<typeof insertSubscriptionPlanSchema>;
+export type SelectSubscriptionPlan = typeof subscriptionPlans.$inferSelect;
+
+export const invoices = pgTable("invoices", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  planId: integer("plan_id").references(() => subscriptionPlans.id),
+  amount: integer("amount").notNull(),
+  status: varchar("status", { length: 20 }).notNull(), // 'paid', 'pending', 'failed'
+  pdfUrl: text("pdf_url"),
+  items: jsonb("items"),
+  stripeInvoiceId: varchar("stripe_invoice_id"),
+  stripePaymentIntentId: varchar("stripe_payment_intent_id"),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  userIdx: index("invoices_user_idx").on(table.userId),
+  statusIdx: index("invoices_status_idx").on(table.status),
+  createdAtIdx: index("invoices_created_at_idx").on(table.createdAt),
+}));
+
+export const insertInvoiceSchema = createInsertSchema(invoices)
+  .omit({ id: true, createdAt: true });
+export type InsertInvoice = z.infer<typeof insertInvoiceSchema>;
+export type SelectInvoice = typeof invoices.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 

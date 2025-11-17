@@ -127,6 +127,7 @@ import aiSelectorRoutes from "./routes/ai-selector-routes";
 import billingRoutes from "./routes/billing-routes";
 import onboardingRoutes from "./routes/onboarding-routes";
 import messagesRoutes from "./routes/messages-routes";
+import { registerMessagingRoutes } from "./routes/messaging-routes";
 import adsRoutes from "./routes/ads-routes";
 import revenueRoutes from "./routes/revenue-routes";
 import volunteerTestingRoutes from "./routes/volunteerTesting";
@@ -478,6 +479,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/billing", billingRoutes);
   app.use("/api/onboarding", onboardingRoutes);
   app.use("/api/messages", messagesRoutes);
+  registerMessagingRoutes(app); // New messaging routes for direct messages, group chats, and threads
   app.use("/api/ads", adsRoutes);
   app.use("/api/admin/ads", adsRoutes);
   app.use("/api/revenue", revenueRoutes);
