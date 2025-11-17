@@ -165,10 +165,7 @@ export function MrBlueStudio() {
 
               {/* Vibe Coding Tab */}
               <TabsContent value="vibecode" className="space-y-4">
-                <VibeCodingInterface
-                  onGenerating={() => setAvatarState('thinking')}
-                  onComplete={() => setAvatarState('happy')}
-                />
+                <VibeCodingInterface />
               </TabsContent>
 
               {/* Voice Cloning Tab */}
