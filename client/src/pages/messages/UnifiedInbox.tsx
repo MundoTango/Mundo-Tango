@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { ComposeMessage } from "@/components/messages/ComposeMessage";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import DOMPurify from 'dompurify';
 
 const channelIcons = {
   mt: MessageCircle,
@@ -273,7 +274,7 @@ export default function UnifiedInbox() {
             <ScrollArea className="flex-1 p-6">
               <div className="prose max-w-none" data-testid="preview-body">
                 {selectedMessage.htmlBody ? (
-                  <div dangerouslySetInnerHTML={{ __html: selectedMessage.htmlBody }} />
+                  <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedMessage.htmlBody) }} />
                 ) : (
                   <p className="whitespace-pre-wrap">{selectedMessage.body}</p>
                 )}

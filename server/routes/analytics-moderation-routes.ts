@@ -16,12 +16,16 @@ import {
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { eq, and, gte, desc, count, sql } from "drizzle-orm";
 import { AnalyticsService } from "../services/AnalyticsService";
+import { apiRateLimiter } from "../middleware/rateLimiter";
 // Temporarily disabled profanity filter due to import issues
 // import * as BadWordsModule from "bad-words";
 // const Filter = (BadWordsModule as any).default || BadWordsModule;
 // const profanityFilter = new Filter();
 
 const router = Router();
+
+// Apply rate limiting to all routes
+router.use(apiRateLimiter);
 
 // ============================================================================
 // ANALYTICS ROUTES

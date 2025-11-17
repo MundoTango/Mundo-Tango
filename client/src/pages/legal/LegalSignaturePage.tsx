@@ -29,6 +29,7 @@ import { SignaturePad } from "@/components/legal/SignaturePad";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import DOMPurify from 'dompurify';
 
 export default function LegalSignaturePage() {
   const { id } = useParams<{ id: string }>();
@@ -253,7 +254,7 @@ export default function LegalSignaturePage() {
           <ScrollArea className="h-[400px] rounded-lg border p-6">
             <div 
               className="prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: mockDocument.content }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(mockDocument.content) }}
             />
           </ScrollArea>
         </CardContent>

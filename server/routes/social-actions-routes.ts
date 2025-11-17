@@ -12,21 +12,48 @@
  */
 
 import { Router } from 'express';
+import { z } from 'zod';
 import { db } from '@db';
 import { blockedUsers, savedPosts, posts, users } from '@shared/schema';
 import { eq, and, desc } from 'drizzle-orm';
-import { authenticateToken } from '../middleware/auth';
+import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { handleErrors } from '../middleware/errorHandler';
+import { apiRateLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
+
+// Apply rate limiting to all routes
+router.use(apiRateLimiter);
+
+// Validation schemas
+const userIdParamSchema = z.object({
+  id: z.string().transform((val) => {
+    const num = parseInt(val, 10);
+    if (isNaN(num) || num <= 0) {
+      throw new Error('Invalid user ID');
+    }
+    return num;
+  }),
+});
+
+const postIdParamSchema = z.object({
+  id: z.string().transform((val) => {
+    const num = parseInt(val, 10);
+    if (isNaN(num) || num <= 0) {
+      throw new Error('Invalid post ID');
+    }
+    return num;
+  }),
+});
 
 /**
  * POST /api/users/:id/block
  * Block a user
  */
-router.post('/users/:id/block', authenticateToken, handleErrors(async (req, res) => {
+router.post('/users/:id/block', authenticateToken, handleErrors(async (req: AuthRequest, res) => {
+  // Validate params
+  const { id: blockedId } = userIdParamSchema.parse(req.params);
   const blockerId = req.userId!;
-  const blockedId = parseInt(req.params.id);
 
   if (blockerId === blockedId) {
     return res.status(400).json({ error: 'Cannot block yourself' });
@@ -56,9 +83,10 @@ router.post('/users/:id/block', authenticateToken, handleErrors(async (req, res)
  * DELETE /api/users/:id/block
  * Unblock a user
  */
-router.delete('/users/:id/block', authenticateToken, handleErrors(async (req, res) => {
+router.delete('/users/:id/block', authenticateToken, handleErrors(async (req: AuthRequest, res) => {
+  // Validate params
+  const { id: blockedId } = userIdParamSchema.parse(req.params);
   const blockerId = req.userId!;
-  const blockedId = parseInt(req.params.id);
 
   await db.delete(blockedUsers).where(
     and(
@@ -74,7 +102,7 @@ router.delete('/users/:id/block', authenticateToken, handleErrors(async (req, re
  * GET /api/users/blocked
  * Get list of blocked users
  */
-router.get('/users/blocked', authenticateToken, handleErrors(async (req, res) => {
+router.get('/users/blocked', authenticateToken, handleErrors(async (req: AuthRequest, res) => {
   const userId = req.userId!;
 
   const blocked = await db
@@ -100,9 +128,10 @@ router.get('/users/blocked', authenticateToken, handleErrors(async (req, res) =>
  * POST /api/posts/:id/save
  * Save a post
  */
-router.post('/posts/:id/save', authenticateToken, handleErrors(async (req, res) => {
+router.post('/posts/:id/save', authenticateToken, handleErrors(async (req: AuthRequest, res) => {
+  // Validate params
+  const { id: postId } = postIdParamSchema.parse(req.params);
   const userId = req.userId!;
-  const postId = parseInt(req.params.id);
 
   // Check if post exists
   const post = await db.query.posts.findFirst({
@@ -137,9 +166,10 @@ router.post('/posts/:id/save', authenticateToken, handleErrors(async (req, res) 
  * DELETE /api/posts/:id/save
  * Unsave a post
  */
-router.delete('/posts/:id/save', authenticateToken, handleErrors(async (req, res) => {
+router.delete('/posts/:id/save', authenticateToken, handleErrors(async (req: AuthRequest, res) => {
+  // Validate params
+  const { id: postId } = postIdParamSchema.parse(req.params);
   const userId = req.userId!;
-  const postId = parseInt(req.params.id);
 
   await db.delete(savedPosts).where(
     and(
@@ -155,7 +185,7 @@ router.delete('/posts/:id/save', authenticateToken, handleErrors(async (req, res
  * GET /api/posts/saved
  * Get saved posts
  */
-router.get('/posts/saved', authenticateToken, handleErrors(async (req, res) => {
+router.get('/posts/saved', authenticateToken, handleErrors(async (req: AuthRequest, res) => {
   const userId = req.userId!;
 
   const saved = await db

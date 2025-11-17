@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Hash, Eye } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import DOMPurify from 'dompurify';
 
 interface PostPreviewProps {
   content: string;
@@ -57,7 +58,7 @@ export function PostPreview({
         {richContent ? (
           <div
             className="prose prose-sm max-w-none"
-            dangerouslySetInnerHTML={{ __html: richContent }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(richContent) }}
             data-testid="preview-rich-content"
           />
         ) : (
