@@ -112,12 +112,13 @@ export class AIBudgetBuilder {
       }, {} as Record<string, any[]>);
 
     return Object.entries(expensesByCategory).map(([category, txns]) => {
-      const totalSpent = txns.reduce((sum, t) => sum + parseFloat(t.amount.toString()), 0);
+      const txnArray = txns as any[];
+      const totalSpent = txnArray.reduce((sum: number, t: any) => sum + parseFloat(t.amount.toString()), 0);
       return {
         category,
         averageMonthly: totalSpent / months,
         totalSpent,
-        transactionCount: txns.length
+        transactionCount: txnArray.length
       };
     });
   }
@@ -152,7 +153,7 @@ export class AIBudgetBuilder {
 
     const subscriptions = spending.filter(s => 
       ['Entertainment', 'Streaming'].includes(s.category) && 
-      s.transactionCount > months * 0.8
+      s.transactionCount > 3
     );
     if (subscriptions.length > 3) {
       recommendations.push(`You have ${subscriptions.length} active subscriptions. Review and cancel unused services.`);

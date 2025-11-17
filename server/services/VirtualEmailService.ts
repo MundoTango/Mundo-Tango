@@ -1,5 +1,5 @@
 import { db } from '../db';
-import { virtualEmails, virtualEmailLogs } from '@shared/schema';
+import { virtualEmails, virtualEmailLogs, users } from '@shared/schema';
 import { eq, and, sql } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 
@@ -25,9 +25,11 @@ export class VirtualEmailService {
   private domain = 'mt-mail.mundotango.life';
 
   async createVirtualEmail(params: CreateVirtualEmailParams): Promise<VirtualEmail> {
-    const user = await db.query.users.findFirst({
-      where: (users, { eq }) => eq(users.id, params.userId)
-    });
+    const user = await db.select()
+      .from(users)
+      .where(eq(users.id, params.userId))
+      .limit(1)
+      .then(rows => rows[0]);
 
     if (!user) {
       throw new Error('User not found');
@@ -46,7 +48,12 @@ export class VirtualEmailService {
       spamCount: 0
     }).returning();
 
-    return email;
+    return {
+      ...email,
+      isActive: email.isActive ?? true,
+      emailCount: email.emailCount ?? 0,
+      spamCount: email.spamCount ?? 0
+    } as VirtualEmail;
   }
 
   async handleIncomingEmail(params: {
@@ -55,9 +62,11 @@ export class VirtualEmailService {
     subject: string;
     body: string;
   }): Promise<void> {
-    const virtualEmail = await db.query.virtualEmails.findFirst({
-      where: eq(virtualEmails.virtualEmail, params.to)
-    });
+    const virtualEmail = await db.select()
+      .from(virtualEmails)
+      .where(eq(virtualEmails.virtualEmail, params.to))
+      .limit(1)
+      .then(rows => rows[0]);
 
     if (!virtualEmail || !virtualEmail.isActive) {
       return;
@@ -152,8 +161,15 @@ export class VirtualEmailService {
   }
 
   async getUserVirtualEmails(userId: number): Promise<VirtualEmail[]> {
-    return await db.select()
+    const emails = await db.select()
       .from(virtualEmails)
       .where(eq(virtualEmails.userId, userId));
+    
+    return emails.map(email => ({
+      ...email,
+      isActive: email.isActive ?? true,
+      emailCount: email.emailCount ?? 0,
+      spamCount: email.spamCount ?? 0
+    })) as VirtualEmail[];
   }
 }

@@ -7317,5 +7317,472 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ============================================================================
+  // AI SERVICES CONSOLIDATION (Week 10-12)
+  // ============================================================================
+
+  console.log('[Server] Loading AI Services Consolidation routes...');
+  
+  const { MeshyService } = await import('./services/ai/MeshyService');
+  const { LumaService } = await import('./services/ai/LumaService');
+  const { HeyGenService } = await import('./services/ai/HeyGenService');
+  const { PomodoroService } = await import('./services/PomodoroService');
+  const { ProductivityAnalyticsService } = await import('./services/ProductivityAnalyticsService');
+  const { AIBudgetBuilder } = await import('./services/AIBudgetBuilder');
+  const { NaturalLanguageTalentSearch } = await import('./services/NaturalLanguageTalentSearch');
+  const { AIOutreachGenerator } = await import('./services/AIOutreachGenerator');
+  const { VirtualEmailService } = await import('./services/VirtualEmailService');
+  const { DarkWebMonitoringService } = await import('./services/DarkWebMonitoringService');
+
+  // ============================================================================
+  // MR BLUE AI CONTENT STUDIO
+  // ============================================================================
+
+  app.post("/api/content-studio/generate-3d", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const meshyService = new MeshyService();
+      const result = await meshyService.textTo3D({
+        userId: req.user!.id,
+        prompt: req.body.prompt,
+        quality: req.body.quality || 'draft',
+        style: req.body.style
+      });
+      res.json(result);
+    } catch (error) {
+      console.error('[ContentStudio] 3D generation error:', error);
+      res.status(500).json({ message: 'Failed to generate 3D model' });
+    }
+  });
+
+  app.post("/api/content-studio/image-to-3d", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const meshyService = new MeshyService();
+      const result = await meshyService.imageTo3D({
+        userId: req.user!.id,
+        imageUrls: req.body.imageUrls,
+        multiViewMode: req.body.multiViewMode || false,
+        targetPolycount: req.body.targetPolycount
+      });
+      res.json(result);
+    } catch (error) {
+      console.error('[ContentStudio] Image-to-3D error:', error);
+      res.status(500).json({ message: 'Failed to convert image to 3D' });
+    }
+  });
+
+  app.post("/api/content-studio/generate-video", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const lumaService = new LumaService();
+      const result = await lumaService.textToVideo({
+        userId: req.user!.id,
+        prompt: req.body.prompt,
+        duration: req.body.duration || 5,
+        aspectRatio: req.body.aspectRatio || '16:9',
+        cameraMotion: req.body.cameraMotion,
+        style: req.body.style,
+        hdr: req.body.hdr
+      });
+      res.json(result);
+    } catch (error) {
+      console.error('[ContentStudio] Video generation error:', error);
+      res.status(500).json({ message: 'Failed to generate video' });
+    }
+  });
+
+  app.post("/api/content-studio/image-to-video", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const lumaService = new LumaService();
+      const result = await lumaService.imageToVideo({
+        userId: req.user!.id,
+        imageUrl: req.body.imageUrl,
+        duration: req.body.duration || 5,
+        animationIntensity: req.body.animationIntensity || 'medium',
+        cameraPath: req.body.cameraPath
+      });
+      res.json(result);
+    } catch (error) {
+      console.error('[ContentStudio] Image-to-video error:', error);
+      res.status(500).json({ message: 'Failed to convert image to video' });
+    }
+  });
+
+  app.post("/api/content-studio/photo-avatar", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const heygenService = new HeyGenService();
+      const result = await heygenService.photoToAvatarVideo({
+        userId: req.user!.id,
+        photoUrl: req.body.photoUrl,
+        script: req.body.script,
+        voiceId: req.body.voiceId,
+        angle: req.body.angle || 'portrait',
+        background: req.body.background || 'clean',
+        customBackgroundUrl: req.body.customBackgroundUrl
+      });
+      res.json(result);
+    } catch (error) {
+      console.error('[ContentStudio] Photo avatar error:', error);
+      res.status(500).json({ message: 'Failed to generate avatar video' });
+    }
+  });
+
+  app.post("/api/content-studio/digital-twin", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const heygenService = new HeyGenService();
+      const result = await heygenService.createDigitalTwin({
+        userId: req.user!.id,
+        trainingVideoUrl: req.body.trainingVideoUrl,
+        name: req.body.name
+      });
+      res.json(result);
+    } catch (error) {
+      console.error('[ContentStudio] Digital twin error:', error);
+      res.status(500).json({ message: 'Failed to create digital twin' });
+    }
+  });
+
+  app.get("/api/content-studio/assets", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const assets = await db.select()
+        .from(generatedAssets)
+        .where(eq(generatedAssets.userId, req.user!.id))
+        .orderBy(desc(generatedAssets.createdAt));
+      res.json(assets);
+    } catch (error) {
+      console.error('[ContentStudio] Get assets error:', error);
+      res.status(500).json({ message: 'Failed to fetch assets' });
+    }
+  });
+
+  // ============================================================================
+  // PRODUCTIVITY AGENT 2.0
+  // ============================================================================
+
+  app.post("/api/productivity/pomodoro/start", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const pomodoroService = new PomodoroService();
+      const session = await pomodoroService.startSession({
+        userId: req.user!.id,
+        taskId: req.body.taskId,
+        duration: req.body.duration || 25,
+        type: req.body.type || 'work'
+      });
+      res.json(session);
+    } catch (error) {
+      console.error('[Productivity] Start pomodoro error:', error);
+      res.status(500).json({ message: 'Failed to start pomodoro session' });
+    }
+  });
+
+  app.post("/api/productivity/pomodoro/:sessionId/complete", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const pomodoroService = new PomodoroService();
+      await pomodoroService.completeSession(parseInt(req.params.sessionId));
+      res.json({ success: true });
+    } catch (error) {
+      console.error('[Productivity] Complete pomodoro error:', error);
+      res.status(500).json({ message: 'Failed to complete session' });
+    }
+  });
+
+  app.post("/api/productivity/pomodoro/:sessionId/cancel", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const pomodoroService = new PomodoroService();
+      await pomodoroService.cancelSession(parseInt(req.params.sessionId));
+      res.json({ success: true });
+    } catch (error) {
+      console.error('[Productivity] Cancel pomodoro error:', error);
+      res.status(500).json({ message: 'Failed to cancel session' });
+    }
+  });
+
+  app.get("/api/productivity/pomodoro/active", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const pomodoroService = new PomodoroService();
+      const session = await pomodoroService.getActiveSession(req.user!.id);
+      res.json(session);
+    } catch (error) {
+      console.error('[Productivity] Get active session error:', error);
+      res.status(500).json({ message: 'Failed to get active session' });
+    }
+  });
+
+  app.get("/api/productivity/stats", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const pomodoroService = new PomodoroService();
+      const days = parseInt(req.query.days as string) || 7;
+      const stats = await pomodoroService.getUserStats(req.user!.id, days);
+      res.json(stats);
+    } catch (error) {
+      console.error('[Productivity] Get stats error:', error);
+      res.status(500).json({ message: 'Failed to get stats' });
+    }
+  });
+
+  app.post("/api/productivity/report/generate", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const analyticsService = new ProductivityAnalyticsService();
+      const report = await analyticsService.generateWeeklyReport(req.user!.id);
+      res.json(report);
+    } catch (error) {
+      console.error('[Productivity] Generate report error:', error);
+      res.status(500).json({ message: 'Failed to generate report' });
+    }
+  });
+
+  app.post("/api/productivity/distraction", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const analyticsService = new ProductivityAnalyticsService();
+      await analyticsService.trackDistraction(req.user!.id, req.body.type, req.body.metadata);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('[Productivity] Track distraction error:', error);
+      res.status(500).json({ message: 'Failed to track distraction' });
+    }
+  });
+
+  // ============================================================================
+  // FINANCE AGENT ENHANCED
+  // ============================================================================
+
+  app.post("/api/finance/analyze", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const budgetBuilder = new AIBudgetBuilder();
+      const months = parseInt(req.body.months) || 6;
+      const analysis = await budgetBuilder.analyzeSpending(req.user!.id, months);
+      res.json(analysis);
+    } catch (error) {
+      console.error('[Finance] Analyze spending error:', error);
+      res.status(500).json({ message: 'Failed to analyze spending' });
+    }
+  });
+
+  app.post("/api/finance/budget/apply", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const budgetBuilder = new AIBudgetBuilder();
+      await budgetBuilder.applyBudget(req.user!.id, req.body.budget);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('[Finance] Apply budget error:', error);
+      res.status(500).json({ message: 'Failed to apply budget' });
+    }
+  });
+
+  app.post("/api/finance/transaction", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const [txn] = await db.insert(financialTransactions).values({
+        userId: req.user!.id,
+        type: req.body.type,
+        amount: req.body.amount,
+        category: req.body.category,
+        description: req.body.description,
+        merchant: req.body.merchant,
+        date: new Date(req.body.date),
+        recurring: req.body.recurring || false
+      }).returning();
+      res.json(txn);
+    } catch (error) {
+      console.error('[Finance] Create transaction error:', error);
+      res.status(500).json({ message: 'Failed to create transaction' });
+    }
+  });
+
+  app.get("/api/finance/transactions", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const txns = await db.select()
+        .from(financialTransactions)
+        .where(eq(financialTransactions.userId, req.user!.id))
+        .orderBy(desc(financialTransactions.date));
+      res.json(txns);
+    } catch (error) {
+      console.error('[Finance] Get transactions error:', error);
+      res.status(500).json({ message: 'Failed to fetch transactions' });
+    }
+  });
+
+  app.get("/api/finance/budgets", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userBudgets = await db.select()
+        .from(budgets)
+        .where(eq(budgets.userId, req.user!.id));
+      res.json(userBudgets);
+    } catch (error) {
+      console.error('[Finance] Get budgets error:', error);
+      res.status(500).json({ message: 'Failed to fetch budgets' });
+    }
+  });
+
+  // ============================================================================
+  // ENHANCED TALENT MATCH
+  // ============================================================================
+
+  app.post("/api/talent-match/search", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const searchService = new NaturalLanguageTalentSearch();
+      const results = await searchService.search({
+        query: req.body.query,
+        userId: req.user!.id,
+        limit: req.body.limit || 20
+      });
+      res.json(results);
+    } catch (error) {
+      console.error('[TalentMatch] Search error:', error);
+      res.status(500).json({ message: 'Failed to search talent' });
+    }
+  });
+
+  app.post("/api/talent-match/outreach/generate", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const outreachService = new AIOutreachGenerator();
+      const message = await outreachService.generateOutreach({
+        candidateId: req.body.candidateId,
+        opportunityDescription: req.body.opportunityDescription,
+        tone: req.body.tone || 'casual',
+        channel: req.body.channel || 'email'
+      });
+      res.json(message);
+    } catch (error) {
+      console.error('[TalentMatch] Generate outreach error:', error);
+      res.status(500).json({ message: 'Failed to generate outreach' });
+    }
+  });
+
+  app.post("/api/talent-match/outreach/sequence", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const outreachService = new AIOutreachGenerator();
+      const sequenceId = await outreachService.createFollowUpSequence({
+        userId: req.user!.id,
+        candidateId: req.body.candidateId,
+        opportunityDescription: req.body.opportunityDescription,
+        initialMessage: req.body.initialMessage
+      });
+      res.json({ sequenceId });
+    } catch (error) {
+      console.error('[TalentMatch] Create sequence error:', error);
+      res.status(500).json({ message: 'Failed to create follow-up sequence' });
+    }
+  });
+
+  app.post("/api/talent-match/pipeline", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const [candidate] = await db.insert(candidatePipelines).values({
+        userId: req.user!.id,
+        candidateId: req.body.candidateId,
+        opportunityId: req.body.opportunityId,
+        stage: req.body.stage || 'contacted',
+        source: req.body.source,
+        notes: req.body.notes,
+        rating: req.body.rating
+      }).returning();
+      res.json(candidate);
+    } catch (error) {
+      console.error('[TalentMatch] Create pipeline error:', error);
+      res.status(500).json({ message: 'Failed to add to pipeline' });
+    }
+  });
+
+  app.get("/api/talent-match/pipeline", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const pipeline = await db.select()
+        .from(candidatePipelines)
+        .where(eq(candidatePipelines.userId, req.user!.id));
+      res.json(pipeline);
+    } catch (error) {
+      console.error('[TalentMatch] Get pipeline error:', error);
+      res.status(500).json({ message: 'Failed to fetch pipeline' });
+    }
+  });
+
+  // ============================================================================
+  // PRIVACY & SECURITY HUB
+  // ============================================================================
+
+  app.post("/api/privacy/virtual-email", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const emailService = new VirtualEmailService();
+      const email = await emailService.createVirtualEmail({
+        userId: req.user!.id,
+        label: req.body.label,
+        forwardTo: req.body.forwardTo
+      });
+      res.json(email);
+    } catch (error) {
+      console.error('[Privacy] Create virtual email error:', error);
+      res.status(500).json({ message: 'Failed to create virtual email' });
+    }
+  });
+
+  app.get("/api/privacy/virtual-emails", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const emailService = new VirtualEmailService();
+      const emails = await emailService.getUserVirtualEmails(req.user!.id);
+      res.json(emails);
+    } catch (error) {
+      console.error('[Privacy] Get virtual emails error:', error);
+      res.status(500).json({ message: 'Failed to fetch virtual emails' });
+    }
+  });
+
+  app.delete("/api/privacy/virtual-email/:emailId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const emailService = new VirtualEmailService();
+      await emailService.deleteVirtualEmail(parseInt(req.params.emailId), req.user!.id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('[Privacy] Delete virtual email error:', error);
+      res.status(500).json({ message: 'Failed to delete virtual email' });
+    }
+  });
+
+  app.post("/api/privacy/virtual-email/:emailId/toggle", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const emailService = new VirtualEmailService();
+      if (req.body.isActive) {
+        await emailService.enableVirtualEmail(parseInt(req.params.emailId));
+      } else {
+        await emailService.disableVirtualEmail(parseInt(req.params.emailId));
+      }
+      res.json({ success: true });
+    } catch (error) {
+      console.error('[Privacy] Toggle virtual email error:', error);
+      res.status(500).json({ message: 'Failed to toggle virtual email' });
+    }
+  });
+
+  app.post("/api/privacy/dark-web-scan", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const monitoringService = new DarkWebMonitoringService();
+      const result = await monitoringService.scanUserData(req.user!.id);
+      res.json(result);
+    } catch (error) {
+      console.error('[Privacy] Dark web scan error:', error);
+      res.status(500).json({ message: 'Failed to scan dark web' });
+    }
+  });
+
+  app.get("/api/privacy/security-alerts", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const monitoringService = new DarkWebMonitoringService();
+      const unreadOnly = req.query.unreadOnly === 'true';
+      const alerts = await monitoringService.getUserSecurityAlerts(req.user!.id, unreadOnly);
+      res.json(alerts);
+    } catch (error) {
+      console.error('[Privacy] Get security alerts error:', error);
+      res.status(500).json({ message: 'Failed to fetch security alerts' });
+    }
+  });
+
+  app.post("/api/privacy/security-alert/:alertId/read", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const monitoringService = new DarkWebMonitoringService();
+      await monitoringService.markAlertAsRead(parseInt(req.params.alertId), req.user!.id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('[Privacy] Mark alert as read error:', error);
+      res.status(500).json({ message: 'Failed to mark alert as read' });
+    }
+  });
+
+  console.log('[Server] ✅ AI Services Consolidation routes loaded successfully');
+
   return httpServer;
 }

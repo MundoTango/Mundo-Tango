@@ -18,9 +18,11 @@ interface OutreachMessage {
 
 export class AIOutreachGenerator {
   async generateOutreach(params: GenerateOutreachParams): Promise<OutreachMessage> {
-    const candidate = await db.query.users.findFirst({
-      where: eq(users.id, params.candidateId)
-    });
+    const candidate = await db.select()
+      .from(users)
+      .where(eq(users.id, params.candidateId))
+      .limit(1)
+      .then(rows => rows[0]);
 
     if (!candidate) {
       throw new Error('Candidate not found');

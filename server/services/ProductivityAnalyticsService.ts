@@ -105,9 +105,10 @@ export class ProductivityAnalyticsService {
     let maxCount = 0;
 
     for (const [hour, count] of Object.entries(hourCounts)) {
-      if (count > maxCount) {
+      const countNum = count as number;
+      if (countNum > maxCount) {
         maxHour = parseInt(hour);
-        maxCount = count;
+        maxCount = countNum;
       }
     }
 
