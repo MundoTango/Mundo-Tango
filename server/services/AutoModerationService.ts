@@ -1,7 +1,8 @@
 import { db } from "@shared/db";
 import { moderationQueue, flaggedContent } from "@shared/schema";
-import Filter from "bad-words";
+import * as BadWordsModule from "bad-words";
 
+const Filter = (BadWordsModule as any).default || BadWordsModule;
 const profanityFilter = new Filter();
 
 interface Flag {

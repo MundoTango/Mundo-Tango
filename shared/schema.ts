@@ -10422,6 +10422,45 @@ export const selectPlatformMetricSchema = createSelectSchema(platformMetrics);
 export type InsertPlatformMetric = z.infer<typeof insertPlatformMetricSchema>;
 export type SelectPlatformMetric = typeof platformMetrics.$inferSelect;
 
+// Analytics Events - Track user events for analytics
+export const analyticsEvents = pgTable("analytics_events", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  eventType: varchar("event_type", { length: 100 }).notNull(),
+  metadata: jsonb("metadata").default({}).notNull(),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("analytics_events_user_idx").on(table.userId),
+  eventTypeIdx: index("analytics_events_event_type_idx").on(table.eventType),
+  timestampIdx: index("analytics_events_timestamp_idx").on(table.timestamp),
+  userEventIdx: index("analytics_events_user_event_idx").on(table.userId, table.eventType),
+}));
+
+export const insertAnalyticsEventSchema = createInsertSchema(analyticsEvents)
+  .omit({ id: true, timestamp: true });
+export const selectAnalyticsEventSchema = createSelectSchema(analyticsEvents);
+export type InsertAnalyticsEvent = z.infer<typeof insertAnalyticsEventSchema>;
+export type SelectAnalyticsEvent = typeof analyticsEvents.$inferSelect;
+
+// User Analytics - Aggregate user analytics data
+export const userAnalytics = pgTable("user_analytics", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  totalEvents: integer("total_events").default(0).notNull(),
+  lastActiveAt: timestamp("last_active_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("user_analytics_user_idx").on(table.userId),
+  lastActiveIdx: index("user_analytics_last_active_idx").on(table.lastActiveAt),
+}));
+
+export const insertUserAnalyticsSchema = createInsertSchema(userAnalytics)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export const selectUserAnalyticsSchema = createSelectSchema(userAnalytics);
+export type InsertUserAnalytics = z.infer<typeof insertUserAnalyticsSchema>;
+export type SelectUserAnalytics = typeof userAnalytics.$inferSelect;
+
 // Daily stats aggregation table for fast analytics queries
 export const dailyStats = pgTable("daily_stats_view", {
   id: serial("id").primaryKey(),

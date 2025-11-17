@@ -13,7 +13,7 @@
 
 import { Router } from 'express';
 import { db } from '@db';
-import { blockedUsers, savedPosts, posts, users } from '@db/schema';
+import { blockedUsers, savedPosts, posts, users } from '@shared/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { authenticateToken } from '../middleware/auth';
 import { handleErrors } from '../middleware/errorHandler';

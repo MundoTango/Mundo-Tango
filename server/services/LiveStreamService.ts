@@ -9,9 +9,9 @@
  */
 
 import { db } from '@db';
-import { liveStreams, streamViewers, liveStreamMessages, users } from '@db/schema';
+import { liveStreams, streamViewers, liveStreamMessages, users } from '@shared/schema';
 import { eq, and, sql, desc, isNull } from 'drizzle-orm';
-import { NotFoundError, UnauthorizedError, ValidationError } from '@/lib/errors';
+import { NotFoundError, UnauthorizedError, ValidationError } from '../lib/errors';
 
 export class LiveStreamService {
   /**

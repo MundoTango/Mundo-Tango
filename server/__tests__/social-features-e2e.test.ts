@@ -13,7 +13,7 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { app } from '../index';
 import { db } from '@db';
-import { users, posts, friendships, storyViews, liveStreams, streamViewers, blockedUsers, savedPosts } from '@db/schema';
+import { users, posts, friendships, storyViews, liveStreams, streamViewers, blockedUsers, savedPosts } from '@shared/schema';
 import { eq, and } from 'drizzle-orm';
 import request from 'supertest';
 

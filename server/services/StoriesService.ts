@@ -9,9 +9,9 @@
  */
 
 import { db } from '@db';
-import { posts, storyViews, users, friendships } from '@db/schema';
+import { posts, storyViews, users, friendships } from '@shared/schema';
 import { eq, and, sql, inArray, gt, desc } from 'drizzle-orm';
-import { NotFoundError, UnauthorizedError, ValidationError } from '@/lib/errors';
+import { NotFoundError, UnauthorizedError, ValidationError } from '../lib/errors';
 
 export class StoriesService {
   /**

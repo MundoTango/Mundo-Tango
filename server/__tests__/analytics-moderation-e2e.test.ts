@@ -8,7 +8,7 @@ import {
   moderationReports,
   moderationActions,
   userViolations
-} from "@/shared/schema";
+} from "@shared/schema";
 import { eq } from "drizzle-orm";
 import request from "supertest";
 import express from "express";

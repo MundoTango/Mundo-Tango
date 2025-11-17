@@ -219,7 +219,6 @@ const AccountSettingsPage = lazy(() => import("@/pages/AccountSettingsPage"));
 const AdminUserDetailPage = lazy(() => import("@/pages/admin/AdminUserDetailPage"));
 const ProfileEditPage = lazy(() => import("@/pages/ProfileEditPage"));
 const ActivityLogPage = lazy(() => import("@/pages/ActivityLogPage"));
-const SavedPostsPage = lazy(() => import("@/pages/SavedPostsPage"));
 const BlockedUsersPage = lazy(() => import("@/pages/BlockedUsersPage"));
 const BlockedContentPage = lazy(() => import("@/pages/BlockedContentPage"));
 
