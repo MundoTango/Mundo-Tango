@@ -3,13 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Video, Code, Mic, MessageSquare, Sparkles, Facebook, Brain } from 'lucide-react';
+import { Video, Code, Mic, MessageSquare, Sparkles, Facebook, Brain, Box, Film } from 'lucide-react';
 import { VideoConference } from './VideoConference';
 import { AvatarCanvas } from './AvatarCanvas';
 import { VibeCodingInterface } from './VibeCodingInterface';
 import { VoiceCloning } from './VoiceCloning';
 import { MessengerIntegration } from './MessengerIntegration';
 import { MemoryDashboard } from './MemoryDashboard';
+import { ThreeDCreatorTab } from './ThreeDCreatorTab';
+import { AIVideoStudioTab } from './AIVideoStudioTab';
 import type { AvatarState } from './PixarAvatar';
 
 /**
@@ -105,7 +107,7 @@ export function MrBlueStudio() {
           {/* Main Content Area */}
           <Card className="lg:col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-6">
+              <TabsList className="grid w-full grid-cols-8">
                 <TabsTrigger value="video" data-testid="tab-video">
                   <Video className="h-4 w-4 mr-2" />
                   Video Call
@@ -113,6 +115,14 @@ export function MrBlueStudio() {
                 <TabsTrigger value="chat" data-testid="tab-chat">
                   <MessageSquare className="h-4 w-4 mr-2" />
                   Chat
+                </TabsTrigger>
+                <TabsTrigger value="3d-creator" data-testid="tab-3d-creator">
+                  <Box className="h-4 w-4 mr-2" />
+                  3D Creator
+                </TabsTrigger>
+                <TabsTrigger value="ai-video" data-testid="tab-ai-video">
+                  <Film className="h-4 w-4 mr-2" />
+                  AI Video
                 </TabsTrigger>
                 <TabsTrigger value="vibecode" data-testid="tab-vibecode">
                   <Code className="h-4 w-4 mr-2" />
@@ -161,6 +171,16 @@ export function MrBlueStudio() {
                     </div>
                   </CardContent>
                 </Card>
+              </TabsContent>
+
+              {/* 3D Creator Tab */}
+              <TabsContent value="3d-creator" className="space-y-4">
+                <ThreeDCreatorTab />
+              </TabsContent>
+
+              {/* AI Video Studio Tab */}
+              <TabsContent value="ai-video" className="space-y-4">
+                <AIVideoStudioTab />
               </TabsContent>
 
               {/* Vibe Coding Tab */}

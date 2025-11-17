@@ -127,6 +127,11 @@ const SleepAgentPage = lazy(() => import("@/pages/life-ceo/SleepAgentPage"));
 const StressAgentPage = lazy(() => import("@/pages/life-ceo/StressAgentPage"));
 const RelationshipAgentPage = lazy(() => import("@/pages/life-ceo/RelationshipAgentPage"));
 
+// AI Services Consolidation (Week 10-12)
+const AIBudgetBuilder = lazy(() => import("@/pages/AIBudgetBuilder"));
+const EnhancedTalentMatch = lazy(() => import("@/pages/EnhancedTalentMatch"));
+const PrivacyHub = lazy(() => import("@/pages/PrivacyHub"));
+
 // Admin & ESA Framework
 const TalentPipelinePage = lazy(() => import("@/pages/admin/TalentPipelinePage"));
 const TaskBoardPage = lazy(() => import("@/pages/admin/TaskBoardPage"));
@@ -395,6 +400,11 @@ function Router() {
       <Route path="/life-ceo/sleep" component={SleepAgentPage} />
       <Route path="/life-ceo/stress" component={StressAgentPage} />
       <Route path="/life-ceo/relationship" component={RelationshipAgentPage} />
+      
+      <Route path="/ai-budget-builder" component={AIBudgetBuilder} />
+      <Route path="/enhanced-talent-match" component={EnhancedTalentMatch} />
+      <Route path="/privacy-hub" component={PrivacyHub} />
+      
       <Route path="/admin/talent-pipeline">
         <ProtectedRoute>
           <AdminLayout>
