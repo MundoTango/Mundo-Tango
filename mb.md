@@ -15,6 +15,8 @@
 - 🛡️ **ENHANCED SAFETY**: Database mutation rules, error recovery trees, incremental validation
 - 📊 **REASONING TRANSPARENCY**: Document WHY for every critical decision
 - 🎓 **CONTINUOUS LEARNING**: Pattern extraction from every task, auto-update mb.md
+- 🌐 **REAL-WORLD AI AGENTS**: 6 agent types from 1,001+ enterprise implementations (Customer, Employee, Code, Data, Security, Creative)
+- 📚 **OSSU SYSTEMATIC LEARNING**: Structured curriculum approach for continuous skill development
 
 **Retained from v8.2:**
 - 🌍 **MISSION**: Reverse social media's negative impacts, change the world
@@ -931,3 +933,239 @@ bash({
 **Status:** Ready for deployment
 **Integration:** Apply to Facebook task NOW
 **Next Version:** v10.0 (after Facebook task pattern extraction)
+
+---
+
+## 🌐 REAL-WORLD AI AGENT PATTERNS (NOV 17, 2025)
+
+**Source:** Google Cloud's 1,001+ enterprise AI implementations across 11 industries
+
+### **6 Agent Function Types**
+
+Real-world AI agents organize by FUNCTION, not technology:
+
+1. **Customer Agents** - Handle customer interactions, support, sales
+2. **Employee Agents** - Boost productivity, automate tasks, assist teams
+3. **Code Agents** - Generate, review, optimize code
+4. **Data Agents** - Analyze, predict, optimize data workflows
+5. **Security Agents** - Detect threats, automate security responses
+6. **Creative Agents** - Generate content, designs, media
+
+### **Pattern 27: Function-First Agent Design** ⭐⭐⭐
+
+**Problem:** Building AI features without clear business function
+
+**Solution:** Start with WHAT the agent does for users/business, not HOW it's built
+
+**Implementation:**
+```typescript
+// ❌ BAD (technology-first):
+class LLMChatbot { }  // What does it actually DO?
+
+// ✅ GOOD (function-first):
+class CustomerSupportAgent {
+  // Clear purpose: Reduce support tickets by 30%
+  // Clear metrics: Response time, resolution rate
+  // Clear value: Save $50k/month in support costs
+}
+```
+
+**Real Examples:**
+- **Mercedes-Benz**: Customer Agent - Car talks to driver (navigation, POI)
+- **Mercari**: Customer Agent - 500% ROI, 20% workload reduction
+- **Uber**: Employee Agent - Summarize customer communications
+- **BMW**: Data Agent - Digital twin for supply chain optimization
+- **Toyota**: Employee Agent - Factory workers develop ML models (10k hours/year saved)
+
+### **Pattern 28: Multi-Tier Token Management** ⭐⭐
+
+**Problem:** API tokens expire, breaking integrations
+
+**Solution:** 3-tier token lifecycle management
+
+**Implementation:**
+```typescript
+// Tier 1: Short-lived tokens (1 hour)
+const shortToken = await getShortLivedToken();  // From Graph API Explorer
+
+// Tier 2: Long-lived tokens (60-90 days)
+const longToken = await exchangeForLongLived(shortToken);
+
+// Tier 3: Auto-refresh (before expiration)
+const refreshedToken = await refreshToken(longToken, daysBeforeExpiry=7);
+
+// Tier 4: Failure handling
+if (tokenExpired) {
+  await notifyUser("Token expired, regenerate needed");
+  await logFailure("facebook_token", { expiredAt, attemptedAt });
+}
+```
+
+**Facebook-Specific:**
+- ✅ Validate token BEFORE every use (`/debug_token` endpoint)
+- ✅ Check expiration date in response
+- ✅ Monitor required scopes (pages_messaging, pages_manage_metadata)
+- ✅ Auto-refresh 7 days before expiration
+- ✅ Fallback to manual generation when automation fails
+
+### **Pattern 29: PSID Lookup for Messaging** ⭐⭐
+
+**Problem:** Facebook Messenger needs PSID (Page-Scoped ID), not email
+
+**Solution:** Multi-approach PSID resolution
+
+**Approaches:**
+```typescript
+// Approach 1: Database lookup (user already messaged page)
+const psid = await db.users.findUnique({ where: { email } }).select('facebookPSID');
+
+// Approach 2: Webhook registration (user initiates conversation)
+// When user messages page first time, webhook provides PSID
+app.post('/webhooks/facebook', async (req) => {
+  const { sender: { id: psid }, message } = req.body.entry[0].messaging[0];
+  await db.users.update({ where: { email }, data: { facebookPSID: psid } });
+});
+
+// Approach 3: Customer ID API (requires business verification)
+const response = await fetch(`https://graph.facebook.com/v18.0/me/ids_for_apps`, {
+  params: { access_token, app_scoped_user_id: userId }
+});
+
+// Approach 4: Manual invitation flow (most reliable)
+// 1. Generate shareable page link: facebook.com/mundotango1
+// 2. User clicks "Send Message" → Initiates conversation
+// 3. Webhook captures PSID automatically
+// 4. Now can send messages programmatically
+```
+
+**Key Insight:** Can't send unsolicited messages on Facebook. User must:
+- Message page first (generates PSID via webhook), OR
+- Engage with page content, OR
+- Be added as Tester role in app settings
+
+### **Pattern 30: Systematic Error Diagnosis** ⭐⭐⭐
+
+**Problem:** User reports "tried X, not working" without diagnostic data
+
+**Solution:** Multi-step diagnostic protocol
+
+**Framework:**
+```markdown
+## Error Diagnosis Protocol
+
+1. **REPRODUCE**: Run exact command user ran
+   - Capture full error output
+   - Note error code, message, context
+
+2. **ANALYZE ROOT CAUSE**:
+   - What is the ACTUAL error? (not symptoms)
+   - Token expired? API limit? Missing permission? Wrong input?
+   - Check logs, response headers, status codes
+
+3. **VERIFY ASSUMPTIONS**:
+   - Is token actually set? (check secrets)
+   - Is token valid? (call validation endpoint)
+   - Does user have required permissions?
+   - Is service actually reachable?
+
+4. **TEST INCREMENTALLY**:
+   - Step 1: Validate token
+   - Step 2: Test simple API call (GET /me)
+   - Step 3: Test with real data
+   - Each step must pass before next
+
+5. **DOCUMENT FINDINGS**:
+   - What failed?
+   - Why it failed?
+   - How to fix it?
+   - How to prevent recurrence?
+```
+
+**Applied to Facebook Issue:**
+1. ✅ User reports "manual steps not working"
+2. ✅ Run test script → Get actual error
+3. ✅ Error: "Token expired Nov 12" (ROOT CAUSE found!)
+4. ✅ Solution: Need NEW token, not troubleshoot old one
+5. ✅ Plan: Get new token → Validate → Test simple call → Send message
+
+---
+
+## 📚 OSSU SYSTEMATIC LEARNING FRAMEWORK
+
+**Source:** OSSU Computer Science (198k+ stars)
+
+### **Pattern 31: Structured Curriculum Approach** ⭐⭐
+
+**Problem:** Random learning without progression or mastery
+
+**Solution:** Systematic curriculum with prerequisites and milestones
+
+**OSSU Structure:**
+```
+Intro CS → Core Programming → Core Math → Core Systems → 
+Core Theory → Core Applications → Specialization → Capstone
+```
+
+**Applied to Mundo Tango / Mr Blue:**
+```
+Week 1-2:   Foundations (video, context, memory)
+Week 3-4:   Core Systems (vibe coding, voice, autonomous)
+Week 5-6:   Integrations (Facebook, Bytez, external APIs)
+Week 7-8:   Optimization (arbitrage, learning systems)
+Week 9-12:  Production (927 features via vibe coding)
+Week 13-16: Validation (Scott's 47-page tour)
+Week 17-20: Launch (scaling, compliance, deploy)
+```
+
+**Key Principle:** Each phase builds on previous. Can't skip steps.
+
+---
+
+## 🎯 APPLYING V9.0 TO FACEBOOK (NOW)
+
+**Current Status:**
+- ❌ Token expired Nov 12, 2025
+- ❌ User tried manual steps "ad nauseum" without success
+- ✅ Diagnostic script working (validates tokens)
+- ✅ Root cause identified (expired token)
+
+**Complete Solution Plan:**
+
+### **Step 1: Get Fresh Token**
+```bash
+# User goes to: https://developers.facebook.com/tools/explorer/
+# Select: Mundo Tango page
+# Permissions: pages_messaging, pages_manage_metadata, pages_read_engagement
+# Click: "Generate Access Token"
+# Result: Short-lived token (1 hour)
+```
+
+### **Step 2: Exchange for Long-Lived**
+```bash
+npx tsx scripts/exchange-facebook-token.ts <SHORT_LIVED_TOKEN>
+# Result: Long-lived token (60-90 days)
+# Action: Add to FACEBOOK_PAGE_ACCESS_TOKEN secret
+```
+
+### **Step 3: Validate New Token**
+```bash
+npx tsx scripts/send-test-invite.ts sboddye@gmail.com
+# Should pass Step 1: Token validation ✅
+# Will fail Step 3: Need PSID, not email
+```
+
+### **Step 4: Get PSID for sboddye@gmail.com**
+Two approaches:
+A. **User initiates**: sboddye@gmail.com messages @mundotango1 page first
+B. **Add as Tester**: Add sboddye@gmail.com as app Tester role
+
+### **Step 5: Send Test Message**
+```bash
+# Once PSID known
+npx tsx scripts/send-test-invite.ts <PSID>
+```
+
+**Next Actions:** Create complete working scripts for all 5 steps
+
+---
+
