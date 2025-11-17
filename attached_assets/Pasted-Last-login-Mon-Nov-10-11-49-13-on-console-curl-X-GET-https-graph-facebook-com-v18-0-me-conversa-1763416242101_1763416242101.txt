@@ -1,0 +1,39 @@
+Last login: Mon Nov 10 11:49:13 on console
+curl -X GET "https://graph.facebook.com/v18.0/me/conversations?access_token=EAAUnXdgzRfcBPzGRAu7m4Mzh0cfgvNRqZCopMewY4s4topcKx8ZBdFW0hblcofTJZCBwSz0wggezUeCK1WmH48jOa4wmXNkMBkjsrWrTiM0ZA30MgS6aCZB3EZC2ziZCnnlV4UZCgihvpXtKbRf5IBA7pikH6e3PFRCaZC0BLrF6enegNzRpfwU1apbe8seSmcaNVymyLszCUXmuhfw29xk4ALDf77qZCswFD6E0fquDgneyiSebG0UgIRRo8BxCymaXI4dNwymbqtqXQwKubiUZAPx&fields=participants"Your user’s .npmrc file (${HOME}/.npmrc)
+has a `globalconfig` and/or a `prefix` setting, which are incompatible with nvm.
+Run `nvm use --delete-prefix v22.20.0 --silent` to unset it.
+scottboddye@Pugliese ~ % curl -X GET "https://graph.facebook.com/v18.0/me/conversations?access_token=EAAUnXdgzRfcBPzGRAu7m4Mzh0cfgvNRqZCopMewY4s4topcKx8ZBdFW0hblcofTJZCBwSz0wggezUeCK1WmH48jOa4wmXNkMBkjsrWrTiM0ZA30MgS6aCZB3EZC2ziZCnnlV4UZCgihvpXtKbRf5IBA7pikH6e3PFRCaZC0BLrF6enegNzRpfwU1apbe8seSmcaNVymyLszCUXmuhfw29xk4ALDf77qZCswFD6E0fquDgneyiSebG0UgIRRo8BxCymaXI4dNwymbqtqXQwKubiUZAPx&fields=participants"
+{"error":{"message":"(#298) Reading mailbox messages requires the extended permission read_mailbox","type":"OAuthException","code":298,"fbtrace_id":"ABXunT3eY3fb24BJxqZZKce"}}%                                                                scottboddye@Pugliese ~ % curl -X GET "https://graph.facebook.com/v18.0/me/conversations?access_token=EAAUnXdgzRfcBPzGRAu7m4Mzh0cfgvNRqZCopMewY4s4topcKx8ZBdFW0hblcofTJZCBwSz0wggezUeCK1WmH48jOa4wmXNkMBkjsrWrTiM0ZA30MgS6aCZB3EZC2ziZCnnlV4UZCgihvpXtKbRf5IBA7pikH6e3PFRCaZC0BLrF6enegNzRpfwU1apbe8seSmcaNVymyLszCUXmuhfw29xk4ALDf77qZCswFD6E0fquDgneyiSebG0UgIRRo8BxCymaXI4dNwymbqtqXQwKubiUZAPx&fields=participants"
+{"error":{"message":"(#298) Reading mailbox messages requires the extended permission read_mailbox","type":"OAuthException","code":298,"fbtrace_id":"A8Gxm1HCVkg9RpRQWAZrc5Q"}}%                                                                scottboddye@Pugliese ~ % npx tsx scripts/send-invitation-direct.ts \
+  EAAUnXdgzRfcBPzGRAu7m4Mzh0cfgvNRqZCopMewY4s4topcKx8ZBdFW0hblcofTJZCBwSz0wggezUeCK1WmH48jOa4wmXNkMBkjsrWrTiM0ZA30MgS6aCZB3EZC2ziZCnnlV4UZCgihvpXtKbRf5IBA7pikH6e3PFRCaZC0BLrF6enegNzRpfwU1apbe8seSmcaNVymyLszCUXmuhfw29xk4ALDf77qZCswFD6E0fquDgneyiSebG0UgIRRo8BxCymaXI4dNwymbqtqXQwKubiUZAPx \
+  YOUR_PSID_HERE
+Need to install the following packages:
+tsx@4.20.6
+Ok to proceed? (y) y
+
+
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/Users/scottboddye/scripts/send-invitation-direct.ts' imported from /Users/scottboddye/
+    at finalizeResolution (node:internal/modules/esm/resolve:274:11)
+    at moduleResolve (node:internal/modules/esm/resolve:859:10)
+    at defaultResolve (node:internal/modules/esm/resolve:983:11)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at resolveBase (file:///Users/scottboddye/.npm/_npx/fd45a72a545557e9/node_modules/tsx/dist/esm/index.mjs?1763416236769:2:3744)
+    at resolveDirectory (file:///Users/scottboddye/.npm/_npx/fd45a72a545557e9/node_modules/tsx/dist/esm/index.mjs?1763416236769:2:4243)
+    at resolveTsPaths (file:///Users/scottboddye/.npm/_npx/fd45a72a545557e9/node_modules/tsx/dist/esm/index.mjs?1763416236769:2:4984)
+    at resolve (file:///Users/scottboddye/.npm/_npx/fd45a72a545557e9/node_modules/tsx/dist/esm/index.mjs?1763416236769:2:5361)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at Hooks.resolve (node:internal/modules/esm/hooks:240:30) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///Users/scottboddye/scripts/send-invitation-direct.ts'
+}
+
+Node.js v22.20.0
+npm notice
+npm notice New major version of npm available! 10.9.3 -> 11.6.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.2
+npm notice To update run: npm install -g npm@11.6.2
+npm notice
+scottboddye@Pugliese ~ % 
