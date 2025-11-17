@@ -94,6 +94,7 @@ import nutritionRoutes from "./routes/nutrition-routes";
 import eventRoutes from "./routes/event-routes";
 import eventRolesRoutes from "./routes/event-roles-routes";
 import groupRoutes from "./routes/group-routes";
+import mapRoutes from "./routes/map-routes";
 import crowdfundingRoutes from "./routes/crowdfunding-routes";
 import recommendationRoutes from "./routes/recommendation-routes";
 import crowdfundingAgentsRoutes from "./routes/crowdfundingAgentsRoutes";
@@ -752,6 +753,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/events", eventRoutes);
   app.use("/api", eventRolesRoutes); // Event participant roles
   app.use("/api/groups", groupRoutes);
+  app.use("/api/map", mapRoutes); // Community map markers
   app.use("/api/recommendations", recommendationRoutes); // MB.MD Week 9 Day 3: Recommendation Engine
   app.use("/api", analyticsModerationRoutes); // MB.MD Week 9 Day 4: Analytics & Moderation
   

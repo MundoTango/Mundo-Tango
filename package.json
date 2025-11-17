@@ -165,6 +165,7 @@
     "react-intersection-observer": "^10.0.0",
     "react-joyride": "^2.9.3",
     "react-leaflet": "^4.2.1",
+    "react-leaflet-cluster": "^3.1.1",
     "react-resizable-panels": "^2.1.7",
     "react-syntax-highlighter": "^16.1.0",
     "recharts": "^2.15.2",

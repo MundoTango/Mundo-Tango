@@ -297,6 +297,53 @@ router.get("/search", optionalAuth, async (req: AuthRequest, res: Response) => {
   }
 });
 
+// GET /api/events/calendar - Get events for calendar view
+router.get("/calendar", async (req: Request, res: Response) => {
+  try {
+    const { month, year } = req.query;
+
+    let query = db
+      .select({
+        event: events,
+        organizer: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage
+        },
+        attendeeCount: sql<number>`(
+          SELECT COUNT(*)::int 
+          FROM ${eventRsvps} 
+          WHERE ${eventRsvps.eventId} = ${events.id}
+          AND ${eventRsvps.status} = 'going'
+        )`.as('attendee_count')
+      })
+      .from(events)
+      .leftJoin(users, eq(events.userId, users.id))
+      .where(eq(events.status, "published"))
+      .$dynamic();
+
+    // Filter by month/year if provided
+    if (month && year) {
+      const startDate = new Date(parseInt(year as string), parseInt(month as string) - 1, 1);
+      const endDate = new Date(parseInt(year as string), parseInt(month as string), 0, 23, 59, 59);
+      
+      query = query.where(and(
+        eq(events.status, "published"),
+        gte(events.startDate, startDate),
+        lte(events.startDate, endDate)
+      ));
+    }
+
+    const results = await query.orderBy(asc(events.startDate));
+
+    res.json(results);
+  } catch (error) {
+    console.error("[Events] Error fetching calendar events:", error);
+    res.status(500).json({ message: "Failed to fetch calendar events" });
+  }
+});
+
 // GET /api/events/analytics/popular - Get popular events
 router.get("/analytics/popular", async (req: Request, res: Response) => {
   try {

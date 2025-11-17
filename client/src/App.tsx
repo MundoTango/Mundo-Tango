@@ -55,9 +55,11 @@ const FeedPage = lazy(() => import("@/pages/FeedPage"));
 const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 const FriendsListPage = lazy(() => import("@/pages/FriendsListPage"));
 const FriendshipPage = lazy(() => import("@/pages/FriendshipPage"));
+const FriendRequestsPage = lazy(() => import("@/pages/FriendRequestsPage"));
 const FollowingPage = lazy(() => import("@/pages/FollowingPage"));
 const FollowersPage = lazy(() => import("@/pages/FollowersPage"));
 const MessagesPage = lazy(() => import("@/pages/MessagesPage"));
+const CreatePostPage = lazy(() => import("@/pages/CreatePostPage"));
 
 // Messages Platform (P0 #12-16)
 const UnifiedInboxPage = lazy(() => import("@/pages/messages/UnifiedInbox"));
@@ -85,6 +87,18 @@ const CreateEventPage = lazy(() => import("@/pages/CreateEventPage"));
 const MyEventsPage = lazy(() => import("@/pages/MyEventsPage"));
 const GroupsPage = lazy(() => import("@/pages/GroupsPage"));
 const GroupDetailsPage = lazy(() => import("@/pages/GroupDetailsPage"));
+
+// Community & Events Pages (Pages 11-20)
+const CommunityMapPage = lazy(() => import("@/pages/CommunityMapPage"));
+const CityGroupsPage = lazy(() => import("@/pages/CityGroupsPage"));
+const ProfessionalGroupsPage = lazy(() => import("@/pages/ProfessionalGroupsPage"));
+const CustomGroupsPage = lazy(() => import("@/pages/CustomGroupsPage"));
+const EventCalendarPage = lazy(() => import("@/pages/EventCalendarPage"));
+const EventCreationPage = lazy(() => import("@/pages/EventCreationPage"));
+const EventDetailPage = lazy(() => import("@/pages/EventDetailPage"));
+const HousingMarketplacePage = lazy(() => import("@/pages/HousingMarketplacePage"));
+const HousingListingDetailPage = lazy(() => import("@/pages/HousingListingDetailPage"));
+const HousingSearchPage = lazy(() => import("@/pages/HousingSearchPage"));
 
 // Week 9 Day 5: Stories, Live Streams, Saved Posts
 const StoriesPage = lazy(() => import("@/pages/StoriesPage"));
@@ -652,7 +666,7 @@ function Router() {
 
       <Route path="/groups/:groupId">
         <ProtectedRoute>
-          <GroupsDetailPage />
+          <GroupDetailsPage />
         </ProtectedRoute>
       </Route>
 
@@ -660,6 +674,79 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <GroupDetailsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* Community & Events Pages (Pages 11-20) */}
+      <Route path="/map">
+        <ProtectedRoute>
+          <AppLayout>
+            <CommunityMapPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/community-map">
+        <ProtectedRoute>
+          <AppLayout>
+            <CommunityMapPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/groups/cities">
+        <ProtectedRoute>
+          <AppLayout>
+            <CityGroupsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/groups/professional">
+        <ProtectedRoute>
+          <AppLayout>
+            <ProfessionalGroupsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/groups/custom">
+        <ProtectedRoute>
+          <AppLayout>
+            <CustomGroupsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/events/calendar">
+        <ProtectedRoute>
+          <AppLayout>
+            <EventCalendarPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/housing">
+        <ProtectedRoute>
+          <AppLayout>
+            <HousingMarketplacePage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/housing/search">
+        <ProtectedRoute>
+          <AppLayout>
+            <HousingSearchPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/housing/listing/:id">
+        <ProtectedRoute>
+          <AppLayout>
+            <HousingListingDetailPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
@@ -756,6 +843,22 @@ function Router() {
           <Suspense fallback={<LoadingFallback />}>
             <FriendshipPage />
           </Suspense>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/friend-requests">
+        <ProtectedRoute>
+          <AppLayout>
+            <FriendRequestsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/create-post">
+        <ProtectedRoute>
+          <AppLayout>
+            <CreatePostPage />
+          </AppLayout>
         </ProtectedRoute>
       </Route>
 

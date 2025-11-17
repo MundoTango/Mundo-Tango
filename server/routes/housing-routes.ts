@@ -75,6 +75,67 @@ router.get("/listings", async (req: Request, res: Response) => {
   }
 });
 
+// POST /api/housing/search - Advanced search for housing
+router.post("/search", async (req: Request, res: Response) => {
+  try {
+    const {
+      checkInDate,
+      checkOutDate,
+      city,
+      country,
+      propertyType,
+      minPrice,
+      maxPrice,
+      bedrooms,
+      bathrooms,
+      maxGuests,
+      amenities,
+      limit = "20",
+      offset = "0"
+    } = req.body;
+
+    const conditions = [eq(housingListings.status, "active")];
+
+    if (city) conditions.push(sql`${housingListings.city} ILIKE ${`%${city}%`}`);
+    if (country) conditions.push(eq(housingListings.country, country));
+    if (propertyType) conditions.push(eq(housingListings.propertyType, propertyType));
+    if (minPrice) conditions.push(gte(housingListings.pricePerNight, minPrice));
+    if (maxPrice) conditions.push(lte(housingListings.pricePerNight, maxPrice));
+    if (bedrooms) conditions.push(gte(housingListings.bedrooms, bedrooms));
+    if (bathrooms) conditions.push(gte(housingListings.bathrooms, bathrooms));
+    if (maxGuests) conditions.push(gte(housingListings.maxGuests, maxGuests));
+
+    // Filter by amenities if provided
+    if (amenities && Array.isArray(amenities) && amenities.length > 0) {
+      amenities.forEach((amenity: string) => {
+        conditions.push(sql`${amenity} = ANY(${housingListings.amenities})`);
+      });
+    }
+
+    const results = await db
+      .select({
+        listing: housingListings,
+        host: {
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          profileImage: users.profileImage
+        }
+      })
+      .from(housingListings)
+      .leftJoin(users, eq(housingListings.hostId, users.id))
+      .where(and(...conditions))
+      .orderBy(desc(housingListings.createdAt))
+      .limit(parseInt(limit))
+      .offset(parseInt(offset));
+
+    res.json(results);
+  } catch (error) {
+    console.error("[Housing] Error searching listings:", error);
+    res.status(500).json({ message: "Failed to search listings" });
+  }
+});
+
 // GET /api/housing/listings/:id - Get specific listing
 router.get("/listings/:id", async (req: Request, res: Response) => {
   try {
