@@ -1,11 +1,16 @@
 # MB.MD - Mundo Blue Methodology Directive
 
-**Version:** 8.0 ULTIMATE (AI Learning + 5 Development Pillars)  
+**Version:** 8.1 ULTIMATE (AI Learning + Anti-Hallucination Framework)  
 **Created:** October 30, 2025  
-**Last Updated:** November 16, 2025 (AI Training Research Complete)  
+**Last Updated:** November 17, 2025 (Anti-Hallucination Framework Added)  
 **Purpose:** Complete AI execution protocol for Mundo Tango  
 **Project:** Mundo Tango (927 features, 20-week build strategy)  
-**New in v8.0:** 
+**New in v8.1:** 
+- ANTI-HALLUCINATION FRAMEWORK (22 enhancements across 7 categories)
+- Database Safety, Security Enforcement, Duplication Prevention
+- Hallucination Detection, Testing Integrity, Code Quality Standards
+- Productivity Measurement (Target: 99.9% AI reliability)
+**Previous (v8.0):**
 - PILLAR 6: AI AGENT LEARNING (Data-Centric AI, DPO, Curriculum Training, Agentic CPT, GEPA, LIMI)
 - 5 Development Principles (Security-First, Error-First, Performance-First, Mobile-First, Accessibility-First)
 
@@ -448,6 +453,146 @@ try {
 - **Week 12**: Polish & Launch (371 features) - Scott 0% involvement (fully autonomous)
 
 **Final Delivery**: 927/927 features, 99/100 quality, mundotango.life live
+
+---
+
+## 🛡️ ANTI-HALLUCINATION FRAMEWORK (v8.1 - November 2025)
+
+**Research Foundation:** AI_VIBE_CODING_GAPS_ANALYSIS.md  
+**Critical Statistics:** 76% hallucination rate, 48% security vulnerabilities, 8x code duplication  
+**Prevention Systems:** DatabaseGuardian, HallucinationDetector, SecurityValidator
+
+### Category A: Database Safety (Prevent Replit Disaster)
+**Enhancement 1:** Production Database Lockdown ✅ IMPLEMENTED
+- execute_sql_tool restricted to development only
+- All destructive ops (DROP, DELETE, TRUNCATE) blocked in production
+- Human approval required for operations affecting >100 rows
+
+**Enhancement 2:** Automated Backup System
+- Auto-backup before UPDATE/DELETE operations
+- Database audit log tracks all modifications
+- Rollback capability via snapshots
+
+**Enhancement 3:** SQL Injection Prevention
+- All queries use parameterized statements (Drizzle ORM)
+- DatabaseGuardian.detectSqlInjection() validates all SQL
+- User input NEVER directly concatenated into queries
+
+### Category B: Security Enforcement (Prevent 48% Vulnerability Rate)
+**Enhancement 4:** OWASP Top 10 Compliance ✅ IMPLEMENTED
+- SecurityValidator.checkOwaspCoverage() enforces all 10 categories
+- SQL injection, XSS, CSRF, authentication, authorization checks
+- Hardcoded secret detection (API keys, passwords, tokens)
+
+**Enhancement 5:** Input Validation Requirements
+- ALL endpoints require Zod schema validation
+- SecurityValidator.validateInputValidation() enforces schemas
+- No raw user input accepted without validation
+
+**Enhancement 6:** Rate Limiting Enforcement
+- ALL endpoints must have rate limiting
+- SecurityValidator.checkRateLimiting() validates implementation
+- Prevents abuse, DDoS, brute force attacks
+
+### Category C: Code Duplication Prevention (8x Increase)
+**Enhancement 7:** Audit-First Development Protocol ✅ IMPLEMENTED
+- MANDATORY 5-10min codebase search before building ANY feature
+- 7-step checklist: grep/search shared/schema.ts, client/src/pages, client/src/components, server/routes.ts, server/services/, database columns
+- Decision matrix: Enhance if exists (80%+), Fix+Enhance if broken, Rebuild only if fundamentally flawed
+- Prevention success rate: 100% (0 duplicates since Week 9 Day 2)
+
+**Enhancement 8:** Naming Convention Enforcement
+- Consistent naming across database/API/frontend
+- Example: users table → /api/users routes → usersService.ts → UsersPage.tsx
+- Prevents accidental duplication via inconsistent naming
+
+### Category D: Hallucination Detection (76% Developer Impact)
+**Enhancement 9:** Package Validation ✅ IMPLEMENTED
+- HallucinationDetector.validateNpmPackages() checks registry before install
+- HallucinationDetector.validatePyPiPackages() validates Python packages
+- Blocks fabricated packages ("slopsquatting" prevention)
+
+**Enhancement 10:** API Endpoint Verification ✅ IMPLEMENTED
+- HallucinationDetector.validateApiEndpoints() tests all endpoints
+- HTTP test calls verify endpoints exist
+- Detects hallucinated API versions (v2 when only v1 exists)
+
+**Enhancement 11:** Function Signature Verification
+- Cross-reference with documentation
+- Detect hallucinated magic functions (autoFix, intelligentProcessor)
+- Verify against actual codebase implementation
+
+**Enhancement 12:** Data Fabrication Detection ✅ IMPLEMENTED
+- HallucinationDetector.detectFabricatedData() identifies fake patterns
+- Detects: Sequential IDs, lorem ipsum, fake@example.com, impossible values
+- Requires real data from database/API (no mock data in production)
+
+### Category E: Testing Integrity (Prevent Test Fabrication)
+**Enhancement 13:** Mandatory Test Execution Evidence ✅ IMPLEMENTED
+- AI MUST execute tests (npm run test:e2e)
+- Capture terminal output (pass/fail count, duration)
+- Verify screenshots/videos in test-results/
+- Check Playwright HTML report exists
+- No evidence = No claim
+
+**Enhancement 14:** Test Quality Checklist
+- Tests use real database (not mocked)
+- Tests cover error cases (not just happy path)
+- Tests verify actual DOM elements (data-testid)
+- Tests validate API responses (status codes, bodies)
+- Tests check edge cases (SQL injection, XSS)
+- Tests have meaningful assertions
+
+**Enhancement 15:** Coverage Verification
+- Run npx playwright test --coverage
+- Parse coverage report (playwright-report/)
+- Compare AI claim vs reality
+- Flag discrepancies >5%
+
+### Category F: Code Quality Standards (Prevent Technical Debt)
+**Enhancement 16:** Cyclomatic Complexity Limits
+- All functions must have complexity <10
+- CodeQualityAnalyzer enforces limits
+- Auto-suggest: "Break function into smaller pieces"
+
+**Enhancement 17:** File Length Limits
+- All files must be <500 lines (except schema.ts, tests)
+- CodeQualityAnalyzer blocks commits >500 lines
+- Auto-suggest: "Split into multiple files by responsibility"
+
+**Enhancement 18:** Magic Number Elimination
+- No hardcoded numbers >10 without named constants
+- Example: 86400 → SECONDS_PER_DAY = 86400
+- CodeQualityAnalyzer detects magic numbers
+
+**Enhancement 19:** Type Safety Enforcement
+- Zero 'any' types in production code
+- LSP diagnostics block commits with 'any'
+- Exceptions: Third-party library types (with TODO)
+
+**Enhancement 20:** Code Duplication Detection
+- No duplicate code blocks >10 lines
+- CodeQualityAnalyzer finds duplicates
+- Auto-suggest: "Extract to reusable function" (DRY)
+
+### Category G: Productivity Measurement (Prevent 19% Slowdown)
+**Enhancement 21:** Objective Productivity Tracking
+- Measure ACTUAL outcomes (not AI-reported metrics)
+- True metrics: Time to production, bugs per 100 LOC, rework %, test coverage (actual)
+- False metrics (ignore): LOC written, features started, suggestions accepted
+
+**Enhancement 22:** Weekly Productivity Reports
+- Generate report every Friday
+- Include: Features deployed, bug rate, test coverage (actual), AI vs traditional, rework %, time to production
+- Actions: Adjust AI usage if slower/buggy, document success patterns
+
+### Implementation Status
+- ✅ Phase 1 (Week 9): Critical safeguards (database, security, hallucination detection) - COMPLETE
+- ✅ Safeguard Services: DatabaseGuardian (650 lines), HallucinationDetector (700 lines), SecurityValidator (750 lines)
+- ⏳ Phase 2 (Week 10): Testing + code quality (coverage, complexity, duplication) - PENDING
+- ⏳ Phase 3 (Week 11): Productivity tracking (metrics, reports, optimization) - PENDING
+
+**Target:** 99.9% AI reliability (0 database disasters, <5% security issues, 0 duplicates, 10% productivity gain)
 
 ---
 
