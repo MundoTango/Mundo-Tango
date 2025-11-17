@@ -1169,3 +1169,389 @@ npx tsx scripts/send-test-invite.ts <PSID>
 
 ---
 
+
+---
+
+## 🎯 PATTERN 32: FACEBOOK MESSENGER EXPERT AGENT ⭐⭐⭐
+
+**Created:** November 17, 2025  
+**Purpose:** Complete Facebook Messenger Platform mastery for Mundo Tango invites  
+**Sources:** Meta official docs, Google 1,001 use cases (Mercedes-Benz, Mercari, Uber)
+
+### **The Facebook Messenger Platform Architecture**
+
+```
+User → Messenger App → Facebook Page → Webhooks → Your Server
+  ↑                                                      ↓
+  └──────────────← Send API ←─────────────────────────┘
+```
+
+**Key Components:**
+1. **Page Access Token** - Authenticates your app to send messages
+2. **PSID (Page-Scoped ID)** - Unique user identifier per page
+3. **Webhooks** - Receive real-time events (messages, postbacks)
+4. **Send API** - Send messages to users
+5. **24-Hour Window** - Can respond freely within 24hrs of user message
+
+---
+
+### **CRITICAL FACEBOOK RULES (MUST KNOW)**
+
+#### ❌ **What You CANNOT Do:**
+- ✗ Send messages to email addresses
+- ✗ Send unsolicited messages to users who haven't messaged you
+- ✗ Use short-lived tokens in production (expire in 1-2 hours)
+- ✗ Send promotional content with message tags
+- ✗ Respond after 24hrs without message tag
+
+#### ✅ **What You CAN Do:**
+- ✓ Send messages to PSIDs of users who messaged you first
+- ✓ Create never-expiring page access tokens
+- ✓ Use webhooks to capture PSIDs automatically
+- ✓ Send messages within 24hrs freely
+- ✓ Use CONFIRMED_EVENT_UPDATE tag for event reminders
+
+---
+
+### **Token Lifecycle Management (4-Tier System)**
+
+#### **Tier 1: Short-Lived User Token (1-2 hours)**
+```bash
+# Get from Graph API Explorer
+# https://developers.facebook.com/tools/explorer/
+# 1. Select your app
+# 2. Select "Get User Access Token"
+# 3. Add permissions: pages_messaging, pages_manage_metadata
+# 4. Click "Generate Access Token"
+```
+
+#### **Tier 2: Long-Lived User Token (60 days)**
+```bash
+curl "https://graph.facebook.com/v18.0/oauth/access_token?\
+grant_type=fb_exchange_token&\
+client_id=APP_ID&\
+client_secret=APP_SECRET&\
+fb_exchange_token=SHORT_LIVED_TOKEN"
+```
+
+#### **Tier 3: Never-Expiring Page Token**
+```bash
+# Step 1: Get user ID
+curl "https://graph.facebook.com/v18.0/me?\
+access_token=LONG_LIVED_USER_TOKEN"
+
+# Step 2: Get page token
+curl "https://graph.facebook.com/v18.0/USER_ID/accounts?\
+access_token=LONG_LIVED_USER_TOKEN"
+
+# Response includes access_token that NEVER expires!
+```
+
+#### **Tier 4: Validate Before Each Use**
+```typescript
+// ALWAYS validate before sending messages
+const response = await fetch(
+  `https://graph.facebook.com/v18.0/debug_token?input_token=${token}&access_token=${APP_ID}|${APP_SECRET}`
+);
+const { data } = await response.json();
+
+if (data.error || !data.is_valid) {
+  throw new Error('Token expired or invalid');
+}
+```
+
+---
+
+### **PSID Acquisition Strategies**
+
+#### **Strategy 1: User-Initiated Conversation (Recommended)**
+```markdown
+1. Share m.me link: https://m.me/mundotango1
+2. User clicks "Send Message"
+3. User sends ANY message
+4. Webhook receives event with PSID automatically
+5. Store PSID in database linked to user
+6. Now can send messages anytime (within 24hr window)
+```
+
+#### **Strategy 2: Webhook Event Capture**
+```typescript
+// When user messages your page
+app.post('/webhooks/facebook', (req, res) => {
+  const entry = req.body.entry[0];
+  const event = entry.messaging[0];
+  
+  const psid = event.sender.id;  // ← PSID acquired!
+  const message = event.message?.text;
+  
+  // Store in database
+  await db.users.update({
+    where: { email: userEmail },
+    data: { facebookPSID: psid }
+  });
+  
+  res.status(200).send('EVENT_RECEIVED');
+});
+```
+
+#### **Strategy 3: Add as App Tester (Testing Only)**
+```markdown
+1. Go to https://developers.facebook.com/apps/YOUR_APP_ID/roles/test-users/
+2. Click "Add Testers"
+3. Enter user's Facebook email
+4. User accepts tester invite
+5. User can now message page for testing
+```
+
+---
+
+### **Webhook Implementation (Complete)**
+
+#### **Requirements:**
+- ✅ HTTPS endpoint (self-signed certs NOT allowed)
+- ✅ Return 200 OK within 5 seconds
+- ✅ Validate payloads with SHA256 signature
+- ✅ Handle verification requests (GET)
+- ✅ Handle event notifications (POST)
+
+#### **Express Webhook Server:**
+```typescript
+import express from 'express';
+import crypto from 'crypto';
+
+const app = express();
+app.use(express.json({
+  verify: (req, res, buf) => {
+    const signature = req.headers['x-hub-signature-256'];
+    const expectedHash = crypto
+      .createHmac('sha256', APP_SECRET)
+      .update(buf)
+      .digest('hex');
+    
+    if (signature !== `sha256=${expectedHash}`) {
+      throw new Error('Invalid signature');
+    }
+  }
+}));
+
+// GET - Webhook Verification
+app.get('/webhooks/facebook', (req, res) => {
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+  
+  if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+    res.status(200).send(challenge);
+  } else {
+    res.sendStatus(403);
+  }
+});
+
+// POST - Event Notifications
+app.post('/webhooks/facebook', async (req, res) => {
+  // MUST respond immediately!
+  res.status(200).send('EVENT_RECEIVED');
+  
+  // Process events asynchronously
+  const { entry } = req.body;
+  for (const item of entry) {
+    for (const event of item.messaging) {
+      if (event.message) {
+        await handleMessage(event.sender.id, event.message);
+      } else if (event.postback) {
+        await handlePostback(event.sender.id, event.postback);
+      }
+    }
+  }
+});
+```
+
+---
+
+### **Send API Usage (Complete)**
+
+#### **Basic Text Message:**
+```typescript
+async function sendMessage(psid: string, text: string) {
+  const response = await fetch(
+    `https://graph.facebook.com/v18.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        recipient: { id: psid },
+        messaging_type: 'RESPONSE',
+        message: { text }
+      })
+    }
+  );
+  
+  return response.json();
+}
+```
+
+#### **With Message Tag (Outside 24hr Window):**
+```typescript
+async function sendEventUpdate(psid: string, text: string) {
+  const response = await fetch(
+    `https://graph.facebook.com/v18.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        recipient: { id: psid },
+        messaging_type: 'MESSAGE_TAG',
+        tag: 'CONFIRMED_EVENT_UPDATE',  // For event reminders!
+        message: { text }
+      })
+    }
+  );
+  
+  return response.json();
+}
+```
+
+#### **Rate Limits:**
+- **Messenger Profile API**: 10 calls / 10 minutes per page
+- **Send API**: 200 × (Number of Engaged Users) per 24 hours
+- **Message Length**: 640 characters max (longer gets truncated)
+
+---
+
+### **Complete Implementation Checklist**
+
+#### **Phase 1: Token Setup** ✅
+- [ ] Get short-lived token from Graph API Explorer
+- [ ] Exchange for long-lived user token (60 days)
+- [ ] Get never-expiring page token
+- [ ] Validate token with debug_token endpoint
+- [ ] Store in FACEBOOK_PAGE_ACCESS_TOKEN secret
+- [ ] Set up auto-refresh 7 days before expiration
+
+#### **Phase 2: Webhook Setup** 🔄
+- [ ] Create HTTPS endpoint (0.0.0.0:5000/webhooks/facebook)
+- [ ] Implement GET verification handler
+- [ ] Implement POST event handler
+- [ ] Add SHA256 signature validation
+- [ ] Subscribe to 'messages' and 'messaging_postbacks'
+- [ ] Test with Graph API Explorer webhook tool
+
+#### **Phase 3: PSID Management** 📝
+- [ ] Add facebookPSID column to users table
+- [ ] Capture PSID from webhook events
+- [ ] Link PSID to user email/account
+- [ ] Create PSID lookup function
+- [ ] Handle PSID not found gracefully
+
+#### **Phase 4: Message Sending** 📧
+- [ ] Implement sendMessage(psid, text)
+- [ ] Add retry logic for failures
+- [ ] Implement rate limiting
+- [ ] Add invitation tracking
+- [ ] Log all sent messages for debugging
+
+#### **Phase 5: Testing** 🧪
+- [ ] Send test message to self
+- [ ] Verify webhook receives events
+- [ ] Confirm PSID captured correctly
+- [ ] Test sending within 24hr window
+- [ ] Test message tag for event updates
+
+---
+
+### **Error Handling Patterns**
+
+```typescript
+// Pattern: Graceful degradation
+async function sendInvite(userEmail: string) {
+  // Step 1: Get PSID
+  const user = await db.users.findUnique({ where: { email: userEmail } });
+  
+  if (!user.facebookPSID) {
+    // Fallback: Provide m.me link
+    console.log(`No PSID for ${userEmail}. Share: https://m.me/mundotango1`);
+    return {
+      success: false,
+      method: 'manual',
+      link: 'https://m.me/mundotango1'
+    };
+  }
+  
+  // Step 2: Validate token
+  const tokenValid = await validateToken();
+  if (!tokenValid) {
+    throw new Error('Token expired - regenerate required');
+  }
+  
+  // Step 3: Send message
+  try {
+    const result = await sendMessage(user.facebookPSID, INVITE_MESSAGE);
+    return { success: true, method: 'messenger', messageId: result.message_id };
+  } catch (error) {
+    // Log and fallback
+    console.error('Send failed:', error);
+    return {
+      success: false,
+      method: 'manual',
+      link: `https://m.me/mundotango1?ref=${userEmail}`,
+      error: error.message
+    };
+  }
+}
+```
+
+---
+
+### **Real-World Enterprise Examples**
+
+**Mercedes-Benz** (Customer Agent):
+- MBUX Virtual Assistant powered by Gemini
+- Natural conversations for navigation, POI
+- Integrated directly into vehicle
+
+**Mercari** (Customer Agent):
+- 500% ROI from Messenger integration
+- 20% workload reduction
+- Easier customer service access
+
+**Uber** (Employee Agent):
+- Summarize customer communications
+- Surface context from previous interactions
+- More effective front-line staff
+
+---
+
+### **Key Success Metrics**
+
+| Metric | Target | Current |
+|--------|--------|---------|
+| Token Validation | 100% before send | TBD |
+| PSID Capture Rate | 95%+ | TBD |
+| Message Delivery | 99%+ | TBD |
+| 24hr Response Time | 100% | TBD |
+| Invite Conversion | 60%+ | TBD |
+
+---
+
+### **Next Implementation: Mundo Tango Invite System**
+
+```typescript
+// The complete flow
+1. User signs up on mundotango.life → Email captured
+2. System sends m.me/mundotango1 link → "Message us to get started!"
+3. User clicks link → Opens Messenger
+4. User sends "Hi" → Webhook captures PSID
+5. System stores PSID → Linked to user account
+6. System sends welcome message → Within 24hr window
+7. User engages → More messages exchanged
+8. Event created → Send invite with CONFIRMED_EVENT_UPDATE tag
+9. User RSVPs → Track in database
+10. Success! → Mundo Tango community grows
+
+**Mission accomplished: Authentic connections, not silos.**
+```
+
+---
+
+**Pattern 32 Status:** ✅ COMPLETE - Ready for implementation
+
