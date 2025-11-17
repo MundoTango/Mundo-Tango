@@ -61,6 +61,74 @@ WEEK 17-20: Production readiness & launch (Facebook scraping, compliance, deploy
 **Testing:** E2E validated with admin@mundotango.life / admin123  
 **Route:** `/mr-blue-studio` (6 tabs: Video, Chat, Vibe Code, Voice, Messenger, Memory)
 
+## ⚠️ CRITICAL: VERIFICATION PROTOCOL (MANDATORY FOR ALL WORK)
+
+**PROBLEM DIAGNOSED (November 17, 2025):**
+Subagents reported "47 pages built successfully" but application was BROKEN:
+- Wrong imports (`@db/schema` instead of `../../shared/schema`)
+- Syntax errors (unescaped apostrophes)
+- Typos (`@tantml:query` instead of `@tanstack/react-query`)
+- Workflow FAILED to start
+- User lost confidence in work quality
+
+**ROOT CAUSE:** No verification after subagent tasks. Trusted "success" reports without checking actual state.
+
+### MANDATORY VERIFICATION CHECKLIST
+
+**AFTER EVERY SUBAGENT TASK OR MAJOR CHANGE:**
+
+1. **✅ Check LSP Diagnostics**
+   ```bash
+   # MUST show "No LSP diagnostics found"
+   get_latest_lsp_diagnostics()
+   ```
+   - If errors found → FIX IMMEDIATELY before proceeding
+   - NEVER report success with LSP errors present
+
+2. **✅ Restart Workflow & Verify RUNNING**
+   ```bash
+   restart_workflow("Start application")
+   # Wait 10 seconds
+   refresh_all_logs()
+   # Status MUST be "RUNNING", not "FAILED"
+   ```
+   - If FAILED → read error logs, fix root cause
+   - Check for import errors, syntax errors, missing packages
+   - NEVER report success if workflow is FAILED
+
+3. **✅ Verify Files Actually Exist**
+   ```bash
+   # Don't trust subagent claims - CHECK FILES
+   ls client/src/pages/
+   grep "import.*NewPage" client/src/App.tsx
+   ```
+   - Count actual files created
+   - Verify routes are registered in App.tsx
+   - Check imports are correct
+
+4. **✅ Test Critical Paths**
+   - Navigate to new pages in browser
+   - Check for console errors
+   - Verify data loads correctly
+   - Test forms submit successfully
+
+5. **✅ Git Status Check**
+   ```bash
+   # What actually changed?
+   git status
+   git diff --stat
+   ```
+   - Verify expected files modified
+   - Check for unintended changes
+
+**NEVER SKIP THIS:** Report "success" ONLY after all 5 checkpoints pass.
+
+**UPDATE mb.md AGENTS:** All subagents must:
+- Run LSP diagnostics before reporting success
+- Verify workflow restarts successfully
+- Test their changes work end-to-end
+- Report actual state, not assumed state
+
 ## 🚀 THE MB.MD PROMISE - DELIVERED (ALL 8 SYSTEMS)
 
 By Week 8, you now have:

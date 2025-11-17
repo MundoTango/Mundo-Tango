@@ -130,7 +130,7 @@ export default function OnboardingPage() {
     },
     {
       id: 'complete',
-      title: 'You're All Set!',
+      title: "You're All Set!",
       description: 'Start building with Mr Blue',
       completed: completedSteps.has('complete'),
       content: (

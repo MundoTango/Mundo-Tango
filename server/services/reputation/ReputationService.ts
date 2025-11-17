@@ -1,5 +1,5 @@
-import { db } from "@db";
-import { professionalEndorsements, users, friendships } from "@db/schema";
+import { db } from "../../db";
+import { professionalEndorsements, users, friendships } from "../../../shared/schema";
 import { eq, and, count, sql, desc, avg } from "drizzle-orm";
 
 export interface TangoRole {

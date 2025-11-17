@@ -1,7 +1,7 @@
 import { Router, type Request, type Response } from "express";
 import { authenticateToken, type AuthRequest } from "../middleware/auth";
 import { reputationService } from "../services/reputation/ReputationService";
-import { insertProfessionalEndorsementSchema } from "@db/schema";
+import { insertProfessionalEndorsementSchema } from "../../shared/schema";
 import { z } from "zod";
 
 const router = Router();
