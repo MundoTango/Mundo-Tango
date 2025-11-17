@@ -11531,6 +11531,142 @@ export type InsertFriendInvitation = z.infer<typeof insertFriendInvitationSchema
 export type SelectFriendInvitation = typeof friendInvitations.$inferSelect;
 
 // ============================================================================
+// PART 10: MULTI-PLATFORM DATA INTEGRATION (Part 10)
+// ============================================================================
+
+// Social Messages - Multi-platform data from FB/IG/WhatsApp
+export const socialMessages = pgTable("social_messages", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  platform: varchar("platform", { length: 50 }).notNull(), // 'facebook', 'instagram', 'whatsapp'
+  friendName: varchar("friend_name", { length: 255 }).notNull(),
+  friendProfileUrl: text("friend_profile_url"),
+  messageText: text("message_text"),
+  interactionType: varchar("interaction_type", { length: 50 }), // 'message', 'like', 'comment', 'share', 'story_view'
+  timestamp: timestamp("timestamp").notNull(),
+  sentiment: varchar("sentiment", { length: 20 }), // 'positive', 'negative', 'neutral'
+  metadata: jsonb("metadata"), // Additional platform-specific data
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  userIdx: index("social_messages_user_idx").on(table.userId),
+  platformIdx: index("social_messages_platform_idx").on(table.platform),
+  friendIdx: index("social_messages_friend_idx").on(table.friendName),
+  timestampIdx: index("social_messages_timestamp_idx").on(table.timestamp),
+}));
+
+export const insertSocialMessageSchema = createInsertSchema(socialMessages)
+  .omit({ id: true, createdAt: true });
+export type InsertSocialMessage = z.infer<typeof insertSocialMessageSchema>;
+export type SelectSocialMessage = typeof socialMessages.$inferSelect;
+
+// Friend Closeness - Closeness metrics calculation
+export const friendCloseness = pgTable("friend_closeness", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  friendName: varchar("friend_name", { length: 255 }).notNull(),
+  friendEmail: varchar("friend_email", { length: 255 }),
+  facebookUrl: text("facebook_url"),
+  instagramUrl: text("instagram_url"),
+  whatsappNumber: varchar("whatsapp_number", { length: 50 }),
+  closenessScore: integer("closeness_score").default(0).notNull(), // 0-1000
+  messageCount: integer("message_count").default(0),
+  lastInteraction: timestamp("last_interaction"),
+  mutualFriends: integer("mutual_friends").default(0),
+  sharedEvents: integer("shared_events").default(0),
+  tier: integer("tier").default(3), // 1 = closest, 2 = close, 3 = acquaintance
+  bio: text("bio"),
+  city: varchar("city", { length: 100 }),
+  country: varchar("country", { length: 100 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("friend_closeness_user_idx").on(table.userId),
+  friendNameIdx: index("friend_closeness_friend_name_idx").on(table.friendName),
+  closenessIdx: index("friend_closeness_score_idx").on(table.closenessScore),
+  tierIdx: index("friend_closeness_tier_idx").on(table.tier),
+  uniqueFriend: unique().on(table.userId, table.friendName),
+}));
+
+export const insertFriendClosenessSchema = createInsertSchema(friendCloseness)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertFriendCloseness = z.infer<typeof insertFriendClosenessSchema>;
+export type SelectFriendCloseness = typeof friendCloseness.$inferSelect;
+
+// Professional Endorsements - Reputation system
+export const professionalEndorsements = pgTable("professional_endorsements", {
+  id: serial("id").primaryKey(),
+  endorseeId: integer("endorsee_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  endorserId: integer("endorser_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  tangoRole: varchar("tango_role", { length: 50 }).notNull(), // 'teacher', 'dj', 'organizer', 'performer'
+  skillType: varchar("skill_type", { length: 100 }), // 'musicality', 'technique', 'teaching', 'event_planning'
+  rating: integer("rating").default(5), // 1-5 stars
+  comment: text("comment"),
+  isVerified: boolean("is_verified").default(false),
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  endorseeIdx: index("professional_endorsements_endorsee_idx").on(table.endorseeId),
+  endorserIdx: index("professional_endorsements_endorser_idx").on(table.endorserId),
+  roleIdx: index("professional_endorsements_role_idx").on(table.tangoRole),
+  uniqueEndorsement: unique().on(table.endorseeId, table.endorserId, table.tangoRole, table.skillType),
+}));
+
+export const insertProfessionalEndorsementSchema = createInsertSchema(professionalEndorsements)
+  .omit({ id: true, createdAt: true });
+export type InsertProfessionalEndorsement = z.infer<typeof insertProfessionalEndorsementSchema>;
+export type SelectProfessionalEndorsement = typeof professionalEndorsements.$inferSelect;
+
+// Mr Blue Tours - Tour tracking system
+export const mrBlueTours = pgTable("mr_blue_tours", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  tourType: varchar("tour_type", { length: 100 }).notNull(), // 'onboarding', 'feature_discovery', 'page_validation'
+  pageName: varchar("page_name", { length: 100 }), // Specific page being toured
+  started: boolean("started").default(false),
+  completed: boolean("completed").default(false),
+  currentStep: integer("current_step").default(0),
+  totalSteps: integer("total_steps"),
+  timeSpent: integer("time_spent").default(0), // seconds
+  skipped: boolean("skipped").default(false),
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
+  metadata: jsonb("metadata"), // Tour-specific data
+  createdAt: timestamp("created_at").defaultNow()
+}, (table) => ({
+  userIdx: index("mr_blue_tours_user_idx").on(table.userId),
+  tourTypeIdx: index("mr_blue_tours_type_idx").on(table.tourType),
+  pageIdx: index("mr_blue_tours_page_idx").on(table.pageName),
+  completedIdx: index("mr_blue_tours_completed_idx").on(table.completed),
+}));
+
+export const insertMrBlueTourSchema = createInsertSchema(mrBlueTours)
+  .omit({ id: true, createdAt: true });
+export type InsertMrBlueTour = z.infer<typeof insertMrBlueTourSchema>;
+export type SelectMrBlueTour = typeof mrBlueTours.$inferSelect;
+
+// Tour Sentiment - Sentiment analysis during tours
+export const tourSentiment = pgTable("tour_sentiment", {
+  id: serial("id").primaryKey(),
+  tourId: integer("tour_id").notNull().references(() => mrBlueTours.id, { onDelete: "cascade" }),
+  step: integer("step").notNull(),
+  userInput: text("user_input"),
+  sentiment: varchar("sentiment", { length: 20 }), // 'positive', 'negative', 'neutral', 'confused', 'frustrated'
+  confidence: real("confidence"), // 0.0 - 1.0
+  aiResponse: text("ai_response"),
+  helpRequested: boolean("help_requested").default(false),
+  issueReported: boolean("issue_reported").default(false),
+  timestamp: timestamp("timestamp").defaultNow()
+}, (table) => ({
+  tourIdx: index("tour_sentiment_tour_idx").on(table.tourId),
+  sentimentIdx: index("tour_sentiment_sentiment_idx").on(table.sentiment),
+  timestampIdx: index("tour_sentiment_timestamp_idx").on(table.timestamp),
+}));
+
+export const insertTourSentimentSchema = createInsertSchema(tourSentiment)
+  .omit({ id: true, timestamp: true });
+export type InsertTourSentiment = z.infer<typeof insertTourSentimentSchema>;
+export type SelectTourSentiment = typeof tourSentiment.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
