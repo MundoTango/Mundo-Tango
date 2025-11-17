@@ -202,13 +202,19 @@ app.use((req, res, next) => {
     startPreviewExpirationChecker();
     initStoryExpirationJob();
     
-    // PHASE 0A: Initialize Policy Monitoring System
-    try {
-      log('🔍 Initializing Policy Monitoring System...');
-      await PolicyMonitoringJobs.initialize();
-      log('✅ Policy Monitoring System initialized successfully');
-    } catch (error) {
-      logger.error('❌ Failed to initialize Policy Monitoring System:', error);
+    // PHASE 0A: Initialize Policy Monitoring System (requires Redis)
+    // SKIP in development if Redis is not available to avoid ECONNREFUSED spam
+    if (process.env.REDIS_URL) {
+      try {
+        log('🔍 Initializing Policy Monitoring System...');
+        await PolicyMonitoringJobs.initialize();
+        log('✅ Policy Monitoring System initialized successfully');
+      } catch (error) {
+        logger.error('❌ Failed to initialize Policy Monitoring System:', error);
+      }
+    } else {
+      log('ℹ️  Policy Monitoring System disabled (Redis not configured)');
+      log('   Set REDIS_URL environment variable to enable monitoring workers');
     }
   });
 })();
