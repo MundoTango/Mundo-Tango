@@ -11121,6 +11121,384 @@ export type InsertUserViolation = z.infer<typeof insertUserViolationSchema>;
 export type SelectUserViolation = typeof userViolations.$inferSelect;
 
 // ============================================================================
+// AI SERVICES CONSOLIDATION (Week 10-12)
+// ============================================================================
+
+// Mr Blue AI Content Studio - Generated Assets (3D models, videos, avatars)
+export const generatedAssets = pgTable("generated_assets", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  assetType: varchar("asset_type", { length: 50 }).notNull(), // '3d_model', 'ai_video', 'avatar_video'
+  fileName: varchar("file_name", { length: 255 }).notNull(),
+  fileUrl: text("file_url").notNull(),
+  thumbnailUrl: text("thumbnail_url"),
+  metadata: jsonb("metadata").notNull(), // { polygonCount, duration, format, etc }
+  tags: text("tags").array(),
+  isPublic: boolean("is_public").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull()
+}, (table) => ({
+  userIdx: index("generated_assets_user_idx").on(table.userId),
+  typeIdx: index("generated_assets_type_idx").on(table.assetType),
+  createdAtIdx: index("generated_assets_created_at_idx").on(table.createdAt),
+}));
+
+export const insertGeneratedAssetSchema = createInsertSchema(generatedAssets)
+  .omit({ id: true, createdAt: true });
+export type InsertGeneratedAsset = z.infer<typeof insertGeneratedAssetSchema>;
+export type SelectGeneratedAsset = typeof generatedAssets.$inferSelect;
+
+// Asset Generation Jobs (BullMQ job tracking)
+export const assetGenerationJobs = pgTable("asset_generation_jobs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  assetType: varchar("asset_type", { length: 50 }).notNull(),
+  inputPrompt: text("input_prompt"),
+  inputImageUrl: text("input_image_url"),
+  status: varchar("status", { length: 20 }).notNull(), // 'processing', 'completed', 'failed'
+  outputUrl: text("output_url"),
+  parameters: jsonb("parameters").notNull(),
+  errorMessage: text("error_message"),
+  apiProvider: varchar("api_provider", { length: 50 }).notNull(), // 'meshy', 'luma', 'heygen'
+  costCents: integer("cost_cents"), // Track API costs
+  processingTimeSeconds: integer("processing_time_seconds"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at")
+}, (table) => ({
+  userIdx: index("asset_generation_jobs_user_idx").on(table.userId),
+  statusIdx: index("asset_generation_jobs_status_idx").on(table.status),
+  createdAtIdx: index("asset_generation_jobs_created_at_idx").on(table.createdAt),
+}));
+
+export const insertAssetGenerationJobSchema = createInsertSchema(assetGenerationJobs)
+  .omit({ id: true, createdAt: true });
+export type InsertAssetGenerationJob = z.infer<typeof insertAssetGenerationJobSchema>;
+export type SelectAssetGenerationJob = typeof assetGenerationJobs.$inferSelect;
+
+// Digital Twins (user-trained avatars)
+export const digitalTwins = pgTable("digital_twins", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 100 }).notNull(),
+  trainingVideoUrl: text("training_video_url").notNull(),
+  heygenAvatarId: varchar("heygen_avatar_id", { length: 100 }),
+  status: varchar("status", { length: 20 }).notNull(), // 'training', 'ready', 'failed'
+  thumbnailUrl: text("thumbnail_url"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  trainedAt: timestamp("trained_at")
+}, (table) => ({
+  userIdx: index("digital_twins_user_idx").on(table.userId),
+  statusIdx: index("digital_twins_status_idx").on(table.status),
+}));
+
+export const insertDigitalTwinSchema = createInsertSchema(digitalTwins)
+  .omit({ id: true, createdAt: true });
+export type InsertDigitalTwin = z.infer<typeof insertDigitalTwinSchema>;
+export type SelectDigitalTwin = typeof digitalTwins.$inferSelect;
+
+// LIFE CEO Productivity Agent 2.0 - Pomodoro Sessions
+export const pomodoroSessions = pgTable("pomodoro_sessions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  taskId: integer("task_id").references(() => lifeCeoTasks.id, { onDelete: "set null" }),
+  type: varchar("type", { length: 20 }).notNull(), // 'work', 'short_break', 'long_break'
+  plannedDuration: integer("planned_duration").notNull(), // seconds
+  actualDuration: integer("actual_duration"),
+  status: varchar("status", { length: 20 }).notNull(), // 'active', 'completed', 'cancelled'
+  startedAt: timestamp("started_at").notNull(),
+  completedAt: timestamp("completed_at")
+}, (table) => ({
+  userIdx: index("pomodoro_sessions_user_idx").on(table.userId),
+  taskIdx: index("pomodoro_sessions_task_idx").on(table.taskId),
+  statusIdx: index("pomodoro_sessions_status_idx").on(table.status),
+  startedAtIdx: index("pomodoro_sessions_started_at_idx").on(table.startedAt),
+}));
+
+export const insertPomodoroSessionSchema = createInsertSchema(pomodoroSessions)
+  .omit({ id: true });
+export type InsertPomodoroSession = z.infer<typeof insertPomodoroSessionSchema>;
+export type SelectPomodoroSession = typeof pomodoroSessions.$inferSelect;
+
+// Distraction Logs
+export const distractionLogs = pgTable("distraction_logs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  type: varchar("type", { length: 50 }).notNull(), // 'tab_switch', 'idle', 'social_media'
+  timestamp: timestamp("timestamp").notNull(),
+  metadata: jsonb("metadata") // { fromUrl, toUrl, duration, etc }
+}, (table) => ({
+  userIdx: index("distraction_logs_user_idx").on(table.userId),
+  typeIdx: index("distraction_logs_type_idx").on(table.type),
+  timestampIdx: index("distraction_logs_timestamp_idx").on(table.timestamp),
+}));
+
+export const insertDistractionLogSchema = createInsertSchema(distractionLogs)
+  .omit({ id: true });
+export type InsertDistractionLog = z.infer<typeof insertDistractionLogSchema>;
+export type SelectDistractionLog = typeof distractionLogs.$inferSelect;
+
+// Productivity Reports
+export const productivityReports = pgTable("productivity_reports", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  weekOf: timestamp("week_of").notNull(),
+  totalFocusTime: integer("total_focus_time").notNull(), // seconds
+  completedTasks: integer("completed_tasks").notNull(),
+  totalTasks: integer("total_tasks").notNull(),
+  distractionCount: integer("distraction_count").notNull(),
+  insights: jsonb("insights").notNull(), // AI-generated recommendations
+  createdAt: timestamp("created_at").defaultNow().notNull()
+}, (table) => ({
+  userIdx: index("productivity_reports_user_idx").on(table.userId),
+  weekOfIdx: index("productivity_reports_week_of_idx").on(table.weekOf),
+}));
+
+export const insertProductivityReportSchema = createInsertSchema(productivityReports)
+  .omit({ id: true, createdAt: true });
+export type InsertProductivityReport = z.infer<typeof insertProductivityReportSchema>;
+export type SelectProductivityReport = typeof productivityReports.$inferSelect;
+
+// LIFE CEO Finance Agent - Financial Transactions
+export const financialTransactions = pgTable("financial_transactions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  type: varchar("type", { length: 20 }).notNull(), // 'income' | 'expense'
+  amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
+  category: varchar("category", { length: 50 }).notNull(),
+  description: text("description").notNull(),
+  merchant: varchar("merchant", { length: 100 }),
+  date: timestamp("date").notNull(),
+  recurring: boolean("recurring").default(false),
+  stripePaymentIntentId: varchar("stripe_payment_intent_id", { length: 100 }),
+  createdAt: timestamp("created_at").defaultNow().notNull()
+}, (table) => ({
+  userIdx: index("financial_transactions_user_idx").on(table.userId),
+  typeIdx: index("financial_transactions_type_idx").on(table.type),
+  categoryIdx: index("financial_transactions_category_idx").on(table.category),
+  dateIdx: index("financial_transactions_date_idx").on(table.date),
+}));
+
+export const insertFinancialTransactionSchema = createInsertSchema(financialTransactions)
+  .omit({ id: true, createdAt: true });
+export type InsertFinancialTransaction = z.infer<typeof insertFinancialTransactionSchema>;
+export type SelectFinancialTransaction = typeof financialTransactions.$inferSelect;
+
+// Budgets
+export const budgets = pgTable("budgets", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  category: varchar("category", { length: 50 }).notNull(),
+  budgetedAmount: numeric("budgeted_amount", { precision: 10, scale: 2 }).notNull(),
+  spentAmount: numeric("spent_amount", { precision: 10, scale: 2 }).default("0").notNull(),
+  period: varchar("period", { length: 20 }).notNull(), // 'monthly' | 'yearly'
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull()
+}, (table) => ({
+  userIdx: index("budgets_user_idx").on(table.userId),
+  categoryIdx: index("budgets_category_idx").on(table.category),
+  periodIdx: index("budgets_period_idx").on(table.period),
+}));
+
+export const insertBudgetSchema = createInsertSchema(budgets)
+  .omit({ id: true, createdAt: true });
+export type InsertBudget = z.infer<typeof insertBudgetSchema>;
+export type SelectBudget = typeof budgets.$inferSelect;
+
+// Investments
+export const investments = pgTable("investments", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  assetType: varchar("asset_type", { length: 20 }).notNull(), // 'stock', 'crypto', 'real_estate', 'cash'
+  symbol: varchar("symbol", { length: 20 }), // 'AAPL', 'BTC', null for real estate
+  quantity: numeric("quantity", { precision: 18, scale: 8 }).notNull(),
+  purchasePrice: numeric("purchase_price", { precision: 10, scale: 2 }).notNull(),
+  currentPrice: numeric("current_price", { precision: 10, scale: 2 }),
+  lastUpdated: timestamp("last_updated"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull()
+}, (table) => ({
+  userIdx: index("investments_user_idx").on(table.userId),
+  assetTypeIdx: index("investments_asset_type_idx").on(table.assetType),
+  symbolIdx: index("investments_symbol_idx").on(table.symbol),
+}));
+
+export const insertInvestmentSchema = createInsertSchema(investments)
+  .omit({ id: true, createdAt: true });
+export type InsertInvestment = z.infer<typeof insertInvestmentSchema>;
+export type SelectInvestment = typeof investments.$inferSelect;
+
+// Enhanced Talent Match - Outreach Sequences
+export const outreachSequences = pgTable("outreach_sequences", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  candidateId: integer("candidate_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  opportunityDescription: text("opportunity_description").notNull(),
+  status: varchar("status", { length: 20 }).notNull(), // 'active', 'paused', 'completed', 'replied'
+  currentStep: integer("current_step").default(1),
+  createdAt: timestamp("created_at").defaultNow().notNull()
+}, (table) => ({
+  userIdx: index("outreach_sequences_user_idx").on(table.userId),
+  candidateIdx: index("outreach_sequences_candidate_idx").on(table.candidateId),
+  statusIdx: index("outreach_sequences_status_idx").on(table.status),
+}));
+
+export const insertOutreachSequenceSchema = createInsertSchema(outreachSequences)
+  .omit({ id: true, createdAt: true });
+export type InsertOutreachSequence = z.infer<typeof insertOutreachSequenceSchema>;
+export type SelectOutreachSequence = typeof outreachSequences.$inferSelect;
+
+// Outreach Steps
+export const outreachSteps = pgTable("outreach_steps", {
+  id: serial("id").primaryKey(),
+  sequenceId: integer("sequence_id").notNull().references(() => outreachSequences.id, { onDelete: "cascade" }),
+  stepNumber: integer("step_number").notNull(),
+  delayDays: integer("delay_days").notNull(),
+  subject: varchar("subject", { length: 200 }).notNull(),
+  body: text("body").notNull(),
+  channel: varchar("channel", { length: 20 }).notNull(), // 'email', 'linkedin', 'messenger'
+  status: varchar("status", { length: 20 }).notNull(), // 'pending', 'sent', 'opened', 'replied'
+  sentAt: timestamp("sent_at"),
+  openedAt: timestamp("opened_at"),
+  repliedAt: timestamp("replied_at")
+}, (table) => ({
+  sequenceIdx: index("outreach_steps_sequence_idx").on(table.sequenceId),
+  statusIdx: index("outreach_steps_status_idx").on(table.status),
+}));
+
+export const insertOutreachStepSchema = createInsertSchema(outreachSteps)
+  .omit({ id: true });
+export type InsertOutreachStep = z.infer<typeof insertOutreachStepSchema>;
+export type SelectOutreachStep = typeof outreachSteps.$inferSelect;
+
+// Candidate Pipelines (ATS)
+export const candidatePipelines = pgTable("candidate_pipelines", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }), // Recruiter
+  candidateId: integer("candidate_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  opportunityId: integer("opportunity_id").references(() => opportunities.id, { onDelete: "set null" }),
+  stage: varchar("stage", { length: 20 }).notNull(), // 'contacted', 'responded', 'interviewed', 'offered', 'hired', 'rejected'
+  source: varchar("source", { length: 50 }), // 'search', 'referral', 'event'
+  notes: text("notes"),
+  rating: integer("rating"), // 1-5 stars
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull()
+}, (table) => ({
+  userIdx: index("candidate_pipelines_user_idx").on(table.userId),
+  candidateIdx: index("candidate_pipelines_candidate_idx").on(table.candidateId),
+  stageIdx: index("candidate_pipelines_stage_idx").on(table.stage),
+}));
+
+export const insertCandidatePipelineSchema = createInsertSchema(candidatePipelines)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertCandidatePipeline = z.infer<typeof insertCandidatePipelineSchema>;
+export type SelectCandidatePipeline = typeof candidatePipelines.$inferSelect;
+
+// Opportunities (Jobs/Gigs)
+export const opportunities = pgTable("opportunities", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 200 }).notNull(),
+  description: text("description").notNull(),
+  location: varchar("location", { length: 100 }),
+  compensation: varchar("compensation", { length: 100 }),
+  startDate: timestamp("start_date"),
+  status: varchar("status", { length: 20 }).notNull(), // 'open', 'filled', 'cancelled'
+  createdAt: timestamp("created_at").defaultNow().notNull()
+}, (table) => ({
+  userIdx: index("opportunities_user_idx").on(table.userId),
+  statusIdx: index("opportunities_status_idx").on(table.status),
+}));
+
+export const insertOpportunitySchema = createInsertSchema(opportunities)
+  .omit({ id: true, createdAt: true });
+export type InsertOpportunity = z.infer<typeof insertOpportunitySchema>;
+export type SelectOpportunity = typeof opportunities.$inferSelect;
+
+// User Privacy Hub - Virtual Emails
+export const virtualEmails = pgTable("virtual_emails", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  virtualEmail: varchar("virtual_email", { length: 100 }).unique().notNull(),
+  label: varchar("label", { length: 50 }).notNull(),
+  forwardTo: varchar("forward_to", { length: 100 }).notNull(),
+  isActive: boolean("is_active").default(true),
+  emailCount: integer("email_count").default(0),
+  spamCount: integer("spam_count").default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  disabledAt: timestamp("disabled_at")
+}, (table) => ({
+  userIdx: index("virtual_emails_user_idx").on(table.userId),
+  virtualEmailIdx: uniqueIndex("virtual_emails_virtual_email_idx").on(table.virtualEmail),
+  activeIdx: index("virtual_emails_active_idx").on(table.isActive),
+}));
+
+export const insertVirtualEmailSchema = createInsertSchema(virtualEmails)
+  .omit({ id: true, createdAt: true });
+export type InsertVirtualEmail = z.infer<typeof insertVirtualEmailSchema>;
+export type SelectVirtualEmail = typeof virtualEmails.$inferSelect;
+
+// Virtual Email Logs
+export const virtualEmailLogs = pgTable("virtual_email_logs", {
+  id: serial("id").primaryKey(),
+  virtualEmailId: integer("virtual_email_id").notNull().references(() => virtualEmails.id, { onDelete: "cascade" }),
+  from: varchar("from", { length: 100 }).notNull(),
+  subject: varchar("subject", { length: 200 }),
+  isSpam: boolean("is_spam").default(false),
+  receivedAt: timestamp("received_at").notNull()
+}, (table) => ({
+  virtualEmailIdx: index("virtual_email_logs_virtual_email_idx").on(table.virtualEmailId),
+  receivedAtIdx: index("virtual_email_logs_received_at_idx").on(table.receivedAt),
+}));
+
+export const insertVirtualEmailLogSchema = createInsertSchema(virtualEmailLogs)
+  .omit({ id: true });
+export type InsertVirtualEmailLog = z.infer<typeof insertVirtualEmailLogSchema>;
+export type SelectVirtualEmailLog = typeof virtualEmailLogs.$inferSelect;
+
+// Data Broker Removal Requests
+export const dataBrokerRemovalRequests = pgTable("data_broker_removal_requests", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  brokerName: varchar("broker_name", { length: 100 }).notNull(),
+  status: varchar("status", { length: 20 }).notNull(), // 'pending', 'submitted', 'in_progress', 'removed', 'failed'
+  requestedAt: timestamp("requested_at").notNull(),
+  submittedAt: timestamp("submitted_at"),
+  removedAt: timestamp("removed_at"),
+  errorMessage: text("error_message")
+}, (table) => ({
+  userIdx: index("data_broker_removal_requests_user_idx").on(table.userId),
+  statusIdx: index("data_broker_removal_requests_status_idx").on(table.status),
+}));
+
+export const insertDataBrokerRemovalRequestSchema = createInsertSchema(dataBrokerRemovalRequests)
+  .omit({ id: true });
+export type InsertDataBrokerRemovalRequest = z.infer<typeof insertDataBrokerRemovalRequestSchema>;
+export type SelectDataBrokerRemovalRequest = typeof dataBrokerRemovalRequests.$inferSelect;
+
+// Security Alerts (Dark Web Monitoring)
+export const securityAlerts = pgTable("security_alerts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  type: varchar("type", { length: 50 }).notNull(), // 'data_breach', 'suspicious_login', 'dark_web_exposure'
+  severity: varchar("severity", { length: 20 }).notNull(), // 'low', 'medium', 'high', 'critical'
+  message: text("message").notNull(),
+  metadata: jsonb("metadata"), // { breaches, affectedData, recommendations }
+  isRead: boolean("is_read").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull()
+}, (table) => ({
+  userIdx: index("security_alerts_user_idx").on(table.userId),
+  typeIdx: index("security_alerts_type_idx").on(table.type),
+  severityIdx: index("security_alerts_severity_idx").on(table.severity),
+  isReadIdx: index("security_alerts_is_read_idx").on(table.isRead),
+  createdAtIdx: index("security_alerts_created_at_idx").on(table.createdAt),
+}));
+
+export const insertSecurityAlertSchema = createInsertSchema(securityAlerts)
+  .omit({ id: true, createdAt: true });
+export type InsertSecurityAlert = z.infer<typeof insertSecurityAlertSchema>;
+export type SelectSecurityAlert = typeof securityAlerts.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
