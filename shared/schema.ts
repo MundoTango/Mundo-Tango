@@ -83,6 +83,8 @@ export const users = pgTable("users", {
   lastJourneyUpdate: timestamp("last_journey_update"),
   role: varchar("role").default("user").notNull(),
   customVoiceId: varchar("custom_voice_id", { length: 255 }),
+  waitlist: boolean("waitlist").default(false),
+  waitlistDate: timestamp("waitlist_date"),
   
   // WEEK 9 DAY 2: User Profile & Networking Features
   interests: text("interests").array(),
