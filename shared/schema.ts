@@ -11893,6 +11893,96 @@ export type InsertBookChapter = z.infer<typeof insertBookChapterSchema>;
 export type SelectBookChapter = typeof bookChapters.$inferSelect;
 
 // ============================================================================
+// MR. BLUE COMPUTER USE (ANTHROPIC COMPUTER USE API - SYSTEM 11)
+// ============================================================================
+
+export const computerUseStatusEnum = pgEnum("computer_use_status", [
+  "pending",
+  "running",
+  "completed",
+  "failed",
+  "requires_approval",
+  "cancelled"
+]);
+
+export const computerUseTasks = pgTable("computer_use_tasks", {
+  id: serial("id").primaryKey(),
+  taskId: varchar("task_id", { length: 100 }).notNull().unique(), // cu_timestamp_random
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // Task details
+  instruction: text("instruction").notNull(),
+  status: varchar("status", { length: 50 }).default("pending").notNull(),
+  
+  // Execution metadata
+  steps: jsonb("steps").default([]).notNull(), // Array of ComputerUseStep objects
+  currentStep: integer("current_step").default(0).notNull(),
+  maxSteps: integer("max_steps").default(50).notNull(),
+  
+  // Results
+  result: jsonb("result"),
+  error: text("error"),
+  
+  // Safety & Approval
+  requiresApproval: boolean("requires_approval").default(true).notNull(),
+  approvedBy: integer("approved_by").references(() => users.id),
+  approvedAt: timestamp("approved_at"),
+  
+  // Automation metadata
+  automationType: varchar("automation_type", { length: 50 }), // 'wix_extraction', 'social_media', 'testing', 'custom'
+  targetUrl: text("target_url"),
+  credentials: jsonb("credentials"), // Encrypted credentials if needed
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  taskIdIdx: index("computer_use_tasks_task_id_idx").on(table.taskId),
+  userIdIdx: index("computer_use_tasks_user_id_idx").on(table.userId),
+  statusIdx: index("computer_use_tasks_status_idx").on(table.status),
+  createdAtIdx: index("computer_use_tasks_created_at_idx").on(table.createdAt),
+  automationTypeIdx: index("computer_use_tasks_automation_type_idx").on(table.automationType),
+}));
+
+export const insertComputerUseTaskSchema = createInsertSchema(computerUseTasks)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertComputerUseTask = z.infer<typeof insertComputerUseTaskSchema>;
+export type SelectComputerUseTask = typeof computerUseTasks.$inferSelect;
+
+// Computer Use Screenshots - Separate table for better performance
+export const computerUseScreenshots = pgTable("computer_use_screenshots", {
+  id: serial("id").primaryKey(),
+  taskId: integer("task_id").notNull().references(() => computerUseTasks.id, { onDelete: "cascade" }),
+  stepNumber: integer("step_number").notNull(),
+  
+  // Screenshot data
+  screenshot: text("screenshot").notNull(), // Base64 encoded PNG
+  width: integer("width").default(1920).notNull(),
+  height: integer("height").default(1080).notNull(),
+  
+  // Metadata
+  action: varchar("action", { length: 50 }).notNull(), // 'screenshot', 'click', 'type', etc.
+  actionDetails: jsonb("action_details"),
+  success: boolean("success").default(true).notNull(),
+  
+  // Storage optimization
+  compressed: boolean("compressed").default(false).notNull(),
+  fileSize: integer("file_size"), // Bytes
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  taskIdIdx: index("computer_use_screenshots_task_id_idx").on(table.taskId),
+  stepNumberIdx: index("computer_use_screenshots_step_number_idx").on(table.stepNumber),
+}));
+
+export const insertComputerUseScreenshotSchema = createInsertSchema(computerUseScreenshots)
+  .omit({ id: true, createdAt: true });
+export type InsertComputerUseScreenshot = z.infer<typeof insertComputerUseScreenshotSchema>;
+export type SelectComputerUseScreenshot = typeof computerUseScreenshots.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
