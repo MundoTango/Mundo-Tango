@@ -596,6 +596,12 @@ export class AutonomousEngine {
       throw new Error('User not found');
     }
 
+    // DEVELOPMENT MODE: Allow autonomous mode for admin users (tier 3+) or in development
+    if (process.env.NODE_ENV !== 'production' || user.tier >= 3) {
+      console.log('[AutonomousEngine] ✅ Development/Admin user - autonomous mode enabled');
+      return;
+    }
+
     // Tier 8 (God Level) has no limits
     if (user.subscriptionTier === 'tier-8-god-level') {
       console.log('[AutonomousEngine] ✅ God Level user - no limits');
