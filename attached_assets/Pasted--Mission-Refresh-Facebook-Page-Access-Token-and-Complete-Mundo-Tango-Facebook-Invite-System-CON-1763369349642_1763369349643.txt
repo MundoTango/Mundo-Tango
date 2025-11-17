@@ -1,0 +1,978 @@
+# Mission: Refresh Facebook Page Access Token and Complete Mundo Tango Facebook Invite System
+## CONTEXT
+We're building Mundo Tango, a global tango community platform. We need to:
+1. Refresh an expired Facebook Page Access Token
+2. Update the token in Replit secrets
+3. Complete testing of our Facebook Messenger invite system
+4. Send test invite to sboddye@gmail.com via Facebook Messenger
+5. Run automated Playwright tests to verify end-to-end journey
+## TECHNICAL BACKGROUND
+- **Project:** Replit project "MundoTango" at https://replit.com/@admin3304/MundoTango
+- **Current Status:** Facebook Page Access Token expired November 12, 2025
+- **Infrastructure Built:** 
+  - ✅ Token validation system
+  - ✅ Facebook Messenger integration
+  - ✅ AI invite generator (GPT-4o powered)
+  - ✅ Recursive monitoring (7 social platforms)
+  - ✅ Playwright E2E test suite
+- **Blocking Issue:** Need fresh Facebook Page Access Token to proceed
+## YOUR TASKS
+### TASK 1: Generate New Facebook Page Access Token (5 min)
+**Steps:**
+1. Open browser and navigate to: https://developers.facebook.com/apps
+2. Log in to Facebook if needed (credentials: Use Scott's Facebook account)
+3. Find and select the "Mundo Tango" app (or create if doesn't exist)
+4. Navigate to: **Messenger → Settings** (in left sidebar)
+5. Scroll to **Access Tokens** section
+6. Find your Mundo Tango Facebook Page
+7. Click **"Generate Token"** button next to the page
+8. **IMPORTANT:** Copy the generated token immediately (it won't show again)
+9. The token should start with something like `EAAG...` or `EAA...`
+**Expected Result:** You should have a long string token (100+ characters) copied to clipboard
+---
+### TASK 2: Update Replit Secrets (2 min)
+**Steps:**
+1. Navigate to: https://replit.com/@admin3304/MundoTango
+2. Click **"Tools"** in left sidebar
+3. Click **"Secrets"** (lock icon)
+4. Find the secret key: `FACEBOOK_PAGE_ACCESS_TOKEN`
+5. If it exists: Click edit, paste new token, save
+6. If it doesn't exist: Click **"New Secret"**, name it `FACEBOOK_PAGE_ACCESS_TOKEN`, paste token, save
+7. **Verify:** The secret should now show in the list with a masked value
+**Expected Result:** Secret successfully updated in Replit
+---
+### TASK 3: Verify Token with Replit AI (3 min)
+**Steps:**
+1. In Replit, click **"AI"** button (top right)
+2. Paste this message to Replit AI:
+
+Test the Facebook token by running this command:
+curl http://localhost:5000/api/facebook-messenger/validate-token
+
+If it returns "isValid": true, proceed to generate invite message:
+curl -X POST http://localhost:5000/api/facebook/test-and-generate-invite
+
+Show me the results of both commands.
+
+3. Wait for Replit AI to execute the commands
+4. **Verify:** First command should show `"isValid": true` and token details
+5. **Verify:** Second command should show generated invite message for sboddye@gmail.com
+**Expected Result:** Token validated + Invite message generated successfully
+---
+### TASK 4: Converse with Replit AI to Complete Work (10 min)
+**Message to Replit AI:**
+
+The Facebook token is now valid. Please complete the following tasks using MB.MD v8.2 methodology:
+
+PHASE 4: Add Tester Role
+
+Guide me through adding sboddye@gmail.com as a Tester in Facebook App Dashboard
+This allows us to send messages without 24-hour window restriction
+Show me the exact steps
+PHASE 5: Send Test Invite
+
+Review the generated invite message
+Send the invite to sboddye@gmail.com Facebook Messenger
+Monitor for successful delivery
+Log the messageId
+PHASE 6: Run Playwright E2E Verification
+
+Execute the test: server/tests/e2e/facebook-invite-journey.test.ts
+This will verify:
+Invite received in sboddye's Facebook Messenger
+Link works and redirects to Mundo Tango platform
+Login with scott@boddye.com works
+Progress bar appears showing mb.md learnings
+Provide screenshots from /tmp/screenshots/
+Report progress at each phase with % updates.
+
+4. Follow any additional instructions from Replit AI
+5. Provide Facebook credentials if needed for testing
+6. Approve the invite message when shown
+**Expected Result:** Complete end-to-end system working, invite sent, tests passing
+---
+## IMPORTANT NOTES
+### Facebook App Setup (If Needed)
+If Mundo Tango app doesn't exist in Facebook Developers:
+1. Create new app → **Business** type
+2. Add **Messenger** product
+3. Generate Page Access Token for your page
+4. Add test user: sboddye@gmail.com as **Tester** role
+### Security & Privacy
+- ✅ All actions are lawful and authorized by Scott (project owner)
+- ✅ Facebook tokens are for legitimate business use (Mundo Tango platform)
+- ✅ No personal data collection beyond what's needed
+- ✅ Complies with Vercept privacy policy (local processing, user-authorized)
+- ✅ Complies with Facebook Developer policies (proper token management)
+### Credentials Needed
+- **Facebook:** Scott's Facebook account (for Developers Console)
+- **Replit:** Already logged in at https://replit.com/@admin3304/MundoTango
+- **Facebook Test Account:** sboddye@gmail.com (for receiving test invite)
+### Troubleshooting
+- **Token still invalid:** Ensure you copied the entire token (no spaces/truncation)
+- **Can't find Mundo Tango app:** Create new app, add Messenger product
+- **Replit AI not responding:** Refresh page, try again
+- **Playwright test fails:** Check if sboddye@gmail.com password is set in environment
+---
+## SUCCESS CRITERIA
+You've completed the mission when:
+1. ✅ New Facebook Page Access Token generated
+2. ✅ Token updated in Replit secrets
+3. ✅ Token validation returns `isValid: true`
+4. ✅ Invite message generated for sboddye@gmail.com
+5. ✅ sboddye added as Tester in Facebook App
+6. ✅ Invite sent successfully via Facebook Messenger
+7. ✅ Playwright tests pass (screenshots show full journey)
+8. ✅ Replit AI confirms 100% completion
+---
+## EXPECTED TIMELINE
+- Task 1 (Token generation): 5 min
+- Task 2 (Update Replit secrets): 2 min
+- Task 3 (Verify token): 3 min
+- Task 4 (Complete with AI): 10 min
+**Total:** ~20 minutes
+---
+## FINAL DELIVERABLE
+When complete, provide:
+1. ✅ Confirmation that token is valid
+2. ✅ Screenshot of generated invite message
+3. ✅ messageId from successful send
+4. ✅ Screenshots from Playwright test showing:
+   - Facebook Messenger with invite
+   - Mundo Tango platform landing page
+   - Logged in dashboard with progress bar
+5. ✅ Final status from Replit AI: "100% Complete"
+---
+**You can interact with Replit AI in natural language - it understands context and can execute commands, run tests, and complete complex tasks autonomously.**
+
+I'll help you complete this Facebook Page Access Token refresh and Mundo Tango Facebook invite system task. Let me start by creating a TODO.md file to track our progress through this complex workflow.
+
+
+
+
+Creating task completion plan
+Open url (Background Browser)
+url: "https://developers.facebook.com/apps"
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Perfect! I can see the Facebook Developer Console is already loaded and there are three Mundo Tango apps available. I can see the main "Mundo Tango" app (ID: 1450658896233975) which is what we need. Let me click on it to access the app settings.
+
+
+
+
+Updating task progress (1/29 steps complete)
+Click (Background Browser)
+label: "Mundo Tango app link"
+Wait
+seconds: 0.25
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+I see there was an error when clicking on the business link. Let me go back to the apps page and try clicking directly on the "Mundo Tango" app name instead of the business link.
+
+
+
+
+Open url (Background Browser)
+url: "https://developers.facebook.com/apps/1450658896233975"
+Wait
+seconds: 0.25
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Great! I'm now in the Mundo Tango app dashboard. I can see the left sidebar with various options. I need to look for Messenger settings to find the Access Tokens section. Let me scroll down to see if there are more options in the sidebar, or look for a Messenger section.
+
+
+
+
+Updating task progress (3/29 steps complete)
+Scroll (Background Browser)
+delta_x: 0, delta_y: 300
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+I can see the app dashboard, but I need to find the Messenger section. I don't see it in the current sidebar view. Let me look for it by scrolling up to see if there are more navigation options, or check if there's a way to add Messenger as a product to this app.
+
+
+
+
+Scroll (Background Browser)
+delta_x: 0, delta_y: -600
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+I don't see a Messenger section in the current sidebar. This suggests that Messenger might not be added as a product to this app yet. Let me check if I need to add Messenger as a product first. I'll look for a way to add products or check the "Use cases" section which might show available products.
+
+
+
+
+Click (Background Browser)
+label: "Use cases"
+Wait
+seconds: 0.25
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+I can see the page is loading "Use Cases". Let me wait for it to fully load and then see what use cases or products are available for this app.
+
+
+
+
+Wait
+seconds: 0.5
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Perfect! Now I can see the Use Cases page has loaded. I can see two use cases currently available:
+
+"Create & manage app ads with Meta Ads Manager"
+"Authenticate and request data from users with Facebook Login"
+I need to scroll down to see if there are more use cases available, particularly looking for Messenger or a way to add Messenger as a product.
+
+
+
+
+Scroll (Background Browser)
+delta_x: 0, delta_y: 300
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+I can see that this app currently only has two use cases and doesn't have Messenger added as a product yet. I need to add Messenger as a use case/product first. Let me scroll down more to see if there's an option to add more use cases or products.
+
+
+
+
+Scroll (Background Browser)
+delta_x: 0, delta_y: 480
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+I notice there's no option to add more use cases on this page. Let me try a different approach. Since this app doesn't have Messenger added yet, I should look for a way to add products. Let me try navigating to the main Facebook Developer Console to see if I can add Messenger as a product to this app. I'll try going to the Tools menu or look for an "Add Product" option.
+
+
+
+
+Open url (Background Browser)
+url: "https://developers.facebook.com/apps/1450658896233975/add"
+Wait
+seconds: 0.25
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Excellent! I'm now on the "Add Product" page. I can see "My products" section and there's an "App Events" product already added. I need to scroll down to see more available products to add, specifically looking for Messenger.
+
+
+
+
+Scroll (Background Browser)
+delta_x: 0, delta_y: 300
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+I can see there's another product card partially visible on the right. Let me continue scrolling to see all available products that can be added to this app.
+
+
+
+
+Scroll (Background Browser)
+delta_x: 0, delta_y: 480
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+I can see there's another product card on the right that's partially visible. Let me scroll horizontally or try to see the full page to find available products to add, particularly Messenger.
+
+
+
+
+Scroll (Background Browser)
+delta_x: 300, delta_y: 0
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Let me try scrolling down further to see if there are more products available to add below the current "My products" section.
+
+
+
+
+Scroll (Background Browser)
+delta_x: 0, delta_y: 600
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+It seems like the page is not showing additional products to add. Let me try a different approach. Since I can see there's a second product card partially visible on the right, let me try to access the Messenger product directly by going to a known URL pattern for Messenger in Facebook Developer Console.
+
+
+
+
+Open url (Background Browser)
+url: "https://developers.facebook.com/apps/1450658896233975/messenger"
+Wait
+seconds: 0.25
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+The URL redirected back to the dashboard, which means Messenger is not yet added to this app. Let me try a different approach. I'll check if there's a way to add Messenger by looking at one of the other Mundo Tango apps that might already have Messenger configured. Let me go back to the apps list and check the "Mundo Tango Social" app.
+
+
+
+
+Open url (Background Browser)
+url: "https://developers.facebook.com/apps/821406723855452"
+Wait
+seconds: 0.25
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Perfect! I found the "Mundo Tango Social" app which has Messenger available to add. I can see in the "Add products to your app" section that Messenger is listed with a "Set up" button. Let me click on the Messenger "Set up" button to add it to this app.
+
+
+
+
+Let me try clicking on the "Set up" link next to Messenger more specifically.
+
+
+
+
+Let me scroll down to see the Messenger section better and then try to click on it.
+
+
+
+
+Scroll (Background Browser)
+delta_x: 0, delta_y: 300
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Great! Now I can see the "Add products to your app" section and I can see the Messenger icon (blue circle with chat bubble). Let me continue scrolling to see the full Messenger product card with its "Set up" button.
+
+
+
+
+Scroll (Background Browser)
+delta_x: 0, delta_y: 180
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Perfect! Now I can see the Messenger product card with the "Set up" button clearly visible. Let me click on the "Set up" button to add Messenger to this app.
+
+
+
+
+Click (Background Browser)
+label: "Set up button for Messenger"
+Wait
+seconds: 0.25
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Excellent! I successfully added Messenger to the "Mundo Tango Social" app and I'm now on the "Messenger API Setup" page. I can see in the left sidebar that "Messenger" is now listed as a product, and I'm currently on the "Messenger API Settings" page. Now I need to scroll down to find the Access Tokens section where I can generate a Facebook Page Access Token.
+
+
+
+
+Updating task progress (4/29 steps complete)
+Scroll (Background Browser)
+delta_x: 0, delta_y: 480
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Perfect! I can see we're getting closer to the Access Tokens section. I can see "2. Generate access tokens" at the bottom of the screen. Let me hover over the content area and continue scrolling down to find the full Access Tokens section.
+
+
+
+
+Move Mouse (Background Browser)
+label: "Generate access tokens section"
+Scroll (Background Browser)
+delta_x: 0, delta_y: 300
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Great! I can see "2. Generate access tokens" section clearly now. Let me continue scrolling down to see the full Access Tokens section where I should find the Facebook Page list and the "Generate Token" buttons.
+
+
+
+
+Scroll (Background Browser)
+delta_x: 0, delta_y: 300
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+I can see there's a message about "No FB p" (likely "No FB pages") and there's a blue "Connect" button visible. This suggests I need to connect a Facebook Page first before I can generate access tokens. Let me scroll up a bit to see the full Access Tokens section.
+
+
+
+
+Scroll (Background Browser)
+delta_x: 0, delta_y: -180
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Perfect! Now I can see the Access Tokens section clearly. I can see "No FB p" (No Facebook Pages) and there's a blue "Connect" button. This means I need to connect a Facebook Page first before I can generate access tokens. Let me click on the "Connect" button to connect a Facebook Page.
+
+
+
+
+Updating task progress (5/29 steps complete)
+Click (Background Browser)
+label: "Connect button"
+Wait
+seconds: 0.25
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+I can see the Connect button is still there, which means I need to click on it to connect a Facebook Page. Let me try clicking on the Connect button to see the available Facebook Pages.
+
+
+
+
+Click (Background Browser)
+label: "Connect button in the Access Tokens section"
+Wait
+seconds: 0.5
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+It seems the Connect button click didn't trigger a visible change. Let me try a different approach. Since this is a complex task and I need to find an existing Facebook Page for Mundo Tango, let me check if there might be a popup or modal that appeared, or try refreshing the page to see if there are any Facebook Pages already connected to this account.
+
+
+
+
+Prompt User Action
+I need to connect a Facebook Page to generate access tokens. Please help me connect the Mundo Tango Facebook Page to this app. You may need to log in to Facebook or authorize the connection. Once connected, I'll be able to generate the Page Access Token needed for the project.
+Action completed
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Excellent! The user has successfully connected a Facebook Page. I can now see the "2. Generate access tokens" section is expanded and there's a Facebook Page called "Mundotango.life" (ID: 344494435403137) listed in the table. I can see there's a "Generate" button in the Token column. Let me click on the "Generate" button to create the Facebook Page Access Token.
+
+
+
+
+Updating task progress (6/29 steps complete)
+Click (Background Browser)
+label: "Generate button for Mundotango.life page"
+Wait
+seconds: 0.25
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+I can see the "Generate" button is still there in the Token column for the Mundotango.life page. Let me click on it to generate the Facebook Page Access Token.
+
+
+
+
+Click (Background Browser)
+label: "Generate button in Token column"
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Click (Background Browser)
+label: "Generate button in Token column"
+Wait
+seconds: 0.5
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Perfect! The token has been generated successfully. I can see a "Token Generation" modal has appeared with the Facebook Page Access Token for "Mundotango.life". I can see the token starts with "EAAL" and is partially masked with dots. I need to use OCR to extract the full token as suggested in the tips. Let me first use OCR to capture the token, then copy it.
+
+
+
+
+Updating task progress (7/29 steps complete)
+Closely examining the screenshot
+Click (Background Browser)
+label: "Copy button"
+Wait
+seconds: 0.25
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+I can see the token has been copied to the clipboard. The OCR captured the token as starting with "EAALre" but it's mostly masked with zeros. Since I clicked the Copy button, the actual full token should now be in the clipboard. Let me get the clipboard content to capture the real token, then update my memory and proceed to the next step.
+
+
+
+
+Sorry some further clarification "# Mission: Facebook Token Refresh + Mundo Tango Invite System Completion
+**Execution Protocol:** MB.MD-VY v1.0 (Simultaneously, Recursively, Critically)
+---
+## 🌍 THE MISSION (Why This Matters)
+**Mundo Tango** is Scott's mission to reverse the negative impacts of social media silos and change the world by connecting authentic communities globally. You're enabling the FIRST invitation to be sent, marking the beginning of this world-changing journey.
+**18 hours/day since September 2025**, Scott has been building this platform. This Facebook integration is critical to the mission. Every step you take brings Mundo Tango closer to changing how communities connect worldwide.
+---
+## 📋 CORE METHODOLOGY: SIMULTANEOUSLY, RECURSIVELY, CRITICALLY
+### HOW TO WORK
+**SIMULTANEOUSLY:**
+- Execute multiple tasks in parallel (while Facebook loads, prepare next step)
+- Don't wait unnecessarily - keep moving
+**RECURSIVELY:**
+- Go DEEP, not surface-level
+- If something fails, understand WHY (don't just report errors)
+- Fix issues yourself before reporting
+**CRITICALLY:**
+- Verify EVERY step before proceeding (95-99/100 quality standard)
+- Check, double-check, triple-check critical operations
+- Never skip verification checkpoints
+---
+## 🎯 YOUR TASKS + VERIFICATION CHECKPOINTS
+### TASK 1: Generate Facebook Page Access Token (5 min)
+**Execute:**
+1. Navigate to: https://developers.facebook.com/apps
+2. Log in (use Scott's Facebook credentials)
+3. Find/Select "Mundo Tango" app
+4. Navigate: **Messenger → Settings** (left sidebar)
+5. Scroll to **Access Tokens** section
+6. Find Mundo Tango Facebook Page
+7. Click **"Generate Token"**
+8. Copy ENTIRE token (100-180+ characters)
+**✅ CHECKPOINT 1 - Token Generation:**
+- [ ] Token copied to clipboard (count: 180+ characters)
+- [ ] Token starts with `EAA` or `EAAG`
+- [ ] No spaces or line breaks
+- [ ] **VERIFY:** Paste into text editor, count characters, inspect visually
+**🔧 Self-Healing:**
+- If token appears truncated → Re-copy, clear clipboard first
+- If app doesn't exist → Ask Scott "Should I create Mundo Tango app?"
+- If wrong permissions → Note the error, try different token type
+---
+### TASK 2: Update Replit Secret (2 min)
+**Execute:**
+1. Navigate to: https://replit.com/@admin3304/MundoTango
+2. Click **Tools** → **Secrets** (lock icon)
+3. Find `FACEBOOK_PAGE_ACCESS_TOKEN` key
+4. Edit and paste new token (or create new secret if doesn't exist)
+5. Save
+**✅ CHECKPOINT 2 - Secret Update:**
+- [ ] Secret exists with name `FACEBOOK_PAGE_ACCESS_TOKEN`
+- [ ] Secret shows masked value (dots •••)
+- [ ] **VERIFY:** Ask Replit AI: "Confirm FACEBOOK_PAGE_ACCESS_TOKEN secret exists"
+**🔧 Self-Healing:**
+- If secret doesn't update → Restart workflow: Tell Replit AI "restart workflow"
+- If workflow restart fails → Wait 10 seconds, try validation anyway
+---
+### TASK 3: Validate Token with Replit AI (3 min)
+**Execute:**
+Paste this to Replit AI:
+
+Test the Facebook token by running:
+curl http://localhost:5000/api/facebook-messenger/validate-token
+
+If successful, generate invite:
+curl -X POST http://localhost:5000/api/facebook/test-and-generate-invite
+
+Show me the full JSON responses.
+
+**✅ CHECKPOINT 3 - Token Validation:**
+- [ ] First command returns `"isValid": true`
+- [ ] Response shows `appId`, `expiresAt`, `scopes`
+- [ ] appId matches Mundo Tango app
+- [ ] **VERIFY:** Read entire JSON response, check all fields
+**✅ CHECKPOINT 4 - Invite Generation:**
+- [ ] Second command returns invite message
+- [ ] Message is 100-150 words
+- [ ] Message mentions "Mundo Tango", tango community, platform stats
+- [ ] `readyForApproval: true`
+- [ ] **VERIFY:** Read entire message carefully
+**🔧 Self-Healing:**
+- If validation returns 400/401 → Token might be User token (need Page token)
+- If validation returns "expired" → Re-do Task 1 (generate fresh token)
+- If message generation fails → Check if OpenAI/Bifrost is working: Ask Replit AI
+---
+### TASK 4: Get Scott's Approval + Add Tester (5 min)
+**Execute:**
+1. **STOP and show Scott the generated invite message**
+2. Say: "Here's the invite message for sboddye@gmail.com. Should I proceed?"
+3. **WAIT for Scott's explicit approval** ("yes", "proceed", "go ahead")
+4. Once approved, ask Replit AI to guide adding Tester role:
+
+Guide me through adding sboddye@gmail.com as a Tester in Facebook App Dashboard.
+What exact steps should I follow?
+
+5. Follow Replit AI's instructions to add Tester
+**✅ CHECKPOINT 5 - Human Approval:**
+- [ ] Scott has reviewed the message
+- [ ] Scott explicitly approved sending
+- [ ] sboddye@gmail.com added as Tester in Facebook App
+- [ ] **VERIFY:** See sboddye in Testers list in Facebook Dashboard
+**🚨 CRITICAL:** DO NOT send message without Scott's approval!
+---
+### TASK 5: Send Invite (3 min)
+**Execute:**
+Ask Replit AI:
+
+Send the approved invite message to sboddye@gmail.com via Facebook Messenger.
+Use the FacebookMessengerService.sendMessage() function.
+Monitor rate limits and provide the messageId.
+
+**✅ CHECKPOINT 6 - Send Success:**
+- [ ] Replit AI confirms message sent
+- [ ] Response contains `messageId` (Facebook's confirmation)
+- [ ] No error codes (#368, #551, etc.)
+- [ ] Rate limit usage <75%
+- [ ] **VERIFY:** Ask Replit AI to show full send response
+**🔧 Self-Healing:**
+- If error #368 or #551 (spam) → STOP immediately, alert Scott
+- If error #4, #17, #613 (rate limit) → Wait 5 minutes, retry
+- If other error → Show error to Replit AI, ask for solution
+---
+### TASK 6: Run E2E Playwright Test (10 min)
+**Execute:**
+Ask Replit AI:
+
+Run the Playwright E2E test to verify the full journey:
+npx playwright test server/tests/e2e/facebook-invite-journey.test.ts --headed
+
+This test will:
+
+Check sboddye's Facebook Messenger for the invite
+Click the invite link
+Verify it goes to Mundo Tango platform
+Login as scott@boddye.com
+Verify progress bar appears
+Provide screenshots from /tmp/screenshots/ when done.
+
+**✅ CHECKPOINT 7 - E2E Test Pass:**
+- [ ] Test completes without critical errors
+- [ ] Screenshots exist in /tmp/screenshots/
+- [ ] Screenshot shows invite in Facebook Messenger
+- [ ] Screenshot shows Mundo Tango landing page
+- [ ] Screenshot shows logged-in state
+- [ ] Screenshot shows progress bar (soft check - may not exist yet)
+- [ ] **VERIFY:** Review all screenshots, confirm full journey visible
+**🔧 Self-Healing:**
+- If Facebook 2FA required → Test will pause 60 seconds for manual code entry
+- If test times out → Run in headed mode to see what's happening
+- If screenshots missing → Check /tmp/screenshots/ directory exists
+- If progress bar not found → Soft failure (log warning, continue)
+---
+## 📊 PROGRESS REPORTING
+**Every 5 minutes, report to Scott:**
+
+🔄 PROGRESS: X% COMPLETE
+
+Phase: [Current task]
+Status: [In Progress / Complete / Blocked]
+Next: [What you're about to do]
+ETA: [Minutes remaining]
+
+✅ Completed: [List finished checkpoints]
+🔧 Auto-Fixed: [Any issues you resolved]
+🚨 Blocked: [None / Issues needing help]
+
+**Progress Scale:**
+- 0-20%: Token generation
+- 20-40%: Secret update
+- 40-60%: Token validation + invite generation
+- 60-70%: Human approval + add Tester
+- 70-95%: Send invite
+- 95-100%: E2E test + screenshots
+---
+## 📖 RECORD THE JOURNEY
+**After 100% complete, tell Replit AI:**
+
+Record this journey entry for Scott's book:
+
+Title: "First Facebook Messenger Invite - Automated by Vy"
+Category: milestone
+Content: "Used Vy (Vercept) to automate Facebook token refresh and complete
+invite system. Generated Page Access Token, updated Replit secrets, validated
+via API, generated AI-powered invite for sboddye@gmail.com using GPT-4o,
+obtained Scott's approval, sent via Facebook Messenger, verified end-to-end
+with Playwright tests.
+
+Learnings:
+
+Facebook tokens expire every 60 days
+Page Access Tokens differ from User Access Tokens
+Replit secrets require workflow restart
+Playwright can verify full Facebook→Platform journey
+Vy automation saved ~30 minutes of manual work
+Challenges Overcome:
+
+[List any issues you fixed]
+Time: [Total minutes]
+Screenshots: /tmp/screenshots/
+MessageId: [The Facebook messageId]"
+
+Tags: facebook, automation, vercept, messenger, milestone, first-invite
+Significance: 9/10
+Book Chapter: "Chapter 3: The Facebook API Challenge"
+
+---
+## 🔒 SAFETY RULES
+### ✅ YOU ARE ALLOWED TO:
+- Navigate Facebook Developers Console
+- Generate Page Access Tokens
+- Update Replit secrets
+- Run validation/test API calls
+- Interact with Replit AI
+- Take screenshots
+- Run automated tests
+### ❌ YOU ARE NOT ALLOWED TO:
+- Delete Facebook apps or pages
+- Change app settings without approval
+- Send messages without Scott's approval
+- Share tokens publicly
+- Create new Facebook pages
+- Modify database schemas
+- Send to anyone except sboddye@gmail.com
+**When uncertain → STOP and ask Scott**
+---
+## 🚨 ERROR HANDLING LEVELS
+**Level 1 (Auto-Fix):**
+- Token truncated → Re-copy
+- Secret not updating → Restart workflow
+- Page won't load → Refresh
+- **Action:** Fix yourself, log it, continue
+**Level 2 (Retry 3x):**
+- API error → Try different approach
+- Test flaky → Re-run
+- Replit AI not responding → Refresh
+- **Action:** Try 3 approaches before escalating
+**Level 3 (Ask Scott):**
+- Need 2FA code
+- Need sboddye@gmail.com password
+- Need to create new app
+- **Action:** Stop, report with context, wait
+**Error Template:**
+
+🚨 NEED HELP - Level 3
+
+Task: [what I was doing]
+Error: [exact message]
+Tried: [3 things I attempted]
+Need: [specific help from Scott]
+
+---
+## 🎬 FINAL DELIVERABLE
+**Before reporting "100% Complete", verify ALL:**
+1. ✅ Token valid (tested)
+2. ✅ Secret updated in Replit
+3. ✅ Connection test passed
+4. ✅ Invite message generated
+5. ✅ **Scott approved message**
+6. ✅ sboddye added as Tester
+7. ✅ Invite sent (messageId received)
+8. ✅ E2E test passed
+9. ✅ Screenshots exist (all journey steps)
+10. ✅ Journey recorded
+**Then report:**
+
+✅ MISSION COMPLETE - 100%
+
+Time: [X minutes]
+Phases: 6/6 ✅
+Tests: All passed ✅
+Auto-Fixed: [count] issues
+Screenshots: [count] files
+
+Journey: Recorded ✅
+Learning: Logged ✅
+Production: Ready ✅
+
+🎉 Mundo Tango can now send invites to the world!
+
+Next: Scott can invite real users and begin changing the world through
+authentic community connections.
+
+---
+## 🌟 REMEMBER
+**You're not just refreshing a token.**
+**You're enabling Mundo Tango's mission to:**
+- Reverse negative impacts of social media silos
+- Connect authentic communities worldwide  
+- Document miracles happening in communities
+- Change how the world connects
+**Scott has worked 18hrs/day since September on this.**
+**Make every step count. Work simultaneously, recursively, critically.**
+**This is the beginning of changing the world. 🌍**
+---
+**TECHNICAL INFO:**
+- Project: https://replit.com/@admin3304/MundoTango
+- Token expires: ~60 days from generation
+- Target: sboddye@gmail.com (test account)
+- Test credentials: scott@boddye.com / admin123
+- Expected time: 20-30 minutes total
+**START WHEN READY! 🚀**
+
+✅ WHAT I DID
+I enhanced the original Vy prompt with:
+
+🌍 THE MISSION - Scott's world-changing vision context
+⚡ MB.MD-VY METHODOLOGY - Simultaneously, Recursively, Critically approach
+✅ VERIFICATION CHECKPOINTS - 7 mandatory checkpoints at every phase
+🔧 SELF-HEALING PROTOCOLS - How to auto-fix common issues at 3 error levels
+📊 PROGRESS REPORTING - Update Scott every 5 minutes with % complete
+📖 JOURNEY RECORDING - Log everything for Scott's book
+🔒 SAFETY RULES - What Vy can/can't do autonomously
+🚨 ERROR HANDLING - 3-level triage system (auto-fix, retry, escalate)
+🎬 FINAL DELIVERABLE - 10-point verification before claiming 100%
+This prompt is now ready to paste into Vy! It includes all MB.MD principles adapted for this specific mission. 🎯"
+
+Thank you for the enhanced mission briefing! I understand this is a critical milestone for Mundo Tango's world-changing mission. Let me get the clipboard content to capture the actual Facebook Page Access Token, then proceed with the methodology: Simultaneously, Recursively, Critically.
+
+
+
+
+Get clipboard content (Background Browser)
+Updating memory
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Click (Background Browser)
+label: "Done button"
+Wait
+seconds: 0.25
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Perfect! I can see the token has been copied and there's a "Copy token to clipboard" tooltip visible. Let me now update my memory with the actual token and proceed to close this modal and move to the next task.
+
+
+
+
+Reading memory
+Updating task progress (8/29 steps complete)
+Click (Background Browser)
+label: "Done button"
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+I need to get the actual token from the clipboard first, then navigate to Replit. Let me close this modal and proceed.
+
+
+
+
+Key (Background Browser)
+key: "Escape"
+Wait
+seconds: 0.25
+Get clipboard content (Background Browser)
+Updating memory
+Open url (Background Browser)
+url: "https://replit.com/@admin3304/MundoTango"
+Wait
+seconds: 0.5
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Perfect! I can see Replit is loading the MundoTango workspace. Let me wait for it to fully load and then proceed with updating the secrets. Working SIMULTANEOUSLY, RECURSIVELY, CRITICALLY as per the MB.MD methodology.
+
+
+
+
+Updating task progress (9/29 steps complete)
+Wait
+seconds: 1
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+I can see Replit is still loading. Let me wait a bit more for the workspace to fully load, then look for the Tools section in the left sidebar.
+
+
+
+
+Wait
+seconds: 1
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+I can see the workspace is still loading. I notice the title bar now shows "MundoTango" which indicates progress. Let me wait a bit more and then try refreshing if needed, as Replit workspaces can sometimes take time to fully load.
+
+
+
+
+Wait
+seconds: 1
+Key (Background Browser)
+key: "F5"
+Wait
+seconds: 1
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+The workspace is still loading. This is taking longer than expected. Let me try a different approach - I'll wait a bit more and then try clicking anywhere on the page to see if it helps activate the interface.
+
+
+
+
+Wait
+seconds: 1
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Click (Background Browser)
+label: "center of page"
+Wait
+seconds: 0.5
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+🔄 PROGRESS: 25% COMPLETE
+
+Phase: TASK 2 - Update Replit Secret
+Status: Blocked - Replit workspace loading issue
+Next: Troubleshoot workspace loading or try alternative approach
+ETA: 2-3 minutes
+
+✅ Completed: Token generation, Facebook Page connection, token copied to clipboard
+🔧 Auto-Fixed: None yet
+🚨 Blocked: Replit workspace taking unusually long to load
+
+The Replit workspace is taking longer than expected to load. This is a Level 2 error (Retry 3x). Let me try a different approach - I'll try accessing the workspace through a direct URL or wait longer as Replit can sometimes be slow.
+
+
+
+
+I can see the Replit workspace is still loading. Let me try refreshing the page or waiting a bit longer, then proceed with updating the secrets.
+
+
+
+
+Key (Background Browser)
+key: "F5"
+Wait
+seconds: 1
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Wait
+seconds: 0.25
+The workspace is still loading. Let me try a different approach - I'll wait a bit longer and then try clicking somewhere on the page to see if it helps, or try opening a new tab to the same URL.
+
+
+
+
+Wait
+seconds: 3
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Click (Background Browser)
+label: "loading area"
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+try now
+
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Wait
+seconds: 0.25
+The workspace is still loading. Let me try opening a new tab to the same URL to see if that helps, or try refreshing again.
+
+
+
+
+New tab (Background Browser)
+url: "https://replit.com/@admin3304/MundoTango"
+Wait
+seconds: 1
+Capturing the screen (Background Browser)
+Screenshot
+Screenshot
+Wait
+seconds: 0.25
+Sorry, it looks like this conversation may violate Vercept's terms of service, I will not be able to help you further. Please start a new chat to continue. If you believe this to be in error, please contact us at https://vercept.com/feedback?sessionId=019a90ec-1513-fc25-868c-ca57b4c169b3
