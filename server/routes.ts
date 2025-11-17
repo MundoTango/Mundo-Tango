@@ -125,6 +125,7 @@ import facebookImportRoutes from "./routes/facebook-import-routes";
 import facebookMessengerRoutes from "./routes/facebook-messenger-routes";
 import facebookWebhooksRoutes from "./routes/facebook-webhooks";
 import socialIntegrationRoutes from "./routes/social-integration-routes";
+import computerUseRoutes from "./routes/computer-use-routes";
 import aiSelectorRoutes from "./routes/ai-selector-routes";
 import journeyRoutes from "./routes/journey-routes";
 import billingRoutes from "./routes/billing-routes";
@@ -525,6 +526,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/facebook", facebookImportRoutes);
   app.use("/api/facebook", facebookMessengerRoutes);
   app.use("", facebookWebhooksRoutes); // Facebook Messenger Platform webhooks (no /api prefix)
+  
+  // Mr. Blue Computer Use - Anthropic Computer Use API (System 11)
+  app.use("/api/computer-use", computerUseRoutes);
   app.use("/api", aiSelectorRoutes);
   app.use("/api/billing", billingRoutes);
   app.use("/api/onboarding", onboardingRoutes);
