@@ -189,6 +189,25 @@ const AdminFacebookImport = lazy(() => import("@/pages/admin/AdminFacebookImport
 const AnalyticsDashboardPage = lazy(() => import("@/pages/AnalyticsDashboardPage"));
 const UserAnalyticsPage = lazy(() => import("@/pages/UserAnalyticsPage"));
 const ContentModerationPage = lazy(() => import("@/pages/ContentModerationPage"));
+
+// Part 10: Final Admin & Mr Blue Pages (29-47)
+const AdminDashboardOverviewPage = lazy(() => import("@/pages/admin/AdminDashboardPage"));
+const UserManagementPage = lazy(() => import("@/pages/admin/UserManagementPage"));
+const PlatformSettingsPage = lazy(() => import("@/pages/admin/PlatformSettingsPage"));
+const RolesPermissionsPage = lazy(() => import("@/pages/admin/RolesPermissionsPage"));
+const ReportsLogsPage = lazy(() => import("@/pages/admin/ReportsLogsPage"));
+const IntegrationsPage = lazy(() => import("@/pages/admin/IntegrationsPage"));
+const FeatureFlagsPage = lazy(() => import("@/pages/admin/FeatureFlagsPage"));
+const SystemHealthPage = lazy(() => import("@/pages/admin/SystemHealthPage"));
+
+// Mr Blue Pages (40-47)
+const MrBlueVoicePage = lazy(() => import("@/pages/mrblue/VoicePage"));
+const MrBlueVibecodingPage = lazy(() => import("@/pages/mrblue/VibecodingPage"));
+const MrBlueVisualEditorPage = lazy(() => import("@/pages/mrblue/VisualEditorPage"));
+const MrBlueSettingsPage = lazy(() => import("@/pages/mrblue/SettingsPage"));
+const MrBlueContextMemoryPage = lazy(() => import("@/pages/mrblue/ContextMemoryPage"));
+const MrBlueAnalyticsPage = lazy(() => import("@/pages/mrblue/AnalyticsPage"));
+const MrBlueOnboardingPage = lazy(() => import("@/pages/mrblue/OnboardingPage"));
 const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
 const PlatformPage = lazy(() => import("@/pages/Platform"));
 const SecretsPage = lazy(() => import("@/pages/SecretsPage"));
@@ -1599,6 +1618,118 @@ function Router() {
           <AdminLayout>
             <AnalyticsDashboard />
           </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/users-manage">
+        <ProtectedRoute>
+          <AdminLayout>
+            <UserManagementPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/settings">
+        <ProtectedRoute>
+          <AdminLayout>
+            <PlatformSettingsPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/roles">
+        <ProtectedRoute>
+          <AdminLayout>
+            <RolesPermissionsPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/reports">
+        <ProtectedRoute>
+          <AdminLayout>
+            <ReportsLogsPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/integrations">
+        <ProtectedRoute>
+          <AdminLayout>
+            <IntegrationsPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/features">
+        <ProtectedRoute>
+          <AdminLayout>
+            <FeatureFlagsPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/health">
+        <ProtectedRoute>
+          <AdminLayout>
+            <SystemHealthPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/mrblue/voice">
+        <ProtectedRoute>
+          <AppLayout>
+            <MrBlueVoicePage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/mrblue/vibecoding">
+        <ProtectedRoute>
+          <AppLayout>
+            <MrBlueVibecodingPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/mrblue/visual-editor">
+        <ProtectedRoute>
+          <AppLayout>
+            <MrBlueVisualEditorPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/mrblue/settings">
+        <ProtectedRoute>
+          <AppLayout>
+            <MrBlueSettingsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/mrblue/context">
+        <ProtectedRoute>
+          <AppLayout>
+            <MrBlueContextMemoryPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/mrblue/analytics">
+        <ProtectedRoute>
+          <AppLayout>
+            <MrBlueAnalyticsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/mrblue/onboarding">
+        <ProtectedRoute>
+          <AppLayout>
+            <MrBlueOnboardingPage />
+          </AppLayout>
         </ProtectedRoute>
       </Route>
 
