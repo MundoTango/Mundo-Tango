@@ -377,6 +377,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const token = res.locals.csrfToken || req.cookies["XSRF-TOKEN"];
     res.json({ csrfToken: token });
   });
+
+  // Waitlist endpoint (public - no auth required, before CSRF verification)
+  app.post("/api/waitlist/join", async (req: Request, res: Response) => {
+    try {
+      const { email, name } = req.body;
+
+      // Validate email
+      if (!email || typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({ error: 'Valid email is required' });
+      }
+
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(email.toLowerCase());
+
+      if (existingUser) {
+        // Update existing user to waitlist
+        await storage.updateUser(existingUser.id, {
+          waitlist: true,
+          waitlistDate: new Date()
+        });
+        return res.json({ success: true, message: 'You\'re already on our waitlist!' });
+      }
+
+      // Create new waitlist user
+      const username = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+      await storage.createUser({
+        email: email.toLowerCase(),
+        username: username,
+        name: name || 'Waitlist User',
+        password: 'temp_waitlist_password', // Will be reset when they sign up
+        waitlist: true,
+        waitlistDate: new Date()
+      });
+
+      res.json({ success: true, message: 'Welcome to the waitlist! We\'ll notify you when we launch.' });
+    } catch (error: any) {
+      console.error('[Waitlist] Error:', error);
+      res.status(500).json({ error: 'Failed to join waitlist' });
+    }
+  });
   
   // ============================================================================
   // CSRF PROTECTION: Verify CSRF tokens on all mutating requests (POST/PUT/DELETE/PATCH)
