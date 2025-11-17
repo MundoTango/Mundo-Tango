@@ -89,4 +89,4 @@ out/
 
 # System/IDE
 .local/
-.DS_Store
+.DS_Store.env.test
