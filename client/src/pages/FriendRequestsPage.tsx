@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { FriendshipQuestionnaire } from "@/components/friendship/FriendshipQuestionnaire";
 
 interface FriendRequest {
   id: number;
@@ -55,6 +57,8 @@ interface FriendRequest {
 export default function FriendRequestsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [selectedRequest, setSelectedRequest] = useState<FriendRequest | null>(null);
+  const [showQuestionnaire, setShowQuestionnaire] = useState(false);
 
   // Fetch received requests
   const { data: receivedRequests = [], isLoading: receivedLoading } = useQuery<FriendRequest[]>({
@@ -68,14 +72,16 @@ export default function FriendRequestsPage() {
     enabled: !!user,
   });
 
-  // Accept request mutation
+  // Accept request mutation with questionnaire data
   const acceptMutation = useMutation({
-    mutationFn: async (requestId: number) => {
-      return await apiRequest('POST', `/api/friends/accept/${requestId}`);
+    mutationFn: async ({ requestId, questionnaireData }: { requestId: number; questionnaireData?: any }) => {
+      return await apiRequest('POST', `/api/friends/requests/${requestId}/accept`, questionnaireData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/friends/requests/received'] });
       queryClient.invalidateQueries({ queryKey: ['/api/friends'] });
+      setShowQuestionnaire(false);
+      setSelectedRequest(null);
       toast({
         title: "Friend request accepted!",
         description: "You are now friends",
@@ -130,12 +136,28 @@ export default function FriendRequestsPage() {
     },
   });
 
+  // Handler for opening questionnaire
+  const handleAcceptClick = (request: FriendRequest) => {
+    setSelectedRequest(request);
+    setShowQuestionnaire(true);
+  };
+
+  // Handler for questionnaire submission
+  const handleQuestionnaireSubmit = (data: any) => {
+    if (selectedRequest) {
+      acceptMutation.mutate({
+        requestId: selectedRequest.id,
+        questionnaireData: data,
+      });
+    }
+  };
+
   // Bulk accept all requests
   const acceptAllMutation = useMutation({
     mutationFn: async () => {
       const promises = receivedRequests
         .filter(req => req.status === 'pending')
-        .map(req => apiRequest('POST', `/api/friends/accept/${req.id}`));
+        .map(req => apiRequest('POST', `/api/friends/requests/${req.id}/accept`));
       return await Promise.all(promises);
     },
     onSuccess: () => {
@@ -372,7 +394,7 @@ export default function FriendRequestsPage() {
 
                             <div className="flex gap-2">
                               <Button
-                                onClick={() => acceptMutation.mutate(request.id)}
+                                onClick={() => handleAcceptClick(request)}
                                 disabled={acceptMutation.isPending}
                                 data-testid={`button-accept-${index}`}
                               >
@@ -472,6 +494,22 @@ export default function FriendRequestsPage() {
             </div>
           </div>
         </div>
+
+        {/* Friendship Questionnaire Modal */}
+        {selectedRequest && (
+          <FriendshipQuestionnaire
+            open={showQuestionnaire}
+            onOpenChange={(open) => {
+              setShowQuestionnaire(open);
+              if (!open) {
+                setSelectedRequest(null);
+              }
+            }}
+            friendName={selectedRequest.sender?.name || 'this person'}
+            onSubmit={handleQuestionnaireSubmit}
+            isLoading={acceptMutation.isPending}
+          />
+        )}
       </PageLayout>
     </SelfHealingErrorBoundary>
   );

@@ -6,7 +6,31 @@ import { SEO } from "@/components/SEO";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Calendar, Award, Users, Heart, MessageCircle, Share2, Edit, Settings, Music, GraduationCap, Mic2 } from "lucide-react";
+import { MapPin, Calendar, Award, Users, Heart, MessageCircle, Share2, Edit, Settings, Music, GraduationCap, Mic2, UserCircle, Building2, Glasses, Upload, Facebook, Instagram, Youtube, Music2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import { SiTiktok } from "react-icons/si";
+
+const TANGO_ROLES = [
+  { value: "dancer", label: "Dancer", icon: UserCircle },
+  { value: "teacher", label: "Teacher", icon: GraduationCap },
+  { value: "dj", label: "DJ", icon: Music },
+  { value: "organizer", label: "Organizer", icon: Calendar },
+  { value: "musician", label: "Musician", icon: Music2 },
+  { value: "venue_owner", label: "Venue Owner", icon: Building2 },
+  { value: "enthusiast", label: "Enthusiast", icon: Heart },
+];
+
+const EXPERIENCE_LEVELS = [
+  { value: "beginner", label: "Beginner" },
+  { value: "intermediate", label: "Intermediate" },
+  { value: "advanced", label: "Advanced" },
+  { value: "professional", label: "Professional" },
+];
 
 const PROFILE_DATA = {
   name: "Sofia Rodriguez",
@@ -14,9 +38,19 @@ const PROFILE_DATA = {
   avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=80",
   coverPhoto: "https://images.unsplash.com/photo-1485872299829-c673f5194813?w=1500&auto=format&fit=crop&q=80",
   bio: "Professional tango instructor & performer from Buenos Aires. Teaching the world to dance, one embrace at a time.",
+  aboutMe: "I started dancing tango in 2015 and fell in love with the embrace, the music, and the connection. Now I dedicate my life to sharing this beautiful dance with others through teaching and performing.",
   location: "Buenos Aires, Argentina",
+  city: "Buenos Aires",
+  country: "Argentina",
   joined: "March 2023",
   roles: ["teacher", "dj", "performer"],
+  experienceLevel: "professional",
+  socialLinks: {
+    facebook: "https://facebook.com/sofia.tango",
+    instagram: "@sofia_tango",
+    tiktok: "@sofia_tango",
+    youtube: "sofia_tango",
+  },
   stats: {
     followers: 1243,
     following: 567,
@@ -24,6 +58,8 @@ const PROFILE_DATA = {
     posts: 234,
   },
   badges: ["Verified Teacher", "Festival Performer", "Community Leader"],
+  closenessScore: 85,
+  isOwnProfile: false,
 };
 
 const ACTIVITY_FEED = [
@@ -55,14 +91,49 @@ const ACTIVITY_FEED = [
 
 export default function ProfilePrototypePage() {
   const [activeTab, setActiveTab] = useState("posts");
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editData, setEditData] = useState({
+    bio: PROFILE_DATA.bio,
+    aboutMe: PROFILE_DATA.aboutMe,
+    roles: PROFILE_DATA.roles,
+    experienceLevel: PROFILE_DATA.experienceLevel,
+    city: PROFILE_DATA.city,
+    country: PROFILE_DATA.country,
+    socialLinks: PROFILE_DATA.socialLinks,
+  });
+  const { toast } = useToast();
 
   const getRoleIcon = (role: string) => {
-    switch (role) {
-      case "teacher": return <GraduationCap className="w-4 h-4" />;
-      case "dj": return <Music className="w-4 h-4" />;
-      case "performer": return <Mic2 className="w-4 h-4" />;
-      default: return null;
+    const roleData = TANGO_ROLES.find(r => r.value === role);
+    if (roleData) {
+      const Icon = roleData.icon;
+      return <Icon className="w-4 h-4" />;
     }
+    return null;
+  };
+
+  const handleSaveProfile = () => {
+    toast({
+      title: "Profile Updated",
+      description: "Your profile has been successfully updated.",
+    });
+    setShowEditDialog(false);
+  };
+
+  const handlePhotoUpload = (type: 'avatar' | 'cover') => {
+    toast({
+      title: "Photo Upload",
+      description: `${type === 'avatar' ? 'Profile photo' : 'Cover photo'} upload would integrate with Cloudinary here.`,
+    });
+  };
+
+  const toggleRole = (role: string) => {
+    setEditData(prev => ({
+      ...prev,
+      roles: prev.roles.includes(role)
+        ? prev.roles.filter(r => r !== role)
+        : [...prev.roles, role]
+    }));
   };
 
   return (
@@ -146,15 +217,24 @@ export default function ProfilePrototypePage() {
               </div>
 
               <div className="flex gap-3">
-                <Button>
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  Message
-                </Button>
-                <Button variant="outline">
-                  <Users className="w-4 h-4 mr-2" />
-                  Follow
-                </Button>
-                <Button variant="outline" size="icon">
+                {PROFILE_DATA.isOwnProfile ? (
+                  <Button onClick={() => setShowEditDialog(true)} data-testid="button-edit-profile">
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit Profile
+                  </Button>
+                ) : (
+                  <>
+                    <Button>
+                      <MessageCircle className="w-4 h-4 mr-2" />
+                      Message
+                    </Button>
+                    <Button variant="outline">
+                      <Users className="w-4 h-4 mr-2" />
+                      Follow
+                    </Button>
+                  </>
+                )}
+                <Button variant="outline" size="icon" data-testid="button-settings">
                   <Settings className="w-4 h-4" />
                 </Button>
               </div>
@@ -233,20 +313,369 @@ export default function ProfilePrototypePage() {
           </TabsContent>
 
           <TabsContent value="about">
-            <Card className="p-8">
-              <h3 className="text-2xl font-serif font-bold mb-6">Achievements</h3>
-              <div className="flex flex-wrap gap-3">
-                {PROFILE_DATA.badges.map((badge) => (
-                  <Badge key={badge} variant="outline" className="gap-1.5 px-4 py-2 text-sm">
-                    <Award className="w-4 h-4" />
-                    {badge}
-                  </Badge>
-                ))}
-              </div>
-            </Card>
+            <div className="space-y-8">
+              {/* Closeness Score - Only shown when viewing another user's profile */}
+              {!PROFILE_DATA.isOwnProfile && (
+                <Card className="p-8">
+                  <h3 className="text-2xl font-serif font-bold mb-6 flex items-center gap-2">
+                    <Heart className="w-6 h-6 text-[#40E0D0]" />
+                    Connection Strength
+                  </h3>
+                  <div className="flex items-center gap-6">
+                    <div className="relative w-32 h-32">
+                      <svg className="w-full h-full transform -rotate-90">
+                        <circle
+                          cx="64"
+                          cy="64"
+                          r="56"
+                          stroke="currentColor"
+                          strokeWidth="8"
+                          fill="none"
+                          className="text-muted"
+                        />
+                        <circle
+                          cx="64"
+                          cy="64"
+                          r="56"
+                          stroke="url(#gradient)"
+                          strokeWidth="8"
+                          fill="none"
+                          strokeDasharray={`${(PROFILE_DATA.closenessScore / 100) * 351.86} 351.86`}
+                          className="transition-all duration-1000"
+                        />
+                        <defs>
+                          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#40E0D0" />
+                            <stop offset="100%" stopColor="#9370DB" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-3xl font-bold">{PROFILE_DATA.closenessScore}%</span>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-lg font-semibold mb-2">Strong Connection</p>
+                      <p className="text-muted-foreground">
+                        You have a high closeness score with {PROFILE_DATA.name.split(' ')[0]} based on shared interests, events attended, and mutual connections.
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              )}
+
+              {/* About Me */}
+              <Card className="p-8">
+                <h3 className="text-2xl font-serif font-bold mb-6">About Me</h3>
+                <p className="text-base leading-relaxed whitespace-pre-wrap">{PROFILE_DATA.aboutMe}</p>
+              </Card>
+
+              {/* Experience & Expertise */}
+              <Card className="p-8">
+                <h3 className="text-2xl font-serif font-bold mb-6">Experience & Expertise</h3>
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-sm font-semibold text-muted-foreground mb-2 block">Experience Level</Label>
+                    <Badge className="gap-2 px-4 py-2 text-base capitalize">
+                      <Glasses className="w-4 h-4" />
+                      {PROFILE_DATA.experienceLevel}
+                    </Badge>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Social Links */}
+              {PROFILE_DATA.socialLinks && (
+                <Card className="p-8">
+                  <h3 className="text-2xl font-serif font-bold mb-6">Connect with Me</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {PROFILE_DATA.socialLinks.facebook && (
+                      <a
+                        href={PROFILE_DATA.socialLinks.facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 p-4 rounded-lg border hover-elevate"
+                        data-testid="link-facebook"
+                      >
+                        <Facebook className="w-5 h-5 text-[#1877F2]" />
+                        <span>Facebook</span>
+                      </a>
+                    )}
+                    {PROFILE_DATA.socialLinks.instagram && (
+                      <a
+                        href={`https://instagram.com/${PROFILE_DATA.socialLinks.instagram.replace('@', '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 p-4 rounded-lg border hover-elevate"
+                        data-testid="link-instagram"
+                      >
+                        <Instagram className="w-5 h-5 text-[#E4405F]" />
+                        <span>{PROFILE_DATA.socialLinks.instagram}</span>
+                      </a>
+                    )}
+                    {PROFILE_DATA.socialLinks.tiktok && (
+                      <a
+                        href={`https://tiktok.com/@${PROFILE_DATA.socialLinks.tiktok.replace('@', '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 p-4 rounded-lg border hover-elevate"
+                        data-testid="link-tiktok"
+                      >
+                        <SiTiktok className="w-5 h-5" />
+                        <span>{PROFILE_DATA.socialLinks.tiktok}</span>
+                      </a>
+                    )}
+                    {PROFILE_DATA.socialLinks.youtube && (
+                      <a
+                        href={`https://youtube.com/@${PROFILE_DATA.socialLinks.youtube}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 p-4 rounded-lg border hover-elevate"
+                        data-testid="link-youtube"
+                      >
+                        <Youtube className="w-5 h-5 text-[#FF0000]" />
+                        <span>{PROFILE_DATA.socialLinks.youtube}</span>
+                      </a>
+                    )}
+                  </div>
+                </Card>
+              )}
+
+              {/* Achievements */}
+              <Card className="p-8">
+                <h3 className="text-2xl font-serif font-bold mb-6">Achievements</h3>
+                <div className="flex flex-wrap gap-3">
+                  {PROFILE_DATA.badges.map((badge) => (
+                    <Badge key={badge} variant="outline" className="gap-1.5 px-4 py-2 text-sm">
+                      <Award className="w-4 h-4" />
+                      {badge}
+                    </Badge>
+                  ))}
+                </div>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Edit Profile Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-serif">Edit Profile</DialogTitle>
+            <DialogDescription>
+              Update your profile information and social links
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6 py-4">
+            {/* Profile Photo Upload */}
+            <div className="space-y-4">
+              <Label className="text-base font-semibold">Profile Photo</Label>
+              <div className="flex items-center gap-6">
+                <Avatar className="w-24 h-24">
+                  <AvatarImage src={PROFILE_DATA.avatar} />
+                  <AvatarFallback>SR</AvatarFallback>
+                </Avatar>
+                <Button variant="outline" onClick={() => handlePhotoUpload('avatar')} data-testid="button-upload-avatar">
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload Photo
+                </Button>
+              </div>
+            </div>
+
+            {/* Cover Photo Upload */}
+            <div className="space-y-4">
+              <Label className="text-base font-semibold">Cover Photo</Label>
+              <div className="space-y-3">
+                <div className="w-full h-32 rounded-lg overflow-hidden border">
+                  <img src={PROFILE_DATA.coverPhoto} alt="Cover" className="w-full h-full object-cover" />
+                </div>
+                <Button variant="outline" onClick={() => handlePhotoUpload('cover')} data-testid="button-upload-cover">
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload Cover Photo
+                </Button>
+              </div>
+            </div>
+
+            {/* Bio */}
+            <div className="space-y-2">
+              <Label htmlFor="bio" className="text-base font-semibold">Bio</Label>
+              <Textarea
+                id="bio"
+                value={editData.bio}
+                onChange={(e) => setEditData(prev => ({ ...prev, bio: e.target.value }))}
+                rows={3}
+                placeholder="Tell the world about yourself..."
+                data-testid="input-bio"
+              />
+            </div>
+
+            {/* About Me */}
+            <div className="space-y-2">
+              <Label htmlFor="aboutMe" className="text-base font-semibold">About Me</Label>
+              <Textarea
+                id="aboutMe"
+                value={editData.aboutMe}
+                onChange={(e) => setEditData(prev => ({ ...prev, aboutMe: e.target.value }))}
+                rows={4}
+                placeholder="Share your tango journey..."
+                data-testid="input-about-me"
+              />
+            </div>
+
+            {/* Tango Roles */}
+            <div className="space-y-3">
+              <Label className="text-base font-semibold">Tango Roles</Label>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {TANGO_ROLES.map((role) => {
+                  const Icon = role.icon;
+                  const isSelected = editData.roles.includes(role.value);
+                  return (
+                    <button
+                      key={role.value}
+                      onClick={() => toggleRole(role.value)}
+                      className={`flex items-center gap-2 p-3 rounded-lg border transition-all ${
+                        isSelected
+                          ? 'bg-primary text-primary-foreground border-primary'
+                          : 'hover-elevate'
+                      }`}
+                      data-testid={`button-role-${role.value}`}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span className="font-medium">{role.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Experience Level */}
+            <div className="space-y-2">
+              <Label htmlFor="experience" className="text-base font-semibold">Experience Level</Label>
+              <Select
+                value={editData.experienceLevel}
+                onValueChange={(value) => setEditData(prev => ({ ...prev, experienceLevel: value }))}
+              >
+                <SelectTrigger id="experience" data-testid="select-experience-level">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {EXPERIENCE_LEVELS.map((level) => (
+                    <SelectItem key={level.value} value={level.value}>
+                      {level.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* City & Country */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="city" className="text-base font-semibold">City</Label>
+                <Input
+                  id="city"
+                  value={editData.city}
+                  onChange={(e) => setEditData(prev => ({ ...prev, city: e.target.value }))}
+                  placeholder="Buenos Aires"
+                  data-testid="input-city"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="country" className="text-base font-semibold">Country</Label>
+                <Input
+                  id="country"
+                  value={editData.country}
+                  onChange={(e) => setEditData(prev => ({ ...prev, country: e.target.value }))}
+                  placeholder="Argentina"
+                  data-testid="input-country"
+                />
+              </div>
+            </div>
+
+            {/* Social Links */}
+            <div className="space-y-4">
+              <Label className="text-base font-semibold">Social Media Links</Label>
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label htmlFor="facebook" className="flex items-center gap-2">
+                    <Facebook className="w-4 h-4 text-[#1877F2]" />
+                    Facebook
+                  </Label>
+                  <Input
+                    id="facebook"
+                    value={editData.socialLinks.facebook || ''}
+                    onChange={(e) => setEditData(prev => ({
+                      ...prev,
+                      socialLinks: { ...prev.socialLinks, facebook: e.target.value }
+                    }))}
+                    placeholder="https://facebook.com/yourprofile"
+                    data-testid="input-facebook"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="instagram" className="flex items-center gap-2">
+                    <Instagram className="w-4 h-4 text-[#E4405F]" />
+                    Instagram
+                  </Label>
+                  <Input
+                    id="instagram"
+                    value={editData.socialLinks.instagram || ''}
+                    onChange={(e) => setEditData(prev => ({
+                      ...prev,
+                      socialLinks: { ...prev.socialLinks, instagram: e.target.value }
+                    }))}
+                    placeholder="@yourhandle"
+                    data-testid="input-instagram"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="tiktok" className="flex items-center gap-2">
+                    <SiTiktok className="w-4 h-4" />
+                    TikTok
+                  </Label>
+                  <Input
+                    id="tiktok"
+                    value={editData.socialLinks.tiktok || ''}
+                    onChange={(e) => setEditData(prev => ({
+                      ...prev,
+                      socialLinks: { ...prev.socialLinks, tiktok: e.target.value }
+                    }))}
+                    placeholder="@yourhandle"
+                    data-testid="input-tiktok"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="youtube" className="flex items-center gap-2">
+                    <Youtube className="w-4 h-4 text-[#FF0000]" />
+                    YouTube
+                  </Label>
+                  <Input
+                    id="youtube"
+                    value={editData.socialLinks.youtube || ''}
+                    onChange={(e) => setEditData(prev => ({
+                      ...prev,
+                      socialLinks: { ...prev.socialLinks, youtube: e.target.value }
+                    }))}
+                    placeholder="@yourchannel"
+                    data-testid="input-youtube"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowEditDialog(false)} data-testid="button-cancel-edit">
+              Cancel
+            </Button>
+            <Button onClick={handleSaveProfile} data-testid="button-save-profile">
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

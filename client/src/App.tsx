@@ -57,6 +57,7 @@ const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 const FriendsListPage = lazy(() => import("@/pages/FriendsListPage"));
 const FriendshipPage = lazy(() => import("@/pages/FriendshipPage"));
 const FriendRequestsPage = lazy(() => import("@/pages/FriendRequestsPage"));
+const FriendDetailPage = lazy(() => import("@/pages/FriendDetailPage"));
 const FollowingPage = lazy(() => import("@/pages/FollowingPage"));
 const FollowersPage = lazy(() => import("@/pages/FollowersPage"));
 const MessagesPage = lazy(() => import("@/pages/MessagesPage"));
@@ -914,6 +915,22 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <FriendRequestsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/friends/requests">
+        <ProtectedRoute>
+          <AppLayout>
+            <FriendRequestsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/friends/:friendId">
+        <ProtectedRoute>
+          <AppLayout>
+            <FriendDetailPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>
