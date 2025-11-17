@@ -9,6 +9,7 @@ import { friendInvitations, users, insertFriendInvitationSchema } from '@shared/
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { AIInviteGenerator } from '../services/facebook/AIInviteGenerator';
 import { FacebookMessengerService } from '../services/facebook/FacebookMessengerService';
+import { FacebookTokenGenerator } from '../services/facebook/FacebookTokenGenerator';
 import { eq, desc, and, gte, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import crypto from 'crypto';
@@ -532,6 +533,91 @@ router.get('/verify-connection', authenticateToken, async (req: AuthRequest, res
       success: false,
       connected: false,
       error: error.message || 'Failed to verify connection'
+    });
+  }
+});
+
+// ============================================================================
+// AUTONOMOUS TOKEN GENERATION (Mr. Blue Computer Use)
+// ============================================================================
+
+const generateTokenSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1),
+  appId: z.string().optional(),
+  headless: z.boolean().optional().default(false)
+});
+
+router.post('/generate-token-autonomous', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const data = generateTokenSchema.parse(req.body);
+    const appId = data.appId || process.env.FACEBOOK_PAGE_ID || '';
+
+    if (!appId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Facebook App ID not configured (FACEBOOK_PAGE_ID)'
+      });
+    }
+
+    console.log('\n🤖 AUTONOMOUS TOKEN GENERATION STARTING...');
+    console.log('='.repeat(60));
+    console.log(`App ID: ${appId}`);
+    console.log(`Headless: ${data.headless}`);
+    console.log(`Email: ${data.email.substring(0, 3)}***`);
+    console.log('='.repeat(60));
+    console.log('');
+
+    const generator = new FacebookTokenGenerator();
+    const result = await generator.generatePageAccessToken(
+      data.email,
+      data.password,
+      appId,
+      data.headless
+    );
+
+    if (result.success && result.token) {
+      console.log('\n✅ TOKEN GENERATION SUCCESSFUL!');
+      console.log('Token:', result.token.substring(0, 30) + '...');
+      console.log(`Expires in: ${result.expiresIn ? (result.expiresIn / 86400).toFixed(0) : 'Unknown'} days`);
+      console.log('');
+      console.log('⚠️  IMPORTANT: Save this token to your environment variables!');
+      console.log('In Replit Secrets, update:');
+      console.log('  FACEBOOK_PAGE_ACCESS_TOKEN = ' + result.token);
+      console.log('');
+
+      return res.json({
+        success: true,
+        message: '✅ Token generated successfully via autonomous browser automation',
+        token: result.token,
+        expiresIn: result.expiresIn,
+        expiresInDays: result.expiresIn ? Math.floor(result.expiresIn / 86400) : null,
+        steps: result.steps,
+        nextSteps: [
+          'Copy the token from the response',
+          'Update FACEBOOK_PAGE_ACCESS_TOKEN in Replit Secrets',
+          'Restart the application workflow',
+          'Test with /api/facebook/validate-token'
+        ]
+      });
+    } else {
+      console.error('\n❌ TOKEN GENERATION FAILED');
+      console.error('Error:', result.error);
+      console.error('Steps executed:', result.steps);
+      console.error('');
+
+      return res.status(500).json({
+        success: false,
+        error: result.error || 'Token generation failed',
+        steps: result.steps
+      });
+    }
+
+  } catch (error: any) {
+    console.error('[Facebook] Autonomous token generation error:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to generate token'
     });
   }
 });
