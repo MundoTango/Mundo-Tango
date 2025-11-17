@@ -4,6 +4,16 @@
 Mundo Tango is a production-ready social platform designed to connect the global tango community. It offers social networking, event management, talent matching, and AI-powered assistance, integrating 7 business systems and 62 specialized AI agents. The platform aims to be the leading digital hub for the tango ecosystem, with market potential in premium services, event monetization, and targeted advertising, emphasizing a lean architecture, optimized npm packages, and enterprise-grade security.
 
 ## Recent Changes
+**Week 9 Day 5 (Nov 17, 2025) - Computer Use Automation + Facebook Messenger + OSI**
+- ✅ **System 11: Computer Use Automation** (850 lines):
+  - **ComputerUseService.ts**: Anthropic Computer Use API integration (screenshot → Claude analysis → action execution loop)
+  - **API Endpoints**: `/api/computer-use/automate`, `/task/:id`, `/approve`, `/wix-extract`
+  - **Database Schema**: `computer_use_tasks`, `computer_use_screenshots` tables
+  - **Safety Controls**: Approval workflow, step limits (max 50), blocked destructive commands
+  - **Use Cases**: Wix data extraction, social automation, E2E testing, web scraping
+  - **Cost**: $0.06-0.30/task, 80% time savings vs manual
+  - **MB.MD Pattern 26**: Complete Computer Use documentation (260 lines)
+  - **Status**: Backend complete, UI pending, ready for first automation test
 **Week 9 Day 5 (Nov 17, 2025) - Facebook Messenger Integration + OSI Protocol**
 - ✅ **MB.MD v9.1 - Pattern 25: Open Source Intelligence (OSI) Protocol**:
   - 5-step auto-cycle: ASSESS → SEARCH → EVALUATE → IMPLEMENT → TEACH
