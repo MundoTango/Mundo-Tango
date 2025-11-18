@@ -26,32 +26,35 @@ interface ExecutionResult {
 async function sendFacebookInvite(): Promise<ExecutionResult> {
   const taskId = `fb-invite-${nanoid(8)}`;
   const recipientName = 'Scott Boddye';
-  const recipientFbUsername = 'sboddye'; // Scott's Facebook username
+  const recipientEmail = 'sboddye@gmail.com'; // Scott's email for messenger
   const userId = 15; // Super Admin (Level 3) - has god-level access
   const timestamp = new Date().toISOString();
 
   console.log('╔══════════════════════════════════════════════════════════════╗');
   console.log('║   MB.MD Protocol v8.1 - Facebook Messenger Automation        ║');
+  console.log('║            ITERATION 5: Search-Based Approach                ║');
   console.log('╚══════════════════════════════════════════════════════════════╝');
   console.log('');
   console.log(`Task ID:       ${taskId}`);
   console.log(`Recipient:     ${recipientName}`);
-  console.log(`FB Username:   ${recipientFbUsername}`);
+  console.log(`Email:         ${recipientEmail}`);
   console.log(`User ID:       ${userId}`);
   console.log(`Timestamp:     ${timestamp}`);
   console.log('');
-  console.log('Starting Facebook Messenger invitation automation...');
-  console.log('Using DIRECT CONVERSATION approach (bypassing search)');
+  console.log('📚 LEARNING FROM FAILURES:');
+  console.log('  Attempt 1-3: Search selectors failed');
+  console.log('  Attempt 4-5: Direct URL navigation → session loss');
+  console.log('  Attempt 6: Using SEARCH instead of direct URL');
   console.log('');
 
   try {
-    // Execute the invitation with direct username
+    // Execute the invitation using SEARCH approach (no direct URL)
     const result = await facebookMessengerService.sendInvitation(
       taskId,
       userId,
       recipientName,
-      'mundo_tango_invite', // Use the Mundo Tango invitation template
-      recipientFbUsername // Pass Facebook username for direct conversation link
+      'mundo_tango_invite' // Use the Mundo Tango invitation template
+      // NO username - will use search instead
     );
 
     // Save screenshots to file

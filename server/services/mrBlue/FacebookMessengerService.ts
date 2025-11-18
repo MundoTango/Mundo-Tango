@@ -237,52 +237,72 @@ export class FacebookMessengerService {
   }
 
   async navigateToMessenger(taskId: string, stepNumber: number, screenshots: Array<{ step: number; base64: string; action: string }>, recipientFbUsername?: string): Promise<number> {
-    // Step: Navigate to Messenger (carefully to preserve session)
+    // Step: Navigate to Messenger using standalone messenger.com domain
     stepNumber++;
     
-    console.log(`[FacebookMessenger ${taskId}] Step ${stepNumber}: Navigate to Messenger${recipientFbUsername ? ` and find ${recipientFbUsername}` : ''}`);
+    console.log(`[FacebookMessenger ${taskId}] Step ${stepNumber}: Navigate to messenger.com (standalone domain)`);
     
-    // First go to main messenger page to ensure session is maintained
-    await this.page!.goto('https://www.facebook.com/messages', {
+    // Use messenger.com instead of facebook.com/messages - different authentication flow
+    await this.page!.goto('https://www.messenger.com', {
       waitUntil: 'networkidle',
       timeout: this.stepTimeout
     });
-    await this.page!.waitForTimeout(2000);
+    await this.page!.waitForTimeout(3000);
     
-    // Check if we're still logged in
+    // Check if we're on login page
     const isLoginPage = await this.page!.evaluate(() => {
       return document.querySelector('input[name="email"]') !== null || 
              document.querySelector('input[placeholder*="Email"]') !== null ||
-             document.body.textContent?.includes('Log Into Facebook') ||
-             document.body.textContent?.includes('You must log in');
+             document.querySelector('input[type="email"]') !== null;
     });
     
     if (isLoginPage) {
-      console.log(`[FacebookMessenger ${taskId}] ⚠️  Session lost! Re-authenticating...`);
-      // Re-login if session was lost
-      stepNumber = await this.login(taskId, screenshots, stepNumber);
-      // Navigate back to messenger
-      await this.page!.goto('https://www.facebook.com/messages', {
-        waitUntil: 'networkidle',
-        timeout: this.stepTimeout
-      });
-      await this.page!.waitForTimeout(2000);
-    }
-    
-    // If we have a username, now navigate to their conversation
-    if (recipientFbUsername) {
-      console.log(`[FacebookMessenger ${taskId}] Navigating to conversation with ${recipientFbUsername}...`);
-      await this.page!.goto(`https://www.facebook.com/messages/t/${recipientFbUsername}`, {
-        waitUntil: 'networkidle',
-        timeout: this.stepTimeout
-      });
+      console.log(`[FacebookMessenger ${taskId}] Messenger login page detected, authenticating...`);
+      // Login directly on messenger.com
+      const fbEmail = process.env.FACEBOOK_EMAIL;
+      const fbPassword = process.env.FACEBOOK_PASSWORD;
+      
+      // Fill email
+      const emailSelectors = ['input[name="email"]', 'input[type="email"]', 'input[placeholder*="Email"]'];
+      for (const selector of emailSelectors) {
+        try {
+          await this.page!.fill(selector, fbEmail!);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+      
+      // Fill password
+      const passwordSelectors = ['input[name="pass"]', 'input[type="password"]', 'input[name="password"]'];
+      for (const selector of passwordSelectors) {
+        try {
+          await this.page!.fill(selector, fbPassword!);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+      
+      // Click login
+      const loginSelectors = ['button[name="login"]', 'button[type="submit"]', 'button:has-text("Log In")'];
+      for (const selector of loginSelectors) {
+        try {
+          await this.page!.click(selector);
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+      
+      await this.page!.waitForLoadState('networkidle', { timeout: this.stepTimeout });
       await this.page!.waitForTimeout(3000);
     }
 
     screenshots.push({
       step: stepNumber,
       base64: await this.takeScreenshot(),
-      action: recipientFbUsername ? `Navigate to conversation with ${recipientFbUsername}` : 'Navigate to Messenger'
+      action: 'Navigate to messenger.com'
     });
 
     return stepNumber;
