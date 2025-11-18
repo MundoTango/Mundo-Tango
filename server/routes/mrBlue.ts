@@ -56,13 +56,15 @@ function detectVibecodingIntent(message: string, context: any): {
   confidence: number;
 } {
   const msg = message.toLowerCase();
+  console.log('[VibeCoding Intent] Analyzing message:', message);
   
   // Pattern matching for vibe coding intents
   const patterns = {
     fix_bug: [
-      /fix|debug|repair|broken|not working|bug|error|issue/i,
+      /fix|debug|repair|broken|not working|not automated|bug|error|issue/i,
       /autocomplete.*not.*work|dropdown.*not.*show|form.*not.*submit/i,
-      /why.*not.*work|what.*wrong|help.*fix/i,
+      /why.*not.*work|what.*wrong|help.*fix|make.*plan.*fix/i,
+      /automat.*not|need.*automat|should.*automat/i,
     ],
     identify_elements: [
       /identify|find|locate|what elements|inspect|show me|list.*elements/i,
@@ -72,7 +74,7 @@ function detectVibecodingIntent(message: string, context: any): {
     make_change: [
       /change|modify|update|add|remove|create|edit|build|implement/i,
       /make.*button|add.*feature|update.*style|create.*component/i,
-      /improve|enhance|refactor/i,
+      /improve|enhance|refactor|automate/i,
     ],
     inspect_page: [
       /what page|where am i|current page|this page|what.*looking at/i,
@@ -82,12 +84,24 @@ function detectVibecodingIntent(message: string, context: any): {
   
   // Special handling for DOM snapshot context
   const hasDOMSnapshot = context?.domSnapshot && Object.keys(context.domSnapshot).length > 0;
+  console.log('[VibeCoding Intent] Has DOM snapshot:', hasDOMSnapshot);
+  
+  // Check for MB.MD protocol keywords FIRST (highest priority)
+  if (/(use\s+mb\.md|mb\.md|mbmd|vibe\s*cod|mb\s*protocol|simultaneously|recursively|critically)/i.test(msg)) {
+    console.log('[VibeCoding Intent] ✅ MB.MD PROTOCOL DETECTED - confidence: 0.99');
+    return {
+      isVibecoding: true,
+      type: 'make_change',
+      confidence: 0.99, // Very high confidence for explicit MB.MD requests
+    };
+  }
   
   // Check each pattern category
   for (const [type, regexList] of Object.entries(patterns)) {
     for (const regex of regexList) {
       if (regex.test(msg)) {
         const confidence = hasDOMSnapshot ? 0.95 : 0.85; // Higher confidence with DOM data
+        console.log(`[VibeCoding Intent] ✅ Pattern matched: ${type} - confidence: ${confidence}`);
         return {
           isVibecoding: true,
           type: type as any,
@@ -97,15 +111,7 @@ function detectVibecodingIntent(message: string, context: any): {
     }
   }
   
-  // Check for MB.MD protocol keywords
-  if (/(mb\.md|mbmd|vibe cod|protocol|simultaneously|recursively|critically)/i.test(msg)) {
-    return {
-      isVibecoding: true,
-      type: 'make_change',
-      confidence: 0.9,
-    };
-  }
-  
+  console.log('[VibeCoding Intent] ❌ No vibe coding pattern matched');
   return {
     isVibecoding: false,
     type: null,
