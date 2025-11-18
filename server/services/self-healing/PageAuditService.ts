@@ -8,7 +8,17 @@
  */
 
 import { db } from '../../../shared/db';
-import { pageAudits, type InsertPageAudit } from '../../../shared/schema';
+import { 
+  pageAudits, 
+  agentBeliefs, 
+  predictionErrors,
+  type InsertPageAudit,
+  type InsertAgentBeliefs,
+  type InsertPredictionError,
+  type SelectAgentBeliefs,
+  type SelectPageAudit
+} from '../../../shared/schema';
+import { eq, and, desc } from 'drizzle-orm';
 
 export interface AuditIssue {
   category: 'ui_ux' | 'routing' | 'integration' | 'performance' | 'accessibility' | 'security';
@@ -17,6 +27,8 @@ export interface AuditIssue {
   location: string;
   suggestedFix: string;
   agentId: string;
+  surpriseScore?: number; // FEP: Prediction error magnitude (0-1)
+  priority?: 'critical' | 'high' | 'medium' | 'low'; // FEP-based priority
 }
 
 export interface AuditResults {
@@ -229,11 +241,215 @@ export class PageAuditService {
         healingApplied: false
       };
 
-      await db.insert(pageAudits).values(auditData);
+      const [insertedAudit] = await db.insert(pageAudits).values(auditData).returning();
       console.log(`✅ Audit saved for ${results.pageId}`);
+
+      // FEP: Update agent beliefs and track prediction errors
+      await this.updateFEPBeliefs(results, insertedAudit.id);
     } catch (error) {
       console.error(`❌ Failed to save audit for ${results.pageId}:`, error);
       // Don't throw - allow orchestration to continue even if audit save fails
+    }
+  }
+
+  /**
+   * FEP: Update agent beliefs based on new observations (Bayesian inference)
+   * MB.MD v9.2 Pattern 27: Free Energy Principle
+   */
+  private static async updateFEPBeliefs(results: AuditResults, auditId: number): Promise<void> {
+    try {
+      // Update beliefs for each auditor agent
+      for (const agentId of results.auditorAgents) {
+        // Get agent's prior beliefs
+        const [priorBelief] = await db
+          .select()
+          .from(agentBeliefs)
+          .where(
+            and(
+              eq(agentBeliefs.agentId, agentId),
+              eq(agentBeliefs.pageId, results.pageId)
+            )
+          );
+
+        const actualIssueCount = results.totalIssues;
+
+        if (priorBelief) {
+          // BAYESIAN UPDATE: posterior = (prior × likelihood) / evidence
+          const prior = priorBelief.expectedIssueCount;
+          const confidence = priorBelief.confidence;
+          
+          // Weighted average (simple Bayesian approximation)
+          const posterior = (prior * confidence + actualIssueCount * (1 - confidence)) / 
+                            (confidence + (1 - confidence));
+          
+          // Increase confidence (we learned something)
+          const newConfidence = Math.min(confidence + 0.1, 0.95);
+
+          // Prediction error (surprise)
+          const predictionError = Math.abs(actualIssueCount - prior);
+          const surpriseScore = Math.min(predictionError / 10, 1.0); // Normalize to 0-1
+
+          // Update beliefs
+          await db
+            .update(agentBeliefs)
+            .set({
+              expectedIssueCount: posterior,
+              confidence: newConfidence,
+              lastObservation: results,
+              lastObservedIssueCount: actualIssueCount,
+              predictionError,
+              observationCount: priorBelief.observationCount + 1,
+              lastUpdated: new Date()
+            })
+            .where(eq(agentBeliefs.id, priorBelief.id));
+
+          // Track prediction error for learning
+          await db.insert(predictionErrors).values({
+            pageId: results.pageId,
+            agentId,
+            predicted: prior,
+            actual: actualIssueCount,
+            error: predictionError,
+            surpriseScore,
+            predictionType: 'issue_count',
+            auditId,
+            beliefUpdated: true,
+            actionTaken: predictionError > 0.5 ? 'high_priority_healing' : 'standard_healing'
+          });
+
+          console.log(`🧠 FEP: ${agentId} beliefs updated - Expected: ${prior.toFixed(2)} → ${posterior.toFixed(2)}, Surprise: ${surpriseScore.toFixed(3)}`);
+        } else {
+          // Initialize new belief for this agent/page combination
+          await db.insert(agentBeliefs).values({
+            agentId,
+            pageId: results.pageId,
+            expectedIssueCount: actualIssueCount,
+            confidence: 0.3, // Start with low confidence
+            lastObservation: results,
+            lastObservedIssueCount: actualIssueCount,
+            predictionError: 0,
+            observationCount: 1
+          });
+
+          console.log(`🧠 FEP: Initialized beliefs for ${agentId} on ${results.pageId}`);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Failed to update FEP beliefs:', error);
+      // Don't throw - FEP is enhancement, not critical path
+    }
+  }
+
+  /**
+   * FEP: Calculate surprise score (prediction error magnitude)
+   * MB.MD v9.2 Pattern 27: High surprise = high information value
+   */
+  static async calculateSurpriseScore(
+    pageId: string,
+    agentId: string,
+    actualValue: number
+  ): Promise<number> {
+    try {
+      const [belief] = await db
+        .select()
+        .from(agentBeliefs)
+        .where(
+          and(
+            eq(agentBeliefs.agentId, agentId),
+            eq(agentBeliefs.pageId, pageId)
+          )
+        );
+
+      if (!belief) {
+        return 0.5; // Medium surprise for unknown pages
+      }
+
+      // Prediction error = |actual - predicted|
+      const predictionError = Math.abs(actualValue - belief.expectedIssueCount);
+      
+      // Normalize to 0-1 (assume max 10 issues)
+      const surpriseScore = Math.min(predictionError / 10, 1.0);
+
+      return surpriseScore;
+    } catch (error) {
+      console.error('❌ Failed to calculate surprise score:', error);
+      return 0.5; // Default medium surprise
+    }
+  }
+
+  /**
+   * FEP: Prioritize issues by surprise + severity
+   * MB.MD v9.2 Pattern 27: Fix surprising issues first (high information value)
+   */
+  static async prioritizeIssues(issues: AuditIssue[], pageId: string): Promise<AuditIssue[]> {
+    try {
+      // Calculate surprise score for each issue
+      const issuesWithSurprise = await Promise.all(
+        issues.map(async (issue) => {
+          const surpriseScore = await this.calculateSurpriseScore(
+            pageId,
+            issue.agentId,
+            1 // Single issue
+          );
+
+          return {
+            ...issue,
+            surpriseScore,
+            priorityScore: 
+              (issue.severity === 'critical' ? 1.0 : 
+               issue.severity === 'high' ? 0.7 : 
+               issue.severity === 'medium' ? 0.4 : 0.2) * 0.6 + // Severity weight
+              surpriseScore * 0.4 // Surprise weight
+          };
+        })
+      );
+
+      // Sort by priority score (highest first)
+      return issuesWithSurprise.sort((a, b) => 
+        (b.priorityScore || 0) - (a.priorityScore || 0)
+      );
+    } catch (error) {
+      console.error('❌ Failed to prioritize issues:', error);
+      return issues; // Return original order on error
+    }
+  }
+
+  /**
+   * FEP: Get agent's current beliefs about a page
+   */
+  static async getAgentBeliefs(pageId: string, agentId: string): Promise<SelectAgentBeliefs | null> {
+    try {
+      const [belief] = await db
+        .select()
+        .from(agentBeliefs)
+        .where(
+          and(
+            eq(agentBeliefs.agentId, agentId),
+            eq(agentBeliefs.pageId, pageId)
+          )
+        );
+
+      return belief || null;
+    } catch (error) {
+      console.error('❌ Failed to get agent beliefs:', error);
+      return null;
+    }
+  }
+
+  /**
+   * FEP: Get recent prediction errors for learning
+   */
+  static async getRecentPredictionErrors(pageId: string, limit: number = 10) {
+    try {
+      return await db
+        .select()
+        .from(predictionErrors)
+        .where(eq(predictionErrors.pageId, pageId))
+        .orderBy(desc(predictionErrors.timestamp))
+        .limit(limit);
+    } catch (error) {
+      console.error('❌ Failed to get prediction errors:', error);
+      return [];
     }
   }
 }
