@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { customNanoid } from '../test-utils/custom-nanoid';
+import { nanoid } from 'nanoid';
 
 test.describe('Full Onboarding Journey to Admin Integrations', () => {
   test('should complete registration → onboarding → access admin integrations wizard', async ({ page, context }) => {
@@ -7,7 +7,7 @@ test.describe('Full Onboarding Journey to Admin Integrations', () => {
     test.setTimeout(120000); // 2 minutes for full journey
     
     // Generate unique user credentials
-    const uniqueId = customNanoid(6);
+    const uniqueId = nanoid(6);
     const testEmail = `test-${uniqueId}@mundotango.com`;
     const testPassword = 'TestPassword123!';
     const testName = `Test User ${uniqueId}`;
