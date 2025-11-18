@@ -48,21 +48,35 @@ export default function CitySelectionPage() {
       setIsSearching(true);
       try {
         const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
             citySearch
-          )}&format=json&limit=5&addressdetails=1`
+          )}&format=json&limit=5&addressdetails=1&featuretype=city`,
+          {
+            headers: {
+              'User-Agent': 'MundoTango/1.0'
+            }
+          }
         );
+        
+        if (!response.ok) {
+          console.error("Nominatim API error:", response.status);
+          setSuggestions([]);
+          return;
+        }
+        
         const data = await response.json();
+        console.log("City search results:", data);
         
         const cities = data.map((result: any) => ({
           display_name: result.display_name,
           name: result.address?.city || result.address?.town || result.address?.village || result.name,
           country: result.address?.country || "Unknown",
-        }));
+        })).filter((city: any) => city.name);
         
         setSuggestions(cities);
       } catch (error) {
         console.error("City search error:", error);
+        setSuggestions([]);
       } finally {
         setIsSearching(false);
       }
