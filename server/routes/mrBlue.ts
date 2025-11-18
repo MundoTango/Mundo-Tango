@@ -212,8 +212,13 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
       // Log received context for debugging
       console.log('[Mr. Blue] Received context:', JSON.stringify(parsedContext, null, 2));
 
+      // ================== MB.MD v9.0: AUTO-APPEND "use mb.md" TO ALL MESSAGES ==================
+      // This ensures every message leverages the MB.MD protocol automatically
+      const enhancedMessage = `use mb.md: ${message}`;
+      console.log('[Mr. Blue] 🚀 Auto-appended MB.MD protocol to message');
+
       // ================== MB.MD v9.0: VIBE CODING INTENT DETECTION ==================
-      const vibecodingIntent = detectVibecodingIntent(message, parsedContext);
+      const vibecodingIntent = detectVibecodingIntent(enhancedMessage, parsedContext);
       
       if (vibecodingIntent.isVibecoding) {
         console.log(`[Mr. Blue] 🎯 VIBE CODING INTENT DETECTED: ${vibecodingIntent.type} (confidence: ${vibecodingIntent.confidence})`);
@@ -235,7 +240,7 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
           }
           
           const vibeRequest = {
-            naturalLanguage: message,
+            naturalLanguage: enhancedMessage,
             context: [
               `Current Page: ${parsedContext.currentPage || 'Unknown'}`,
               `Page Title: ${parsedContext.pageTitle || 'Unknown'}`,
@@ -469,8 +474,8 @@ Help users navigate the platform, answer questions, and provide personalized rec
         messages.push(...conversationHistory.slice(-6));
       }
 
-      // Add current user message
-      messages.push({ role: "user", content: message });
+      // Add current user message (with MB.MD protocol already appended)
+      messages.push({ role: "user", content: enhancedMessage });
 
       const completion = await groq.chat.completions.create({
         messages,
@@ -485,7 +490,7 @@ Help users navigate the platform, answer questions, and provide personalized rec
       // Save messages to history if conversationId and userId provided
       if (conversationId && userId) {
         try {
-          await saveMessageToHistory(conversationId, userId, 'user', message);
+          await saveMessageToHistory(conversationId, userId, 'user', enhancedMessage);
           await saveMessageToHistory(conversationId, userId, 'assistant', response);
           
           // SYSTEM 8: Store conversation in memory
@@ -494,7 +499,7 @@ Help users navigate the platform, answer questions, and provide personalized rec
               // Store user message
               await memoryService.storeMemory(
                 userId,
-                `User: ${message}\nMr Blue: ${response}`,
+                `User: ${enhancedMessage}\nMr Blue: ${response}`,
                 'conversation',
                 {
                   importance: 5,
