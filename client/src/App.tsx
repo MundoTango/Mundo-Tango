@@ -28,6 +28,7 @@ import HomePage from "@/pages/HomePage";
 import LandingPage from "@/pages/LandingPage";
 import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
+import FacebookCallbackPage from "@/pages/auth/FacebookCallbackPage";
 import MarketingPrototype from "@/pages/MarketingPrototype";
 import MarketingPrototypeEnhanced from "@/pages/MarketingPrototypeEnhanced";
 import MarketingPrototypeOcean from "@/pages/MarketingPrototypeOcean";
@@ -489,6 +490,7 @@ function Router() {
       </Route>
       <Route path="/login" component={LoginPage} />
       <Route path="/register" component={RegisterPage} />
+      <Route path="/auth/callback" component={FacebookCallbackPage} />
       
       <Route path="/feed">
         <ProtectedRoute>

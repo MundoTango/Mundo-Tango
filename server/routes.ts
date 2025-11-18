@@ -3,6 +3,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import authRoutes from "./routes/auth";
+import facebookOAuthRoutes from "./routes/auth/facebook-oauth-routes";
 import storiesRoutes from "./routes/stories-routes";
 import liveRoutes from "./routes/live-routes";
 import socialActionsRoutes from "./routes/social-actions-routes";
@@ -512,6 +513,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Existing routes
   app.use("/api/auth", authRoutes);
+  app.use("/api/auth/facebook", facebookOAuthRoutes);
   app.use("/api/deployments", deploymentsRoutes);
   app.use("/api/secrets", secretsRoutes);
   app.use("/api/previews", previewsRoutes);
