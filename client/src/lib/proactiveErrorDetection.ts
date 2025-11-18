@@ -12,7 +12,7 @@
  */
 
 interface ErrorReport {
-  type: 'console.error' | 'console.warn' | 'window.onerror' | 'unhandledrejection' | 'dom.mutation';
+  type: 'console.error' | 'console.warn' | 'window.onerror' | 'unhandledrejection' | 'dom.mutation' | 'http.error';
   message: string;
   stack?: string;
   timestamp: number;
@@ -298,19 +298,27 @@ export class ProactiveErrorDetector {
         `[ProactiveErrorDetector] Sending batch of ${batch.length} errors to Mr. Blue API...`
       );
 
-      // Get CSRF token from cookie
+      // Get CSRF token from cookie (try multiple possible names)
       const csrfToken = document.cookie
         .split('; ')
+        .find(row => row.startsWith('XSRF-TOKEN='))
+        ?.split('=')[1] ||
+      document.cookie
+        .split('; ')
         .find(row => row.startsWith('csrf-token='))
+        ?.split('=')[1] ||
+      document.cookie
+        .split('; ')
+        .find(row => row.startsWith('_csrf='))
         ?.split('=')[1];
 
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
       };
       
-      // Add CSRF token header if available
+      // Add CSRF token header if available (server checks for 'x-xsrf-token')
       if (csrfToken) {
-        headers['X-CSRF-Token'] = csrfToken;
+        headers['X-XSRF-Token'] = csrfToken;
       }
 
       const response = await fetch(this.API_ENDPOINT, {
@@ -369,6 +377,13 @@ export class ProactiveErrorDetector {
     } finally {
       this.isSending = false;
     }
+  }
+
+  /**
+   * Public method to report errors from external sources (e.g., HTTP interceptor)
+   */
+  public reportError(error: ErrorReport) {
+    this.captureError(error);
   }
 
   /**

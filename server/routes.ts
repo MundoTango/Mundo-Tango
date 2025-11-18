@@ -58,7 +58,7 @@ import agentHealthRoutes from "./routes/agent-health-routes";
 import predictiveContextRoutes from "./routes/predictive-context-routes";
 import aiEnhanceRoutes from "./routes/ai-enhance";
 import userSearchRoutes from "./routes/user-search";
-import locationSearchRoutes from "./routes/location-search";
+import locationRoutes from "./routes/locations";
 import { registerAIArbitrageRoutes } from "./routes/ai-arbitrage-routes";
 import { registerDPOTrainingRoutes } from "./routes/dpo-training-routes";
 import housingRoutes from "./routes/housing-routes";
@@ -570,7 +570,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/god-level", authenticateToken, godLevelRoutes);
   app.use("/api/ai", aiEnhanceRoutes);
   app.use("/api/user", userSearchRoutes);
-  app.use("/api/locations", locationSearchRoutes);
+  app.use("/api/locations", locationRoutes);
   
   // ============================================================================
   // GDPR COMPLIANCE & PRIVACY ROUTES

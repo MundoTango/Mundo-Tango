@@ -17,6 +17,8 @@ import { MrBlueWidget } from "./components/MrBlueWidget";
 import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
 import { LoadingFallback } from "./components/LoadingFallback";
 import { initErrorDetection, cleanupErrorDetection } from "./lib/proactiveErrorDetection";
+import { initHttpInterceptor, cleanupHttpInterceptor } from "./lib/httpInterceptor";
+import { initComponentHealthMonitor, cleanupComponentHealthMonitor } from "./lib/componentHealthMonitor";
 
 // Lazy load heavy components - Updated to use new unified interface
 const UnifiedMrBlue = lazy(() => import("./components/mr-blue/UnifiedMrBlue"));
@@ -2100,12 +2102,24 @@ function App() {
   const [isVisualEditorOpen, setIsVisualEditorOpen] = useState(false);
   const [location] = useLocation();
 
-  // Initialize Proactive Error Detection
+  // Initialize Proactive Error Detection + HTTP Interceptor + Component Health Monitor
   useEffect(() => {
     console.log('[App] Initializing Proactive Error Detection...');
     const detector = initErrorDetection();
     
+    console.log('[App] Initializing HTTP Interceptor...');
+    initHttpInterceptor();
+    
+    console.log('[App] Initializing Component Health Monitor...');
+    initComponentHealthMonitor();
+    
     return () => {
+      console.log('[App] Cleaning up Component Health Monitor...');
+      cleanupComponentHealthMonitor();
+      
+      console.log('[App] Cleaning up HTTP Interceptor...');
+      cleanupHttpInterceptor();
+      
       console.log('[App] Cleaning up Proactive Error Detection...');
       cleanupErrorDetection();
     };
