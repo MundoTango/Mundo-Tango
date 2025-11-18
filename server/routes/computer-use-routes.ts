@@ -1,11 +1,15 @@
 /**
  * COMPUTER USE API ROUTES
- * Endpoints for Anthropic Computer Use automation
+ * Endpoints for browser automation via Playwright + Anthropic Computer Use
  */
 
 import { Router, Request, Response } from 'express';
 import { computerUseService } from '../services/mrBlue/ComputerUseService';
+import { browserAutomationService } from '../services/mrBlue/BrowserAutomationService';
 import { authenticateToken, requireRoleLevel, type AuthRequest } from '../middleware/auth';
+import { db } from '@db';
+import { computerUseTasks, computerUseScreenshots } from '@db/schema';
+import { nanoid } from 'nanoid';
 
 const router = Router();
 
@@ -171,29 +175,93 @@ router.post('/task/:taskId/cancel', authenticateToken, async (req: AuthRequest, 
 
 /**
  * POST /api/computer-use/wix-extract
- * Specialized endpoint for Wix contact extraction
+ * Specialized endpoint for Wix contact extraction using Playwright
+ * Uses WIX_EMAIL and WIX_PASSWORD environment variables
  */
 router.post('/wix-extract', authenticateToken, requireRoleLevel(8), async (req: AuthRequest, res: Response) => {
   try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Wix email and password required' });
+    // Verify Wix credentials are configured
+    if (!process.env.WIX_EMAIL || !process.env.WIX_PASSWORD) {
+      return res.status(400).json({ 
+        error: 'Wix credentials not configured',
+        message: 'Please add WIX_EMAIL and WIX_PASSWORD to environment variables'
+      });
     }
 
-    const task = await computerUseService.extractWixContacts({ email, password });
+    const taskId = `wix_extract_${nanoid(10)}`;
+    
+    console.log(`[WixExtraction] Creating task ${taskId}...`);
 
+    // Create task record
+    await db.insert(computerUseTasks).values({
+      taskId,
+      instruction: 'Extract all contacts from Wix',
+      status: 'running',
+      steps: [],
+      currentStep: 0,
+      maxSteps: 20,
+      requiresApproval: false, // No approval needed for Wix extraction
+      automationType: 'wix_extraction'
+    });
+
+    // Execute extraction in background
+    (async () => {
+      try {
+        console.log(`[WixExtraction] Starting extraction for task ${taskId}...`);
+        
+        const result = await browserAutomationService.extractWixContacts(taskId);
+
+        // Store screenshots
+        if (result.screenshots && result.screenshots.length > 0) {
+          for (const screenshot of result.screenshots) {
+            await db.insert(computerUseScreenshots).values({
+              taskId,
+              stepNumber: screenshot.step,
+              screenshotBase64: screenshot.base64,
+              action: { description: screenshot.action }
+            });
+          }
+        }
+
+        // Update task with result
+        await db.update(computerUseTasks)
+          .set({
+            status: result.success ? 'completed' : 'failed',
+            currentStep: result.screenshots?.length || 0,
+            result: result.data,
+            error: result.error,
+            steps: result.screenshots?.map(s => ({
+              step: s.step,
+              action: s.action
+            })) || []
+          })
+          .where(eq(computerUseTasks.taskId, taskId));
+
+        console.log(`[WixExtraction] Task ${taskId} completed:`, result.success ? 'SUCCESS' : 'FAILED');
+
+      } catch (error: any) {
+        console.error(`[WixExtraction] Task ${taskId} error:`, error);
+        
+        await db.update(computerUseTasks)
+          .set({
+            status: 'failed',
+            error: error.message
+          })
+          .where(eq(computerUseTasks.taskId, taskId));
+      }
+    })();
+
+    // Return immediately with task ID
     res.json({
       success: true,
-      task: {
-        id: task.id,
-        status: task.status,
-        message: 'Wix extraction started - requires approval before execution'
-      }
+      taskId,
+      status: 'running',
+      message: 'Wix extraction started. Poll /api/computer-use/task/:taskId for status.',
+      estimatedTime: '2-3 minutes'
     });
 
   } catch (error: any) {
-    console.error('[ComputerUse API] Error starting Wix extraction:', error);
+    console.error('[WixExtraction] Error starting extraction:', error);
     res.status(500).json({
       error: 'Failed to start Wix extraction',
       message: error.message
