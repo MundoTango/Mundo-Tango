@@ -19,6 +19,7 @@ import { useOpenAIRealtime } from "@/hooks/useOpenAIRealtime";
 import { VibecodingRouter } from "@/lib/vibecodingRouter";
 import { useToast } from "@/hooks/use-toast";
 import type { MrBlueMode } from "./ModeSwitcher";
+import { VibeCodingResult } from "./VibeCodingResult";
 
 interface Message {
   id: string;
@@ -32,6 +33,16 @@ interface Message {
   editedAt?: Date | null;
   deletedAt?: Date | null;
   reactions?: Array<{ emoji: string; count: number; users: number[] }>;
+  vibecodingResult?: {
+    sessionId: string;
+    fileChanges: Array<{
+      filePath: string;
+      action: 'modify' | 'create';
+      reason: string;
+      oldContent?: string;
+      newContent: string;
+    }>;
+  };
 }
 
 interface MrBlueChatProps {
@@ -429,19 +440,19 @@ Provide natural, conversational assistance based on where the user is in the pla
         const assistantMessage: Message = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: `${data.response}\n\n**🔨 Code Changes Generated:**\n${vibeResult.fileChanges.length} file(s) will be modified.\n\n${vibeResult.fileChanges.map((fc: any) => `- ${fc.filePath} (${fc.action})`).join('\n')}\n\n**Impact:** ${vibeResult.estimatedImpact}\n\n*Use the Visual Editor or Vibecoding page to review and apply these changes.*`,
+          content: data.response || 'Code changes generated successfully',
           timestamp: new Date(),
+          vibecodingResult: vibeResult,
         };
         
         setMessages(prev => [...prev, assistantMessage]);
         
         toast({
           title: '✅ Vibe Coding Complete!',
-          description: `Generated changes for ${vibeResult.fileChanges.length} file(s). Session: ${vibeResult.sessionId}`,
+          description: `Generated changes for ${vibeResult.fileChanges.length} file(s). Review and apply below.`,
           duration: 5000,
         });
         
-        // Store session ID for later approval
         console.log('[MrBlue] Vibe coding session:', vibeResult.sessionId);
         return;
       }
@@ -838,6 +849,22 @@ Provide natural, conversational assistance based on where the user is in the pla
                       ) : (
                         <>
                           <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                          
+                          {/* Vibe Coding Result */}
+                          {message.vibecodingResult && (
+                            <div className="mt-3">
+                              <VibeCodingResult
+                                sessionId={message.vibecodingResult.sessionId}
+                                fileChanges={message.vibecodingResult.fileChanges}
+                                onApplySuccess={() => {
+                                  toast({
+                                    title: "🎉 Changes Applied!",
+                                    description: "Your code has been updated. Check the files for changes.",
+                                  });
+                                }}
+                              />
+                            </div>
+                          )}
                           
                           {/* Audio playback for assistant messages with TTS */}
                           {message.role === 'assistant' && message.audioUrl && (

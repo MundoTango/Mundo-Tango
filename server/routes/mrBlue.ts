@@ -1269,4 +1269,73 @@ router.get("/capabilities", async (req, res) => {
   }
 });
 
+// ============================================================================
+// VIBE CODING: APPLY CHANGES
+// ============================================================================
+
+/**
+ * Apply generated code changes to files
+ * POST /api/mrblue/vibecoding/apply
+ */
+router.post("/vibecoding/apply", async (req: Request, res: Response) => {
+  try {
+    const { sessionId, fileChanges } = req.body;
+
+    if (!sessionId || !fileChanges || !Array.isArray(fileChanges)) {
+      return res.status(400).json({ error: 'Missing sessionId or fileChanges' });
+    }
+
+    console.log(`[VibeCoding] Applying ${fileChanges.length} file changes for session ${sessionId}`);
+
+    const appliedFiles: string[] = [];
+    const errors: Array<{ filePath: string; error: string }> = [];
+
+    // Import fs/promises for async file operations
+    const fsPromises = await import('fs/promises');
+    const path = await import('path');
+
+    for (const change of fileChanges) {
+      try {
+        const { filePath, newContent } = change;
+        
+        // Resolve absolute path (assuming workspace root)
+        const absolutePath = path.resolve(process.cwd(), filePath);
+        
+        // Ensure directory exists
+        const directory = path.dirname(absolutePath);
+        await fsPromises.mkdir(directory, { recursive: true });
+
+        // Write file
+        await fsPromises.writeFile(absolutePath, newContent, 'utf-8');
+        
+        appliedFiles.push(filePath);
+        console.log(`[VibeCoding] ✅ Applied: ${filePath}`);
+      } catch (error: any) {
+        console.error(`[VibeCoding] ❌ Failed to apply ${change.filePath}:`, error);
+        errors.push({
+          filePath: change.filePath,
+          error: error.message,
+        });
+      }
+    }
+
+    // Return results
+    res.json({
+      success: errors.length === 0,
+      appliedFiles,
+      errors,
+      message: errors.length === 0 
+        ? `Successfully applied ${appliedFiles.length} file changes`
+        : `Applied ${appliedFiles.length} files with ${errors.length} errors`,
+    });
+
+  } catch (error: any) {
+    console.error('[VibeCoding] Apply error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: error.message 
+    });
+  }
+});
+
 export default router;
