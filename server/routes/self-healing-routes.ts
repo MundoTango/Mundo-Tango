@@ -1,11 +1,13 @@
 import { Router } from 'express';
 import { authenticateToken, requireRoleLevel, AuthRequest } from '../middleware/auth';
 import { SelfHealingService } from '../services/SelfHealingService';
+import { AgentOrchestrationService } from '../services/self-healing';
 
 /**
  * BLOCKER 5: Self-Healing System Routes
  * 
  * Super Admin-only endpoints for automated page validation
+ * + MB.MD v9.0: Agent Orchestration System (Nov 18, 2025)
  */
 const router = Router();
 
@@ -52,6 +54,57 @@ router.post('/generate-fix/:validationLogId', authenticateToken, requireRoleLeve
   } catch (error) {
     console.error('Generate fix error:', error);
     res.status(500).json({ message: 'Error generating fix' });
+  }
+});
+
+// ============================================================================
+// MB.MD v9.0: Agent Orchestration System (Nov 18, 2025)
+// ============================================================================
+
+// Trigger complete self-healing cycle for a page (public - called by Visual Editor)
+router.post('/orchestrate', async (req, res) => {
+  try {
+    const { route } = req.body;
+    
+    if (!route) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Route is required' 
+      });
+    }
+
+    console.log(`🔧 [Agent Orchestration] Handling page load: ${route}`);
+
+    const result = await AgentOrchestrationService.handlePageLoad(route);
+
+    res.json({
+      success: true,
+      result
+    });
+  } catch (error: any) {
+    console.error('[Agent Orchestration] Error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get orchestration health status
+router.get('/health', async (req, res) => {
+  try {
+    const health = await AgentOrchestrationService.getHealthStatus();
+
+    res.json({
+      success: true,
+      health
+    });
+  } catch (error: any) {
+    console.error('[Agent Orchestration] Health check error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
   }
 });
 

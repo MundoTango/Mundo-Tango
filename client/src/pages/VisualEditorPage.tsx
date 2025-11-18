@@ -26,6 +26,8 @@ import { VoiceModeToggle } from "@/components/visual-editor/VoiceModeToggle";
 import { VoiceCommandProcessor } from "@/components/visual-editor/VoiceCommandProcessor";
 import { SmartSuggestions } from "@/components/visual-editor/SmartSuggestions";
 import { StreamingStatusPanel } from "@/components/visual-editor/StreamingStatusPanel";
+import { IframeAddressBar } from "@/components/visual-editor/IframeAddressBar";
+import { useSelfHealing } from "@/hooks/useSelfHealing";
 import type { ChangeMetadata } from "@/components/visual-editor/VisualDiffViewer";
 import { SEO } from "@/components/SEO";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -103,6 +105,12 @@ function VisualEditorPageContent() {
 
   const user = authResponse?.user;
   const isGodLevel = user?.role === 'god';
+
+  // Self-healing orchestration (MB.MD v9.0)
+  const { isRunning: isSelfHealingRunning, result: selfHealingResult } = useSelfHealing(
+    '/', 
+    !!user && isGodLevel // Only run for god-level users
+  );
 
   // Voice hooks setup
   const handleVoiceResult = useCallback((text: string) => {
@@ -1104,18 +1112,44 @@ function VisualEditorPageContent() {
           <Separator />
 
           {/* Preview Content */}
-          <div className="flex-1 overflow-auto bg-muted/20 relative">
+          <div className="flex-1 flex flex-col overflow-hidden bg-muted/20 relative">
             {viewMode === 'preview' ? (
               <>
-                <iframe
-                  ref={iframeRef}
-                  src="/"
-                  className="w-full h-full border-0"
-                  title="Live Preview"
-                  data-visual-editor="true"
-                  data-testid="iframe-preview"
-                  aria-label="Live preview of your Mundo Tango application"
+                {/* Address Bar for iframe navigation */}
+                <IframeAddressBar
+                  currentUrl={currentIframeUrl}
+                  onNavigate={(url) => {
+                    setCurrentIframeUrl(url);
+                    if (iframeRef.current) {
+                      iframeRef.current.src = url;
+                    }
+                  }}
+                  onRefresh={() => {
+                    if (iframeRef.current) {
+                      iframeRef.current.src = iframeRef.current.src;
+                    }
+                  }}
+                  onHome={() => {
+                    setCurrentIframeUrl('/landing');
+                    if (iframeRef.current) {
+                      iframeRef.current.src = '/landing';
+                    }
+                  }}
+                  loading={iframeLoading}
                 />
+                
+                {/* Live Preview iframe */}
+                <div className="flex-1 overflow-auto relative">
+                  <iframe
+                    ref={iframeRef}
+                    src={currentIframeUrl}
+                    className="w-full h-full border-0"
+                    title="Live Preview"
+                    data-visual-editor="true"
+                    data-testid="iframe-preview"
+                    aria-label="Live preview of your Mundo Tango application"
+                  />
+                </div>
                 
                 {/* Streaming Status Panel - Real-time "Mr. Blue is working..." */}
                 <StreamingStatusPanel
@@ -1136,6 +1170,28 @@ function VisualEditorPageContent() {
                       });
                     }}
                   />
+                )}
+                
+                {/* Self-Healing Status */}
+                {isSelfHealingRunning && (
+                  <div className="absolute top-16 right-4 bg-background/95 border rounded-lg p-4 shadow-lg max-w-sm" data-testid="self-healing-status">
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                      <span className="text-sm font-medium">Self-Healing System Active...</span>
+                    </div>
+                  </div>
+                )}
+                
+                {selfHealingResult && !isSelfHealingRunning && (
+                  <div className="absolute top-16 right-4 bg-background/95 border rounded-lg p-4 shadow-lg max-w-sm" data-testid="self-healing-result">
+                    <h3 className="text-sm font-medium mb-2">Self-Healing Complete ✅</h3>
+                    <div className="text-xs space-y-1 text-muted-foreground">
+                      <div>Agents: {selfHealingResult.agentsActivated} ({selfHealingResult.activationTime}ms)</div>
+                      <div>Issues Fixed: {selfHealingResult.issuesFixed || 0}</div>
+                      <div>Total Time: {selfHealingResult.totalTime}ms</div>
+                      <div>UX Validation: {selfHealingResult.uxValidationPassed ? '✅ PASS' : '❌ FAIL'}</div>
+                    </div>
+                  </div>
                 )}
               </>
             ) : viewMode === 'history' ? (
