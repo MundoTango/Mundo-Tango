@@ -38,14 +38,38 @@ const enhancedChatSchema = z.object({
 
 /**
  * Computer Use Intent Detection
- * Detects automation requests in user messages
+ * Detects automation requests AND questions about Computer Use
  */
 function detectComputerUseIntent(message: string): {
   isAutomation: boolean;
-  type: 'wix_extraction' | 'facebook_automation' | 'custom' | null;
+  type: 'wix_extraction' | 'facebook_automation' | 'info_request' | 'custom' | null;
   confidence: number;
 } {
   const msg = message.toLowerCase();
+  
+  // General Computer Use info patterns (user asking ABOUT the feature)
+  const infoPatterns = [
+    /computer.*use/i,
+    /compute.*use/i,
+    /computer.*access/i,
+    /compute.*access/i,
+    /browser.*automat/i,
+    /what.*automat/i,
+    /can.*you.*automat/i,
+    /automation.*feature/i,
+    /automation.*capabilit/i,
+    /what.*can.*you.*do.*automat/i,
+  ];
+  
+  for (const pattern of infoPatterns) {
+    if (pattern.test(message)) {
+      return {
+        isAutomation: true,
+        type: 'info_request',
+        confidence: 0.85
+      };
+    }
+  }
   
   // Wix extraction patterns
   const wixPatterns = [
@@ -221,7 +245,66 @@ router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
           automationType: 'facebook_automation',
           automationStatus: 'not_implemented'
         });
+      } else if (automationIntent.type === 'info_request') {
+        // User is asking ABOUT Computer Use capabilities
+        return res.json({
+          role: 'assistant',
+          content: `🤖 **Yes! I have access to Computer Use automation!**
+
+I can control a real web browser to automate tasks for you. Here's what I can do:
+
+**Available Automations:**
+
+📦 **Wix Data Migration**
+"Extract my Wix contacts" - I'll log into Wix, navigate to your contacts, and download them as CSV
+
+🔷 **Facebook Automation** (Coming Soon)
+"Automate Facebook invitations" - Send personalized invites to tango dancers
+
+**How It Works:**
+1. You tell me what to automate (natural language)
+2. I detect the intent and start the automation
+3. You see real-time progress with screenshots
+4. Task completes and you get the results
+
+**Try It Now:**
+Just type one of these commands:
+• "Extract my Wix contacts"
+• "Migrate my Wix data"
+• "Get my Wix contact list"
+
+**Features:**
+✅ Real-time progress updates
+✅ Live browser screenshots
+✅ Background execution (non-blocking)
+✅ Secure (admin-only access)
+
+Would you like to try one?`,
+          timestamp: new Date().toISOString(),
+          automationType: 'info_request',
+          automationStatus: 'explained'
+        });
       }
+    }
+    
+    // Handle non-admin users asking about Computer Use
+    if (automationIntent.isAutomation && userRoleLevel < 8) {
+      return res.json({
+        role: 'assistant',
+        content: `🔒 Computer Use automation is available, but requires admin access (role level 8+).
+
+Your current role level: ${userRoleLevel}
+
+Computer Use allows me to control a web browser to automate tasks like:
+• Extracting data from websites
+• Automating social media actions
+• Migrating data between platforms
+
+Please contact an administrator if you need access to this feature.`,
+        timestamp: new Date().toISOString(),
+        automationType: 'info_request',
+        automationStatus: 'insufficient_permissions'
+      });
     }
     
     // STEP 2: Build context-aware system message
