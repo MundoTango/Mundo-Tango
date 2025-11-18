@@ -1,7 +1,7 @@
 # Mundo Tango
 
 ## Overview
-Mundo Tango is a production-ready social platform designed to connect the global tango community. It offers social networking, event management, talent matching, and AI-powered assistance, integrating 7 business systems and 62 specialized AI agents. The platform aims to be the leading digital hub for the tango ecosystem, with market potential in premium services, event monetization, and targeted advertising, emphasizing a lean architecture, optimized npm packages, and enterprise-grade security.
+Mundo Tango is a production-ready social platform designed to connect the global tango community. It offers social networking, event management, talent matching, and AI-powered assistance, integrating 7 business systems and 62 specialized AI agents. The platform aims to be the leading digital hub for the tango ecosystem, with market potential in premium services, event monetization, and targeted advertising, emphasizing a **self-sovereign, resilient architecture** with minimal third-party dependencies, optimized npm packages, and enterprise-grade security.
 
 ## User Preferences
 **Methodology:** MB.MD Protocol v8.1 (see mb.md for complete methodology with Anti-Hallucination Framework)
@@ -12,6 +12,14 @@ Mundo Tango is a production-ready social platform designed to connect the global
 - **NEW v8.0**: 5 Development-First Principles (Security, Error, Performance, Mobile, Accessibility)
 
 **Never deviate from the handoff plan** - Follow the exact phase sequence
+
+**NEW v9.0 STRATEGIC PIVOT** (Nov 18, 2025): **Self-Sovereign Architecture**
+- Multi-platform flagging crisis (Supabase + GitHub) → Self-hosted solutions
+- Passport.js OAuth (replacing Supabase Auth)
+- n8n workflow automation (replacing browser automation)
+- Replit native integrations (Gmail, SendGrid, PostgreSQL)
+- Direct API integrations (Facebook Graph API, zero browser automation)
+- **Goal**: <20% third-party dependency, 9/10 resilience score
 
 ## System Architecture
 The project employs a modular, agent-driven development approach based on an Expert Specialized Agents (ESA) framework.
