@@ -30,7 +30,7 @@ The platform features a unified **MT Ocean theme** with a tango-inspired color p
 **AI Integration:**
 -   **Bifrost AI Gateway:** Unified AI gateway with automatic failover, semantic caching, and load balancing.
 -   **Mr. Blue AI Assistant - Unified Interface:** Offers Text Chat, Voice Chat, Vibecoding (context-aware code generation), and a Visual Editor (element selection, change timeline, Git integration). Features seamless mode switching, voice input in all modes, and unified conversation history.
--   **Mr. Blue Natural Language Automation (PRODUCTION-READY):** ✅ **E2E Validated Nov 18, 2025** - God-level users (role_level ≥ 8) can trigger browser automation via natural language (e.g., "Send FB invitation to Scott Boddye"). System correctly detects intent, extracts recipient name, and executes Playwright-based Facebook Messenger automation. Includes rate limiting (5/day, 1/hour), database tracking, and graceful error handling.
+-   **Mr. Blue Natural Language Automation (PRODUCTION-READY):** ✅ **E2E Validated Nov 18, 2025** - God-level users (role_level ≥ 8) can trigger browser automation via natural language (e.g., "Send FB invitation to Scott Boddye"). System correctly detects intent, extracts recipient name, and executes Playwright-based Facebook Messenger automation. Includes rate limiting (5/day, 1/hour), database tracking, and graceful error handling. **Note:** Evolving to Facebook OAuth + Graph API approach for legitimate API access (see Facebook OAuth Integration below).
 -   **Mr. Blue System 1 - Context Service:** Production LanceDB-powered semantic search providing RAG capabilities, indexing 134,648+ lines of documentation with sub-200ms semantic search, auto-chunking, batch embedding, and similarity scoring.
 -   **Mr. Blue Autonomous Agent System:** Full autonomous development using the MB.MD Protocol Engine, an 850+ line GROQ Llama-3.1-70b powered AI Code Generator, a Validator Service, and integration with the Visual Editor for real-time polling, task decomposition, file diffs, validation reports, and approve/reject controls. Includes production safety features like rate limiting, cost caps, and audit logging.
 -   **AI Arbitrage Engine:** Intelligent routing system achieving 50-90% cost savings via TaskClassifier, ModelSelector, CascadeExecutor, and CostTracker.
@@ -40,6 +40,7 @@ The platform features a unified **MT Ocean theme** with a tango-inspired color p
 -   **LIFE CEO AI SYSTEM:** Integrates LanceDB for semantic memory and orchestrates 16 specialized AI agents via a Decision Matrix.
 -   **Multi-AI Orchestration System:** Integrates OpenAI GPT-4o, Anthropic Claude 3.5 Sonnet, Groq Llama 3.1, Google Gemini Pro with specialized fallback routing, intelligent load balancing, and a semantic caching layer with LanceDB. Enhanced with queryWithArbitrage() for cost-aware intelligent routing.
 -   **Automated Data Scraping System:** Uses static (Cheerio), dynamic (Playwright), and social (Facebook Graph API, Instagram) scraping with AI-powered deduplication.
+-   **Facebook OAuth Integration (IN PROGRESS - Nov 18, 2025):** 🔧 Strategic pivot from browser automation to legitimate Facebook OAuth + Graph API. When users authenticate via Supabase Facebook provider, they grant `pages_messaging` permission, enabling MT to send messages via official Facebook Graph API using Page Access Tokens. Database schema updated with OAuth fields (supabase_user_id, facebook_page_id, facebook_page_access_token, facebook_token_expires_at, facebook_refresh_token, facebook_scopes). Comprehensive plan documented in `docs/FACEBOOK_OAUTH_SUPABASE_INTEGRATION_PLAN.md`. **Next Steps:** Scott must configure Facebook App + enable Supabase provider, then agent builds OAuth flow + token exchange service.
 
 **Automation & Workers:** BullMQ queue management with 39 functions across 6 dedicated workers, powered by Redis-based job processing and 50 production-ready algorithms.
 
@@ -55,7 +56,7 @@ The platform features a unified **MT Ocean theme** with a tango-inspired color p
 ## External Dependencies
 
 -   **Database:** PostgreSQL (with Drizzle ORM)
--   **Authentication:** Google OAuth, JWT
+-   **Authentication:** Google OAuth, Facebook OAuth (Supabase), JWT
 -   **AI Platforms:** OpenAI (GPT-4o), Anthropic (Claude 3.5 Sonnet), Groq (Llama 3.1), Google (Gemini Pro), Luma Dream Machine
 -   **AI Infrastructure:** Bifrost AI Gateway
 -   **Vector Database:** LanceDB
