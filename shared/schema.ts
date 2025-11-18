@@ -108,6 +108,11 @@ export const users = pgTable("users", {
   facebookTokenExpiresAt: timestamp("facebook_token_expires_at"),
   facebookRefreshToken: text("facebook_refresh_token"),
   facebookScopes: text("facebook_scopes").array(),
+  
+  // God-Level User Registration: Location & Community Website
+  latitude: numeric("latitude", { precision: 10, scale: 7 }),
+  longitude: numeric("longitude", { precision: 10, scale: 7 }),
+  communityWebsiteUrl: text("community_website_url"),
 }, (table) => ({
   emailIdx: index("users_email_idx").on(table.email),
   usernameIdx: index("users_username_idx").on(table.username),
@@ -116,6 +121,33 @@ export const users = pgTable("users", {
   citiesIdx: index("users_cities_idx").on(table.city, table.country, table.isActive),
   customUrlIdx: index("users_custom_url_idx").on(table.customUrl),
 }));
+
+// ============================================================================
+// CITY WEBSITES - City-to-Website Mapping
+// ============================================================================
+
+export const cityWebsites = pgTable("city_websites", {
+  id: serial("id").primaryKey(),
+  city: varchar("city", { length: 255 }).notNull(),
+  country: varchar("country", { length: 255 }).notNull(),
+  websiteUrl: text("website_url").notNull(),
+  latitude: numeric("latitude", { precision: 10, scale: 7 }).notNull(),
+  longitude: numeric("longitude", { precision: 10, scale: 7 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  cityCountryIdx: index("city_websites_city_country_idx").on(table.city, table.country),
+  uniqueCityCountry: unique("unique_city_country").on(table.city, table.country),
+}));
+
+export const insertCityWebsiteSchema = createInsertSchema(cityWebsites).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertCityWebsite = z.infer<typeof insertCityWebsiteSchema>;
+export type CityWebsite = typeof cityWebsites.$inferSelect;
 
 // ============================================================================
 // GOD LEVEL QUOTAS
