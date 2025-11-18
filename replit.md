@@ -4,9 +4,21 @@
 Mundo Tango is a production-ready social platform designed to connect the global tango community. It offers social networking, event management, talent matching, and AI-powered assistance, integrating 7 business systems and 62 specialized AI agents. The platform aims to be the leading digital hub for the tango ecosystem, with market potential in premium services, event monetization, and targeted advertising, emphasizing a lean architecture, optimized npm packages, and enterprise-grade security.
 
 ## Recent Changes
+**Week 9 Day 6 (Nov 18, 2025) - Natural Language Computer Use Interface**
+- ✅ **Computer Use - Natural Language Interface** (500+ lines):
+  - **Enhanced Chat Endpoint**: `/api/mrblue/chat` now detects Computer Use intents (Wix extraction, Facebook automation)
+  - **Intent Detection**: Pattern matching for "extract Wix contacts", "automate Facebook", "migrate Wix", etc.
+  - **Automatic Execution**: User says "Extract my Wix contacts" → automation starts immediately, no manual UI needed
+  - **Real-time Chat Updates**: AutomationTaskMessage component polls task status, displays progress bar, recent actions, screenshots
+  - **Playwright Integration**: Replaced Anthropic Computer Use API (requires GUI) with BrowserAutomationService.ts (Playwright-based)
+  - **Live Screenshot Display**: Chat shows 3x2 grid of latest screenshots, click to view full-size, auto-updates every 3 seconds
+  - **Global Access**: GlobalMrBlue button (bottom-right) accessible on ALL pages for god-level users (roleLevel >= 8)
+  - **Background Execution**: Wix extraction runs async, user gets immediate response with task ID + poll URL
+  - **Status**: ✅ PRODUCTION READY - Natural language to automation complete, testable end-to-end
+
 **Week 9 Day 5 (Nov 17, 2025) - Computer Use Automation COMPLETE**
 - ✅ **System 11: Computer Use Automation** (1,200+ lines COMPLETE):
-  - **Backend (450 lines)**: ComputerUseService.ts with Anthropic Computer Use API integration
+  - **Backend (450 lines)**: BrowserAutomationService.ts with Playwright browser automation
   - **API Endpoints (6 routes)**: `/api/computer-use/automate`, `/task/:id`, `/approve`, `/wix-extract`, `/tasks`, DELETE task
   - **Database Schema**: `computer_use_tasks`, `computer_use_screenshots` tables (pushed to production)
   - **UI Integration (380 lines)**: ComputerUseAutomation.tsx component with tab navigation in MrBlueChatPage
