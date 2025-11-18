@@ -18,7 +18,7 @@ import { MrBlueVisualChat } from "./MrBlueVisualChat";
 import { visualEditorTracker } from "@/lib/visualEditorTracker";
 import { VisualEditorErrorBoundary } from "./ErrorBoundary";
 import { IframeLoading, ChatPaneLoading, CodePreviewLoading } from "./LoadingStates";
-import { IframeInjector, type IframeCallbacks } from "@/lib/iframeInjector";
+import { IframeInjector, type IframeCallbacks, injectSelectionScript } from "@/lib/iframeInjector";
 
 const CodePreview = lazy(() => import('./CodePreview').then(module => ({ default: module.CodePreview })));
 
@@ -34,10 +34,12 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
   const [isGenerating, setIsGenerating] = useState(false);
   const [splitRatio, setSplitRatio] = useState(60); // 60% left, 40% right
   const [previewError, setPreviewError] = useState<string | null>(null);
-  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(true);
   const [showInspector, setShowInspector] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
   const iframeInjectorRef = useRef<IframeInjector | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const currentPage = window.location.pathname;
   
@@ -192,6 +194,55 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
     }
   };
 
+  const handleSaveChanges = async () => {
+    const allEdits = visualEditorTracker.getAllEdits();
+    
+    if (allEdits.length === 0) {
+      toast({
+        title: "No Changes",
+        description: "Make some edits first before saving",
+        variant: "default"
+      });
+      return;
+    }
+    
+    setIsSaving(true);
+    
+    try {
+      const response = await fetch('/api/visual-editor/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pagePath: currentPage,
+          edits: allEdits,
+          checkpointMessage: `Visual Editor: ${allEdits.length} changes to ${currentPage}`
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        visualEditorTracker.clear();
+        
+        toast({
+          title: "Changes Saved!",
+          description: `Applied ${allEdits.length} changes to ${data.filePath || currentPage}`,
+          duration: 5000
+        });
+      } else {
+        throw new Error(data.message || 'Save failed');
+      }
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Save Failed",
+        description: error.message || "Failed to save changes"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleDragEnd = useCallback((element: HTMLElement, position: { x: number; y: number }) => {
     visualEditorTracker.track({
       elementId: element.id,
@@ -239,11 +290,12 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
             </Button>
             <Button
               size="sm"
-              variant="ghost"
-              data-testid="button-preview"
+              variant="default"
+              onClick={handleSaveChanges}
+              disabled={isSaving || visualEditorTracker.getAllEdits().length === 0}
+              data-testid="button-save-changes"
             >
-              <Play className="h-4 w-4 mr-2" />
-              Preview
+              {isSaving ? 'Saving...' : `Save (${visualEditorTracker.getAllEdits().length})`}
             </Button>
             <Button
               size="sm"
@@ -300,15 +352,51 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
               {/* Iframe Container for actual site */}
               {!previewError && (
                 <div className="absolute inset-0">
+                  {/* CRITICAL FIX 1: Actual iframe element */}
+                  <iframe
+                    ref={iframeRef}
+                    src={currentPage}
+                    className="w-full h-full border-0"
+                    sandbox="allow-same-origin allow-scripts allow-forms allow-modals"
+                    onLoad={() => {
+                      console.log('[VisualEditor] iframe loaded');
+                      setIsPreviewLoading(false);
+                      
+                      // CRITICAL FIX 2: Inject selection script
+                      if (iframeRef.current) {
+                        try {
+                          injectSelectionScript(iframeRef.current);
+                          
+                          // Initialize IframeInjector with callbacks
+                          if (!iframeInjectorRef.current) {
+                            iframeInjectorRef.current = new IframeInjector();
+                          }
+                          iframeInjectorRef.current.initialize(iframeRef.current, iframeCallbacks);
+                          
+                          console.log('[VisualEditor] Script injected and initialized');
+                        } catch (error) {
+                          console.error('[VisualEditor] Injection failed:', error);
+                        }
+                      }
+                    }}
+                    onError={() => {
+                      console.error('[VisualEditor] iframe load error');
+                      setPreviewError('Failed to load preview');
+                      setIsPreviewLoading(false);
+                    }}
+                    data-testid="visual-editor-iframe"
+                  />
+                  
+                  {/* Overlays on top of iframe */}
                   {/* Component Selector */}
                   <ComponentSelector
-                    enabled={isOpen}
+                    enabled={isOpen && !isPreviewLoading}
                     onSelect={handleComponentSelect}
                   />
 
                   {/* Drag & Drop Handler */}
                   <DragDropHandler
-                    enabled={isOpen}
+                    enabled={isOpen && !isPreviewLoading}
                     selectedElement={selectedComponent?.element || null}
                     onDragEnd={handleDragEnd}
                   />
@@ -331,10 +419,9 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
                   />
 
                   {/* Helper Text */}
-                  <div className="absolute top-4 left-4 glass-card rounded-lg p-3 max-w-xs">
+                  <div className="absolute top-4 left-4 glass-card rounded-lg p-3 max-w-xs z-50 pointer-events-none">
                     <p className="text-xs text-muted-foreground">
-                      <strong>Click</strong> any element to select it, or
-                      <strong> drag</strong> to reposition. Or just ask Mr. Blue!
+                      <strong>Click</strong> any element in iframe to select it. Or just ask Mr. Blue!
                     </p>
                   </div>
                 </div>
