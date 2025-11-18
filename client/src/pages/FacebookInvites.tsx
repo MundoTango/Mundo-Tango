@@ -6,6 +6,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { InviteSender } from "@/components/facebook/InviteSender";
 import { 
   TrendingUp, 
@@ -59,11 +60,21 @@ export default function FacebookInvites() {
   return (
     <div className="container mx-auto p-6 space-y-6" data-testid="page-facebook-invites">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Facebook Messenger Invites</h1>
-        <p className="text-muted-foreground">
-          Send AI-powered personalized invitations to grow your tango community
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Facebook Messenger Invites</h1>
+          <p className="text-muted-foreground">
+            Send AI-powered personalized invitations to grow your tango community
+          </p>
+        </div>
+        <Button
+          onClick={() => window.location.href = '/facebook-test-workflow'}
+          variant="outline"
+          data-testid="button-test-workflow"
+        >
+          <TrendingUp className="w-4 h-4 mr-2" />
+          Test Workflow
+        </Button>
       </div>
 
       {/* Stats Grid */}

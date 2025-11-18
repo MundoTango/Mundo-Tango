@@ -87,6 +87,7 @@ const CommunityWorldMapPage = lazy(() => import("@/pages/CommunityWorldMapPage")
 const RecommendationsPage = lazy(() => import("@/pages/RecommendationsPage"));
 const InvitationsPage = lazy(() => import("@/pages/InvitationsPage"));
 const FacebookInvites = lazy(() => import("@/pages/FacebookInvites"));
+const FacebookTestWorkflow = lazy(() => import("@/pages/FacebookTestWorkflow"));
 const FacebookDataImport = lazy(() => import("@/pages/FacebookDataImport"));
 const ClosenessMetrics = lazy(() => import("@/pages/ClosenessMetrics"));
 const FavoritesPage = lazy(() => import("@/pages/FavoritesPage"));
@@ -536,6 +537,14 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <FacebookInvites />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/facebook-test-workflow">
+        <ProtectedRoute>
+          <AppLayout>
+            <FacebookTestWorkflow />
           </AppLayout>
         </ProtectedRoute>
       </Route>
