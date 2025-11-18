@@ -6941,6 +6941,76 @@ export type InsertPagePreCheck = z.infer<typeof insertPagePreCheckSchema>;
 export type SelectPagePreCheck = typeof pagePreChecks.$inferSelect;
 
 /**
+ * Agent Beliefs - Stores Bayesian beliefs about page health (Free Energy Principle)
+ * Tracks expected issue counts, confidence levels, and belief updates over time
+ * Enables predictive intelligence via active inference
+ */
+export const agentBeliefs = pgTable("agent_beliefs", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull(), // e.g., 'AGENT_45', 'EXPERT_11'
+  pageId: varchar("page_id", { length: 100 }).notNull().references(() => pageAgentRegistry.pageId),
+  
+  // Bayesian beliefs (prior/posterior distributions)
+  expectedIssueCount: real("expected_issue_count").default(0.5).notNull(), // Prior belief about issues
+  confidence: real("confidence").default(0.1).notNull(), // Certainty (0-1), increases with observations
+  
+  // Last observation data
+  lastObservation: jsonb("last_observation"), // Actual audit results that updated beliefs
+  lastObservedIssueCount: integer("last_observed_issue_count"),
+  predictionError: real("prediction_error"), // |actual - predicted|
+  
+  // Metadata
+  observationCount: integer("observation_count").default(0), // How many times we've observed this page
+  lastUpdated: timestamp("last_updated").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  uniqueAgentPage: index("agent_beliefs_unique_idx").on(table.agentId, table.pageId),
+  pageIdx: index("agent_beliefs_page_idx").on(table.pageId),
+  confidenceIdx: index("agent_beliefs_confidence_idx").on(table.confidence),
+  errorIdx: index("agent_beliefs_error_idx").on(table.predictionError),
+}));
+
+export const insertAgentBeliefsSchema = createInsertSchema(agentBeliefs).omit({ id: true, createdAt: true, lastUpdated: true });
+export type InsertAgentBeliefs = z.infer<typeof insertAgentBeliefsSchema>;
+export type SelectAgentBeliefs = typeof agentBeliefs.$inferSelect;
+
+/**
+ * Prediction Errors - Tracks surprise scores for learning (Free Energy Principle)
+ * High surprise = unexpected event = high information value
+ * Agents learn by minimizing prediction error over time
+ */
+export const predictionErrors = pgTable("prediction_errors", {
+  id: serial("id").primaryKey(),
+  pageId: varchar("page_id", { length: 100 }).notNull().references(() => pageAgentRegistry.pageId),
+  agentId: varchar("agent_id", { length: 100 }).notNull(),
+  
+  // Prediction vs reality
+  predicted: real("predicted").notNull(), // What agent expected
+  actual: real("actual").notNull(), // What actually happened
+  error: real("error").notNull(), // |actual - predicted|
+  surpriseScore: real("surprise_score").notNull(), // Normalized surprise (0-1)
+  
+  // Context
+  predictionType: varchar("prediction_type", { length: 50 }), // 'issue_count', 'severity', 'category'
+  auditId: integer("audit_id").references(() => pageAudits.id),
+  
+  // Learning impact
+  beliefUpdated: boolean("belief_updated").default(false), // Did this trigger belief update?
+  actionTaken: varchar("action_taken", { length: 255 }), // What action minimized free energy?
+  
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+}, (table) => ({
+  pageIdx: index("prediction_errors_page_idx").on(table.pageId),
+  surpriseIdx: index("prediction_errors_surprise_idx").on(table.surpriseScore),
+  timestampIdx: index("prediction_errors_timestamp_idx").on(table.timestamp),
+  agentIdx: index("prediction_errors_agent_idx").on(table.agentId),
+}));
+
+export const insertPredictionErrorSchema = createInsertSchema(predictionErrors).omit({ id: true, timestamp: true });
+export type InsertPredictionError = z.infer<typeof insertPredictionErrorSchema>;
+export type SelectPredictionError = typeof predictionErrors.$inferSelect;
+
+/**
  * AI Guardrail Violations Table (APPENDIX Q - BATCH 28)
  * Tracks AI error prevention guardrail violations across 7 layers
  * Enables tracking of hallucinations, breaking changes, and other AI errors
