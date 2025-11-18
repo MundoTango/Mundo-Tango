@@ -11983,6 +11983,44 @@ export type InsertComputerUseScreenshot = z.infer<typeof insertComputerUseScreen
 export type SelectComputerUseScreenshot = typeof computerUseScreenshots.$inferSelect;
 
 // ============================================================================
+// FACEBOOK MESSENGER AUTOMATION (COMPUTER USE - SOCIAL MEDIA)
+// ============================================================================
+
+export const facebookInviteStatusEnum = pgEnum("facebook_invite_status", [
+  "sent",
+  "failed",
+  "rate_limited"
+]);
+
+export const facebookInvites = pgTable("facebook_invites", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // Recipient details
+  recipientFbName: varchar("recipient_fb_name", { length: 255 }).notNull(),
+  
+  // Message details
+  messageTemplate: varchar("message_template", { length: 100 }).default("mundo_tango_invite").notNull(),
+  
+  // Status tracking
+  status: varchar("status", { length: 50 }).default("sent").notNull(), // 'sent', 'failed', 'rate_limited'
+  error: text("error"),
+  
+  // Timestamps
+  sentAt: timestamp("sent_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("facebook_invites_user_id_idx").on(table.userId),
+  sentAtIdx: index("facebook_invites_sent_at_idx").on(table.sentAt),
+  statusIdx: index("facebook_invites_status_idx").on(table.status),
+  userSentAtIdx: index("facebook_invites_user_sent_at_idx").on(table.userId, table.sentAt), // For rate limiting queries
+}));
+
+export const insertFacebookInviteSchema = createInsertSchema(facebookInvites)
+  .omit({ id: true, sentAt: true });
+export type InsertFacebookInvite = z.infer<typeof insertFacebookInviteSchema>;
+export type SelectFacebookInvite = typeof facebookInvites.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
