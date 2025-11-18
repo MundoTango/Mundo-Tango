@@ -63,7 +63,104 @@
 - **Validated Patterns** used by $1B+ AI products in production
 - **Tested Effectiveness**: 40-60% faster completion, 80% fewer errors, 90% less redundancy
 
-### **NEW Pattern 25: Open Source Intelligence (OSI) Protocol** ⭐⭐⭐ (v9.1)
+### **NEW Pattern 25: Platform Compliance Protocol** ⭐⭐⭐ (v9.1 - CRITICAL)
+
+**Problem:** Automated fraud detection systems flag legitimate development patterns, causing multi-platform account lockouts that shut down entire projects.
+
+**Solution:** BEFORE integrating ANY platform OR during vibe coding, automatically execute Platform Compliance Protocol.
+
+**Trigger Event:** Nov 18, 2025 - Supabase + GitHub both flagged simultaneously (multi-platform crisis)
+
+**5-Step Compliance Cycle:**
+
+1. **ASSESS**: "Is this platform-safe?"
+   ```
+   IF new_platform OR high_risk_pattern:
+     TRIGGER_COMPLIANCE_CHECK = True
+   ```
+
+2. **REVIEW ToS**: "What's prohibited?"
+   ```
+   Read: Terms of Service, Acceptable Use Policy
+   Check for: Browser automation bans, rate limits, prohibited content
+   Verify: Our use case is explicitly allowed
+   Document: Key restrictions and requirements
+   ```
+
+3. **SECURITY SETUP**: "Is account secure?"
+   ```
+   Required:
+   - ✅ Enable 2FA (authenticator app)
+   - ✅ Strong unique password
+   - ✅ Profile represents individual (not company)
+   - ✅ Review connected apps/integrations
+   - ✅ Billing alerts configured
+   ```
+
+4. **CODE SCAN**: "Is implementation compliant?"
+   ```
+   RED FLAGS (Auto-reject):
+   - ❌ Browser automation (use official APIs)
+   - ❌ Credential logging (NEVER log secrets)
+   - ❌ No rate limiting (add immediately)
+   - ❌ High-frequency testing (looks like DDoS)
+   
+   BEST PRACTICES (Required):
+   - ✅ Official SDKs only
+   - ✅ Exponential backoff retry logic
+   - ✅ Moderate testing frequency (<10 req/sec)
+   - ✅ User-generated content moderation
+   ```
+
+5. **MONITOR**: "Are we staying compliant?"
+   ```
+   Daily: Error logs (API failures, rate limits)
+   Weekly: Usage trends (detect anomalies)
+   Monthly: Re-review ToS (platforms update policies)
+   Alerts: Account warnings, billing spikes
+   ```
+
+**Real-World Impact (Mundo Tango crisis):**
+- Platforms flagged: Supabase + GitHub (simultaneous)
+- Downtime: 1-4 weeks for recovery
+- Business impact: Critical features blocked
+- Root cause: E2E testing patterns + console logging + no 2FA
+- Prevention: This protocol would have caught all violations
+
+**When Compliance Applies:**
+- ✅ ALL platform integrations (Supabase, GitHub, OpenAI, Stripe, etc.)
+- ✅ During vibe coding (real-time violation detection)
+- ✅ Before deployment (final compliance audit)
+- ✅ After account warnings (immediate investigation)
+
+**Platform Compliance Agent (PCA):**
+```typescript
+// Auto-invoked before ANY platform integration
+async function platformComplianceCheck(platform: string, code: string) {
+  // 1. ToS Review
+  const tosCheck = await reviewToS(platform);
+  if (!tosCheck.allowed) return { blocked: true };
+  
+  // 2. Security Check
+  if (!has2FA(platform)) return { warning: '2FA required' };
+  
+  // 3. Code Scan
+  if (hasBrowserAutomation(code)) return { blocked: 'Use official API' };
+  if (logsCredentials(code)) return { blocked: 'Remove credential logging' };
+  if (!hasRateLimit(code)) return { warning: 'Add rate limiting' };
+  
+  // 4. Pattern Analysis
+  if (highFrequency(code)) return { warning: 'Reduce API frequency' };
+  
+  return { approved: true };
+}
+```
+
+**Knowledge Base**: `docs/PLATFORM_COMPLIANCE_AUDIT_2025.md` (Comprehensive audit of all platforms, ToS summaries, violation case studies)
+
+---
+
+### **Pattern 26: Open Source Intelligence (OSI) Protocol** ⭐⭐⭐ (v9.1)
 
 **Problem:** Agents rebuild solutions that already exist in production-quality open source, wasting time and creating maintenance burden.
 
