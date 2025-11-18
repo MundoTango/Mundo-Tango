@@ -236,22 +236,27 @@ export class FacebookMessengerService {
     return stepNumber;
   }
 
-  async navigateToMessenger(taskId: string, stepNumber: number, screenshots: Array<{ step: number; base64: string; action: string }>): Promise<number> {
+  async navigateToMessenger(taskId: string, stepNumber: number, screenshots: Array<{ step: number; base64: string; action: string }>, recipientFbUsername?: string): Promise<number> {
     // Step: Navigate to Messenger
     stepNumber++;
-    console.log(`[FacebookMessenger ${taskId}] Step ${stepNumber}: Navigate to Messenger`);
     
-    // Direct navigation is more reliable than clicking icon
-    await this.page!.goto('https://www.facebook.com/messages', {
+    // If we have a Facebook username, navigate directly to their conversation
+    const messengerUrl = recipientFbUsername 
+      ? `https://www.facebook.com/messages/t/${recipientFbUsername}`
+      : 'https://www.facebook.com/messages';
+    
+    console.log(`[FacebookMessenger ${taskId}] Step ${stepNumber}: Navigate to ${recipientFbUsername ? `conversation with ${recipientFbUsername}` : 'Messenger'}`);
+    
+    await this.page!.goto(messengerUrl, {
       waitUntil: 'networkidle',
       timeout: this.stepTimeout
     });
-    await this.page!.waitForTimeout(2000);
+    await this.page!.waitForTimeout(3000); // Wait for conversation to load
 
     screenshots.push({
       step: stepNumber,
       base64: await this.takeScreenshot(),
-      action: 'Navigate to Messenger'
+      action: recipientFbUsername ? `Navigate to conversation with ${recipientFbUsername}` : 'Navigate to Messenger'
     });
 
     return stepNumber;
@@ -268,28 +273,51 @@ export class FacebookMessengerService {
     stepNumber++;
     console.log(`[FacebookMessenger ${taskId}] Step ${stepNumber}: Search for ${recipientName}`);
     
+    // Wait for page to fully load
+    await this.page!.waitForTimeout(3000);
+    
+    // Comprehensive search selectors for Facebook Messenger
     const searchSelectors = [
       'input[placeholder*="Search"]',
+      'input[placeholder*="search"]',
       'input[aria-label*="Search"]',
+      'input[aria-label*="search"]',
       'input[type="search"]',
-      'input[role="searchbox"]'
+      'input[role="searchbox"]',
+      'input[name="q"]',
+      '[aria-label*="Search"] input',
+      '[placeholder*="Search"] input',
+      'div[role="search"] input',
+      'input.x1i10hfl',  // Facebook's dynamic class (may change)
+      'input[data-testid*="search"]'
     ];
 
     let searchFilled = false;
     for (const selector of searchSelectors) {
       try {
-        await this.page!.waitForSelector(selector, { timeout: 5000 });
+        console.log(`[FacebookMessenger ${taskId}] Trying selector: ${selector}`);
+        await this.page!.waitForSelector(selector, { timeout: 3000 });
+        await this.page!.click(selector); // Click first to focus
+        await this.page!.waitForTimeout(500);
         await this.page!.fill(selector, recipientName);
         searchFilled = true;
-        await this.page!.waitForTimeout(2000); // Wait for search results
+        console.log(`[FacebookMessenger ${taskId}] ✅ Search box found with: ${selector}`);
+        await this.page!.waitForTimeout(3000); // Wait for search results to load
         break;
       } catch (e) {
+        console.log(`[FacebookMessenger ${taskId}] ❌ Failed with: ${selector}`);
         continue;
       }
     }
 
     if (!searchFilled) {
-      throw new Error(`Could not find search box for ${recipientName}`);
+      // Take debug screenshot before throwing error
+      screenshots.push({
+        step: stepNumber,
+        base64: await this.takeScreenshot(),
+        action: `DEBUG: Could not find search box`
+      });
+      throw new Error(`Could not find search box for ${recipientName}. Tried ${searchSelectors.length} selectors.`);
     }
 
     screenshots.push({
@@ -410,6 +438,199 @@ export class FacebookMessengerService {
     return stepNumber;
   }
 
+  async sendMessageDirect(
+    taskId: string,
+    recipientName: string,
+    messageTemplate: string,
+    stepNumber: number,
+    screenshots: Array<{ step: number; base64: string; action: string }>
+  ): Promise<number> {
+    // Already at the conversation page, skip search
+    // Just type and send the message
+    
+    // First, check if we need to click "Send message" button or similar
+    stepNumber++;
+    console.log(`[FacebookMessenger ${taskId}] Step ${stepNumber}: Inspect page and prepare for messaging`);
+    
+    // Try clicking common "Start messaging" buttons
+    const startMessageButtons = [
+      'button:has-text("Send message")',
+      'button:has-text("Message")',
+      'div[role="button"]:has-text("Send message")',
+      'a:has-text("Send message")'
+    ];
+    
+    for (const selector of startMessageButtons) {
+      try {
+        const element = await this.page!.$(selector);
+        if (element) {
+          console.log(`[FacebookMessenger ${taskId}] Found "Send message" button, clicking...`);
+          await element.click();
+          await this.page!.waitForTimeout(2000);
+          break;
+        }
+      } catch (e) {
+        continue;
+      }
+    }
+    
+    screenshots.push({
+      step: stepNumber,
+      base64: await this.takeScreenshot(),
+      action: `Prepare for messaging`
+    });
+    
+    // Step: Type message
+    stepNumber++;
+    console.log(`[FacebookMessenger ${taskId}] Step ${stepNumber}: Type message to ${recipientName}`);
+    
+    // Get message text based on template
+    const messageText = this.getMessageTemplate(messageTemplate, recipientName);
+    
+    // Try intelligent element finding - look for ALL editable elements
+    let messageFilled = false;
+    
+    try {
+      console.log(`[FacebookMessenger ${taskId}] Inspecting page for editable elements...`);
+      
+      // Get all potentially editable elements
+      const editableElements = await this.page!.$$eval(
+        'div[contenteditable="true"], textarea, input[type="text"]',
+        (elements) => elements.map((el, idx) => ({
+          index: idx,
+          tag: el.tagName,
+          role: el.getAttribute('role'),
+          ariaLabel: el.getAttribute('aria-label'),
+          placeholder: el.getAttribute('placeholder'),
+          className: el.className,
+          visible: el.offsetParent !== null
+        }))
+      );
+      
+      console.log(`[FacebookMessenger ${taskId}] Found ${editableElements.length} editable elements:`);
+      editableElements.forEach((el, idx) => {
+        console.log(`  ${idx}: ${el.tag} [visible:${el.visible}] role="${el.role}" aria-label="${el.ariaLabel}" placeholder="${el.placeholder}"`);
+      });
+      
+      // Try each visible editable element
+      for (let i = 0; i < editableElements.length; i++) {
+        if (!editableElements[i].visible) continue;
+        
+        try {
+          const selector = `(//div[@contenteditable="true"] | //textarea | //input[@type="text"])[${i + 1}]`;
+          console.log(`[FacebookMessenger ${taskId}] Trying element ${i}...`);
+          
+          const element = await this.page!.locator(selector).first();
+          await element.click({ timeout: 2000 });
+          await this.page!.waitForTimeout(500);
+          await element.fill(messageText);
+          
+          messageFilled = true;
+          console.log(`[FacebookMessenger ${taskId}] ✅ Successfully filled element ${i}`);
+          break;
+        } catch (e) {
+          console.log(`[FacebookMessenger ${taskId}] ❌ Element ${i} failed`);
+          continue;
+        }
+      }
+    } catch (error: any) {
+      console.log(`[FacebookMessenger ${taskId}] Intelligent search failed: ${error.message}`);
+    }
+    
+    // Fallback to standard selectors
+    if (!messageFilled) {
+      console.log(`[FacebookMessenger ${taskId}] Falling back to standard selectors...`);
+      const messageInputSelectors = [
+        'div[role="textbox"]',
+        'div[contenteditable="true"]',
+        'textarea[placeholder*="message"]',
+        'textarea[placeholder*="Aa"]',
+        'p[data-text="true"]',
+        '[aria-label*="Message"] div[contenteditable="true"]',
+        '[data-testid="message-input"]',
+        'div.notranslate[contenteditable="true"]',
+        'textarea',
+        'input[type="text"]'
+      ];
+
+      for (const selector of messageInputSelectors) {
+        try {
+          console.log(`[FacebookMessenger ${taskId}] Trying selector: ${selector}`);
+          await this.page!.waitForSelector(selector, { timeout: 3000 });
+          await this.page!.click(selector);
+          await this.page!.waitForTimeout(500);
+          await this.page!.fill(selector, messageText);
+          messageFilled = true;
+          console.log(`[FacebookMessenger ${taskId}] ✅ Message input found with: ${selector}`);
+          break;
+        } catch (e) {
+          console.log(`[FacebookMessenger ${taskId}] ❌ Failed with: ${selector}`);
+          continue;
+        }
+      }
+    }
+
+    if (!messageFilled) {
+      // Take final debug screenshot
+      screenshots.push({
+        step: stepNumber,
+        base64: await this.takeScreenshot(),
+        action: `ERROR: Could not find any message input`
+      });
+      throw new Error('Could not find message input box after trying all methods');
+    }
+
+    screenshots.push({
+      step: stepNumber,
+      base64: await this.takeScreenshot(),
+      action: `Type invitation message`
+    });
+
+    // Step: Send message
+    stepNumber++;
+    console.log(`[FacebookMessenger ${taskId}] Step ${stepNumber}: Send message`);
+    
+    const sendSelectors = [
+      'button[aria-label*="Send"]',
+      'button:has-text("Send")',
+      'div[aria-label*="Send"]',
+      'button[type="submit"]',
+      '[data-testid="send-button"]'
+    ];
+
+    let sendClicked = false;
+    for (const selector of sendSelectors) {
+      try {
+        await this.page!.click(selector, { timeout: 5000 });
+        sendClicked = true;
+        await this.page!.waitForTimeout(2000); // Wait for message to send
+        break;
+      } catch (e) {
+        continue;
+      }
+    }
+
+    if (!sendClicked) {
+      // Fallback: Press Enter key
+      try {
+        console.log(`[FacebookMessenger ${taskId}] Using Enter key fallback`);
+        await this.page!.keyboard.press('Enter');
+        await this.page!.waitForTimeout(2000);
+      } catch (e) {
+        throw new Error('Could not send message');
+      }
+    }
+
+    screenshots.push({
+      step: stepNumber,
+      base64: await this.takeScreenshot(),
+      action: `Message sent to ${recipientName}`
+    });
+
+    console.log(`[FacebookMessenger ${taskId}] Message sent successfully to ${recipientName}`);
+    return stepNumber;
+  }
+
   getMessageTemplate(templateName: string, recipientName: string): string {
     const templates: Record<string, string> = {
       'mundo_tango_invite': `Hey ${recipientName.split(' ')[0]}! 👋\n\nI'd love to invite you to Mundo Tango, the global tango community platform. We're connecting dancers worldwide, sharing events, and celebrating our passion for tango.\n\nJoin us at mundotango.life 💃🕺\n\nHope to see you there!`,
@@ -424,7 +645,8 @@ export class FacebookMessengerService {
     taskId: string,
     userId: number,
     recipientName: string,
-    messageTemplate: string = 'mundo_tango_invite'
+    messageTemplate: string = 'mundo_tango_invite',
+    recipientFbUsername?: string
   ): Promise<FacebookAutomationResult> {
     const screenshots: Array<{ step: number; base64: string; action: string }> = [];
     let stepNumber = 0;
@@ -446,16 +668,20 @@ export class FacebookMessengerService {
       await this.initialize();
       this.page = await this.browser!.newPage();
 
-      console.log(`[FacebookMessenger ${taskId}] Starting invitation to ${recipientName}...`);
+      console.log(`[FacebookMessenger ${taskId}] Starting invitation to ${recipientName}${recipientFbUsername ? ` (${recipientFbUsername})` : ''}...`);
 
       // Execute login flow
       stepNumber = await this.login(taskId, screenshots);
 
-      // Navigate to Messenger
-      stepNumber = await this.navigateToMessenger(taskId, stepNumber, screenshots);
+      // Navigate to Messenger (with direct conversation link if username provided)
+      stepNumber = await this.navigateToMessenger(taskId, stepNumber, screenshots, recipientFbUsername);
 
-      // Send message
-      stepNumber = await this.sendMessage(taskId, recipientName, messageTemplate, stepNumber, screenshots);
+      // Send message (skip search if we have direct conversation)
+      if (recipientFbUsername) {
+        stepNumber = await this.sendMessageDirect(taskId, recipientName, messageTemplate, stepNumber, screenshots);
+      } else {
+        stepNumber = await this.sendMessage(taskId, recipientName, messageTemplate, stepNumber, screenshots);
+      }
 
       // Record success
       await this.recordSentInvite(userId, recipientName, 'sent');

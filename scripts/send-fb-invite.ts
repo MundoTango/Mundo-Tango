@@ -26,6 +26,7 @@ interface ExecutionResult {
 async function sendFacebookInvite(): Promise<ExecutionResult> {
   const taskId = `fb-invite-${nanoid(8)}`;
   const recipientName = 'Scott Boddye';
+  const recipientFbUsername = 'sboddye'; // Scott's Facebook username
   const userId = 15; // Super Admin (Level 3) - has god-level access
   const timestamp = new Date().toISOString();
 
@@ -35,19 +36,22 @@ async function sendFacebookInvite(): Promise<ExecutionResult> {
   console.log('');
   console.log(`Task ID:       ${taskId}`);
   console.log(`Recipient:     ${recipientName}`);
+  console.log(`FB Username:   ${recipientFbUsername}`);
   console.log(`User ID:       ${userId}`);
   console.log(`Timestamp:     ${timestamp}`);
   console.log('');
   console.log('Starting Facebook Messenger invitation automation...');
+  console.log('Using DIRECT CONVERSATION approach (bypassing search)');
   console.log('');
 
   try {
-    // Execute the invitation
+    // Execute the invitation with direct username
     const result = await facebookMessengerService.sendInvitation(
       taskId,
       userId,
       recipientName,
-      'mundo_tango_invite' // Use the Mundo Tango invitation template
+      'mundo_tango_invite', // Use the Mundo Tango invitation template
+      recipientFbUsername // Pass Facebook username for direct conversation link
     );
 
     // Save screenshots to file
