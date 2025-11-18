@@ -1,5 +1,4 @@
 import { chromium, Browser, Page } from 'playwright';
-import type { ComputerUseTask } from '@db/schema';
 
 interface BrowserAutomationResult {
   success: boolean;
