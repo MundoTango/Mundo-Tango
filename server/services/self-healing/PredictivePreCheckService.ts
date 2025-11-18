@@ -9,8 +9,13 @@
  */
 
 import { db } from '../../../shared/db';
-import { pagePreChecks, pageAgentRegistry, type InsertPagePreCheck } from '../../../shared/schema';
-import { eq } from 'drizzle-orm';
+import { 
+  pagePreChecks, 
+  pageAgentRegistry, 
+  agentBeliefs,
+  type InsertPagePreCheck 
+} from '../../../shared/schema';
+import { eq, and } from 'drizzle-orm';
 import { PageAuditService, type AuditResults } from './PageAuditService';
 import { SelfHealingService } from './SelfHealingService';
 
@@ -43,15 +48,21 @@ export class PredictivePreCheckService {
 
       console.log(`🔮 Pre-checking ${navigatesToPages.length} pages that ${currentPageId} navigates to...`);
 
-      // 2. Pre-check all pages in parallel
-      const preCheckPromises = navigatesToPages.map(pageId =>
-        this.preCheckPage(pageId, currentPageId)
-      );
+      // 2. FEP: Select pages using Expected Free Energy (balance exploration/exploitation)
+      const selectedPages = await this.selectPagesWithEFE(navigatesToPages, currentPageId);
+      
+      console.log(`🧠 FEP: Selected ${selectedPages.length}/${navigatesToPages.length} pages using Expected Free Energy`);
+
+      // 3. Pre-check selected pages in parallel
+      const preCheckPromises = selectedPages.map(({ pageId, efe, risk, ambiguity }) => {
+        console.log(`  └─ ${pageId}: EFE=${efe.toFixed(3)} (risk=${risk.toFixed(2)}, ambiguity=${ambiguity.toFixed(2)})`);
+        return this.preCheckPage(pageId, currentPageId);
+      });
 
       await Promise.all(preCheckPromises);
 
       const totalTime = Date.now() - startTime;
-      console.log(`✅ Pre-checked ${navigatesToPages.length} pages in ${totalTime}ms (background)`);
+      console.log(`✅ Pre-checked ${selectedPages.length} pages in ${totalTime}ms (background)`);
     } catch (error) {
       console.error(`❌ Failed to pre-check pages for ${currentPageId}:`, error);
     }
@@ -155,5 +166,138 @@ export class PredictivePreCheckService {
     }
 
     return null;
+  }
+
+  /**
+   * FEP: Select pages to pre-check using Expected Free Energy (EFE)
+   * MB.MD v9.2 Pattern 28: Active Inference - Balance exploration/exploitation
+   * 
+   * EFE = Risk + Ambiguity
+   * - Risk: Distance from preferred state (0 issues)
+   * - Ambiguity: Uncertainty about page health
+   * 
+   * Lower EFE = higher priority (minimize free energy)
+   */
+  private static async selectPagesWithEFE(
+    candidatePages: string[],
+    sourcePageId: string
+  ): Promise<Array<{ pageId: string; efe: number; risk: number; ambiguity: number }>> {
+    try {
+      // Calculate EFE for each candidate page
+      const efeScores = await Promise.all(
+        candidatePages.map(async (pageId) => {
+          // Get agent beliefs about this page
+          const beliefs = await db
+            .select()
+            .from(agentBeliefs)
+            .where(eq(agentBeliefs.pageId, pageId));
+
+          if (beliefs.length === 0) {
+            // Unknown page = high ambiguity (exploration opportunity)
+            return {
+              pageId,
+              efe: 1.5, // High priority for exploration
+              risk: 0.5, // Unknown risk
+              ambiguity: 1.0 // Maximum uncertainty
+            };
+          }
+
+          // Aggregate beliefs from all agents
+          const avgExpectedIssues = beliefs.reduce((sum, b) => 
+            sum + b.expectedIssueCount, 0) / beliefs.length;
+          const avgConfidence = beliefs.reduce((sum, b) => 
+            sum + b.confidence, 0) / beliefs.length;
+
+          // RISK: Distance from preferred state (0 issues)
+          // Normalize to 0-1 (assume max 10 issues)
+          const risk = Math.min(avgExpectedIssues / 10, 1.0);
+
+          // AMBIGUITY: Uncertainty (low confidence = high ambiguity)
+          const ambiguity = 1 - avgConfidence;
+
+          // EXPECTED FREE ENERGY = risk + ambiguity
+          const efe = risk + ambiguity;
+
+          return {
+            pageId,
+            efe,
+            risk,
+            ambiguity
+          };
+        })
+      );
+
+      // Sort by EFE (lowest = highest priority)
+      // This automatically balances:
+      // - High risk pages (known problems) = EXPLOITATION
+      // - High ambiguity pages (uncertain) = EXPLORATION
+      const sorted = efeScores.sort((a, b) => a.efe - b.efe);
+
+      // Select top pages (balance compute cost vs coverage)
+      const maxPages = Math.min(candidatePages.length, 5); // Limit to 5 for performance
+      return sorted.slice(0, maxPages);
+    } catch (error) {
+      console.error('❌ Failed to calculate EFE scores:', error);
+      // Fallback to first N pages on error
+      return candidatePages.slice(0, 5).map(pageId => ({
+        pageId,
+        efe: 0.5,
+        risk: 0.5,
+        ambiguity: 0.5
+      }));
+    }
+  }
+
+  /**
+   * FEP: Calculate Expected Free Energy for a single page
+   * Exposed for external use (e.g., AgentOrchestrationService)
+   */
+  static async calculateEFE(pageId: string): Promise<{
+    efe: number;
+    risk: number;
+    ambiguity: number;
+    details: string;
+  }> {
+    try {
+      const beliefs = await db
+        .select()
+        .from(agentBeliefs)
+        .where(eq(agentBeliefs.pageId, pageId));
+
+      if (beliefs.length === 0) {
+        return {
+          efe: 1.5,
+          risk: 0.5,
+          ambiguity: 1.0,
+          details: 'Unknown page (high exploration value)'
+        };
+      }
+
+      const avgExpectedIssues = beliefs.reduce((sum, b) => 
+        sum + b.expectedIssueCount, 0) / beliefs.length;
+      const avgConfidence = beliefs.reduce((sum, b) => 
+        sum + b.confidence, 0) / beliefs.length;
+
+      const risk = Math.min(avgExpectedIssues / 10, 1.0);
+      const ambiguity = 1 - avgConfidence;
+      const efe = risk + ambiguity;
+
+      const strategy = risk > ambiguity ? 'EXPLOIT (fix known problems)' : 'EXPLORE (reduce uncertainty)';
+
+      return {
+        efe,
+        risk,
+        ambiguity,
+        details: `${strategy} - Expected issues: ${avgExpectedIssues.toFixed(2)}, Confidence: ${(avgConfidence * 100).toFixed(0)}%`
+      };
+    } catch (error) {
+      console.error('❌ Failed to calculate EFE:', error);
+      return {
+        efe: 0.5,
+        risk: 0.5,
+        ambiguity: 0.5,
+        details: 'Error calculating EFE'
+      };
+    }
   }
 }
