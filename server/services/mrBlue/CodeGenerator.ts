@@ -119,22 +119,25 @@ ${existingCode}
 7. Use 2-space indentation, NO tabs
 
 **Output Format:**
-Provide ONLY a JSON array with NO markdown code blocks:
+Respond with ONLY valid JSON (no markdown, no code blocks):
 
-[
-  {
-    "filePath": "client/src/pages/onboarding/CitySelectionPage.tsx",
-    "action": "modify",
-    "reason": "Fix city autocomplete",
-    "content": "import statement here...\\n\\nfunction Component() {\\n  return <div></div>\\n}"
-  }
-]
+{
+  "files": [
+    {
+      "filePath": "client/src/pages/onboarding/CitySelectionPage.tsx",
+      "action": "modify",
+      "reason": "Fix city autocomplete",
+      "content": "import statement here...\\n\\nfunction Component() {\\n  return <div></div>\\n}"
+    }
+  ]
+}
 
 **CRITICAL JSON FORMATTING:**
+- Wrap files array in a root "files" object
 - Escape ALL newlines as \\n (two characters: backslash + n)
 - Escape ALL quotes as \\"
 - Do NOT use actual line breaks in the content string
-- Respond with ONLY the JSON array, nothing before or after
+- Respond with ONLY the JSON object, nothing before or after
 
 Generate the fix now:`;
   }
@@ -150,7 +153,7 @@ Generate the fix now:`;
       messages: [
         {
           role: 'system',
-          content: 'You are an expert full-stack developer. You generate clean, production-ready code following best practices. You always respond with valid JSON containing complete file contents.',
+          content: 'You are an expert full-stack developer. You generate clean, production-ready code following best practices. You MUST respond with valid JSON only - no markdown, no explanations.',
         },
         {
           role: 'user',
@@ -159,6 +162,7 @@ Generate the fix now:`;
       ],
       temperature: 0.2,
       max_tokens: 8000,
+      response_format: { type: 'json_object' }, // Force JSON mode
     });
 
     const response = completion.choices[0]?.message?.content || '[]';
@@ -192,30 +196,22 @@ Generate the fix now:`;
         }
       }
 
-      // AGGRESSIVE JSON REPAIR: Fix unescaped newlines/tabs in content strings
-      // GROQ often returns literal newlines instead of \n escapes
-      // Strategy: Find all "content": "..." blocks and escape their contents
-      jsonStr = jsonStr.replace(/"content"\s*:\s*"([^"]*)"/gs, (match, content) => {
-        // Escape the content properly
-        const escaped = content
-          .replace(/\\/g, '\\\\')  // Escape backslashes first
-          .replace(/\n/g, '\\n')   // Then newlines
-          .replace(/\r/g, '\\r')   // Carriage returns
-          .replace(/\t/g, '\\t')   // Tabs
-          .replace(/"/g, '\\"');   // Quotes
-        return `"content": "${escaped}"`;
-      });
-      
-      // Also clean up any remaining control characters outside of strings
+      // Clean up any remaining control characters outside of strings
       jsonStr = jsonStr.replace(/[\x00-\x09\x0B-\x1F\x7F-\x9F]/g, '');
       
       const parsed = JSON.parse(jsonStr);
       
-      if (!Array.isArray(parsed)) {
-        throw new Error('Response is not an array');
+      // Handle both old array format and new {files: [...]} format
+      let filesArray: any[];
+      if (Array.isArray(parsed)) {
+        filesArray = parsed;
+      } else if (parsed.files && Array.isArray(parsed.files)) {
+        filesArray = parsed.files;
+      } else {
+        throw new Error('Response does not contain a files array');
       }
 
-      for (const item of parsed) {
+      for (const item of filesArray) {
         const { filePath, action, reason, content } = item;
 
         if (!filePath || !action || !content) {
