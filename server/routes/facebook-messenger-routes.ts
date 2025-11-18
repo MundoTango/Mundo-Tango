@@ -345,21 +345,39 @@ router.post('/send-invite', authenticateToken, async (req: AuthRequest, res) => 
     // Generate unique invite code
     const inviteCode = crypto.randomBytes(16).toString('hex');
 
-    // Send via Facebook Messenger
+    // Try automated sending via Facebook Messenger
     let sendResult;
+    let requiresManualFallback = false;
+    
     if (data.friendFacebookId) {
-      sendResult = await FacebookMessengerService.sendMessage({
-        recipientId: data.friendFacebookId,
-        message: data.message
-      });
+      try {
+        sendResult = await FacebookMessengerService.sendMessage({
+          recipientId: data.friendFacebookId,
+          message: data.message
+        });
+        
+        if (!sendResult.success) {
+          console.log('[Facebook] Automation failed, flagging for manual fallback');
+          requiresManualFallback = true;
+        }
+      } catch (error: any) {
+        console.log('[Facebook] Automation blocked, flagging for manual fallback');
+        requiresManualFallback = true;
+        sendResult = {
+          success: false,
+          error: 'Facebook blocked automation',
+          requiresManualFallback: true
+        };
+      }
     } else if (data.friendEmail) {
-      // For now, we'll log that we'd send via email as fallback
+      // No Facebook ID means manual workflow required
+      console.log(`[Facebook] No Facebook ID provided for ${data.friendEmail}, requiring manual workflow`);
+      requiresManualFallback = true;
       sendResult = {
-        success: true,
-        messageId: `email_${inviteCode}`,
-        timestamp: new Date()
+        success: false,
+        error: 'Manual workflow required',
+        requiresManualFallback: true
       };
-      console.log(`[Facebook] Would send invite to ${data.friendEmail} via email fallback`);
     } else {
       return res.status(400).json({
         success: false,
@@ -367,14 +385,19 @@ router.post('/send-invite', authenticateToken, async (req: AuthRequest, res) => 
       });
     }
 
-    if (!sendResult.success) {
-      return res.status(500).json({
-        success: false,
-        error: sendResult.error || 'Failed to send message'
+    // If manual fallback is required, return flag to frontend
+    if (requiresManualFallback) {
+      return res.json({
+        success: true,
+        requiresManualFallback: true,
+        message: 'Facebook blocked automation - manual workflow required',
+        friendName: data.friendName,
+        friendEmail: data.friendEmail,
+        inviteMessage: data.message
       });
     }
 
-    // Track invite in database
+    // Track successful automated invite in database
     const [invitation] = await db.insert(friendInvitations).values({
       invitedBy: userId,
       invitedFriendName: data.friendName,
@@ -391,6 +414,7 @@ router.post('/send-invite', authenticateToken, async (req: AuthRequest, res) => 
 
     return res.json({
       success: true,
+      requiresManualFallback: false,
       invitation,
       sendResult,
       rateLimit: FacebookMessengerService.getRateLimitStatus(userId)
@@ -618,6 +642,79 @@ router.post('/generate-token-autonomous', authenticateToken, async (req: AuthReq
     return res.status(500).json({
       success: false,
       error: error.message || 'Failed to generate token'
+    });
+  }
+});
+
+// ============================================================================
+// RECORD MANUAL ACTION (Mr. Blue Computer Use Learning)
+// ============================================================================
+
+const recordManualActionSchema = z.object({
+  recipientName: z.string().min(1).max(255),
+  recipientEmail: z.string().email().optional(),
+  message: z.string().min(1),
+  actionType: z.string(),
+  completedAt: z.string()
+});
+
+router.post('/record-manual-action', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user!.userId;
+    const data = recordManualActionSchema.parse(req.body);
+
+    console.log('\n🧠 RECORDING MANUAL ACTION FOR MR. BLUE LEARNING');
+    console.log('='.repeat(60));
+    console.log('User ID:', userId);
+    console.log('Recipient:', data.recipientName);
+    console.log('Action Type:', data.actionType);
+    console.log('Completed At:', data.completedAt);
+    console.log('='.repeat(60));
+
+    // Generate invite code for tracking
+    const inviteCode = crypto.randomBytes(16).toString('hex');
+
+    // Store manual action in facebook_invites table with metadata
+    const [invitation] = await db.insert(friendInvitations).values({
+      invitedBy: userId,
+      invitedFriendName: data.recipientName,
+      invitedFriendEmail: data.recipientEmail,
+      inviteCode,
+      inviteMessage: data.message,
+      sentVia: 'manual_facebook_messenger', // Mark as manual for learning
+      closenessScore: 80,
+      metadata: {
+        manualAction: true,
+        actionType: data.actionType,
+        completedAt: data.completedAt,
+        recordedForLearning: true,
+        computerUseTraining: true
+      }
+    }).returning();
+
+    // Track for rate limiting (manual sends still count)
+    FacebookMessengerService.trackSentInvite(userId);
+
+    console.log('✅ Manual action recorded successfully!');
+    console.log('Invitation ID:', invitation.id);
+    console.log('This action will be used to train Mr. Blue\'s computer use feature\n');
+
+    return res.json({
+      success: true,
+      message: 'Manual action recorded for Mr. Blue learning',
+      invitation,
+      learning: {
+        recorded: true,
+        actionType: data.actionType,
+        willBeUsedForTraining: true
+      },
+      rateLimit: FacebookMessengerService.getRateLimitStatus(userId)
+    });
+  } catch (error: any) {
+    console.error('[Facebook] Record manual action error:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to record manual action'
     });
   }
 });

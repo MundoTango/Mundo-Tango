@@ -13,7 +13,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Send, Sparkles, AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Loader2, Send, Sparkles, AlertCircle, CheckCircle2, Clock, ExternalLink, Clipboard, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface InviteSenderProps {
@@ -27,6 +28,8 @@ export function InviteSender({ onSendComplete }: InviteSenderProps) {
   const [message, setMessage] = useState("");
   const [generatedMessage, setGeneratedMessage] = useState("");
   const [wordCount, setWordCount] = useState(0);
+  const [showManualFallback, setShowManualFallback] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   // Get rate limit status
   const { data: progressData } = useQuery({
@@ -79,27 +82,39 @@ export function InviteSender({ onSendComplete }: InviteSenderProps) {
         })
       });
     },
-    onSuccess: () => {
-      toast({
-        title: "Invite Sent!",
-        description: "Your invitation has been sent successfully.",
-      });
-      // Clear form
-      setFriendName("");
-      setFriendEmail("");
-      setMessage("");
-      setGeneratedMessage("");
-      setWordCount(0);
+    onSuccess: (data) => {
+      // Check if automation succeeded or needs manual fallback
+      if (data.requiresManualFallback) {
+        setShowManualFallback(true);
+        toast({
+          title: "Manual Action Required",
+          description: "Facebook blocked automation. Please follow manual steps.",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Invite Sent!",
+          description: "Your invitation has been sent successfully.",
+        });
+        // Clear form
+        setFriendName("");
+        setFriendEmail("");
+        setMessage("");
+        setGeneratedMessage("");
+        setWordCount(0);
+      }
       // Invalidate queries
       queryClient.invalidateQueries({ queryKey: ['/api/facebook/invites/progress'] });
       queryClient.invalidateQueries({ queryKey: ['/api/facebook/invites/history'] });
       onSendComplete?.();
     },
     onError: (error: any) => {
+      // Show manual fallback on any error
+      setShowManualFallback(true);
       toast({
-        title: "Send Failed",
-        description: error.message || "Failed to send invitation",
-        variant: "destructive",
+        title: "Automation Blocked",
+        description: "Please use manual workflow instead.",
+        variant: "default",
       });
     },
   });
@@ -151,8 +166,58 @@ export function InviteSender({ onSendComplete }: InviteSenderProps) {
     setWordCount(count);
   };
 
+  const handleCopyMessage = () => {
+    navigator.clipboard.writeText(message);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    toast({
+      title: "Copied!",
+      description: "Message copied to clipboard",
+    });
+  };
+
+  const handleManualComplete = async () => {
+    try {
+      // Record manual completion to database
+      await apiRequest('/api/facebook/record-manual-action', {
+        method: 'POST',
+        body: JSON.stringify({
+          recipientName: friendName,
+          recipientEmail: friendEmail,
+          message: message,
+          actionType: 'manual_facebook_message',
+          completedAt: new Date().toISOString()
+        })
+      });
+
+      toast({
+        title: "Action Recorded!",
+        description: "Manual send recorded for Mr. Blue learning",
+      });
+
+      // Clear form
+      setFriendName("");
+      setFriendEmail("");
+      setMessage("");
+      setGeneratedMessage("");
+      setWordCount(0);
+      setShowManualFallback(false);
+
+      // Invalidate queries
+      queryClient.invalidateQueries({ queryKey: ['/api/facebook/invites/progress'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/facebook/invites/history'] });
+    } catch (error) {
+      toast({
+        title: "Recording Failed",
+        description: "Could not record manual action",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
-    <Card data-testid="card-invite-sender">
+    <>
+      <Card data-testid="card-invite-sender">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-primary" />
@@ -293,5 +358,129 @@ export function InviteSender({ onSendComplete }: InviteSenderProps) {
         </Button>
       </CardFooter>
     </Card>
+
+    {/* Manual Fallback Dialog */}
+    <Dialog open={showManualFallback} onOpenChange={setShowManualFallback}>
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            🎯 Manual Workflow - Computer Use Training
+          </DialogTitle>
+          <DialogDescription>
+            Facebook blocked automation. Complete this manually so Mr. Blue can learn from your actions.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          {/* Instructions */}
+          <Alert>
+            <AlertCircle className="w-4 h-4" />
+            <AlertDescription>
+              <strong>Why Manual?</strong> Facebook detects automation tools. By completing this manually, 
+              you'll create training data for Mr. Blue's "Computer Use" feature to automate this in the future.
+            </AlertDescription>
+          </Alert>
+
+          {/* Step-by-Step Guide */}
+          <div className="space-y-4">
+            <div className="font-semibold text-lg">📋 Step-by-Step Instructions:</div>
+
+            {/* Step 1 */}
+            <div className="border rounded-lg p-4 space-y-2">
+              <div className="flex items-center gap-2 font-medium">
+                <Badge>1</Badge>
+                <span>Open Facebook Messenger</span>
+              </div>
+              <p className="text-sm text-muted-foreground ml-7">
+                Go to{' '}
+                <a 
+                  href="https://www.facebook.com/messages" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline inline-flex items-center gap-1"
+                >
+                  facebook.com/messages
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="border rounded-lg p-4 space-y-2">
+              <div className="flex items-center gap-2 font-medium">
+                <Badge>2</Badge>
+                <span>Search for: {friendName}</span>
+              </div>
+              <p className="text-sm text-muted-foreground ml-7">
+                Use the search box to find {friendName} in Messenger
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="border rounded-lg p-4 space-y-3">
+              <div className="flex items-center gap-2 font-medium">
+                <Badge>3</Badge>
+                <span>Copy & Send Message</span>
+              </div>
+              <div className="ml-7 space-y-2">
+                <div className="bg-muted p-3 rounded-lg text-sm max-h-40 overflow-y-auto">
+                  {message}
+                </div>
+                <Button
+                  onClick={handleCopyMessage}
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                >
+                  {copied ? (
+                    <><Check className="w-4 h-4 mr-2" /> Copied!</>
+                  ) : (
+                    <><Clipboard className="w-4 h-4 mr-2" /> Copy Message</>
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div className="border rounded-lg p-4 space-y-2">
+              <div className="flex items-center gap-2 font-medium">
+                <Badge>4</Badge>
+                <span>Paste and send the message</span>
+              </div>
+              <p className="text-sm text-muted-foreground ml-7">
+                Paste the copied message into the conversation and hit Send
+              </p>
+            </div>
+
+            {/* Learning Component */}
+            <Alert>
+              <Sparkles className="w-4 h-4" />
+              <AlertDescription>
+                <strong>🧠 Mr. Blue is Learning:</strong> When you complete this manual workflow, 
+                Mr. Blue records your actions and builds training data for future automation using 
+                computer vision and browser automation.
+              </AlertDescription>
+            </Alert>
+          </div>
+        </div>
+
+        <DialogFooter className="flex flex-col sm:flex-row gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setShowManualFallback(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleManualComplete}
+            data-testid="button-mark-complete"
+          >
+            <CheckCircle2 className="w-4 h-4 mr-2" />
+            I've Sent It - Record Action
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }
