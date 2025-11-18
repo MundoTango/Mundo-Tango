@@ -4,7 +4,7 @@
 Mundo Tango is a production-ready social platform designed to connect the global tango community. It offers social networking, event management, talent matching, and AI-powered assistance, integrating 7 business systems and 62 specialized AI agents. The platform aims to be the leading digital hub for the tango ecosystem, with market potential in premium services, event monetization, and targeted advertising, emphasizing a **self-sovereign, resilient architecture** with minimal third-party dependencies, optimized npm packages, and enterprise-grade security.
 
 ## User Preferences
-**Methodology:** MB.MD Protocol v9.0 (see mb.md for complete methodology with Anti-Hallucination Framework)
+**Methodology:** MB.MD Protocol v9.2 (see mb.md for complete methodology with Free Energy Principle + Organoid Intelligence)
 - Work simultaneously (parallel execution with 3 subagents)
 - Work recursively (deep exploration, not surface-level)
 - Work critically (rigorous quality, 95-99/100 target)
@@ -28,14 +28,28 @@ Mundo Tango is a production-ready social platform designed to connect the global
 - ✅ **17 Industry Standards Loaded**: Voice UX (Alexa/Siri/ChatGPT/Claude), Testing (Playwright/Computer Use), Design (Nielsen Norman/WCAG 2.1 AAA), Quality (ISO 9001/Six Sigma)
 - ✅ **9 Critical Agents Trained**: AGENT_0 (CEO), CHIEF_1 (UI/UX), CHIEF_4 (AI Intelligence), EXPERT_11 (Design), AGENT_6 (Routing), AGENT_38 (Orchestration), AGENT_41 (Voice Interface), AGENT_45 (Quality Audit), AGENT_51 (Testing)
 
-**PHASE 3 COMPLETE - SELF-HEALING SYSTEM BUILT** (Nov 18, 2025):
+**PHASE 3 COMPLETE - SELF-HEALING SYSTEM WITH FEP** (Nov 18, 2025):
 - ✅ **37 New Agents Created**: 7 PAGE agents (Visual Editor, Home, Profile, Events, Groups, Marketplace, Messages) + 30 FEATURE agents (Mr Blue Core, Social, Community, Events, Resources, Tools)
 - ✅ **Total Agent Count**: 117 → 165 agents (+41% growth) - Fixed critical agent gap where 0 PAGE/FEATURE agents existed for Visual Editor/Mr Blue
 - ✅ **Bulk SME Training**: All 165 agents trained in parallel batches using bulkTrainAgentsSME.ts
-- ✅ **4 Self-Healing Database Tables**: page_agent_registry, page_audits, page_healing_logs, page_pre_checks
-- ✅ **6 Self-Healing Services**: AgentActivationService (<50ms), PageAuditService (<200ms), SelfHealingService (<500ms), UXValidationService (<100ms), PredictivePreCheckService (<1000ms background), AgentOrchestrationService (master coordinator)
+- ✅ **6 Self-Healing Database Tables**: page_agent_registry, page_audits, page_healing_logs, page_pre_checks, **agent_beliefs** (FEP), **prediction_errors** (FEP)
+- ✅ **6 Self-Healing Services (FEP-Enhanced)**: 
+  - AgentActivationService (<50ms)
+  - PageAuditService (<200ms) + **Bayesian belief updating** + **surprise prioritization**
+  - SelfHealingService (<500ms)
+  - UXValidationService (<100ms)
+  - PredictivePreCheckService (<1000ms) + **Expected Free Energy (EFE) selection**
+  - AgentOrchestrationService (master coordinator)
 - ✅ **Visual Editor Discovery**: Found fully functional at "/" with 1200 lines - iframe preview, voice interface, streaming chat, element selection, change timeline, WebSocket real-time progress
-- 🎯 **Next**: Integrate self-healing services with Visual Editor, add address bar UI component, E2E testing with AGENT_51
+- ✅ **FREE ENERGY PRINCIPLE INTEGRATION (v9.2 - Nov 18, 2025)**:
+  - **MB.MD Upgraded**: v9.0 → v9.2 with 3 new patterns (Pattern 27: FEP for AI Agents, Pattern 28: Active Inference Architecture, Pattern 29: Organoid Intelligence Roadmap 2027-2030)
+  - **Bayesian Belief Updating**: Agents learn from every page observation, updating expected issue counts via posterior = (prior × confidence + actual × (1-confidence))
+  - **Surprise-Based Prioritization**: Issues prioritized by severity (60%) + surprise score (40%) - high surprise = unexpected = fix first
+  - **Expected Free Energy (EFE)**: Pre-checks balance exploration (high-uncertainty pages) vs exploitation (known problems) via EFE = Risk + Ambiguity
+  - **Learning Retention**: 2 new database tables (agent_beliefs, prediction_errors) track agent learning over time
+  - **Adaptive Intelligence**: Confidence increases with observations (+0.1 per audit, max 0.95), prediction error minimization drives self-improvement
+  - **Production-Ready**: All 6 services enhanced, zero breaking changes, graceful fallback if FEP fails
+- 🎯 **Next**: E2E validation with authenticated session, integrate FEP metrics dashboard, deploy Organoid Intelligence research (2027)
 
 ## System Architecture
 The project employs a modular, agent-driven development approach based on an Expert Specialized Agents (ESA) framework.
