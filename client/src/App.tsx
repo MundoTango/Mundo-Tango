@@ -14,8 +14,6 @@ import { AdminLayout } from "./components/AdminLayout";
 import { GlobalTopbar } from "./components/GlobalTopbar";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { MrBlueWidget } from "./components/MrBlueWidget";
-import { GlobalMrBlue } from "./components/mrblue/GlobalMrBlue";
-import { ChatSidePanel } from "./components/mrblue/ChatSidePanel";
 import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
 import { LoadingFallback } from "./components/LoadingFallback";
 
@@ -2122,9 +2120,7 @@ function App() {
                   <Suspense fallback={<LoadingFallback />}>
                     <Router />
                   </Suspense>
-                  <GlobalMrBlue />
-                  <ChatSidePanel />
-                  {!isOnVisualEditorPage && <MrBlueFloatingButton />}
+                  <MrBlueFloatingButton />
                   {isVisualEditorOpen && (
                     <Suspense fallback={<LoadingFallback />}>
                       <VisualEditorSplitPane 
