@@ -7,12 +7,17 @@ import { useToast } from "@/hooks/use-toast";
 import { Send, Bot, User, X, Minimize2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMrBlue } from "@/contexts/MrBlueContext";
+import { AutomationTaskMessage } from "./AutomationTaskMessage";
 
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  automationType?: string;
+  automationStatus?: string;
+  taskId?: string;
+  pollUrl?: string;
 }
 
 export function ChatSidePanel() {
@@ -73,8 +78,12 @@ export function ChatSidePanel() {
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: data.response,
-        timestamp: new Date()
+        content: data.response || data.content,
+        timestamp: new Date(),
+        automationType: data.automationType,
+        automationStatus: data.automationStatus,
+        taskId: data.taskId,
+        pollUrl: data.pollUrl
       };
       
       setMessages(prev => [...prev, aiMessage]);
@@ -149,14 +158,25 @@ export function ChatSidePanel() {
                   )}
                   
                   <div className={`max-w-[75%] ${message.role === "user" ? "order-first" : ""}`}>
-                    <Card className={message.role === "user" ? "bg-primary text-primary-foreground" : ""}>
-                      <CardContent className="p-3">
-                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                        <p className="text-xs opacity-60 mt-1">
-                          {message.timestamp.toLocaleTimeString()}
-                        </p>
-                      </CardContent>
-                    </Card>
+                    {message.automationType && message.taskId ? (
+                      // Show automation task card
+                      <AutomationTaskMessage
+                        taskId={message.taskId}
+                        automationType={message.automationType}
+                        initialStatus={message.automationStatus}
+                        pollUrl={message.pollUrl}
+                      />
+                    ) : (
+                      // Show regular message
+                      <Card className={message.role === "user" ? "bg-primary text-primary-foreground" : ""}>
+                        <CardContent className="p-3">
+                          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                          <p className="text-xs opacity-60 mt-1">
+                            {message.timestamp.toLocaleTimeString()}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    )}
                   </div>
 
                   {message.role === "user" && (
