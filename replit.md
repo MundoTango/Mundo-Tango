@@ -4,12 +4,13 @@
 Mundo Tango is a production-ready social platform designed to connect the global tango community. It offers social networking, event management, talent matching, and AI-powered assistance, integrating 7 business systems and 62 specialized AI agents. The platform aims to be the leading digital hub for the tango ecosystem, with market potential in premium services, event monetization, and targeted advertising, emphasizing a **self-sovereign, resilient architecture** with minimal third-party dependencies, optimized npm packages, and enterprise-grade security.
 
 ## User Preferences
-**Methodology:** MB.MD Protocol v8.1 (see mb.md for complete methodology with Anti-Hallucination Framework)
+**Methodology:** MB.MD Protocol v9.0 (see mb.md for complete methodology with Anti-Hallucination Framework)
 - Work simultaneously (parallel execution with 3 subagents)
 - Work recursively (deep exploration, not surface-level)
 - Work critically (rigorous quality, 95-99/100 target)
 - **NEW v8.0**: AI Agent Learning (DPO, Curriculum, GEPA, LIMI)
 - **NEW v8.0**: 5 Development-First Principles (Security, Error, Performance, Mobile, Accessibility)
+- **NEW v9.0**: **Agent SME Training System** - Agents become Subject Matter Experts by learning ALL documentation, code, and industry standards BEFORE implementation
 
 **Never deviate from the handoff plan** - Follow the exact phase sequence
 
@@ -20,6 +21,13 @@ Mundo Tango is a production-ready social platform designed to connect the global
 - Replit native integrations (Gmail, SendGrid, PostgreSQL)
 - Direct API integrations (Facebook Graph API, zero browser automation)
 - **Goal**: <20% third-party dependency, 9/10 resilience score
+
+**AGENT SME TRAINING SYSTEM ACTIVATED** (Nov 18, 2025):
+- ✅ **4 New Database Tables**: agent_documentation_index, agent_code_knowledge, agent_sme_training, agent_industry_standards
+- ✅ **396 Document-Agent Mappings**: All critical agents trained on relevant documentation
+- ✅ **17 Industry Standards Loaded**: Voice UX (Alexa/Siri/ChatGPT/Claude), Testing (Playwright/Computer Use), Design (Nielsen Norman/WCAG 2.1 AAA), Quality (ISO 9001/Six Sigma)
+- ✅ **9 Critical Agents Trained**: AGENT_0 (CEO), CHIEF_1 (UI/UX), CHIEF_4 (AI Intelligence), EXPERT_11 (Design), AGENT_6 (Routing), AGENT_38 (Orchestration), AGENT_41 (Voice Interface), AGENT_45 (Quality Audit), AGENT_51 (Testing)
+- 🎯 **Next**: Create missing Page/Feature/Element agents, build self-healing system, implement Visual Editor
 
 ## System Architecture
 The project employs a modular, agent-driven development approach based on an Expert Specialized Agents (ESA) framework.
