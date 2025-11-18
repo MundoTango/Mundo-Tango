@@ -50,15 +50,23 @@ function detectComputerUseIntent(message: string): {
   // General Computer Use info patterns (user asking ABOUT the feature)
   const infoPatterns = [
     /computer.*use/i,
+    /use.*computer/i,  // Bidirectional: "can you use computer"
     /compute.*use/i,
+    /use.*compute/i,   // Bidirectional: "can you use compute"
     /computer.*access/i,
+    /access.*computer/i,  // Bidirectional
     /compute.*access/i,
+    /access.*compute/i,   // Bidirectional
     /browser.*automat/i,
+    /automat.*browser/i,  // Bidirectional
     /what.*automat/i,
     /can.*you.*automat/i,
+    /do.*you.*have.*automat/i,
     /automation.*feature/i,
     /automation.*capabilit/i,
     /what.*can.*you.*do.*automat/i,
+    /\bai.*automat/i,  // AI automation
+    /automat.*\bai/i,  // automation AI
   ];
   
   for (const pattern of infoPatterns) {
