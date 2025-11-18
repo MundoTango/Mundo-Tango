@@ -6778,6 +6778,168 @@ export const agentIndustryStandards = pgTable("agent_industry_standards", {
   proficiencyIdx: index("agent_industry_standards_proficiency_idx").on(table.proficiencyLevel),
 }));
 
+// ============================================================================
+// SELF-HEALING PAGE AGENT SYSTEM (MB.MD V9.0 - NOV 18, 2025)
+// ============================================================================
+
+/**
+ * Page Agent Registry - Tracks which agents are assigned to which pages
+ * Enables automatic agent spin-up when Scott navigates to any page
+ */
+export const pageAgentRegistry = pgTable("page_agent_registry", {
+  pageId: varchar("page_id", { length: 100 }).primaryKey(), // e.g., 'visual-editor', 'home', 'profile'
+  pageName: varchar("page_name", { length: 255 }).notNull(),
+  route: varchar("route", { length: 255 }).notNull(), // e.g., '/', '/home', '/profile/:username'
+  pageAgentId: varchar("page_agent_id", { length: 100 }).notNull().references(() => agents.id),
+  featureAgentIds: jsonb("feature_agent_ids").default([]), // Array of agent IDs
+  elementAgentIds: jsonb("element_agent_ids").default([]), // Array of agent IDs
+  navigatesTo: text("navigates_to").array(), // Pages this page can navigate to
+  activatedAt: timestamp("activated_at"),
+  lastAudit: timestamp("last_audit"),
+  lastHealing: timestamp("last_healing"),
+  healingCount: integer("healing_count").default(0),
+  metadata: jsonb("metadata").default({}),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  routeIdx: index("page_agent_registry_route_idx").on(table.route),
+  pageAgentIdx: index("page_agent_registry_page_agent_idx").on(table.pageAgentId),
+  lastAuditIdx: index("page_agent_registry_last_audit_idx").on(table.lastAudit),
+}));
+
+export const insertPageAgentRegistrySchema = createInsertSchema(pageAgentRegistry).omit({ createdAt: true, updatedAt: true });
+export type InsertPageAgentRegistry = z.infer<typeof insertPageAgentRegistrySchema>;
+export type SelectPageAgentRegistry = typeof pageAgentRegistry.$inferSelect;
+
+/**
+ * Page Audits - Stores comprehensive audit results for pages
+ * Tracks UI/UX, routing, integration, performance, accessibility, security issues
+ */
+export const pageAudits = pgTable("page_audits", {
+  id: serial("id").primaryKey(),
+  pageId: varchar("page_id", { length: 100 }).notNull().references(() => pageAgentRegistry.pageId),
+  auditTimestamp: timestamp("audit_timestamp").defaultNow().notNull(),
+  totalIssues: integer("total_issues").default(0).notNull(),
+  criticalIssues: integer("critical_issues").default(0).notNull(),
+  
+  // Issues by category
+  uiUxIssues: integer("ui_ux_issues").default(0),
+  routingIssues: integer("routing_issues").default(0),
+  integrationIssues: integer("integration_issues").default(0),
+  performanceIssues: integer("performance_issues").default(0),
+  accessibilityIssues: integer("accessibility_issues").default(0),
+  securityIssues: integer("security_issues").default(0),
+  
+  // Full audit results
+  issuesByCategory: jsonb("issues_by_category").default({}), // Categorized issues
+  auditResults: jsonb("audit_results").notNull(), // Full audit data
+  
+  // Agent results
+  auditorAgents: text("auditor_agents").array(), // Which agents ran the audit
+  auditDurationMs: integer("audit_duration_ms"),
+  
+  // Status
+  hasIssues: boolean("has_issues").default(false).notNull(),
+  healingRequired: boolean("healing_required").default(false),
+  healingApplied: boolean("healing_applied").default(false),
+  
+  metadata: jsonb("metadata").default({}),
+}, (table) => ({
+  pageIdIdx: index("page_audits_page_id_idx").on(table.pageId),
+  timestampIdx: index("page_audits_timestamp_idx").on(table.auditTimestamp),
+  hasIssuesIdx: index("page_audits_has_issues_idx").on(table.hasIssues),
+  criticalIdx: index("page_audits_critical_idx").on(table.criticalIssues),
+}));
+
+export const insertPageAuditSchema = createInsertSchema(pageAudits).omit({ id: true, auditTimestamp: true });
+export type InsertPageAudit = z.infer<typeof insertPageAuditSchema>;
+export type SelectPageAudit = typeof pageAudits.$inferSelect;
+
+/**
+ * Page Healing Logs - Tracks all self-healing actions taken by agents
+ * Logs fixes, validation, and success rates for continuous improvement
+ */
+export const pageHealingLogs = pgTable("page_healing_logs", {
+  id: serial("id").primaryKey(),
+  pageId: varchar("page_id", { length: 100 }).notNull().references(() => pageAgentRegistry.pageId),
+  auditId: integer("audit_id").references(() => pageAudits.id),
+  healingTimestamp: timestamp("healing_timestamp").defaultNow().notNull(),
+  
+  // Healing details
+  issuesFixed: integer("issues_fixed").default(0).notNull(),
+  fixesApplied: jsonb("fixes_applied").notNull(), // Array of fix objects
+  
+  // Agent assignments
+  assignedAgents: text("assigned_agents").array(), // Which agents performed healing
+  fixesByAgent: jsonb("fixes_by_agent").default({}), // Which agent fixed which issues
+  
+  // Validation
+  success: boolean("success").default(true).notNull(),
+  validationResults: jsonb("validation_results").default({}),
+  postHealAuditId: integer("post_heal_audit_id").references(() => pageAudits.id), // Audit after healing
+  
+  // Performance
+  healingDurationMs: integer("healing_duration_ms"),
+  fixesFailed: integer("fixes_failed").default(0),
+  failureReasons: jsonb("failure_reasons").default([]),
+  
+  // Learning
+  patternsLearned: text("patterns_learned").array(),
+  improvementSuggestions: text("improvement_suggestions").array(),
+  
+  metadata: jsonb("metadata").default({}),
+}, (table) => ({
+  pageIdIdx: index("page_healing_logs_page_id_idx").on(table.pageId),
+  auditIdIdx: index("page_healing_logs_audit_id_idx").on(table.auditId),
+  timestampIdx: index("page_healing_logs_timestamp_idx").on(table.healingTimestamp),
+  successIdx: index("page_healing_logs_success_idx").on(table.success),
+}));
+
+export const insertPageHealingLogSchema = createInsertSchema(pageHealingLogs).omit({ id: true, healingTimestamp: true });
+export type InsertPageHealingLog = z.infer<typeof insertPageHealingLogSchema>;
+export type SelectPageHealingLog = typeof pageHealingLogs.$inferSelect;
+
+/**
+ * Page Pre-Checks - Caches predictive pre-checks for pages user is likely to visit
+ * Enables proactive healing BEFORE user sees issues
+ */
+export const pagePreChecks = pgTable("page_pre_checks", {
+  id: serial("id").primaryKey(),
+  pageId: varchar("page_id", { length: 100 }).notNull().references(() => pageAgentRegistry.pageId),
+  sourcePageId: varchar("source_page_id", { length: 100 }), // Page that triggered pre-check
+  checkedTimestamp: timestamp("checked_timestamp").defaultNow().notNull(),
+  
+  // Prediction data
+  predictedIssues: jsonb("predicted_issues").default([]), // Predicted issues before visit
+  confidenceScore: real("confidence_score").default(0.0), // 0-1 confidence in predictions
+  navigationProbability: real("navigation_probability").default(0.0), // 0-1 likelihood user will visit
+  
+  // Pre-check results
+  issuesPredicted: integer("issues_predicted").default(0),
+  criticalPredicted: integer("critical_predicted").default(0),
+  
+  // Proactive healing
+  proactiveHealingApplied: boolean("proactive_healing_applied").default(false),
+  healingLogId: integer("healing_log_id").references(() => pageHealingLogs.id),
+  
+  // Cache control
+  expiresAt: timestamp("expires_at").notNull(), // Cache expiration
+  cacheHit: boolean("cache_hit").default(false), // Was prediction used?
+  actualIssuesFound: integer("actual_issues_found"), // Actual issues when visited
+  predictionAccuracy: real("prediction_accuracy"), // Accuracy score
+  
+  metadata: jsonb("metadata").default({}),
+}, (table) => ({
+  pageIdIdx: index("page_pre_checks_page_id_idx").on(table.pageId),
+  sourcePageIdx: index("page_pre_checks_source_page_idx").on(table.sourcePageId),
+  expiresAtIdx: index("page_pre_checks_expires_at_idx").on(table.expiresAt),
+  confidenceIdx: index("page_pre_checks_confidence_idx").on(table.confidenceScore),
+}));
+
+export const insertPagePreCheckSchema = createInsertSchema(pagePreChecks).omit({ id: true, checkedTimestamp: true });
+export type InsertPagePreCheck = z.infer<typeof insertPagePreCheckSchema>;
+export type SelectPagePreCheck = typeof pagePreChecks.$inferSelect;
+
 /**
  * AI Guardrail Violations Table (APPENDIX Q - BATCH 28)
  * Tracks AI error prevention guardrail violations across 7 layers
