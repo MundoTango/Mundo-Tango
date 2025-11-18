@@ -12451,6 +12451,231 @@ export type InsertFacebookInvite = z.infer<typeof insertFacebookInviteSchema>;
 export type SelectFacebookInvite = typeof facebookInvites.$inferSelect;
 
 // ============================================================================
+// MB.MD v9.3: SOAR-INSPIRED COGNITIVE MEMORY (PHASE 3)
+// Three memory types: Episodic (experiences), Semantic (patterns), Procedural (skills)
+// ============================================================================
+
+export const agentEpisodicMemory = pgTable("agent_episodic_memory", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull(), // 'EXPERT_11', 'AGENT_6', etc.
+  pageId: varchar("page_id", { length: 100 }).notNull(),
+  
+  // Event details
+  eventType: varchar("event_type", { length: 50 }).notNull(), // 'audit', 'fix_applied', 'validation', 'pre_check'
+  context: jsonb("context").notNull(), // Full state snapshot
+  outcome: varchar("outcome", { length: 50 }).notNull(), // 'success', 'failure', 'partial'
+  
+  // Learning signals
+  surpriseScore: real("surprise_score"), // How unexpected was this? (0-1)
+  emotionalValence: real("emotional_valence"), // Positive/negative outcome (-1 to 1)
+  salience: real("salience").default(1.0), // How important is this memory? (0-1)
+  
+  // Memory decay
+  retrievalCount: integer("retrieval_count").default(0), // How often recalled
+  lastRetrievedAt: timestamp("last_retrieved_at"),
+  
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+}, (table) => ({
+  agentPageIdx: index("episodic_agent_page_idx").on(table.agentId, table.pageId),
+  eventTypeIdx: index("episodic_event_type_idx").on(table.eventType),
+  surpriseIdx: index("episodic_surprise_idx").on(table.surpriseScore), // Find high-surprise events
+  timestampIdx: index("episodic_timestamp_idx").on(table.timestamp),
+}));
+
+export const insertAgentEpisodicMemorySchema = createInsertSchema(agentEpisodicMemory)
+  .omit({ id: true, timestamp: true });
+export type InsertAgentEpisodicMemory = z.infer<typeof insertAgentEpisodicMemorySchema>;
+export type SelectAgentEpisodicMemory = typeof agentEpisodicMemory.$inferSelect;
+
+export const agentSemanticMemory = pgTable("agent_semantic_memory", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull(),
+  
+  // Concept/Pattern details
+  concept: varchar("concept", { length: 255 }).notNull(), // 'broken_button', 'missing_route', 'slow_render'
+  pattern: jsonb("pattern").notNull(), // Generalized pattern extracted from episodes
+  
+  // Learning metadata
+  confidence: real("confidence").default(0.3).notNull(), // How certain are we? (0-1)
+  learnedFromCount: integer("learned_from_count").default(1).notNull(), // How many episodes contributed?
+  episodeIds: integer("episode_ids").array(), // Links to episodic memories
+  
+  // Generalization level
+  abstractionLevel: integer("abstraction_level").default(1), // 1=specific, 5=very general
+  applicabilityScope: text("applicability_scope").array(), // Which page types does this apply to?
+  
+  // Usage tracking
+  applicationCount: integer("application_count").default(0), // Times applied
+  successRate: real("success_rate").default(0.0), // RL-style reward signal
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  agentConceptIdx: uniqueIndex("semantic_agent_concept_idx").on(table.agentId, table.concept),
+  confidenceIdx: index("semantic_confidence_idx").on(table.confidence),
+  successRateIdx: index("semantic_success_rate_idx").on(table.successRate),
+}));
+
+export const insertAgentSemanticMemorySchema = createInsertSchema(agentSemanticMemory)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertAgentSemanticMemory = z.infer<typeof insertAgentSemanticMemorySchema>;
+export type SelectAgentSemanticMemory = typeof agentSemanticMemory.$inferSelect;
+
+export const agentProceduralMemory = pgTable("agent_procedural_memory", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull(),
+  
+  // Rule details
+  ruleName: varchar("rule_name", { length: 255 }).notNull().unique(),
+  description: text("description"),
+  
+  // Production rule (condition → action)
+  condition: jsonb("condition").notNull(), // When to apply this rule
+  action: jsonb("action").notNull(), // What to do
+  
+  // Learning signals
+  successRate: real("success_rate").default(0.0).notNull(), // RL reward signal
+  applicationCount: integer("application_count").default(0).notNull(),
+  lastApplicationOutcome: varchar("last_application_outcome", { length: 50 }), // 'success', 'failure'
+  
+  // Adaptive learning
+  learningRate: real("learning_rate").default(0.1), // How fast does this rule adapt?
+  explorationRate: real("exploration_rate").default(0.1), // Epsilon-greedy exploration
+  
+  // Mental simulation results
+  mentalSimulationCount: integer("mental_simulation_count").default(0),
+  simulatedSuccessRate: real("simulated_success_rate"),
+  
+  // Metadata
+  priority: integer("priority").default(0), // Higher = try first
+  enabled: boolean("enabled").default(true).notNull(),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  agentIdx: index("procedural_agent_idx").on(table.agentId),
+  successRateIdx: index("procedural_success_rate_idx").on(table.successRate),
+  priorityIdx: index("procedural_priority_idx").on(table.priority),
+  enabledIdx: index("procedural_enabled_idx").on(table.enabled),
+}));
+
+export const insertAgentProceduralMemorySchema = createInsertSchema(agentProceduralMemory)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertAgentProceduralMemory = z.infer<typeof insertAgentProceduralMemorySchema>;
+export type SelectAgentProceduralMemory = typeof agentProceduralMemory.$inferSelect;
+
+// ============================================================================
+// MB.MD v9.3: LANGGRAPH-STYLE STATE CHECKPOINTS (PHASE 2)
+// Production-ready agent orchestration with persistent memory
+// ============================================================================
+
+export const agentStateCheckpoints = pgTable("agent_state_checkpoints", {
+  id: serial("id").primaryKey(),
+  threadId: varchar("thread_id", { length: 255 }).notNull(), // 'tenant-X:user-Y:session-Z'
+  namespace: varchar("namespace", { length: 100 }), // Optional: tenant isolation
+  
+  // State snapshot
+  state: jsonb("state").notNull(), // Complete agent state
+  nodeId: varchar("node_id", { length: 100 }).notNull(), // Which node created this checkpoint
+  
+  // Metadata
+  parentId: integer("parent_id").references((): any => agentStateCheckpoints.id), // Previous checkpoint
+  stepNumber: integer("step_number").default(0).notNull(),
+  
+  // Resumption data
+  pendingWrites: jsonb("pending_writes"), // Uncommitted state changes
+  interruptPoint: varchar("interrupt_point", { length: 100 }), // Where execution paused
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  threadIdx: index("checkpoint_thread_idx").on(table.threadId),
+  namespaceIdx: index("checkpoint_namespace_idx").on(table.namespace),
+  nodeIdx: index("checkpoint_node_idx").on(table.nodeId),
+  createdAtIdx: index("checkpoint_created_at_idx").on(table.createdAt),
+}));
+
+export const insertAgentStateCheckpointSchema = createInsertSchema(agentStateCheckpoints)
+  .omit({ id: true, createdAt: true });
+export type InsertAgentStateCheckpoint = z.infer<typeof insertAgentStateCheckpointSchema>;
+export type SelectAgentStateCheckpoint = typeof agentStateCheckpoints.$inferSelect;
+
+// ============================================================================
+// MB.MD v9.3: SUPERAGI-STYLE TELEMETRY (PHASE 5)
+// Production observability, cost tracking, performance monitoring
+// ============================================================================
+
+export const agentOperationMetrics = pgTable("agent_operation_metrics", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull(),
+  
+  // Operation details
+  operation: varchar("operation", { length: 100 }).notNull(), // 'audit', 'fix', 'pre_check'
+  pageId: varchar("page_id", { length: 100 }),
+  
+  // Performance metrics
+  durationMs: integer("duration_ms").notNull(),
+  tokensUsed: integer("tokens_used").default(0),
+  costUSD: real("cost_usd").default(0.0),
+  
+  // Cache performance
+  cacheHitRate: real("cache_hit_rate"), // 0-1
+  databaseQueries: integer("database_queries").default(0),
+  apiCalls: integer("api_calls").default(0),
+  
+  // Success metrics
+  success: boolean("success").notNull(),
+  errorType: varchar("error_type", { length: 100 }),
+  errorMessage: text("error_message"),
+  
+  // Resource usage
+  memoryMB: real("memory_mb"),
+  cpuPercent: real("cpu_percent"),
+  
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+}, (table) => ({
+  agentOpIdx: index("metrics_agent_op_idx").on(table.agentId, table.operation),
+  timestampIdx: index("metrics_timestamp_idx").on(table.timestamp),
+  costIdx: index("metrics_cost_idx").on(table.costUSD), // Find expensive operations
+  successIdx: index("metrics_success_idx").on(table.success),
+}));
+
+export const insertAgentOperationMetricSchema = createInsertSchema(agentOperationMetrics)
+  .omit({ id: true, timestamp: true });
+export type InsertAgentOperationMetric = z.infer<typeof insertAgentOperationMetricSchema>;
+export type SelectAgentOperationMetric = typeof agentOperationMetrics.$inferSelect;
+
+// Agent cost budgets (SuperAGI pattern)
+export const agentCostBudgets = pgTable("agent_cost_budgets", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull().unique(),
+  
+  // Budget limits
+  dailyBudgetUSD: real("daily_budget_usd").default(1.0),
+  monthlyBudgetUSD: real("monthly_budget_usd").default(10.0),
+  
+  // Current spending
+  todaySpentUSD: real("today_spent_usd").default(0.0),
+  monthSpentUSD: real("month_spent_usd").default(0.0),
+  
+  // Reset timestamps
+  lastDailyReset: timestamp("last_daily_reset").defaultNow(),
+  lastMonthlyReset: timestamp("last_monthly_reset").defaultNow(),
+  
+  // Alerts
+  budgetExceeded: boolean("budget_exceeded").default(false),
+  alertThreshold: real("alert_threshold").default(0.8), // Alert at 80%
+  
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  budgetExceededIdx: index("budget_exceeded_idx").on(table.budgetExceeded),
+}));
+
+export const insertAgentCostBudgetSchema = createInsertSchema(agentCostBudgets)
+  .omit({ id: true, updatedAt: true });
+export type InsertAgentCostBudget = z.infer<typeof insertAgentCostBudgetSchema>;
+export type SelectAgentCostBudget = typeof agentCostBudgets.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
