@@ -93,9 +93,32 @@ async function sendFacebookMessage(): Promise<ExecutionResult> {
     await page.waitForTimeout(3000);
     screenshots.push({ step: 4, base64: await page.screenshot({ encoding: 'base64' }), action: 'After login' });
     
-    // Step 5: Look for "New Message" or search
+    // Check for security challenge "Please verify your Facebook account"
+    const needsVerification = await page.evaluate(() => {
+      return document.body.textContent?.includes('Please verify your Facebook account') ||
+             document.body.textContent?.includes('verify your account') ||
+             document.body.textContent?.includes('finish signing in');
+    });
+    
+    if (needsVerification) {
+      console.log('⚠️  Facebook security challenge detected!');
+      console.log('Clicking Continue button to proceed with verification...');
+      steps.push('⚠️  Facebook security challenge detected - clicking Continue');
+      
+      try {
+        await page.click('button:has-text("Continue")', { timeout: 5000 });
+        await page.waitForLoadState('networkidle', { timeout: 30000 });
+        await page.waitForTimeout(3000);
+        screenshots.push({ step: 5, base64: await page.screenshot({ encoding: 'base64' }), action: 'After clicking Continue on security challenge' });
+        steps.push('✅ Clicked Continue on security challenge');
+      } catch (e: any) {
+        console.log(`Could not click Continue: ${e.message}`);
+      }
+    }
+    
+    // Step 5/6: Look for "New Message" or search
     steps.push('✅ Look for messaging interface');
-    console.log('Step 5: Finding messaging interface...');
+    console.log(`Step ${screenshots.length + 1}: Finding messaging interface...`);
     await page.waitForTimeout(2000);
     
     // Try to find and click "New Message" button
@@ -129,6 +152,30 @@ async function sendFacebookMessage(): Promise<ExecutionResult> {
     steps.push('✅ Search for recipient');
     console.log('Step 6: Searching for recipient...');
     
+    // DEBUG: Log all inputs on page
+    try {
+      const allInputs = await page.$$eval('input, textarea, div[contenteditable="true"]', (elements) => 
+        elements.map((el, idx) => ({
+          index: idx,
+          tag: el.tagName,
+          type: el.getAttribute('type'),
+          placeholder: el.getAttribute('placeholder'),
+          ariaLabel: el.getAttribute('aria-label'),
+          name: el.getAttribute('name'),
+          visible: el.offsetParent !== null
+        }))
+      );
+      console.log(`\n📊 Found ${allInputs.length} input elements on page:`);
+      allInputs.forEach((input, idx) => {
+        if (input.visible) {
+          console.log(`  ${idx}: ${input.tag} type="${input.type}" placeholder="${input.placeholder}" aria="${input.ariaLabel}" name="${input.name}"`);
+        }
+      });
+      console.log('');
+    } catch (e: any) {
+      console.log(`⚠️  Could not inspect page: ${e.message}`);
+    }
+    
     // Look for "To:" field or search input
     const searchSelectors = [
       'input[placeholder*="To"]',
@@ -136,38 +183,60 @@ async function sendFacebookMessage(): Promise<ExecutionResult> {
       'input[name="to"]',
       'input[aria-label*="To"]',
       'input[placeholder*="Search"]',
+      'input[placeholder*="search"]',
       'input[type="search"]',
-      'input'
+      'input[type="text"]',
+      'textarea',
+      'div[contenteditable="true"]'
     ];
     
     let searchFilled = false;
     for (const selector of searchSelectors) {
       try {
+        console.log(`Trying: ${selector}`);
         const elements = await page.$$(selector);
-        for (const element of elements) {
+        console.log(`  Found ${elements.length} elements`);
+        
+        for (let i = 0; i < elements.length; i++) {
           try {
-            await element.click({ timeout: 2000 });
+            const isVisible = await elements[i].isVisible();
+            if (!isVisible) continue;
+            
+            console.log(`  Attempting to fill element ${i}...`);
+            await elements[i].click({ timeout: 2000 });
             await page.waitForTimeout(500);
-            await element.fill(recipientName);
+            await elements[i].fill(recipientName);
             await page.waitForTimeout(2000);
             searchFilled = true;
-            console.log(`✅ Search filled with: ${selector}`);
+            console.log(`✅ Search filled with: ${selector} [element ${i}]`);
             steps.push(`✅ Filled search with "${recipientName}"`);
             break;
-          } catch (e) {
+          } catch (e: any) {
+            console.log(`  Element ${i} failed: ${e.message.substring(0, 50)}`);
             continue;
           }
         }
         if (searchFilled) break;
-      } catch (e) {
+      } catch (e: any) {
+        console.log(`  Selector failed: ${e.message.substring(0, 50)}`);
         continue;
       }
     }
     
-    screenshots.push({ step: 6, base64: await page.screenshot({ encoding: 'base64' }), action: 'Search for recipient' });
+    screenshots.push({ step: 6, base64: await page.screenshot({ encoding: 'base64' }), action: searchFilled ? 'Search filled' : 'ERROR: No search field found' });
     
     if (!searchFilled) {
-      throw new Error('Could not find search/To field');
+      // Save all screenshots before throwing error
+      const logsDir = path.join(process.cwd(), 'logs', 'fb-automation');
+      fs.mkdirSync(logsDir, { recursive: true });
+      
+      screenshots.forEach((s) => {
+        const imgPath = path.join(logsDir, `${taskId}-step-${s.step}.png`);
+        fs.writeFileSync(imgPath, Buffer.from(s.base64, 'base64'));
+      });
+      console.log(`\n📸 DEBUG screenshots saved to: ${logsDir}\n`);
+      
+      throw new Error('Could not find search/To field after trying all selectors');
     }
     
     // Step 7: Click on recipient in results
