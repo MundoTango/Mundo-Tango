@@ -2432,3 +2432,41 @@ SOLUTION:
 
 ---
 
+
+
+## 🤖 AGENT ACCOUNTABILITY & LEARNING (v9.1)
+
+### **Pattern 35: Agent Integration Protocol** ⭐⭐⭐
+
+**Created:** November 18, 2025  
+**Purpose:** Prevent agents from building features in isolation  
+**Context:** This is the START of Mr. Blue's brain - how agents learn from failures
+
+**Problem:** Agents build EXCELLENT features but FAIL to integrate them, creating 95% complete but 0% functional systems.
+
+**The 10 Commandments of Agent Completion:**
+1. ✅ BUILT - Feature works in isolation
+2. ✅ INTEGRATED - Feature connects to dependent systems
+3. ✅ VALIDATED - E2E data flow works
+4. ✅ TESTED - E2E test passes
+5. ✅ ERROR HANDLED - Graceful degradation
+6. ✅ DOCUMENTED - Integration points clear
+7. ✅ CRITICAL ANALYSIS - All assumptions challenged
+8. ✅ RATE LIMITED - Won't exceed API limits
+9. ✅ COST AWARE - Monitors AI/API costs
+10. ✅ LEARNING PATH - Future agents can learn
+
+**The Ultimate Question:** "If I was the FIRST user trying this feature RIGHT NOW, would it work end-to-end?"
+
+If NO → Task is NOT complete.
+
+**MB.MD v9.1 Update - Four Pillars:**
+1. SIMULTANEOUSLY - Work in parallel ✅
+2. RECURSIVELY - Deep dive ✅
+3. CRITICALLY - Validate connections ✅
+4. ACCOUNTABILITY - 10-point checklist ⭐ NEW
+
+**Pattern 35 Status:** ✅ ACTIVE - All agents MUST follow this protocol
+
+---
+
