@@ -273,6 +273,7 @@ const NotificationPreferencesPage = lazy(() => import("@/pages/NotificationPrefe
 const PrivacySettingsPage = lazy(() => import("@/pages/PrivacySettings"));
 const AccountSettingsPage = lazy(() => import("@/pages/AccountSettingsPage"));
 const AdminUserDetailPage = lazy(() => import("@/pages/admin/AdminUserDetailPage"));
+const AdminIntegrationsPage = lazy(() => import("@/pages/admin/integrations"));
 const ProfileEditPage = lazy(() => import("@/pages/ProfileEditPage"));
 const ActivityLogPage = lazy(() => import("@/pages/ActivityLogPage"));
 const BlockedUsersPage = lazy(() => import("@/pages/BlockedUsersPage"));
@@ -1209,6 +1210,17 @@ function Router() {
         <ProtectedRoute>
           <AdminLayout>
             <UserTestingPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* Platform Integrations - Authorization Wizard */}
+      <Route path="/admin/integrations">
+        <ProtectedRoute>
+          <AdminLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <AdminIntegrationsPage />
+            </Suspense>
           </AdminLayout>
         </ProtectedRoute>
       </Route>
