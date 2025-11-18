@@ -108,8 +108,8 @@ export class FacebookMessengerService {
     }
   }
 
-  async login(taskId: string, screenshots: Array<{ step: number; base64: string; action: string }>): Promise<number> {
-    let stepNumber = 0;
+  async login(taskId: string, screenshots: Array<{ step: number; base64: string; action: string }>, startStep: number = 0): Promise<number> {
+    let stepNumber = startStep;
     const fbEmail = process.env.FACEBOOK_EMAIL;
     const fbPassword = process.env.FACEBOOK_PASSWORD;
 
@@ -237,21 +237,47 @@ export class FacebookMessengerService {
   }
 
   async navigateToMessenger(taskId: string, stepNumber: number, screenshots: Array<{ step: number; base64: string; action: string }>, recipientFbUsername?: string): Promise<number> {
-    // Step: Navigate to Messenger
+    // Step: Navigate to Messenger (carefully to preserve session)
     stepNumber++;
     
-    // If we have a Facebook username, navigate directly to their conversation
-    const messengerUrl = recipientFbUsername 
-      ? `https://www.facebook.com/messages/t/${recipientFbUsername}`
-      : 'https://www.facebook.com/messages';
+    console.log(`[FacebookMessenger ${taskId}] Step ${stepNumber}: Navigate to Messenger${recipientFbUsername ? ` and find ${recipientFbUsername}` : ''}`);
     
-    console.log(`[FacebookMessenger ${taskId}] Step ${stepNumber}: Navigate to ${recipientFbUsername ? `conversation with ${recipientFbUsername}` : 'Messenger'}`);
-    
-    await this.page!.goto(messengerUrl, {
+    // First go to main messenger page to ensure session is maintained
+    await this.page!.goto('https://www.facebook.com/messages', {
       waitUntil: 'networkidle',
       timeout: this.stepTimeout
     });
-    await this.page!.waitForTimeout(3000); // Wait for conversation to load
+    await this.page!.waitForTimeout(2000);
+    
+    // Check if we're still logged in
+    const isLoginPage = await this.page!.evaluate(() => {
+      return document.querySelector('input[name="email"]') !== null || 
+             document.querySelector('input[placeholder*="Email"]') !== null ||
+             document.body.textContent?.includes('Log Into Facebook') ||
+             document.body.textContent?.includes('You must log in');
+    });
+    
+    if (isLoginPage) {
+      console.log(`[FacebookMessenger ${taskId}] ⚠️  Session lost! Re-authenticating...`);
+      // Re-login if session was lost
+      stepNumber = await this.login(taskId, screenshots, stepNumber);
+      // Navigate back to messenger
+      await this.page!.goto('https://www.facebook.com/messages', {
+        waitUntil: 'networkidle',
+        timeout: this.stepTimeout
+      });
+      await this.page!.waitForTimeout(2000);
+    }
+    
+    // If we have a username, now navigate to their conversation
+    if (recipientFbUsername) {
+      console.log(`[FacebookMessenger ${taskId}] Navigating to conversation with ${recipientFbUsername}...`);
+      await this.page!.goto(`https://www.facebook.com/messages/t/${recipientFbUsername}`, {
+        waitUntil: 'networkidle',
+        timeout: this.stepTimeout
+      });
+      await this.page!.waitForTimeout(3000);
+    }
 
     screenshots.push({
       step: stepNumber,
