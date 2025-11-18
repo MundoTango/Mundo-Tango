@@ -99,6 +99,15 @@ export const users = pgTable("users", {
   facebookPSID: varchar("facebook_psid", { length: 100 }).unique(),
   facebookMessengerOptIn: boolean("facebook_messenger_opt_in").default(false),
   facebookLastMessageAt: timestamp("facebook_last_message_at"),
+  
+  // WEEK 9 DAY 6: Facebook OAuth Integration (Supabase)
+  supabaseUserId: varchar("supabase_user_id", { length: 100 }).unique(),
+  facebookUserId: varchar("facebook_user_id", { length: 100 }),
+  facebookPageId: varchar("facebook_page_id", { length: 100 }),
+  facebookPageAccessToken: text("facebook_page_access_token"),
+  facebookTokenExpiresAt: timestamp("facebook_token_expires_at"),
+  facebookRefreshToken: text("facebook_refresh_token"),
+  facebookScopes: text("facebook_scopes").array(),
 }, (table) => ({
   emailIdx: index("users_email_idx").on(table.email),
   usernameIdx: index("users_username_idx").on(table.username),
