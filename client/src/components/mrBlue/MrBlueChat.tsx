@@ -371,11 +371,37 @@ Provide natural, conversational assistance based on where the user is in the pla
     setIsLoading(true);
 
     try {
-      // Gather comprehensive context
+      // Gather comprehensive context + DOM snapshot for vibe coding
       const breadcrumbs = breadcrumbTracker.getRecentActions(10);
       const currentPage = window.location.pathname;
       const pageTitle = document.title;
       const userIntent = inferUserIntent(breadcrumbs);
+      
+      // MB.MD v9.0: Capture DOM snapshot for vibe coding
+      const domSnapshot = {
+        inputs: Array.from(document.querySelectorAll('input')).slice(0, 20).map(el => ({
+          testId: el.getAttribute('data-testid'),
+          placeholder: el.getAttribute('placeholder'),
+          name: el.getAttribute('name'),
+          type: el.getAttribute('type'),
+          id: el.id,
+          value: el.value ? '***' : '', // Don't send actual values (privacy)
+        })),
+        buttons: Array.from(document.querySelectorAll('button')).slice(0, 20).map(el => ({
+          testId: el.getAttribute('data-testid'),
+          text: el.textContent?.trim().substring(0, 50),
+          type: el.getAttribute('type'),
+          disabled: el.hasAttribute('disabled'),
+        })),
+        selects: Array.from(document.querySelectorAll('select')).slice(0, 10).map(el => ({
+          testId: el.getAttribute('data-testid'),
+          name: el.getAttribute('name'),
+          id: el.id,
+        })),
+        errors: Array.from(document.querySelectorAll('[role="alert"], .error, .text-destructive')).slice(0, 5).map(el => ({
+          text: el.textContent?.trim().substring(0, 100),
+        })),
+      };
 
       const response = await fetch('/api/mrblue/chat', {
         method: 'POST',
@@ -386,7 +412,8 @@ Provide natural, conversational assistance based on where the user is in the pla
             breadcrumbs,
             currentPage,
             pageTitle,
-            userIntent
+            userIntent,
+            domSnapshot, // Send DOM snapshot
           },
           voiceEnabled: elevenLabsVoiceEnabled,
           selectedVoiceId: selectedElevenLabsVoice
@@ -394,6 +421,30 @@ Provide natural, conversational assistance based on where the user is in the pla
       });
 
       const data = await response.json();
+      
+      // MB.MD v9.0: Handle vibe coding response
+      if (data.mode === 'vibecoding' && data.vibecodingResult) {
+        const vibeResult = data.vibecodingResult;
+        
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: `${data.response}\n\n**🔨 Code Changes Generated:**\n${vibeResult.fileChanges.length} file(s) will be modified.\n\n${vibeResult.fileChanges.map((fc: any) => `- ${fc.filePath} (${fc.action})`).join('\n')}\n\n**Impact:** ${vibeResult.estimatedImpact}\n\n*Use the Visual Editor or Vibecoding page to review and apply these changes.*`,
+          timestamp: new Date(),
+        };
+        
+        setMessages(prev => [...prev, assistantMessage]);
+        
+        toast({
+          title: '✅ Vibe Coding Complete!',
+          description: `Generated changes for ${vibeResult.fileChanges.length} file(s). Session: ${vibeResult.sessionId}`,
+          duration: 5000,
+        });
+        
+        // Store session ID for later approval
+        console.log('[MrBlue] Vibe coding session:', vibeResult.sessionId);
+        return;
+      }
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),

@@ -14,6 +14,7 @@ import { CodeGenerator } from "../services/codeGenerator";
 import { getMrBlueCapabilities, getTierName } from '../utils/mrBlueCapabilities';
 import { contextService } from "../services/mrBlue/ContextService";
 import { memoryService } from "../services/mrBlue/MemoryService";
+import { vibeCodingService } from "../services/mrBlue/VibeCodingService";
 
 const router = Router();
 
@@ -43,6 +44,74 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
   baseURL: process.env.BIFROST_BASE_URL || undefined,
 });
+
+// ================== MB.MD v9.0: VIBE CODING INTENT DETECTION ==================
+/**
+ * Detect if user message requires vibe coding (code generation/modification)
+ * Follows MB.MD Pattern #25: Platform Compliance Protocol
+ */
+function detectVibecodingIntent(message: string, context: any): {
+  isVibecoding: boolean;
+  type: 'fix_bug' | 'identify_elements' | 'make_change' | 'inspect_page' | null;
+  confidence: number;
+} {
+  const msg = message.toLowerCase();
+  
+  // Pattern matching for vibe coding intents
+  const patterns = {
+    fix_bug: [
+      /fix|debug|repair|broken|not working|bug|error|issue/i,
+      /autocomplete.*not.*work|dropdown.*not.*show|form.*not.*submit/i,
+      /why.*not.*work|what.*wrong|help.*fix/i,
+    ],
+    identify_elements: [
+      /identify|find|locate|what elements|inspect|show me|list.*elements/i,
+      /what.*on.*page|elements.*page|inputs.*page|buttons.*page/i,
+      /id.*all|scan|analyze.*page/i,
+    ],
+    make_change: [
+      /change|modify|update|add|remove|create|edit|build|implement/i,
+      /make.*button|add.*feature|update.*style|create.*component/i,
+      /improve|enhance|refactor/i,
+    ],
+    inspect_page: [
+      /what page|where am i|current page|this page|what.*looking at/i,
+      /page.*title|url|path/i,
+    ],
+  };
+  
+  // Special handling for DOM snapshot context
+  const hasDOMSnapshot = context?.domSnapshot && Object.keys(context.domSnapshot).length > 0;
+  
+  // Check each pattern category
+  for (const [type, regexList] of Object.entries(patterns)) {
+    for (const regex of regexList) {
+      if (regex.test(msg)) {
+        const confidence = hasDOMSnapshot ? 0.95 : 0.85; // Higher confidence with DOM data
+        return {
+          isVibecoding: true,
+          type: type as any,
+          confidence,
+        };
+      }
+    }
+  }
+  
+  // Check for MB.MD protocol keywords
+  if (/(mb\.md|mbmd|vibe cod|protocol|simultaneously|recursively|critically)/i.test(msg)) {
+    return {
+      isVibecoding: true,
+      type: 'make_change',
+      confidence: 0.9,
+    };
+  }
+  
+  return {
+    isVibecoding: false,
+    type: null,
+    confidence: 0,
+  };
+}
 
 // Voice Transcription for Mr. Blue Continuous Voice Mode
 router.post("/transcribe", upload.single('audio'), async (req: Request, res: Response) => {
@@ -136,6 +205,56 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
 
       // Log received context for debugging
       console.log('[Mr. Blue] Received context:', JSON.stringify(parsedContext, null, 2));
+
+      // ================== MB.MD v9.0: VIBE CODING INTENT DETECTION ==================
+      const vibecodingIntent = detectVibecodingIntent(message, parsedContext);
+      
+      if (vibecodingIntent.isVibecoding) {
+        console.log(`[Mr. Blue] 🎯 VIBE CODING INTENT DETECTED: ${vibecodingIntent.type} (confidence: ${vibecodingIntent.confidence})`);
+        
+        try {
+          const sessionId = `vibe_${userId || Date.now()}_${Date.now()}`;
+          
+          const vibeRequest = {
+            naturalLanguage: message,
+            context: [
+              `Current Page: ${parsedContext.currentPage || 'Unknown'}`,
+              `Page Title: ${parsedContext.pageTitle || 'Unknown'}`,
+              ...(parsedContext.domSnapshot ? [`DOM Elements: ${JSON.stringify(parsedContext.domSnapshot)}`] : []),
+              ...(parsedContext.breadcrumbs || []).slice(-5).map((b: any) => `Recent: ${b.action} on ${b.page}`)
+            ],
+            targetFiles: parsedContext.targetFiles || [],
+            userId: userId || 0,
+            sessionId,
+          };
+          
+          console.log('[Mr. Blue] 🔨 Calling VibeCodingService...');
+          const vibeResult = await vibeCodingService.generateCode(vibeRequest);
+          
+          if (vibeResult.success) {
+            console.log(`[Mr. Blue] ✅ Vibe coding successful: ${vibeResult.fileChanges.length} files affected`);
+            
+            return res.json({
+              success: true,
+              mode: 'vibecoding',
+              response: vibeResult.interpretation,
+              vibecodingResult: {
+                sessionId: vibeResult.sessionId,
+                fileChanges: vibeResult.fileChanges,
+                validationResults: vibeResult.validationResults,
+                estimatedImpact: vibeResult.estimatedImpact,
+              },
+              requiresApproval: true,
+            });
+          } else {
+            console.log('[Mr. Blue] ⚠️ Vibe coding failed, falling back to AI chat');
+            // Fall through to normal AI chat
+          }
+        } catch (error) {
+          console.error('[Mr. Blue] ❌ Vibe coding error:', error);
+          // Fall through to normal AI chat
+        }
+      }
 
       // Detect context type: Visual Editor vs General Chat
       const isVisualEditorContext = parsedContext?.selectedElement || parsedContext?.recentEdits;
