@@ -1121,6 +1121,69 @@ router.post("/messages/:id/share", authenticateToken, async (req: AuthRequest, r
 });
 
 // ============================================================================
+// MB.MD v9.0: DOM INSPECTOR ENDPOINT
+// ============================================================================
+router.post("/inspect-page", async (req: Request, res: Response) => {
+  try {
+    const { currentPage, domSnapshot } = req.body;
+    
+    if (!domSnapshot) {
+      return res.status(400).json({
+        success: false,
+        message: 'DOM snapshot is required'
+      });
+    }
+    
+    console.log('[Mr. Blue] 🔍 DOM Inspector called for page:', currentPage);
+    
+    // Analyze DOM elements
+    const analysis = {
+      currentPage: currentPage || 'Unknown',
+      summary: {
+        totalInputs: domSnapshot.inputs?.length || 0,
+        totalButtons: domSnapshot.buttons?.length || 0,
+        totalSelects: domSnapshot.selects?.length || 0,
+        totalErrors: domSnapshot.errors?.length || 0,
+      },
+      elements: {
+        inputs: domSnapshot.inputs || [],
+        buttons: domSnapshot.buttons || [],
+        selects: domSnapshot.selects || [],
+        errors: domSnapshot.errors || [],
+      },
+      insights: []
+    };
+    
+    // Generate insights
+    if (analysis.summary.totalErrors > 0) {
+      analysis.insights.push(`⚠️ Found ${analysis.summary.totalErrors} error message(s) on page`);
+    }
+    
+    if (analysis.summary.totalInputs === 0) {
+      analysis.insights.push('ℹ️ No input fields found on this page');
+    }
+    
+    const inputsWithoutTestId = domSnapshot.inputs?.filter((i: any) => !i.testId).length || 0;
+    if (inputsWithoutTestId > 0) {
+      analysis.insights.push(`⚠️ ${inputsWithoutTestId} input(s) missing data-testid attributes`);
+    }
+    
+    console.log('[Mr. Blue] 🔍 DOM Inspector analysis:', analysis.summary);
+    
+    res.json({
+      success: true,
+      analysis
+    });
+  } catch (error: any) {
+    console.error('[Mr. Blue] DOM Inspector error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to inspect page'
+    });
+  }
+});
+
+// ============================================================================
 // CODE GENERATION
 // ============================================================================
 
