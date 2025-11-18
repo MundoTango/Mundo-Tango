@@ -37,13 +37,9 @@ export function useSelfHealing(route: string, enabled: boolean = true) {
       try {
         console.log(`🔧 [useSelfHealing] Triggering self-healing for route: ${route}`);
 
-        const response = await apiRequest<{ success: boolean; result: SelfHealingResult }>(
-          '/api/admin/self-healing/orchestrate',
-          {
-            method: 'POST',
-            body: JSON.stringify({ route })
-          }
-        );
+        // apiRequest expects: (method, url, data)
+        const res = await apiRequest('POST', '/api/admin/self-healing/orchestrate', { route });
+        const response = await res.json() as { success: boolean; result: SelfHealingResult };
 
         if (response.success) {
           setResult(response.result);

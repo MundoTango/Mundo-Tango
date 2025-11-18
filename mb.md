@@ -2470,3 +2470,74 @@ If NO → Task is NOT complete.
 
 ---
 
+## 🧪 TESTING & QUALITY ASSURANCE (v9.1)
+
+### **Pattern 36: Playwright E2E Testing Protocol** ⭐⭐⭐
+
+**Created:** November 18, 2025  
+**Purpose:** Standardize E2E testing across all Mundo Tango features  
+**Context:** Consistent test credentials and protocols for reliable automation
+
+**Standard Test Credentials:**
+
+```typescript
+// ALL Playwright tests MUST use these credentials
+const TEST_CREDENTIALS = {
+  email: 'admin@mundotango.life',
+  password: 'admin123',
+  role: 'god',           // God-level access for full feature testing
+  roleLevel: 8           // Enables all admin/self-healing features
+};
+```
+
+**Why Standardized Credentials:**
+1. ✅ **Consistency** - All tests use same account, no credential confusion
+2. ✅ **God-Level Access** - Tests all features including admin/self-healing
+3. ✅ **Database Stability** - Single test user, predictable state
+4. ✅ **Easy Debugging** - Known account for manual verification
+5. ✅ **No Setup Required** - Pre-existing account, tests work immediately
+
+**Test Authentication Pattern:**
+
+```typescript
+// Standard login flow for ALL Playwright tests
+test('Feature Name', async ({ page }) => {
+  // 1. Navigate to login
+  await page.goto('/login');
+  
+  // 2. Use standard credentials
+  await page.fill('[data-testid="input-email"]', 'admin@mundotango.life');
+  await page.fill('[data-testid="input-password"]', 'admin123');
+  await page.click('[data-testid="button-login"]');
+  
+  // 3. Wait for authentication
+  await page.waitForURL('/dashboard'); // or appropriate authenticated page
+  
+  // 4. Proceed with test
+  // ... your test steps here
+});
+```
+
+**Test Design Principles:**
+
+1. **Always Login First** - No anonymous testing unless specifically testing public pages
+2. **Use data-testid** - All interactive elements MUST have test IDs
+3. **Verify End-to-End** - Test complete user flows, not isolated components
+4. **Check Real Data** - Validate actual API responses and database changes
+5. **Performance Targets** - Include timing assertions (<500ms for critical paths)
+
+**Quality Targets:**
+- **Coverage**: 95%+ for critical user flows
+- **Reliability**: 99%+ pass rate (flaky tests must be fixed)
+- **Speed**: <30s for individual test, <5min for full suite
+- **Isolation**: Each test cleans up after itself
+
+**Pattern applies to:**
+- ✅ Visual Editor self-healing tests
+- ✅ Mr. Blue AI feature tests
+- ✅ Social feed/events/groups tests
+- ✅ Admin dashboard tests
+- ✅ Payment/subscription flow tests
+
+---
+
