@@ -87,7 +87,12 @@ export class CodeGenerator {
       }
     }
 
-    return `You are an expert full-stack developer working on the Mundo Tango platform. You follow best practices, write clean TypeScript code, and adhere to the project's coding standards.
+    return `You are an expert full-stack developer working on the Mundo Tango platform using React + TypeScript + Vite.
+
+**CRITICAL CONTEXT UNDERSTANDING:**
+- User mentioned "MB.MD" referring to the MB.MD Development Protocol (a methodology)
+- This is NOT a file name - do NOT create files named "mb.md.ts" or "mb-md.tsx"
+- Focus on the ACTUAL problem described in the user request
 
 **User Request:** ${request.request}
 
@@ -98,37 +103,40 @@ ${contextSnippets}
 
 ${existingCode}
 
+**Technology Stack:**
+- Frontend: React 18 + TypeScript + Vite + Wouter (routing) + TanStack Query
+- UI: shadcn/ui + Tailwind CSS
+- Backend: Node.js + Express + PostgreSQL + Drizzle ORM
+- File Structure: client/src/pages/, client/src/components/, server/
+
 **Instructions:**
 1. Generate production-ready code that fulfills the user's request
-2. Follow the existing code patterns and architecture
-3. Use TypeScript with proper typing
-4. Follow the project's component structure and naming conventions
-5. Include proper error handling and validation
-6. Add helpful comments for complex logic
-7. Format code properly (2-space indentation)
+2. Fix the ACTUAL bug/issue described (e.g., city autocomplete not working)
+3. Modify EXISTING files, not create new unrelated files
+4. Use TypeScript with proper typing
+5. Follow React hooks best practices
+6. Include proper error handling
+7. Use 2-space indentation, NO tabs
 
 **Output Format:**
-Provide your response as a JSON array of file changes:
+Provide ONLY a JSON array with NO markdown code blocks:
 
-\`\`\`json
 [
   {
-    "filePath": "relative/path/to/file.ts",
-    "action": "create|modify",
-    "reason": "Brief explanation of this change",
-    "content": "Complete file content here..."
+    "filePath": "client/src/pages/onboarding/CitySelectionPage.tsx",
+    "action": "modify",
+    "reason": "Fix city autocomplete",
+    "content": "import statement here...\\n\\nfunction Component() {\\n  return <div></div>\\n}"
   }
 ]
-\`\`\`
 
-IMPORTANT: 
-- Only include files that need to be changed
-- Provide COMPLETE file content (not partial)
-- Use proper JSON escaping for quotes and newlines
-- Do not truncate code
-- Respond ONLY with the JSON array, no additional text
+**CRITICAL JSON FORMATTING:**
+- Escape ALL newlines as \\n (two characters: backslash + n)
+- Escape ALL quotes as \\"
+- Do NOT use actual line breaks in the content string
+- Respond with ONLY the JSON array, nothing before or after
 
-Generate the code changes now:`;
+Generate the fix now:`;
   }
 
   /**
@@ -184,6 +192,17 @@ Generate the code changes now:`;
         }
       }
 
+      // Clean JSON string - remove control characters
+      jsonStr = jsonStr.replace(/[\x00-\x1F\x7F-\x9F]/g, (char) => {
+        // Replace control characters with their escaped equivalents
+        const escaped: Record<string, string> = {
+          '\n': '\\n',
+          '\r': '\\r',
+          '\t': '\\t',
+        };
+        return escaped[char] || '';
+      });
+      
       const parsed = JSON.parse(jsonStr);
       
       if (!Array.isArray(parsed)) {

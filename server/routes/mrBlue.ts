@@ -215,15 +215,29 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
         try {
           const sessionId = `vibe_${userId || Date.now()}_${Date.now()}`;
           
+          // Auto-detect target file from current page
+          let targetFiles = parsedContext.targetFiles || [];
+          const currentPage = parsedContext.currentPage || '';
+          
+          // Map routes to component files
+          if (currentPage.includes('/onboarding/step-1') || currentPage.includes('city')) {
+            targetFiles = ['client/src/pages/onboarding/CitySelectionPage.tsx'];
+          } else if (currentPage.includes('/profile')) {
+            targetFiles = ['client/src/pages/ProfilePage.tsx'];
+          } else if (currentPage.includes('/events')) {
+            targetFiles = ['client/src/pages/EventsPage.tsx'];
+          }
+          
           const vibeRequest = {
             naturalLanguage: message,
             context: [
               `Current Page: ${parsedContext.currentPage || 'Unknown'}`,
               `Page Title: ${parsedContext.pageTitle || 'Unknown'}`,
-              ...(parsedContext.domSnapshot ? [`DOM Elements: ${JSON.stringify(parsedContext.domSnapshot)}`] : []),
-              ...(parsedContext.breadcrumbs || []).slice(-5).map((b: any) => `Recent: ${b.action} on ${b.page}`)
+              `Target Component File: ${targetFiles[0] || 'Auto-detect'}`,
+              ...(parsedContext.domSnapshot ? [`DOM Snapshot: ${JSON.stringify(parsedContext.domSnapshot, null, 2)}`] : []),
+              ...(parsedContext.breadcrumbs || []).slice(-5).map((b: any) => `Recent Action: ${b.action} on ${b.page}`)
             ],
-            targetFiles: parsedContext.targetFiles || [],
+            targetFiles,
             userId: userId || 0,
             sessionId,
           };
