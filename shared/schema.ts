@@ -1003,6 +1003,33 @@ export const messageBookmarks = pgTable("message_bookmarks", {
 }));
 
 // ============================================================================
+// MR BLUE ERROR PATTERNS (Phase 3 - Error Analysis API)
+// ============================================================================
+
+export const errorPatterns = pgTable("error_patterns", {
+  id: serial("id").primaryKey(),
+  errorType: varchar("error_type", { length: 100 }),
+  errorMessage: text("error_message").notNull(),
+  errorStack: text("error_stack"),
+  frequency: integer("frequency").default(1).notNull(),
+  lastSeen: timestamp("last_seen").defaultNow().notNull(),
+  firstSeen: timestamp("first_seen").defaultNow().notNull(),
+  status: varchar("status", { length: 50 }).default("pending").notNull(), // pending, analyzed, auto_fixed, manually_fixed, escalated
+  aiAnalysis: jsonb("ai_analysis"),
+  suggestedFix: text("suggested_fix"),
+  fixConfidence: numeric("fix_confidence", { precision: 3, scale: 2 }), // 0.00 to 1.00
+  similarErrors: integer("similar_errors").array(),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  errorTypeIdx: index("error_patterns_error_type_idx").on(table.errorType),
+  statusIdx: index("error_patterns_status_idx").on(table.status),
+  frequencyIdx: index("error_patterns_frequency_idx").on(table.frequency),
+  lastSeenIdx: index("error_patterns_last_seen_idx").on(table.lastSeen),
+}));
+
+// ============================================================================
 // MR BLUE MEMORY SYSTEM (System 8)
 // ============================================================================
 
@@ -1418,6 +1445,20 @@ export const insertMrBlueMessageSchema = createInsertSchema(mrBlueMessages).omit
 });
 export type InsertMrBlueMessage = z.infer<typeof insertMrBlueMessageSchema>;
 export type SelectMrBlueMessage = typeof mrBlueMessages.$inferSelect;
+
+// Error Patterns (Phase 3)
+export const insertErrorPatternSchema = createInsertSchema(errorPatterns, {
+  errorMessage: z.string().min(1),
+  status: z.enum(['pending', 'analyzed', 'auto_fixed', 'manually_fixed', 'escalated']),
+}).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  lastSeen: true,
+  firstSeen: true,
+});
+export type InsertErrorPattern = z.infer<typeof insertErrorPatternSchema>;
+export type SelectErrorPattern = typeof errorPatterns.$inferSelect;
 
 // User Memories (System 8)
 export const insertUserMemorySchema = createInsertSchema(userMemories, {

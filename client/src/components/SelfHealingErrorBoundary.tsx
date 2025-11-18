@@ -222,44 +222,61 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
     const { pageName = 'Unknown Page' } = this.props;
     
     try {
-      const bugReport = {
+      const errorReport = {
         page: pageName,
         error: error.toString(),
         stack: error.stack,
         componentStack: errorInfo.componentStack,
         timestamp: new Date().toISOString(),
         userAgent: navigator.userAgent,
+        url: window.location.href,
       };
       
       console.log('[Self-Healing] 🤖 Sending to Mr Blue AI for analysis...');
       
-      const response = await fetch('/api/v1/report-bug', {
+      // Use the new /api/mrblue/analyze-error endpoint
+      const response = await fetch('/api/mrblue/analyze-error', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bugReport),
+        body: JSON.stringify({ errors: [errorReport] }),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log('[Mr Blue Analysis] 🤖', data.analysis);
-        
-        // Check structured response for auto-fix flag
-        if (data.structured?.autoFixable) {
-          console.log('[Self-Healing] 💡 Mr Blue confirms this is auto-fixable');
-          console.log('[Self-Healing] 📝 Fix steps:', data.structured.fixSteps);
-          
-          // For auto-fixable errors, attempt recovery after showing analysis
-          setTimeout(() => {
-            console.log('[Self-Healing] 🔄 Attempting Mr Blue suggested auto-fix...');
-            this.handleAutoRecover();
-          }, 3000);
-        } else {
-          console.log('[Self-Healing] ⚠️ Mr Blue says this requires manual intervention');
-          console.log('[Self-Healing] 🎯 Severity:', data.structured?.severity);
+      if (!response.ok) {
+        // Graceful degradation - API endpoint might not exist yet (Phase 2)
+        if (response.status === 404) {
+          console.warn(
+            '[Self-Healing] Mr Blue API endpoint not ready yet (404). This is expected during Phase 2.'
+          );
+          return;
         }
+        
+        // Other error
+        throw new Error(`Mr Blue API returned ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('[Mr Blue Analysis] 🤖', data);
+      
+      // Check structured response for auto-fix flag
+      if (data.analysis?.autoFixable) {
+        console.log('[Self-Healing] 💡 Mr Blue confirms this is auto-fixable');
+        console.log('[Self-Healing] 📝 Fix steps:', data.analysis.fixSteps);
+        
+        // For auto-fixable errors, attempt recovery after showing analysis
+        setTimeout(() => {
+          console.log('[Self-Healing] 🔄 Attempting Mr Blue suggested auto-fix...');
+          this.handleAutoRecover();
+        }, 3000);
+      } else {
+        console.log('[Self-Healing] ⚠️ Mr Blue says this requires manual intervention');
+        console.log('[Self-Healing] 🎯 Severity:', data.analysis?.severity);
       }
     } catch (err) {
-      console.error('[Self-Healing] Failed to contact Mr Blue:', err);
+      // Network failure - gracefully degrade without crashing
+      console.warn(
+        '[Self-Healing] Failed to contact Mr Blue (network error). Error still handled locally.',
+        err
+      );
     }
   }
 
@@ -384,47 +401,52 @@ export class SelfHealingErrorBoundary extends Component<Props, State> {
     const { pageName = 'Unknown Page' } = this.props;
     const { error, errorInfo } = this.state;
     
-    const bugReport = {
+    const errorReport = {
       page: pageName,
       error: error?.toString(),
       stack: error?.stack,
       componentStack: errorInfo?.componentStack,
       timestamp: new Date().toISOString(),
       userAgent: navigator.userAgent,
+      url: window.location.href,
     };
     
-    console.log('[Self-Healing] Sending bug report to Mr Blue AI...', bugReport);
+    console.log('[Self-Healing] Sending bug report to Mr Blue AI...', errorReport);
     
     try {
-      // Send to Mr Blue AI for analysis
-      const response = await fetch('/api/v1/report-bug', {
+      // Send to Mr Blue AI for analysis using new endpoint
+      const response = await fetch('/api/mrblue/analyze-error', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bugReport),
+        body: JSON.stringify({ errors: [errorReport] }),
       });
 
       if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('Mr Blue API endpoint not ready yet');
+        }
         throw new Error('Failed to send bug report');
       }
 
       const data = await response.json();
       
-      console.log('[Mr Blue Analysis]:', data.analysis);
+      console.log('[Mr Blue Analysis]:', data);
       
       // Show analysis in a dialog/alert (future: show in modal)
-      alert(`🤖 Mr Blue AI Analysis:\n\n${data.analysis}\n\nFull details copied to clipboard.`);
+      const analysisText = data.analysis?.description || data.message || 'Analysis received';
+      alert(`🤖 Mr Blue AI Analysis:\n\n${analysisText}\n\nFull details copied to clipboard.`);
       
       // Also copy to clipboard as backup
       navigator.clipboard.writeText(JSON.stringify({
-        bugReport,
-        mrBlueAnalysis: data.analysis,
+        errorReport,
+        mrBlueAnalysis: data,
       }, null, 2));
 
     } catch (error: any) {
       console.error('[Self-Healing] Failed to send to Mr Blue:', error);
       
       // Fallback: just copy to clipboard
-      navigator.clipboard.writeText(JSON.stringify(bugReport, null, 2));
+      navigator.clipboard.writeText(JSON.stringify(errorReport, null, 2));
       alert('⚠️ Could not connect to Mr Blue AI. Error details copied to clipboard.');
     }
   };

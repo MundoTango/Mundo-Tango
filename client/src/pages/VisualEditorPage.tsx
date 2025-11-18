@@ -29,6 +29,7 @@ import { StreamingStatusPanel } from "@/components/visual-editor/StreamingStatus
 import type { ChangeMetadata } from "@/components/visual-editor/VisualDiffViewer";
 import { SEO } from "@/components/SEO";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { ErrorAnalysisPanel } from "@/components/mr-blue/ErrorAnalysisPanel";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -724,35 +725,8 @@ function VisualEditorPageContent() {
     );
   }
 
-  // Access denied for non-God Level users
-  if (!isGodLevel) {
-    return (
-      <>
-        <SEO 
-          title="Access Denied - Visual Editor"
-          description="God Level access required"
-        />
-        <div className="h-screen w-full bg-background flex items-center justify-center p-4">
-          <Card className="w-full max-w-md">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ShieldAlert className="h-5 w-5 text-destructive" />
-                Access Denied
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Alert variant="destructive">
-                <AlertDescription>
-                  Visual Editor requires God Level (Tier 8) access.
-                  {user ? ` Your current role: ${user.role}` : ' Please log in.'}
-                </AlertDescription>
-              </Alert>
-            </CardContent>
-          </Card>
-        </div>
-      </>
-    );
-  }
+  // NOTE: Access restriction removed - Visual Editor is now the homepage ("/")
+  // All users can access Visual Editor (previously god-level only)
 
   // Main Visual Editor UI
   return (
@@ -774,10 +748,6 @@ function VisualEditorPageContent() {
             <p className="text-xs text-muted-foreground mt-1">
               AI-Powered Conversational Code Generation
             </p>
-            <Badge variant="outline" className="mt-2 text-xs">
-              <Crown className="h-3 w-3 mr-1" />
-              God Level Access
-            </Badge>
           </header>
 
           <Separator />
@@ -1066,6 +1036,11 @@ function VisualEditorPageContent() {
               </div>
             </CardContent>
           </Card>
+        </section>
+
+        {/* Middle Panel: Error Analysis */}
+        <section className="w-96 border-r flex flex-col" role="region" aria-label="Error analysis panel">
+          <ErrorAnalysisPanel />
         </section>
 
         {/* Right Panel: Live Preview / Code View / History */}

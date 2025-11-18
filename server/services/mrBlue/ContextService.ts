@@ -477,6 +477,30 @@ export class ContextService {
       throw error;
     }
   }
+
+  /**
+   * Search for similar errors (Phase 3: Error Analysis API)
+   * 
+   * @param errorMessage - The error message to search for
+   * @param topK - Number of similar errors to return (default: 5)
+   * @returns Array of similar errors (empty for now - LanceDB implementation pending)
+   * 
+   * NOTE: This is a stub implementation. Full LanceDB error search will be implemented
+   * in a future phase when we add error embeddings to LanceDB.
+   */
+  async searchErrors(errorMessage: string, topK: number = 5): Promise<Array<{
+    id: number;
+    errorMessage: string;
+    similarity: number;
+  }>> {
+    console.log(`[MrBlue Context] searchErrors() called for: "${errorMessage.substring(0, 50)}..." (topK: ${topK})`);
+    console.log('[MrBlue Context] ⏳ LanceDB error search not yet implemented - returning empty array');
+    
+    // TODO: Implement LanceDB error search when error embeddings are added
+    // This will enable semantic similarity search for error patterns
+    
+    return [];
+  }
 }
 
 // Export singleton instance

@@ -16,6 +16,7 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { MrBlueWidget } from "./components/MrBlueWidget";
 import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
 import { LoadingFallback } from "./components/LoadingFallback";
+import { initErrorDetection, cleanupErrorDetection } from "./lib/proactiveErrorDetection";
 
 // Lazy load heavy components - Updated to use new unified interface
 const UnifiedMrBlue = lazy(() => import("./components/mr-blue/UnifiedMrBlue"));
@@ -261,6 +262,9 @@ const LegalSignaturePage = lazy(() => import("@/pages/legal/LegalSignaturePage")
 const UserTestingPage = lazy(() => import("@/pages/UserTestingPage"));
 const VolunteerRecruitmentPage = lazy(() => import("@/pages/VolunteerRecruitmentPage"));
 const VolunteerTestingInterface = lazy(() => import("@/pages/VolunteerTestingInterface"));
+
+// Error Detection Test Page (Phase 2 - Proactive Error Detection)
+const ErrorDetectionTest = lazy(() => import("@/pages/ErrorDetectionTest"));
 
 // Settings & Account
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
@@ -2063,6 +2067,14 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/admin/error-detection-test">
+        <ProtectedRoute>
+          <AppLayout>
+            <ErrorDetectionTest />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/marketing/seo" component={SEOAgentPage} />
       <Route path="/marketing/content" component={ContentAgentPage} />
       <Route path="/marketing/social-media" component={SocialMediaAgentPage} />
@@ -2085,6 +2097,17 @@ function Router() {
 function App() {
   const [isVisualEditorOpen, setIsVisualEditorOpen] = useState(false);
   const [location] = useLocation();
+
+  // Initialize Proactive Error Detection
+  useEffect(() => {
+    console.log('[App] Initializing Proactive Error Detection...');
+    const detector = initErrorDetection();
+    
+    return () => {
+      console.log('[App] Cleaning up Proactive Error Detection...');
+      cleanupErrorDetection();
+    };
+  }, []);
 
   useEffect(() => {
     // Check for ?edit=true in URL to open Visual Editor
