@@ -15,6 +15,11 @@ import {
 } from '../knowledge/mr-blue-troubleshooting-kb';
 import { legalOrchestrator } from '../services/legal/LegalOrchestrator';
 import { ElevenLabsVoiceService } from '../services/premium/elevenlabsVoiceService';
+import { browserAutomationService } from '../services/mrBlue/BrowserAutomationService';
+import { db } from '@db';
+import { computerUseTasks, computerUseScreenshots } from '@shared/schema';
+import { nanoid } from 'nanoid';
+import { eq } from 'drizzle-orm';
 
 const router = Router();
 const elevenlabsService = new ElevenLabsVoiceService();
@@ -32,8 +37,66 @@ const enhancedChatSchema = z.object({
 });
 
 /**
+ * Computer Use Intent Detection
+ * Detects automation requests in user messages
+ */
+function detectComputerUseIntent(message: string): {
+  isAutomation: boolean;
+  type: 'wix_extraction' | 'facebook_automation' | 'custom' | null;
+  confidence: number;
+} {
+  const msg = message.toLowerCase();
+  
+  // Wix extraction patterns
+  const wixPatterns = [
+    /wix.*contact/i,
+    /extract.*wix/i,
+    /get.*wix.*data/i,
+    /download.*wix.*contact/i,
+    /migrate.*wix/i,
+  ];
+  
+  for (const pattern of wixPatterns) {
+    if (pattern.test(message)) {
+      return {
+        isAutomation: true,
+        type: 'wix_extraction',
+        confidence: 0.9
+      };
+    }
+  }
+  
+  // Facebook automation patterns
+  const facebookPatterns = [
+    /facebook.*automat/i,
+    /automate.*facebook/i,
+    /facebook.*post/i,
+    /facebook.*invite/i,
+  ];
+  
+  for (const pattern of facebookPatterns) {
+    if (pattern.test(message)) {
+      return {
+        isAutomation: true,
+        type: 'facebook_automation',
+        confidence: 0.8
+      };
+    }
+  }
+  
+  return {
+    isAutomation: false,
+    type: null,
+    confidence: 0
+  };
+}
+
+/**
  * Context-aware chat endpoint for Mr. Blue interactions
- * Now supports ElevenLabs TTS for human-sounding voice responses
+ * Now supports:
+ * - Computer Use automation triggers
+ * - ElevenLabs TTS for voice responses
+ * - Context-aware assistance
  */
 router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
   try {
@@ -44,11 +107,124 @@ router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
     }
     
     const userId = (req as any).user?.id;
+    const userRoleLevel = (req as any).user?.roleLevel || 0;
+    
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
     
-    // Build context-aware system message
+    // STEP 1: Check for Computer Use automation intent
+    const automationIntent = detectComputerUseIntent(message);
+    
+    if (automationIntent.isAutomation && userRoleLevel >= 8) {
+      console.log(`[Mr. Blue] Detected automation intent: ${automationIntent.type}`);
+      
+      if (automationIntent.type === 'wix_extraction') {
+        try {
+          // Check if Wix credentials are configured
+          if (!process.env.WIX_EMAIL || !process.env.WIX_PASSWORD) {
+            return res.json({
+              role: 'assistant',
+              content: "I'd love to help extract your Wix contacts, but I need WIX_EMAIL and WIX_PASSWORD configured in environment variables first. Please ask an admin to set these up.",
+              timestamp: new Date().toISOString(),
+              contextUsed: true,
+              automationType: 'wix_extraction',
+              automationStatus: 'credentials_missing'
+            });
+          }
+          
+          const taskId = `wix_extract_${nanoid(10)}`;
+          
+          // Create task record
+          await db.insert(computerUseTasks).values({
+            taskId,
+            instruction: 'Extract all contacts from Wix (triggered by Mr. Blue chat)',
+            status: 'running',
+            steps: [],
+            currentStep: 0,
+            maxSteps: 20,
+            requiresApproval: false,
+            automationType: 'wix_extraction'
+          });
+          
+          // Execute extraction in background
+          (async () => {
+            try {
+              const result = await browserAutomationService.extractWixContacts(taskId);
+              
+              // Store screenshots
+              if (result.screenshots && result.screenshots.length > 0) {
+                for (const screenshot of result.screenshots) {
+                  await db.insert(computerUseScreenshots).values({
+                    taskId,
+                    stepNumber: screenshot.step,
+                    screenshotBase64: screenshot.base64,
+                    action: { description: screenshot.action }
+                  });
+                }
+              }
+              
+              // Update task with result
+              await db.update(computerUseTasks)
+                .set({
+                  status: result.success ? 'completed' : 'failed',
+                  currentStep: result.screenshots?.length || 0,
+                  result: result.data,
+                  error: result.error,
+                  steps: result.screenshots?.map(s => ({
+                    step: s.step,
+                    action: s.action
+                  })) || []
+                })
+                .where(eq(computerUseTasks.taskId, taskId));
+              
+              console.log(`[Mr. Blue] Wix extraction task ${taskId} completed:`, result.success ? 'SUCCESS' : 'FAILED');
+            } catch (error: any) {
+              console.error(`[Mr. Blue] Wix extraction error:`, error);
+              
+              await db.update(computerUseTasks)
+                .set({
+                  status: 'failed',
+                  error: error.message
+                })
+                .where(eq(computerUseTasks.taskId, taskId));
+            }
+          })();
+          
+          // Return immediate response
+          return res.json({
+            role: 'assistant',
+            content: `🚀 Starting Wix contact extraction!\n\nTask ID: ${taskId}\n\nI'm now:\n1. Logging into your Wix account\n2. Navigating to Contacts\n3. Exporting all contacts\n4. Downloading the CSV\n\nThis will take 2-3 minutes. I'll show you real-time screenshots as I go. You can check the status anytime in the Computer Use tab.\n\nPoll /api/computer-use/task/${taskId} for live updates!`,
+            timestamp: new Date().toISOString(),
+            contextUsed: true,
+            automationType: 'wix_extraction',
+            automationStatus: 'started',
+            taskId,
+            pollUrl: `/api/computer-use/task/${taskId}`
+          });
+        } catch (error: any) {
+          console.error('[Mr. Blue] Wix extraction error:', error);
+          return res.json({
+            role: 'assistant',
+            content: `❌ Failed to start Wix extraction: ${error.message}\n\nPlease try again or check the Computer Use tab for more details.`,
+            timestamp: new Date().toISOString(),
+            automationType: 'wix_extraction',
+            automationStatus: 'error',
+            error: error.message
+          });
+        }
+      } else if (automationIntent.type === 'facebook_automation') {
+        return res.json({
+          role: 'assistant',
+          content: "🎯 Facebook automation detected! This feature is coming soon. For now, please use the Facebook Invites page to send invitations manually.",
+          timestamp: new Date().toISOString(),
+          automationType: 'facebook_automation',
+          automationStatus: 'not_implemented'
+        });
+      }
+    }
+    
+    // STEP 2: Build context-aware system message
     let systemMessage = 'You are Mr. Blue, the tango community AI assistant.';
     
     if (context) {
