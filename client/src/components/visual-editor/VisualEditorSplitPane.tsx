@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { ComponentSelector, type SelectedComponent } from "./ComponentSelector";
+import { ComponentPaletteIntegration } from "./ComponentPaletteIntegration";
 import { DragDropHandler } from "./DragDropHandler";
 import { EditControls } from "./EditControls";
 import { SelectionOverlay } from "./SelectionOverlay";
@@ -317,11 +318,18 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
 
         {/* Split Pane Container */}
         <div className="flex h-[calc(100vh-3.5rem)]">
-          {/* LEFT SIDE: Live Preview (60%) */}
+          {/* LEFT: Component Palette */}
+          <VisualEditorErrorBoundary>
+            <ComponentPaletteIntegration 
+              iframeRef={iframeRef}
+              iframeInjector={iframeInjectorRef.current}
+            />
+          </VisualEditorErrorBoundary>
+          
+          {/* CENTER: Live Preview */}
           <VisualEditorErrorBoundary>
             <div 
-              className="relative bg-muted/30"
-              style={{ width: `${splitRatio}%` }}
+              className="relative bg-muted/30 flex-1"
               data-testid="preview-pane"
             >
               {/* Error State */}

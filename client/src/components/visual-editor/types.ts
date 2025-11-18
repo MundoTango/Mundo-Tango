@@ -1,9 +1,48 @@
 /**
  * Visual Page Editor Types
- * Component definitions for drag-drop page builder
+ * Component definitions for drag-drop page builder with 20+ components
  */
 
-export type ComponentType = 'heading' | 'text' | 'image' | 'button' | 'container';
+// Expanded component type definitions
+export type ComponentType = 
+  // Layout (5)
+  | 'container' 
+  | 'flex-row' 
+  | 'flex-column' 
+  | 'grid-2x2' 
+  | 'grid-3x3' 
+  | 'section'
+  // Content (6)
+  | 'heading' 
+  | 'paragraph' 
+  | 'image' 
+  | 'video' 
+  | 'code-block' 
+  | 'divider'
+  // Interactive (5)
+  | 'button' 
+  | 'input' 
+  | 'textarea' 
+  | 'select' 
+  | 'checkbox'
+  // Navigation (4)
+  | 'link' 
+  | 'breadcrumbs' 
+  | 'tabs' 
+  | 'navbar';
+
+export type ComponentCategory = 'layout' | 'content' | 'interactive' | 'navigation';
+
+export interface ComponentDefinition {
+  type: ComponentType;
+  category: ComponentCategory;
+  label: string;
+  description: string;
+  icon: string;
+  defaultHtml: string;
+  defaultClasses: string;
+  thumbnail?: string;
+}
 
 export interface BaseComponent {
   id: string;
@@ -22,7 +61,7 @@ export interface HeadingComponent extends BaseComponent {
 }
 
 export interface TextComponent extends BaseComponent {
-  type: 'text';
+  type: 'paragraph';
   properties: {
     text: string;
     fontSize: string;
@@ -77,4 +116,18 @@ export interface PageData {
   components: PageComponent[];
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface DragDropPosition {
+  x: number;
+  y: number;
+  targetElement?: HTMLElement;
+  insertPosition?: 'before' | 'after' | 'inside';
+}
+
+export interface ComponentInsertionData {
+  type: ComponentType;
+  html: string;
+  position: DragDropPosition;
+  testId: string;
 }

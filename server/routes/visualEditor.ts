@@ -7,6 +7,7 @@ import { Router, type Request, Response } from "express";
 import { aiCodeGenerator } from "../services/aiCodeGenerator";
 import { gitService } from "../services/gitService";
 import { traceRoute } from "../metrics/tracing";
+import { GroqService, GROQ_MODELS } from "../services/ai/GroqService";
 import * as path from "path";
 
 const router = Router();
@@ -351,6 +352,180 @@ router.post("/explain", async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: 'Failed to explain code'
+    });
+  }
+});
+
+// AI-Powered Smart Suggestions
+router.post("/suggestions", traceRoute("visual-editor-suggestions"), async (req: Request, res: Response) => {
+  try {
+    const { pageHtml, selectedElement, currentStyles, pagePath } = req.body;
+
+    if (!pageHtml) {
+      return res.status(400).json({
+        success: false,
+        message: 'Page HTML is required'
+      });
+    }
+
+    console.log('[VisualEditor] Generating AI suggestions for page:', pagePath || 'unknown');
+
+    // Build the analysis prompt
+    const systemPrompt = `You are a UI/UX expert specializing in web accessibility, design systems, and modern web best practices.
+
+Your role is to analyze HTML/React pages and provide specific, actionable improvement suggestions.
+
+Focus areas:
+1. **Accessibility (WCAG 2.1 AA)**:
+   - Color contrast ratios (4.5:1 for normal text, 3:1 for large text)
+   - ARIA labels and semantic HTML
+   - Keyboard navigation
+   - Screen reader compatibility
+
+2. **Design System Compliance**:
+   - MT Ocean Theme adherence (Turquoise #40E0D0, Dodger Blue #1E90FF, Cobalt Blue #0047AB)
+   - Consistent spacing (4px system)
+   - Typography hierarchy
+   - Component usage (shadcn/ui)
+
+3. **UX Best Practices**:
+   - Button sizing (min 44px touch targets)
+   - Form validation and error messages
+   - Loading states and feedback
+   - Mobile responsiveness
+
+4. **Performance**:
+   - Image optimization
+   - Unused CSS/JS
+   - Large bundle sizes
+   - Slow render times
+
+5. **Responsive Design**:
+   - Mobile-first approach
+   - Breakpoint consistency
+   - Touch-friendly interfaces
+
+Return suggestions as a valid JSON array with this exact structure:
+[
+  {
+    "id": "unique-id",
+    "category": "accessibility" | "ux" | "design" | "performance" | "responsive",
+    "severity": "critical" | "warning" | "suggestion" | "info",
+    "title": "Short descriptive title (max 50 chars)",
+    "message": "Clear explanation of the issue",
+    "fix": "Step-by-step how to fix it",
+    "selector": "CSS selector for the affected element (if applicable)",
+    "automated": true | false,
+    "changes": { "property": "value" } (if automated is true)
+  }
+]
+
+Rules:
+- Return 5-10 suggestions maximum
+- Prioritize critical issues first
+- Only mark as "automated: true" if it's a simple CSS change
+- Be specific with selectors
+- Focus on actionable improvements
+- Return ONLY valid JSON, no explanations before or after`;
+
+    const userPrompt = `Analyze this page and provide UI/UX improvement suggestions:
+
+Page HTML:
+\`\`\`html
+${pageHtml.substring(0, 8000)}
+\`\`\`
+
+${selectedElement ? `Selected Element:
+Tag: ${selectedElement.tagName}
+ID: ${selectedElement.id || 'none'}
+Classes: ${selectedElement.className || 'none'}
+Text: ${selectedElement.textContent?.substring(0, 100) || 'none'}
+` : ''}
+
+${currentStyles ? `Current Styles:
+${JSON.stringify(currentStyles, null, 2)}
+` : ''}
+
+Page Path: ${pagePath || '/'}
+
+Provide 5-10 specific improvement suggestions in JSON format.`;
+
+    // Query Groq Llama-3.3-70b for analysis
+    const groqResponse = await GroqService.query({
+      prompt: userPrompt,
+      model: GROQ_MODELS.LLAMA_70B_LATEST,
+      systemPrompt,
+      temperature: 0.3, // Lower temperature for consistent, focused analysis
+      maxTokens: 2000,
+      waitForRateLimit: true
+    });
+
+    // Parse AI response
+    let suggestions = [];
+    try {
+      // Extract JSON from response (might be wrapped in markdown)
+      const jsonMatch = groqResponse.content.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        suggestions = JSON.parse(jsonMatch[0]);
+      } else {
+        // Try parsing the full response
+        suggestions = JSON.parse(groqResponse.content);
+      }
+    } catch (parseError) {
+      console.error('[VisualEditor] Failed to parse AI suggestions:', parseError);
+      return res.status(500).json({
+        success: false,
+        message: 'AI returned invalid suggestions format',
+        rawResponse: groqResponse.content
+      });
+    }
+
+    // Validate and sanitize suggestions
+    const validSuggestions = suggestions
+      .filter((s: any) => s.id && s.category && s.severity && s.title && s.message)
+      .slice(0, 10); // Max 10 suggestions
+
+    // Calculate summary statistics
+    const summary = {
+      total: validSuggestions.length,
+      critical: validSuggestions.filter((s: any) => s.severity === 'critical').length,
+      warnings: validSuggestions.filter((s: any) => s.severity === 'warning').length,
+      suggestions: validSuggestions.filter((s: any) => s.severity === 'suggestion').length,
+      automated: validSuggestions.filter((s: any) => s.automated).length
+    };
+
+    // Calculate page quality score (0-100)
+    const pageScore = Math.max(0, 100 - (
+      (summary.critical * 15) +
+      (summary.warnings * 5) +
+      (summary.suggestions * 2)
+    ));
+
+    const report = {
+      suggestions: validSuggestions,
+      summary,
+      pageScore,
+      generatedAt: Date.now(),
+      model: groqResponse.model,
+      analysisSpeed: groqResponse.speed
+    };
+
+    console.log(
+      `[VisualEditor] ✅ Generated ${validSuggestions.length} suggestions | ` +
+      `Critical: ${summary.critical}, Warnings: ${summary.warnings} | ` +
+      `Score: ${pageScore}/100 | ` +
+      `${groqResponse.speed.latencyMs}ms`
+    );
+
+    res.json({
+      success: true,
+      report
+    });
+  } catch (error: any) {
+    console.error('[VisualEditor] Suggestions error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to generate suggestions'
     });
   }
 });

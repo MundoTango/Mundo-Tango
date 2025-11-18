@@ -21,21 +21,30 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { 
   Sparkles, ChevronDown, ChevronUp, AlertTriangle, 
-  AlertCircle, Info, Lightbulb, Zap, RefreshCw 
+  AlertCircle, Info, Lightbulb, Zap, RefreshCw, Filter 
 } from "lucide-react";
 
 // ==================== TYPES ====================
 
 interface DesignSuggestion {
   id: string;
-  type: 'accessibility' | 'ux' | 'theme' | 'responsive' | 'component';
+  category: 'accessibility' | 'ux' | 'design' | 'performance' | 'responsive';
   severity: 'critical' | 'warning' | 'suggestion' | 'info';
+  title: string;
   message: string;
   fix: string;
   selector?: string;
   automated: boolean;
+  changes?: Record<string, string>;
 }
 
 interface SuggestionsReport {
@@ -49,41 +58,71 @@ interface SuggestionsReport {
   };
   pageScore: number;
   generatedAt: number;
+  model?: string;
+  analysisSpeed?: {
+    latencyMs: number;
+    tokensPerSecond: number;
+  };
 }
 
 // ==================== COMPONENT ====================
 
 interface SmartSuggestionsProps {
-  url: string; // Current page URL in iframe
+  pageHtml?: string; // Current page HTML
+  selectedElement?: any; // Currently selected element
+  currentStyles?: Record<string, string>; // Current element styles
+  pagePath?: string; // Page path
   autoRefresh?: boolean; // Auto-analyze every 30s
   onApplyFix?: (suggestion: DesignSuggestion) => void;
 }
 
 export function SmartSuggestions({ 
-  url, 
-  autoRefresh = true, 
+  pageHtml,
+  selectedElement,
+  currentStyles,
+  pagePath,
+  autoRefresh = false, // Disabled by default (expensive AI calls)
   onApplyFix 
 }: SmartSuggestionsProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [filterCategory, setFilterCategory] = useState<string>("all");
+  const [filterSeverity, setFilterSeverity] = useState<string>("all");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   // Fetch suggestions
   const { 
-    data: report, 
+    data: response, 
     isLoading, 
     refetch,
     isFetching 
   } = useQuery<{ success: boolean; report: SuggestionsReport }>({
-    queryKey: ['/api/autonomous/analyze', url],
-    enabled: !!url,
-    refetchInterval: autoRefresh ? 30000 : false, // 30s auto-refresh
-    staleTime: 25000
+    queryKey: ['/api/visual-editor/suggestions', pageHtml, selectedElement?.id, pagePath],
+    queryFn: async () => {
+      const res = await apiRequest('POST', '/api/visual-editor/suggestions', {
+        pageHtml,
+        selectedElement,
+        currentStyles,
+        pagePath
+      });
+      return await res.json();
+    },
+    enabled: !!pageHtml,
+    refetchInterval: autoRefresh ? 60000 : false, // 60s auto-refresh if enabled
+    staleTime: 55000
   });
 
-  const suggestions = report?.report?.suggestions || [];
-  const summary = report?.report?.summary;
-  const pageScore = report?.report?.pageScore || 0;
+  const report = response?.report;
+  const suggestions = report?.suggestions || [];
+  const summary = report?.summary;
+  const pageScore = report?.pageScore || 0;
+
+  // Filter suggestions
+  const filteredSuggestions = suggestions.filter((s) => {
+    if (filterCategory !== "all" && s.category !== filterCategory) return false;
+    if (filterSeverity !== "all" && s.severity !== filterSeverity) return false;
+    return true;
+  });
 
   // Auto-expand if critical issues found
   useEffect(() => {
@@ -167,19 +206,19 @@ export function SmartSuggestions({
     }
   };
 
-  // Get type badge color
-  const getTypeColor = (type: string) => {
-    switch (type) {
+  // Get category badge color
+  const getCategoryColor = (category: string) => {
+    switch (category) {
       case 'accessibility':
         return 'bg-red-500/10 text-red-500 border-red-500/20';
       case 'ux':
         return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
-      case 'theme':
+      case 'design':
         return 'bg-purple-500/10 text-purple-500 border-purple-500/20';
+      case 'performance':
+        return 'bg-orange-500/10 text-orange-500 border-orange-500/20';
       case 'responsive':
         return 'bg-green-500/10 text-green-500 border-green-500/20';
-      case 'component':
-        return 'bg-orange-500/10 text-orange-500 border-orange-500/20';
       default:
         return 'bg-muted text-muted-foreground';
     }
@@ -286,18 +325,51 @@ export function SmartSuggestions({
 
             <Separator />
 
+            {/* Filters */}
+            <div className="flex gap-2">
+              <Select value={filterCategory} onValueChange={setFilterCategory}>
+                <SelectTrigger className="flex-1" data-testid="select-filter-category">
+                  <Filter className="w-3 h-3 mr-2" />
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="accessibility">Accessibility</SelectItem>
+                  <SelectItem value="ux">UX</SelectItem>
+                  <SelectItem value="design">Design</SelectItem>
+                  <SelectItem value="performance">Performance</SelectItem>
+                  <SelectItem value="responsive">Responsive</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={filterSeverity} onValueChange={setFilterSeverity}>
+                <SelectTrigger className="flex-1" data-testid="select-filter-severity">
+                  <SelectValue placeholder="Severity" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Levels</SelectItem>
+                  <SelectItem value="critical">Critical</SelectItem>
+                  <SelectItem value="warning">Warning</SelectItem>
+                  <SelectItem value="suggestion">Suggestion</SelectItem>
+                  <SelectItem value="info">Info</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Suggestions List */}
             <ScrollArea className="flex-1">
-              {suggestions.length === 0 ? (
+              {filteredSuggestions.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
                   <Sparkles className="w-12 h-12 text-muted-foreground mb-3" />
                   <p className="text-sm text-muted-foreground">
-                    No suggestions yet. Great job!
+                    {suggestions.length === 0 
+                      ? "No suggestions yet. Great job!"
+                      : "No suggestions match your filters."}
                   </p>
                 </div>
               ) : (
                 <div className="space-y-3 pr-3">
-                  {suggestions.map((suggestion) => (
+                  {filteredSuggestions.map((suggestion) => (
                     <div
                       key={suggestion.id}
                       className="p-3 rounded-lg border bg-card hover-elevate"
@@ -309,10 +381,10 @@ export function SmartSuggestions({
                         </div>
 
                         <div className="flex-1 space-y-2">
-                          {/* Message */}
+                          {/* Title & Severity */}
                           <div className="flex items-start justify-between gap-2">
-                            <p className="text-sm font-medium leading-tight">
-                              {suggestion.message}
+                            <p className="text-sm font-semibold leading-tight">
+                              {suggestion.title}
                             </p>
                             <Badge 
                               variant={getSeverityColor(suggestion.severity) as any}
@@ -322,15 +394,20 @@ export function SmartSuggestions({
                             </Badge>
                           </div>
 
-                          {/* Type Badge */}
+                          {/* Category Badge */}
                           <Badge 
-                            className={`text-xs ${getTypeColor(suggestion.type)}`}
+                            className={`text-xs ${getCategoryColor(suggestion.category)}`}
                           >
-                            {suggestion.type}
+                            {suggestion.category}
                           </Badge>
 
+                          {/* Message/Description */}
+                          <p className="text-xs text-foreground">
+                            {suggestion.message}
+                          </p>
+
                           {/* Fix Description */}
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-muted-foreground italic">
                             {suggestion.fix}
                           </p>
 

@@ -83,6 +83,8 @@ function VisualEditorPageContent() {
   const [iframeError, setIframeError] = useState(false);
   const [isReplaying, setIsReplaying] = useState(false);
   const [currentChangeIndex, setCurrentChangeIndex] = useState(-1);
+  const [currentPageHtml, setCurrentPageHtml] = useState<string>("");
+  const [selectedElementStyles, setSelectedElementStyles] = useState<Record<string, string>>({});
   
   // Refs
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -254,10 +256,33 @@ function VisualEditorPageContent() {
     iframe.addEventListener('load', handleLoad);
     iframe.addEventListener('error', handleError);
     
+    // Extract page HTML for Smart Suggestions
+    const extractPageHtml = () => {
+      try {
+        if (iframe?.contentDocument?.documentElement) {
+          const html = iframe.contentDocument.documentElement.outerHTML;
+          setCurrentPageHtml(html);
+        }
+      } catch (error) {
+        console.error('[VisualEditor] Failed to extract page HTML (CORS):', error);
+        // If CORS blocks access, we can't extract HTML
+        setCurrentPageHtml("");
+      }
+    };
+
     // Listen for iframe messages
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === 'IFRAME_ELEMENT_SELECTED') {
         setSelectedElement(event.data.component);
+        
+        // Extract computed styles from the selected element
+        if (event.data.component.styles) {
+          setSelectedElementStyles(event.data.component.styles);
+        }
+        
+        // Extract page HTML for analysis
+        extractPageHtml();
+        
         toast({
           title: "Element Selected",
           description: `<${event.data.component.tagName}> ${event.data.component.testId ? `[${event.data.component.testId}]` : ''}`,
@@ -272,6 +297,12 @@ function VisualEditorPageContent() {
         if (iframe && iframe.contentWindow) {
           iframe.src = newUrl;
         }
+        
+        // Extract HTML after navigation completes
+        setTimeout(extractPageHtml, 1000);
+      } else if (event.data.type === 'IFRAME_LOADED') {
+        // Extract HTML when page finishes loading
+        extractPageHtml();
       }
     };
 
@@ -1159,11 +1190,26 @@ function VisualEditorPageContent() {
                 />
                 
                 {/* Smart Suggestions Panel (only in preview mode) */}
-                {isGodLevel && (
+                {isGodLevel && currentPageHtml && (
                   <SmartSuggestions
-                    url={currentIframeUrl}
-                    autoRefresh={true}
+                    pageHtml={currentPageHtml}
+                    selectedElement={selectedElement}
+                    currentStyles={selectedElementStyles}
+                    pagePath={currentIframeUrl}
+                    autoRefresh={false}
                     onApplyFix={(suggestion) => {
+                      // Apply automated CSS changes to iframe
+                      if (suggestion.automated && suggestion.changes && iframeRef.current) {
+                        Object.entries(suggestion.changes).forEach(([property, value]) => {
+                          applyInstantChange(iframeRef.current!, {
+                            type: 'style',
+                            selector: suggestion.selector || '',
+                            property,
+                            value: value as string
+                          });
+                        });
+                      }
+                      
                       toast({
                         title: "Suggestion Applied",
                         description: suggestion.fix

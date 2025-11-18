@@ -299,6 +299,46 @@ export class IframeInjector {
       data,
     }, '*');
   }
+  
+  /**
+   * Inject a new component into the iframe at the specified position
+   */
+  async injectComponent(componentType: string, html: string, position: { x: number; y: number }): Promise<void> {
+    if (!this.iframe) {
+      console.warn('[IframeInjector] No iframe available');
+      return;
+    }
+    
+    const iframeDoc = this.iframe.contentDocument;
+    if (!iframeDoc) {
+      console.warn('[IframeInjector] Cannot access iframe document');
+      return;
+    }
+    
+    // Generate unique test ID for the component
+    const testId = `component-${componentType}-${Date.now()}`;
+    
+    // Send INSERT_COMPONENT message to iframe
+    this.iframe.contentWindow?.postMessage({
+      type: 'INSERT_COMPONENT',
+      payload: {
+        componentType,
+        html,
+        position,
+        testId
+      }
+    }, '*');
+    
+    console.log('[IframeInjector] Component injection requested:', componentType, testId);
+    
+    // Track the insertion
+    this.notifyParent('COMPONENT_INSERTED', {
+      componentType,
+      testId,
+      position,
+      timestamp: Date.now()
+    });
+  }
 }
 
 export const IFRAME_SELECTION_SCRIPT = `
@@ -306,6 +346,32 @@ export const IFRAME_SELECTION_SCRIPT = `
   let hoveredElement = null;
   let selectedElement = null;
   let undoStack = [];
+  
+  // Add highlight animation for new components
+  const style = document.createElement('style');
+  style.textContent = \`
+    @keyframes highlight-new {
+      0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+        transform: scale(0.95);
+      }
+      50% {
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+        transform: scale(1.02);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+        transform: scale(1);
+      }
+    }
+    
+    .drop-zone-highlight {
+      outline: 2px dashed #3b82f6 !important;
+      outline-offset: 4px;
+      background-color: rgba(59, 130, 246, 0.05) !important;
+    }
+  \`;
+  document.head.appendChild(style);
 
   // Hide floating Mr. Blue buttons inside iframe
   function hideMrBlueButtons() {
@@ -416,12 +482,139 @@ export const IFRAME_SELECTION_SCRIPT = `
     }
   }
 
+  // ============================================================================
+  // COMPONENT INSERTION
+  // ============================================================================
+  function insertComponent(payload) {
+    const { componentType, html, position, testId } = payload;
+    
+    console.log('[VisualEditor] Inserting component:', componentType, 'at', position);
+    
+    // Find the target element at the drop position
+    const targetElement = document.elementFromPoint(position.x, position.y);
+    
+    if (!targetElement) {
+      console.warn('[VisualEditor] No target element found at position');
+      return;
+    }
+    
+    // Create a temporary div to parse the HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html.trim();
+    const newElement = tempDiv.firstElementChild;
+    
+    if (!newElement) {
+      console.warn('[VisualEditor] Failed to parse component HTML');
+      return;
+    }
+    
+    // Determine insertion strategy based on target element
+    const insertPosition = determineInsertPosition(targetElement, position);
+    
+    switch (insertPosition) {
+      case 'inside':
+        // Insert as last child
+        targetElement.appendChild(newElement);
+        break;
+      case 'before':
+        // Insert before target
+        targetElement.parentNode.insertBefore(newElement, targetElement);
+        break;
+      case 'after':
+        // Insert after target
+        if (targetElement.nextSibling) {
+          targetElement.parentNode.insertBefore(newElement, targetElement.nextSibling);
+        } else {
+          targetElement.parentNode.appendChild(newElement);
+        }
+        break;
+      default:
+        // Default: append to body
+        document.body.appendChild(newElement);
+    }
+    
+    // Add a subtle highlight animation
+    newElement.style.animation = 'highlight-new 0.6s ease-out';
+    
+    // Notify parent of successful insertion
+    window.parent.postMessage({
+      type: 'IFRAME_COMPONENT_INSERTED',
+      data: {
+        componentType,
+        testId,
+        success: true,
+        elementId: newElement.id,
+        timestamp: Date.now()
+      }
+    }, '*');
+    
+    console.log('[VisualEditor] Component inserted successfully:', testId);
+  }
+  
+  function determineInsertPosition(targetElement, position) {
+    // If target is a container-type element (div, section, main, etc.)
+    const containerTags = ['DIV', 'SECTION', 'MAIN', 'ARTICLE', 'HEADER', 'FOOTER', 'NAV', 'ASIDE'];
+    
+    if (containerTags.includes(targetElement.tagName)) {
+      // Check if it has the data-component-type attribute indicating it's from our palette
+      const isOurComponent = targetElement.hasAttribute('data-component-type');
+      
+      if (isOurComponent) {
+        const componentType = targetElement.getAttribute('data-component-type');
+        const layoutTypes = ['container', 'flex-row', 'flex-column', 'grid-2x2', 'grid-3x3', 'section'];
+        
+        if (layoutTypes.includes(componentType)) {
+          return 'inside'; // Insert inside layout components
+        }
+      }
+      
+      // For generic containers, check if they have children
+      if (targetElement.children.length > 0) {
+        return 'after'; // Insert after if it has children
+      } else {
+        return 'inside'; // Insert inside if empty
+      }
+    }
+    
+    // For non-container elements, insert adjacent
+    return 'after';
+  }
+
+  // ============================================================================
+  // DROP ZONE HIGHLIGHTING
+  // ============================================================================
+  let dropZoneElement = null;
+  
+  function showDropZone(position) {
+    hideDropZone(); // Remove previous drop zone
+    
+    const targetElement = document.elementFromPoint(position.x, position.y);
+    if (!targetElement) return;
+    
+    // Add drop zone highlight
+    targetElement.classList.add('drop-zone-highlight');
+    dropZoneElement = targetElement;
+  }
+  
+  function hideDropZone() {
+    if (dropZoneElement) {
+      dropZoneElement.classList.remove('drop-zone-highlight');
+      dropZoneElement = null;
+    }
+  }
+
   // Listen for commands from parent
   window.addEventListener('message', function(event) {
     if (event.data.type === 'APPLY_CHANGE') {
       applyChange(event.data.change);
     } else if (event.data.type === 'UNDO_CHANGE') {
       undoLastChange();
+    } else if (event.data.type === 'INSERT_COMPONENT') {
+      insertComponent(event.data.payload);
+    } else if (event.data.type === 'SHOW_DROP_ZONE') {
+      showDropZone(event.data.position);
+    } else if (event.data.type === 'HIDE_DROP_ZONE') {
+      hideDropZone();
     }
   });
 

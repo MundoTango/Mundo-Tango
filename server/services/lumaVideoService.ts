@@ -1,10 +1,15 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';
+import { db } from '../db';
+import { lumaVideos, type InsertLumaVideo, type LumaVideo } from '@shared/schema';
+import { eq, desc } from 'drizzle-orm';
+import { uploadImage } from '../utils/cloudinary';
 
 /**
  * MB.MD Protocol: Luma Dream Machine Video Generation Service
  * Generates AI videos of Mr. Blue using text-to-video and image-to-video
+ * Integrates with database and Cloudinary for permanent storage
  */
 
 export interface VideoGenerationRequest {
@@ -396,6 +401,197 @@ export class LumaVideoService {
     console.log(`✅ Saved avatar video to ${outputPath}`);
 
     return `/videos/${filename}`;
+  }
+
+  // ============================================================================
+  // USER-FACING VIDEO GENERATION WITH DATABASE & CLOUDINARY
+  // ============================================================================
+
+  /**
+   * Create a video generation record in database
+   */
+  async createVideoRecord(userId: number, generationId: string, prompt: string, options: {
+    aspectRatio?: string;
+    duration?: number;
+  }): Promise<LumaVideo> {
+    const [video] = await db.insert(lumaVideos).values({
+      userId,
+      generationId,
+      prompt,
+      status: 'pending',
+      aspectRatio: options.aspectRatio,
+      duration: options.duration,
+    }).returning();
+
+    return video;
+  }
+
+  /**
+   * Update video status in database
+   */
+  async updateVideoStatus(generationId: string, updates: Partial<InsertLumaVideo>): Promise<void> {
+    await db.update(lumaVideos)
+      .set({
+        ...updates,
+        ...(updates.status === 'completed' ? { completedAt: new Date() } : {}),
+      })
+      .where(eq(lumaVideos.generationId, generationId));
+  }
+
+  /**
+   * Download video buffer from URL
+   */
+  async downloadVideoBuffer(videoUrl: string): Promise<Buffer> {
+    console.log('📥 Downloading video from Luma...');
+    const response = await fetch(videoUrl);
+
+    if (!response.ok) {
+      throw new Error(`Failed to download video: ${response.status}`);
+    }
+
+    return response.buffer();
+  }
+
+  /**
+   * Upload video to Cloudinary
+   */
+  async uploadToCloudinary(videoBuffer: Buffer, generationId: string): Promise<{ url: string; publicId: string }> {
+    console.log('☁️  Uploading video to Cloudinary...');
+    
+    return new Promise((resolve, reject) => {
+      const cloudinary = require('cloudinary').v2;
+      
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'luma_videos',
+          resource_type: 'video',
+          public_id: `video_${generationId}`,
+          format: 'mp4',
+        },
+        (error: any, result: any) => {
+          if (error) {
+            console.error('[Cloudinary] Upload error:', error);
+            reject(new Error(`Failed to upload video: ${error.message}`));
+          } else if (result) {
+            resolve({
+              url: result.secure_url,
+              publicId: result.public_id,
+            });
+          }
+        }
+      );
+
+      uploadStream.end(videoBuffer);
+    });
+  }
+
+  /**
+   * Generate video for user (text-to-video)
+   */
+  async generateUserVideo(
+    userId: number,
+    prompt: string,
+    options: {
+      aspectRatio?: '16:9' | '9:16' | '1:1';
+      duration?: number;
+    } = {}
+  ): Promise<LumaVideo> {
+    console.log(`🎬 User ${userId} generating video: ${prompt}`);
+
+    // Start Luma generation
+    const generation = await this.generateFromText({
+      prompt,
+      aspectRatio: options.aspectRatio || '16:9',
+      loop: false,
+    });
+
+    // Save to database
+    const video = await this.createVideoRecord(userId, generation.id, prompt, {
+      aspectRatio: options.aspectRatio,
+      duration: options.duration,
+    });
+
+    console.log(`✅ Video generation started: ${generation.id}`);
+    return video;
+  }
+
+  /**
+   * Poll and complete video generation
+   * Downloads from Luma, uploads to Cloudinary, updates database
+   */
+  async completeVideoGeneration(generationId: string): Promise<LumaVideo> {
+    console.log(`🔄 Completing video generation: ${generationId}`);
+
+    // Get current status from Luma
+    const status = await this.getGenerationStatus(generationId);
+
+    if (status.state === 'failed') {
+      await this.updateVideoStatus(generationId, {
+        status: 'failed',
+        failureReason: status.failure_reason || 'Unknown error',
+      });
+      throw new Error(`Video generation failed: ${status.failure_reason}`);
+    }
+
+    if (status.state !== 'completed' || !status.video?.url) {
+      // Update status but don't complete yet
+      await this.updateVideoStatus(generationId, {
+        status: status.state,
+      });
+      
+      const [video] = await db.select().from(lumaVideos).where(eq(lumaVideos.generationId, generationId));
+      return video;
+    }
+
+    // Video is complete! Download and upload to Cloudinary
+    const videoBuffer = await this.downloadVideoBuffer(status.video.url);
+    const cloudinaryResult = await this.uploadToCloudinary(videoBuffer, generationId);
+
+    // Update database with final URLs and metadata
+    await this.updateVideoStatus(generationId, {
+      status: 'completed',
+      videoUrl: status.video.url,
+      cloudinaryUrl: cloudinaryResult.url,
+      cloudinaryPublicId: cloudinaryResult.publicId,
+      width: status.video.width,
+      height: status.video.height,
+      thumbnailUrl: status.video.thumbnail,
+    });
+
+    console.log(`✅ Video generation complete and saved to Cloudinary`);
+
+    const [video] = await db.select().from(lumaVideos).where(eq(lumaVideos.generationId, generationId));
+    return video;
+  }
+
+  /**
+   * Get user's video history
+   */
+  async getUserVideos(userId: number, limit: number = 20): Promise<LumaVideo[]> {
+    return db.select()
+      .from(lumaVideos)
+      .where(eq(lumaVideos.userId, userId))
+      .orderBy(desc(lumaVideos.createdAt))
+      .limit(limit);
+  }
+
+  /**
+   * Get single video by generation ID
+   */
+  async getVideoByGenerationId(generationId: string): Promise<LumaVideo | undefined> {
+    const [video] = await db.select()
+      .from(lumaVideos)
+      .where(eq(lumaVideos.generationId, generationId));
+    return video;
+  }
+
+  /**
+   * Delete video from Cloudinary (cleanup)
+   */
+  async deleteFromCloudinary(publicId: string): Promise<void> {
+    const cloudinary = require('cloudinary').v2;
+    await cloudinary.uploader.destroy(publicId, { resource_type: 'video' });
+    console.log(`🗑️  Deleted video from Cloudinary: ${publicId}`);
   }
 }
 

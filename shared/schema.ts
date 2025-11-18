@@ -137,6 +137,43 @@ export const godLevelQuotas = pgTable("god_level_quotas", {
 }));
 
 // ============================================================================
+// LUMA AI VIDEO GENERATION
+// ============================================================================
+
+export const lumaVideos = pgTable("luma_videos", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  generationId: varchar("generation_id", { length: 255 }).notNull().unique(),
+  prompt: text("prompt").notNull(),
+  videoUrl: text("video_url"),
+  cloudinaryUrl: text("cloudinary_url"),
+  cloudinaryPublicId: varchar("cloudinary_public_id", { length: 255 }),
+  status: varchar("status", { length: 50 }).default("pending").notNull(),
+  duration: integer("duration"),
+  aspectRatio: varchar("aspect_ratio", { length: 10 }),
+  width: integer("width"),
+  height: integer("height"),
+  thumbnailUrl: text("thumbnail_url"),
+  failureReason: text("failure_reason"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+}, (table) => ({
+  userIdx: index("luma_videos_user_idx").on(table.userId),
+  statusIdx: index("luma_videos_status_idx").on(table.status),
+  createdAtIdx: index("luma_videos_created_at_idx").on(table.createdAt),
+  generationIdIdx: index("luma_videos_generation_id_idx").on(table.generationId),
+}));
+
+export const insertLumaVideoSchema = createInsertSchema(lumaVideos).omit({
+  id: true,
+  createdAt: true,
+  completedAt: true,
+});
+
+export type InsertLumaVideo = z.infer<typeof insertLumaVideoSchema>;
+export type LumaVideo = typeof lumaVideos.$inferSelect;
+
+// ============================================================================
 // SOCIAL CONNECTIONS
 // ============================================================================
 

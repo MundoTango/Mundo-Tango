@@ -1,7 +1,13 @@
-import { Router } from 'express';
+import { Router, type Request } from 'express';
 import { lumaVideoService } from '../services/lumaVideoService';
+import { insertLumaVideoSchema } from '@shared/schema';
 
 const router = Router();
+
+// Extend Request to include user
+interface AuthRequest extends Request {
+  user?: { id: number };
+}
 
 /**
  * POST /api/mrblue/generate-state/:state
@@ -137,6 +143,164 @@ router.get('/check-generation/:generationId', async (req, res) => {
   } catch (error: any) {
     res.status(500).json({
       error: error.message || 'Failed to check generation status'
+    });
+  }
+});
+
+// ============================================================================
+// USER-FACING VIDEO GENERATION API
+// ============================================================================
+
+/**
+ * POST /api/mrblue/video/generate
+ * Start a new video generation for the logged-in user
+ */
+router.post('/video/generate', async (req: AuthRequest, res) => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const { prompt, aspectRatio, duration } = req.body;
+
+    if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {
+      return res.status(400).json({ error: 'Prompt is required' });
+    }
+
+    if (prompt.length > 500) {
+      return res.status(400).json({ error: 'Prompt too long (max 500 characters)' });
+    }
+
+    const video = await lumaVideoService.generateUserVideo(
+      req.user.id,
+      prompt.trim(),
+      {
+        aspectRatio: aspectRatio || '16:9',
+        duration: duration || 5,
+      }
+    );
+
+    res.json({
+      success: true,
+      generationId: video.generationId,
+      status: video.status,
+      message: 'Video generation started! Check status for updates.',
+    });
+  } catch (error: any) {
+    console.error('Video generation error:', error);
+    res.status(500).json({
+      error: error.message || 'Failed to start video generation'
+    });
+  }
+});
+
+/**
+ * GET /api/mrblue/video/status/:generationId
+ * Poll generation status and auto-complete when ready
+ */
+router.get('/video/status/:generationId', async (req: AuthRequest, res) => {
+  try {
+    const { generationId } = req.params;
+
+    if (!generationId) {
+      return res.status(400).json({ error: 'Generation ID required' });
+    }
+
+    // Get from database first
+    const dbVideo = await lumaVideoService.getVideoByGenerationId(generationId);
+
+    if (!dbVideo) {
+      return res.status(404).json({ error: 'Video not found' });
+    }
+
+    // If already completed, return it
+    if (dbVideo.status === 'completed') {
+      return res.json({
+        success: true,
+        video: dbVideo,
+      });
+    }
+
+    // If failed, return error
+    if (dbVideo.status === 'failed') {
+      return res.json({
+        success: false,
+        video: dbVideo,
+        error: dbVideo.failureReason || 'Video generation failed',
+      });
+    }
+
+    // Otherwise, check Luma and try to complete
+    const video = await lumaVideoService.completeVideoGeneration(generationId);
+
+    res.json({
+      success: true,
+      video,
+    });
+  } catch (error: any) {
+    console.error('Status check error:', error);
+    res.status(500).json({
+      error: error.message || 'Failed to check video status'
+    });
+  }
+});
+
+/**
+ * GET /api/mrblue/video/download/:generationId
+ * Get download URL for completed video
+ */
+router.get('/video/download/:generationId', async (req: AuthRequest, res) => {
+  try {
+    const { generationId } = req.params;
+
+    const video = await lumaVideoService.getVideoByGenerationId(generationId);
+
+    if (!video) {
+      return res.status(404).json({ error: 'Video not found' });
+    }
+
+    if (video.status !== 'completed') {
+      return res.status(400).json({ 
+        error: 'Video not ready',
+        status: video.status 
+      });
+    }
+
+    res.json({
+      success: true,
+      downloadUrl: video.cloudinaryUrl || video.videoUrl,
+      thumbnailUrl: video.thumbnailUrl,
+    });
+  } catch (error: any) {
+    console.error('Download error:', error);
+    res.status(500).json({
+      error: error.message || 'Failed to get download URL'
+    });
+  }
+});
+
+/**
+ * GET /api/mrblue/video/history
+ * Get user's video generation history
+ */
+router.get('/video/history', async (req: AuthRequest, res) => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const limit = parseInt(req.query.limit as string) || 20;
+    const videos = await lumaVideoService.getUserVideos(req.user.id, limit);
+
+    res.json({
+      success: true,
+      videos,
+      count: videos.length,
+    });
+  } catch (error: any) {
+    console.error('History fetch error:', error);
+    res.status(500).json({
+      error: error.message || 'Failed to fetch video history'
     });
   }
 });
