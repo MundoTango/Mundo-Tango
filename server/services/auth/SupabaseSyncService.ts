@@ -1,4 +1,4 @@
-import { db } from "@/server/db";
+import { db } from "@shared/db";
 import { users } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import type { User as SupabaseUser } from '@supabase/supabase-js';
