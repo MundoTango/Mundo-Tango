@@ -35,7 +35,14 @@ export class AgentActivationService {
         .where(eq(pageAgentRegistry.pageId, pageId));
 
       if (!pageReg) {
-        throw new Error(`Page registration not found for: ${pageId}`);
+        console.log(`⚠️ Page registration not found for: ${pageId} - returning empty activation (page not yet registered)`);
+        return {
+          pageAgent: null,
+          featureAgents: [],
+          elementAgents: [],
+          totalAgents: 0,
+          activationTime: Date.now() - startTime
+        };
       }
 
       // 2. Get Page Agent

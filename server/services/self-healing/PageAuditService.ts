@@ -192,27 +192,48 @@ export class PageAuditService {
 
   /**
    * Save audit results to database
+   * Gracefully skips saving if page not registered (prevents FK constraint violation)
    */
   private static async saveAudit(results: AuditResults): Promise<void> {
-    const auditData: InsertPageAudit = {
-      pageId: results.pageId,
-      totalIssues: results.totalIssues,
-      criticalIssues: results.criticalIssues,
-      uiUxIssues: results.issuesByCategory.ui_ux.length,
-      routingIssues: results.issuesByCategory.routing.length,
-      integrationIssues: results.issuesByCategory.integration.length,
-      performanceIssues: results.issuesByCategory.performance.length,
-      accessibilityIssues: results.issuesByCategory.accessibility.length,
-      securityIssues: results.issuesByCategory.security.length,
-      issuesByCategory: results.issuesByCategory,
-      auditResults: results,
-      auditorAgents: results.auditorAgents,
-      auditDurationMs: results.auditDurationMs,
-      hasIssues: results.hasIssues,
-      healingRequired: results.totalIssues > 0,
-      healingApplied: false
-    };
+    try {
+      // Check if page is registered before saving (prevents FK constraint violation)
+      const { pageAgentRegistry } = await import('../../../shared/schema');
+      const { eq } = await import('drizzle-orm');
+      
+      const [pageReg] = await db
+        .select()
+        .from(pageAgentRegistry)
+        .where(eq(pageAgentRegistry.pageId, results.pageId));
 
-    await db.insert(pageAudits).values(auditData);
+      if (!pageReg) {
+        console.log(`⚠️ Skipping audit save for ${results.pageId} - page not registered yet`);
+        return;
+      }
+
+      const auditData: InsertPageAudit = {
+        pageId: results.pageId,
+        totalIssues: results.totalIssues,
+        criticalIssues: results.criticalIssues,
+        uiUxIssues: results.issuesByCategory.ui_ux.length,
+        routingIssues: results.issuesByCategory.routing.length,
+        integrationIssues: results.issuesByCategory.integration.length,
+        performanceIssues: results.issuesByCategory.performance.length,
+        accessibilityIssues: results.issuesByCategory.accessibility.length,
+        securityIssues: results.issuesByCategory.security.length,
+        issuesByCategory: results.issuesByCategory,
+        auditResults: results,
+        auditorAgents: results.auditorAgents,
+        auditDurationMs: results.auditDurationMs,
+        hasIssues: results.hasIssues,
+        healingRequired: results.totalIssues > 0,
+        healingApplied: false
+      };
+
+      await db.insert(pageAudits).values(auditData);
+      console.log(`✅ Audit saved for ${results.pageId}`);
+    } catch (error) {
+      console.error(`❌ Failed to save audit for ${results.pageId}:`, error);
+      // Don't throw - allow orchestration to continue even if audit save fails
+    }
   }
 }
