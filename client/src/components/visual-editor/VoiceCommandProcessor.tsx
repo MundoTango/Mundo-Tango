@@ -4,6 +4,16 @@
  */
 
 import Fuse from 'fuse.js';
+import { 
+  tts, 
+  speakCommandConfirmation, 
+  speakUnrecognizedCommand,
+  speakSuccess,
+  extractColor,
+  extractDirection,
+  extractFont,
+  extractNumber
+} from '@/lib/voiceCommands';
 
 export interface VoiceCommand {
   patterns: string[];
@@ -329,6 +339,84 @@ export class VoiceCommandProcessor {
         description: 'Take screenshot of current view',
         category: 'visual-editor',
       },
+      {
+        patterns: ['move left', 'shift left', 'go left'],
+        action: () => {
+          this.context.setPrompt?.('Move element left');
+          this.context.handleSubmit?.();
+        },
+        description: 'Move element left',
+        category: 'visual-editor',
+      },
+      {
+        patterns: ['move right', 'shift right', 'go right'],
+        action: () => {
+          this.context.setPrompt?.('Move element right');
+          this.context.handleSubmit?.();
+        },
+        description: 'Move element right',
+        category: 'visual-editor',
+      },
+      {
+        patterns: ['move up', 'shift up', 'go up'],
+        action: () => {
+          this.context.setPrompt?.('Move element up');
+          this.context.handleSubmit?.();
+        },
+        description: 'Move element up',
+        category: 'visual-editor',
+      },
+      {
+        patterns: ['move down', 'shift down', 'go down'],
+        action: () => {
+          this.context.setPrompt?.('Move element down');
+          this.context.handleSubmit?.();
+        },
+        description: 'Move element down',
+        category: 'visual-editor',
+      },
+      {
+        patterns: ['change background', 'background color', 'set background'],
+        action: (matches) => {
+          const text = matches?.[0] || '';
+          const color = extractColor(text) || 'blue';
+          this.context.setPrompt?.(`Change background to ${color}`);
+          this.context.handleSubmit?.();
+        },
+        description: 'Change background color',
+        category: 'visual-editor',
+        parameterized: true,
+      },
+      {
+        patterns: ['change font', 'set font', 'font to'],
+        action: (matches) => {
+          const text = matches?.[0] || '';
+          const font = extractFont(text) || 'Arial';
+          this.context.setPrompt?.(`Change font to ${font}`);
+          this.context.handleSubmit?.();
+        },
+        description: 'Change font family',
+        category: 'visual-editor',
+        parameterized: true,
+      },
+      {
+        patterns: ['add margin', 'more margin', 'increase margin'],
+        action: () => {
+          this.context.setPrompt?.('Add more margin');
+          this.context.handleSubmit?.();
+        },
+        description: 'Add margin to element',
+        category: 'visual-editor',
+      },
+      {
+        patterns: ['remove margin', 'less margin', 'decrease margin', 'reduce margin'],
+        action: () => {
+          this.context.setPrompt?.('Remove margin');
+          this.context.handleSubmit?.();
+        },
+        description: 'Remove margin from element',
+        category: 'visual-editor',
+      },
 
       // ===== MR. BLUE COMMANDS (10) =====
       {
@@ -493,6 +581,42 @@ export class VoiceCommandProcessor {
         category: 'content',
         parameterized: true,
       },
+      {
+        patterns: ['add button', 'create button', 'insert button', 'new button'],
+        action: () => {
+          this.context.setPrompt?.('Add a button element');
+          this.context.handleSubmit?.();
+        },
+        description: 'Add button element',
+        category: 'content',
+      },
+      {
+        patterns: ['add text', 'create text', 'insert text', 'add paragraph'],
+        action: () => {
+          this.context.setPrompt?.('Add a text element');
+          this.context.handleSubmit?.();
+        },
+        description: 'Add text element',
+        category: 'content',
+      },
+      {
+        patterns: ['delete element', 'remove element', 'delete this', 'remove this'],
+        action: () => {
+          this.context.setPrompt?.('Delete selected element');
+          this.context.handleSubmit?.();
+        },
+        description: 'Delete selected element',
+        category: 'content',
+      },
+      {
+        patterns: ['duplicate element', 'copy element', 'clone element', 'duplicate this'],
+        action: () => {
+          this.context.setPrompt?.('Duplicate selected element');
+          this.context.handleSubmit?.();
+        },
+        description: 'Duplicate element',
+        category: 'content',
+      },
 
       // ===== SYSTEM COMMANDS (7) =====
       {
@@ -561,6 +685,7 @@ export class VoiceCommandProcessor {
   /**
    * Process a voice input and execute matching command
    * Uses exact matching first, then fuzzy matching
+   * Provides TTS feedback for every command
    * @returns true if a command was executed, false otherwise
    */
   processCommand(input: string): boolean {
@@ -574,6 +699,7 @@ export class VoiceCommandProcessor {
         // Exact match
         if (trimmedInput === patternLower) {
           console.log('[VoiceCommand] Exact match:', command.description);
+          speakCommandConfirmation(command.description);
           command.action([trimmedInput], this.context);
           return true;
         }
@@ -581,6 +707,22 @@ export class VoiceCommandProcessor {
         // Partial match for parameterized commands
         if (command.parameterized && trimmedInput.includes(patternLower.split(' ')[0])) {
           console.log('[VoiceCommand] Parameterized match:', command.description);
+          
+          // Extract parameters for better TTS feedback
+          const color = extractColor(trimmedInput);
+          const direction = extractDirection(trimmedInput);
+          const font = extractFont(trimmedInput);
+          
+          if (color) {
+            tts.speak(`Changing color to ${color}`);
+          } else if (direction) {
+            tts.speak(`Moving ${direction}`);
+          } else if (font) {
+            tts.speak(`Changing font to ${font}`);
+          } else {
+            speakCommandConfirmation(command.description);
+          }
+          
           command.action([trimmedInput], this.context);
           return true;
         }
@@ -591,11 +733,14 @@ export class VoiceCommandProcessor {
     const fuzzyMatch = this.nlp.findBestMatch(trimmedInput);
     if (fuzzyMatch && fuzzyMatch.score >= 0.6) {
       console.log('[VoiceCommand] Fuzzy match:', fuzzyMatch.command.description, 'Score:', fuzzyMatch.score);
+      speakCommandConfirmation(fuzzyMatch.command.description);
       fuzzyMatch.command.action([trimmedInput], this.context);
       return true;
     }
 
+    // No match found - speak error
     console.log('[VoiceCommand] No command matched for:', input);
+    speakUnrecognizedCommand();
     return false;
   }
 

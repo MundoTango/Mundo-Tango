@@ -368,6 +368,12 @@ export const IFRAME_SELECTION_SCRIPT = `
         console.log('[VisualEditor] Applied text:', change.value);
         break;
 
+      case 'html':
+        // Update HTML content (already sanitized on parent side)
+        selectedElement.innerHTML = change.value;
+        console.log('[VisualEditor] Applied HTML content update');
+        break;
+
       case 'class':
         if (change.add) {
           selectedElement.classList.add(change.add);

@@ -461,7 +461,7 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
             >
               {/* Element Inspector Panel (collapsible) */}
               {showInspector && (
-                <div className="border-b border-ocean-divider p-4 max-h-96 overflow-auto">
+                <div className="border-b border-ocean-divider p-4 overflow-auto" style={{ maxHeight: '60vh' }}>
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-semibold text-sm">Inspector</h3>
                     <Button
@@ -473,7 +473,23 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
                       <X className="w-4 h-4" />
                     </Button>
                   </div>
-                  <ElementInspector element={selectedIframeElement} />
+                  <ElementInspector 
+                    element={selectedIframeElement}
+                    iframe={iframeRef.current}
+                    changeCount={visualEditorTracker.getAllEdits().length}
+                    onUndo={() => {
+                      if (iframeInjectorRef.current) {
+                        iframeInjectorRef.current.undo();
+                      }
+                    }}
+                    onRedo={() => {
+                      if (iframeInjectorRef.current) {
+                        iframeInjectorRef.current.redo();
+                      }
+                    }}
+                    canUndo={iframeInjectorRef.current?.canUndo() || false}
+                    canRedo={iframeInjectorRef.current?.canRedo() || false}
+                  />
                 </div>
               )}
               
