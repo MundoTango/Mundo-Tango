@@ -14,6 +14,7 @@ export interface FacebookSendParams {
   recipientId?: string;
   recipientEmail?: string;
   message: string;
+  pageAccessToken?: string; // NEW: Accept Page Access Token from OAuth flow
 }
 
 export interface FacebookSendResult {
@@ -54,12 +55,15 @@ export class FacebookMessengerService {
    * Send message via Facebook Messenger
    */
   static async sendMessage(params: FacebookSendParams): Promise<FacebookSendResult> {
-    const { recipientId, recipientEmail, message } = params;
+    const { recipientId, recipientEmail, message, pageAccessToken } = params;
 
-    if (!this.accessToken) {
+    // Prioritize OAuth Page Access Token, fallback to env var for backward compatibility
+    const accessToken = pageAccessToken || this.accessToken;
+
+    if (!accessToken) {
       return {
         success: false,
-        error: 'Facebook access token not configured',
+        error: 'Facebook access token not configured. Please connect your Facebook account.',
         timestamp: new Date()
       };
     }
@@ -99,7 +103,7 @@ export class FacebookMessengerService {
         },
         {
           params: {
-            access_token: this.accessToken
+            access_token: accessToken
           },
           headers: {
             'Content-Type': 'application/json'
