@@ -215,6 +215,94 @@ class GitService {
     }
   }
 
+  async getDiff(commitHash: string, filePath?: string): Promise<{ success: boolean; diff?: string; error?: string }> {
+    try {
+      const fileArg = filePath ? `-- ${filePath}` : '';
+      const { stdout } = await this.execGit(`show ${commitHash} ${fileArg}`);
+      
+      return {
+        success: true,
+        diff: stdout
+      };
+    } catch (error: any) {
+      console.error('[GitService] Get diff error:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to get diff'
+      };
+    }
+  }
+
+  async switchBranch(branchName: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      // Check for uncommitted changes
+      const { stdout: status } = await this.execGit('status --porcelain');
+      if (status.trim()) {
+        return {
+          success: false,
+          error: 'You have uncommitted changes. Please commit or stash them first.'
+        };
+      }
+
+      // Switch branch
+      await this.checkoutBranch(branchName);
+      
+      return { success: true };
+    } catch (error: any) {
+      console.error('[GitService] Switch branch error:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to switch branch'
+      };
+    }
+  }
+
+  async createBranchFromCurrent(branchName: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      // Check if branch already exists
+      const branches = await this.listBranches();
+      if (branches.includes(branchName)) {
+        return {
+          success: false,
+          error: `Branch "${branchName}" already exists`
+        };
+      }
+
+      await this.createBranch(branchName);
+      
+      return { success: true };
+    } catch (error: any) {
+      console.error('[GitService] Create branch error:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to create branch'
+      };
+    }
+  }
+
+  async initRepository(): Promise<{ success: boolean; error?: string }> {
+    try {
+      // Check if .git exists
+      const gitDir = path.join(this.repoPath, '.git');
+      try {
+        await fs.access(gitDir);
+        return { success: true }; // Already initialized
+      } catch {
+        // Not a git repo, initialize it
+        await this.execGit('init');
+        await this.execGit('config user.name "Visual Editor"');
+        await this.execGit('config user.email "visual-editor@mundotango.com"');
+        return { success: true };
+      }
+    } catch (error: any) {
+      console.error('[GitService] Init repo error:', error);
+      return {
+        success: false,
+        error: error.message || 'Failed to initialize repository'
+      };
+    }
+  }
+
   private async execGit(command: string): Promise<{ stdout: string; stderr: string }> {
     return execAsync(`git ${command}`, { cwd: this.repoPath });
   }

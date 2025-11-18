@@ -174,6 +174,113 @@ export type InsertLumaVideo = z.infer<typeof insertLumaVideoSchema>;
 export type LumaVideo = typeof lumaVideos.$inferSelect;
 
 // ============================================================================
+// VOICE CLONES - ELEVENLABS INTEGRATION
+// ============================================================================
+
+export const voiceClones = pgTable("voice_clones", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  voiceId: varchar("voice_id", { length: 255 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  
+  // Status
+  status: varchar("status", { length: 50 }).default("active").notNull(),
+  isDefault: boolean("is_default").default(false).notNull(),
+  
+  // Metadata
+  audioSampleCount: integer("audio_sample_count").default(0),
+  totalDuration: integer("total_duration"),
+  language: varchar("language", { length: 10 }).default("en"),
+  modelId: varchar("model_id", { length: 100 }).default("eleven_multilingual_v2"),
+  
+  // Quality metrics
+  qualityScore: real("quality_score"),
+  similarityScore: real("similarity_score"),
+  
+  // Usage tracking
+  usageCount: integer("usage_count").default(0),
+  lastUsedAt: timestamp("last_used_at"),
+  
+  // ElevenLabs metadata
+  elevenLabsData: jsonb("elevenlabs_data"),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("voice_clones_user_idx").on(table.userId),
+  voiceIdIdx: index("voice_clones_voice_id_idx").on(table.voiceId),
+  statusIdx: index("voice_clones_status_idx").on(table.status),
+  userDefaultIdx: index("voice_clones_user_default_idx").on(table.userId, table.isDefault),
+  createdAtIdx: index("voice_clones_created_at_idx").on(table.createdAt),
+}));
+
+export const insertVoiceCloneSchema = createInsertSchema(voiceClones).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertVoiceClone = z.infer<typeof insertVoiceCloneSchema>;
+export type VoiceClone = typeof voiceClones.$inferSelect;
+
+// ============================================================================
+// D-ID TALKING AVATAR VIDEOS
+// ============================================================================
+
+export const didVideos = pgTable("did_videos", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  
+  // D-ID video ID
+  didVideoId: varchar("did_video_id", { length: 255 }).notNull().unique(),
+  
+  // Avatar configuration
+  avatarUrl: text("avatar_url").notNull(),
+  avatarPreset: varchar("avatar_preset", { length: 100 }),
+  
+  // Script & voice
+  script: text("script").notNull(),
+  voice: varchar("voice", { length: 100 }).notNull(),
+  voiceProvider: varchar("voice_provider", { length: 50 }).default("d-id").notNull(),
+  elevenLabsVoiceId: varchar("elevenlabs_voice_id", { length: 255 }),
+  
+  // Video output
+  videoUrl: text("video_url"),
+  cloudinaryUrl: text("cloudinary_url"),
+  cloudinaryPublicId: varchar("cloudinary_public_id", { length: 255 }),
+  thumbnailUrl: text("thumbnail_url"),
+  
+  // Status & metadata
+  status: varchar("status", { length: 50 }).default("pending").notNull(),
+  duration: integer("duration"),
+  width: integer("width"),
+  height: integer("height"),
+  failureReason: text("failure_reason"),
+  
+  // Cost tracking
+  estimatedCost: numeric("estimated_cost", { precision: 10, scale: 4 }),
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+}, (table) => ({
+  userIdx: index("did_videos_user_idx").on(table.userId),
+  statusIdx: index("did_videos_status_idx").on(table.status),
+  createdAtIdx: index("did_videos_created_at_idx").on(table.createdAt),
+  didVideoIdIdx: index("did_videos_did_video_id_idx").on(table.didVideoId),
+}));
+
+export const insertDIDVideoSchema = createInsertSchema(didVideos).omit({
+  id: true,
+  createdAt: true,
+  completedAt: true,
+});
+
+export type InsertDIDVideo = z.infer<typeof insertDIDVideoSchema>;
+export type DIDVideo = typeof didVideos.$inferSelect;
+
+// ============================================================================
 // SOCIAL CONNECTIONS
 // ============================================================================
 

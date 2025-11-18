@@ -637,4 +637,254 @@ function validateReactCode(code: string): boolean {
   }
 }
 
+// ===== GIT INTEGRATION ENDPOINTS =====
+
+// Get commit history for a file
+router.get("/git/history/:filePath(*)?", async (req: Request, res: Response) => {
+  try {
+    const { filePath } = req.params;
+    const limit = parseInt(req.query.limit as string) || 20;
+
+    if (!filePath) {
+      return res.status(400).json({
+        success: false,
+        message: 'File path is required'
+      });
+    }
+
+    const history = await gitService.getCommitHistory(filePath, limit);
+
+    res.json({
+      success: true,
+      commits: history,
+      count: history.length
+    });
+  } catch (error: any) {
+    console.error('[VisualEditor] Git history error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get commit history'
+    });
+  }
+});
+
+// Get diff for a specific commit
+router.get("/git/diff/:commitHash", async (req: Request, res: Response) => {
+  try {
+    const { commitHash } = req.params;
+    const { filePath } = req.query;
+
+    if (!commitHash) {
+      return res.status(400).json({
+        success: false,
+        message: 'Commit hash is required'
+      });
+    }
+
+    const result = await gitService.getDiff(commitHash, filePath as string);
+
+    if (!result.success) {
+      return res.status(500).json({
+        success: false,
+        message: result.error || 'Failed to get diff'
+      });
+    }
+
+    res.json({
+      success: true,
+      diff: result.diff
+    });
+  } catch (error: any) {
+    console.error('[VisualEditor] Get diff error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get diff'
+    });
+  }
+});
+
+// List all branches
+router.get("/git/branches", async (req: Request, res: Response) => {
+  try {
+    const branches = await gitService.listBranches();
+    const currentBranch = await gitService.getCurrentBranch();
+
+    res.json({
+      success: true,
+      branches: branches.map(b => ({
+        name: b,
+        current: b === currentBranch
+      })),
+      currentBranch
+    });
+  } catch (error: any) {
+    console.error('[VisualEditor] List branches error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to list branches'
+    });
+  }
+});
+
+// Create a new branch
+router.post("/git/branch", async (req: Request, res: Response) => {
+  try {
+    const { name, createFrom } = req.body;
+
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: 'Branch name is required'
+      });
+    }
+
+    // If createFrom is specified, checkout that first
+    if (createFrom) {
+      const switchResult = await gitService.switchBranch(createFrom);
+      if (!switchResult.success) {
+        return res.status(400).json({
+          success: false,
+          message: switchResult.error || 'Failed to switch to base branch'
+        });
+      }
+    }
+
+    const result = await gitService.createBranchFromCurrent(name);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.error || 'Failed to create branch'
+      });
+    }
+
+    res.json({
+      success: true,
+      branchName: name
+    });
+  } catch (error: any) {
+    console.error('[VisualEditor] Create branch error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create branch'
+    });
+  }
+});
+
+// Switch to a different branch
+router.post("/git/switch-branch", async (req: Request, res: Response) => {
+  try {
+    const { branchName } = req.body;
+
+    if (!branchName) {
+      return res.status(400).json({
+        success: false,
+        message: 'Branch name is required'
+      });
+    }
+
+    const result = await gitService.switchBranch(branchName);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.error || 'Failed to switch branch'
+      });
+    }
+
+    res.json({
+      success: true,
+      currentBranch: branchName
+    });
+  } catch (error: any) {
+    console.error('[VisualEditor] Switch branch error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to switch branch'
+    });
+  }
+});
+
+// Manual commit (for advanced users)
+router.post("/git/commit", async (req: Request, res: Response) => {
+  try {
+    const { filePath, message, changes } = req.body;
+    // @ts-ignore
+    const userName = req.user?.name || 'Visual Editor';
+    // @ts-ignore
+    const userEmail = req.user?.email || 'visual-editor@mundotango.com';
+
+    if (!filePath || !message) {
+      return res.status(400).json({
+        success: false,
+        message: 'File path and commit message are required'
+      });
+    }
+
+    // Get current file content
+    const currentCode = await gitService.getFileContent(filePath);
+    if (!currentCode) {
+      return res.status(404).json({
+        success: false,
+        message: 'File not found'
+      });
+    }
+
+    // For manual commits, we don't modify the file content
+    // Just commit the current state
+    const fullMessage = `${message}\n\nCommitted by: ${userName} <${userEmail}>`;
+
+    const result = await gitService.commitChanges({
+      filePath,
+      content: currentCode,
+      commitMessage: fullMessage,
+      createPR: false
+    });
+
+    if (!result.success) {
+      return res.status(500).json({
+        success: false,
+        message: result.error || 'Failed to commit'
+      });
+    }
+
+    res.json({
+      success: true,
+      commitHash: result.commitHash,
+      branch: result.branchName
+    });
+  } catch (error: any) {
+    console.error('[VisualEditor] Manual commit error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to commit changes'
+    });
+  }
+});
+
+// Initialize Git repository if needed
+router.post("/git/init", async (req: Request, res: Response) => {
+  try {
+    const result = await gitService.initRepository();
+
+    if (!result.success) {
+      return res.status(500).json({
+        success: false,
+        message: result.error || 'Failed to initialize repository'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Repository initialized successfully'
+    });
+  } catch (error: any) {
+    console.error('[VisualEditor] Init repo error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to initialize repository'
+    });
+  }
+});
+
 export default router;

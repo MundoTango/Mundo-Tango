@@ -32,6 +32,7 @@ import {
   Sparkles, ChevronDown, ChevronUp, AlertTriangle, 
   AlertCircle, Info, Lightbulb, Zap, RefreshCw, Filter 
 } from "lucide-react";
+import { SmartSuggestionsLoading, NoSuggestions } from "./LoadingStates";
 
 // ==================== TYPES ====================
 
@@ -227,15 +228,7 @@ export function SmartSuggestions({
   if (isLoading) {
     return (
       <div className="fixed bottom-6 right-6 z-50">
-        <Button
-          size="icon"
-          variant="default"
-          className="rounded-full shadow-lg"
-          disabled
-          data-testid="button-suggestions-loading"
-        >
-          <RefreshCw className="w-5 h-5 animate-spin" />
-        </Button>
+        <SmartSuggestionsLoading />
       </div>
     );
   }
@@ -359,14 +352,16 @@ export function SmartSuggestions({
             {/* Suggestions List */}
             <ScrollArea className="flex-1">
               {filteredSuggestions.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <Sparkles className="w-12 h-12 text-muted-foreground mb-3" />
-                  <p className="text-sm text-muted-foreground">
-                    {suggestions.length === 0 
-                      ? "No suggestions yet. Great job!"
-                      : "No suggestions match your filters."}
-                  </p>
-                </div>
+                suggestions.length === 0 ? (
+                  <NoSuggestions />
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-8 text-center">
+                    <Filter className="w-12 h-12 text-muted-foreground mb-3" />
+                    <p className="text-sm text-muted-foreground">
+                      No suggestions match your filters.
+                    </p>
+                  </div>
+                )
               ) : (
                 <div className="space-y-3 pr-3">
                   {filteredSuggestions.map((suggestion) => (

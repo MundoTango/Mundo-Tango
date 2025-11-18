@@ -511,6 +511,310 @@ export class MessengerService {
   getVerifyToken(): string {
     return this.verifyToken;
   }
+
+  /**
+   * Get conversation message history
+   */
+  async getConversationMessages(
+    connectionId: number,
+    conversationId: string,
+    limit: number = 50
+  ): Promise<{
+    success: boolean;
+    messages?: Array<{
+      id: number;
+      senderId: string;
+      recipientId: string;
+      message: string;
+      messageType: string;
+      sentAt: Date;
+      readAt: Date | null;
+      isFromPage: boolean;
+    }>;
+    error?: string;
+  }> {
+    try {
+      const connection = await db.query.messengerConnections.findFirst({
+        where: eq(messengerConnections.id, connectionId),
+      });
+
+      if (!connection) {
+        return { success: false, error: 'Connection not found' };
+      }
+
+      const messages = await db.query.messengerMessages.findMany({
+        where: and(
+          eq(messengerMessages.connectionId, connectionId),
+          eq(messengerMessages.conversationId, conversationId)
+        ),
+        orderBy: [desc(messengerMessages.sentAt)],
+        limit,
+      });
+
+      const formattedMessages = messages.map(msg => ({
+        id: msg.id,
+        senderId: msg.senderId,
+        recipientId: msg.recipientId,
+        message: msg.message,
+        messageType: msg.messageType,
+        sentAt: msg.sentAt,
+        readAt: msg.readAt,
+        isFromPage: msg.senderId === connection.pageId,
+      })).reverse(); // Reverse to show oldest first
+
+      return { success: true, messages: formattedMessages };
+    } catch (error) {
+      console.error('[MessengerService] Error fetching conversation messages:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+
+  /**
+   * Get Facebook contacts/friends via Graph API
+   */
+  async getContacts(connectionId: number): Promise<{
+    success: boolean;
+    contacts?: Array<{
+      id: string;
+      name: string;
+      profilePic?: string;
+    }>;
+    error?: string;
+  }> {
+    try {
+      const connection = await db.query.messengerConnections.findFirst({
+        where: eq(messengerConnections.id, connectionId),
+      });
+
+      if (!connection || !connection.isActive) {
+        return { success: false, error: 'Connection not found or inactive' };
+      }
+
+      const accessToken = this.decryptAccessToken(connection.accessToken);
+
+      // Fetch conversations to get PSIDs of people who have messaged the page
+      const response = await fetch(
+        `${GRAPH_API_BASE}/${connection.pageId}/conversations?fields=participants,updated_time&access_token=${accessToken}`
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return { 
+          success: false, 
+          error: this.handleFacebookError(errorData) 
+        };
+      }
+
+      const data = await response.json();
+      
+      const contacts: Array<{ id: string; name: string; profilePic?: string }> = [];
+      
+      if (data.data && Array.isArray(data.data)) {
+        for (const conversation of data.data) {
+          if (conversation.participants?.data) {
+            for (const participant of conversation.participants.data) {
+              // Skip the page itself
+              if (participant.id === connection.pageId) continue;
+
+              // Fetch user details
+              const userResponse = await fetch(
+                `${GRAPH_API_BASE}/${participant.id}?fields=name,profile_pic&access_token=${accessToken}`
+              );
+
+              if (userResponse.ok) {
+                const userData = await userResponse.json();
+                contacts.push({
+                  id: participant.id,
+                  name: userData.name || participant.id,
+                  profilePic: userData.profile_pic || undefined,
+                });
+              } else {
+                // Fallback if we can't get user details
+                contacts.push({
+                  id: participant.id,
+                  name: participant.name || participant.id,
+                });
+              }
+            }
+          }
+        }
+      }
+
+      // Remove duplicates based on ID
+      const uniqueContacts = Array.from(
+        new Map(contacts.map(c => [c.id, c])).values()
+      );
+
+      return { success: true, contacts: uniqueContacts };
+    } catch (error) {
+      console.error('[MessengerService] Error fetching contacts:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+
+  /**
+   * Send message with template (quick replies, buttons, generic template)
+   */
+  async sendMessageWithTemplate(
+    connectionId: number,
+    recipientId: string,
+    messagePayload: {
+      text?: string;
+      quickReplies?: Array<{ title: string; payload: string }>;
+      buttons?: Array<{ type: string; title: string; url?: string; payload?: string }>;
+      attachment?: any;
+    }
+  ): Promise<{ success: boolean; messageId?: string; error?: string }> {
+    try {
+      const connection = await db.query.messengerConnections.findFirst({
+        where: eq(messengerConnections.id, connectionId),
+      });
+
+      if (!connection || !connection.isActive) {
+        return { success: false, error: 'Connection not found or inactive' };
+      }
+
+      const accessToken = this.decryptAccessToken(connection.accessToken);
+
+      // Send typing indicator
+      await this.sendTypingIndicator(connection.pageId, recipientId, accessToken, true);
+
+      // Build message object
+      const messageBody: any = {
+        recipient: { id: recipientId },
+        messaging_type: 'RESPONSE',
+      };
+
+      if (messagePayload.attachment) {
+        messageBody.message = { attachment: messagePayload.attachment };
+      } else if (messagePayload.text) {
+        messageBody.message = { text: messagePayload.text };
+        
+        // Add quick replies if provided
+        if (messagePayload.quickReplies && messagePayload.quickReplies.length > 0) {
+          messageBody.message.quick_replies = messagePayload.quickReplies.map(qr => ({
+            content_type: 'text',
+            title: qr.title,
+            payload: qr.payload,
+          }));
+        }
+        
+        // Add buttons if provided
+        if (messagePayload.buttons && messagePayload.buttons.length > 0) {
+          messageBody.message = {
+            attachment: {
+              type: 'template',
+              payload: {
+                template_type: 'button',
+                text: messagePayload.text,
+                buttons: messagePayload.buttons.map(btn => {
+                  if (btn.type === 'web_url') {
+                    return {
+                      type: 'web_url',
+                      url: btn.url,
+                      title: btn.title,
+                    };
+                  } else {
+                    return {
+                      type: 'postback',
+                      title: btn.title,
+                      payload: btn.payload,
+                    };
+                  }
+                }),
+              },
+            },
+          };
+        }
+      }
+
+      const response = await fetch(
+        `${GRAPH_API_BASE}/me/messages?access_token=${accessToken}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(messageBody),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return { 
+          success: false, 
+          error: this.handleFacebookError(data) 
+        };
+      }
+
+      if (data.message_id) {
+        // Store message in database
+        await db.insert(messengerMessages).values({
+          connectionId,
+          conversationId: recipientId,
+          senderId: connection.pageId,
+          recipientId,
+          message: messagePayload.text || '[Template Message]',
+          messageType: messagePayload.buttons ? 'button_template' : messagePayload.quickReplies ? 'quick_reply' : 'text',
+        });
+
+        // Turn off typing indicator
+        await this.sendTypingIndicator(connection.pageId, recipientId, accessToken, false);
+
+        console.log(`[MessengerService] Template message sent: ${data.message_id}`);
+        return { success: true, messageId: data.message_id };
+      } else {
+        return { success: false, error: data.error?.message || 'Failed to send message' };
+      }
+    } catch (error) {
+      console.error('[MessengerService] Error sending template message:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+  }
+
+  /**
+   * Handle Facebook API errors with user-friendly messages
+   */
+  private handleFacebookError(errorData: any): string {
+    if (!errorData.error) {
+      return 'Unknown Facebook API error';
+    }
+
+    const { code, message, error_subcode } = errorData.error;
+
+    // Rate limiting
+    if (code === 4 || code === 17 || code === 32 || code === 613) {
+      return 'Rate limit exceeded. Please wait a few minutes and try again.';
+    }
+
+    // Invalid PSID
+    if (code === 551 || error_subcode === 2018065) {
+      return 'Invalid recipient ID (PSID). This user may not have messaged your page yet.';
+    }
+
+    // OAuth/Token errors
+    if (code === 190) {
+      if (error_subcode === 463) {
+        return 'Access token has expired. Please reconnect your Facebook page.';
+      } else if (error_subcode === 467) {
+        return 'Access token has been invalidated. Please reconnect your Facebook page.';
+      } else {
+        return 'Invalid access token. Please reconnect your Facebook page.';
+      }
+    }
+
+    // Permission errors
+    if (code === 10 || code === 200) {
+      return 'Permission denied. Please ensure your page has the necessary permissions.';
+    }
+
+    // User opted out
+    if (code === 551 && message.includes('opt')) {
+      return 'This user has opted out of messages from your page.';
+    }
+
+    // Generic error with message
+    return message || 'Facebook API error occurred';
+  }
 }
 
 export const messengerService = new MessengerService();

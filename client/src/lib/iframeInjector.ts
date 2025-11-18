@@ -4,7 +4,8 @@
  * Solves cross-origin security issues
  */
 
-import { ScreenshotCapture } from './screenshotCapture';
+import { ScreenshotCapture, captureIframeScreenshot, saveScreenshot } from './screenshotCapture';
+import { visualEditorTracker } from './visualEditorTracker';
 
 export interface StyleChangeRequest {
   type: 'style' | 'class';
@@ -12,36 +13,85 @@ export interface StyleChangeRequest {
   value: string;
 }
 
-export interface StyleChange {
+/**
+ * Comprehensive history entry for undo/redo system
+ */
+export interface HistoryEntry {
   id: string;
-  selector: string;
-  property: string;
-  previousValue: string;
-  newValue: string;
   timestamp: number;
-  screenshot?: string;
-  description?: string;
+  type: 'style' | 'html' | 'insert' | 'delete' | 'class';
+  targetElement: {
+    selector: string;
+    tagName: string;
+    testId?: string;
+    id?: string;
+  };
+  property?: string;  // For style/class changes
+  oldValue: any;
+  newValue: any;
+  screenshot?: string; // Base64 thumbnail
+  description: string; // Human-readable description
+}
+
+/**
+ * Backward compatibility alias
+ */
+export type StyleChange = HistoryEntry;
+
+/**
+ * Navigation history entry for tracking iframe URL changes
+ */
+export interface NavigationEntry {
+  url: string;
+  timestamp: number;
+  title?: string;
 }
 
 export interface IframeCallbacks {
   onElementSelected?: (element: HTMLElement) => void;
-  onChangeApplied?: (change: StyleChange) => void;
+  onChangeApplied?: (change: HistoryEntry) => void;
+  onHistoryChanged?: (undoStack: HistoryEntry[], redoStack: HistoryEntry[], currentIndex: number) => void;
+  onUrlChanged?: (url: string, canGoBack: boolean, canGoForward: boolean) => void;
+  onNavigationStart?: () => void;
+  onNavigationEnd?: () => void;
 }
 
 export class IframeInjector {
   private iframe: HTMLIFrameElement | null = null;
   private selectedElement: HTMLElement | null = null;
-  private changeHistory: StyleChange[] = [];
-  private changeIndex: number = -1;
+  private undoStack: HistoryEntry[] = [];
+  private redoStack: HistoryEntry[] = [];
+  private maxHistory: number = 50;
   private onElementSelected?: (element: HTMLElement) => void;
-  private onChangeApplied?: (change: StyleChange) => void;
+  private onChangeApplied?: (change: HistoryEntry) => void;
+  private onHistoryChanged?: (undoStack: HistoryEntry[], redoStack: HistoryEntry[], currentIndex: number) => void;
+  private onUrlChanged?: (url: string, canGoBack: boolean, canGoForward: boolean) => void;
+  private onNavigationStart?: () => void;
+  private onNavigationEnd?: () => void;
   private messageListener?: (event: MessageEvent) => void;
   private screenshotCapture = new ScreenshotCapture();
+  private keyboardListener?: (event: KeyboardEvent) => void;
+  
+  // URL Navigation History
+  private navigationHistory: NavigationEntry[] = [];
+  private navigationIndex: number = -1;
+  private currentUrl: string = '';
+  private isNavigating: boolean = false;
   
   initialize(iframe: HTMLIFrameElement, callbacks: IframeCallbacks) {
     this.iframe = iframe;
     this.onElementSelected = callbacks.onElementSelected;
     this.onChangeApplied = callbacks.onChangeApplied;
+    this.onHistoryChanged = callbacks.onHistoryChanged;
+    this.onUrlChanged = callbacks.onUrlChanged;
+    this.onNavigationStart = callbacks.onNavigationStart;
+    this.onNavigationEnd = callbacks.onNavigationEnd;
+    
+    // Initialize current URL
+    if (iframe.src) {
+      this.currentUrl = this.getPathFromUrl(iframe.src);
+      this.addToNavigationHistory(this.currentUrl);
+    }
     
     // Set up message listener for iframe events
     this.messageListener = (event: MessageEvent) => {
@@ -61,11 +111,35 @@ export class IframeInjector {
         }
       } else if (event.data.type === 'IFRAME_CHANGE_APPLIED' && this.onChangeApplied) {
         this.onChangeApplied(event.data.change);
+      } else if (event.data.type === 'IFRAME_NAVIGATE') {
+        // Handle navigation events from inside iframe (link clicks, form submits)
+        const newUrl = event.data.url;
+        if (newUrl && this.validateUrl(newUrl)) {
+          this.handleNavigationEvent(newUrl);
+        }
+      }
+    };
+    
+    // Set up keyboard shortcuts
+    this.keyboardListener = (event: KeyboardEvent) => {
+      // Ctrl+Z / Cmd+Z - Undo
+      if ((event.ctrlKey || event.metaKey) && event.key === 'z' && !event.shiftKey) {
+        event.preventDefault();
+        this.undo();
+      }
+      // Ctrl+Y / Cmd+Shift+Z - Redo
+      else if (
+        ((event.ctrlKey || event.metaKey) && event.key === 'y') ||
+        ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'z')
+      ) {
+        event.preventDefault();
+        this.redo();
       }
     };
     
     window.addEventListener('message', this.messageListener);
-    console.log('[IframeInjector] Initialized with callbacks');
+    window.addEventListener('keydown', this.keyboardListener);
+    console.log('[IframeInjector] Initialized with callbacks and keyboard shortcuts');
   }
   
   setIframe(iframe: HTMLIFrameElement) {
@@ -105,6 +179,10 @@ export class IframeInjector {
       window.removeEventListener('message', this.messageListener);
     }
     
+    if (this.keyboardListener) {
+      window.removeEventListener('keydown', this.keyboardListener);
+    }
+    
     const iframeDoc = this.iframe?.contentDocument;
     if (iframeDoc) {
       // Clean up any inline styles we added
@@ -117,7 +195,9 @@ export class IframeInjector {
     this.selectedElement = null;
     this.onElementSelected = undefined;
     this.onChangeApplied = undefined;
+    this.onHistoryChanged = undefined;
     this.messageListener = undefined;
+    this.keyboardListener = undefined;
     
     console.log('[IframeInjector] Destroyed and cleaned up');
   }
@@ -141,7 +221,28 @@ export class IframeInjector {
     }
     
     // Store previous value for undo
-    const previousValue = targetElement.style[change.property as any];
+    let previousValue: any;
+    let description: string;
+    
+    if (change.type === 'style') {
+      previousValue = targetElement.style[change.property as any] || '';
+      description = `Changed ${change.property} from "${previousValue}" to "${change.value}"`;
+    } else {
+      previousValue = targetElement.className;
+      description = `Changed classes from "${previousValue}" to "${change.value}"`;
+    }
+    
+    // Capture screenshot BEFORE change
+    let screenshot = '';
+    if (this.iframe) {
+      try {
+        screenshot = await captureIframeScreenshot(this.iframe);
+        // Generate thumbnail (resize to 200x150)
+        screenshot = await this.generateThumbnail(screenshot, 200, 150);
+      } catch (error) {
+        console.warn('[IframeInjector] Screenshot capture failed:', error);
+      }
+    }
     
     // Apply the change
     if (change.type === 'style') {
@@ -156,108 +257,325 @@ export class IframeInjector {
       }
     }
     
-    // Capture screenshot after change
-    let screenshot = '';
-    if (this.iframe) {
-      screenshot = await this.screenshotCapture.captureIframe(this.iframe);
-    }
-    
-    // Add to history
-    const styleChange: StyleChange = {
-      id: `change-${Date.now()}`,
-      selector,
-      property: change.property,
-      previousValue,
-      newValue: change.value,
+    // Create history entry
+    const historyEntry: HistoryEntry = {
+      id: `change-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       timestamp: Date.now(),
+      type: change.type as 'style' | 'class',
+      targetElement: {
+        selector,
+        tagName: targetElement.tagName.toLowerCase(),
+        testId: targetElement.getAttribute('data-testid') || undefined,
+        id: targetElement.id || undefined,
+      },
+      property: change.property,
+      oldValue: previousValue,
+      newValue: change.value,
       screenshot,
-      description: `Changed ${change.property} from ${previousValue} to ${change.value}`,
+      description,
     };
     
-    // Remove any changes after current index (for redo)
-    this.changeHistory = this.changeHistory.slice(0, this.changeIndex + 1);
-    this.changeHistory.push(styleChange);
-    this.changeIndex++;
+    // Add to history
+    await this.addToHistory(historyEntry);
+    
+    // Sync with visualEditorTracker
+    visualEditorTracker.track({
+      elementId: historyEntry.targetElement.id || selector,
+      elementTestId: historyEntry.targetElement.testId || '',
+      changeType: change.type as any,
+      changes: { [change.property]: { before: previousValue, after: change.value } },
+      description: historyEntry.description,
+    });
     
     // Send update to parent
-    this.notifyParent('CHANGE_APPLIED', styleChange);
+    this.notifyParent('CHANGE_APPLIED', historyEntry);
+    this.onChangeApplied?.(historyEntry);
   }
   
-  async undo(): Promise<void> {
-    if (this.changeIndex < 0) {
+  async undo(): Promise<boolean> {
+    if (this.undoStack.length === 0) {
       console.log('[IframeInjector] Nothing to undo');
-      return;
+      return false;
     }
     
-    const change = this.changeHistory[this.changeIndex];
+    const entry = this.undoStack.pop()!;
     
     const iframeDoc = this.iframe?.contentDocument;
-    if (!iframeDoc) return;
+    if (!iframeDoc) return false;
     
-    const targetElement = iframeDoc.querySelector(change.selector) as HTMLElement;
-    if (targetElement) {
-      targetElement.style[change.property as any] = change.previousValue;
+    const targetElement = iframeDoc.querySelector(entry.targetElement.selector) as HTMLElement;
+    if (!targetElement) {
+      console.warn('[IframeInjector] Target element not found for undo');
+      return false;
     }
     
-    this.changeIndex--;
-    this.notifyParent('CHANGE_UNDONE', change);
+    // Apply the old value
+    if (entry.type === 'style' && entry.property) {
+      targetElement.style[entry.property as any] = entry.oldValue;
+    } else if (entry.type === 'class') {
+      targetElement.className = entry.oldValue;
+    } else if (entry.type === 'html') {
+      targetElement.innerHTML = entry.oldValue;
+    } else if (entry.type === 'delete') {
+      // Restore deleted element (would need parent reference)
+      console.warn('[IframeInjector] Cannot undo delete operation yet');
+    }
     
-    await this.captureScreenshot();
+    // Move to redo stack
+    this.redoStack.push(entry);
+    
+    // Notify callbacks
+    this.notifyParent('CHANGE_UNDONE', entry);
+    this.notifyHistoryChanged();
+    
+    console.log('[IframeInjector] Undo successful:', entry.description);
+    return true;
   }
   
-  async redo(): Promise<void> {
-    if (this.changeIndex >= this.changeHistory.length - 1) {
+  async redo(): Promise<boolean> {
+    if (this.redoStack.length === 0) {
       console.log('[IframeInjector] Nothing to redo');
-      return;
+      return false;
     }
     
-    this.changeIndex++;
-    const change = this.changeHistory[this.changeIndex];
+    const entry = this.redoStack.pop()!;
     
     const iframeDoc = this.iframe?.contentDocument;
-    if (!iframeDoc) return;
+    if (!iframeDoc) return false;
     
-    const targetElement = iframeDoc.querySelector(change.selector) as HTMLElement;
-    if (targetElement) {
-      targetElement.style[change.property as any] = change.newValue;
+    const targetElement = iframeDoc.querySelector(entry.targetElement.selector) as HTMLElement;
+    if (!targetElement) {
+      console.warn('[IframeInjector] Target element not found for redo');
+      return false;
     }
     
-    this.notifyParent('CHANGE_REDONE', change);
+    // Apply the new value
+    if (entry.type === 'style' && entry.property) {
+      targetElement.style[entry.property as any] = entry.newValue;
+    } else if (entry.type === 'class') {
+      targetElement.className = entry.newValue;
+    } else if (entry.type === 'html') {
+      targetElement.innerHTML = entry.newValue;
+    } else if (entry.type === 'insert') {
+      // Re-insert element (would need parent reference)
+      console.warn('[IframeInjector] Cannot redo insert operation yet');
+    }
     
-    await this.captureScreenshot();
+    // Move back to undo stack
+    this.undoStack.push(entry);
+    
+    // Notify callbacks
+    this.notifyParent('CHANGE_REDONE', entry);
+    this.notifyHistoryChanged();
+    
+    console.log('[IframeInjector] Redo successful:', entry.description);
+    return true;
   }
   
+  /**
+   * Undo multiple changes at once (batch undo)
+   */
+  async batchUndo(count: number): Promise<number> {
+    let undone = 0;
+    for (let i = 0; i < count && this.undoStack.length > 0; i++) {
+      const success = await this.undo();
+      if (success) undone++;
+    }
+    console.log(`[IframeInjector] Batch undo: ${undone}/${count} changes undone`);
+    return undone;
+  }
+  
+  /**
+   * Jump to a specific point in history
+   */
   async jumpToChange(index: number): Promise<void> {
-    if (index < -1 || index >= this.changeHistory.length) {
+    const totalChanges = this.undoStack.length + this.redoStack.length;
+    
+    if (index < 0 || index >= totalChanges) {
       console.warn('[IframeInjector] Invalid change index');
       return;
     }
     
-    // Undo to the beginning
-    while (this.changeIndex > index) {
-      await this.undo();
-    }
+    const currentIndex = this.undoStack.length - 1;
     
-    // Redo to the target index
-    while (this.changeIndex < index) {
-      await this.redo();
+    if (index < currentIndex) {
+      // Undo to reach the target
+      const stepsBack = currentIndex - index;
+      await this.batchUndo(stepsBack);
+    } else if (index > currentIndex) {
+      // Redo to reach the target
+      const stepsForward = index - currentIndex;
+      for (let i = 0; i < stepsForward; i++) {
+        await this.redo();
+      }
     }
   }
   
-  getHistory(): StyleChange[] {
-    return this.changeHistory;
+  /**
+   * Get full history (undo stack + redo stack)
+   */
+  getHistory(): HistoryEntry[] {
+    return [...this.undoStack, ...this.redoStack.reverse()];
   }
   
+  /**
+   * Get undo stack
+   */
+  getUndoStack(): HistoryEntry[] {
+    return [...this.undoStack];
+  }
+  
+  /**
+   * Get redo stack
+   */
+  getRedoStack(): HistoryEntry[] {
+    return [...this.redoStack];
+  }
+  
+  /**
+   * Get current position in history
+   */
   getCurrentIndex(): number {
-    return this.changeIndex;
+    return this.undoStack.length - 1;
   }
   
   canUndo(): boolean {
-    return this.changeIndex >= 0;
+    return this.undoStack.length > 0;
   }
   
   canRedo(): boolean {
-    return this.changeIndex < this.changeHistory.length - 1;
+    return this.redoStack.length > 0;
+  }
+  
+  /**
+   * Search history by filters
+   */
+  searchHistory(filters: {
+    type?: HistoryEntry['type'];
+    element?: string;
+    property?: string;
+    searchText?: string;
+  }): HistoryEntry[] {
+    const allHistory = this.getHistory();
+    
+    return allHistory.filter(entry => {
+      if (filters.type && entry.type !== filters.type) return false;
+      if (filters.element && !entry.targetElement.selector.includes(filters.element)) return false;
+      if (filters.property && entry.property !== filters.property) return false;
+      if (filters.searchText && !entry.description.toLowerCase().includes(filters.searchText.toLowerCase())) return false;
+      return true;
+    });
+  }
+  
+  /**
+   * Export history as JSON
+   */
+  exportHistory(): string {
+    return JSON.stringify({
+      exportDate: new Date().toISOString(),
+      totalChanges: this.undoStack.length + this.redoStack.length,
+      currentIndex: this.getCurrentIndex(),
+      undoStack: this.undoStack,
+      redoStack: this.redoStack,
+    }, null, 2);
+  }
+  
+  /**
+   * Clear redo stack (called when new action is taken)
+   */
+  private clearRedoStack(): void {
+    this.redoStack = [];
+  }
+  
+  /**
+   * Add entry to history with automatic management
+   */
+  private async addToHistory(entry: HistoryEntry): Promise<void> {
+    // Clear redo stack when new action is taken
+    this.clearRedoStack();
+    
+    // Add to undo stack
+    this.undoStack.push(entry);
+    
+    // Limit history size
+    if (this.undoStack.length > this.maxHistory) {
+      this.undoStack.shift(); // Remove oldest
+    }
+    
+    // Save screenshot to IndexedDB if present
+    if (entry.screenshot) {
+      try {
+        await saveScreenshot(entry.id, entry.screenshot, {
+          id: entry.id,
+          timestamp: entry.timestamp,
+          prompt: entry.description,
+          type: 'after',
+          changeId: entry.id,
+        });
+      } catch (error) {
+        console.warn('[IframeInjector] Failed to save screenshot:', error);
+      }
+    }
+    
+    // Notify history changed
+    this.notifyHistoryChanged();
+    
+    console.log('[IframeInjector] Added to history:', entry.description);
+  }
+  
+  /**
+   * Generate thumbnail from screenshot
+   */
+  private async generateThumbnail(dataUrl: string, width: number, height: number): Promise<string> {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(dataUrl); // Return original if canvas fails
+          return;
+        }
+        
+        // Calculate aspect ratio
+        const aspectRatio = img.width / img.height;
+        const targetRatio = width / height;
+        
+        let drawWidth = width;
+        let drawHeight = height;
+        let offsetX = 0;
+        let offsetY = 0;
+        
+        if (aspectRatio > targetRatio) {
+          // Image is wider - fit height
+          drawWidth = height * aspectRatio;
+          offsetX = -(drawWidth - width) / 2;
+        } else {
+          // Image is taller - fit width
+          drawHeight = width / aspectRatio;
+          offsetY = -(drawHeight - height) / 2;
+        }
+        
+        ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+        resolve(canvas.toDataURL('image/png', 0.7));
+      };
+      img.onerror = () => resolve(dataUrl); // Return original on error
+      img.src = dataUrl;
+    });
+  }
+  
+  /**
+   * Notify callbacks that history has changed
+   */
+  private notifyHistoryChanged(): void {
+    this.onHistoryChanged?.(
+      this.undoStack,
+      this.redoStack,
+      this.getCurrentIndex()
+    );
   }
   
   private getElementSelector(element: HTMLElement): string {
@@ -298,6 +616,279 @@ export class IframeInjector {
       type: `IFRAME_${type}`,
       data,
     }, '*');
+  }
+  
+  /**
+   * ============================================================
+   * URL NAVIGATION & HISTORY MANAGEMENT
+   * ============================================================
+   */
+  
+  /**
+   * Validate URL for security (prevent javascript: protocol injection)
+   */
+  private validateUrl(url: string): boolean {
+    if (!url || typeof url !== 'string') {
+      console.warn('[IframeInjector] Invalid URL type');
+      return false;
+    }
+    
+    const trimmedUrl = url.trim().toLowerCase();
+    
+    // Block dangerous protocols
+    const dangerousProtocols = ['javascript:', 'data:', 'vbscript:', 'file:'];
+    for (const protocol of dangerousProtocols) {
+      if (trimmedUrl.startsWith(protocol)) {
+        console.error('[IframeInjector] Blocked dangerous protocol:', protocol);
+        return false;
+      }
+    }
+    
+    return true;
+  }
+  
+  /**
+   * Extract path from full URL
+   */
+  private getPathFromUrl(url: string): string {
+    try {
+      const urlObj = new URL(url, window.location.origin);
+      return urlObj.pathname + urlObj.search + urlObj.hash;
+    } catch (e) {
+      // If URL parsing fails, assume it's already a path
+      return url;
+    }
+  }
+  
+  /**
+   * Add URL to navigation history
+   */
+  private addToNavigationHistory(url: string): void {
+    // Remove any forward history when navigating to new URL
+    if (this.navigationIndex < this.navigationHistory.length - 1) {
+      this.navigationHistory = this.navigationHistory.slice(0, this.navigationIndex + 1);
+    }
+    
+    // Add new entry
+    const entry: NavigationEntry = {
+      url,
+      timestamp: Date.now(),
+      title: this.iframe?.contentDocument?.title
+    };
+    
+    this.navigationHistory.push(entry);
+    this.navigationIndex = this.navigationHistory.length - 1;
+    this.currentUrl = url;
+    
+    // Limit history size
+    if (this.navigationHistory.length > 100) {
+      this.navigationHistory.shift();
+      this.navigationIndex--;
+    }
+    
+    console.log('[IframeInjector] Navigation history updated:', {
+      url,
+      index: this.navigationIndex,
+      total: this.navigationHistory.length
+    });
+    
+    this.notifyUrlChanged();
+  }
+  
+  /**
+   * Handle navigation event from iframe (link clicks, etc)
+   */
+  private handleNavigationEvent(url: string): void {
+    const path = this.getPathFromUrl(url);
+    
+    // Don't add duplicate if same as current
+    if (path === this.currentUrl) {
+      return;
+    }
+    
+    this.addToNavigationHistory(path);
+  }
+  
+  /**
+   * Notify URL changed callback
+   */
+  private notifyUrlChanged(): void {
+    this.onUrlChanged?.(
+      this.currentUrl,
+      this.canGoBack(),
+      this.canGoForward()
+    );
+  }
+  
+  /**
+   * Navigate to a URL (from address bar input)
+   */
+  navigateTo(url: string): void {
+    if (!this.iframe) {
+      console.warn('[IframeInjector] No iframe available for navigation');
+      return;
+    }
+    
+    // Validate URL
+    if (!this.validateUrl(url)) {
+      console.error('[IframeInjector] URL validation failed:', url);
+      this.notifyParent('NAVIGATION_BLOCKED', { url, reason: 'Invalid URL' });
+      return;
+    }
+    
+    // Normalize to path if needed
+    const path = url.startsWith('/') ? url : `/${url}`;
+    
+    this.isNavigating = true;
+    this.onNavigationStart?.();
+    
+    console.log('[IframeInjector] Navigating to:', path);
+    
+    // Navigate iframe
+    this.iframe.src = path;
+    
+    // Add to history (will be updated on load)
+    this.addToNavigationHistory(path);
+    
+    // Send message to iframe
+    this.iframe.contentWindow?.postMessage({
+      type: 'NAVIGATE_TO',
+      url: path
+    }, '*');
+  }
+  
+  /**
+   * Go back in navigation history
+   */
+  goBack(): boolean {
+    if (!this.canGoBack()) {
+      console.log('[IframeInjector] Cannot go back - at beginning of history');
+      return false;
+    }
+    
+    this.navigationIndex--;
+    const entry = this.navigationHistory[this.navigationIndex];
+    
+    this.isNavigating = true;
+    this.onNavigationStart?.();
+    
+    console.log('[IframeInjector] Going back to:', entry.url);
+    
+    if (this.iframe) {
+      this.iframe.src = entry.url;
+    }
+    
+    this.currentUrl = entry.url;
+    this.notifyUrlChanged();
+    
+    return true;
+  }
+  
+  /**
+   * Go forward in navigation history
+   */
+  goForward(): boolean {
+    if (!this.canGoForward()) {
+      console.log('[IframeInjector] Cannot go forward - at end of history');
+      return false;
+    }
+    
+    this.navigationIndex++;
+    const entry = this.navigationHistory[this.navigationIndex];
+    
+    this.isNavigating = true;
+    this.onNavigationStart?.();
+    
+    console.log('[IframeInjector] Going forward to:', entry.url);
+    
+    if (this.iframe) {
+      this.iframe.src = entry.url;
+    }
+    
+    this.currentUrl = entry.url;
+    this.notifyUrlChanged();
+    
+    return true;
+  }
+  
+  /**
+   * Refresh current page
+   */
+  refresh(): void {
+    if (!this.iframe) {
+      console.warn('[IframeInjector] No iframe available for refresh');
+      return;
+    }
+    
+    this.isNavigating = true;
+    this.onNavigationStart?.();
+    
+    console.log('[IframeInjector] Refreshing:', this.currentUrl);
+    
+    // Reload iframe
+    this.iframe.src = this.iframe.src;
+  }
+  
+  /**
+   * Navigate to home page
+   */
+  goHome(): void {
+    this.navigateTo('/');
+  }
+  
+  /**
+   * Check if can go back
+   */
+  canGoBack(): boolean {
+    return this.navigationIndex > 0;
+  }
+  
+  /**
+   * Check if can go forward
+   */
+  canGoForward(): boolean {
+    return this.navigationIndex < this.navigationHistory.length - 1;
+  }
+  
+  /**
+   * Get current URL
+   */
+  getCurrentUrl(): string {
+    return this.currentUrl;
+  }
+  
+  /**
+   * Get navigation history
+   */
+  getNavigationHistory(): NavigationEntry[] {
+    return [...this.navigationHistory];
+  }
+  
+  /**
+   * Handle iframe load event (navigation complete)
+   */
+  handleIframeLoad(): void {
+    if (!this.iframe) return;
+    
+    this.isNavigating = false;
+    this.onNavigationEnd?.();
+    
+    // Update current URL from iframe
+    try {
+      const iframePath = this.getPathFromUrl(this.iframe.contentWindow?.location.href || '');
+      if (iframePath && iframePath !== this.currentUrl) {
+        // Update without adding to history if it's from back/forward
+        if (!this.isNavigating) {
+          this.currentUrl = iframePath;
+          this.notifyUrlChanged();
+        }
+      }
+    } catch (e) {
+      // Cross-origin restriction - can't access iframe location
+      console.log('[IframeInjector] Cannot access iframe location (cross-origin)');
+    }
+    
+    console.log('[IframeInjector] Navigation complete:', this.currentUrl);
   }
   
   /**

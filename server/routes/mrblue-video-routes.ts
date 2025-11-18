@@ -1,8 +1,11 @@
 import { Router, type Request } from 'express';
 import { lumaVideoService } from '../services/lumaVideoService';
+import { didService, DID_VOICE_PRESETS, MRBLUE_AVATAR_PRESETS } from '../services/didService';
 import { insertLumaVideoSchema } from '@shared/schema';
+import multer from 'multer';
 
 const router = Router();
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Extend Request to include user
 interface AuthRequest extends Request {
@@ -301,6 +304,267 @@ router.get('/video/history', async (req: AuthRequest, res) => {
     console.error('History fetch error:', error);
     res.status(500).json({
       error: error.message || 'Failed to fetch video history'
+    });
+  }
+});
+
+// ============================================================================
+// D-ID TALKING AVATAR VIDEO GENERATION
+// ============================================================================
+
+/**
+ * GET /api/mrblue/video/did/presets
+ * Get avatar and voice presets
+ */
+router.get('/video/did/presets', async (req: AuthRequest, res) => {
+  try {
+    res.json({
+      success: true,
+      avatarPresets: MRBLUE_AVATAR_PRESETS,
+      voicePresets: DID_VOICE_PRESETS,
+    });
+  } catch (error: any) {
+    console.error('Presets fetch error:', error);
+    res.status(500).json({
+      error: error.message || 'Failed to fetch presets'
+    });
+  }
+});
+
+/**
+ * GET /api/mrblue/video/did/voices
+ * Get available voices (D-ID + user's ElevenLabs voices)
+ */
+router.get('/video/did/voices', async (req: AuthRequest, res) => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const voices = await didService.getAvailableVoices(req.user.id);
+
+    res.json({
+      success: true,
+      voices,
+    });
+  } catch (error: any) {
+    console.error('Voices fetch error:', error);
+    res.status(500).json({
+      error: error.message || 'Failed to fetch voices'
+    });
+  }
+});
+
+/**
+ * POST /api/mrblue/video/did/upload-avatar
+ * Upload custom avatar image
+ */
+router.post('/video/did/upload-avatar', upload.single('avatar'), async (req: AuthRequest, res) => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'Avatar image is required' });
+    }
+
+    const filename = `${Date.now()}_${req.file.originalname}`;
+    const avatarUrl = await didService.uploadAvatar(
+      req.file.buffer,
+      req.user.id,
+      filename
+    );
+
+    res.json({
+      success: true,
+      avatarUrl,
+    });
+  } catch (error: any) {
+    console.error('Avatar upload error:', error);
+    res.status(500).json({
+      error: error.message || 'Failed to upload avatar'
+    });
+  }
+});
+
+/**
+ * POST /api/mrblue/video/did/generate
+ * Generate talking avatar video
+ */
+router.post('/video/did/generate', async (req: AuthRequest, res) => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const {
+      avatarUrl,
+      avatarPreset,
+      script,
+      voice,
+      voiceProvider,
+      elevenLabsVoiceId,
+      useSSML,
+    } = req.body;
+
+    // Validation
+    if (!avatarUrl) {
+      return res.status(400).json({ error: 'Avatar URL is required' });
+    }
+
+    if (!script || typeof script !== 'string' || script.trim().length === 0) {
+      return res.status(400).json({ error: 'Script is required' });
+    }
+
+    if (script.length > 2000) {
+      return res.status(400).json({ error: 'Script too long (max 2000 characters)' });
+    }
+
+    if (!voice) {
+      return res.status(400).json({ error: 'Voice is required' });
+    }
+
+    // Validate SSML if enabled
+    if (useSSML) {
+      const validation = didService.validateSSML(script);
+      if (!validation.valid) {
+        return res.status(400).json({ error: validation.error });
+      }
+    }
+
+    // Generate video
+    const video = await didService.generateVideo(req.user.id, {
+      avatarUrl,
+      avatarPreset,
+      script: script.trim(),
+      voice,
+      voiceProvider,
+      elevenLabsVoiceId,
+      useSSML,
+    });
+
+    res.json({
+      success: true,
+      videoId: video.didVideoId,
+      status: video.status,
+      message: 'Talking avatar video generation started!',
+    });
+  } catch (error: any) {
+    console.error('D-ID generation error:', error);
+    res.status(500).json({
+      error: error.message || 'Failed to generate video'
+    });
+  }
+});
+
+/**
+ * GET /api/mrblue/video/did/status/:id
+ * Check D-ID video generation status and auto-complete when ready
+ */
+router.get('/video/did/status/:id', async (req: AuthRequest, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: 'Video ID required' });
+    }
+
+    // Get from database first
+    const dbVideo = await didService.getVideoByDIDId(id);
+
+    if (!dbVideo) {
+      return res.status(404).json({ error: 'Video not found' });
+    }
+
+    // If already completed, return it
+    if (dbVideo.status === 'completed') {
+      return res.json({
+        success: true,
+        video: dbVideo,
+      });
+    }
+
+    // If failed, return error
+    if (dbVideo.status === 'failed') {
+      return res.json({
+        success: false,
+        video: dbVideo,
+        error: dbVideo.failureReason || 'Video generation failed',
+      });
+    }
+
+    // Otherwise, check D-ID and try to complete
+    const video = await didService.completeVideoGeneration(id);
+
+    res.json({
+      success: true,
+      video,
+    });
+  } catch (error: any) {
+    console.error('D-ID status check error:', error);
+    res.status(500).json({
+      error: error.message || 'Failed to check video status'
+    });
+  }
+});
+
+/**
+ * GET /api/mrblue/video/did/history
+ * Get user's D-ID video generation history
+ */
+router.get('/video/did/history', async (req: AuthRequest, res) => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const limit = parseInt(req.query.limit as string) || 20;
+    const videos = await didService.getUserVideos(req.user.id, limit);
+
+    res.json({
+      success: true,
+      videos,
+      count: videos.length,
+    });
+  } catch (error: any) {
+    console.error('History fetch error:', error);
+    res.status(500).json({
+      error: error.message || 'Failed to fetch video history'
+    });
+  }
+});
+
+/**
+ * GET /api/mrblue/video/did/download/:id
+ * Get download URL for completed D-ID video
+ */
+router.get('/video/did/download/:id', async (req: AuthRequest, res) => {
+  try {
+    const { id } = req.params;
+
+    const video = await didService.getVideoByDIDId(id);
+
+    if (!video) {
+      return res.status(404).json({ error: 'Video not found' });
+    }
+
+    if (video.status !== 'completed') {
+      return res.status(400).json({
+        error: 'Video not ready',
+        status: video.status
+      });
+    }
+
+    res.json({
+      success: true,
+      downloadUrl: video.cloudinaryUrl || video.videoUrl,
+      thumbnailUrl: video.thumbnailUrl,
+    });
+  } catch (error: any) {
+    console.error('Download error:', error);
+    res.status(500).json({
+      error: error.message || 'Failed to get download URL'
     });
   }
 });

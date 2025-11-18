@@ -28,6 +28,22 @@ const sendInviteSchema = z.object({
   inviteMessage: z.string().min(1).max(2000),
 });
 
+const sendTemplateSchema = z.object({
+  recipientId: z.string().min(1),
+  text: z.string().optional(),
+  quickReplies: z.array(z.object({
+    title: z.string(),
+    payload: z.string(),
+  })).optional(),
+  buttons: z.array(z.object({
+    type: z.enum(['web_url', 'postback']),
+    title: z.string(),
+    url: z.string().optional(),
+    payload: z.string().optional(),
+  })).optional(),
+  attachment: z.any().optional(),
+});
+
 /**
  * GET /api/mrblue/messenger/webhook
  * Webhook verification endpoint (Facebook initial setup)
@@ -373,6 +389,153 @@ router.get('/status', authenticateToken, async (req: AuthRequest, res: Response)
     console.error('[MessengerAPI] Status error:', error);
     res.status(500).json({ 
       message: 'Failed to get connection status',
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * GET /api/mrblue/messenger/conversations/:conversationId/messages
+ * Get message history for a specific conversation
+ */
+router.get('/conversations/:conversationId/messages', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    const { conversationId } = req.params;
+    const limit = parseInt(req.query.limit as string) || 50;
+
+    // Get user's active connection
+    const connection = await messengerService.getConnectionByUserId(userId);
+    if (!connection) {
+      return res.status(404).json({ message: 'No active Messenger connection found' });
+    }
+
+    console.log(`[MessengerAPI] Fetching messages for conversation ${conversationId}`);
+
+    const result = await messengerService.getConversationMessages(
+      connection.id,
+      conversationId,
+      limit
+    );
+
+    if (result.success) {
+      res.json({
+        success: true,
+        messages: result.messages || [],
+        conversationId,
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: result.error || 'Failed to fetch messages',
+      });
+    }
+  } catch (error: any) {
+    console.error('[MessengerAPI] Messages fetch error:', error);
+    res.status(500).json({ 
+      message: 'Failed to fetch conversation messages',
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * GET /api/mrblue/messenger/contacts
+ * Get Facebook contacts (people who have messaged the page)
+ */
+router.get('/contacts', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    // Get user's active connection
+    const connection = await messengerService.getConnectionByUserId(userId);
+    if (!connection) {
+      return res.status(404).json({ message: 'No active Messenger connection found' });
+    }
+
+    console.log(`[MessengerAPI] Fetching contacts for page ${connection.pageName}`);
+
+    const result = await messengerService.getContacts(connection.id);
+
+    if (result.success) {
+      res.json({
+        success: true,
+        contacts: result.contacts || [],
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: result.error || 'Failed to fetch contacts',
+      });
+    }
+  } catch (error: any) {
+    console.error('[MessengerAPI] Contacts fetch error:', error);
+    res.status(500).json({ 
+      message: 'Failed to fetch contacts',
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * POST /api/mrblue/messenger/send-template
+ * Send a message with template (quick replies, buttons, etc.)
+ */
+router.post('/send-template', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    // Validate request body
+    const validation = sendTemplateSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({ 
+        message: 'Validation error',
+        errors: validation.error.errors 
+      });
+    }
+
+    const { recipientId, text, quickReplies, buttons, attachment } = validation.data;
+
+    // Get user's active connection
+    const connection = await messengerService.getConnectionByUserId(userId);
+    if (!connection) {
+      return res.status(404).json({ message: 'No active Messenger connection found' });
+    }
+
+    console.log(`[MessengerAPI] Sending template message to ${recipientId}`);
+
+    const result = await messengerService.sendMessageWithTemplate(
+      connection.id,
+      recipientId,
+      { text, quickReplies, buttons, attachment }
+    );
+
+    if (result.success) {
+      res.json({
+        success: true,
+        message: 'Template message sent successfully',
+        messageId: result.messageId,
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: result.error || 'Failed to send template message',
+      });
+    }
+  } catch (error: any) {
+    console.error('[MessengerAPI] Template send error:', error);
+    res.status(500).json({ 
+      message: 'Failed to send template message',
       error: error.message 
     });
   }

@@ -10,6 +10,19 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import {
   Accordion,
   AccordionContent,
@@ -40,6 +53,11 @@ import {
   SkipBack,
   SkipForward,
   Download,
+  Search,
+  Filter,
+  FileJson,
+  RotateCcwSquare,
+  Keyboard,
 } from 'lucide-react';
 
 interface ChangeTimelineProps {
@@ -54,6 +72,8 @@ interface ChangeTimelineProps {
   onStepBack?: () => void;
   onJumpTo?: (index: number) => void;
   onDownload?: (screenshot: string, filename: string) => void;
+  onBatchUndo?: (count: number) => void;
+  onExportHistory?: () => string;
 }
 
 export function ChangeTimeline({ 
@@ -68,11 +88,16 @@ export function ChangeTimeline({
   onStepBack,
   onJumpTo,
   onDownload,
+  onBatchUndo,
+  onExportHistory,
 }: ChangeTimelineProps) {
   const [expandedChange, setExpandedChange] = useState<string | null>(null);
   const [restoreDialogOpen, setRestoreDialogOpen] = useState(false);
   const [selectedChangeId, setSelectedChangeId] = useState<string | null>(null);
   const [thumbnails, setThumbnails] = useState<Record<string, string>>({});
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [filterType, setFilterType] = useState<string>('all');
+  const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
 
   // Load thumbnails for timeline
   useEffect(() => {
@@ -105,7 +130,45 @@ export function ChangeTimeline({
     setSelectedChangeId(null);
   };
 
-  const sortedChanges = [...changes].sort((a, b) => b.timestamp - a.timestamp);
+  const handleExportHistory = () => {
+    if (!onExportHistory) return;
+    
+    const historyJson = onExportHistory();
+    const blob = new Blob([historyJson], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `visual-editor-history-${Date.now()}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleBatchUndo = (count: number) => {
+    if (onBatchUndo) {
+      onBatchUndo(count);
+    }
+  };
+
+  // Filter and search changes
+  const filteredChanges = changes.filter((change) => {
+    // Filter by type
+    if (filterType !== 'all') {
+      const changeType = (change as any).type || 'unknown';
+      if (changeType !== filterType) return false;
+    }
+
+    // Search in description and prompt
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      const matchesPrompt = change.prompt.toLowerCase().includes(query);
+      const matchesDescription = (change as any).description?.toLowerCase().includes(query);
+      return matchesPrompt || matchesDescription;
+    }
+
+    return true;
+  });
+
+  const sortedChanges = [...filteredChanges].sort((a, b) => b.timestamp - a.timestamp);
 
   if (changes.length === 0) {
     return (
@@ -168,11 +231,122 @@ export function ChangeTimeline({
                   </>
                 )}
                 <Badge variant="secondary">
-                  {changes.length} change{changes.length !== 1 ? 's' : ''}
+                  {filteredChanges.length} / {changes.length} change{changes.length !== 1 ? 's' : ''}
                 </Badge>
               </div>
             </CardTitle>
           </CardHeader>
+          
+          <CardContent className="space-y-3">
+            {/* Search and Filter Toolbar */}
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search changes..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-8"
+                  data-testid="input-search-changes"
+                />
+              </div>
+              
+              <Select value={filterType} onValueChange={setFilterType}>
+                <SelectTrigger className="w-32" data-testid="select-filter-type">
+                  <Filter className="w-4 h-4 mr-2" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="style">Style</SelectItem>
+                  <SelectItem value="html">HTML</SelectItem>
+                  <SelectItem value="class">Class</SelectItem>
+                  <SelectItem value="insert">Insert</SelectItem>
+                  <SelectItem value="delete">Delete</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              {/* Batch Undo Popover */}
+              {onBatchUndo && (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button size="sm" variant="outline" data-testid="button-batch-undo">
+                      <RotateCcwSquare className="w-4 h-4" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-60">
+                    <div className="space-y-3">
+                      <h4 className="font-medium text-sm">Batch Undo</h4>
+                      <p className="text-xs text-muted-foreground">
+                        Undo multiple changes at once
+                      </p>
+                      <div className="space-y-2">
+                        {[3, 5, 10].map((count) => (
+                          <Button
+                            key={count}
+                            size="sm"
+                            variant="outline"
+                            className="w-full"
+                            onClick={() => handleBatchUndo(count)}
+                            disabled={currentIndex < count - 1}
+                            data-testid={`button-batch-undo-${count}`}
+                          >
+                            Undo Last {count} Changes
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              )}
+              
+              {/* Export History */}
+              {onExportHistory && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleExportHistory}
+                  data-testid="button-export-history"
+                >
+                  <FileJson className="w-4 h-4" />
+                </Button>
+              )}
+              
+              {/* Keyboard Shortcuts */}
+              <Popover open={showKeyboardHelp} onOpenChange={setShowKeyboardHelp}>
+                <PopoverTrigger asChild>
+                  <Button size="sm" variant="outline" data-testid="button-keyboard-shortcuts">
+                    <Keyboard className="w-4 h-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-72">
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-sm">Keyboard Shortcuts</h4>
+                    <div className="space-y-2 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Undo</span>
+                        <Badge variant="outline" className="font-mono">
+                          Ctrl+Z
+                        </Badge>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Redo</span>
+                        <Badge variant="outline" className="font-mono">
+                          Ctrl+Y
+                        </Badge>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Redo (Alt)</span>
+                        <Badge variant="outline" className="font-mono">
+                          Ctrl+Shift+Z
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+          </CardContent>
         </Card>
 
         <ScrollArea className="h-[calc(100vh-16rem)]">

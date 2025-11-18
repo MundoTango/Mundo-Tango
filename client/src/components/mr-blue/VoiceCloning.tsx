@@ -18,6 +18,9 @@ import {
   Clock,
   Globe,
   Volume2,
+  Trash2,
+  Star,
+  AudioLines,
 } from "lucide-react";
 import {
   Select,
@@ -53,6 +56,20 @@ interface VoiceModel {
   description?: string;
 }
 
+interface VoiceClone {
+  id: number;
+  voiceId: string;
+  name: string;
+  description?: string;
+  status: string;
+  isDefault: boolean;
+  audioSampleCount: number;
+  language: string;
+  usageCount: number;
+  lastUsedAt?: string;
+  createdAt: string;
+}
+
 export function VoiceCloning() {
   const { toast } = useToast();
   
@@ -80,6 +97,15 @@ export function VoiceCloning() {
     };
   }>({
     queryKey: ['/api/mrblue/voice/samples'],
+  });
+
+  // Fetch user's voice clones (new endpoint)
+  const { data: clonesData, isLoading: clonesLoading } = useQuery<{
+    success: boolean;
+    clones: VoiceClone[];
+    count: number;
+  }>({
+    queryKey: ['/api/mrblue/voice/clones'],
   });
 
   // Fetch training status if session is active
@@ -151,6 +177,79 @@ export function VoiceCloning() {
       toast({
         title: "Generation Failed",
         description: error.message || "Failed to generate speech",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Delete voice clone mutation
+  const deleteCloneMutation = useMutation({
+    mutationFn: async (cloneId: number) => {
+      return apiRequest(`/api/mrblue/voice/clone/${cloneId}`, {
+        method: 'DELETE',
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Voice Clone Deleted",
+        description: "Your voice clone has been deleted successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/mrblue/voice/clones'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/mrblue/voice/samples'] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Deletion Failed",
+        description: error.message || "Failed to delete voice clone",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Set default voice mutation
+  const setDefaultMutation = useMutation({
+    mutationFn: async (cloneId: number) => {
+      return apiRequest(`/api/mrblue/voice/set-default/${cloneId}`, {
+        method: 'POST',
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Default Voice Set",
+        description: "Your default voice has been updated successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/mrblue/voice/clones'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/mrblue/voice/samples'] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Update Failed",
+        description: error.message || "Failed to set default voice",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Preview voice mutation
+  const previewMutation = useMutation({
+    mutationFn: async (data: { voiceId: string; text: string; language?: string }) => {
+      return apiRequest('/api/mrblue/voice/preview', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: (data: any) => {
+      const audio = new Audio(data.audio);
+      audio.play();
+      toast({
+        title: "Preview Generated",
+        description: "Playing voice preview",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Preview Failed",
+        description: error.message || "Failed to generate preview",
         variant: "destructive",
       });
     },
@@ -564,6 +663,102 @@ export function VoiceCloning() {
                 </>
               )}
             </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Voice Library Management */}
+      {clonesData && clonesData.clones && clonesData.clones.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AudioLines className="h-5 w-5" />
+              Your Voice Library ({clonesData.count})
+            </CardTitle>
+            <CardDescription>
+              Manage your voice clones, preview, set default, or delete them
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {clonesData.clones.map((clone) => (
+                <div
+                  key={clone.id}
+                  className="flex items-center justify-between p-4 border rounded-lg hover-elevate"
+                  data-testid={`clone-item-${clone.id}`}
+                >
+                  <div className="flex-1 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-semibold" data-testid={`text-clone-name-${clone.id}`}>
+                        {clone.name}
+                      </h4>
+                      {clone.isDefault && (
+                        <Badge variant="default" className="gap-1" data-testid={`badge-default-${clone.id}`}>
+                          <Star className="h-3 w-3" />
+                          Default
+                        </Badge>
+                      )}
+                    </div>
+                    {clone.description && (
+                      <p className="text-sm text-muted-foreground">{clone.description}</p>
+                    )}
+                    <div className="flex gap-4 text-xs text-muted-foreground">
+                      <span>{clone.audioSampleCount} samples</span>
+                      <span>{clone.language.toUpperCase()}</span>
+                      <span>Used {clone.usageCount} times</span>
+                      <span>Created {new Date(clone.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    {/* Preview Button */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => previewMutation.mutate({
+                        voiceId: clone.voiceId,
+                        text: "Hello! This is a preview of my cloned voice.",
+                        language: clone.language,
+                      })}
+                      disabled={previewMutation.isPending}
+                      data-testid={`button-preview-${clone.id}`}
+                    >
+                      <Play className="h-4 w-4 mr-1" />
+                      Preview
+                    </Button>
+
+                    {/* Set Default Button */}
+                    {!clone.isDefault && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setDefaultMutation.mutate(clone.id)}
+                        disabled={setDefaultMutation.isPending}
+                        data-testid={`button-set-default-${clone.id}`}
+                      >
+                        <Star className="h-4 w-4 mr-1" />
+                        Set Default
+                      </Button>
+                    )}
+
+                    {/* Delete Button */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if (confirm(`Are you sure you want to delete "${clone.name}"? This action cannot be undone.`)) {
+                          deleteCloneMutation.mutate(clone.id);
+                        }
+                      }}
+                      disabled={deleteCloneMutation.isPending}
+                      data-testid={`button-delete-${clone.id}`}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       )}

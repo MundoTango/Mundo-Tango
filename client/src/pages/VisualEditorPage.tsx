@@ -728,6 +728,42 @@ function VisualEditorPageContent() {
     });
   };
 
+  // Batch undo multiple changes
+  const handleBatchUndo = (count: number) => {
+    const actualCount = Math.min(count, changeHistory.length);
+    
+    for (let i = 0; i < actualCount; i++) {
+      handleUndo();
+    }
+    
+    toast({
+      title: "Batch Undo Complete",
+      description: `Undid ${actualCount} change${actualCount !== 1 ? 's' : ''}`,
+    });
+  };
+
+  // Export change history as JSON
+  const handleExportHistory = (): string => {
+    const historyData = {
+      exportDate: new Date().toISOString(),
+      totalChanges: changeHistory.length,
+      currentIndex: currentChangeIndex,
+      changes: changeHistory.map(change => ({
+        id: change.id,
+        timestamp: change.timestamp,
+        prompt: change.prompt,
+        files: change.files.map(f => ({
+          path: f.path,
+          hasChanges: !!f.before || !!f.after,
+        })),
+        changedElements: change.changedElements,
+        css: change.css,
+      })),
+    };
+    
+    return JSON.stringify(historyData, null, 2);
+  };
+
   // Cleanup replay interval on unmount
   useEffect(() => {
     return () => {
@@ -1254,6 +1290,8 @@ function VisualEditorPageContent() {
                   onStepBack={stepBack}
                   onJumpTo={jumpToChange}
                   onDownload={handleDownloadScreenshot}
+                  onBatchUndo={handleBatchUndo}
+                  onExportHistory={handleExportHistory}
                 />
               </div>
             ) : (

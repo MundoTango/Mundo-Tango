@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, useCallback, Suspense, lazy, useRef } from "react";
-import { X, Maximize2, Code, Play, AlertTriangle } from "lucide-react";
+import { X, Maximize2, Code, Play, AlertTriangle, GitBranch, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -16,10 +16,27 @@ import { EditControls } from "./EditControls";
 import { SelectionOverlay } from "./SelectionOverlay";
 import { ElementInspector } from "./ElementInspector";
 import { MrBlueVisualChat } from "./MrBlueVisualChat";
+import { IframeAddressBar } from "./IframeAddressBar";
 import { visualEditorTracker } from "@/lib/visualEditorTracker";
 import { VisualEditorErrorBoundary } from "./ErrorBoundary";
-import { IframeLoading, ChatPaneLoading, CodePreviewLoading } from "./LoadingStates";
+import { 
+  IframeLoading, 
+  ChatPaneLoading, 
+  CodePreviewLoading, 
+  GitPanelLoading,
+  ElementInspectorLoading,
+  PageLoadError,
+  SavingIndicator,
+  SavedIndicator,
+  AIGeneratingProgress,
+  OptimisticChangeIndicator,
+  ChangeAppliedIndicator
+} from "./LoadingStates";
 import { IframeInjector, type IframeCallbacks, injectSelectionScript } from "@/lib/iframeInjector";
+import { GitPanel } from "./GitPanel";
+import { FocusMode } from "./FocusMode";
+import { FocusModeTimer } from "./FocusModeTimer";
+import { useFocusModeStore } from "@/lib/focusModeStore";
 
 const CodePreview = lazy(() => import('./CodePreview').then(module => ({ default: module.CodePreview })));
 
@@ -38,11 +55,30 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
   const [isPreviewLoading, setIsPreviewLoading] = useState(true);
   const [showInspector, setShowInspector] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [showSaved, setShowSaved] = useState(false);
+  const [showGitPanel, setShowGitPanel] = useState(false);
+  
+  // URL Navigation State
+  const [currentUrl, setCurrentUrl] = useState(window.location.pathname);
+  const [canGoBack, setCanGoBack] = useState(false);
+  const [canGoForward, setCanGoForward] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [navigationHistory, setNavigationHistory] = useState<Array<{ url: string; timestamp: number; title?: string }>>([]);
+  
   const { toast } = useToast();
   const iframeInjectorRef = useRef<IframeInjector | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const currentPage = window.location.pathname;
+  
+  // Focus Mode state
+  const { 
+    isActive: isFocusModeActive, 
+    startSession, 
+    endSession, 
+    incrementEdits,
+    sessionDuration 
+  } = useFocusModeStore();
   
   // Initialize IframeInjector with callbacks
   useEffect(() => {
@@ -67,6 +103,27 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
           description: `Applied ${change.property} change`
         });
       },
+      onUrlChanged: (url, back, forward) => {
+        setCurrentUrl(url);
+        setCanGoBack(back);
+        setCanGoForward(forward);
+        
+        // Update navigation history from injector
+        if (iframeInjectorRef.current) {
+          const history = iframeInjectorRef.current.getNavigationHistory();
+          setNavigationHistory(history);
+        }
+        
+        console.log('[VisualEditor] URL changed:', url, 'back:', back, 'forward:', forward);
+      },
+      onNavigationStart: () => {
+        setIsNavigating(true);
+        setIsPreviewLoading(true);
+      },
+      onNavigationEnd: () => {
+        setIsNavigating(false);
+        setIsPreviewLoading(false);
+      },
     };
     
     // Create and initialize injector
@@ -90,6 +147,39 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
       visualEditorTracker.clear();
     }
   }, [isOpen]);
+  
+  // Focus Mode keyboard shortcuts
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // F11 to toggle focus mode
+      if (e.key === 'F11' && !isFocusModeActive) {
+        e.preventDefault();
+        startSession(sessionDuration);
+        toast({
+          title: "Focus Mode Activated",
+          description: `${sessionDuration} minute session started`,
+          duration: 3000
+        });
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, isFocusModeActive, startSession, sessionDuration, toast]);
+  
+  // Track edits in focus mode
+  useEffect(() => {
+    if (!isFocusModeActive) return;
+    
+    const trackerListener = () => {
+      incrementEdits();
+    };
+    
+    visualEditorTracker.addListener(trackerListener);
+    return () => visualEditorTracker.removeListener(trackerListener);
+  }, [isFocusModeActive, incrementEdits]);
   
   // Handlers for SelectionOverlay toolbar actions
   const handleInspect = useCallback((element: HTMLElement) => {
@@ -224,12 +314,16 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
       
       if (data.success) {
         visualEditorTracker.clear();
+        setShowSaved(true);
         
         toast({
           title: "Changes Saved!",
           description: `Applied ${allEdits.length} changes to ${data.filePath || currentPage}`,
           duration: 5000
         });
+        
+        // Hide saved indicator after 3 seconds
+        setTimeout(() => setShowSaved(false), 3000);
       } else {
         throw new Error(data.message || 'Save failed');
       }
@@ -256,10 +350,72 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
       description: `Moved element to (${position.x}, ${position.y})`
     });
   }, []);
+  
+  // Navigation Handlers
+  const handleNavigate = useCallback((url: string) => {
+    if (iframeInjectorRef.current) {
+      iframeInjectorRef.current.navigateTo(url);
+    }
+  }, []);
+  
+  const handleBack = useCallback(() => {
+    if (iframeInjectorRef.current) {
+      iframeInjectorRef.current.goBack();
+    }
+  }, []);
+  
+  const handleForward = useCallback(() => {
+    if (iframeInjectorRef.current) {
+      iframeInjectorRef.current.goForward();
+    }
+  }, []);
+  
+  const handleRefresh = useCallback(() => {
+    if (iframeInjectorRef.current) {
+      iframeInjectorRef.current.refresh();
+    }
+  }, []);
+  
+  const handleHome = useCallback(() => {
+    if (iframeInjectorRef.current) {
+      iframeInjectorRef.current.goHome();
+    }
+  }, []);
+  
+  // Focus Mode handlers
+  const handleToggleFocusMode = useCallback(() => {
+    if (isFocusModeActive) {
+      endSession();
+    } else {
+      startSession(sessionDuration);
+      toast({
+        title: "Focus Mode Activated",
+        description: `${sessionDuration} minute session started. Press Esc to exit.`,
+        duration: 3000
+      });
+    }
+  }, [isFocusModeActive, endSession, startSession, sessionDuration, toast]);
+  
+  const handleFocusModeExit = useCallback(() => {
+    const session = endSession();
+    if (session) {
+      toast({
+        title: "Focus Session Complete",
+        description: `${session.editsCount} edits in ${session.duration} minutes`,
+        duration: 5000
+      });
+    }
+  }, [endSession, toast]);
+  
+  const handleAutoSave = useCallback(() => {
+    if (visualEditorTracker.getAllEdits().length > 0) {
+      handleSaveChanges();
+    }
+  }, [handleSaveChanges]);
 
   if (!isOpen) return null;
 
-  return (
+  const editorContent = (
     <VisualEditorErrorBoundary>
       <div 
         className="fixed inset-0 z-[100] bg-background"
@@ -276,19 +432,43 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
                 <span className="text-xs">Generating code...</span>
               </div>
             )}
+            {isSaving && <SavingIndicator />}
+            {showSaved && !isSaving && <SavedIndicator />}
           </div>
           
           <div className="flex items-center gap-2">
             <Button
               size="sm"
-              variant="ghost"
-              onClick={() => handleGenerateCode("Generate code for all visual changes")}
-              disabled={isGenerating || visualEditorTracker.getAllEdits().length === 0}
-              data-testid="button-generate-all-code"
+              variant={isFocusModeActive ? "default" : "ghost"}
+              onClick={handleToggleFocusMode}
+              data-testid="button-toggle-focus-mode"
             >
-              <Code className="h-4 w-4 mr-2" />
-              Generate Code
+              <Zap className="h-4 w-4 mr-2" />
+              {isFocusModeActive ? 'Exit Focus' : 'Focus Mode'}
             </Button>
+            {!isFocusModeActive && (
+              <>
+                <Button
+                  size="sm"
+                  variant={showGitPanel ? "default" : "ghost"}
+                  onClick={() => setShowGitPanel(!showGitPanel)}
+                  data-testid="button-toggle-git-panel"
+                >
+                  <GitBranch className="h-4 w-4 mr-2" />
+                  Git
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => handleGenerateCode("Generate code for all visual changes")}
+                  disabled={isGenerating || visualEditorTracker.getAllEdits().length === 0}
+                  data-testid="button-generate-all-code"
+                >
+                  <Code className="h-4 w-4 mr-2" />
+                  Generate Code
+                </Button>
+              </>
+            )}
             <Button
               size="sm"
               variant="default"
@@ -298,13 +478,15 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
             >
               {isSaving ? 'Saving...' : `Save (${visualEditorTracker.getAllEdits().length})`}
             </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              data-testid="button-fullscreen"
-            >
-              <Maximize2 className="h-4 w-4" />
-            </Button>
+            {!isFocusModeActive && (
+              <Button
+                size="sm"
+                variant="ghost"
+                data-testid="button-fullscreen"
+              >
+                <Maximize2 className="h-4 w-4" />
+              </Button>
+            )}
             <Button
               size="sm"
               variant="ghost"
@@ -318,40 +500,46 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
 
         {/* Split Pane Container */}
         <div className="flex h-[calc(100vh-3.5rem)]">
-          {/* LEFT: Component Palette */}
-          <VisualEditorErrorBoundary>
-            <ComponentPaletteIntegration 
-              iframeRef={iframeRef}
-              iframeInjector={iframeInjectorRef.current}
-            />
-          </VisualEditorErrorBoundary>
+          {/* LEFT: Component Palette (hidden in focus mode) */}
+          {!isFocusModeActive && (
+            <VisualEditorErrorBoundary>
+              <ComponentPaletteIntegration 
+                iframeRef={iframeRef}
+                iframeInjector={iframeInjectorRef.current}
+              />
+            </VisualEditorErrorBoundary>
+          )}
           
           {/* CENTER: Live Preview */}
           <VisualEditorErrorBoundary>
             <div 
-              className="relative bg-muted/30 flex-1"
+              className="relative bg-muted/30 flex-1 flex flex-col"
               data-testid="preview-pane"
             >
+              {/* Address Bar */}
+              <IframeAddressBar
+                currentUrl={currentUrl}
+                onNavigate={handleNavigate}
+                onRefresh={handleRefresh}
+                onHome={handleHome}
+                canGoBack={canGoBack}
+                canGoForward={canGoForward}
+                onBack={handleBack}
+                onForward={handleForward}
+                loading={isNavigating}
+                navigationHistory={navigationHistory}
+              />
+              
               {/* Error State */}
               {previewError && (
-                <div className="absolute inset-0 flex items-center justify-center bg-background z-20">
-                  <Card className="p-6 max-w-md">
-                    <CardTitle className="flex items-center gap-2 text-destructive mb-4">
-                      <AlertTriangle className="w-5 h-5" />
-                      Preview Error
-                    </CardTitle>
-                    <p className="text-sm text-muted-foreground mb-4">{previewError}</p>
-                    <Button 
-                      onClick={() => {
-                        setPreviewError(null);
-                        setIsPreviewLoading(true);
-                      }}
-                      data-testid="button-retry-preview"
-                    >
-                      Retry
-                    </Button>
-                  </Card>
-                </div>
+                <PageLoadError 
+                  pagePath={currentUrl}
+                  onRetry={() => {
+                    setPreviewError(null);
+                    setIsPreviewLoading(true);
+                    handleRefresh();
+                  }}
+                />
               )}
 
               {/* Loading State */}
@@ -359,11 +547,11 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
 
               {/* Iframe Container for actual site */}
               {!previewError && (
-                <div className="absolute inset-0">
+                <div className="relative flex-1">
                   {/* CRITICAL FIX 1: Actual iframe element */}
                   <iframe
                     ref={iframeRef}
-                    src={currentPage}
+                    src={currentUrl}
                     className="w-full h-full border-0"
                     sandbox="allow-same-origin allow-scripts allow-forms allow-modals"
                     onLoad={() => {
@@ -379,7 +567,43 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
                           if (!iframeInjectorRef.current) {
                             iframeInjectorRef.current = new IframeInjector();
                           }
-                          iframeInjectorRef.current.initialize(iframeRef.current, iframeCallbacks);
+                          iframeInjectorRef.current.initialize(iframeRef.current, {
+                            onElementSelected: (element) => {
+                              setSelectedIframeElement(element);
+                              setShowInspector(true);
+                              toast({
+                                title: "Element Selected",
+                                description: `${element.tagName} - ${element.id || 'No ID'}`,
+                                duration: 2000
+                              });
+                            },
+                            onChangeApplied: (change) => {
+                              visualEditorTracker.track({
+                                elementId: change.targetElement.selector,
+                                elementTestId: '',
+                                changeType: 'style',
+                                changes: { [change.property || 'unknown']: { before: change.oldValue, after: change.newValue } },
+                                description: change.description
+                              });
+                            },
+                            onUrlChanged: (url, back, forward) => {
+                              setCurrentUrl(url);
+                              setCanGoBack(back);
+                              setCanGoForward(forward);
+                              console.log('[VisualEditor] URL changed:', url, 'back:', back, 'forward:', forward);
+                            },
+                            onNavigationStart: () => {
+                              setIsNavigating(true);
+                              setIsPreviewLoading(true);
+                            },
+                            onNavigationEnd: () => {
+                              setIsNavigating(false);
+                              setIsPreviewLoading(false);
+                            },
+                          });
+                          
+                          // Handle iframe load for navigation tracking
+                          iframeInjectorRef.current.handleIframeLoad();
                           
                           console.log('[VisualEditor] Script injected and initialized');
                         } catch (error) {
@@ -460,72 +684,108 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
             </div>
           </VisualEditorErrorBoundary>
 
-          {/* RIGHT SIDE: Inspector + Chat (40%) */}
-          <VisualEditorErrorBoundary>
-            <div 
-              className="flex flex-col"
-              style={{ width: `${100 - splitRatio}%` }}
-              data-testid="chat-pane"
-            >
-              {/* Element Inspector Panel (collapsible) */}
-              {showInspector && (
-                <div className="border-b border-ocean-divider p-4 overflow-auto" style={{ maxHeight: '60vh' }}>
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-semibold text-sm">Inspector</h3>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => setShowInspector(false)}
-                      data-testid="button-close-inspector"
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
+          {/* RIGHT SIDE: Inspector + Chat (40%) or Focus Mode Timer */}
+          {!isFocusModeActive && (
+            <VisualEditorErrorBoundary>
+              <div 
+                className="flex flex-col"
+                style={{ width: `${100 - splitRatio}%` }}
+                data-testid="chat-pane"
+              >
+                {/* Element Inspector Panel (collapsible) */}
+                {showInspector && (
+                  <div className="border-b border-ocean-divider p-4 overflow-auto" style={{ maxHeight: '60vh' }}>
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-semibold text-sm">Inspector</h3>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setShowInspector(false)}
+                        data-testid="button-close-inspector"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <ElementInspector 
+                      element={selectedIframeElement}
+                      iframe={iframeRef.current}
+                      changeCount={visualEditorTracker.getAllEdits().length}
+                      onUndo={() => {
+                        if (iframeInjectorRef.current) {
+                          iframeInjectorRef.current.undo();
+                        }
+                      }}
+                      onRedo={() => {
+                        if (iframeInjectorRef.current) {
+                          iframeInjectorRef.current.redo();
+                        }
+                      }}
+                      canUndo={iframeInjectorRef.current?.canUndo() || false}
+                      canRedo={iframeInjectorRef.current?.canRedo() || false}
+                    />
                   </div>
-                  <ElementInspector 
-                    element={selectedIframeElement}
-                    iframe={iframeRef.current}
-                    changeCount={visualEditorTracker.getAllEdits().length}
-                    onUndo={() => {
-                      if (iframeInjectorRef.current) {
-                        iframeInjectorRef.current.undo();
-                      }
-                    }}
-                    onRedo={() => {
-                      if (iframeInjectorRef.current) {
-                        iframeInjectorRef.current.redo();
-                      }
-                    }}
-                    canUndo={iframeInjectorRef.current?.canUndo() || false}
-                    canRedo={iframeInjectorRef.current?.canRedo() || false}
-                  />
+                )}
+                
+                {/* Git Panel or Mr. Blue Chat */}
+                <div className="flex-1 overflow-hidden">
+                  {showGitPanel ? (
+                    <GitPanel
+                      currentFile={currentPage}
+                      onBranchSwitch={(branch) => {
+                        toast({
+                          title: "Branch Switched",
+                          description: `Now on branch: ${branch}. Reload the page to see changes.`,
+                          duration: 5000
+                        });
+                      }}
+                    />
+                  ) : (
+                    <Suspense fallback={<ChatPaneLoading />}>
+                      <MrBlueVisualChat
+                        currentPage={currentPage}
+                        selectedElement={selectedComponent?.element.getAttribute('data-testid') || null}
+                        onGenerateCode={handleGenerateCode}
+                        contextInfo={{
+                          page: currentPage,
+                          selectedElement: selectedComponent ? {
+                            tagName: selectedComponent.tagName,
+                            testId: selectedComponent.element.getAttribute('data-testid'),
+                            className: selectedComponent.element.className,
+                            text: selectedComponent.element.textContent?.slice(0, 100) || ''
+                          } : null,
+                          editsCount: visualEditorTracker.getAllEdits().length,
+                          recentEdits: visualEditorTracker.getAllEdits().slice(0, 5)
+                        }}
+                      />
+                    </Suspense>
+                  )}
                 </div>
-              )}
-              
-              {/* Mr. Blue Chat */}
-              <div className="flex-1 overflow-hidden">
-                <Suspense fallback={<ChatPaneLoading />}>
-                  <MrBlueVisualChat
-                    currentPage={currentPage}
-                    selectedElement={selectedComponent?.element.getAttribute('data-testid') || null}
-                    onGenerateCode={handleGenerateCode}
-                    contextInfo={{
-                      page: currentPage,
-                      selectedElement: selectedComponent ? {
-                        tagName: selectedComponent.tagName,
-                        testId: selectedComponent.element.getAttribute('data-testid'),
-                        className: selectedComponent.element.className,
-                        text: selectedComponent.element.textContent?.slice(0, 100) || ''
-                      } : null,
-                      editsCount: visualEditorTracker.getAllEdits().length,
-                      recentEdits: visualEditorTracker.getAllEdits().slice(0, 5)
-                    }}
-                  />
-                </Suspense>
               </div>
+            </VisualEditorErrorBoundary>
+          )}
+          
+          {/* Focus Mode Timer (replaces right panel when active) */}
+          {isFocusModeActive && (
+            <div className="absolute top-20 right-4 z-[160]" data-testid="focus-mode-timer-container">
+              <FocusModeTimer 
+                onExit={handleFocusModeExit}
+                onAutoSave={handleAutoSave}
+              />
             </div>
-          </VisualEditorErrorBoundary>
+          )}
         </div>
       </div>
     </VisualEditorErrorBoundary>
   );
+  
+  // Wrap with Focus Mode when active
+  if (isFocusModeActive) {
+    return (
+      <FocusMode onClose={handleFocusModeExit}>
+        {editorContent}
+      </FocusMode>
+    );
+  }
+  
+  return editorContent;
 }

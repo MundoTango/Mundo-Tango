@@ -7,6 +7,7 @@ import { Router, type Request, type Response } from 'express';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
 import { voiceCloningService, SUPPORTED_LANGUAGES } from '../services/mrBlue/VoiceCloningService';
 import { voiceTrainer } from '../services/mrBlue/VoiceTrainer';
+import { elevenLabsService } from '../services/elevenLabsService';
 import { z } from 'zod';
 
 const router = Router();
@@ -29,6 +30,19 @@ const generateSpeechSchema = z.object({
     style: z.number().min(0).max(1).optional(),
     useSpeakerBoost: z.boolean().optional(),
   }).optional(),
+});
+
+const cloneVoiceSchema = z.object({
+  name: z.string().min(1).max(255),
+  description: z.string().optional(),
+  audioFiles: z.array(z.string()).min(1).max(25),
+  language: z.string().optional(),
+});
+
+const previewVoiceSchema = z.object({
+  voiceId: z.string().min(1),
+  text: z.string().min(1).max(1000),
+  language: z.string().optional(),
 });
 
 /**
@@ -477,6 +491,227 @@ router.delete('/cancel/:sessionId', authenticateToken, async (req: AuthRequest, 
     console.error('[VoiceAPI] Cancel session error:', error);
     res.status(500).json({ 
       message: 'Failed to cancel training session',
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * POST /api/mrblue/voice/clone
+ * Create voice clone from audio files (required endpoint alias)
+ */
+router.post('/clone', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    // Validate request body
+    const validation = cloneVoiceSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({ 
+        message: 'Validation error',
+        errors: validation.error.errors 
+      });
+    }
+
+    const { name, description, audioFiles, language } = validation.data;
+
+    console.log(`[VoiceAPI] Creating voice clone for user ${userId}: ${name}`);
+
+    // Create voice clone using ElevenLabs service
+    const result = await elevenLabsService.cloneVoice(userId, {
+      name,
+      description,
+      audioFiles,
+      language,
+    });
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.error || 'Failed to create voice clone',
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Voice clone created successfully',
+      voiceId: result.voiceId,
+      voiceCloneId: result.voiceCloneId,
+    });
+  } catch (error: any) {
+    console.error('[VoiceAPI] Clone voice error:', error);
+    res.status(500).json({ 
+      message: 'Failed to create voice clone',
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * GET /api/mrblue/voice/clones
+ * List all voice clones for the current user
+ */
+router.get('/clones', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    console.log(`[VoiceAPI] Listing voice clones for user ${userId}`);
+
+    const result = await elevenLabsService.listUserVoiceClones(userId);
+
+    if (!result.success) {
+      throw new Error(result.error || 'Failed to list voice clones');
+    }
+
+    res.json({
+      success: true,
+      clones: result.clones || [],
+      count: result.clones?.length || 0,
+    });
+  } catch (error: any) {
+    console.error('[VoiceAPI] List clones error:', error);
+    res.status(500).json({ 
+      message: 'Failed to list voice clones',
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * DELETE /api/mrblue/voice/clone/:id
+ * Delete a specific voice clone
+ */
+router.delete('/clone/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    const cloneId = parseInt(req.params.id, 10);
+    if (isNaN(cloneId)) {
+      return res.status(400).json({ message: 'Invalid clone ID' });
+    }
+
+    console.log(`[VoiceAPI] Deleting voice clone ${cloneId} for user ${userId}`);
+
+    const result = await elevenLabsService.deleteVoiceClone(userId, cloneId);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.error || 'Failed to delete voice clone',
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Voice clone deleted successfully',
+    });
+  } catch (error: any) {
+    console.error('[VoiceAPI] Delete clone error:', error);
+    res.status(500).json({ 
+      message: 'Failed to delete voice clone',
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * POST /api/mrblue/voice/preview
+ * Generate preview audio for a voice clone
+ */
+router.post('/preview', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    // Validate request body
+    const validation = previewVoiceSchema.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({ 
+        message: 'Validation error',
+        errors: validation.error.errors 
+      });
+    }
+
+    const { voiceId, text, language } = validation.data;
+
+    console.log(`[VoiceAPI] Generating preview for voice ${voiceId}`);
+
+    const result = await elevenLabsService.generatePreview({
+      voiceId,
+      text,
+      language,
+    });
+
+    if (!result.success || !result.audio) {
+      return res.status(400).json({
+        success: false,
+        message: result.error || 'Failed to generate preview',
+      });
+    }
+
+    // Convert to base64 for easy transmission
+    const audioBase64 = result.audio.toString('base64');
+
+    res.json({
+      success: true,
+      audio: `data:audio/mpeg;base64,${audioBase64}`,
+      characterCount: text.length,
+    });
+  } catch (error: any) {
+    console.error('[VoiceAPI] Preview error:', error);
+    res.status(500).json({ 
+      message: 'Failed to generate preview',
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * POST /api/mrblue/voice/set-default/:id
+ * Set a voice clone as the user's default voice
+ */
+router.post('/set-default/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    const cloneId = parseInt(req.params.id, 10);
+    if (isNaN(cloneId)) {
+      return res.status(400).json({ message: 'Invalid clone ID' });
+    }
+
+    console.log(`[VoiceAPI] Setting default voice ${cloneId} for user ${userId}`);
+
+    const result = await elevenLabsService.setDefaultVoice(userId, cloneId);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        message: result.error || 'Failed to set default voice',
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Default voice set successfully',
+    });
+  } catch (error: any) {
+    console.error('[VoiceAPI] Set default error:', error);
+    res.status(500).json({ 
+      message: 'Failed to set default voice',
       error: error.message 
     });
   }

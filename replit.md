@@ -51,6 +51,7 @@ The platform features a unified **MT Ocean theme** with a tango-inspired color p
 -   **AI Arbitrage Engine:** Intelligent routing system achieving 50-90% cost savings via TaskClassifier, ModelSelector, CascadeExecutor, and CostTracker.
 -   **AI Agent Learning Systems:** 4 learning pathways: DPO Training, Curriculum Learning, GEPA Self-Evolution, and LIMI Curation.
 -   **OpenAI Realtime Voice API:** ChatGPT-style natural voice conversations.
+-   **ElevenLabs Voice Cloning (Nov 18, 2025):** Complete voice cloning integration with database persistence (`elevenlabsService`). Features audio upload (up to 25 files), voice clone creation via ElevenLabs API, clone management (list/delete), default voice selection, preview generation, and usage tracking. Database schema includes `voice_clones` table (18 fields: user_id, voice_id, name, status, is_default, audio_sample_count, language, model_id, usage_count, etc.). Integrated with `VoiceCloning.tsx` frontend component.
 -   **Talent Match AI:** Advanced matching algorithms.
 -   **LIFE CEO AI SYSTEM:** Integrates LanceDB for semantic memory and orchestrates 16 specialized AI agents via a Decision Matrix.
 -   **Multi-AI Orchestration System:** Integrates OpenAI GPT-4o, Anthropic Claude 3.5 Sonnet, Groq Llama 3.1, Google Gemini Pro with specialized fallback routing, intelligent load balancing, and a semantic caching layer with LanceDB, enhanced with `queryWithArbitrage()`.
@@ -72,7 +73,7 @@ The platform features a unified **MT Ocean theme** with a tango-inspired color p
 
 -   **Database:** PostgreSQL (with Drizzle ORM)
 -   **Authentication:** Google OAuth, Facebook OAuth (Supabase), JWT
--   **AI Platforms:** OpenAI (GPT-4o), Anthropic (Claude 3.5 Sonnet), Groq (Llama 3.1), Google (Gemini Pro), Luma Dream Machine
+-   **AI Platforms:** OpenAI (GPT-4o), Anthropic (Claude 3.5 Sonnet), Groq (Llama 3.1), Google (Gemini Pro), Luma Dream Machine, ElevenLabs (Voice Cloning & TTS)
 -   **AI Infrastructure:** Bifrost AI Gateway
 -   **Vector Database:** LanceDB
 -   **Payments:** Stripe
