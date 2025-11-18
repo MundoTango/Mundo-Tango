@@ -192,16 +192,22 @@ Generate the fix now:`;
         }
       }
 
-      // Clean JSON string - remove control characters
-      jsonStr = jsonStr.replace(/[\x00-\x1F\x7F-\x9F]/g, (char) => {
-        // Replace control characters with their escaped equivalents
-        const escaped: Record<string, string> = {
-          '\n': '\\n',
-          '\r': '\\r',
-          '\t': '\\t',
-        };
-        return escaped[char] || '';
+      // AGGRESSIVE JSON REPAIR: Fix unescaped newlines/tabs in content strings
+      // GROQ often returns literal newlines instead of \n escapes
+      // Strategy: Find all "content": "..." blocks and escape their contents
+      jsonStr = jsonStr.replace(/"content"\s*:\s*"([^"]*)"/gs, (match, content) => {
+        // Escape the content properly
+        const escaped = content
+          .replace(/\\/g, '\\\\')  // Escape backslashes first
+          .replace(/\n/g, '\\n')   // Then newlines
+          .replace(/\r/g, '\\r')   // Carriage returns
+          .replace(/\t/g, '\\t')   // Tabs
+          .replace(/"/g, '\\"');   // Quotes
+        return `"content": "${escaped}"`;
       });
+      
+      // Also clean up any remaining control characters outside of strings
+      jsonStr = jsonStr.replace(/[\x00-\x09\x0B-\x1F\x7F-\x9F]/g, '');
       
       const parsed = JSON.parse(jsonStr);
       
