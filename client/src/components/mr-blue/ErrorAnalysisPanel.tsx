@@ -31,6 +31,8 @@ import {
   Clock,
   TrendingUp,
   ShieldAlert,
+  ThumbsUp,
+  ThumbsDown,
 } from "lucide-react";
 
 type ErrorPattern = {
@@ -64,10 +66,18 @@ type EscalateErrorRequest = {
   reason?: string;
 };
 
+type FixFeedbackRequest = {
+  errorPatternId: number;
+  success: boolean;
+  feedbackMessage?: string;
+  wasHelpful?: boolean;
+};
+
 export function ErrorAnalysisPanel() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [expandedError, setExpandedError] = useState<number | null>(null);
+  const [feedbackGiven, setFeedbackGiven] = useState<Set<number>>(new Set());
 
   // Fetch error patterns
   const { data: patternsData, isLoading, error } = useQuery<{
@@ -137,6 +147,44 @@ export function ErrorAnalysisPanel() {
     },
   });
 
+  // PHASE 5: Fix feedback mutation (Learning Retention)
+  const feedbackMutation = useMutation({
+    mutationFn: async (request: FixFeedbackRequest) => {
+      return apiRequest<{
+        success: boolean;
+        confidence: { previous: number; new: number };
+        learningStats: { successCount: number; failureCount: number };
+      }>(
+        'POST',
+        '/api/mrblue/fix-feedback',
+        request
+      );
+    },
+    onSuccess: (data, variables) => {
+      const change = data.confidence.new - data.confidence.previous;
+      const direction = change > 0 ? '↑' : '↓';
+      
+      toast({
+        title: "🧠 Learning Update",
+        description: `Confidence ${direction} ${Math.abs(change).toFixed(2)} → ${data.confidence.new.toFixed(2)}. Success rate: ${data.learningStats.successCount}/${data.learningStats.successCount + data.learningStats.failureCount}`,
+        variant: "default",
+      });
+      
+      // Mark feedback as given
+      setFeedbackGiven(prev => new Set(prev).add(variables.errorPatternId));
+      
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['/api/mrblue/error-patterns'] });
+    },
+    onError: (error: any, variables) => {
+      toast({
+        title: "❌ Failed to Record Feedback",
+        description: error.message || "An error occurred while recording feedback",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Handle apply fix click
   const handleApplyFix = (errorId: number) => {
     applyFixMutation.mutate({ errorPatternId: errorId });
@@ -147,6 +195,16 @@ export function ErrorAnalysisPanel() {
     escalateMutation.mutate({
       errorPatternId: errorId,
       reason: "User requested manual escalation from Error Analysis Panel",
+    });
+  };
+
+  // PHASE 5: Handle feedback click
+  const handleFeedback = (errorId: number, success: boolean) => {
+    feedbackMutation.mutate({
+      errorPatternId: errorId,
+      success,
+      wasHelpful: success,
+      feedbackMessage: success ? "Fix worked as expected" : "Fix did not resolve the issue",
     });
   };
 
@@ -366,6 +424,63 @@ export function ErrorAnalysisPanel() {
                               )}
                             </Button>
                           )}
+                        </div>
+                      )}
+
+                      {/* PHASE 5: Learning Feedback Buttons */}
+                      {(pattern.status === 'manually_fixed' || pattern.status === 'auto_fixed') && !feedbackGiven.has(pattern.id) && (
+                        <div className="flex gap-2 pt-2 items-center">
+                          <span className="text-xs text-muted-foreground">Did this fix work?</span>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleFeedback(pattern.id, true);
+                            }}
+                            disabled={feedbackMutation.isPending}
+                            data-testid={`button-feedback-yes-${pattern.id}`}
+                            className="text-green-600 hover:bg-green-50"
+                          >
+                            {feedbackMutation.isPending ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : (
+                              <>
+                                <ThumbsUp className="w-3 h-3 mr-1" />
+                                Yes
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleFeedback(pattern.id, false);
+                            }}
+                            disabled={feedbackMutation.isPending}
+                            data-testid={`button-feedback-no-${pattern.id}`}
+                            className="text-red-600 hover:bg-red-50"
+                          >
+                            {feedbackMutation.isPending ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : (
+                              <>
+                                <ThumbsDown className="w-3 h-3 mr-1" />
+                                No
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      )}
+
+                      {/* Feedback Given Indicator */}
+                      {feedbackGiven.has(pattern.id) && (
+                        <div className="pt-2">
+                          <Badge variant="secondary" className="text-xs">
+                            <CheckCircle2 className="w-3 h-3 mr-1" />
+                            Feedback recorded
+                          </Badge>
                         </div>
                       )}
                     </CardContent>

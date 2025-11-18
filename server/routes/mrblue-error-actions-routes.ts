@@ -39,6 +39,13 @@ const escalateErrorSchema = z.object({
   reason: z.string().optional(),
 });
 
+const fixFeedbackSchema = z.object({
+  errorPatternId: z.number().int().positive(),
+  success: z.boolean(),
+  feedbackMessage: z.string().optional(),
+  wasHelpful: z.boolean().optional(),
+});
+
 /**
  * POST /api/mrblue/apply-fix
  * Apply AI-suggested fix to the codebase
@@ -264,6 +271,123 @@ router.post("/escalate-error", async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.error('[Error Actions] Error escalating:', error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error",
+      message: error.message,
+    });
+  }
+});
+
+/**
+ * POST /api/mrblue/fix-feedback
+ * Submit feedback on fix effectiveness - PHASE 5: Learning Retention
+ */
+router.post("/fix-feedback", async (req: Request, res: Response) => {
+  try {
+    console.log('[Error Actions] Fix feedback received:', req.body);
+
+    // Validate request
+    const validationResult = fixFeedbackSchema.safeParse(req.body);
+    if (!validationResult.success) {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid request format",
+        details: validationResult.error.errors,
+      });
+    }
+
+    const { errorPatternId, success, feedbackMessage, wasHelpful } = validationResult.data;
+    const userId = (req as any).user?.id;
+
+    // Get error pattern from database
+    const [pattern] = await db
+      .select()
+      .from(errorPatterns)
+      .where(eq(errorPatterns.id, errorPatternId))
+      .limit(1);
+
+    if (!pattern) {
+      return res.status(404).json({
+        success: false,
+        error: "Error pattern not found",
+      });
+    }
+
+    // Calculate new confidence based on feedback
+    let newConfidence = pattern.fixConfidence || 0.5;
+    if (success) {
+      // Increase confidence (max 1.0)
+      newConfidence = Math.min(1.0, newConfidence + 0.1);
+    } else {
+      // Decrease confidence (min 0.0)
+      newConfidence = Math.max(0.0, newConfidence - 0.15);
+    }
+
+    // Store feedback in metadata
+    const currentMetadata = (pattern.metadata as any) || {};
+    const feedbackHistory = currentMetadata.feedbackHistory || [];
+    feedbackHistory.push({
+      timestamp: new Date().toISOString(),
+      success,
+      feedbackMessage,
+      wasHelpful,
+      userId,
+      previousConfidence: pattern.fixConfidence,
+      newConfidence,
+    });
+
+    // Update learning statistics
+    const learningStats = currentMetadata.learningStats || { successCount: 0, failureCount: 0 };
+    if (success) {
+      learningStats.successCount++;
+    } else {
+      learningStats.failureCount++;
+    }
+
+    // Update error pattern with new confidence and feedback
+    await db
+      .update(errorPatterns)
+      .set({
+        fixConfidence: newConfidence,
+        metadata: {
+          ...currentMetadata,
+          feedbackHistory,
+          learningStats,
+          lastFeedback: new Date().toISOString(),
+        },
+        updatedAt: new Date(),
+      })
+      .where(eq(errorPatterns.id, errorPatternId));
+
+    console.log(`[Error Actions] ✅ Feedback recorded for error ${errorPatternId}`);
+    console.log(`[Error Actions] Confidence updated: ${pattern.fixConfidence?.toFixed(2)} → ${newConfidence.toFixed(2)}`);
+    console.log(`[Error Actions] Learning stats:`, learningStats);
+
+    // Broadcast learning update to user via WebSocket
+    if (userId) {
+      broadcastToUser(userId, 'learning_update', {
+        errorPatternId,
+        confidence: {
+          previous: pattern.fixConfidence,
+          new: newConfidence,
+          change: success ? '+0.10' : '-0.15',
+        },
+        learningStats,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      confidence: {
+        previous: pattern.fixConfidence,
+        new: newConfidence,
+      },
+      learningStats,
+    });
+  } catch (error: any) {
+    console.error('[Error Actions] Error recording feedback:', error);
     return res.status(500).json({
       success: false,
       error: "Internal server error",
