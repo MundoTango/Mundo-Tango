@@ -3,61 +3,6 @@
 ## Overview
 Mundo Tango is a production-ready social platform designed to connect the global tango community. It offers social networking, event management, talent matching, and AI-powered assistance, integrating 7 business systems and 62 specialized AI agents. The platform aims to be the leading digital hub for the tango ecosystem, with market potential in premium services, event monetization, and targeted advertising, emphasizing a lean architecture, optimized npm packages, and enterprise-grade security.
 
-## Recent Changes
-**Week 9 Day 6 (Nov 18, 2025) - Natural Language Computer Use Interface**
-- ✅ **Computer Use - Natural Language Interface** (500+ lines):
-  - **Enhanced Chat Endpoint**: `/api/mrblue/chat` now detects Computer Use intents (Wix extraction, Facebook automation)
-  - **Intent Detection**: Pattern matching for "extract Wix contacts", "automate Facebook", "migrate Wix", etc.
-  - **Automatic Execution**: User says "Extract my Wix contacts" → automation starts immediately, no manual UI needed
-  - **Real-time Chat Updates**: AutomationTaskMessage component polls task status, displays progress bar, recent actions, screenshots
-  - **Playwright Integration**: Replaced Anthropic Computer Use API (requires GUI) with BrowserAutomationService.ts (Playwright-based)
-  - **Live Screenshot Display**: Chat shows 3x2 grid of latest screenshots, click to view full-size, auto-updates every 3 seconds
-  - **Global Access**: GlobalMrBlue button (bottom-right) accessible on ALL pages for god-level users (roleLevel >= 8)
-  - **Background Execution**: Wix extraction runs async, user gets immediate response with task ID + poll URL
-  - **Status**: ✅ PRODUCTION READY - Natural language to automation complete, testable end-to-end
-
-**Week 9 Day 5 (Nov 17, 2025) - Computer Use Automation COMPLETE**
-- ✅ **System 11: Computer Use Automation** (1,200+ lines COMPLETE):
-  - **Backend (450 lines)**: BrowserAutomationService.ts with Playwright browser automation
-  - **API Endpoints (6 routes)**: `/api/computer-use/automate`, `/task/:id`, `/approve`, `/wix-extract`, `/tasks`, DELETE task
-  - **Database Schema**: `computer_use_tasks`, `computer_use_screenshots` tables (pushed to production)
-  - **UI Integration (380 lines)**: ComputerUseAutomation.tsx component with tab navigation in MrBlueChatPage
-  - **UI Features**: Quick Actions (Wix extraction), Custom Automation form, Real-time task tracking, Approval workflow, Screenshot viewer
-  - **Safety Controls**: Approval workflow, step limits (max 50), blocked destructive commands, admin-only access (roleLevel >= 8)
-  - **Use Cases**: Wix data extraction, Facebook automation, E2E testing, web scraping
-  - **Cost Efficiency**: $0.06-0.30/task, 80% time savings vs manual
-  - **Documentation (370 lines)**: MB.MD Pattern 26, WIX_SHUTDOWN_PROCEDURE.md (6-phase migration guide)
-  - **Status**: ✅ PRODUCTION READY - Full stack complete, UI live, ready for Wix migration
-**Week 9 Day 5 (Nov 17, 2025) - Facebook Messenger Integration + OSI Protocol**
-- ✅ **MB.MD v9.1 - Pattern 25: Open Source Intelligence (OSI) Protocol**:
-  - 5-step auto-cycle: ASSESS → SEARCH → EVALUATE → IMPLEMENT → TEACH
-  - Teaches agents to find open source solutions BEFORE building
-  - Applied to Facebook integration: Found messenger-node (97% code reduction)
-  - Impact: 1,200 lines → 300 lines, 8 hours → 2 hours, 0 bugs vs 12 bugs
-  - Documentation: `docs/FACEBOOK_OPEN_SOURCE_INTELLIGENCE.md` (1,800 lines)
-- ✅ **Facebook Messenger Integration** (Optimized with OSI):
-  - **messenger-node SDK**: Replaced 350-line custom webhook with 10-line battle-tested solution
-  - **Official fbsamples**: Integrated patterns from Facebook's official examples (1,700⭐, updated 3 hours ago)
-  - **Legal Pages**: Privacy Policy, Terms of Service, User Data Deletion (all live at mundotango.life)
-  - **Expert Knowledge Base**: `docs/FACEBOOK_MESSENGER_KNOWLEDGE_BASE.md` (420 lines continuous learning)
-  - **AIInviteGenerator.ts**: Context-aware, personalized invitation messages (kept as unique value)
-  - **Rate Limiting**: Phase 1 - 5 invites/day, 1/hour per user (kept as unique value)
-  - **API Endpoints**: Simplified using messenger-node Client class
-  - **Status**: 75% code reduction complete, awaiting valid Facebook token for first send
-- ✅ **AI Vibe Coding Safeguards** (3,100+ lines total):
-  - **AI Vibe Coding Gaps Analysis** (1,398 lines): Analyzed 7 critical AI coding failure patterns, 76% hallucination rate research
-  - **DatabaseGuardian (650 lines)**: Prevents DB disasters, blocks DROP/DELETE in prod, auto-backup
-  - **HallucinationDetector (700 lines)**: Validates npm/PyPI packages, verifies API endpoints, detects fabricated data
-  - **SecurityValidator (750 lines)**: OWASP Top 10 scanning, SQL injection/XSS detection, hardcoded secrets
-- ✅ **MB.MD v8.1 Enhancement**: Anti-Hallucination Framework with 22 safeguards (✅ Phase 1 complete)
-- ✅ **Security Hardening** (10 vulnerabilities fixed): XSS fixes, Zod validation, rate limiting (80/100 → 100/100)
-
-**Week 9 Day 3 (Nov 16, 2025) - Events & Recommendations (40 Features)**
-- ✅ Event Management System (20 features): Enhanced schema, check-in endpoint, CreateEventPage, MyEventsPage
-- ✅ Recommendation Engine (15 features): 4 recommendation types (friends, events, teachers, content), multi-factor scoring
-- ✅ Testing (5 features): 30+ comprehensive tests covering CRUD, RSVPs, check-ins, recommendations
-- ✅ Quality Metrics: 0 LSP errors, workflow running, 99/100 quality score
-
 ## User Preferences
 **Methodology:** MB.MD Protocol v8.1 (see mb.md for complete methodology with Anti-Hallucination Framework)
 - Work simultaneously (parallel execution with 3 subagents)
@@ -86,13 +31,9 @@ The platform features a unified **MT Ocean theme** with a tango-inspired color p
 -   **Bifrost AI Gateway:** Unified AI gateway with automatic failover, semantic caching, and load balancing.
 -   **Mr. Blue AI Assistant - Unified Interface:** Offers Text Chat, Voice Chat, Vibecoding (context-aware code generation), and a Visual Editor (element selection, change timeline, Git integration). Features seamless mode switching, voice input in all modes, and unified conversation history.
 -   **Mr. Blue System 1 - Context Service:** Production LanceDB-powered semantic search providing RAG capabilities, indexing 134,648+ lines of documentation with sub-200ms semantic search, auto-chunking, batch embedding, and similarity scoring.
--   **Mr. Blue Autonomous Agent System:** Full autonomous development using the MB.MD Protocol Engine (parallel, recursive, critical methodology), an 850+ line GROQ Llama-3.1-70b powered AI Code Generator, a Validator Service (LSP diagnostics, snapshot/rollback, file safety validation), and integration with the Visual Editor for real-time polling, task decomposition, file diffs, validation reports, and approve/reject controls. Includes production safety features like rate limiting, cost caps, and audit logging.
--   **🆕 System 9: AI Arbitrage Engine (Nov 2025):** Intelligent routing system achieving 50-90% cost savings via TaskClassifier (LLM-based complexity analyzer), ModelSelector (cost-aware routing), CascadeExecutor (3-tier progressive escalation: Tier 1 free/cheap → Tier 2 mid-tier → Tier 3 premium), and CostTracker (budget monitoring with 80% alert threshold). Routes 80% tasks to tier-1 (Llama 3 8B, Gemini Flash $0), 15% to tier-2 (GPT-4o-mini $0.08-0.60/1K), 5% to tier-3 (GPT-4o/Claude $3-15/1K). Expected savings: $22.50/month → $1.15/month (95% reduction) per 1K requests.
--   **🆕 AI Agent Learning Systems (Nov 2025):** 4 learning pathways enabling continuous self-improvement:
-    - **DPO Training (Direct Preference Optimization):** Learns from routing decisions via user feedback, generates (CHOSEN, REJECTED) preference pairs, retrains classifier every 1,000 decisions. Target: 95%+ accuracy, 100+ decisions/week.
-    - **Curriculum Learning:** Progressive difficulty scaling (basic → intermediate → advanced → expert) with auto-promotion/demotion based on success rate. Tracks user progression, adjusts model access by level. Target: 90%+ retention.
-    - **GEPA Self-Evolution:** Monthly improvement cycles (Reflect → Propose → Test → Select → Update). Analyzes failures, proposes 3 alternative strategies via GPT-4o, A/B tests on 10% traffic, adopts best cost/quality ratio. Target: 1 cycle/month, 3+ proposals tested.
-    - **LIMI Curation (Learning from Ideal Matches):** Curates 78 golden routing examples (high quality 4-5 stars, cost-effective 50%+ savings, diverse domains, edge cases) for DPO training dataset. Target: 78 examples by Week 12.
+-   **Mr. Blue Autonomous Agent System:** Full autonomous development using the MB.MD Protocol Engine, an 850+ line GROQ Llama-3.1-70b powered AI Code Generator, a Validator Service, and integration with the Visual Editor for real-time polling, task decomposition, file diffs, validation reports, and approve/reject controls. Includes production safety features like rate limiting, cost caps, and audit logging.
+-   **AI Arbitrage Engine:** Intelligent routing system achieving 50-90% cost savings via TaskClassifier, ModelSelector, CascadeExecutor, and CostTracker.
+-   **AI Agent Learning Systems:** 4 learning pathways enabling continuous self-improvement: DPO Training, Curriculum Learning, GEPA Self-Evolution, and LIMI Curation.
 -   **OpenAI Realtime Voice API:** ChatGPT-style natural voice conversations.
 -   **Talent Match AI:** Advanced matching algorithms.
 -   **LIFE CEO AI SYSTEM:** Integrates LanceDB for semantic memory and orchestrates 16 specialized AI agents via a Decision Matrix.
@@ -114,7 +55,7 @@ The platform features a unified **MT Ocean theme** with a tango-inspired color p
 
 -   **Database:** PostgreSQL (with Drizzle ORM)
 -   **Authentication:** Google OAuth, JWT
--   **AI Platforms:** OpenAI (GPT-4o), Anthropic (Claude 3.5 Sonnet + Computer Use API), Groq (Llama 3.1), Google (Gemini Pro), Luma Dream Machine
+-   **AI Platforms:** OpenAI (GPT-4o), Anthropic (Claude 3.5 Sonnet), Groq (Llama 3.1), Google (Gemini Pro), Luma Dream Machine
 -   **AI Infrastructure:** Bifrost AI Gateway
 -   **Vector Database:** LanceDB
 -   **Payments:** Stripe
@@ -124,4 +65,4 @@ The platform features a unified **MT Ocean theme** with a tango-inspired color p
 -   **Animation Library:** Framer Motion
 -   **Error Tracking:** Sentry
 -   **Image Hosting:** Cloudinary
--   **Automation:** Anthropic Computer Use API (browser/CLI automation)
+-   **Automation:** Playwright (for browser automation)
