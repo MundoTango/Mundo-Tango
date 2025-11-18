@@ -16,6 +16,7 @@ import {
 import { legalOrchestrator } from '../services/legal/LegalOrchestrator';
 import { ElevenLabsVoiceService } from '../services/premium/elevenlabsVoiceService';
 import { browserAutomationService } from '../services/mrBlue/BrowserAutomationService';
+import { facebookMessengerService } from '../services/mrBlue/FacebookMessengerService';
 import { db } from '@db';
 import { computerUseTasks, computerUseScreenshots } from '@shared/schema';
 import { nanoid } from 'nanoid';
@@ -100,10 +101,15 @@ function detectComputerUseIntent(message: string): {
   
   // Facebook automation patterns
   const facebookPatterns = [
+    /send.*fb.*invit.*to/i,
+    /send.*facebook.*invit.*to/i,
+    /invite.*on.*facebook/i,
+    /facebook.*message.*to/i,
+    /fb.*message.*to/i,
     /facebook.*automat/i,
     /automate.*facebook/i,
-    /facebook.*post/i,
     /facebook.*invite/i,
+    /fb.*invite/i,
   ];
   
   for (const pattern of facebookPatterns) {
@@ -246,13 +252,180 @@ router.post('/api/mrblue/chat', authenticateToken, async (req, res) => {
           });
         }
       } else if (automationIntent.type === 'facebook_automation') {
-        return res.json({
-          role: 'assistant',
-          content: "🎯 Facebook automation detected! This feature is coming soon. For now, please use the Facebook Invites page to send invitations manually.",
-          timestamp: new Date().toISOString(),
-          automationType: 'facebook_automation',
-          automationStatus: 'not_implemented'
-        });
+        try {
+          // Check if Facebook credentials are configured
+          if (!process.env.FACEBOOK_EMAIL || !process.env.FACEBOOK_PASSWORD) {
+            return res.json({
+              role: 'assistant',
+              content: "I'd love to help with Facebook automation, but I need FACEBOOK_EMAIL and FACEBOOK_PASSWORD configured in environment variables first. Please ask an admin to set these up.",
+              timestamp: new Date().toISOString(),
+              contextUsed: true,
+              automationType: 'facebook_automation',
+              automationStatus: 'credentials_missing'
+            });
+          }
+          
+          // Extract recipient name from message using patterns
+          const namePatterns = [
+            /send.*(?:fb|facebook).*invit.*to\s+(.+?)(?:\.|$)/i,
+            /invite\s+(.+?)\s+on\s+facebook/i,
+            /(?:fb|facebook).*message.*to\s+(.+?)(?:\.|$)/i,
+          ];
+          
+          let recipientName: string | null = null;
+          for (const pattern of namePatterns) {
+            const match = message.match(pattern);
+            if (match && match[1]) {
+              recipientName = match[1].trim();
+              break;
+            }
+          }
+          
+          if (!recipientName) {
+            return res.json({
+              role: 'assistant',
+              content: `I detected you want to send a Facebook invitation, but I couldn't determine the recipient name.
+
+Please use one of these formats:
+• "Send FB invitation to John Smith"
+• "Invite Maria Garcia on Facebook"
+• "Send Facebook message to Carlos Mendez"
+
+What name would you like to send to?`,
+              timestamp: new Date().toISOString(),
+              automationType: 'facebook_automation',
+              automationStatus: 'missing_recipient'
+            });
+          }
+          
+          // Check rate limit
+          const rateLimit = await facebookMessengerService.checkRateLimit(userId);
+          if (!rateLimit.canSend) {
+            return res.json({
+              role: 'assistant',
+              content: `⏱️ Facebook invitation rate limit reached!
+
+**Current Status:**
+• Daily limit: ${rateLimit.dailyCount}/5 sent
+• Hourly limit: ${rateLimit.hourlyCount}/1 sent
+
+You can send your next invitation at: ${rateLimit.nextAvailable?.toLocaleString()}
+
+These limits help protect your Facebook account from being flagged for spam. Thank you for your patience! 🙏`,
+              timestamp: new Date().toISOString(),
+              automationType: 'facebook_automation',
+              automationStatus: 'rate_limited',
+              rateLimitInfo: rateLimit
+            });
+          }
+          
+          const taskId = `fb_invite_${nanoid(10)}`;
+          
+          // Create task record
+          await db.insert(computerUseTasks).values({
+            taskId,
+            userId,
+            instruction: `Send Facebook invitation to ${recipientName} (triggered by Mr. Blue chat)`,
+            status: 'running',
+            steps: [],
+            currentStep: 0,
+            maxSteps: 15,
+            requiresApproval: false,
+            automationType: 'facebook_automation'
+          });
+          
+          // Execute Facebook automation in background
+          (async () => {
+            try {
+              const result = await facebookMessengerService.sendInvitation(
+                taskId,
+                userId,
+                recipientName,
+                'mundo_tango_invite'
+              );
+              
+              // Store screenshots
+              if (result.screenshots && result.screenshots.length > 0) {
+                for (const screenshot of result.screenshots) {
+                  await db.insert(computerUseScreenshots).values({
+                    taskId,
+                    stepNumber: screenshot.step,
+                    screenshotBase64: screenshot.base64,
+                    action: { description: screenshot.action }
+                  });
+                }
+              }
+              
+              // Update task with result
+              await db.update(computerUseTasks)
+                .set({
+                  status: result.success ? 'completed' : 'failed',
+                  currentStep: result.screenshots?.length || 0,
+                  result: {
+                    success: result.success,
+                    messagesSent: result.messagesSent,
+                    recipientNames: result.recipientNames
+                  },
+                  error: result.error,
+                  steps: result.screenshots?.map(s => ({
+                    step: s.step,
+                    action: s.action
+                  })) || []
+                })
+                .where(eq(computerUseTasks.taskId, taskId));
+              
+              console.log(`[Mr. Blue] Facebook automation task ${taskId} completed:`, result.success ? 'SUCCESS' : 'FAILED');
+            } catch (error: any) {
+              console.error(`[Mr. Blue] Facebook automation error:`, error);
+              
+              await db.update(computerUseTasks)
+                .set({
+                  status: 'failed',
+                  error: error.message
+                })
+                .where(eq(computerUseTasks.taskId, taskId));
+            }
+          })();
+          
+          // Return immediate response
+          return res.json({
+            role: 'assistant',
+            content: `🚀 Starting Facebook invitation to ${recipientName}!
+
+Task ID: ${taskId}
+
+**I'm now:**
+1. 🔐 Logging into Facebook
+2. 💬 Opening Messenger
+3. 🔍 Searching for "${recipientName}"
+4. ✉️ Sending personalized Mundo Tango invitation
+
+**Rate Limits:**
+• Daily: ${rateLimit.dailyCount + 1}/5
+• Hourly: ${rateLimit.hourlyCount + 1}/1
+
+This will take 1-2 minutes. I'll show you real-time screenshots as I go!
+
+Poll /api/computer-use/task/${taskId} for live updates! 📸`,
+            timestamp: new Date().toISOString(),
+            contextUsed: true,
+            automationType: 'facebook_automation',
+            automationStatus: 'started',
+            taskId,
+            pollUrl: `/api/computer-use/task/${taskId}`,
+            recipientName
+          });
+        } catch (error: any) {
+          console.error('[Mr. Blue] Facebook automation error:', error);
+          return res.json({
+            role: 'assistant',
+            content: `❌ Failed to start Facebook automation: ${error.message}\n\nPlease try again or check the Computer Use tab for more details.`,
+            timestamp: new Date().toISOString(),
+            automationType: 'facebook_automation',
+            automationStatus: 'error',
+            error: error.message
+          });
+        }
       } else if (automationIntent.type === 'info_request') {
         // User is asking ABOUT Computer Use capabilities
         return res.json({
@@ -266,8 +439,8 @@ I can control a real web browser to automate tasks for you. Here's what I can do
 📦 **Wix Data Migration**
 "Extract my Wix contacts" - I'll log into Wix, navigate to your contacts, and download them as CSV
 
-🔷 **Facebook Automation** (Coming Soon)
-"Automate Facebook invitations" - Send personalized invites to tango dancers
+💌 **Facebook Messenger Invitations** ✨ NEW!
+"Send FB invitation to [name]" - I'll log into Facebook, search for the person, and send a personalized Mundo Tango invitation
 
 **How It Works:**
 1. You tell me what to automate (natural language)
@@ -276,16 +449,23 @@ I can control a real web browser to automate tasks for you. Here's what I can do
 4. Task completes and you get the results
 
 **Try It Now:**
-Just type one of these commands:
+
+*Wix Migration:*
 • "Extract my Wix contacts"
 • "Migrate my Wix data"
 • "Get my Wix contact list"
+
+*Facebook Invitations:*
+• "Send FB invitation to John Smith"
+• "Invite Maria Garcia on Facebook"
+• "Send Facebook message to Carlos Mendez"
 
 **Features:**
 ✅ Real-time progress updates
 ✅ Live browser screenshots
 ✅ Background execution (non-blocking)
 ✅ Secure (admin-only access)
+✅ Rate limiting (5/day, 1/hour for FB)
 
 Would you like to try one?`,
           timestamp: new Date().toISOString(),
