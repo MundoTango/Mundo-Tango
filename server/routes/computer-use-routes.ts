@@ -8,7 +8,8 @@ import { computerUseService } from '../services/mrBlue/ComputerUseService';
 import { browserAutomationService } from '../services/mrBlue/BrowserAutomationService';
 import { authenticateToken, requireRoleLevel, type AuthRequest } from '../middleware/auth';
 import { db } from '@db';
-import { computerUseTasks, computerUseScreenshots } from '@db/schema';
+import { computerUseTasks, computerUseScreenshots } from '@shared/schema';
+import { eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 
 const router = Router();
