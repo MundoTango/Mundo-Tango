@@ -6650,6 +6650,134 @@ export const customerJourneyTests = pgTable("customer_journey_tests", {
   testedAtIdx: index("customer_journey_tests_tested_at_idx").on(table.testedAt),
 }));
 
+// ============================================================================
+// AGENT SME TRAINING SYSTEM (MB.MD V9.0 - NOVEMBER 18, 2025)
+// Comprehensive agent learning system where agents become Subject Matter Experts
+// by learning ALL documentation, code, and domain expertise before implementation
+// ============================================================================
+
+/**
+ * Agent Documentation Index - Maps documentation to agent domains
+ * Enables agents to become SMEs by learning all relevant docs
+ */
+export const agentDocumentationIndex = pgTable("agent_documentation_index", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull().references(() => agents.id, { onDelete: "cascade" }),
+  documentPath: text("document_path").notNull(),
+  documentType: varchar("document_type", { length: 50 }).notNull(), // 'handoff', 'research', 'mb_md', 'prd', 'api_doc'
+  documentTitle: varchar("document_title", { length: 255 }).notNull(),
+  domain: varchar("domain", { length: 100 }).notNull(), // 'voice_ui', 'routing', 'ai_integration', 'testing'
+  relevanceScore: real("relevance_score").default(1.0).notNull(), // 0-1, how relevant to agent
+  contentSummary: text("content_summary"),
+  keyInsights: jsonb("key_insights").default([]), // Array of key insights from doc
+  learnedAt: timestamp("learned_at"),
+  lastReviewed: timestamp("last_reviewed"),
+  proficiencyScore: real("proficiency_score").default(0.0), // 0-1, how well agent knows this doc
+  quizzesPassed: integer("quizzes_passed").default(0),
+  metadata: jsonb("metadata").default({}),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  agentIdx: index("agent_doc_index_agent_idx").on(table.agentId),
+  domainIdx: index("agent_doc_index_domain_idx").on(table.domain),
+  docTypeIdx: index("agent_doc_index_type_idx").on(table.documentType),
+  relevanceIdx: index("agent_doc_index_relevance_idx").on(table.relevanceScore),
+}));
+
+/**
+ * Agent Code Knowledge - Maps code files and patterns to agent expertise
+ * Enables agents to understand the entire codebase in their domain
+ */
+export const agentCodeKnowledge = pgTable("agent_code_knowledge", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull().references(() => agents.id, { onDelete: "cascade" }),
+  filePath: text("file_path").notNull(),
+  fileType: varchar("file_type", { length: 50 }).notNull(), // 'component', 'service', 'route', 'hook', 'util'
+  domain: varchar("domain", { length: 100 }).notNull(),
+  codePattern: varchar("code_pattern", { length: 100 }), // 'react_component', 'express_route', 'drizzle_schema'
+  functionSignatures: jsonb("function_signatures").default([]),
+  dependencies: text("dependencies").array(),
+  exports: text("exports").array(),
+  apiEndpoints: jsonb("api_endpoints").default([]),
+  componentsUsed: text("components_used").array(),
+  understandingLevel: varchar("understanding_level", { length: 20 }).default('none'), // none, basic, intermediate, expert
+  canModify: boolean("can_modify").default(false),
+  lastAnalyzed: timestamp("last_analyzed"),
+  lineCount: integer("line_count"),
+  complexity: varchar("complexity", { length: 20 }), // low, medium, high
+  notes: text("notes"),
+  metadata: jsonb("metadata").default({}),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  agentIdx: index("agent_code_knowledge_agent_idx").on(table.agentId),
+  domainIdx: index("agent_code_knowledge_domain_idx").on(table.domain),
+  fileTypeIdx: index("agent_code_knowledge_file_type_idx").on(table.fileType),
+  understandingIdx: index("agent_code_knowledge_understanding_idx").on(table.understandingLevel),
+}));
+
+/**
+ * Agent SME Training - Tracks comprehensive training progress for each agent
+ * MB.MD v9.0 requires agents to be SMEs before implementation
+ */
+export const agentSMETraining = pgTable("agent_sme_training", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull().references(() => agents.id, { onDelete: "cascade" }),
+  domain: varchar("domain", { length: 100 }).notNull(),
+  trainingPhase: varchar("training_phase", { length: 50 }).notNull(), // 'documentation', 'code_analysis', 'industry_standards', 'practical_application'
+  totalDocuments: integer("total_documents").default(0),
+  documentsLearned: integer("documents_learned").default(0),
+  totalCodeFiles: integer("total_code_files").default(0),
+  codeFilesUnderstood: integer("code_files_understood").default(0),
+  industryStandards: jsonb("industry_standards").default([]), // e.g., ['Nielsen Norman Heuristics', 'WCAG 2.1 AAA']
+  standardsLearned: text("standards_learned").array(),
+  overallProficiency: real("overall_proficiency").default(0.0), // 0-1
+  smeStatus: varchar("sme_status", { length: 20 }).default('novice'), // novice, intermediate, proficient, expert, sme
+  certifiedAt: timestamp("certified_at"), // When agent achieved SME status
+  lastTrainingSession: timestamp("last_training_session"),
+  trainingHours: integer("training_hours").default(0),
+  practicalApplications: integer("practical_applications").default(0), // How many times used knowledge
+  feedbackScore: real("feedback_score").default(0.0), // 0-1, based on implementation quality
+  weakAreas: text("weak_areas").array(),
+  strongAreas: text("strong_areas").array(),
+  nextTrainingGoals: text("next_training_goals").array(),
+  metadata: jsonb("metadata").default({}),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  agentIdx: index("agent_sme_training_agent_idx").on(table.agentId),
+  domainIdx: index("agent_sme_training_domain_idx").on(table.domain),
+  phaseIdx: index("agent_sme_training_phase_idx").on(table.trainingPhase),
+  statusIdx: index("agent_sme_training_status_idx").on(table.smeStatus),
+  proficiencyIdx: index("agent_sme_training_proficiency_idx").on(table.overallProficiency),
+}));
+
+/**
+ * Agent Industry Standards - Tracks industry standard knowledge per agent
+ * e.g., Alexa Voice UX, Siri patterns, Nielsen Norman, WCAG 2.1 AAA
+ */
+export const agentIndustryStandards = pgTable("agent_industry_standards", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull().references(() => agents.id, { onDelete: "cascade" }),
+  standardName: varchar("standard_name", { length: 255 }).notNull(),
+  standardType: varchar("standard_type", { length: 50 }).notNull(), // 'voice_ux', 'accessibility', 'testing', 'quality', 'design'
+  organization: varchar("organization", { length: 100 }), // 'Amazon', 'Apple', 'Nielsen Norman Group', 'W3C'
+  version: varchar("version", { length: 50 }),
+  documentationUrl: text("documentation_url"),
+  keyPrinciples: jsonb("key_principles").default([]),
+  applicableDomains: text("applicable_domains").array(),
+  proficiencyLevel: varchar("proficiency_level", { length: 20 }).default('none'), // none, basic, intermediate, advanced, expert
+  quizScore: real("quiz_score"), // 0-1
+  practicalApplicationCount: integer("practical_application_count").default(0),
+  lastStudied: timestamp("last_studied"),
+  certifiedAt: timestamp("certified_at"),
+  notes: text("notes"),
+  metadata: jsonb("metadata").default({}),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  agentIdx: index("agent_industry_standards_agent_idx").on(table.agentId),
+  standardTypeIdx: index("agent_industry_standards_type_idx").on(table.standardType),
+  proficiencyIdx: index("agent_industry_standards_proficiency_idx").on(table.proficiencyLevel),
+}));
+
 /**
  * AI Guardrail Violations Table (APPENDIX Q - BATCH 28)
  * Tracks AI error prevention guardrail violations across 7 layers
@@ -6762,6 +6890,26 @@ export type SelectAgentCollaboration = typeof agentCollaborations.$inferSelect;
 export const insertAgentMemorySchema = createInsertSchema(agentMemories).omit({ id: true, createdAt: true });
 export type InsertAgentMemory = z.infer<typeof insertAgentMemorySchema>;
 export type SelectAgentMemory = typeof agentMemories.$inferSelect;
+
+// Agent Documentation Index (MB.MD v9.0 - SME Training)
+export const insertAgentDocumentationIndexSchema = createInsertSchema(agentDocumentationIndex).omit({ id: true, createdAt: true });
+export type InsertAgentDocumentationIndex = z.infer<typeof insertAgentDocumentationIndexSchema>;
+export type SelectAgentDocumentationIndex = typeof agentDocumentationIndex.$inferSelect;
+
+// Agent Code Knowledge (MB.MD v9.0 - SME Training)
+export const insertAgentCodeKnowledgeSchema = createInsertSchema(agentCodeKnowledge).omit({ id: true, createdAt: true });
+export type InsertAgentCodeKnowledge = z.infer<typeof insertAgentCodeKnowledgeSchema>;
+export type SelectAgentCodeKnowledge = typeof agentCodeKnowledge.$inferSelect;
+
+// Agent SME Training (MB.MD v9.0 - SME Training)
+export const insertAgentSMETrainingSchema = createInsertSchema(agentSMETraining).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertAgentSMETraining = z.infer<typeof insertAgentSMETrainingSchema>;
+export type SelectAgentSMETraining = typeof agentSMETraining.$inferSelect;
+
+// Agent Industry Standards (MB.MD v9.0 - SME Training)
+export const insertAgentIndustryStandardsSchema = createInsertSchema(agentIndustryStandards).omit({ id: true, createdAt: true });
+export type InsertAgentIndustryStandards = z.infer<typeof insertAgentIndustryStandardsSchema>;
+export type SelectAgentIndustryStandards = typeof agentIndustryStandards.$inferSelect;
 
 // Agent Knowledge
 export const insertAgentKnowledgeSchema = createInsertSchema(agentKnowledge).omit({ id: true, createdAt: true, updatedAt: true });
