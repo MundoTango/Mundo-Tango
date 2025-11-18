@@ -6,12 +6,21 @@ import { z } from "zod";
 import { ErrorAnalysisAgent } from "../services/mrBlue/errorAnalysisAgent";
 import { SolutionSuggesterAgent } from "../services/mrBlue/solutionSuggesterAgent";
 import { contextService } from "../services/mrBlue/ContextService";
+import { getAutoFixEngine } from "../services/mrBlue/AutoFixEngine";
 
 const router = Router();
 
 // Initialize AI agents
 const errorAnalysisAgent = new ErrorAnalysisAgent();
 const solutionSuggesterAgent = new SolutionSuggesterAgent();
+
+// Initialize AutoFixEngine for autonomous fixing
+let autoFixEngine: any = null;
+(async () => {
+  autoFixEngine = await import('../services/mrBlue/AutoFixEngine').then(m => m.getAutoFixEngine());
+  await autoFixEngine.initialize();
+  console.log('[Error Analysis Routes] ✅ AutoFixEngine ready for autonomous fixing');
+})();
 
 // ============================================================================
 // ERROR ANALYSIS API - PHASE 3
@@ -224,30 +233,36 @@ router.post("/analyze-error", async (req: Request, res: Response) => {
           confidence: suggestion.confidence,
         });
 
-        // Step 7: Auto-fix if confidence is very high (> 0.90)
-        if (suggestion.confidence > 0.90) {
-          console.log(`[Error Analysis API] 🔧 Step 7: Auto-applying fix for error ${errorPattern.id} (confidence: ${suggestion.confidence})...`);
+        // Step 7: AUTONOMOUS AUTO-FIX using AutoFixEngine
+        // This triggers automatically based on confidence scores:
+        // - >95%: Auto-apply immediately (no manual intervention)
+        // - 80-95%: Stage for approval
+        // - <80%: Manual review required
+        if (autoFixEngine && suggestion.confidence > 0.80) {
+          console.log(`[Error Analysis API] 🤖 Step 7: AUTONOMOUS fix triggered for error ${errorPattern.id} (confidence: ${Math.round(suggestion.confidence * 100)}%)...`);
           
           try {
-            // Note: Auto-fix is tracked but not auto-applied to prevent unintended changes
-            // User must explicitly click "Apply Fix" in the UI for safety
-            results.autoFixes.push({
-              errorId: errorPattern.id,
-              fix: suggestion.code,
-              applied: false, // Will be true when user clicks "Apply Fix" button
+            // Trigger autonomous fix (runs in background, non-blocking)
+            setImmediate(async () => {
+              try {
+                const autoFixResult = await autoFixEngine.processError(errorPattern.id);
+                
+                console.log(`[Error Analysis API] ${autoFixResult.success ? '✅' : '❌'} Autonomous fix ${autoFixResult.decision.action}: ${autoFixResult.decision.reasoning}`);
+                
+                results.autoFixes.push({
+                  errorId: errorPattern.id,
+                  fix: autoFixResult.fixAnalysis.suggestedFix,
+                  applied: autoFixResult.decision.action === 'auto-fix' && autoFixResult.success,
+                });
+              } catch (error: any) {
+                console.error(`[Error Analysis API] ❌ Autonomous fix failed for error ${errorPattern.id}:`, error);
+              }
             });
             
-            console.log(`[Error Analysis API] ✅ Auto-fix candidate identified for error ${errorPattern.id}`);
+            console.log(`[Error Analysis API] ✅ Autonomous fix queued for error ${errorPattern.id}`);
           } catch (error: any) {
-            console.error(`[Error Analysis API] ❌ Auto-fix preparation failed for error ${errorPattern.id}:`, error);
+            console.error(`[Error Analysis API] ❌ Failed to queue autonomous fix for error ${errorPattern.id}:`, error);
           }
-        } else if (suggestion.confidence > 0.85) {
-          // Medium-high confidence - suggest but don't auto-apply
-          results.autoFixes.push({
-            errorId: errorPattern.id,
-            fix: suggestion.code,
-            applied: false,
-          });
         }
 
         // Escalate if confidence is low (< 0.4) and frequency is high (> 5)
@@ -355,6 +370,91 @@ router.get("/error-patterns/:id", async (req: Request, res: Response) => {
     console.error('[Error Analysis API] Error fetching pattern:', error);
     return res.status(500).json({
       error: "Failed to fetch error pattern",
+      message: error.message,
+    });
+  }
+});
+
+/**
+ * GET /api/mrblue/auto-fix/status
+ * Server-Sent Events endpoint for real-time auto-fix status updates
+ */
+router.get("/auto-fix/status", async (req: Request, res: Response) => {
+  console.log('[AutoFix SSE] Client connected');
+  
+  // Set headers for SSE
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no'); // Disable buffering for nginx
+  
+  // Send initial connection success
+  res.write(': connected\n\n');
+  
+  // Register client with AutoFixEngine
+  if (autoFixEngine) {
+    autoFixEngine.registerSSEClient(res);
+    
+    // Send current status immediately
+    const currentStatus = autoFixEngine.getStatus();
+    res.write(`data: ${JSON.stringify(currentStatus)}\n\n`);
+  } else {
+    // Engine not ready yet
+    res.write(`data: ${JSON.stringify({
+      phase: 'idle',
+      progress: 0,
+      message: 'Auto-fix engine initializing...'
+    })}\n\n`);
+  }
+  
+  // Handle client disconnect
+  req.on('close', () => {
+    console.log('[AutoFix SSE] Client disconnected');
+    if (autoFixEngine) {
+      autoFixEngine.unregisterSSEClient(res);
+    }
+  });
+});
+
+/**
+ * POST /api/mrblue/auto-fix/trigger
+ * Manually trigger auto-fix for a specific error (for testing/god-level users)
+ */
+router.post("/auto-fix/trigger", async (req: Request, res: Response) => {
+  try {
+    const { errorId } = req.body;
+    
+    if (!errorId) {
+      return res.status(400).json({
+        error: "errorId is required",
+      });
+    }
+    
+    if (!autoFixEngine) {
+      return res.status(503).json({
+        error: "AutoFixEngine not initialized",
+      });
+    }
+    
+    console.log(`[AutoFix API] Manual trigger for error ${errorId}`);
+    
+    // Trigger auto-fix (non-blocking)
+    setImmediate(async () => {
+      try {
+        await autoFixEngine.processError(parseInt(errorId));
+      } catch (error: any) {
+        console.error(`[AutoFix API] Error processing ${errorId}:`, error);
+      }
+    });
+    
+    return res.status(202).json({
+      success: true,
+      message: `Auto-fix queued for error ${errorId}`,
+    });
+  } catch (error: any) {
+    console.error('[AutoFix API] Error triggering auto-fix:', error);
+    return res.status(500).json({
+      error: "Failed to trigger auto-fix",
       message: error.message,
     });
   }
