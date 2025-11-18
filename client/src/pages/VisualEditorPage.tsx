@@ -75,7 +75,7 @@ function VisualEditorPageContent() {
   const [changeHistory, setChangeHistory] = useState<ChangeMetadata[]>([]);
   const [beforeScreenshot, setBeforeScreenshot] = useState<string | null>(null);
   const [voiceModeEnabled, setVoiceModeEnabled] = useState(false);
-  const [currentIframeUrl, setCurrentIframeUrl] = useState<string>('/');
+  const [currentIframeUrl, setCurrentIframeUrl] = useState<string>('/landing');
   const [iframeLoading, setIframeLoading] = useState(true);
   const [iframeError, setIframeError] = useState(false);
   const [isReplaying, setIsReplaying] = useState(false);
