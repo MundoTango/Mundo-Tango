@@ -298,11 +298,25 @@ export class ProactiveErrorDetector {
         `[ProactiveErrorDetector] Sending batch of ${batch.length} errors to Mr. Blue API...`
       );
 
+      // Get CSRF token from cookie
+      const csrfToken = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrf-token='))
+        ?.split('=')[1];
+
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      
+      // Add CSRF token header if available
+      if (csrfToken) {
+        headers['X-CSRF-Token'] = csrfToken;
+      }
+
       const response = await fetch(this.API_ENDPOINT, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
+        credentials: 'include', // Include cookies for CSRF validation
         body: JSON.stringify({
           errors: batch,
           timestamp: Date.now(),
@@ -317,15 +331,29 @@ export class ProactiveErrorDetector {
           this.originalConsoleWarn(
             `[ProactiveErrorDetector] API endpoint not ready yet (404). This is expected during Phase 2.`
           );
+        } else if (response.status === 403) {
+          this.originalConsoleWarn(
+            `[ProactiveErrorDetector] CSRF validation failed (403). Errors captured locally.`
+          );
         } else {
           throw new Error(`API returned ${response.status}`);
         }
       } else {
-        const data = await response.json();
-        this.originalConsoleError(
-          `[ProactiveErrorDetector] ✅ Batch sent successfully. Response:`, 
-          data
-        );
+        // Check content type before parsing as JSON
+        const contentType = response.headers.get('Content-Type');
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          this.originalConsoleError(
+            `[ProactiveErrorDetector] ✅ Batch sent successfully. Response:`, 
+            data
+          );
+        } else {
+          // Server returned HTML instead of JSON (e.g. error page)
+          const text = await response.text();
+          this.originalConsoleWarn(
+            `[ProactiveErrorDetector] ⚠️ Server returned non-JSON response (likely error page). Errors captured locally.`
+          );
+        }
       }
     } catch (error) {
       // Network failure - gracefully degrade
