@@ -218,9 +218,10 @@ async function handleActivateAgents(req: any, res: any, params: any) {
 /**
  * Action Handler: Ask Mr. Blue
  * Allows Replit AI to send messages to Mr. Blue AI and get responses
+ * Fully integrated with ConversationOrchestrator
  */
 async function handleAskMrBlue(req: any, res: any, params: any) {
-  const { message, context } = params;
+  const { message, context, userId = 1, streaming = false } = params;
   
   if (!message) {
     return res.status(400).json({
@@ -230,17 +231,85 @@ async function handleAskMrBlue(req: any, res: any, params: any) {
   }
   
   try {
-    // This would integrate with the ConversationOrchestrator
-    // For now, return a placeholder response
+    const { ConversationOrchestrator } = await import('../services/ConversationOrchestrator');
+    const orchestrator = new ConversationOrchestrator();
+    
+    // Classify intent
+    const intent = await orchestrator.classifyIntent(message);
+    
+    console.log(`[Replit AI Bridge] Intent: ${intent.type} (${intent.confidence})`);
+    
+    // Route to appropriate handler
+    let response: any;
+    
+    if (intent.type === 'question') {
+      // Handle question - no code generation
+      const enriched = await orchestrator.enrichWithContext(message);
+      const questionResponse = await orchestrator.handleQuestion(message, enriched);
+      
+      response = {
+        mode: 'question',
+        intent: intent.type,
+        confidence: intent.confidence,
+        answer: questionResponse.response,
+        sources: questionResponse.sources,
+        context: {
+          ...context,
+          contextChunks: enriched.contextChunks.length,
+        },
+      };
+    } else if (intent.type === 'action') {
+      // Handle action - trigger VibeCoding
+      const actionContext = {
+        currentPage: context?.currentPage || 'unknown',
+        pageTitle: context?.pageTitle || 'Unknown Page',
+        targetFiles: context?.targetFiles || [],
+        domSnapshot: context?.domSnapshot,
+      };
+      
+      const actionResponse = await orchestrator.handleActionRequest(message, actionContext, userId);
+      response = {
+        mode: 'action',
+        intent: intent.type,
+        confidence: intent.confidence,
+        requiresApproval: actionResponse.requiresApproval,
+        vibecodingResult: actionResponse.vibecodingResult,
+        context,
+      };
+    } else if (intent.type === 'page_analysis') {
+      // Handle page analysis - trigger self-healing
+      const pageId = context?.pageId || context?.currentPage || 'home';
+      const autoHeal = context?.autoHeal !== false; // Default true
+      
+      const analysisResponse = await orchestrator.analyzePage(pageId, autoHeal);
+      response = {
+        mode: 'page_analysis',
+        intent: intent.type,
+        confidence: intent.confidence,
+        pageId: analysisResponse.pageId,
+        activation: analysisResponse.activation,
+        audit: analysisResponse.audit,
+        healing: analysisResponse.healing,
+        totalTime: analysisResponse.totalTime,
+        context,
+      };
+    } else {
+      // Unknown intent - default to question handling
+      response = {
+        mode: 'unknown',
+        intent: intent.type,
+        confidence: intent.confidence,
+        message: 'Intent unclear - please rephrase your request',
+        context,
+      };
+    }
+    
     return res.json({
       success: true,
-      result: {
-        message,
-        response: 'Mr. Blue AI integration pending - this endpoint will route to ConversationOrchestrator',
-        context,
-      },
+      result: response,
     });
   } catch (error) {
+    console.error('[Replit AI Bridge] Error in handleAskMrBlue:', error);
     return res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Failed to process message',
