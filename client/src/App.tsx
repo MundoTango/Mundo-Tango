@@ -19,6 +19,7 @@ import { LoadingFallback } from "./components/LoadingFallback";
 import { initErrorDetection, cleanupErrorDetection } from "./lib/proactiveErrorDetection";
 import { initHttpInterceptor, cleanupHttpInterceptor } from "./lib/httpInterceptor";
 import { initComponentHealthMonitor, cleanupComponentHealthMonitor } from "./lib/componentHealthMonitor";
+import { setupNavigationInterceptor } from "./lib/navigationInterceptor";
 
 // Lazy load heavy components - Updated to use new unified interface
 const UnifiedMrBlue = lazy(() => import("./components/mr-blue/UnifiedMrBlue"));
@@ -2102,7 +2103,7 @@ function App() {
   const [isVisualEditorOpen, setIsVisualEditorOpen] = useState(false);
   const [location] = useLocation();
 
-  // Initialize Proactive Error Detection + HTTP Interceptor + Component Health Monitor
+  // Initialize Proactive Error Detection + HTTP Interceptor + Component Health Monitor + Navigation Interceptor
   useEffect(() => {
     console.log('[App] Initializing Proactive Error Detection...');
     const detector = initErrorDetection();
@@ -2112,6 +2113,9 @@ function App() {
     
     console.log('[App] Initializing Component Health Monitor...');
     initComponentHealthMonitor();
+    
+    console.log('[App] Initializing Navigation Interceptor...');
+    setupNavigationInterceptor();
     
     return () => {
       console.log('[App] Cleaning up Component Health Monitor...');
