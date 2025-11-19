@@ -226,8 +226,9 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
       // Step 3: Route based on intent
       if (intent.type === 'question') {
         // Handle question - use GROQ to answer (NO code generation)
-        console.log('[Mr. Blue] ❓ Handling as QUESTION');
-        const questionResponse = await conversationOrchestrator.handleQuestion(message, enriched);
+        // MB.MD v9.2 FIX: Pass page context for awareness
+        console.log('[Mr. Blue] ❓ Handling as QUESTION with page context');
+        const questionResponse = await conversationOrchestrator.handleQuestion(message, enriched, parsedContext);
         
         return res.json({
           success: questionResponse.success,

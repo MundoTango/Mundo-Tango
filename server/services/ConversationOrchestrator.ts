@@ -85,7 +85,31 @@ export class ConversationOrchestrator {
     const startTime = Date.now();
     const msg = message.toLowerCase();
 
-    // Tier 1: Check for page analysis intent (highest priority)
+    // TIER 0: Explicit vibecoding requests (HIGHEST PRIORITY - MB.MD v9.2 FIX)
+    const vibecodingKeywords = [
+      'vibe code',
+      'vibecod',
+      'vibe cod',
+      'can you code',
+      'can you vibe',
+      'generate code',
+      'write code',
+      'code this',
+      'code that',
+    ];
+
+    for (const keyword of vibecodingKeywords) {
+      if (msg.includes(keyword)) {
+        console.log(`[Orchestrator] 🎯 VIBECODING intent detected: "${keyword}" (${Date.now() - startTime}ms)`);
+        return {
+          type: 'action',
+          confidence: 0.99,
+          reasoning: `Explicit vibecoding request: "${keyword}"`
+        };
+      }
+    }
+
+    // Tier 1: Check for page analysis intent
     const pageAnalysisKeywords = [
       'analyze page',
       'audit page',
@@ -107,10 +131,11 @@ export class ConversationOrchestrator {
       }
     }
 
-    // Tier 2: Check for question intent
+    // Tier 2: Check for question intent (CONTEXT-AWARE - MB.MD v9.2 FIX)
     const questionKeywords = [
       'what is',
       'what are',
+      'what\'s wrong',
       'where is',
       'where can',
       'when does',
@@ -118,12 +143,10 @@ export class ConversationOrchestrator {
       'why is',
       'why does',
       'how do',
-      'how can',
       'who is',
       'who are',
       'explain',
       'tell me',
-      'show me',
       'describe',
     ];
 
@@ -213,11 +236,13 @@ export class ConversationOrchestrator {
 
   /**
    * Handle question intent - Use GROQ to generate answer (NO code)
+   * MB.MD v9.2: Now CONTEXT-AWARE of current page, DOM elements, user intent
    * Target: <2000ms
    */
   async handleQuestion(
     message: string,
-    enrichedContext: EnrichedMessage
+    enrichedContext: EnrichedMessage,
+    pageContext?: any
   ): Promise<QuestionResponse> {
     const startTime = Date.now();
 
@@ -230,18 +255,65 @@ export class ConversationOrchestrator {
           .join('\n\n');
       }
 
-      const systemPrompt = `You are Mr. Blue, the Mundo Tango AI assistant.
+      // MB.MD v9.2 FIX: Build page awareness context
+      let pageAwarenessText = '';
+      if (pageContext) {
+        const currentPage = pageContext.currentPage || 'Unknown';
+        const pageTitle = pageContext.pageTitle || 'Unknown';
+        const userIntent = pageContext.userIntent || 'browsing';
+        
+        pageAwarenessText = `CURRENT PAGE CONTEXT:
+- URL Path: ${currentPage}
+- Page Title: ${pageTitle}
+- User Intent: ${userIntent}`;
 
-IMPORTANT: You are in QUESTION mode. Answer the user's question conversationally. DO NOT generate code.
+        // Add DOM snapshot if available
+        if (pageContext.domSnapshot) {
+          const { inputs, buttons, selects, errors } = pageContext.domSnapshot;
+          pageAwarenessText += `
+- Inputs on page: ${inputs?.length || 0}
+- Buttons on page: ${buttons?.length || 0}
+- Dropdowns on page: ${selects?.length || 0}
+- Errors visible: ${errors?.length || 0}`;
 
-${contextText ? `RELEVANT CONTEXT:\n${contextText}\n\n` : ''}
+          // Show specific DOM elements if present
+          if (inputs && inputs.length > 0) {
+            const inputDetails = inputs.slice(0, 3).map((inp: any) => 
+              `  • ${inp.placeholder || inp.name || inp.testId || 'input'}`
+            ).join('\n');
+            pageAwarenessText += `\n\nKey inputs:\n${inputDetails}`;
+          }
+
+          if (errors && errors.length > 0) {
+            const errorDetails = errors.map((err: any) => 
+              `  • ${err.text}`
+            ).join('\n');
+            pageAwarenessText += `\n\nVisible errors:\n${errorDetails}`;
+          }
+        }
+      }
+
+      const systemPrompt = `You are Mr. Blue, the Mundo Tango AI assistant with CONTEXT AWARENESS.
+
+${pageAwarenessText}
+
+CAPABILITIES:
+✅ I can SEE the current page you're on
+✅ I can SEE form fields, buttons, and errors
+✅ I can VIBE CODE (generate/modify code with "can you vibe code?")
+✅ I provide context-aware answers based on where you are
+
+IMPORTANT: You are in QUESTION mode. Answer the user's question conversationally. DO NOT generate code unless explicitly asked.
+
+${contextText ? `RELEVANT DOCUMENTATION:\n${contextText}\n\n` : ''}
 
 GUIDELINES:
-1. Answer questions clearly and concisely
-2. Reference the context if relevant
-3. If you don't know, say so - don't make things up
-4. Keep responses conversational and helpful
-5. DO NOT generate code or file changes`;
+1. **ALWAYS acknowledge the current page** in your response
+2. If asking about a specific field/button, reference what you see on the page
+3. Answer questions clearly and concisely
+4. If you don't know, say so - don't make things up
+5. Keep responses conversational and helpful
+6. If they ask about my abilities, mention vibecoding!`;
 
       const response = await groq.chat.completions.create({
         model: 'llama-3.3-70b-versatile',
