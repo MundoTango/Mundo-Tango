@@ -479,6 +479,9 @@ Provide natural, conversational assistance based on where the user is in the pla
         
         setMessages(prev => [...prev, assistantMessage]);
         
+        // ✅ FIX: Refetch to update conversation history
+        await refetchMessages();
+        
         toast({
           title: '✅ Vibe Coding Complete!',
           description: `Generated changes for ${vibeResult.fileChanges.length} file(s). Review and apply below.`,
@@ -499,6 +502,9 @@ Provide natural, conversational assistance based on where the user is in the pla
       };
 
       setMessages(prev => [...prev, assistantMessage]);
+      
+      // ✅ FIX: Refetch to update conversation history
+      await refetchMessages();
 
       // Auto-play audio if available
       if (data.audioUrl && audioRef.current) {
