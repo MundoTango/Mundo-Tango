@@ -1,5 +1,110 @@
-# MB.MD Protocol v8.1 - Subject Matter Expert Guide
+# MB.MD Protocol v9.3 - Subject Matter Expert Guide
 **The Definitive Methodology for AI-Driven Development Excellence**
+
+---
+
+# ⚠️ CRITICAL RULE #0: NEVER ASSUME COMPLETENESS ⚠️
+
+## 🔴 **THE CARDINAL SIN OF AGENT WORK: ASSUMING SOMETHING IS COMPLETE**
+
+### **RULE:**
+```
+IF you did not PERSONALLY verify it is working RIGHT NOW,
+THEN it is NOT complete.
+```
+
+### **WRONG MINDSET:**
+- ❌ "I built it, so it must be complete"
+- ❌ "The documentation says it's complete"
+- ❌ "Someone else said it works"
+- ❌ "The code exists, therefore it works"
+- ❌ "Phase N is done, ship it"
+
+### **CORRECT MINDSET:**
+- ✅ "I built it AND I tested it AND it works RIGHT NOW"
+- ✅ "I verified EVERY component is connected"
+- ✅ "I ran the actual workflow end-to-end"
+- ✅ "I checked logs/errors/output MYSELF"
+- ✅ "Integration Phase passed BEFORE marking complete"
+
+### **VERIFICATION CHECKLIST - ALL MUST BE TRUE:**
+
+**Before Marking ANYTHING as Complete:**
+
+1. ✅ **Code Exists** - Files created/modified
+2. ✅ **Imports Work** - No import errors
+3. ✅ **Routes Registered** - Endpoints accessible
+4. ✅ **Integration Complete** - Components connected
+5. ✅ **Tests Pass** - E2E validation successful
+6. ✅ **Logs Clean** - No errors in console/server
+7. ✅ **User Workflow Works** - Can user actually use it?
+8. ✅ **Data Flows** - Request → Processing → Response
+
+**IF ANY CHECKBOX IS UNCHECKED:**
+```
+STATUS = ⚠️ INCOMPLETE
+ACTION = Continue working until ALL checkboxes ✅
+```
+
+### **EXAMPLES OF ASSUMED COMPLETENESS (FAILURES):**
+
+**❌ FAILURE CASE 1: UI Components**
+```
+Agent Report: "✅ PageAwarenessIndicator built (86 lines)"
+Reality: Component existed but had wrong import → crashed on load
+Lesson: BUILD ≠ COMPLETE. Must verify it RENDERS.
+```
+
+**❌ FAILURE CASE 2: Backend Services**
+```
+Agent Report: "✅ Autonomous agents exist (AutonomousEngine.ts)"
+Reality: No worker running 24/7, no continuous loop
+Lesson: CODE EXISTS ≠ CODE RUNNING. Must verify EXECUTION.
+```
+
+**❌ FAILURE CASE 3: Integration**
+```
+Phase 3 Report: "✅ VibeCoding service COMPLETE"
+Phase 4: Service never called from routes → not connected
+Lesson: SERVICE BUILT ≠ SERVICE INTEGRATED. Must verify CONNECTIONS.
+```
+
+### **THE ONLY ACCEPTABLE "COMPLETE" STATEMENT:**
+
+```typescript
+// ✅ CORRECT COMPLETE REPORT
+function markComplete(feature: string) {
+  const checklist = {
+    codeExists: verifyFilesExist(),
+    importsWork: runLSPCheck(),
+    routesRegistered: testEndpoints(),
+    integrated: testFullWorkflow(),
+    testsPass: runE2ETests(),
+    logsClean: checkErrorLogs(),
+    userCanUse: manualVerification(),
+    dataFlows: validateRequestResponse()
+  };
+  
+  const allTrue = Object.values(checklist).every(v => v === true);
+  
+  if (!allTrue) {
+    return `⚠️ INCOMPLETE: ${JSON.stringify(checklist, null, 2)}`;
+  }
+  
+  return `✅ COMPLETE: All 8 verification steps passed`;
+}
+```
+
+### **WHEN TO USE THIS RULE:**
+- ✅ **ALWAYS** - Before marking any task complete
+- ✅ **ALWAYS** - Before reporting to user
+- ✅ **ALWAYS** - Before moving to next phase
+- ✅ **ALWAYS** - Before claiming "100% done"
+
+### **WHEN NOT TO USE THIS RULE:**
+- ❌ **NEVER** - There is NO exception to this rule
+
+---
 
 ## Table of Contents
 1. [Core Philosophy](#core-philosophy)
