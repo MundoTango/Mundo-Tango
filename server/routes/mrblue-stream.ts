@@ -10,6 +10,8 @@
 
 import { Router, type Request, Response } from "express";
 import { GroqService, GROQ_MODELS } from "../services/ai/GroqService";
+import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 
 const router = Router();
 
@@ -185,36 +187,105 @@ INSTRUCTIONS:
 
 ${command.changeType !== 'none' ? `You just applied a ${command.changeType} change to the selected element.` : ''}`;
 
-    // Stream AI response
+    // Stream AI response with cascading fallback: GROQ → OpenAI → Anthropic
     let fullMessage = '';
     
-    await GroqService.stream({
-      prompt: message,
-      systemPrompt,
-      model: GROQ_MODELS.LLAMA_8B, // Ultra-fast 877 tok/s
-      temperature: 0.7,
-      maxTokens: 200,
-      onChunk: (chunk) => {
-        if (!chunk.isComplete) {
-          fullMessage += chunk.content;
-          
-          // Stream each token to client
+    // Try GROQ first
+    try {
+      console.log('[MrBlue] Using GROQ for AI response...');
+      
+      await GroqService.stream({
+        prompt: message,
+        systemPrompt,
+        model: GROQ_MODELS.LLAMA_8B, // Ultra-fast 877 tok/s
+        temperature: 0.7,
+        maxTokens: 200,
+        onChunk: (chunk) => {
+          if (!chunk.isComplete) {
+            fullMessage += chunk.content;
+            
+            // Stream each token to client
+            res.write(`data: ${JSON.stringify({ 
+              type: 'progress',
+              message: fullMessage,
+              status: 'generating'
+            })}\n\n`);
+          } else {
+            // Final completion message
+            res.write(`data: ${JSON.stringify({ 
+              type: 'completion',
+              message: fullMessage
+            })}\n\n`);
+            
+            res.end();
+          }
+        }
+      });
+      
+    } catch (groqError: any) {
+      console.log('[MrBlue] GROQ failed, trying OpenAI...', groqError.message);
+      
+      // Fallback to OpenAI GPT-4o-mini
+      try {
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const stream = await openai.chat.completions.create({
+          model: 'gpt-4o-mini',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: message }
+          ],
+          stream: true,
+          max_tokens: 200,
+          temperature: 0.7
+        });
+        
+        for await (const chunk of stream) {
+          const content = chunk.choices[0]?.delta?.content || '';
+          if (content) {
+            fullMessage += content;
+            res.write(`data: ${JSON.stringify({ 
+              type: 'progress',
+              message: fullMessage,
+              status: 'generating'
+            })}\n\n`);
+          }
+        }
+        
+        res.write(`data: ${JSON.stringify({ 
+          type: 'completion',
+          message: fullMessage
+        })}\n\n`);
+        res.end();
+        
+      } catch (openaiError: any) {
+        console.log('[MrBlue] OpenAI failed, trying Anthropic...', openaiError.message);
+        
+        // Fallback to Anthropic Claude Haiku
+        const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+        const stream = await anthropic.messages.stream({
+          model: 'claude-3-haiku-20240307',
+          max_tokens: 200,
+          messages: [{ role: 'user', content: `${systemPrompt}\n\n${message}` }]
+        });
+        
+        stream.on('text', (text) => {
+          fullMessage += text;
           res.write(`data: ${JSON.stringify({ 
             type: 'progress',
             message: fullMessage,
             status: 'generating'
           })}\n\n`);
-        } else {
-          // Final completion message
+        });
+        
+        stream.on('end', () => {
           res.write(`data: ${JSON.stringify({ 
             type: 'completion',
             message: fullMessage
           })}\n\n`);
-          
           res.end();
-        }
+        });
       }
-    });
+    }
 
   } catch (error: any) {
     console.error('[MrBlue Stream] Error:', error);

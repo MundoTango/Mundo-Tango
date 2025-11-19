@@ -279,7 +279,7 @@ export class ConversationOrchestrator {
       // MB.MD v9.2 FIX: Build page awareness context
       let pageAwarenessText = '';
       if (pageContext) {
-        const currentPage = pageContext.currentPage || 'Unknown';
+        const currentPage = pageContext.page || pageContext.currentPage || 'Unknown';
         const pageTitle = pageContext.pageTitle || 'Unknown';
         const userIntent = pageContext.userIntent || 'browsing';
         

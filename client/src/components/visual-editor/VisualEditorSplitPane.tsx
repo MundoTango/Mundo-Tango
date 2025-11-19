@@ -8,7 +8,9 @@ import { useState, useEffect, useCallback, Suspense, lazy, useRef } from "react"
 import { X, Maximize2, Code, Play, AlertTriangle, GitBranch, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { ComponentSelector, type SelectedComponent } from "./ComponentSelector";
 import { ComponentPaletteIntegration } from "./ComponentPaletteIntegration";
 import { DragDropHandler } from "./DragDropHandler";
@@ -57,6 +59,10 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
   const [isSaving, setIsSaving] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
   const [showGitPanel, setShowGitPanel] = useState(false);
+  
+  // Mobile Tabs State
+  const isMobile = useIsMobile();
+  const [activeTab, setActiveTab] = useState<"chat" | "preview" | "code" | "components">("preview");
   
   // URL Navigation State
   const [currentUrl, setCurrentUrl] = useState(window.location.pathname);
@@ -498,20 +504,216 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
           </div>
         </div>
 
-        {/* Split Pane Container */}
-        <div className="flex h-[calc(100vh-3.5rem)]">
-          {/* LEFT: Component Palette (hidden in focus mode) */}
-          {!isFocusModeActive && (
+        {/* Split Pane Container - Mobile Tabs or Desktop 3-Pane */}
+        {isMobile ? (
+          /* MOBILE: Tab-based layout */
+          <Tabs 
+            value={activeTab} 
+            onValueChange={(value) => setActiveTab(value as typeof activeTab)}
+            className="flex flex-col h-[calc(100vh-3.5rem)]"
+          >
+            <TabsList className="w-full grid grid-cols-4 rounded-none border-b" data-testid="mobile-tabs-list">
+              <TabsTrigger value="chat" data-testid="tab-chat">Chat</TabsTrigger>
+              <TabsTrigger value="preview" data-testid="tab-preview">Preview</TabsTrigger>
+              <TabsTrigger value="code" data-testid="tab-code">Code</TabsTrigger>
+              <TabsTrigger value="components" data-testid="tab-components">Components</TabsTrigger>
+            </TabsList>
+            
+            {/* Chat Tab */}
+            <TabsContent value="chat" className="flex-1 overflow-hidden m-0 mt-0 data-[state=active]:flex data-[state=active]:flex-col">
+              <Suspense fallback={<ChatPaneLoading />}>
+                <MrBlueVisualChat
+                  currentPage={currentPage}
+                  selectedElement={selectedComponent?.element.getAttribute('data-testid') || null}
+                  onGenerateCode={handleGenerateCode}
+                  contextInfo={{
+                    page: currentPage,
+                    selectedElement: selectedComponent ? {
+                      tagName: selectedComponent.tagName,
+                      testId: selectedComponent.element.getAttribute('data-testid'),
+                      className: selectedComponent.element.className,
+                      text: selectedComponent.element.textContent?.slice(0, 100) || ''
+                    } : null,
+                    editsCount: visualEditorTracker.getAllEdits().length,
+                    recentEdits: visualEditorTracker.getAllEdits().slice(0, 5)
+                  }}
+                />
+              </Suspense>
+            </TabsContent>
+            
+            {/* Preview Tab */}
+            <TabsContent value="preview" className="flex-1 overflow-hidden m-0 mt-0 data-[state=active]:flex data-[state=active]:flex-col">
+              <VisualEditorErrorBoundary>
+                <div className="relative bg-muted/30 flex-1 flex flex-col" data-testid="preview-pane-mobile">
+                  {/* Address Bar */}
+                  <IframeAddressBar
+                    currentUrl={currentUrl}
+                    onNavigate={handleNavigate}
+                    onRefresh={handleRefresh}
+                    onHome={handleHome}
+                    canGoBack={canGoBack}
+                    canGoForward={canGoForward}
+                    onBack={handleBack}
+                    onForward={handleForward}
+                    loading={isNavigating}
+                    navigationHistory={navigationHistory}
+                  />
+                  
+                  {/* Error State */}
+                  {previewError && (
+                    <PageLoadError 
+                      pagePath={currentUrl}
+                      onRetry={() => {
+                        setPreviewError(null);
+                        setIsPreviewLoading(true);
+                        handleRefresh();
+                      }}
+                    />
+                  )}
+
+                  {/* Loading State */}
+                  {isPreviewLoading && !previewError && <IframeLoading />}
+
+                  {/* Iframe Container for actual site */}
+                  {!previewError && (
+                    <div className="relative flex-1">
+                      <iframe
+                        ref={iframeRef}
+                        src={currentUrl}
+                        className="w-full h-full border-0"
+                        sandbox="allow-same-origin allow-scripts allow-forms allow-modals"
+                        onLoad={() => {
+                          console.log('[VisualEditor] iframe loaded');
+                          setIsPreviewLoading(false);
+                          
+                          if (iframeRef.current) {
+                            try {
+                              injectSelectionScript(iframeRef.current);
+                              
+                              if (!iframeInjectorRef.current) {
+                                iframeInjectorRef.current = new IframeInjector();
+                              }
+                              iframeInjectorRef.current.initialize(iframeRef.current, {
+                                onElementSelected: (element) => {
+                                  setSelectedIframeElement(element);
+                                  setShowInspector(true);
+                                  toast({
+                                    title: "Element Selected",
+                                    description: `${element.tagName} - ${element.id || 'No ID'}`,
+                                    duration: 2000
+                                  });
+                                },
+                                onChangeApplied: (change) => {
+                                  visualEditorTracker.track({
+                                    elementId: change.targetElement.selector,
+                                    elementTestId: '',
+                                    changeType: 'style',
+                                    changes: { [change.property || 'unknown']: { before: change.oldValue, after: change.newValue } },
+                                    description: change.description
+                                  });
+                                },
+                                onUrlChanged: (url, back, forward) => {
+                                  setCurrentUrl(url);
+                                  setCanGoBack(back);
+                                  setCanGoForward(forward);
+                                  console.log('[VisualEditor] URL changed:', url, 'back:', back, 'forward:', forward);
+                                },
+                                onNavigationStart: () => {
+                                  setIsNavigating(true);
+                                  setIsPreviewLoading(true);
+                                },
+                                onNavigationEnd: () => {
+                                  setIsNavigating(false);
+                                  setIsPreviewLoading(false);
+                                },
+                              });
+                              
+                              iframeInjectorRef.current.handleIframeLoad();
+                              
+                              console.log('[VisualEditor] Script injected and initialized');
+                            } catch (error) {
+                              console.error('[VisualEditor] Injection failed:', error);
+                            }
+                          }
+                        }}
+                        onError={() => {
+                          console.error('[VisualEditor] iframe load error');
+                          setPreviewError('Failed to load preview');
+                          setIsPreviewLoading(false);
+                        }}
+                        data-testid="visual-editor-iframe-mobile"
+                      />
+                      
+                      {/* Component Selector */}
+                      <ComponentSelector
+                        enabled={isOpen && !isPreviewLoading}
+                        onSelect={handleComponentSelect}
+                      />
+
+                      {/* Drag & Drop Handler */}
+                      <DragDropHandler
+                        enabled={isOpen && !isPreviewLoading}
+                        selectedElement={selectedComponent?.element || null}
+                        onDragEnd={handleDragEnd}
+                      />
+
+                      {/* Edit Controls */}
+                      {selectedComponent && (
+                        <EditControls
+                          component={selectedComponent}
+                          onClose={() => setSelectedComponent(null)}
+                          onChange={handleComponentChange}
+                        />
+                      )}
+                      
+                      {/* Selection Overlay with toolbar */}
+                      <SelectionOverlay
+                        selectedElement={selectedIframeElement}
+                        onInspect={handleInspect}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                      />
+                    </div>
+                  )}
+                </div>
+              </VisualEditorErrorBoundary>
+            </TabsContent>
+            
+            {/* Code Tab */}
+            <TabsContent value="code" className="flex-1 overflow-hidden m-0 mt-0 data-[state=active]:flex data-[state=active]:flex-col">
+              <Suspense fallback={<CodePreviewLoading />}>
+                <CodePreview 
+                  currentPage={currentPage}
+                  edits={visualEditorTracker.getAllEdits()}
+                />
+              </Suspense>
+            </TabsContent>
+            
+            {/* Components Tab */}
+            <TabsContent value="components" className="flex-1 overflow-hidden m-0 mt-0 data-[state=active]:flex data-[state=active]:flex-col">
+              <VisualEditorErrorBoundary>
+                <ComponentPaletteIntegration 
+                  iframeRef={iframeRef}
+                  iframeInjector={iframeInjectorRef.current}
+                />
+              </VisualEditorErrorBoundary>
+            </TabsContent>
+          </Tabs>
+        ) : (
+          /* DESKTOP: 3-Pane Layout */
+          <div className="flex h-[calc(100vh-3.5rem)]">
+            {/* LEFT: Component Palette (hidden in focus mode) */}
+            {!isFocusModeActive && (
+              <VisualEditorErrorBoundary>
+                <ComponentPaletteIntegration 
+                  iframeRef={iframeRef}
+                  iframeInjector={iframeInjectorRef.current}
+                />
+              </VisualEditorErrorBoundary>
+            )}
+            
+            {/* CENTER: Live Preview */}
             <VisualEditorErrorBoundary>
-              <ComponentPaletteIntegration 
-                iframeRef={iframeRef}
-                iframeInjector={iframeInjectorRef.current}
-              />
-            </VisualEditorErrorBoundary>
-          )}
-          
-          {/* CENTER: Live Preview */}
-          <VisualEditorErrorBoundary>
             <div 
               className="relative bg-muted/30 flex-1 flex flex-col"
               data-testid="preview-pane"
@@ -773,7 +975,8 @@ export function VisualEditorSplitPane({ isOpen, onClose, embeddedMode = false }:
               />
             </div>
           )}
-        </div>
+          </div>
+        )}
       </div>
     </VisualEditorErrorBoundary>
   );
