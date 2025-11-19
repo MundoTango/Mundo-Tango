@@ -49,6 +49,7 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
   const publicMrBlueEndpoints = [
     "/api/mrblue/chat",
     "/api/mrblue/stream",
+    "/api/mrblue/vibecode/stream",
     "/api/mr-blue/agents"
   ];
   if (publicMrBlueEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
@@ -114,6 +115,7 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
   const publicMrBlueEndpoints = [
     "/api/mrblue/chat",
     "/api/mrblue/stream",
+    "/api/mrblue/vibecode/stream",
     "/api/mr-blue/agents"
   ];
   if (publicMrBlueEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {

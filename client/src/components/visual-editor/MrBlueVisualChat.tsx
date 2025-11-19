@@ -9,7 +9,7 @@
 
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Sparkles, History, Lightbulb, Mic, MicOff, Volume2, VolumeX, Box, Loader2 } from "lucide-react";
+import { Send, Sparkles, History, Lightbulb, Mic, MicOff, Volume2, VolumeX, Box, Loader2, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -22,6 +22,7 @@ import { useStreamingChat } from "@/hooks/useStreamingChat";
 import { MrBlueAvatar } from "./MrBlueAvatar";
 import { AutonomousWorkflowPanel } from "@/components/autonomous/AutonomousWorkflowPanel";
 import { apiRequest } from "@/lib/queryClient";
+import { intentDetector, sentimentAnalyzer, type UserIntent, type Sentiment } from "@/lib/transformers";
 
 // Lazy load 3D avatar component (heavy Three.js dependency)
 const MrBlueAvatar3D = lazy(() => import("@/components/mrblue/MrBlueAvatar3D"));
@@ -69,6 +70,9 @@ export function MrBlueVisualChat({
   const [currentStreamingMessage, setCurrentStreamingMessage] = useState("");
   const [showWorkflowPanel, setShowWorkflowPanel] = useState(false);
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
+  const [modelsLoading, setModelsLoading] = useState(true);
+  const [detectedIntent, setDetectedIntent] = useState<UserIntent | null>(null);
+  const [detectedSentiment, setDetectedSentiment] = useState<Sentiment | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const hasSpokenGreeting = useRef(false);
   const silenceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -84,6 +88,30 @@ export function MrBlueVisualChat({
     sendMessage: sendStreamingMessage,
     clear: clearStream
   } = useStreamingChat();
+
+  // Preload Transformers.js models in background
+  useEffect(() => {
+    const preloadModels = async () => {
+      try {
+        console.log('[MrBlueVisualChat] Preloading Transformers.js models...');
+        setModelsLoading(true);
+        
+        // Preload both models in parallel
+        await Promise.all([
+          intentDetector.preload(),
+          sentimentAnalyzer.preload()
+        ]);
+        
+        console.log('[MrBlueVisualChat] ✅ All models loaded and cached');
+        setModelsLoading(false);
+      } catch (error) {
+        console.warn('[MrBlueVisualChat] Model preload failed (will lazy load):', error);
+        setModelsLoading(false);
+      }
+    };
+
+    preloadModels();
+  }, []);
 
   // Initialize greeting with context
   useEffect(() => {
@@ -101,7 +129,10 @@ export function MrBlueVisualChat({
 • Generate production-ready code
 
 **Voice Mode:**
-Click the microphone to speak naturally! I'll show you exactly what I heard.`;
+Click the microphone to speak naturally! I'll show you exactly what I heard.
+
+**🧠 Browser AI Enabled:**
+I use on-device AI models to understand your intent instantly - no backend needed for simple questions!`;
 
     setMessages([{
       id: '1',
@@ -328,8 +359,28 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
     setCurrentStreamingMessage("");
 
     try {
-      // Detect if this is a code change request
-      const isCodeRequest = isCodeChangeRequest(originalInput);
+      // 🧠 BROWSER-BASED AI: Detect intent and sentiment using Transformers.js
+      // This runs entirely in the browser - no backend API call needed!
+      console.log('[MrBlueVisualChat] Running browser-based intent detection...');
+      setCurrentStreamingMessage("Analyzing your request (browser AI)...");
+      
+      const [intentResult, sentimentResult] = await Promise.all([
+        intentDetector.detectIntent(originalInput),
+        sentimentAnalyzer.analyzeSentiment(originalInput)
+      ]);
+      
+      setDetectedIntent(intentResult.intent);
+      setDetectedSentiment(sentimentResult.sentiment);
+      
+      console.log('[MrBlueVisualChat] Intent:', intentResult.intent, 'Confidence:', intentResult.confidence);
+      console.log('[MrBlueVisualChat] Sentiment:', sentimentResult.sentiment, 'Tone:', sentimentResult.suggestedTone);
+      
+      setCurrentStreamingMessage("");
+
+      // Route based on detected intent
+      const isCodeRequest = intentResult.intent === 'code_generation' || 
+                           intentResult.intent === 'visual_change' ||
+                           isCodeChangeRequest(originalInput);
 
       if (isCodeRequest) {
         // VIBECODING STREAMING MODE: Code generation requests go to streaming API
@@ -474,7 +525,13 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
               editsCount: contextInfo.editsCount,
               recentEdits: contextInfo.recentEdits.map(e => e.description)
             },
-            conversationHistory
+            conversationHistory,
+            // 🧠 Pass browser-based sentiment analysis for tone adjustment
+            sentiment: {
+              type: sentimentResult.sentiment,
+              confidence: sentimentResult.confidence,
+              suggestedTone: sentimentResult.suggestedTone
+            }
           })
         });
 
@@ -718,13 +775,53 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
 
       {/* Context Display */}
       <div className="p-3 bg-muted/30 border-b border-ocean-divider">
-        <div className="flex items-center gap-2 text-xs">
+        <div className="flex items-center gap-2 text-xs flex-wrap">
           <Sparkles className="h-3 w-3 text-primary" />
           <span className="font-medium">Context:</span>
           <span className="text-muted-foreground">
             {currentPage} • {contextInfo.editsCount} edits
             {contextInfo.selectedElement && ` • Selected: ${contextInfo.selectedElement.tagName}`}
           </span>
+          
+          {/* Browser AI Status Indicators */}
+          <div className="flex items-center gap-1 ml-auto">
+            {modelsLoading ? (
+              <Badge variant="outline" className="text-xs gap-1" data-testid="badge-models-loading">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Loading AI models...
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="text-xs gap-1" data-testid="badge-models-ready">
+                <Brain className="h-3 w-3" />
+                Browser AI Ready
+              </Badge>
+            )}
+            
+            {detectedIntent && (
+              <Badge 
+                variant={detectedIntent === 'code_generation' ? 'default' : 'secondary'}
+                className="text-xs"
+                data-testid={`badge-intent-${detectedIntent}`}
+              >
+                {detectedIntent === 'visual_change' && '🎨 Visual'}
+                {detectedIntent === 'code_generation' && '⚡ Code'}
+                {detectedIntent === 'question' && '❓ Question'}
+                {detectedIntent === 'command' && '⌘ Command'}
+              </Badge>
+            )}
+            
+            {detectedSentiment && (
+              <Badge 
+                variant="outline"
+                className="text-xs"
+                data-testid={`badge-sentiment-${detectedSentiment}`}
+              >
+                {detectedSentiment === 'positive' && '😊 Happy'}
+                {detectedSentiment === 'negative' && '😔 Frustrated'}
+                {detectedSentiment === 'neutral' && '😐 Neutral'}
+              </Badge>
+            )}
+          </div>
         </div>
       </div>
 

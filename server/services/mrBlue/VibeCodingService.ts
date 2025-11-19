@@ -16,6 +16,8 @@
 import Groq from 'groq-sdk';
 import { ContextService } from './ContextService';
 import { CodeGenerator } from './CodeGenerator';
+import { agentEventBus } from './AgentEventBus';
+import { progressTrackingAgent } from './ProgressTrackingAgent';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { exec } from 'child_process';
@@ -95,6 +97,19 @@ export class VibeCodingService {
     try {
       console.log(`[VibeCoding] 🎯 Request: "${request.naturalLanguage}"`);
       
+      // Publish progress update
+      const progressEvent = agentEventBus.createEvent(
+        'progress:update',
+        'VibeCodingService',
+        {
+          sessionId: request.sessionId,
+          phase: 'planning',
+          percent: 10,
+          message: 'Analyzing request...',
+        } as any
+      );
+      await agentEventBus.publish(progressEvent);
+      
       // Step 1: Interpret the request using GROQ
       const interpretation = await this.interpretRequest(request.naturalLanguage);
       console.log(`[VibeCoding] 📝 Interpretation: ${interpretation.intent}`);
@@ -106,6 +121,19 @@ export class VibeCodingService {
       );
       console.log(`[VibeCoding] 📚 Found ${contextResults.length} relevant context chunks`);
 
+      // Update progress
+      const contextProgressEvent = agentEventBus.createEvent(
+        'progress:update',
+        'VibeCodingService',
+        {
+          sessionId: request.sessionId,
+          phase: 'execution',
+          percent: 40,
+          message: 'Generating code changes...',
+        } as any
+      );
+      await agentEventBus.publish(contextProgressEvent);
+
       // Step 3: Generate code changes
       const fileChanges = await this.codeGenerator.generateChanges({
         request: request.naturalLanguage,
@@ -115,9 +143,43 @@ export class VibeCodingService {
       });
       console.log(`[VibeCoding] 🔨 Generated ${fileChanges.length} file changes`);
 
+      // Publish code:generated event
+      const codeGeneratedEvent = agentEventBus.createEvent(
+        'code:generated',
+        'VibeCodingService',
+        {
+          sessionId: request.sessionId,
+          fileChanges,
+        } as any
+      );
+      await agentEventBus.publish(codeGeneratedEvent);
+
       // Step 4: Validate changes
       const validationResults = await this.validateChanges(fileChanges);
       console.log(`[VibeCoding] ✅ Validation complete`);
+
+      // Publish validation event
+      if (validationResults.syntax && validationResults.safety) {
+        const validationPassedEvent = agentEventBus.createEvent(
+          'validation:passed',
+          'VibeCodingService',
+          {
+            sessionId: request.sessionId,
+            validationResults,
+          } as any
+        );
+        await agentEventBus.publish(validationPassedEvent);
+      } else {
+        const validationFailedEvent = agentEventBus.createEvent(
+          'validation:failed',
+          'VibeCodingService',
+          {
+            sessionId: request.sessionId,
+            errors: validationResults.warnings,
+          } as any
+        );
+        await agentEventBus.publish(validationFailedEvent);
+      }
 
       // Step 5: Create result
       const result: VibeCodeResult = {

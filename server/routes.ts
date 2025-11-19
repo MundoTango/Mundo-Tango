@@ -38,6 +38,7 @@ import mrBlueMemoryRoutes from "./routes/mrblue-memory-routes";
 import mrBluePlanRoutes from "./routes/mr-blue-plan-routes";
 import mrBlueErrorAnalysisRoutes from "./routes/mrblue-error-analysis-routes";
 import mrBlueErrorActionsRoutes from "./routes/mrblue-error-actions-routes";
+import mrBlueOrchestrationRoutes from "./routes/mrblue-orchestration-routes";
 import autonomousRoutes from "./routes/autonomous";
 import premiumMediaRoutes from "./routes/premiumMedia";
 import learningIntelligenceRoutes from "./routes/learningIntelligence";
@@ -559,6 +560,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/mrblue/plan", mrBluePlanRoutes); // Plan Roadmap Tracker (47-page validation system)
   app.use("/api/mrblue", mrBlueErrorAnalysisRoutes); // Phase 3: Error Analysis API with AI Integration
   app.use("/api/mrblue", mrBlueErrorActionsRoutes); // Phase 4: Error Fix Actions (Apply/Escalate)
+  app.use("/api/mrblue/orchestration", mrBlueOrchestrationRoutes); // Multi-agent orchestration with LangChain.js
   app.use(mrBlueEnhancedRoutes); // Enhanced Mr. Blue with troubleshooting KB
   app.use("/api/autonomous", autonomousRoutes); // Mr. Blue Autonomous Agent (God Level)
   app.use("/api/visual-editor", authenticateToken, visualEditorRoutes);
