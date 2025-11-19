@@ -107,7 +107,21 @@ function handleUnauthorizedError() {
   localStorage.removeItem('user');
   
   const currentPath = window.location.pathname;
-  if (currentPath !== '/login' && currentPath !== '/register') {
+  
+  // MB.MD Protocol v9.2: Visual Editor is PUBLIC (auth-optional)
+  // Bypass redirect for: login, register, visual editor (root /), mrblue/visual-editor, admin/visual-editor
+  const publicPaths = [
+    '/login',
+    '/register',
+    '/', // Visual Editor root
+    '/mrblue/visual-editor',
+    '/admin/visual-editor',
+    '/visual-editor', // Generic fallback
+  ];
+  
+  const isPublicPath = publicPaths.some(path => currentPath === path || currentPath.startsWith(path));
+  
+  if (!isPublicPath) {
     window.location.href = '/login?expired=true';
   }
 }
