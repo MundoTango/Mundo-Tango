@@ -208,7 +208,7 @@ const SystemHealthPage = lazy(() => import("@/pages/admin/SystemHealthPage"));
 // Mr Blue Pages (40-47)
 const MrBlueVoicePage = lazy(() => import("@/pages/mrblue/VoicePage"));
 const MrBlueVibecodingPage = lazy(() => import("@/pages/mrblue/VibecodingPage"));
-const MrBlueVisualEditorPage = lazy(() => import("@/pages/mrblue/VisualEditorPage"));
+const VisualEditorMode = lazy(() => import("@/components/mr-blue/VisualEditorMode").then(m => ({ default: m.VisualEditorMode })));
 const MrBlueSettingsPage = lazy(() => import("@/pages/mrblue/SettingsPage"));
 const MrBlueContextMemoryPage = lazy(() => import("@/pages/mrblue/ContextMemoryPage"));
 const MrBlueAnalyticsPage = lazy(() => import("@/pages/mrblue/AnalyticsPage"));
@@ -1746,7 +1746,7 @@ function Router() {
       <Route path="/mrblue/visual-editor">
         <ProtectedRoute>
           <AppLayout>
-            <MrBlueVisualEditorPage />
+            <VisualEditorMode />
           </AppLayout>
         </ProtectedRoute>
       </Route>
