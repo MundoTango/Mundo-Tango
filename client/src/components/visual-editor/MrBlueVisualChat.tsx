@@ -72,6 +72,7 @@ export function MrBlueVisualChat({
   const scrollRef = useRef<HTMLDivElement>(null);
   const hasSpokenGreeting = useRef(false);
   const silenceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const eventSourceRef = useRef<EventSource | null>(null);
 
   // Streaming hook
   const {
@@ -235,6 +236,43 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
     }
   }, [transcript]);
 
+  // Cleanup EventSource on unmount
+  useEffect(() => {
+    return () => {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
+    };
+  }, []);
+
+  // Format code result as markdown
+  const formatCodeResult = (data: any): string => {
+    if (!data) return "✅ **Code generated successfully!**";
+
+    let result = "✅ **Code generated successfully!**\n\n";
+    
+    if (data.fileChanges && data.fileChanges.length > 0) {
+      result += "**File Changes:**\n\n";
+      data.fileChanges.forEach((change: any) => {
+        result += `📄 **${change.filePath}**\n\`\`\`${change.language || 'typescript'}\n${change.content}\n\`\`\`\n\n`;
+      });
+    }
+
+    if (data.summary) {
+      result += `**Summary:** ${data.summary}\n\n`;
+    }
+
+    if (data.visualChanges && data.visualChanges.length > 0) {
+      result += "**Visual Changes:**\n";
+      data.visualChanges.forEach((change: any) => {
+        result += `• ${change.description}\n`;
+      });
+    }
+
+    return result;
+  };
+
   // Helper to detect code change requests vs normal chat
   const isCodeChangeRequest = (message: string): boolean => {
     const lowerMessage = message.toLowerCase();
@@ -294,68 +332,121 @@ Click the microphone to speak naturally! I'll show you exactly what I heard.`;
       const isCodeRequest = isCodeChangeRequest(originalInput);
 
       if (isCodeRequest) {
-        // AUTONOMOUS MODE: Code generation requests go to autonomous API
-        console.log('[MrBlueVisualChat] Code request detected, calling autonomous API');
+        // VIBECODING STREAMING MODE: Code generation requests go to streaming API
+        console.log('[MrBlueVisualChat] Code request detected, calling VibeCoding streaming API');
         
-        let contextualPrompt = `USER REQUEST: ${originalInput}\n\nCONTEXT:\n- Page: ${contextInfo.page}`;
-        
-        if (contextInfo.selectedElement) {
-          contextualPrompt += `\n- Selected element: ${contextInfo.selectedElement.tagName} (testId: ${contextInfo.selectedElement.testId || 'none'})\n- Element class: ${contextInfo.selectedElement.className}\n- Element text: ${contextInfo.selectedElement.text?.substring(0, 100) || 'N/A'}`;
-        }
-        
-        contextualPrompt += `\n- Total edits so far: ${contextInfo.editsCount}`;
-        
-        if (contextInfo.recentEdits.length > 0) {
-          contextualPrompt += `\n- Recent edits: ${contextInfo.recentEdits.slice(0, 3).map(e => e.description).join(', ')}`;
+        // Close any existing EventSource
+        if (eventSourceRef.current) {
+          eventSourceRef.current.close();
+          eventSourceRef.current = null;
         }
 
-        // Call autonomous code generation API directly
-        const token = localStorage.getItem('accessToken');
-        const response = await fetch('/api/autonomous/execute', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': token ? `Bearer ${token}` : ''
-          },
-          body: JSON.stringify({
-            prompt: contextualPrompt,
-            autoApprove: false,
-            selectedElement: contextInfo.selectedElement?.testId || null,
-            context: {
-              page: contextInfo.page,
-              editsCount: contextInfo.editsCount,
-              recentEdits: contextInfo.recentEdits.slice(0, 5)
-            }
-          })
+        // Build context object
+        const context = [
+          {
+            type: 'page',
+            page: contextInfo.page,
+            editsCount: contextInfo.editsCount,
+            selectedElement: contextInfo.selectedElement ? {
+              tagName: contextInfo.selectedElement.tagName,
+              testId: contextInfo.selectedElement.testId,
+              className: contextInfo.selectedElement.className,
+              text: contextInfo.selectedElement.text?.substring(0, 100)
+            } : null,
+            recentEdits: contextInfo.recentEdits.slice(0, 5).map(e => e.description)
+          }
+        ];
+
+        // Create query params for EventSource (GET request)
+        const params = new URLSearchParams({
+          naturalLanguage: originalInput,
+          context: JSON.stringify(context),
+          targetFiles: JSON.stringify([])
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-        }
+        // Show initial "working on it" message
+        setCurrentStreamingMessage("Mr. Blue is generating code...");
 
-        const data = await response.json();
+        // Create EventSource for streaming
+        const eventSource = new EventSource(`/api/mrblue/vibecode/stream?${params.toString()}`);
+        eventSourceRef.current = eventSource;
 
-        if (!data.success) {
-          throw new Error(data.message || 'Failed to start autonomous task');
-        }
+        eventSource.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            console.log('[VibeCoding] SSE event:', data);
 
-        // Show workflow panel
-        setCurrentTaskId(data.taskId);
-        setShowWorkflowPanel(true);
+            if (data.type === 'progress') {
+              // Update UI with streaming progress
+              const progressMessage = data.percent 
+                ? `${data.message} (${data.percent}%)`
+                : data.message;
+              setCurrentStreamingMessage(progressMessage);
+            } else if (data.type === 'complete') {
+              // Final result received
+              setCurrentStreamingMessage("");
+              
+              const assistantMessage: Message = {
+                id: Date.now().toString(),
+                role: 'assistant',
+                content: formatCodeResult(data.data),
+                timestamp: new Date()
+              };
+              setMessages(prev => [...prev, assistantMessage]);
 
-        const assistantMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: `✅ **I'm working on that!**\n\nTask ID: ${data.taskId}\n\n**Next steps:**\n1. Decomposing your request into subtasks\n2. Generating code changes\n3. Validating the code\n4. Waiting for your approval\n\nWatch the **Autonomous Workflow Panel** on the right for real-time progress!`,
-          timestamp: new Date()
+              if (ttsEnabled && ttsSupported) {
+                speak("Code generated successfully!");
+              }
+
+              // Close the EventSource
+              eventSource.close();
+              eventSourceRef.current = null;
+              setIsLoading(false);
+            } else if (data.type === 'error') {
+              // Error occurred
+              setCurrentStreamingMessage("");
+              
+              const errorMessage: Message = {
+                id: Date.now().toString(),
+                role: 'assistant',
+                content: `❌ **Error generating code:**\n\n${data.message || 'Unknown error occurred'}`,
+                timestamp: new Date()
+              };
+              setMessages(prev => [...prev, errorMessage]);
+
+              if (ttsEnabled && ttsSupported) {
+                speak("Error generating code. Please try again.");
+              }
+
+              eventSource.close();
+              eventSourceRef.current = null;
+              setIsLoading(false);
+            }
+          } catch (error) {
+            console.error('[VibeCoding] Error parsing SSE data:', error);
+          }
         };
 
-        setMessages(prev => [...prev, assistantMessage]);
+        eventSource.onerror = (error) => {
+          console.error('[VibeCoding] SSE Error:', error);
+          setCurrentStreamingMessage("");
 
-        if (ttsEnabled && ttsSupported) {
-          speak("I'm working on that! Check the workflow panel for progress.");
-        }
-        setIsLoading(false);
+          const errorMessage: Message = {
+            id: Date.now().toString(),
+            role: 'assistant',
+            content: `❌ **Connection error:**\n\nFailed to connect to VibeCoding API. Please try again.`,
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, errorMessage]);
+
+          if (ttsEnabled && ttsSupported) {
+            speak("Connection error. Please try again.");
+          }
+
+          eventSource.close();
+          eventSourceRef.current = null;
+          setIsLoading(false);
+        };
       } else {
         // SIMPLE CHAT MODE: Conversational messages go to chat endpoint
         const token = localStorage.getItem('accessToken');

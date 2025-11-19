@@ -6,6 +6,7 @@
  * 
  * Endpoints:
  * - POST /api/mrblue/vibecode/generate - Generate code from natural language
+ * - POST /api/mrblue/vibecode/stream - Stream code generation progress via SSE
  * - POST /api/mrblue/vibecode/apply - Apply generated code changes
  * - POST /api/mrblue/vibecode/preview - Preview generated changes
  * - POST /api/mrblue/vibecode/validate - Validate code safety
@@ -86,6 +87,135 @@ router.post('/generate', authenticateToken, async (req: AuthRequest, res: Respon
     });
   } catch (error: any) {
     console.error('[VibeCoding API] ❌ Generate error:', error);
+    
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation error',
+        details: error.errors,
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Internal server error',
+    });
+  }
+});
+
+/**
+ * POST /api/mrblue/vibecode/stream
+ * Stream code generation progress via Server-Sent Events (SSE)
+ */
+router.post('/stream', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const body = generateSchema.parse(req.body);
+    
+    if (!req.user) {
+      return res.status(401).json({ 
+        success: false, 
+        error: 'Authentication required' 
+      });
+    }
+
+    // Set SSE headers
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();
+
+    // Helper function to send SSE events
+    const sendEvent = (data: any) => {
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
+    };
+
+    // Create session ID
+    const sessionId = `vibe_${req.user.id}_${Date.now()}`;
+
+    console.log(`[VibeCoding API] 🎯 Stream request from user ${req.user.id}: "${body.naturalLanguage}"`);
+
+    try {
+      // Phase 1: Interpreting (10%)
+      sendEvent({
+        type: 'progress',
+        phase: 'interpreting',
+        message: 'Interpreting your request...',
+        percent: 10,
+      });
+
+      // Phase 2: Context search (30%)
+      sendEvent({
+        type: 'progress',
+        phase: 'context_search',
+        message: 'Searching documentation context...',
+        percent: 30,
+      });
+
+      // Phase 3: Code generation (60%)
+      sendEvent({
+        type: 'progress',
+        phase: 'code_generation',
+        message: 'Generating production code...',
+        percent: 60,
+      });
+
+      // Phase 4: Validation (90%)
+      sendEvent({
+        type: 'progress',
+        phase: 'validation',
+        message: 'Validating code safety...',
+        percent: 90,
+      });
+
+      // Generate code
+      const request: VibeCodeRequest = {
+        naturalLanguage: body.naturalLanguage,
+        context: body.context,
+        targetFiles: body.targetFiles,
+        userId: req.user.id,
+        sessionId,
+      };
+
+      const result = await vibeCodingService.generateCode(request);
+
+      // Phase 5: Complete (100%)
+      sendEvent({
+        type: 'progress',
+        phase: 'complete',
+        message: 'Complete! Code ready to apply.',
+        percent: 100,
+      });
+
+      // Send final result
+      sendEvent({
+        type: 'complete',
+        data: {
+          success: result.success,
+          sessionId: result.sessionId,
+          fileChanges: result.fileChanges,
+          interpretation: result.interpretation,
+          validationResults: result.validationResults,
+        },
+      });
+
+      console.log(`[VibeCoding API] ✅ Stream completed for session ${sessionId}`);
+
+      // Close connection
+      res.end();
+    } catch (error: any) {
+      console.error('[VibeCoding API] ❌ Stream generation error:', error);
+      
+      // Send error event
+      sendEvent({
+        type: 'error',
+        message: error.message || 'Code generation failed',
+        error: true,
+      });
+      
+      res.end();
+    }
+  } catch (error: any) {
+    console.error('[VibeCoding API] ❌ Stream setup error:', error);
     
     if (error instanceof z.ZodError) {
       return res.status(400).json({
