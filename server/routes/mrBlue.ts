@@ -15,6 +15,7 @@ import { getMrBlueCapabilities, getTierName } from '../utils/mrBlueCapabilities'
 import { contextService } from "../services/mrBlue/ContextService";
 import { memoryService } from "../services/mrBlue/MemoryService";
 import { vibeCodingService } from "../services/mrBlue/VibeCodingService";
+import { conversationOrchestrator } from "../services/ConversationOrchestrator";
 
 const router = Router();
 
@@ -212,13 +213,67 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
       // Log received context for debugging
       console.log('[Mr. Blue] Received context:', JSON.stringify(parsedContext, null, 2));
 
-      // ================== MB.MD v9.0: AUTO-APPEND "use mb.md" TO ALL MESSAGES ==================
-      // This ensures every message leverages the MB.MD protocol automatically
-      const enhancedMessage = `use mb.md: ${message}`;
-      console.log('[Mr. Blue] 🚀 Auto-appended MB.MD protocol to message');
+      // ================== MB.MD v9.2: CONVERSATION ORCHESTRATOR INTEGRATION ==================
+      // Step 1: Enrich message with RAG context
+      console.log('[Mr. Blue] 📚 Enriching message with RAG context...');
+      const enriched = await conversationOrchestrator.enrichWithContext(message);
 
-      // ================== MB.MD v9.0: VIBE CODING INTENT DETECTION ==================
-      const vibecodingIntent = detectVibecodingIntent(enhancedMessage, parsedContext);
+      // Step 2: Classify intent (question vs action vs page_analysis)
+      console.log('[Mr. Blue] 🎯 Classifying intent...');
+      const intent = await conversationOrchestrator.classifyIntent(message);
+      console.log(`[Mr. Blue] Intent classified as: ${intent.type} (confidence: ${intent.confidence})`);
+
+      // Step 3: Route based on intent
+      if (intent.type === 'question') {
+        // Handle question - use GROQ to answer (NO code generation)
+        console.log('[Mr. Blue] ❓ Handling as QUESTION');
+        const questionResponse = await conversationOrchestrator.handleQuestion(message, enriched);
+        
+        return res.json({
+          success: questionResponse.success,
+          mode: 'question',
+          response: questionResponse.response,
+          sources: questionResponse.sources,
+          intent: intent.type,
+          confidence: intent.confidence
+        });
+      } else if (intent.type === 'page_analysis') {
+        // Handle page analysis - activate → audit → heal
+        console.log('[Mr. Blue] 🔍 Handling as PAGE ANALYSIS');
+        const pageId = parsedContext.currentPage || 'unknown-page';
+        const analysisResult = await conversationOrchestrator.analyzePage(pageId, false);
+        
+        return res.json({
+          success: analysisResult.success,
+          mode: 'page_analysis',
+          response: `Page analysis complete for ${pageId}:\n- Activated ${analysisResult.activation.totalAgents} agents\n- Found ${analysisResult.audit.totalIssues} issues (${analysisResult.audit.criticalIssues} critical)\n- Analysis time: ${analysisResult.totalTime}ms`,
+          analysisResult,
+          intent: intent.type,
+          confidence: intent.confidence
+        });
+      } else if (intent.type === 'action') {
+        // Handle action - route to VibeCoding
+        console.log('[Mr. Blue] 🔨 Handling as ACTION (VibeCoding)');
+        const actionResponse = await conversationOrchestrator.handleActionRequest(
+          message,
+          parsedContext,
+          userId || 0
+        );
+        
+        return res.json({
+          success: actionResponse.success,
+          mode: 'action',
+          response: actionResponse.vibecodingResult?.interpretation || 'Action processed',
+          vibecodingResult: actionResponse.vibecodingResult,
+          requiresApproval: actionResponse.requiresApproval,
+          intent: intent.type,
+          confidence: intent.confidence
+        });
+      }
+
+      // ================== FALLBACK: OLD VIBE CODING DETECTION ==================
+      // NOTE: This is now only a fallback if orchestrator doesn't classify properly
+      const vibecodingIntent = detectVibecodingIntent(message, parsedContext);
       
       if (vibecodingIntent.isVibecoding) {
         console.log(`[Mr. Blue] 🎯 VIBE CODING INTENT DETECTED: ${vibecodingIntent.type} (confidence: ${vibecodingIntent.confidence})`);
@@ -1345,6 +1400,45 @@ router.post("/vibecoding/apply", async (req: Request, res: Response) => {
     res.status(500).json({ 
       success: false,
       error: error.message 
+    });
+  }
+});
+
+// ============================================================================
+// MB.MD v9.2: PAGE ANALYSIS ENDPOINT
+// ============================================================================
+
+/**
+ * Analyze page health: Activate → Audit → Self-Heal
+ * POST /api/mrblue/analyze-page
+ * 
+ * Body: { pageId: string, autoHeal?: boolean }
+ * Returns: { success, activation, audit, healing?, totalTime }
+ */
+router.post("/analyze-page", async (req: Request, res: Response) => {
+  try {
+    const { pageId, autoHeal = false } = req.body;
+
+    if (!pageId) {
+      return res.status(400).json({
+        success: false,
+        error: 'pageId is required'
+      });
+    }
+
+    console.log(`[MrBlue] 🔍 Analyzing page: ${pageId} (autoHeal: ${autoHeal})`);
+
+    const result = await conversationOrchestrator.analyzePage(pageId, autoHeal);
+
+    console.log(`[MrBlue] ✅ Page analysis complete in ${result.totalTime}ms`);
+
+    res.json(result);
+
+  } catch (error: any) {
+    console.error('[MrBlue] Page analysis error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to analyze page'
     });
   }
 });
