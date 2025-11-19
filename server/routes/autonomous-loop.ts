@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireAuth } from '../middleware/auth';
+import { authenticateToken } from '../middleware/auth';
 import { 
   startAutonomousLoop, 
   stopAutonomousLoop, 
@@ -44,7 +44,7 @@ router.get('/status', async (req, res) => {
  * Start 24/7 autonomous loop
  * Requires authentication (admin/god-level only in production)
  */
-router.post('/start', requireAuth, async (req, res) => {
+router.post('/start', authenticateToken, async (req, res) => {
   try {
     await startAutonomousLoop();
     
@@ -64,7 +64,7 @@ router.post('/start', requireAuth, async (req, res) => {
 /**
  * Stop autonomous loop
  */
-router.post('/stop', requireAuth, async (req, res) => {
+router.post('/stop', authenticateToken, async (req, res) => {
   try {
     await stopAutonomousLoop();
     
@@ -84,7 +84,7 @@ router.post('/stop', requireAuth, async (req, res) => {
 /**
  * Manually trigger loop iteration
  */
-router.post('/trigger', requireAuth, async (req, res) => {
+router.post('/trigger', authenticateToken, async (req, res) => {
   try {
     const { context } = req.body;
     

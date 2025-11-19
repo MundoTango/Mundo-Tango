@@ -1,5 +1,5 @@
 import { Worker, Job, Queue } from 'bullmq';
-import { getRedisClient } from '../cache/redis-cache';
+import { getRedisClient, isRedisConnected } from '../cache/redis-cache';
 import { jobDuration, jobTotal } from '../monitoring/prometheus';
 import { AutonomousEngine } from '../services/mrBlue/AutonomousEngine';
 import { ConversationOrchestrator } from '../services/ConversationOrchestrator';
@@ -134,48 +134,63 @@ async function processAutonomousLoop(job: Job<AutonomousLoopJob>): Promise<Auton
   }
 }
 
-// Create BullMQ Worker
-const autonomousWorker = new Worker<AutonomousLoopJob, AutonomousLoopResult>(
-  'autonomous-loop-queue',
-  processAutonomousLoop,
-  {
-    connection: getRedisClient(),
-    concurrency: 1, // Only one loop at a time
-    limiter: {
-      max: 1,
-      duration: 60000, // Max 1 job per minute
-    },
-  }
-);
+// Initialize worker and queue (null if Redis not available)
+let autonomousWorker: Worker<AutonomousLoopJob, AutonomousLoopResult> | null = null;
+let autonomousQueue: Queue<AutonomousLoopJob> | null = null;
 
-// Event handlers
-autonomousWorker.on('completed', (job, result) => {
-  console.log(`[Autonomous Loop] Job ${job.id} completed:`, {
-    tasksDiscovered: result.tasksDiscovered,
-    tasksExecuted: result.tasksExecuted,
-    agentsActivated: result.agentsActivated,
-    learningEvents: result.learningEvents,
-    duration: result.duration,
+// Only create worker if Redis is connected
+if (isRedisConnected()) {
+  autonomousWorker = new Worker<AutonomousLoopJob, AutonomousLoopResult>(
+    'autonomous-loop-queue',
+    processAutonomousLoop,
+    {
+      connection: getRedisClient(),
+      concurrency: 1, // Only one loop at a time
+      limiter: {
+        max: 1,
+        duration: 60000, // Max 1 job per minute
+      },
+    }
+  );
+
+  // Event handlers
+  autonomousWorker.on('completed', (job, result) => {
+    console.log(`[Autonomous Loop] Job ${job.id} completed:`, {
+      tasksDiscovered: result.tasksDiscovered,
+      tasksExecuted: result.tasksExecuted,
+      agentsActivated: result.agentsActivated,
+      learningEvents: result.learningEvents,
+      duration: result.duration,
+    });
   });
-});
 
-autonomousWorker.on('failed', (job, err) => {
-  console.error(`[Autonomous Loop] Job ${job?.id} failed:`, err);
-});
+  autonomousWorker.on('failed', (job, err) => {
+    console.error(`[Autonomous Loop] Job ${job?.id} failed:`, err);
+  });
 
-autonomousWorker.on('error', (err) => {
-  console.error('[Autonomous Loop] Worker error:', err);
-});
+  autonomousWorker.on('error', (err) => {
+    console.error('[Autonomous Loop] Worker error:', err);
+  });
 
-// Create queue for scheduling
-const autonomousQueue = new Queue<AutonomousLoopJob>('autonomous-loop-queue', {
-  connection: getRedisClient(),
-});
+  // Create queue for scheduling
+  autonomousQueue = new Queue<AutonomousLoopJob>('autonomous-loop-queue', {
+    connection: getRedisClient(),
+  });
+
+  console.log('[Autonomous Loop] ✅ Worker initialized with Redis');
+} else {
+  console.log('[Autonomous Loop] ⚠️  Redis not available - autonomous loop disabled');
+  console.log('[Autonomous Loop]    Set REDIS_URL to enable 24/7 autonomous operations');
+}
 
 /**
  * Start the 24/7 autonomous loop
  */
 export async function startAutonomousLoop(): Promise<void> {
+  if (!autonomousQueue) {
+    throw new Error('Redis not available - autonomous loop requires Redis to be running');
+  }
+  
   console.log('[Autonomous Loop] Starting 24/7 continuous loop...');
   
   // Remove any existing repeatable jobs
@@ -207,6 +222,10 @@ export async function startAutonomousLoop(): Promise<void> {
  * Stop the autonomous loop
  */
 export async function stopAutonomousLoop(): Promise<void> {
+  if (!autonomousQueue || !autonomousWorker) {
+    throw new Error('Redis not available - autonomous loop not running');
+  }
+  
   console.log('[Autonomous Loop] Stopping continuous loop...');
   
   const repeatableJobs = await autonomousQueue.getRepeatableJobs();
@@ -222,6 +241,10 @@ export async function stopAutonomousLoop(): Promise<void> {
  * Manually trigger a loop iteration
  */
 export async function triggerManualLoop(context?: Record<string, any>): Promise<void> {
+  if (!autonomousQueue) {
+    throw new Error('Redis not available - autonomous loop requires Redis to be running');
+  }
+  
   console.log('[Autonomous Loop] Manual trigger requested');
   
   await autonomousQueue.add('autonomous-loop-manual', {
@@ -235,6 +258,20 @@ export async function triggerManualLoop(context?: Record<string, any>): Promise<
  * Get loop status
  */
 export async function getLoopStatus() {
+  if (!autonomousQueue) {
+    return {
+      isRunning: false,
+      redisAvailable: false,
+      message: 'Redis not available - autonomous loop requires Redis to be running',
+      activeJobs: 0,
+      waitingJobs: 0,
+      completedJobs: 0,
+      failedJobs: 0,
+      repeatableJobs: 0,
+      nextLoop: null,
+    };
+  }
+  
   const activeJobs = await autonomousQueue.getActive();
   const waitingJobs = await autonomousQueue.getWaiting();
   const completedJobs = await autonomousQueue.getCompleted();
@@ -243,6 +280,7 @@ export async function getLoopStatus() {
   
   return {
     isRunning: repeatableJobs.length > 0,
+    redisAvailable: true,
     activeJobs: activeJobs.length,
     waitingJobs: waitingJobs.length,
     completedJobs: completedJobs.length,
