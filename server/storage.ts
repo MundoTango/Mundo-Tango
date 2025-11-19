@@ -69,6 +69,8 @@ import {
   facebookImports,
   facebookPosts,
   facebookFriends,
+  mrBlueConversations,
+  mrBlueMessages,
   type SelectUser,
   type InsertUser,
   type SelectRefreshToken,
@@ -217,7 +219,23 @@ if (!process.env.DATABASE_URL) {
 }
 
 const sqlClient = neon(process.env.DATABASE_URL);
-const db = drizzle(sqlClient);
+// MB.MD FIX (Nov 19, 2025): Pass schema to enable db.query API for mrBlueConversations
+const db = drizzle(sqlClient, { schema: {
+  users, refreshTokens, emailVerificationTokens, passwordResetTokens, twoFactorSecrets,
+  posts, postLikes, postComments, reactions, follows, profileViews,
+  events, eventRsvps, eventPhotos, eventComments, eventReminders,
+  groups, groupMembers, groupInvites, groupPosts, groupCategories, groupCategoryAssignments,
+  chatRooms, chatRoomUsers, chatMessages, notifications, savedPosts,
+  friendRequests, friendships, friendshipActivities, friendshipMedia,
+  moderationQueue, communities, communityMembers, workshops, reviews, liveStreams,
+  media, activityLogs, blockedUsers, blockedContent, teachers, venues, tutorials,
+  blogPosts, newsletterSubscriptions, bookings, payments, volunteers, resumes,
+  clarifierSessions, tasks, assignments,
+  lifeCeoDomains, lifeCeoGoals, lifeCeoTasks, lifeCeoMilestones, lifeCeoRecommendations,
+  h2acMessages, memories, recommendations, roleInvitations, favorites,
+  communityStats, facebookImports, facebookPosts, facebookFriends,
+  mrBlueConversations, mrBlueMessages, // FIX: Added for Mr. Blue chat memory
+}});
 
 // Export db for use in other modules
 export { db };
