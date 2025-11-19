@@ -10,7 +10,7 @@ import { mrBlueConversations, mrBlueMessages, messageReactions, messageBookmarks
 import { eq, and, desc, sql, isNull } from "drizzle-orm";
 import { authenticateToken, type AuthRequest } from "../middleware/auth";
 import { getConversationContext, saveMessageToHistory } from "../services/chat-context";
-import { CodeGenerator } from "../services/codeGenerator";
+import { CodeGenerator } from "../services/mrBlue/CodeGenerator";
 import { getMrBlueCapabilities, getTierName } from '../utils/mrBlueCapabilities';
 import { contextService } from "../services/mrBlue/ContextService";
 import { memoryService } from "../services/mrBlue/MemoryService";
