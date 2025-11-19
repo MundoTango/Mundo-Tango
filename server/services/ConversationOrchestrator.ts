@@ -85,8 +85,9 @@ export class ConversationOrchestrator {
     const startTime = Date.now();
     const msg = message.toLowerCase();
 
-    // TIER 0: Explicit vibecoding requests (HIGHEST PRIORITY - MB.MD v9.2 FIX)
-    const vibecodingKeywords = [
+    // TIER 0: UI/Code modification requests (HIGHEST PRIORITY - MB.MD v9.2 ENHANCED)
+    const uiModificationKeywords = [
+      // Explicit vibecoding
       'vibe code',
       'vibecod',
       'vibe cod',
@@ -96,15 +97,35 @@ export class ConversationOrchestrator {
       'write code',
       'code this',
       'code that',
+      // UI modification patterns (NEW - Nov 19, 2025)
+      'make the',
+      'change the',
+      'make it',
+      'change it to',
+      'turn the',
+      'set the',
+      'color to',
+      'color the',
+      'style the',
+      'resize the',
+      'move the',
+      'add a button',
+      'add a',
+      'create a button',
+      'create a',
+      'remove the',
+      'hide the',
+      'show the',
+      'display the',
     ];
 
-    for (const keyword of vibecodingKeywords) {
+    for (const keyword of uiModificationKeywords) {
       if (msg.includes(keyword)) {
-        console.log(`[Orchestrator] 🎯 VIBECODING intent detected: "${keyword}" (${Date.now() - startTime}ms)`);
+        console.log(`[Orchestrator] 🎯 UI MODIFICATION intent detected: "${keyword}" (${Date.now() - startTime}ms)`);
         return {
           type: 'action',
           confidence: 0.99,
-          reasoning: `Explicit vibecoding request: "${keyword}"`
+          reasoning: `UI modification request: "${keyword}"`
         };
       }
     }
