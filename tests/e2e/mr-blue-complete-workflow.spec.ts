@@ -26,8 +26,7 @@ test.describe('🎯 Mr. Blue Complete Workflow - End-to-End Validation', () => {
     console.log('📍 Test will validate all 8 requirements from user');
     
     // Navigate to home page
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 30000 });
     
     // Take screenshot of initial state
     await page.screenshot({ path: 'test-results/mr-blue-workflow-01-initial.png', fullPage: true });

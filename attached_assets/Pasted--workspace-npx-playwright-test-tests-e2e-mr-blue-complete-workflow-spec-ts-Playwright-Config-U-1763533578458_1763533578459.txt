@@ -1,0 +1,217 @@
+~/workspace$ npx playwright test tests/e2e/mr-blue-complete-workflow.spec.ts
+[Playwright Config] ✅ Using system Chromium: /nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium
+
+Running 5 tests using 1 worker
+
+[Playwright Config] ✅ Using system Chromium: /nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium
+  ✘  1 … Blue Complete Workflow - End-to-End Validation › PART 1: Advanced MT Platform Conversation (RAG Context) (4.2m)
+🎯 STARTING MR. BLUE COMPLETE WORKFLOW TEST
+📍 Test will validate all 8 requirements from user
+[Playwright Config] ✅ Using system Chromium: /nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium
+  ✘  2 … Complete Workflow - End-to-End Validation › PART 2: Navigate to Registration Page + Show Page Awareness (11.0s)
+🎯 STARTING MR. BLUE COMPLETE WORKFLOW TEST
+📍 Test will validate all 8 requirements from user
+[Playwright Config] ✅ Using system Chromium: /nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium
+  ✘  3 … Blue Complete Workflow - End-to-End Validation › PART 3: Request Page Analysis (Agents + Audit + Issues) (4.2m)
+🎯 STARTING MR. BLUE COMPLETE WORKFLOW TEST
+📍 Test will validate all 8 requirements from user
+[Playwright Config] ✅ Using system Chromium: /nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium
+  ✘  4 …8:3 › 🎯 Mr. Blue Complete Workflow - End-to-End Validation › PART 4: VibeCoding Fix on Registration Page (9.4s)
+🎯 STARTING MR. BLUE COMPLETE WORKFLOW TEST
+📍 Test will validate all 8 requirements from user
+[Playwright Config] ✅ Using system Chromium: /nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium
+  ✘  5 …3 › 🎯 Mr. Blue Complete Workflow - End-to-End Validation › FULL WORKFLOW: All 8 Requirements End-to-End (10.0s)
+🎯 STARTING MR. BLUE COMPLETE WORKFLOW TEST
+📍 Test will validate all 8 requirements from user
+
+
+  1) [chromium] › tests/e2e/mr-blue-complete-workflow.spec.ts:36:3 › 🎯 Mr. Blue Complete Workflow - End-to-End Validation › PART 1: Advanced MT Platform Conversation (RAG Context) 
+
+    Test timeout of 180000ms exceeded while running "beforeEach" hook.
+
+      20 |   let page: Page;
+      21 |
+    > 22 |   test.beforeEach(async ({ page: testPage }) => {
+         |        ^
+      23 |     page = testPage;
+      24 |     
+      25 |     console.log('🎯 STARTING MR. BLUE COMPLETE WORKFLOW TEST');
+        at /home/runner/workspace/tests/e2e/mr-blue-complete-workflow.spec.ts:22:8
+
+    Error: page.waitForLoadState: Test timeout of 180000ms exceeded.
+    =========================== logs ===========================
+      "commit" event fired
+      "domcontentloaded" event fired
+      "load" event fired
+    ============================================================
+
+      28 |     // Navigate to home page
+      29 |     await page.goto('/');
+    > 30 |     await page.waitForLoadState('networkidle');
+         |                ^
+      31 |     
+      32 |     // Take screenshot of initial state
+      33 |     await page.screenshot({ path: 'test-results/mr-blue-workflow-01-initial.png', fullPage: true });
+        at /home/runner/workspace/tests/e2e/mr-blue-complete-workflow.spec.ts:30:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-videos/e2e-mr-blue-complete-workf-bbbb4-m-Conversation-RAG-Context--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-videos/e2e-mr-blue-complete-workf-bbbb4-m-Conversation-RAG-Context--chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-videos/e2e-mr-blue-complete-workf-bbbb4-m-Conversation-RAG-Context--chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-videos/e2e-mr-blue-complete-workf-bbbb4-m-Conversation-RAG-Context--chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-videos/e2e-mr-blue-complete-workf-bbbb4-m-Conversation-RAG-Context--chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests/e2e/mr-blue-complete-workflow.spec.ts:112:3 › 🎯 Mr. Blue Complete Workflow - End-to-End Validation › PART 2: Navigate to Registration Page + Show Page Awareness 
+
+    Error: page.waitForLoadState: Navigation failed because page crashed!
+    =========================== logs ===========================
+      "commit" event fired
+      "domcontentloaded" event fired
+      "load" event fired
+    ============================================================
+
+      28 |     // Navigate to home page
+      29 |     await page.goto('/');
+    > 30 |     await page.waitForLoadState('networkidle');
+         |                ^
+      31 |     
+      32 |     // Take screenshot of initial state
+      33 |     await page.screenshot({ path: 'test-results/mr-blue-workflow-01-initial.png', fullPage: true });
+        at /home/runner/workspace/tests/e2e/mr-blue-complete-workflow.spec.ts:30:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-videos/e2e-mr-blue-complete-workf-a1013-on-Page-Show-Page-Awareness-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-videos/e2e-mr-blue-complete-workf-a1013-on-Page-Show-Page-Awareness-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-videos/e2e-mr-blue-complete-workf-a1013-on-Page-Show-Page-Awareness-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › tests/e2e/mr-blue-complete-workflow.spec.ts:192:3 › 🎯 Mr. Blue Complete Workflow - End-to-End Validation › PART 3: Request Page Analysis (Agents + Audit + Issues) 
+
+    Test timeout of 180000ms exceeded while running "beforeEach" hook.
+
+      20 |   let page: Page;
+      21 |
+    > 22 |   test.beforeEach(async ({ page: testPage }) => {
+         |        ^
+      23 |     page = testPage;
+      24 |     
+      25 |     console.log('🎯 STARTING MR. BLUE COMPLETE WORKFLOW TEST');
+        at /home/runner/workspace/tests/e2e/mr-blue-complete-workflow.spec.ts:22:8
+
+    Error: page.waitForLoadState: Test timeout of 180000ms exceeded.
+    =========================== logs ===========================
+      "commit" event fired
+      "domcontentloaded" event fired
+      "load" event fired
+    ============================================================
+
+      28 |     // Navigate to home page
+      29 |     await page.goto('/');
+    > 30 |     await page.waitForLoadState('networkidle');
+         |                ^
+      31 |     
+      32 |     // Take screenshot of initial state
+      33 |     await page.screenshot({ path: 'test-results/mr-blue-workflow-01-initial.png', fullPage: true });
+        at /home/runner/workspace/tests/e2e/mr-blue-complete-workflow.spec.ts:30:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-videos/e2e-mr-blue-complete-workf-4f48b-alysis-Agents-Audit-Issues--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-videos/e2e-mr-blue-complete-workf-4f48b-alysis-Agents-Audit-Issues--chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-videos/e2e-mr-blue-complete-workf-4f48b-alysis-Agents-Audit-Issues--chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-videos/e2e-mr-blue-complete-workf-4f48b-alysis-Agents-Audit-Issues--chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-videos/e2e-mr-blue-complete-workf-4f48b-alysis-Agents-Audit-Issues--chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium] › tests/e2e/mr-blue-complete-workflow.spec.ts:278:3 › 🎯 Mr. Blue Complete Workflow - End-to-End Validation › PART 4: VibeCoding Fix on Registration Page 
+
+    Error: page.waitForLoadState: Target page, context or browser has been closed
+    =========================== logs ===========================
+      "commit" event fired
+      "domcontentloaded" event fired
+      "load" event fired
+    ============================================================
+
+      28 |     // Navigate to home page
+      29 |     await page.goto('/');
+    > 30 |     await page.waitForLoadState('networkidle');
+         |                ^
+      31 |     
+      32 |     // Take screenshot of initial state
+      33 |     await page.screenshot({ path: 'test-results/mr-blue-workflow-01-initial.png', fullPage: true });
+        at /home/runner/workspace/tests/e2e/mr-blue-complete-workflow.spec.ts:30:16
+
+    Error: apiRequestContext._wrapApiCall: Target page, context or browser has been closed
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-videos/e2e-mr-blue-complete-workf-648f3-ng-Fix-on-Registration-Page-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-videos/e2e-mr-blue-complete-workf-648f3-ng-Fix-on-Registration-Page-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [chromium] › tests/e2e/mr-blue-complete-workflow.spec.ts:349:3 › 🎯 Mr. Blue Complete Workflow - End-to-End Validation › FULL WORKFLOW: All 8 Requirements End-to-End 
+
+    Error: page.waitForLoadState: Navigation failed because page crashed!
+    =========================== logs ===========================
+      "commit" event fired
+      "domcontentloaded" event fired
+      "load" event fired
+    ============================================================
+
+      28 |     // Navigate to home page
+      29 |     await page.goto('/');
+    > 30 |     await page.waitForLoadState('networkidle');
+         |                ^
+      31 |     
+      32 |     // Take screenshot of initial state
+      33 |     await page.screenshot({ path: 'test-results/mr-blue-workflow-01-initial.png', fullPage: true });
+        at /home/runner/workspace/tests/e2e/mr-blue-complete-workflow.spec.ts:30:16
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-videos/e2e-mr-blue-complete-workf-81740-l-8-Requirements-End-to-End-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-videos/e2e-mr-blue-complete-workf-81740-l-8-Requirements-End-to-End-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-videos/e2e-mr-blue-complete-workf-81740-l-8-Requirements-End-to-End-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5 failed
+    [chromium] › tests/e2e/mr-blue-complete-workflow.spec.ts:36:3 › 🎯 Mr. Blue Complete Workflow - End-to-End Validation › PART 1: Advanced MT Platform Conversation (RAG Context) 
+    [chromium] › tests/e2e/mr-blue-complete-workflow.spec.ts:112:3 › 🎯 Mr. Blue Complete Workflow - End-to-End Validation › PART 2: Navigate to Registration Page + Show Page Awareness 
+    [chromium] › tests/e2e/mr-blue-complete-workflow.spec.ts:192:3 › 🎯 Mr. Blue Complete Workflow - End-to-End Validation › PART 3: Request Page Analysis (Agents + Audit + Issues) 
+    [chromium] › tests/e2e/mr-blue-complete-workflow.spec.ts:278:3 › 🎯 Mr. Blue Complete Workflow - End-to-End Validation › PART 4: VibeCoding Fix on Registration Page 
+    [chromium] › tests/e2e/mr-blue-complete-workflow.spec.ts:349:3 › 🎯 Mr. Blue Complete Workflow - End-to-End Validation › FULL WORKFLOW: All 8 Requirements End-to-End 
+
+  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
