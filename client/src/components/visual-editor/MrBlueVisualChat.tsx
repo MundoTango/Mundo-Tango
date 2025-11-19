@@ -9,7 +9,7 @@
 
 import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Sparkles, History, Lightbulb, Mic, MicOff, Volume2, VolumeX, Box, Loader2, Brain } from "lucide-react";
+import { Send, Sparkles, History, Lightbulb, Mic, MicOff, Volume2, VolumeX, Box, Loader2, Brain, Code2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -952,6 +952,26 @@ I use on-device AI models to understand your intent instantly - no backend neede
           )}
         </div>
       </ScrollArea>
+
+      {/* Generated Code Display */}
+      {generatedCode && (
+        <div className="p-3 border-t border-ocean-divider bg-muted/30">
+          <div className="flex items-center gap-2 mb-2">
+            <Code2 className="h-4 w-4 text-green-500" />
+            <span className="text-xs font-medium text-green-500">✨ Generated Code</span>
+            <Badge variant="default" className="ml-auto text-xs">
+              {generatedCode.split('\n').length} lines
+            </Badge>
+          </div>
+          <Card className="bg-background">
+            <CardContent className="p-3">
+              <pre className="text-xs overflow-x-auto">
+                <code>{generatedCode}</code>
+              </pre>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Recent Edits */}
       {contextInfo.recentEdits.length > 0 && (
