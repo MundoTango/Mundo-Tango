@@ -83,20 +83,27 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
   
   // ✅ FIX: Fetch conversation history from API (was missing!)
   const { data: fetchedMessages, refetch: refetchMessages } = useQuery<Message[]>({
-    queryKey: ['/api/mrblue/messenger/conversations', currentConversationId, 'messages'],
+    queryKey: [`/api/mrblue/conversations/${currentConversationId}/messages`],
     enabled: !!currentConversationId,
   });
   
   // ✅ FIX: Load most recent conversation on mount
   const { data: recentConversations } = useQuery<any[]>({
-    queryKey: ['/api/mrblue/messenger/conversations'],
+    queryKey: ['/api/mrblue/conversations'],
   });
   
   // ✅ FIX: Sync fetched messages with local state
   useEffect(() => {
     if (fetchedMessages && fetchedMessages.length > 0) {
       console.log('[MrBlue] Loaded conversation history:', fetchedMessages.length, 'messages');
-      setMessages([messages[0], ...fetchedMessages]); // Keep welcome message + add fetched
+      // Replace all messages with fetched ones (keeping welcome message first)
+      const welcomeMessage = {
+        id: '1',
+        role: 'assistant' as const,
+        content: "Hi! I'm Mr. Blue, your AI companion. I can help you navigate the platform, answer questions, and provide personalized recommendations. What can I help you with today?",
+        timestamp: new Date()
+      };
+      setMessages([welcomeMessage, ...fetchedMessages]);
     }
   }, [fetchedMessages]);
   

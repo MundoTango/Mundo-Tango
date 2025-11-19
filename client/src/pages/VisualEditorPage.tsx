@@ -85,6 +85,7 @@ function VisualEditorPageContent() {
   const [currentChangeIndex, setCurrentChangeIndex] = useState(-1);
   const [currentPageHtml, setCurrentPageHtml] = useState<string>("");
   const [selectedElementStyles, setSelectedElementStyles] = useState<Record<string, string>>({});
+  const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
   
   // Refs
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -92,6 +93,37 @@ function VisualEditorPageContent() {
   const replayIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // ✅ FIX: Fetch conversation history from Mr. Blue Messenger API
+  const { data: recentConversations } = useQuery<any[]>({
+    queryKey: ['/api/mrblue/conversations'],
+  });
+
+  const { data: fetchedMessages, refetch: refetchConversationHistory } = useQuery<any[]>({
+    queryKey: [`/api/mrblue/conversations/${currentConversationId}/messages`],
+    enabled: !!currentConversationId,
+  });
+
+  // ✅ FIX: Auto-load most recent conversation on mount
+  useEffect(() => {
+    if (recentConversations && recentConversations.length > 0 && !currentConversationId) {
+      const mostRecent = recentConversations[0];
+      console.log('[VisualEditor] Loading most recent conversation:', mostRecent.id);
+      setCurrentConversationId(mostRecent.id);
+    }
+  }, [recentConversations, currentConversationId]);
+
+  // ✅ FIX: Sync fetched messages with local conversation history
+  useEffect(() => {
+    if (fetchedMessages && fetchedMessages.length > 0) {
+      console.log('[VisualEditor] Loaded conversation history:', fetchedMessages.length, 'messages');
+      const formattedMessages = fetchedMessages.map((msg: any) => ({
+        role: msg.sender === 'user' ? 'user' : 'assistant',
+        content: msg.content,
+      }));
+      setConversationHistory(formattedMessages);
+    }
+  }, [fetchedMessages]);
 
   // Import streaming chat hook
   const { 
