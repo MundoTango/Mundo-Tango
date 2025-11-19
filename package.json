@@ -156,6 +156,7 @@
     "passport-local": "^1.0.0",
     "pdf-parse": "^2.4.5",
     "pixelmatch": "^7.1.0",
+    "playwright-core": "^1.56.1",
     "playwright-extra": "^4.3.6",
     "pngjs": "^7.0.0",
     "prom-client": "^15.1.3",
