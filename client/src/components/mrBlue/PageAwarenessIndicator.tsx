@@ -1,7 +1,7 @@
 import { useLocation } from 'wouter';
 import { MapPin, Link as LinkIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { routeConfig } from '@shared/route-config';
+import { ROUTES as routeConfig } from '@shared/route-config';
 
 export function PageAwarenessIndicator() {
   const [location] = useLocation();

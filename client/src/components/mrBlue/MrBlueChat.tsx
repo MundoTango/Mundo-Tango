@@ -20,6 +20,10 @@ import { VibecodingRouter } from "@/lib/vibecodingRouter";
 import { useToast } from "@/hooks/use-toast";
 import type { MrBlueMode } from "./ModeSwitcher";
 import { VibeCodingResult } from "./VibeCodingResult";
+import { PageAwarenessIndicator } from "./PageAwarenessIndicator";
+import { ActiveAgentsPanel } from "./ActiveAgentsPanel";
+import { AuditResultsPanel } from "./AuditResultsPanel";
+import { SelfHealingProgress } from "./SelfHealingProgress";
 
 interface Message {
   id: string;
@@ -553,6 +557,10 @@ Provide natural, conversational assistance based on where the user is in the pla
 
   return (
     <main role="main" className="flex flex-col h-full">
+      {/* Page Awareness & Active Agents - MB.MD v9.2 */}
+      <PageAwarenessIndicator />
+      <ActiveAgentsPanel />
+      
       {/* ElevenLabs TTS Controls - ALWAYS visible for human voice */}
       <div className="p-4 border-b bg-muted/20 space-y-4">
         <div className="flex items-center gap-4 flex-wrap">
