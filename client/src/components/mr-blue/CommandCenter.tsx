@@ -189,11 +189,10 @@ export function CommandCenter({ onNavigateToSystem, onSwitchMode }: CommandCente
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-4">
-          <AvatarCanvas
-            size={200}
-            state={avatarState}
-            audioLevel={0}
-          />
+          {/* Temporarily disabled Avatar to fix R3F crash - will re-enable after fixing */}
+          <div className="w-[200px] h-[200px] rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+            <Sparkles className="h-12 w-12 text-white animate-pulse" />
+          </div>
           <Badge variant="outline">
             {avatarState.charAt(0).toUpperCase() + avatarState.slice(1)}
           </Badge>
