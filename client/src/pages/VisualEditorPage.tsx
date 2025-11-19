@@ -94,14 +94,23 @@ function VisualEditorPageContent() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // ✅ FIX: Fetch conversation history from Mr. Blue Messenger API
+  // Fetch current user FIRST (needed for conversation queries)
+  const { data: authResponse, isLoading } = useQuery<{ user: User }>({
+    queryKey: ['/api/auth/me'],
+  });
+
+  const user = authResponse?.user;
+  const isGodLevel = user?.role === 'god';
+
+  // ✅ FIX: Fetch conversation history from Mr. Blue API (only when authenticated)
   const { data: recentConversations } = useQuery<any[]>({
     queryKey: ['/api/mrblue/conversations'],
+    enabled: !!user, // Only fetch when user is logged in
   });
 
   const { data: fetchedMessages, refetch: refetchConversationHistory } = useQuery<any[]>({
     queryKey: [`/api/mrblue/conversations/${currentConversationId}/messages`],
-    enabled: !!currentConversationId,
+    enabled: !!currentConversationId && !!user, // Only fetch when authenticated AND conversation exists
   });
 
   // ✅ FIX: Auto-load most recent conversation on mount
@@ -131,14 +140,6 @@ function VisualEditorPageContent() {
     currentStatus: streamStatus,
     messages: streamMessages 
   } = useStreamingChat();
-
-  // Fetch current user
-  const { data: authResponse, isLoading } = useQuery<{ user: User }>({
-    queryKey: ['/api/auth/me'],
-  });
-
-  const user = authResponse?.user;
-  const isGodLevel = user?.role === 'god';
 
   // Self-healing orchestration (MB.MD v9.0)
   const { isRunning: isSelfHealingRunning, result: selfHealingResult } = useSelfHealing(
