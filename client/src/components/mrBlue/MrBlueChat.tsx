@@ -81,6 +81,34 @@ export function MrBlueChat({ enableVoice = false, enableVibecoding = false, mode
   const vibeRouterRef = useRef<VibecodingRouter | null>(null);
   const { toast } = useToast();
   
+  // ✅ FIX: Fetch conversation history from API (was missing!)
+  const { data: fetchedMessages, refetch: refetchMessages } = useQuery<Message[]>({
+    queryKey: ['/api/mrblue/messenger/conversations', currentConversationId, 'messages'],
+    enabled: !!currentConversationId,
+  });
+  
+  // ✅ FIX: Load most recent conversation on mount
+  const { data: recentConversations } = useQuery<any[]>({
+    queryKey: ['/api/mrblue/messenger/conversations'],
+  });
+  
+  // ✅ FIX: Sync fetched messages with local state
+  useEffect(() => {
+    if (fetchedMessages && fetchedMessages.length > 0) {
+      console.log('[MrBlue] Loaded conversation history:', fetchedMessages.length, 'messages');
+      setMessages([messages[0], ...fetchedMessages]); // Keep welcome message + add fetched
+    }
+  }, [fetchedMessages]);
+  
+  // ✅ FIX: Auto-load most recent conversation on mount
+  useEffect(() => {
+    if (recentConversations && recentConversations.length > 0 && !currentConversationId) {
+      const mostRecent = recentConversations[0];
+      console.log('[MrBlue] Loading most recent conversation:', mostRecent.id);
+      setCurrentConversationId(mostRecent.id);
+    }
+  }, [recentConversations, currentConversationId]);
+  
   // Show mode-specific UI
   const showVoiceControls = enableVoice || mode === 'voice';
   const showVibecodingFeatures = enableVibecoding || mode === 'vibecoding';
