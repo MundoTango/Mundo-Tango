@@ -59,6 +59,17 @@ router.get("/check-username/:username", async (req: Request, res: Response) => {
   }
 });
 
+router.get("/check-email/:email", async (req: Request, res: Response) => {
+  try {
+    const { email } = req.params;
+    const existingUser = await storage.getUserByEmail(decodeURIComponent(email));
+    res.json({ available: !existingUser });
+  } catch (error) {
+    console.error("Email check error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 router.post("/register", async (req: Request, res: Response) => {
   try {
     const validatedData = registerSchema.parse(req.body);

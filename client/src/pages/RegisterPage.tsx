@@ -26,6 +26,8 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
+  const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   const { register } = useAuth();
   const { toast } = useToast();
 
@@ -69,6 +71,28 @@ export default function RegisterPage() {
       setUsernameAvailable(null);
     }
   }, [username]);
+
+  useEffect(() => {
+    if (email.length >= 5 && email.includes('@')) {
+      const checkEmail = async () => {
+        setIsCheckingEmail(true);
+        try {
+          const response = await fetch(`/api/auth/check-email/${encodeURIComponent(email)}`);
+          const data = await response.json();
+          setEmailAvailable(data.available);
+        } catch (error) {
+          console.error("Email check error:", error);
+        } finally {
+          setIsCheckingEmail(false);
+        }
+      };
+      
+      const debounce = setTimeout(checkEmail, 500);
+      return () => clearTimeout(debounce);
+    } else {
+      setEmailAvailable(null);
+    }
+  }, [email]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -196,17 +220,34 @@ export default function RegisterPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-sm font-medium text-white">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="maria@example.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        disabled={isLoading}
-                        data-testid="input-email"
-                        className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
-                      />
+                      <div className="relative">
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder="maria@example.com"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                          disabled={isLoading}
+                          data-testid="input-email"
+                          className="bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-white/50 focus:border-white/40 pr-10"
+                        />
+                        {isCheckingEmail && (
+                          <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-white/70" />
+                        )}
+                        {!isCheckingEmail && emailAvailable === true && (
+                          <Check className="absolute right-3 top-3 h-4 w-4 text-green-400" data-testid="icon-email-available" />
+                        )}
+                        {!isCheckingEmail && emailAvailable === false && (
+                          <X className="absolute right-3 top-3 h-4 w-4 text-red-400" data-testid="icon-email-taken" />
+                        )}
+                      </div>
+                      {emailAvailable === false && (
+                        <p className="text-sm text-red-400">This email is already registered</p>
+                      )}
+                      {emailAvailable === true && (
+                        <p className="text-sm text-green-400">Email available!</p>
+                      )}
                     </div>
                   </div>
 
@@ -343,7 +384,7 @@ export default function RegisterPage() {
                     type="submit"
                     className="w-full mt-6 bg-white text-black hover:bg-white/90"
                     size="lg"
-                    disabled={isLoading || !termsAccepted || usernameAvailable === false}
+                    disabled={isLoading || !termsAccepted || usernameAvailable === false || emailAvailable === false}
                     data-testid="button-register"
                   >
                     {isLoading ? (
