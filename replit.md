@@ -23,6 +23,15 @@ The platform features a unified **MT Ocean theme** with a tango-inspired color p
 ### Technical Implementations
 **Backend Architecture:** Node.js with Express and TypeScript, PostgreSQL with Drizzle ORM, JWT authentication, and real-time capabilities via Supabase Realtime and WebSockets.
 
+**Authentication & Access Patterns (MB.MD Protocol v9.2):**
+-   **Visual Editor Public Access:** Visual Editor routes (`/`, `/mrblue/visual-editor`, `/admin/visual-editor`) are PUBLIC and accessible without authentication. Implements auth-optional UX where users can view/explore Visual Editor without login, with degraded functionality (view-only) for unauthenticated users.
+-   **401 Error Handling:** Global query error handler (`client/src/lib/queryClient.ts`) intelligently handles 401 Unauthorized errors by:
+    -   Bypassing login redirect for public paths (Visual Editor, login, register)
+    -   Gracefully degrading UX for unauthenticated access
+    -   Only redirecting to `/login` for protected routes requiring authentication
+-   **MB.MD Protocol v9.2 Integration:** Implements Free Energy Principle (Expected Free Energy calculation), Active Inference (proactive error detection), and Bayesian Belief Updating (user preference modeling) for optimal auth UX.
+-   **Design Philosophy:** Follows "auth-optional" pattern where public features are accessible without forced authentication, reducing friction while maintaining security for protected features. Similar UX pattern as Mr. Blue Chat (public access with degraded features).
+
 **Key Systems:**
 -   **Security & Compliance:** 8-Tier RBAC, Dynamic Feature Flags, RLS, CSP Headers, Audit Logging, 2FA, GDPR, Legal Compliance.
 -   **Social Features:** Events, Groups, friendship algorithms, rich post interactions, real-time WebSocket notifications, Media Gallery, Live Streaming & Chat, Marketplace, Subscription management, Polymorphic Reviews, Leaderboard, Blog, Teacher/Venue Management, Workshop System, Music Library, Stories, and Venue Recommendations.
