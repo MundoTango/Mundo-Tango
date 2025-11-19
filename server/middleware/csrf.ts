@@ -56,6 +56,14 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     return next();
   }
   
+  // Skip CSRF for external API endpoints (Replit AI bridge)
+  const externalApiEndpoints = [
+    "/api/replit-ai/"
+  ];
+  if (externalApiEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
   // Skip CSRF for auth endpoints in development/testing (Playwright E2E tests)
   // Production uses additional security: rate limiting, bot detection, CAPTCHA
   if (process.env.NODE_ENV === 'development') {
@@ -119,6 +127,14 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     "/api/mr-blue/agents"
   ];
   if (publicMrBlueEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
+  // Skip CSRF for external API endpoints (Replit AI bridge)
+  const externalApiEndpoints = [
+    "/api/replit-ai/"
+  ];
+  if (externalApiEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
     return next();
   }
   
