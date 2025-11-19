@@ -1286,6 +1286,493 @@ test('Mr. Blue autonomously fixes RegisterPage', async ({ page }) => {
 
 ---
 
-**Last Updated:** November 18, 2025  
-**Version:** 9.4 (Proactive Self-Healing System)  
-**Status:** Infrastructure Ready - Mr. Blue Implementation Pending ✅
+## Agent Organizational Structure
+
+### Overview
+
+Mundo Tango is powered by **165 specialized AI agents** organized in a hierarchical structure. Understanding this structure is critical for routing questions, delegating work, and ensuring integration.
+
+### Level 0: Strategic Leadership
+
+**AGENT_0 (ESA CEO)**
+- **Role:** Strategic oversight and coordination of all division chiefs
+- **Reports To:** User (Scott)
+- **Manages:** 6 Division Chiefs (CHIEF_1 through CHIEF_6)
+- **Responsibilities:**
+  - Strategic planning and resource allocation
+  - Quality assurance (95-99/100 target)
+  - Escalation handling
+  - Final approval on all work
+  - Integration validation
+
+### Level 1: C-Suite (Division Chiefs)
+
+**6 Division Chiefs manage 61 Layer Agents:**
+
+#### CHIEF_1: Foundation Division Chief
+- **Manages:** Layers 1-10 (Database, Auth, Real-time, Security)
+- **Key Responsibilities:**
+  - Database Architecture & Migrations
+  - Authentication System (JWT, sessions, 2FA)
+  - Real-time Communication (WebSocket)
+  - Error Handling & Logging
+  - Security Headers & CORS
+- **Reports to:** AGENT_0
+
+#### CHIEF_2: Core Division Chief
+- **Manages:** Layers 11-20 (Social, Events, Groups, Content)
+- **Key Responsibilities:**
+  - User Profiles & Settings
+  - Social Posts & Comments
+  - Event Management System
+  - Group Management
+  - Friend System
+  - Notification System
+  - Search & Discovery
+  - Content Moderation
+- **Reports to:** AGENT_0
+
+#### CHIEF_3: Business Division Chief
+- **Manages:** Layers 21-30 (Payments, Analytics)
+- **Key Responsibilities:**
+  - Stripe Integration
+  - Subscription Management
+  - Payment Processing
+  - Invoice Generation
+  - Revenue Analytics
+  - User Analytics
+  - A/B Testing Framework
+- **Reports to:** AGENT_0
+
+#### CHIEF_4: Intelligence Division Chief
+- **Manages:** Layers 31-46 (AI, Algorithms, Recommendations)
+- **Key Responsibilities:**
+  - Mr. Blue AI Companion
+  - Life CEO System
+  - Content Recommendation
+  - User Matching Algorithms
+  - Feed Ranking
+  - Natural Language Processing
+  - Sentiment Analysis
+  - Predictive Analytics
+- **Reports to:** AGENT_0
+
+#### CHIEF_5: Platform Division Chief
+- **Manages:** Layers 47-56 (DevOps, Monitoring, Deployment)
+- **Key Responsibilities:**
+  - Deployment Automation
+  - CI/CD Pipelines
+  - Health Monitoring
+  - Performance Monitoring
+  - Error Tracking
+  - Log Aggregation
+  - Backup & Disaster Recovery
+- **Reports to:** AGENT_0
+
+#### CHIEF_6: Extended Division Chief
+- **Manages:** Layers 57-61 (Housing, Volunteers, Tango Resources)
+- **Key Responsibilities:**
+  - Housing Marketplace
+  - Volunteer Management
+  - Resume Parsing AI
+  - Tango Resources
+  - Teacher/Student Matching
+- **Reports to:** AGENT_0
+
+### Level 2: Managers (Layer Agents)
+
+**61 Layer Agents** execute specialized work within their divisions:
+
+**Foundation Division (Layers 1-10):**
+- L1: Database Architecture
+- L2: Authentication System
+- L3: Real-time Communication
+- L4: Session Management
+- L5: Data Validation & Sanitization
+- L6: Error Handling & Logging
+- L7: API Rate Limiting
+- L8: CORS & Security Headers
+- L9: Database Migrations
+- L10: Schema Versioning
+
+**Core Division (Layers 11-20):**
+- L11: User Profiles & Settings
+- L12: Social Posts & Comments
+- L13: Event Management
+- L14: Group Management
+- L15: Friend System
+- L16: Notification System
+- L17: Search & Discovery
+- L18: Content Moderation
+- L19: Report Management
+- L20: User Blocking
+
+**Business Division (Layers 21-30):**
+- L21: Stripe Integration
+- L22: Subscription Management
+- L23: Payment Processing
+- L24: Invoice Generation
+- L25: Revenue Analytics
+- L26: User Analytics
+- L27: Event Analytics
+- L28: Engagement Metrics
+- L29: Conversion Tracking
+- L30: A/B Testing Framework
+
+**Intelligence Division (Layers 31-46):**
+- L31: Mr. Blue AI Companion
+- L32: Life CEO System
+- L33: Content Recommendation
+- L34: User Matching
+- L35: Event Recommendations
+- L36: Feed Ranking Algorithm
+- L37: Sentiment Analysis
+- L38: Spam Detection
+- L39: Image Recognition
+- L40: Natural Language Processing
+- L41: Predictive Analytics
+- L42: Behavioral Analysis
+- L43: Anomaly Detection
+- L44: Trend Detection
+- L45: Influencer Identification
+- L46: Viral Content Detection
+
+**Platform Division (Layers 47-56):**
+- L47: Deployment Automation
+- L48: CI/CD Pipelines
+- L49: Environment Management
+- L50: Secret Management
+- L51: Health Monitoring
+- L52: Performance Monitoring
+- L53: Error Tracking
+- L54: Log Aggregation
+- L55: Backup Management
+- L56: Disaster Recovery
+
+**Extended Division (Layers 57-61):**
+- L57: Housing Marketplace
+- L58: Volunteer Management
+- L59: Resume Parsing AI
+- L60: Tango Resources
+- L61: Teacher/Student Matching
+
+### Level 3: Specialists (Expert Agents)
+
+**7 Expert Agents** provide cross-cutting expertise:
+
+| Agent | Expertise | Reports To | Specialty |
+|-------|-----------|-----------|-----------|
+| **EXPERT_10** | AI Research | CHIEF_4 | Latest AI/ML techniques |
+| **EXPERT_11** | UI/UX Aurora | CHIEF_1 | Interface design, accessibility |
+| **EXPERT_12** | Data Visualization | CHIEF_3 | Charts, dashboards, analytics |
+| **EXPERT_13** | Security | CHIEF_1 | Vulnerability scanning, pen testing |
+| **EXPERT_14** | Performance | CHIEF_5 | Load testing, optimization |
+| **EXPERT_15** | Accessibility | CHIEF_1 | WCAG compliance, screen readers |
+| **EXPERT_16** | Mobile | CHIEF_2 | Responsive design, mobile optimization |
+
+### Level 4: Operational Agents
+
+**Key Operational Agents:**
+
+| Agent | Role | Reports To | Responsibilities |
+|-------|------|-----------|------------------|
+| **AGENT_51** | Testing Lead | CHIEF_5 | E2E tests, Playwright, test coverage |
+| **AGENT_45** | Quality Audit | CHIEF_5 | Quality gates, code review |
+| **AGENT_38** | Collaboration | CHIEF_4 | Agent orchestration, A2A communication |
+| **AGENT_41** | Voice Interface | CHIEF_4 | Voice chat, TTS, STT |
+| **AGENT_6** | Routing | CHIEF_2 | Navigation, route management |
+
+### Level 5: Specialized Agents
+
+**Page Agents (50 total)** - Report to relevant Division Chief:
+- PAGE_VISUAL_EDITOR → CHIEF_4 (Intelligence)
+- PAGE_HOME → CHIEF_2 (Core)
+- PAGE_PROFILE → CHIEF_2 (Core)
+- PAGE_EVENTS → CHIEF_2 (Core)
+- PAGE_ADMIN_DASHBOARD → CHIEF_5 (Platform)
+
+**Feature Agents (35 total)** - Report to feature owner Division Chief:
+- FEATURE_MR_BLUE_CORE → CHIEF_4
+- FEATURE_VIBE_CODING → CHIEF_4
+- FEATURE_VISUAL_PREVIEW → CHIEF_1
+- FEATURE_WEBSOCKET_REALTIME → CHIEF_1
+
+**Element Agents (110+ total)** - Report to page agents they belong to
+
+---
+
+## Agent Communication (H2AC Framework)
+
+### H2AC = Human-to-Agent Communication
+
+Three types of communication protocols:
+
+#### 1. H2A (Human → Agent)
+- **User Actions:** Trigger workflows, navigate pages, submit forms
+- **Admin Actions:** Configure settings, assign roles, moderate content
+- **Developer Actions:** Assign tasks to AGENT_0, request features
+- **Communication Method:** Direct commands, UI interactions
+
+#### 2. A2H (Agent → Human)
+- **Status Reports:** Progress updates, task completion
+- **Error Escalation:** Issues requiring human intervention
+- **Recommendations:** Suggested optimizations, improvements
+- **Notifications:** Important events, system alerts
+- **Communication Method:** Toast messages, email, chat, dashboard alerts
+
+#### 3. A2A (Agent → Agent)
+- **Upward:** Layer Agent → Division Chief → AGENT_0
+  - Example: L31 (Mr. Blue) reports issue to CHIEF_4 (Intelligence)
+- **Downward:** AGENT_0 → Division Chief → Layer Agent
+  - Example: AGENT_0 delegates task to CHIEF_5 → L51 (Testing)
+- **Lateral:** Peer collaboration
+  - Example: EXPERT_11 (UI/UX) consults EXPERT_13 (Security)
+- **Orchestration:** AGENT_38 (Collaboration) coordinates multi-agent workflows
+
+### Communication Table Schema
+
+```sql
+CREATE TABLE agent_communications (
+  id SERIAL PRIMARY KEY,
+  communication_type VARCHAR(20) NOT NULL, -- 'H2A' | 'A2H' | 'A2A'
+  from_agent_id INTEGER REFERENCES esa_agents(id),
+  to_agent_id INTEGER REFERENCES esa_agents(id),
+  from_user_id INTEGER REFERENCES users(id),
+  to_user_id INTEGER REFERENCES users(id),
+  message_type VARCHAR(50) NOT NULL, -- command, query, response, notification, escalation
+  subject TEXT,
+  content TEXT NOT NULL,
+  priority VARCHAR DEFAULT 'normal', -- low, normal, high, critical
+  status VARCHAR DEFAULT 'sent', -- sent, read, responded
+  metadata JSONB,
+  created_at TIMESTAMP DEFAULT NOW(),
+  read_at TIMESTAMP,
+  responded_at TIMESTAMP
+);
+```
+
+### Communication Protocols
+
+**1. Command Protocol**
+```
+Agent receives task → Acknowledges receipt → Executes task → Reports completion
+```
+
+**2. Query Protocol**
+```
+Agent requests info → Receives data response → Validates response → Processes
+```
+
+**3. Escalation Protocol**
+```
+Agent detects issue → Escalates to parent/human → Waits for guidance → Implements resolution
+```
+
+**4. Coordination Protocol**
+```
+Multiple agents collaborate → Share progress → Synchronize dependencies → Report combined results
+```
+
+---
+
+## Phase N+1 Integration Protocol
+
+### The Integration Gap Problem
+
+**Discovery (Nov 19, 2025):** Phase 3 created services, routes, database schema, and documentation - all marked "✅ COMPLETE". But Phase 4 (Integration) was never executed, leaving components disconnected.
+
+**Root Cause:** The "work simultaneously" pattern creates structure in parallel, but integration is inherently sequential (requires all pieces to exist first). No agent was assigned to connect the pieces.
+
+### NEW MANDATORY PROTOCOL: Phase N+1 Integration
+
+```typescript
+// BEFORE marking anything "✅ COMPLETE":
+
+interface IntegrationChecklist {
+  // 1. Structure
+  servicesExist: boolean;           // Files created
+  routesExist: boolean;             // Endpoints defined
+  databaseSchemaUpdated: boolean;   // Tables added
+  
+  // 2. Implementation
+  methodsImplemented: boolean;      // NOT empty placeholders
+  routesHaveCallers: boolean;       // Something uses them
+  frontendIntegrated: boolean;      // UI connects to backend
+  
+  // 3. Testing
+  unitTestsPass: boolean;           // Individual functions work
+  integrationTestsPass: boolean;    // Services connect
+  e2eTestsPass: boolean;            // Full user flow works
+  
+  // 4. Documentation
+  docsAccurate: boolean;            // Matches actual code state
+  examplesWork: boolean;            // Code snippets run
+  
+  // 5. Deployment Ready
+  noTodos: boolean;                 // No "TODO" or "PLACEHOLDER" comments
+  noEmptyMethods: boolean;          // All methods have logic
+  performanceMet: boolean;          // Meets timing targets
+}
+
+// ONLY mark "✅ COMPLETE" when ALL are true
+```
+
+### Phase Workflow (MANDATORY)
+
+```
+Phase N: Build Structure (Simultaneously)
+  ├─ Agent A: Services
+  ├─ Agent B: Routes
+  ├─ Agent C: Database
+  └─ Agent D: Frontend
+
+Phase N+1: Integration (Sequentially) ← MANDATORY
+  ├─ Connect services to routes
+  ├─ Connect routes to frontend
+  ├─ Connect frontend to user interactions
+  ├─ Test end-to-end flow
+  └─ Verify ALL checklist items
+
+Phase N+2: Testing (Simultaneously)
+  ├─ Agent A: Unit tests
+  ├─ Agent B: Integration tests
+  └─ Agent C: E2E tests
+
+ONLY THEN → Mark "✅ COMPLETE"
+```
+
+### Integration Agent Ownership
+
+**Who Owns Phase N+1:** 
+- AGENT_38 (Collaboration Agent) - Coordinates multi-agent integration
+- Reports to: CHIEF_4 (Intelligence Division)
+- Ensures: All pieces connect before marking complete
+
+**Integration Verification:**
+```typescript
+// AGENT_38 must verify:
+const integration = {
+  servicesConnected: await testServiceToRoute(),
+  routesConnected: await testRouteToFrontend(),
+  frontendConnected: await testFrontendToUser(),
+  e2eFlowWorks: await runE2ETest(),
+  performanceTargets: await checkPerformance()
+};
+
+if (Object.values(integration).every(v => v === true)) {
+  return "✅ INTEGRATION COMPLETE";
+} else {
+  return "⏳ INTEGRATION IN PROGRESS";
+}
+```
+
+---
+
+## Current Project State (November 19, 2025)
+
+### What Exists (Phase 3 Complete)
+
+✅ **Agent System:**
+- 165 total agents (was 117, added 48 in Phase 3)
+- 7 Page agents: Visual Editor, Home, Profile, Events, Groups, Marketplace, Messages
+- 30 Feature agents: Mr Blue, Social, Community, Events, Resources, Tools
+- SME training system (4 database tables created)
+- All 165 agents trained in parallel batches
+
+✅ **Self-Healing Infrastructure:**
+- 6 services created:
+  - `AgentActivationService` - Spin up agents on page load (<50ms)
+  - `PageAuditService` - Comprehensive audits (<200ms)
+  - `SelfHealingService` - Execute fixes (<500ms)
+  - `UXValidationService` - Validate navigation (<100ms)
+  - `PredictivePreCheckService` - Pre-check pages (<1000ms)
+  - `AgentOrchestrationService` - Master coordinator
+- 4 database tables defined:
+  - `page_agent_registry`
+  - `page_audits`
+  - `page_healing_logs`
+  - `page_pre_checks`
+- Routes created: `server/routes/self-healing-routes.ts`
+
+✅ **Visual Editor:**
+- Fully functional at "/" route
+- 1200+ lines of code
+- Features: iframe preview, voice/text chat, element selection, timeline, WebSocket
+
+### What's MISSING (Phase 4 Integration Gap)
+
+❌ **Empty Implementations:**
+- All 6 PageAuditService methods return empty arrays (lines 136-203)
+- Methods: auditUIUX, auditRouting, auditIntegrations, auditPerformance, auditAccessibility, auditSecurity
+- No actual audit logic implemented
+
+❌ **Integration Gaps:**
+- Mr Blue chat (`server/routes/mrBlue.ts`) does NOT import self-healing services
+- Frontend has ZERO integration with backend services
+- No page navigation triggers agent activation
+- No UI showing active agents or audit results
+- No connection between user conversations and agent orchestration
+
+❌ **Missing Services:**
+- `ConversationOrchestrator` - Multi-agent workflow coordination in chat
+- RAG integration in ALL chat conversations (currently only in VibeCoding)
+
+❌ **Intent Detection Issues:**
+- Auto-prepends "use mb.md:" triggers VibeCoding for EVERY message
+- Need 2-tier detection: Question FIRST (answer it), then Action (generate code)
+- Example: "what page am i on" should answer, not generate code
+
+### Blockers Identified
+
+**BLOCKER 1:** Empty audit methods (2-3 hours to implement)  
+**BLOCKER 2:** Mr Blue chat integration (1-2 hours)  
+**BLOCKER 3:** Frontend integration (1-2 hours)  
+**BLOCKER 4:** Conversation orchestration (2-3 hours)  
+**BLOCKER 5:** RAG in all conversations (1 hour)  
+**BLOCKER 6:** Intent detection fix (30 minutes)
+
+**TOTAL:** 8-13 hours (with 3 parallel subagents: 4-6 hours)
+
+---
+
+## MB.MD Protocol v9.2 Updates
+
+### v9.0: Agent SME Training System
+
+**New Paradigm:** Agents become **Subject Matter Experts** by learning ALL documentation, code, and industry standards BEFORE implementation.
+
+**Database Tables:**
+- `agent_documentation_index` - Maps docs to agent domains (396 mappings created)
+- `agent_code_knowledge` - Maps code files to agent expertise
+- `agent_sme_training` - Tracks training progress (20 sessions initialized)
+- `agent_industry_standards` - Tracks industry standard knowledge (17 standards loaded)
+
+**Training Process:**
+1. Index all documentation across docs/ folder
+2. Map code files to agents based on responsibility
+3. Load industry standards (Alexa UX, Siri, WCAG, Playwright, ISO 9001, etc.)
+4. Train agents on their domain
+5. Verify proficiency before activation
+
+**Industry Standards Loaded:**
+- Voice UX: Alexa (Amazon), Siri (Apple), ChatGPT Voice (OpenAI), Claude Voice (Anthropic)
+- Accessibility: WCAG 2.1 AAA (W3C)
+- Design: Nielsen Norman 10 Usability Heuristics
+- Testing: Playwright Best Practices, Computer Use Testing (Anthropic)
+- Quality: ISO 9001, Six Sigma DMAIC
+
+### v9.2: Integration Protocol (Nov 19, 2025)
+
+**New Requirement:** Phase N+1 Integration is now MANDATORY before marking complete
+
+**Key Changes:**
+- Integration checklist must be verified
+- AGENT_38 owns integration verification
+- Cannot skip to testing without integration
+- Documentation must match reality
+
+---
+
+**Last Updated:** November 19, 2025  
+**Version:** 9.2 (Full Agent Ecosystem + Integration Protocol)  
+**Status:** Knowledge Base Complete - Ready for Integration Fix ✅
