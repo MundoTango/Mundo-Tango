@@ -148,6 +148,7 @@ import tracesRoutes from "./routes/traces";
 import postsEnhancedRoutes from "./routes/posts-enhanced";
 import testRunnerRoutes from "./routes/test-runner";
 import replitAIBridgeRoutes from "./routes/replit-ai-bridge";
+import autonomousLoopRoutes from "./routes/autonomous-loop";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
 import { auditLog, getClientIp } from "./middleware/auditLog";
@@ -508,6 +509,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Test Runner & Replit AI Bridge (MB.MD v9.2 - Nov 19, 2025)
   app.use("/api/tests", testRunnerRoutes);
   app.use("/api/replit-ai", replitAIBridgeRoutes);
+  app.use("/api/autonomous-loop", autonomousLoopRoutes);
   
   // TRACK 2: Mr. Blue Core Agents Routes (#201-205) - Service + Routes + Frontend
   app.use("/api/mr-blue/agents", mrBlueAgentsRoutes);
