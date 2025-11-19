@@ -1,0 +1,48 @@
+~/workspace$ npx playwright test tests/e2e/debug-vibecoding-user-flow.spec.ts --headed
+
+Running 1 test using 1 worker
+
+  ✘  1 [chromium] › tests/e2e/debug-vibecoding-user-flow.spec.ts:235:3 › VibeCoding Debug Flow - Comprehensive Diagnostics › Main Flow: Navigate → Type Prompt → Monitor SSE Stream (3.9m)
+🔴 [Console Error] WebSocket connection to 'ws://localhost:5000/?token=H2eVtv2WGXgT' failed: Error during WebSocket handshake: Unexpected response code: 400
+💥 [Page Error] Failed to construct 'WebSocket': The URL 'ws://localhost:undefined/?token=H2eVtv2WGXgT' is invalid.
+📸 Screenshot: 01-login-page
+
+✅ Diagnostic report generated: /tmp/vibecoding-debug-report.md
+
+
+
+  1) [chromium] › tests/e2e/debug-vibecoding-user-flow.spec.ts:235:3 › VibeCoding Debug Flow - Comprehensive Diagnostics › Main Flow: Navigate → Type Prompt → Monitor SSE Stream 
+
+    Test timeout of 180000ms exceeded while running "beforeEach" hook.
+
+      93 |   let userFlowSteps: string[] = [];
+      94 |
+    > 95 |   test.beforeEach(async ({ page }) => {
+         |        ^
+      96 |     // Initialize diagnostic report
+      97 |     diagnosticReport = {
+      98 |       testName: 'VibeCoding User Flow Debug',
+        at /home/runner/workspace/tests/e2e/debug-vibecoding-user-flow.spec.ts:95:8
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-videos/e2e-debug-vibecoding-user--7d67c-Prompt-→-Monitor-SSE-Stream-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-videos/e2e-debug-vibecoding-user--7d67c-Prompt-→-Monitor-SSE-Stream-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-videos/e2e-debug-vibecoding-user--7d67c-Prompt-→-Monitor-SSE-Stream-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-videos/e2e-debug-vibecoding-user--7d67c-Prompt-→-Monitor-SSE-Stream-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-videos/e2e-debug-vibecoding-user--7d67c-Prompt-→-Monitor-SSE-Stream-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests/e2e/debug-vibecoding-user-flow.spec.ts:235:3 › VibeCoding Debug Flow - Comprehensive Diagnostics › Main Flow: Navigate → Type Prompt → Monitor SSE Stream 
+
+  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.

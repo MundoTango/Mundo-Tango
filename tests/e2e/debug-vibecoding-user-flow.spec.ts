@@ -166,7 +166,10 @@ test.describe('VibeCoding Debug Flow - Comprehensive Diagnostics', () => {
       
       await takeDebugScreenshot(page, '01-login-page');
       
-      await page.getByTestId('input-username').fill(testUser.username);
+      // Wait for login form to be visible
+      await page.waitForSelector('[data-testid="input-email"]', { timeout: 5000 });
+      
+      await page.getByTestId('input-email').fill(testUser.email);
       await page.getByTestId('input-password').fill(testUser.password);
       userFlowSteps.push('Filled login credentials');
       
@@ -175,8 +178,9 @@ test.describe('VibeCoding Debug Flow - Comprehensive Diagnostics', () => {
       await page.getByTestId('button-login').click();
       userFlowSteps.push('Clicked login button');
       
-      await page.waitForURL('**/feed', { timeout: 10000 });
-      userFlowSteps.push('Successfully logged in - redirected to /feed');
+      // Wait for redirect (could be /feed or /dashboard depending on user role)
+      await page.waitForURL((url) => url.pathname.includes('/feed') || url.pathname.includes('/dashboard'), { timeout: 10000 });
+      userFlowSteps.push('Successfully logged in - redirected to home');
       
       await takeDebugScreenshot(page, '03-logged-in-feed');
 
