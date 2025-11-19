@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
 
+  // Show loading state while authentication is being verified
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -17,9 +18,12 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
+  // Only redirect after loading is complete and user is confirmed null
   if (!user) {
+    console.log('[ProtectedRoute] No authenticated user - redirecting to login');
     return <Redirect to="/login" />;
   }
 
+  // User is authenticated - render protected content
   return <>{children}</>;
 }

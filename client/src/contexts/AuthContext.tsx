@@ -143,7 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [, navigate] = useLocation();
 
-  const loadCurrentUser = async () => {
+  const loadCurrentUser = async (retryCount = 0): Promise<boolean> => {
     try {
       const response = await fetchWithAuth(`${API_BASE_URL}/api/auth/me`);
       
@@ -170,12 +170,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (accessToken) {
         setSession({ accessToken });
       }
-    } catch (error) {
+      
+      return true;
+    } catch (error: any) {
       console.error("Error loading user:", error);
+      
+      // If 401 and haven't retried yet, attempt token refresh
+      if (error.message?.includes("401") || error.message?.includes("Token expired")) {
+        if (retryCount === 0) {
+          console.log("[Auth] Access token expired, attempting refresh...");
+          const refreshed = await refreshAccessToken();
+          if (refreshed) {
+            // Retry loading user with new token
+            return await loadCurrentUser(1);
+          }
+        }
+      }
+      
+      // Clear auth state only if refresh failed
       setUser(null);
       setProfile(null);
       setSession(null);
       localStorage.removeItem("accessToken");
+      return false;
     }
   };
 
