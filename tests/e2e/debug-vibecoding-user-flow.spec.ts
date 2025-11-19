@@ -304,10 +304,12 @@ test.describe('VibeCoding Debug Flow - Comprehensive Diagnostics', () => {
     
     // Try multiple selectors to find the input/textarea
     const inputSelectors = [
+      '[data-testid="input-mr-blue-visual-chat"]',
       '[data-testid="input-prompt"]',
       '[data-testid="textarea-request"]',
       'textarea[placeholder*="natural"]',
       'textarea[placeholder*="describe"]',
+      'textarea[placeholder*="Mr"]',
       'textarea',
     ];
 
