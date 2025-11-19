@@ -146,6 +146,8 @@ import telemetryRoutes from "./routes/telemetry";
 import swaggerRoutes from "./routes/swagger";
 import tracesRoutes from "./routes/traces";
 import postsEnhancedRoutes from "./routes/posts-enhanced";
+import testRunnerRoutes from "./routes/test-runner";
+import replitAIBridgeRoutes from "./routes/replit-ai-bridge";
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
 import { auditLog, getClientIp } from "./middleware/auditLog";
@@ -502,6 +504,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Legal Document AI Agents Routes (2 AI Agents for Legal Documents - Agents #185-186)
   app.use("/api/legal/agents", legalAgentsRoutes);
+
+  // Test Runner & Replit AI Bridge (MB.MD v9.2 - Nov 19, 2025)
+  app.use("/api/tests", testRunnerRoutes);
+  app.use("/api/replit-ai", replitAIBridgeRoutes);
   
   // TRACK 2: Mr. Blue Core Agents Routes (#201-205) - Service + Routes + Frontend
   app.use("/api/mr-blue/agents", mrBlueAgentsRoutes);
