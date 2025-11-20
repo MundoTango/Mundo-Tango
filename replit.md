@@ -1,10 +1,10 @@
 # Mundo Tango
 
 ## Overview
-Mundo Tango is a production-ready social platform designed to connect the global tango community. It offers comprehensive social networking features, event management, talent matching, and advanced AI-powered assistance. The platform integrates 7 business systems and 62 specialized AI agents, aiming to become the leading digital hub for the tango ecosystem. Its business model targets premium services, event monetization, and targeted advertising, built on a self-sovereign, resilient architecture with minimal third-party dependencies, optimized npm packages, and enterprise-grade security.
+Mundo Tango is a production-ready social platform connecting the global tango community with comprehensive social networking, event management, talent matching, and advanced AI assistance. It integrates 7 business systems and 62 specialized AI agents, aiming to be the leading digital hub for tango. The business model focuses on premium services, event monetization, and targeted advertising, built on a self-sovereign, resilient architecture with enterprise-grade security.
 
 ## User Preferences
-**Methodology:** MB.MD Protocol v9.2 (see mb.md for complete methodology with Free Energy Principle + Organoid Intelligence)
+**Methodology:** MB.MD Protocol v9.2
 - Work simultaneously (parallel execution with 3 subagents)
 - Work recursively (deep exploration, not surface-level)
 - Work critically (rigorous quality, 95-99/100 target)
@@ -15,7 +15,7 @@ Mundo Tango is a production-ready social platform designed to connect the global
 **Never deviate from the handoff plan** - Follow the exact phase sequence
 
 ## System Architecture
-The project utilizes a modular, agent-driven development approach based on an Expert Specialized Agents (ESA) framework, emphasizing a self-sovereign architecture.
+The project uses a modular, agent-driven development approach based on an Expert Specialized Agents (ESA) framework, emphasizing a self-sovereign architecture.
 
 ### UI/UX Decisions
 The platform features a unified **MT Ocean theme** with a tango-inspired color palette, dark mode, glassmorphic effects, and responsive design using Tailwind CSS and shadcn/ui. The frontend is built with React, TypeScript, Wouter for routing, and React Query, prioritizing a video-first design and global accessibility. Navigation is managed by **AppLayout**, **AdminLayout**, and **DashboardLayout**, including i18n integration and real-time features.
@@ -23,14 +23,7 @@ The platform features a unified **MT Ocean theme** with a tango-inspired color p
 ### Technical Implementations
 **Backend Architecture:** Node.js with Express and TypeScript, PostgreSQL with Drizzle ORM, JWT authentication, and real-time capabilities via Supabase Realtime and WebSockets.
 
-**Authentication & Access Patterns (MB.MD Protocol v9.2):**
--   **Visual Editor Public Access:** Visual Editor routes (`/`, `/mrblue/visual-editor`, `/admin/visual-editor`) are PUBLIC and accessible without authentication. Implements auth-optional UX where users can view/explore Visual Editor without login, with degraded functionality (view-only) for unauthenticated users.
--   **401 Error Handling:** Global query error handler (`client/src/lib/queryClient.ts`) intelligently handles 401 Unauthorized errors by:
-    -   Bypassing login redirect for public paths (Visual Editor, login, register)
-    -   Gracefully degrading UX for unauthenticated access
-    -   Only redirecting to `/login` for protected routes requiring authentication
--   **MB.MD Protocol v9.2 Integration:** Implements Free Energy Principle (Expected Free Energy calculation), Active Inference (proactive error detection), and Bayesian Belief Updating (user preference modeling) for optimal auth UX.
--   **Design Philosophy:** Follows "auth-optional" pattern where public features are accessible without forced authentication, reducing friction while maintaining security for protected features. Similar UX pattern as Mr. Blue Chat (public access with degraded features).
+**Authentication & Access Patterns:** Implements an "auth-optional" pattern for public routes (e.g., Visual Editor) with graceful degradation for unauthenticated users, and robust 401 error handling for protected routes. This integrates MB.MD Protocol v9.2's Free Energy Principle and Active Inference for optimal UX.
 
 **Key Systems:**
 -   **Security & Compliance:** 8-Tier RBAC, Dynamic Feature Flags, RLS, CSP Headers, Audit Logging, 2FA, GDPR, Legal Compliance.
@@ -38,54 +31,31 @@ The platform features a unified **MT Ocean theme** with a tango-inspired color p
 -   **Admin Dashboard & Analytics** for user management, content moderation, and platform health.
 -   **AI Integration:**
     -   **Bifrost AI Gateway:** Unified AI gateway with automatic failover, semantic caching, and load balancing.
-    -   **🚀 UNIVERSAL AGENT ECOSYSTEM (PRODUCTION - Nov 20, 2025):** Comprehensive agent discovery, training, and page generation infrastructure
-        -   **1,218 Specialized Agents Registered:** 323 pages, 273 services, 338 components, 152 routes, 52 algorithms, 19 workers, plus dynamic runtime agents (36x expansion from original 32 agents)
-        -   **Universal Agent Scanner:** Auto-discovers agents across entire codebase, extracts capabilities, maps to domains, generates A2A Protocol endpoints
-        -   **Agent SME Training System:** 4-phase training pipeline (Documentation → Code Analysis → Industry Standards → Practical Application) - Currently executing batch training for all 1,218 agents
-        -   **Industry Standards Integration:** Agents learn Alexa/Siri/ChatGPT Voice UX, WCAG 2.1 AAA, Nielsen Norman Heuristics, Playwright Best Practices, Computer Use Testing, ISO 9001, Six Sigma DMAIC
-        -   **✨ AI Page Generator (PRODUCTION - Nov 20, 2025):** Natural language to production-ready pages using GROQ Llama-3.3-70b
-            -   **4 Page Archetypes:** Data Display (lists/galleries), Form/Creation (CRUD), Detail/View (single items), Admin/Dashboard (tables/management)
-            -   **Auto-generates:** React component (.tsx), API route (Express), Database schema (Drizzle), Playwright test (.spec.ts), Route registration
-            -   **Intelligent Detection:** Automatically detects page type from natural language description
-            -   **Integrated in Visual Editor:** Accessible via `/mrblue/visual-editor` → AI Page Generator tab
-            -   **API Endpoint:** `POST /api/mr-blue/generate-page` with SSE streaming support
-            -   **Page Patterns Analyzed:** 491 useQuery hooks, 3,860 Cards, 374 Forms, 79 AppLayouts across 323 existing pages
-        -   **A2A Protocol Ready:** All 1,218 agents registered for agent-to-agent orchestration
-        -   **Scripts:** `server/scripts/registerAllAgents.ts`, `server/scripts/trainAllAgents.ts`
-        -   **Services:** `server/services/agent-registry/UniversalAgentScanner.ts`, `server/services/agent-sme/AgentSMETrainingService.ts`, `server/services/page-generator/PageGeneratorService.ts`
-        -   **Routes:** `server/routes/mr-blue-page-generator.ts`
-        -   **UI Components:** `client/src/components/mr-blue/PageGeneratorPanel.tsx`
-        -   **Documentation:** `docs/PAGE_CREATION_METHODOLOGY.md`, `/tmp/AGENT_ECOSYSTEM_BUILD_SUMMARY_NOV20_2025.md`
-        -   **Tests:** `tests/e2e/page-generator.spec.ts`
-    -   **Mr. Blue AI Assistant (FULLY OPERATIONAL - Nov 19, 2025):** Unified interface for Text Chat, Voice Chat, Vibecoding (context-aware code generation), and a **Visual Editor** with iframe preview, element selection, instant DOM updates, change tracking, and voice command integration. Supports seamless mode switching, voice input in all modes, and unified conversation history.
-        -   **✅ VERIFIED WORKING: Vibecoding Intent Classification (Phase 1)** - Server logs confirm `[Orchestrator] 🎯 UI MODIFICATION intent detected: "make the"` for requests like "Can you make the Watch demo button blue?" Tier 0 priority detection working at 0ms latency.
-        -   **✅ VERIFIED WORKING: Natural Language UI Modification Detection (Phase 2)** - 18+ UI modification patterns ("make the", "change the", "color to", "add a button", etc.) successfully trigger action intent at 99% confidence. Logs show: `[Mr. Blue] Intent classified as: action (confidence: 0.99)`.
-        -   **✅ VERIFIED WORKING: Context Awareness (Phase 3)** - Page context injection working. Logs show: `[Mr. Blue] ❓ Handling as QUESTION with page context`.
-        -   **✅ VERIFIED WORKING: Code Generation (Phase 4)** - VibeCodingService successfully generates code. Logs show: `[CodeGenerator] ✅ Generated 1 file changes` and `[VibeCoding] 🎉 Code generation complete`.
-        -   **✅ FIXED: Chat Memory Database (Phase 5)** - Added mrBlueConversations and mrBlueMessages to server/storage.ts schema initialization. Running `npm run db:push --force` to sync database.
-        -   **✅ E2E TEST CREATED** - Comprehensive 8-phase Playwright test (`e2e/tests/mr-blue-vibecoding-e2e.spec.ts`) validates entire flow: UI → backend → intent → vibecoding → stream → DOM changes → persistence. Test plan: `docs/MB-MD-TEST-PLAN-VIBECODING-E2E-NOV19-2025.md`.
-    -   **Proactive Self-Healing System:** Autonomous multi-agent system for continuous platform validation, featuring audit methods (UI/UX, Routing, Integrations, Performance, Accessibility, Security) powered by GROQ Llama-3.3-70b + Cheerio.
-    -   **Replit AI ↔ Mr. Blue Integration:** Bidirectional communication bridge enabling Replit AI to control Mr. Blue AI autonomously via a RESTful API endpoint.
-    -   **Autonomous Loop Infrastructure:** BullMQ continuous worker and API endpoints providing a foundation for autonomous operations.
-    -   **Mr. Blue Visual Editor:** Features live preview, element inspector, component palette, AI-powered smart suggestions, undo/redo system, Git integration, preview mode, voice commands, 3D creator, Luma API integration, voice cloning, messenger UI, avatar video, address bar, focus mode, and enhanced loading.
-    -   **Mr. Blue Vibe Coding System:** Natural language code generation using GROQ Llama-3.3-70b with real-time streaming of changes via Server-Sent Events (SSE).
-    -   **Mr. Blue Voice Command System:** 50+ commands with fuzzy matching and wake word detection.
+    -   **Universal Agent Ecosystem:** Production-ready system with 1,218 specialized agents, including a **Universal Agent Scanner** for auto-discovery and an **Agent SME Training System**.
+    -   **AI Page Generator:** Natural language to production-ready pages using GROQ Llama-3.3-70b, generating React components, API routes, database schemas, Playwright tests, and route registrations. Integrated into the Visual Editor.
+    -   **Page Audit System:** Comprehensive 12-category auditing for Mr. Blue's self-healing, with pattern detection, auto-fix engine, AI deep audit, and escalation matrix. Integrated into the Visual Editor.
+    -   **Mr. Blue AI Assistant:** Unified interface for Text Chat, Voice Chat, Vibecoding (context-aware code generation), and a **Visual Editor** with live preview, element selection, instant DOM updates, change tracking, and voice commands. Supports seamless mode switching and unified conversation history. Includes a working Vibecoding system with intent classification, natural language UI modification detection, context awareness, and code generation.
+    -   **Proactive Self-Healing System:** Autonomous multi-agent system for continuous platform validation using GROQ Llama-3.3-70b.
+    -   **Replit AI ↔ Mr. Blue Integration:** Bidirectional communication bridge for autonomous control.
+    -   **Mr. Blue Visual Editor:** Features live preview, element inspector, component palette, AI-powered smart suggestions, undo/redo, Git integration, preview mode, voice commands, and advanced creator tools.
+    -   **Mr. Blue Vibe Coding System:** Natural language code generation using GROQ Llama-3.3-70b with real-time SSE streaming.
+    -   **Mr. Blue Voice Command System:** 50+ commands with fuzzy matching.
     -   **Mr. Blue Natural Language Automation:** Triggers browser automation via natural language.
-    -   **Mr. Blue Proactive Error Detection & Learning Retention:** Autonomous error detection, AI-powered analysis, and self-healing with learning retention within the Visual Editor.
-    -   **Mr. Blue System 1 - Context Service:** LanceDB-powered semantic search for RAG capabilities.
-    -   **Mr. Blue Autonomous Agent System:** Full autonomous development using the MB.MD Protocol Engine, a GROQ Llama-3.1-70b powered AI Code Generator, and a Validator Service.
-    -   **AI Arbitrage Engine:** Intelligent routing system for cost savings via TaskClassifier, ModelSelector, CascadeExecutor, and CostTracker.
+    -   **Mr. Blue Proactive Error Detection & Learning Retention:** Autonomous error detection, AI-powered analysis, and self-healing within the Visual Editor.
+    -   **Mr. Blue System 1 - Context Service:** LanceDB-powered semantic search for RAG.
+    -   **Mr. Blue Autonomous Agent System:** Full autonomous development using MB.MD Protocol Engine and a GROQ Llama-3.1-70b powered AI Code Generator.
+    -   **AI Arbitrage Engine:** Intelligent routing for cost savings.
     -   **AI Agent Learning Systems:** DPO Training, Curriculum Learning, GEPA Self-Evolution, and LIMI Curation.
     -   **Talent Match AI:** Advanced matching algorithms.
-    -   **LIFE CEO AI SYSTEM:** Integrates LanceDB for semantic memory and orchestrates 16 specialized AI agents.
-    -   **Multi-AI Orchestration System:** Integrates OpenAI GPT-4o, Anthropic Claude 3.5 Sonnet, Groq Llama 3.1, Google Gemini Pro with fallback routing, load balancing, and semantic caching.
+    -   **LIFE CEO AI SYSTEM:** Integrates LanceDB and orchestrates 16 specialized AI agents.
+    -   **Multi-AI Orchestration System:** Integrates OpenAI GPT-4o, Anthropic Claude 3.5 Sonnet, Groq Llama 3.1, Google Gemini Pro with fallback, load balancing, and semantic caching.
     -   **Automated Data Scraping System:** Uses static (Cheerio), dynamic (Playwright), and social (Facebook Graph API, Instagram) scraping with AI-powered deduplication.
-    -   **Facebook OAuth Integration:** For sending messages via the official API using Page Access Tokens.
+    -   **Facebook OAuth Integration:** For sending messages via the official API.
 
-**Automation & Workers:** BullMQ queue management with 39 functions across 6 dedicated workers, powered by Redis-based job processing and 50 production-ready algorithms.
+**Automation & Workers:** BullMQ queue management with 39 functions across 6 dedicated workers, powered by Redis.
 
 ### System Design Choices
-**Development Methodology:** MB.MD Protocol v4.0 (simultaneously, recursively, critically) with micro-batching, template reuse, context pre-loading, zero documentation mode, main agent parallel work, smart dependency ordering, parallel testing, a memory system, and 10-layer quality gates.
+**Development Methodology:** MB.MD Protocol v4.0 (simultaneously, recursively, critically) with micro-batching, template reuse, context pre-loading, zero documentation mode, parallel work, smart dependency ordering, parallel testing, a memory system, and 10-layer quality gates.
 
 **Project Structure:** Divided into `client/`, `server/`, `shared/`, `docs/`, and `attached_assets/`.
 
