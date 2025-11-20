@@ -5,10 +5,11 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MousePointer2, Undo2, Redo2, Save, GitBranch, Eye, Settings, Workflow, HelpCircle, Sparkles } from 'lucide-react';
+import { MousePointer2, Undo2, Redo2, Save, GitBranch, Eye, Settings, Workflow, HelpCircle, Sparkles, Search } from 'lucide-react';
 import { WorkflowBuilder } from '@/components/mrBlue/WorkflowBuilder';
 import { ClarificationDialog, ClarificationQuestion } from '@/components/mrBlue/ClarificationDialog';
 import { PageGeneratorPanel } from '@/components/mr-blue/PageGeneratorPanel';
+import { PageAuditPanel } from '@/components/mr-blue/PageAuditPanel';
 
 interface SelectedElement {
   id: string;
@@ -163,6 +164,10 @@ export default function VisualEditorPage() {
             <Sparkles className="h-4 w-4 mr-2" />
             AI Page Generator
           </TabsTrigger>
+          <TabsTrigger value="page-audit" data-testid="tab-page-audit">
+            <Search className="h-4 w-4 mr-2" />
+            Page Audit
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="editor" className="flex-1 flex overflow-hidden mt-0">
@@ -287,6 +292,12 @@ export default function VisualEditorPage() {
         <TabsContent value="page-generator" className="flex-1 overflow-auto p-6 mt-0">
           <div className="max-w-2xl mx-auto">
             <PageGeneratorPanel />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="page-audit" className="flex-1 overflow-auto p-6 mt-0" data-testid="tab-content-page-audit">
+          <div className="max-w-4xl mx-auto">
+            <PageAuditPanel />
           </div>
         </TabsContent>
       </Tabs>
