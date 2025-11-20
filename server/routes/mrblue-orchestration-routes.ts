@@ -445,4 +445,122 @@ router.get('/agents', authenticateToken, (req: Request, res: Response) => {
   });
 });
 
+// ==================== A2A PROTOCOL ENDPOINTS (NOV 20, 2025) ====================
+
+import { a2aProtocolService } from '../services/orchestration/A2AProtocolService';
+import { orchestratorAgent } from '../services/orchestration/OrchestratorAgent';
+import { agentCardRegistry } from '../services/orchestration/AgentCardRegistry';
+import type { A2AMessage } from '../../shared/types/a2a';
+
+/**
+ * POST /api/v1/a2a/:agentId
+ * A2A Protocol endpoint - route messages to specific agent
+ */
+router.post('/a2a/:agentId', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const { agentId } = req.params;
+    const message: A2AMessage = req.body;
+
+    console.log(`[A2A] Routing message to agent: ${agentId}`);
+
+    const result = await a2aProtocolService.routeMessage(agentId, message);
+
+    if (result.error) {
+      return res.status(400).json(result);
+    }
+
+    res.json(result);
+  } catch (error: any) {
+    console.error('[A2A] Message routing failed:', error);
+    res.status(500).json({
+      jsonrpc: '2.0',
+      id: req.body.id || 'unknown',
+      error: {
+        code: -32603,
+        message: error.message || 'Internal error'
+      }
+    });
+  }
+});
+
+/**
+ * POST /api/v1/orchestration/route
+ * Orchestrator endpoint - auto-select agent and route request
+ */
+router.post('/route', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const { message, context, orchestrationType } = req.body;
+
+    console.log('[Orchestrator] Routing request:', message.substring(0, 100));
+
+    const result = await orchestratorAgent.routeRequest({
+      message,
+      context,
+      orchestrationType,
+      userId: req.user?.id
+    });
+
+    res.json({
+      success: true,
+      data: result
+    });
+  } catch (error: any) {
+    console.error('[Orchestrator] Routing failed:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * GET /api/v1/a2a/agents
+ * Get all registered agent cards
+ */
+router.get('/a2a/agents', authenticateToken, (req: Request, res: Response) => {
+  const agents = agentCardRegistry.getAllAgents();
+
+  res.json({
+    success: true,
+    data: agents
+  });
+});
+
+/**
+ * GET /api/v1/a2a/agents/search
+ * Search agents by capability
+ */
+router.get('/a2a/agents/search', authenticateToken, (req: Request, res: Response) => {
+  const { capability, method, query } = req.query;
+
+  let agents;
+  if (capability) {
+    agents = agentCardRegistry.discoverAgentsByCapability(capability as string);
+  } else if (method) {
+    agents = agentCardRegistry.discoverAgentsByMethod(method as any);
+  } else if (query) {
+    agents = agentCardRegistry.searchAgents(query as string);
+  } else {
+    agents = agentCardRegistry.getAllAgents();
+  }
+
+  res.json({
+    success: true,
+    data: agents
+  });
+});
+
+/**
+ * GET /api/v1/orchestration/stats
+ * Get orchestrator statistics
+ */
+router.get('/stats', authenticateToken, async (req: Request, res: Response) => {
+  const stats = await orchestratorAgent.getStats();
+
+  res.json({
+    success: true,
+    data: stats
+  });
+});
+
 export default router;

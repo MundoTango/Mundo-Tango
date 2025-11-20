@@ -12901,24 +12901,6 @@ export const insertClarificationRoundSchema = createInsertSchema(clarificationRo
 export type InsertClarificationRound = z.infer<typeof insertClarificationRoundSchema>;
 export type SelectClarificationRound = typeof clarificationRounds.$inferSelect;
 
-export const validationResults = pgTable("validation_results", {
-  id: serial("id").primaryKey(),
-  tier: varchar("tier", { length: 100 }).notNull(),
-  passed: boolean("passed").notNull(),
-  score: real("score").notNull(),
-  errors: jsonb("errors"),
-  suggestions: text("suggestions").array(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-}, (table) => ({
-  passedIdx: index("validation_results_passed_idx").on(table.passed),
-  scoreIdx: index("validation_results_score_idx").on(table.score),
-}));
-
-export const insertValidationResultSchema = createInsertSchema(validationResults)
-  .omit({ id: true, createdAt: true });
-export type InsertValidationResult = z.infer<typeof insertValidationResultSchema>;
-export type SelectValidationResult = typeof validationResults.$inferSelect;
-
 export const autoCommits = pgTable("auto_commits", {
   id: serial("id").primaryKey(),
   commitHash: varchar("commit_hash", { length: 255 }).notNull().unique(),
