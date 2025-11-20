@@ -574,6 +574,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/a2a", a2aRoutes); // A2A Protocol - Machine-to-machine agent communication (MB.MD Phase 6A)
   app.use("/api/mrblue/orchestration", mrBlueOrchestrationRoutes); // Multi-agent orchestration with LangChain.js
   app.use("/api/orchestration", orchestrationRoutes); // Production-ready workflow orchestration (Sequential/Parallel/Intelligence Cycle)
+  app.use("/api/git", gitRoutes); // Autonomous Git commit system with AI-generated messages
   app.use(mrBlueEnhancedRoutes); // Enhanced Mr. Blue with troubleshooting KB
   app.use("/api/autonomous", autonomousRoutes); // Mr. Blue Autonomous Agent (God Level)
   app.use("/api/visual-editor", authenticateToken, visualEditorRoutes);
