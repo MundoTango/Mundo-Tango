@@ -1444,4 +1444,91 @@ router.post("/analyze-page", async (req: Request, res: Response) => {
   }
 });
 
+// ================== PHASE 1: CONVERSATION PERSISTENCE API ==================
+
+router.post("/conversations", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const { storage } = await import("../storage");
+    const conversation = await storage.getOrCreateActiveMrBlueConversation(userId);
+
+    console.log(`[MrBlue Conversations] ✅ Get/create active conversation for user ${userId}: ${conversation.id}`);
+
+    res.json(conversation);
+  } catch (error: any) {
+    console.error('[MrBlue Conversations] Error getting/creating conversation:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/conversations/:id/messages", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const conversationId = parseInt(req.params.id);
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
+    const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
+
+    const { storage } = await import("../storage");
+    
+    const conversation = await storage.getMrBlueConversationById(conversationId);
+    if (!conversation || conversation.userId !== userId) {
+      return res.status(404).json({ error: 'Conversation not found or unauthorized' });
+    }
+
+    const messages = await storage.getMrBlueConversationMessages(conversationId, { limit, offset });
+
+    console.log(`[MrBlue Conversations] ✅ Retrieved ${messages.length} messages for conversation ${conversationId}`);
+
+    res.json(messages);
+  } catch (error: any) {
+    console.error('[MrBlue Conversations] Error retrieving messages:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post("/messages", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const { conversationId, role, content, metadata } = req.body;
+
+    if (!conversationId || !role || !content) {
+      return res.status(400).json({ error: 'Missing required fields: conversationId, role, content' });
+    }
+
+    const { storage } = await import("../storage");
+    
+    const conversation = await storage.getMrBlueConversationById(conversationId);
+    if (!conversation || conversation.userId !== userId) {
+      return res.status(404).json({ error: 'Conversation not found or unauthorized' });
+    }
+
+    const message = await storage.createMrBlueMessage({
+      conversationId,
+      userId,
+      role,
+      content,
+      metadata: metadata || null,
+    });
+
+    console.log(`[MrBlue Conversations] ✅ Saved message to conversation ${conversationId}: ${role}`);
+
+    res.json(message);
+  } catch (error: any) {
+    console.error('[MrBlue Conversations] Error saving message:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;

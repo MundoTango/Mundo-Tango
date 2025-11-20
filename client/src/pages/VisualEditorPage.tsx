@@ -127,12 +127,55 @@ function VisualEditorPageContent() {
     if (fetchedMessages && fetchedMessages.length > 0) {
       console.log('[VisualEditor] Loaded conversation history:', fetchedMessages.length, 'messages');
       const formattedMessages = fetchedMessages.map((msg: any) => ({
-        role: msg.sender === 'user' ? 'user' : 'assistant',
+        role: msg.role,
         content: msg.content,
       }));
       setConversationHistory(formattedMessages);
     }
   }, [fetchedMessages]);
+
+  // PHASE 1: Get or create active conversation
+  const getOrCreateConversationMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('POST', '/api/mrblue/conversations', {});
+      return await response.json();
+    },
+    onSuccess: (conversation) => {
+      console.log('[VisualEditor] ✅ Active conversation:', conversation.id);
+      setCurrentConversationId(conversation.id);
+    },
+    onError: (error: any) => {
+      console.error('[VisualEditor] Failed to get/create conversation:', error);
+    },
+  });
+
+  // PHASE 1: Save message to database
+  const saveMessageMutation = useMutation({
+    mutationFn: async ({ role, content }: { role: string; content: string }) => {
+      if (!currentConversationId) {
+        throw new Error('No active conversation');
+      }
+      const response = await apiRequest('POST', '/api/mrblue/messages', {
+        conversationId: currentConversationId,
+        role,
+        content,
+      });
+      return await response.json();
+    },
+    onSuccess: () => {
+      console.log('[VisualEditor] ✅ Message saved to database');
+    },
+    onError: (error: any) => {
+      console.error('[VisualEditor] Failed to save message:', error);
+    },
+  });
+
+  // PHASE 1: Ensure conversation exists on mount
+  useEffect(() => {
+    if (user && !currentConversationId && !recentConversations) {
+      getOrCreateConversationMutation.mutate();
+    }
+  }, [user, currentConversationId, recentConversations]);
 
   // Import streaming chat hook
   const { 
@@ -360,16 +403,30 @@ function VisualEditorPageContent() {
       if (!data.success) throw new Error(data.message);
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      const userMessage = prompt.trim();
+      const assistantMessage = 'Starting task...';
+      
       setCurrentTask({
         id: data.taskId,
         taskId: data.taskId,
         status: 'pending',
-        prompt: prompt.trim()
+        prompt: userMessage
       });
       setIsExecuting(true);
-      setConversationHistory(prev => [...prev, { role: 'user', content: prompt }, { role: 'assistant', content: 'Starting task...' }]);
+      setConversationHistory(prev => [...prev, { role: 'user', content: userMessage }, { role: 'assistant', content: assistantMessage }]);
       setPrompt("");
+      
+      // PHASE 1: Save messages to database
+      if (currentConversationId) {
+        try {
+          await saveMessageMutation.mutateAsync({ role: 'user', content: userMessage });
+          await saveMessageMutation.mutateAsync({ role: 'assistant', content: assistantMessage });
+        } catch (error) {
+          console.error('[VisualEditor] Failed to save messages:', error);
+        }
+      }
+      
       toast({
         title: "Task Started",
         description: "Mr. Blue is analyzing your request...",
@@ -421,13 +478,26 @@ function VisualEditorPageContent() {
           });
         }, 500);
       }
+      const userMessage = prompt;
       const responseText = `Applied: ${JSON.stringify(data.css)}`;
+      
       setConversationHistory(prev => [
         ...prev,
-        { role: 'user', content: prompt },
+        { role: 'user', content: userMessage },
         { role: 'assistant', content: responseText }
       ]);
       setPrompt("");
+      
+      // PHASE 1: Save messages to database
+      if (currentConversationId) {
+        try {
+          await saveMessageMutation.mutateAsync({ role: 'user', content: userMessage });
+          await saveMessageMutation.mutateAsync({ role: 'assistant', content: responseText });
+        } catch (error) {
+          console.error('[VisualEditor] Failed to save messages:', error);
+        }
+      }
+      
       toast({
         title: "Style Applied",
         description: "CSS changed instantly!",
@@ -472,14 +542,27 @@ function VisualEditorPageContent() {
       if (!data.success) throw new Error(data.message || 'Chat request failed');
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       const responseText = data.response || 'I can help with that!';
+      const userMessage = prompt;
+      
       setConversationHistory(prev => [
         ...prev,
-        { role: 'user', content: prompt },
+        { role: 'user', content: userMessage },
         { role: 'assistant', content: responseText }
       ]);
       setPrompt("");
+      
+      // PHASE 1: Save both user and assistant messages to database
+      if (currentConversationId) {
+        try {
+          await saveMessageMutation.mutateAsync({ role: 'user', content: userMessage });
+          await saveMessageMutation.mutateAsync({ role: 'assistant', content: responseText });
+        } catch (error) {
+          console.error('[VisualEditor] Failed to save messages:', error);
+        }
+      }
+      
       toast({
         title: "Response",
         description: responseText.slice(0, 100) + (responseText.length > 100 ? '...' : ''),

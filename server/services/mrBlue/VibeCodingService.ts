@@ -18,6 +18,7 @@ import { ContextService } from './ContextService';
 import { CodeGenerator } from './CodeGenerator';
 import { agentEventBus } from './AgentEventBus';
 import { progressTrackingAgent } from './ProgressTrackingAgent';
+import { preferenceExtractor } from './PreferenceExtractor';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { exec } from 'child_process';
@@ -91,6 +92,50 @@ export class VibeCodingService {
   }
 
   /**
+   * PHASE 2: Check for known errors in the request
+   * Queries errorPatterns table for past failures matching keywords in the prompt
+   */
+  async checkForKnownErrors(prompt: string): Promise<Array<{
+    errorMessage: string;
+    suggestedFix: string;
+    frequency: number;
+  }>> {
+    try {
+      const { storage } = await import('../storage');
+      
+      // Extract keywords from prompt (simple approach: split by spaces and filter)
+      const keywords = prompt
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(word => word.length > 3 && !['make', 'this', 'that', 'with', 'from', 'have'].includes(word))
+        .slice(0, 10); // Limit to 10 keywords to avoid overly broad queries
+
+      if (keywords.length === 0) {
+        return [];
+      }
+
+      console.log(`[VibeCoding] 🔍 Checking for known errors with keywords: ${keywords.join(', ')}`);
+      
+      const patterns = await storage.searchErrorPatterns(keywords);
+      
+      if (patterns.length > 0) {
+        console.log(`[VibeCoding] ⚠️ Found ${patterns.length} known error patterns!`);
+        return patterns.map((p: any) => ({
+          errorMessage: p.errorMessage,
+          suggestedFix: p.suggestedFix || 'No fix suggested yet',
+          frequency: p.frequency || 1,
+        }));
+      }
+      
+      console.log(`[VibeCoding] ✅ No known errors found for this request`);
+      return [];
+    } catch (error: any) {
+      console.error('[VibeCoding] Error checking for known errors:', error);
+      return [];
+    }
+  }
+
+  /**
    * Generate code from natural language request
    */
   async generateCode(request: VibeCodeRequest): Promise<VibeCodeResult> {
@@ -110,6 +155,16 @@ export class VibeCodingService {
       );
       await agentEventBus.publish(progressEvent);
       
+      // PHASE 2: Check for known errors BEFORE generating code
+      const knownErrors = await this.checkForKnownErrors(request.naturalLanguage);
+      
+      // PHASE 3: Extract user preferences from the request
+      await preferenceExtractor.extractAndSave(
+        request.userId,
+        request.naturalLanguage,
+        undefined // conversationId can be added if available
+      );
+      
       // Step 1: Interpret the request using GROQ
       const interpretation = await this.interpretRequest(request.naturalLanguage);
       console.log(`[VibeCoding] 📝 Interpretation: ${interpretation.intent}`);
@@ -120,6 +175,12 @@ export class VibeCodingService {
         5
       );
       console.log(`[VibeCoding] 📚 Found ${contextResults.length} relevant context chunks`);
+
+      // PHASE 3: Build user preference context
+      const preferenceContext = await preferenceExtractor.buildPreferenceContext(request.userId);
+      if (preferenceContext) {
+        console.log(`[VibeCoding] 🎨 Loaded user preferences for code generation`);
+      }
 
       // Update progress
       const contextProgressEvent = agentEventBus.createEvent(
@@ -134,12 +195,14 @@ export class VibeCodingService {
       );
       await agentEventBus.publish(contextProgressEvent);
 
-      // Step 3: Generate code changes
+      // Step 3: Generate code changes (PHASE 2 & 3: Inject error patterns and preferences)
       const fileChanges = await this.codeGenerator.generateChanges({
         request: request.naturalLanguage,
         interpretation,
         context: contextResults,
         targetFiles: request.targetFiles || [],
+        knownErrors, // PHASE 2: Pass error patterns to code generator
+        preferenceContext, // PHASE 3: Pass user preferences to code generator
       });
       console.log(`[VibeCoding] 🔨 Generated ${fileChanges.length} file changes`);
 

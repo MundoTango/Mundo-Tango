@@ -27,6 +27,11 @@ interface GenerateRequest {
   interpretation: any;
   context: ContextSearchResult[];
   targetFiles: string[];
+  knownErrors?: Array<{
+    errorMessage: string;
+    suggestedFix: string;
+    frequency: number;
+  }>;
 }
 
 export interface FileChange {
@@ -87,6 +92,16 @@ export class CodeGenerator {
       }
     }
 
+    // PHASE 2: Build error learning section if known errors exist
+    let errorLearningSection = '';
+    if (request.knownErrors && request.knownErrors.length > 0) {
+      errorLearningSection = `\n**⚠️ CRITICAL - LEARN FROM PAST FAILURES:**\nThe following errors have occurred before with similar requests. AVOID these mistakes:\n\n`;
+      request.knownErrors.forEach((error, i) => {
+        errorLearningSection += `${i + 1}. Problem: ${error.errorMessage}\n   Solution: ${error.suggestedFix}\n   (Occurred ${error.frequency} time${error.frequency > 1 ? 's' : ''})\n\n`;
+      });
+      console.log(`[CodeGenerator] 📚 Injecting ${request.knownErrors.length} error patterns into prompt`);
+    }
+
     return `You are an expert full-stack developer working on the Mundo Tango platform using React + TypeScript + Vite.
 
 **CRITICAL CONTEXT UNDERSTANDING:**
@@ -97,7 +112,7 @@ export class CodeGenerator {
 **User Request:** ${request.request}
 
 **Interpretation:** ${request.interpretation.summary}
-
+${errorLearningSection}
 **Project Context:**
 ${contextSnippets}
 

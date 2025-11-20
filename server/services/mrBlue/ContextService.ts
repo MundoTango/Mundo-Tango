@@ -14,6 +14,7 @@
  */
 
 import { lanceDB } from '../../lib/lancedb';
+import { knowledgeBaseManager, KnowledgeSearchResult } from '../knowledge/KnowledgeBaseManager';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
@@ -379,6 +380,81 @@ export class ContextService {
       }));
     } catch (error) {
       console.error('[MrBlue Context] ❌ Search error:', error);
+      return [];
+    }
+  }
+
+  /**
+   * PHASE 4: Search both documentation AND agent knowledge bases
+   * Provides comprehensive context from docs + cross-agent learning
+   */
+  async searchWithKnowledgeBases(
+    query: string,
+    limitDocs: number = 3,
+    limitKnowledge: number = 2,
+    agentFilter?: string[]
+  ): Promise<{
+    documentation: ContextSearchResult[];
+    knowledge: KnowledgeSearchResult[];
+    combined: Array<ContextSearchResult | KnowledgeSearchResult>;
+  }> {
+    try {
+      const startTime = Date.now();
+      console.log(`[MrBlue Context] 🔍 Comprehensive search (docs + knowledge): "${query}"`);
+
+      // Search both in parallel
+      const [docResults, knowledgeResults] = await Promise.all([
+        this.search(query, limitDocs),
+        knowledgeBaseManager.queryKnowledge(query, agentFilter, limitKnowledge)
+      ]);
+
+      // Combine and sort by similarity
+      const combined = [...docResults, ...knowledgeResults].sort(
+        (a, b) => (b.similarity || 0) - (a.similarity || 0)
+      );
+
+      const searchTime = Date.now() - startTime;
+      console.log(
+        `[MrBlue Context] ✅ Found ${docResults.length} docs + ${knowledgeResults.length} knowledge entries in ${searchTime}ms`
+      );
+
+      return {
+        documentation: docResults,
+        knowledge: knowledgeResults,
+        combined
+      };
+    } catch (error) {
+      console.error('[MrBlue Context] ❌ Comprehensive search error:', error);
+      return {
+        documentation: [],
+        knowledge: [],
+        combined: []
+      };
+    }
+  }
+
+  /**
+   * PHASE 4: Search ONLY agent knowledge bases
+   * Used when specifically looking for agent wisdom/patterns
+   */
+  async searchKnowledgeBasesOnly(
+    query: string,
+    limit: number = 5,
+    agentFilter?: string[]
+  ): Promise<KnowledgeSearchResult[]> {
+    try {
+      console.log(`[MrBlue Context] 🧠 Knowledge bases only search: "${query}"`);
+      
+      const results = await knowledgeBaseManager.queryKnowledge(
+        query,
+        agentFilter,
+        limit
+      );
+
+      console.log(`[MrBlue Context] ✅ Found ${results.length} knowledge entries`);
+      return results;
+    } catch (error) {
+      console.error('[MrBlue Context] ❌ Knowledge base search error:', error);
       return [];
     }
   }

@@ -71,6 +71,7 @@ import {
   facebookFriends,
   mrBlueConversations,
   mrBlueMessages,
+  errorPatterns,
   type SelectUser,
   type InsertUser,
   type SelectRefreshToken,
@@ -597,6 +598,27 @@ export interface IStorage {
   createCicdRun(run: any): Promise<any>;
   getCicdRuns(pipelineId: number): Promise<any[]>;
   updateCicdRun(id: number, userId: number, data: any): Promise<any | null>;
+
+  // Mr. Blue Conversations & Messages (PHASE 1: Conversation Memory)
+  createMrBlueConversation(data: any): Promise<any>;
+  getMrBlueConversationById(id: number): Promise<any | undefined>;
+  getOrCreateActiveMrBlueConversation(userId: number): Promise<any>;
+  getMrBlueConversationMessages(conversationId: number, params?: { limit?: number; offset?: number }): Promise<any[]>;
+  createMrBlueMessage(message: any): Promise<any>;
+  updateMrBlueConversationTimestamp(conversationId: number): Promise<void>;
+  
+  // Error Patterns (PHASE 2: Error Learning)
+  createErrorPattern(data: any): Promise<any>;
+  getErrorPatternById(id: number): Promise<any | undefined>;
+  searchErrorPatterns(keywords: string[]): Promise<any[]>;
+  updateErrorPattern(id: number, data: any): Promise<any | undefined>;
+
+  // User Preferences (PHASE 3: Preference Learning)
+  saveUserPreference(data: any): Promise<any>;
+  getUserPreferences(userId: number, category?: string): Promise<any[]>;
+  getUserPreferenceByKey(userId: number, key: string): Promise<any | undefined>;
+  updateUserPreference(id: number, data: any): Promise<any | undefined>;
+  deleteUserPreference(id: number): Promise<void>;
 
   // Search
   search(query: string, userId: number): Promise<any[]>;
@@ -7415,6 +7437,185 @@ export class DbStorage implements IStorage {
 
   async getFacebookFriendsByUserId(userId: number): Promise<any[]> {
     return await db.select().from(facebookFriends).where(eq(facebookFriends.userId, userId));
+  }
+
+  // Mr. Blue Conversations & Messages (PHASE 1: Conversation Memory)
+  async createMrBlueConversation(data: any): Promise<any> {
+    const [conversation] = await db.insert(mrBlueConversations).values(data).returning();
+    return conversation;
+  }
+
+  async getMrBlueConversationById(id: number): Promise<any | undefined> {
+    const [conversation] = await db.select().from(mrBlueConversations).where(eq(mrBlueConversations.id, id)).limit(1);
+    return conversation;
+  }
+
+  async getOrCreateActiveMrBlueConversation(userId: number): Promise<any> {
+    const [existing] = await db
+      .select()
+      .from(mrBlueConversations)
+      .where(eq(mrBlueConversations.userId, userId))
+      .orderBy(desc(mrBlueConversations.lastMessageAt))
+      .limit(1);
+
+    if (existing) {
+      return existing;
+    }
+
+    const [newConversation] = await db.insert(mrBlueConversations).values({
+      userId,
+      title: 'New Conversation',
+      contextWindow: 10,
+      lastMessageAt: new Date(),
+    }).returning();
+
+    return newConversation;
+  }
+
+  async getMrBlueConversationMessages(conversationId: number, params?: { limit?: number; offset?: number }): Promise<any[]> {
+    const limit = params?.limit || 50;
+    const offset = params?.offset || 0;
+
+    return await db
+      .select()
+      .from(mrBlueMessages)
+      .where(eq(mrBlueMessages.conversationId, conversationId))
+      .orderBy(asc(mrBlueMessages.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async createMrBlueMessage(message: any): Promise<any> {
+    const [newMessage] = await db.insert(mrBlueMessages).values(message).returning();
+    
+    await this.updateMrBlueConversationTimestamp(message.conversationId);
+    
+    return newMessage;
+  }
+
+  async updateMrBlueConversationTimestamp(conversationId: number): Promise<void> {
+    await db
+      .update(mrBlueConversations)
+      .set({ 
+        lastMessageAt: new Date(),
+        updatedAt: new Date() 
+      })
+      .where(eq(mrBlueConversations.id, conversationId));
+  }
+
+  // Error Patterns (PHASE 2: Error Learning)
+  async createErrorPattern(data: any): Promise<any> {
+    const [pattern] = await db.insert(errorPatterns).values({
+      ...data,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      lastSeen: new Date(),
+      firstSeen: new Date(),
+    }).returning();
+    return pattern;
+  }
+
+  async getErrorPatternById(id: number): Promise<any | undefined> {
+    const [pattern] = await db.select().from(errorPatterns).where(eq(errorPatterns.id, id)).limit(1);
+    return pattern;
+  }
+
+  async searchErrorPatterns(keywords: string[]): Promise<any[]> {
+    if (keywords.length === 0) {
+      return [];
+    }
+
+    const patterns = await db
+      .select()
+      .from(errorPatterns)
+      .where(
+        or(
+          ...keywords.map(keyword => 
+            ilike(errorPatterns.errorMessage, `%${keyword}%`)
+          )
+        )
+      )
+      .orderBy(desc(errorPatterns.frequency))
+      .limit(10);
+
+    return patterns;
+  }
+
+  async updateErrorPattern(id: number, data: any): Promise<any | undefined> {
+    const [pattern] = await db
+      .update(errorPatterns)
+      .set({ 
+        ...data, 
+        updatedAt: new Date() 
+      })
+      .where(eq(errorPatterns.id, id))
+      .returning();
+    return pattern;
+  }
+
+  // User Preferences (PHASE 3: Preference Learning)
+  async saveUserPreference(data: any): Promise<any> {
+    // Check if preference already exists for this user+key
+    const existing = await this.getUserPreferenceByKey(data.userId, data.preferenceKey);
+    
+    if (existing) {
+      // Update existing preference with higher confidence
+      return this.updateUserPreference(existing.id, {
+        preferenceValue: data.preferenceValue,
+        confidence: Math.max(existing.confidence, data.confidence || 0.5),
+        extractedFrom: data.extractedFrom,
+        metadata: data.metadata,
+        updatedAt: new Date(),
+      });
+    }
+
+    const [preference] = await db.insert(userPreferences).values({
+      ...data,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }).returning();
+    return preference;
+  }
+
+  async getUserPreferences(userId: number, category?: string): Promise<any[]> {
+    let query = db.select().from(userPreferences).where(eq(userPreferences.userId, userId));
+    
+    if (category) {
+      // Category is not in the current schema, but can be extracted from preferenceKey (e.g., 'coding_style:typescript')
+      // For now, return all preferences
+    }
+    
+    return await query.orderBy(desc(userPreferences.confidence), desc(userPreferences.updatedAt));
+  }
+
+  async getUserPreferenceByKey(userId: number, key: string): Promise<any | undefined> {
+    const [preference] = await db
+      .select()
+      .from(userPreferences)
+      .where(
+        and(
+          eq(userPreferences.userId, userId),
+          eq(userPreferences.preferenceKey, key)
+        )
+      )
+      .limit(1);
+    return preference;
+  }
+
+  async updateUserPreference(id: number, data: any): Promise<any | undefined> {
+    const [preference] = await db
+      .update(userPreferences)
+      .set({ 
+        ...data, 
+        updatedAt: new Date() 
+      })
+      .where(eq(userPreferences.id, id))
+      .returning();
+    return preference;
+  }
+
+  async deleteUserPreference(id: number): Promise<void> {
+    await db.delete(userPreferences).where(eq(userPreferences.id, id));
   }
 }
 
