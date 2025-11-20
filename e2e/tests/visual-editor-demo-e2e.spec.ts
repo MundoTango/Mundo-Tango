@@ -15,8 +15,23 @@ import { test, expect } from '@playwright/test';
 test('Visual Editor - Complete E2E Flow with Screenshots', async ({ page }) => {
   console.log('🚀 [TEST] Starting comprehensive Visual Editor test...');
   
+  // ========== STEP 0: Login as admin (required for vibe coding) ==========
+  console.log('\n📍 STEP 0: Login as admin for vibe coding access');
+  
+  await page.goto('http://localhost:5000/login', { waitUntil: 'load', timeout: 30000 });
+  await page.waitForTimeout(2000);
+  
+  // Fill login form
+  await page.fill('[data-testid="input-email"]', 'admin@mundotango.life');
+  await page.fill('[data-testid="input-password"]', 'admin123');
+  await page.click('[data-testid="button-login"]');
+  
+  // Wait for redirect after login
+  await page.waitForURL('http://localhost:5000/', { timeout: 10000 });
+  console.log('✅ Logged in as admin');
+  
   // ========== STEP 1: Load Visual Editor ==========
-  console.log('\n📍 STEP 1: Navigate to Visual Editor (PUBLIC access)');
+  console.log('\n📍 STEP 1: Navigate to Visual Editor');
   
   await page.goto('http://localhost:5000/', { waitUntil: 'load', timeout: 30000 });
   
@@ -78,15 +93,16 @@ test('Visual Editor - Complete E2E Flow with Screenshots', async ({ page }) => {
   }
   
   // ========== STEP 3: Vibe Code Request ==========
-  console.log('\n📍 STEP 3: Vibe Code - Change button color on landing page');
+  console.log('\n📍 STEP 3: Vibe Code - Add new button component to landing page');
   
   // Get chat input again for new message
   const chatInputStep3 = page.locator('[data-testid="input-chat"]');
   const sendButtonStep3 = page.locator('[data-testid="button-send"]');
   
-  // Clear input and type vibe code request
+  // Clear input and type vibe code request (must NOT be style-only)
+  // Use "add a button" instead of "make button blue" to trigger full code generation
   await chatInputStep3.clear();
-  await chatInputStep3.fill('Make the Watch demo button on the landing page have a blue background');
+  await chatInputStep3.fill('Add a "Contact Us" button to the landing page hero section');
   
   // Screenshot 4: Vibe code request typed
   await page.screenshot({ 
