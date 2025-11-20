@@ -53,8 +53,9 @@ test('Visual Editor - Complete E2E Flow with Screenshots', async ({ page }) => {
   await sendButton.click();
   console.log('✅ Context question sent');
   
-  // Wait for AI response (up to 20 seconds)
-  await page.waitForSelector('.prose', { timeout: 20000 });
+  // Wait for AI response to appear in conversation history (correct selector!)
+  // Messages render as: <div><p class="text-sm">{content}</p></div>
+  await page.waitForSelector('p.text-sm:has-text("landing")', { timeout: 30000 });
   
   // Screenshot 3: AI response received
   await page.screenshot({ 
@@ -64,7 +65,7 @@ test('Visual Editor - Complete E2E Flow with Screenshots', async ({ page }) => {
   console.log('✅ Screenshot 3: AI response received');
   
   // Verify response mentions "/landing" or "landing"
-  const responseText = await page.locator('.prose').last().textContent();
+  const responseText = await page.locator('p.text-sm').last().textContent();
   console.log(`📝 AI Response preview: ${responseText?.substring(0, 150)}...`);
   
   const mentionsLanding = responseText?.toLowerCase().includes('landing') || 
@@ -112,7 +113,8 @@ test('Visual Editor - Complete E2E Flow with Screenshots', async ({ page }) => {
   }
   
   // Wait for completion (up to 40 seconds for GROQ API with fallback)
-  await page.waitForSelector('.prose:has-text("Code generated successfully")', { 
+  // Look for the AI response message (uses p.text-sm, not .prose)
+  await page.waitForSelector('p.text-sm', { 
     timeout: 40000 
   });
   console.log('✅ Code generation completed');
