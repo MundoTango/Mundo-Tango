@@ -3251,3 +3251,86 @@ All patterns researched from production systems: LangGraph, Gödel Agent (arXiv)
 
 ---
 
+
+### **Pattern 34: A2A Protocol (Agent-to-Agent Communication)** ⭐⭐⭐ (v9.2 - FOUNDATIONAL)
+
+**Source:** Google + EvolutionAPI/evo-ai (517 stars, Apache 2.0)  
+**Date:** November 20, 2025  
+**Research:** docs/EVO-AI-RESEARCH-INTEGRATION-ANALYSIS-NOV20-2025.md
+
+**Problem:** 62+ agents work in isolation, cannot communicate or delegate work to each other.
+
+**Solution:** Implement Google's Agent-to-Agent (A2A) protocol - standardized JSON-RPC 2.0 communication enabling agent interoperability.
+
+**Impact:** Isolated agents → collaborative agent ecosystem, enables agent delegation and specialization
+
+**Implementation:** A2AProtocolService.ts + AgentCardRegistry.ts + A2A endpoints for all 62+ agents
+
+**Key Learning:** Standardized communication > custom protocols (industry standard enables interoperability)
+
+---
+
+### **Pattern 35: Multi-Agent Orchestration (5 Patterns)** ⭐⭐⭐ (v9.2 - CRITICAL)
+
+**Source:** EvolutionAPI/evo-ai + LangGraph  
+**Date:** November 20, 2025  
+**Research:** docs/EVO-AI-RESEARCH-INTEGRATION-ANALYSIS-NOV20-2025.md
+
+**Problem:** Monolithic agent execution, no formalized workflow patterns.
+
+**Solution:** Implement 5 orchestration patterns from evo-ai: Sequential, Parallel, Loop, Workflow, Task agents.
+
+**Impact:** Formalize MB.MD parallel execution, recursive loops, conditional workflows
+
+**Implementation:**
+- SequentialOrchestrator.ts (ordered execution)
+- ParallelOrchestrator.ts (simultaneous execution, 3x speedup)
+- LoopOrchestrator.ts (recursive improvement, max iterations)
+- WorkflowOrchestrator.ts (LangGraph conditional flows)
+- TaskAgent pattern (specialized delegation)
+
+**Key Learning:** Different workflow patterns for different needs - composability through orchestration
+
+---
+
+### **Pattern 36: Langfuse Tracing (AI Observability)** ⭐⭐⭐ (v9.2)
+
+**Source:** Langfuse + OpenTelemetry (OTel) Standard  
+**Date:** November 20, 2025  
+**Research:** docs/EVO-AI-RESEARCH-INTEGRATION-ANALYSIS-NOV20-2025.md
+
+**Problem:** No visibility into agent workflows, impossible to debug multi-agent interactions or optimize costs.
+
+**Solution:** Integrate Langfuse tracing via OpenTelemetry - trace every agent action, LLM call, token usage.
+
+**Impact:** Full observability, debug production issues, optimize LLM costs, track agent performance
+
+**Implementation:** LangfuseTracingService.ts wrapping all agent calls + dashboard.langfuse.com for visualization
+
+**Key Learning:** Observability is non-negotiable for production AI agents (can't debug what you can't see)
+
+---
+
+### **Pattern 37: Visual Workflow Builder (LangGraph + ReactFlow)** ⭐⭐⭐ (v9.2)
+
+**Source:** EvolutionAPI/evo-ai + LangGraph + ReactFlow  
+**Date:** November 20, 2025  
+**Research:** docs/EVO-AI-RESEARCH-INTEGRATION-ANALYSIS-NOV20-2025.md
+
+**Problem:** Complex workflows hard-coded, no user-friendly creation, no conditional branching.
+
+**Solution:** Visual workflow editor using LangGraph (execution) + ReactFlow (UI) for graph-based agent workflows.
+
+**Impact:** Users create custom workflows visually, conditional branching, dynamic agent orchestration
+
+**Implementation:** WorkflowOrchestrator.ts (LangGraph) + Visual Editor UI (ReactFlow components)
+
+**Key Learning:** Visual > code for workflow creation (empowers non-technical users, faster iteration)
+
+---
+
+**MB.MD v9.2 - 4 NEW PATTERNS (34-37) ADDED:**
+Agent orchestration patterns from EvolutionAPI/evo-ai research: A2A Protocol (Google standard), Multi-Agent Orchestration (5 types), Langfuse Tracing (observability), Visual Workflow Builder (LangGraph + ReactFlow). Total patterns: 37 (up from 33). See docs/EVO-AI-RESEARCH-INTEGRATION-ANALYSIS-NOV20-2025.md for complete analysis.
+
+---
+
