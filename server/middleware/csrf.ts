@@ -50,7 +50,8 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     "/api/mrblue/chat",
     "/api/mrblue/stream",
     "/api/mrblue/vibecode/stream",
-    "/api/mr-blue/agents"
+    "/api/mr-blue/agents",
+    "/api/mrblue/analyze-error"
   ];
   if (publicMrBlueEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
     return next();

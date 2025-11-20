@@ -104,7 +104,7 @@ export class VibeCodingService {
     frequency: number;
   }>> {
     try {
-      const { storage } = await import('../storage');
+      const { storage } = await import('../../storage');
       
       // Extract keywords from prompt (simple approach: split by spaces and filter)
       const keywords = prompt
