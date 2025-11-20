@@ -5,7 +5,9 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MousePointer2, Undo2, Redo2, Save, GitBranch, Eye, Settings } from 'lucide-react';
+import { MousePointer2, Undo2, Redo2, Save, GitBranch, Eye, Settings, Workflow, HelpCircle } from 'lucide-react';
+import { WorkflowBuilder } from '@/components/mrBlue/WorkflowBuilder';
+import { ClarificationDialog, ClarificationQuestion } from '@/components/mrBlue/ClarificationDialog';
 
 interface SelectedElement {
   id: string;
@@ -29,6 +31,23 @@ export default function VisualEditorPage() {
   const [changes, setChanges] = useState<Change[]>([]);
   const [undoStack, setUndoStack] = useState<Change[]>([]);
   const [redoStack, setRedoStack] = useState<Change[]>([]);
+  
+  // Clarification Dialog State
+  const [showClarification, setShowClarification] = useState(false);
+  const [clarificationQuestions, setClarificationQuestions] = useState<ClarificationQuestion[]>([
+    {
+      question: "What is the primary purpose of this UI change?",
+      reasoning: "Understanding the goal helps me suggest the best implementation approach",
+      category: "Purpose"
+    },
+    {
+      question: "Which components should be affected by this change?",
+      reasoning: "This ensures I modify only the relevant parts of your application",
+      category: "Scope"
+    }
+  ]);
+  const [clarificationRound, setClarificationRound] = useState(1);
+  const [clarificationConfidence, setClarificationConfidence] = useState(0.65);
 
   const handlePropertyChange = (property: string, value: string) => {
     if (!selectedElement) return;
@@ -61,6 +80,21 @@ export default function VisualEditorPage() {
     setUndoStack(prev => [...prev, change]);
   };
 
+  const handleClarificationAnswers = (answers: string[]) => {
+    console.log('Clarification answers:', answers);
+    // Simulate increasing confidence
+    const newConfidence = Math.min(clarificationConfidence + 0.2, 1.0);
+    setClarificationConfidence(newConfidence);
+    
+    if (newConfidence >= 0.8) {
+      setShowClarification(false);
+      setClarificationRound(1);
+      setClarificationConfidence(0.65);
+    } else {
+      setClarificationRound(prev => prev + 1);
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col" data-testid="page-visual-editor">
       <div className="border-b p-4 flex items-center justify-between bg-background">
@@ -71,6 +105,14 @@ export default function VisualEditorPage() {
           </p>
         </div>
         <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setShowClarification(true)}
+            data-testid="button-clarification"
+          >
+            <HelpCircle className="h-4 w-4 mr-2" />
+            Ask for Clarification
+          </Button>
           <Button
             variant={selectionMode ? 'default' : 'outline'}
             onClick={() => setSelectionMode(!selectionMode)}
@@ -106,120 +148,146 @@ export default function VisualEditorPage() {
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
-        <div className="flex-1 p-6 overflow-auto bg-muted/30">
-          <Card className="max-w-4xl mx-auto" data-testid="card-preview">
-            <CardHeader>
-              <CardTitle>Live Preview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div
-                  className={`p-4 rounded-lg border ${selectionMode ? 'cursor-crosshair' : ''}`}
-                  onClick={() => selectionMode && setSelectedElement({
-                    id: 'card-1',
-                    type: 'div',
-                    className: 'p-4 rounded-lg border',
-                    textContent: 'Sample Card Content'
-                  })}
-                  data-testid="preview-card-1"
-                >
-                  <h3 className="font-semibold mb-2">Sample Card</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Click to select this element when in selection mode
-                  </p>
+      <Tabs defaultValue="editor" className="flex-1 flex flex-col overflow-hidden">
+        <TabsList className="w-full justify-start rounded-none border-b">
+          <TabsTrigger value="editor" data-testid="tab-editor">
+            <MousePointer2 className="h-4 w-4 mr-2" />
+            Visual Editor
+          </TabsTrigger>
+          <TabsTrigger value="workflow" data-testid="tab-workflow">
+            <Workflow className="h-4 w-4 mr-2" />
+            Workflow Builder
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="editor" className="flex-1 flex overflow-hidden mt-0">
+          <div className="flex-1 p-6 overflow-auto bg-muted/30">
+            <Card className="max-w-4xl mx-auto" data-testid="card-preview">
+              <CardHeader>
+                <CardTitle>Live Preview</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div
+                    className={`p-4 rounded-lg border ${selectionMode ? 'cursor-crosshair' : ''}`}
+                    onClick={() => selectionMode && setSelectedElement({
+                      id: 'card-1',
+                      type: 'div',
+                      className: 'p-4 rounded-lg border',
+                      textContent: 'Sample Card Content'
+                    })}
+                    data-testid="preview-card-1"
+                  >
+                    <h3 className="font-semibold mb-2">Sample Card</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Click to select this element when in selection mode
+                    </p>
+                  </div>
+
+                  {selectedElement && (
+                    <Badge variant="default" data-testid="badge-selected">
+                      Selected: {selectedElement.type}#{selectedElement.id}
+                    </Badge>
+                  )}
                 </div>
+              </CardContent>
+            </Card>
+          </div>
 
-                {selectedElement && (
-                  <Badge variant="default" data-testid="badge-selected">
-                    Selected: {selectedElement.type}#{selectedElement.id}
-                  </Badge>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+          <div className="w-80 border-l bg-background overflow-auto">
+            <Tabs defaultValue="properties" className="h-full">
+              <TabsList className="w-full justify-start rounded-none border-b">
+                <TabsTrigger value="properties" data-testid="tab-properties">
+                  <Settings className="h-4 w-4 mr-2" />
+                  Properties
+                </TabsTrigger>
+                <TabsTrigger value="changes" data-testid="tab-changes">
+                  <GitBranch className="h-4 w-4 mr-2" />
+                  Changes
+                </TabsTrigger>
+              </TabsList>
 
-        <div className="w-80 border-l bg-background overflow-auto">
-          <Tabs defaultValue="properties" className="h-full">
-            <TabsList className="w-full justify-start rounded-none border-b">
-              <TabsTrigger value="properties" data-testid="tab-properties">
-                <Settings className="h-4 w-4 mr-2" />
-                Properties
-              </TabsTrigger>
-              <TabsTrigger value="changes" data-testid="tab-changes">
-                <GitBranch className="h-4 w-4 mr-2" />
-                Changes
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="properties" className="p-4 space-y-4">
-              {selectedElement ? (
-                <>
-                  <div className="space-y-2">
-                    <Label>Element Type</Label>
-                    <Input value={selectedElement.type} disabled data-testid="input-element-type" />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Element ID</Label>
-                    <Input value={selectedElement.id} disabled data-testid="input-element-id" />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Class Name</Label>
-                    <Input
-                      value={selectedElement.className}
-                      onChange={(e) => handlePropertyChange('className', e.target.value)}
-                      data-testid="input-class-name"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Text Content</Label>
-                    <Input
-                      value={selectedElement.textContent}
-                      onChange={(e) => handlePropertyChange('textContent', e.target.value)}
-                      data-testid="input-text-content"
-                    />
-                  </div>
-                </>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <MousePointer2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Select an element to view and edit its properties</p>
-                </div>
-              )}
-            </TabsContent>
-
-            <TabsContent value="changes" className="p-4">
-              <div className="space-y-2">
-                {changes.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <p className="text-sm">No changes yet</p>
-                  </div>
-                ) : (
-                  changes.reverse().map((change) => (
-                    <div
-                      key={change.id}
-                      className="p-3 rounded-lg border text-sm space-y-1"
-                      data-testid={`change-${change.id}`}
-                    >
-                      <div className="font-medium">{change.element}</div>
-                      <div className="text-muted-foreground">
-                        {change.property}: <span className="line-through">{change.oldValue}</span> → {change.newValue}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {new Date(change.timestamp).toLocaleTimeString()}
-                      </div>
+              <TabsContent value="properties" className="p-4 space-y-4">
+                {selectedElement ? (
+                  <>
+                    <div className="space-y-2">
+                      <Label>Element Type</Label>
+                      <Input value={selectedElement.type} disabled data-testid="input-element-type" />
                     </div>
-                  ))
+
+                    <div className="space-y-2">
+                      <Label>Element ID</Label>
+                      <Input value={selectedElement.id} disabled data-testid="input-element-id" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Class Name</Label>
+                      <Input
+                        value={selectedElement.className}
+                        onChange={(e) => handlePropertyChange('className', e.target.value)}
+                        data-testid="input-class-name"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Text Content</Label>
+                      <Input
+                        value={selectedElement.textContent}
+                        onChange={(e) => handlePropertyChange('textContent', e.target.value)}
+                        data-testid="input-text-content"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <MousePointer2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>Select an element to view and edit its properties</p>
+                  </div>
                 )}
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </div>
+              </TabsContent>
+
+              <TabsContent value="changes" className="p-4">
+                <div className="space-y-2">
+                  {changes.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <p className="text-sm">No changes yet</p>
+                    </div>
+                  ) : (
+                    changes.reverse().map((change) => (
+                      <div
+                        key={change.id}
+                        className="p-3 rounded-lg border text-sm space-y-1"
+                        data-testid={`change-${change.id}`}
+                      >
+                        <div className="font-medium">{change.element}</div>
+                        <div className="text-muted-foreground">
+                          {change.property}: <span className="line-through">{change.oldValue}</span> → {change.newValue}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {new Date(change.timestamp).toLocaleTimeString()}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="workflow" className="flex-1 overflow-hidden p-6 mt-0">
+          <WorkflowBuilder />
+        </TabsContent>
+      </Tabs>
+
+      <ClarificationDialog
+        open={showClarification}
+        questions={clarificationQuestions}
+        confidence={clarificationConfidence}
+        roundNumber={clarificationRound}
+        onAnswer={handleClarificationAnswers}
+        onClose={() => setShowClarification(false)}
+      />
     </div>
   );
 }

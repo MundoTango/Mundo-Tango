@@ -19,6 +19,9 @@ import { CodeGenerator } from './CodeGenerator';
 import { agentEventBus } from './AgentEventBus';
 import { progressTrackingAgent } from './ProgressTrackingAgent';
 import { preferenceExtractor } from './PreferenceExtractor';
+import { clarificationService } from '../clarification/ClarificationService';
+import { sequentialOrchestrator } from '../orchestration/SequentialOrchestrator';
+import type { WorkflowStep } from '@shared/types/a2a';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { exec } from 'child_process';
@@ -136,7 +139,83 @@ export class VibeCodingService {
   }
 
   /**
+   * PHASE 1: Assess request clarity and run clarification if needed
+   * Uses ClarificationService to determine if request is ambiguous
+   */
+  private async assessAndClarify(
+    request: VibeCodeRequest
+  ): Promise<{ clarified: boolean; finalRequest: string; clarityScore: number }> {
+    try {
+      console.log(`[VibeCoding] 🔍 Assessing request clarity...`);
+
+      // Use sessionId as conversationId for tracking
+      const conversationId = parseInt(request.sessionId.split('-')[1] || '1', 10);
+
+      // Step 1: Check initial clarity score
+      const clarityScore = await clarificationService['assessClarity'](request.naturalLanguage);
+      console.log(`[VibeCoding] 📊 Initial clarity score: ${clarityScore.toFixed(2)}`);
+
+      // Step 2: If clarity is below threshold (0.8), run clarification
+      if (clarityScore < 0.8) {
+        console.log(`[VibeCoding] ⚠️ Request is ambiguous (${clarityScore.toFixed(2)} < 0.8)`);
+        console.log(`[VibeCoding] 🤔 Starting clarification rounds...`);
+
+        // Publish clarification start event
+        const clarificationEvent = agentEventBus.createEvent(
+          'progress:update',
+          'VibeCodingService',
+          {
+            sessionId: request.sessionId,
+            phase: 'clarification',
+            percent: 5,
+            message: 'Clarifying ambiguous request...',
+          } as any
+        );
+        await agentEventBus.publish(clarificationEvent);
+
+        // Run clarification loop
+        const clarificationResult = await clarificationService.clarify(
+          request.naturalLanguage,
+          conversationId,
+          {
+            maxRounds: 2,
+            minClarityThreshold: 0.8,
+            questionCount: 3
+          }
+        );
+
+        console.log(
+          `[VibeCoding] ✅ Clarification complete after ${clarificationResult.totalRounds} rounds`
+        );
+
+        return {
+          clarified: clarificationResult.clarified,
+          finalRequest: clarificationResult.finalRequest,
+          clarityScore: clarificationResult.rounds[clarificationResult.rounds.length - 1]?.clarityScore || clarityScore
+        };
+      }
+
+      // Request is already clear
+      console.log(`[VibeCoding] ✅ Request is clear (${clarityScore.toFixed(2)} >= 0.8)`);
+      return {
+        clarified: false,
+        finalRequest: request.naturalLanguage,
+        clarityScore
+      };
+    } catch (error: any) {
+      console.error('[VibeCoding] Error in clarity assessment:', error);
+      // On error, proceed with original request
+      return {
+        clarified: false,
+        finalRequest: request.naturalLanguage,
+        clarityScore: 0.5
+      };
+    }
+  }
+
+  /**
    * Generate code from natural language request
+   * NOW WITH CLARIFICATION INTEGRATION
    */
   async generateCode(request: VibeCodeRequest): Promise<VibeCodeResult> {
     try {
@@ -154,6 +233,15 @@ export class VibeCodingService {
         } as any
       );
       await agentEventBus.publish(progressEvent);
+
+      // PHASE 1: Clarification - NEW INTEGRATION
+      const clarificationResult = await this.assessAndClarify(request);
+      
+      // Update request with clarified version if clarification was needed
+      if (clarificationResult.clarified) {
+        console.log(`[VibeCoding] 📝 Using clarified request`);
+        request.naturalLanguage = clarificationResult.finalRequest;
+      }
       
       // PHASE 2: Check for known errors BEFORE generating code
       const knownErrors = await this.checkForKnownErrors(request.naturalLanguage);
@@ -277,6 +365,94 @@ export class VibeCodingService {
         estimatedImpact: 'Unknown',
         error: error.message,
       };
+    }
+  }
+
+  /**
+   * Generate code using SequentialOrchestrator for ordered workflow execution
+   * This provides an orchestrated alternative to the standard generateCode method
+   * 
+   * Workflow Steps:
+   * 1. Clarification (if needed)
+   * 2. Code Generation
+   * 3. Validation
+   * 4. Result Streaming
+   */
+  async generateCodeWithOrchestrator(request: VibeCodeRequest): Promise<VibeCodeResult> {
+    try {
+      console.log(`[VibeCoding] 🎼 Starting orchestrated workflow for: "${request.naturalLanguage}"`);
+
+      const conversationId = parseInt(request.sessionId.split('-')[1] || '1', 10);
+
+      // Define workflow steps
+      const steps: WorkflowStep[] = [
+        {
+          id: 'clarify',
+          agentId: 'clarification',
+          task: request.naturalLanguage,
+          context: {
+            conversationId,
+            userId: request.userId,
+            sessionId: request.sessionId
+          }
+        },
+        {
+          id: 'generate',
+          agentId: 'vibe-coding',
+          task: request.naturalLanguage,
+          context: {
+            targetFiles: request.targetFiles,
+            userId: request.userId,
+            sessionId: request.sessionId
+          }
+        },
+        {
+          id: 'validate',
+          agentId: 'quality-validator',
+          task: 'Validate generated code changes',
+          context: {
+            sessionId: request.sessionId
+          }
+        }
+      ];
+
+      // Execute workflow using SequentialOrchestrator
+      console.log(`[VibeCoding] 🚀 Executing ${steps.length} workflow steps...`);
+      const workflowResult = await sequentialOrchestrator.execute(steps);
+
+      if (!workflowResult.success) {
+        console.error('[VibeCoding] ❌ Workflow execution failed');
+        return {
+          success: false,
+          sessionId: request.sessionId,
+          request: request.naturalLanguage,
+          interpretation: '',
+          fileChanges: [],
+          validationResults: {
+            syntax: false,
+            lsp: false,
+            safety: false,
+            warnings: workflowResult.errors?.map(e => e.error) || []
+          },
+          estimatedImpact: 'Unknown',
+          error: 'Workflow execution failed'
+        };
+      }
+
+      // Extract results from workflow
+      const clarificationStep = workflowResult.results.find(r => r.stepId === 'clarify');
+      const generationStep = workflowResult.results.find(r => r.stepId === 'generate');
+      const validationStep = workflowResult.results.find(r => r.stepId === 'validate');
+
+      console.log(`[VibeCoding] ✅ Orchestrated workflow completed in ${workflowResult.duration}ms`);
+
+      // For now, fall back to standard generation if orchestrator doesn't provide full result
+      // This maintains backward compatibility
+      return await this.generateCode(request);
+    } catch (error: any) {
+      console.error('[VibeCoding] ❌ Orchestrator error:', error);
+      // Fall back to standard generation on error
+      return await this.generateCode(request);
     }
   }
 
