@@ -1154,6 +1154,32 @@ export const mrBlueMessages = pgTable("mr_blue_messages", {
   userIdx: index("mr_blue_messages_user_idx").on(table.userId),
 }));
 
+export const userWorkflowActions = pgTable("user_workflow_actions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  actionType: varchar("action_type", { length: 100 }).notNull(),
+  context: jsonb("context"),
+  sessionId: varchar("session_id", { length: 100 }),
+  timestamp: timestamp("timestamp").defaultNow(),
+}, (table) => ({
+  userTimestampIdx: index("user_workflow_actions_user_timestamp_idx").on(table.userId, table.timestamp.desc()),
+  userIdx: index("user_workflow_actions_user_idx").on(table.userId),
+}));
+
+export const workflowPatterns = pgTable("workflow_patterns", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  sequence: text("sequence").array().notNull(),
+  nextAction: varchar("next_action", { length: 100 }).notNull(),
+  confidence: real("confidence").notNull().default(0.5),
+  frequency: integer("frequency").notNull().default(1),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("workflow_patterns_user_idx").on(table.userId),
+  userConfidenceIdx: index("workflow_patterns_user_confidence_idx").on(table.userId, table.confidence.desc()),
+}));
+
 export const messageReactions = pgTable("message_reactions", {
   id: serial("id").primaryKey(),
   messageId: integer("message_id").notNull().references(() => mrBlueMessages.id, { onDelete: "cascade" }),

@@ -620,6 +620,13 @@ export interface IStorage {
   updateUserPreference(id: number, data: any): Promise<any | undefined>;
   deleteUserPreference(id: number): Promise<void>;
 
+  // Workflow Patterns (PHASE 5: Predictive Assistance)
+  saveWorkflowAction(data: any): Promise<any>;
+  getUserWorkflowActions(userId: number, limit?: number): Promise<any[]>;
+  saveWorkflowPattern(data: any): Promise<any>;
+  findWorkflowPatterns(userId: number, sequence: string[]): Promise<any[]>;
+  getAllWorkflowPatterns(userId: number): Promise<any[]>;
+
   // Search
   search(query: string, userId: number): Promise<any[]>;
 
@@ -7616,6 +7623,89 @@ export class DbStorage implements IStorage {
 
   async deleteUserPreference(id: number): Promise<void> {
     await db.delete(userPreferences).where(eq(userPreferences.id, id));
+  }
+
+  // ==================== WORKFLOW PATTERNS (PHASE 5) ====================
+
+  async saveWorkflowAction(data: any): Promise<any> {
+    const [action] = await db.insert(userWorkflowActions).values({
+      userId: data.userId,
+      actionType: data.actionType,
+      context: data.context,
+      sessionId: data.sessionId,
+      timestamp: data.timestamp || new Date(),
+    }).returning();
+    return action;
+  }
+
+  async getUserWorkflowActions(userId: number, limit: number = 100): Promise<any[]> {
+    const actions = await db
+      .select()
+      .from(userWorkflowActions)
+      .where(eq(userWorkflowActions.userId, userId))
+      .orderBy(desc(userWorkflowActions.timestamp))
+      .limit(limit);
+    return actions;
+  }
+
+  async saveWorkflowPattern(data: any): Promise<any> {
+    // Check if pattern already exists
+    const existing = await db
+      .select()
+      .from(workflowPatterns)
+      .where(
+        and(
+          eq(workflowPatterns.userId, data.userId),
+          sql`${workflowPatterns.sequence}::text[] = ${JSON.stringify(data.sequence)}::text[]`
+        )
+      )
+      .limit(1);
+
+    if (existing.length > 0) {
+      // Update existing pattern
+      const [updated] = await db
+        .update(workflowPatterns)
+        .set({
+          confidence: data.confidence,
+          frequency: data.frequency,
+          updatedAt: new Date(),
+        })
+        .where(eq(workflowPatterns.id, existing[0].id))
+        .returning();
+      return updated;
+    } else {
+      // Create new pattern
+      const [pattern] = await db.insert(workflowPatterns).values({
+        userId: data.userId,
+        sequence: data.sequence,
+        nextAction: data.nextAction,
+        confidence: data.confidence,
+        frequency: data.frequency,
+      }).returning();
+      return pattern;
+    }
+  }
+
+  async findWorkflowPatterns(userId: number, sequence: string[]): Promise<any[]> {
+    const patterns = await db
+      .select()
+      .from(workflowPatterns)
+      .where(
+        and(
+          eq(workflowPatterns.userId, userId),
+          sql`${workflowPatterns.sequence}::text[] = ${JSON.stringify(sequence)}::text[]`
+        )
+      );
+    return patterns;
+  }
+
+  async getAllWorkflowPatterns(userId: number): Promise<any[]> {
+    const patterns = await db
+      .select()
+      .from(workflowPatterns)
+      .where(eq(workflowPatterns.userId, userId))
+      .orderBy(desc(workflowPatterns.confidence));
+    return patterns;
   }
 }
 
