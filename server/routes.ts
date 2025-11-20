@@ -40,6 +40,7 @@ import mrBlueErrorAnalysisRoutes from "./routes/mrblue-error-analysis-routes";
 import mrBlueErrorActionsRoutes from "./routes/mrblue-error-actions-routes";
 import mrBlueOrchestrationRoutes from "./routes/mrblue-orchestration-routes";
 import orchestrationRoutes from "./routes/orchestration";
+import gitRoutes from "./routes/git";
 import a2aRoutes from "./routes/a2a";
 import autonomousRoutes from "./routes/autonomous";
 import premiumMediaRoutes from "./routes/premiumMedia";
