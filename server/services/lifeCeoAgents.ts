@@ -330,7 +330,7 @@ export class LifeCeoAgentService {
       ];
 
       const response = await anthropic.messages.create({
-        model: 'claude-3-5-sonnet-20240620',
+        model: 'claude-3-5-sonnet-20241022',
         max_tokens: 2000,
         messages: fullConversation,
       });
@@ -384,7 +384,7 @@ export class LifeCeoAgentService {
       const prompt = `${agent.systemPrompt}\n\n${contextPrompt}\n\nBased on what you know about this user, provide one specific, actionable recommendation for their ${agent.domain}. Make it personalized and practical.`;
 
       const response = await anthropic.messages.create({
-        model: 'claude-3-5-sonnet-20240620',
+        model: 'claude-3-5-sonnet-20241022',
         max_tokens: 500,
         messages: [{ role: 'user', content: prompt }],
       });

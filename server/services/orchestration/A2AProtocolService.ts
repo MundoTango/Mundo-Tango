@@ -2,6 +2,8 @@ import type { A2AMessage, A2AResponse, AgentCard, TextPart } from '@shared/types
 import { agentCardRegistry } from './AgentCardRegistry';
 import { db } from '../../db';
 import { a2aMessages } from '../../../shared/schema';
+import { GroqService, GROQ_MODELS } from '../ai/GroqService';
+import { ContextService } from '../mrBlue/ContextService';
 
 export class A2AProtocolService {
   /**
@@ -202,74 +204,301 @@ export class A2AProtocolService {
       return new ErrorAnalysisAgent();
     }
 
-    // Orchestration System (6 agents)
+    // Orchestration System (6 agents) - Real GROQ AI for workflow orchestration
     if (agentId.startsWith('orchestration-')) {
+      const shortId = agentId.replace('orchestration-', '');
+      
       return {
         execute: async (message: string, context: any) => {
-          return `Orchestration agent ${agentId}: Processing message with ${Object.keys(context || {}).length} context items`;
+          try {
+            const systemPrompt = `You are an expert workflow orchestration agent (${shortId}). 
+Your role is to:
+- Analyze complex multi-step workflows and break them into manageable tasks
+- Coordinate between multiple agents and services
+- Optimize task execution order and parallelization
+- Handle dependencies and error recovery
+- Provide clear execution plans with priorities
+
+Context: ${JSON.stringify(context || {}, null, 2)}
+
+Respond with practical, actionable orchestration plans in JSON format when appropriate.`;
+
+            const response = await GroqService.query({
+              prompt: message,
+              model: GROQ_MODELS.LLAMA_70B,
+              systemPrompt,
+              temperature: 0.3, // Lower for consistent orchestration logic
+              maxTokens: 2000
+            });
+
+            return response.content;
+          } catch (error: any) {
+            console.error(`[A2A] Orchestration agent ${agentId} error:`, error);
+            return `Error in orchestration: ${error.message}. Falling back to basic orchestration.`;
+          }
         }
       };
     }
 
-    // Self-Healing System (5 agents)
+    // Self-Healing System (5 agents) - Real GROQ AI for system health analysis
     if (agentId.startsWith('self-healing-')) {
+      const shortId = agentId.replace('self-healing-', '');
+      
       return {
         execute: async (message: string, context: any) => {
-          return `Self-healing agent ${agentId}: Analyzing system health`;
+          try {
+            const systemPrompt = `You are a self-healing system agent (${shortId}) specialized in:
+- Analyzing system health metrics and error patterns
+- Detecting anomalies and potential failures
+- Recommending automated remediation actions
+- Root cause analysis of system issues
+- Preventive maintenance suggestions
+
+System context: ${JSON.stringify(context || {}, null, 2)}
+
+Provide actionable recommendations with severity levels (critical/warning/info).`;
+
+            const response = await GroqService.query({
+              prompt: message,
+              model: GROQ_MODELS.LLAMA_70B,
+              systemPrompt,
+              temperature: 0.2, // Very low for reliable diagnostics
+              maxTokens: 1500
+            });
+
+            return response.content;
+          } catch (error: any) {
+            console.error(`[A2A] Self-healing agent ${agentId} error:`, error);
+            return `Error in system analysis: ${error.message}. Manual intervention may be required.`;
+          }
         }
       };
     }
 
-    // AI Arbitrage System (5 agents)
+    // AI Arbitrage System (5 agents) - Real GROQ AI for AI model selection
     if (agentId.startsWith('ai-')) {
+      const shortId = agentId.replace('ai-', '');
+      
       return {
         execute: async (message: string, context: any) => {
-          return `AI Arbitrage agent ${agentId}: Optimizing AI model selection`;
+          try {
+            const systemPrompt = `You are an AI arbitrage agent (${shortId}) that optimizes AI model selection across:
+- OpenAI (GPT-4o, GPT-4o-mini)
+- Anthropic (Claude 3.5 Sonnet, Haiku)
+- Groq (Llama 3.3 70B - FREE, ultra-fast)
+- Gemini (Flash, Pro)
+- OpenRouter (Multi-model gateway)
+
+Your role:
+- Analyze task requirements (speed/quality/cost priority)
+- Recommend optimal AI model for each use case
+- Calculate cost-benefit tradeoffs
+- Suggest fallback chains for reliability
+
+Task context: ${JSON.stringify(context || {}, null, 2)}
+
+Provide model recommendations with rationale and estimated costs.`;
+
+            const response = await GroqService.query({
+              prompt: message,
+              model: GROQ_MODELS.LLAMA_70B,
+              systemPrompt,
+              temperature: 0.4,
+              maxTokens: 1500
+            });
+
+            return response.content;
+          } catch (error: any) {
+            console.error(`[A2A] AI arbitrage agent ${agentId} error:`, error);
+            return `Error in AI selection: ${error.message}. Defaulting to Groq Llama-3.3-70B (FREE).`;
+          }
         }
       };
     }
 
-    // User Testing System (4 agents)
+    // User Testing System (4 agents) - Real GROQ AI for behavior analysis
     if (agentId.startsWith('user-testing-')) {
+      const shortId = agentId.replace('user-testing-', '');
+      
       return {
         execute: async (message: string, context: any) => {
-          return `User Testing agent ${agentId}: Analyzing user behavior patterns`;
+          try {
+            const systemPrompt = `You are a user testing agent (${shortId}) specialized in:
+- Analyzing user behavior patterns and interaction data
+- Identifying UX issues and friction points
+- A/B test result interpretation
+- User journey optimization
+- Accessibility and usability recommendations
+
+Test data: ${JSON.stringify(context || {}, null, 2)}
+
+Provide insights with specific, actionable recommendations for improvements.`;
+
+            const response = await GroqService.query({
+              prompt: message,
+              model: GROQ_MODELS.LLAMA_70B,
+              systemPrompt,
+              temperature: 0.5,
+              maxTokens: 1500
+            });
+
+            return response.content;
+          } catch (error: any) {
+            console.error(`[A2A] User testing agent ${agentId} error:`, error);
+            return `Error in user analysis: ${error.message}. Manual review recommended.`;
+          }
         }
       };
     }
 
-    // Knowledge System (4 agents)
+    // Knowledge System (4 agents) - Integrated with LanceDB ContextService
     if (agentId.startsWith('knowledge-')) {
+      const shortId = agentId.replace('knowledge-', '');
+      const contextService = new ContextService();
+      
       return {
         execute: async (message: string, context: any) => {
-          return `Knowledge agent ${agentId}: Retrieving semantic information`;
+          try {
+            // Perform semantic search in LanceDB
+            const searchResults = await contextService.search(message, 5);
+            
+            // Build context from search results
+            const knowledgeContext = searchResults
+              .map(result => `[${result.source}] ${result.section}:\n${result.content}`)
+              .join('\n\n---\n\n');
+
+            // Use GROQ with retrieved context for RAG
+            const systemPrompt = `You are a knowledge retrieval agent (${shortId}) with access to the complete Mundo Tango documentation.
+
+Retrieved context from semantic search:
+${knowledgeContext}
+
+Your role:
+- Answer questions using the retrieved documentation
+- Cite sources when providing information
+- Suggest related topics when relevant
+- Indicate confidence level in answers
+
+Additional context: ${JSON.stringify(context || {}, null, 2)}`;
+
+            const response = await GroqService.query({
+              prompt: message,
+              model: GROQ_MODELS.LLAMA_70B,
+              systemPrompt,
+              temperature: 0.3,
+              maxTokens: 2000
+            });
+
+            return response.content;
+          } catch (error: any) {
+            console.error(`[A2A] Knowledge agent ${agentId} error:`, error);
+            return `Error retrieving knowledge: ${error.message}. Please check documentation manually.`;
+          }
         }
       };
     }
 
-    // Clarification System (2 agents)
+    // Clarification System (2 agents) - Real GROQ AI for question generation
     if (agentId.startsWith('clarification-')) {
+      const shortId = agentId.replace('clarification-', '');
+      
       return {
         execute: async (message: string, context: any) => {
-          return `Clarification agent ${agentId}: Generating clarifying questions`;
+          try {
+            const systemPrompt = `You are a clarification agent (${shortId}) that helps resolve ambiguities by:
+- Identifying unclear or ambiguous requests
+- Generating targeted clarifying questions
+- Suggesting multiple interpretation paths
+- Helping users refine their requirements
+
+Request context: ${JSON.stringify(context || {}, null, 2)}
+
+Ask 2-4 specific, helpful questions to clarify the user's intent.`;
+
+            const response = await GroqService.query({
+              prompt: message,
+              model: GROQ_MODELS.LLAMA_8B, // Faster model for simple question generation
+              systemPrompt,
+              temperature: 0.7,
+              maxTokens: 800
+            });
+
+            return response.content;
+          } catch (error: any) {
+            console.error(`[A2A] Clarification agent ${agentId} error:`, error);
+            return `Error generating questions: ${error.message}. Please provide more details.`;
+          }
         }
       };
     }
 
-    // Validation System (2 agents)
+    // Validation System (2 agents) - Real GROQ AI for code quality
     if (agentId.startsWith('validation-')) {
+      const shortId = agentId.replace('validation-', '');
+      
       return {
         execute: async (message: string, context: any) => {
-          return `Validation agent ${agentId}: Validating code quality`;
+          try {
+            const systemPrompt = `You are a validation agent (${shortId}) specialized in:
+- Code quality assessment and best practices
+- Security vulnerability detection
+- Performance optimization opportunities
+- Architecture review and patterns
+- Testing coverage analysis
+
+Code/system context: ${JSON.stringify(context || {}, null, 2)}
+
+Provide structured feedback with severity levels and specific line references when possible.`;
+
+            const response = await GroqService.query({
+              prompt: message,
+              model: GROQ_MODELS.LLAMA_70B,
+              systemPrompt,
+              temperature: 0.2, // Very low for consistent validation
+              maxTokens: 2000
+            });
+
+            return response.content;
+          } catch (error: any) {
+            console.error(`[A2A] Validation agent ${agentId} error:`, error);
+            return `Error in validation: ${error.message}. Manual code review recommended.`;
+          }
         }
       };
     }
 
-    // Deployment System (2 agents)
+    // Deployment System (2 agents) - Real GROQ AI for deployment readiness
     if (agentId.startsWith('deployment-')) {
+      const shortId = agentId.replace('deployment-', '');
+      
       return {
         execute: async (message: string, context: any) => {
-          return `Deployment agent ${agentId}: Checking deployment readiness`;
+          try {
+            const systemPrompt = `You are a deployment readiness agent (${shortId}) that checks:
+- Environment configuration completeness
+- Database migrations status
+- Security compliance (API keys, CORS, CSP)
+- Performance benchmarks
+- Monitoring and logging setup
+- Rollback plan readiness
+
+Deployment context: ${JSON.stringify(context || {}, null, 2)}
+
+Provide a deployment checklist with pass/fail status and blocking issues highlighted.`;
+
+            const response = await GroqService.query({
+              prompt: message,
+              model: GROQ_MODELS.LLAMA_70B,
+              systemPrompt,
+              temperature: 0.2,
+              maxTokens: 1500
+            });
+
+            return response.content;
+          } catch (error: any) {
+            console.error(`[A2A] Deployment agent ${agentId} error:`, error);
+            return `Error checking deployment: ${error.message}. Manual verification required.`;
+          }
         }
       };
     }

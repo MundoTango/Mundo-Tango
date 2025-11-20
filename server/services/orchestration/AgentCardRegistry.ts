@@ -182,7 +182,135 @@ const registerCoreAgents = async () => {
     version: '1.0.0'
   });
 
-  console.log('[AgentCardRegistry] Registered core agents');
+  // Orchestration System Agents (6 agents)
+  const orchestrationAgents = ['workflow', 'coordinator', 'scheduler', 'priority', 'dependency', 'optimizer'];
+  for (const agent of orchestrationAgents) {
+    await agentCardRegistry.registerAgent({
+      id: `orchestration-${agent}`,
+      name: `Orchestration ${agent.charAt(0).toUpperCase() + agent.slice(1)} Agent`,
+      description: `Handles workflow ${agent} with GROQ AI-powered orchestration logic`,
+      capabilities: ['orchestration', agent, 'workflow', 'ai-powered'],
+      inputSchema: { type: 'object', properties: { message: { type: 'string' }, context: { type: 'object' } } },
+      outputSchema: { type: 'object', properties: { plan: { type: 'string' }, tasks: { type: 'array' } } },
+      methods: ['message/send'],
+      a2aEndpoint: `/api/v1/a2a/orchestration-${agent}`,
+      version: '1.0.0'
+    });
+  }
+
+  // Self-Healing System Agents (5 agents)
+  const healingAgents = ['monitor', 'remediation', 'diagnostics', 'prevention', 'recovery'];
+  for (const agent of healingAgents) {
+    await agentCardRegistry.registerAgent({
+      id: `self-healing-${agent}`,
+      name: `Self-Healing ${agent.charAt(0).toUpperCase() + agent.slice(1)} Agent`,
+      description: `System health ${agent} with GROQ AI-powered analysis`,
+      capabilities: ['self-healing', agent, 'system-health', 'ai-powered'],
+      inputSchema: { type: 'object', properties: { message: { type: 'string' }, context: { type: 'object' } } },
+      outputSchema: { type: 'object', properties: { analysis: { type: 'string' }, recommendations: { type: 'array' } } },
+      methods: ['message/send'],
+      a2aEndpoint: `/api/v1/a2a/self-healing-${agent}`,
+      version: '1.0.0'
+    });
+  }
+
+  // AI Arbitrage System Agents (5 agents)
+  const aiAgents = ['optimizer', 'selector', 'cost-analyzer', 'performance', 'fallback'];
+  for (const agent of aiAgents) {
+    await agentCardRegistry.registerAgent({
+      id: `ai-${agent}`,
+      name: `AI ${agent.charAt(0).toUpperCase() + agent.slice(1)} Agent`,
+      description: `AI model ${agent} with GROQ-powered optimization`,
+      capabilities: ['ai-arbitrage', agent, 'model-selection', 'ai-powered'],
+      inputSchema: { type: 'object', properties: { message: { type: 'string' }, context: { type: 'object' } } },
+      outputSchema: { type: 'object', properties: { recommendation: { type: 'string' }, rationale: { type: 'string' } } },
+      methods: ['message/send'],
+      a2aEndpoint: `/api/v1/a2a/ai-${agent}`,
+      version: '1.0.0'
+    });
+  }
+
+  // User Testing System Agents (4 agents)
+  const testingAgents = ['behavior', 'analytics', 'ab-testing', 'feedback'];
+  for (const agent of testingAgents) {
+    await agentCardRegistry.registerAgent({
+      id: `user-testing-${agent}`,
+      name: `User Testing ${agent.charAt(0).toUpperCase() + agent.slice(1)} Agent`,
+      description: `User ${agent} analysis with GROQ AI`,
+      capabilities: ['user-testing', agent, 'ux-analysis', 'ai-powered'],
+      inputSchema: { type: 'object', properties: { message: { type: 'string' }, context: { type: 'object' } } },
+      outputSchema: { type: 'object', properties: { insights: { type: 'string' }, recommendations: { type: 'array' } } },
+      methods: ['message/send'],
+      a2aEndpoint: `/api/v1/a2a/user-testing-${agent}`,
+      version: '1.0.0'
+    });
+  }
+
+  // Knowledge System Agents (4 agents) - Integrated with LanceDB
+  const knowledgeAgents = ['retrieval', 'search', 'semantic', 'context'];
+  for (const agent of knowledgeAgents) {
+    await agentCardRegistry.registerAgent({
+      id: `knowledge-${agent}`,
+      name: `Knowledge ${agent.charAt(0).toUpperCase() + agent.slice(1)} Agent`,
+      description: `Semantic ${agent} with LanceDB RAG and GROQ AI`,
+      capabilities: ['knowledge', agent, 'rag', 'lancedb', 'ai-powered'],
+      inputSchema: { type: 'object', properties: { message: { type: 'string' }, context: { type: 'object' } } },
+      outputSchema: { type: 'object', properties: { answer: { type: 'string' }, sources: { type: 'array' } } },
+      methods: ['message/send'],
+      a2aEndpoint: `/api/v1/a2a/knowledge-${agent}`,
+      version: '1.0.0'
+    });
+  }
+
+  // Clarification System Agents (2 agents)
+  const clarificationAgents = ['questions', 'disambiguator'];
+  for (const agent of clarificationAgents) {
+    await agentCardRegistry.registerAgent({
+      id: `clarification-${agent}`,
+      name: `Clarification ${agent.charAt(0).toUpperCase() + agent.slice(1)} Agent`,
+      description: `Generates clarifying ${agent} with GROQ AI`,
+      capabilities: ['clarification', agent, 'ai-powered'],
+      inputSchema: { type: 'object', properties: { message: { type: 'string' }, context: { type: 'object' } } },
+      outputSchema: { type: 'object', properties: { questions: { type: 'array' } } },
+      methods: ['message/send'],
+      a2aEndpoint: `/api/v1/a2a/clarification-${agent}`,
+      version: '1.0.0'
+    });
+  }
+
+  // Validation System Agents (2 agents)
+  const validationAgents = ['code-quality', 'security'];
+  for (const agent of validationAgents) {
+    await agentCardRegistry.registerAgent({
+      id: `validation-${agent}`,
+      name: `Validation ${agent.charAt(0).toUpperCase() + agent.slice(1)} Agent`,
+      description: `${agent} validation with GROQ AI`,
+      capabilities: ['validation', agent, 'ai-powered'],
+      inputSchema: { type: 'object', properties: { message: { type: 'string' }, context: { type: 'object' } } },
+      outputSchema: { type: 'object', properties: { issues: { type: 'array' }, recommendations: { type: 'array' } } },
+      methods: ['message/send'],
+      a2aEndpoint: `/api/v1/a2a/validation-${agent}`,
+      version: '1.0.0'
+    });
+  }
+
+  // Deployment System Agents (2 agents)
+  const deploymentAgents = ['readiness', 'checklist'];
+  for (const agent of deploymentAgents) {
+    await agentCardRegistry.registerAgent({
+      id: `deployment-${agent}`,
+      name: `Deployment ${agent.charAt(0).toUpperCase() + agent.slice(1)} Agent`,
+      description: `Deployment ${agent} checks with GROQ AI`,
+      capabilities: ['deployment', agent, 'ai-powered'],
+      inputSchema: { type: 'object', properties: { message: { type: 'string' }, context: { type: 'object' } } },
+      outputSchema: { type: 'object', properties: { status: { type: 'string' }, checklist: { type: 'array' } } },
+      methods: ['message/send'],
+      a2aEndpoint: `/api/v1/a2a/deployment-${agent}`,
+      version: '1.0.0'
+    });
+  }
+
+  console.log('[AgentCardRegistry] Registered core agents + 30 AI-powered agents');
 };
 
 registerCoreAgents().catch(console.error);

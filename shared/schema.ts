@@ -8190,6 +8190,137 @@ export const insertGoldenExampleSchema = createInsertSchema(goldenExamples).omit
 export type InsertGoldenExample = z.infer<typeof insertGoldenExampleSchema>;
 export type SelectGoldenExample = typeof goldenExamples.$inferSelect;
 
+/**
+ * Agent Executions - Comprehensive agent run tracking for learning
+ * Stores every agent execution with outcomes, performance metrics, and feedback
+ * Enables pattern recognition, performance analysis, and recursive improvement
+ */
+export const agentExecutions = pgTable("agent_executions", {
+  id: serial("id").primaryKey(),
+  
+  // Agent identification
+  agentId: varchar("agent_id", { length: 100 }).notNull(), // e.g., "mr-blue-context", "life-ceo-strategic-advisor"
+  agentVersion: varchar("agent_version", { length: 50 }).default("1.0.0"),
+  
+  // Execution context
+  userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
+  task: text("task").notNull(), // What the agent was asked to do
+  context: jsonb("context"), // Additional context provided
+  
+  // Execution details
+  startedAt: timestamp("started_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+  durationMs: integer("duration_ms"),
+  
+  // Results
+  outcome: varchar("outcome", { length: 20 }).notNull(), // success, failure, partial, timeout
+  result: jsonb("result"), // Agent's output/response
+  errorMessage: text("error_message"),
+  errorType: varchar("error_type", { length: 100 }),
+  
+  // Performance metrics
+  quality: numeric("quality", { precision: 5, scale: 4 }), // 0-1 score (self-assessed or user-rated)
+  efficiency: numeric("efficiency", { precision: 5, scale: 4 }), // 0-1 score (speed/resource usage)
+  confidence: numeric("confidence", { precision: 5, scale: 4 }), // 0-1 score (agent's confidence)
+  
+  // Cost tracking
+  cost: numeric("cost", { precision: 10, scale: 6 }),
+  tokensUsed: integer("tokens_used"),
+  
+  // Learning data
+  userFeedback: varchar("user_feedback", { length: 20 }), // thumbs_up, thumbs_down, neutral
+  feedbackComment: text("feedback_comment"),
+  userRating: integer("user_rating"), // 1-5 stars
+  performanceVsBaseline: numeric("performance_vs_baseline", { precision: 6, scale: 4 }), // -1 to 1 (worse to better)
+  
+  // Pattern linkage
+  patternId: integer("pattern_id").references(() => learningPatterns.id), // Link to learned pattern
+  appliedPatterns: text("applied_patterns").array(), // Patterns used in this execution
+  discoveredPatterns: jsonb("discovered_patterns"), // New patterns identified
+  
+  // Metadata
+  metadata: jsonb("metadata"), // Additional execution metadata
+  tags: text("tags").array(),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  agentIdx: index("agent_executions_agent_idx").on(table.agentId),
+  userIdx: index("agent_executions_user_idx").on(table.userId),
+  outcomeIdx: index("agent_executions_outcome_idx").on(table.outcome),
+  qualityIdx: index("agent_executions_quality_idx").on(table.quality),
+  createdAtIdx: index("agent_executions_created_at_idx").on(table.createdAt),
+  agentVersionIdx: index("agent_executions_agent_version_idx").on(table.agentId, table.agentVersion),
+  feedbackIdx: index("agent_executions_feedback_idx").on(table.userFeedback),
+}));
+
+/**
+ * Agent Knowledge Versions - Version tracking for agent improvements
+ * Tracks evolution of agent prompts, behaviors, and learned knowledge
+ * Enables rollback, A/B testing, and performance comparison
+ */
+export const agentKnowledgeVersions = pgTable("agent_knowledge_versions", {
+  id: serial("id").primaryKey(),
+  
+  // Agent identification
+  agentId: varchar("agent_id", { length: 100 }).notNull(),
+  version: varchar("version", { length: 50 }).notNull(), // e.g., "1.0.0", "1.1.0", "2.0.0"
+  
+  // Knowledge content
+  systemPrompt: text("system_prompt"),
+  knowledgeBase: jsonb("knowledge_base"), // Structured knowledge (patterns, rules, preferences)
+  configuration: jsonb("configuration"), // Agent settings and parameters
+  
+  // Version metadata
+  changeDescription: text("change_description").notNull(), // What changed and why
+  changeType: varchar("change_type", { length: 50 }).notNull(), // learned, manual, experiment, rollback
+  improvementHypothesis: text("improvement_hypothesis"), // Expected improvement
+  
+  // Learning source
+  learnedFrom: text("learned_from").array(), // Execution IDs or pattern IDs that led to this version
+  trainingDataSize: integer("training_data_size"), // Number of examples used
+  
+  // Performance tracking
+  baselinePerformance: jsonb("baseline_performance"), // Performance before this version
+  currentPerformance: jsonb("current_performance"), // Performance after this version
+  performanceImprovement: numeric("performance_improvement", { precision: 6, scale: 4 }), // % improvement
+  
+  // A/B testing
+  isActive: boolean("is_active").default(false),
+  isExperimental: boolean("is_experimental").default(false),
+  trafficPercentage: integer("traffic_percentage").default(0), // % of traffic using this version
+  testStatus: varchar("test_status", { length: 50 }), // testing, adopted, rejected, rolled_back
+  
+  // Execution statistics
+  totalExecutions: integer("total_executions").default(0),
+  successfulExecutions: integer("successful_executions").default(0),
+  averageQuality: numeric("average_quality", { precision: 5, scale: 4 }),
+  averageEfficiency: numeric("average_efficiency", { precision: 5, scale: 4 }),
+  userSatisfaction: numeric("user_satisfaction", { precision: 5, scale: 4 }), // 0-1 based on feedback
+  
+  // Lifecycle
+  createdBy: varchar("created_by", { length: 100 }).notNull(), // "learning-system", "human-override", agent ID
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  activatedAt: timestamp("activated_at"),
+  deactivatedAt: timestamp("deactivated_at"),
+  supersededBy: integer("superseded_by").references(() => agentKnowledgeVersions.id), // Next version that replaced this
+}, (table) => ({
+  agentVersionIdx: uniqueIndex("agent_knowledge_versions_agent_version_idx").on(table.agentId, table.version),
+  agentIdx: index("agent_knowledge_versions_agent_idx").on(table.agentId),
+  isActiveIdx: index("agent_knowledge_versions_active_idx").on(table.isActive),
+  performanceIdx: index("agent_knowledge_versions_performance_idx").on(table.performanceImprovement),
+  createdAtIdx: index("agent_knowledge_versions_created_at_idx").on(table.createdAt),
+  testStatusIdx: index("agent_knowledge_versions_test_status_idx").on(table.testStatus),
+}));
+
+// Agent Learning Zod Schemas & Types
+export const insertAgentExecutionSchema = createInsertSchema(agentExecutions).omit({ id: true, createdAt: true });
+export type InsertAgentExecution = z.infer<typeof insertAgentExecutionSchema>;
+export type SelectAgentExecution = typeof agentExecutions.$inferSelect;
+
+export const insertAgentKnowledgeVersionSchema = createInsertSchema(agentKnowledgeVersions).omit({ id: true, createdAt: true });
+export type InsertAgentKnowledgeVersion = z.infer<typeof insertAgentKnowledgeVersionSchema>;
+export type SelectAgentKnowledgeVersion = typeof agentKnowledgeVersions.$inferSelect;
+
 // ============================================================================
 // PROFILE MEDIA & ANALYTICS (BATCH 13-14)
 // ============================================================================
