@@ -506,24 +506,29 @@ function VisualEditorPageContent() {
     const trimmedPrompt = prompt.trim();
     const lowerPrompt = trimmedPrompt.toLowerCase();
     
+    // Vibe Coding: Detect UI modification requests (e.g., "Make button blue", "Change header color")
+    const isVibeCodeRequest = /\b(make|change|update|modify|set|add|remove)\s+(the|a|an)?\s*(button|header|text|color|background|style|size)/i.test(trimmedPrompt) ||
+                              /\b(have|with|to)\s+(a|an|the)?\s*(blue|red|green|yellow|white|black|larger|smaller|bold)/i.test(trimmedPrompt) ||
+                              /color.*to|background.*to|font.*to|size.*to/i.test(lowerPrompt);
+    
     // FIXED ROUTING: Only route to autonomous for SPECIFIC build phrases
     // Avoid matching common words like "make" which appear in normal conversation
     const isBuildRequest = /\b(build|create|add)\s+(a|an|the|this|that|new)?\s*(feature|component|section|page)/i.test(trimmedPrompt) ||
                           /\b(generate|scaffold|implement)\s/i.test(trimmedPrompt);
     
-    // Check if it's a simple style change
-    const styleKeywords = ['make', 'change', 'color', 'size', 'bigger', 'smaller', 'blue', 'red', 'center', 'font'];
+    // Check if it's a simple style change (requires selectedElement)
+    const styleKeywords = ['color', 'size', 'bigger', 'smaller', 'center', 'font'];
     const isStyleOnly = styleKeywords.some(kw => lowerPrompt.includes(kw)) && trimmedPrompt.split(' ').length < 15;
 
     if (isStyleOnly && selectedElement) {
       // Capture screenshot before style change
       await captureBeforeScreenshot();
-      // Fast path: instant CSS change
+      // Fast path: instant CSS change (requires element selection)
       quickStyleMutation.mutate(trimmedPrompt);
-    } else if (isBuildRequest) {
-      // Capture screenshot before build
+    } else if (isVibeCodeRequest || isBuildRequest) {
+      // Capture screenshot before code generation
       await captureBeforeScreenshot();
-      // Full path: autonomous code generation
+      // Vibe Coding path: AI-powered code generation with live streaming
       executeMutation.mutate(trimmedPrompt);
     } else {
       // Simple chat: Send to chat endpoint for conversational responses
