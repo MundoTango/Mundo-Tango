@@ -7,7 +7,7 @@ import { Router, type Request, type Response } from 'express';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
 import { voiceCloningService, SUPPORTED_LANGUAGES } from '../services/mrBlue/VoiceCloningService';
 import { voiceTrainer } from '../services/mrBlue/VoiceTrainer';
-import { elevenLabsService } from '../services/elevenLabsService';
+import { elevenLabsService } from '../services/elevenlabsService';
 import { z } from 'zod';
 
 const router = Router();

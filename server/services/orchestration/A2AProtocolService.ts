@@ -155,8 +155,8 @@ export class A2AProtocolService {
         return new VibeCodingService();
 
       case 'error-analysis':
-        const { ErrorAnalysisService } = await import('../mrBlue/ErrorAnalysisService');
-        return new ErrorAnalysisService();
+        const { ErrorAnalysisAgent } = await import('../mrBlue/errorAnalysisAgent');
+        return new ErrorAnalysisAgent();
 
       case 'quality-validator':
         // Will be implemented in Priority 3
