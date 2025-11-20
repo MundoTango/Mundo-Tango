@@ -15,7 +15,7 @@
 import { universalAgentScanner } from '../services/agent-registry/UniversalAgentScanner';
 import { AgentSMETrainingService } from '../services/agent-sme/AgentSMETrainingService';
 import { db } from '../../shared/db';
-import { agents } from '../../shared/schema';
+import { agents, agentSMETraining } from '../../shared/schema';
 import { eq } from 'drizzle-orm';
 
 const BATCH_SIZE = 50; // Train 50 agents in parallel
@@ -80,8 +80,8 @@ async function main() {
           // Check if already trained
           const existingTraining = await db
             .select()
-            .from(import('../../shared/schema').then(s => s.agentSMETraining))
-            .where(eq(import('../../shared/schema').then(s => s.agentSMETraining.agentId), agent.id))
+            .from(agentSMETraining)
+            .where(eq(agentSMETraining.agentId, agent.id))
             .limit(1);
           
           if (existingTraining.length > 0) {
