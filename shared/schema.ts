@@ -12961,6 +12961,7 @@ export type SelectAgentCard = typeof agentCards.$inferSelect;
 
 export const a2aMessages = pgTable("a2a_messages", {
   id: serial("id").primaryKey(),
+  jsonrpc: varchar("jsonrpc", { length: 10 }).notNull().default('2.0'),
   messageId: varchar("message_id", { length: 255 }).notNull().unique(),
   fromAgent: varchar("from_agent", { length: 100 }).notNull(),
   toAgent: varchar("to_agent", { length: 100 }).notNull(),

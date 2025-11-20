@@ -56,6 +56,14 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     return next();
   }
   
+  // Skip CSRF for A2A protocol endpoints (machine-to-machine communication)
+  const a2aEndpoints = [
+    "/api/a2a/"
+  ];
+  if (a2aEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
   // Skip CSRF for external API endpoints (Replit AI bridge)
   const externalApiEndpoints = [
     "/api/replit-ai/"
@@ -127,6 +135,14 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     "/api/mr-blue/agents"
   ];
   if (publicMrBlueEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
+  // Skip CSRF for A2A protocol endpoints (machine-to-machine communication)
+  const a2aEndpoints = [
+    "/api/a2a/"
+  ];
+  if (a2aEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
     return next();
   }
   

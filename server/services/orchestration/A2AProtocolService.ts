@@ -310,6 +310,7 @@ export class A2AProtocolService {
   ): Promise<void> {
     try {
       await db.insert(a2aMessages).values({
+        jsonrpc: message.jsonrpc || '2.0',
         messageId: message.id,
         fromAgent: 'user', // TODO: Track actual sender agent
         toAgent: agentId,
