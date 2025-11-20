@@ -443,7 +443,7 @@ Format your response as JSON:
 }`;
 
       const response = await anthropic.messages.create({
-        model: 'claude-3-5-sonnet-20240620',
+        model: 'claude-3-5-sonnet-20241022',
         max_tokens: 2000,
         messages: [{ role: 'user', content: prompt }],
       });
