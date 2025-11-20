@@ -37,6 +37,7 @@ import mrBlueAutonomousRoutes from "./routes/mrblue-autonomous-routes";
 import mrBlueMemoryRoutes from "./routes/mrblue-memory-routes";
 import mrBluePlanRoutes from "./routes/mr-blue-plan-routes";
 import mrBluePageGeneratorRoutes from "./routes/mr-blue-page-generator";
+import pageAuditRoutes from "./routes/page-audit-routes";
 import mrBlueErrorAnalysisRoutes from "./routes/mrblue-error-analysis-routes";
 import mrBlueErrorActionsRoutes from "./routes/mrblue-error-actions-routes";
 import mrBlueOrchestrationRoutes from "./routes/mrblue-orchestration-routes";
@@ -570,7 +571,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/mrblue/autonomous", mrBlueAutonomousRoutes); // System 7: Autonomous Coding Engine
   app.use("/api/mrblue/memory", mrBlueMemoryRoutes); // System 8: Advanced Memory System
   app.use("/api/mrblue/plan", mrBluePlanRoutes); // Plan Roadmap Tracker (47-page validation system)
-  app.use("/api/mr-blue", mrBluePageGeneratorRoutes); // AI Page Generator (1,155 agents + 4 archetypes)
+  app.use("/api/mr-blue", mrBluePageGeneratorRoutes); // AI Page Generator (1,218 agents + 4 archetypes)
+  app.use("/api/page-audit", pageAuditRoutes); // Page Audit System (12 categories + self-healing)
   app.use("/api/mrblue", mrBlueErrorAnalysisRoutes); // Phase 3: Error Analysis API with AI Integration
   app.use("/api/mrblue", mrBlueErrorActionsRoutes); // Phase 4: Error Fix Actions (Apply/Escalate)
   app.use("/api/a2a", a2aRoutes); // A2A Protocol - Machine-to-machine agent communication (MB.MD Phase 6A)
