@@ -12878,6 +12878,152 @@ export type InsertAgentCostBudget = z.infer<typeof insertAgentCostBudgetSchema>;
 export type SelectAgentCostBudget = typeof agentCostBudgets.$inferSelect;
 
 // ============================================================================
+// A2A PROTOCOL & AGENT ORCHESTRATION (MB.MD v9.3 - NOV 20, 2025)
+// Google Agent-to-Agent protocol + 5 orchestration types
+// ============================================================================
+
+export const clarificationRounds = pgTable("clarification_rounds", {
+  id: serial("id").primaryKey(),
+  conversationId: integer("conversation_id").notNull(),
+  round: integer("round").notNull(),
+  questions: text("questions").array().notNull(),
+  answers: text("answers").array(),
+  clarityScore: real("clarity_score").notNull(),
+  completed: boolean("completed").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  conversationIdx: index("clarification_rounds_conversation_idx").on(table.conversationId),
+  completedIdx: index("clarification_rounds_completed_idx").on(table.completed),
+}));
+
+export const insertClarificationRoundSchema = createInsertSchema(clarificationRounds)
+  .omit({ id: true, createdAt: true });
+export type InsertClarificationRound = z.infer<typeof insertClarificationRoundSchema>;
+export type SelectClarificationRound = typeof clarificationRounds.$inferSelect;
+
+export const validationResults = pgTable("validation_results", {
+  id: serial("id").primaryKey(),
+  tier: varchar("tier", { length: 100 }).notNull(),
+  passed: boolean("passed").notNull(),
+  score: real("score").notNull(),
+  errors: jsonb("errors"),
+  suggestions: text("suggestions").array(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  passedIdx: index("validation_results_passed_idx").on(table.passed),
+  scoreIdx: index("validation_results_score_idx").on(table.score),
+}));
+
+export const insertValidationResultSchema = createInsertSchema(validationResults)
+  .omit({ id: true, createdAt: true });
+export type InsertValidationResult = z.infer<typeof insertValidationResultSchema>;
+export type SelectValidationResult = typeof validationResults.$inferSelect;
+
+export const autoCommits = pgTable("auto_commits", {
+  id: serial("id").primaryKey(),
+  commitHash: varchar("commit_hash", { length: 255 }).notNull().unique(),
+  message: text("message").notNull(),
+  filesChanged: integer("files_changed").notNull(),
+  automated: boolean("automated").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  hashIdx: uniqueIndex("auto_commits_hash_idx").on(table.commitHash),
+  automatedIdx: index("auto_commits_automated_idx").on(table.automated),
+}));
+
+export const insertAutoCommitSchema = createInsertSchema(autoCommits)
+  .omit({ id: true, createdAt: true });
+export type InsertAutoCommit = z.infer<typeof insertAutoCommitSchema>;
+export type SelectAutoCommit = typeof autoCommits.$inferSelect;
+
+export const deploymentChecks = pgTable("deployment_checks", {
+  id: serial("id").primaryKey(),
+  ready: boolean("ready").notNull(),
+  blockers: integer("blockers").notNull(),
+  warnings: integer("warnings").notNull(),
+  score: real("score").notNull(),
+  checks: jsonb("checks").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  readyIdx: index("deployment_checks_ready_idx").on(table.ready),
+  scoreIdx: index("deployment_checks_score_idx").on(table.score),
+}));
+
+export const insertDeploymentCheckSchema = createInsertSchema(deploymentChecks)
+  .omit({ id: true, createdAt: true });
+export type InsertDeploymentCheck = z.infer<typeof insertDeploymentCheckSchema>;
+export type SelectDeploymentCheck = typeof deploymentChecks.$inferSelect;
+
+export const agentCards = pgTable("agent_cards", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  capabilities: text("capabilities").array(),
+  inputSchema: jsonb("input_schema").notNull(),
+  outputSchema: jsonb("output_schema").notNull(),
+  methods: text("methods").array(),
+  a2aEndpoint: varchar("a2a_endpoint", { length: 255 }).notNull(),
+  version: varchar("version", { length: 50 }).default("1.0.0"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  agentIdIdx: uniqueIndex("agent_cards_agent_id_idx").on(table.agentId),
+  capabilitiesIdx: index("agent_cards_capabilities_idx").on(table.capabilities),
+}));
+
+export const insertAgentCardSchema = createInsertSchema(agentCards)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertAgentCard = z.infer<typeof insertAgentCardSchema>;
+export type SelectAgentCard = typeof agentCards.$inferSelect;
+
+export const a2aMessages = pgTable("a2a_messages", {
+  id: serial("id").primaryKey(),
+  messageId: varchar("message_id", { length: 255 }).notNull().unique(),
+  fromAgent: varchar("from_agent", { length: 100 }).notNull(),
+  toAgent: varchar("to_agent", { length: 100 }).notNull(),
+  method: varchar("method", { length: 100 }).notNull(),
+  params: jsonb("params").notNull(),
+  response: jsonb("response"),
+  success: boolean("success").notNull(),
+  duration: integer("duration").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  messageIdIdx: uniqueIndex("a2a_messages_message_id_idx").on(table.messageId),
+  agentsIdx: index("a2a_messages_agents_idx").on(table.fromAgent, table.toAgent),
+  methodIdx: index("a2a_messages_method_idx").on(table.method),
+  successIdx: index("a2a_messages_success_idx").on(table.success),
+  createdAtIdx: index("a2a_messages_created_at_idx").on(table.createdAt),
+}));
+
+export const insertA2AMessageSchema = createInsertSchema(a2aMessages)
+  .omit({ id: true, createdAt: true });
+export type InsertA2AMessage = z.infer<typeof insertA2AMessageSchema>;
+export type SelectA2AMessage = typeof a2aMessages.$inferSelect;
+
+export const workflowExecutions = pgTable("workflow_executions", {
+  id: serial("id").primaryKey(),
+  workflowId: varchar("workflow_id", { length: 255 }).notNull(),
+  type: varchar("type", { length: 50 }).notNull(),
+  steps: jsonb("steps").notNull(),
+  results: jsonb("results").notNull(),
+  success: boolean("success").notNull(),
+  duration: integer("duration").notNull(),
+  startedAt: timestamp("started_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+}, (table) => ({
+  workflowIdIdx: index("workflow_executions_workflow_id_idx").on(table.workflowId),
+  typeIdx: index("workflow_executions_type_idx").on(table.type),
+  successIdx: index("workflow_executions_success_idx").on(table.success),
+  startedAtIdx: index("workflow_executions_started_at_idx").on(table.startedAt),
+}));
+
+export const insertWorkflowExecutionSchema = createInsertSchema(workflowExecutions)
+  .omit({ id: true, startedAt: true });
+export type InsertWorkflowExecution = z.infer<typeof insertWorkflowExecutionSchema>;
+export type SelectWorkflowExecution = typeof workflowExecutions.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
