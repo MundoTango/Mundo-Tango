@@ -12,6 +12,9 @@
 
 import { test, expect } from '@playwright/test';
 
+// Increase timeout to 60 seconds for GROQ API responses
+test.setTimeout(60000);
+
 test('Visual Editor - Complete E2E Flow with Screenshots', async ({ page }) => {
   console.log('🚀 [TEST] Starting comprehensive Visual Editor test...');
   
