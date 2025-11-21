@@ -2159,15 +2159,29 @@ function App() {
   useEffect(() => {
     const checkWelcomeScreen = async () => {
       try {
-        const response = await fetch('/api/the-plan/progress');
+        // Include credentials for authenticated request
+        const response = await fetch('/api/the-plan/progress', {
+          credentials: 'include'
+        });
+        
+        // If unauthorized, user isn't logged in - don't show welcome screen
+        if (response.status === 401) {
+          setShowWelcomeScreen(false);
+          return;
+        }
+        
         const data = await response.json();
         
         // Show welcome screen if user is logged in and hasn't started The Plan
-        if (!data.active && data.active !== undefined) {
+        // data.active will be false when no plan session exists
+        if (data.active === false) {
           setShowWelcomeScreen(true);
+        } else {
+          setShowWelcomeScreen(false);
         }
       } catch (error) {
         console.error('[App] Error checking welcome screen:', error);
+        setShowWelcomeScreen(false);
       }
     };
     
