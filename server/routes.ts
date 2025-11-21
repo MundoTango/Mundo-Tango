@@ -156,6 +156,12 @@ import postsEnhancedRoutes from "./routes/posts-enhanced";
 import testRunnerRoutes from "./routes/test-runner";
 import replitAIBridgeRoutes from "./routes/replit-ai-bridge";
 import autonomousLoopRoutes from "./routes/autonomous-loop";
+
+// MB.MD Protocol Phase 1: PART_10 Completion Routes
+import invitationBatchingRoutes from "./routes/invitation-batching-routes";
+import tangoResumeRoutes from "./routes/tango-resume-routes";
+import roleConfirmationRoutes from "./routes/role-confirmation-routes";
+
 import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
 import { auditLog, getClientIp } from "./middleware/auditLog";
@@ -2389,6 +2395,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/achievements", achievementRoutes);
   app.use("/api/endorsements", reputationRoutes);
   app.use("/api/reputation", reputationRoutes);
+  
+  // MB.MD Protocol Phase 1: PART_10 Completion API Routes
+  console.log("✅ [MB.MD Phase 1] Registering invitation batching routes");
+  app.use("/api/invitations", invitationBatchingRoutes);
+  
+  console.log("✅ [MB.MD Phase 1] Registering tango résumé routes");
+  app.use("/api/resumes", tangoResumeRoutes);
+  
+  console.log("✅ [MB.MD Phase 1] Registering role confirmation routes");
+  app.use("/api/role-confirmations", roleConfirmationRoutes);
+  
   app.use("/api/profile", profileRoutes);
   
   // BATCH 13-14: Profile Media & Analytics Routes

@@ -13161,6 +13161,125 @@ export type InsertWorkflowExecution = z.infer<typeof insertWorkflowExecutionSche
 export type SelectWorkflowExecution = typeof workflowExecutions.$inferSelect;
 
 // ============================================================================
+// PART_10 COMPLETION TABLES (MB.MD Protocol Phase 1)
+// ============================================================================
+
+// Invitation Batches - Smart batching system for friend invitations
+export const invitationBatches = pgTable("invitation_batches", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  batchName: varchar("batch_name", { length: 255 }), // e.g., "Weekly Batch #1"
+  status: varchar("status", { length: 50 }).default("pending").notNull(), // pending, processing, completed, failed
+  totalInvitations: integer("total_invitations").default(0),
+  sentInvitations: integer("sent_invitations").default(0),
+  failedInvitations: integer("failed_invitations").default(0),
+  platform: varchar("platform", { length: 50 }).default("facebook_messenger").notNull(), // facebook_messenger, whatsapp, email
+  messageTemplate: text("message_template"),
+  scheduledFor: timestamp("scheduled_for"),
+  processedAt: timestamp("processed_at"),
+  completedAt: timestamp("completed_at"),
+  metadata: jsonb("metadata"), // Error logs, success metrics, etc.
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("invitation_batches_user_idx").on(table.userId),
+  statusIdx: index("invitation_batches_status_idx").on(table.status),
+  scheduledIdx: index("invitation_batches_scheduled_idx").on(table.scheduledFor),
+  platformIdx: index("invitation_batches_platform_idx").on(table.platform),
+}));
+
+export const insertInvitationBatchSchema = createInsertSchema(invitationBatches)
+  .omit({ id: true, createdAt: true, processedAt: true, completedAt: true });
+export type InsertInvitationBatch = z.infer<typeof insertInvitationBatchSchema>;
+export type SelectInvitationBatch = typeof invitationBatches.$inferSelect;
+
+// Batch Invitations - Individual invitations within a batch
+export const batchInvitations = pgTable("batch_invitations", {
+  id: serial("id").primaryKey(),
+  batchId: integer("batch_id").notNull().references(() => invitationBatches.id, { onDelete: "cascade" }),
+  friendName: varchar("friend_name", { length: 255 }).notNull(),
+  friendId: varchar("friend_id", { length: 255 }), // Platform-specific friend ID
+  platform: varchar("platform", { length: 50 }).notNull(),
+  messageContent: text("message_content"),
+  status: varchar("status", { length: 50 }).default("pending").notNull(), // pending, sent, failed, bounced
+  sentAt: timestamp("sent_at"),
+  errorMessage: text("error_message"),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  batchIdx: index("batch_invitations_batch_idx").on(table.batchId),
+  statusIdx: index("batch_invitations_status_idx").on(table.status),
+  platformIdx: index("batch_invitations_platform_idx").on(table.platform),
+}));
+
+export const insertBatchInvitationSchema = createInsertSchema(batchInvitations)
+  .omit({ id: true, createdAt: true, sentAt: true });
+export type InsertBatchInvitation = z.infer<typeof insertBatchInvitationSchema>;
+export type SelectBatchInvitation = typeof batchInvitations.$inferSelect;
+
+// Tango Resumes - Professional profiles for tango community
+export const tangoResumes = pgTable("tango_resumes", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  headline: varchar("headline", { length: 255 }), // "International Tango Teacher & DJ"
+  bio: text("bio"), // Extended professional bio
+  yearsExperience: integer("years_experience"),
+  specialties: text("specialties").array(), // ['Milonguero Style', 'Tango Nuevo', 'DJ']
+  tangoRoles: text("tango_roles").array(), // ['teacher', 'dj', 'organizer', 'performer']
+  languages: text("languages").array(), // ['English', 'Spanish', 'Portuguese']
+  certifications: jsonb("certifications"), // [{title, institution, year}]
+  achievements: jsonb("achievements"), // [{title, description, year}]
+  teachingLocations: text("teaching_locations").array(), // Cities where they teach
+  availability: varchar("availability", { length: 50 }), // 'available', 'limited', 'unavailable'
+  hourlyRate: integer("hourly_rate"), // In cents (e.g., $50 = 5000)
+  currency: varchar("currency", { length: 10 }).default("USD"),
+  website: varchar("website", { length: 255 }),
+  youtubeChannel: varchar("youtube_channel", { length: 255 }),
+  instagramHandle: varchar("instagram_handle", { length: 100 }),
+  professionalScore: integer("professional_score").default(0), // Calculated reputation score
+  endorsementCount: integer("endorsement_count").default(0),
+  reviewCount: integer("review_count").default(0),
+  avgRating: real("avg_rating"),
+  isVerified: boolean("is_verified").default(false), // Verified by platform
+  isPremium: boolean("is_premium").default(false), // Premium profile
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: uniqueIndex("tango_resumes_user_idx").on(table.userId),
+  rolesIdx: index("tango_resumes_roles_idx").on(table.tangoRoles),
+  availabilityIdx: index("tango_resumes_availability_idx").on(table.availability),
+  scoreIdx: index("tango_resumes_score_idx").on(table.professionalScore),
+  verifiedIdx: index("tango_resumes_verified_idx").on(table.isVerified),
+}));
+
+export const insertTangoResumeSchema = createInsertSchema(tangoResumes)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertTangoResume = z.infer<typeof insertTangoResumeSchema>;
+export type SelectTangoResume = typeof tangoResumes.$inferSelect;
+
+// Role Confirmations - Peer-to-peer role verification
+export const roleConfirmations = pgTable("role_confirmations", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }), // User being confirmed
+  confirmerId: integer("confirmer_id").notNull().references(() => users.id, { onDelete: "cascade" }), // User confirming
+  tangoRole: varchar("tango_role", { length: 50 }).notNull(), // 'teacher', 'dj', 'organizer', 'performer'
+  relationship: varchar("relationship", { length: 100 }), // 'student', 'colleague', 'event_attendee', 'co-organizer'
+  comment: text("comment"), // Optional verification comment
+  rating: integer("rating"), // 1-5 stars (optional)
+  isVerified: boolean("is_verified").default(false), // Verified by platform
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("role_confirmations_user_idx").on(table.userId),
+  confirmerIdx: index("role_confirmations_confirmer_idx").on(table.confirmerId),
+  roleIdx: index("role_confirmations_role_idx").on(table.tangoRole),
+  uniqueConfirmation: unique().on(table.userId, table.confirmerId, table.tangoRole),
+}));
+
+export const insertRoleConfirmationSchema = createInsertSchema(roleConfirmations)
+  .omit({ id: true, createdAt: true });
+export type InsertRoleConfirmation = z.infer<typeof insertRoleConfirmationSchema>;
+export type SelectRoleConfirmation = typeof roleConfirmations.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
