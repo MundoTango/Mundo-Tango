@@ -7,7 +7,12 @@ const router = Router();
 // Get current plan progress for the logged-in user
 router.get('/progress', async (req, res) => {
   try {
-    const userId = (req as any).user?.id || 0; // Default to 0 for anonymous/first user
+    const userId = (req as any).user?.id;
+    
+    // If no user logged in, return inactive state (welcome screen won't show)
+    if (!userId) {
+      return res.json({ active: false });
+    }
     
     const progress = await storage.getPlanProgress(userId);
     
@@ -34,7 +39,11 @@ router.get('/progress', async (req, res) => {
 // Start The Plan validation tour
 router.post('/start', async (req, res) => {
   try {
-    const userId = (req as any).user?.id || 0;
+    const userId = (req as any).user?.id;
+    
+    if (!userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
     
     // Initialize The Plan progress
     const progress = await storage.createOrUpdatePlanProgress(userId, {
@@ -63,7 +72,11 @@ router.post('/start', async (req, res) => {
 // Skip The Plan and go straight to dashboard
 router.post('/skip', async (req, res) => {
   try {
-    const userId = (req as any).user?.id || 0;
+    const userId = (req as any).user?.id;
+    
+    if (!userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
     
     // Mark as inactive
     await storage.createOrUpdatePlanProgress(userId, {
@@ -83,7 +96,11 @@ router.post('/skip', async (req, res) => {
 // Update progress (mark page as tested)
 router.post('/update', async (req, res) => {
   try {
-    const userId = (req as any).user?.id || 0;
+    const userId = (req as any).user?.id;
+    
+    if (!userId) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
     
     const schema = z.object({
       pageIndex: z.number(),

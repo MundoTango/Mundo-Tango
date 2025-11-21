@@ -57,6 +57,14 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     return next();
   }
   
+  // Skip CSRF for The Plan endpoints (Scott's first-time login tour)
+  const thePlanEndpoints = [
+    "/api/the-plan/"
+  ];
+  if (thePlanEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
   // Skip CSRF for A2A protocol endpoints (machine-to-machine communication)
   const a2aEndpoints = [
     "/api/a2a/"
@@ -136,6 +144,14 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     "/api/mr-blue/agents"
   ];
   if (publicMrBlueEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
+  // Skip CSRF for The Plan endpoints (Scott's first-time login tour)
+  const thePlanEndpoints = [
+    "/api/the-plan/"
+  ];
+  if (thePlanEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
     return next();
   }
   
