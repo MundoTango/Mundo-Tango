@@ -2159,6 +2159,15 @@ function App() {
   useEffect(() => {
     const checkWelcomeScreen = async () => {
       try {
+        // Don't show welcome screen on public/auth routes
+        const publicRoutes = ['/', '/login', '/register', '/auth/google', '/auth/facebook', '/reset-password', '/forgot-password'];
+        const isPublicRoute = publicRoutes.some(route => location === route || location.startsWith('/auth/'));
+        
+        if (isPublicRoute) {
+          setShowWelcomeScreen(false);
+          return;
+        }
+        
         // Include credentials for authenticated request
         const response = await fetch('/api/the-plan/progress', {
           credentials: 'include'
