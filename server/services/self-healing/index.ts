@@ -8,6 +8,7 @@ export { PageAuditService } from './PageAuditService';
 export { SelfHealingService } from './SelfHealingService';
 export { UXValidationService } from './UXValidationService';
 export { PredictivePreCheckService } from './PredictivePreCheckService';
+export { PreFlightCheckService } from './PreFlightCheckService';
 export { AgentOrchestrationService } from './AgentOrchestrationService';
 
 export type { AuditIssue, AuditResults } from './PageAuditService';
