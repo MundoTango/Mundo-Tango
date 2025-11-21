@@ -326,7 +326,18 @@ export class ProactiveErrorDetector {
         headers,
         credentials: 'include', // Include cookies for CSRF validation
         body: JSON.stringify({
-          errors: batch,
+          errors: batch.map(error => ({
+            errorType: error.type,
+            errorMessage: error.message, // Map "message" to "errorMessage" for backend
+            errorStack: error.stack,
+            metadata: {
+              url: error.url,
+              lineNumber: error.lineNumber,
+              columnNumber: error.columnNumber,
+              context: error.context,
+              timestamp: error.timestamp,
+            },
+          })),
           timestamp: Date.now(),
           userAgent: navigator.userAgent,
           url: window.location.href,
