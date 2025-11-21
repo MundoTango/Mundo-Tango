@@ -11,6 +11,7 @@ import { db } from '../../../shared/db';
 import { pageHealingLogs, type InsertPageHealingLog } from '../../../shared/schema';
 import type { AuditResults, AuditIssue } from './PageAuditService';
 import { PageAuditService } from './PageAuditService';
+import { PreFlightCheckService } from './PreFlightCheckService';
 
 interface FixResult {
   agentId: string;
@@ -141,13 +142,34 @@ export class SelfHealingService {
    * Apply a single fix
    */
   private static async applyFix(agentId: string, issue: AuditIssue): Promise<any> {
-    // Placeholder - will be implemented with actual fix logic
+    // MB.MD V2.0: Run pre-flight checks before applying fix
     console.log(`🔧 Agent ${agentId} fixing ${issue.category} issue: ${issue.description}`);
+    
+    // Run pre-flight checks
+    const preFlightResult = await PreFlightCheckService.runPreFlightChecks(
+      issue.pageId || 'unknown',
+      issue.suggestedFix
+    );
+
+    if (!preFlightResult.allChecksPassed) {
+      console.log(`❌ Pre-flight checks failed for ${agentId} fix:`, preFlightResult.blockers);
+      // Don't apply fix if pre-flight checks fail
+      return {
+        issue,
+        fix: null,
+        appliedAt: new Date(),
+        preFlightFailed: true,
+        blockers: preFlightResult.blockers
+      };
+    }
+
+    console.log(`✅ Pre-flight checks passed for ${agentId} fix`);
 
     return {
       issue,
       fix: issue.suggestedFix,
       appliedAt: new Date(),
+      preFlightCheckId: preFlightResult.checkId,
       agentId
     };
   }

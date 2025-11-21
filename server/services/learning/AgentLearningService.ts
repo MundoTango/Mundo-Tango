@@ -31,6 +31,7 @@ import type {
 } from '@shared/schema';
 import { PatternRecognition } from './PatternRecognition';
 import { DPOTrainer } from '../ai/DPOTrainer';
+import { GlobalKnowledgeBase } from './GlobalKnowledgeBase';
 
 // ============================================================================
 // TYPES
@@ -127,6 +128,29 @@ export class AgentLearningService {
 
       console.log(`[AgentLearning] ✅ Recorded execution ID: ${inserted.id}`);
 
+      // MB.MD V2.0: Save lesson to Global Knowledge Base if successful
+      if (execution.outcome === 'success' && execution.metadata?.issue && execution.result) {
+        try {
+          await GlobalKnowledgeBase.saveLesson({
+            agentId: execution.agentId,
+            context: execution.task,
+            issue: execution.metadata.issue,
+            solution: typeof execution.result === 'string' ? execution.result : JSON.stringify(execution.result),
+            confidence: execution.confidence || 0.8,
+            appliesTo: this.getRelatedAgents(execution.agentId),
+            metadata: {
+              executionId: inserted.id,
+              quality: execution.quality,
+              efficiency: execution.efficiency,
+              durationMs: execution.durationMs
+            }
+          });
+          console.log(`[AgentLearning] 📚 Lesson saved to Global Knowledge Base`);
+        } catch (error) {
+          console.error('[AgentLearning] Failed to save lesson to Knowledge Base:', error);
+        }
+      }
+
       // Trigger learning check
       await this.checkAndTriggerLearning(execution.agentId);
 
@@ -154,6 +178,30 @@ export class AgentLearningService {
       .limit(1);
 
     return currentVersion?.version || '1.0.0';
+  }
+
+  /**
+   * Get related agents that can benefit from this agent's lessons
+   * MB.MD V2.0: Used for Global Knowledge Base sharing
+   */
+  private static getRelatedAgents(agentId: string): string[] {
+    // Map agent to related agent types that can use its lessons
+    const agentRelationships: Record<string, string[]> = {
+      'page-agent-visual-editor': ['page-agent-*', 'feature-agent-*', 'component-agent-*'],
+      'page-agent-mr-blue': ['page-agent-*', 'feature-agent-*'],
+      'feature-agent-auth': ['page-agent-*', 'feature-agent-*'],
+      'component-agent-modal': ['component-agent-*', 'page-agent-*'],
+      'algorithm-agent-optimization': ['algorithm-agent-*', 'feature-agent-*'],
+    };
+
+    // If specific mapping exists, use it
+    if (agentRelationships[agentId]) {
+      return agentRelationships[agentId];
+    }
+
+    // Otherwise, infer from agent ID pattern
+    const [category] = agentId.split('-');
+    return [`${category}-agent-*`, 'page-agent-*']; // Share with same category + all page agents
   }
 
   /**
