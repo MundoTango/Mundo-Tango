@@ -12472,7 +12472,7 @@ export const planSessions = pgTable("plan_sessions", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
   active: boolean("active").default(false),
-  totalPages: integer("total_pages").notNull().default(47),
+  totalPages: integer("total_pages").notNull().default(50),
   pagesCompleted: integer("pages_completed").default(0),
   currentPageIndex: integer("current_page_index").default(0),
   currentPage: text("current_page"), // JSON string

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { storage } from '../storage';
 import { z } from 'zod';
+import { THE_PLAN_PAGES, getTotalPages, getPageById } from '@shared/thePlanPages';
 
 const router = Router();
 
@@ -45,19 +46,21 @@ router.post('/start', async (req, res) => {
       return res.status(401).json({ error: 'Authentication required' });
     }
     
-    // Initialize The Plan progress
+    // Get first page from THE_PLAN_PAGES
+    const firstPage = THE_PLAN_PAGES[0];
+    
+    // Initialize The Plan progress with 50 pages from PART_10
     const progress = await storage.createOrUpdatePlanProgress(userId, {
       active: true,
-      totalPages: 47, // PART 10 spec: 47 pages to validate
+      totalPages: getTotalPages(), // 50 pages from PART_10
       pagesCompleted: 0,
       currentPageIndex: 0,
       currentPage: JSON.stringify({
-        name: 'Dashboard / Home Feed',
-        checklist: [
-          { label: 'Feed loads correctly', status: 'pending' },
-          { label: 'Post creation works', status: 'pending' },
-          { label: 'Notifications visible', status: 'pending' }
-        ]
+        id: firstPage.id,
+        name: firstPage.name,
+        phase: firstPage.phase,
+        route: firstPage.route,
+        checklist: firstPage.checklist
       }),
       startedAt: new Date()
     });
@@ -78,10 +81,10 @@ router.post('/skip', async (req, res) => {
       return res.status(401).json({ error: 'Authentication required' });
     }
     
-    // Mark as inactive
+    // Mark as inactive (50 pages from PART_10)
     await storage.createOrUpdatePlanProgress(userId, {
       active: false,
-      totalPages: 47,
+      totalPages: getTotalPages(),
       pagesCompleted: 0,
       currentPageIndex: 0
     });
