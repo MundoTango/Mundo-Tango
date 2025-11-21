@@ -15,7 +15,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import VoiceFirstService from '../services/mrBlue/VoiceFirstService';
-import { requireAuth } from '../middleware/auth';
+import { authenticateToken } from '../middleware/auth';
 
 const router = Router();
 
@@ -39,7 +39,7 @@ const upload = multer({
  * POST /api/voice/transcribe
  * General-purpose voice transcription with auto-editing
  */
-router.post('/transcribe', requireAuth, upload.single('audio'), async (req, res) => {
+router.post('/transcribe', authenticateToken, upload.single('audio'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No audio file provided' });
@@ -72,7 +72,7 @@ router.post('/transcribe', requireAuth, upload.single('audio'), async (req, res)
  * POST /api/voice/post
  * Create a post from voice input
  */
-router.post('/post', requireAuth, upload.single('audio'), async (req, res) => {
+router.post('/post', authenticateToken, upload.single('audio'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No audio file provided' });
@@ -107,7 +107,7 @@ router.post('/post', requireAuth, upload.single('audio'), async (req, res) => {
  * POST /api/voice/event
  * Create an event from natural language voice input
  */
-router.post('/event', requireAuth, upload.single('audio'), async (req, res) => {
+router.post('/event', authenticateToken, upload.single('audio'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No audio file provided' });
@@ -139,7 +139,7 @@ router.post('/event', requireAuth, upload.single('audio'), async (req, res) => {
  * POST /api/voice/profile
  * Update profile bio from voice
  */
-router.post('/profile', requireAuth, upload.single('audio'), async (req, res) => {
+router.post('/profile', authenticateToken, upload.single('audio'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No audio file provided' });
@@ -174,7 +174,7 @@ router.post('/profile', requireAuth, upload.single('audio'), async (req, res) =>
  * POST /api/voice/search
  * Voice-powered search
  */
-router.post('/search', requireAuth, upload.single('audio'), async (req, res) => {
+router.post('/search', authenticateToken, upload.single('audio'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No audio file provided' });
@@ -208,7 +208,7 @@ router.post('/search', requireAuth, upload.single('audio'), async (req, res) => 
  * POST /api/voice/chat
  * Voice input for Mr. Blue chat
  */
-router.post('/chat', requireAuth, upload.single('audio'), async (req, res) => {
+router.post('/chat', authenticateToken, upload.single('audio'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No audio file provided' });
