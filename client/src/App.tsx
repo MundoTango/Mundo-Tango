@@ -16,6 +16,8 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { MrBlueWidget } from "./components/MrBlueWidget";
 import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
 import { LoadingFallback } from "./components/LoadingFallback";
+import { ScottWelcomeScreen } from "./components/mrBlue/ScottWelcomeScreen";
+import { ThePlanProgressBar } from "./components/ThePlanProgressBar";
 import { initErrorDetection, cleanupErrorDetection } from "./lib/proactiveErrorDetection";
 import { initHttpInterceptor, cleanupHttpInterceptor } from "./lib/httpInterceptor";
 import { initComponentHealthMonitor, cleanupComponentHealthMonitor } from "./lib/componentHealthMonitor";
@@ -2101,6 +2103,7 @@ function Router() {
 
 function App() {
   const [isVisualEditorOpen, setIsVisualEditorOpen] = useState(false);
+  const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
   const [location] = useLocation();
 
   // Initialize Proactive Error Detection + HTTP Interceptor + Component Health Monitor + Navigation Interceptor
@@ -2152,6 +2155,26 @@ function App() {
 
   const isOnVisualEditorPage = location === '/admin/visual-editor';
 
+  // Check if Scott should see welcome screen on first login
+  useEffect(() => {
+    const checkWelcomeScreen = async () => {
+      try {
+        const response = await fetch('/api/the-plan/progress');
+        const data = await response.json();
+        
+        // Show welcome screen if user is logged in and hasn't started The Plan
+        if (!data.active && data.active !== undefined) {
+          setShowWelcomeScreen(true);
+        }
+      } catch (error) {
+        console.error('[App] Error checking welcome screen:', error);
+      }
+    };
+    
+    // Check on mount and when location changes
+    checkWelcomeScreen();
+  }, [location]);
+
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
@@ -2161,6 +2184,8 @@ function App() {
               <MrBlueProvider>
                 <TooltipProvider>
                   <Toaster />
+                  {showWelcomeScreen && <ScottWelcomeScreen />}
+                  <ThePlanProgressBar />
                   <Suspense fallback={<LoadingFallback />}>
                     <Router />
                   </Suspense>

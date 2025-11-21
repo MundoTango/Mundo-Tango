@@ -12467,6 +12467,29 @@ export const insertPlanProgressSchema = createInsertSchema(planProgress)
 export type InsertPlanProgress = z.infer<typeof insertPlanProgressSchema>;
 export type SelectPlanProgress = typeof planProgress.$inferSelect;
 
+// Overall plan session tracking (separate from per-page tracking)
+export const planSessions = pgTable("plan_sessions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  active: boolean("active").default(false),
+  totalPages: integer("total_pages").notNull().default(47),
+  pagesCompleted: integer("pages_completed").default(0),
+  currentPageIndex: integer("current_page_index").default(0),
+  currentPage: text("current_page"), // JSON string
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+}, (table) => ({
+  userIdx: index("plan_sessions_user_idx").on(table.userId),
+  activeIdx: index("plan_sessions_active_idx").on(table.active),
+}));
+
+export const insertPlanSessionSchema = createInsertSchema(planSessions)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertPlanSession = z.infer<typeof insertPlanSessionSchema>;
+export type SelectPlanSession = typeof planSessions.$inferSelect;
+
 // ============================================================================
 // SUBSCRIPTION & BILLING (PAGES 25-28)
 // ============================================================================

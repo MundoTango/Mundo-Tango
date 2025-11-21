@@ -58,6 +58,7 @@ import rbacRoutes from "./routes/rbac-routes";
 import featureFlagsRoutes from "./routes/feature-flags-routes";
 import pricingRoutes from "./routes/pricing-routes";
 import planRoutes from "./routes/plan-routes";
+import thePlanRoutes from "./routes/thePlanRoutes";
 import syncRoutes from "./routes/sync-routes";
 import selfHealingRoutes from "./routes/self-healing-routes";
 import agentHealthRoutes from "./routes/agent-health-routes";
@@ -444,6 +445,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Phase 3 Deployment Blocker Routes
   app.use("/api/plan", planRoutes);
+  app.use("/api/the-plan", thePlanRoutes);
   app.use("/api/sync", syncRoutes);
   app.use("/api/admin/self-healing", selfHealingRoutes);
   

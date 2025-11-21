@@ -72,6 +72,8 @@ import {
   mrBlueConversations,
   mrBlueMessages,
   errorPatterns,
+  userPreferences,
+  planSessions,
   type SelectUser,
   type InsertUser,
   type SelectRefreshToken,
@@ -7706,6 +7708,41 @@ export class DbStorage implements IStorage {
       .where(eq(workflowPatterns.userId, userId))
       .orderBy(desc(workflowPatterns.confidence));
     return patterns;
+  }
+
+  // ==================== PLAN SESSIONS (PART 10) ====================
+
+  async getPlanProgress(userId: number): Promise<any | undefined> {
+    const [session] = await db
+      .select()
+      .from(planSessions)
+      .where(eq(planSessions.userId, userId))
+      .limit(1);
+    return session;
+  }
+
+  async createOrUpdatePlanProgress(userId: number, data: any): Promise<any> {
+    const existing = await this.getPlanProgress(userId);
+    
+    if (existing) {
+      const [updated] = await db
+        .update(planSessions)
+        .set({ ...data, updatedAt: new Date() })
+        .where(eq(planSessions.userId, userId))
+        .returning();
+      return updated;
+    }
+    
+    const [created] = await db
+      .insert(planSessions)
+      .values({
+        userId,
+        ...data,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      })
+      .returning();
+    return created;
   }
 }
 
