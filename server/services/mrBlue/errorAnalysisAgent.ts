@@ -172,9 +172,16 @@ Respond with ONLY one word: critical, major, or minor`,
     recommendations: string[];
   }> {
     try {
-      const bugSummaries = bugs.map(b => 
-        `- ${b.title}: ${b.description.substring(0, 100)}...`
-      ).join('\n');
+      // MB.MD: Defensive coding - handle undefined/null values
+      const bugSummaries = bugs
+        .filter(b => b && b.title) // Remove malformed bugs
+        .map(b => {
+          const title = b.title || 'Untitled Bug';
+          const description = b.description || 'No description';
+          const truncated = description.substring(0, Math.min(100, description.length));
+          return `- ${title}: ${truncated}...`;
+        })
+        .join('\n');
 
       const completion = await openai.chat.completions.create({
         model: "gpt-4o-mini",
