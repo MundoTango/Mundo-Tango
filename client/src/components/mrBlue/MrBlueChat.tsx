@@ -465,6 +465,8 @@ Provide natural, conversational assistance based on where the user is in the pla
             userIntent,
             domSnapshot, // Send DOM snapshot
           },
+          conversationId: currentConversationId, // ✅ FIX: Include conversation ID for persistence
+          userId: 1, // ✅ FIX: Include user ID (TODO: Get from auth context)
           voiceEnabled: elevenLabsVoiceEnabled,
           selectedVoiceId: selectedElevenLabsVoice
         })
