@@ -11,6 +11,7 @@ import { eq, and, desc, sql, isNull } from "drizzle-orm";
 import { authenticateToken, type AuthRequest } from "../middleware/auth";
 import { getConversationContext, saveMessageToHistory } from "../services/chat-context";
 import { CodeGenerator } from "../services/mrBlue/CodeGenerator";
+import { storage } from "../storage";
 import { getMrBlueCapabilities, getTierName } from '../utils/mrBlueCapabilities';
 import { contextService } from "../services/mrBlue/ContextService";
 import { memoryService } from "../services/mrBlue/MemoryService";
@@ -230,6 +231,24 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
         console.log('[Mr. Blue] ❓ Handling as QUESTION with page context');
         const questionResponse = await conversationOrchestrator.handleQuestion(message, enriched, parsedContext);
         
+        // MB.MD FIX: Save question messages to conversation history
+        if (userId) {
+          try {
+            let activeConversationId = conversationId;
+            if (!activeConversationId) {
+              const conversation = await storage.getOrCreateActiveMrBlueConversation(userId);
+              activeConversationId = conversation.id;
+              console.log(`[MrBlue] Created/got active conversation for question: ${activeConversationId}`);
+            }
+            
+            await saveMessageToHistory(activeConversationId, userId, 'user', message);
+            await saveMessageToHistory(activeConversationId, userId, 'assistant', questionResponse.response);
+            console.log(`[MrBlue] ✅ Saved question messages to conversation ${activeConversationId}`);
+          } catch (error) {
+            console.error('[MrBlue] Failed to save question messages:', error);
+          }
+        }
+        
         return res.json({
           success: questionResponse.success,
           mode: 'question',
@@ -260,6 +279,25 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
           parsedContext,
           userId || 0
         );
+        
+        // MB.MD FIX: Save action messages to conversation history
+        if (userId) {
+          try {
+            let activeConversationId = conversationId;
+            if (!activeConversationId) {
+              const conversation = await storage.getOrCreateActiveMrBlueConversation(userId);
+              activeConversationId = conversation.id;
+              console.log(`[MrBlue] Created/got active conversation for action: ${activeConversationId}`);
+            }
+            
+            const response = actionResponse.vibecodingResult?.interpretation || 'Action processed';
+            await saveMessageToHistory(activeConversationId, userId, 'user', message);
+            await saveMessageToHistory(activeConversationId, userId, 'assistant', response);
+            console.log(`[MrBlue] ✅ Saved action messages to conversation ${activeConversationId}`);
+          } catch (error) {
+            console.error('[MrBlue] Failed to save action messages:', error);
+          }
+        }
         
         return res.json({
           success: actionResponse.success,
