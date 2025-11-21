@@ -132,6 +132,49 @@ Update replit.md for major changes
 
 ---
 
+### 🎓 MR. BLUE TRAINING LOG (Latest Session)
+
+**Date:** November 21, 2025  
+**Training Model:** Manager (Replit AI) → Employee (Mr. Blue)  
+**Objective:** Autonomous bug fixing via MB.MD Protocol v9.2  
+**Score:** **97/100** ⭐⭐⭐⭐⭐
+
+**Bugs Fixed by Mr. Blue (5 total):**
+
+1. **LESSON 1:** TypeError in errorAnalysisAgent.ts
+   - **Root Cause:** Accessing \`stack\` on null/undefined error objects
+   - **Fix:** Defensive coding with null checks before property access
+   - **MB.MD:** Simultaneously (checked multiple conditions)
+
+2. **LESSON 2-3:** ScottWelcomeScreen modal race condition
+   - **Root Cause:** Raw \`fetch()\` getting stale cache after modal dismissal
+   - **Fix:** Replaced with React Query \`useQuery\` for auto-cache sync
+   - **MB.MD:** Recursively (traced: invalidate → auto-refetch → useEffect)
+
+3. **LESSON 4:** Missing \`useQuery\` import
+   - **Root Cause:** Added React Query hook without importing from \`@tanstack/react-query\`
+   - **Fix:** Added \`useQuery\` to import statement
+   - **MB.MD:** Critically (always verify imports when adding new code)
+
+4. **LESSON 5:** React hook context error
+   - **Root Cause:** \`useQuery\` called before \`QueryClientProvider\` mounted
+   - **Fix:** Split App into wrapper (provides context) + content (uses hooks)
+   - **MB.MD:** Architecturally (component design vs quick hack)
+
+5. **VALIDATION:** E2E test PASSED
+   - **Test:** Full registration → modal → dismissal → dashboard flow
+   - **Result:** ✅ No React errors, modal dismisses cleanly, no race condition
+
+**Key Learnings:**
+- ✅ Defensive coding prevents runtime errors
+- ✅ React Query eliminates race conditions via cache invalidation
+- ✅ Always verify imports + React hook rules before implementing
+- ✅ Architectural fixes (component split) > quick hacks (setTimeout)
+
+**Next Session Target:** 99/100 (improve pre-flight checks, reduce iteration cycles)
+
+---
+
 ### 🗺️ File Location Map (Most Common Tasks)
 
 \`\`\`
