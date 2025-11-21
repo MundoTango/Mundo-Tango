@@ -12,6 +12,7 @@ import { PageAuditService } from './PageAuditService';
 import { SelfHealingService } from './SelfHealingService';
 import { UXValidationService } from './UXValidationService';
 import { PredictivePreCheckService } from './PredictivePreCheckService';
+import { PreFlightCheckService } from './PreFlightCheckService';
 
 export interface PageLoadResult {
   pageId: string;
