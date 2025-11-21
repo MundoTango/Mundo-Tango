@@ -3,10 +3,10 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Sparkles } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
-import { useNavigate } from 'wouter';
+import { useLocation } from 'wouter';
 
 export function ScottWelcomeScreen() {
-  const [, navigate] = useNavigate();
+  const [, setLocation] = useLocation();
   
   const startPlanMutation = useMutation({
     mutationFn: async () => {
@@ -15,7 +15,7 @@ export function ScottWelcomeScreen() {
       });
     },
     onSuccess: () => {
-      navigate('/dashboard');
+      setLocation('/dashboard');
     }
   });
   
@@ -26,7 +26,7 @@ export function ScottWelcomeScreen() {
       });
     },
     onSuccess: () => {
-      navigate('/dashboard');
+      setLocation('/dashboard');
     }
   });
   
