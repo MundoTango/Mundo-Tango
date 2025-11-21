@@ -10,9 +10,7 @@ export function ScottWelcomeScreen() {
   
   const startPlanMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('/api/the-plan/start', {
-        method: 'POST'
-      });
+      return await apiRequest('POST', '/api/the-plan/start');
     },
     onSuccess: () => {
       setLocation('/dashboard');
@@ -21,9 +19,7 @@ export function ScottWelcomeScreen() {
   
   const skipToDashboardMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('/api/the-plan/skip', {
-        method: 'POST'
-      });
+      return await apiRequest('POST', '/api/the-plan/skip');
     },
     onSuccess: () => {
       setLocation('/dashboard');
