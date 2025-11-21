@@ -11,8 +11,30 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 - **NEW v8.0**: AI Agent Learning (DPO, Curriculum, GEPA, LIMI)
 - **NEW v8.0**: 5 Development-First Principles (Security, Error, Performance, Mobile, Accessibility)
 - **NEW v9.0**: **Agent SME Training System** - Agents become Subject Matter Experts by learning ALL documentation, code, and industry standards BEFORE implementation
+- **NEW v9.2**: **Self-Healing First Protocol** - MANDATORY: Before ANY manual debugging, check and use autonomous self-healing infrastructure (see `docs/MB_MD_SELF_HEALING_PROTOCOL.md`)
 
 **Never deviate from the handoff plan** - Follow the exact phase sequence
+
+## Bug Detection & Self-Healing Protocol (MANDATORY)
+
+**CRITICAL:** Before any manual debugging, verify and use self-healing infrastructure:
+
+1. ✅ Check if `/api/self-healing/orchestrate` endpoint exists
+2. ✅ If exists → Trigger autonomous self-healing FIRST using `POST /api/self-healing/orchestrate {"route": "/page-path"}`
+3. ⏱️ Wait for results (2-5 minutes) - system runs 6 parallel audits
+4. 📊 Review auto-generated fixes with confidence scores:
+   - >95%: Already auto-applied
+   - 80-95%: Staged for approval
+   - <80%: Manual review needed
+5. 🔧 Only manually debug if self-healing failed or unavailable
+
+**Reference:** `docs/MB_MD_SELF_HEALING_PROTOCOL.md`
+
+**Infrastructure Status:** ✅ PRODUCTION-READY
+- Page Audit System (6 specialized agents, <200ms)
+- Auto-Fix Engine (VibeCoding + GROQ Llama-3.3-70b)
+- Agent Orchestration (1,218 specialized agents)
+- Error Pattern Detection (Proactive monitoring)
 
 ## System Architecture
 The project uses a modular, agent-driven development approach based on an Expert Specialized Agents (ESA) framework, emphasizing a self-sovereign architecture.
