@@ -543,11 +543,19 @@ Help users navigate the platform, answer questions, and provide personalized rec
       const response = completion.choices[0]?.message?.content || 
         "I'm sorry, I couldn't process that request.";
 
-      // Save messages to history if conversationId and userId provided
-      if (conversationId && userId) {
+      // Save messages to history - get or create conversation if needed
+      if (userId) {
         try {
-          await saveMessageToHistory(conversationId, userId, 'user', enhancedMessage);
-          await saveMessageToHistory(conversationId, userId, 'assistant', response);
+          // MB.MD FIX: Get or create active conversation if conversationId not provided
+          let activeConversationId = conversationId;
+          if (!activeConversationId) {
+            const conversation = await storage.getOrCreateActiveMrBlueConversation(userId);
+            activeConversationId = conversation.id;
+            console.log(`[MrBlue] Created/got active conversation: ${activeConversationId}`);
+          }
+          
+          await saveMessageToHistory(activeConversationId, userId, 'user', enhancedMessage);
+          await saveMessageToHistory(activeConversationId, userId, 'assistant', response);
           
           // SYSTEM 8: Store conversation in memory
           if (process.env.OPENAI_API_KEY) {
@@ -560,14 +568,14 @@ Help users navigate the platform, answer questions, and provide personalized rec
                 {
                   importance: 5,
                   metadata: {
-                    conversationId,
+                    conversationId: activeConversationId,
                     timestamp: Date.now()
                   }
                 }
               );
               
               // Get conversation history to check if we should extract preferences or summarize
-              const conversationMessages = await getConversationContext(conversationId, 100);
+              const conversationMessages = await getConversationContext(activeConversationId, 100);
               
               // Extract preferences every 10 messages
               if (conversationMessages.length > 0 && conversationMessages.length % 10 === 0) {
@@ -582,7 +590,7 @@ Help users navigate the platform, answer questions, and provide personalized rec
               
               // Summarize conversation after 50 messages
               if (conversationMessages.length >= 50 && conversationMessages.length % 50 === 0) {
-                memoryService.summarizeConversation(userId, conversationMessages, conversationId.toString())
+                memoryService.summarizeConversation(userId, conversationMessages, activeConversationId.toString())
                   .then(result => {
                     if (result.success) {
                       console.log('[Mr. Blue] 📝 Conversation summarized');
