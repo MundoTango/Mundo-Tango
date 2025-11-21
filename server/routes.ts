@@ -458,7 +458,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/the-plan", optionalAuth, thePlanRoutes);
   
   app.use("/api/sync", syncRoutes);
-  app.use("/api/admin/self-healing", selfHealingRoutes);
+  
+  // Self-Healing Routes (public + admin)
+  app.use("/api/self-healing", selfHealingRoutes);       // Public: /activate endpoint
+  app.use("/api/admin/self-healing", selfHealingRoutes); // Admin: dashboard, scan, etc.
   
   // Phase 4 Deployment Blocker Routes
   app.use("/api/agents", agentHealthRoutes);
