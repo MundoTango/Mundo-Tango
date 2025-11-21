@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Sparkles } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useLocation } from 'wouter';
 
 export function ScottWelcomeScreen() {
@@ -12,8 +12,9 @@ export function ScottWelcomeScreen() {
     mutationFn: async () => {
       return await apiRequest('POST', '/api/the-plan/start');
     },
-    onSuccess: () => {
-      setLocation('/dashboard');
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['/api/the-plan/progress'] });
+      setTimeout(() => setLocation('/dashboard'), 100);
     }
   });
   
@@ -21,8 +22,9 @@ export function ScottWelcomeScreen() {
     mutationFn: async () => {
       return await apiRequest('POST', '/api/the-plan/skip');
     },
-    onSuccess: () => {
-      setLocation('/dashboard');
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['/api/the-plan/progress'] });
+      setTimeout(() => setLocation('/dashboard'), 100);
     }
   });
   
