@@ -1,1 +1,0 @@
-{"success":true,"analyzedCount":8,"commonalities":[],"suggestions":[{"errorId":33,"suggestion":"Error generating fix suggestion","confidence":0},{"errorId":34,"suggestion":"Error generating fix suggestion","confidence":0}],"autoFixes":[],"escalations":[{"errorId":33,"reason":"Low confidence (0) with high frequency (6)"}]}

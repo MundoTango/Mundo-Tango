@@ -257,9 +257,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         country: data.user.country,
       });
 
-      // Redirect to root after successful login - ProtectedRoute will handle auth check
+      // Redirect to dashboard after successful login
       // Use setTimeout to ensure state updates complete before navigation (fixes race condition)
-      setTimeout(() => navigate("/"), 0);
+      setTimeout(() => navigate("/dashboard"), 0);
     } catch (error) {
       console.error("Login error:", error);
       throw error;

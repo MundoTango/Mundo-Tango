@@ -92,32 +92,29 @@ const THE_PLAN_ROUTES = [
 
 // Helper: Login function
 async function login(page: Page, email: string, password: string) {
-  await page.goto('/');
+  console.log(`🔐 Logging in as ${email}...`);
   
-  // Check if already logged in
-  const isDashboard = await page.url().includes('/dashboard');
-  if (isDashboard) {
-    console.log('Already logged in, skipping login');
+  await page.goto('/login', { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(1000);
+  
+  // Check if already logged in (redirects to dashboard)
+  if (page.url().includes('/dashboard')) {
+    console.log('✅ Already logged in, skipping login');
     return;
   }
 
-  // Try to find login form
-  const emailInput = page.locator('input[type="email"], input[name="email"], input[data-testid*="email"]').first();
-  const passwordInput = page.locator('input[type="password"], input[name="password"], input[data-testid*="password"]').first();
+  // Use exact test IDs from LoginPage.tsx
+  await page.locator('[data-testid="input-email"]').fill(email);
+  await page.locator('[data-testid="input-password"]').fill(password);
+  await page.locator('[data-testid="button-login"]').click();
   
-  if (await emailInput.count() > 0) {
-    await emailInput.fill(email);
-    await passwordInput.fill(password);
-    
-    // Find and click login button
-    const loginButton = page.locator('button[type="submit"], button[data-testid*="login"], button:has-text("Login"), button:has-text("Sign in")').first();
-    await loginButton.click();
-    
-    // Wait for navigation
-    await page.waitForURL(/dashboard|profile|feed/, { timeout: 10000 });
-    console.log(`✅ Logged in as ${email}`);
-  } else {
-    console.log('⚠️  No login form found, may already be authenticated');
+  // Wait for successful login (redirect to dashboard)
+  try {
+    await page.waitForURL(/dashboard|profile|feed/, { timeout: 15000 });
+    console.log(`✅ Successfully logged in as ${email}`);
+  } catch (error) {
+    console.log(`❌ Login failed for ${email}: ${error.message}`);
+    throw error;
   }
 }
 
