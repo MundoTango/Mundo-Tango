@@ -197,6 +197,14 @@ const AnalyticsDashboardPage = lazy(() => import("@/pages/AnalyticsDashboardPage
 const UserAnalyticsPage = lazy(() => import("@/pages/UserAnalyticsPage"));
 const ContentModerationPage = lazy(() => import("@/pages/ContentModerationPage"));
 
+// The Plan: Missing Pages (Pages 37, 38, 46, 47, 48, 49)
+const AdminProjectTrackerPage = lazy(() => import("@/pages/AdminProjectTrackerPage"));
+const AdminCompliancePage = lazy(() => import("@/pages/AdminCompliancePage"));
+const AdminTranslationsPage = lazy(() => import("@/pages/AdminTranslationsPage"));
+const AdminScrapingPage = lazy(() => import("@/pages/AdminScrapingPage"));
+const ClosenessMetricsDashboardPage = lazy(() => import("@/pages/ClosenessMetricsDashboardPage"));
+const ProfessionalReputationPage = lazy(() => import("@/pages/ProfessionalReputationPage"));
+
 // Part 10: Final Admin & Mr Blue Pages (29-47)
 const AdminDashboardOverviewPage = lazy(() => import("@/pages/admin/AdminDashboardPage"));
 const UserManagementPage = lazy(() => import("@/pages/admin/UserManagementPage"));
@@ -1726,6 +1734,55 @@ function Router() {
           <AdminLayout>
             <SystemHealthPage />
           </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      {/* The Plan: New Admin Pages */}
+      <Route path="/admin/project-tracker">
+        <ProtectedRoute>
+          <AdminLayout>
+            <AdminProjectTrackerPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/compliance">
+        <ProtectedRoute>
+          <AdminLayout>
+            <AdminCompliancePage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/translations">
+        <ProtectedRoute>
+          <AdminLayout>
+            <AdminTranslationsPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/admin/scraping">
+        <ProtectedRoute>
+          <AdminLayout>
+            <AdminScrapingPage />
+          </AdminLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/analytics/closeness">
+        <ProtectedRoute>
+          <AppLayout>
+            <ClosenessMetricsDashboardPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/profile/reputation">
+        <ProtectedRoute>
+          <AppLayout>
+            <ProfessionalReputationPage />
+          </AppLayout>
         </ProtectedRoute>
       </Route>
 
