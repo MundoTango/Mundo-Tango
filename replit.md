@@ -22,7 +22,13 @@ The backend is built with Express and TypeScript, using PostgreSQL (Neon) as the
 
 ### AI Systems
 A universal agent ecosystem comprises 1,218 agents, including an Agent Scanner, SME Training System, DPO Training, Curriculum Learning, and GEPA Self-Evolution.
-- **Self-Healing Infrastructure:** Features `PageAuditService` (6-agent parallel audit), `AutoFixEngine`, `AgentOrchestration`, and `VibeCodingService` (natural language to code).
+- **Self-Healing Infrastructure v2.0 (MVP - Nov 21, 2025):** Advanced self-healing with pre-flight checks and instant knowledge sharing
+  - `PreFlightCheckService`: Verifies imports, providers, and React hooks BEFORE implementing fixes (prevents chained bugs)
+  - `GlobalKnowledgeBase`: Instant knowledge sharing across all 1,218 agents (<5ms broadcast, PostgreSQL-backed)
+  - `PageAuditService`: 6-agent parallel audit system
+  - `AutoFixEngine`: Autonomous self-healing with one-shot fixes
+  - `AgentOrchestration`: Master orchestrator (5-phase healing pipeline)
+  - `VibeCodingService`: Natural language to code conversion
 - **Mr. Blue AI Assistant:** Provides text/voice chat, VibeCoding (GROQ Llama-3.3-70b), a visual editor, page generation from natural language, proactive error detection, and auto-fix capabilities.
 - **The Plan: Scott's First-Time Login Tour:** A 50-page validation system guiding new users.
 - **Bifrost AI Gateway:** Manages multi-provider AI interactions (OpenAI, Anthropic, Groq, Google) with automatic failover, semantic caching, and load balancing.
