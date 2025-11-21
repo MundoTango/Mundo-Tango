@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { RoleConfirmationService } from '../services/reputation/RoleConfirmationService';
-import { requireAuth } from '../middleware/auth';
+import { authenticateToken } from '../middleware/auth';
 import { z } from 'zod';
 
 const router = Router();
@@ -18,7 +18,7 @@ const createConfirmationSchema = z.object({
  * POST /api/role-confirmations
  * Confirm a user's tango role
  */
-router.post('/', requireAuth, async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   try {
     const confirmerId = req.user!.id;
     const data = createConfirmationSchema.parse(req.body);
@@ -125,7 +125,7 @@ router.get('/:userId/stats', async (req, res) => {
  * DELETE /api/role-confirmations/:id
  * Delete a confirmation (only confirmer can delete)
  */
-router.delete('/:id', requireAuth, async (req, res) => {
+router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const confirmationId = parseInt(req.params.id);
     const requesterId = req.user!.id;
@@ -157,7 +157,7 @@ router.delete('/:id', requireAuth, async (req, res) => {
  * POST /api/role-confirmations/:id/verify
  * Verify confirmation (admin only)
  */
-router.post('/:id/verify', requireAuth, async (req, res) => {
+router.post('/:id/verify', authenticateToken, async (req, res) => {
   try {
     // Check if user is volunteer or higher (RBAC level 6+)
     if (req.user!.rbacLevel < 6) {
@@ -185,7 +185,7 @@ router.post('/:id/verify', requireAuth, async (req, res) => {
  * GET /api/role-confirmations/pending
  * Get pending confirmations awaiting verification (admin only)
  */
-router.get('/pending', requireAuth, async (req, res) => {
+router.get('/pending', authenticateToken, async (req, res) => {
   try {
     // Check if user is volunteer or higher (RBAC level 6+)
     if (req.user!.rbacLevel < 6) {

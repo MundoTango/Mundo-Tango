@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import { InvitationBatchingService } from '../services/invitations/InvitationBatchingService';
-import { requireAuth } from '../middleware/auth';
+import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { z } from 'zod';
-import { getQueue } from '../workers/queue';
+import { Response } from 'express';
+import { createQueue } from '../workers/redis-fallback';
 import { DEFAULT_BATCH_DELAY } from '../workers/jobs/invitationBatchingJob';
 
 const router = Router();
@@ -24,7 +25,7 @@ const createBatchSchema = z.object({
  * POST /api/invitations/batches
  * Create a new invitation batch
  */
-router.post('/batches', requireAuth, async (req, res) => {
+router.post('/batches', authenticateToken, async (req, res) => {
   try {
     const userId = req.user!.id;
     const data = createBatchSchema.parse(req.body);
@@ -48,7 +49,7 @@ router.post('/batches', requireAuth, async (req, res) => {
     });
 
     // Schedule batch processing job (2 days delay)
-    const queue = getQueue('invitation-batch');
+    const queue = createQueue('invitation-batch');
     await queue.add('process-batch', {
       batchId,
       userId
@@ -81,7 +82,7 @@ router.post('/batches', requireAuth, async (req, res) => {
  * GET /api/invitations/batches
  * Get all batches for current user
  */
-router.get('/batches', requireAuth, async (req, res) => {
+router.get('/batches', authenticateToken, async (req, res) => {
   try {
     const userId = req.user!.id;
     const service = new InvitationBatchingService(userId);
@@ -103,7 +104,7 @@ router.get('/batches', requireAuth, async (req, res) => {
  * GET /api/invitations/batches/:id/progress
  * Get batch progress
  */
-router.get('/batches/:id/progress', requireAuth, async (req, res) => {
+router.get('/batches/:id/progress', authenticateToken, async (req, res) => {
   try {
     const userId = req.user!.id;
     const batchId = parseInt(req.params.id);
@@ -130,7 +131,7 @@ router.get('/batches/:id/progress', requireAuth, async (req, res) => {
  * GET /api/invitations/top-friends
  * Get top friends to invite based on closeness score
  */
-router.get('/top-friends', requireAuth, async (req, res) => {
+router.get('/top-friends', authenticateToken, async (req, res) => {
   try {
     const userId = req.user!.id;
     const limit = parseInt(req.query.limit as string || '20');
@@ -153,7 +154,7 @@ router.get('/top-friends', requireAuth, async (req, res) => {
  * GET /api/invitations/rate-limit
  * Check daily rate limit
  */
-router.get('/rate-limit', requireAuth, async (req, res) => {
+router.get('/rate-limit', authenticateToken, async (req, res) => {
   try {
     const userId = req.user!.id;
 

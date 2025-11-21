@@ -1,6 +1,7 @@
 import { Router } from 'express';
+import { Response } from "express";
 import { TangoResumeService } from '../services/reputation/TangoResumeService';
-import { requireAuth } from '../middleware/auth';
+import { authenticateToken } from '../middleware/auth';
 import { z } from 'zod';
 
 const router = Router();
@@ -25,7 +26,7 @@ const createResumeSchema = z.object({
  * POST /api/resumes
  * Create or update tango résumé
  */
-router.post('/', requireAuth, async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   try {
     const userId = req.user!.id;
     const data = createResumeSchema.parse(req.body);
@@ -158,7 +159,7 @@ router.get('/top/:role', async (req, res) => {
  * POST /api/resumes/:userId/verify
  * Verify professional (admin only)
  */
-router.post('/:userId/verify', requireAuth, async (req, res) => {
+router.post('/:userId/verify', authenticateToken, async (req, res) => {
   try {
     // Check if user is admin (RBAC level 4+)
     if (req.user!.rbacLevel < 4) {
@@ -186,7 +187,7 @@ router.post('/:userId/verify', requireAuth, async (req, res) => {
  * POST /api/resumes/:userId/premium
  * Set premium status (admin only)
  */
-router.post('/:userId/premium', requireAuth, async (req, res) => {
+router.post('/:userId/premium', authenticateToken, async (req, res) => {
   try {
     // Check if user is admin (RBAC level 4+)
     if (req.user!.rbacLevel < 4) {
