@@ -22,6 +22,7 @@ import { eq, and, desc } from 'drizzle-orm';
 import * as cheerio from 'cheerio';
 import Groq from 'groq-sdk';
 import axios from 'axios';
+import { PredictiveAnalysisService } from './PredictiveAnalysisService';
 
 // Initialize GROQ client for AI-powered analysis
 const groq = new Groq({
@@ -129,6 +130,25 @@ export class PageAuditService {
 
       // Save audit to database
       await this.saveAudit(auditResults);
+
+      // ✨ PHASE 4: Predictive Analysis for critical issues
+      if (criticalIssues > 0) {
+        console.log(`🔮 [Phase 4] Running predictive analysis for ${criticalIssues} critical issues`);
+        const criticalIssuesList = allIssues.filter(i => i.severity === 'critical');
+        
+        // Run predictions in parallel for all critical issues
+        const predictionPromises = criticalIssuesList.map(issue => 
+          PredictiveAnalysisService.predictCascadingIssues(issue)
+        );
+        
+        try {
+          const predictions = await Promise.all(predictionPromises);
+          const totalPredictions = predictions.flat().length;
+          console.log(`🔮 [Phase 4] Generated ${totalPredictions} cascading issue predictions`);
+        } catch (error) {
+          console.warn('[Phase 4] Predictive analysis failed, continuing anyway:', error);
+        }
+      }
 
       console.log(`✅ Audit complete for ${pageId}: ${totalIssues} issues (${criticalIssues} critical) in ${auditDurationMs}ms`);
 

@@ -12,6 +12,7 @@ import { pageHealingLogs, type InsertPageHealingLog } from '../../../shared/sche
 import type { AuditResults, AuditIssue } from './PageAuditService';
 import { PageAuditService } from './PageAuditService';
 import { PreFlightCheckService } from './PreFlightCheckService';
+import { AgentCoordinationService } from './AgentCoordinationService';
 
 interface FixResult {
   agentId: string;
@@ -44,6 +45,41 @@ export class SelfHealingService {
 
       // 1. Group issues by agent responsibility
       const agentAssignments = this.assignIssuesToAgents(auditResults);
+
+      // ✨ PHASE 5: Agent Coordination for complex multi-agent issues
+      const agentCount = Object.keys(agentAssignments).length;
+      const requiresCoordination = agentCount > 2 && auditResults.criticalIssues > 0;
+      
+      if (requiresCoordination) {
+        console.log(`🤝 [Phase 5] ${agentCount} agents detected - initiating coordination`);
+        
+        // Create coordination session for first critical issue
+        const firstCritical = Object.values(auditResults.issuesByCategory)
+          .flat()
+          .find(i => i.severity === 'critical');
+        
+        if (firstCritical) {
+          try {
+            const sessionId = await AgentCoordinationService.createCoordinationSession(
+              auditResults.pageId,
+              firstCritical.agentId,
+              firstCritical
+            );
+            
+            const invitedAgents = await AgentCoordinationService.inviteAgents(
+              sessionId,
+              Object.keys(agentAssignments)
+            );
+            
+            console.log(`🤝 [Phase 5] Coordination session ${sessionId} created with ${invitedAgents.length} agents`);
+            
+            // Note: Full consensus building would happen here in production
+            // For MVP, we log the session and continue with parallel fixes
+          } catch (error) {
+            console.warn('[Phase 5] Coordination session failed, continuing with parallel fixes:', error);
+          }
+        }
+      }
 
       // 2. Execute fixes in parallel (MB.MD simultaneously pattern)
       const fixResults = await Promise.all(
