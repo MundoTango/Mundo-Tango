@@ -162,7 +162,7 @@ import invitationBatchingRoutes from "./routes/invitation-batching-routes";
 import tangoResumeRoutes from "./routes/tango-resume-routes";
 import roleConfirmationRoutes from "./routes/role-confirmation-routes";
 
-import { authenticateToken, AuthRequest, requireRoleLevel } from "./middleware/auth";
+import { authenticateToken, optionalAuth, AuthRequest, requireRoleLevel } from "./middleware/auth";
 import { setCsrfToken, verifyCsrfToken } from "./middleware/csrf";
 import { auditLog, getClientIp } from "./middleware/auditLog";
 import { wsNotificationService } from "./services/websocket-notification-service";
@@ -453,8 +453,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Phase 3 Deployment Blocker Routes
   app.use("/api/plan", planRoutes);
   
-  // FIX: The Plan routes require authentication for all endpoints
-  app.use("/api/the-plan", authenticateToken, thePlanRoutes);
+  // The Plan routes use optional auth - allows unauthenticated /progress checks,
+  // but POST endpoints (/start, /skip) require auth at route level
+  app.use("/api/the-plan", optionalAuth, thePlanRoutes);
   
   app.use("/api/sync", syncRoutes);
   app.use("/api/admin/self-healing", selfHealingRoutes);
