@@ -1,0 +1,285 @@
+# MB.MD - Scott's First Login + 50-Page Validation
+
+## MISSION
+Execute Scott's First Login process through all 50 pages of The Plan, followed by multi-user testing to validate that every feature in Mundo Tango works perfectly in production.
+
+## BACKGROUND
+- **Phase 7 Complete (97/100):** Backend API + Frontend UI ready
+- **Status:** The Plan system infrastructure built and tested
+- **Gap:** Actual user testing not yet performed - pages may not exist or have bugs
+- **Risk:** Features may fail when real users interact with them
+- **Opportunity:** Use 1,218 AI agents + self-healing to validate and fix issues autonomously
+
+## DELIVERABLES
+1. **Scott's Complete Tour:** 50/50 pages tested with all checklists validated
+2. **Multi-User Testing:** 5+ test users complete same tour across different roles
+3. **Issue Reports:** Document all bugs/missing features discovered
+4. **Auto-Fix Results:** Self-healing agents fix issues during testing
+5. **Validation Report:** Comprehensive test results for all 50 pages
+6. **Production-Ready Status:** All pages working, no critical bugs
+
+## ROLES & RESPONSIBILITIES
+
+### **Replit AI (Manager/Observer)**
+- Oversees the entire process
+- Guides Mr. Blue and agent team
+- Validates results and quality
+- Makes strategic decisions
+
+### **Mr. Blue + 1,218 Agents (Execution Team)**
+- **PageAuditService (6 agents):** Scan each page for errors
+- **AutoFixEngine:** Fix issues discovered during tour
+- **PreFlightCheckService:** Validate fixes before deployment
+- **GlobalKnowledgeBase:** Share learnings across all agents
+- **VibeCodingService:** Build missing features on-the-fly
+
+### **Test Users**
+1. **Scott (scott@test.com)** - First user, admin role, full access
+2. **Teacher (teacher@test.com)** - Dance instructor role
+3. **Venue Owner (venue@test.com)** - Venue management role
+4. **Regular User (user@test.com)** - Standard member
+5. **Premium User (premium@test.com)** - Paid subscriber
+
+---
+
+## RESEARCH PHASE
+
+### **R1: Current State Analysis**
+**Question:** Which of the 50 pages actually exist and are functional?
+
+**Tasks:**
+- [ ] Read `shared/thePlanPages.ts` - Get full list of 50 pages
+- [ ] Search codebase for each route mentioned in the pages
+- [ ] Check which pages have components built
+- [ ] Identify missing pages that need to be built
+- [ ] Document current state: ✅ Built | 🚧 Partial | ❌ Missing
+
+### **R2: Test User Preparation**
+**Question:** Are test users ready with correct roles/permissions?
+
+**Tasks:**
+- [ ] Check existing test users in database
+- [ ] Verify scottplan@test.com user exists (created in Phase 7)
+- [ ] Create additional 4 test users with different roles
+- [ ] Ensure each user has appropriate permissions
+- [ ] Set up initial data (posts, events, etc.) for testing
+
+### **R3: Self-Healing Integration**
+**Question:** Are self-healing agents connected to The Plan system?
+
+**Tasks:**
+- [ ] Check if PageAuditService triggers on page navigation
+- [ ] Verify AutoFixEngine can fix issues during tour
+- [ ] Confirm GlobalKnowledgeBase is sharing learnings
+- [ ] Test that checklist updates happen automatically
+- [ ] Validate Mr. Blue can see tour progress in real-time
+
+### **R4: E2E Test Infrastructure**
+**Question:** Can we use Playwright to automate testing?
+
+**Tasks:**
+- [ ] Check if Playwright is configured
+- [ ] Review test IDs added in Phase 7
+- [ ] Determine if we can automate the 50-page tour
+- [ ] Plan manual vs. automated testing approach
+- [ ] Identify which pages need visual validation
+
+---
+
+## ANALYSIS PHASE
+
+### **A1: Page Inventory Matrix**
+Create matrix of all 50 pages with status:
+
+| Phase | Page Name | Route | Status | Checklist Items | Notes |
+|-------|-----------|-------|--------|----------------|-------|
+| 1 | Dashboard | /dashboard | ✅ Built | 4 items | Feed works |
+| 1 | Profile | /profile/:id | 🚧 Partial | 5 items | Edit broken |
+| ... | ... | ... | ... | ... | ... |
+
+### **A2: Risk Assessment**
+**High-Risk Pages:**
+- Pages with complex AI integrations (Mr. Blue, VibeCoding)
+- Payment/Stripe pages (requires test mode)
+- Real-time features (WebSocket, notifications)
+- Admin-only pages (need proper role)
+
+**Medium-Risk Pages:**
+- Social features (posts, comments, reactions)
+- Event management (create/edit/delete)
+- Messaging system (chat, direct messages)
+
+**Low-Risk Pages:**
+- Static content (FAQ, blog)
+- Read-only pages (community map, teacher list)
+- Settings pages (profile edit)
+
+### **A3: Test Scenario Planning**
+For each page, define:
+1. **Happy Path:** Expected user journey
+2. **Edge Cases:** Error scenarios to test
+3. **Validation Criteria:** What makes checklist pass/fail
+4. **Self-Healing Triggers:** When agents should activate
+
+---
+
+## EXECUTION PHASE
+
+### **E1: Scott's First Login (Day 1)**
+**Objective:** Scott completes all 50 pages with Mr. Blue guidance
+
+**Process:**
+1. Scott logs in → ScottWelcomeScreen appears
+2. Scott clicks "Start The Plan" → Tour begins
+3. **For each of 50 pages:**
+   - Navigate to page route
+   - PageAuditService scans for errors
+   - Execute checklist items (click, type, verify)
+   - If issue found → AutoFixEngine attempts fix
+   - Update checklist status (pass/fail/pending)
+   - POST to `/api/the-plan/update`
+   - Progress bar increments
+4. Complete tour → Celebration screen
+5. Generate comprehensive test report
+
+**Agent Coordination:**
+```
+Scott navigates to page → 
+  PageAuditService scans → 
+    If errors found → AutoFixEngine fixes → 
+      PreFlightCheck validates → 
+        GlobalKnowledgeBase shares learning → 
+          Checklist updates automatically
+```
+
+### **E2: Multi-User Testing (Day 2)**
+**Objective:** 4 additional users complete tour to validate consistency
+
+**Users & Focus Areas:**
+1. **Teacher User:** Focus on teacher pages, workshop creation, event hosting
+2. **Venue Owner:** Focus on venue management, event listings, reviews
+3. **Regular User:** Focus on social features, posts, comments, reactions
+4. **Premium User:** Focus on subscription features, premium content, payments
+
+**Validation:**
+- Each user completes 50/50 pages
+- Compare results across users
+- Identify role-specific issues
+- Validate permissions/RBAC working
+- Ensure no cross-user data leaks
+
+### **E3: Issue Resolution & Iteration**
+**Objective:** Fix all discovered issues and re-test
+
+**Process:**
+1. Aggregate all issues from 5 users
+2. Categorize: Critical | High | Medium | Low
+3. Mr. Blue agents fix issues in parallel
+4. Re-test affected pages with all 5 users
+5. Validate fixes don't break other pages
+6. Iterate until all checklists pass
+
+### **E4: Final Validation & Sign-Off**
+**Objective:** Confirm production readiness
+
+**Criteria:**
+- [ ] 50/50 pages working for all 5 users
+- [ ] All checklist items pass
+- [ ] No critical or high-priority bugs
+- [ ] Self-healing system working autonomously
+- [ ] Performance acceptable (page load <2s)
+- [ ] Test report generated and reviewed
+
+---
+
+## SUCCESS METRICS
+
+### **Quantitative**
+- **Page Coverage:** 50/50 pages (100%)
+- **Checklist Pass Rate:** >95% items passing
+- **User Completion:** 5/5 users complete tour
+- **Auto-Fix Success:** >80% issues fixed by agents
+- **Page Load Time:** <2s average
+
+### **Qualitative**
+- Scott's feedback on tour experience
+- Agent coordination effectiveness
+- Self-healing quality and speed
+- User role separation working
+- Overall system stability
+
+---
+
+## TIMELINE
+
+### **Phase 1: Research & Analysis (2-4 hours)**
+- Complete R1-R4 research tasks
+- Complete A1-A3 analysis tasks
+- Prepare MB.MD summary for approval
+
+### **Phase 2: Scott's Tour (4-6 hours)**
+- Execute E1 with Scott user
+- Monitor and document issues
+- Validate self-healing working
+
+### **Phase 3: Multi-User Testing (4-6 hours)**
+- Execute E2 with 4 additional users
+- Compare results
+- Identify patterns
+
+### **Phase 4: Issue Resolution (2-4 hours)**
+- Execute E3 fixes and re-testing
+- Validate all critical issues resolved
+
+### **Phase 5: Final Validation (1-2 hours)**
+- Execute E4 sign-off process
+- Generate final report
+- Update replit.md with results
+
+**Total Estimated Time:** 13-22 hours
+
+---
+
+## RISK MITIGATION
+
+### **Risk 1: Many pages don't exist yet**
+**Mitigation:** Use VibeCodingService to build missing pages on-the-fly during tour
+
+### **Risk 2: Auto-fix creates new bugs**
+**Mitigation:** PreFlightCheckService validates all fixes before deployment
+
+### **Risk 3: Testing takes too long manually**
+**Mitigation:** Use Playwright automation where possible, prioritize critical paths
+
+### **Risk 4: Database breaks during testing**
+**Mitigation:** Regular backups, rollback capability, test on development DB only
+
+### **Risk 5: Self-healing agents conflict**
+**Mitigation:** GlobalKnowledgeBase prevents duplicate fixes, agent coordination via orchestrator
+
+---
+
+## ROLLBACK PLAN
+
+If critical issues discovered:
+1. **Stop the tour** - Don't proceed to next page
+2. **Document the issue** - Screenshot, logs, reproduction steps
+3. **Assess severity** - Can we continue or must we stop?
+4. **Fix and re-test** - Agents fix, validate, continue
+5. **Escalate if needed** - If agents can't fix, get human help
+
+---
+
+## NEXT STEPS
+
+1. **Get approval** on this MB.MD plan
+2. **Execute Research Phase** (R1-R4)
+3. **Execute Analysis Phase** (A1-A3)
+4. **Present findings** and refined execution plan
+5. **Begin Scott's First Login** with full agent support
+
+---
+
+**Created:** November 21, 2025  
+**Status:** AWAITING APPROVAL  
+**Owner:** Replit AI (Manager) + Mr. Blue Team (Execution)
