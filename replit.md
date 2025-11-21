@@ -1,103 +1,119 @@
 # Mundo Tango
 
+---
+
 ## Overview
-Mundo Tango is a production-ready social platform connecting the global tango community with comprehensive social networking, event management, talent matching, and advanced AI assistance. It integrates 7 business systems and 62 specialized AI agents, aiming to be the leading digital hub for tango. The business model focuses on premium services, event monetization, and targeted advertising, built on a self-sovereign, resilient architecture with enterprise-grade security.
+Mundo Tango is a production-ready social platform designed to connect the global tango community. It offers comprehensive social networking, event management, talent matching, and advanced AI assistance, aiming to be the leading digital hub for tango enthusiasts. The platform integrates 7 core business systems and 62 specialized AI agents, built with a self-sovereign, resilient, and enterprise-grade secure architecture.
+
+**Business Vision:** To become the premier digital ecosystem for the tango community, offering premium services, event monetization, and targeted advertising.
+**Market Potential:** Tapping into the global tango community by providing a centralized, feature-rich platform.
+**Project Ambition:** To be the most advanced and comprehensive social platform dedicated to tango, leveraging cutting-edge AI and robust architecture.
+
+---
 
 ## User Preferences
-**Methodology:** MB.MD Protocol v9.2
-- Work simultaneously (parallel execution with 3 subagents)
-- Work recursively (deep exploration, not surface-level)
-- Work critically (rigorous quality, 95-99/100 target)
-- **NEW v8.0**: AI Agent Learning (DPO, Curriculum, GEPA, LIMI)
-- **NEW v8.0**: 5 Development-First Principles (Security, Error, Performance, Mobile, Accessibility)
-- **NEW v9.0**: **Agent SME Training System** - Agents become Subject Matter Experts by learning ALL documentation, code, and industry standards BEFORE implementation
-- **NEW v9.2**: **Self-Healing First Protocol** - MANDATORY: Before ANY manual debugging, check and use autonomous self-healing infrastructure (see `docs/MB_MD_SELF_HEALING_PROTOCOL.md`)
 
-**Never deviate from the handoff plan** - Follow the exact phase sequence
+Every Replit Agent session MUST execute protocols in this order:
+1. **SELF-HEALING FIRST** - Always check infrastructure
+2. **MB.MD EXECUTION CHECKLIST** - Follow methodology
+3. **TASK-SPECIFIC PROTOCOLS** - Domain-specific rules
+4. **QUALITY GATES (95-99/100)** - Verify before complete
 
-## Bug Detection & Self-Healing Protocol (MANDATORY)
+**MB.MD Execution Checklist:**
+- **Work Simultaneously** - Run operations in parallel (use Promise.all, parallel tool calls)
+- **Work Recursively** - Deep analysis, not surface-level (read imports, dependencies, related files)
+- **Work Critically** - Target 95-99/100 quality (test before complete, validate edge cases)
+- **Check Infrastructure First** - Use existing systems before building new (Page Audit, Auto-Fix, Agent Orchestration)
+- **Test Before Complete** - Run E2E tests for UI changes, unit tests for backend
 
-**CRITICAL:** Before any manual debugging, verify and use self-healing infrastructure:
+**Quality Gates (95-99/100 Target):** Before marking ANY task complete:
+- **LSP Diagnostics:** Check LSP if >100 lines changed (for typed languages)
+- **E2E Testing:** `run_test` for browser interactions, forms, multi-page flows (for UI/UX features)
+- **Infrastructure Verification:** Restart workflow, check logs, verify no errors
+- **Documentation Update:** Update `replit.md` for major changes
+- **Self-Audit:** "Did I use self-healing? Did I follow MB.MD checklist?"
 
-1. ✅ Check if `/api/self-healing/orchestrate` endpoint exists
-2. ✅ If exists → Trigger autonomous self-healing FIRST using `POST /api/self-healing/orchestrate {"route": "/page-path"}`
-3. ⏱️ Wait for results (2-5 minutes) - system runs 6 parallel audits
-4. 📊 Review auto-generated fixes with confidence scores:
-   - >95%: Already auto-applied
-   - 80-95%: Staged for approval
-   - <80%: Manual review needed
-5. 🔧 Only manually debug if self-healing failed or unavailable
+**CRITICAL RULE for Database:** Never change ID column types (serial ↔ varchar) - breaks existing data.
+**Handoff Plan:** Never deviate from the handoff plan - Follow the exact phase sequence.
 
-**Reference:** `docs/MB_MD_SELF_HEALING_PROTOCOL.md`
-
-**Infrastructure Status:** ✅ PRODUCTION-READY
-- Page Audit System (6 specialized agents, <200ms)
-- Auto-Fix Engine (VibeCoding + GROQ Llama-3.3-70b)
-- Agent Orchestration (1,218 specialized agents)
-- Error Pattern Detection (Proactive monitoring)
+---
 
 ## System Architecture
-The project uses a modular, agent-driven development approach based on an Expert Specialized Agents (ESA) framework, emphasizing a self-sovereign architecture.
 
-### UI/UX Decisions
-The platform features a unified **MT Ocean theme** with a tango-inspired color palette, dark mode, glassmorphic effects, and responsive design using Tailwind CSS and shadcn/ui. The frontend is built with React, TypeScript, Wouter for routing, and React Query, prioritizing a video-first design and global accessibility. Navigation is managed by **AppLayout**, **AdminLayout**, and **DashboardLayout**, including i18n integration and real-time features.
+**Development Methodology:** MB.MD Protocol v9.2, emphasizing micro-batching, template reuse, parallel work, and 10-layer quality gates. Agents undergo SME (Subject Matter Expert) training, learning all documentation before implementation. The protocol includes DPO Training, Curriculum Learning, GEPA Self-Evolution, and LIMI Curation.
 
-### Technical Implementations
-**Backend Architecture:** Node.js with Express and TypeScript, PostgreSQL with Drizzle ORM, JWT authentication, and real-time capabilities via Supabase Realtime and WebSockets.
+**UI/UX Decisions:**
+- **Theme System:** MT Ocean, using a Tango-inspired palette (ocean blues, warm accents) with dark mode support via Tailwind. Features glassmorphic overlays and smooth animations.
+- **Components:** Utilizes `shadcn/ui` and `Radix UI` primitives, with `Lucide React` and `React Icons` for iconography.
+- **Responsiveness:** Mobile-first design, tested across various screen sizes.
+- **Navigation:** Wouter for routing, with distinct layouts: `AppLayout` (public), `DashboardLayout` (authenticated), and `AdminLayout` (super admin).
+- **Internationalization (i18n):** `i18next` supports 68 languages, with locale files in `public/locales/{lang}/{namespace}.json`.
 
-**Authentication & Access Patterns:** Implements an "auth-optional" pattern for public routes (e.g., Visual Editor) with graceful degradation for unauthenticated users, and robust 401 error handling for protected routes. This integrates MB.MD Protocol v9.2's Free Energy Principle and Active Inference for optimal UX.
+**Technical Implementations:**
+- **Frontend:** React, TypeScript, Vite, Wouter routing, React Query.
+- **Backend:** Express.js, TypeScript, PostgreSQL.
+- **Database:** PostgreSQL (Neon-backed) with Drizzle ORM. `shared/schema.ts` is the single source of truth for the schema. `npm run db:push` handles migrations.
+- **API Structure:** Modular routes (`server/routes/*-routes.ts`) registered centrally in `server/routes.ts`. Uses Express middleware for authentication, CSRF, and rate limiting. Zod schemas from Drizzle are used for validation.
+- **Authentication & Authorization:** JWT (stored in httpOnly cookies), Google/Facebook OAuth (via Supabase), and an 8-tier Role-Based Access Control (RBAC) system. Includes 2FA and robust security features like Dynamic Feature Flags, Row-Level Security (RLS), CSP Headers, and Audit Logging.
+- **AI Systems:** A Universal Agent Ecosystem of 1,218 specialized agents.
+    - **Self-Healing Infrastructure:** Page Audit Service (6-agent parallel audit), Auto-Fix Engine, Agent Orchestration, Error Analysis Agent, and VibeCoding Service (natural language to code). Endpoints include `/api/self-healing/orchestrate`, `/api/self-healing/health`, and `/api/self-healing/dashboard`.
+    - **Mr. Blue AI Assistant:** Conversational AI with context awareness, voice chat (ElevenLabs TTS + Whisper STT), VibeCoding for code generation, a Visual Editor, and a Page Generator. Proactive error detection, autonomous agent system, and integration with Replit AI.
+    - **The Plan: Scott's First-Time Login Tour:** A 50-page validation system to guide the founder through feature testing against documentation.
+    - **Bifrost AI Gateway:** Unifies AI provider access (OpenAI, Anthropic, Groq, Google) with automatic failover, semantic caching, and load balancing.
 
-**Key Systems:**
--   **Security & Compliance:** 8-Tier RBAC, Dynamic Feature Flags, RLS, CSP Headers, Audit Logging, 2FA, GDPR, Legal Compliance.
--   **Social Features:** Events, Groups, friendship algorithms, rich post interactions, real-time WebSocket notifications, Media Gallery, Live Streaming & Chat, Marketplace, Subscription management, Polymorphic Reviews, Leaderboard, Blog, Teacher/Venue Management, Workshop System, Music Library, Stories, and Venue Recommendations.
--   **Admin Dashboard & Analytics** for user management, content moderation, and platform health.
--   **AI Integration:**
-    -   **Bifrost AI Gateway:** Unified AI gateway with automatic failover, semantic caching, and load balancing.
-    -   **Universal Agent Ecosystem:** Production-ready system with 1,218 specialized agents, including a **Universal Agent Scanner** for auto-discovery and an **Agent SME Training System**.
-    -   **AI Page Generator:** Natural language to production-ready pages using GROQ Llama-3.3-70b, generating React components, API routes, database schemas, Playwright tests, and route registrations. Integrated into the Visual Editor.
-    -   **Page Audit System:** Comprehensive 12-category auditing for Mr. Blue's self-healing, with pattern detection, auto-fix engine, AI deep audit, and escalation matrix. Integrated into the Visual Editor.
-    -   **Mr. Blue AI Assistant:** Unified interface for Text Chat, Voice Chat, Vibecoding (context-aware code generation), and a **Visual Editor** with live preview, element selection, instant DOM updates, change tracking, and voice commands. Supports seamless mode switching and unified conversation history. Includes a working Vibecoding system with intent classification, natural language UI modification detection, context awareness, and code generation.
-    -   **Proactive Self-Healing System:** Autonomous multi-agent system for continuous platform validation using GROQ Llama-3.3-70b.
-    -   **Replit AI ↔ Mr. Blue Integration:** Bidirectional communication bridge for autonomous control.
-    -   **Mr. Blue Visual Editor:** Features live preview, element inspector, component palette, AI-powered smart suggestions, undo/redo, Git integration, preview mode, voice commands, and advanced creator tools.
-    -   **Mr. Blue Vibe Coding System:** Natural language code generation using GROQ Llama-3.3-70b with real-time SSE streaming.
-    -   **Mr. Blue Voice Command System:** 50+ commands with fuzzy matching.
-    -   **Mr. Blue Natural Language Automation:** Triggers browser automation via natural language.
-    -   **Mr. Blue Proactive Error Detection & Learning Retention:** Autonomous error detection, AI-powered analysis, and self-healing within the Visual Editor.
-    -   **Mr. Blue System 1 - Context Service:** LanceDB-powered semantic search for RAG.
-    -   **Mr. Blue Autonomous Agent System:** Full autonomous development using MB.MD Protocol Engine and a GROQ Llama-3.1-70b powered AI Code Generator.
-    -   **Scott's First-Time Login Tour (The Plan):** 47-page validation system where Mr. Blue guides the founder through testing every feature. Includes ScottWelcomeScreen.tsx with personalized greeting and Start/Skip buttons, ThePlanProgressBar.tsx for progress tracking, complete backend API (/start, /skip, /progress, /update), planSessions database table, and authentication-protected endpoints.
-    -   **AI Arbitrage Engine:** Intelligent routing for cost savings.
-    -   **AI Agent Learning Systems:** DPO Training, Curriculum Learning, GEPA Self-Evolution, and LIMI Curation.
-    -   **Talent Match AI:** Advanced matching algorithms.
-    -   **LIFE CEO AI SYSTEM:** Integrates LanceDB and orchestrates 16 specialized AI agents.
-    -   **Multi-AI Orchestration System:** Integrates OpenAI GPT-4o, Anthropic Claude 3.5 Sonnet, Groq Llama 3.1, Google Gemini Pro with fallback, load balancing, and semantic caching.
-    -   **Automated Data Scraping System:** Uses static (Cheerio), dynamic (Playwright), and social (Facebook Graph API, Instagram) scraping with AI-powered deduplication.
-    -   **Facebook OAuth Integration:** For sending messages via the official API.
+**Feature Specifications:**
+- **Social Features:** Events, groups, friendship system, posts (likes, comments, shares), real-time notifications (WebSockets), media gallery, live streaming, marketplace, subscriptions, reviews, leaderboard, blog, teacher/venue management, workshop system, music library, stories, venue recommendations.
+- **Business Systems:** Talent Match AI, LIFE CEO AI SYSTEM (orchestrating 16 AI agents via LanceDB), Multi-AI Orchestration (4 providers with failover/caching), Automated Data Scraping (Cheerio, Playwright, Graph API), Admin Dashboard & Analytics, Stripe Payment Processing, and BullMQ-based Automation & Workers (39 functions, 6 workers, requires Redis).
 
-**Automation & Workers:** BullMQ queue management with 39 functions across 6 dedicated workers, powered by Redis.
+**System Design Choices:**
+- **Project Structure:** `client/` for frontend, `server/` for backend, `shared/` for common types/schemas, `docs/` for documentation, `attached_assets/` for media.
+- **Testing:** 95% E2E coverage using Playwright for user journeys, WebSockets, security, performance, and visual editor functionality.
+- **DevOps & Monitoring:** CI/CD with GitHub Actions, Prometheus/Grafana for monitoring, Redis for caching/session management, Sentry for error tracking. Optimized for performance with bundle sizes, lazy loading, and code splitting.
 
-### System Design Choices
-**Development Methodology:** MB.MD Protocol v4.0 (simultaneously, recursively, critically) with micro-batching, template reuse, context pre-loading, zero documentation mode, parallel work, smart dependency ordering, parallel testing, a memory system, and 10-layer quality gates.
-
-**Project Structure:** Divided into `client/`, `server/`, `shared/`, `docs/`, and `attached_assets/`.
-
-**Production Infrastructure:** CI/CD with GitHub Actions, Prometheus/Grafana monitoring, Redis caching, BullMQ background jobs, robust security, performance optimizations, and reliability features.
-
-**Testing Infrastructure:** Comprehensive Playwright test suites achieving 95% coverage, including E2E, WebSocket, security, performance, and visual editor tests, employing a Parallel Testing & Bug Fix Workflow.
+---
 
 ## External Dependencies
 
--   **Database:** PostgreSQL (with Drizzle ORM)
--   **Authentication:** Google OAuth, Facebook OAuth (Supabase), JWT
--   **AI Platforms:** OpenAI (GPT-4o), Anthropic (Claude 3.5 Sonnet), Groq (Llama 3.1), Google (Gemini Pro), Luma Dream Machine, ElevenLabs (Voice Cloning & TTS)
--   **AI Infrastructure:** Bifrost AI Gateway
--   **Vector Database:** LanceDB
--   **Payments:** Stripe
--   **Real-time Communication:** Supabase Realtime, WebSocket
--   **Queue Management:** BullMQ (requires Redis)
--   **UI Components:** shadcn/ui, Radix UI
--   **Animation Library:** Framer Motion
--   **Error Tracking:** Sentry
--   **Image Hosting:** Cloudinary
--   **Automation:** Playwright (for browser automation)
+**Infrastructure:**
+- **Database:** PostgreSQL (Neon-backed)
+- **ORM:** Drizzle
+- **Cache/Queue:** Redis (for BullMQ and session management)
+- **Storage:** Cloudinary (for images)
+
+**Authentication:**
+- Google OAuth
+- Facebook OAuth (via Supabase)
+- JWT
+
+**AI Platforms & Services:**
+- OpenAI (GPT-4o)
+- Anthropic (Claude 3.5 Sonnet)
+- Groq (Llama 3.1, Llama 3.3-70b)
+- Google (Gemini Pro)
+- Luma (Dream Machine - video generation)
+- ElevenLabs (Voice Cloning + TTS)
+- Bifrost AI Gateway (for unified AI routing)
+
+**Real-time Communication:**
+- Supabase Realtime
+- WebSockets (custom implementation)
+
+**Payments:**
+- Stripe
+
+**UI/UX Libraries:**
+- shadcn/ui
+- Radix UI
+- Framer Motion
+
+**Error Tracking:**
+- Sentry
+
+**Testing:**
+- Playwright
+
+**Vector Search:**
+- LanceDB
+
+**Queue Management:**
+- BullMQ
