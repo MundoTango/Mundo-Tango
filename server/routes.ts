@@ -452,7 +452,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Phase 3 Deployment Blocker Routes
   app.use("/api/plan", planRoutes);
-  app.use("/api/the-plan", thePlanRoutes);
+  
+  // FIX: The Plan routes require authentication for all endpoints
+  app.use("/api/the-plan", authenticateToken, thePlanRoutes);
+  
   app.use("/api/sync", syncRoutes);
   app.use("/api/admin/self-healing", selfHealingRoutes);
   
