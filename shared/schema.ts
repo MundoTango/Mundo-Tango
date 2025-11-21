@@ -8322,6 +8322,121 @@ export type InsertAgentKnowledgeVersion = z.infer<typeof insertAgentKnowledgeVer
 export type SelectAgentKnowledgeVersion = typeof agentKnowledgeVersions.$inferSelect;
 
 // ============================================================================
+// ADVANCED SELF-HEALING TABLES (MB.MD V2.0 - November 21, 2025)
+// ============================================================================
+
+/**
+ * Pre-Flight Checks Table
+ * MB.MD Module 1: Verify dependencies before implementing fixes
+ * Prevents chained bugs (missing imports, providers, etc.)
+ */
+export const preFlightChecks = pgTable("pre_flight_checks", {
+  id: serial("id").primaryKey(),
+  pageId: varchar("page_id", { length: 100 }).notNull(),
+  fixProposal: jsonb("fix_proposal").notNull(), // What we're about to fix
+  importsNeeded: text("imports_needed").array(), // Required imports
+  providersNeeded: text("providers_needed").array(), // Required providers
+  dependenciesChecked: jsonb("dependencies_checked"), // Full dependency graph
+  reactHooksValid: boolean("react_hooks_valid").notNull(),
+  allChecksPassed: boolean("all_checks_passed").notNull(),
+  blockers: text("blockers").array(), // What prevents fix
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+}, (table) => ({
+  pageIdIdx: index("pre_flight_checks_page_id_idx").on(table.pageId),
+  timestampIdx: index("pre_flight_checks_timestamp_idx").on(table.timestamp),
+  allChecksIdx: index("pre_flight_checks_all_checks_idx").on(table.allChecksPassed),
+}));
+
+/**
+ * Global Agent Lessons Table
+ * MB.MD Module 2: Instant knowledge sharing across all 1,218 agents
+ * Never re-learn the same lesson twice (<5ms broadcast)
+ */
+export const globalAgentLessons = pgTable("global_agent_lessons", {
+  id: serial("id").primaryKey(),
+  agentId: varchar("agent_id", { length: 100 }).notNull(), // Who learned this
+  context: text("context").notNull(), // What situation
+  issue: text("issue").notNull(), // What problem
+  solution: text("solution").notNull(), // How solved
+  confidence: real("confidence").notNull(), // 0-1
+  appliesTo: text("applies_to").array().notNull(), // Which agents can use this
+  timesApplied: integer("times_applied").default(0), // Usage tracking
+  successRate: real("success_rate").default(1.0), // How often it works
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastAppliedAt: timestamp("last_applied_at"),
+  metadata: jsonb("metadata"), // Extra context
+}, (table) => ({
+  agentIdIdx: index("global_agent_lessons_agent_id_idx").on(table.agentId),
+  confidenceIdx: index("global_agent_lessons_confidence_idx").on(table.confidence),
+  successRateIdx: index("global_agent_lessons_success_rate_idx").on(table.successRate),
+  createdAtIdx: index("global_agent_lessons_created_at_idx").on(table.createdAt),
+}));
+
+/**
+ * Predicted Issues Table
+ * MB.MD Module 3: Predictive analysis - anticipate cascading issues
+ * Predict 3-5 follow-up bugs before first implementation
+ */
+export const predictedIssues = pgTable("predicted_issues", {
+  id: serial("id").primaryKey(),
+  sourceIssueId: integer("source_issue_id").notNull(), // Original issue
+  predictedIssue: text("predicted_issue").notNull(), // What we predict will happen
+  predictionType: varchar("prediction_type", { length: 50 }).notNull(), // 'import', 'provider', 'hook_rule', 'cascading'
+  confidence: real("confidence").notNull(), // 0-1
+  affectedAgents: text("affected_agents").array(), // Which agents impacted
+  preventionStrategy: text("prevention_strategy").notNull(), // How to prevent
+  actuallyOccurred: boolean("actually_occurred"), // Validation (null = not yet known)
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  validatedAt: timestamp("validated_at"),
+}, (table) => ({
+  sourceIssueIdx: index("predicted_issues_source_issue_idx").on(table.sourceIssueId),
+  predictionTypeIdx: index("predicted_issues_type_idx").on(table.predictionType),
+  confidenceIdx: index("predicted_issues_confidence_idx").on(table.confidence),
+  actuallyOccurredIdx: index("predicted_issues_occurred_idx").on(table.actuallyOccurred),
+}));
+
+/**
+ * Agent Coordination Sessions Table
+ * MB.MD Module 4: Multi-agent review before fixes
+ * Page + Feature + Component + Algorithm agents coordinate
+ */
+export const agentCoordinationSessions = pgTable("agent_coordination_sessions", {
+  id: serial("id").primaryKey(),
+  sessionId: varchar("session_id", { length: 100 }).notNull().unique(),
+  pageId: varchar("page_id", { length: 100 }).notNull(),
+  leadAgentId: varchar("lead_agent_id", { length: 100 }).notNull(), // Usually page agent
+  participatingAgents: text("participating_agents").array().notNull(), // All involved agents
+  issueUnderReview: jsonb("issue_under_review").notNull(), // What we're fixing
+  agentFeedback: jsonb("agent_feedback"), // Map of agentId -> feedback
+  consensusReached: boolean("consensus_reached").default(false),
+  unifiedFix: jsonb("unified_fix"), // Final synthesized fix
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+}, (table) => ({
+  sessionIdIdx: uniqueIndex("agent_coordination_sessions_session_id_idx").on(table.sessionId),
+  pageIdIdx: index("agent_coordination_sessions_page_id_idx").on(table.pageId),
+  leadAgentIdx: index("agent_coordination_sessions_lead_agent_idx").on(table.leadAgentId),
+  consensusIdx: index("agent_coordination_sessions_consensus_idx").on(table.consensusReached),
+}));
+
+// Advanced Self-Healing Zod Schemas & Types
+export const insertPreFlightCheckSchema = createInsertSchema(preFlightChecks).omit({ id: true, timestamp: true });
+export type InsertPreFlightCheck = z.infer<typeof insertPreFlightCheckSchema>;
+export type SelectPreFlightCheck = typeof preFlightChecks.$inferSelect;
+
+export const insertGlobalAgentLessonSchema = createInsertSchema(globalAgentLessons).omit({ id: true, createdAt: true });
+export type InsertGlobalAgentLesson = z.infer<typeof insertGlobalAgentLessonSchema>;
+export type SelectGlobalAgentLesson = typeof globalAgentLessons.$inferSelect;
+
+export const insertPredictedIssueSchema = createInsertSchema(predictedIssues).omit({ id: true, createdAt: true });
+export type InsertPredictedIssue = z.infer<typeof insertPredictedIssueSchema>;
+export type SelectPredictedIssue = typeof predictedIssues.$inferSelect;
+
+export const insertAgentCoordinationSessionSchema = createInsertSchema(agentCoordinationSessions).omit({ id: true, createdAt: true });
+export type InsertAgentCoordinationSession = z.infer<typeof insertAgentCoordinationSessionSchema>;
+export type SelectAgentCoordinationSession = typeof agentCoordinationSessions.$inferSelect;
+
+// ============================================================================
 // PROFILE MEDIA & ANALYTICS (BATCH 13-14)
 // ============================================================================
 
