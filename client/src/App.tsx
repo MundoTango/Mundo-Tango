@@ -2106,6 +2106,18 @@ function App() {
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
   const [location] = useLocation();
 
+  // MB.MD FIX: Use React Query to check The Plan progress (auto-updates when cache invalidated)
+  // This fixes race condition where raw fetch was getting stale data
+  const publicRoutes = ['/', '/login', '/register', '/auth/google', '/auth/facebook', '/reset-password', '/forgot-password'];
+  const isPublicRoute = publicRoutes.some(route => location === route || location.startsWith('/auth/'));
+  
+  const { data: thePlanProgress } = useQuery<{ active: boolean }>({
+    queryKey: ['/api/the-plan/progress'],
+    enabled: !isPublicRoute, // Only fetch on authenticated routes
+    staleTime: 0, // Always get fresh data after cache invalidation
+    retry: false, // Don't retry on 401
+  });
+
   // Initialize Proactive Error Detection + HTTP Interceptor + Component Health Monitor + Navigation Interceptor
   useEffect(() => {
     console.log('[App] Initializing Proactive Error Detection...');
@@ -2155,48 +2167,23 @@ function App() {
 
   const isOnVisualEditorPage = location === '/admin/visual-editor';
 
-  // Check if Scott should see welcome screen on first login
+  // MB.MD FIX: React to React Query cache updates instead of using raw fetch
+  // This fixes the race condition - when ScottWelcomeScreen invalidates the cache,
+  // the query auto-refetches and this useEffect sees the updated data immediately
   useEffect(() => {
-    const checkWelcomeScreen = async () => {
-      try {
-        // Don't show welcome screen on public/auth routes
-        const publicRoutes = ['/', '/login', '/register', '/auth/google', '/auth/facebook', '/reset-password', '/forgot-password'];
-        const isPublicRoute = publicRoutes.some(route => location === route || location.startsWith('/auth/'));
-        
-        if (isPublicRoute) {
-          setShowWelcomeScreen(false);
-          return;
-        }
-        
-        // Include credentials for authenticated request
-        const response = await fetch('/api/the-plan/progress', {
-          credentials: 'include'
-        });
-        
-        // If unauthorized, user isn't logged in - don't show welcome screen
-        if (response.status === 401) {
-          setShowWelcomeScreen(false);
-          return;
-        }
-        
-        const data = await response.json();
-        
-        // Show welcome screen if user is logged in and hasn't started The Plan
-        // data.active will be false when no plan session exists
-        if (data.active === false) {
-          setShowWelcomeScreen(true);
-        } else {
-          setShowWelcomeScreen(false);
-        }
-      } catch (error) {
-        console.error('[App] Error checking welcome screen:', error);
-        setShowWelcomeScreen(false);
-      }
-    };
+    if (isPublicRoute) {
+      setShowWelcomeScreen(false);
+      return;
+    }
     
-    // Check on mount and when location changes
-    checkWelcomeScreen();
-  }, [location]);
+    // Show welcome screen if user is logged in and hasn't started The Plan
+    // thePlanProgress?.active will be false when no plan session exists
+    if (thePlanProgress?.active === false) {
+      setShowWelcomeScreen(true);
+    } else if (thePlanProgress?.active === true) {
+      setShowWelcomeScreen(false);
+    }
+  }, [thePlanProgress, isPublicRoute]);
 
   return (
     <ErrorBoundary>
