@@ -32,6 +32,7 @@ import mrBlueContextRoutes from "./routes/mrblue-context-routes";
 import mrBlueVideoConferenceRoutes from "./routes/mrblue-video-conference-routes";
 import mrBlueVibeCodingRoutes from "./routes/mrblue-vibecoding-routes";
 import mrBlueVoiceRoutes from "./routes/mrblue-voice-routes";
+import voiceFirstRoutes from "./routes/voice-first-routes";
 import mrBlueMessengerRoutes from "./routes/mrblue-messenger-routes";
 import mrBlueAutonomousRoutes from "./routes/mrblue-autonomous-routes";
 import mrBlueMemoryRoutes from "./routes/mrblue-memory-routes";
@@ -569,6 +570,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/mrblue/video", mrBlueVideoConferenceRoutes); // System 2: Daily.co Video Conference
   app.use("/api/mrblue/vibecode", mrBlueVibeCodingRoutes); // System 4: Vibe Coding Engine (Natural Language → Code)
   app.use("/api/mrblue/voice", mrBlueVoiceRoutes); // System 5: Voice Cloning with ElevenLabs (17 languages)
+  app.use("/api/voice", voiceFirstRoutes); // Voice-First Features (Wispr Flow inspired): 4x faster than typing, 68 languages
   app.use("/api/mrblue/messenger", mrBlueMessengerRoutes); // System 6: Facebook Messenger Integration
   app.use("/api/mrblue/autonomous", mrBlueAutonomousRoutes); // System 7: Autonomous Coding Engine
   app.use("/api/mrblue/memory", mrBlueMemoryRoutes); // System 8: Advanced Memory System
