@@ -2101,7 +2101,9 @@ function Router() {
   );
 }
 
-function App() {
+// MB.MD FIX: Split into wrapper (provides QueryClient) + content (uses useQuery)
+// This fixes "No QueryClient set" error - hooks must be inside provider
+function AppContent() {
   const [isVisualEditorOpen, setIsVisualEditorOpen] = useState(false);
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
   const [location] = useLocation();
@@ -2186,6 +2188,28 @@ function App() {
   }, [thePlanProgress, isPublicRoute]);
 
   return (
+    <>
+      <Toaster />
+      {showWelcomeScreen && <ScottWelcomeScreen />}
+      <ThePlanProgressBar />
+      <Suspense fallback={<LoadingFallback />}>
+        <Router />
+      </Suspense>
+      <MrBlueFloatingButton />
+      {isVisualEditorOpen && (
+        <Suspense fallback={<LoadingFallback />}>
+          <VisualEditorSplitPane 
+            isOpen={isVisualEditorOpen} 
+            onClose={() => setIsVisualEditorOpen(false)} 
+          />
+        </Suspense>
+      )}
+    </>
+  );
+}
+
+function App() {
+  return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
@@ -2193,21 +2217,7 @@ function App() {
             <PredictiveContextProvider>
               <MrBlueProvider>
                 <TooltipProvider>
-                  <Toaster />
-                  {showWelcomeScreen && <ScottWelcomeScreen />}
-                  <ThePlanProgressBar />
-                  <Suspense fallback={<LoadingFallback />}>
-                    <Router />
-                  </Suspense>
-                  <MrBlueFloatingButton />
-                  {isVisualEditorOpen && (
-                    <Suspense fallback={<LoadingFallback />}>
-                      <VisualEditorSplitPane 
-                        isOpen={isVisualEditorOpen} 
-                        onClose={() => setIsVisualEditorOpen(false)} 
-                      />
-                    </Suspense>
-                  )}
+                  <AppContent />
                 </TooltipProvider>
               </MrBlueProvider>
             </PredictiveContextProvider>
