@@ -4,11 +4,10 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { AgentEventBus } from '../services/mrBlue/AgentEventBus';
+import { agentEventBus } from '../services/mrBlue/AgentEventBus';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
 
 const router = Router();
-const eventBus = AgentEventBus.getInstance();
 
 /**
  * GET /api/mrblue/events/stream
@@ -18,7 +17,7 @@ router.get('/stream', authenticateToken, async (req: Request, res: Response) => 
   try {
     const limit = parseInt(req.query.limit as string) || 50;
 
-    const events = eventBus.getRecentEvents(limit);
+    const events = agentEventBus.getRecentEvents(limit);
 
     res.json({
       success: true,
@@ -43,7 +42,7 @@ router.get('/by-agent/:agentId', authenticateToken, async (req: Request, res: Re
     const { agentId } = req.params;
     const limit = parseInt(req.query.limit as string) || 20;
 
-    const events = eventBus.getEventsByAgent(agentId, limit);
+    const events = agentEventBus.getEventsByAgent(agentId, limit);
 
     res.json({
       success: true,
@@ -66,7 +65,7 @@ router.get('/by-agent/:agentId', authenticateToken, async (req: Request, res: Re
  */
 router.get('/stats', authenticateToken, async (req: Request, res: Response) => {
   try {
-    const stats = eventBus.getEventStats();
+    const stats = agentEventBus.getEventStats();
 
     res.json({
       success: true,
@@ -90,7 +89,7 @@ router.delete('/clear', authenticateToken, async (req: Request, res: Response) =
     const { userId } = req as AuthRequest;
 
     // TODO: Add admin check here if needed
-    eventBus.clearHistory();
+    agentEventBus.clearHistory();
 
     res.json({
       success: true,

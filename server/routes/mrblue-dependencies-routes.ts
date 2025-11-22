@@ -4,16 +4,10 @@
  */
 
 import { Router, Request, Response } from 'express';
-import { FileDependencyTracker } from '../services/mrBlue/fileDependencyTracker';
+import { fileDependencyTracker } from '../services/mrBlue/fileDependencyTracker';
 import { authenticateToken, type AuthRequest } from '../middleware/auth';
 
 const router = Router();
-const dependencyTracker = new FileDependencyTracker();
-
-// Initialize service on startup
-dependencyTracker.initialize().catch(err => 
-  console.error('[FileDependencyTracker Routes] Initialization error:', err)
-);
 
 /**
  * POST /api/mrblue/dependencies/analyze
@@ -30,7 +24,7 @@ router.post('/analyze', authenticateToken, async (req: Request, res: Response) =
       });
     }
 
-    const analysis = await dependencyTracker.analyzeDependencies(filePath);
+    const analysis = await fileDependencyTracker.analyzeDependencies(filePath);
 
     res.json({
       success: true,
@@ -60,7 +54,7 @@ router.post('/dependents', authenticateToken, async (req: Request, res: Response
       });
     }
 
-    const dependents = await dependencyTracker.getDependents(filePath);
+    const dependents = await fileDependencyTracker.getDependents(filePath);
 
     res.json({
       success: true,
@@ -91,7 +85,7 @@ router.post('/impact', authenticateToken, async (req: Request, res: Response) =>
       });
     }
 
-    const impact = await dependencyTracker.calculateImpact(filePath);
+    const impact = await fileDependencyTracker.calculateImpact(filePath);
 
     res.json({
       success: true,
@@ -121,7 +115,7 @@ router.post('/graph', authenticateToken, async (req: Request, res: Response) => 
       });
     }
 
-    const graph = await dependencyTracker.buildGraph(rootPath);
+    const graph = await fileDependencyTracker.buildGraph(rootPath);
 
     res.json({
       success: true,
