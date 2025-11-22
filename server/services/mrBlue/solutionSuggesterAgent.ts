@@ -84,14 +84,16 @@ Provide:
 3. Explanation of the fix
 4. Confidence level (0.0-1.0)
 
-Format as JSON:
+Format as STRICT JSON (no backticks, no template literals):
 {
-  "rootCause": "...",
-  "code": "...",
-  "explanation": "...",
-  "files": ["path/to/file1.ts", "path/to/file2.tsx"],
-  "confidence": 0.0-1.0
-}`;
+  "rootCause": "Brief explanation of why this error occurred",
+  "code": "Complete code fix as a single string (use \\n for newlines)",
+  "explanation": "Clear explanation of how the fix works",
+  "files": ["path/to/file1.ts"],
+  "confidence": 0.9
+}
+
+IMPORTANT: Use escaped newlines (\\n) instead of backticks or template literals!`;
 
       const message = await anthropic.messages.create({
         model: "claude-3-haiku-20240307",
@@ -106,6 +108,8 @@ Format as JSON:
 
       const content = message.content[0];
       
+      console.log('[Solution Suggester Agent] Raw Claude response:', JSON.stringify(content, null, 2));
+      
       // Initialize result with defaults
       let result = {
         code: '',
@@ -115,17 +119,32 @@ Format as JSON:
       };
       
       if (content.type === 'text') {
+        console.log('[Solution Suggester Agent] Claude text response length:', content.text.length);
+        
         // Try to extract JSON from the response
         const jsonMatch = content.text.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           try {
-            result = JSON.parse(jsonMatch[0]);
+            // Fix: Escape newlines and replace HTML entities before parsing
+            let cleanedJson = jsonMatch[0]
+              .replace(/\r?\n/g, '\\n')  // Escape actual newlines
+              .replace(/\t/g, '\\t')     // Escape tabs
+              .replace(/&gt;/g, '>')
+              .replace(/&lt;/g, '<')
+              .replace(/&amp;/g, '&')
+              .replace(/&quot;/g, '"')
+              .replace(/&#x27;/g, "'");
+            
+            const parsed = JSON.parse(cleanedJson);
+            console.log('[Solution Suggester Agent] ✅ Successfully parsed Claude JSON (confidence:', parsed.confidence, ')');
+            result = parsed;
           } catch (parseError) {
-            console.error('[Solution Suggester Agent] JSON parse error:', parseError);
-            console.error('[Solution Suggester Agent] Claude response:', content.text);
+            console.error('[Solution Suggester Agent] ❌ JSON parse failed:', parseError);
+            // Fallback: store the whole response as explanation
             result.explanation = content.text;
           }
         } else {
+          console.log('[Solution Suggester Agent] No JSON match found, using fallback');
           // Fallback: treat whole response as explanation
           result = {
             code: '',
@@ -137,6 +156,8 @@ Format as JSON:
       } else {
         console.warn('[Solution Suggester Agent] Unexpected content type:', content.type);
       }
+      
+      console.log('[Solution Suggester Agent] Final result:', JSON.stringify(result, null, 2));
 
       return {
         code: result.code || '',

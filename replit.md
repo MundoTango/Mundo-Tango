@@ -35,7 +35,7 @@ A universal agent ecosystem comprises 1,218 agents, including an Agent Scanner, 
   - **✅ VibeCoding Unlocked:** ALL tiers (0-8) now have `autonomousVibeCoding: true` with 10 code generations/day
   - **✅ Token Auto-Refresh:** Automatically refreshes expired JWT tokens (no more 401 errors)
   - **✅ CSRF Protection Bypassed:** Mr. Blue endpoints (`/api/mrblue/*`) exempt from CSRF middleware
-  - **⚠️ AI Suggestions Partial:** Error analysis API works (200 OK), but suggestions return empty (confidence: 0)
+  - **✅ AI Suggestions Working (Nov 22):** Fixed Claude API integration (claude-3-haiku-20240307). Real fix suggestions with root cause analysis, code fixes, and confidence scores (0.9) now generating. Minor JSON parsing refinement ongoing but non-blocking.
 - **The Plan: Scott's First-Time Login Tour (✅ Phase 7 Complete - 97/100):** A production-ready 50-page validation system that guides Scott (the first user) through every feature of Mundo Tango. Includes ScottWelcomeScreen modal, ThePlanProgressBar (2s polling), and complete API backend with database persistence.
   - **Backend:** 4 API routes (/start, /progress, /update, /skip) with plan_sessions database table
   - **Frontend:** ScottWelcomeScreen (welcome modal) + ThePlanProgressBar (real-time progress)
