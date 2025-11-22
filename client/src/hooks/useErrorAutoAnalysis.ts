@@ -45,7 +45,8 @@ interface UseErrorAutoAnalysisReturn {
 }
 
 export function useErrorAutoAnalysis(
-  onProposalReady: (proposal: FixProposal) => void
+  onProposalReady: (proposal: FixProposal) => void,
+  conversationId?: number | null // ✅ MB.MD Fix: Wait for conversation before analyzing
 ): UseErrorAutoAnalysisReturn {
   const [currentErrors, setCurrentErrors] = useState<ErrorContext[]>([]);
   const [activeProposal, setActiveProposal] = useState<FixProposal | null>(null);
@@ -83,9 +84,14 @@ export function useErrorAutoAnalysis(
   /**
    * Auto-detect new errors and trigger analysis
    * MB.MD v9.2: Triggers on ANY analyzed error, even without suggestedFix
+   * ✅ MB.MD Fix: Only analyze AFTER conversation exists (prevents orphaned proposals)
    */
   useEffect(() => {
     if (patterns.length === 0) return;
+    if (!conversationId) {
+      console.log('[ErrorAutoAnalysis] ⏳ Waiting for conversation ID before analyzing errors...');
+      return;
+    }
     
     // Find errors we haven't analyzed yet
     const newErrors = patterns.filter(p => 
@@ -97,7 +103,7 @@ export function useErrorAutoAnalysis(
     if (newErrors.length > 0) {
       // Auto-analyze the most recent error
       const errorToAnalyze = newErrors[0];
-      console.log('[ErrorAutoAnalysis] New error detected, auto-analyzing:', errorToAnalyze.id);
+      console.log('[ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error:', errorToAnalyze.id);
       
       // Mark as analyzed to prevent duplicate analysis
       setAnalyzedErrorIds(prev => new Set([...prev, errorToAnalyze.id]));
@@ -105,7 +111,7 @@ export function useErrorAutoAnalysis(
       // Generate proposal
       generateProposal(errorToAnalyze.id);
     }
-  }, [patterns, analyzedErrorIds]);
+  }, [patterns, analyzedErrorIds, conversationId]);
   
   /**
    * Generate fix proposal for an error

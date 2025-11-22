@@ -616,7 +616,7 @@ Let's get started! What would you like to change?`,
     isAnalyzing: isAnalyzingErrors,
     approveProposal,
     rejectProposal
-  } = useErrorAutoAnalysis(handleProposalReady);
+  } = useErrorAutoAnalysis(handleProposalReady, currentConversationId);
 
   // ✅ STREAMING HANDLER WITH CONTEXT BUILDER - MB.MD v9.2
   const handleStreamingChat = useCallback(async (message: string) => {
