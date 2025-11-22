@@ -1,5 +1,5 @@
 import { db } from "@db";
-import { sessionBugsFound } from "@shared/schema";
+import { sessionBugsFound, errorPatterns } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import Anthropic from "@anthropic-ai/sdk";
 
@@ -14,7 +14,7 @@ const anthropic = new Anthropic({
 
 export class SolutionSuggesterAgent {
   /**
-   * Suggest a fix for a bug
+   * Suggest a fix for a bug (works with both sessionBugsFound and errorPatterns)
    */
   async suggestFix(bugId: number): Promise<{
     code: string;
@@ -23,29 +23,39 @@ export class SolutionSuggesterAgent {
     confidence: number;
   }> {
     try {
-      // Get the bug details
-      const [bug] = await db
+      // ✅ AGENT #6 FIX: Try errorPatterns table first, then sessionBugsFound
+      let bug = await db
         .select()
-        .from(sessionBugsFound)
-        .where(eq(sessionBugsFound.id, bugId));
+        .from(errorPatterns)
+        .where(eq(errorPatterns.id, bugId))
+        .limit(1)
+        .then(rows => rows[0]);
+
+      let isErrorPattern = !!bug;
 
       if (!bug) {
-        throw new Error(`Bug ${bugId} not found`);
+        // Fallback to sessionBugsFound
+        bug = await db
+          .select()
+          .from(sessionBugsFound)
+          .where(eq(sessionBugsFound.id, bugId))
+          .limit(1)
+          .then(rows => rows[0]);
+      }
+
+      if (!bug) {
+        throw new Error(`Bug/Error ${bugId} not found`);
       }
 
       // Generate fix using Claude 3.5 Sonnet
-      const message = await anthropic.messages.create({
-        model: "claude-3-5-sonnet-20241022",
-        max_tokens: 2000,
-        messages: [
-          {
-            role: "user",
-            content: `You are an expert software engineer. Analyze this bug and suggest a fix:
+      const userPrompt = isErrorPattern 
+        ? `You are an expert software engineer. Analyze this error and suggest a fix:
 
-Bug Title: ${bug.title}
-Description: ${bug.description}
-Severity: ${bug.severity}
-Reproduction Steps: ${JSON.stringify(bug.reproSteps, null, 2)}
+Error Type: ${(bug as any).errorType}
+Error Message: ${(bug as any).errorMessage}
+Stack Trace: ${(bug as any).errorStack || 'N/A'}
+Frequency: ${(bug as any).frequency} occurrences
+Metadata: ${JSON.stringify((bug as any).metadata, null, 2)}
 
 Provide:
 1. Root cause analysis
@@ -60,7 +70,36 @@ Format as JSON:
   "explanation": "...",
   "files": ["path/to/file1.ts", "path/to/file2.tsx"],
   "confidence": 0.0-1.0
-}`,
+}`
+        : `You are an expert software engineer. Analyze this bug and suggest a fix:
+
+Bug Title: ${(bug as any).title}
+Description: ${(bug as any).description}
+Severity: ${(bug as any).severity}
+Reproduction Steps: ${JSON.stringify((bug as any).reproSteps, null, 2)}
+
+Provide:
+1. Root cause analysis
+2. Suggested code fix (with file paths)
+3. Explanation of the fix
+4. Confidence level (0.0-1.0)
+
+Format as JSON:
+{
+  "rootCause": "...",
+  "code": "...",
+  "explanation": "...",
+  "files": ["path/to/file1.ts", "path/to/file2.tsx"],
+  "confidence": 0.0-1.0
+}`;
+
+      const message = await anthropic.messages.create({
+        model: "claude-3-5-sonnet-20241022",
+        max_tokens: 2000,
+        messages: [
+          {
+            role: "user",
+            content: userPrompt,
           },
         ],
       });
