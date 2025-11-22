@@ -42,6 +42,16 @@ import pageAuditRoutes from "./routes/page-audit-routes";
 import mrBlueErrorAnalysisRoutes from "./routes/mrblue-error-analysis-routes";
 import mrBlueErrorActionsRoutes from "./routes/mrblue-error-actions-routes";
 import mrBlueOrchestrationRoutes from "./routes/mrblue-orchestration-routes";
+import mrBlueTaskPlannerRoutes from "./routes/mrblue-task-planner-routes";
+import mrBlueQualityValidatorRoutes from "./routes/mrblue-quality-validator-routes";
+import mrBlueGitCommitRoutes from "./routes/mrblue-git-commit-routes";
+import mrBluePreferencesRoutes from "./routes/mrblue-preferences-routes";
+import mrBlueWorkflowPatternsRoutes from "./routes/mrblue-workflow-patterns-routes";
+import mrBlueAgentEventsRoutes from "./routes/mrblue-agent-events-routes";
+import mrBlueDependenciesRoutes from "./routes/mrblue-dependencies-routes";
+import mrBlueRoleAdapterRoutes from "./routes/mrblue-role-adapter-routes";
+import mrBlueSubscriptionRoutes from "./routes/mrblue-subscription-routes";
+import mrBlueLearningRoutes from "./routes/mrblue-learning-routes";
 import orchestrationRoutes from "./routes/orchestration";
 import gitRoutes from "./routes/git";
 import a2aRoutes from "./routes/a2a";
@@ -594,6 +604,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/mrblue", mrBlueErrorActionsRoutes); // Phase 4: Error Fix Actions (Apply/Escalate)
   app.use("/api/a2a", a2aRoutes); // A2A Protocol - Machine-to-machine agent communication (MB.MD Phase 6A)
   app.use("/api/mrblue/orchestration", mrBlueOrchestrationRoutes); // Multi-agent orchestration with LangChain.js
+  
+  // ============================================================================
+  // MR. BLUE PHASE 2 INTEGRATIONS - 10 NEW AGENTS (MB.MD)
+  // ============================================================================
+  app.use("/api/mrblue/task-planner", mrBlueTaskPlannerRoutes); // Agent #44: AI-powered task decomposition (GROQ Llama-3.3-70b)
+  app.use("/api/mrblue/quality", mrBlueQualityValidatorRoutes); // Agent #43: Code quality + security scanning (GPT-4o)
+  app.use("/api/mrblue/git", mrBlueGitCommitRoutes); // Agent #41: AI commit messages + Git operations
+  app.use("/api/mrblue/preferences", mrBluePreferencesRoutes); // Agent #42: Auto-extract user preferences (16 patterns)
+  app.use("/api/mrblue/workflow", mrBlueWorkflowPatternsRoutes); // Agent #46: Workflow pattern learning + prediction
+  app.use("/api/mrblue/events", mrBlueAgentEventsRoutes); // Agent #45: Inter-agent event bus viewer
+  app.use("/api/mrblue/dependencies", mrBlueDependenciesRoutes); // Agent #50: File dependency analysis
+  app.use("/api/mrblue/role", mrBlueRoleAdapterRoutes); // Agent #47: Tier-based feature gating
+  app.use("/api/mrblue/subscription", mrBlueSubscriptionRoutes); // Agent #48: Quota management
+  app.use("/api/mrblue/learning", mrBlueLearningRoutes); // Agent #49: 10-pathway learning coordinator
+  
   app.use("/api/orchestration", orchestrationRoutes); // Production-ready workflow orchestration (Sequential/Parallel/Intelligence Cycle)
   app.use("/api/git", gitRoutes); // Autonomous Git commit system with AI-generated messages
   app.use(mrBlueEnhancedRoutes); // Enhanced Mr. Blue with troubleshooting KB
