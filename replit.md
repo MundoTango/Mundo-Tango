@@ -30,11 +30,16 @@ A universal agent ecosystem comprises 1,218 agents, including an Agent Scanner, 
   - `AgentOrchestration`: Master orchestrator (5-phase healing pipeline)
   - `VibeCodingService`: Natural language to code conversion
 - **Mr. Blue AI Assistant:** Provides text/voice chat, VibeCoding (GROQ Llama-3.3-70b), a visual editor, page generation from natural language, proactive error detection, and auto-fix capabilities.
+  - **✅ Beta Mode (Nov 22, 2025):** Visual Editor works WITHOUT authentication (guest users auto-created)
+  - **✅ VibeCoding Unlocked:** ALL tiers (0-8) now have `autonomousVibeCoding: true` with 10 code generations/day
+  - **✅ Token Auto-Refresh:** Automatically refreshes expired JWT tokens (no more 401 errors)
+  - **✅ AI Suggestions Fixed:** Error analysis now generates REAL Claude-powered suggestions (not empty arrays)
 - **The Plan: Scott's First-Time Login Tour (✅ Phase 7 Complete - 97/100):** A production-ready 50-page validation system that guides Scott (the first user) through every feature of Mundo Tango. Includes ScottWelcomeScreen modal, ThePlanProgressBar (2s polling), and complete API backend with database persistence.
   - **Backend:** 4 API routes (/start, /progress, /update, /skip) with plan_sessions database table
   - **Frontend:** ScottWelcomeScreen (welcome modal) + ThePlanProgressBar (real-time progress)
   - **Structure:** 50 pages across 10 phases from ULTIMATE_ZERO_TO_DEPLOY_PART_10
   - **Features:** Page checklists, progress tracking, skip functionality, completion tracking
+  - **✅ Beta Mode (Nov 22):** Works WITHOUT authentication (auto-creates guest users)
 - **Bifrost AI Gateway:** Manages multi-provider AI interactions (OpenAI, Anthropic, Groq, Google) with automatic failover, semantic caching, and load balancing.
 
 ### Platform Features
