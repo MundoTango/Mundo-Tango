@@ -121,17 +121,41 @@ IMPORTANT: Use escaped newlines (\\n) instead of backticks or template literals!
       if (content.type === 'text') {
         console.log('[Solution Suggester Agent] Claude text response length:', content.text.length);
         
+        // ✅ MB.MD v9.2 Fix: Clean up Claude's response for JSON parsing
+        // 1. Decode HTML entities (&lt;, &gt;, &amp;)
+        // 2. Escape control characters (newlines, tabs) inside JSON strings
+        const cleanForJson = (text: string) => {
+          // First decode HTML entities
+          let cleaned = text
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&')
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'");
+          
+          // Then escape control characters inside JSON string values
+          // This regex finds strings in JSON and escapes newlines/tabs within them
+          return cleaned.replace(/"((?:[^"\\]|\\.)*)"/g, (match, str) => {
+            const escaped = str
+              .replace(/\n/g, '\\n')
+              .replace(/\r/g, '\\r')
+              .replace(/\t/g, '\\t');
+            return `"${escaped}"`;
+          });
+        };
+        
+        const decodedText = cleanForJson(content.text);
+        
         // Try to parse JSON directly - Claude may format with whitespace
         try {
-          // ✅ MB.MD v9.2 Fix: Parse JSON directly (JSON.parse handles whitespace)
-          const parsed = JSON.parse(content.text);
+          const parsed = JSON.parse(decodedText);
           console.log('[Solution Suggester Agent] ✅ Successfully parsed Claude JSON (confidence:', parsed.confidence, ')');
           result = parsed;
         } catch (parseError) {
           console.error('[Solution Suggester Agent] ❌ Direct JSON parse failed, trying regex extraction');
           
           // Fallback: Extract JSON from text using regex
-          const jsonMatch = content.text.match(/\{[\s\S]*\}/);
+          const jsonMatch = decodedText.match(/\{[\s\S]*\}/);
           if (jsonMatch) {
             try {
               const parsed = JSON.parse(jsonMatch[0]);

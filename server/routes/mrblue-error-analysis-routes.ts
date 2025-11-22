@@ -221,7 +221,8 @@ router.post("/analyze-error", async (req: Request, res: Response) => {
               files: suggestion.files,
               generatedAt: new Date().toISOString(),
             },
-            fixConfidence: suggestion.confidence.toString(),
+            // ✅ MB.MD v9.2 Fix: Store as string for DECIMAL(3,2) column
+            fixConfidence: suggestion.confidence.toFixed(2),
             status: 'analyzed',
             updatedAt: new Date(),
           })
