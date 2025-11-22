@@ -563,4 +563,197 @@ router.get('/stats', authenticateToken, async (req: Request, res: Response) => {
   });
 });
 
+// ==================== BROWSER AUTOMATION (Agent #38) ====================
+
+import { browserAutomationService } from '../services/mrBlue/BrowserAutomationService';
+
+/**
+ * GET /api/v1/orchestration/browser-automation/recordings
+ * Get all recordings for the authenticated user
+ */
+router.get('/browser-automation/recordings', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const { status } = req.query;
+
+    const recordings = await browserAutomationService.getUserRecordings(userId, status as string | undefined);
+
+    res.json({
+      success: true,
+      data: recordings
+    });
+  } catch (error: any) {
+    console.error('[BrowserAutomation] Error getting recordings:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * GET /api/v1/orchestration/browser-automation/recordings/:id
+ * Get a specific recording
+ */
+router.get('/browser-automation/recordings/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const recordingId = parseInt(req.params.id);
+    const recording = await browserAutomationService.getRecording(recordingId);
+
+    if (!recording) {
+      return res.status(404).json({
+        success: false,
+        error: 'Recording not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: recording
+    });
+  } catch (error: any) {
+    console.error('[BrowserAutomation] Error getting recording:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * POST /api/v1/orchestration/browser-automation/recordings
+ * Save a new recording
+ */
+router.post('/browser-automation/recordings', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const { name, description, actions, startUrl, metadata } = req.body;
+
+    if (!name || !actions || !startUrl) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: name, actions, startUrl'
+      });
+    }
+
+    const recordingId = await browserAutomationService.saveRecording({
+      userId,
+      name,
+      description,
+      actions,
+      startUrl,
+      metadata,
+    });
+
+    res.json({
+      success: true,
+      data: { id: recordingId }
+    });
+  } catch (error: any) {
+    console.error('[BrowserAutomation] Error saving recording:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * PATCH /api/v1/orchestration/browser-automation/recordings/:id
+ * Update a recording
+ */
+router.patch('/browser-automation/recordings/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const recordingId = parseInt(req.params.id);
+    const updates = req.body;
+
+    await browserAutomationService.updateRecording(recordingId, updates);
+
+    res.json({
+      success: true,
+      message: 'Recording updated successfully'
+    });
+  } catch (error: any) {
+    console.error('[BrowserAutomation] Error updating recording:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * DELETE /api/v1/orchestration/browser-automation/recordings/:id
+ * Delete a recording
+ */
+router.delete('/browser-automation/recordings/:id', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const recordingId = parseInt(req.params.id);
+    await browserAutomationService.deleteRecording(recordingId);
+
+    res.json({
+      success: true,
+      message: 'Recording deleted successfully'
+    });
+  } catch (error: any) {
+    console.error('[BrowserAutomation] Error deleting recording:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * POST /api/v1/orchestration/browser-automation/recordings/:id/execute
+ * Execute a recording
+ */
+router.post('/browser-automation/recordings/:id/execute', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const recordingId = parseInt(req.params.id);
+    const userId = req.user!.id;
+
+    console.log(`[BrowserAutomation] Executing recording ${recordingId} for user ${userId}`);
+
+    const result = await browserAutomationService.executeRecording(recordingId, userId);
+
+    res.json({
+      success: result.success,
+      data: result.data,
+      screenshots: result.screenshots,
+      error: result.error
+    });
+  } catch (error: any) {
+    console.error('[BrowserAutomation] Error executing recording:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
+ * GET /api/v1/orchestration/browser-automation/recordings/:id/executions
+ * Get execution history for a recording
+ */
+router.get('/browser-automation/recordings/:id/executions', authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const recordingId = parseInt(req.params.id);
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    const executions = await browserAutomationService.getExecutionHistory(recordingId, limit);
+
+    res.json({
+      success: true,
+      data: executions
+    });
+  } catch (error: any) {
+    console.error('[BrowserAutomation] Error getting execution history:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 export default router;

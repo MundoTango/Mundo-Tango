@@ -30,6 +30,7 @@ import { IframeAddressBar } from "@/components/visual-editor/IframeAddressBar";
 import { ElementHighlighter } from "@/components/visual-editor/ElementHighlighter";
 import { MemoryPanel } from "@/components/visual-editor/MemoryPanel";
 import { ProgressPanel } from "@/components/visual-editor/ProgressPanel";
+import { BrowserAutomationPanel } from "@/components/visual-editor/BrowserAutomationPanel";
 import { useSelfHealing } from "@/hooks/useSelfHealing";
 import type { ChangeMetadata } from "@/components/visual-editor/VisualDiffViewer";
 import { SEO } from "@/components/SEO";
@@ -89,7 +90,7 @@ function VisualEditorPageContent() {
   const [currentPageHtml, setCurrentPageHtml] = useState<string>("");
   const [selectedElementStyles, setSelectedElementStyles] = useState<Record<string, string>>({});
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
-  const [middlePanelTab, setMiddlePanelTab] = useState<'errors' | 'memory' | 'progress'>('errors');
+  const [middlePanelTab, setMiddlePanelTab] = useState<'errors' | 'memory' | 'progress' | 'automation'>('errors');
   
   // Refs
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -1329,7 +1330,7 @@ function VisualEditorPageContent() {
           {/* Tab Header */}
           <div className="border-b p-3">
             <Tabs value={middlePanelTab} onValueChange={(v) => setMiddlePanelTab(v as any)}>
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="errors" data-testid="tab-errors">
                   <Bug className="h-4 w-4 mr-2" />
                   Errors
@@ -1342,6 +1343,10 @@ function VisualEditorPageContent() {
                   <Activity className="h-4 w-4 mr-2" />
                   Progress
                 </TabsTrigger>
+                <TabsTrigger value="automation" data-testid="tab-automation">
+                  <Play className="h-4 w-4 mr-2" />
+                  Automation
+                </TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
@@ -1352,8 +1357,10 @@ function VisualEditorPageContent() {
               <ErrorAnalysisPanel />
             ) : middlePanelTab === 'memory' ? (
               <MemoryPanel />
-            ) : (
+            ) : middlePanelTab === 'progress' ? (
               <ProgressPanel />
+            ) : (
+              <BrowserAutomationPanel />
             )}
           </div>
         </section>

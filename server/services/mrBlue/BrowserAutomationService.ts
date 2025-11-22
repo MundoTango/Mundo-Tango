@@ -1,4 +1,7 @@
 import { chromium, Browser, Page } from 'playwright';
+import { db } from '../../db';
+import { browserAutomationRecordings, browserAutomationExecutions } from '@shared/schema';
+import { eq, and, desc } from 'drizzle-orm';
 
 interface BrowserAutomationResult {
   success: boolean;
@@ -6,6 +9,26 @@ interface BrowserAutomationResult {
   filePath?: string;
   error?: string;
   screenshots: Array<{ step: number; base64: string; action: string }>;
+}
+
+interface BrowserAction {
+  type: 'navigate' | 'click' | 'type' | 'wait' | 'screenshot' | 'extract' | 'scroll';
+  selector?: string;
+  value?: string;
+  wait?: number;
+  extractPattern?: string;
+  url?: string;
+}
+
+interface Recording {
+  id?: number;
+  userId: number;
+  name: string;
+  description?: string;
+  actions: BrowserAction[];
+  startUrl: string;
+  status?: string;
+  metadata?: any;
 }
 
 export class BrowserAutomationService {
@@ -270,8 +293,8 @@ export class BrowserAutomationService {
       this.page = await this.browser!.newPage();
 
       // For now, return error for custom automations
-      // Future: Parse instruction and execute steps
-      throw new Error('Custom browser automation not yet implemented. Use Wix extraction for now.');
+      // Future: Parse instruction and execute steps using AI
+      throw new Error('Custom browser automation not yet implemented. Use recorded sequences instead.');
 
     } catch (error: any) {
       return {
@@ -282,6 +305,287 @@ export class BrowserAutomationService {
     } finally {
       await this.cleanup();
     }
+  }
+
+  // ============================================================================
+  // RECORDING & PLAYBACK SYSTEM
+  // ============================================================================
+
+  async saveRecording(recording: Recording): Promise<number> {
+    const [result] = await db.insert(browserAutomationRecordings).values({
+      userId: recording.userId,
+      name: recording.name,
+      description: recording.description,
+      actions: recording.actions,
+      startUrl: recording.startUrl,
+      status: recording.status || 'draft',
+      metadata: recording.metadata || {},
+    }).returning({ id: browserAutomationRecordings.id });
+
+    console.log(`[BrowserAutomation] ✅ Saved recording: ${recording.name} (ID: ${result.id})`);
+    return result.id;
+  }
+
+  async updateRecording(recordingId: number, updates: Partial<Recording>): Promise<void> {
+    await db.update(browserAutomationRecordings)
+      .set({
+        ...updates,
+        updatedAt: new Date(),
+      })
+      .where(eq(browserAutomationRecordings.id, recordingId));
+
+    console.log(`[BrowserAutomation] ✅ Updated recording ID: ${recordingId}`);
+  }
+
+  async getRecording(recordingId: number): Promise<any> {
+    const [recording] = await db.select()
+      .from(browserAutomationRecordings)
+      .where(eq(browserAutomationRecordings.id, recordingId));
+
+    return recording;
+  }
+
+  async getUserRecordings(userId: number, status?: string): Promise<any[]> {
+    const query = status
+      ? and(
+          eq(browserAutomationRecordings.userId, userId),
+          eq(browserAutomationRecordings.status, status)
+        )
+      : eq(browserAutomationRecordings.userId, userId);
+
+    const recordings = await db.select()
+      .from(browserAutomationRecordings)
+      .where(query)
+      .orderBy(desc(browserAutomationRecordings.updatedAt));
+
+    return recordings;
+  }
+
+  async deleteRecording(recordingId: number): Promise<void> {
+    await db.delete(browserAutomationRecordings)
+      .where(eq(browserAutomationRecordings.id, recordingId));
+
+    console.log(`[BrowserAutomation] ✅ Deleted recording ID: ${recordingId}`);
+  }
+
+  async executeRecording(recordingId: number, userId: number): Promise<BrowserAutomationResult> {
+    const screenshots: Array<{ step: number; base64: string; action: string }> = [];
+    let stepNumber = 0;
+    let executionId: number | null = null;
+
+    try {
+      // Load recording
+      const recording = await this.getRecording(recordingId);
+      if (!recording) {
+        throw new Error(`Recording ${recordingId} not found`);
+      }
+
+      const actions = recording.actions as BrowserAction[];
+      const totalSteps = actions.length;
+
+      // Create execution record
+      const [execution] = await db.insert(browserAutomationExecutions).values({
+        recordingId,
+        userId,
+        status: 'running',
+        totalSteps,
+        stepsCompleted: 0,
+      }).returning({ id: browserAutomationExecutions.id });
+
+      executionId = execution.id;
+
+      console.log(`[BrowserAutomation] Starting execution ${executionId} for recording: ${recording.name}`);
+
+      // Initialize browser
+      await this.initialize();
+      this.page = await this.browser!.newPage();
+
+      // Navigate to start URL
+      await this.page.goto(recording.startUrl, { 
+        waitUntil: 'networkidle',
+        timeout: 30000 
+      });
+
+      let extractedData: any = {};
+
+      // Execute each action
+      for (const action of actions) {
+        stepNumber++;
+        console.log(`[BrowserAutomation] Step ${stepNumber}/${totalSteps}: ${action.type}`);
+
+        switch (action.type) {
+          case 'navigate':
+            if (action.url) {
+              await this.page.goto(action.url, { waitUntil: 'networkidle', timeout: 30000 });
+              screenshots.push({
+                step: stepNumber,
+                base64: await this.takeScreenshot(),
+                action: `Navigate to ${action.url}`
+              });
+            }
+            break;
+
+          case 'click':
+            if (action.selector) {
+              await this.page.waitForSelector(action.selector, { timeout: 10000 });
+              await this.page.click(action.selector);
+              if (action.wait) {
+                await this.page.waitForTimeout(action.wait);
+              }
+              screenshots.push({
+                step: stepNumber,
+                base64: await this.takeScreenshot(),
+                action: `Click: ${action.selector}`
+              });
+            }
+            break;
+
+          case 'type':
+            if (action.selector && action.value) {
+              await this.page.waitForSelector(action.selector, { timeout: 10000 });
+              await this.page.fill(action.selector, action.value);
+              screenshots.push({
+                step: stepNumber,
+                base64: await this.takeScreenshot(),
+                action: `Type into: ${action.selector}`
+              });
+            }
+            break;
+
+          case 'wait':
+            if (action.wait) {
+              await this.page.waitForTimeout(action.wait);
+            } else if (action.selector) {
+              await this.page.waitForSelector(action.selector, { timeout: 10000 });
+            }
+            screenshots.push({
+              step: stepNumber,
+              base64: await this.takeScreenshot(),
+              action: 'Wait'
+            });
+            break;
+
+          case 'screenshot':
+            screenshots.push({
+              step: stepNumber,
+              base64: await this.takeScreenshot(),
+              action: 'Screenshot'
+            });
+            break;
+
+          case 'extract':
+            if (action.selector) {
+              const element = await this.page.$(action.selector);
+              if (element) {
+                const text = await element.textContent();
+                extractedData[action.selector] = text;
+              }
+            }
+            break;
+
+          case 'scroll':
+            if (action.value) {
+              const distance = parseInt(action.value);
+              await this.page.evaluate((dist) => {
+                window.scrollBy(0, dist);
+              }, distance);
+            }
+            screenshots.push({
+              step: stepNumber,
+              base64: await this.takeScreenshot(),
+              action: 'Scroll'
+            });
+            break;
+        }
+
+        // Update execution progress
+        await db.update(browserAutomationExecutions)
+          .set({ stepsCompleted: stepNumber })
+          .where(eq(browserAutomationExecutions.id, executionId));
+      }
+
+      // Mark execution as completed
+      const duration = Date.now() - new Date(execution.startedAt).getTime();
+      await db.update(browserAutomationExecutions).set({
+        status: 'completed',
+        completedAt: new Date(),
+        duration,
+        stepsCompleted: totalSteps,
+        screenshots,
+        result: extractedData,
+      }).where(eq(browserAutomationExecutions.id, executionId));
+
+      // Update recording stats
+      const executions = await db.select()
+        .from(browserAutomationExecutions)
+        .where(eq(browserAutomationExecutions.recordingId, recordingId));
+
+      const successCount = executions.filter(e => e.status === 'completed').length;
+      const successRate = executions.length > 0 ? successCount / executions.length : 0;
+      const avgDuration = executions.reduce((sum, e) => sum + (e.duration || 0), 0) / executions.length;
+
+      await db.update(browserAutomationRecordings).set({
+        executionCount: executions.length,
+        lastExecutedAt: new Date(),
+        successRate,
+        averageDuration: Math.round(avgDuration),
+      }).where(eq(browserAutomationRecordings.id, recordingId));
+
+      console.log(`[BrowserAutomation] ✅ Execution ${executionId} completed successfully`);
+
+      return {
+        success: true,
+        data: extractedData,
+        screenshots
+      };
+
+    } catch (error: any) {
+      console.error(`[BrowserAutomation] Execution failed:`, error);
+
+      // Take final error screenshot
+      if (this.page) {
+        try {
+          screenshots.push({
+            step: stepNumber + 1,
+            base64: await this.takeScreenshot(),
+            action: `Error: ${error.message}`
+          });
+        } catch (e) {
+          // Ignore screenshot errors
+        }
+      }
+
+      // Update execution record
+      if (executionId) {
+        const duration = Date.now() - new Date().getTime();
+        await db.update(browserAutomationExecutions).set({
+          status: 'failed',
+          completedAt: new Date(),
+          duration,
+          errorMessage: error.message,
+          errorStack: error.stack,
+          screenshots,
+        }).where(eq(browserAutomationExecutions.id, executionId));
+      }
+
+      return {
+        success: false,
+        error: error.message,
+        screenshots
+      };
+    } finally {
+      await this.cleanup();
+    }
+  }
+
+  async getExecutionHistory(recordingId: number, limit = 10): Promise<any[]> {
+    const executions = await db.select()
+      .from(browserAutomationExecutions)
+      .where(eq(browserAutomationExecutions.recordingId, recordingId))
+      .orderBy(desc(browserAutomationExecutions.startedAt))
+      .limit(limit);
+
+    return executions;
   }
 }
 
