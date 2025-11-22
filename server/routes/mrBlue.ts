@@ -1308,22 +1308,23 @@ router.post("/analyze-page", async (req: Request, res: Response) => {
 
 router.post("/conversations", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
-    // ✅ BETA FIX: Allow unauthenticated access during beta testing
+    // ✅ AGENT #15: God-Mode Test User - Use existing god user for unauthenticated sessions
     let userId = req.user?.id;
     
-    // Create guest user if not authenticated
+    // Use god user (ID 147) as Mr. Blue test identity for unauthenticated access
     if (!userId) {
-      console.log('[MrBlue] Creating guest user for conversation...');
+      const MR_BLUE_GOD_USER_ID = 147; // admin5mundotangol (god role, full permissions)
+      console.log(`[MrBlue] ✅ AGENT #15: Using god user #${MR_BLUE_GOD_USER_ID} for unauthenticated session`);
+      
       const { storage } = await import("../storage");
-      const guestUser = await storage.createUser({
-        email: `guest-${Date.now()}@mundo-tango.local`,
-        username: `guest_${Date.now()}`,
-        password: 'guest_temp_password',
-        role: 'user',
-        subscriptionTier: 0
-      });
-      userId = guestUser.id;
-      req.user = guestUser;
+      const godUser = await storage.getUserById(MR_BLUE_GOD_USER_ID);
+      
+      if (!godUser) {
+        return res.status(500).json({ error: 'Mr. Blue test user not found. Contact admin.' });
+      }
+      
+      userId = godUser.id;
+      req.user = godUser;
     }
 
     const { storage } = await import("../storage");
@@ -1340,11 +1341,14 @@ router.post("/conversations", optionalAuth, async (req: AuthRequest, res: Respon
 
 router.get("/conversations/:id/messages", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
-    // ✅ BETA FIX: Allow unauthenticated access during beta testing
-    const userId = req.user?.id;
+    // ✅ AGENT #15: God-Mode Test User - Use existing god user for unauthenticated sessions
+    let userId = req.user?.id;
+    
+    // Use god user (ID 147) as Mr. Blue test identity for unauthenticated access
     if (!userId) {
-      console.log('[MrBlue] Unauthenticated user trying to access messages - allowing for beta');
-      // Don't block - let them access their guest conversation
+      const MR_BLUE_GOD_USER_ID = 147; // admin5mundotangol (god role, full permissions)
+      console.log(`[MrBlue] ✅ AGENT #15: Using god user #${MR_BLUE_GOD_USER_ID} for message retrieval`);
+      userId = MR_BLUE_GOD_USER_ID;
     }
 
     const conversationId = parseInt(req.params.id);
@@ -1371,7 +1375,7 @@ router.get("/conversations/:id/messages", optionalAuth, async (req: AuthRequest,
 
 router.post("/messages", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
-    // ✅ BETA FIX: Allow unauthenticated access during beta testing
+    // ✅ AGENT #15: God-Mode Test User - Use existing god user for unauthenticated sessions
     let userId = req.user?.id;
     
     const { conversationId, role, content, metadata } = req.body;
@@ -1384,28 +1388,29 @@ router.post("/messages", optionalAuth, async (req: AuthRequest, res: Response) =
     
     const conversation = await storage.getMrBlueConversationById(conversationId);
     
-    // Create guest user if needed
+    // Use god user (ID 147) as Mr. Blue test identity for unauthenticated access
     if (!userId) {
-      console.log('[MrBlue] Creating guest user for message save...');
-      const guestUser = await storage.createUser({
-        email: `guest-${Date.now()}@mundo-tango.local`,
-        username: `guest_${Date.now()}`,
-        password: 'guest_temp_password',
-        role: 'user',
-        subscriptionTier: 0
-      });
-      userId = guestUser.id;
-      req.user = guestUser;
+      const MR_BLUE_GOD_USER_ID = 147; // admin5mundotangol (god role, full permissions)
+      console.log(`[MrBlue] ✅ AGENT #15: Using god user #${MR_BLUE_GOD_USER_ID} for message save`);
       
-      // Update conversation to belong to this guest user
-      if (conversation) {
+      const godUser = await storage.getUserById(MR_BLUE_GOD_USER_ID);
+      
+      if (!godUser) {
+        return res.status(500).json({ error: 'Mr. Blue test user not found. Contact admin.' });
+      }
+      
+      userId = godUser.id;
+      req.user = godUser;
+      
+      // Update conversation to belong to god user
+      if (conversation && conversation.userId !== userId) {
         await db.update(mrBlueConversations)
           .set({ userId: userId })
           .where(eq(mrBlueConversations.id, conversationId));
       }
     }
     
-    // Verify conversation ownership (now with potential guest user)
+    // Verify conversation ownership (now with god user)
     if (!conversation) {
       return res.status(404).json({ error: 'Conversation not found' });
     }
