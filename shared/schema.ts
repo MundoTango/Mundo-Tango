@@ -13443,6 +13443,73 @@ export type InsertRoleConfirmation = z.infer<typeof insertRoleConfirmationSchema
 export type SelectRoleConfirmation = typeof roleConfirmations.$inferSelect;
 
 // ============================================================================
+// MR. BLUE AI AGENT TABLES (Phase 2)
+// ============================================================================
+
+// User Preferences - Auto-extracted from conversations (Agent #42)
+export const mrBlueUserPreferences = pgTable("mr_blue_user_preferences", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  category: varchar("category", { length: 50 }).notNull(), // coding_style, tech_stack, design_preference, etc.
+  preferenceKey: varchar("preference_key", { length: 255 }).notNull(), // Unique key for de-duplication
+  preferenceValue: text("preference_value").notNull(),
+  confidence: real("confidence").notNull().default(0.5), // 0-1 score
+  extractedFrom: text("extracted_from"), // Original message context
+  detectedAt: timestamp("detected_at").defaultNow(),
+  lastDetectedAt: timestamp("last_detected_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("mr_blue_user_prefs_user_idx").on(table.userId),
+  categoryIdx: index("mr_blue_user_prefs_category_idx").on(table.category),
+  uniquePreference: unique().on(table.userId, table.preferenceKey),
+}));
+
+export const insertMrBlueUserPreferenceSchema = createInsertSchema(mrBlueUserPreferences)
+  .omit({ id: true, detectedAt: true, lastDetectedAt: true });
+export type InsertMrBlueUserPreference = z.infer<typeof insertMrBlueUserPreferenceSchema>;
+export type SelectMrBlueUserPreference = typeof mrBlueUserPreferences.$inferSelect;
+
+// Workflow Actions - User action recording for pattern learning (Agent #46)
+export const mrBlueWorkflowActions = pgTable("mr_blue_workflow_actions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  sessionId: varchar("session_id", { length: 100 }).notNull(), // Groups actions in same session
+  actionType: varchar("action_type", { length: 50 }).notNull(), // code_generation, file_edit, etc.
+  context: jsonb("context"), // Additional context about the action
+  performedAt: timestamp("performed_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("mr_blue_workflow_actions_user_idx").on(table.userId),
+  sessionIdx: index("mr_blue_workflow_actions_session_idx").on(table.sessionId),
+  typeIdx: index("mr_blue_workflow_actions_type_idx").on(table.actionType),
+  performedAtIdx: index("mr_blue_workflow_actions_performed_at_idx").on(table.performedAt),
+}));
+
+export const insertMrBlueWorkflowActionSchema = createInsertSchema(mrBlueWorkflowActions)
+  .omit({ id: true, performedAt: true });
+export type InsertMrBlueWorkflowAction = z.infer<typeof insertMrBlueWorkflowActionSchema>;
+export type SelectMrBlueWorkflowAction = typeof mrBlueWorkflowActions.$inferSelect;
+
+// Workflow Patterns - Learned action sequences (Agent #46)
+export const mrBlueWorkflowPatterns = pgTable("mr_blue_workflow_patterns", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  actionSequence: varchar("action_sequence", { length: 500 }).notNull(), // e.g., "code_generation->test_creation->git_commit"
+  frequency: integer("frequency").notNull().default(1), // How many times this sequence occurred
+  confidence: real("confidence").notNull().default(0.5), // 0-1 score
+  avgTimeBetweenActions: integer("avg_time_between_actions").default(0), // Seconds
+  lastOccurred: timestamp("last_occurred").defaultNow(),
+}, (table) => ({
+  userIdx: index("mr_blue_workflow_patterns_user_idx").on(table.userId),
+  sequenceIdx: index("mr_blue_workflow_patterns_sequence_idx").on(table.actionSequence),
+  confidenceIdx: index("mr_blue_workflow_patterns_confidence_idx").on(table.confidence),
+  uniquePattern: unique().on(table.userId, table.actionSequence),
+}));
+
+export const insertMrBlueWorkflowPatternSchema = createInsertSchema(mrBlueWorkflowPatterns)
+  .omit({ id: true, lastOccurred: true });
+export type InsertMrBlueWorkflowPattern = z.infer<typeof insertMrBlueWorkflowPatternSchema>;
+export type SelectMrBlueWorkflowPattern = typeof mrBlueWorkflowPatterns.$inferSelect;
+
+// ============================================================================
 // PLATFORM INDEPENDENCE SCHEMA (PATH 2)
 // ============================================================================
 
