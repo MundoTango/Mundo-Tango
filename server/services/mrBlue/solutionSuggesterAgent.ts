@@ -94,7 +94,7 @@ Format as JSON:
 }`;
 
       const message = await anthropic.messages.create({
-        model: "claude-3-5-sonnet-20241022",
+        model: "claude-3-haiku-20240307",
         max_tokens: 2000,
         messages: [
           {
@@ -105,13 +105,26 @@ Format as JSON:
       });
 
       const content = message.content[0];
-      let result;
+      
+      // Initialize result with defaults
+      let result = {
+        code: '',
+        explanation: 'No explanation provided',
+        files: [],
+        confidence: 0.5,
+      };
       
       if (content.type === 'text') {
         // Try to extract JSON from the response
         const jsonMatch = content.text.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
-          result = JSON.parse(jsonMatch[0]);
+          try {
+            result = JSON.parse(jsonMatch[0]);
+          } catch (parseError) {
+            console.error('[Solution Suggester Agent] JSON parse error:', parseError);
+            console.error('[Solution Suggester Agent] Claude response:', content.text);
+            result.explanation = content.text;
+          }
         } else {
           // Fallback: treat whole response as explanation
           result = {
@@ -121,6 +134,8 @@ Format as JSON:
             confidence: 0.5,
           };
         }
+      } else {
+        console.warn('[Solution Suggester Agent] Unexpected content type:', content.type);
       }
 
       return {
@@ -129,11 +144,16 @@ Format as JSON:
         files: result.files || [],
         confidence: result.confidence || 0.5,
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('[Solution Suggester Agent] Error suggesting fix:', error);
+      console.error('[Solution Suggester Agent] Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+      });
       return {
         code: '',
-        explanation: 'Error generating fix suggestion',
+        explanation: `Error generating fix suggestion: ${error.message || 'Unknown error'}`,
         files: [],
         confidence: 0.0,
       };
@@ -146,7 +166,7 @@ Format as JSON:
   async generateTestCase(bug: any): Promise<string> {
     try {
       const message = await anthropic.messages.create({
-        model: "claude-3-5-sonnet-20241022",
+        model: "claude-3-haiku-20240307",
         max_tokens: 1500,
         messages: [
           {
@@ -204,7 +224,7 @@ Return ONLY the test code, no explanations.`,
       }
 
       const message = await anthropic.messages.create({
-        model: "claude-3-5-sonnet-20241022",
+        model: "claude-3-haiku-20240307",
         max_tokens: 500,
         messages: [
           {
@@ -271,7 +291,7 @@ Provide effort estimate in JSON:
       }
 
       const message = await anthropic.messages.create({
-        model: "claude-3-5-sonnet-20241022",
+        model: "claude-3-haiku-20240307",
         max_tokens: 3000,
         messages: [
           {
@@ -337,7 +357,7 @@ Return as JSON array:
       }
 
       const message = await anthropic.messages.create({
-        model: "claude-3-5-sonnet-20241022",
+        model: "claude-3-haiku-20240307",
         max_tokens: 1000,
         messages: [
           {
