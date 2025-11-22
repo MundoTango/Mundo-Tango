@@ -1,0 +1,1565 @@
+ [Coframe] Replit Enterprise watcher loaded
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_monitoring/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/session_result/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+MundoTango:1 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+MundoTango:1 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+MundoTango:1 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+ 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+ Download the Apollo DevTools for a better development experience: https://chrome.google.com/webstore/detail/apollo-client-developer-t/jdkknkkbebbapilgoeccciglkfbmbnfm
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852648908&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852648909&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=1007&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ content loaded
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852649060&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ Content Script: Initializing
+ [LaunchDarkly] LaunchDarkly client initialized
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852649621&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=1007&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852649656&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852649729&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+ Unrecognized feature: 'ambient-light-sensor'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'battery'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'execution-while-not-rendered'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'execution-while-out-of-viewport'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'layout-animations'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'legacy-image-formats'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'navigation-override'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'oversized-images'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'publickey-credentials'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'speaker-selection'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'unoptimized-images'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'unsized-media'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ Unrecognized feature: 'pointer-lock'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ Allow attribute will take precedence over 'allowfullscreen'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+ Allow attribute will take precedence over 'allowpaymentrequest'.
+z @ ed1e693c96a75807.js:2
+(anonymous) @ ed1e693c96a75807.js:2
+iA @ ed1e693c96a75807.js:2
+iV @ ed1e693c96a75807.js:2
+iU @ ed1e693c96a75807.js:2
+i_ @ ed1e693c96a75807.js:2
+C @ ed1e693c96a75807.js:2
+M @ ed1e693c96a75807.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852652146&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=1007&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852652231&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852652231&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+web-client-content-script.js:2 Uncaught 
+(anonymous) @ web-client-content-script.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852656748&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=1007&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852656748&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=1007&gz=1. TypeError: Failed to fetch 
+(anonymous) @ a0df91602a414c03.js:2
+value @ e7f41799b4d05fca.js:2
+(anonymous) @ e7f41799b4d05fca.js:2
+(anonymous) @ aef1f2c6f8544e95.js:2
+s @ e7f41799b4d05fca.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ a0df91602a414c03.js:2
+value @ e7f41799b4d05fca.js:2
+(anonymous) @ e7f41799b4d05fca.js:2
+(anonymous) @ aef1f2c6f8544e95.js:2
+s @ e7f41799b4d05fca.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852656811&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852656811&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=2&gz=1. TypeError: Failed to fetch 
+(anonymous) @ a0df91602a414c03.js:2
+value @ e7f41799b4d05fca.js:2
+(anonymous) @ e7f41799b4d05fca.js:2
+(anonymous) @ aef1f2c6f8544e95.js:2
+s @ e7f41799b4d05fca.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ a0df91602a414c03.js:2
+value @ e7f41799b4d05fca.js:2
+(anonymous) @ e7f41799b4d05fca.js:2
+(anonymous) @ aef1f2c6f8544e95.js:2
+s @ e7f41799b4d05fca.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852656812&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852656812&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ a0df91602a414c03.js:2
+value @ e7f41799b4d05fca.js:2
+(anonymous) @ e7f41799b4d05fca.js:2
+(anonymous) @ aef1f2c6f8544e95.js:2
+s @ e7f41799b4d05fca.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ a0df91602a414c03.js:2
+value @ e7f41799b4d05fca.js:2
+(anonymous) @ e7f41799b4d05fca.js:2
+(anonymous) @ aef1f2c6f8544e95.js:2
+s @ e7f41799b4d05fca.js:2
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852658856&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852659365&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852661377&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852665880&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=2&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852665880&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=2&gz=1. TypeError: Failed to fetch 
+(anonymous) @ a0df91602a414c03.js:2
+value @ e7f41799b4d05fca.js:2
+(anonymous) @ e7f41799b4d05fca.js:2
+(anonymous) @ aef1f2c6f8544e95.js:2
+s @ e7f41799b4d05fca.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ a0df91602a414c03.js:2
+value @ e7f41799b4d05fca.js:2
+(anonymous) @ e7f41799b4d05fca.js:2
+(anonymous) @ aef1f2c6f8544e95.js:2
+s @ e7f41799b4d05fca.js:2
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852802123&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852802656&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852804662&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852809168&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=505&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763852809168&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=505&gz=1. TypeError: Failed to fetch 
+(anonymous) @ a0df91602a414c03.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ a0df91602a414c03.js:2
+ingest.app.coframe.com/ingest/v2/batched_events/68c9ad4d4cddb58cf3a1f93d/:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.js:10 Uncaught 
+workspace_iframe.html?initialPath=%2F&id=%3Ar131%3A:32 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar131%3A:32 Unrecognized feature: 'battery'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar131%3A:32 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar131%3A:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar131%3A:32 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar131%3A:32 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar131%3A:32 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar131%3A:32 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar131%3A:32 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar131%3A:32 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar131%3A:32 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar131%3A:32 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar131%3A:32 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar131%3A:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/?token=hE-9G97K7N5f' failed: 
+setupWebSocket @ client:536
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/diagnostic/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ Loading the script 'https://replit.com/public/js/beacon.js' violates the following Content Security Policy directive: "script-src-elem 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net https://unpkg.com". The action has been blocked.
+onIframeLoad @ workspace_iframe.htm…F&id=%3Ar131%3A:142
+ i18next::backendConnector: loaded namespace common for language en Object
+ i18next::backendConnector: loaded namespace errors for language en Object
+ i18next::backendConnector: loaded namespace pages for language en Object
+ i18next: languageChanged en
+ i18next: initialized Object
+content.js:10 Uncaught 
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ErrorAutoAnalysis] ⏳ Waiting for conversation ID before analyzing errors...
+ [VisualEditor] ✅ Active conversation: 20087
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 24
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 24
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 1
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 1
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 6
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 6
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 25
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 25
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 9
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 9
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 4
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 4
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 10
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 10
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 3
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 3
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 41
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 41
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 16
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 16
+ [VisualEditor] Loaded conversation history: 32 messages
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 32
+ [VisualEditor] Updated history length: 33
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 33
+ [VisualEditor] Updated history length: 34
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 34
+ [VisualEditor] Updated history length: 35
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 35
+ [VisualEditor] Updated history length: 36
+ [VisualEditor] Previous history length: 36
+ [VisualEditor] Updated history length: 37
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 37
+ [VisualEditor] Updated history length: 38
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 38
+ [VisualEditor] Updated history length: 39
+ [VisualEditor] Previous history length: 39
+ [VisualEditor] Updated history length: 40
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 40
+ [VisualEditor] Updated history length: 41
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 41
+ [VisualEditor] Updated history length: 42
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/?token=hE-9G97K7N5f' failed: 
+setupWebSocket @ client:536
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=hE-9G97K7N5f' is invalid.
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ Warning: validateDOMNesting(...): %s cannot appear as a descendant of <%s>.%s <a> a 
+    at e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/a
+    at e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/a
+    at wouter.js?v=f1612d26:205:18
+    at e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/li
+    at e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/ul
+    at e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/div
+    at e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/div
+    at e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/div
+    at e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/footer
+    at e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/div
+    at LandingPage (LandingPage.tsx:51:3)
+    at Route (wouter.js?v=f1612d26:191:16)
+    at Switch (wouter.js?v=f1612d26:247:17)
+    at e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/Router
+    at e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/Suspense
+    at AppContent (e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/src/App.tsx?v=zRByk900Wn_4Wo4v0H0Ol:4655:55)
+    at Provider (chunk-XOUBXFGS.js?v=f1612d26:38:15)
+    at TooltipProvider (@radix-ui_react-tool….js?v=f1612d26:65:5)
+    at MrBlueProvider (MrBlueContext.tsx:21:34)
+    at PredictiveContextProvider (PredictiveContextProvider.tsx:23:45)
+    at AuthProvider (AuthContext.tsx:77:32)
+    at ThemeProvider (theme-context.tsx:34:33)
+    at QueryClientProvider (@tanstack_react-quer…s?v=f1612d26:2805:3)
+    at ErrorBoundary (ErrorBoundary.tsx:11:5)
+    at e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/__replco/App
+(anonymous) @ injected.js:37
+ [App] Initializing Proactive Error Detection...
+ [ProactiveErrorDetector] Initializing...
+ [ProactiveErrorDetector] ✅ Started - monitoring all errors
+ [App] Initializing HTTP Interceptor...
+ [HttpInterceptor] ✅ Initialized - monitoring all HTTP requests
+ [App] Initializing Component Health Monitor...
+ [ComponentHealthMonitor] Initializing...
+ [ComponentHealthMonitor] Registered health check: UnifiedLocationPicker
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Started - checking every 60 seconds
+ [App] Initializing Navigation Interceptor...
+ ✅ Navigation interceptor enabled - agents will activate on page changes
+ i18next::backendConnector: loaded namespace common for language en [object Object]
+ i18next::backendConnector: loaded namespace errors for language en [object Object]
+ i18next::backendConnector: loaded namespace navigation for language en [object Object]
+ i18next::backendConnector: loaded namespace pages for language en [object Object]
+ i18next: languageChanged en
+ i18next: initialized [object Object]
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [VisualEditor] Loaded conversation history: 42 messages
+ [ERROR] Query failed Object
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Captured console.error: [ERROR] Query failed [object Object]...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Sending batch of 1 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 11
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 11
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 57
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 57
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 12
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 12
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 13
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 13
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 26
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 26
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 7
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 7
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 19
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 19
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 39
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 39
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 40
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 40
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 28
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 28
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 42
+ [VisualEditor] Updated history length: 43
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 43
+ [VisualEditor] Updated history length: 44
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 44
+ [VisualEditor] Updated history length: 45
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 45
+ [VisualEditor] Updated history length: 46
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 46
+ [VisualEditor] Updated history length: 47
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 47
+ [VisualEditor] Updated history length: 48
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 48
+ [VisualEditor] Updated history length: 49
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 49
+ [VisualEditor] Updated history length: 50
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] Previous history length: 50
+ [VisualEditor] Updated history length: 51
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 51
+ [VisualEditor] Updated history length: 52
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] Loaded conversation history: 50 messages
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 43
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 43
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 14
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 14
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 5
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 5
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 42
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 42
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 20
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 20
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 21
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 21
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 38
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 38
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 70
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 70
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 27
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 27
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 29
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 29
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 50
+ [VisualEditor] Updated history length: 51
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 51
+ [VisualEditor] Updated history length: 52
+ [VisualEditor] Previous history length: 52
+ [VisualEditor] Updated history length: 53
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 53
+ [VisualEditor] Updated history length: 54
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 54
+ [VisualEditor] Updated history length: 55
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 55
+ [VisualEditor] Updated history length: 56
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/mrblue/messages:1  Failed to load resource: the server responded with a status of 403 (Forbidden)
+ [ProactiveErrorDetector] Captured http.error: HTTP 403 Forbidden: POST /api/mrblue/messages...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: POST /api/mrblue/messages - 403 Forbidden
+ [ERROR] Mutation failed Object
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Captured console.error: [ERROR] Mutation failed [object Object]...
+(anonymous) @ injected.js:37
+ [VisualEditor] Failed to save message: 
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Captured console.error: [VisualEditor] Failed to save message: Error: 403: {"error":"Unauthorized to access this conversatio...
+(anonymous) @ injected.js:37
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/mrblue/messages:1  Failed to load resource: the server responded with a status of 403 (Forbidden)
+ [ProactiveErrorDetector] Captured http.error: HTTP 403 Forbidden: POST /api/mrblue/messages...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: POST /api/mrblue/messages - 403 Forbidden
+ [ERROR] Mutation failed Object
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Captured console.error: [ERROR] Mutation failed [object Object]...
+(anonymous) @ injected.js:37
+ [VisualEditor] Failed to save message: 
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Captured console.error: [VisualEditor] Failed to save message: Error: 403: {"error":"Unauthorized to access this conversatio...
+(anonymous) @ injected.js:37
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 56
+ [VisualEditor] Updated history length: 57
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 57
+ [VisualEditor] Updated history length: 58
+ [VisualEditor] Previous history length: 58
+ [VisualEditor] Updated history length: 59
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 59
+ [VisualEditor] Updated history length: 60
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ProactiveErrorDetector] Sending batch of 6 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] ✅ Batch sent successfully. Response: Object
+(anonymous) @ injected.js:37
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 71
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 71
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 30
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 30
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 32
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 32
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 51
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 51
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 58
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 58
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 2
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 2
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 35
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 35
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 34
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 34
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 59
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 59
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 37
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 37
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 60
+ [VisualEditor] Updated history length: 61
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 61
+ [VisualEditor] Updated history length: 62
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 62
+ [VisualEditor] Updated history length: 63
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 63
+ [VisualEditor] Updated history length: 64
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 64
+ [VisualEditor] Updated history length: 65
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 65
+ [VisualEditor] Updated history length: 66
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 66
+ [VisualEditor] Updated history length: 67
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] Previous history length: 67
+ [VisualEditor] Updated history length: 68
+ [VisualEditor] Previous history length: 68
+ [VisualEditor] Updated history length: 69
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 69
+ [VisualEditor] Updated history length: 70
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 60
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 60
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 36
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 36
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 18
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 18
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 48
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 48
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 49
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 49
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 44
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 44
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 61
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 61
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 62
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 62
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 15
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 15
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 63
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 63
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 70
+ [VisualEditor] Updated history length: 71
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 71
+ [VisualEditor] Updated history length: 72
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 72
+ [VisualEditor] Updated history length: 73
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 73
+ [VisualEditor] Updated history length: 74
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 74
+ [VisualEditor] Updated history length: 75
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 75
+ [VisualEditor] Updated history length: 76
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 76
+ [VisualEditor] Updated history length: 77
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 77
+ [VisualEditor] Updated history length: 78
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 78
+ [VisualEditor] Updated history length: 79
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 79
+ [VisualEditor] Updated history length: 80
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763853466057&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 17
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 17
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 22
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 22
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 23
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 23
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 64
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 64
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 47
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 47
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 72
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 72
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 50
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 50
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 65
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 65
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 53
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 53
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 54
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 54
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763853466563&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 80
+ [VisualEditor] Updated history length: 81
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 81
+ [VisualEditor] Updated history length: 82
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 82
+ [VisualEditor] Updated history length: 83
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 83
+ [VisualEditor] Updated history length: 84
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 84
+ [VisualEditor] Updated history length: 85
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 85
+ [VisualEditor] Updated history length: 86
+ [VisualEditor] ✅ Message saved to database
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 86
+ [VisualEditor] Updated history length: 87
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 87
+ [VisualEditor] Updated history length: 88
+ [VisualEditor] ✅ Message saved to database
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 88
+ [VisualEditor] Updated history length: 89
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 89
+ [VisualEditor] Updated history length: 90
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763853468566&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763853473072&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=1&gz=1:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+  ERROR  [Statsig] A networking error occurred during POST request to https://prodregistryv2.org/v1/rgstr?k=client-Bp7m7pNB6H0fnSGjVtxN5BeWQw4BSAat4OFsXa3VcTF&st=javascript-client&sv=3.26.0&t=1763853473072&sid=09cd3785-748d-4979-9721-cf5adab1cf3d&ec=1&gz=1. TypeError: Failed to fetch 
+(anonymous) @ a0df91602a414c03.js:2
+   WARN  [Statsig] Failed to flush events.
+(anonymous) @ a0df91602a414c03.js:2
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 45
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 45
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 31
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 31
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 46
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 46
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 56
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 56
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 66
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 66
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 52
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 52
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 55
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 55
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 73
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 73
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 67
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 67
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 68
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 68
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 90
+ [VisualEditor] Updated history length: 91
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 91
+ [VisualEditor] Updated history length: 92
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 92
+ [VisualEditor] Updated history length: 93
+ [VisualEditor] Previous history length: 93
+ [VisualEditor] Updated history length: 94
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 94
+ [VisualEditor] Updated history length: 95
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 95
+ [VisualEditor] Updated history length: 96
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 96
+ [VisualEditor] Updated history length: 97
+ [VisualEditor] ✅ Message saved to database
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] Previous history length: 97
+ [VisualEditor] Updated history length: 98
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 98
+ [VisualEditor] Updated history length: 99
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 99
+ [VisualEditor] Updated history length: 100
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 69
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 69
+ [ErrorAutoAnalysis] ✅ Conversation ready, auto-analyzing error: 74
+ [ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis... 74
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 100
+ [VisualEditor] Updated history length: 101
+ [ErrorAutoAnalysis] ✅ AutoFixEngine confidence: 0%
+ [VisualEditor] 🎯 PROPOSAL READY: Object
+ [VisualEditor] Current conversation ID: 20087
+ [VisualEditor] Adding proposal to conversation history
+ [VisualEditor] ✅ Saving proposal to database (conversation: 20087 )
+ [VisualEditor] Previous history length: 101
+ [VisualEditor] Updated history length: 102
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] ✅ Message saved to database
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+events.launchdarkly.com/events/bulk/62b35a865152ab14c5942820:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [ComponentHealthMonitor] Running 1 health checks...
+ [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+ [VisualEditor] ✅ Message saved to database
+ [VisualEditor] Building full context for Mr. Blue...
+ [ContextBuilder] Building context with keywords: Array(4)
+ [VisualEditor] Context built: Object
+ [WS] Connecting to /ws/notifications for user 168...
+ [WS] Connecting with JWT token authentication...
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/self-healing/activate:1  Failed to load resource: the server responded with a status of 403 (Forbidden)
+ [ProactiveErrorDetector] Captured http.error: HTTP 403 Forbidden: POST /api/self-healing/activate...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: POST /api/self-healing/activate - 403 Forbidden
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/notifications/count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/notifications/count...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/notifications/count - 401 Unauthorized
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/auth/me:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/auth/me...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/auth/me - 401 Unauthorized
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/messages/unread-count:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/messages/unread-count...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/messages/unread-count - 401 Unauthorized
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/predictive/track:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: POST /api/predictive/track...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: POST /api/predictive/track - 401 Unauthorized
+ [TokenRefresh] 401 detected, attempting refresh...
+ [WS] ✅ Connection established to /ws/notifications for user 168
+ [WS] WebSocket readyState: 1
+ [WS] Waiting for server authentication confirmation...
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE2OCwiZW1haWwiOiJhZG1pbis4QG11bmRvdGFuZ28ubGlmZSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzYzODUyNDQ5LCJleHAiOjE3NjM4NTMzNDl9.TgHmM_c8QVnhOGSRQ8-JbQiXaWvavy_aNi89OwvqbyU' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:61
+ [WS] WebSocket error on /ws/notifications: [object Event]
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Captured console.error: [WS] WebSocket error on /ws/notifications: [object Event]...
+(anonymous) @ injected.js:37
+ [WS] Connection error: [object Event]
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Captured console.error: [WS] Connection error: [object Event]...
+(anonymous) @ injected.js:37
+ [WS] Disconnected from /ws/notifications [object Object]
+ [WS] Reconnecting in 1000ms (attempt 1/5)...
+ [TokenRefresh] ✅ Token refreshed successfully
+ [TokenRefresh] ✅ Retrying request with new token...
+ [WS] Connecting to /ws/notifications for user 168...
+ [WS] Connecting with JWT token authentication...
+ [WS] ✅ Connection established to /ws/notifications for user 168
+ [WS] WebSocket readyState: 1
+ [WS] Waiting for server authentication confirmation...
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE2OCwiZW1haWwiOiJhZG1pbis4QG11bmRvdGFuZ28ubGlmZSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzYzODUzNzA0LCJleHAiOjE3NjM4NTQ2MDR9.S_xg5xnZg_WDHeVLP6gq36MZdnXGspVbXQf0Jlwdfrw' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:61
+ [WS] WebSocket error on /ws/notifications: [object Event]
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Captured console.error: [WS] WebSocket error on /ws/notifications: [object Event]...
+(anonymous) @ injected.js:37
+ [WS] Connection error: [object Event]
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Captured console.error: [WS] Connection error: [object Event]...
+(anonymous) @ injected.js:37
+ [WS] Disconnected from /ws/notifications [object Object]
+ [WS] Reconnecting in 2000ms (attempt 2/5)...
+ [WS] Connecting to /ws/notifications for user 168...
+ [WS] Connecting with JWT token authentication...
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/feed/following?limit=20&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/feed/recommended?limit=6:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Captured http.error: HTTP 401 Unauthorized: GET /api/feed/following?limit=20&offset=0...
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/feed/following?limit=20&offset=0 - 401 Unauthorized
+ [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/feed/recommended?limit=6 - 401 Unauthorized
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/self-healing/activate:1  Failed to load resource: the server responded with a status of 403 (Forbidden)
+ [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: POST /api/self-healing/activate - 403 Forbidden
+ [WS] ✅ Connection established to /ws/notifications for user 168
+ [WS] WebSocket readyState: 1
+ [WS] Waiting for server authentication confirmation...
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE2OCwiZW1haWwiOiJhZG1pbis4QG11bmRvdGFuZ28ubGlmZSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzYzODUzNzA0LCJleHAiOjE3NjM4NTQ2MDR9.S_xg5xnZg_WDHeVLP6gq36MZdnXGspVbXQf0Jlwdfrw' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:61
+ [WS] WebSocket error on /ws/notifications: [object Event]
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+ [WS] Connection error: [object Event]
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+ [WS] Disconnected from /ws/notifications [object Object]
+ [WS] Reconnecting in 1000ms (attempt 1/5)...
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/' failed: 
+(anonymous) @ e0001089-5956-480e-9…wPostsBanner.tsx:30
+ [NewPostsBanner] WebSocket error: [object Event]
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+ [NewPostsBanner] WebSocket disconnected
+ [WS] Connected to notification service
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications' failed: Invalid frame header
+connect @ UpcomingEventsSidebar.tsx:156
+ [WS] WebSocket error: [object Event]
+ [WS] Disconnected from notification service
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/feed/following?limit=20&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/feed/following?limit=20&offset=0 - 401 Unauthorized
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/feed/recommended?limit=6:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/feed/recommended?limit=6 - 401 Unauthorized
+ [WS] Connecting to /ws/notifications for user 168...
+ [WS] Connecting with JWT token authentication...
+ [WS] ✅ Connection established to /ws/notifications for user 168
+ [WS] WebSocket readyState: 1
+ [WS] Waiting for server authentication confirmation...
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE2OCwiZW1haWwiOiJhZG1pbis4QG11bmRvdGFuZ28ubGlmZSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzYzODUzNzA0LCJleHAiOjE3NjM4NTQ2MDR9.S_xg5xnZg_WDHeVLP6gq36MZdnXGspVbXQf0Jlwdfrw' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:61
+ [WS] WebSocket error on /ws/notifications: [object Event]
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+ [WS] Connection error: [object Event]
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+ [WS] Disconnected from /ws/notifications [object Object]
+ [WS] Reconnecting in 2000ms (attempt 2/5)...
+ [WS] Connecting to /ws/notifications for user 168...
+ [WS] Connecting with JWT token authentication...
+ [WS] ✅ Connection established to /ws/notifications for user 168
+ [WS] WebSocket readyState: 1
+ [WS] Waiting for server authentication confirmation...
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE2OCwiZW1haWwiOiJhZG1pbis4QG11bmRvdGFuZ28ubGlmZSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzYzODUzNzA0LCJleHAiOjE3NjM4NTQ2MDR9.S_xg5xnZg_WDHeVLP6gq36MZdnXGspVbXQf0Jlwdfrw' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:61
+ [WS] WebSocket error on /ws/notifications: [object Event]
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+ [WS] Connection error: [object Event]
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+ [WS] Disconnected from /ws/notifications [object Object]
+ [WS] Reconnecting in 4000ms (attempt 3/5)...
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/self-healing/activate:1  Failed to load resource: the server responded with a status of 403 (Forbidden)
+ [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: POST /api/self-healing/activate - 403 Forbidden
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/feed/recommended?limit=6:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/feed/recommended?limit=6 - 401 Unauthorized
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/feed/following?limit=20&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+ [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+ [HttpInterceptor] Captured http.error: GET /api/feed/following?limit=20&offset=0 - 401 Unauthorized
+ [WS] Connecting to /ws/notifications for user 168...
+ [WS] Connecting with JWT token authentication...
+ [WS] ✅ Connection established to /ws/notifications for user 168
+ [WS] WebSocket readyState: 1
+ [WS] Waiting for server authentication confirmation...
+ [WS] 🎉 Authentication successful for user 168
+ [WS] 📨 Received message type: auth_success
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE2OCwiZW1haWwiOiJhZG1pbis4QG11bmRvdGFuZ28ubGlmZSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzYzODUzNzA0LCJleHAiOjE3NjM4NTQ2MDR9.S_xg5xnZg_WDHeVLP6gq36MZdnXGspVbXQf0Jlwdfrw' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:61
+ [WS] WebSocket error on /ws/notifications: [object Event]
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+ [WS] Connection error: [object Event]
+(anonymous) @ injected.js:37
+ [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+ [WS] Disconnected from /ws/notifications [object Object]
+ [WS] Reconnecting in 1000ms (attempt 1/5)...
+ [WS] Connecting to /ws/notifications for user 168...
+injected.js:37 [WS] Connecting with JWT token authentication...
+injected.js:37 [WS] ✅ Connection established to /ws/notifications for user 168
+injected.js:37 [WS] WebSocket readyState: 1
+injected.js:37 [WS] Waiting for server authentication confirmation...
+ WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE2OCwiZW1haWwiOiJhZG1pbis4QG11bmRvdGFuZ28ubGlmZSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzYzODUzNzA0LCJleHAiOjE3NjM4NTQ2MDR9.S_xg5xnZg_WDHeVLP6gq36MZdnXGspVbXQf0Jlwdfrw' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:61
+injected.js:37 [WS] WebSocket error on /ws/notifications: [object Event]
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+injected.js:37 [WS] Connection error: [object Event]
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+injected.js:37 [WS] Disconnected from /ws/notifications [object Object]
+injected.js:37 [WS] Reconnecting in 2000ms (attempt 2/5)...
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/self-healing/activate:1  Failed to load resource: the server responded with a status of 403 (Forbidden)
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: POST /api/self-healing/activate - 403 Forbidden
+injected.js:37 [WS] Connecting to /ws/notifications for user 168...
+injected.js:37 [WS] Connecting with JWT token authentication...
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/self-healing/activate:1  Failed to load resource: the server responded with a status of 403 (Forbidden)
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: POST /api/self-healing/activate - 403 Forbidden
+injected.js:37 [ProactiveErrorDetector] Sending batch of 10 errors to Mr. Blue API...
+(anonymous) @ injected.js:37
+injected.js:37 [ERROR] Query failed [object Object]
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+injected.js:37 [WS] ✅ Connection established to /ws/notifications for user 168
+injected.js:37 [WS] WebSocket readyState: 1
+injected.js:37 [WS] Waiting for server authentication confirmation...
+useWebSocket.ts:92 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE2OCwiZW1haWwiOiJhZG1pbis4QG11bmRvdGFuZ28ubGlmZSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzYzODUzNzA0LCJleHAiOjE3NjM4NTQ2MDR9.S_xg5xnZg_WDHeVLP6gq36MZdnXGspVbXQf0Jlwdfrw' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:92
+injected.js:37 [WS] WebSocket error on /ws/notifications: [object Event]
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+injected.js:37 [WS] Connection error: [object Event]
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+injected.js:37 [WS] Disconnected from /ws/notifications [object Object]
+injected.js:37 [WS] Reconnecting in 8000ms (attempt 4/5)...
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/feed/recommended?limit=6:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/feed/recommended?limit=6 - 401 Unauthorized
+injected.js:37 [ERROR] Query failed [object Object]
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/feed/following?limit=20&offset=0:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/feed/following?limit=20&offset=0 - 401 Unauthorized
+injected.js:37 [ERROR] Query failed [object Object]
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+injected.js:37 [WS] Connecting to /ws/notifications for user 168...
+injected.js:37 [WS] Connecting with JWT token authentication...
+injected.js:37 [WS] ✅ Connection established to /ws/notifications for user 168
+injected.js:37 [WS] WebSocket readyState: 1
+injected.js:37 [WS] Waiting for server authentication confirmation...
+useWebSocket.ts:92 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE2OCwiZW1haWwiOiJhZG1pbis4QG11bmRvdGFuZ28ubGlmZSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzYzODUzNzA0LCJleHAiOjE3NjM4NTQ2MDR9.S_xg5xnZg_WDHeVLP6gq36MZdnXGspVbXQf0Jlwdfrw' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:92
+injected.js:37 [WS] WebSocket error on /ws/notifications: [object Event]
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+injected.js:37 [WS] Connection error: [object Event]
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+injected.js:37 [WS] Disconnected from /ws/notifications [object Object]
+injected.js:37 [WS] Reconnecting in 4000ms (attempt 3/5)...
+injected.js:37 [ProactiveErrorDetector] ✅ Batch sent successfully. Response: [object Object]
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Rate limit exceeded (10/min). Error not captured.
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured network error: GET /api/the-plan/progress - Failed to fetch
+client:536 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/?token=hE-9G97K7N5f' failed: 
+setupWebSocket @ client:536
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=hE-9G97K7N5f' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+injected.js:37 [App] Initializing Proactive Error Detection...
+injected.js:37 [ProactiveErrorDetector] Initializing...
+injected.js:37 [ProactiveErrorDetector] ✅ Started - monitoring all errors
+injected.js:37 [App] Initializing HTTP Interceptor...
+injected.js:37 [HttpInterceptor] ✅ Initialized - monitoring all HTTP requests
+injected.js:37 [App] Initializing Component Health Monitor...
+injected.js:37 [ComponentHealthMonitor] Initializing...
+injected.js:37 [ComponentHealthMonitor] Registered health check: UnifiedLocationPicker
+injected.js:37 [ComponentHealthMonitor] Running 1 health checks...
+injected.js:37 [ComponentHealthMonitor] ✅ Started - checking every 60 seconds
+injected.js:37 [App] Initializing Navigation Interceptor...
+injected.js:37 ✅ Navigation interceptor enabled - agents will activate on page changes
+injected.js:37 i18next::backendConnector: loaded namespace common for language en Object
+injected.js:37 i18next::backendConnector: loaded namespace navigation for language en Object
+injected.js:37 i18next::backendConnector: loaded namespace pages for language en Object
+injected.js:37 i18next::backendConnector: loaded namespace errors for language en Object
+injected.js:37 i18next: languageChanged en
+injected.js:37 i18next: initialized Object
+injected.js:37 [WS] Connecting to /ws/notifications for user 168...
+injected.js:37 [WS] Connecting with JWT token authentication...
+injected.js:37 [ComponentHealthMonitor] ✅ Component health check passed: UnifiedLocationPicker
+e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/api/mr-blue/agents/tour/app-onboarding:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+injected.js:37 [ProactiveErrorDetector] Captured http.error: HTTP 404 Not Found: GET /api/mr-blue/agents/tour/app-onboarding...
+(anonymous) @ injected.js:37
+injected.js:37 [HttpInterceptor] Captured http.error: GET /api/mr-blue/agents/tour/app-onboarding - 404 Not Found
+injected.js:37 [ERROR] Query failed Object
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Captured console.error: [ERROR] Query failed [object Object]...
+(anonymous) @ injected.js:37
+injected.js:37 [WS] ✅ Connection established to /ws/notifications for user 168
+injected.js:37 [WS] WebSocket readyState: 1
+injected.js:37 [WS] Waiting for server authentication confirmation...
+injected.js:37 [WS] 🎉 Authentication successful for user 168
+injected.js:37 [WS] 📨 Received message type: auth_success
+useWebSocket.ts:92 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE2OCwiZW1haWwiOiJhZG1pbis4QG11bmRvdGFuZ28ubGlmZSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzYzODUzNzA0LCJleHAiOjE3NjM4NTQ2MDR9.S_xg5xnZg_WDHeVLP6gq36MZdnXGspVbXQf0Jlwdfrw' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:92
+injected.js:37 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Captured console.error: [WS] WebSocket error on /ws/notifications: [object Event]...
+(anonymous) @ injected.js:37
+injected.js:37 [WS] Connection error: Event
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Captured console.error: [WS] Connection error: [object Event]...
+(anonymous) @ injected.js:37
+injected.js:37 [WS] Disconnected from /ws/notifications Object
+injected.js:37 [WS] Reconnecting in 1000ms (attempt 1/5)...
+injected.js:37 [WS] Connecting to /ws/notifications for user 168...
+injected.js:37 [WS] Connecting with JWT token authentication...
+injected.js:37 [WS] ✅ Connection established to /ws/notifications for user 168
+injected.js:37 [WS] WebSocket readyState: 1
+injected.js:37 [WS] Waiting for server authentication confirmation...
+useWebSocket.ts:92 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE2OCwiZW1haWwiOiJhZG1pbis4QG11bmRvdGFuZ28ubGlmZSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzYzODUzNzA0LCJleHAiOjE3NjM4NTQ2MDR9.S_xg5xnZg_WDHeVLP6gq36MZdnXGspVbXQf0Jlwdfrw' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:92
+injected.js:37 [WS] WebSocket error on /ws/notifications: Event
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Captured console.error: [WS] WebSocket error on /ws/notifications: [object Event]...
+(anonymous) @ injected.js:37
+injected.js:37 [WS] Connection error: Event
+(anonymous) @ injected.js:37
+injected.js:37 [ProactiveErrorDetector] Captured console.error: [WS] Connection error: [object Event]...
+(anonymous) @ injected.js:37
+injected.js:37 [WS] Disconnected from /ws/notifications Object
+injected.js:37 [WS] Reconnecting in 2000ms (attempt 2/5)...
+injected.js:37 [WS] Connecting to /ws/notifications for user 168...
+injected.js:37 [WS] Connecting with JWT token authentication...
+injected.js:37 [WS] ✅ Connection established to /ws/notifications for user 168
+injected.js:37 [WS] WebSocket readyState: 1
+injected.js:37 [WS] Waiting for server authentication confirmation...
+injected.js:37 [WS] 🎉 Authentication successful for user 168
+injected.js:37 [WS] 📨 Received message type: auth_success
+useWebSocket.ts:92 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE2OCwiZW1haWwiOiJhZG1pbis4QG11bmRvdGFuZ28ubGlmZSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzYzODUzNzA0LCJleHAiOjE3NjM4NTQ2MDR9.S_xg5xnZg_WDHeVLP6gq36MZdnXGspVbXQf0Jlwdfrw' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:92
+(anonymous) @ useWebSocket.ts:216
+injected.js:37 [WS] WebSocket error on /ws/notifications: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+(anonymous) @ injected.js:37
+console.error @ proactiveErrorDetection.ts:83
+(anonymous) @ injected.js:37
+ws.onerror @ useWebSocket.ts:183
+injected.js:37 [ProactiveErrorDetector] Captured console.error: [WS] WebSocket error on /ws/notifications: [object Event]...
+(anonymous) @ injected.js:37
+captureError @ proactiveErrorDetection.ts:235
+console.error @ proactiveErrorDetection.ts:86
+(anonymous) @ injected.js:37
+ws.onerror @ useWebSocket.ts:183
+injected.js:37 [WS] Connection error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+(anonymous) @ injected.js:37
+console.error @ proactiveErrorDetection.ts:83
+(anonymous) @ injected.js:37
+onError @ ConnectionStatusBadge.tsx:24
+ws.onerror @ useWebSocket.ts:187
+injected.js:37 [ProactiveErrorDetector] Captured console.error: [WS] Connection error: [object Event]...
+(anonymous) @ injected.js:37
+captureError @ proactiveErrorDetection.ts:235
+console.error @ proactiveErrorDetection.ts:86
+(anonymous) @ injected.js:37
+onError @ ConnectionStatusBadge.tsx:24
+ws.onerror @ useWebSocket.ts:187
+injected.js:37 [WS] Disconnected from /ws/notifications {code: 1006, reason: '', wasClean: false}
+injected.js:37 [WS] Reconnecting in 1000ms (attempt 1/5)...
+injected.js:37 [WS] Connecting to /ws/notifications for user 168...
+injected.js:37 [WS] Connecting with JWT token authentication...
+injected.js:37 [WS] ✅ Connection established to /ws/notifications for user 168
+injected.js:37 [WS] WebSocket readyState: 1
+injected.js:37 [WS] Waiting for server authentication confirmation...
+useWebSocket.ts:92 WebSocket connection to 'wss://e0001089-5956-480e-9ebc-7b1a6c2ec0e7-00-3cydblgjeyjzl.worf.replit.dev/ws/notifications?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE2OCwiZW1haWwiOiJhZG1pbis4QG11bmRvdGFuZ28ubGlmZSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzYzODUzNzA0LCJleHAiOjE3NjM4NTQ2MDR9.S_xg5xnZg_WDHeVLP6gq36MZdnXGspVbXQf0Jlwdfrw' failed: Invalid frame header
+(anonymous) @ useWebSocket.ts:92
+(anonymous) @ useWebSocket.ts:216
+injected.js:37 [WS] WebSocket error on /ws/notifications: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+(anonymous) @ injected.js:37
+console.error @ proactiveErrorDetection.ts:83
+(anonymous) @ injected.js:37
+ws.onerror @ useWebSocket.ts:183
+injected.js:37 [ProactiveErrorDetector] Captured console.error: [WS] WebSocket error on /ws/notifications: [object Event]...
+(anonymous) @ injected.js:37
+captureError @ proactiveErrorDetection.ts:235
+console.error @ proactiveErrorDetection.ts:86
+(anonymous) @ injected.js:37
+ws.onerror @ useWebSocket.ts:183
+injected.js:37 [WS] Connection error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+(anonymous) @ injected.js:37
+console.error @ proactiveErrorDetection.ts:83
+(anonymous) @ injected.js:37
+onError @ ConnectionStatusBadge.tsx:24
+ws.onerror @ useWebSocket.ts:187
+injected.js:37 [ProactiveErrorDetector] Captured console.error: [WS] Connection error: [object Event]...
+(anonymous) @ injected.js:37
+captureError @ proactiveErrorDetection.ts:235
+console.error @ proactiveErrorDetection.ts:86
+(anonymous) @ injected.js:37
+onError @ ConnectionStatusBadge.tsx:24
+ws.onerror @ useWebSocket.ts:187
+injected.js:37 [WS] Disconnected from /ws/notifications {code: 1006, reason: '', wasClean: false}
+injected.js:37 [WS] Reconnecting in 2000ms (attempt 2/5)...

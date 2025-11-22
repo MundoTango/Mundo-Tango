@@ -576,11 +576,36 @@ Let's get started! What would you like to change?`,
     },
   });
 
-  // ✅ ERROR AUTO-ANALYSIS INTEGRATION - MB.MD v9.2
-  // MB.MD Fix: Memoize callback and ensure conversation exists before saving
+  // ✅ ERROR AUTO-ANALYSIS INTEGRATION - MB.MD v9.2 (FIXED: No chat spam)
+  // MB.MD Fix: Only show high-priority errors in chat, don't spam every error
+  const [errorProposalQueue, setErrorProposalQueue] = useState<any[]>([]);
+  const [lastProposalTime, setLastProposalTime] = useState<number>(0);
+  
   const handleProposalReady = useCallback((proposal: any) => {
     console.log('[VisualEditor] 🎯 PROPOSAL READY:', proposal);
-    console.log('[VisualEditor] Current conversation ID:', currentConversationId);
+    console.log('[VisualEditor] Confidence:', proposal.confidence);
+    
+    // ✅ MB.MD v9.2: Don't spam chat with 0% confidence errors
+    // Only show in chat if:
+    // 1. High confidence (>= 80%) - Will auto-fix
+    // 2. Critical frequency (> 20 occurrences)
+    // 3. Not already shown recently (debounce 30s)
+    
+    const shouldShowInChat = 
+      proposal.confidence >= 80 || // High confidence = auto-fix worthy
+      (proposal.errorMessage && proposal.errorMessage.includes('time(s)') && 
+       parseInt(proposal.errorMessage.match(/(\d+) time\(s\)/)?.[1] || '0') > 20) || // Critical frequency
+      (Date.now() - lastProposalTime > 30000); // Debounce 30s
+    
+    if (!shouldShowInChat) {
+      console.log('[VisualEditor] ⏭️ Skipping chat notification (low priority error)');
+      // Still save to database but don't spam chat
+      setErrorProposalQueue(prev => [...prev, proposal]);
+      return;
+    }
+    
+    console.log('[VisualEditor] ✅ High-priority error - showing in chat');
+    setLastProposalTime(Date.now());
     
     // When error analysis generates a fix proposal, add it to chat
     const proposalMessage = `🚨 **Error Detected: Auto-Analysis Complete**\n\n` +
@@ -592,23 +617,19 @@ Let's get started! What would you like to change?`,
       `Reply "yes" or "approve" to proceed, "no" to skip.`;
     
     console.log('[VisualEditor] Adding proposal to conversation history');
-    setConversationHistory(prev => {
-      console.log('[VisualEditor] Previous history length:', prev.length);
-      const updated = [...prev, { role: 'assistant', content: proposalMessage }];
-      console.log('[VisualEditor] Updated history length:', updated.length);
-      return updated;
-    });
+    setConversationHistory(prev => [
+      ...prev,
+      { role: 'assistant', content: proposalMessage }
+    ]);
     
     // Save to database (conversation ID should exist by now)
     if (currentConversationId) {
       console.log('[VisualEditor] ✅ Saving proposal to database (conversation:', currentConversationId, ')');
       saveMessageMutation.mutate({ role: 'assistant', content: proposalMessage });
-    } else {
-      console.warn('[VisualEditor] ⚠️ No conversation ID yet - will try again on next proposal');
     }
     
     setAwaitingApproval(true);
-  }, [currentConversationId, saveMessageMutation]);
+  }, [currentConversationId, saveMessageMutation, lastProposalTime]);
   
   const {
     currentErrors,
