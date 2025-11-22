@@ -45,15 +45,18 @@ router.post('/start', async (req, res) => {
     // ✅ BETA FIX: Create guest user if not authenticated
     if (!userId) {
       console.log('[The Plan] Creating guest user for tour...');
+      const timestamp = Date.now();
       const guestUser = await storage.createUser({
-        email: `guest-${Date.now()}@mundo-tango.local`,
-        username: `guest_${Date.now()}`,
+        name: `Guest User ${timestamp}`,
+        email: `guest-${timestamp}@mundo-tango.local`,
+        username: `guest_${timestamp}`,
         password: 'guest_temp_password',
         role: 'user',
         subscriptionTier: 0
       });
       userId = guestUser.id;
       (req as any).user = guestUser;
+      console.log('[The Plan] ✅ Guest user created:', userId);
     }
     
     // Get first page from THE_PLAN_PAGES
