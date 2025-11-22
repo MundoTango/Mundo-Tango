@@ -160,7 +160,7 @@ router.post("/stream", async (req: Request, res: Response) => {
     // PHASE 3: Generate AI explanation (streaming)
     if (!process.env.GROQ_API_KEY) {
       res.write(`data: ${JSON.stringify({ 
-        type: 'completion',
+        type: 'chat_response',
         message: `I'm in demo mode. ${command.changeType !== 'none' ? 'The visual change has been applied!' : 'Configure GROQ_API_KEY for full AI capabilities.'}`
       })}\n\n`);
       res.end();
@@ -213,7 +213,7 @@ ${command.changeType !== 'none' ? `You just applied a ${command.changeType} chan
           } else {
             // Final completion message
             res.write(`data: ${JSON.stringify({ 
-              type: 'completion',
+              type: 'chat_response',
               message: fullMessage
             })}\n\n`);
             
@@ -252,7 +252,7 @@ ${command.changeType !== 'none' ? `You just applied a ${command.changeType} chan
         }
         
         res.write(`data: ${JSON.stringify({ 
-          type: 'completion',
+          type: 'chat_response',
           message: fullMessage
         })}\n\n`);
         res.end();
@@ -279,7 +279,7 @@ ${command.changeType !== 'none' ? `You just applied a ${command.changeType} chan
         
         stream.on('end', () => {
           res.write(`data: ${JSON.stringify({ 
-            type: 'completion',
+            type: 'chat_response',
             message: fullMessage
           })}\n\n`);
           res.end();

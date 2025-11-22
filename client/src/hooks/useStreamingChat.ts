@@ -142,9 +142,20 @@ export function useStreamingChat(): UseStreamingChatReturn {
         if (msg.message) {
           setCurrentStatus(''); // Clear banner
         }
+        setIsStreaming(false);
+        setIsTyping(false);
         break;
 
-      // Legacy support
+      // Legacy support for 'completion' type (treat as chat_response)
+      case 'completion':
+        if (msg.message) {
+          setCurrentStatus(''); // Clear banner
+        }
+        setIsStreaming(false);
+        setIsTyping(false);
+        break;
+
+      // Legacy progress support
       case 'progress':
         if (msg.message) {
           setCurrentStatus(msg.message);
@@ -155,12 +166,6 @@ export function useStreamingChat(): UseStreamingChatReturn {
         if (msg.code) {
           setGeneratedCode(prev => prev + msg.code);
         }
-        break;
-
-      case 'completion':
-        setCurrentStatus(msg.message || 'Done');
-        setIsStreaming(false);
-        setIsTyping(false);
         break;
 
       case 'error':

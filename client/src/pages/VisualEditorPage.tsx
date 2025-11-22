@@ -688,8 +688,10 @@ Let's get started! What would you like to change?`,
         keywords // 🔥 NEW: Smart chunking keywords
       }, 'chat');
       
-      // Extract final response from stream messages
-      const completionMsg = streamMessages.find(m => m.type === 'completion');
+      // Extract final response from stream messages (chat_response or completion)
+      const completionMsg = streamMessages.find(m => 
+        m.type === 'chat_response' || m.type === 'completion'
+      );
       if (completionMsg && completionMsg.message) {
         const responseText = completionMsg.message;
         

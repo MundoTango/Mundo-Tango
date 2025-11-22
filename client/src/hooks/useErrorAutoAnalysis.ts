@@ -82,6 +82,7 @@ export function useErrorAutoAnalysis(
   
   /**
    * Auto-detect new errors and trigger analysis
+   * MB.MD v9.2: Triggers on ANY analyzed error, even without suggestedFix
    */
   useEffect(() => {
     if (patterns.length === 0) return;
@@ -89,8 +90,8 @@ export function useErrorAutoAnalysis(
     // Find errors we haven't analyzed yet
     const newErrors = patterns.filter(p => 
       !analyzedErrorIds.has(p.id) && 
-      p.status === 'analyzed' &&
-      p.suggestedFix // Only auto-analyze if AI has a suggested fix
+      p.status === 'analyzed'
+      // REMOVED: p.suggestedFix check - now triggers on all errors!
     );
     
     if (newErrors.length > 0) {
@@ -120,13 +121,16 @@ export function useErrorAutoAnalysis(
       
       console.log('[ErrorAutoAnalysis] Generating fix proposal for error:', errorId);
       
-      // Create fix proposal
+      // Create fix proposal (works with or without AI-suggested fix)
       const proposal: FixProposal = {
         errorId: error.id,
         errorMessage: error.errorMessage,
-        proposedFix: error.suggestedFix || 'Auto-generated fix based on error pattern analysis',
-        confidence: parseFloat(error.fixConfidence || '0.75'),
-        filesAffected: ['Analyzing...'],
+        proposedFix: error.suggestedFix || 
+          `I'll investigate this ${error.errorType} error and propose a solution. ` +
+          `Error: "${error.errorMessage.substring(0, 100)}..." ` +
+          `This error has occurred ${error.frequency} time(s).`,
+        confidence: parseFloat(error.fixConfidence || '0.65'),
+        filesAffected: ['Will be determined during fix'],
         estimatedImpact: 'Low - Targeted fix for specific error',
         timestamp: new Date()
       };
