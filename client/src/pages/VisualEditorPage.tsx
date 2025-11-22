@@ -29,6 +29,7 @@ import { StreamingStatusPanel } from "@/components/visual-editor/StreamingStatus
 import { IframeAddressBar } from "@/components/visual-editor/IframeAddressBar";
 import { ElementHighlighter } from "@/components/visual-editor/ElementHighlighter";
 import { MemoryPanel } from "@/components/visual-editor/MemoryPanel";
+import { ProgressPanel } from "@/components/visual-editor/ProgressPanel";
 import { useSelfHealing } from "@/hooks/useSelfHealing";
 import type { ChangeMetadata } from "@/components/visual-editor/VisualDiffViewer";
 import { SEO } from "@/components/SEO";
@@ -46,7 +47,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Separator } from "@/components/ui/separator";
 import { 
   ShieldAlert, Crown, Bot, Cpu, Loader2, CheckCircle2, AlertCircle,
-  Play, Eye, Code2, Palette, Undo2, Sparkles, Zap, FileCode, History, Mic, MicOff, Lightbulb, RefreshCw, Brain, Bug
+  Play, Eye, Code2, Palette, Undo2, Sparkles, Zap, FileCode, History, Mic, MicOff, Lightbulb, RefreshCw, Brain, Bug, Activity
 } from "lucide-react";
 
 type User = {
@@ -88,7 +89,7 @@ function VisualEditorPageContent() {
   const [currentPageHtml, setCurrentPageHtml] = useState<string>("");
   const [selectedElementStyles, setSelectedElementStyles] = useState<Record<string, string>>({});
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
-  const [middlePanelTab, setMiddlePanelTab] = useState<'errors' | 'memory'>('errors');
+  const [middlePanelTab, setMiddlePanelTab] = useState<'errors' | 'memory' | 'progress'>('errors');
   
   // Refs
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -1323,12 +1324,12 @@ function VisualEditorPageContent() {
           </Card>
         </section>
 
-        {/* Middle Panel: Error Analysis & Memory System */}
+        {/* Middle Panel: Error Analysis, Memory System & Progress Tracking */}
         <section className="w-96 border-r flex flex-col" role="region" aria-label="Analysis panel">
           {/* Tab Header */}
           <div className="border-b p-3">
             <Tabs value={middlePanelTab} onValueChange={(v) => setMiddlePanelTab(v as any)}>
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="errors" data-testid="tab-errors">
                   <Bug className="h-4 w-4 mr-2" />
                   Errors
@@ -1336,6 +1337,10 @@ function VisualEditorPageContent() {
                 <TabsTrigger value="memory" data-testid="tab-memory">
                   <Brain className="h-4 w-4 mr-2" />
                   Memory
+                </TabsTrigger>
+                <TabsTrigger value="progress" data-testid="tab-progress">
+                  <Activity className="h-4 w-4 mr-2" />
+                  Progress
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -1345,8 +1350,10 @@ function VisualEditorPageContent() {
           <div className="flex-1 overflow-hidden">
             {middlePanelTab === 'errors' ? (
               <ErrorAnalysisPanel />
-            ) : (
+            ) : middlePanelTab === 'memory' ? (
               <MemoryPanel />
+            ) : (
+              <ProgressPanel />
             )}
           </div>
         </section>
