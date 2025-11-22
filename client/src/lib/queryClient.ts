@@ -15,10 +15,31 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
+async function refreshAccessToken(): Promise<boolean> {
+  try {
+    const res = await fetch('/api/auth/refresh', {
+      method: 'POST',
+      credentials: 'include',
+    });
+    
+    if (res.ok) {
+      const { accessToken } = await res.json();
+      localStorage.setItem('accessToken', accessToken);
+      console.log('[TokenRefresh] ✅ Token refreshed successfully');
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error('[TokenRefresh] ❌ Refresh failed:', error);
+    return false;
+  }
+}
+
 export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
+  isRetry: boolean = false
 ): Promise<Response> {
   const token = localStorage.getItem('accessToken');
   const csrfToken = getCsrfToken();
@@ -43,6 +64,17 @@ export async function apiRequest(
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
+
+  // ✅ AGENT #4 FIX: Auto-refresh expired tokens
+  if (res.status === 401 && !isRetry) {
+    console.log('[TokenRefresh] 401 detected, attempting refresh...');
+    const refreshed = await refreshAccessToken();
+    
+    if (refreshed) {
+      console.log('[TokenRefresh] ✅ Retrying request with new token...');
+      return apiRequest(method, url, data, true); // Retry once
+    }
+  }
 
   await throwIfResNotOk(res);
   return res;
