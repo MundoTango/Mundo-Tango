@@ -125,17 +125,8 @@ IMPORTANT: Use escaped newlines (\\n) instead of backticks or template literals!
         const jsonMatch = content.text.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           try {
-            // Fix: Escape newlines and replace HTML entities before parsing
-            let cleanedJson = jsonMatch[0]
-              .replace(/\r?\n/g, '\\n')  // Escape actual newlines
-              .replace(/\t/g, '\\t')     // Escape tabs
-              .replace(/&gt;/g, '>')
-              .replace(/&lt;/g, '<')
-              .replace(/&amp;/g, '&')
-              .replace(/&quot;/g, '"')
-              .replace(/&#x27;/g, "'");
-            
-            const parsed = JSON.parse(cleanedJson);
+            // ✅ MB.MD v9.2 Fix: Parse JSON directly without escaping (Claude returns valid JSON)
+            const parsed = JSON.parse(jsonMatch[0]);
             console.log('[Solution Suggester Agent] ✅ Successfully parsed Claude JSON (confidence:', parsed.confidence, ')');
             result = parsed;
           } catch (parseError) {
