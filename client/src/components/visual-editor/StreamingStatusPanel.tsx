@@ -31,11 +31,19 @@ export function StreamingStatusPanel({
   const [displayMessages, setDisplayMessages] = useState<string[]>([]);
 
   // Accumulate streaming messages for display
+  // MB.MD v9.2: ONLY show vibe_coding_progress and visual_change messages
+  // Chat responses go to conversation history instead
   useEffect(() => {
     if (streamingMessages.length > 0) {
       const latest = streamingMessages[streamingMessages.length - 1];
       
-      if (latest.type === 'progress' && latest.message) {
+      // ONLY show banner for vibe coding work, NOT chat responses
+      if (latest.type === 'vibe_coding_progress' || latest.type === 'visual_change') {
+        if (latest.message) {
+          setDisplayMessages(prev => [...prev, latest.message!]);
+        }
+      } else if (latest.type === 'progress' && latest.message) {
+        // Legacy support - treat as vibe coding progress
         setDisplayMessages(prev => [...prev, latest.message!]);
       } else if (latest.type === 'completion' && latest.message) {
         // Replace all progress messages with final message

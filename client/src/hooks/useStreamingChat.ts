@@ -6,7 +6,7 @@
 import { useState, useCallback, useRef } from 'react';
 
 export interface StreamMessage {
-  type: 'progress' | 'code' | 'completion' | 'error';
+  type: 'progress' | 'code' | 'completion' | 'error' | 'vibe_coding_progress' | 'chat_response' | 'visual_change';
   status?: 'analyzing' | 'applying' | 'generating' | 'done';
   message?: string;
   code?: string;
@@ -122,11 +122,29 @@ export function useStreamingChat(): UseStreamingChatReturn {
 
   /**
    * Handle stream message
+   * MB.MD v9.2: Discriminate between chat responses and vibe coding progress
    */
   const handleStreamMessage = useCallback((msg: StreamMessage) => {
     setMessages(prev => [...prev, msg]);
 
     switch (msg.type) {
+      // VIBE CODING PROGRESS - Shows in banner overlay
+      case 'vibe_coding_progress':
+      case 'visual_change':
+        if (msg.message) {
+          setCurrentStatus(msg.message);
+        }
+        break;
+
+      // CHAT RESPONSE - Shows in conversation history (NO banner)
+      case 'chat_response':
+        // Don't update banner status for chat responses
+        if (msg.message) {
+          setCurrentStatus(''); // Clear banner
+        }
+        break;
+
+      // Legacy support
       case 'progress':
         if (msg.message) {
           setCurrentStatus(msg.message);

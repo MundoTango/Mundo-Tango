@@ -32,6 +32,8 @@ import { MemoryPanel } from "@/components/visual-editor/MemoryPanel";
 import { ProgressPanel } from "@/components/visual-editor/ProgressPanel";
 import { BrowserAutomationPanel } from "@/components/visual-editor/BrowserAutomationPanel";
 import { useSelfHealing } from "@/hooks/useSelfHealing";
+import { useErrorAutoAnalysis } from "@/hooks/useErrorAutoAnalysis";
+import { contextBuilder } from "@/services/ContextBuilderService";
 import type { ChangeMetadata } from "@/components/visual-editor/VisualDiffViewer";
 import { SEO } from "@/components/SEO";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -91,6 +93,7 @@ function VisualEditorPageContent() {
   const [selectedElementStyles, setSelectedElementStyles] = useState<Record<string, string>>({});
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
   const [middlePanelTab, setMiddlePanelTab] = useState<'errors' | 'memory' | 'progress' | 'automation'>('errors');
+  const [awaitingApproval, setAwaitingApproval] = useState(false);
   
   // Refs
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -563,10 +566,81 @@ Let's get started! What would you like to change?`,
     },
   });
 
-  // ✅ STREAMING HANDLER - Replace chatMutation with streaming approach
+  // ✅ ERROR AUTO-ANALYSIS INTEGRATION - MB.MD v9.2
+  const {
+    currentErrors,
+    activeProposal,
+    isAnalyzing: isAnalyzingErrors,
+    approveProposal,
+    rejectProposal
+  } = useErrorAutoAnalysis((proposal) => {
+    // When error analysis generates a fix proposal, add it to chat
+    const proposalMessage = `🚨 **Error Detected: Auto-Analysis Complete**\n\n` +
+      `**Error:** ${proposal.errorMessage.substring(0, 150)}\n\n` +
+      `**Proposed Fix:**\n${proposal.proposedFix}\n\n` +
+      `**Confidence:** ${(proposal.confidence * 100).toFixed(0)}%\n` +
+      `**Estimated Impact:** ${proposal.estimatedImpact}\n\n` +
+      `**Action Required:** Would you like me to apply this fix?\n` +
+      `Reply "yes" or "approve" to proceed, "no" to skip.`;
+    
+    setConversationHistory(prev => [
+      ...prev,
+      { role: 'assistant', content: proposalMessage }
+    ]);
+    
+    // Save to database
+    if (currentConversationId) {
+      saveMessageMutation.mutate({ role: 'assistant', content: proposalMessage });
+    }
+    
+    setAwaitingApproval(true);
+  });
+
+  // ✅ STREAMING HANDLER WITH CONTEXT BUILDER - MB.MD v9.2
   const handleStreamingChat = useCallback(async (message: string) => {
     try {
       const userMessage = message;
+      
+      // Check if user is approving error fix
+      if (awaitingApproval && activeProposal) {
+        const lowerMessage = message.toLowerCase().trim();
+        if (lowerMessage === 'yes' || lowerMessage === 'approve' || lowerMessage.includes('go ahead')) {
+          // User approved fix
+          setConversationHistory(prev => [
+            ...prev,
+            { role: 'user', content: userMessage },
+            { role: 'assistant', content: '✅ **Applying fix now...**\n\nI will show progress in the banner above.' }
+          ]);
+          setAwaitingApproval(false);
+          
+          try {
+            await approveProposal();
+            
+            setTimeout(() => {
+              setConversationHistory(prev => [
+                ...prev,
+                { role: 'assistant', content: '✅ **Fix applied successfully!**\n\nThe error should now be resolved. I\'ll continue monitoring for any issues.' }
+              ]);
+            }, 2000);
+          } catch (error: any) {
+            setConversationHistory(prev => [
+              ...prev,
+              { role: 'assistant', content: `❌ **Fix failed:** ${error.message}\n\nLet me analyze this further...` }
+            ]);
+          }
+          return;
+        } else if (lowerMessage === 'no' || lowerMessage === 'reject' || lowerMessage.includes('skip')) {
+          // User rejected fix
+          setConversationHistory(prev => [
+            ...prev,
+            { role: 'user', content: userMessage },
+            { role: 'assistant', content: 'Understood. I won\'t apply that fix. How else can I help?' }
+          ]);
+          setAwaitingApproval(false);
+          rejectProposal();
+          return;
+        }
+      }
       
       // Add user message to conversation history immediately
       setConversationHistory(prev => [
@@ -584,13 +658,34 @@ Let's get started! What would you like to change?`,
         }
       }
       
-      // Send streaming request
+      // 🔥 BUILD FULL CONTEXT - MB.MD v9.2
+      console.log('[VisualEditor] Building full context for Mr. Blue...');
+      const keywords = contextBuilder.extractKeywords(userMessage);
+      const fullContext = await contextBuilder.buildContext(
+        currentIframeUrl,
+        selectedElement,
+        currentErrors,
+        changeHistory,
+        keywords
+      );
+      const contextStrings = contextBuilder.formatContextForAPI(fullContext);
+      
+      console.log('[VisualEditor] Context built:', {
+        keywords,
+        errors: currentErrors.length,
+        docChunks: fullContext.documentation.length
+      });
+      
+      // Send streaming request with FULL CONTEXT
       await sendStreamingMessage(userMessage, {
         page: currentIframeUrl,
         selectedElement: selectedElement,
         viewMode,
         editsCount: changeHistory.length,
-        conversationHistory: conversationHistory.slice(-6)
+        conversationHistory: conversationHistory.slice(-6),
+        fullContext: contextStrings, // 🔥 NEW: Full context for Mr. Blue
+        errors: currentErrors, // 🔥 NEW: Active errors
+        keywords // 🔥 NEW: Smart chunking keywords
       }, 'chat');
       
       // Extract final response from stream messages
@@ -627,7 +722,7 @@ Let's get started! What would you like to change?`,
         description: error.message || "Could not stream response",
       });
     }
-  }, [currentIframeUrl, selectedElement, viewMode, changeHistory, conversationHistory, currentConversationId, sendStreamingMessage, streamMessages, saveMessageMutation, voiceModeEnabled, ttsSupported, speak, toast]);
+  }, [awaitingApproval, activeProposal, currentIframeUrl, selectedElement, viewMode, changeHistory, conversationHistory, currentConversationId, currentErrors, sendStreamingMessage, streamMessages, saveMessageMutation, voiceModeEnabled, ttsSupported, speak, toast, approveProposal, rejectProposal]);
   
   // Legacy chat mutation (fallback for non-streaming)
   const chatMutation = useMutation({
