@@ -577,13 +577,10 @@ Let's get started! What would you like to change?`,
   });
 
   // ✅ ERROR AUTO-ANALYSIS INTEGRATION - MB.MD v9.2
-  const {
-    currentErrors,
-    activeProposal,
-    isAnalyzing: isAnalyzingErrors,
-    approveProposal,
-    rejectProposal
-  } = useErrorAutoAnalysis((proposal) => {
+  // MB.MD Fix: Memoize callback to prevent stale closure issues
+  const handleProposalReady = useCallback((proposal: any) => {
+    console.log('[VisualEditor] 🎯 PROPOSAL READY:', proposal);
+    
     // When error analysis generates a fix proposal, add it to chat
     const proposalMessage = `🚨 **Error Detected: Auto-Analysis Complete**\n\n` +
       `**Error:** ${proposal.errorMessage.substring(0, 150)}\n\n` +
@@ -593,6 +590,7 @@ Let's get started! What would you like to change?`,
       `**Action Required:** Would you like me to apply this fix?\n` +
       `Reply "yes" or "approve" to proceed, "no" to skip.`;
     
+    console.log('[VisualEditor] Adding proposal to conversation history');
     setConversationHistory(prev => [
       ...prev,
       { role: 'assistant', content: proposalMessage }
@@ -600,11 +598,22 @@ Let's get started! What would you like to change?`,
     
     // Save to database
     if (currentConversationId) {
+      console.log('[VisualEditor] Saving proposal to database');
       saveMessageMutation.mutate({ role: 'assistant', content: proposalMessage });
+    } else {
+      console.warn('[VisualEditor] No conversation ID - proposal not saved');
     }
     
     setAwaitingApproval(true);
-  });
+  }, [currentConversationId, saveMessageMutation]);
+  
+  const {
+    currentErrors,
+    activeProposal,
+    isAnalyzing: isAnalyzingErrors,
+    approveProposal,
+    rejectProposal
+  } = useErrorAutoAnalysis(handleProposalReady);
 
   // ✅ STREAMING HANDLER WITH CONTEXT BUILDER - MB.MD v9.2
   const handleStreamingChat = useCallback(async (message: string) => {
