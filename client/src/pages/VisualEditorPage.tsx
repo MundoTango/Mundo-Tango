@@ -577,9 +577,10 @@ Let's get started! What would you like to change?`,
   });
 
   // ✅ ERROR AUTO-ANALYSIS INTEGRATION - MB.MD v9.2
-  // MB.MD Fix: Memoize callback to prevent stale closure issues
+  // MB.MD Fix: Memoize callback and ensure conversation exists before saving
   const handleProposalReady = useCallback((proposal: any) => {
     console.log('[VisualEditor] 🎯 PROPOSAL READY:', proposal);
+    console.log('[VisualEditor] Current conversation ID:', currentConversationId);
     
     // When error analysis generates a fix proposal, add it to chat
     const proposalMessage = `🚨 **Error Detected: Auto-Analysis Complete**\n\n` +
@@ -591,17 +592,19 @@ Let's get started! What would you like to change?`,
       `Reply "yes" or "approve" to proceed, "no" to skip.`;
     
     console.log('[VisualEditor] Adding proposal to conversation history');
-    setConversationHistory(prev => [
-      ...prev,
-      { role: 'assistant', content: proposalMessage }
-    ]);
+    setConversationHistory(prev => {
+      console.log('[VisualEditor] Previous history length:', prev.length);
+      const updated = [...prev, { role: 'assistant', content: proposalMessage }];
+      console.log('[VisualEditor] Updated history length:', updated.length);
+      return updated;
+    });
     
-    // Save to database
+    // Save to database (conversation ID should exist by now)
     if (currentConversationId) {
-      console.log('[VisualEditor] Saving proposal to database');
+      console.log('[VisualEditor] ✅ Saving proposal to database (conversation:', currentConversationId, ')');
       saveMessageMutation.mutate({ role: 'assistant', content: proposalMessage });
     } else {
-      console.warn('[VisualEditor] No conversation ID - proposal not saved');
+      console.warn('[VisualEditor] ⚠️ No conversation ID yet - will try again on next proposal');
     }
     
     setAwaitingApproval(true);
