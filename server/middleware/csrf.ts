@@ -51,7 +51,9 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     "/api/mrblue/stream",
     "/api/mrblue/vibecode/stream",
     "/api/mr-blue/agents",
-    "/api/mrblue/analyze-error"
+    "/api/mrblue/analyze-error",
+    "/api/mrblue/conversations",  // ✅ AGENT #13: Beta testing - guest users
+    "/api/mrblue/messages"  // ✅ AGENT #13: Beta testing - guest users
   ];
   if (publicMrBlueEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
     return next();
@@ -141,7 +143,10 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     "/api/mrblue/chat",
     "/api/mrblue/stream",
     "/api/mrblue/vibecode/stream",
-    "/api/mr-blue/agents"
+    "/api/mr-blue/agents",
+    "/api/mrblue/analyze-error",  // ✅ AGENT #13: Error analysis
+    "/api/mrblue/conversations",  // ✅ AGENT #13: Beta testing - guest users
+    "/api/mrblue/messages"  // ✅ AGENT #13: Beta testing - guest users
   ];
   if (publicMrBlueEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
     return next();
