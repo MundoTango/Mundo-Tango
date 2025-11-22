@@ -1311,6 +1311,54 @@ export const lifeCeoChatMessages = pgTable("life_ceo_chat_messages", {
 }));
 
 // ============================================================================
+// MR BLUE BROWSER AUTOMATION (Agent #38)
+// ============================================================================
+
+export const browserAutomationRecordings = pgTable("browser_automation_recordings", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: varchar("name", { length: 200 }).notNull(),
+  description: text("description"),
+  actions: jsonb("actions").notNull(), // Array of {type, selector, value, wait, screenshot}
+  startUrl: text("start_url").notNull(),
+  status: varchar("status", { length: 50 }).default("draft").notNull(), // draft, active, archived
+  executionCount: integer("execution_count").default(0).notNull(),
+  lastExecutedAt: timestamp("last_executed_at"),
+  successRate: real("success_rate").default(0), // 0-1 scale
+  averageDuration: integer("average_duration"), // milliseconds
+  metadata: jsonb("metadata"), // {tags, category, environment}
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("browser_automation_user_idx").on(table.userId),
+  statusIdx: index("browser_automation_status_idx").on(table.status),
+  nameIdx: index("browser_automation_name_idx").on(table.name),
+  userStatusIdx: index("browser_automation_user_status_idx").on(table.userId, table.status),
+}));
+
+export const browserAutomationExecutions = pgTable("browser_automation_executions", {
+  id: serial("id").primaryKey(),
+  recordingId: integer("recording_id").notNull().references(() => browserAutomationRecordings.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  status: varchar("status", { length: 50 }).notNull(), // running, completed, failed
+  startedAt: timestamp("started_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+  duration: integer("duration"), // milliseconds
+  stepsCompleted: integer("steps_completed").default(0).notNull(),
+  totalSteps: integer("total_steps").notNull(),
+  screenshots: jsonb("screenshots"), // Array of {step, base64, timestamp}
+  errorMessage: text("error_message"),
+  errorStack: text("error_stack"),
+  result: jsonb("result"), // Execution result data
+  metadata: jsonb("metadata"),
+}, (table) => ({
+  recordingIdx: index("browser_executions_recording_idx").on(table.recordingId),
+  userIdx: index("browser_executions_user_idx").on(table.userId),
+  statusIdx: index("browser_executions_status_idx").on(table.status),
+  startedIdx: index("browser_executions_started_idx").on(table.startedAt),
+}));
+
+// ============================================================================
 // LIFE CEO SYSTEM (16 Agents - P66-P81)
 // ============================================================================
 
