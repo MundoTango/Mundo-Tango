@@ -136,6 +136,27 @@ function VisualEditorPageContent() {
         content: msg.content,
       }));
       setConversationHistory(formattedMessages);
+    } else if (fetchedMessages && fetchedMessages.length === 0) {
+      // Add initial greeting when conversation is empty
+      console.log('[VisualEditor] No messages - adding initial greeting');
+      setConversationHistory([{
+        role: 'assistant',
+        content: `Hi! I'm Mr. Blue, your visual editing assistant. I can help you make changes to your website just by chatting with me! 🎉
+
+**What I can do:**
+• Edit any element on the page
+• Change colors, fonts, and styling
+• Add or remove content
+• Generate production-ready code
+
+**How to use:**
+Just tell me what you want to change. For example:
+• "Make the header bigger"
+• "Change the button color to blue"
+• "Add a hero section"
+
+Let's get started! What would you like to change?`,
+      }]);
     }
   }, [fetchedMessages]);
 
