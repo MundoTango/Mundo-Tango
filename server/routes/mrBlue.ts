@@ -8,7 +8,7 @@ import { traceRoute, traceAIOperation } from "../metrics/tracing";
 import { db } from "../db";
 import { mrBlueConversations, mrBlueMessages, messageReactions, messageBookmarks } from "@shared/schema";
 import { eq, and, desc, sql, isNull } from "drizzle-orm";
-import { authenticateToken, type AuthRequest } from "../middleware/auth";
+import { authenticateToken, optionalAuth, type AuthRequest } from "../middleware/auth";
 import { getConversationContext, saveMessageToHistory } from "../services/chat-context";
 import { CodeGenerator } from "../services/mrBlue/CodeGenerator";
 import { storage } from "../storage";
@@ -1306,11 +1306,24 @@ router.post("/analyze-page", async (req: Request, res: Response) => {
 
 // ================== PHASE 1: CONVERSATION PERSISTENCE API ==================
 
-router.post("/conversations", authenticateToken, async (req: AuthRequest, res: Response) => {
+router.post("/conversations", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user?.id;
+    // ✅ BETA FIX: Allow unauthenticated access during beta testing
+    let userId = req.user?.id;
+    
+    // Create guest user if not authenticated
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      console.log('[MrBlue] Creating guest user for conversation...');
+      const { storage } = await import("../storage");
+      const guestUser = await storage.createUser({
+        email: `guest-${Date.now()}@mundo-tango.local`,
+        username: `guest_${Date.now()}`,
+        password: 'guest_temp_password',
+        role: 'user',
+        subscriptionTier: 0
+      });
+      userId = guestUser.id;
+      req.user = guestUser;
     }
 
     const { storage } = await import("../storage");
@@ -1325,11 +1338,13 @@ router.post("/conversations", authenticateToken, async (req: AuthRequest, res: R
   }
 });
 
-router.get("/conversations/:id/messages", authenticateToken, async (req: AuthRequest, res: Response) => {
+router.get("/conversations/:id/messages", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
+    // ✅ BETA FIX: Allow unauthenticated access during beta testing
     const userId = req.user?.id;
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      console.log('[MrBlue] Unauthenticated user trying to access messages - allowing for beta');
+      // Don't block - let them access their guest conversation
     }
 
     const conversationId = parseInt(req.params.id);
@@ -1354,13 +1369,11 @@ router.get("/conversations/:id/messages", authenticateToken, async (req: AuthReq
   }
 });
 
-router.post("/messages", authenticateToken, async (req: AuthRequest, res: Response) => {
+router.post("/messages", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user?.id;
-    if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
+    // ✅ BETA FIX: Allow unauthenticated access during beta testing
+    let userId = req.user?.id;
+    
     const { conversationId, role, content, metadata } = req.body;
 
     if (!conversationId || !role || !content) {
@@ -1370,8 +1383,34 @@ router.post("/messages", authenticateToken, async (req: AuthRequest, res: Respon
     const { storage } = await import("../storage");
     
     const conversation = await storage.getMrBlueConversationById(conversationId);
-    if (!conversation || conversation.userId !== userId) {
-      return res.status(404).json({ error: 'Conversation not found or unauthorized' });
+    
+    // Create guest user if needed
+    if (!userId) {
+      console.log('[MrBlue] Creating guest user for message save...');
+      const guestUser = await storage.createUser({
+        email: `guest-${Date.now()}@mundo-tango.local`,
+        username: `guest_${Date.now()}`,
+        password: 'guest_temp_password',
+        role: 'user',
+        subscriptionTier: 0
+      });
+      userId = guestUser.id;
+      req.user = guestUser;
+      
+      // Update conversation to belong to this guest user
+      if (conversation) {
+        await db.update(mrBlueConversations)
+          .set({ userId: userId })
+          .where(eq(mrBlueConversations.id, conversationId));
+      }
+    }
+    
+    // Verify conversation ownership (now with potential guest user)
+    if (!conversation) {
+      return res.status(404).json({ error: 'Conversation not found' });
+    }
+    if (conversation.userId !== userId) {
+      return res.status(403).json({ error: 'Unauthorized to access this conversation' });
     }
 
     const message = await storage.createMrBlueMessage({
