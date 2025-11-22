@@ -5,11 +5,18 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MousePointer2, Undo2, Redo2, Save, GitBranch, Eye, Settings, Workflow, HelpCircle, Sparkles, Search } from 'lucide-react';
+import { MousePointer2, Undo2, Redo2, Save, GitBranch, Eye, Settings, Workflow, HelpCircle, Sparkles, Search, GitCommit, Brain, Code, ListTodo, Radio, TrendingUp, Network } from 'lucide-react';
 import { WorkflowBuilder } from '@/components/mrBlue/WorkflowBuilder';
 import { ClarificationDialog, ClarificationQuestion } from '@/components/mrBlue/ClarificationDialog';
 import { PageGeneratorPanel } from '@/components/mr-blue/PageGeneratorPanel';
 import { PageAuditPanel } from '@/components/mr-blue/PageAuditPanel';
+import { GitCommitPanel } from '@/components/mrBlue/GitCommitPanel';
+import { PreferencesPanel } from '@/components/mrBlue/PreferencesPanel';
+import { CodeQualityDashboard } from '@/components/mrBlue/CodeQualityDashboard';
+import { TaskBreakdownPanel } from '@/components/mrBlue/TaskBreakdownPanel';
+import { AgentEventViewer } from '@/components/mrBlue/AgentEventViewer';
+import LearningDashboard from '@/components/mrBlue/LearningDashboard';
+import { DependencyGraph } from '@/components/mrBlue/DependencyGraph';
 
 interface SelectedElement {
   id: string;
@@ -151,7 +158,7 @@ export default function VisualEditorPage() {
       </div>
 
       <Tabs defaultValue="editor" className="flex-1 flex flex-col overflow-hidden">
-        <TabsList className="w-full justify-start rounded-none border-b">
+        <TabsList className="w-full justify-start rounded-none border-b overflow-x-auto">
           <TabsTrigger value="editor" data-testid="tab-editor">
             <MousePointer2 className="h-4 w-4 mr-2" />
             Visual Editor
@@ -167,6 +174,34 @@ export default function VisualEditorPage() {
           <TabsTrigger value="page-audit" data-testid="tab-page-audit">
             <Search className="h-4 w-4 mr-2" />
             Page Audit
+          </TabsTrigger>
+          <TabsTrigger value="git-commit" data-testid="tab-git-commit">
+            <GitCommit className="h-4 w-4 mr-2" />
+            Git Commit
+          </TabsTrigger>
+          <TabsTrigger value="preferences" data-testid="tab-preferences">
+            <Brain className="h-4 w-4 mr-2" />
+            Preferences
+          </TabsTrigger>
+          <TabsTrigger value="code-quality" data-testid="tab-code-quality">
+            <Code className="h-4 w-4 mr-2" />
+            Code Quality
+          </TabsTrigger>
+          <TabsTrigger value="task-breakdown" data-testid="tab-task-breakdown">
+            <ListTodo className="h-4 w-4 mr-2" />
+            Task Breakdown
+          </TabsTrigger>
+          <TabsTrigger value="agent-events" data-testid="tab-agent-events">
+            <Radio className="h-4 w-4 mr-2" />
+            Agent Events
+          </TabsTrigger>
+          <TabsTrigger value="learning" data-testid="tab-learning">
+            <TrendingUp className="h-4 w-4 mr-2" />
+            Learning
+          </TabsTrigger>
+          <TabsTrigger value="dependencies" data-testid="tab-dependencies">
+            <Network className="h-4 w-4 mr-2" />
+            Dependencies
           </TabsTrigger>
         </TabsList>
 
@@ -299,6 +334,34 @@ export default function VisualEditorPage() {
           <div className="max-w-4xl mx-auto">
             <PageAuditPanel />
           </div>
+        </TabsContent>
+
+        <TabsContent value="git-commit" className="flex-1 overflow-hidden mt-0" data-testid="tab-content-git-commit">
+          <GitCommitPanel />
+        </TabsContent>
+
+        <TabsContent value="preferences" className="flex-1 overflow-hidden mt-0" data-testid="tab-content-preferences">
+          <PreferencesPanel />
+        </TabsContent>
+
+        <TabsContent value="code-quality" className="flex-1 overflow-hidden mt-0" data-testid="tab-content-code-quality">
+          <CodeQualityDashboard />
+        </TabsContent>
+
+        <TabsContent value="task-breakdown" className="flex-1 overflow-hidden mt-0" data-testid="tab-content-task-breakdown">
+          <TaskBreakdownPanel />
+        </TabsContent>
+
+        <TabsContent value="agent-events" className="flex-1 overflow-hidden mt-0" data-testid="tab-content-agent-events">
+          <AgentEventViewer />
+        </TabsContent>
+
+        <TabsContent value="learning" className="flex-1 overflow-hidden mt-0" data-testid="tab-content-learning">
+          <LearningDashboard />
+        </TabsContent>
+
+        <TabsContent value="dependencies" className="flex-1 overflow-hidden mt-0" data-testid="tab-content-dependencies">
+          <DependencyGraph />
         </TabsContent>
       </Tabs>
 
