@@ -10,16 +10,20 @@ import rateLimit from 'express-rate-limit';
 // RATE LIMITING
 // ============================================================================
 
-// General API rate limiter
+// General API rate limiter - INCREASED FOR BETA (Nov 22, 2025 - QuickFixAgent)
+// Rationale: The Plan Progress Bar polls /api/the-plan/progress every 2s
+// Combined with user navigation + error monitoring = ~400 req/15min normal usage
 export const apiRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later',
+  max: 500, // INCREASED from 100 to 500 for beta testing
+  message: 'Too many requests, please try again later',
   standardHeaders: true,
   legacyHeaders: false,
   skip: (req) => {
-    // Skip rate limiting for health checks
-    return req.path === '/health' || req.path === '/api/health';
+    // Skip rate limiting for health checks AND The Plan polling
+    return req.path === '/health' 
+        || req.path === '/api/health'
+        || req.path === '/api/the-plan/progress'; // Skip polling endpoint
   },
 });
 
