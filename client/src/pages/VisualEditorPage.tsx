@@ -130,17 +130,24 @@ function VisualEditorPageContent() {
     }
   }, [recentConversations, currentConversationId]);
 
-  // ✅ FIX: Sync fetched messages with local conversation history
+  // ✅ MB.MD Fix: Sync fetched messages with local conversation history
+  // Only update if length changed OR initial load (prevents overwriting local state)
+  const prevMessageCountRef = useRef<number>(0);
+  
   useEffect(() => {
     if (fetchedMessages && fetchedMessages.length > 0) {
-      console.log('[VisualEditor] Loaded conversation history:', fetchedMessages.length, 'messages');
-      const formattedMessages = fetchedMessages.map((msg: any) => ({
-        role: msg.role,
-        content: msg.content,
-      }));
-      setConversationHistory(formattedMessages);
-    } else if (fetchedMessages && fetchedMessages.length === 0) {
-      // Add initial greeting when conversation is empty
+      // Only update if message count changed (new messages from server)
+      if (fetchedMessages.length !== prevMessageCountRef.current) {
+        console.log('[VisualEditor] Loaded conversation history:', fetchedMessages.length, 'messages');
+        const formattedMessages = fetchedMessages.map((msg: any) => ({
+          role: msg.role,
+          content: msg.content,
+        }));
+        setConversationHistory(formattedMessages);
+        prevMessageCountRef.current = fetchedMessages.length;
+      }
+    } else if (fetchedMessages && fetchedMessages.length === 0 && prevMessageCountRef.current === 0) {
+      // Add initial greeting when conversation is empty (only on first load)
       console.log('[VisualEditor] No messages - adding initial greeting');
       setConversationHistory([{
         role: 'assistant',
@@ -160,6 +167,7 @@ Just tell me what you want to change. For example:
 
 Let's get started! What would you like to change?`,
       }]);
+      prevMessageCountRef.current = 1;
     }
   }, [fetchedMessages]);
 
@@ -193,6 +201,8 @@ Let's get started! What would you like to change?`,
     },
     onSuccess: () => {
       console.log('[VisualEditor] ✅ Message saved to database');
+      // ✅ MB.MD Fix: Refetch conversation history to sync state with database
+      refetchConversationHistory();
     },
     onError: (error: any) => {
       console.error('[VisualEditor] Failed to save message:', error);
