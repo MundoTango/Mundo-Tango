@@ -121,28 +121,32 @@ IMPORTANT: Use escaped newlines (\\n) instead of backticks or template literals!
       if (content.type === 'text') {
         console.log('[Solution Suggester Agent] Claude text response length:', content.text.length);
         
-        // Try to extract JSON from the response
-        const jsonMatch = content.text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          try {
-            // ✅ MB.MD v9.2 Fix: Parse JSON directly without escaping (Claude returns valid JSON)
-            const parsed = JSON.parse(jsonMatch[0]);
-            console.log('[Solution Suggester Agent] ✅ Successfully parsed Claude JSON (confidence:', parsed.confidence, ')');
-            result = parsed;
-          } catch (parseError) {
-            console.error('[Solution Suggester Agent] ❌ JSON parse failed:', parseError);
-            // Fallback: store the whole response as explanation
+        // Try to parse JSON directly - Claude may format with whitespace
+        try {
+          // ✅ MB.MD v9.2 Fix: Parse JSON directly (JSON.parse handles whitespace)
+          const parsed = JSON.parse(content.text);
+          console.log('[Solution Suggester Agent] ✅ Successfully parsed Claude JSON (confidence:', parsed.confidence, ')');
+          result = parsed;
+        } catch (parseError) {
+          console.error('[Solution Suggester Agent] ❌ Direct JSON parse failed, trying regex extraction');
+          
+          // Fallback: Extract JSON from text using regex
+          const jsonMatch = content.text.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            try {
+              const parsed = JSON.parse(jsonMatch[0]);
+              console.log('[Solution Suggester Agent] ✅ Successfully parsed extracted JSON (confidence:', parsed.confidence, ')');
+              result = parsed;
+            } catch (secondError) {
+              console.error('[Solution Suggester Agent] ❌ JSON parse failed:', secondError);
+              // Final fallback: store the whole response as explanation
+              result.explanation = content.text;
+            }
+          } else {
+            console.log('[Solution Suggester Agent] No JSON match found, using fallback');
+            // Final fallback: treat whole response as explanation
             result.explanation = content.text;
           }
-        } else {
-          console.log('[Solution Suggester Agent] No JSON match found, using fallback');
-          // Fallback: treat whole response as explanation
-          result = {
-            code: '',
-            explanation: content.text,
-            files: [],
-            confidence: 0.5,
-          };
         }
       } else {
         console.warn('[Solution Suggester Agent] Unexpected content type:', content.type);
