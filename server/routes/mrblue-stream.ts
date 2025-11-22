@@ -303,6 +303,49 @@ ${command.changeType !== 'none' ? `You just applied a ${command.changeType} chan
 });
 
 /**
+ * Parse element reference from natural language
+ * POST /api/mrblue/select-element
+ */
+router.post("/select-element", async (req: Request, res: Response) => {
+  try {
+    const { reference, userId } = req.body;
+
+    if (!reference || !reference.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Element reference is required"
+      });
+    }
+
+    // Import elementSelector dynamically
+    const { elementSelector } = await import("../services/mrBlue/elementSelector");
+
+    // Parse element reference
+    const result = await elementSelector.parseElementReference(reference, userId);
+
+    console.log('[Element Selection] Parsed:', {
+      reference,
+      selector: result.selector,
+      confidence: result.confidence
+    });
+
+    res.json({
+      success: true,
+      selector: result.selector,
+      confidence: result.confidence,
+      explanation: result.explanation,
+      alternatives: result.alternatives || []
+    });
+  } catch (error: any) {
+    console.error('[Element Selection] Error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to parse element reference'
+    });
+  }
+});
+
+/**
  * Helper: Sleep for delay
  */
 function sleep(ms: number): Promise<void> {

@@ -27,6 +27,7 @@ import { VoiceCommandProcessor } from "@/components/visual-editor/VoiceCommandPr
 import { SmartSuggestions } from "@/components/visual-editor/SmartSuggestions";
 import { StreamingStatusPanel } from "@/components/visual-editor/StreamingStatusPanel";
 import { IframeAddressBar } from "@/components/visual-editor/IframeAddressBar";
+import { ElementHighlighter } from "@/components/visual-editor/ElementHighlighter";
 import { useSelfHealing } from "@/hooks/useSelfHealing";
 import type { ChangeMetadata } from "@/components/visual-editor/VisualDiffViewer";
 import { SEO } from "@/components/SEO";
@@ -1466,6 +1467,19 @@ function VisualEditorPageContent() {
                       });
                     }}
                   />
+                )}
+                
+                {/* Element Highlighter - Natural language element selection */}
+                {isGodLevel && (
+                  <div className="absolute bottom-4 left-4 max-w-xs z-10">
+                    <ElementHighlighter
+                      iframeRef={iframeRef}
+                      onElementSelected={(selector, confidence) => {
+                        setSelectedElement(selector);
+                        console.log('[Visual Editor] Element selected:', selector, confidence);
+                      }}
+                    />
+                  </div>
                 )}
                 
                 {/* Self-Healing Status */}
