@@ -7,7 +7,7 @@ import { useState } from 'react';
 export function ThePlanProgressBar() {
   const { data: progress } = useQuery({
     queryKey: ['/api/the-plan/progress'],
-    refetchInterval: 2000 // Poll every 2 seconds
+    refetchInterval: 5000 // Poll every 5 seconds (REDUCED from 2s - QuickFixAgent Nov 22)
   });
   
   const [minimized, setMinimized] = useState(false);
