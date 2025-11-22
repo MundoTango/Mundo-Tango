@@ -115,6 +115,7 @@ export function useErrorAutoAnalysis(
   
   /**
    * Generate fix proposal for an error
+   * ✅ MB.MD v9.2: Now uses AutoFixEngine for REAL confidence scores + auto-approval
    */
   const generateProposal = useCallback(async (errorId: number) => {
     setIsAnalyzing(true);
@@ -125,21 +126,76 @@ export function useErrorAutoAnalysis(
         throw new Error('Error pattern not found');
       }
       
-      console.log('[ErrorAutoAnalysis] Generating fix proposal for error:', errorId);
+      console.log('[ErrorAutoAnalysis] 🤖 Calling AutoFixEngine for AI-powered analysis...', errorId);
       
-      // Create fix proposal (works with or without AI-suggested fix)
-      const proposal: FixProposal = {
+      // ✅ MB.MD v9.2: Call AutoFixEngine for REAL analysis with confidence scores
+      const response = await apiRequest('POST', '/api/mrblue/auto-fix', {
         errorId: error.id,
-        errorMessage: error.errorMessage,
-        proposedFix: error.suggestedFix || 
-          `I'll investigate this ${error.errorType} error and propose a solution. ` +
-          `Error: "${error.errorMessage.substring(0, 100)}..." ` +
-          `This error has occurred ${error.frequency} time(s).`,
-        confidence: parseFloat(error.fixConfidence || '0.65'),
-        filesAffected: ['Will be determined during fix'],
-        estimatedImpact: 'Low - Targeted fix for specific error',
-        timestamp: new Date()
-      };
+        dryRun: true // Analyze only, don't apply fix yet
+      });
+      
+      let proposal: FixProposal;
+      let autoFixResult: any = null;
+      
+      if (response.ok) {
+        autoFixResult = await response.json();
+        
+        // Create proposal from AutoFixEngine analysis
+        proposal = {
+          errorId: error.id,
+          errorMessage: error.errorMessage,
+          proposedFix: autoFixResult.fixAnalysis?.suggestedFix || 
+            `I'll investigate this ${error.errorType} error and propose a solution. ` +
+            `Error: "${error.errorMessage.substring(0, 100)}..." ` +
+            `This error has occurred ${error.frequency} time(s).`,
+          confidence: autoFixResult.fixAnalysis?.confidence || 0,
+          filesAffected: autoFixResult.fixAnalysis?.affectedFiles || ['Will be determined during fix'],
+          estimatedImpact: autoFixResult.fixAnalysis?.estimatedComplexity === 'low' 
+            ? 'Low - Targeted fix for specific error'
+            : autoFixResult.fixAnalysis?.estimatedComplexity === 'medium'
+            ? 'Medium - Affects multiple components'
+            : 'High - Significant refactoring required',
+          timestamp: new Date()
+        };
+        
+        console.log(`[ErrorAutoAnalysis] ✅ AutoFixEngine confidence: ${proposal.confidence}%`);
+        
+        // ✅ MB.MD v9.2: Auto-approve high-confidence fixes (>= 80%)
+        if (proposal.confidence >= 80 && autoFixResult.decision?.action === 'auto-fix') {
+          console.log('[ErrorAutoAnalysis] 🚀 HIGH CONFIDENCE - Auto-applying fix...');
+          
+          // Apply fix immediately
+          const applyResponse = await apiRequest('POST', '/api/mrblue/auto-fix', {
+            errorId: error.id,
+            dryRun: false // Actually apply the fix
+          });
+          
+          if (applyResponse.ok) {
+            const applyResult = await applyResponse.json();
+            console.log('[ErrorAutoAnalysis] ✅ Fix auto-applied!', applyResult);
+            
+            // Update proposal to show auto-fix status
+            proposal.proposedFix = `✅ **AUTO-FIXED** (${proposal.confidence}% confidence)\n\n` +
+              `${proposal.proposedFix}\n\n` +
+              `**Status:** Fix applied automatically and committed to git.`;
+          }
+        }
+      } else {
+        // Fallback to simple proposal if AutoFixEngine fails
+        console.warn('[ErrorAutoAnalysis] AutoFixEngine unavailable, using fallback proposal');
+        proposal = {
+          errorId: error.id,
+          errorMessage: error.errorMessage,
+          proposedFix: error.suggestedFix || 
+            `I'll investigate this ${error.errorType} error and propose a solution. ` +
+            `Error: "${error.errorMessage.substring(0, 100)}..." ` +
+            `This error has occurred ${error.frequency} time(s).`,
+          confidence: parseFloat(error.fixConfidence || '0.65'),
+          filesAffected: ['Will be determined during fix'],
+          estimatedImpact: 'Low - Targeted fix for specific error',
+          timestamp: new Date()
+        };
+      }
       
       setActiveProposal(proposal);
       

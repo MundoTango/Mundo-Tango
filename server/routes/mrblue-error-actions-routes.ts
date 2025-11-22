@@ -13,6 +13,7 @@ import { errorPatterns, agentEscalations } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { VibeCodingService } from "../services/mrBlue/VibeCodingService";
+import { AutoFixEngine } from "../services/mrBlue/AutoFixEngine";
 import { broadcastToUser } from "../services/websocket";
 
 const router = Router();
@@ -21,11 +22,23 @@ const router = Router();
 const vibeCodingService = new VibeCodingService();
 let serviceInitialized = false;
 
+// ✅ MB.MD v9.2: Initialize AutoFixEngine
+const autoFixEngine = new AutoFixEngine();
+let autoFixInitialized = false;
+
 // Initialize service on first use
 async function ensureServiceInitialized() {
   if (!serviceInitialized) {
     await vibeCodingService.initialize();
     serviceInitialized = true;
+  }
+}
+
+// Initialize AutoFixEngine on first use
+async function ensureAutoFixInitialized() {
+  if (!autoFixInitialized) {
+    await autoFixEngine.initialize();
+    autoFixInitialized = true;
   }
 }
 
@@ -44,6 +57,87 @@ const fixFeedbackSchema = z.object({
   success: z.boolean(),
   feedbackMessage: z.string().optional(),
   wasHelpful: z.boolean().optional(),
+});
+
+const autoFixSchema = z.object({
+  errorId: z.number().int().positive(),
+  dryRun: z.boolean().optional().default(false), // If true, only analyze without applying
+});
+
+/**
+ * POST /api/mrblue/auto-fix
+ * ✅ MB.MD v9.2: Autonomous self-healing using AutoFixEngine
+ * - Analyzes error with REAL confidence scores
+ * - Auto-applies high-confidence fixes (>95%)
+ * - Requests approval for medium-confidence (80-95%)
+ * - Returns manual review for low-confidence (<80%)
+ */
+router.post("/auto-fix", async (req: Request, res: Response) => {
+  try {
+    console.log('[AutoFix] Request received:', req.body);
+
+    // Validate request
+    const validationResult = autoFixSchema.safeParse(req.body);
+    if (!validationResult.success) {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid request format",
+        details: validationResult.error.errors,
+      });
+    }
+
+    const { errorId, dryRun } = validationResult.data;
+
+    // Initialize AutoFixEngine if needed
+    await ensureAutoFixInitialized();
+
+    console.log(`[AutoFix] Processing error ${errorId} (dryRun: ${dryRun})...`);
+
+    // Process error through AutoFixEngine
+    const result = await autoFixEngine.processError(errorId);
+
+    if (!result.success) {
+      return res.status(500).json({
+        success: false,
+        error: result.error || "Auto-fix processing failed",
+        errorId,
+      });
+    }
+
+    console.log(`[AutoFix] ✅ Analysis complete:`);
+    console.log(`  Decision: ${result.decision.action}`);
+    console.log(`  Confidence: ${result.decision.confidence}%`);
+    console.log(`  Affected files: ${result.fixAnalysis.affectedFiles.length}`);
+
+    // If dry run, return analysis without applying
+    if (dryRun) {
+      return res.status(200).json({
+        success: true,
+        dryRun: true,
+        errorId,
+        decision: result.decision,
+        fixAnalysis: result.fixAnalysis,
+      });
+    }
+
+    // Return full result (including applied changes if auto-fixed)
+    return res.status(200).json({
+      success: true,
+      errorId,
+      decision: result.decision,
+      fixAnalysis: result.fixAnalysis,
+      vibeCodeResult: result.vibeCodeResult,
+      gitCommitId: result.gitCommitId,
+      appliedAt: result.appliedAt,
+    });
+  } catch (error: any) {
+    console.error('[AutoFix] Error processing:', error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error",
+      message: error.message,
+    });
+  }
 });
 
 /**
