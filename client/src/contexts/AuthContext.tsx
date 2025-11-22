@@ -173,12 +173,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       return true;
     } catch (error: any) {
-      console.error("Error loading user:", error);
+      // ✅ MB.MD v9.2 Fix: Reduce error spam by only logging once
+      if (retryCount === 0) {
+        console.warn("[Auth] User not authenticated");
+      }
       
       // If 401 and haven't retried yet, attempt token refresh
       if (error.message?.includes("401") || error.message?.includes("Token expired")) {
         if (retryCount === 0) {
-          console.log("[Auth] Access token expired, attempting refresh...");
+          console.log("[Auth] Attempting token refresh...");
           const refreshed = await refreshAccessToken();
           if (refreshed) {
             // Retry loading user with new token
@@ -187,7 +190,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
       
-      // Clear auth state only if refresh failed
+      // Clear auth state only if refresh failed (silently - don't spam errors)
       setUser(null);
       setProfile(null);
       setSession(null);

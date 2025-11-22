@@ -5,15 +5,21 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 
 export function SelfHealingStatus() {
-  const { data: status } = useQuery({
+  const { data: status, isError } = useQuery({
     queryKey: ['/api/self-healing/status'],
-    refetchInterval: 5000 // Poll every 5 seconds
+    refetchInterval: (data) => {
+      // ✅ MB.MD v9.2 Fix: Stop polling if error or no agents active
+      if (!data?.agentsActive || data.agentsActive.length === 0) return false;
+      return 10000; // Poll every 10 seconds when active (reduced from 5s)
+    },
+    retry: 1, // Only retry once on failure
+    staleTime: 8000, // Consider data fresh for 8 seconds
   });
   
   const [expanded, setExpanded] = useState(false);
   
-  // Don't show if no agents active
-  if (!status?.agentsActive || status.agentsActive.length === 0) {
+  // Don't show if no agents active or has errors
+  if (!status?.agentsActive || status.agentsActive.length === 0 || isError) {
     return null;
   }
   

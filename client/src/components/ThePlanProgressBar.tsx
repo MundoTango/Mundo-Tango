@@ -5,15 +5,21 @@ import { X } from 'lucide-react';
 import { useState } from 'react';
 
 export function ThePlanProgressBar() {
-  const { data: progress } = useQuery({
+  const { data: progress, isError } = useQuery({
     queryKey: ['/api/the-plan/progress'],
-    refetchInterval: 5000 // Poll every 5 seconds (REDUCED from 2s - QuickFixAgent Nov 22)
+    refetchInterval: (data) => {
+      // ✅ MB.MD v9.2 Fix: Stop polling if error or inactive
+      if (!data?.active) return false; // Don't poll if inactive
+      return 10000; // Poll every 10 seconds when active (reduced from 5s)
+    },
+    retry: 1, // Only retry once on failure
+    staleTime: 8000, // Consider data fresh for 8 seconds
   });
   
   const [minimized, setMinimized] = useState(false);
   
-  // Don't show if The Plan is not active
-  if (!progress?.active) return null;
+  // Don't show if The Plan is not active or has errors
+  if (!progress?.active || isError) return null;
   
   const percentComplete = (progress.pagesCompleted / progress.totalPages) * 100;
   
