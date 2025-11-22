@@ -17,6 +17,9 @@ import { TaskBreakdownPanel } from '@/components/mrBlue/TaskBreakdownPanel';
 import { AgentEventViewer } from '@/components/mrBlue/AgentEventViewer';
 import LearningDashboard from '@/components/mrBlue/LearningDashboard';
 import { DependencyGraph } from '@/components/mrBlue/DependencyGraph';
+import { useMutation } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 
 interface SelectedElement {
   id: string;
@@ -35,6 +38,7 @@ interface Change {
 }
 
 export default function VisualEditorPage() {
+  const { toast } = useToast();
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedElement, setSelectedElement] = useState<SelectedElement | null>(null);
   const [changes, setChanges] = useState<Change[]>([]);
@@ -57,6 +61,52 @@ export default function VisualEditorPage() {
   ]);
   const [clarificationRound, setClarificationRound] = useState(1);
   const [clarificationConfidence, setClarificationConfidence] = useState(0.65);
+
+  // Git commit mutation
+  const saveChangesMutation = useMutation({
+    mutationFn: async () => {
+      // Step 1: Check for uncommitted changes
+      const statusResponse = await apiRequest('/api/mrblue/git/status');
+      
+      if (!statusResponse.hasUncommittedChanges) {
+        throw new Error('No uncommitted changes to save');
+      }
+
+      // Step 2: Generate AI commit message
+      const messageResponse = await apiRequest('/api/mrblue/git/generate-message', {
+        method: 'POST',
+        body: { 
+          files: ['.'], 
+          description: `Visual Editor changes: ${changes.length} modifications`
+        }
+      });
+
+      // Step 3: Create commit
+      const commitResponse = await apiRequest('/api/mrblue/git/commit', {
+        method: 'POST',
+        body: {
+          files: ['.'],
+          description: messageResponse.message,
+          autoPush: false
+        }
+      });
+
+      return commitResponse;
+    },
+    onSuccess: () => {
+      toast({
+        title: '✅ Changes Saved',
+        description: 'Your changes have been committed to git successfully!',
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: '❌ Save Failed',
+        description: error.message,
+        variant: 'destructive',
+      });
+    }
+  });
 
   const handlePropertyChange = (property: string, value: string) => {
     if (!selectedElement) return;
@@ -150,9 +200,13 @@ export default function VisualEditorPage() {
             <Eye className="h-4 w-4 mr-2" />
             Preview
           </Button>
-          <Button data-testid="button-save-changes">
+          <Button 
+            data-testid="button-save-changes"
+            onClick={() => saveChangesMutation.mutate()}
+            disabled={saveChangesMutation.isPending}
+          >
             <Save className="h-4 w-4 mr-2" />
-            Save Changes
+            {saveChangesMutation.isPending ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
       </div>
