@@ -23,7 +23,7 @@ export const getMrBlueCapabilities = (tier: number): MrBlueCapabilities => {
       audioChat: true,
       contextAwareness: true,
       voiceCloning: false,
-      autonomousVibeCoding: false,
+      autonomousVibeCoding: true,  // ✅ BETA: Enabled for testing
       unlimitedCodeGen: false,
       premiumVoices: false,
       realtimeVoice: false,
@@ -32,7 +32,7 @@ export const getMrBlueCapabilities = (tier: number): MrBlueCapabilities => {
       gitIntegration: false,
       backendCodeGen: false,
       messagesPerHour: 10,
-      codeGenPerDay: 0,
+      codeGenPerDay: 10,  // ✅ BETA: Allow code gen
       audioMinutesPerDay: 5
     },
     1: {
@@ -40,7 +40,7 @@ export const getMrBlueCapabilities = (tier: number): MrBlueCapabilities => {
       audioChat: true,
       contextAwareness: true,
       voiceCloning: false,
-      autonomousVibeCoding: false,
+      autonomousVibeCoding: true,  // ✅ BETA: Enabled for testing
       unlimitedCodeGen: false,
       premiumVoices: false,
       realtimeVoice: false,
@@ -49,7 +49,7 @@ export const getMrBlueCapabilities = (tier: number): MrBlueCapabilities => {
       gitIntegration: false,
       backendCodeGen: false,
       messagesPerHour: 20,
-      codeGenPerDay: 0,
+      codeGenPerDay: 10,  // ✅ BETA: Allow code gen
       audioMinutesPerDay: 10
     },
     2: {
@@ -57,7 +57,7 @@ export const getMrBlueCapabilities = (tier: number): MrBlueCapabilities => {
       audioChat: true,
       contextAwareness: true,
       voiceCloning: false,
-      autonomousVibeCoding: false,
+      autonomousVibeCoding: true,  // ✅ BETA: Enabled for testing
       unlimitedCodeGen: false,
       premiumVoices: false,
       realtimeVoice: false,
@@ -66,7 +66,7 @@ export const getMrBlueCapabilities = (tier: number): MrBlueCapabilities => {
       gitIntegration: false,
       backendCodeGen: false,
       messagesPerHour: 50,
-      codeGenPerDay: 0,
+      codeGenPerDay: 10,  // ✅ BETA: Allow code gen
       audioMinutesPerDay: 15
     },
     3: {
@@ -74,7 +74,7 @@ export const getMrBlueCapabilities = (tier: number): MrBlueCapabilities => {
       audioChat: true,
       contextAwareness: true,
       voiceCloning: false,
-      autonomousVibeCoding: false,
+      autonomousVibeCoding: true,  // ✅ BETA: Enabled for testing
       unlimitedCodeGen: false,
       premiumVoices: false,
       realtimeVoice: false,
@@ -83,7 +83,7 @@ export const getMrBlueCapabilities = (tier: number): MrBlueCapabilities => {
       gitIntegration: false,
       backendCodeGen: false,
       messagesPerHour: 100,
-      codeGenPerDay: 1,
+      codeGenPerDay: 10,  // ✅ BETA: Allow code gen
       audioMinutesPerDay: 30
     },
     4: {
@@ -91,7 +91,7 @@ export const getMrBlueCapabilities = (tier: number): MrBlueCapabilities => {
       audioChat: true,
       contextAwareness: true,
       voiceCloning: false,
-      autonomousVibeCoding: false,
+      autonomousVibeCoding: true,  // ✅ BETA: Enabled for testing
       unlimitedCodeGen: false,
       premiumVoices: true,
       realtimeVoice: false,
@@ -100,7 +100,7 @@ export const getMrBlueCapabilities = (tier: number): MrBlueCapabilities => {
       gitIntegration: false,
       backendCodeGen: false,
       messagesPerHour: 200,
-      codeGenPerDay: 3,
+      codeGenPerDay: 10,  // ✅ BETA: Allow code gen
       audioMinutesPerDay: 60
     },
     5: {
@@ -108,7 +108,7 @@ export const getMrBlueCapabilities = (tier: number): MrBlueCapabilities => {
       audioChat: true,
       contextAwareness: true,
       voiceCloning: false,
-      autonomousVibeCoding: false,
+      autonomousVibeCoding: true,  // ✅ BETA: Enabled for testing
       unlimitedCodeGen: false,
       premiumVoices: true,
       realtimeVoice: true,
@@ -117,7 +117,7 @@ export const getMrBlueCapabilities = (tier: number): MrBlueCapabilities => {
       gitIntegration: false,
       backendCodeGen: false,
       messagesPerHour: 500,
-      codeGenPerDay: 5,
+      codeGenPerDay: 10,  // ✅ BETA: Allow code gen
       audioMinutesPerDay: 120
     },
     6: {
@@ -125,7 +125,7 @@ export const getMrBlueCapabilities = (tier: number): MrBlueCapabilities => {
       audioChat: true,
       contextAwareness: true,
       voiceCloning: true,
-      autonomousVibeCoding: false,
+      autonomousVibeCoding: true,  // ✅ BETA: Enabled for testing
       unlimitedCodeGen: false,
       premiumVoices: true,
       realtimeVoice: true,
@@ -134,7 +134,7 @@ export const getMrBlueCapabilities = (tier: number): MrBlueCapabilities => {
       gitIntegration: false,
       backendCodeGen: false,
       messagesPerHour: 1000,
-      codeGenPerDay: 10,
+      codeGenPerDay: 10,  // ✅ BETA: Enabled (was already enabled)
       audioMinutesPerDay: 240
     },
     7: {
