@@ -181,8 +181,28 @@ function VisualEditorPageContent() {
   const { 
     isStreaming: streamIsActive,
     currentStatus: streamStatus,
-    messages: streamMessages 
+    messages: streamMessages,
+    sendMessage: sendStreamingMessage,
+    clear: clearStreaming,
+    error: streamError
   } = useStreamingChat();
+  
+  // ✅ Handle visual changes from streaming (e.g., "make button blue")
+  useEffect(() => {
+    const visualChangeMsg = streamMessages.find(m => m.type === 'visual_change');
+    if (visualChangeMsg && visualChangeMsg.data && iframeRef.current) {
+      const change = visualChangeMsg.data.change;
+      
+      // Apply instant visual change to iframe
+      applyInstantChange(iframeRef.current, selectedElement, {
+        changeType: change.changeType,
+        property: change.property,
+        value: change.value
+      });
+      
+      console.log('[Streaming] Applied visual change:', change);
+    }
+  }, [streamMessages, selectedElement]);
 
   // Self-healing orchestration (MB.MD v9.0)
   const { isRunning: isSelfHealingRunning, result: selfHealingResult } = useSelfHealing(
@@ -517,7 +537,73 @@ function VisualEditorPageContent() {
     },
   });
 
-  // Chat mutation (conversational responses without code generation)
+  // ✅ STREAMING HANDLER - Replace chatMutation with streaming approach
+  const handleStreamingChat = useCallback(async (message: string) => {
+    try {
+      const userMessage = message;
+      
+      // Add user message to conversation history immediately
+      setConversationHistory(prev => [
+        ...prev,
+        { role: 'user', content: userMessage }
+      ]);
+      setPrompt("");
+      
+      // Save user message to database
+      if (currentConversationId) {
+        try {
+          await saveMessageMutation.mutateAsync({ role: 'user', content: userMessage });
+        } catch (error) {
+          console.error('[VisualEditor] Failed to save user message:', error);
+        }
+      }
+      
+      // Send streaming request
+      await sendStreamingMessage(userMessage, {
+        page: currentIframeUrl,
+        selectedElement: selectedElement,
+        viewMode,
+        editsCount: changeHistory.length,
+        conversationHistory: conversationHistory.slice(-6)
+      }, 'chat');
+      
+      // Extract final response from stream messages
+      const completionMsg = streamMessages.find(m => m.type === 'completion');
+      if (completionMsg && completionMsg.message) {
+        const responseText = completionMsg.message;
+        
+        // Add assistant response to conversation history
+        setConversationHistory(prev => [
+          ...prev,
+          { role: 'assistant', content: responseText }
+        ]);
+        
+        // Save assistant message to database
+        if (currentConversationId) {
+          try {
+            await saveMessageMutation.mutateAsync({ role: 'assistant', content: responseText });
+          } catch (error) {
+            console.error('[VisualEditor] Failed to save assistant message:', error);
+          }
+        }
+        
+        // Voice response
+        if (voiceModeEnabled && ttsSupported) {
+          speak(responseText);
+        }
+      }
+      
+    } catch (error: any) {
+      console.error('[StreamingChat] Error:', error);
+      toast({
+        variant: "destructive",
+        title: "Streaming Failed",
+        description: error.message || "Could not stream response",
+      });
+    }
+  }, [currentIframeUrl, selectedElement, viewMode, changeHistory, conversationHistory, currentConversationId, sendStreamingMessage, streamMessages, saveMessageMutation, voiceModeEnabled, ttsSupported, speak, toast]);
+  
+  // Legacy chat mutation (fallback for non-streaming)
   const chatMutation = useMutation({
     mutationFn: async (message: string) => {
       const token = localStorage.getItem('accessToken');
@@ -614,8 +700,8 @@ function VisualEditorPageContent() {
       // Vibe Coding path: AI-powered code generation with live streaming
       executeMutation.mutate(trimmedPrompt);
     } else {
-      // Simple chat: Send to chat endpoint for conversational responses
-      chatMutation.mutate(trimmedPrompt);
+      // ✅ NEW: Simple chat with STREAMING responses (real-time AI responses)
+      await handleStreamingChat(trimmedPrompt);
     }
   };
 
@@ -1344,6 +1430,13 @@ function VisualEditorPageContent() {
                   currentStatus={streamStatus}
                   isStreaming={streamIsActive}
                   streamingMessages={streamMessages}
+                  onStop={() => {
+                    clearStreaming();
+                    toast({
+                      title: "Streaming Stopped",
+                      description: "Generation cancelled",
+                    });
+                  }}
                 />
                 
                 {/* Smart Suggestions Panel (only in preview mode) */}
