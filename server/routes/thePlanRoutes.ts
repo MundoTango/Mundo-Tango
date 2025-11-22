@@ -40,10 +40,20 @@ router.get('/progress', async (req, res) => {
 // Start The Plan validation tour
 router.post('/start', async (req, res) => {
   try {
-    const userId = (req as any).user?.id;
+    let userId = (req as any).user?.id;
     
+    // ✅ BETA FIX: Create guest user if not authenticated
     if (!userId) {
-      return res.status(401).json({ error: 'Authentication required' });
+      console.log('[The Plan] Creating guest user for tour...');
+      const guestUser = await storage.createUser({
+        email: `guest-${Date.now()}@mundo-tango.local`,
+        username: `guest_${Date.now()}`,
+        password: 'guest_temp_password',
+        role: 'user',
+        subscriptionTier: 0
+      });
+      userId = guestUser.id;
+      (req as any).user = guestUser;
     }
     
     // Get first page from THE_PLAN_PAGES
