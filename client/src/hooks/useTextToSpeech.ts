@@ -32,14 +32,25 @@ export function useTextToSpeech(): UseTextToSpeechReturn {
         const availableVoices = window.speechSynthesis.getVoices();
         setVoices(availableVoices);
 
-        // Prefer English voices
-        const englishVoice = availableVoices.find(
-          voice => voice.lang.startsWith('en') && voice.name.includes('Google')
+        // Prefer natural female voices (NOT Google robot voices)
+        const naturalVoice = availableVoices.find(
+          voice => voice.lang.startsWith('en') && 
+                   (voice.name.includes('Samantha') || voice.name.includes('Karen'))
+        ) || availableVoices.find(
+          voice => voice.lang.startsWith('en') && 
+                   (voice.name.includes('Zira') || voice.name.includes('Female'))
+        ) || availableVoices.find(
+          voice => voice.lang.startsWith('en') && 
+                   voice.name.includes('Microsoft') && 
+                   !voice.name.includes('Male')
+        ) || availableVoices.find(
+          voice => voice.lang.startsWith('en') && 
+                   !voice.name.includes('Google')
         ) || availableVoices.find(
           voice => voice.lang.startsWith('en')
         ) || availableVoices[0];
 
-        setSelectedVoice(englishVoice || null);
+        setSelectedVoice(naturalVoice || null);
       };
 
       loadVoices();

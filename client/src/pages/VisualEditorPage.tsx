@@ -461,6 +461,69 @@ Let's get started! What would you like to change?`,
       setIframeLoading(false);
       setIframeError(false);
       injectSelectionScript(iframe);
+      
+      // Enable element click selection with visual outline
+      try {
+        const iframeDoc = iframe.contentDocument;
+        if (iframeDoc && iframeDoc.body) {
+          // Inject click-to-select script
+          const script = iframeDoc.createElement('script');
+          script.textContent = `
+            (function() {
+              let selectedElement = null;
+              
+              document.addEventListener('click', function(e) {
+                // Check for Cmd/Ctrl+Click (navigation)
+                if (e.metaKey || e.ctrlKey) {
+                  console.log('[IframeSelection] Cmd+Click detected');
+                  let link = e.target.closest('a');
+                  if (link && link.href) {
+                    e.preventDefault();
+                    window.parent.postMessage({
+                      type: 'IFRAME_NAVIGATE',
+                      url: link.href
+                    }, '*');
+                    return;
+                  }
+                }
+                
+                // Regular click - select element
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Remove previous selection
+                if (selectedElement) {
+                  selectedElement.style.outline = '';
+                }
+                
+                selectedElement = e.target;
+                
+                // Add blue outline
+                selectedElement.style.outline = '2px solid hsl(var(--primary))';
+                selectedElement.style.outlineOffset = '2px';
+                
+                // Send to parent
+                window.parent.postMessage({
+                  type: 'IFRAME_ELEMENT_SELECTED',
+                  component: {
+                    id: selectedElement.id || 'element-' + Date.now(),
+                    tagName: selectedElement.tagName.toLowerCase(),
+                    className: selectedElement.className || '',
+                    text: (selectedElement.textContent || '').substring(0, 100),
+                    testId: selectedElement.getAttribute('data-testid') || null
+                  }
+                }, '*');
+              }, true);
+              
+              console.log('[IframeSelection] Click-to-select enabled');
+            })();
+          `;
+          iframeDoc.body.appendChild(script);
+          console.log('[VisualEditor] Element click selection enabled');
+        }
+      } catch (error) {
+        console.error('[VisualEditor] Failed to enable element selection:', error);
+      }
     };
 
     const handleError = () => {
@@ -577,10 +640,10 @@ Let's get started! What would you like to change?`,
         description: "Mr. Blue is analyzing your request...",
       });
       
-      // Voice response (DISABLED - no robot TTS)
-      // if (ttsSupported) {
-      //   speak("I'm working on that now.");
-      // }
+      // Voice response with natural voice
+      if (ttsSupported) {
+        speak("I'm working on that now.");
+      }
     },
     onError: (error: any) => {
       setIsExecuting(false);
@@ -648,10 +711,10 @@ Let's get started! What would you like to change?`,
         description: "CSS changed instantly!",
       });
       
-      // Voice response (DISABLED - no robot TTS)
-      // if (ttsSupported) {
-      //   speak("I changed the style. Anything else?");
-      // }
+      // Voice response with natural voice
+      if (ttsSupported) {
+        speak("I changed the style. Anything else?");
+      }
     },
     onError: (error: any) => {
       toast({
@@ -839,10 +902,10 @@ Let's get started! What would you like to change?`,
           }
         }
         
-        // Voice response (DISABLED - no robot TTS)
-        // if (ttsSupported) {
-        //   speak(responseText);
-        // }
+        // Voice response with natural voice
+        if (ttsSupported) {
+          speak(responseText);
+        }
       }
       
     } catch (error: any) {
@@ -906,10 +969,10 @@ Let's get started! What would you like to change?`,
         description: responseText.slice(0, 100) + (responseText.length > 100 ? '...' : ''),
       });
       
-      // Voice response (DISABLED - no robot TTS)
-      // if (ttsSupported) {
-      //   speak(responseText);
-      // }
+      // Voice response with natural voice
+      if (ttsSupported) {
+        speak(responseText);
+      }
     },
     onError: (error: any) => {
       toast({
@@ -971,10 +1034,10 @@ Let's get started! What would you like to change?`,
         description: "Changes saved to codebase!",
       });
       
-      // Voice response (DISABLED - no robot TTS)
-      // if (ttsSupported) {
-      //   speak("I applied the changes to the codebase. Should I make any other updates?");
-      // }
+      // Voice response with natural voice
+      if (ttsSupported) {
+        speak("I applied the changes to the codebase. Should I make any other updates?");
+      }
       
       // Capture after screenshot
       if (currentTask?.generatedFiles && iframeRef.current) {
@@ -1028,10 +1091,10 @@ Let's get started! What would you like to change?`,
         description: `✓ ${data.message}`,
       });
       
-      // Voice response (DISABLED - no robot TTS)
-      // if (ttsSupported) {
-      //   speak("Changes committed to Git. You're all set!");
-      // }
+      // Voice response with natural voice
+      if (ttsSupported) {
+        speak("Changes committed to Git. You're all set!");
+      }
     },
     onError: (error: any) => {
       toast({
