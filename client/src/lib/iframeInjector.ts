@@ -117,6 +117,10 @@ export class IframeInjector {
         if (newUrl && this.validateUrl(newUrl)) {
           this.handleNavigationEvent(newUrl);
         }
+      } else if (event.data.type === 'IFRAME_ELEMENT_CLICKED') {
+        // Handle element click from iframe
+        const { element: elementData, position } = event.data;
+        this.handleElementClick(elementData, position);
       }
     };
     
@@ -889,6 +893,132 @@ export class IframeInjector {
     }
     
     console.log('[IframeInjector] Navigation complete:', this.currentUrl);
+  }
+  
+  /**
+   * Handle element click from iframe
+   */
+  private handleElementClick(elementData: any, position: { x: number; y: number }) {
+    console.log('[IframeInjector] Element clicked:', elementData);
+    
+    // Get the actual element from iframe
+    const iframeDoc = this.iframe?.contentDocument;
+    if (iframeDoc) {
+      const element = iframeDoc.querySelector(elementData.selector) as HTMLElement;
+      
+      if (element) {
+        this.selectedElement = element;
+        this.onElementSelected?.(element);
+      }
+    }
+    
+    // Send notification to parent
+    this.notifyParent('ELEMENT_CLICKED', {
+      element: elementData,
+      position
+    });
+  }
+  
+  /**
+   * Enable element selection in iframe (inject click handlers)
+   */
+  enableElementSelection() {
+    if (!this.iframe) {
+      console.warn('[IframeInjector] No iframe available');
+      return;
+    }
+    
+    const iframeDoc = this.iframe.contentDocument;
+    if (!iframeDoc) {
+      console.warn('[IframeInjector] Cannot access iframe document');
+      return;
+    }
+    
+    // Inject selection script into iframe
+    const script = iframeDoc.createElement('script');
+    script.textContent = `
+      (function() {
+        console.log('[IframeSelection] Initializing element selection...');
+        
+        let selectedElement = null;
+        
+        // Handle clicks on elements
+        document.addEventListener('click', function(e) {
+          // Check for Cmd/Ctrl+Click (navigation)
+          if (e.metaKey || e.ctrlKey) {
+            console.log('[IframeSelection] Cmd+Click detected - navigating');
+            
+            // Find closest link
+            let link = e.target.closest('a');
+            if (link && link.href) {
+              e.preventDefault();
+              window.parent.postMessage({
+                type: 'IFRAME_NAVIGATE',
+                url: link.href
+              }, '*');
+              return;
+            }
+          }
+          
+          // Regular click - select element
+          e.preventDefault();
+          e.stopPropagation();
+          
+          // Remove previous selection outline
+          if (selectedElement) {
+            selectedElement.style.outline = '';
+          }
+          
+          selectedElement = e.target;
+          
+          // Add selection outline
+          selectedElement.style.outline = '2px solid hsl(var(--primary))';
+          selectedElement.style.outlineOffset = '2px';
+          
+          // Get element info
+          const rect = selectedElement.getBoundingClientRect();
+          const elementInfo = {
+            tagName: selectedElement.tagName,
+            id: selectedElement.id || null,
+            className: selectedElement.className || null,
+            textContent: selectedElement.textContent?.slice(0, 100) || null,
+            testId: selectedElement.getAttribute('data-testid') || null,
+            selector: getSelector(selectedElement)
+          };
+          
+          // Send to parent
+          window.parent.postMessage({
+            type: 'IFRAME_ELEMENT_CLICKED',
+            element: elementInfo,
+            position: { x: rect.left, y: rect.bottom + 5 }
+          }, '*');
+        }, true);
+        
+        // Helper to generate CSS selector
+        function getSelector(element) {
+          if (element.id) {
+            return '#' + element.id;
+          }
+          if (element.getAttribute('data-testid')) {
+            return '[data-testid="' + element.getAttribute('data-testid') + '"]';
+          }
+          
+          const classes = Array.from(element.classList).join('.');
+          const tag = element.tagName.toLowerCase();
+          
+          if (classes) {
+            return tag + '.' + classes;
+          }
+          
+          return tag;
+        }
+        
+        console.log('[IframeSelection] Element selection enabled');
+      })();
+    `;
+    
+    iframeDoc.body.appendChild(script);
+    console.log('[IframeInjector] Element selection script injected');
   }
   
   /**
