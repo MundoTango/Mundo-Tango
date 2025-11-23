@@ -233,8 +233,8 @@ Explanation: [Brief explanation of what you built]`;
           temperature: 0.3,
         });
 
-        if (!codeResponse.success || !codeResponse.content) {
-          throw new Error('Code generation failed');
+        if (!codeResponse.content) {
+          throw new Error('Code generation failed - empty response');
         }
 
         // Extract code blocks
