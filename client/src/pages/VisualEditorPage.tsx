@@ -22,7 +22,6 @@ import { useStreamingChat } from "@/hooks/useStreamingChat";
 import { injectSelectionScript, applyInstantChange, undoLastChange } from "@/lib/iframeInjector";
 import { captureIframeScreenshot, saveScreenshot } from "@/lib/screenshotCapture";
 import { ChangeTimeline } from "@/components/visual-editor/ChangeTimeline";
-import { VoiceModeToggle } from "@/components/visual-editor/VoiceModeToggle";
 import { VoiceCommandProcessor } from "@/components/visual-editor/VoiceCommandProcessor";
 import { SmartSuggestions } from "@/components/visual-editor/SmartSuggestions";
 import { StreamingStatusPanel } from "@/components/visual-editor/StreamingStatusPanel";
@@ -84,7 +83,6 @@ function VisualEditorPageContent() {
   const [conversationHistory, setConversationHistory] = useState<Array<{role: string; content: string}>>([]);
   const [changeHistory, setChangeHistory] = useState<ChangeMetadata[]>([]);
   const [beforeScreenshot, setBeforeScreenshot] = useState<string | null>(null);
-  const [voiceModeEnabled, setVoiceModeEnabled] = useState(false);
   const [currentIframeUrl, setCurrentIframeUrl] = useState<string>('/landing');
   const [iframeLoading, setIframeLoading] = useState(true);
   const [iframeError, setIframeError] = useState(false);
@@ -365,7 +363,7 @@ Let's get started! What would you like to change?`,
     disableContinuousMode
   } = useVoiceInput({
     onResult: handleVoiceResult,
-    continuous: voiceModeEnabled,
+    continuous: true,
     interimResults: true
   });
 
@@ -579,7 +577,7 @@ Let's get started! What would you like to change?`,
       });
       
       // Voice response
-      if (voiceModeEnabled && ttsSupported) {
+      if (ttsSupported) {
         speak("I'm working on that now.");
       }
     },
@@ -650,7 +648,7 @@ Let's get started! What would you like to change?`,
       });
       
       // Voice response
-      if (voiceModeEnabled && ttsSupported) {
+      if (ttsSupported) {
         speak("I changed the style. Anything else?");
       }
     },
@@ -841,7 +839,7 @@ Let's get started! What would you like to change?`,
         }
         
         // Voice response
-        if (voiceModeEnabled && ttsSupported) {
+        if (ttsSupported) {
           speak(responseText);
         }
       }
@@ -854,7 +852,7 @@ Let's get started! What would you like to change?`,
         description: error.message || "Could not stream response",
       });
     }
-  }, [awaitingApproval, activeProposal, currentIframeUrl, selectedElement, viewMode, changeHistory, conversationHistory, currentConversationId, currentErrors, sendStreamingMessage, streamMessages, saveMessageMutation, voiceModeEnabled, ttsSupported, speak, toast, approveProposal, rejectProposal]);
+  }, [awaitingApproval, activeProposal, currentIframeUrl, selectedElement, viewMode, changeHistory, conversationHistory, currentConversationId, currentErrors, sendStreamingMessage, streamMessages, saveMessageMutation, ttsSupported, speak, toast, approveProposal, rejectProposal]);
   
   // Legacy chat mutation (fallback for non-streaming)
   const chatMutation = useMutation({
@@ -908,7 +906,7 @@ Let's get started! What would you like to change?`,
       });
       
       // Voice response
-      if (voiceModeEnabled && ttsSupported) {
+      if (ttsSupported) {
         speak(responseText);
       }
     },
@@ -973,7 +971,7 @@ Let's get started! What would you like to change?`,
       });
       
       // Voice response
-      if (voiceModeEnabled && ttsSupported) {
+      if (ttsSupported) {
         speak("I applied the changes to the codebase. Should I make any other updates?");
       }
       
@@ -1030,7 +1028,7 @@ Let's get started! What would you like to change?`,
       });
       
       // Voice response
-      if (voiceModeEnabled && ttsSupported) {
+      if (ttsSupported) {
         speak("Changes committed to Git. You're all set!");
       }
     },
@@ -1380,39 +1378,6 @@ Let's get started! What would you like to change?`,
             </>
           )}
 
-          {/* Voice Mode Toggle */}
-          {voiceSupported && (
-            <>
-              <div className="p-4">
-                <h3 className="text-xs font-semibold mb-2">Voice Mode</h3>
-                <VoiceModeToggle
-                  isListening={isListening}
-                  onToggle={(enabled) => {
-                    setVoiceModeEnabled(enabled);
-                    if (enabled) {
-                      enableContinuousMode();
-                      startListening();
-                    } else {
-                      disableContinuousMode();
-                      stopListening();
-                    }
-                  }}
-                  className="w-full"
-                />
-                {/* Show continuous mode status */}
-                {voiceModeEnabled && isContinuousMode && (
-                  <div className="mt-2 text-xs text-muted-foreground">
-                    <Badge variant="default" className="text-xs">
-                      <Mic className="h-3 w-3 mr-1" />
-                      Continuous Mode Active
-                    </Badge>
-                    <p className="mt-1">Just start speaking - no wake word needed!</p>
-                  </div>
-                )}
-              </div>
-              <Separator />
-            </>
-          )}
 
           {/* Input Area */}
           <Card className="m-4">
@@ -1536,29 +1501,6 @@ Let's get started! What would you like to change?`,
                   )}
                 </Button>
 
-                {/* Microphone Button */}
-                {voiceSupported && !voiceModeEnabled && (
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => {
-                      if (isListening) {
-                        stopListening();
-                      } else {
-                        startListening();
-                      }
-                    }}
-                    disabled={isExecuting}
-                    data-testid="button-microphone"
-                    className={isListening ? 'bg-red-500/10 border-red-500' : ''}
-                  >
-                    {isListening ? (
-                      <Mic className="h-4 w-4 text-red-500" />
-                    ) : (
-                      <MicOff className="h-4 w-4" />
-                    )}
-                  </Button>
-                )}
 
                 {conversationHistory.length > 0 && (
                   <>
