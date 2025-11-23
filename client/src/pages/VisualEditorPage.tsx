@@ -472,7 +472,10 @@ Let's get started! What would you like to change?`,
   // Inject selection script when iframe loads
   useEffect(() => {
     const iframe = iframeRef.current;
-    if (!iframe) return;
+    if (!iframe) {
+      console.log('[VisualEditor] Iframe ref not ready yet, will retry when available');
+      return;
+    }
 
     const handleLoad = () => {
       console.log('[VisualEditor] Iframe loaded, injecting selection script');
@@ -607,6 +610,17 @@ Let's get started! What would you like to change?`,
       });
     };
 
+    // Check if iframe already loaded (handles race condition)
+    try {
+      if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+        console.log('[VisualEditor] Iframe already loaded, injecting immediately');
+        handleLoad();
+      }
+    } catch (e) {
+      // CORS or not loaded yet - will wait for load event
+      console.log('[VisualEditor] Iframe not ready yet (CORS or still loading)');
+    }
+
     iframe.addEventListener('load', handleLoad);
     iframe.addEventListener('error', handleError);
     
@@ -679,7 +693,7 @@ Let's get started! What would you like to change?`,
       iframe.removeEventListener('error', handleError);
       window.removeEventListener('message', handleMessage);
     };
-  }, [toast]);
+  }, [toast, currentIframeUrl]);
 
   // Execute full autonomous task
   const executeMutation = useMutation({
