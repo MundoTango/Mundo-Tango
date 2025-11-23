@@ -39,6 +39,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
    */
   const sendMessage = useCallback(async (message: string, context?: any, mode: string = 'chat') => {
     try {
+      console.log('[StreamingChat] 🚀 Initiating stream request:', { message, mode });
       setIsStreaming(true);
       setIsTyping(true);
       setError(null);
@@ -54,6 +55,8 @@ export function useStreamingChat(): UseStreamingChatReturn {
         eventSourceRef.current.close();
       }
 
+      console.log('[StreamingChat] Sending POST to /api/mrblue/stream...');
+
       // Create POST request to initiate stream
       const response = await fetch('/api/mrblue/stream', {
         method: 'POST',
@@ -68,6 +71,9 @@ export function useStreamingChat(): UseStreamingChatReturn {
         })
       });
 
+      console.log('[StreamingChat] Response status:', response.status, response.statusText);
+      console.log('[StreamingChat] Response headers:', Object.fromEntries(response.headers.entries()));
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
@@ -80,33 +86,48 @@ export function useStreamingChat(): UseStreamingChatReturn {
         throw new Error('No response body');
       }
 
+      console.log('[StreamingChat] ✅ ReadableStream reader obtained, starting to read chunks...');
+
       let buffer = '';
+      let chunkCount = 0;
 
       while (true) {
         const { done, value } = await reader.read();
         
         if (done) {
+          console.log(`[StreamingChat] ✅ Stream complete after ${chunkCount} chunks`);
           setIsStreaming(false);
           setIsTyping(false);
           setCurrentStatus('Done');
           break;
         }
 
+        chunkCount++;
+        console.log(`[StreamingChat] Chunk ${chunkCount} received, size: ${value?.length} bytes`);
+
         // Decode chunk
         buffer += decoder.decode(value, { stream: true });
+        console.log('[StreamingChat] Buffer size after decode:', buffer.length);
 
         // Process complete SSE messages
         const lines = buffer.split('\n\n');
         buffer = lines.pop() || '';
 
+        console.log(`[StreamingChat] Processing ${lines.length} complete SSE messages`);
+
         for (const line of lines) {
           if (line.startsWith('data: ')) {
             try {
-              const data = JSON.parse(line.slice(6));
+              const jsonStr = line.slice(6);
+              console.log('[StreamingChat] Parsing SSE message:', jsonStr.substring(0, 100));
+              const data = JSON.parse(jsonStr);
+              console.log('[StreamingChat] ✅ Parsed message type:', data.type);
               handleStreamMessage(data);
             } catch (err) {
-              console.error('[StreamingChat] Parse error:', err);
+              console.error('[StreamingChat] Parse error:', err, 'Line:', line.substring(0, 100));
             }
+          } else if (line.trim()) {
+            console.warn('[StreamingChat] Non-data SSE line:', line.substring(0, 50));
           }
         }
       }

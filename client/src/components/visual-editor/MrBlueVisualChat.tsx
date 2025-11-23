@@ -198,8 +198,11 @@ I use on-device AI models to understand your intent instantly - no backend neede
     if (streamMessages.length > 0) {
       const latestMessage = streamMessages[streamMessages.length - 1];
       
+      console.log('[MrBlueVisualChat] Received stream message:', latestMessage.type, latestMessage);
+      
       if (latestMessage.type === 'completion' && latestMessage.message) {
-        // Final message received
+        // Final message received (legacy support)
+        console.log('[MrBlueVisualChat] ✅ Completion message received');
         setCurrentStreamingMessage("");
         const assistantMessage: Message = {
           id: Date.now().toString(),
@@ -212,8 +215,40 @@ I use on-device AI models to understand your intent instantly - no backend neede
         if (ttsEnabled && ttsSupported) {
           speak(latestMessage.message);
         }
+      } else if (latestMessage.type === 'chat_response' && latestMessage.message) {
+        // Chat response from AI (primary message type)
+        console.log('[MrBlueVisualChat] ✅ Chat response received:', latestMessage.message.substring(0, 100));
+        setCurrentStreamingMessage("");
+        const assistantMessage: Message = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: latestMessage.message,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, assistantMessage]);
+        
+        if (ttsEnabled && ttsSupported) {
+          speak(latestMessage.message);
+        }
+      } else if (latestMessage.type === 'vibe_coding_progress' && latestMessage.message) {
+        // VibeCoding progress updates (show in banner)
+        console.log('[MrBlueVisualChat] VibeCoding progress:', latestMessage.message);
+        setCurrentStreamingMessage(latestMessage.message);
+        
+        // If there's code data, display it as well
+        if (latestMessage.data && latestMessage.data.explanation) {
+          setCurrentStreamingMessage("");
+          const codeMessage: Message = {
+            id: Date.now().toString(),
+            role: 'assistant',
+            content: latestMessage.data.explanation,
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, codeMessage]);
+        }
       } else if (latestMessage.type === 'progress' && latestMessage.message) {
-        // Stream progress
+        // Stream progress (legacy support)
+        console.log('[MrBlueVisualChat] Progress update:', latestMessage.message);
         setCurrentStreamingMessage(latestMessage.message);
       } else if (latestMessage.type === 'visual_change' && latestMessage.data) {
         // Apply visual change to iframe in real-time!
@@ -231,6 +266,19 @@ I use on-device AI models to understand your intent instantly - no backend neede
         } else {
           console.warn('[MrBlueVisualChat] Iframe not found for visual change');
         }
+      } else if (latestMessage.type === 'error') {
+        // Error message
+        console.error('[MrBlueVisualChat] Error received:', latestMessage.message);
+        setCurrentStreamingMessage("");
+        const errorMessage: Message = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: `❌ **Error:** ${latestMessage.message || 'An unknown error occurred'}`,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, errorMessage]);
+      } else {
+        console.warn('[MrBlueVisualChat] Unknown message type:', latestMessage.type);
       }
     }
   }, [streamMessages, ttsEnabled, ttsSupported, speak]);
