@@ -6,14 +6,83 @@
  * 1. User says "make it blue"
  * 2. Stream: "I'll change the button color... Finding button element... Applying CSS..."
  * 3. Visual change: Button turns blue in real-time as AI streams text
+ * 
+ * MB.MD v9.2: Routes code generation requests to VibeCoding engine
  */
 
 import { Router, type Request, Response } from "express";
 import { GroqService, GROQ_MODELS } from "../services/ai/GroqService";
 import OpenAI from "openai";
 import Anthropic from "@anthropic-ai/sdk";
+import { getMrBlueCapabilities } from "../utils/mrBlueCapabilities";
 
 const router = Router();
+
+/**
+ * Detect if message requires VibeCoding (actual code generation)
+ * MB.MD v9.2: Routing logic for code generation vs visual changes
+ */
+function detectVibeCodeIntent(prompt: string, context: any): {
+  isVibeCoding: boolean;
+  confidence: number;
+  reason: string;
+} {
+  const lower = prompt.toLowerCase();
+  
+  // High-confidence VibeCoding patterns
+  const codePatterns = [
+    /\b(create|generate|build|add|make)\s+(a|an|new)?\s*(component|page|endpoint|api|route|function|class|interface)/i,
+    /\bimplement\b/i,
+    /\bscaffold|setup|initialize\b/i,
+    /\bwrite\s+code/i,
+    /\badd\s+test/i,
+    /\bcreate.*database|table|model/i,
+  ];
+  
+  for (const pattern of codePatterns) {
+    if (pattern.test(prompt)) {
+      return { isVibeCoding: true, confidence: 0.95, reason: 'Code generation keyword detected' };
+    }
+  }
+  
+  // Medium-confidence: Modifying without selected element (requires code generation)
+  const hasElement = context?.selectedElement;
+  const modifyPatterns = [
+    /\b(make|change|update|modify)\b.*\b(button|element|component|section|header|footer|nav|menu)/i,
+  ];
+  
+  for (const pattern of modifyPatterns) {
+    if (pattern.test(prompt) && !hasElement) {
+      return { isVibeCoding: true, confidence: 0.80, reason: 'Modification request without selected element' };
+    }
+  }
+  
+  // Low confidence: Simple visual changes with selected element (use instant visual change)
+  if (hasElement && (/make.*blue|color|bigger|smaller/i.test(prompt))) {
+    return { isVibeCoding: false, confidence: 0.90, reason: 'Simple visual change with selected element' };
+  }
+  
+  // Default: Questions or unclear intent (use AI chat)
+  return { isVibeCoding: false, confidence: 0.50, reason: 'Default to chat mode' };
+}
+
+/**
+ * Extract code blocks from markdown
+ */
+function extractCodeBlocks(text: string): Array<{ language: string; code: string }> {
+  const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
+  const blocks: Array<{ language: string; code: string }> = [];
+  
+  let match;
+  while ((match = codeBlockRegex.exec(text)) !== null) {
+    blocks.push({
+      language: match[1] || 'typescript',
+      code: match[2].trim(),
+    });
+  }
+  
+  return blocks;
+}
 
 /**
  * Parse visual editing command and extract change type
@@ -95,6 +164,114 @@ router.post("/stream", async (req: Request, res: Response) => {
       visualContext = {};
     }
 
+    // MB.MD v9.2: Detect if this is a VibeCoding request (code generation)
+    const vibeIntent = detectVibeCodeIntent(message, visualContext);
+    console.log(`[Stream] VibeCoding intent: ${vibeIntent.isVibeCoding}, confidence: ${vibeIntent.confidence}, reason: ${vibeIntent.reason}`);
+
+    // ROUTE TO VIBECODING if intent detected
+    if (vibeIntent.isVibeCoding && vibeIntent.confidence >= 0.80) {
+      console.log(`[Stream] Routing to VibeCoding engine...`);
+      
+      res.write(`data: ${JSON.stringify({ 
+        type: 'progress', 
+        message: '🧠 Analyzing your request...',
+        status: 'analyzing'
+      })}\n\n`);
+
+      await sleep(300);
+
+      // Check user capabilities
+      const user = (req as any).user;
+      const userTier = user?.tier || 8; // Default to God Level during beta
+      const capabilities = getMrBlueCapabilities(userTier);
+
+      if (!capabilities.autonomousVibeCoding) {
+        res.write(`data: ${JSON.stringify({ 
+          type: 'error',
+          message: 'VibeCoding requires Elite (Tier 7) or God Level (Tier 8)'
+        })}\n\n`);
+        res.end();
+        return;
+      }
+
+      res.write(`data: ${JSON.stringify({ 
+        type: 'progress', 
+        message: '✨ Generating code with GROQ Llama-3.3-70b...',
+        status: 'generating'
+      })}\n\n`);
+
+      // Build VibeCoding system prompt
+      const vibeSystemPrompt = `You are Mr. Blue, an expert code generation AI using MB.MD v9.2 methodology.
+
+CRITICAL RULES:
+1. ALWAYS generate actual, production-ready code
+2. NEVER say "I'll help you" without code
+3. NEVER claim completion without showing code
+4. Use modern best practices (React, TypeScript, Tailwind CSS)
+
+Current Context:
+- Page: ${visualContext?.currentPage || 'unknown'}
+- Theme: MT Ocean (blues and warm accents)
+- Framework: React + TypeScript + Tailwind CSS
+- UI Library: shadcn/ui + Radix UI
+
+TASK: Generate complete, working code for the user's request.
+
+RESPONSE FORMAT:
+\`\`\`typescript
+// Your generated code here
+\`\`\`
+
+Explanation: [Brief explanation of what you built]`;
+
+      try {
+        // Generate code using GROQ
+        const codeResponse = await GroqService.querySimple({
+          prompt: message,
+          systemPrompt: vibeSystemPrompt,
+          model: GROQ_MODELS.LLAMA_70B,
+          temperature: 0.3,
+        });
+
+        if (!codeResponse.success || !codeResponse.content) {
+          throw new Error('Code generation failed');
+        }
+
+        // Extract code blocks
+        const codeBlocks = extractCodeBlocks(codeResponse.content);
+
+        res.write(`data: ${JSON.stringify({ 
+          type: 'vibe_coding_progress',
+          message: '✅ Code generated!',
+          status: 'done',
+          data: {
+            code: codeBlocks,
+            explanation: codeResponse.content,
+            model: GROQ_MODELS.LLAMA_70B,
+            tokensUsed: codeResponse.tokensUsed,
+          }
+        })}\n\n`);
+
+        res.write(`data: ${JSON.stringify({ 
+          type: 'chat_response',
+          message: codeResponse.content
+        })}\n\n`);
+
+        res.end();
+        return;
+
+      } catch (error: any) {
+        console.error('[Stream] VibeCoding error:', error);
+        res.write(`data: ${JSON.stringify({ 
+          type: 'error',
+          message: `VibeCoding failed: ${error.message}`
+        })}\n\n`);
+        res.end();
+        return;
+      }
+    }
+
+    // FALLBACK: Simple visual changes (original logic)
     // Parse command for instant visual changes
     const command = parseVisualCommand(message, visualContext);
     
