@@ -8,8 +8,8 @@
 import { Router, type Request, Response } from "express";
 import { GroqService, GROQ_MODELS } from "../services/ai/GroqService";
 import { getRoleCapabilities } from "../utils/mrBlueCapabilities";
-import { db } from "../db/db";
-import { mr_blue_conversations } from "../../shared/schema";
+import { db } from "../db";
+import { mr_blue_conversations } from "@shared/schema";
 import { eq } from "drizzle-orm";
 
 const router = Router();
