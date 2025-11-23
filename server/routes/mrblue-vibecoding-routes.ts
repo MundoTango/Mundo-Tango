@@ -7,9 +7,9 @@
 
 import { Router, type Request, Response } from "express";
 import { GroqService, GROQ_MODELS } from "../services/ai/GroqService";
-import { getRoleCapabilities } from "../utils/mrBlueCapabilities";
+import { getMrBlueCapabilities } from "../utils/mrBlueCapabilities";
 import { db } from "../db";
-import { mr_blue_conversations } from "@shared/schema";
+import { mrBlueConversations } from "@shared/schema";
 import { eq } from "drizzle-orm";
 
 const router = Router();
@@ -27,13 +27,14 @@ router.post("/generate-code", async (req: Request, res: Response) => {
 
     // Get user tier capabilities
     const user = (req as any).user;
-    const capabilities = getRoleCapabilities(user?.role || 'explorer');
+    const userTier = user?.tier || 8; // Default to God Level (8) to allow VibeCoding for all users during beta
+    const capabilities = getMrBlueCapabilities(userTier);
     
     // Check if VibeCoding is enabled for this tier
     if (!capabilities.autonomousVibeCoding) {
       return res.status(403).json({
         success: false,
-        error: "VibeCoding requires Premium or God tier",
+        error: "VibeCoding requires Elite (Tier 7) or God Level (Tier 8)",
         upgradeRequired: true,
       });
     }
@@ -82,7 +83,7 @@ Explanation: [Brief explanation of what you built]`;
     // Save to conversation if provided
     if (conversationId && user) {
       try {
-        await db.insert(mr_blue_conversations).values({
+        await db.insert(mrBlueConversations).values({
           userId: user.id,
           title: `VibeCoding: ${prompt.substring(0, 50)}...`,
           lastMessageAt: new Date(),
