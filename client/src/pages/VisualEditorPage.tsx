@@ -484,7 +484,7 @@ Let's get started! What would you like to change?`,
       
       // Enable element click selection with visual outline
       try {
-        const iframeDoc = iframe.contentDocument;
+        const iframeDoc = element.contentDocument;
         if (iframeDoc && iframeDoc.body) {
           // Inject click-to-select script
           const script = iframeDoc.createElement('script');
@@ -611,7 +611,7 @@ Let's get started! What would you like to change?`,
 
     // Check if iframe already loaded (handles race condition)
     try {
-      if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+      if (element.contentDocument && element.contentDocument.readyState === 'complete') {
         console.log('[VisualEditor] Iframe already loaded, injecting immediately');
         handleLoad();
       }
@@ -620,14 +620,14 @@ Let's get started! What would you like to change?`,
       console.log('[VisualEditor] Iframe not ready yet (CORS or still loading)');
     }
 
-    iframe.addEventListener('load', handleLoad);
-    iframe.addEventListener('error', handleError);
+    element.addEventListener('load', handleLoad);
+    element.addEventListener('error', handleError);
     
     // Extract page HTML for Smart Suggestions
     const extractPageHtml = () => {
       try {
-        if (iframe?.contentDocument?.documentElement) {
-          const html = iframe.contentDocument.documentElement.outerHTML;
+        if (element?.contentDocument?.documentElement) {
+          const html = element.contentDocument.documentElement.outerHTML;
           setCurrentPageHtml(html);
         }
       } catch (error) {
@@ -673,8 +673,8 @@ Let's get started! What would you like to change?`,
         setCurrentIframeUrl(newUrl);
         
         // Navigate the iframe
-        if (iframe && iframe.contentWindow) {
-          iframe.src = newUrl;
+        if (element && element.contentWindow) {
+          element.src = newUrl;
         }
         
         // Extract HTML after navigation completes
@@ -688,11 +688,11 @@ Let's get started! What would you like to change?`,
     window.addEventListener('message', handleMessage);
 
     return () => {
-      iframe.removeEventListener('load', handleLoad);
-      iframe.removeEventListener('error', handleError);
+      element.removeEventListener('load', handleLoad);
+      element.removeEventListener('error', handleError);
       window.removeEventListener('message', handleMessage);
     };
-  }, [toast, currentIframeUrl]);
+  }, [toast]);
 
   // Execute full autonomous task
   const executeMutation = useMutation({
@@ -1918,7 +1918,7 @@ Let's get started! What would you like to change?`,
                 {/* Live Preview iframe */}
                 <div className="flex-1 overflow-auto relative">
                   <iframe
-                    ref={iframeRef}
+                    ref={handleIframeMount}
                     src={currentIframeUrl}
                     className="w-full h-full border-0"
                     title="Live Preview"
