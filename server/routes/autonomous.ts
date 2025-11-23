@@ -1389,4 +1389,103 @@ router.get("/dependencies",
   }
 );
 
+// ============================================================================
+// VISUAL EDITOR SAVE ROUTE (MB.MD v9.4 P0 Task 3)
+// ============================================================================
+
+/**
+ * Save Visual Editor Changes
+ * Converts visual edits to code using Vibe Coding Service
+ * 
+ * POST /api/autonomous/visual-editor/save
+ * Body: { edits: VisualEdit[], pagePath: string, checkpointMessage?: string }
+ */
+router.post("/visual-editor/save",
+  authenticateToken,
+  requireRoleLevel(1), // All authenticated users
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const { edits, pagePath, checkpointMessage } = req.body;
+      const userId = req.user!.id;
+      
+      if (!edits || edits.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "No edits provided"
+        });
+      }
+      
+      console.log(`[VisualEditor] 💾 Saving ${edits.length} changes to ${pagePath}`);
+      
+      // Convert edits to natural language prompt for Vibe Coding
+      const editDescriptions = edits.map((edit: any) => {
+        const changes = Object.entries(edit.changes)
+          .map(([prop, values]: [string, any]) => `${prop}: ${values.before} → ${values.after}`)
+          .join(', ');
+        return `- ${edit.changeType} on element ${edit.elementTestId || edit.elementId}: ${changes}`;
+      }).join('\n');
+      
+      const prompt = `Apply these visual changes to ${pagePath}:\n${editDescriptions}\n\nMaintain existing code structure and only modify the specified elements.`;
+      
+      // Use Vibe Coding Service to generate code
+      const { vibeCodingService } = await import('../services/mrBlue/VibeCodingService');
+      const vibeResult = await vibeCodingService.generateCode({
+        naturalLanguage: prompt,
+        context: [pagePath],
+        targetFiles: [pagePath],
+        userId,
+        sessionId: `ve-save-${Date.now()}`
+      });
+      
+      if (!vibeResult.success) {
+        return res.status(500).json({
+          success: false,
+          message: "Code generation failed",
+          error: vibeResult.error
+        });
+      }
+      
+      // Apply changes (vibe coding service already writes files)
+      const modifiedFiles = vibeResult.fileChanges.map(fc => fc.filePath);
+      
+      // Commit changes to git
+      const gitMessage = checkpointMessage || `Visual Editor: ${edits.length} changes to ${pagePath}`;
+      let commitId;
+      try {
+        commitId = await commitChanges(gitMessage, modifiedFiles);
+        console.log(`[VisualEditor] ✅ Git commit: ${commitId}`);
+      } catch (gitError: any) {
+        console.error('[VisualEditor] Git commit failed:', gitError);
+        // Continue even if git fails - changes are already applied
+      }
+      
+      // Log audit
+      await logAuditAction(
+        userId,
+        'visual_editor_save',
+        pagePath,
+        {
+          editsCount: edits.length,
+          modifiedFiles,
+          commitId
+        }
+      );
+      
+      res.json({
+        success: true,
+        filesModified: modifiedFiles,
+        commitId,
+        message: `Applied ${edits.length} changes successfully`
+      });
+      
+    } catch (error: any) {
+      console.error('[VisualEditor] Save error:', error);
+      res.status(500).json({
+        success: false,
+        message: error.message || "Failed to save changes"
+      });
+    }
+  }
+);
+
 export default router;

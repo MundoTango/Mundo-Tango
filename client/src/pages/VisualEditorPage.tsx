@@ -843,6 +843,64 @@ Let's get started! What would you like to change?`,
     },
   });
 
+  // Save Changes Mutation (MB.MD v9.4 P0 Task 3)
+  const saveChangesMutation = useMutation({
+    mutationFn: async () => {
+      const allEdits = visualEditorTracker.getAllEdits();
+      const pagePath = window.location.pathname;
+      
+      const response = await apiRequest('POST', '/api/autonomous/visual-editor/save', {
+        edits: allEdits,
+        pagePath,
+        checkpointMessage: `Visual Editor: ${allEdits.length} changes to ${pagePath}`
+      });
+      const data = await response.json();
+      if (!data.success) throw new Error(data.message);
+      return data;
+    },
+    onSuccess: (data) => {
+      visualEditorTracker.clear();
+      setUnsavedChangesCount(0);
+      
+      toast({
+        title: "Changes Saved!",
+        description: data.message,
+      });
+      
+      // Voice feedback
+      if (ttsSupported) {
+        speak("All changes saved successfully.");
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Save Failed",
+        description: error.message || "Failed to save changes",
+      });
+      
+      // Voice feedback
+      if (ttsSupported) {
+        speak("Sorry, I couldn't save the changes. Please try again.");
+      }
+    },
+  });
+
+  // Save Changes Handler
+  const handleSaveChanges = () => {
+    const allEdits = visualEditorTracker.getAllEdits();
+    
+    if (allEdits.length === 0) {
+      toast({
+        title: "No Changes",
+        description: "Make some edits first before saving",
+      });
+      return;
+    }
+    
+    saveChangesMutation.mutate();
+  };
+
   // ✅ ERROR AUTO-ANALYSIS INTEGRATION - MB.MD v9.2 (FIXED: No chat spam)
   // MB.MD Fix: Only show high-priority errors in chat, don't spam every error
   const [errorProposalQueue, setErrorProposalQueue] = useState<any[]>([]);
@@ -1705,28 +1763,26 @@ Let's get started! What would you like to change?`,
                   </div>
                 )}
                 
-                {/* MB.MD v9.4: Manual Checkpoint Button */}
+                {/* MB.MD v9.4: Manual Save Changes Button (P0 Task 3) */}
                 {unsavedChangesCount > 0 && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => {
-                          setUnsavedChangesCount(0);
-                          setLastSavedTime(new Date());
-                          toast({
-                            title: "Checkpoint Created",
-                            description: `Manually saved ${unsavedChangesCount} changes`,
-                          });
-                        }}
-                        data-testid="button-create-checkpoint"
+                        onClick={handleSaveChanges}
+                        disabled={saveChangesMutation.isPending}
+                        data-testid="button-save-changes"
                       >
-                        <BookmarkCheck className="h-4 w-4" />
+                        {saveChangesMutation.isPending ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Save className="h-4 w-4" />
+                        )}
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      Create checkpoint ({unsavedChangesCount} unsaved changes)
+                      Save changes ({unsavedChangesCount} unsaved edits)
                     </TooltipContent>
                   </Tooltip>
                 )}
