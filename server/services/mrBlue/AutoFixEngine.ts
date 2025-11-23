@@ -202,7 +202,8 @@ export class AutoFixEngine {
     const suggestion = await this.solutionSuggester.suggestFix(error.id);
     
     // Calculate confidence score
-    const baseConfidence = suggestion.confidence;
+    // ✅ MB.MD v9.2 Fix: Claude returns decimal (0.8), convert to percentage (80)
+    const baseConfidence = suggestion.confidence * 100;
     
     // Adjust for complexity
     const complexityPenalty = {
@@ -423,7 +424,8 @@ export class AutoFixEngine {
       .update(errorPatterns)
       .set({
         status: result.success ? 'fixed' : 'failed',
-        fixConfidence: result.fixAnalysis.confidence.toString(),
+        // ✅ MB.MD v9.2 Fix: Convert percentage (43) to decimal (0.43) for DECIMAL(3,2) column
+        fixConfidence: (result.fixAnalysis.confidence / 100).toFixed(2),
         suggestedFix: result.fixAnalysis.suggestedFix,
         aiAnalysis: {
           rootCause: result.fixAnalysis.rootCause,
