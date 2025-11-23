@@ -15,6 +15,7 @@ import { GroqService, GROQ_MODELS } from "../services/ai/GroqService";
 import OpenAI from "openai";
 import Anthropic from "@anthropic-ai/sdk";
 import { getMrBlueCapabilities } from "../utils/mrBlueCapabilities";
+import { vibeCodeApplier } from "../services/mrblue/VibeCodeApplier";
 
 const router = Router();
 
@@ -252,10 +253,54 @@ Explanation: [Brief explanation of what you built]`;
           }
         })}\n\n`);
 
+        // ✨ AUTO-APPLY: Try to detect and apply changes to actual source files
         res.write(`data: ${JSON.stringify({ 
-          type: 'chat_response',
-          message: codeResponse.content
+          type: 'vibe_coding_progress',
+          message: '🔍 Searching for elements to auto-apply...',
+          status: 'applying'
         })}\n\n`);
+
+        const applyResult = await vibeCodeApplier.applyVibeCodeChanges(message, visualContext);
+
+        if (applyResult.success && applyResult.diffs.length > 0) {
+          // Success! Show what was changed
+          const diff = applyResult.diffs[0];
+          const element = applyResult.elementsChanged[0];
+
+          res.write(`data: ${JSON.stringify({ 
+            type: 'file_updated',
+            message: `✅ Auto-applied to ${diff.filePath}`,
+            data: {
+              filePath: diff.filePath,
+              before: diff.before,
+              after: diff.after,
+              diff: diff.diff,
+              element: {
+                type: element.elementType,
+                text: element.textContent,
+                line: element.lineNumber,
+              }
+            }
+          })}\n\n`);
+
+          // Build comprehensive response with diff
+          const responseWithDiff = `${codeResponse.content}\n\n---\n\n✅ **Auto-Applied Changes:**\n\n**File:** \`${diff.filePath}\` (line ${element.lineNumber})\n\n**Element:** ${element.elementType} containing "${element.textContent}"\n\n**Diff:**\n\`\`\`diff\n${diff.diff}\n\`\`\`\n\n🔄 **Hot reload triggered** - check your preview!`;
+
+          res.write(`data: ${JSON.stringify({ 
+            type: 'chat_response',
+            message: responseWithDiff
+          })}\n\n`);
+        } else {
+          // Auto-apply failed or didn't find anything - show original response
+          if (applyResult.error) {
+            console.log(`[Stream] Auto-apply info: ${applyResult.error}`);
+          }
+
+          res.write(`data: ${JSON.stringify({ 
+            type: 'chat_response',
+            message: codeResponse.content
+          })}\n\n`);
+        }
 
         res.end();
         return;

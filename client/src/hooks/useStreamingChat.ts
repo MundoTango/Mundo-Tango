@@ -5,8 +5,20 @@
 
 import { useState, useCallback, useRef } from 'react';
 
+export interface FileUpdateData {
+  filePath: string;
+  before: string;
+  after: string;
+  diff: string;
+  element: {
+    type: string;
+    text: string;
+    line: number;
+  };
+}
+
 export interface StreamMessage {
-  type: 'progress' | 'code' | 'completion' | 'error' | 'vibe_coding_progress' | 'chat_response' | 'visual_change';
+  type: 'progress' | 'code' | 'completion' | 'error' | 'vibe_coding_progress' | 'chat_response' | 'visual_change' | 'file_updated';
   status?: 'analyzing' | 'applying' | 'generating' | 'done';
   message?: string;
   code?: string;
@@ -20,6 +32,7 @@ interface UseStreamingChatReturn {
   generatedCode: string;
   error: string | null;
   isTyping: boolean;
+  fileUpdates: FileUpdateData[];
   sendMessage: (message: string, context?: any, mode?: string) => Promise<void>;
   clear: () => void;
 }
@@ -31,6 +44,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
   const [generatedCode, setGeneratedCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isTyping, setIsTyping] = useState(false);
+  const [fileUpdates, setFileUpdates] = useState<FileUpdateData[]>([]);
 
   const eventSourceRef = useRef<EventSource | null>(null);
 
@@ -45,6 +59,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
       setError(null);
       setMessages([]);
       setGeneratedCode('');
+      setFileUpdates([]);
       setCurrentStatus('Connecting...');
 
       // Get auth token
@@ -149,6 +164,15 @@ export function useStreamingChat(): UseStreamingChatReturn {
     setMessages(prev => [...prev, msg]);
 
     switch (msg.type) {
+      // FILE UPDATED - Auto-apply success
+      case 'file_updated':
+        if (msg.data) {
+          console.log('[StreamingChat] ✅ File updated:', msg.data);
+          setFileUpdates(prev => [...prev, msg.data as FileUpdateData]);
+          setCurrentStatus(msg.message || 'File updated');
+        }
+        break;
+
       // VIBE CODING PROGRESS - Shows in banner overlay
       case 'vibe_coding_progress':
       case 'visual_change':
@@ -204,6 +228,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
   const clear = useCallback(() => {
     setMessages([]);
     setGeneratedCode('');
+    setFileUpdates([]);
     setCurrentStatus('');
     setError(null);
     
@@ -220,6 +245,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
     generatedCode,
     error,
     isTyping,
+    fileUpdates,
     sendMessage,
     clear
   };

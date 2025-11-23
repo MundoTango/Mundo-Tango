@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { visualEditorTracker, type VisualEdit } from "@/lib/visualEditorTracker";
 import { useVoiceInput } from "@/hooks/useVoiceInput";
 import { useTextToSpeech } from "@/hooks/useTextToSpeech";
-import { useStreamingChat } from "@/hooks/useStreamingChat";
+import { useStreamingChat, type FileUpdateData } from "@/hooks/useStreamingChat";
 import { MrBlueAvatar } from "./MrBlueAvatar";
 import { AutonomousWorkflowPanel } from "@/components/autonomous/AutonomousWorkflowPanel";
 import { apiRequest } from "@/lib/queryClient";
@@ -85,6 +85,7 @@ export function MrBlueVisualChat({
     messages: streamMessages,
     generatedCode,
     error: streamError,
+    fileUpdates,
     sendMessage: sendStreamingMessage,
     clear: clearStream
   } = useStreamingChat();
@@ -1000,6 +1001,53 @@ I use on-device AI models to understand your intent instantly - no backend neede
           )}
         </div>
       </ScrollArea>
+
+      {/* File Updates Display - Auto-Apply Results */}
+      {fileUpdates.length > 0 && (
+        <div className="p-3 border-t border-ocean-divider bg-green-500/10">
+          {fileUpdates.map((update, index) => (
+            <div key={index} className="mb-3 last:mb-0">
+              <div className="flex items-center gap-2 mb-2">
+                <Code2 className="h-4 w-4 text-green-500" />
+                <span className="text-xs font-medium text-green-500">✅ Auto-Applied Changes</span>
+                <Badge variant="outline" className="ml-auto text-xs">
+                  {update.filePath}
+                </Badge>
+              </div>
+              
+              <Card className="bg-background mb-2">
+                <CardContent className="p-3">
+                  <div className="text-xs space-y-2">
+                    <div>
+                      <span className="font-medium text-muted-foreground">Element:</span>{' '}
+                      <code className="bg-muted px-1 py-0.5 rounded">{update.element.type}</code>
+                      {' '}containing "{update.element.text}" (line {update.element.line})
+                    </div>
+                    
+                    <div className="mt-3">
+                      <span className="font-medium text-muted-foreground mb-2 block">Changes:</span>
+                      <div className="space-y-1">
+                        <div className="bg-red-500/10 px-2 py-1 rounded font-mono text-xs">
+                          <span className="text-red-500">−</span> {update.before}
+                        </div>
+                        <div className="bg-green-500/10 px-2 py-1 rounded font-mono text-xs">
+                          <span className="text-green-500">+</span> {update.after}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-2 pt-2 border-t border-border">
+                      <span className="text-green-500 text-xs">
+                        🔄 Hot reload triggered - changes visible in preview
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Generated Code Display */}
       {generatedCode && (
