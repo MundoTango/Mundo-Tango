@@ -312,15 +312,16 @@ Explanation: [Brief explanation of what you built]`;
           }
         })}\n\n`);
 
-        // ✨ AUTO-APPLY: Use MB.MD Agent Architecture
+        // ✨ AUTO-APPLY: Use MB.MD v9.2 Agent Architecture (contextual agents only)
         res.write(`data: ${JSON.stringify({ 
           type: 'vibe_coding_progress',
-          message: '📢 Broadcasting query to agent ecosystem...',
+          message: '🎯 Querying active agents (already contextually aware)...',
           status: 'applying'
         })}\n\n`);
 
-        // Step 1: Broadcast to all agents
-        const agentResponses = await agentCommunication.broadcastQuery(message);
+        // Step 1: Query ONLY active agents (MB.MD v9.2 - no broadcast)
+        // Active agents are already listening and contextually aware of current page
+        const agentResponses = await agentCommunication.queryActiveAgents(message);
 
         if (agentResponses.length === 0) {
           // No agents can handle this - show original response

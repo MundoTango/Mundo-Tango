@@ -164,6 +164,68 @@ export class AgentCommunication {
   }
 
   /**
+   * Query ONLY active agents (MB.MD v9.2)
+   * 
+   * This is used by VibeCoding instead of broadcastQuery()
+   * Active agents are already contextually aware of the current page
+   * 
+   * Target: <5ms response time (agents already listening)
+   */
+  async queryActiveAgents(query: string): Promise<QueryResponse[]> {
+    const startTime = Date.now();
+    console.log(`[AgentCommunication] 📢 Querying active agents: "${query}"`);
+
+    // Import agentLifecycle dynamically to avoid circular dependency
+    const { agentLifecycle } = await import('./AgentLifecycle');
+    const activeAgents = agentLifecycle.getActiveAgents();
+
+    if (activeAgents.length === 0) {
+      console.log(`[AgentCommunication] ⚠️ No active agents - falling back to broadcast`);
+      return this.broadcastQuery(query);
+    }
+
+    console.log(`[AgentCommunication] 🎯 Querying ${activeAgents.length} active agents`);
+
+    // Query only active agents in parallel
+    const queryPromises = activeAgents.map(async (agent) => {
+      try {
+        const result = await agent.canHandle(query);
+        return {
+          agentId: agent.getId(),
+          agentName: agent.getName(),
+          canHandle: result.canHandle,
+          confidence: result.confidence,
+          element: result.element,
+          reason: result.reason,
+        };
+      } catch (error: any) {
+        console.error(`[AgentCommunication] Error querying ${agent.getName()}:`, error);
+        return {
+          agentId: agent.getId(),
+          agentName: agent.getName(),
+          canHandle: false,
+          confidence: 0,
+          element: null,
+          reason: `Error: ${error.message}`,
+        };
+      }
+    });
+
+    const results = await Promise.all(queryPromises);
+    
+    // Filter to only agents that can handle the query
+    const capableAgents = results.filter(r => r.canHandle && r.confidence > 0.5);
+    
+    // Sort by confidence (highest first)
+    capableAgents.sort((a, b) => b.confidence - a.confidence);
+
+    const elapsed = Date.now() - startTime;
+    console.log(`[AgentCommunication] ⚡ ${capableAgents.length} active agents responded (${elapsed}ms)`);
+
+    return capableAgents;
+  }
+
+  /**
    * Get agent ecosystem stats
    */
   getEcosystemStats(): {
