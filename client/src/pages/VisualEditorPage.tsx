@@ -48,9 +48,10 @@ import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { 
   ShieldAlert, Crown, Bot, Cpu, Loader2, CheckCircle2, AlertCircle,
-  Play, Eye, Code2, Palette, Undo2, Sparkles, Zap, FileCode, History, Mic, MicOff, Lightbulb, RefreshCw, Brain, Bug, Activity, Save
+  Play, Eye, Code2, Palette, Undo2, Sparkles, Zap, FileCode, History, Mic, MicOff, Lightbulb, RefreshCw, Brain, Bug, Activity, Save, Trash2
 } from "lucide-react";
 
 type User = {
@@ -398,7 +399,7 @@ Let's get started! What would you like to change?`,
         }
       },
       handleStopListening: () => {
-        setVoiceModeEnabled(false);
+        disableContinuousMode();
         stopListening();
       },
       setPrompt,
@@ -1473,56 +1474,117 @@ Let's get started! What would you like to change?`,
               </Accordion>
 
               <div className="flex gap-2">
-                <Button
-                  data-testid="button-send"
-                  onClick={handleSubmit}
-                  disabled={!prompt.trim() || isExecuting}
-                  className="flex-1"
-                >
-                  {isExecuting ? (
-                    <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Working...</>
-                  ) : (
-                    <><Zap className="h-4 w-4 mr-2" /> Generate</>
-                  )}
-                </Button>
+                {/* Generate Button - Icon Only */}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      data-testid="button-send"
+                      onClick={handleSubmit}
+                      disabled={!prompt.trim() || isExecuting}
+                      className="flex-1"
+                    >
+                      {isExecuting ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Zap className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {isExecuting ? 'Working...' : 'Generate changes'}
+                  </TooltipContent>
+                </Tooltip>
 
-                {/* MB.MD v9.3: Save Backend Button */}
-                <Button
-                  data-testid="button-save-backend"
-                  onClick={handleBackendSave}
-                  disabled={!saveStatus?.enabled || saveBackendMutation.isPending}
-                  variant="secondary"
-                  title={saveStatus?.tooltip || 'Save backend changes'}
-                >
-                  {saveBackendMutation.isPending ? (
-                    <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Saving...</>
-                  ) : (
-                    <><Save className="h-4 w-4 mr-2" /> Save</>
-                  )}
-                </Button>
+                {/* MB.MD v9.3: Save Backend Button - Icon Only */}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      data-testid="button-save-backend"
+                      onClick={handleBackendSave}
+                      disabled={!saveStatus?.enabled || saveBackendMutation.isPending}
+                      variant="secondary"
+                      size="icon"
+                    >
+                      {saveBackendMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Save className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {saveStatus?.tooltip || 'Save backend changes'}
+                  </TooltipContent>
+                </Tooltip>
 
+                {/* Voice Mode Button - Icon Only */}
+                {voiceSupported && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => {
+                          if (isContinuousMode) {
+                            disableContinuousMode();
+                          } else {
+                            enableContinuousMode();
+                          }
+                        }}
+                        disabled={isExecuting}
+                        data-testid="button-voice-mode"
+                        className={isContinuousMode ? 'bg-red-500/10 border-red-500' : ''}
+                      >
+                        {isContinuousMode ? (
+                          <Mic className="h-4 w-4 text-red-500" />
+                        ) : (
+                          <MicOff className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {isContinuousMode ? 'Disable voice mode' : 'Enable voice mode'}
+                    </TooltipContent>
+                  </Tooltip>
+                )}
 
                 {conversationHistory.length > 0 && (
                   <>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={handleUndo}
-                      disabled={isExecuting}
-                      data-testid="button-undo"
-                    >
-                      <Undo2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setConversationHistory([])}
-                      disabled={isExecuting}
-                      data-testid="button-clear-conversation"
-                      className="text-xs"
-                    >
-                      Clear Chat
-                    </Button>
+                    {/* Undo Button - Icon Only */}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={handleUndo}
+                          disabled={isExecuting}
+                          data-testid="button-undo"
+                        >
+                          <Undo2 className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Undo last change
+                      </TooltipContent>
+                    </Tooltip>
+
+                    {/* Clear Chat Button - Icon Only */}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setConversationHistory([])}
+                          disabled={isExecuting}
+                          data-testid="button-clear-conversation"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Clear conversation
+                      </TooltipContent>
+                    </Tooltip>
                   </>
                 )}
               </div>
