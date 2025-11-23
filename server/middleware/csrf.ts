@@ -54,7 +54,8 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     "/api/mrblue/analyze-error",
     "/api/mrblue/conversations",  // ✅ AGENT #13: Beta testing - guest users
     "/api/mrblue/messages",  // ✅ AGENT #13: Beta testing - guest users
-    "/api/mrblue/activate-agents"  // ✅ MB.MD v9.2: Contextual agent activation
+    "/api/mrblue/activate-agents",  // ✅ MB.MD v9.2: Contextual agent activation
+    "/api/mrblue/save-backend"  // ✅ MB.MD v9.3: Backend agent system (Save button)
   ];
   if (publicMrBlueEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
     return next();
@@ -148,7 +149,8 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     "/api/mrblue/analyze-error",  // ✅ AGENT #13: Error analysis
     "/api/mrblue/conversations",  // ✅ AGENT #13: Beta testing - guest users
     "/api/mrblue/messages",  // ✅ AGENT #13: Beta testing - guest users
-    "/api/mrblue/activate-agents"  // ✅ MB.MD v9.2: Contextual agent activation
+    "/api/mrblue/activate-agents",  // ✅ MB.MD v9.2: Contextual agent activation
+    "/api/mrblue/save-backend"  // ✅ MB.MD v9.3: Backend agent system (Save button)
   ];
   if (publicMrBlueEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
     return next();
