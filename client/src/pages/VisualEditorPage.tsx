@@ -577,10 +577,10 @@ Let's get started! What would you like to change?`,
         description: "Mr. Blue is analyzing your request...",
       });
       
-      // Voice response
-      if (ttsSupported) {
-        speak("I'm working on that now.");
-      }
+      // Voice response (DISABLED - no robot TTS)
+      // if (ttsSupported) {
+      //   speak("I'm working on that now.");
+      // }
     },
     onError: (error: any) => {
       setIsExecuting(false);
@@ -648,10 +648,10 @@ Let's get started! What would you like to change?`,
         description: "CSS changed instantly!",
       });
       
-      // Voice response
-      if (ttsSupported) {
-        speak("I changed the style. Anything else?");
-      }
+      // Voice response (DISABLED - no robot TTS)
+      // if (ttsSupported) {
+      //   speak("I changed the style. Anything else?");
+      // }
     },
     onError: (error: any) => {
       toast({
@@ -839,10 +839,10 @@ Let's get started! What would you like to change?`,
           }
         }
         
-        // Voice response
-        if (ttsSupported) {
-          speak(responseText);
-        }
+        // Voice response (DISABLED - no robot TTS)
+        // if (ttsSupported) {
+        //   speak(responseText);
+        // }
       }
       
     } catch (error: any) {
@@ -906,10 +906,10 @@ Let's get started! What would you like to change?`,
         description: responseText.slice(0, 100) + (responseText.length > 100 ? '...' : ''),
       });
       
-      // Voice response
-      if (ttsSupported) {
-        speak(responseText);
-      }
+      // Voice response (DISABLED - no robot TTS)
+      // if (ttsSupported) {
+      //   speak(responseText);
+      // }
     },
     onError: (error: any) => {
       toast({
@@ -971,10 +971,10 @@ Let's get started! What would you like to change?`,
         description: "Changes saved to codebase!",
       });
       
-      // Voice response
-      if (ttsSupported) {
-        speak("I applied the changes to the codebase. Should I make any other updates?");
-      }
+      // Voice response (DISABLED - no robot TTS)
+      // if (ttsSupported) {
+      //   speak("I applied the changes to the codebase. Should I make any other updates?");
+      // }
       
       // Capture after screenshot
       if (currentTask?.generatedFiles && iframeRef.current) {
@@ -1028,10 +1028,10 @@ Let's get started! What would you like to change?`,
         description: `✓ ${data.message}`,
       });
       
-      // Voice response
-      if (ttsSupported) {
-        speak("Changes committed to Git. You're all set!");
-      }
+      // Voice response (DISABLED - no robot TTS)
+      // if (ttsSupported) {
+      //   speak("Changes committed to Git. You're all set!");
+      // }
     },
     onError: (error: any) => {
       toast({
@@ -1517,33 +1517,51 @@ Let's get started! What would you like to change?`,
                   </TooltipContent>
                 </Tooltip>
 
-                {/* Voice Mode Button - Icon Only */}
+                {/* Voice Mode Button - Push-to-Talk (wisprflow.ai style) */}
                 {voiceSupported && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => {
-                          if (isContinuousMode) {
-                            disableContinuousMode();
-                          } else {
-                            enableContinuousMode();
+                        onMouseDown={() => {
+                          if (!isExecuting && !isListening) {
+                            startListening();
+                          }
+                        }}
+                        onMouseUp={() => {
+                          if (isListening) {
+                            stopListening();
+                          }
+                        }}
+                        onMouseLeave={() => {
+                          if (isListening) {
+                            stopListening();
+                          }
+                        }}
+                        onTouchStart={() => {
+                          if (!isExecuting && !isListening) {
+                            startListening();
+                          }
+                        }}
+                        onTouchEnd={() => {
+                          if (isListening) {
+                            stopListening();
                           }
                         }}
                         disabled={isExecuting}
                         data-testid="button-voice-mode"
-                        className={isContinuousMode ? 'bg-red-500/10 border-red-500' : ''}
+                        className={isListening ? 'bg-red-500/10 border-red-500' : ''}
                       >
-                        {isContinuousMode ? (
-                          <Mic className="h-4 w-4 text-red-500" />
+                        {isListening ? (
+                          <Mic className="h-4 w-4 text-red-500 animate-pulse" />
                         ) : (
-                          <MicOff className="h-4 w-4" />
+                          <Mic className="h-4 w-4" />
                         )}
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      {isContinuousMode ? 'Disable voice mode' : 'Enable voice mode'}
+                      {isListening ? 'Listening... (release to stop)' : 'Hold to speak'}
                     </TooltipContent>
                   </Tooltip>
                 )}
