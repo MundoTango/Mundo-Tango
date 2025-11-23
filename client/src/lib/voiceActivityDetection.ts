@@ -29,7 +29,37 @@ export class VoiceActivityDetector {
       modelURL: '/silero_vad.onnx',
     };
     
-    this.vad = await MicVAD.new(vadOptions);
+    try {
+      console.log('[VAD] Initializing with options:', {
+        workletURL: vadOptions.workletURL,
+        modelURL: vadOptions.modelURL
+      });
+      
+      // Check if files exist before initializing
+      console.log('[VAD] Checking if VAD files are accessible...');
+      const workletCheck = await fetch(vadOptions.workletURL, { method: 'HEAD' });
+      const modelCheck = await fetch(vadOptions.modelURL, { method: 'HEAD' });
+      
+      console.log('[VAD] Worklet file status:', workletCheck.status, workletCheck.ok ? '✅' : '❌');
+      console.log('[VAD] Model file status:', modelCheck.status, modelCheck.ok ? '✅' : '❌');
+      
+      if (!workletCheck.ok || !modelCheck.ok) {
+        throw new Error(`VAD files not accessible - Worklet: ${workletCheck.ok ? 'OK' : 'FAILED'}, Model: ${modelCheck.ok ? 'OK' : 'FAILED'}`);
+      }
+      
+      this.vad = await MicVAD.new(vadOptions);
+      console.log('[VAD] ✅ Initialized successfully');
+    } catch (error) {
+      console.error('[VAD] ❌ Initialization failed:', error);
+      console.error('[VAD] Worklet URL:', vadOptions.workletURL);
+      console.error('[VAD] Model URL:', vadOptions.modelURL);
+      
+      if (options.onError) {
+        options.onError(error as Error);
+      }
+      
+      throw error;
+    }
   }
   
   async start() {

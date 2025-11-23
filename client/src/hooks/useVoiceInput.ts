@@ -254,66 +254,110 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
         console.log('[Voice] ✅ Audio processing pipeline initialized');
       }
 
-      // Step 3: Initialize VAD (Voice Activity Detector)
+      // Step 3: Initialize VAD (Voice Activity Detector) with fallback
       console.log('[Voice] Step 3/4: Initializing Voice Activity Detector (VAD)...');
       toast({
         title: 'Initializing Voice Mode',
         description: 'Step 3/4: Loading voice detection AI model...',
       });
 
-      if (!vadRef.current) {
-        vadRef.current = new VoiceActivityDetector();
-        await vadRef.current.initialize({
-          onSpeechStart: () => {
-            console.log('[Continuous] Speech detected');
-            setIsListening(true);
-          },
-          onSpeechEnd: async (audioData) => {
-            console.log('[Continuous] Speech ended, processing...');
-            
-            // Convert Float32Array to audio blob
-            const audioBlob = await convertToAudioBlob(audioData);
-            
-            // Send to transcription
-            const transcriptResult = await transcribeAudio(audioBlob);
-            
-            if (transcriptResult && onResult) {
-              onResult(transcriptResult);
-            }
-            
-            setIsListening(false);
-          },
-          onError: (error) => {
-            console.error('[VAD] Error:', error);
-            toast({
-              variant: 'destructive',
-              title: 'Voice Detection Error',
-              description: 'Failed to initialize voice detection. Please try again.',
-            });
-          },
-        });
-        console.log('[Voice] ✅ VAD initialized successfully');
-      }
-      
-      // Step 4: Start listening
-      console.log('[Voice] Step 4/4: Starting continuous listening mode...');
-      toast({
-        title: 'Initializing Voice Mode',
-        description: 'Step 4/4: Activating continuous listening...',
-      });
+      let useWebSpeechFallback = false;
 
-      await vadRef.current.start();
-      setContinuousMode(true);
-      setIsContinuousMode(true);
-      setIsInitializing(false);
-      
-      console.log('[Voice] ✅ Voice mode activated successfully!');
-      console.log('[Voice] Continuous mode enabled with VAD and audio processing');
-      
-      toast({
-        title: '🎤 Voice Mode Active!',
-        description: 'Start speaking naturally - I\'m listening with studio-quality audio!',
-      });
+      try {
+        if (!vadRef.current) {
+          vadRef.current = new VoiceActivityDetector();
+          await vadRef.current.initialize({
+            onSpeechStart: () => {
+              console.log('[Continuous] Speech detected');
+              setIsListening(true);
+            },
+            onSpeechEnd: async (audioData) => {
+              console.log('[Continuous] Speech ended, processing...');
+              
+              // Convert Float32Array to audio blob
+              const audioBlob = await convertToAudioBlob(audioData);
+              
+              // Send to transcription
+              const transcriptResult = await transcribeAudio(audioBlob);
+              
+              if (transcriptResult && onResult) {
+                onResult(transcriptResult);
+              }
+              
+              setIsListening(false);
+            },
+            onError: (error) => {
+              console.error('[VAD] Error:', error);
+              toast({
+                variant: 'destructive',
+                title: 'Voice Detection Error',
+                description: 'Failed to initialize voice detection. Please try again.',
+              });
+            },
+          });
+          console.log('[Voice] ✅ VAD initialized successfully (studio-quality mode)');
+        }
+        
+        // Step 4: Start VAD listening
+        console.log('[Voice] Step 4/4: Starting VAD continuous listening mode...');
+        toast({
+          title: 'Initializing Voice Mode',
+          description: 'Step 4/4: Activating continuous listening...',
+        });
+
+        await vadRef.current.start();
+        setContinuousMode(true);
+        setIsContinuousMode(true);
+        setIsInitializing(false);
+        
+        console.log('[Voice] ✅ Voice mode activated with VAD!');
+        console.log('[Voice] Continuous mode enabled with VAD and audio processing');
+        
+        toast({
+          title: '🎤 Voice Mode Active! (VAD)',
+          description: 'Start speaking naturally - I\'m listening with studio-quality audio!',
+        });
+      } catch (vadError) {
+        console.warn('[Voice] ⚠️ VAD initialization failed, falling back to Web Speech API:', vadError);
+        useWebSpeechFallback = true;
+        
+        // Fallback: Use Web Speech API continuous mode
+        console.log('[Voice] Step 3/4 (Fallback): Using Web Speech API...');
+        toast({
+          title: 'Initializing Voice Mode',
+          description: 'Step 3/4: Using browser speech recognition (fallback)...',
+        });
+
+        if (recognitionRef.current) {
+          // Enable continuous mode with Web Speech API
+          continuousModeRef.current = true;
+          
+          console.log('[Voice] Step 4/4 (Fallback): Starting Web Speech API...');
+          toast({
+            title: 'Initializing Voice Mode',
+            description: 'Step 4/4: Starting browser speech recognition...',
+          });
+
+          try {
+            recognitionRef.current.start();
+            setContinuousMode(true);
+            setIsContinuousMode(true);
+            setIsInitializing(false);
+            
+            console.log('[Voice] ✅ Voice mode activated with Web Speech API fallback!');
+            
+            toast({
+              title: '🎤 Voice Mode Active! (Fallback)',
+              description: 'Using browser speech recognition - speak clearly and wait for responses.',
+            });
+          } catch (startError) {
+            console.error('[Voice] ❌ Failed to start Web Speech API:', startError);
+            throw startError;
+          }
+        } else {
+          throw new Error('Web Speech API not supported in this browser');
+        }
+      }
     } catch (error: any) {
       console.error('[Voice] ❌ Failed to enable continuous mode:', error);
       setIsInitializing(false);
