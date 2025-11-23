@@ -1,548 +1,130 @@
 /**
- * MR BLUE VIBE CODING ROUTES
- * Natural Language → Production Code API
+ * MR. BLUE VIBECODING ROUTES
+ * MB.MD v9.2 - GROQ Llama-3.3-70b Code Generation
  * 
- * Week 1, Day 1 Implementation - MB.MD v7.1
- * 
- * Endpoints:
- * - POST /api/mrblue/vibecode/generate - Generate code from natural language
- * - POST /api/mrblue/vibecode/stream - Stream code generation progress via SSE
- * - POST /api/mrblue/vibecode/apply - Apply generated code changes
- * - POST /api/mrblue/vibecode/preview - Preview generated changes
- * - POST /api/mrblue/vibecode/validate - Validate code safety
+ * Implements autonomous code generation with context awareness
  */
 
-import { Router, type Request, type Response } from 'express';
-import { vibeCodingService, type VibeCodeRequest } from '../services/mrBlue/VibeCodingService';
-import { authenticateToken, type AuthRequest } from '../middleware/auth';
-import { z } from 'zod';
+import { Router, type Request, Response } from "express";
+import { GroqService, GROQ_MODELS } from "../services/ai/GroqService";
+import { getRoleCapabilities } from "../utils/mrBlueCapabilities";
+import { db } from "../db/db";
+import { mr_blue_conversations } from "../../shared/schema";
+import { eq } from "drizzle-orm";
 
 const router = Router();
 
-// Initialize service
-vibeCodingService.initialize().catch(error => {
-  console.error('[VibeCoding Routes] ❌ Failed to initialize:', error);
-});
-
-// Validation schemas
-const generateSchema = z.object({
-  naturalLanguage: z.string().min(3).max(1000),
-  context: z.array(z.string()).optional(),
-  targetFiles: z.array(z.string()).optional(),
-});
-
-const applySchema = z.object({
-  sessionId: z.string(),
-});
-
-const previewSchema = z.object({
-  sessionId: z.string(),
-});
-
-const validateSchema = z.object({
-  code: z.string(),
-  filePath: z.string(),
-});
-
-/**
- * POST /api/mrblue/vibecode/generate
- * Generate code from natural language request
- */
-router.post('/generate', authenticateToken, async (req: AuthRequest, res: Response) => {
+router.post("/generate-code", async (req: Request, res: Response) => {
   try {
-    const body = generateSchema.parse(req.body);
+    const { prompt, context, conversationId } = req.body;
     
-    if (!req.user) {
-      return res.status(401).json({ 
+    if (!prompt) {
+      return res.status(400).json({ 
         success: false, 
-        error: 'Authentication required' 
+        error: "Prompt is required" 
       });
     }
 
-    // Create session ID
-    const sessionId = `vibe_${req.user.id}_${Date.now()}`;
-
-    const request: VibeCodeRequest = {
-      naturalLanguage: body.naturalLanguage,
-      context: body.context,
-      targetFiles: body.targetFiles,
-      userId: req.user.id,
-      sessionId,
-    };
-
-    console.log(`[VibeCoding API] 🎯 Generate request from user ${req.user.id}: "${body.naturalLanguage}"`);
-
-    const result = await vibeCodingService.generateCode(request);
-
-    if (!result.success) {
-      return res.status(400).json({
+    // Get user tier capabilities
+    const user = (req as any).user;
+    const capabilities = getRoleCapabilities(user?.role || 'explorer');
+    
+    // Check if VibeCoding is enabled for this tier
+    if (!capabilities.autonomousVibeCoding) {
+      return res.status(403).json({
         success: false,
-        error: result.error || 'Failed to generate code',
+        error: "VibeCoding requires Premium or God tier",
+        upgradeRequired: true,
       });
     }
 
-    res.json({
+    // Build system prompt with context
+    const systemPrompt = `You are Mr. Blue, an expert code generation AI using MB.MD v9.2 methodology.
+
+CRITICAL RULES:
+1. ALWAYS generate actual, production-ready code
+2. NEVER say "I'll help you" without code
+3. NEVER claim completion without showing code
+4. Use modern best practices (React, TypeScript, Tailwind CSS)
+
+Current Context:
+- Page: ${context?.currentPage || 'unknown'}
+- Theme: ${context?.theme || 'MT Ocean'}
+- Framework: React + TypeScript + Tailwind CSS
+
+TASK: Generate complete, working code for the user's request.
+
+RESPONSE FORMAT:
+\`\`\`typescript
+// Your generated code here
+\`\`\`
+
+Explanation: [Brief explanation of what you built]`;
+
+    // Generate code using GROQ Llama-3.3-70b
+    const response = await GroqService.querySimple({
+      prompt,
+      systemPrompt,
+      model: GROQ_MODELS.LLAMA_70B,
+      temperature: 0.3, // Lower temp for code generation
+    });
+
+    if (!response.success || !response.content) {
+      return res.status(500).json({
+        success: false,
+        error: "Code generation failed",
+      });
+    }
+
+    // Extract code blocks from response
+    const codeBlocks = extractCodeBlocks(response.content);
+    
+    // Save to conversation if provided
+    if (conversationId && user) {
+      try {
+        await db.insert(mr_blue_conversations).values({
+          userId: user.id,
+          title: `VibeCoding: ${prompt.substring(0, 50)}...`,
+          lastMessageAt: new Date(),
+        });
+      } catch (err) {
+        console.error('[VibeCoding] Failed to save conversation:', err);
+      }
+    }
+
+    return res.json({
       success: true,
-      data: result,
+      code: codeBlocks,
+      explanation: response.content,
+      model: GROQ_MODELS.LLAMA_70B,
+      tokensUsed: response.tokensUsed,
     });
-  } catch (error: any) {
-    console.error('[VibeCoding API] ❌ Generate error:', error);
-    
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        success: false,
-        error: 'Validation error',
-        details: error.errors,
-      });
-    }
 
-    res.status(500).json({
+  } catch (error: any) {
+    console.error('[VibeCoding] Error:', error);
+    return res.status(500).json({
       success: false,
-      error: error.message || 'Internal server error',
+      error: error.message || "Code generation failed",
     });
   }
 });
 
 /**
- * GET /api/mrblue/vibecode/stream
- * Stream code generation progress via Server-Sent Events (SSE)
- * GET version for EventSource compatibility (auth via query param)
+ * Extract code blocks from markdown
  */
-router.get('/stream', async (req: Request, res: Response) => {
-  try {
-    // Extract params from query string
-    const naturalLanguage = req.query.naturalLanguage as string;
-    const contextStr = req.query.context as string;
-    const targetFilesStr = req.query.targetFiles as string;
-    const token = req.query.token as string;
-
-    if (!naturalLanguage) {
-      return res.status(400).json({
-        success: false,
-        error: 'naturalLanguage is required'
-      });
-    }
-
-    // Parse JSON strings
-    let context = [];
-    let targetFiles = [];
-    try {
-      if (contextStr) context = JSON.parse(contextStr);
-      if (targetFilesStr) targetFiles = JSON.parse(targetFilesStr);
-    } catch (e) {
-      console.error('[VibeCoding API] Failed to parse JSON params:', e);
-    }
-
-    // For god mode (Visual Editor), use default user 147
-    const userId = 168; // Using authenticated user from earlier logs
-
-    // Set SSE headers
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    res.flushHeaders();
-
-    // Helper function to send SSE events
-    const sendEvent = (data: any) => {
-      res.write(`data: ${JSON.stringify(data)}\n\n`);
-    };
-
-    // Create session ID
-    const sessionId = `vibe_${userId}_${Date.now()}`;
-
-    console.log(`[VibeCoding API] 🎯 GET Stream request from user ${userId}: "${naturalLanguage}"`);
-
-    try {
-      // Phase 1: Interpreting (10%)
-      sendEvent({
-        type: 'progress',
-        phase: 'interpreting',
-        message: 'Interpreting your request...',
-        percent: 10,
-      });
-
-      // Phase 2: Context search (30%)
-      sendEvent({
-        type: 'progress',
-        phase: 'context_search',
-        message: 'Searching documentation context...',
-        percent: 30,
-      });
-
-      // Phase 3: Code generation (60%)
-      sendEvent({
-        type: 'progress',
-        phase: 'code_generation',
-        message: 'Generating production code...',
-        percent: 60,
-      });
-
-      // Phase 4: Validation (90%)
-      sendEvent({
-        type: 'progress',
-        phase: 'validation',
-        message: 'Validating code safety...',
-        percent: 90,
-      });
-
-      // Generate code
-      const request: VibeCodeRequest = {
-        naturalLanguage,
-        context,
-        targetFiles,
-        userId,
-        sessionId,
-      };
-
-      const result = await vibeCodingService.generateCode(request);
-
-      // Phase 5: Complete (100%)
-      sendEvent({
-        type: 'progress',
-        phase: 'complete',
-        message: 'Complete! Code ready to apply.',
-        percent: 100,
-      });
-
-      // 🔥 AUTO-APPLY THE CHANGES IMMEDIATELY
-      console.log(`[VibeCoding API] 🚀 Auto-applying changes for session ${sessionId}`);
-      const applyResult = await vibeCodingService.applyChanges(sessionId, userId);
-
-      // Send final result with apply status
-      sendEvent({
-        type: 'complete',
-        data: {
-          success: result.success,
-          sessionId: result.sessionId,
-          fileChanges: result.fileChanges,
-          interpretation: result.interpretation,
-          validationResults: result.validationResults,
-          applied: applyResult.success,
-          appliedFiles: applyResult.appliedFiles || [],
-        },
-      });
-
-      console.log(`[VibeCoding API] ✅ Stream completed and applied for session ${sessionId}`);
-
-      // Close connection
-      res.end();
-    } catch (error: any) {
-      console.error('[VibeCoding API] ❌ Stream generation error:', error);
-      
-      // Send error event
-      sendEvent({
-        type: 'error',
-        message: error.message || 'Code generation failed',
-        error: true,
-      });
-      
-      res.end();
-    }
-  } catch (error: any) {
-    console.error('[VibeCoding API] ❌ GET Stream setup error:', error);
-    
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Internal server error',
+function extractCodeBlocks(text: string): Array<{ language: string; code: string }> {
+  const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
+  const blocks: Array<{ language: string; code: string }> = [];
+  
+  let match;
+  while ((match = codeBlockRegex.exec(text)) !== null) {
+    blocks.push({
+      language: match[1] || 'typescript',
+      code: match[2].trim(),
     });
   }
-});
-
-/**
- * POST /api/mrblue/vibecode/stream
- * Stream code generation progress via Server-Sent Events (SSE)
- */
-router.post('/stream', authenticateToken, async (req: AuthRequest, res: Response) => {
-  try {
-    const body = generateSchema.parse(req.body);
-    
-    if (!req.user) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Authentication required' 
-      });
-    }
-
-    // Set SSE headers
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    res.flushHeaders();
-
-    // Helper function to send SSE events
-    const sendEvent = (data: any) => {
-      res.write(`data: ${JSON.stringify(data)}\n\n`);
-    };
-
-    // Create session ID
-    const sessionId = `vibe_${req.user.id}_${Date.now()}`;
-
-    console.log(`[VibeCoding API] 🎯 Stream request from user ${req.user.id}: "${body.naturalLanguage}"`);
-
-    try {
-      // Phase 1: Interpreting (10%)
-      sendEvent({
-        type: 'progress',
-        phase: 'interpreting',
-        message: 'Interpreting your request...',
-        percent: 10,
-      });
-
-      // Phase 2: Context search (30%)
-      sendEvent({
-        type: 'progress',
-        phase: 'context_search',
-        message: 'Searching documentation context...',
-        percent: 30,
-      });
-
-      // Phase 3: Code generation (60%)
-      sendEvent({
-        type: 'progress',
-        phase: 'code_generation',
-        message: 'Generating production code...',
-        percent: 60,
-      });
-
-      // Phase 4: Validation (90%)
-      sendEvent({
-        type: 'progress',
-        phase: 'validation',
-        message: 'Validating code safety...',
-        percent: 90,
-      });
-
-      // Generate code
-      const request: VibeCodeRequest = {
-        naturalLanguage: body.naturalLanguage,
-        context: body.context,
-        targetFiles: body.targetFiles,
-        userId: req.user.id,
-        sessionId,
-      };
-
-      const result = await vibeCodingService.generateCode(request);
-
-      // Phase 5: Complete (100%)
-      sendEvent({
-        type: 'progress',
-        phase: 'complete',
-        message: 'Complete! Code ready to apply.',
-        percent: 100,
-      });
-
-      // Send final result
-      sendEvent({
-        type: 'complete',
-        data: {
-          success: result.success,
-          sessionId: result.sessionId,
-          fileChanges: result.fileChanges,
-          interpretation: result.interpretation,
-          validationResults: result.validationResults,
-        },
-      });
-
-      console.log(`[VibeCoding API] ✅ Stream completed for session ${sessionId}`);
-
-      // Close connection
-      res.end();
-    } catch (error: any) {
-      console.error('[VibeCoding API] ❌ Stream generation error:', error);
-      
-      // Send error event
-      sendEvent({
-        type: 'error',
-        message: error.message || 'Code generation failed',
-        error: true,
-      });
-      
-      res.end();
-    }
-  } catch (error: any) {
-    console.error('[VibeCoding API] ❌ Stream setup error:', error);
-    
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        success: false,
-        error: 'Validation error',
-        details: error.errors,
-      });
-    }
-
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Internal server error',
-    });
-  }
-});
-
-/**
- * POST /api/mrblue/vibecode/apply
- * Apply generated code changes
- */
-router.post('/apply', authenticateToken, async (req: AuthRequest, res: Response) => {
-  try {
-    const body = applySchema.parse(req.body);
-    
-    if (!req.user) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Authentication required' 
-      });
-    }
-
-    console.log(`[VibeCoding API] 📝 Apply request for session ${body.sessionId}`);
-
-    const result = await vibeCodingService.applyChanges(body.sessionId, req.user.id);
-
-    if (!result.success) {
-      return res.status(400).json({
-        success: false,
-        error: result.error || 'Failed to apply changes',
-      });
-    }
-
-    res.json({
-      success: true,
-      data: result,
-    });
-  } catch (error: any) {
-    console.error('[VibeCoding API] ❌ Apply error:', error);
-    
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        success: false,
-        error: 'Validation error',
-        details: error.errors,
-      });
-    }
-
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Internal server error',
-    });
-  }
-});
-
-/**
- * POST /api/mrblue/vibecode/preview
- * Preview generated code changes
- */
-router.post('/preview', authenticateToken, async (req: AuthRequest, res: Response) => {
-  try {
-    const body = previewSchema.parse(req.body);
-    
-    if (!req.user) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Authentication required' 
-      });
-    }
-
-    console.log(`[VibeCoding API] 👀 Preview request for session ${body.sessionId}`);
-
-    const result = await vibeCodingService.previewChanges(body.sessionId);
-
-    if (!result) {
-      return res.status(404).json({
-        success: false,
-        error: 'Session not found or expired',
-      });
-    }
-
-    res.json({
-      success: true,
-      data: result,
-    });
-  } catch (error: any) {
-    console.error('[VibeCoding API] ❌ Preview error:', error);
-    
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        success: false,
-        error: 'Validation error',
-        details: error.errors,
-      });
-    }
-
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Internal server error',
-    });
-  }
-});
-
-/**
- * POST /api/mrblue/vibecode/validate
- * Validate code safety
- */
-router.post('/validate', authenticateToken, async (req: AuthRequest, res: Response) => {
-  try {
-    const body = validateSchema.parse(req.body);
-    
-    if (!req.user) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Authentication required' 
-      });
-    }
-
-    console.log(`[VibeCoding API] ✅ Validate request for ${body.filePath}`);
-
-    const result = await vibeCodingService.validateCode(body.code, body.filePath);
-
-    res.json({
-      success: true,
-      data: result,
-    });
-  } catch (error: any) {
-    console.error('[VibeCoding API] ❌ Validate error:', error);
-    
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        success: false,
-        error: 'Validation error',
-        details: error.errors,
-      });
-    }
-
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Internal server error',
-      });
-  }
-});
-
-/**
- * GET /api/mrblue/vibecode/status
- * Get service status
- */
-router.get('/status', authenticateToken, async (req: AuthRequest, res: Response) => {
-  try {
-    res.json({
-      success: true,
-      data: {
-        service: 'Vibe Coding Engine',
-        status: 'active',
-        model: 'llama-3.1-70b-versatile',
-        provider: 'GROQ',
-        features: [
-          'Natural language to code',
-          'Multi-file editing',
-          'Safety validation',
-          'Git integration',
-          'Preview before apply',
-        ],
-      },
-    });
-  } catch (error: any) {
-    console.error('[VibeCoding API] ❌ Status error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message || 'Internal server error',
-    });
-  }
-});
+  
+  return blocks;
+}
 
 export default router;

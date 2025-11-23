@@ -73,7 +73,26 @@ type FixFeedbackRequest = {
   wasHelpful?: boolean;
 };
 
-export function ErrorAnalysisPanel() {
+type SelfHealingResult = {
+  pageId: string;
+  agentsActivated: number;
+  activationTime: number;
+  auditResults: any;
+  auditTime: number;
+  healingApplied: boolean;
+  healingTime?: number;
+  issuesFixed?: number;
+  uxValidationPassed: boolean;
+  preCheckStarted: boolean;
+  totalTime: number;
+};
+
+type ErrorAnalysisPanelProps = {
+  selfHealingResult?: SelfHealingResult | null;
+  isSelfHealingRunning?: boolean;
+};
+
+export function ErrorAnalysisPanel({ selfHealingResult, isSelfHealingRunning }: ErrorAnalysisPanelProps = {}) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [expandedError, setExpandedError] = useState<number | null>(null);
@@ -256,6 +275,33 @@ export function ErrorAnalysisPanel() {
 
       <CardContent className="flex-1 overflow-hidden p-0">
         <ScrollArea className="h-full px-6 pb-6">
+          {/* Self-Healing Status */}
+          {isSelfHealingRunning && (
+            <Alert className="mb-4" data-testid="self-healing-status">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <AlertDescription>
+                <div className="font-medium">Self-Healing System Active...</div>
+                <div className="text-xs text-muted-foreground mt-1">Scanning page for issues</div>
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          {/* Self-Healing Complete */}
+          {selfHealingResult && !isSelfHealingRunning && (
+            <Alert className="mb-4 bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800" data-testid="self-healing-result">
+              <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
+              <AlertDescription>
+                <div className="font-medium text-green-900 dark:text-green-100">Self-Healing Complete ✅</div>
+                <div className="text-xs text-green-700 dark:text-green-300 mt-2 space-y-1">
+                  <div>Agents: {selfHealingResult.agentsActivated} ({selfHealingResult.activationTime}ms)</div>
+                  <div>Issues Fixed: {selfHealingResult.issuesFixed || 0}</div>
+                  <div>Total Time: {selfHealingResult.totalTime}ms</div>
+                  <div>UX Validation: {selfHealingResult.uxValidationPassed ? '✅ PASS' : '❌ FAIL'}</div>
+                </div>
+              </AlertDescription>
+            </Alert>
+          )}
+
           {isLoading && (
             <div className="flex items-center justify-center py-12" data-testid="status-loading">
               <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />

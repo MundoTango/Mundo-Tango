@@ -1515,7 +1515,10 @@ Let's get started! What would you like to change?`,
           {/* Tab Content */}
           <div className="flex-1 overflow-hidden">
             {middlePanelTab === 'errors' ? (
-              <ErrorAnalysisPanel />
+              <ErrorAnalysisPanel 
+                selfHealingResult={selfHealingResult}
+                isSelfHealingRunning={isSelfHealingRunning}
+              />
             ) : middlePanelTab === 'memory' ? (
               <MemoryPanel />
             ) : middlePanelTab === 'progress' ? (
@@ -1679,28 +1682,6 @@ Let's get started! What would you like to change?`,
                         console.log('[Visual Editor] Element selected:', selector, confidence);
                       }}
                     />
-                  </div>
-                )}
-                
-                {/* Self-Healing Status */}
-                {isSelfHealingRunning && (
-                  <div className="absolute top-16 right-4 bg-background/95 border rounded-lg p-4 shadow-lg max-w-sm" data-testid="self-healing-status">
-                    <div className="flex items-center gap-2">
-                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                      <span className="text-sm font-medium">Self-Healing System Active...</span>
-                    </div>
-                  </div>
-                )}
-                
-                {selfHealingResult && !isSelfHealingRunning && (
-                  <div className="absolute top-16 right-4 bg-background/95 border rounded-lg p-4 shadow-lg max-w-sm" data-testid="self-healing-result">
-                    <h3 className="text-sm font-medium mb-2">Self-Healing Complete ✅</h3>
-                    <div className="text-xs space-y-1 text-muted-foreground">
-                      <div>Agents: {selfHealingResult.agentsActivated} ({selfHealingResult.activationTime}ms)</div>
-                      <div>Issues Fixed: {selfHealingResult.issuesFixed || 0}</div>
-                      <div>Total Time: {selfHealingResult.totalTime}ms</div>
-                      <div>UX Validation: {selfHealingResult.uxValidationPassed ? '✅ PASS' : '❌ FAIL'}</div>
-                    </div>
                   </div>
                 )}
               </>
