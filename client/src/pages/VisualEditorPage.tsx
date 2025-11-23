@@ -38,6 +38,7 @@ import type { ChangeMetadata } from "@/components/visual-editor/VisualDiffViewer
 import { SEO } from "@/components/SEO";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ErrorAnalysisPanel } from "@/components/mr-blue/ErrorAnalysisPanel";
+import { BackendSaveProgressModal, type BackendSaveProgress } from "@/components/visual-editor/BackendSaveProgressModal";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -50,7 +51,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Separator } from "@/components/ui/separator";
 import { 
   ShieldAlert, Crown, Bot, Cpu, Loader2, CheckCircle2, AlertCircle,
-  Play, Eye, Code2, Palette, Undo2, Sparkles, Zap, FileCode, History, Mic, MicOff, Lightbulb, RefreshCw, Brain, Bug, Activity
+  Play, Eye, Code2, Palette, Undo2, Sparkles, Zap, FileCode, History, Mic, MicOff, Lightbulb, RefreshCw, Brain, Bug, Activity, Save
 } from "lucide-react";
 
 type User = {
@@ -94,6 +95,10 @@ function VisualEditorPageContent() {
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
   const [middlePanelTab, setMiddlePanelTab] = useState<'errors' | 'memory' | 'progress' | 'automation'>('errors');
   const [awaitingApproval, setAwaitingApproval] = useState(false);
+  
+  // MB.MD v9.3: Backend Save Progress
+  const [showSaveProgress, setShowSaveProgress] = useState(false);
+  const [saveProgress, setSaveProgress] = useState<BackendSaveProgress | null>(null);
   
   // Refs
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -208,6 +213,88 @@ Let's get started! What would you like to change?`,
       console.error('[VisualEditor] Failed to save message:', error);
     },
   });
+
+  // MB.MD v9.3: Backend Save Mutation
+  const saveBackendMutation = useMutation({
+    mutationFn: async () => {
+      if (!currentConversationId) {
+        throw new Error('No active conversation');
+      }
+      const response = await apiRequest('POST', '/api/mrblue/save-backend', {
+        conversationId: currentConversationId,
+      });
+      return await response.json();
+    },
+    onSuccess: (result) => {
+      setSaveProgress({
+        phase: 'complete',
+        currentStep: 'Backend save complete!',
+        totalSteps: result.agentsUsed.length + 2,
+        completedSteps: result.agentsUsed.length + 2,
+        agentsWorking: [],
+        filesModified: result.filesModified,
+        errors: result.errors,
+      });
+      
+      toast({
+        title: '✅ Backend Saved',
+        description: `Updated ${result.filesModified.length} files using ${result.agentsUsed.length} agents`,
+      });
+      
+      // Close modal after 2 seconds
+      setTimeout(() => {
+        setShowSaveProgress(false);
+        setSaveProgress(null);
+      }, 2000);
+    },
+    onError: (error: any) => {
+      toast({
+        title: '❌ Backend Save Failed',
+        description: error.message,
+        variant: 'destructive',
+      });
+      setShowSaveProgress(false);
+    },
+  });
+
+  // MB.MD v9.3: Query save button status
+  const { data: saveStatus } = useQuery<{
+    enabled: boolean;
+    tooltip: string;
+    changeCount: number;
+    filesModified: number;
+  }>({
+    queryKey: ['/api/mrblue/save-backend/status', currentConversationId],
+    enabled: !!currentConversationId,
+    refetchInterval: 5000, // Poll every 5 seconds
+  });
+
+  // MB.MD v9.3: Handle backend save
+  const handleBackendSave = async () => {
+    if (!currentConversationId) {
+      toast({
+        title: '⚠️ No Conversation',
+        description: 'Please start a conversation first',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    // Show progress modal
+    setShowSaveProgress(true);
+    setSaveProgress({
+      phase: 'analyzing',
+      currentStep: 'Analyzing UI changes...',
+      totalSteps: 6,
+      completedSteps: 0,
+      agentsWorking: [],
+      filesModified: [],
+      errors: [],
+    });
+    
+    // Trigger save
+    saveBackendMutation.mutate();
+  };
 
   // PHASE 1: Ensure conversation exists on mount
   useEffect(() => {
@@ -1434,6 +1521,21 @@ Let's get started! What would you like to change?`,
                   )}
                 </Button>
 
+                {/* MB.MD v9.3: Save Backend Button */}
+                <Button
+                  data-testid="button-save-backend"
+                  onClick={handleBackendSave}
+                  disabled={!saveStatus?.enabled || saveBackendMutation.isPending}
+                  variant="secondary"
+                  title={saveStatus?.tooltip || 'Save backend changes'}
+                >
+                  {saveBackendMutation.isPending ? (
+                    <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Saving...</>
+                  ) : (
+                    <><Save className="h-4 w-4 mr-2" /> Save</>
+                  )}
+                </Button>
+
                 {/* Microphone Button */}
                 {voiceSupported && !voiceModeEnabled && (
                   <Button
@@ -1739,6 +1841,13 @@ Let's get started! What would you like to change?`,
           </div>
         </section>
       </main>
+
+      {/* MB.MD v9.3: Backend Save Progress Modal */}
+      <BackendSaveProgressModal
+        open={showSaveProgress}
+        progress={saveProgress}
+        onClose={() => setShowSaveProgress(false)}
+      />
     </>
   );
 }
