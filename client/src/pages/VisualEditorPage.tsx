@@ -469,19 +469,18 @@ Let's get started! What would you like to change?`,
     }
   }, [wsProgress?.files, viewMode]);
 
-  // Inject selection script when iframe loads
-  useEffect(() => {
-    const iframe = iframeRef.current;
-    if (!iframe) {
-      console.log('[VisualEditor] Iframe ref not ready yet, will retry when available');
-      return;
-    }
+  // Callback ref: fires when iframe element is mounted to DOM (solves race condition!)
+  const handleIframeMount = useCallback((element: HTMLIFrameElement | null) => {
+    if (!element) return;
+    
+    iframeRef.current = element;
+    console.log('[VisualEditor] Iframe element mounted, attaching listeners');
 
     const handleLoad = () => {
       console.log('[VisualEditor] Iframe loaded, injecting selection script');
       setIframeLoading(false);
       setIframeError(false);
-      injectSelectionScript(iframe);
+      injectSelectionScript(element);
       
       // Enable element click selection with visual outline
       try {
