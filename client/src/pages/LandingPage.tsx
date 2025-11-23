@@ -295,7 +295,7 @@ export default function LandingPage() {
               {/* CTA Buttons */}
               <motion.div 
                 variants={fadeInUp}
-                className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+                className="bg-blue-800 hover:bg-blue-900 text-white text-lg px-8 py-6 h-auto font-semibold"
               >
                 <Link href="/register">
                   <Button 

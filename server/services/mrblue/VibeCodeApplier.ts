@@ -88,15 +88,13 @@ export class VibeCodeApplier {
 
         const [, filePath, lineNum, content] = match;
         
-        // Check if this line contains a React component (Button, div, etc.)
-        if (!this.isElementLine(content)) continue;
-
         // Read file to get more context
         const fileContent = await fs.readFile(filePath, 'utf-8');
         const lines = fileContent.split('\n');
         const lineIndex = parseInt(lineNum) - 1;
 
         // Extract element info from surrounding lines
+        // extractElementInfo will scan backwards to find the opening tag
         const elementInfo = this.extractElementInfo(lines, lineIndex, filePath);
         if (elementInfo) {
           matches.push(elementInfo);

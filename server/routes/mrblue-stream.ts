@@ -16,6 +16,8 @@ import OpenAI from "openai";
 import Anthropic from "@anthropic-ai/sdk";
 import { getMrBlueCapabilities } from "../utils/mrBlueCapabilities";
 import { vibeCodeApplier } from "../services/mrblue/VibeCodeApplier";
+import { agentCommunication } from "../services/mrblue/AgentCommunication";
+import type { StyleChange } from "../services/mrblue/agents/BasePageAgent";
 
 const router = Router();
 
@@ -83,6 +85,63 @@ function extractCodeBlocks(text: string): Array<{ language: string; code: string
   }
   
   return blocks;
+}
+
+/**
+ * Parse style change from natural language message
+ * Used by MB.MD agent architecture
+ */
+function parseStyleChangeFromMessage(message: string): StyleChange {
+  const lower = message.toLowerCase();
+
+  // Parse color changes
+  if (lower.includes('dark blue')) {
+    return {
+      property: 'className',
+      oldValue: '', // Will be filled by agent
+      newValue: 'bg-blue-800 hover:bg-blue-900 text-white text-lg px-8 py-6 h-auto font-semibold',
+      description: 'Changed button color to dark blue with white text',
+    };
+  } else if (lower.includes('blue')) {
+    return {
+      property: 'className',
+      oldValue: '',
+      newValue: 'bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-6 h-auto font-semibold',
+      description: 'Changed button color to blue with white text',
+    };
+  } else if (lower.includes('red')) {
+    return {
+      property: 'className',
+      oldValue: '',
+      newValue: 'bg-red-600 hover:bg-red-700 text-white text-lg px-8 py-6 h-auto font-semibold',
+      description: 'Changed button color to red with white text',
+    };
+  } else if (lower.includes('green')) {
+    return {
+      property: 'className',
+      oldValue: '',
+      newValue: 'bg-green-600 hover:bg-green-700 text-white text-lg px-8 py-6 h-auto font-semibold',
+      description: 'Changed button color to green with white text',
+    };
+  }
+
+  // Size changes
+  if (lower.includes('bigger') || lower.includes('larger')) {
+    return {
+      property: 'className',
+      oldValue: '',
+      newValue: 'text-2xl px-12 py-8',
+      description: 'Made element larger',
+    };
+  }
+
+  // Default: no change detected
+  return {
+    property: 'className',
+    oldValue: '',
+    newValue: '',
+    description: 'No style change detected',
+  };
 }
 
 /**
@@ -253,53 +312,90 @@ Explanation: [Brief explanation of what you built]`;
           }
         })}\n\n`);
 
-        // ✨ AUTO-APPLY: Try to detect and apply changes to actual source files
+        // ✨ AUTO-APPLY: Use MB.MD Agent Architecture
         res.write(`data: ${JSON.stringify({ 
           type: 'vibe_coding_progress',
-          message: '🔍 Searching for elements to auto-apply...',
+          message: '📢 Broadcasting query to agent ecosystem...',
           status: 'applying'
         })}\n\n`);
 
-        const applyResult = await vibeCodeApplier.applyVibeCodeChanges(message, visualContext);
+        // Step 1: Broadcast to all agents
+        const agentResponses = await agentCommunication.broadcastQuery(message);
 
-        if (applyResult.success && applyResult.diffs.length > 0) {
-          // Success! Show what was changed
-          const diff = applyResult.diffs[0];
-          const element = applyResult.elementsChanged[0];
-
-          res.write(`data: ${JSON.stringify({ 
-            type: 'file_updated',
-            message: `✅ Auto-applied to ${diff.filePath}`,
-            data: {
-              filePath: diff.filePath,
-              before: diff.before,
-              after: diff.after,
-              diff: diff.diff,
-              element: {
-                type: element.elementType,
-                text: element.textContent,
-                line: element.lineNumber,
-              }
-            }
-          })}\n\n`);
-
-          // Build comprehensive response with diff
-          const responseWithDiff = `${codeResponse.content}\n\n---\n\n✅ **Auto-Applied Changes:**\n\n**File:** \`${diff.filePath}\` (line ${element.lineNumber})\n\n**Element:** ${element.elementType} containing "${element.textContent}"\n\n**Diff:**\n\`\`\`diff\n${diff.diff}\n\`\`\`\n\n🔄 **Hot reload triggered** - check your preview!`;
-
-          res.write(`data: ${JSON.stringify({ 
-            type: 'chat_response',
-            message: responseWithDiff
-          })}\n\n`);
-        } else {
-          // Auto-apply failed or didn't find anything - show original response
-          if (applyResult.error) {
-            console.log(`[Stream] Auto-apply info: ${applyResult.error}`);
-          }
-
+        if (agentResponses.length === 0) {
+          // No agents can handle this - show original response
           res.write(`data: ${JSON.stringify({ 
             type: 'chat_response',
             message: codeResponse.content
           })}\n\n`);
+        } else {
+          // Found agent(s) - use the one with highest confidence
+          const bestAgent = agentResponses[0];
+          
+          res.write(`data: ${JSON.stringify({ 
+            type: 'vibe_coding_progress',
+            message: `✅ ${bestAgent.agentName} will handle this (confidence: ${Math.round(bestAgent.confidence * 100)}%)`,
+            status: 'delegating'
+          })}\n\n`);
+
+          if (bestAgent.element) {
+            // Parse style change from message
+            const styleChange = parseStyleChangeFromMessage(message);
+
+            res.write(`data: ${JSON.stringify({ 
+              type: 'vibe_coding_progress',
+              message: `🎯 Delegating to ${bestAgent.agentName}...`,
+              status: 'applying'
+            })}\n\n`);
+
+            // Step 2: Delegate task to agent
+            const taskResult = await agentCommunication.delegateTask(
+              bestAgent.agentId,
+              bestAgent.element,
+              styleChange
+            );
+
+            if (taskResult.success && taskResult.fileUpdate) {
+              const diff = taskResult.fileUpdate;
+              const element = diff.element;
+
+              res.write(`data: ${JSON.stringify({ 
+                type: 'file_updated',
+                message: `✅ Auto-applied by ${taskResult.agentName}`,
+                data: {
+                  filePath: diff.filePath,
+                  before: diff.before,
+                  after: diff.after,
+                  diff: diff.diff,
+                  element: {
+                    type: element.elementType,
+                    text: element.textContent,
+                    line: element.lineNumber,
+                  }
+                }
+              })}\n\n`);
+
+              // Build comprehensive response with diff
+              const responseWithDiff = `${codeResponse.content}\n\n---\n\n✅ **Auto-Applied by ${taskResult.agentName}:**\n\n**File:** \`${diff.filePath}\` (line ${element.lineNumber})\n\n**Element:** ${element.elementType} containing "${element.textContent}"\n\n**Diff:**\n\`\`\`diff\n${diff.diff}\n\`\`\`\n\n🔄 **Hot reload triggered** - check your preview!\n\n💡 **MB.MD Agent Architecture:** Query broadcasted to agent ecosystem, ${taskResult.agentName} responded and applied changes automatically.`;
+
+              res.write(`data: ${JSON.stringify({ 
+                type: 'chat_response',
+                message: responseWithDiff
+              })}\n\n`);
+            } else {
+              // Delegation failed - show error but include code
+              res.write(`data: ${JSON.stringify({ 
+                type: 'chat_response',
+                message: `${codeResponse.content}\n\n⚠️ Auto-apply failed: ${taskResult.error || 'Unknown error'}`
+              })}\n\n`);
+            }
+          } else {
+            // Agent can handle but needs more context
+            res.write(`data: ${JSON.stringify({ 
+              type: 'chat_response',
+              message: `${codeResponse.content}\n\nℹ️ ${bestAgent.agentName} can help but needs more specific element information.`
+            })}\n\n`);
+          }
         }
 
         res.end();
