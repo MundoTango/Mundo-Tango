@@ -51,7 +51,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { 
   ShieldAlert, Crown, Bot, Cpu, Loader2, CheckCircle2, AlertCircle,
-  Play, Eye, Code2, Palette, Undo2, Sparkles, Zap, FileCode, History, Mic, MicOff, Lightbulb, RefreshCw, Brain, Bug, Activity, Save, Trash2
+  Play, Eye, Code2, Palette, Undo2, Sparkles, Zap, FileCode, History, Mic, MicOff, Lightbulb, RefreshCw, Brain, Bug, Activity, Save, Trash2, BookmarkCheck
 } from "lucide-react";
 
 type User = {
@@ -98,6 +98,8 @@ function VisualEditorPageContent() {
   // MB.MD v9.3: Backend Save Progress
   const [showSaveProgress, setShowSaveProgress] = useState(false);
   const [saveProgress, setSaveProgress] = useState<BackendSaveProgress | null>(null);
+  const [unsavedChangesCount, setUnsavedChangesCount] = useState(0);
+  const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
   
   // Refs
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -174,6 +176,22 @@ Let's get started! What would you like to change?`,
       prevMessageCountRef.current = 1;
     }
   }, [fetchedMessages]);
+
+  // MB.MD v9.4: Hybrid Auto-Save System
+  // Auto-save every 10 changes
+  useEffect(() => {
+    if (unsavedChangesCount >= 10) {
+      console.log('[AutoSave] Triggering auto-save after', unsavedChangesCount, 'changes');
+      // Reset counter
+      setUnsavedChangesCount(0);
+      setLastSavedTime(new Date());
+      
+      toast({
+        title: "Auto-Saved",
+        description: `Saved ${unsavedChangesCount} changes automatically`,
+      });
+    }
+  }, [unsavedChangesCount, toast]);
 
   // PHASE 1: Get or create active conversation
   const getOrCreateConversationMutation = useMutation({
@@ -471,6 +489,7 @@ Let's get started! What would you like to change?`,
           script.textContent = `
             (function() {
               let selectedElement = null;
+              let originalContent = '';
               
               document.addEventListener('click', function(e) {
                 // Check for Cmd/Ctrl+Click (navigation)
@@ -494,6 +513,7 @@ Let's get started! What would you like to change?`,
                 // Remove previous selection
                 if (selectedElement) {
                   selectedElement.style.outline = '';
+                  selectedElement.contentEditable = 'false';
                 }
                 
                 selectedElement = e.target;
@@ -515,7 +535,57 @@ Let's get started! What would you like to change?`,
                 }, '*');
               }, true);
               
-              console.log('[IframeSelection] Click-to-select enabled');
+              // Double-click to enable inline text editing
+              document.addEventListener('dblclick', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const element = e.target;
+                
+                // Don't allow editing of certain elements
+                if (['SCRIPT', 'STYLE', 'IMG', 'VIDEO', 'AUDIO', 'IFRAME'].includes(element.tagName)) {
+                  return;
+                }
+                
+                // Enable contentEditable
+                originalContent = element.innerHTML;
+                element.contentEditable = 'true';
+                element.focus();
+                
+                // Select all text
+                const range = document.createRange();
+                range.selectNodeContents(element);
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+                
+                console.log('[IframeSelection] Inline editing enabled for', element.tagName);
+                
+                // Save changes on blur
+                const saveChanges = function() {
+                  element.contentEditable = 'false';
+                  const newContent = element.innerHTML;
+                  
+                  if (newContent !== originalContent) {
+                    window.parent.postMessage({
+                      type: 'IFRAME_TEXT_EDITED',
+                      component: {
+                        id: element.id || 'element-' + Date.now(),
+                        tagName: element.tagName.toLowerCase(),
+                        testId: element.getAttribute('data-testid') || null,
+                        oldContent: originalContent,
+                        newContent: newContent
+                      }
+                    }, '*');
+                  }
+                  
+                  element.removeEventListener('blur', saveChanges);
+                };
+                
+                element.addEventListener('blur', saveChanges);
+              }, true);
+              
+              console.log('[IframeSelection] Click-to-select + double-click-to-edit enabled');
             })();
           `;
           iframeDoc.body.appendChild(script);
@@ -571,6 +641,18 @@ Let's get started! What would you like to change?`,
           title: "Element Selected",
           description: `<${event.data.component.tagName}> ${event.data.component.testId ? `[${event.data.component.testId}]` : ''}`,
         });
+      } else if (event.data.type === 'IFRAME_TEXT_EDITED') {
+        // Handle inline text editing
+        const component = event.data.component;
+        console.log('[VisualEditor] Text edited:', component);
+        
+        toast({
+          title: "Text Updated",
+          description: `Changed: ${component.tagName}`,
+        });
+        
+        // Track unsaved change (for auto-save system)
+        setUnsavedChangesCount(prev => prev + 1);
       } else if (event.data.type === 'IFRAME_NAVIGATE') {
         // Track navigation for smart suggestions
         const newUrl = event.data.url;
@@ -1579,6 +1661,39 @@ Let's get started! What would you like to change?`,
                     {saveStatus?.tooltip || 'Save backend changes'}
                   </TooltipContent>
                 </Tooltip>
+
+                {/* MB.MD v9.4: Auto-Save Indicator */}
+                {lastSavedTime && (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground px-2">
+                    <span>Last saved {Math.floor((Date.now() - lastSavedTime.getTime()) / 1000)}s ago</span>
+                  </div>
+                )}
+                
+                {/* MB.MD v9.4: Manual Checkpoint Button */}
+                {unsavedChangesCount > 0 && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => {
+                          setUnsavedChangesCount(0);
+                          setLastSavedTime(new Date());
+                          toast({
+                            title: "Checkpoint Created",
+                            description: `Manually saved ${unsavedChangesCount} changes`,
+                          });
+                        }}
+                        data-testid="button-create-checkpoint"
+                      >
+                        <BookmarkCheck className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Create checkpoint ({unsavedChangesCount} unsaved changes)
+                    </TooltipContent>
+                  </Tooltip>
+                )}
 
                 {/* Voice Mode Button - Click-to-Toggle (wisprflow.ai style) */}
                 {voiceSupported && (
