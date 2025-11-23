@@ -1517,36 +1517,20 @@ Let's get started! What would you like to change?`,
                   </TooltipContent>
                 </Tooltip>
 
-                {/* Voice Mode Button - Push-to-Talk (wisprflow.ai style) */}
+                {/* Voice Mode Button - Click-to-Toggle (wisprflow.ai style) */}
                 {voiceSupported && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
                         variant="outline"
                         size="icon"
-                        onMouseDown={() => {
-                          if (!isExecuting && !isListening) {
-                            startListening();
-                          }
-                        }}
-                        onMouseUp={() => {
-                          if (isListening) {
-                            stopListening();
-                          }
-                        }}
-                        onMouseLeave={() => {
-                          if (isListening) {
-                            stopListening();
-                          }
-                        }}
-                        onTouchStart={() => {
-                          if (!isExecuting && !isListening) {
-                            startListening();
-                          }
-                        }}
-                        onTouchEnd={() => {
-                          if (isListening) {
-                            stopListening();
+                        onClick={() => {
+                          if (!isExecuting) {
+                            if (isListening) {
+                              stopListening();
+                            } else {
+                              startListening();
+                            }
                           }
                         }}
                         disabled={isExecuting}
@@ -1561,7 +1545,7 @@ Let's get started! What would you like to change?`,
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      {isListening ? 'Listening... (release to stop)' : 'Hold to speak'}
+                      {isListening ? 'Click to stop listening' : 'Click to start speaking'}
                     </TooltipContent>
                   </Tooltip>
                 )}
