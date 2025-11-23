@@ -469,9 +469,28 @@ Let's get started! What would you like to change?`,
     }
   }, [wsProgress?.files, viewMode]);
 
+  // Store handlers for cleanup
+  const handlersRef = useRef<{
+    load?: () => void;
+    error?: () => void;
+    message?: (event: MessageEvent) => void;
+  }>({});
+
   // Callback ref: fires when iframe element is mounted to DOM (solves race condition!)
   const handleIframeMount = useCallback((element: HTMLIFrameElement | null) => {
-    if (!element) return;
+    // Cleanup previous handlers
+    if (iframeRef.current && handlersRef.current.load && handlersRef.current.error) {
+      iframeRef.current.removeEventListener('load', handlersRef.current.load);
+      iframeRef.current.removeEventListener('error', handlersRef.current.error);
+    }
+    if (handlersRef.current.message) {
+      window.removeEventListener('message', handlersRef.current.message);
+    }
+    
+    if (!element) {
+      iframeRef.current = null;
+      return;
+    }
     
     iframeRef.current = element;
     console.log('[VisualEditor] Iframe element mounted, attaching listeners');
@@ -620,6 +639,10 @@ Let's get started! What would you like to change?`,
       console.log('[VisualEditor] Iframe not ready yet (CORS or still loading)');
     }
 
+    // Store handlers for cleanup
+    handlersRef.current.load = handleLoad;
+    handlersRef.current.error = handleError;
+    
     element.addEventListener('load', handleLoad);
     element.addEventListener('error', handleError);
     
@@ -685,13 +708,13 @@ Let's get started! What would you like to change?`,
       }
     };
 
+    // Store message handler for cleanup
+    handlersRef.current.message = handleMessage;
+    
     window.addEventListener('message', handleMessage);
-
-    return () => {
-      element.removeEventListener('load', handleLoad);
-      element.removeEventListener('error', handleError);
-      window.removeEventListener('message', handleMessage);
-    };
+    
+    // Note: Cleanup will happen automatically when React calls this ref with null
+    // Callback refs cannot return cleanup functions
   }, [toast]);
 
   // Execute full autonomous task
