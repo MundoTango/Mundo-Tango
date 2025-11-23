@@ -35,6 +35,7 @@ export interface VoiceCommandContext {
   handleStopListening?: () => void;
   handleStartListening?: () => void;
   handleTakeScreenshot?: () => void;
+  handleSaveChanges?: () => void;
   
   // Prompts
   setPrompt?: (text: string) => void;
@@ -300,11 +301,11 @@ export class VoiceCommandProcessor {
         category: 'visual-editor',
       },
       {
-        patterns: ['save changes', 'apply changes', 'save to codebase', 'apply to codebase'],
+        patterns: ['save changes', 'apply changes', 'save to codebase', 'apply to codebase', 'commit changes', 'save it'],
         action: () => {
-          this.context.handleApprove?.();
+          this.context.handleSaveChanges?.();
         },
-        description: 'Save changes to codebase',
+        description: 'Save visual editor changes to codebase',
         category: 'visual-editor',
       },
       {

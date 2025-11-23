@@ -420,6 +420,7 @@ Let's get started! What would you like to change?`,
         disableContinuousMode();
         stopListening();
       },
+      handleSaveChanges,
       setPrompt,
       handleSubmit
     });
@@ -440,11 +441,12 @@ Let's get started! What would you like to change?`,
           setVoiceModeEnabled(false);
           stopListening();
         },
+        handleSaveChanges,
         setPrompt,
         handleSubmit
       });
     }
-  }, [setViewMode, currentTask, stopListening]);
+  }, [setViewMode, currentTask, stopListening, handleSaveChanges]);
 
   // Sync task data
   useEffect(() => {
