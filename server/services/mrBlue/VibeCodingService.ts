@@ -26,6 +26,7 @@ import { ValidationService } from '../validation/ValidationService';
 import { autoRetryService } from './AutoRetryService';
 import { escalationService } from './EscalationService';
 import { evidenceCollector } from './EvidenceCollector';
+import { visualValidationService } from './VisualValidationService';
 import type { WorkflowStep } from '@shared/types/a2a';
 import * as fs from 'fs/promises';
 import * as path from 'path';
@@ -755,8 +756,14 @@ Respond ONLY with valid JSON, no additional text.`;
 
   /**
    * Apply generated code changes
+   * NOW WITH VISUAL VALIDATION (November 24, 2025)
    */
-  async applyChanges(sessionId: string, userId: number): Promise<ApplyResult> {
+  async applyChanges(sessionId: string, userId: number, options?: {
+    skipVisualValidation?: boolean;
+    targetUrl?: string;
+    targetPage?: string;
+    selectedElement?: string;
+  }): Promise<ApplyResult> {
     try {
       const result = this.sessionCache.get(sessionId);
       
@@ -777,6 +784,63 @@ Respond ONLY with valid JSON, no additional text.`;
           filesModified: [],
           error: 'Safety validation failed - manual review required',
         };
+      }
+
+      // STEP 1: Check if this change affects UI (visual validation required)
+      const isUIChange = result.fileChanges.some(change => 
+        change.filePath.match(/\.(tsx|jsx|css|html)$/) &&
+        !change.filePath.includes('test') &&
+        !change.filePath.includes('spec')
+      );
+
+      // STEP 2: Run visual validation for UI changes (UNLESS explicitly skipped)
+      if (isUIChange && !options?.skipVisualValidation) {
+        console.log('[VibeCoding] 🔍 UI change detected - Running visual validation...');
+        
+        try {
+          // Determine target URL and page
+          const targetUrl = options?.targetUrl || 'http://localhost:5000';
+          const targetPage = options?.targetPage || '/'; // Default to homepage
+          
+          // Run visual validation
+          const validationResult = await visualValidationService.validateChanges({
+            sessionId,
+            userId,
+            changeDescription: result.request,
+            targetUrl,
+            targetPage,
+            selectedElement: options?.selectedElement,
+            checkpoints: [
+              'Layout should be intact with no broken positioning',
+              'All text should be readable with proper contrast',
+              'Background transparency should not cause readability issues',
+              'All buttons and interactive elements should be visible',
+              'No overlapping or cut-off content'
+            ]
+          });
+
+          // BLOCK if visual validation failed
+          if (!validationResult.success) {
+            console.log('[VibeCoding] ❌ Visual validation FAILED - Changes NOT applied');
+            console.log(`[VibeCoding] Issues: ${validationResult.analysis.issues.join(', ')}`);
+            console.log(`[VibeCoding] Escalation ID: ${validationResult.escalationId}`);
+            
+            return {
+              success: false,
+              sessionId,
+              filesModified: [],
+              error: `Visual validation failed: ${validationResult.analysis.feedback}. Escalated to Replit AI (ID: ${validationResult.escalationId})`,
+            };
+          }
+
+          console.log('[VibeCoding] ✅ Visual validation PASSED - Proceeding with changes');
+        } catch (error: any) {
+          console.error('[VibeCoding] ⚠️ Visual validation error:', error.message);
+          console.log('[VibeCoding] Proceeding with caution...');
+          // Continue with changes but log the validation failure
+        }
+      } else if (isUIChange) {
+        console.log('[VibeCoding] ⚠️ UI change detected but visual validation SKIPPED (manual override)');
       }
 
       console.log(`[VibeCoding] 📝 Applying ${result.fileChanges.length} file changes...`);
