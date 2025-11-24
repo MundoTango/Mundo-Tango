@@ -1563,17 +1563,23 @@ Let's get started! What would you like to change?`,
                     </CardContent>
                   </Card>
                 ) : (
-                  conversationHistory.map((msg, idx) => (
-                    <div key={idx} className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-[85%] rounded-lg p-3 ${
-                        msg.role === 'user' 
-                          ? 'bg-primary text-primary-foreground' 
-                          : 'bg-muted'
-                      }`}>
-                        <p className="text-sm">{msg.content}</p>
-                      </div>
+                  <>
+                    {/* Debug: Show message count */}
+                    <div className="text-xs text-muted-foreground px-2 pb-2" data-testid="message-count">
+                      {conversationHistory.length} message{conversationHistory.length !== 1 ? 's' : ''}
                     </div>
-                  ))
+                    {conversationHistory.map((msg, idx) => (
+                      <div key={idx} className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`} data-testid={`message-${idx}`}>
+                        <div className={`max-w-[85%] rounded-lg p-3 ${
+                          msg.role === 'user' 
+                            ? 'bg-primary text-primary-foreground' 
+                            : 'bg-muted'
+                        }`}>
+                          <p className="text-sm whitespace-pre-wrap">{msg.content || '[Empty message]'}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </>
                 )}
               </div>
             </ScrollArea>
