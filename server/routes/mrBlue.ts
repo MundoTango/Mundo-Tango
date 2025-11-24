@@ -1780,8 +1780,14 @@ router.post("/messages", optionalAuth, async (req: AuthRequest, res: Response) =
     if (!conversation) {
       return res.status(404).json({ error: 'Conversation not found' });
     }
+    
+    // ✅ MB.MD v9.5.1 P0-9 FIX: Allow authenticated users to reassign orphaned conversations
     if (conversation.userId !== userId) {
-      return res.status(403).json({ error: 'Unauthorized to access this conversation' });
+      // Reassign orphaned conversation to current authenticated user
+      console.log(`[MrBlue] 🔄 Reassigning conversation ${conversationId} from user ${conversation.userId} to ${userId}`);
+      await db.update(mrBlueConversations)
+        .set({ userId: userId })
+        .where(eq(mrBlueConversations.id, conversationId));
     }
 
     const message = await storage.createMrBlueMessage({

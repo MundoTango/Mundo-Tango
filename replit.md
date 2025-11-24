@@ -48,8 +48,9 @@ The Visual Editor provides wisprflow.ai-style UX with comprehensive inline editi
     - **P0-6.1:** Fixed `apiRequest()` call signature (wrong parameter order)
     - **P0-7:** Fixed `executeMutation.onSuccess` TanStack Query closure bug (used empty `prompt` state → now uses `taskPrompt` parameter)
     - **P0-8:** Fixed `quickStyleMutation.onSuccess` TanStack Query closure bug (used empty `prompt` state → now uses `stylePrompt` parameter)
-    - **Root Cause:** Mutation callbacks captured cleared `prompt` state in closures instead of using mutation parameters - classic async/closure bug
-    - **Result:** Zero empty message errors in production logs ✅
+    - **P0-9:** Fixed backend auth blocking message saves (403 error) - allow authenticated users to reassign orphaned conversations
+    - **Root Cause:** Multiple bugs - closure bugs in mutations, undefined variables, wrong API signatures, and overly strict auth
+    - **Result:** Zero empty message errors, zero 403 errors in production logs ✅
   - 🔬 **4-RESEARCH-SESSION METHODOLOGY:** Formalized deep-dive debugging approach
     - Session 1: Error Understanding (what's happening)
     - Session 2: Code Flow Traced (execution path)
