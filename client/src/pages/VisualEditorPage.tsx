@@ -107,6 +107,7 @@ function VisualEditorPageContent() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const voiceCommandProcessorRef = useRef<VoiceCommandProcessor | null>(null);
   const replayIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const domSnapshotRef = useRef<string | null>(null); // ✅ MB.MD v9.5.1 P0-6 FIX #1: DOM snapshot for pre-generation analysis
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -549,6 +550,7 @@ Let's get started! What would you like to change?`,
   });
 
   // Capture screenshot before change - MUST BE BEFORE handleSubmit
+  // ✅ MB.MD v9.5.1 P0-6 FIX #2: Made non-blocking - errors don't crash message save
   const captureBeforeScreenshot = async () => {
     if (!iframeRef.current) return null;
     try {
@@ -564,7 +566,8 @@ Let's get started! What would you like to change?`,
       setBeforeScreenshot(id);
       return id;
     } catch (error) {
-      console.error('[VisualEditor] Failed to capture before screenshot:', error);
+      // ✅ Non-blocking: Log warning but don't throw - message save continues regardless
+      console.warn('[VisualEditor] ⚠️ Screenshot capture failed (non-blocking):', error);
       return null;
     }
   };
@@ -620,6 +623,13 @@ Let's get started! What would you like to change?`,
   }> => {
     try {
       console.log('[VisualEditor] 🔍 Analyzing request before generation...');
+      
+      // ✅ MB.MD v9.5.1 P0-6 FIX #1: Capture DOM snapshot before analysis
+      const iframe = iframeRef.current?.querySelector('iframe');
+      if (iframe?.contentDocument?.body) {
+        domSnapshotRef.current = iframe.contentDocument.body.innerHTML;
+        console.log('[VisualEditor] 📸 Captured DOM snapshot:', domSnapshotRef.current.length, 'chars');
+      }
       
       // Build context
       const context = {
@@ -695,6 +705,24 @@ Let's get started! What would you like to change?`,
     // ✅ CLEAR TEXT BOX IMMEDIATELY after capturing prompt (MB.MD v9.5 Fix #2)
     setPrompt('');
     
+    // ✅ MB.MD v9.5.1 P0-6 FIX #3: ADD USER MESSAGE TO CHAT IMMEDIATELY
+    // This ensures message appears even if analysis/screenshot fails
+    console.log('[VisualEditor] 💬 Adding user message to chat:', trimmedPrompt.substring(0, 50));
+    setConversationHistory(prev => [
+      ...prev,
+      { role: 'user', content: trimmedPrompt }
+    ]);
+    lastLocalUpdateRef.current = Date.now(); // Track timestamp to prevent race condition
+    
+    // Save user message to database (non-blocking)
+    if (currentConversationId) {
+      saveMessageMutation.mutateAsync({ role: 'user', content: trimmedPrompt })
+        .catch(error => {
+          console.warn('[VisualEditor] ⚠️ Failed to save user message (non-blocking):', error);
+          // Message already in UI, so this failure doesn't break UX
+        });
+    }
+    
     // Vibe Coding: Detect UI modification requests (e.g., "Make button blue", "make this container background transparent", "change div opacity")
     const isVibeCodeRequest = /\b(make|change|update|modify|set|add|remove)\s+(the|a|an|this|that)?\s*(button|header|text|color|background|container|div|element|section|card|panel|box|wrapper|style|size|width|height|padding|margin|border|radius|opacity|spacing)/i.test(trimmedPrompt) ||
                               /\b(have|with|to)\s+(a|an|the|this)?\s*(blue|red|green|yellow|white|black|transparent|opaque|hidden|visible|larger|smaller|wider|narrower|bold)/i.test(trimmedPrompt) ||
@@ -709,7 +737,7 @@ Let's get started! What would you like to change?`,
     const styleKeywords = ['color', 'size', 'bigger', 'smaller', 'center', 'font'];
     const isStyleOnly = styleKeywords.some(kw => lowerPrompt.includes(kw)) && trimmedPrompt.split(' ').length < 15;
 
-    // ✅ MB.MD v9.5 Fix #4: PRE-GENERATION ANALYSIS for vibe coding requests
+    // ✅ MB.MD v9.5 Fix #4: PRE-GENERATION ANALYSIS for vibe coding requests (now non-blocking)
     if ((isVibeCodeRequest || isBuildRequest) && !isStyleOnly) {
       console.log('[VisualEditor] 🧠 Running pre-generation analysis...');
       
