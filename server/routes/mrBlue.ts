@@ -1553,6 +1553,79 @@ Guidelines:
   }
 });
 
+// ============================================================================
+// MB.MD v9.5: VOICE TRANSCRIPTION (Fix #3)
+// ============================================================================
+
+/**
+ * Transcribe audio to text using OpenAI Whisper
+ * POST /api/mrblue/transcribe
+ * 
+ * Receives audio file from MediaRecorder and transcribes using Whisper API
+ * Returns: { success: boolean, transcript?: string }
+ */
+router.post("/transcribe", upload.single('audio'), async (req: Request, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        error: 'No audio file provided'
+      });
+    }
+
+    console.log('[MrBlue/Transcribe] 🎤 Transcribing audio:', req.file.originalname, req.file.size, 'bytes');
+
+    // Check if OpenAI API key is configured
+    if (!process.env.OPENAI_API_KEY) {
+      // Clean up uploaded file
+      if (fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
+      
+      return res.status(503).json({
+        success: false,
+        error: 'Voice transcription unavailable - OPENAI_API_KEY not configured'
+      });
+    }
+
+    // Create a read stream from the uploaded file
+    const audioFile = fs.createReadStream(req.file.path);
+
+    // Call OpenAI Whisper API
+    const transcription = await openai.audio.transcriptions.create({
+      file: audioFile,
+      model: "whisper-1",
+      language: req.body.language || "en",
+      response_format: "json",
+      temperature: 0.2
+    });
+
+    // Clean up uploaded file
+    fs.unlinkSync(req.file.path);
+
+    console.log('[MrBlue/Transcribe] ✅ Transcription successful:', transcription.text.substring(0, 100));
+
+    res.json({
+      success: true,
+      transcript: transcription.text,
+      language: req.body.language || "en"
+    });
+
+  } catch (error: any) {
+    console.error('[MrBlue/Transcribe] ❌ Transcription error:', error);
+
+    // Clean up file if it exists
+    if (req.file?.path && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to transcribe audio'
+    });
+  }
+});
+
 // ================== PHASE 1: CONVERSATION PERSISTENCE API ==================
 
 // 🔥 FIX: GET /conversations - Frontend was getting HTML because this route was missing
