@@ -43,14 +43,15 @@ The Visual Editor provides wisprflow.ai-style UX with comprehensive inline editi
     - P0-3: Voice transcription endpoint `/api/mrblue/transcribe` (OpenAI Whisper integration)
     - P1-4: Pre-generation context analysis `/api/mrblue/analyze` (AI-powered request analysis)
     - **P0-5: Empty message bug - PARTIAL FIX** (timestamp-based race condition guard - helped but didn't fully fix the root cause)
-  - ✅ **MB.MD v9.5.1 PHASE 2 COMPLETE:** Empty message bug root cause fixed via 4-Research-Session methodology
+  - ✅ **MB.MD v9.5.1 PHASE 2 COMPLETE:** Empty message bug + color change bug fixed via 4-Research-Session methodology
     - **P0-6:** Fixed `iframeUrl` variable name typo → `currentIframeUrl` (analysis was failing)
     - **P0-6.1:** Fixed `apiRequest()` call signature (wrong parameter order)
     - **P0-7:** Fixed `executeMutation.onSuccess` TanStack Query closure bug (used empty `prompt` state → now uses `taskPrompt` parameter)
     - **P0-8:** Fixed `quickStyleMutation.onSuccess` TanStack Query closure bug (used empty `prompt` state → now uses `stylePrompt` parameter)
     - **P0-9:** Fixed backend auth blocking message saves (403 error) - allow authenticated users to reassign orphaned conversations
-    - **Root Cause:** Multiple bugs - closure bugs in mutations, undefined variables, wrong API signatures, and overly strict auth
-    - **Result:** Zero empty message errors, zero 403 errors in production logs ✅
+    - **P0-10:** Fixed selector extraction from prompt (color change bug) - parse `#element-1763981558346` from user message instead of applying CSS to `*`
+    - **Root Cause:** Multiple bugs - closure bugs in mutations, undefined variables, wrong API signatures, overly strict auth, and missing selector extraction
+    - **Result:** Zero empty message errors, zero 403 errors, color changes work correctly ✅
   - 🔬 **4-RESEARCH-SESSION METHODOLOGY:** Formalized deep-dive debugging approach
     - Session 1: Error Understanding (what's happening)
     - Session 2: Code Flow Traced (execution path)
