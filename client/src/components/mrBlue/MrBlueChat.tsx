@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Send, Sparkles, Loader2, X, Check, Mic, ToggleLeft, ToggleRight, Phone, PhoneOff } from "lucide-react";
+import { Send, Sparkles, Loader2, X, Check, Mic, ToggleLeft, ToggleRight, Phone, PhoneOff, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -598,6 +598,32 @@ Provide natural, conversational assistance based on where the user is in the pla
     }
   };
 
+  const copyConversation = () => {
+    try {
+      const conversationText = messages
+        .filter(msg => msg.id !== '1' && !msg.deletedAt)
+        .map(msg => {
+          const author = msg.role === 'user' ? 'scott' : 'mr blue';
+          return `${author}: ${msg.content}`;
+        })
+        .join('\n\n');
+      
+      navigator.clipboard.writeText(conversationText);
+      toast({
+        title: "✅ Conversation Copied!",
+        description: "The conversation has been copied to your clipboard with author attribution.",
+      });
+      console.log('[MrBlueChat] Copied conversation:', conversationText.length, 'characters');
+    } catch (error) {
+      console.error('[MrBlueChat] Copy error:', error);
+      toast({
+        title: "❌ Copy Failed",
+        description: "Could not copy the conversation. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <main role="main" className="flex flex-col h-full">
       {/* Page Awareness & Active Agents - MB.MD v9.2 */}
@@ -606,36 +632,50 @@ Provide natural, conversational assistance based on where the user is in the pla
       
       {/* ElevenLabs TTS Controls - ALWAYS visible for human voice */}
       <div className="p-4 border-b bg-muted/20 space-y-4">
-        <div className="flex items-center gap-4 flex-wrap">
-          <div className="flex items-center gap-2">
-            <Label className="whitespace-nowrap font-semibold">🎙️ Human Voice (ElevenLabs):</Label>
-            <Button
-              size="sm"
-              variant={elevenLabsVoiceEnabled ? "default" : "outline"}
-              onClick={() => setElevenLabsVoiceEnabled(!elevenLabsVoiceEnabled)}
-              data-testid="button-toggle-elevenlabs-voice"
-            >
-              {elevenLabsVoiceEnabled ? <ToggleRight className="w-4 h-4 mr-2" /> : <ToggleLeft className="w-4 h-4 mr-2" />}
-              {elevenLabsVoiceEnabled ? 'Enabled' : 'Disabled'}
-            </Button>
+        <div className="flex items-center gap-4 flex-wrap justify-between">
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex items-center gap-2">
+              <Label className="whitespace-nowrap font-semibold">🎙️ Human Voice (ElevenLabs):</Label>
+              <Button
+                size="sm"
+                variant={elevenLabsVoiceEnabled ? "default" : "outline"}
+                onClick={() => setElevenLabsVoiceEnabled(!elevenLabsVoiceEnabled)}
+                data-testid="button-toggle-elevenlabs-voice"
+              >
+                {elevenLabsVoiceEnabled ? <ToggleRight className="w-4 h-4 mr-2" /> : <ToggleLeft className="w-4 h-4 mr-2" />}
+                {elevenLabsVoiceEnabled ? 'Enabled' : 'Disabled'}
+              </Button>
+            </div>
+
+            {elevenLabsVoiceEnabled && (
+              <div className="flex items-center gap-2">
+                <Label className="whitespace-nowrap">Select Voice:</Label>
+                <Select value={selectedElevenLabsVoice} onValueChange={setSelectedElevenLabsVoice} data-testid="select-elevenlabs-voice">
+                  <SelectTrigger className="w-[240px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="21m00Tcm4TlvDq8ikWAM">Rachel (Professional Female)</SelectItem>
+                    <SelectItem value="AZnzlk1XvdvUeBnXmlld">Domi (Strong Male)</SelectItem>
+                    <SelectItem value="EXAVITQu4vr4xnSDxMaL">Bella (Soft Female)</SelectItem>
+                    <SelectItem value="ErXwobaYiN019PkySvjV">Antoni (Well-Rounded Male)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
 
-          {elevenLabsVoiceEnabled && (
-            <div className="flex items-center gap-2">
-              <Label className="whitespace-nowrap">Select Voice:</Label>
-              <Select value={selectedElevenLabsVoice} onValueChange={setSelectedElevenLabsVoice} data-testid="select-elevenlabs-voice">
-                <SelectTrigger className="w-[240px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="21m00Tcm4TlvDq8ikWAM">Rachel (Professional Female)</SelectItem>
-                  <SelectItem value="AZnzlk1XvdvUeBnXmlld">Domi (Strong Male)</SelectItem>
-                  <SelectItem value="EXAVITQu4vr4xnSDxMaL">Bella (Soft Female)</SelectItem>
-                  <SelectItem value="ErXwobaYiN019PkySvjV">Antoni (Well-Rounded Male)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+          {/* Copy Conversation Button */}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={copyConversation}
+            disabled={messages.filter(m => m.id !== '1' && !m.deletedAt).length === 0}
+            data-testid="button-copy-conversation"
+          >
+            <Copy className="w-4 h-4 mr-2" />
+            Copy Conversation
+          </Button>
         </div>
 
         {elevenLabsVoiceEnabled && (

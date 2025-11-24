@@ -1372,19 +1372,28 @@ export const IFRAME_SELECTION_SCRIPT = `
     const target = e.target;
     
     // COMMAND+CLICK (or CTRL+CLICK) NAVIGATION - Like Replit
-    if ((e.metaKey || e.ctrlKey) && target.tagName === 'A') {
-      e.preventDefault();
-      e.stopPropagation();
+    if (e.metaKey || e.ctrlKey) {
+      // Find closest link or button
+      const link = target.closest('a');
+      const button = target.closest('button');
       
-      const href = target.getAttribute('href');
-      if (href && href.startsWith('/')) {
-        // Send navigation request to parent
-        window.parent.postMessage({
-          type: 'IFRAME_NAVIGATE',
-          url: href
-        }, '*');
-        return;
+      if (link) {
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('/')) {
+          e.preventDefault();
+          e.stopPropagation();
+          // Send navigation request to parent
+          window.parent.postMessage({
+            type: 'IFRAME_NAVIGATE',
+            url: href
+          }, '*');
+          return;
+        }
       }
+      
+      // ✅ Allow Cmd+Click to pass through for form submissions and external links
+      console.log('[VisualEditor] Cmd+Click detected - allowing default behavior');
+      return; // Don't prevent default for Cmd+Click
     }
 
     // REGULAR CLICK - Element selection
