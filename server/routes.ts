@@ -3340,6 +3340,83 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Upcoming events endpoint - for Dashboard
+  app.get("/api/users/:id/upcoming-events", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.id);
+      
+      const upcomingEvents = await db
+        .select({
+          id: events.id,
+          title: events.title,
+          startDate: events.startDate,
+          location: events.location,
+        })
+        .from(events)
+        .innerJoin(eventRsvps, eq(events.id, eventRsvps.eventId))
+        .where(
+          and(
+            eq(eventRsvps.userId, userId),
+            eq(eventRsvps.status, 'going'),
+            gte(events.startDate, sql`NOW()`)
+          )
+        )
+        .orderBy(events.startDate)
+        .limit(3);
+
+      res.json(upcomingEvents);
+    } catch (error) {
+      console.error('Failed to fetch upcoming events:', error);
+      res.status(500).json({ message: "Failed to fetch upcoming events" });
+    }
+  });
+
+  // Recent activity endpoint - for Dashboard
+  app.get("/api/users/:id/recent-activity", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.id);
+      
+      // Fetch recent post likes
+      const recentLikes = await db
+        .select({
+          type: sql<string>`'post_like'`,
+          createdAt: postLikes.createdAt,
+          targetId: posts.id,
+          relatedUser: users.name,
+        })
+        .from(postLikes)
+        .innerJoin(posts, eq(postLikes.postId, posts.id))
+        .innerJoin(users, eq(posts.userId, users.id))
+        .where(eq(postLikes.userId, userId))
+        .orderBy(desc(postLikes.createdAt))
+        .limit(5);
+
+      // Fetch recent event RSVPs
+      const recentRsvps = await db
+        .select({
+          type: sql<string>`'event_rsvp'`,
+          createdAt: eventRsvps.rsvpedAt,
+          targetId: events.id,
+          relatedUser: events.title,
+        })
+        .from(eventRsvps)
+        .innerJoin(events, eq(eventRsvps.eventId, events.id))
+        .where(eq(eventRsvps.userId, userId))
+        .orderBy(desc(eventRsvps.rsvpedAt))
+        .limit(5);
+
+      // Combine and sort all activities
+      const allActivities = [...recentLikes, ...recentRsvps]
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .slice(0, 3);
+
+      res.json(allActivities);
+    } catch (error) {
+      console.error('Failed to fetch recent activity:', error);
+      res.status(500).json({ message: "Failed to fetch recent activity" });
+    }
+  });
+
   // Global search endpoint for UnifiedTopBar
   app.get("/api/user/global-search", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
