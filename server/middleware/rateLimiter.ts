@@ -52,10 +52,16 @@ export const authRateLimiter = rateLimit({
 // API rate limiter for general API endpoints
 export const apiRateLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 30, // 30 requests per minute
+  max: process.env.NODE_ENV === 'production' ? 30 : 1000, // 30 in production, 1000 in dev/test
   message: "API rate limit exceeded",
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req: Request) => {
+    // Skip rate limiting for localhost in development/test
+    const isDevelopment = process.env.NODE_ENV !== 'production';
+    const isLocalhost = req.ip === '127.0.0.1' || req.ip === '::1' || req.ip?.includes('::ffff:127.0.0.1');
+    return isDevelopment && isLocalhost;
+  },
 });
 
 // Upload rate limiter for file uploads
