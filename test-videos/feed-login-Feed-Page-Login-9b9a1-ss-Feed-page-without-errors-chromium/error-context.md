@@ -1,0 +1,161 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - main [ref=e3]:
+    - region "Conversation panel" [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - img [ref=e7]
+          - heading "Mr. Blue Visual Editor" [level=1] [ref=e9]
+        - paragraph [ref=e10]: AI-Powered Conversational Code Generation
+      - generic [ref=e11]:
+        - generic [ref=e12]:
+          - heading "Conversation History" [level=2] [ref=e13]
+          - paragraph [ref=e14]: Your chat with Mr. Blue
+        - generic [ref=e19]:
+          - generic [ref=e21]:
+            - img [ref=e22]
+            - text: Getting Started
+          - generic [ref=e26]:
+            - paragraph [ref=e27]: Tell me what you want to build or change!
+            - generic [ref=e28]:
+              - heading "Examples:" [level=3] [ref=e29]
+              - generic [ref=e30]:
+                - paragraph [ref=e31]: • "Make the header blue"
+                - paragraph [ref=e32]: • "Add a hero section"
+                - paragraph [ref=e33]: • "Center that button"
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - generic [ref=e36]: Prompt Input
+          - generic [ref=e37]: Tell Mr. Blue what you want to build or change
+        - generic [ref=e38]:
+          - textbox "Describe what you want..." [disabled] [ref=e40]
+          - heading "Quick Examples" [level=3] [ref=e43]:
+            - button "Quick Examples" [ref=e44] [cursor=pointer]:
+              - generic [ref=e45]:
+                - img [ref=e46]
+                - generic [ref=e48]: Quick Examples
+              - img [ref=e49]
+          - generic [ref=e51]:
+            - button [disabled]:
+              - img
+            - button [disabled]:
+              - img
+            - button [ref=e52] [cursor=pointer]:
+              - img
+    - region "Analysis panel" [ref=e53]:
+      - tablist [ref=e56]:
+        - tab "Element" [ref=e57] [cursor=pointer]:
+          - img
+          - text: Element
+        - tab "Errors" [selected] [ref=e59] [cursor=pointer]:
+          - img
+          - text: Errors
+        - tab "Memory" [ref=e68] [cursor=pointer]:
+          - img
+          - text: Memory
+        - tab "Progress" [ref=e78] [cursor=pointer]:
+          - img
+          - text: Progress
+        - tab "Auto" [ref=e80] [cursor=pointer]:
+          - img [ref=e81]
+          - text: Auto
+      - generic [ref=e84]:
+        - generic [ref=e85]:
+          - generic [ref=e86]:
+            - generic [ref=e87]:
+              - img [ref=e88]
+              - generic [ref=e90]: Error Analysis
+            - generic [ref=e91]: 1 patterns
+          - generic [ref=e92]: AI-analyzed error patterns with suggested fixes
+        - generic [ref=e99] [cursor=pointer]:
+          - generic [ref=e100]:
+            - generic [ref=e101]:
+              - generic [ref=e102]:
+                - img [ref=e103]
+                - generic [ref=e105]: console.error
+              - paragraph [ref=e106]: "[VisualEditor] ❌ Fatal injection error: SecurityError: Failed to read a named property 'document' from 'Window': Blocked a frame with origin \"http://localhost:5000\" from accessing a cross-origin frame."
+            - generic [ref=e107]:
+              - generic [ref=e108]: analyzed
+              - generic [ref=e109]: 80% confident
+          - generic [ref=e110]:
+            - generic [ref=e111]:
+              - img [ref=e112]
+              - generic [ref=e115]: 1x
+            - generic [ref=e116]:
+              - img [ref=e117]
+              - generic [ref=e120]: 11/24/2025
+          - generic [ref=e121]:
+            - button "Apply Fix" [ref=e122]:
+              - img
+              - text: Apply Fix
+            - button "Escalate to Senior Agent" [ref=e123]:
+              - img
+              - text: Escalate to Senior Agent
+    - region "Preview panel" [ref=e124]:
+      - generic [ref=e126]:
+        - heading "Visual Editor" [level=2] [ref=e127]
+        - tablist [ref=e129]:
+          - tab "Live Preview" [selected] [ref=e130] [cursor=pointer]:
+            - img [ref=e131]
+            - text: Live Preview
+          - tab "Generated Code" [ref=e134] [cursor=pointer]:
+            - img [ref=e135]
+            - text: Generated Code
+          - tab "History" [ref=e139] [cursor=pointer]:
+            - img [ref=e140]
+            - text: History
+      - generic [ref=e144]:
+        - generic [ref=e145]:
+          - button "Go Back" [disabled]:
+            - img
+          - button "Go Forward" [disabled]:
+            - img
+          - button "Refresh" [ref=e146] [cursor=pointer]:
+            - img
+          - button "Home" [ref=e147] [cursor=pointer]:
+            - img
+          - generic "Local (Secure)" [ref=e148]:
+            - img [ref=e149]
+          - textbox "Enter page URL (e.g., /landing, /home, /profile)" [ref=e153]: /landing
+          - button "Add Bookmark" [ref=e154] [cursor=pointer]:
+            - img
+          - button "Navigation History" [disabled]:
+            - img
+        - iframe [ref=e156]:
+          
+        - generic [ref=e157]:
+          - generic [ref=e158]:
+            - generic [ref=e159]:
+              - generic [ref=e160]: Inline Editing Shortcuts
+              - button [ref=e161] [cursor=pointer]:
+                - img
+            - generic [ref=e162]: Click elements in the preview to edit directly
+          - generic [ref=e163]:
+            - generic [ref=e164]:
+              - img [ref=e166]
+              - generic [ref=e168]:
+                - generic [ref=e169]: Double-Click to Edit Text
+                - generic [ref=e170]: Click any text, type your changes, click away to save
+            - generic [ref=e171]:
+              - img [ref=e173]
+              - generic [ref=e176]:
+                - generic [ref=e177]: Delete Key to Remove
+                - generic [ref=e178]: Select element, press Delete or Backspace
+            - generic [ref=e179]:
+              - img [ref=e181]
+              - generic [ref=e186]:
+                - generic [ref=e187]: Alt+Drag to Move
+                - generic [ref=e188]: Hold Alt (⌥) and drag selected element
+            - generic [ref=e189]:
+              - img [ref=e191]
+              - generic [ref=e197]:
+                - generic [ref=e198]: Cmd+Click to Navigate
+                - generic [ref=e199]: Hold Cmd (⌘) or Ctrl and click links
+            - generic [ref=e200]: 💡 All changes auto-tracked for saving
+  - button [ref=e201] [cursor=pointer]:
+    - img
+```
