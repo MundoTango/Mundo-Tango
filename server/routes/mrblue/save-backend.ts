@@ -76,11 +76,9 @@ router.post('/', async (req, res) => {
 });
 
 /**
- * GET /api/mrblue/save-backend/status
+ * GET /api/mrblue/save-backend/status/:conversationId
  * Get save button status (enabled/disabled, tooltip)
- * 
- * Query params:
- * - conversationId: number
+ * 🔥 MB.MD v9.4: Fixed to use path param instead of query param
  * 
  * Response:
  * {
@@ -90,14 +88,14 @@ router.post('/', async (req, res) => {
  *   filesModified: number
  * }
  */
-router.get('/status', (req, res) => {
+router.get('/status/:conversationId', (req, res) => {
   try {
-    const conversationId = parseInt(req.query.conversationId as string);
+    const conversationId = parseInt(req.params.conversationId);
     
-    if (!conversationId) {
+    if (!conversationId || isNaN(conversationId)) {
       return res.status(400).json({
         success: false,
-        error: 'conversationId is required',
+        error: 'conversationId is required and must be a number',
       });
     }
     
