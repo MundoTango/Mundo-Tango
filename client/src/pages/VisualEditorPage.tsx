@@ -838,7 +838,89 @@ Let's get started! What would you like to change?`,
                 element.addEventListener('blur', saveChanges);
               }, true);
               
-              console.log('[IframeSelection] Click-to-select + double-click-to-edit enabled');
+              // Delete key to delete selected element
+              document.addEventListener('keydown', function(e) {
+                if ((e.key === 'Delete' || e.key === 'Backspace') && selectedElement && !selectedElement.contentEditable) {
+                  e.preventDefault();
+                  const elementInfo = {
+                    id: selectedElement.id || 'element-' + Date.now(),
+                    tagName: selectedElement.tagName.toLowerCase(),
+                    className: selectedElement.className || '',
+                    testId: selectedElement.getAttribute('data-testid') || null
+                  };
+                  
+                  selectedElement.remove();
+                  selectedElement = null;
+                  
+                  window.parent.postMessage({
+                    type: 'IFRAME_ELEMENT_DELETED',
+                    component: elementInfo
+                  }, '*');
+                  
+                  console.log('[IframeSelection] Element deleted:', elementInfo.tagName);
+                }
+              });
+              
+              // Alt+Drag to move elements (basic implementation)
+              let isDragging = false;
+              let dragElement = null;
+              let offsetX = 0;
+              let offsetY = 0;
+              
+              document.addEventListener('mousedown', function(e) {
+                if (e.altKey && selectedElement) {
+                  e.preventDefault();
+                  isDragging = true;
+                  dragElement = selectedElement;
+                  
+                  // Ensure element is positioned
+                  if (window.getComputedStyle(dragElement).position === 'static') {
+                    dragElement.style.position = 'relative';
+                  }
+                  
+                  offsetX = e.clientX - (parseFloat(dragElement.style.left) || 0);
+                  offsetY = e.clientY - (parseFloat(dragElement.style.top) || 0);
+                  
+                  dragElement.style.cursor = 'move';
+                  dragElement.style.userSelect = 'none';
+                }
+              });
+              
+              document.addEventListener('mousemove', function(e) {
+                if (isDragging && dragElement) {
+                  e.preventDefault();
+                  const left = e.clientX - offsetX;
+                  const top = e.clientY - offsetY;
+                  
+                  dragElement.style.left = left + 'px';
+                  dragElement.style.top = top + 'px';
+                }
+              });
+              
+              document.addEventListener('mouseup', function(e) {
+                if (isDragging && dragElement) {
+                  isDragging = false;
+                  dragElement.style.cursor = '';
+                  dragElement.style.userSelect = '';
+                  
+                  window.parent.postMessage({
+                    type: 'IFRAME_ELEMENT_MOVED',
+                    component: {
+                      id: dragElement.id || 'element-' + Date.now(),
+                      tagName: dragElement.tagName.toLowerCase(),
+                      testId: dragElement.getAttribute('data-testid') || null,
+                      position: {
+                        left: dragElement.style.left,
+                        top: dragElement.style.top
+                      }
+                    }
+                  }, '*');
+                  
+                  dragElement = null;
+                }
+              });
+              
+              console.log('[IframeSelection] Click-to-select + double-click-to-edit + Delete + Alt+Drag enabled');
             })();
           `;
           iframeDoc.body.appendChild(script);
