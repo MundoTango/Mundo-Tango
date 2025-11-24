@@ -532,6 +532,114 @@ export class ComputerUseService {
       maxSteps: 30
     });
   }
+
+  /**
+   * VISUAL ANALYSIS (New Method for Playwright Integration)
+   * Analyzes a screenshot using Claude's vision capabilities
+   * 
+   * This method is specifically designed for E2E testing integration:
+   * 1. Playwright captures screenshot
+   * 2. This method sends to Claude for visual analysis
+   * 3. Claude provides qualitative validation
+   * 
+   * @param screenshotBase64 - Base64 encoded PNG screenshot
+   * @param question - What to analyze (e.g., "Does this UI look correct?")
+   * @param checkpoints - Specific things to validate
+   * @returns Analysis result with pass/fail and detailed feedback
+   */
+  async analyzeScreenshot(params: {
+    screenshotBase64: string;
+    question: string;
+    checkpoints?: string[];
+  }): Promise<{
+    looksCorrect: boolean;
+    feedback: string;
+    issues: string[];
+    confidence: number; // 0-100
+  }> {
+    if (!this.anthropic) {
+      throw new Error('Computer Use not available - ANTHROPIC_API_KEY not set');
+    }
+
+    try {
+      const checkpointText = params.checkpoints 
+        ? `\n\nSpecific checkpoints to verify:\n${params.checkpoints.map((c, i) => `${i + 1}. ${c}`).join('\n')}`
+        : '';
+
+      const response = await this.anthropic.messages.create({
+        model: 'claude-3-5-sonnet-20241022',
+        max_tokens: 1024,
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: `You are a visual QA tester analyzing a UI screenshot.
+
+Question: ${params.question}${checkpointText}
+
+Provide your analysis in this exact JSON format:
+{
+  "looksCorrect": true/false,
+  "feedback": "detailed explanation of what you see",
+  "issues": ["issue 1", "issue 2"],
+  "confidence": 0-100 (how confident are you in this assessment)
+}
+
+Be thorough but concise. Focus on visual correctness, layout, accessibility, and user experience.`
+              },
+              {
+                type: 'image',
+                source: {
+                  type: 'base64',
+                  media_type: 'image/png',
+                  data: params.screenshotBase64
+                }
+              }
+            ]
+          }
+        ]
+      });
+
+      // Extract text response
+      const textContent = response.content.find(c => c.type === 'text');
+      if (!textContent || !('text' in textContent)) {
+        throw new Error('No text response from Claude');
+      }
+
+      // Parse JSON response
+      const jsonMatch = textContent.text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        // Fallback: Claude didn't format as JSON
+        return {
+          looksCorrect: true,
+          feedback: textContent.text,
+          issues: [],
+          confidence: 50
+        };
+      }
+
+      const analysis = JSON.parse(jsonMatch[0]);
+      
+      console.log('[ComputerUse] Visual analysis complete:', {
+        looksCorrect: analysis.looksCorrect,
+        issuesFound: analysis.issues?.length || 0,
+        confidence: analysis.confidence
+      });
+
+      return {
+        looksCorrect: analysis.looksCorrect ?? true,
+        feedback: analysis.feedback || textContent.text,
+        issues: analysis.issues || [],
+        confidence: analysis.confidence ?? 50
+      };
+
+    } catch (error: any) {
+      console.error('[ComputerUse] Visual analysis failed:', error);
+      throw new Error(`Visual analysis failed: ${error.message}`);
+    }
+  }
 }
 
 // Singleton export

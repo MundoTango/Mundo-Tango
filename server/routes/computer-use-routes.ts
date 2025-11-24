@@ -15,6 +15,51 @@ import { nanoid } from 'nanoid';
 const router = Router();
 
 /**
+ * VISUAL ANALYSIS - NEW ENDPOINT FOR PLAYWRIGHT INTEGRATION
+ * POST /api/computer-use/analyze-screenshot
+ * 
+ * Accepts a screenshot and returns Claude's visual analysis
+ * Used for hybrid Playwright + Computer Use testing
+ */
+router.post('/analyze-screenshot', async (req: Request, res: Response) => {
+  try {
+    const { screenshotBase64, question, checkpoints } = req.body;
+
+    if (!screenshotBase64) {
+      return res.status(400).json({
+        success: false,
+        error: 'screenshotBase64 is required'
+      });
+    }
+
+    if (!question) {
+      return res.status(400).json({
+        success: false,
+        error: 'question is required'
+      });
+    }
+
+    const analysis = await computerUseService.analyzeScreenshot({
+      screenshotBase64,
+      question,
+      checkpoints
+    });
+
+    res.json({
+      success: true,
+      analysis
+    });
+
+  } catch (error: any) {
+    console.error('[Computer Use API] Visual analysis error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+/**
  * POST /api/computer-use/automate
  * Start a new computer automation task
  */
