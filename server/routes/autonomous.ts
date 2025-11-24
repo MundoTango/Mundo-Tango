@@ -192,16 +192,29 @@ router.post("/quick-style",
 
       const startTime = Date.now();
 
-      // Resolve element reference if provided
+      // ✅ P0-10 FIX: Extract selector from prompt FIRST (strip quotes before matching)
       let resolvedSelector = element;
-      if (element && typeof element === 'string') {
-        const selectorResult = await elementSelector.parseElementReference(element, userId);
-        resolvedSelector = selectorResult.selector;
+      const cleanPrompt = prompt.trim().replace(/^["']|["']$/g, ''); // Strip surrounding quotes
+      const elementMatch = cleanPrompt.match(/^#(element-\d+|[\w-]+)\s+/);
+      
+      if (elementMatch) {
+        // Selector found in prompt - use it!
+        const selectorFromPrompt = `#${elementMatch[1]}`;
+        console.log('[Autonomous] ✅ Extracted selector from prompt:', selectorFromPrompt);
+        resolvedSelector = selectorFromPrompt;
       } else {
-        // Try to get last selected element from context
-        const lastElement = conversationContext.getLastSelectedElement(userId);
-        if (lastElement) {
-          resolvedSelector = lastElement;
+        console.log('[Autonomous] ℹ️ No selector in prompt, using element parameter');
+        
+        // Fall back to element parameter
+        if (element && typeof element === 'string') {
+          const selectorResult = await elementSelector.parseElementReference(element, userId);
+          resolvedSelector = selectorResult.selector;
+        } else {
+          // Try to get last selected element from context
+          const lastElement = conversationContext.getLastSelectedElement(userId);
+          if (lastElement) {
+            resolvedSelector = lastElement;
+          }
         }
       }
 
