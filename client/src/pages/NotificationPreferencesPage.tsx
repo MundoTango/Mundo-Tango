@@ -68,10 +68,11 @@ export default function NotificationPreferencesPage() {
   }, [emailPrefs]);
 
   const updatePreferencesMutation = useMutation({
-    mutationFn: async (data: NotificationPreferences) => {
-      return await apiRequest("PATCH", "/api/user/notification-preferences", data);
+    mutationFn: async (data: EmailPreferences) => {
+      return await apiRequest("/api/user/email-preferences", "PATCH", data);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/user/email-preferences'] });
       toast({ title: "Preferences saved successfully" });
     },
     onError: () => {
@@ -80,29 +81,34 @@ export default function NotificationPreferencesPage() {
   });
 
   const handleToggle = (type: 'email' | 'push', key: string) => {
-    setPreferences(prev => {
-      if (type === 'email') {
-        return {
-          ...prev,
-          email: {
-            ...prev.email,
-            [key]: !prev.email[key as keyof typeof prev.email],
-          },
-        };
-      } else {
-        return {
-          ...prev,
-          push: {
-            ...prev.push,
-            [key]: !prev.push[key as keyof typeof prev.push],
-          },
-        };
-      }
-    });
-  };
-
-  const handleSave = () => {
-    updatePreferencesMutation.mutate(preferences);
+    if (type === 'email') {
+      const newEmailPrefs = {
+        ...preferences.email,
+        [key]: !preferences.email[key as keyof typeof preferences.email],
+      };
+      
+      setPreferences(prev => ({
+        ...prev,
+        email: newEmailPrefs,
+      }));
+      
+      // Save immediately to backend (no fake setTimeout!)
+      updatePreferencesMutation.mutate(newEmailPrefs);
+    } else {
+      setPreferences(prev => ({
+        ...prev,
+        push: {
+          ...prev.push,
+          [key]: !prev.push[key as keyof typeof prev.push],
+        },
+      }));
+      // Note: Push notifications not implemented in backend yet
+      toast({ 
+        title: "Push notifications coming soon", 
+        description: "Push notification settings will be available in a future update.",
+        variant: "default"
+      });
+    }
   };
 
   return (
@@ -137,123 +143,131 @@ export default function NotificationPreferencesPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="email-events" className="text-base flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
-                      Event Updates
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      Notifications about new events and changes
-                    </p>
+                {isLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                   </div>
-                  <Switch
-                    id="email-events"
-                    checked={preferences.email.events}
-                    onCheckedChange={() => handleToggle('email', 'events')}
-                    data-testid="switch-email-events"
-                  />
-                </div>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="email-event-invite" className="text-base flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          Event Invites
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          Notifications about new event invitations
+                        </p>
+                      </div>
+                      <Switch
+                        id="email-event-invite"
+                        checked={preferences.email.eventInvite}
+                        onCheckedChange={() => handleToggle('email', 'eventInvite')}
+                        data-testid="switch-email-event-invite"
+                      />
+                    </div>
 
-                <Separator />
+                    <Separator />
 
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="email-messages" className="text-base flex items-center gap-2">
-                      <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                      Messages
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      New direct messages from other users
-                    </p>
-                  </div>
-                  <Switch
-                    id="email-messages"
-                    checked={preferences.email.messages}
-                    onCheckedChange={() => handleToggle('email', 'messages')}
-                    data-testid="switch-email-messages"
-                  />
-                </div>
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="email-new-message" className="text-base flex items-center gap-2">
+                          <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                          New Messages
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          New direct messages from other users
+                        </p>
+                      </div>
+                      <Switch
+                        id="email-new-message"
+                        checked={preferences.email.newMessage}
+                        onCheckedChange={() => handleToggle('email', 'newMessage')}
+                        data-testid="switch-email-new-message"
+                      />
+                    </div>
 
-                <Separator />
+                    <Separator />
 
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="email-friend-requests" className="text-base flex items-center gap-2">
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                      Friend Requests
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      When someone sends you a friend request
-                    </p>
-                  </div>
-                  <Switch
-                    id="email-friend-requests"
-                    checked={preferences.email.friendRequests}
-                    onCheckedChange={() => handleToggle('email', 'friendRequests')}
-                    data-testid="switch-email-friend-requests"
-                  />
-                </div>
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="email-friend-request" className="text-base flex items-center gap-2">
+                          <Users className="h-4 w-4 text-muted-foreground" />
+                          Friend Requests
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          When someone sends you a friend request
+                        </p>
+                      </div>
+                      <Switch
+                        id="email-friend-request"
+                        checked={preferences.email.friendRequest}
+                        onCheckedChange={() => handleToggle('email', 'friendRequest')}
+                        data-testid="switch-email-friend-request"
+                      />
+                    </div>
 
-                <Separator />
+                    <Separator />
 
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="email-group-invites" className="text-base flex items-center gap-2">
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                      Group Invites
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      Invitations to join groups
-                    </p>
-                  </div>
-                  <Switch
-                    id="email-group-invites"
-                    checked={preferences.email.groupInvites}
-                    onCheckedChange={() => handleToggle('email', 'groupInvites')}
-                    data-testid="switch-email-group-invites"
-                  />
-                </div>
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="email-event-reminder" className="text-base flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          Event Reminders
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          Reminders before events you're attending
+                        </p>
+                      </div>
+                      <Switch
+                        id="email-event-reminder"
+                        checked={preferences.email.eventReminder}
+                        onCheckedChange={() => handleToggle('email', 'eventReminder')}
+                        data-testid="switch-email-event-reminder"
+                      />
+                    </div>
 
-                <Separator />
+                    <Separator />
 
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="email-event-reminders" className="text-base flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
-                      Event Reminders
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      Reminders before events you're attending
-                    </p>
-                  </div>
-                  <Switch
-                    id="email-event-reminders"
-                    checked={preferences.email.eventReminders}
-                    onCheckedChange={() => handleToggle('email', 'eventReminders')}
-                    data-testid="switch-email-event-reminders"
-                  />
-                </div>
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="email-weekly-digest" className="text-base flex items-center gap-2">
+                          <Mail className="h-4 w-4 text-muted-foreground" />
+                          Weekly Digest
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          Weekly summary of tango news and tips
+                        </p>
+                      </div>
+                      <Switch
+                        id="email-weekly-digest"
+                        checked={preferences.email.weeklyDigest}
+                        onCheckedChange={() => handleToggle('email', 'weeklyDigest')}
+                        data-testid="switch-email-weekly-digest"
+                      />
+                    </div>
 
-                <Separator />
+                    <Separator />
 
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="email-newsletter" className="text-base flex items-center gap-2">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
-                      Newsletter
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      Weekly digest of tango news and tips
-                    </p>
-                  </div>
-                  <Switch
-                    id="email-newsletter"
-                    checked={preferences.email.newsletter}
-                    onCheckedChange={() => handleToggle('email', 'newsletter')}
-                    data-testid="switch-email-newsletter"
-                  />
-                </div>
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="email-marketing" className="text-base flex items-center gap-2">
+                          <Mail className="h-4 w-4 text-muted-foreground" />
+                          Marketing Emails
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          Promotional content and special offers
+                        </p>
+                      </div>
+                      <Switch
+                        id="email-marketing"
+                        checked={preferences.email.marketingEmails}
+                        onCheckedChange={() => handleToggle('email', 'marketingEmails')}
+                        data-testid="switch-email-marketing"
+                      />
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
 
@@ -369,17 +383,14 @@ export default function NotificationPreferencesPage() {
               </CardContent>
             </Card>
 
-            {/* Save Button */}
-            <div className="flex justify-end gap-3">
-              <Button
-                onClick={handleSave}
-                disabled={updatePreferencesMutation.isPending}
-                size="lg"
-                data-testid="button-save-preferences"
-              >
-                Save Preferences
-              </Button>
-            </div>
+            <Card className="bg-muted/50">
+              <CardContent className="pt-6">
+                <p className="text-sm text-muted-foreground flex items-center gap-2">
+                  <Bell className="h-4 w-4" />
+                  Changes are saved automatically. Email preferences take effect immediately, while push notifications will be available in a future update.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
