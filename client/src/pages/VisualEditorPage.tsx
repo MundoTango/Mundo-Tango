@@ -1916,7 +1916,7 @@ Let's get started! What would you like to change?`,
                       data-testid="button-send"
                       onClick={handleSubmit}
                       disabled={!prompt.trim() || isExecuting}
-                      className="flex-1"
+                      className="flex-1 ml-[11px] mr-[11px]"
                     >
                       {isExecuting ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
