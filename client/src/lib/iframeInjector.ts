@@ -1158,7 +1158,7 @@ export const IFRAME_SELECTION_SCRIPT = `
 
       case 'position':
         const rect = targetElement.getBoundingClientRect();
-        targetElement.style.transform = \`translate(\${change.x || 0}px, \${change.y || 0}px)\`;
+        targetElement.style.transform = `translate(${change.x || 0}px, ${change.y || 0}px)`;
         console.log('[VisualEditor] Applied position:', change.x, change.y);
         break;
 
