@@ -1661,9 +1661,19 @@ router.post("/messages", optionalAuth, async (req: AuthRequest, res: Response) =
     // ✅ AGENT #15: God-Mode Test User - Use existing god user for unauthenticated sessions
     let userId = req.user?.id;
     
+    // 🔍 DEBUG: Log what we're receiving
+    console.log('[DEBUG] POST /messages - req.body:', JSON.stringify(req.body, null, 2));
+    console.log('[DEBUG] POST /messages - Content-Type:', req.headers['content-type']);
+    
     const { conversationId, role, content, metadata } = req.body;
 
     if (!conversationId || !role || !content) {
+      console.error('[DEBUG] Missing fields!', {
+        hasConversationId: !!conversationId,
+        hasRole: !!role,
+        hasContent: !!content,
+        bodyKeys: Object.keys(req.body || {})
+      });
       return res.status(400).json({ error: 'Missing required fields: conversationId, role, content' });
     }
 

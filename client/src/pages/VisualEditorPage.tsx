@@ -216,9 +216,21 @@ Let's get started! What would you like to change?`,
   // PHASE 1: Save message to database
   const saveMessageMutation = useMutation({
     mutationFn: async ({ role, content }: { role: string; content: string }) => {
-      if (!currentConversationId) {
-        throw new Error('No active conversation');
+      // ✅ MB.MD v9.5 FIX #4: Enhanced validation to prevent race conditions
+      if (!currentConversationId || typeof currentConversationId !== 'number' || currentConversationId <= 0) {
+        console.error('[VisualEditor] ❌ Invalid conversation ID:', { 
+          value: currentConversationId, 
+          type: typeof currentConversationId 
+        });
+        throw new Error('No active conversation - please wait for conversation to initialize');
       }
+      
+      console.log('[VisualEditor] 💾 Saving message:', { 
+        conversationId: currentConversationId, 
+        role, 
+        contentLength: content.length 
+      });
+      
       const response = await apiRequest('POST', '/api/mrblue/messages', {
         conversationId: currentConversationId,
         role,
@@ -232,7 +244,7 @@ Let's get started! What would you like to change?`,
       refetchConversationHistory();
     },
     onError: (error: any) => {
-      console.error('[VisualEditor] Failed to save message:', error);
+      console.error('[VisualEditor] ❌ Failed to save message:', error);
     },
   });
 
