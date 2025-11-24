@@ -144,9 +144,20 @@ function VisualEditorPageContent() {
   // ✅ MB.MD Fix: Sync fetched messages with local conversation history
   // Only update if length changed OR initial load (prevents overwriting local state)
   const prevMessageCountRef = useRef<number>(0);
+  const lastLocalUpdateRef = useRef<number>(0); // ✅ MB.MD v9.5.1 P0-5: Track last local message add
   
   useEffect(() => {
     if (fetchedMessages && fetchedMessages.length > 0) {
+      // ✅ MB.MD v9.5.1 P0-5 FIX: Race condition guard - prevent refetch from overwriting recent local updates
+      const timeSinceLastLocalUpdate = Date.now() - lastLocalUpdateRef.current;
+      const isRecentLocalUpdate = timeSinceLastLocalUpdate < 3000; // Within last 3 seconds
+      
+      if (isRecentLocalUpdate && fetchedMessages.length <= conversationHistory.length) {
+        // Skip overwrite - local state is fresher than fetched data
+        console.log('[VisualEditor] ⏭️ Skipping refetch overwrite - local state is fresher (last update', timeSinceLastLocalUpdate, 'ms ago)');
+        return;
+      }
+      
       // Only update if message count changed (new messages from server)
       if (fetchedMessages.length !== prevMessageCountRef.current) {
         console.log('[VisualEditor] Loaded conversation history:', fetchedMessages.length, 'messages');
@@ -180,7 +191,7 @@ Let's get started! What would you like to change?`,
       }]);
       prevMessageCountRef.current = 1;
     }
-  }, [fetchedMessages]);
+  }, [fetchedMessages, conversationHistory.length]);
 
   // MB.MD v9.4: Hybrid Auto-Save System
   // Auto-save every 10 changes
@@ -409,6 +420,7 @@ Let's get started! What would you like to change?`,
         ...prev,
         { role: 'assistant', content: responseText }
       ]);
+      lastLocalUpdateRef.current = Date.now(); // ✅ MB.MD v9.5.1 P0-5: Track timestamp
       
       // ✅ MB.MD QA FIX #1: REMOVED duplicate save (handleStreamingChat already saves messages)
       // This was causing 5x greeting repetition bug
@@ -1279,6 +1291,7 @@ Let's get started! What would you like to change?`,
       });
       setIsExecuting(true);
       setConversationHistory(prev => [...prev, { role: 'user', content: userMessage }, { role: 'assistant', content: assistantMessage }]);
+      lastLocalUpdateRef.current = Date.now(); // ✅ MB.MD v9.5.1 P0-5: Track timestamp
       setPrompt("");
       
       // PHASE 1: Save messages to database
@@ -1350,6 +1363,7 @@ Let's get started! What would you like to change?`,
         { role: 'user', content: userMessage },
         { role: 'assistant', content: responseText }
       ]);
+      lastLocalUpdateRef.current = Date.now(); // ✅ MB.MD v9.5.1 P0-5: Track timestamp
       setPrompt("");
       
       // PHASE 1: Save messages to database
@@ -1426,6 +1440,7 @@ Let's get started! What would you like to change?`,
       ...prev,
       { role: 'assistant', content: proposalMessage }
     ]);
+    lastLocalUpdateRef.current = Date.now(); // ✅ MB.MD v9.5.1 P0-5: Track timestamp
     
     // Save to database (conversation ID should exist by now)
     if (currentConversationId) {
@@ -1470,6 +1485,7 @@ Let's get started! What would you like to change?`,
             { role: 'user', content: userMessage },
             { role: 'assistant', content: '✅ **Applying fix now...**\n\nI will show progress in the banner above.' }
           ]);
+          lastLocalUpdateRef.current = Date.now(); // ✅ MB.MD v9.5.1 P0-5: Track timestamp
           setAwaitingApproval(false);
           
           try {
@@ -1495,6 +1511,7 @@ Let's get started! What would you like to change?`,
             { role: 'user', content: userMessage },
             { role: 'assistant', content: 'Understood. I won\'t apply that fix. How else can I help?' }
           ]);
+          lastLocalUpdateRef.current = Date.now(); // ✅ MB.MD v9.5.1 P0-5: Track timestamp
           setAwaitingApproval(false);
           rejectProposal();
           return;
@@ -1506,6 +1523,7 @@ Let's get started! What would you like to change?`,
         ...prev,
         { role: 'user', content: userMessage }
       ]);
+      lastLocalUpdateRef.current = Date.now(); // ✅ MB.MD v9.5.1 P0-5: Track timestamp to prevent race condition
       setPrompt("");
       
       // Save user message to database
@@ -1594,6 +1612,7 @@ Let's get started! What would you like to change?`,
         { role: 'user', content: userMessage },
         { role: 'assistant', content: responseText }
       ]);
+      lastLocalUpdateRef.current = Date.now(); // ✅ MB.MD v9.5.1 P0-5: Track timestamp
       setPrompt("");
       
       // PHASE 1: Save both user and assistant messages to database
