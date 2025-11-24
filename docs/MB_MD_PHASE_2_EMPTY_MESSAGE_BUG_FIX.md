@@ -81,6 +81,26 @@ currentPage: iframeUrl || 'preview'
 currentPage: currentIframeUrl || 'preview'
 ```
 
+### Fix #1.5: apiRequest Call Signature (P0-6.1)
+**File:** `client/src/pages/VisualEditorPage.tsx`  
+**Line:** 642  
+**Before:**
+```typescript
+const response = await apiRequest('/api/mrblue/analyze', {
+  method: 'POST',
+  body: JSON.stringify({ prompt: userPrompt, context }),
+  headers: { 'Content-Type': 'application/json' }
+});
+```
+**After:**
+```typescript
+const response = await apiRequest('POST', '/api/mrblue/analyze', {
+  prompt: userPrompt,
+  context
+});
+```
+**Issue:** Wrong function signature - `apiRequest()` expects (method, url, body) not (url, options)
+
 ### Fix #2: executeMutation Closure Bug (P0-7)
 **File:** `client/src/pages/VisualEditorPage.tsx`  
 **Line:** 1313  

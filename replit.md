@@ -42,7 +42,14 @@ The Visual Editor provides wisprflow.ai-style UX with comprehensive inline editi
     - P0-2: Text box clears immediately after send (UX improvement)
     - P0-3: Voice transcription endpoint `/api/mrblue/transcribe` (OpenAI Whisper integration)
     - P1-4: Pre-generation context analysis `/api/mrblue/analyze` (AI-powered request analysis)
-    - **P0-5: Empty message bug fixed** (timestamp-based race condition guard prevents refetch from overwriting local state during async DB operations - 3-second protection window, applied to all 7 setConversationHistory calls in VisualEditorPage.tsx)
+    - **P0-5: Empty message bug - PARTIAL FIX** (timestamp-based race condition guard - helped but didn't fully fix the root cause)
+  - ✅ **MB.MD v9.5.1 PHASE 2 COMPLETE:** Empty message bug root cause fixed via 4-Research-Session methodology
+    - **P0-6:** Fixed `iframeUrl` variable name typo → `currentIframeUrl` (analysis was failing)
+    - **P0-6.1:** Fixed `apiRequest()` call signature (wrong parameter order)
+    - **P0-7:** Fixed `executeMutation.onSuccess` TanStack Query closure bug (used empty `prompt` state → now uses `taskPrompt` parameter)
+    - **P0-8:** Fixed `quickStyleMutation.onSuccess` TanStack Query closure bug (used empty `prompt` state → now uses `stylePrompt` parameter)
+    - **Root Cause:** Mutation callbacks captured cleared `prompt` state in closures instead of using mutation parameters - classic async/closure bug
+    - **Result:** Zero empty message errors in production logs ✅
   - 🔬 **4-RESEARCH-SESSION METHODOLOGY:** Formalized deep-dive debugging approach
     - Session 1: Error Understanding (what's happening)
     - Session 2: Code Flow Traced (execution path)

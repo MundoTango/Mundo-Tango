@@ -639,15 +639,9 @@ Let's get started! What would you like to change?`,
       };
 
       // Call analysis endpoint
-      const response = await apiRequest('/api/mrblue/analyze', {
-        method: 'POST',
-        body: JSON.stringify({
-          prompt: userPrompt,
-          context
-        }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
+      const response = await apiRequest('POST', '/api/mrblue/analyze', {
+        prompt: userPrompt,
+        context
       });
 
       if (!response.success) {
