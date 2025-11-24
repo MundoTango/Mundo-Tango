@@ -140,6 +140,9 @@ function VisualEditorPageContent() {
     }
   }, [recentConversations, currentConversationId]);
 
+  // ✅ Text-to-Speech hook - MUST BE BEFORE ANY useEffects THAT USE IT
+  const { speak, isSpeaking, isSupported: ttsSupported } = useTextToSpeech();
+
   // ✅ MB.MD Fix: Sync fetched messages with local conversation history
   // Only update if length changed OR initial load (prevents overwriting local state)
   const prevMessageCountRef = useRef<number>(0);
@@ -626,8 +629,6 @@ Let's get started! What would you like to change?`,
     continuous: true,
     interimResults: true
   });
-
-  const { speak, isSpeaking, isSupported: ttsSupported } = useTextToSpeech();
 
   // Initialize voice command processor - NOW AFTER handleSaveChanges, handleUndo, approveMutation, and stopListening definitions
   useEffect(() => {
