@@ -635,7 +635,7 @@ Let's get started! What would you like to change?`,
       const context = {
         selectedElement,
         domSnapshot: domSnapshotRef.current,
-        currentPage: iframeUrl || 'preview'
+        currentPage: currentIframeUrl || 'preview'
       };
 
       // Call analysis endpoint
@@ -1307,8 +1307,8 @@ Let's get started! What would you like to change?`,
       if (!data.success) throw new Error(data.message);
       return data;
     },
-    onSuccess: async (data) => {
-      const userMessage = prompt.trim();
+    onSuccess: async (data, taskPrompt) => {
+      const userMessage = taskPrompt.trim();
       const assistantMessage = 'Starting task...';
       
       setCurrentTask({
@@ -1363,7 +1363,7 @@ Let's get started! What would you like to change?`,
       if (!data.success) throw new Error(data.message);
       return data;
     },
-    onSuccess: async (data) => {
+    onSuccess: async (data, stylePrompt) => {
       // Apply CSS to iframe immediately
       if (data.css && iframeRef.current) {
         applyInstantChange(iframeRef.current, {
@@ -1376,14 +1376,14 @@ Let's get started! What would you like to change?`,
         // Wait a bit for DOM to update, then capture after screenshot
         setTimeout(async () => {
           await captureAfterScreenshot(beforeScreenshot, {
-            prompt: prompt.trim(),
+            prompt: stylePrompt.trim(),
             css: data.css,
             changedElements: 1,
             files: []
           });
         }, 500);
       }
-      const userMessage = prompt;
+      const userMessage = stylePrompt.trim();
       const responseText = `Applied: ${JSON.stringify(data.css)}`;
       
       setConversationHistory(prev => [
