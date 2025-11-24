@@ -38,6 +38,7 @@ import { SEO } from "@/components/SEO";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ErrorAnalysisPanel } from "@/components/mr-blue/ErrorAnalysisPanel";
 import { BackendSaveProgressModal, type BackendSaveProgress } from "@/components/visual-editor/BackendSaveProgressModal";
+import { InlineEditingInstructions } from "@/components/visual-editor/InlineEditingInstructions";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -840,7 +841,7 @@ Let's get started! What would you like to change?`,
               
               // Delete key to delete selected element
               document.addEventListener('keydown', function(e) {
-                if ((e.key === 'Delete' || e.key === 'Backspace') && selectedElement && !selectedElement.contentEditable) {
+                if ((e.key === 'Delete' || e.key === 'Backspace') && selectedElement && selectedElement.contentEditable !== 'true') {
                   e.preventDefault();
                   const elementInfo = {
                     id: selectedElement.id || 'element-' + Date.now(),
@@ -1002,6 +1003,30 @@ Let's get started! What would you like to change?`,
         });
         
         // Track unsaved change (for auto-save system)
+        setUnsavedChangesCount(prev => prev + 1);
+      } else if (event.data.type === 'IFRAME_ELEMENT_DELETED') {
+        // Handle element deletion
+        const component = event.data.component;
+        console.log('[VisualEditor] Element deleted:', component);
+        
+        toast({
+          title: "✅ Element Deleted",
+          description: `Removed: <${component.tagName}>`,
+        });
+        
+        // Track unsaved change
+        setUnsavedChangesCount(prev => prev + 1);
+      } else if (event.data.type === 'IFRAME_ELEMENT_MOVED') {
+        // Handle element movement
+        const component = event.data.component;
+        console.log('[VisualEditor] Element moved:', component);
+        
+        toast({
+          title: "✅ Element Moved",
+          description: `Repositioned: <${component.tagName}>`,
+        });
+        
+        // Track unsaved change
         setUnsavedChangesCount(prev => prev + 1);
       } else if (event.data.type === 'IFRAME_NAVIGATE') {
         // Track navigation for smart suggestions
@@ -2135,6 +2160,9 @@ Let's get started! What would you like to change?`,
                 />
                 
                 {/* Smart Suggestions moved to Error Analysis tab */}
+                
+                {/* Inline Editing Instructions - Floating help tooltip */}
+                <InlineEditingInstructions />
                 
                 {/* Element Highlighter - Natural language element selection */}
                 {isGodLevel && (
