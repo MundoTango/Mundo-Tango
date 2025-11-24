@@ -634,6 +634,28 @@ Let's get started! What would you like to change?`,
   const handleSubmit = async () => {
     if (!prompt.trim()) return;
 
+    // ✅ MB.MD v9.5 FIX #5: Conversation Readiness Guard (Prevents race condition)
+    if (!currentConversationId || typeof currentConversationId !== 'number' || currentConversationId <= 0) {
+      console.warn('[VisualEditor] ⚠️ Conversation not ready, cannot send message');
+      
+      toast({
+        title: '⏳ Initializing Mr. Blue...',
+        description: 'Please wait a moment while I set up our conversation.',
+        variant: 'default',
+      });
+      
+      // Restore the prompt so user doesn't lose their message
+      // Don't clear setPrompt yet
+      
+      // Retry conversation creation
+      if (user && !getOrCreateConversationMutation.isPending) {
+        console.log('[VisualEditor] 🔄 Retrying conversation creation...');
+        getOrCreateConversationMutation.mutate();
+      }
+      
+      return; // Block submission until conversation is ready
+    }
+
     const trimmedPrompt = prompt.trim();
     const lowerPrompt = trimmedPrompt.toLowerCase();
     
