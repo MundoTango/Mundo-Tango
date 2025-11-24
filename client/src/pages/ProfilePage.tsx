@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle } from "lucide-react";
+import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
@@ -55,6 +55,14 @@ interface User {
   followerLevel?: number;
   languages?: string[] | null;
   createdAt?: string;
+  socialLinks?: {
+    instagram?: string;
+    facebook?: string;
+    twitter?: string;
+    linkedin?: string;
+    youtube?: string;
+    website?: string;
+  } | null;
 }
 
 interface Post {
@@ -301,6 +309,106 @@ export default function ProfilePage() {
                     {role.replace(/_/g, ' ')}
                   </Badge>
                 ))}
+              </div>
+            )}
+
+            {/* Professional Score */}
+            {user.yearsOfDancing && user.yearsOfDancing > 0 && (
+              <div className="bg-primary/20 border border-primary/30 rounded-lg p-3 backdrop-blur-sm mb-3" data-testid="section-professional-score">
+                <div className="flex items-center gap-2">
+                  <Award className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-semibold text-white">
+                    {user.yearsOfDancing} {user.yearsOfDancing === 1 ? 'year' : 'years'} of tango experience
+                  </span>
+                </div>
+                {(user.leaderLevel || user.followerLevel) && (
+                  <div className="mt-2 flex gap-4 text-xs text-white/90">
+                    {user.leaderLevel && user.leaderLevel > 0 && (
+                      <span data-testid="text-leader-level">Leader: Level {user.leaderLevel}</span>
+                    )}
+                    {user.followerLevel && user.followerLevel > 0 && (
+                      <span data-testid="text-follower-level">Follower: Level {user.followerLevel}</span>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Social Links */}
+            {user.socialLinks && Object.values(user.socialLinks).some(link => link) && (
+              <div className="flex flex-wrap gap-3 mb-3" data-testid="section-social-links">
+                {user.socialLinks.instagram && (
+                  <a
+                    href={user.socialLinks.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
+                    aria-label="Instagram"
+                    data-testid="link-instagram"
+                  >
+                    <Instagram className="w-4 h-4 text-white" />
+                  </a>
+                )}
+                {user.socialLinks.facebook && (
+                  <a
+                    href={user.socialLinks.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
+                    aria-label="Facebook"
+                    data-testid="link-facebook"
+                  >
+                    <Facebook className="w-4 h-4 text-white" />
+                  </a>
+                )}
+                {user.socialLinks.twitter && (
+                  <a
+                    href={user.socialLinks.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
+                    aria-label="Twitter"
+                    data-testid="link-twitter"
+                  >
+                    <Twitter className="w-4 h-4 text-white" />
+                  </a>
+                )}
+                {user.socialLinks.linkedin && (
+                  <a
+                    href={user.socialLinks.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
+                    aria-label="LinkedIn"
+                    data-testid="link-linkedin"
+                  >
+                    <Linkedin className="w-4 h-4 text-white" />
+                  </a>
+                )}
+                {user.socialLinks.youtube && (
+                  <a
+                    href={user.socialLinks.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
+                    aria-label="YouTube"
+                    data-testid="link-youtube"
+                  >
+                    <Youtube className="w-4 h-4 text-white" />
+                  </a>
+                )}
+                {user.socialLinks.website && (
+                  <a
+                    href={user.socialLinks.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm transition-colors"
+                    aria-label="Website"
+                    data-testid="link-website"
+                  >
+                    <Globe className="w-4 h-4 text-white" />
+                  </a>
+                )}
               </div>
             )}
             
