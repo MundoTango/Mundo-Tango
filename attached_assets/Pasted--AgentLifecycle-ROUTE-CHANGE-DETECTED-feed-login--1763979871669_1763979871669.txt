@@ -1,0 +1,37 @@
+[AgentLifecycle] 🔄 ROUTE CHANGE DETECTED: /feed → /login
+================================================================================
+
+[AgentLifecycle] 📋 Route /login requires 1 agents: landing-page
+[AgentLifecycle] 💤 Deactivating agents for /feed...
+[AgentLifecycle] 💤 Deactivated: Landing Page Agent
+[AgentLifecycle] ✅ Activated: Landing Page Agent
+[AgentLifecycle] 🔍 Running pre-flight health checks...
+
+🔍 PRE-FLIGHT CHECKS for /login
+✅ All pre-flight checks passed
+[AgentLifecycle] ✅ Health checks passed
+[AgentLifecycle] 🔎 Running comprehensive page audit...
+✅ Integration audit complete for login-page: 0 issues found in 0ms
+⚠️ No HTML found for login-page - skipping UI/UX audit
+2025-11-24 10:24:21:2421 http: 127.0.0.1 - - [24/Nov/2025:10:24:21 +0000] "GET /api/locations/search?q=test HTTP/1.1" 200 - "http://localhost:5000/feed" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.37 Safari/537.36"
+10:24:21 AM [express] GET /api/locations/search 200 in 497ms :: [{"place_id":233682874,"licence":"Dat…
+⚠️ Skipping audit save for login-page - page not registered yet
+✅ Audit complete for login-page: 0 issues (0 critical) in 0ms
+[AgentLifecycle] 📊 Audit complete: 0 issues found (0 critical)
+[AgentLifecycle] 👂 All agents now LISTENING for user requests
+[AgentLifecycle] ⚡ Total activation time: 110ms
+================================================================================
+
+[API] ✅ Activated 1 agents in 110ms
+2025-11-24 10:24:21:2421 http: 127.0.0.1 - - [24/Nov/2025:10:24:21 +0000] "POST /api/mrblue/activate-agents HTTP/1.1" 200 608 "http://localhost:5000/feed" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.37 Safari/537.36"
+10:24:21 AM [express] POST /api/mrblue/activate-agents 200 in 112ms :: {"success":true,"result":{"rou…
+2025-11-24 10:24:21:2421 http: 127.0.0.1 - - [24/Nov/2025:10:24:21 +0000] "GET /@fs/home/runner/workspace/attached_assets/stock_images/elegant_professional_29e89c1e.jpg HTTP/1.1" 200 272907 "http://localhost:5000/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.37 Safari/537.36"
+2025-11-24 10:24:26:2426 http: 127.0.0.1 - - [24/Nov/2025:10:24:26 +0000] "GET /login HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.37 Safari/537.36"
+2025-11-24 10:24:27:2427 http: 127.0.0.1 - - [24/Nov/2025:10:24:27 +0000] "GET /@vite/client HTTP/1.1" 200 - "http://localhost:5000/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.37 Safari/537.36"
+2025-11-24 10:24:27:2427 http: 127.0.0.1 - - [24/Nov/2025:10:24:27 +0000] "GET /src/main.tsx?v=xJgflR1fnIhzWyB4cfoEf HTTP/1.1" 200 - "http://localhost:5000/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.37 Safari/537.36"
+2025-11-24 10:24:27:2427 http: 127.0.0.1 - - [24/Nov/2025:10:24:27 +0000] "GET /@replit/vite-plugin-dev-banner/banner-script.js HTTP/1.1" 200 - "http://localhost:5000/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.37 Safari/537.36"
+2025-11-24 10:24:27:2427 http: 127.0.0.1 - - [24/Nov/2025:10:24:27 +0000] "GET /@react-refresh HTTP/1.1" 200 - "http://localhost:5000/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.37 Safari/537.36"
+2025-11-24 10:24:27:2427 http: 127.0.0.1 - - [24/Nov/2025:10:24:27 +0000] "GET /@fs/home/runner/workspace/node_modules/vite/dist/client/env.mjs HTTP/1.1" 200 - "http://localhost:5000/@vite/client" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.37 Safari/537.36"
+2025-11-24 10:24:27:2427 http: 127.0.0.1 - - [24/Nov/2025:10:24:27 +0000] "GET /@fs/home/runner/workspace/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=f1612d26 HTTP/1.1" 200 - "http://localhost:5000/src/main.tsx?v=xJgflR1fnIhzWyB4cfoEf" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.37 Safari/537.36"
+2025-11-24 10:24:27:2427 http: 127.0.0.1 - - [24/Nov/2025:10:24:27 +0000] "GET /@fs/home/runner/workspace/node_modules/.vite/deps/react-dom_client.js?v=f1612d26 HTTP/1.1" 200 - "http://localhost:5000/src/main.tsx?v=xJgflR1fnIhzWyB4cfoEf" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.37 Safari/537.36"
+2025-11-24 10:24:27:2427 http: 127.0.0.1 - - [24/Nov/2025:10:24:27 +0000] "GET /src/App.tsx?v=xJgflR1fnIhzWyB4cfoEf HTTP/1.1" 200 - "http://localhost:5000/src/main.tsx?v=xJgflR1fnIhzWyB4cfoEf" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.7390.37 Safari/537.36"
