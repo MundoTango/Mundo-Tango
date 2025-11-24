@@ -15,7 +15,22 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 ## System Architecture
 
 ### UI/UX
-The platform uses the "MT Ocean Theme" with ocean blues and warm accents, supporting dark mode via Tailwind CSS. Components are built with `shadcn/ui` and Radix UI, using Lucide React and React Icons for iconography. It provides i18n support for 68 languages via `i18next` and uses Wouter for routing. Layouts include `AppLayout` (public), `DashboardLayout` (authenticated), and `AdminLayout` (administrative). The Visual Editor provides a wisprflow.ai-style UX with voice interaction, element selection, inline text editing, and manual save functionality. **Recent Update:** Implemented save changes feature (MB.MD v9.4 P0 Tasks 1-4) with backend route, VibeCodingService integration, frontend mutation, manual checkpoint button, and voice command "save changes" support.
+The platform uses the "MT Ocean Theme" with ocean blues and warm accents, supporting dark mode via Tailwind CSS. Components are built with `shadcn/ui` and Radix UI, using Lucide React and React Icons for iconography. It provides i18n support for 68 languages via `i18next` and uses Wouter for routing. Layouts include `AppLayout` (public), `DashboardLayout` (authenticated), and `AdminLayout` (administrative).
+
+**Visual Editor - Full Autonomous System:**
+The Visual Editor provides wisprflow.ai-style UX with comprehensive inline editing:
+- **Inline Editing:** Double-click text to edit directly, Delete key removes elements, Alt+Drag moves elements
+- **Element Selection:** Click any element → blue outline, Cmd+Click links to navigate within iframe
+- **Visual Feedback:** Toast notifications for all actions (edit saved, element deleted/moved)
+- **User Instructions:** Floating InlineEditingInstructions tooltip teaches all shortcuts
+- **Voice Commands:** Click-to-toggle voice mode (NOT hold-to-talk), natural TTS voice selection
+- **Save System:** Manual "Save Changes" button with backend orchestration, tracks unsaved changes count
+- **Context Awareness:** Smart suggestions based on selected elements, page awareness indicators
+- **Recent Updates (Nov 24, 2025):**
+  - ✅ FIXED: Delete key bug (now checks contentEditable state correctly)
+  - ✅ ADDED: Toast feedback for text editing, element deletion, element movement
+  - ✅ ADDED: InlineEditingInstructions floating tooltip for user education
+  - ⚠️ PENDING: Color picker for MT Ocean Theme (requires new component with brand presets)
 
 ### Backend
 The backend is developed with Express and TypeScript, utilizing PostgreSQL (Neon) and Drizzle ORM. `shared/schema.ts` is the single source of truth for the database schema, with `server/storage.ts` providing CRUD operations. Routes are modular, and authentication uses JWT (httpOnly cookies) and Google/Facebook OAuth, featuring an 8-tier Role-Based Access Control (RBAC) system. Database migrations are automated.
