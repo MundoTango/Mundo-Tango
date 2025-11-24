@@ -96,11 +96,12 @@ declare module 'http' {
   }
 }
 app.use(express.json({
+  limit: '1mb', // Increased from default 100kb to support Visual Editor suggestions with large HTML payloads
   verify: (req, _res, buf) => {
     req.rawBody = buf;
   }
 }));
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false, limit: '1mb' }));
 app.use(cookieParser());
 
 // CSRF Protection - set token for GET requests
