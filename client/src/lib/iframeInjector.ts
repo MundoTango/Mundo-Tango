@@ -1392,19 +1392,37 @@ export const IFRAME_SELECTION_SCRIPT = `
       }
       
       if (button) {
-        // ✅ For buttons, trigger the click handler by re-dispatching without metaKey
+        // ✅ For buttons, we need special handling
         e.preventDefault();
         e.stopPropagation();
-        console.log('[VisualEditor] Cmd+Click on button - re-dispatching click event');
         
-        // Create a new click event without metaKey/ctrlKey so React's onClick fires
-        const syntheticClick = new MouseEvent('click', {
-          bubbles: true,
-          cancelable: true,
-          view: window,
-          // Don't include metaKey/ctrlKey so it's treated as a normal click
-        });
-        button.dispatchEvent(syntheticClick);
+        // Check if this is a submit button
+        const buttonType = button.getAttribute('type');
+        if (buttonType === 'submit') {
+          console.log('[VisualEditor] Cmd+Click on submit button - triggering form submission');
+          
+          // Find the parent form and trigger its submit
+          const form = button.closest('form');
+          if (form) {
+            // Dispatch a submit event that React will recognize
+            // This triggers validation and React's onSubmit handler
+            const submitEvent = new Event('submit', { 
+              bubbles: true, 
+              cancelable: true 
+            });
+            form.dispatchEvent(submitEvent);
+          }
+        } else {
+          console.log('[VisualEditor] Cmd+Click on button - re-dispatching click event');
+          
+          // Create a new click event without metaKey/ctrlKey so React's onClick fires
+          const syntheticClick = new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+          });
+          button.dispatchEvent(syntheticClick);
+        }
         return;
       }
       
