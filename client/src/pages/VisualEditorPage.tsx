@@ -199,17 +199,33 @@ Let's get started! What would you like to change?`,
   }, [unsavedChangesCount, toast]);
 
   // PHASE 1: Get or create active conversation
+  // ✅ MB.MD v9.5 FIX #5: Enhanced with retry logic (Phase C AutoRetryService pattern)
   const getOrCreateConversationMutation = useMutation({
     mutationFn: async () => {
       const response = await apiRequest('POST', '/api/mrblue/conversations', {});
       return await response.json();
     },
+    retry: 3, // Auto-retry 3 times with exponential backoff
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000), // 1s, 2s, 4s
     onSuccess: (conversation) => {
       console.log('[VisualEditor] ✅ Active conversation:', conversation.id);
       setCurrentConversationId(conversation.id);
+      
+      // Success toast for user feedback
+      toast({
+        title: '✅ Mr. Blue Ready',
+        description: 'You can now start chatting!',
+      });
     },
     onError: (error: any) => {
-      console.error('[VisualEditor] Failed to get/create conversation:', error);
+      console.error('[VisualEditor] ❌ Failed to get/create conversation after 3 retries:', error);
+      
+      // User-friendly error message
+      toast({
+        title: '🚨 Connection Error',
+        description: 'Could not connect to Mr. Blue. Please refresh the page.',
+        variant: 'destructive',
+      });
     },
   });
 
@@ -1973,12 +1989,15 @@ Let's get started! What would you like to change?`,
                       handleSubmit();
                     }
                   }}
-                  placeholder={selectedElement 
-                    ? `Change this ${selectedElement.tagName}...` 
-                    : "Describe what you want..."
+                  placeholder={
+                    getOrCreateConversationMutation.isPending
+                      ? "⏳ Initializing Mr. Blue..."
+                      : selectedElement 
+                        ? `Change this ${selectedElement.tagName}...` 
+                        : "Describe what you want..."
                   }
                   className="min-h-[80px] resize-none pr-12"
-                  disabled={isExecuting}
+                  disabled={isExecuting || getOrCreateConversationMutation.isPending || !currentConversationId}
                 />
                 
                 {/* Recording indicator (pulsing red dot) */}
@@ -2053,10 +2072,10 @@ Let's get started! What would you like to change?`,
                     <Button
                       data-testid="button-send"
                       onClick={handleSubmit}
-                      disabled={!prompt.trim() || isExecuting}
+                      disabled={!prompt.trim() || isExecuting || getOrCreateConversationMutation.isPending || !currentConversationId}
                       className="flex-1 ml-[11px] mr-[11px]"
                     >
-                      {isExecuting ? (
+                      {isExecuting || getOrCreateConversationMutation.isPending ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
                         <Zap className="h-4 w-4" />
@@ -2064,7 +2083,11 @@ Let's get started! What would you like to change?`,
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    {isExecuting ? 'Working...' : 'Generate changes'}
+                    {getOrCreateConversationMutation.isPending
+                      ? 'Initializing...'
+                      : isExecuting
+                        ? 'Working...'
+                        : 'Generate changes'}
                   </TooltipContent>
                 </Tooltip>
 
