@@ -299,11 +299,15 @@ router.post("/execute", traceRoute("autonomous-execute"),
         
         // ✅ MB.MD v9.5.1 P0-10 FIX: Extract element selector from prompt if present
         if (!resolvedSelector) {
+          // Strip surrounding quotes from prompt if present
+          const cleanPrompt = prompt.trim().replace(/^["']|["']$/g, '');
           // Check if prompt starts with element selector like "#element-1763981558346"
-          const elementMatch = prompt.trim().match(/^#(element-\d+|[\w-]+)\s+/);
+          const elementMatch = cleanPrompt.match(/^#(element-\d+|[\w-]+)\s+/);
           if (elementMatch) {
             resolvedSelector = `#${elementMatch[1]}`;
-            console.log(`[Autonomous] Extracted selector from prompt: ${resolvedSelector}`);
+            console.log(`[Autonomous] ✅ Extracted selector from prompt: ${resolvedSelector}`);
+          } else {
+            console.log(`[Autonomous] ❌ No selector found in prompt: "${cleanPrompt.substring(0, 50)}"`);
           }
         }
         
