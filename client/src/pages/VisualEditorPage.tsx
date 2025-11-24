@@ -564,10 +564,10 @@ Let's get started! What would you like to change?`,
     const trimmedPrompt = prompt.trim();
     const lowerPrompt = trimmedPrompt.toLowerCase();
     
-    // Vibe Coding: Detect UI modification requests (e.g., "Make button blue", "Change header color")
-    const isVibeCodeRequest = /\b(make|change|update|modify|set|add|remove)\s+(the|a|an)?\s*(button|header|text|color|background|style|size)/i.test(trimmedPrompt) ||
-                              /\b(have|with|to)\s+(a|an|the)?\s*(blue|red|green|yellow|white|black|larger|smaller|bold)/i.test(trimmedPrompt) ||
-                              /color.*to|background.*to|font.*to|size.*to/i.test(lowerPrompt);
+    // Vibe Coding: Detect UI modification requests (e.g., "Make button blue", "Change header color", "make this container background transparent")
+    const isVibeCodeRequest = /\b(make|change|update|modify|set|add|remove)\s+(the|a|an|this|that)?\s*(button|header|text|color|background|container|div|element|style|size)/i.test(trimmedPrompt) ||
+                              /\b(have|with|to)\s+(a|an|the|this)?\s*(blue|red|green|yellow|white|black|transparent|larger|smaller|bold)/i.test(trimmedPrompt) ||
+                              /color.*to|background.*to|background.*transparent|font.*to|size.*to/i.test(lowerPrompt);
     
     // FIXED ROUTING: Only route to autonomous for SPECIFIC build phrases
     // Avoid matching common words like "make" which appear in normal conversation
