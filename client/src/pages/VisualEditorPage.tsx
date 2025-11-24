@@ -347,6 +347,106 @@ Let's get started! What would you like to change?`,
     }
   }, [streamMessages, selectedElement]);
 
+  // Save Changes Mutation (MB.MD v9.4 P0 Task 3) - MUST BE BEFORE useEffects
+  const saveChangesMutation = useMutation({
+    mutationFn: async () => {
+      const allEdits = visualEditorTracker.getAllEdits();
+      const pagePath = window.location.pathname;
+      
+      const response = await apiRequest('POST', '/api/autonomous/visual-editor/save', {
+        edits: allEdits,
+        pagePath,
+        checkpointMessage: `Visual Editor: ${allEdits.length} changes to ${pagePath}`
+      });
+      const data = await response.json();
+      if (!data.success) throw new Error(data.message);
+      return data;
+    },
+    onSuccess: (data) => {
+      visualEditorTracker.clear();
+      setUnsavedChangesCount(0);
+      
+      toast({
+        title: "Changes Saved!",
+        description: data.message,
+      });
+      
+      // Voice feedback
+      if (ttsSupported) {
+        speak("All changes saved successfully.");
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Save Failed",
+        description: error.message || "Failed to save changes",
+      });
+      
+      // Voice feedback
+      if (ttsSupported) {
+        speak("Sorry, I couldn't save the changes. Please try again.");
+      }
+    },
+  });
+
+  // Save Changes Handler - MUST BE BEFORE useEffects THAT USE IT
+  const handleSaveChanges = useCallback(() => {
+    const allEdits = visualEditorTracker.getAllEdits();
+    
+    if (allEdits.length === 0) {
+      toast({
+        title: "No Changes",
+        description: "Make some edits first before saving",
+      });
+      return;
+    }
+    
+    saveChangesMutation.mutate();
+  }, [saveChangesMutation, toast]);
+
+  // Initialize voice command processor - NOW AFTER handleSaveChanges definition
+  useEffect(() => {
+    voiceCommandProcessorRef.current = new VoiceCommandProcessor({
+      setViewMode,
+      handleUndo,
+      handleApprove: () => {
+        if (currentTask?.taskId) {
+          approveMutation.mutate(currentTask.taskId);
+        }
+      },
+      handleStopListening: () => {
+        disableContinuousMode();
+        stopListening();
+      },
+      handleSaveChanges,
+      setPrompt,
+      handleSubmit
+    });
+  }, [currentTask, handleSaveChanges, setViewMode, handleUndo, approveMutation, stopListening, setPrompt, handleSubmit]);
+
+  // Update voice command processor context when dependencies change
+  useEffect(() => {
+    if (voiceCommandProcessorRef.current) {
+      voiceCommandProcessorRef.current.updateContext({
+        setViewMode,
+        handleUndo,
+        handleApprove: () => {
+          if (currentTask?.taskId) {
+            approveMutation.mutate(currentTask.taskId);
+          }
+        },
+        handleStopListening: () => {
+          setVoiceModeEnabled(false);
+          stopListening();
+        },
+        handleSaveChanges,
+        setPrompt,
+        handleSubmit
+      });
+    }
+  }, [setViewMode, currentTask, stopListening, handleSaveChanges, handleUndo, approveMutation, setPrompt, handleSubmit]);
+
   // Self-healing orchestration (MB.MD v9.0)
   const { isRunning: isSelfHealingRunning, result: selfHealingResult } = useSelfHealing(
     '/', 
@@ -405,48 +505,6 @@ Let's get started! What would you like to change?`,
       return activeStatuses.includes(query.state.data.task.status) ? 5000 : false;
     },
   });
-
-  // Initialize voice command processor
-  useEffect(() => {
-    voiceCommandProcessorRef.current = new VoiceCommandProcessor({
-      setViewMode,
-      handleUndo,
-      handleApprove: () => {
-        if (currentTask?.taskId) {
-          approveMutation.mutate(currentTask.taskId);
-        }
-      },
-      handleStopListening: () => {
-        disableContinuousMode();
-        stopListening();
-      },
-      handleSaveChanges,
-      setPrompt,
-      handleSubmit
-    });
-  }, [currentTask]);
-
-  // Update voice command processor context when dependencies change
-  useEffect(() => {
-    if (voiceCommandProcessorRef.current) {
-      voiceCommandProcessorRef.current.updateContext({
-        setViewMode,
-        handleUndo,
-        handleApprove: () => {
-          if (currentTask?.taskId) {
-            approveMutation.mutate(currentTask.taskId);
-          }
-        },
-        handleStopListening: () => {
-          setVoiceModeEnabled(false);
-          stopListening();
-        },
-        handleSaveChanges,
-        setPrompt,
-        handleSubmit
-      });
-    }
-  }, [setViewMode, currentTask, stopListening, handleSaveChanges]);
 
   // Sync task data
   useEffect(() => {
@@ -844,64 +902,6 @@ Let's get started! What would you like to change?`,
       });
     },
   });
-
-  // Save Changes Mutation (MB.MD v9.4 P0 Task 3)
-  const saveChangesMutation = useMutation({
-    mutationFn: async () => {
-      const allEdits = visualEditorTracker.getAllEdits();
-      const pagePath = window.location.pathname;
-      
-      const response = await apiRequest('POST', '/api/autonomous/visual-editor/save', {
-        edits: allEdits,
-        pagePath,
-        checkpointMessage: `Visual Editor: ${allEdits.length} changes to ${pagePath}`
-      });
-      const data = await response.json();
-      if (!data.success) throw new Error(data.message);
-      return data;
-    },
-    onSuccess: (data) => {
-      visualEditorTracker.clear();
-      setUnsavedChangesCount(0);
-      
-      toast({
-        title: "Changes Saved!",
-        description: data.message,
-      });
-      
-      // Voice feedback
-      if (ttsSupported) {
-        speak("All changes saved successfully.");
-      }
-    },
-    onError: (error: any) => {
-      toast({
-        variant: "destructive",
-        title: "Save Failed",
-        description: error.message || "Failed to save changes",
-      });
-      
-      // Voice feedback
-      if (ttsSupported) {
-        speak("Sorry, I couldn't save the changes. Please try again.");
-      }
-    },
-  });
-
-  // Save Changes Handler
-  const handleSaveChanges = () => {
-    const allEdits = visualEditorTracker.getAllEdits();
-    
-    if (allEdits.length === 0) {
-      toast({
-        title: "No Changes",
-        description: "Make some edits first before saving",
-      });
-      return;
-    }
-    
-    saveChangesMutation.mutate();
-  };
 
   // ✅ ERROR AUTO-ANALYSIS INTEGRATION - MB.MD v9.2 (FIXED: No chat spam)
   // MB.MD Fix: Only show high-priority errors in chat, don't spam every error
