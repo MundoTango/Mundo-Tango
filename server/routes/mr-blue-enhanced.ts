@@ -530,7 +530,10 @@ Please contact an administrator if you need access to this feature.`,
     // Generate context-aware response based on page and intent
     let responseContent = '';
     
-    if (context?.currentPage?.includes('/events')) {
+    // ✅ MB.MD P0-11 FIX: Add Feed page context
+    if (context?.currentPage?.includes('/feed')) {
+      responseContent = `I see you're on the Feed page! This is your social hub where you can share tango moments, connect with dancers, create posts, and discover what's happening in the tango community. ${message.toLowerCase().includes('help') ? 'I can help you create posts, find dancers to follow, or explain feed features. What would you like to do?' : 'What would you like to know about the feed?'}`;
+    } else if (context?.currentPage?.includes('/events')) {
       responseContent = `I see you're viewing events! ${message.toLowerCase().includes('help') ? 'I can help you find milongas, festivals, and workshops. Would you like me to show you upcoming events in your area, or help you search for specific types of tango events?' : 'What would you like to know about the events?'}`;
     } else if (context?.currentPage?.includes('/profile')) {
       responseContent = `I notice you're on a profile page. ${message.toLowerCase().includes('help') ? 'I can help you edit your profile, manage your tango preferences, or explain any profile features. What would you like to do?' : 'How can I assist you with profiles?'}`;

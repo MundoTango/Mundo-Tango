@@ -423,7 +423,12 @@ Provide natural, conversational assistance based on where the user is in the pla
     try {
       // Gather comprehensive context + DOM snapshot for vibe coding
       const breadcrumbs = breadcrumbTracker.getRecentActions(10);
-      const currentPage = window.location.pathname;
+      
+      // ✅ MB.MD P0-11 FIX: Use Visual Editor iframe URL if available
+      const visualEditorUrl = sessionStorage.getItem('visualEditorIframeUrl');
+      const currentPage = visualEditorUrl || window.location.pathname;
+      console.log('[MrBlue] Context - currentPage:', currentPage, '(visualEditor:', visualEditorUrl, ', window:', window.location.pathname, ')');
+      
       const pageTitle = document.title;
       const userIntent = inferUserIntent(breadcrumbs);
       

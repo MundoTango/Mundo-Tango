@@ -91,6 +91,17 @@ function VisualEditorPageContent() {
   const [iframeError, setIframeError] = useState(false);
   const [isReplaying, setIsReplaying] = useState(false);
   const [currentChangeIndex, setCurrentChangeIndex] = useState(-1);
+  
+  // ✅ MB.MD P0-11 FIX: Store iframe URL in sessionStorage for Mr. Blue context awareness
+  useEffect(() => {
+    sessionStorage.setItem('visualEditorIframeUrl', currentIframeUrl);
+    console.log('[VisualEditor] Updated iframe URL in sessionStorage:', currentIframeUrl);
+    
+    // Clear on unmount
+    return () => {
+      sessionStorage.removeItem('visualEditorIframeUrl');
+    };
+  }, [currentIframeUrl]);
   const [currentPageHtml, setCurrentPageHtml] = useState<string>("");
   const [selectedElementStyles, setSelectedElementStyles] = useState<Record<string, string>>({});
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
