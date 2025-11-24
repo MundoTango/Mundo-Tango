@@ -296,10 +296,21 @@ router.post("/execute", traceRoute("autonomous-execute"),
 
         // Resolve element reference
         let resolvedSelector = element;
+        
+        // ✅ MB.MD v9.5.1 P0-10 FIX: Extract element selector from prompt if present
+        if (!resolvedSelector) {
+          // Check if prompt starts with element selector like "#element-1763981558346"
+          const elementMatch = prompt.trim().match(/^#(element-\d+|[\w-]+)\s+/);
+          if (elementMatch) {
+            resolvedSelector = `#${elementMatch[1]}`;
+            console.log(`[Autonomous] Extracted selector from prompt: ${resolvedSelector}`);
+          }
+        }
+        
         if (element && typeof element === 'string') {
           const selectorResult = await elementSelector.parseElementReference(element, userId);
           resolvedSelector = selectorResult.selector;
-        } else {
+        } else if (!resolvedSelector) {
           // Try to get last selected element from context
           const lastElement = conversationContext.getLastSelectedElement(userId);
           if (lastElement) {
