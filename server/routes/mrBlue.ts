@@ -1306,6 +1306,40 @@ router.post("/analyze-page", async (req: Request, res: Response) => {
 
 // ================== PHASE 1: CONVERSATION PERSISTENCE API ==================
 
+// 🔥 FIX: GET /conversations - Frontend was getting HTML because this route was missing
+router.get("/conversations", optionalAuth, async (req: AuthRequest, res: Response) => {
+  try {
+    // ✅ AGENT #15: God-Mode Test User - Use existing god user for unauthenticated sessions
+    let userId = req.user?.id;
+    
+    // Use god user (ID 147) as Mr. Blue test identity for unauthenticated access
+    if (!userId) {
+      const MR_BLUE_GOD_USER_ID = 147; // admin5mundotangol (god role, full permissions)
+      console.log(`[MrBlue] ✅ AGENT #15: Using god user #${MR_BLUE_GOD_USER_ID} for conversation listing`);
+      
+      const { storage } = await import("../storage");
+      const godUser = await storage.getUserById(MR_BLUE_GOD_USER_ID);
+      
+      if (!godUser) {
+        return res.status(500).json({ success: false, error: 'Mr. Blue test user not found. Contact admin.', conversations: [] });
+      }
+      
+      userId = godUser.id;
+      req.user = godUser;
+    }
+
+    const { storage } = await import("../storage");
+    const conversation = await storage.getOrCreateActiveMrBlueConversation(userId);
+
+    console.log(`[MrBlue Conversations] ✅ Listed conversation for user ${userId}: ${conversation.id}`);
+
+    res.json({ success: true, conversations: [conversation], activeId: conversation.id });
+  } catch (error: any) {
+    console.error('[MrBlue Conversations] Error listing conversations:', error);
+    res.status(500).json({ success: false, error: error.message, conversations: [] });
+  }
+});
+
 router.post("/conversations", optionalAuth, async (req: AuthRequest, res: Response) => {
   try {
     // ✅ AGENT #15: God-Mode Test User - Use existing god user for unauthenticated sessions
