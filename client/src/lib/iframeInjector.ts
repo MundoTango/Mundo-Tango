@@ -1391,7 +1391,24 @@ export const IFRAME_SELECTION_SCRIPT = `
         }
       }
       
-      // ✅ Allow Cmd+Click to pass through for form submissions and external links
+      if (button) {
+        // ✅ For buttons, trigger the click handler by re-dispatching without metaKey
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('[VisualEditor] Cmd+Click on button - re-dispatching click event');
+        
+        // Create a new click event without metaKey/ctrlKey so React's onClick fires
+        const syntheticClick = new MouseEvent('click', {
+          bubbles: true,
+          cancelable: true,
+          view: window,
+          // Don't include metaKey/ctrlKey so it's treated as a normal click
+        });
+        button.dispatchEvent(syntheticClick);
+        return;
+      }
+      
+      // ✅ Allow Cmd+Click to pass through for other elements
       console.log('[VisualEditor] Cmd+Click detected - allowing default behavior');
       return; // Don't prevent default for Cmd+Click
     }
