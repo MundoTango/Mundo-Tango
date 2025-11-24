@@ -1959,18 +1959,10 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
-      <Route path="/settings/notifications">
-        <ProtectedRoute>
-          <AppLayout>
-            <NotificationSettingsPage />
-          </AppLayout>
-        </ProtectedRoute>
-      </Route>
-
       <Route path="/settings/privacy">
         <ProtectedRoute>
           <AppLayout>
-            <PrivacySettingsPage />
+            <PrivacyPage />
           </AppLayout>
         </ProtectedRoute>
       </Route>

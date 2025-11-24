@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { Slider } from "@/components/ui/slider";
 import { 
   User, 
   Lock, 
@@ -22,6 +23,7 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from '@/components/SelfHealingErrorBoundary';
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
+import { useUser } from "@/hooks/use-user";
 
 interface UserSettings {
   emailNotifications: boolean;
@@ -38,10 +40,13 @@ interface UserSettings {
 export default function UserSettingsPage() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { user, isLoading: userLoading } = useUser();
 
-  const { data: settings, isLoading } = useQuery<UserSettings>({
+  const { data: settings, isLoading: settingsLoading } = useQuery<UserSettings>({
     queryKey: ["/api/users/me/settings"],
   });
+
+  const isLoading = userLoading || settingsLoading;
 
   const updateSettingsMutation = useMutation({
     mutationFn: (data: Partial<UserSettings>) =>
@@ -143,12 +148,90 @@ export default function UserSettingsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
+                <Label htmlFor="name">Name</Label>
+                <Input 
+                  id="name" 
+                  type="text" 
+                  defaultValue={user?.name || ""} 
+                  placeholder="Your full name" 
+                  data-testid="input-name" 
+                />
+              </div>
+              <div>
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="your@email.com" data-testid="input-email" />
+                <Input 
+                  id="email" 
+                  type="email" 
+                  defaultValue={user?.email || ""} 
+                  placeholder="your@email.com" 
+                  data-testid="input-email" 
+                  disabled 
+                />
+                <p className="text-sm text-muted-foreground mt-1">Email cannot be changed</p>
               </div>
               <div>
                 <Label htmlFor="username">Username</Label>
-                <Input id="username" placeholder="@username" data-testid="input-username" />
+                <Input 
+                  id="username" 
+                  defaultValue={user?.username || ""} 
+                  placeholder="@username" 
+                  data-testid="input-username" 
+                />
+              </div>
+              <div>
+                <Label htmlFor="city">Location</Label>
+                <Input 
+                  id="city" 
+                  defaultValue={user?.city && user?.country ? `${user.city}, ${user.country}` : ""} 
+                  placeholder="City, Country" 
+                  data-testid="input-location" 
+                />
+              </div>
+              <Separator />
+              <div className="space-y-4">
+                <h3 className="font-semibold">Tango Experience</h3>
+                <div>
+                  <Label htmlFor="yearsOfDancing">Years of Dancing</Label>
+                  <Input 
+                    id="yearsOfDancing" 
+                    type="number" 
+                    min="0" 
+                    max="100"
+                    defaultValue={user?.yearsOfDancing || 0}
+                    placeholder="0" 
+                    data-testid="input-years-dancing" 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="leaderLevel">Leader Level (0-5)</Label>
+                  <div className="flex items-center space-x-4">
+                    <Slider
+                      id="leaderLevel"
+                      min={0}
+                      max={5}
+                      step={1}
+                      defaultValue={[user?.leaderLevel || 0]}
+                      className="flex-1"
+                      data-testid="slider-leader-level"
+                    />
+                    <Badge variant="secondary">{user?.leaderLevel || 0}</Badge>
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="followerLevel">Follower Level (0-5)</Label>
+                  <div className="flex items-center space-x-4">
+                    <Slider
+                      id="followerLevel"
+                      min={0}
+                      max={5}
+                      step={1}
+                      defaultValue={[user?.followerLevel || 0]}
+                      className="flex-1"
+                      data-testid="slider-follower-level"
+                    />
+                    <Badge variant="secondary">{user?.followerLevel || 0}</Badge>
+                  </div>
+                </div>
               </div>
               <Button data-testid="button-save-account">Save Changes</Button>
             </CardContent>
