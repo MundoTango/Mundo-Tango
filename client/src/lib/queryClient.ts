@@ -126,6 +126,19 @@ export const getQueryFn: <T>(options: {
     }
 
     await throwIfResNotOk(res);
+    
+    // Check if response is actually JSON before parsing
+    const contentType = res.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await res.text();
+      console.error(`[QueryClient] Expected JSON but got ${contentType}:`, {
+        url,
+        status: res.status,
+        preview: text.substring(0, 200)
+      });
+      throw new Error(`API endpoint ${url} returned ${contentType || 'unknown'} instead of JSON`);
+    }
+    
     return await res.json();
   };
 

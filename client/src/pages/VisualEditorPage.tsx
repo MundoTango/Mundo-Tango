@@ -741,17 +741,22 @@ Let's get started! What would you like to change?`,
                 e.preventDefault();
                 e.stopPropagation();
                 
-                // Remove previous selection
-                if (selectedElement) {
+                // Remove previous selection (but keep it visible until new selection)
+                if (selectedElement && selectedElement !== e.target) {
                   selectedElement.style.outline = '';
                   selectedElement.contentEditable = 'false';
+                  selectedElement.removeAttribute('data-selected');
                 }
                 
                 selectedElement = e.target;
                 
-                // Add blue outline
-                selectedElement.style.outline = '2px solid hsl(var(--primary))';
+                // Add blue outline - KEEP IT VISIBLE
+                selectedElement.style.outline = '3px solid #3b82f6';
                 selectedElement.style.outlineOffset = '2px';
+                selectedElement.style.transition = 'outline 0.2s';
+                selectedElement.setAttribute('data-selected', 'true');
+                
+                console.log('[IframeSelection] Element selected:', selectedElement.tagName, selectedElement.className);
                 
                 // Send to parent
                 window.parent.postMessage({
@@ -2030,34 +2035,7 @@ Let's get started! What would you like to change?`,
                   }}
                 />
                 
-                {/* Smart Suggestions Panel (only in preview mode) */}
-                {isGodLevel && currentPageHtml && (
-                  <SmartSuggestions
-                    pageHtml={currentPageHtml}
-                    selectedElement={selectedElement}
-                    currentStyles={selectedElementStyles}
-                    pagePath={currentIframeUrl}
-                    autoRefresh={false}
-                    onApplyFix={(suggestion) => {
-                      // Apply automated CSS changes to iframe
-                      if (suggestion.automated && suggestion.changes && iframeRef.current) {
-                        Object.entries(suggestion.changes).forEach(([property, value]) => {
-                          applyInstantChange(iframeRef.current!, {
-                            type: 'style',
-                            selector: suggestion.selector || '',
-                            property,
-                            value: value as string
-                          });
-                        });
-                      }
-                      
-                      toast({
-                        title: "Suggestion Applied",
-                        description: suggestion.fix
-                      });
-                    }}
-                  />
-                )}
+                {/* Smart Suggestions moved to Error Analysis tab */}
                 
                 {/* Element Highlighter - Natural language element selection */}
                 {isGodLevel && (
