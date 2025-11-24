@@ -21,6 +21,8 @@ import { progressTrackingAgent } from './ProgressTrackingAgent';
 import { preferenceExtractor } from './PreferenceExtractor';
 import { clarificationService } from '../clarification/ClarificationService';
 import { sequentialOrchestrator } from '../orchestration/SequentialOrchestrator';
+import { LearningRetentionService } from './LearningRetentionService';
+import { ValidationService } from '../validation/ValidationService';
 import type { WorkflowStep } from '@shared/types/a2a';
 import * as fs from 'fs/promises';
 import * as path from 'path';

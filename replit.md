@@ -11,6 +11,8 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 - **Test Before Complete** - Run E2E tests for UI changes, unit tests for backend
 - **Database:** Never change ID column types (serial ↔ varchar) - breaks existing data
 - **Handoff Plan:** Never deviate - Follow exact phase sequence
+- **Auto-Fix Maximization** - All auto-fix as much as possible (3-attempt retry, <10% escalation rate)
+- **Validation Loop** - observe → decide → act → validate → adapt (not just automation)
 
 ## System Architecture
 
@@ -31,6 +33,9 @@ The Visual Editor provides wisprflow.ai-style UX with comprehensive inline editi
   - ✅ ADDED: Toast feedback for text editing, element deletion, element movement
   - ✅ ADDED: InlineEditingInstructions floating tooltip for user education
   - ⚠️ PENDING: Color picker for MT Ocean Theme (requires new component with brand presets)
+  - 🚀 IN PROGRESS: Phase C Autonomous Framework (auto-validation, auto-fix, escalation)
+  - 📋 CREATED: MB_MD_PHASE_C_AUTONOMOUS_FRAMEWORK_PRD.md (handoff to Mr. Blue)
+  - 🎓 CREATED: Agent training lessons 45-47 (validation loop, orchestration phases, event bus)
 
 ### Backend
 The backend is developed with Express and TypeScript, utilizing PostgreSQL (Neon) and Drizzle ORM. `shared/schema.ts` is the single source of truth for the database schema, with `server/storage.ts` providing CRUD operations. Routes are modular, and authentication uses JWT (httpOnly cookies) and Google/Facebook OAuth, featuring an 8-tier Role-Based Access Control (RBAC) system. Database migrations are automated.
