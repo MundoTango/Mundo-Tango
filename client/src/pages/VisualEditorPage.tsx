@@ -39,6 +39,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ErrorAnalysisPanel } from "@/components/mr-blue/ErrorAnalysisPanel";
 import { BackendSaveProgressModal, type BackendSaveProgress } from "@/components/visual-editor/BackendSaveProgressModal";
 import { InlineEditingInstructions } from "@/components/visual-editor/InlineEditingInstructions";
+import { ElementPropertiesPopup } from "@/components/visual-editor/ElementPropertiesPopup";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -82,6 +83,8 @@ function VisualEditorPageContent() {
   const [isExecuting, setIsExecuting] = useState(false);
   const [viewMode, setViewMode] = useState<'preview' | 'code' | 'history'>('preview');
   const [selectedElement, setSelectedElement] = useState<any>(null);
+  const [showPropertiesPopup, setShowPropertiesPopup] = useState(false);
+  const [popupPosition, setPopupPosition] = useState({ x: 100, y: 100 });
   const [conversationHistory, setConversationHistory] = useState<Array<{role: string; content: string}>>([]);
   const [changeHistory, setChangeHistory] = useState<ChangeMetadata[]>([]);
   const [beforeScreenshot, setBeforeScreenshot] = useState<string | null>(null);
@@ -347,6 +350,41 @@ Let's get started! What would you like to change?`,
       console.log('[Streaming] Applied visual change:', change);
     }
   }, [streamMessages, selectedElement]);
+  
+  // ✅ FIX: Handle chat responses from streaming
+  useEffect(() => {
+    const chatResponseMsg = streamMessages.find(m => 
+      m.type === 'chat_response' || m.type === 'completion'
+    );
+    
+    if (chatResponseMsg && chatResponseMsg.message) {
+      const responseText = chatResponseMsg.message;
+      
+      // Check if we already added this response
+      const lastMessage = conversationHistory[conversationHistory.length - 1];
+      if (lastMessage?.role === 'assistant' && lastMessage.content === responseText) {
+        return; // Already added
+      }
+      
+      console.log('[VisualEditor] ✅ Adding chat response to history:', responseText);
+      
+      // Add assistant response to conversation history
+      setConversationHistory(prev => [
+        ...prev,
+        { role: 'assistant', content: responseText }
+      ]);
+      
+      // Save assistant message to database
+      if (currentConversationId) {
+        saveMessageMutation.mutate({ role: 'assistant', content: responseText });
+      }
+      
+      // Voice response with natural voice
+      if (ttsSupported) {
+        speak(responseText);
+      }
+    }
+  }, [streamMessages, conversationHistory, currentConversationId, saveMessageMutation, ttsSupported, speak]);
 
   // Save Changes Mutation (MB.MD v9.4 P0 Task 3) - MUST BE BEFORE useEffects
   const saveChangesMutation = useMutation({
@@ -985,6 +1023,14 @@ Let's get started! What would you like to change?`,
           setSelectedElementStyles(event.data.component.styles);
         }
         
+        // ✅ Show Replit-style properties popup
+        setShowPropertiesPopup(true);
+        // Position popup near the element (or center of screen if no position data)
+        setPopupPosition({
+          x: event.data.component.position?.x || window.innerWidth / 2 - 350,
+          y: event.data.component.position?.y || 100
+        });
+        
         // Extract page HTML for analysis
         extractPageHtml();
         
@@ -1326,7 +1372,7 @@ Let's get started! What would you like to change?`,
       });
       
       // Send streaming request with FULL CONTEXT
-      await sendStreamingMessage(userMessage, {
+      sendStreamingMessage(userMessage, {
         page: currentIframeUrl,
         selectedElement: selectedElement,
         viewMode,
@@ -1337,33 +1383,8 @@ Let's get started! What would you like to change?`,
         keywords // 🔥 NEW: Smart chunking keywords
       }, 'chat');
       
-      // Extract final response from stream messages (chat_response or completion)
-      const completionMsg = streamMessages.find(m => 
-        m.type === 'chat_response' || m.type === 'completion'
-      );
-      if (completionMsg && completionMsg.message) {
-        const responseText = completionMsg.message;
-        
-        // Add assistant response to conversation history
-        setConversationHistory(prev => [
-          ...prev,
-          { role: 'assistant', content: responseText }
-        ]);
-        
-        // Save assistant message to database
-        if (currentConversationId) {
-          try {
-            await saveMessageMutation.mutateAsync({ role: 'assistant', content: responseText });
-          } catch (error) {
-            console.error('[VisualEditor] Failed to save assistant message:', error);
-          }
-        }
-        
-        // Voice response with natural voice
-        if (ttsSupported) {
-          speak(responseText);
-        }
-      }
+      // ✅ FIX: Response will be handled by useEffect watching streamMessages
+      // (The chat_response arrives asynchronously via the stream)
       
     } catch (error: any) {
       console.error('[StreamingChat] Error:', error);
@@ -1507,6 +1528,49 @@ Let's get started! What would you like to change?`,
       description: "Change removed from history",
     });
   };
+
+  // ✅ Replit-style popup handlers
+  const handlePropertiesSave = useCallback((changes: any) => {
+    console.log('[VisualEditor] Saving element properties:', changes);
+    
+    // Apply changes to the iframe element
+    if (iframeRef.current && selectedElement) {
+      const iframe = iframeRef.current;
+      try {
+        iframe.contentWindow?.postMessage({
+          type: 'APPLY_STYLE_CHANGES',
+          testId: selectedElement.testId,
+          changes
+        }, '*');
+        
+        setUnsavedChangesCount(prev => prev + 1);
+        setShowPropertiesPopup(false);
+      } catch (error) {
+        console.error('[VisualEditor] Failed to apply properties:', error);
+      }
+    }
+  }, [selectedElement]);
+
+  const handlePropertiesDelete = useCallback(() => {
+    console.log('[VisualEditor] Deleting element from popup');
+    
+    // Send delete command to iframe
+    if (iframeRef.current && selectedElement) {
+      const iframe = iframeRef.current;
+      try {
+        iframe.contentWindow?.postMessage({
+          type: 'DELETE_ELEMENT',
+          testId: selectedElement.testId
+        }, '*');
+        
+        setUnsavedChangesCount(prev => prev + 1);
+        setShowPropertiesPopup(false);
+        setSelectedElement(null);
+      } catch (error) {
+        console.error('[VisualEditor] Failed to delete element:', error);
+      }
+    }
+  }, [selectedElement]);
 
   // Replay System Functions
   const startReplay = () => {
@@ -2163,6 +2227,17 @@ Let's get started! What would you like to change?`,
                 
                 {/* Inline Editing Instructions - Floating help tooltip */}
                 <InlineEditingInstructions />
+                
+                {/* ✅ Element Properties Popup - Replit-style */}
+                {showPropertiesPopup && selectedElement && (
+                  <ElementPropertiesPopup
+                    element={selectedElement}
+                    position={popupPosition}
+                    onClose={() => setShowPropertiesPopup(false)}
+                    onSave={handlePropertiesSave}
+                    onDelete={handlePropertiesDelete}
+                  />
+                )}
                 
                 {/* Element Highlighter - Natural language element selection */}
                 {isGodLevel && (
