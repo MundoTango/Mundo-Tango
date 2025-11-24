@@ -405,7 +405,192 @@ Let's get started! What would you like to change?`,
     saveChangesMutation.mutate();
   }, [saveChangesMutation, toast]);
 
-  // Initialize voice command processor - NOW AFTER handleSaveChanges definition
+  // Undo Handler - MUST BE BEFORE useEffects THAT USE IT
+  const handleUndo = useCallback(() => {
+    if (iframeRef.current) {
+      undoLastChange(iframeRef.current);
+      setConversationHistory(prev => prev.slice(0, -2)); // Remove last exchange
+      toast({
+        title: "Undone",
+        description: "Last change reverted",
+      });
+    }
+  }, [toast]);
+
+  // Approve Mutation - MUST BE BEFORE useEffects THAT USE IT
+  const approveMutation = useMutation({
+    mutationFn: async (taskId: string) => {
+      const response = await apiRequest('POST', `/api/autonomous/approve/${taskId}`, {});
+      const data = await response.json();
+      if (!data.success) throw new Error(data.message);
+      return data;
+    },
+    onSuccess: async () => {
+      toast({
+        title: "Code Applied",
+        description: "Changes saved to codebase!",
+      });
+      
+      // Voice response with natural voice
+      if (ttsSupported) {
+        speak("I applied the changes to the codebase. Should I make any other updates?");
+      }
+      
+      // Capture after screenshot
+      if (currentTask?.generatedFiles && iframeRef.current) {
+        setTimeout(async () => {
+          await captureAfterScreenshot(beforeScreenshot, {
+            prompt: currentTask.prompt || '',
+            files: currentTask.generatedFiles?.map((f: any) => ({
+              path: f.filePath,
+              before: '',
+              after: f.content
+            })) || [],
+            changedElements: currentTask.generatedFiles?.length || 0
+          });
+        }, 1000);
+      }
+
+      setCurrentTask(prev => prev ? { ...prev, status: 'completed' } : null);
+      setIsExecuting(false);
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Apply Failed",
+        description: error.message,
+      });
+    },
+  });
+
+  // Capture screenshot before change - MUST BE BEFORE handleSubmit
+  const captureBeforeScreenshot = async () => {
+    if (!iframeRef.current) return null;
+    try {
+      const screenshot = await captureIframeScreenshot(iframeRef.current);
+      const id = `before-${Date.now()}`;
+      await saveScreenshot(id, screenshot, {
+        id,
+        type: 'before',
+        timestamp: Date.now(),
+        prompt: prompt.trim(),
+        changeId: id
+      });
+      setBeforeScreenshot(id);
+      return id;
+    } catch (error) {
+      console.error('[VisualEditor] Failed to capture before screenshot:', error);
+      return null;
+    }
+  };
+
+  // Capture screenshot after change and record in history - MUST BE BEFORE handleSubmit
+  const captureAfterScreenshot = async (beforeId: string | null, changeData: any) => {
+    if (!iframeRef.current || !beforeId) return;
+    try {
+      const screenshot = await captureIframeScreenshot(iframeRef.current);
+      const afterId = `after-${Date.now()}`;
+      await saveScreenshot(afterId, screenshot, {
+        id: afterId,
+        type: 'after',
+        timestamp: Date.now(),
+        prompt: changeData.prompt || prompt.trim(),
+        changeId: beforeId
+      });
+
+      // Create change metadata
+      const change: ChangeMetadata = {
+        id: beforeId,
+        timestamp: Date.now(),
+        prompt: changeData.prompt || prompt.trim(),
+        beforeScreenshot: beforeId,
+        afterScreenshot: afterId,
+        files: changeData.files || [],
+        css: changeData.css,
+        changedElements: changeData.changedElements
+      };
+
+      setChangeHistory(prev => [change, ...prev]);
+      setBeforeScreenshot(null);
+    } catch (error) {
+      console.error('[VisualEditor] Failed to capture after screenshot:', error);
+    }
+  };
+
+  // Handle submit - MUST BE BEFORE handleVoiceResult WHICH CALLS IT
+  const handleSubmit = async () => {
+    if (!prompt.trim()) return;
+
+    const trimmedPrompt = prompt.trim();
+    const lowerPrompt = trimmedPrompt.toLowerCase();
+    
+    // Vibe Coding: Detect UI modification requests (e.g., "Make button blue", "Change header color")
+    const isVibeCodeRequest = /\b(make|change|update|modify|set|add|remove)\s+(the|a|an)?\s*(button|header|text|color|background|style|size)/i.test(trimmedPrompt) ||
+                              /\b(have|with|to)\s+(a|an|the)?\s*(blue|red|green|yellow|white|black|larger|smaller|bold)/i.test(trimmedPrompt) ||
+                              /color.*to|background.*to|font.*to|size.*to/i.test(lowerPrompt);
+    
+    // FIXED ROUTING: Only route to autonomous for SPECIFIC build phrases
+    // Avoid matching common words like "make" which appear in normal conversation
+    const isBuildRequest = /\b(build|create|add)\s+(a|an|the|this|that|new)?\s*(feature|component|section|page)/i.test(trimmedPrompt) ||
+                          /\b(generate|scaffold|implement)\s/i.test(trimmedPrompt);
+    
+    // Check if it's a simple style change (requires selectedElement)
+    const styleKeywords = ['color', 'size', 'bigger', 'smaller', 'center', 'font'];
+    const isStyleOnly = styleKeywords.some(kw => lowerPrompt.includes(kw)) && trimmedPrompt.split(' ').length < 15;
+
+    if (isStyleOnly && selectedElement) {
+      // Capture screenshot before style change
+      await captureBeforeScreenshot();
+      // Fast path: instant CSS change (requires element selection)
+      quickStyleMutation.mutate(trimmedPrompt);
+    } else if (isVibeCodeRequest || isBuildRequest) {
+      // Capture screenshot before code generation
+      await captureBeforeScreenshot();
+      // Vibe Coding path: AI-powered code generation with live streaming
+      executeMutation.mutate(trimmedPrompt);
+    } else {
+      // ✅ NEW: Simple chat with STREAMING responses (real-time AI responses)
+      await handleStreamingChat(trimmedPrompt);
+    }
+  };
+
+  // Voice Result Handler - MUST BE BEFORE useEffects THAT USE stopListening
+  const handleVoiceResult = useCallback((text: string) => {
+    console.log('[Voice] Received transcript:', text);
+    
+    // First check if it's a voice command
+    if (voiceCommandProcessorRef.current?.processCommand(text)) {
+      return; // Command was executed
+    }
+    
+    // If not a command, treat as regular prompt
+    setPrompt(text);
+    // Auto-submit after a short delay to allow user to see the transcript
+    setTimeout(() => {
+      handleSubmit();
+    }, 500);
+  }, []);
+
+  // Voice Input Hook - MUST BE BEFORE useEffects THAT USE stopListening
+  const { 
+    isListening, 
+    isSupported: voiceSupported, 
+    transcript, 
+    isContinuousMode,
+    startListening, 
+    stopListening, 
+    resetTranscript,
+    enableContinuousMode,
+    disableContinuousMode
+  } = useVoiceInput({
+    onResult: handleVoiceResult,
+    continuous: true,
+    interimResults: true
+  });
+
+  const { speak, isSpeaking, isSupported: ttsSupported } = useTextToSpeech();
+
+  // Initialize voice command processor - NOW AFTER handleSaveChanges, handleUndo, approveMutation, and stopListening definitions
   useEffect(() => {
     voiceCommandProcessorRef.current = new VoiceCommandProcessor({
       setViewMode,
@@ -452,41 +637,6 @@ Let's get started! What would you like to change?`,
     '/', 
     !!user && isGodLevel // Only run for god-level users
   );
-
-  // Voice hooks setup
-  const handleVoiceResult = useCallback((text: string) => {
-    console.log('[Voice] Received transcript:', text);
-    
-    // First check if it's a voice command
-    if (voiceCommandProcessorRef.current?.processCommand(text)) {
-      return; // Command was executed
-    }
-    
-    // If not a command, treat as regular prompt
-    setPrompt(text);
-    // Auto-submit after a short delay to allow user to see the transcript
-    setTimeout(() => {
-      handleSubmit();
-    }, 500);
-  }, []);
-
-  const { 
-    isListening, 
-    isSupported: voiceSupported, 
-    transcript, 
-    isContinuousMode,
-    startListening, 
-    stopListening, 
-    resetTranscript,
-    enableContinuousMode,
-    disableContinuousMode
-  } = useVoiceInput({
-    onResult: handleVoiceResult,
-    continuous: true,
-    interimResults: true
-  });
-
-  const { speak, isSpeaking, isSupported: ttsSupported } = useTextToSpeech();
 
   // WebSocket real-time progress
   const { isConnected: wsConnected, progress: wsProgress } = useAutonomousProgress({
@@ -1161,89 +1311,6 @@ Let's get started! What would you like to change?`,
     },
   });
 
-  // Handle submit (auto-detect if it's a chat message, style change, or full build task)
-  const handleSubmit = async () => {
-    if (!prompt.trim()) return;
-
-    const trimmedPrompt = prompt.trim();
-    const lowerPrompt = trimmedPrompt.toLowerCase();
-    
-    // Vibe Coding: Detect UI modification requests (e.g., "Make button blue", "Change header color")
-    const isVibeCodeRequest = /\b(make|change|update|modify|set|add|remove)\s+(the|a|an)?\s*(button|header|text|color|background|style|size)/i.test(trimmedPrompt) ||
-                              /\b(have|with|to)\s+(a|an|the)?\s*(blue|red|green|yellow|white|black|larger|smaller|bold)/i.test(trimmedPrompt) ||
-                              /color.*to|background.*to|font.*to|size.*to/i.test(lowerPrompt);
-    
-    // FIXED ROUTING: Only route to autonomous for SPECIFIC build phrases
-    // Avoid matching common words like "make" which appear in normal conversation
-    const isBuildRequest = /\b(build|create|add)\s+(a|an|the|this|that|new)?\s*(feature|component|section|page)/i.test(trimmedPrompt) ||
-                          /\b(generate|scaffold|implement)\s/i.test(trimmedPrompt);
-    
-    // Check if it's a simple style change (requires selectedElement)
-    const styleKeywords = ['color', 'size', 'bigger', 'smaller', 'center', 'font'];
-    const isStyleOnly = styleKeywords.some(kw => lowerPrompt.includes(kw)) && trimmedPrompt.split(' ').length < 15;
-
-    if (isStyleOnly && selectedElement) {
-      // Capture screenshot before style change
-      await captureBeforeScreenshot();
-      // Fast path: instant CSS change (requires element selection)
-      quickStyleMutation.mutate(trimmedPrompt);
-    } else if (isVibeCodeRequest || isBuildRequest) {
-      // Capture screenshot before code generation
-      await captureBeforeScreenshot();
-      // Vibe Coding path: AI-powered code generation with live streaming
-      executeMutation.mutate(trimmedPrompt);
-    } else {
-      // ✅ NEW: Simple chat with STREAMING responses (real-time AI responses)
-      await handleStreamingChat(trimmedPrompt);
-    }
-  };
-
-  // Approve generated code
-  const approveMutation = useMutation({
-    mutationFn: async (taskId: string) => {
-      const response = await apiRequest('POST', `/api/autonomous/approve/${taskId}`, {});
-      const data = await response.json();
-      if (!data.success) throw new Error(data.message);
-      return data;
-    },
-    onSuccess: async () => {
-      toast({
-        title: "Code Applied",
-        description: "Changes saved to codebase!",
-      });
-      
-      // Voice response with natural voice
-      if (ttsSupported) {
-        speak("I applied the changes to the codebase. Should I make any other updates?");
-      }
-      
-      // Capture after screenshot
-      if (currentTask?.generatedFiles && iframeRef.current) {
-        setTimeout(async () => {
-          await captureAfterScreenshot(beforeScreenshot, {
-            prompt: currentTask.prompt || '',
-            files: currentTask.generatedFiles?.map((f: any) => ({
-              path: f.filePath,
-              before: '',
-              after: f.content
-            })) || [],
-            changedElements: currentTask.generatedFiles?.length || 0
-          });
-        }, 1000);
-      }
-
-      setCurrentTask(prev => prev ? { ...prev, status: 'completed' } : null);
-      setIsExecuting(false);
-    },
-    onError: (error: any) => {
-      toast({
-        variant: "destructive",
-        title: "Apply Failed",
-        description: error.message,
-      });
-    },
-  });
-
   // Commit changes to Git
   const commitMutation = useMutation({
     mutationFn: async () => {
@@ -1282,60 +1349,6 @@ Let's get started! What would you like to change?`,
       });
     },
   });
-
-  // Capture screenshot before change
-  const captureBeforeScreenshot = async () => {
-    if (!iframeRef.current) return null;
-    try {
-      const screenshot = await captureIframeScreenshot(iframeRef.current);
-      const id = `before-${Date.now()}`;
-      await saveScreenshot(id, screenshot, {
-        id,
-        type: 'before',
-        timestamp: Date.now(),
-        prompt: prompt.trim(),
-        changeId: id
-      });
-      setBeforeScreenshot(id);
-      return id;
-    } catch (error) {
-      console.error('[VisualEditor] Failed to capture before screenshot:', error);
-      return null;
-    }
-  };
-
-  // Capture screenshot after change and record in history
-  const captureAfterScreenshot = async (beforeId: string | null, changeData: any) => {
-    if (!iframeRef.current || !beforeId) return;
-    try {
-      const screenshot = await captureIframeScreenshot(iframeRef.current);
-      const afterId = `after-${Date.now()}`;
-      await saveScreenshot(afterId, screenshot, {
-        id: afterId,
-        type: 'after',
-        timestamp: Date.now(),
-        prompt: changeData.prompt || prompt.trim(),
-        changeId: beforeId
-      });
-
-      // Create change metadata
-      const change: ChangeMetadata = {
-        id: beforeId,
-        timestamp: Date.now(),
-        prompt: changeData.prompt || prompt.trim(),
-        beforeScreenshot: beforeId,
-        afterScreenshot: afterId,
-        files: changeData.files || [],
-        css: changeData.css,
-        changedElements: changeData.changedElements
-      };
-
-      setChangeHistory(prev => [change, ...prev]);
-      setBeforeScreenshot(null);
-    } catch (error) {
-      console.error('[VisualEditor] Failed to capture after screenshot:', error);
-    }
-  };
 
   // Restore to a specific point in history
   const handleRestore = async (changeId: string) => {
@@ -1472,18 +1485,6 @@ Let's get started! What would you like to change?`,
       }
     };
   }, []);
-
-  // Undo last change
-  const handleUndo = () => {
-    if (iframeRef.current) {
-      undoLastChange(iframeRef.current);
-      setConversationHistory(prev => prev.slice(0, -2)); // Remove last exchange
-      toast({
-        title: "Undone",
-        description: "Last change reverted",
-      });
-    }
-  };
 
   // Loading state
   if (isLoading) {
