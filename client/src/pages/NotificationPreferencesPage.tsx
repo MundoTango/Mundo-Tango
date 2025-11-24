@@ -1,25 +1,27 @@
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Bell, Mail, Smartphone, Users, Calendar, MessageSquare, Heart } from "lucide-react";
+import { Bell, Mail, Smartphone, Users, Calendar, MessageSquare, Heart, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { SEO } from "@/components/SEO";
 
+interface EmailPreferences {
+  newMessage: boolean;
+  friendRequest: boolean;
+  eventInvite: boolean;
+  eventReminder: boolean;
+  weeklyDigest: boolean;
+  marketingEmails: boolean;
+}
+
 interface NotificationPreferences {
-  email: {
-    events: boolean;
-    messages: boolean;
-    friendRequests: boolean;
-    groupInvites: boolean;
-    eventReminders: boolean;
-    newsletter: boolean;
-  };
+  email: EmailPreferences;
   push: {
     events: boolean;
     messages: boolean;
@@ -32,14 +34,19 @@ interface NotificationPreferences {
 export default function NotificationPreferencesPage() {
   const { toast } = useToast();
   
+  // Load preferences from backend
+  const { data: emailPrefs, isLoading } = useQuery<EmailPreferences>({
+    queryKey: ['/api/user/email-preferences'],
+  });
+
   const [preferences, setPreferences] = useState<NotificationPreferences>({
     email: {
-      events: true,
-      messages: true,
-      friendRequests: true,
-      groupInvites: true,
-      eventReminders: true,
-      newsletter: false,
+      newMessage: false,
+      friendRequest: false,
+      eventInvite: false,
+      eventReminder: false,
+      weeklyDigest: false,
+      marketingEmails: false,
     },
     push: {
       events: true,
@@ -49,6 +56,16 @@ export default function NotificationPreferencesPage() {
       reactions: false,
     },
   });
+
+  // Sync backend data with local state
+  useEffect(() => {
+    if (emailPrefs) {
+      setPreferences(prev => ({
+        ...prev,
+        email: emailPrefs
+      }));
+    }
+  }, [emailPrefs]);
 
   const updatePreferencesMutation = useMutation({
     mutationFn: async (data: NotificationPreferences) => {

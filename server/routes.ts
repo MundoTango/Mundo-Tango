@@ -3479,6 +3479,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Privacy settings endpoints
+  app.get("/api/settings/privacy", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const user = await db.query.users.findFirst({
+        where: eq(users.id, req.user!.id),
+        columns: {
+          privacySettings: true
+        }
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Parse privacy settings from jsonb or return defaults
+      const privacySettings = user.privacySettings || {};
+      
+      res.json({
+        marketingEmails: privacySettings.marketingEmails ?? true,
+        analytics: privacySettings.analytics ?? true,
+        thirdPartySharing: privacySettings.thirdPartySharing ?? false,
+        profileVisibility: privacySettings.profileVisibility ?? "public",
+        searchable: privacySettings.searchable ?? true,
+        showActivity: privacySettings.showActivity ?? true
+      });
+    } catch (error) {
+      console.error('Failed to fetch privacy settings:', error);
+      res.status(500).json({ message: "Failed to fetch privacy settings" });
+    }
+  });
+
+  app.patch("/api/settings/privacy", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const updates = req.body;
+
+      // Get current privacy settings
+      const user = await db.query.users.findFirst({
+        where: eq(users.id, req.user!.id),
+        columns: {
+          privacySettings: true
+        }
+      });
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Merge with existing settings
+      const currentSettings = user.privacySettings || {};
+      const newSettings = {
+        ...currentSettings,
+        ...updates
+      };
+
+      // Update user privacy settings
+      await db
+        .update(users)
+        .set({ 
+          privacySettings: newSettings,
+          updatedAt: new Date()
+        })
+        .where(eq(users.id, req.user!.id));
+
+      res.json({ message: "Privacy settings updated successfully" });
+    } catch (error) {
+      console.error('Failed to update privacy settings:', error);
+      res.status(500).json({ message: "Failed to update privacy settings" });
+    }
+  });
+
   // User stats endpoint - for Dashboard
   app.get("/api/users/:id/stats", async (req: Request, res: Response) => {
     try {
