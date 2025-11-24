@@ -1,20 +1,73 @@
 # MB.MD v9.5: Visual Editor Production Requirements Document (PRD)
 
-**Version:** 9.5  
+**Version:** 9.5.1  
 **Date:** November 24, 2025  
-**Owner:** Replit AI → Mr. Blue  
-**Status:** ACTIVE - Production Critical Fixes  
-**Priority:** P0 - Blocking Beta Launch
+**Owner:** Replit AI → Mr. Blue → 1,218 Agents  
+**Status:** ACTIVE - Production Ready (Phase 1 Complete + P0-5 Complete)  
+**Priority:** P0 - Ready for Beta Launch
 
 ---
 
 ## 🎯 EXECUTIVE SUMMARY
 
-The Visual Editor Mr. Blue chat is **not responding with actual vibe code work**. Three critical issues are blocking production:
+**MB.MD v9.5 Phase 1 COMPLETE** ✅  
+All P0 production blockers resolved using the **4-Research-Session Deep-Dive Methodology**:
 
-1. **Routing Failure**: Requests route to `chat_response` instead of `code_generation`
-2. **UX Bug**: Text box doesn't clear after sending message
-3. **Voice Recognition Failure**: Network error prevents audio conversation
+1. ✅ **P0-1: Vibe Coding Routing** - Enhanced regex patterns detect UI modifications
+2. ✅ **P0-2: Text Box Clears** - `setPrompt('')` implemented immediately after send
+3. ✅ **P0-3: Voice Transcription** - OpenAI Whisper API endpoint `/api/mrblue/transcribe`
+4. ✅ **P0-4: Pre-Generation Analysis** - AI analyzes requests before code generation
+5. ✅ **P0-5: Conversation Race Condition** - Readiness guard prevents interaction before initialization
+
+**New: 4-Research-Session Methodology** - All bug fixes now follow this structured approach for 95-99% quality.
+
+---
+
+## 📚 **4-RESEARCH-SESSION DEEP-DIVE METHODOLOGY**
+
+### **Purpose**
+Achieve 95-99% bug resolution quality through systematic investigation before implementing fixes.
+
+### **When to Use**
+- Complex production bugs (P0/P1)
+- Race conditions and timing issues
+- Integration failures between systems
+- User-reported blocking errors
+
+### **The 4 Sessions**
+
+#### **Session 1: Error Understanding**
+- **Goal:** Understand what's happening
+- **Output:** Clear error description, user flow reproduction
+- **Example:** "User gets 400 error 'Missing conversationId' when selecting element"
+
+#### **Session 2: Code Flow Traced**
+- **Goal:** Map the execution path
+- **Tools:** `search_codebase`, `grep`, `read`
+- **Output:** Call stack, mutation chain, data flow diagram
+- **Example:** "User clicks element → IFRAME_ELEMENT_SELECTED → quickStyleMutation → saveMessageMutation"
+
+#### **Session 3: Root Cause Identified**
+- **Goal:** Find the core issue
+- **Output:** Specific line/function causing problem, why it fails
+- **Example:** "Race condition: `currentConversationId` is null because async creation hasn't completed"
+
+#### **Session 4: Secondary Issues Found**
+- **Goal:** Discover related problems
+- **Output:** Validation gaps, missing error handling, UX improvements
+- **Example:** "No loading state, no retry logic, no user feedback during initialization"
+
+### **Implementation Pattern**
+
+After research:
+1. **Apply Fix:** Implement solution using Phase C Auto-Fix framework
+2. **Validate:** Test with evidence collection (screenshots, LSP, logs)
+3. **Document:** Update MB.MD with root cause and solution
+
+### **Success Metrics**
+- **Target:** >80% auto-fix success rate (Phase C framework)
+- **Escalation:** <10% to Replit AI (only after 3 auto-retry attempts)
+- **Quality:** 95-99% code quality before delivery
 
 ---
 
