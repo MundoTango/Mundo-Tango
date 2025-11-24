@@ -121,7 +121,8 @@ function detectVibecodingIntent(message: string, context: any): {
   };
 }
 
-// Voice Transcription for Mr. Blue Continuous Voice Mode
+// ✅ MB.MD v9.5 Fix #3: Voice Transcription using Groq Whisper
+// Replaced OpenAI Whisper with Groq Whisper for better reliability in Replit environment
 router.post("/transcribe", upload.single('audio'), async (req: Request, res: Response) => {
   try {
     if (!req.file) {
@@ -131,34 +132,34 @@ router.post("/transcribe", upload.single('audio'), async (req: Request, res: Res
       });
     }
 
-    console.log('[MrBlue] Transcribing audio for continuous voice mode');
+    console.log('[MrBlue] Transcribing audio using Groq Whisper...');
 
-    // Check if OpenAI API key is configured
-    if (!process.env.OPENAI_API_KEY) {
-      console.warn('[MrBlue] OPENAI_API_KEY not configured, returning demo response');
+    // Check if GROQ_API_KEY is configured
+    if (!process.env.GROQ_API_KEY) {
+      console.warn('[MrBlue] GROQ_API_KEY not configured, returning demo response');
       fs.unlinkSync(req.file.path);
       return res.json({
         success: true,
-        transcript: 'This is a demo transcription. Configure OPENAI_API_KEY for real transcription.'
+        transcript: 'This is a demo transcription. Configure GROQ_API_KEY for real voice transcription.'
       });
     }
 
     // Create a read stream from the uploaded file
     const audioFile = fs.createReadStream(req.file.path);
 
-    // Call Whisper API
-    const transcription = await openai.audio.transcriptions.create({
+    // ✅ Call Groq Whisper API (whisper-large-v3 model)
+    const transcription = await groq.audio.transcriptions.create({
       file: audioFile,
-      model: "whisper-1",
+      model: "whisper-large-v3",
       language: "en",
       response_format: "json",
-      temperature: 0.2
+      temperature: 0.0
     });
 
     // Clean up uploaded file
     fs.unlinkSync(req.file.path);
 
-    console.log('[MrBlue] Transcription successful:', transcription.text.substring(0, 50));
+    console.log('[MrBlue] ✅ Groq Whisper transcription successful:', transcription.text.substring(0, 50));
 
     res.json({
       success: true,
@@ -166,7 +167,7 @@ router.post("/transcribe", upload.single('audio'), async (req: Request, res: Res
     });
 
   } catch (error: any) {
-    console.error('[MrBlue] Transcription error:', error);
+    console.error('[MrBlue] Groq Whisper transcription error:', error);
 
     // Clean up file if it exists
     if (req.file?.path && fs.existsSync(req.file.path)) {
@@ -176,6 +177,116 @@ router.post("/transcribe", upload.single('audio'), async (req: Request, res: Res
     res.status(500).json({
       success: false,
       message: error.message || 'Failed to transcribe audio'
+    });
+  }
+});
+
+// ✅ MB.MD v9.5 Fix #2: Research & Planning Intelligence Endpoint
+// Analyzes user requests to detect vague prompts and ask clarifying questions
+router.post("/analyze", async (req: Request, res: Response) => {
+  try {
+    const { prompt, context } = req.body;
+
+    if (!prompt || !prompt.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Prompt is required"
+      });
+    }
+
+    console.log('[MrBlue] 🔍 Analyzing request for clarity:', prompt);
+
+    // Check if GROQ_API_KEY is configured
+    if (!process.env.GROQ_API_KEY) {
+      console.warn('[MrBlue] GROQ_API_KEY not configured - returning default analysis');
+      return res.json({
+        success: true,
+        needsClarification: false,
+        questions: [],
+        plan: 'Analysis not available in demo mode. Configure GROQ_API_KEY.',
+        confidence: 0.5
+      });
+    }
+
+    // Build context-aware system prompt
+    const selectedElementInfo = context?.selectedElement 
+      ? `Selected Element: ${context.selectedElement.tagName} (class: ${context.selectedElement.className})`
+      : 'No element selected';
+    
+    const pageInfo = context?.pageRoute 
+      ? `Current Page: ${context.pageRoute}`
+      : 'Unknown page';
+
+    const systemPrompt = `You are Mr. Blue's Research & Planning Intelligence system. Your job is to analyze user requests and determine if they are clear enough to execute, or if you need to ask clarifying questions first.
+
+CONTEXT:
+- ${pageInfo}
+- ${selectedElementInfo}
+
+USER REQUEST: "${prompt}"
+
+ANALYSIS TASK:
+1. Determine if this request is CLEAR or VAGUE
+2. If VAGUE, generate 2-3 specific clarifying questions
+3. If CLEAR, generate a brief execution plan (1-2 sentences)
+4. Assign a confidence score (0.0 to 1.0)
+
+VAGUE REQUEST EXAMPLES:
+- "make it better" → Ask: What aspect? Appearance, performance, or functionality?
+- "redesign homepage" → Ask: Which sections? What style? What's the goal?
+- "add a button" → Ask: Where? What should it do? What text/style?
+
+CLEAR REQUEST EXAMPLES:
+- "make the login button background blue" → CLEAR (specific element, property, value)
+- "change header font to 24px" → CLEAR (specific target and value)
+- "add a red border to the footer" → CLEAR (specific element and style)
+
+You MUST respond in this EXACT JSON format:
+{
+  "needsClarification": true/false,
+  "questions": ["Question 1?", "Question 2?"],
+  "plan": "Brief execution plan if clear",
+  "confidence": 0.65
+}`;
+
+    const response = await groq.chat.completions.create({
+      model: 'llama-3.3-70b-versatile',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: `Analyze this request: "${prompt}"` }
+      ],
+      temperature: 0.2,
+      max_tokens: 500,
+      response_format: { type: "json_object" }
+    });
+
+    const analysisText = response.choices[0]?.message?.content;
+    
+    if (!analysisText) {
+      throw new Error('No analysis response from Groq');
+    }
+
+    const analysis = JSON.parse(analysisText);
+
+    console.log('[MrBlue] ✅ Analysis complete:', {
+      needsClarification: analysis.needsClarification,
+      confidence: analysis.confidence
+    });
+
+    res.json({
+      success: true,
+      needsClarification: analysis.needsClarification || false,
+      questions: analysis.questions || [],
+      plan: analysis.plan || '',
+      confidence: analysis.confidence || 0.5
+    });
+
+  } catch (error: any) {
+    console.error('[MrBlue] Analysis error:', error);
+    
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to analyze request'
     });
   }
 });
@@ -334,7 +445,7 @@ router.post("/chat", traceRoute("mr-blue-chat"), async (req: Request, res: Respo
           }
           
           const vibeRequest = {
-            naturalLanguage: enhancedMessage,
+            naturalLanguage: message,
             context: [
               `Current Page: ${parsedContext.currentPage || 'Unknown'}`,
               `Page Title: ${parsedContext.pageTitle || 'Unknown'}`,
@@ -569,7 +680,7 @@ Help users navigate the platform, answer questions, and provide personalized rec
       }
 
       // Add current user message (with MB.MD protocol already appended)
-      messages.push({ role: "user", content: enhancedMessage });
+      messages.push({ role: "user", content: message });
 
       const completion = await groq.chat.completions.create({
         messages,
@@ -592,7 +703,7 @@ Help users navigate the platform, answer questions, and provide personalized rec
             console.log(`[MrBlue] Created/got active conversation: ${activeConversationId}`);
           }
           
-          await saveMessageToHistory(activeConversationId, userId, 'user', enhancedMessage);
+          await saveMessageToHistory(activeConversationId, userId, 'user', message);
           await saveMessageToHistory(activeConversationId, userId, 'assistant', response);
           
           // SYSTEM 8: Store conversation in memory
@@ -601,7 +712,7 @@ Help users navigate the platform, answer questions, and provide personalized rec
               // Store user message
               await memoryService.storeMemory(
                 userId,
-                `User: ${enhancedMessage}\nMr Blue: ${response}`,
+                `User: ${message}\nMr Blue: ${response}`,
                 'conversation',
                 {
                   importance: 5,
