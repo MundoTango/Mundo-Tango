@@ -58,6 +58,12 @@ export default defineConfig({
       },
     }),
   },
+  
+  // Environment variables for tests (including Stripe test keys)
+  env: {
+    VITE_STRIPE_PUBLIC_KEY: process.env.TESTING_VITE_STRIPE_PUBLIC_KEY || process.env.VITE_STRIPE_PUBLIC_KEY || '',
+    STRIPE_SECRET_KEY: process.env.TESTING_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY || '',
+  },
 
   outputDir: 'test-videos',
 
