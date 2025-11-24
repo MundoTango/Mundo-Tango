@@ -39,7 +39,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ErrorAnalysisPanel } from "@/components/mr-blue/ErrorAnalysisPanel";
 import { BackendSaveProgressModal, type BackendSaveProgress } from "@/components/visual-editor/BackendSaveProgressModal";
 import { InlineEditingInstructions } from "@/components/visual-editor/InlineEditingInstructions";
-import { ElementPropertiesPopup } from "@/components/visual-editor/ElementPropertiesPopup";
+import { ElementPropertiesPanel } from "@/components/visual-editor/ElementPropertiesPanel";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -53,7 +53,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { 
   ShieldAlert, Crown, Bot, Cpu, Loader2, CheckCircle2, AlertCircle,
-  Play, Eye, Code2, Palette, Undo2, Sparkles, Zap, FileCode, History, Mic, MicOff, Lightbulb, RefreshCw, Brain, Bug, Activity, Save, Trash2, BookmarkCheck
+  Play, Eye, Code2, Palette, Undo2, Sparkles, Zap, FileCode, History, Mic, MicOff, Lightbulb, RefreshCw, Brain, Bug, Activity, Save, Trash2, BookmarkCheck, MousePointer2
 } from "lucide-react";
 
 type User = {
@@ -83,8 +83,6 @@ function VisualEditorPageContent() {
   const [isExecuting, setIsExecuting] = useState(false);
   const [viewMode, setViewMode] = useState<'preview' | 'code' | 'history'>('preview');
   const [selectedElement, setSelectedElement] = useState<any>(null);
-  const [showPropertiesPopup, setShowPropertiesPopup] = useState(false);
-  const [popupPosition, setPopupPosition] = useState({ x: 100, y: 100 });
   const [conversationHistory, setConversationHistory] = useState<Array<{role: string; content: string}>>([]);
   const [changeHistory, setChangeHistory] = useState<ChangeMetadata[]>([]);
   const [beforeScreenshot, setBeforeScreenshot] = useState<string | null>(null);
@@ -96,7 +94,7 @@ function VisualEditorPageContent() {
   const [currentPageHtml, setCurrentPageHtml] = useState<string>("");
   const [selectedElementStyles, setSelectedElementStyles] = useState<Record<string, string>>({});
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
-  const [middlePanelTab, setMiddlePanelTab] = useState<'errors' | 'memory' | 'progress' | 'automation'>('errors');
+  const [middlePanelTab, setMiddlePanelTab] = useState<'errors' | 'memory' | 'progress' | 'automation' | 'element'>('errors');
   const [awaitingApproval, setAwaitingApproval] = useState(false);
   
   // MB.MD v9.3: Backend Save Progress
@@ -1024,13 +1022,8 @@ Let's get started! What would you like to change?`,
           setSelectedElementStyles(event.data.component.styles);
         }
         
-        // ✅ Show Replit-style properties popup
-        setShowPropertiesPopup(true);
-        // Position popup near the element (or center of screen if no position data)
-        setPopupPosition({
-          x: event.data.component.position?.x || window.innerWidth / 2 - 350,
-          y: event.data.component.position?.y || 100
-        });
+        // ✅ Auto-switch to element tab when element is selected
+        setMiddlePanelTab('element');
         
         // Extract page HTML for analysis
         extractPageHtml();
@@ -2072,7 +2065,14 @@ Let's get started! What would you like to change?`,
           {/* Tab Header */}
           <div className="border-b p-3">
             <Tabs value={middlePanelTab} onValueChange={(v) => setMiddlePanelTab(v as any)}>
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
+                <TabsTrigger value="element" data-testid="tab-element">
+                  <MousePointer2 className="h-4 w-4 mr-2" />
+                  Element
+                  {selectedElement && (
+                    <Badge variant="secondary" className="ml-1 text-xs">1</Badge>
+                  )}
+                </TabsTrigger>
                 <TabsTrigger value="errors" data-testid="tab-errors">
                   <Bug className="h-4 w-4 mr-2" />
                   Errors
@@ -2087,7 +2087,7 @@ Let's get started! What would you like to change?`,
                 </TabsTrigger>
                 <TabsTrigger value="automation" data-testid="tab-automation">
                   <Play className="h-4 w-4 mr-2" />
-                  Automation
+                  Auto
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -2095,7 +2095,22 @@ Let's get started! What would you like to change?`,
 
           {/* Tab Content */}
           <div className="flex-1 overflow-hidden">
-            {middlePanelTab === 'errors' ? (
+            {middlePanelTab === 'element' ? (
+              <div className="h-full overflow-y-auto p-4">
+                {selectedElement ? (
+                  <ElementPropertiesPanel
+                    element={selectedElement}
+                    onSave={handlePropertiesSave}
+                    onDelete={handlePropertiesDelete}
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                    <MousePointer2 className="h-12 w-12 mb-3 opacity-50" />
+                    <p className="text-sm">Click any element in the preview to inspect it</p>
+                  </div>
+                )}
+              </div>
+            ) : middlePanelTab === 'errors' ? (
               <ErrorAnalysisPanel 
                 selfHealingResult={selfHealingResult}
                 isSelfHealingRunning={isSelfHealingRunning}
@@ -2228,17 +2243,6 @@ Let's get started! What would you like to change?`,
                 
                 {/* Inline Editing Instructions - Floating help tooltip */}
                 <InlineEditingInstructions />
-                
-                {/* ✅ Element Properties Popup - Replit-style */}
-                {showPropertiesPopup && selectedElement && (
-                  <ElementPropertiesPopup
-                    element={selectedElement}
-                    position={popupPosition}
-                    onClose={() => setShowPropertiesPopup(false)}
-                    onSave={handlePropertiesSave}
-                    onDelete={handlePropertiesDelete}
-                  />
-                )}
                 
                 {/* Element Highlighter - Natural language element selection */}
                 {isGodLevel && (
