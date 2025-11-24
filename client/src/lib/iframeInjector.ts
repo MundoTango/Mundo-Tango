@@ -1121,17 +1121,28 @@ export const IFRAME_SELECTION_SCRIPT = `
   // INSTANT DOM UPDATE COMMANDS
   // ============================================================================
   function applyChange(change) {
-    if (!selectedElement) {
-      console.warn('[VisualEditor] No element selected');
+    // ✅ P0-10 FIX: Support selector-based changes (not just selectedElement)
+    let targetElement = selectedElement;
+    
+    if (change.selector) {
+      // Use querySelector to find element by selector
+      targetElement = document.querySelector(change.selector);
+      if (!targetElement) {
+        console.warn('[VisualEditor] Element not found with selector:', change.selector);
+        return;
+      }
+      console.log('[VisualEditor] ✅ Found element with selector:', change.selector);
+    } else if (!selectedElement) {
+      console.warn('[VisualEditor] No element selected and no selector provided');
       return;
     }
 
     // Save state for undo
     const previousState = {
-      element: selectedElement,
-      style: selectedElement.style.cssText,
-      className: selectedElement.className,
-      innerHTML: selectedElement.innerHTML
+      element: targetElement,
+      style: targetElement.style.cssText,
+      className: targetElement.className,
+      innerHTML: targetElement.innerHTML
     };
     undoStack.push(previousState);
 
@@ -1139,41 +1150,44 @@ export const IFRAME_SELECTION_SCRIPT = `
     switch (change.type) {
       case 'style':
         if (change.property && change.value) {
-          selectedElement.style[change.property] = change.value;
-          console.log('[VisualEditor] Applied style:', change.property, '=', change.value);
+          // ✅ Use !important to override Tailwind classes
+          targetElement.style.setProperty(change.property, change.value, 'important');
+          console.log('[VisualEditor] Applied style:', change.property, '=', change.value, '!important');
         }
         break;
 
       case 'position':
-        const rect = selectedElement.getBoundingClientRect();
-        selectedElement.style.transform = \`translate(\${change.x || 0}px, \${change.y || 0}px)\`;
+        const rect = targetElement.getBoundingClientRect();
+        targetElement.style.transform = \`translate(\${change.x || 0}px, \${change.y || 0}px)\`;
         console.log('[VisualEditor] Applied position:', change.x, change.y);
         break;
 
       case 'text':
-        selectedElement.textContent = change.value;
+        targetElement.textContent = change.value;
         console.log('[VisualEditor] Applied text:', change.value);
         break;
 
       case 'html':
         // Update HTML content (already sanitized on parent side)
-        selectedElement.innerHTML = change.value;
+        targetElement.innerHTML = change.value;
         console.log('[VisualEditor] Applied HTML content update');
         break;
 
       case 'class':
         if (change.add) {
-          selectedElement.classList.add(change.add);
+          targetElement.classList.add(change.add);
         }
         if (change.remove) {
-          selectedElement.classList.remove(change.remove);
+          targetElement.classList.remove(change.remove);
         }
         console.log('[VisualEditor] Applied class change');
         break;
 
       case 'delete':
-        selectedElement.remove();
-        selectedElement = null;
+        targetElement.remove();
+        if (targetElement === selectedElement) {
+          selectedElement = null;
+        }
         console.log('[VisualEditor] Deleted element');
         break;
 
