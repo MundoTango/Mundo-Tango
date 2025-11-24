@@ -564,10 +564,13 @@ Let's get started! What would you like to change?`,
     const trimmedPrompt = prompt.trim();
     const lowerPrompt = trimmedPrompt.toLowerCase();
     
-    // Vibe Coding: Detect UI modification requests (e.g., "Make button blue", "Change header color", "make this container background transparent")
-    const isVibeCodeRequest = /\b(make|change|update|modify|set|add|remove)\s+(the|a|an|this|that)?\s*(button|header|text|color|background|container|div|element|style|size)/i.test(trimmedPrompt) ||
-                              /\b(have|with|to)\s+(a|an|the|this)?\s*(blue|red|green|yellow|white|black|transparent|larger|smaller|bold)/i.test(trimmedPrompt) ||
-                              /color.*to|background.*to|background.*transparent|font.*to|size.*to/i.test(lowerPrompt);
+    // ✅ CLEAR TEXT BOX IMMEDIATELY after capturing prompt (MB.MD v9.5 Fix #2)
+    setPrompt('');
+    
+    // Vibe Coding: Detect UI modification requests (e.g., "Make button blue", "make this container background transparent", "change div opacity")
+    const isVibeCodeRequest = /\b(make|change|update|modify|set|add|remove)\s+(the|a|an|this|that)?\s*(button|header|text|color|background|container|div|element|section|card|panel|box|wrapper|style|size|width|height|padding|margin|border|radius|opacity|spacing)/i.test(trimmedPrompt) ||
+                              /\b(have|with|to)\s+(a|an|the|this)?\s*(blue|red|green|yellow|white|black|transparent|opaque|hidden|visible|larger|smaller|wider|narrower|bold)/i.test(trimmedPrompt) ||
+                              /color.*to|background.*to|background.*transparent|opacity.*to|font.*to|size.*to|width.*to|height.*to/i.test(lowerPrompt);
     
     // FIXED ROUTING: Only route to autonomous for SPECIFIC build phrases
     // Avoid matching common words like "make" which appear in normal conversation
