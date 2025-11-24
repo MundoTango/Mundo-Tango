@@ -128,11 +128,41 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
         console.error('Speech recognition error:', event.error);
         setIsListening(false);
         
-        if (event.error !== 'no-speech') {
+        // ✅ MB.MD v9.5 Fix #3: Graceful degradation for network errors
+        if (event.error === 'network') {
+          console.warn('[Voice] Network error - browser SpeechRecognition API unavailable');
+          
+          // Check if we're in Replit environment
+          const isReplitEnv = window.location.hostname.includes('replit');
+          
+          toast({
+            title: '🎤 Voice Mode Unavailable',
+            description: isReplitEnv 
+              ? 'Browser voice recognition doesn\'t work in development mode. Please use the text box for now.'
+              : 'Voice recognition is temporarily unavailable. Please check your internet connection or use the text box.',
+            variant: 'default',
+          });
+        } else if (event.error === 'not-allowed') {
+          toast({
+            title: '🎤 Microphone Access Denied',
+            description: 'Please allow microphone access in your browser settings and try again.',
+            variant: 'destructive',
+          });
+        } else if (event.error === 'no-speech') {
+          // Don't show toast for no-speech - it's expected when user is silent
+          console.log('[Voice] No speech detected');
+        } else if (event.error === 'audio-capture') {
+          toast({
+            title: '🎤 No Microphone Found',
+            description: 'Please connect a microphone and try again.',
+            variant: 'destructive',
+          });
+        } else if (event.error !== 'aborted') {
+          // Show generic error for other cases (except 'aborted' which is expected when stopping)
           toast({
             variant: 'destructive',
             title: 'Voice Input Error',
-            description: `Failed to recognize speech: ${event.error}`
+            description: `Speech recognition failed: ${event.error}. Please try again or use text input.`
           });
         }
       };

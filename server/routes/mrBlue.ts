@@ -1304,6 +1304,144 @@ router.post("/analyze-page", async (req: Request, res: Response) => {
   }
 });
 
+// ============================================================================
+// MB.MD v9.5: PRE-GENERATION CONTEXT ANALYSIS (Fix #4)
+// ============================================================================
+
+/**
+ * Analyze user request context before code generation
+ * POST /api/mrblue/analyze
+ * 
+ * Body: { 
+ *   prompt: string, 
+ *   context?: { selectedElement?, domSnapshot?, currentPage? } 
+ * }
+ * Returns: { 
+ *   needsClarification: boolean, 
+ *   questions?: string[], 
+ *   plan?: string,
+ *   confidence: number 
+ * }
+ */
+router.post("/analyze", async (req: Request, res: Response) => {
+  try {
+    const { prompt, context = {} } = req.body;
+
+    if (!prompt || !prompt.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'Prompt is required'
+      });
+    }
+
+    console.log('[MrBlue] 🔍 Analyzing request:', prompt);
+
+    // Check if GROQ_API_KEY is configured
+    if (!process.env.GROQ_API_KEY) {
+      // Graceful degradation - proceed without analysis
+      return res.json({
+        success: true,
+        needsClarification: false,
+        confidence: 0.7,
+        plan: 'Proceeding with basic code generation (demo mode)',
+        message: 'AI analysis unavailable - configure GROQ_API_KEY for full capabilities'
+      });
+    }
+
+    // Build context summary
+    const contextSummary = {
+      hasSelectedElement: !!context.selectedElement,
+      selectedElementType: context.selectedElement?.tagName || null,
+      hasDOMSnapshot: !!context.domSnapshot,
+      currentPage: context.currentPage || 'unknown',
+      domElementCount: context.domSnapshot ? Object.keys(context.domSnapshot).length : 0
+    };
+
+    // Analyze with AI
+    const analysisPrompt = `You are Mr. Blue, an AI coding assistant. Analyze this user request to determine if you can proceed or need clarification.
+
+User Request: "${prompt}"
+
+Context Available:
+- Selected Element: ${contextSummary.hasSelectedElement ? `<${contextSummary.selectedElementType}>` : 'None'}
+- DOM Elements: ${contextSummary.domElementCount} elements available
+- Current Page: ${contextSummary.currentPage}
+
+Analyze the request and respond with JSON:
+{
+  "needsClarification": boolean,
+  "confidence": number (0.0 to 1.0),
+  "questions": ["Question 1?", "Question 2?"] (if needsClarification is true),
+  "plan": "Brief 1-2 sentence plan of what you'll do" (if needsClarification is false),
+  "reasoning": "Why you need clarification or why you can proceed"
+}
+
+Guidelines:
+- If the request is vague (e.g., "make it better", "fix this") → needsClarification=true
+- If target element is unclear (e.g., "change the button" but no button selected) → needsClarification=true
+- If request is specific with clear target (e.g., "make this container background transparent") → needsClarification=false
+- confidence should be 0.9+ for clear requests, 0.5-0.7 for moderate, <0.5 for unclear`;
+
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        {
+          role: "system",
+          content: "You are Mr. Blue, an expert AI coding assistant. Respond only with valid JSON."
+        },
+        {
+          role: "user",
+          content: analysisPrompt
+        }
+      ],
+      temperature: 0.3,
+      max_tokens: 500
+    });
+
+    const responseText = completion.choices[0]?.message?.content || '{}';
+    
+    // Parse AI response
+    let analysis;
+    try {
+      // Extract JSON from markdown code blocks if present
+      const jsonMatch = responseText.match(/```(?:json)?\n?([\s\S]*?)\n?```/) || responseText.match(/\{[\s\S]*\}/);
+      const jsonStr = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : responseText;
+      analysis = JSON.parse(jsonStr.trim());
+    } catch (parseError) {
+      console.error('[MrBlue] Failed to parse analysis response:', responseText);
+      // Fallback - proceed without clarification
+      analysis = {
+        needsClarification: false,
+        confidence: 0.7,
+        plan: 'Proceeding with code generation',
+        reasoning: 'Unable to analyze request fully'
+      };
+    }
+
+    console.log('[MrBlue] ✅ Analysis complete:', {
+      needsClarification: analysis.needsClarification,
+      confidence: analysis.confidence
+    });
+
+    res.json({
+      success: true,
+      ...analysis,
+      contextSummary
+    });
+
+  } catch (error: any) {
+    console.error('[MrBlue] Analysis error:', error);
+    // Graceful degradation - proceed without analysis
+    res.json({
+      success: true,
+      needsClarification: false,
+      confidence: 0.6,
+      plan: 'Proceeding with code generation (analysis failed)',
+      error: error.message
+    });
+  }
+});
+
 // ================== PHASE 1: CONVERSATION PERSISTENCE API ==================
 
 // 🔥 FIX: GET /conversations - Frontend was getting HTML because this route was missing

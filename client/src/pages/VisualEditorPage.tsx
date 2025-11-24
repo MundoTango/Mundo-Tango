@@ -557,6 +557,67 @@ Let's get started! What would you like to change?`,
     }
   };
 
+  // ============================================================================
+  // MB.MD v9.5 Fix #4: PRE-GENERATION CONTEXT ANALYSIS
+  // ============================================================================
+  
+  /**
+   * Analyze user request before code generation
+   * - Detects ambiguous requests and asks clarifying questions
+   * - Creates execution plan for clear requests
+   * - Improves code generation accuracy
+   */
+  const analyzeBeforeGenerate = async (userPrompt: string): Promise<{
+    needsClarification: boolean;
+    questions?: string[];
+    plan?: string;
+    confidence: number;
+  }> => {
+    try {
+      console.log('[VisualEditor] 🔍 Analyzing request before generation...');
+      
+      // Build context
+      const context = {
+        selectedElement,
+        domSnapshot: domSnapshotRef.current,
+        currentPage: iframeUrl || 'preview'
+      };
+
+      // Call analysis endpoint
+      const response = await apiRequest('/api/mrblue/analyze', {
+        method: 'POST',
+        body: JSON.stringify({
+          prompt: userPrompt,
+          context
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.success) {
+        console.warn('[VisualEditor] Analysis failed, proceeding without analysis');
+        return { needsClarification: false, confidence: 0.7 };
+      }
+
+      console.log('[VisualEditor] ✅ Analysis complete:', {
+        needsClarification: response.needsClarification,
+        confidence: response.confidence
+      });
+
+      return {
+        needsClarification: response.needsClarification,
+        questions: response.questions,
+        plan: response.plan,
+        confidence: response.confidence
+      };
+    } catch (error) {
+      console.error('[VisualEditor] Analysis error:', error);
+      // Graceful degradation - proceed without analysis
+      return { needsClarification: false, confidence: 0.6 };
+    }
+  };
+
   // Handle submit - MUST BE BEFORE handleVoiceResult WHICH CALLS IT
   const handleSubmit = async () => {
     if (!prompt.trim()) return;
@@ -580,6 +641,46 @@ Let's get started! What would you like to change?`,
     // Check if it's a simple style change (requires selectedElement)
     const styleKeywords = ['color', 'size', 'bigger', 'smaller', 'center', 'font'];
     const isStyleOnly = styleKeywords.some(kw => lowerPrompt.includes(kw)) && trimmedPrompt.split(' ').length < 15;
+
+    // ✅ MB.MD v9.5 Fix #4: PRE-GENERATION ANALYSIS for vibe coding requests
+    if ((isVibeCodeRequest || isBuildRequest) && !isStyleOnly) {
+      console.log('[VisualEditor] 🧠 Running pre-generation analysis...');
+      
+      const analysis = await analyzeBeforeGenerate(trimmedPrompt);
+      
+      if (analysis.needsClarification && analysis.questions) {
+        // Ask clarifying questions via chat
+        console.log('[VisualEditor] ❓ Request needs clarification');
+        
+        const clarificationMessage = `I need to understand your request better before making changes:\n\n${analysis.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}\n\nPlease provide more details so I can help you accurately.`;
+        
+        // Add to chat history
+        addMessage({
+          role: 'assistant',
+          content: clarificationMessage,
+          timestamp: Date.now()
+        });
+        
+        // Show in toast for visibility
+        toast({
+          title: '🤔 Need More Information',
+          description: 'I\'ve added some questions to the chat. Please answer them so I can help you better.',
+        });
+        
+        return; // Don't proceed with generation
+      }
+      
+      // Show plan if available
+      if (analysis.plan) {
+        console.log('[VisualEditor] 📋 Execution plan:', analysis.plan);
+        
+        addMessage({
+          role: 'assistant',
+          content: `📋 **Plan:** ${analysis.plan}\n\nGenerating code now...`,
+          timestamp: Date.now()
+        });
+      }
+    }
 
     if (isStyleOnly && selectedElement) {
       // Capture screenshot before style change
