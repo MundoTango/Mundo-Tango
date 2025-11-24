@@ -4301,9 +4301,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (query.length < 2) {
         return res.json({ users: [], events: [], groups: [] });
       }
-      const results = await storage.search(query, req.user!.id);
-      res.json(results);
+      
+      // storage.search() returns flat array with 'type' field
+      // Frontend expects { users: [], events: [], groups: [] }
+      const flatResults = await storage.search(query, req.user!.id);
+      
+      // Transform flat array to categorized object
+      const categorizedResults = {
+        users: flatResults.filter((r: any) => r.type === 'user'),
+        events: flatResults.filter((r: any) => r.type === 'event'),
+        groups: flatResults.filter((r: any) => r.type === 'group'),
+      };
+      
+      res.json(categorizedResults);
     } catch (error) {
+      console.error('Search failed:', error);
       res.status(500).json({ message: "Search failed" });
     }
   });
