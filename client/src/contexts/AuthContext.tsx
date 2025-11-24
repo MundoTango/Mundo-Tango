@@ -260,9 +260,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         country: data.user.country,
       });
 
-      // Redirect to dashboard after successful login
+      // Redirect to feed after successful login
       // Use setTimeout to ensure state updates complete before navigation (fixes race condition)
-      setTimeout(() => navigate("/dashboard"), 0);
+      setTimeout(() => navigate("/feed"), 0);
     } catch (error) {
       console.error("Login error:", error);
       throw error;
