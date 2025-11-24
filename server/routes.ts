@@ -3275,6 +3275,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update user profile endpoint - for Profile Edit Page
+  app.patch("/api/users/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = parseInt(req.params.id);
+      
+      // Verify user is updating their own profile or is admin
+      if (req.user!.id !== userId && req.user!.role !== 'super_admin') {
+        return res.status(403).json({ message: "Unauthorized to update this profile" });
+      }
+
+      const {
+        name,
+        bio,
+        city,
+        country,
+        yearsOfDancing,
+        tangoRoles,
+        socialLinks,
+        profileImage,
+      } = req.body;
+
+      // Update user in database
+      const [updatedUser] = await db
+        .update(users)
+        .set({
+          name,
+          bio,
+          city,
+          country,
+          yearsOfDancing,
+          tangoRoles,
+          socialLinks,
+          profileImage,
+          updatedAt: new Date(),
+        })
+        .where(eq(users.id, userId))
+        .returning();
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json(updatedUser);
+    } catch (error) {
+      console.error('Failed to update user profile:', error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
   app.get("/api/users/:id/followers", async (req: Request, res: Response) => {
     try {
       const userId = parseInt(req.params.id);
