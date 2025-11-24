@@ -197,10 +197,12 @@ import {
   agentHealth,
   users,
   events,
+  eventRsvps,
   groups,
   chatMessages,
   notifications,
   friendships,
+  postLikes,
   follows,
   profileViews,
   travelPlans,
@@ -3290,6 +3292,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(following);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch following" });
+    }
+  });
+
+  // User stats endpoint - for Dashboard
+  app.get("/api/users/:id/stats", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.id);
+      
+      // Fetch all stats in parallel for performance
+      const [eventsAttended, connections, postsLiked, messageConversations] = await Promise.all([
+        db.select({ count: sql<number>`count(*)::int` })
+          .from(eventRsvps)
+          .where(and(eq(eventRsvps.userId, userId), eq(eventRsvps.status, 'going')))
+          .then(rows => rows[0]?.count || 0),
+        
+        db.select({ count: sql<number>`count(*)::int` })
+          .from(friendships)
+          .where(
+            and(
+              or(eq(friendships.userId, userId), eq(friendships.friendId, userId)),
+              eq(friendships.status, 'accepted')
+            )
+          )
+          .then(rows => rows[0]?.count || 0),
+        
+        db.select({ count: sql<number>`count(*)::int` })
+          .from(postLikes)
+          .where(eq(postLikes.userId, userId))
+          .then(rows => rows[0]?.count || 0),
+        
+        db.select({ count: sql<number>`count(distinct ${chatMessages.chatRoomId})::int` })
+          .from(chatMessages)
+          .where(eq(chatMessages.userId, userId))
+          .then(rows => rows[0]?.count || 0)
+      ]);
+
+      res.json({
+        eventsAttended,
+        connections,
+        postsLiked,
+        messages: messageConversations
+      });
+    } catch (error) {
+      console.error('Failed to fetch user stats:', error);
+      res.status(500).json({ message: "Failed to fetch user stats" });
     }
   });
 

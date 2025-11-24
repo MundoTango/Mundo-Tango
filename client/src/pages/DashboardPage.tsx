@@ -1,19 +1,83 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Users, Heart, MessageCircle, ChevronRight, TrendingUp } from "lucide-react";
+import { Calendar, Users, Heart, MessageCircle, ChevronRight, TrendingUp, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
+import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { safeDateDistance } from "@/lib/safeDateFormat";
+
+type UserStats = {
+  eventsAttended: number;
+  connections: number;
+  postsLiked: number;
+  messages: number;
+};
+
+type Event = {
+  id: number;
+  title: string;
+  startDate: string;
+  location: string;
+};
+
+type Activity = {
+  type: string;
+  createdAt: string;
+  targetId: number;
+  relatedUser: string;
+};
 
 export default function DashboardPage() {
-  const stats = [
-    { label: "Events Attended", value: "24", icon: Calendar },
-    { label: "Connections", value: "156", icon: Users },
-    { label: "Posts Liked", value: "342", icon: Heart },
-    { label: "Messages", value: "89", icon: MessageCircle }
+  const { user } = useAuth();
+
+  // Fetch user stats
+  const { data: stats, isLoading: statsLoading } = useQuery<UserStats>({
+    queryKey: [`/api/users/${user?.id}/stats`],
+    enabled: !!user?.id,
+  });
+
+  // Fetch upcoming events
+  const { data: events = [], isLoading: eventsLoading } = useQuery<Event[]>({
+    queryKey: [`/api/users/${user?.id}/upcoming-events`],
+    enabled: !!user?.id,
+  });
+
+  // Fetch recent activity
+  const { data: activities = [], isLoading: activitiesLoading } = useQuery<Activity[]>({
+    queryKey: [`/api/users/${user?.id}/recent-activity`],
+    enabled: !!user?.id,
+  });
+
+  const statsCards = [
+    { 
+      label: "Events Attended", 
+      value: stats?.eventsAttended || 0, 
+      icon: Calendar,
+      loading: statsLoading
+    },
+    { 
+      label: "Connections", 
+      value: stats?.connections || 0, 
+      icon: Users,
+      loading: statsLoading
+    },
+    { 
+      label: "Posts Liked", 
+      value: stats?.postsLiked || 0, 
+      icon: Heart,
+      loading: statsLoading
+    },
+    { 
+      label: "Messages", 
+      value: stats?.messages || 0, 
+      icon: MessageCircle,
+      loading: statsLoading
+    }
   ];
 
   const fadeInUp = {
@@ -21,6 +85,21 @@ export default function DashboardPage() {
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true, margin: "-100px" },
     transition: { duration: 0.6 }
+  };
+
+  const formatActivityText = (activity: Activity) => {
+    switch (activity.type) {
+      case 'post_like':
+        return `Liked a post by ${activity.relatedUser}`;
+      case 'event_rsvp':
+        return `RSVPed to ${activity.relatedUser}`;
+      case 'comment':
+        return `Commented on ${activity.relatedUser}'s post`;
+      case 'friendship':
+        return `Connected with ${activity.relatedUser}`;
+      default:
+        return `Activity with ${activity.relatedUser}`;
+    }
   };
 
   return (
@@ -66,7 +145,7 @@ export default function DashboardPage() {
             <div className="container mx-auto max-w-6xl">
               {/* Stats Cards */}
               <motion.div {...fadeInUp} className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-12">
-                {stats.map((stat, idx) => {
+                {statsCards.map((stat, idx) => {
                   const IconComponent = stat.icon;
                   return (
                     <motion.div
@@ -82,8 +161,16 @@ export default function DashboardPage() {
                       >
                         <CardContent className="p-8 text-center">
                           <IconComponent className="h-10 w-10 text-primary mx-auto mb-4" />
-                          <div className="text-4xl font-serif font-bold mb-2">{stat.value}</div>
-                          <div className="text-sm text-muted-foreground">{stat.label}</div>
+                          {stat.loading ? (
+                            <div className="flex justify-center items-center h-12">
+                              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                            </div>
+                          ) : (
+                            <>
+                              <div className="text-4xl font-serif font-bold mb-2">{stat.value}</div>
+                              <div className="text-sm text-muted-foreground">{stat.label}</div>
+                            </>
+                          )}
                         </CardContent>
                       </Card>
                     </motion.div>
@@ -100,34 +187,59 @@ export default function DashboardPage() {
                       <CardTitle className="text-2xl font-serif">Upcoming Events</CardTitle>
                     </CardHeader>
                     <CardContent className="p-8">
-                      <div className="space-y-6">
-                        {[1, 2, 3].map((i) => (
-                          <motion.div 
-                            key={i} 
-                            className="flex items-center justify-between pb-6 border-b last:border-0 last:pb-0"
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: i * 0.05 }}
-                          >
-                            <div className="flex-1">
-                              <p className="font-semibold mb-1">Friday Night Milonga</p>
-                              <p className="text-sm text-muted-foreground">Dec 15, 2025 • 8:00 PM</p>
-                            </div>
-                            <Link href="/events">
-                              <Button size="sm" variant="outline" data-testid={`button-view-event-${i}`}>
-                                View
-                              </Button>
-                            </Link>
-                          </motion.div>
-                        ))}
-                      </div>
-                      <Link href="/events">
-                        <Button className="w-full mt-6 gap-2" data-testid="button-see-all-events">
-                          See All Events
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
-                      </Link>
+                      {eventsLoading ? (
+                        <div className="flex justify-center items-center py-12">
+                          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        </div>
+                      ) : events.length > 0 ? (
+                        <div className="space-y-6">
+                          {events.slice(0, 3).map((event, i) => (
+                            <motion.div 
+                              key={event.id} 
+                              className="flex items-center justify-between pb-6 border-b last:border-0 last:pb-0"
+                              initial={{ opacity: 0, x: -20 }}
+                              whileInView={{ opacity: 1, x: 0 }}
+                              viewport={{ once: true }}
+                              transition={{ delay: i * 0.05 }}
+                            >
+                              <div className="flex-1">
+                                <p className="font-semibold mb-1">{event.title}</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {new Date(event.startDate).toLocaleDateString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                  {event.location && ` • ${event.location}`}
+                                </p>
+                              </div>
+                              <Link href={`/events/${event.id}`}>
+                                <Button size="sm" variant="outline" data-testid={`button-view-event-${event.id}`}>
+                                  View
+                                </Button>
+                              </Link>
+                            </motion.div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-12">
+                          <Calendar className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                          <p className="text-muted-foreground mb-4">No upcoming events</p>
+                          <Link href="/events">
+                            <Button variant="outline">Discover Events</Button>
+                          </Link>
+                        </div>
+                      )}
+                      {events.length > 0 && (
+                        <Link href="/events">
+                          <Button className="w-full mt-6 gap-2" data-testid="button-see-all-events">
+                            See All Events
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                      )}
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -139,30 +251,48 @@ export default function DashboardPage() {
                       <CardTitle className="text-2xl font-serif">Recent Activity</CardTitle>
                     </CardHeader>
                     <CardContent className="p-8">
-                      <div className="space-y-6">
-                        {[1, 2, 3].map((i) => (
-                          <motion.div 
-                            key={i} 
-                            className="flex items-center gap-4 pb-6 border-b last:border-0 last:pb-0"
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: i * 0.05 }}
-                          >
-                            <div className="h-2 w-2 rounded-full bg-primary flex-shrink-0" />
-                            <span className="text-sm flex-1">
-                              Liked a post by Maria Santos
-                            </span>
-                            <span className="text-xs text-muted-foreground">2h ago</span>
-                          </motion.div>
-                        ))}
-                      </div>
-                      <Link href="/feed">
-                        <Button className="w-full mt-6 gap-2" data-testid="button-see-all-activity">
-                          See All Activity
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
-                      </Link>
+                      {activitiesLoading ? (
+                        <div className="flex justify-center items-center py-12">
+                          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        </div>
+                      ) : activities.length > 0 ? (
+                        <div className="space-y-6">
+                          {activities.slice(0, 3).map((activity, i) => (
+                            <motion.div 
+                              key={i} 
+                              className="flex items-center gap-4 pb-6 border-b last:border-0 last:pb-0"
+                              initial={{ opacity: 0, x: -20 }}
+                              whileInView={{ opacity: 1, x: 0 }}
+                              viewport={{ once: true }}
+                              transition={{ delay: i * 0.05 }}
+                            >
+                              <div className="h-2 w-2 rounded-full bg-primary flex-shrink-0" />
+                              <span className="text-sm flex-1">
+                                {formatActivityText(activity)}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {safeDateDistance(new Date(activity.createdAt))}
+                              </span>
+                            </motion.div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-12">
+                          <TrendingUp className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                          <p className="text-muted-foreground mb-4">No recent activity</p>
+                          <Link href="/feed">
+                            <Button variant="outline">Start Exploring</Button>
+                          </Link>
+                        </div>
+                      )}
+                      {activities.length > 0 && (
+                        <Link href="/feed">
+                          <Button className="w-full mt-6 gap-2" data-testid="button-see-all-activity">
+                            See All Activity
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                      )}
                     </CardContent>
                   </Card>
                 </motion.div>
