@@ -728,7 +728,7 @@ Let's get started! What would you like to change?`,
                           /\b(generate|scaffold|implement)\s/i.test(trimmedPrompt);
     
     // Check if it's a simple style change (requires selectedElement)
-    const styleKeywords = ['color', 'size', 'bigger', 'smaller', 'center', 'font'];
+    const styleKeywords = ['color', 'background', 'transparent', 'size', 'bigger', 'smaller', 'center', 'font', 'border', 'shadow', 'opacity', 'padding', 'margin'];
     const isStyleOnly = styleKeywords.some(kw => lowerPrompt.includes(kw)) && trimmedPrompt.split(' ').length < 15;
 
     // ✅ MB.MD v9.5 Fix #4: PRE-GENERATION ANALYSIS for vibe coding requests (now non-blocking)
