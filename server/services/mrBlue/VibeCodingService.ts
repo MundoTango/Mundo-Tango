@@ -23,6 +23,9 @@ import { clarificationService } from '../clarification/ClarificationService';
 import { sequentialOrchestrator } from '../orchestration/SequentialOrchestrator';
 import { LearningRetentionService } from './LearningRetentionService';
 import { ValidationService } from '../validation/ValidationService';
+import { autoRetryService } from './AutoRetryService';
+import { escalationService } from './EscalationService';
+import { evidenceCollector } from './EvidenceCollector';
 import type { WorkflowStep } from '@shared/types/a2a';
 import * as fs from 'fs/promises';
 import * as path from 'path';
@@ -30,6 +33,8 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 
 const execAsync = promisify(exec);
+
+const validationService = new ValidationService();
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
@@ -217,11 +222,11 @@ export class VibeCodingService {
 
   /**
    * Generate code from natural language request
-   * NOW WITH CLARIFICATION INTEGRATION
+   * WITH PHASE C AUTONOMOUS FRAMEWORK: Pattern Learning + Validation Loop + Auto-Retry + Escalation
    */
-  async generateCode(request: VibeCodeRequest): Promise<VibeCodeResult> {
+  async generateCode(request: VibeCodeRequest, attemptNumber: number = 1): Promise<VibeCodeResult> {
     try {
-      console.log(`[VibeCoding] 🎯 Request: "${request.naturalLanguage}"`);
+      console.log(`[VibeCoding] 🎯 Request (Attempt ${attemptNumber}/3): "${request.naturalLanguage}"`);
       
       // Publish progress update
       const progressEvent = agentEventBus.createEvent(
@@ -231,45 +236,62 @@ export class VibeCodingService {
           sessionId: request.sessionId,
           phase: 'planning',
           percent: 10,
-          message: 'Analyzing request...',
+          message: `Analyzing request (Attempt ${attemptNumber}/3)...`,
         } as any
       );
       await agentEventBus.publish(progressEvent);
 
-      // PHASE 1: Clarification - NEW INTEGRATION
-      const clarificationResult = await this.assessAndClarify(request);
+      // PHASE C STEP 1: Query learned patterns BEFORE generating
+      console.log('[VibeCoding] 📚 Querying learned patterns...');
+      const patterns = await LearningRetentionService.getRelevantPatterns({
+        agentId: 'VibeCodingAgent',
+        task: request.naturalLanguage,
+        taskType: 'code_generation',
+        metadata: { attemptNumber }
+      });
+      console.log(`[VibeCoding] Found ${patterns.length} relevant patterns`);
+
+      // Apply patterns to enhance request
+      let enhancedRequest = request.naturalLanguage;
+      if (patterns.length > 0) {
+        const topPattern = patterns[0];
+        console.log(`[VibeCoding] Applying pattern: ${topPattern.pattern.patternType}`);
+        enhancedRequest += `\n\nLearned pattern: ${topPattern.pattern.description}`;
+      }
+
+      // PHASE 1: Clarification
+      const clarificationResult = await this.assessAndClarify({
+        ...request,
+        naturalLanguage: enhancedRequest
+      });
       
-      // Update request with clarified version if clarification was needed
       if (clarificationResult.clarified) {
         console.log(`[VibeCoding] 📝 Using clarified request`);
-        request.naturalLanguage = clarificationResult.finalRequest;
+        enhancedRequest = clarificationResult.finalRequest;
       }
       
-      // PHASE 2: Check for known errors BEFORE generating code
-      const knownErrors = await this.checkForKnownErrors(request.naturalLanguage);
+      // PHASE 2: Check for known errors
+      const knownErrors = await this.checkForKnownErrors(enhancedRequest);
       
-      // PHASE 3: Extract user preferences from the request
+      // PHASE 3: Extract user preferences
       await preferenceExtractor.extractAndSave(
         request.userId,
-        request.naturalLanguage,
-        undefined // conversationId can be added if available
+        enhancedRequest,
+        undefined
       );
       
-      // Step 1: Interpret the request using GROQ
-      const interpretation = await this.interpretRequest(request.naturalLanguage);
+      // Step 1: Interpret the request
+      const interpretation = await this.interpretRequest(enhancedRequest);
       console.log(`[VibeCoding] 📝 Interpretation: ${interpretation.intent}`);
 
-      // Step 2: Get relevant context from documentation
-      const contextResults = await this.contextService.search(
-        request.naturalLanguage,
-        5
-      );
+      // Step 2: Get relevant context
+      const contextResults = await this.contextService.search(enhancedRequest, 5);
       console.log(`[VibeCoding] 📚 Found ${contextResults.length} relevant context chunks`);
 
-      // PHASE 3: Build user preference context
+      // Build preference context
       const preferenceContext = await preferenceExtractor.buildPreferenceContext(request.userId);
       if (preferenceContext) {
-        console.log(`[VibeCoding] 🎨 Loaded user preferences for code generation`);
+        console.log(`[VibeCoding] 🎨 Loaded user preferences`);
       }
 
       // Update progress
@@ -285,14 +307,14 @@ export class VibeCodingService {
       );
       await agentEventBus.publish(contextProgressEvent);
 
-      // Step 3: Generate code changes (PHASE 2 & 3: Inject error patterns and preferences)
+      // Step 3: Generate code changes
       const fileChanges = await this.codeGenerator.generateChanges({
-        request: request.naturalLanguage,
+        request: enhancedRequest,
         interpretation,
         context: contextResults,
         targetFiles: request.targetFiles || [],
-        knownErrors, // PHASE 2: Pass error patterns to code generator
-        preferenceContext, // PHASE 3: Pass user preferences to code generator
+        knownErrors,
+        preferenceContext,
       });
       console.log(`[VibeCoding] 🔨 Generated ${fileChanges.length} file changes`);
 
@@ -307,48 +329,171 @@ export class VibeCodingService {
       );
       await agentEventBus.publish(codeGeneratedEvent);
 
-      // Step 4: Validate changes
-      const validationResults = await this.validateChanges(fileChanges);
-      console.log(`[VibeCoding] ✅ Validation complete`);
+      // PHASE C STEP 2: Multi-tier validation with Phase C framework
+      console.log('[VibeCoding] 🔍 Running multi-tier validation...');
+      const files = fileChanges.map(fc => ({
+        path: fc.filePath,
+        content: fc.newContent
+      }));
+      
+      const validationResult = await validationService.validate(files, {
+        strictMode: true,
+        maxAttempts: 1
+      });
 
-      // Publish validation event
-      if (validationResults.syntax && validationResults.safety) {
-        const validationPassedEvent = agentEventBus.createEvent(
-          'validation:passed',
-          'VibeCodingService',
-          {
-            sessionId: request.sessionId,
-            validationResults,
-          } as any
+      console.log(`[VibeCoding] Validation result: ${validationResult.passed ? '✅ PASSED' : '❌ FAILED'} (score: ${validationResult.score})`);
+
+      // PHASE C STEP 3: Handle validation result
+      if (!validationResult.passed) {
+        console.log(`[VibeCoding] ❌ Validation failed with ${validationResult.errors.length} errors`);
+        
+        // Collect evidence for failure
+        const evidence = await evidenceCollector.collect(
+          request.sessionId,
+          validationResult,
+          fileChanges.map(fc => fc.filePath)
         );
-        await agentEventBus.publish(validationPassedEvent);
-      } else {
-        const validationFailedEvent = agentEventBus.createEvent(
-          'validation:failed',
-          'VibeCodingService',
-          {
+        
+        // Try auto-retry if attempts remain
+        if (attemptNumber < 3) {
+          console.log(`[VibeCoding] 🔄 Initiating auto-retry (attempt ${attemptNumber + 1}/3)...`);
+          
+          const retryResult = await autoRetryService.retry({
             sessionId: request.sessionId,
-            errors: validationResults.warnings,
-          } as any
-        );
-        await agentEventBus.publish(validationFailedEvent);
+            originalRequest: request.naturalLanguage,
+            validationResult,
+            attemptNumber
+          });
+
+          if (retryResult.shouldEscalate) {
+            // Escalate after exhausting retries
+            console.log('[VibeCoding] 🚨 Escalating to Replit AI...');
+            await escalationService.escalate({
+              sessionId: request.sessionId,
+              originalRequest: request.naturalLanguage,
+              attempts: attemptNumber,
+              validationResults: [validationResult],
+              strategies: [retryResult.strategy]
+            });
+            
+            // Return failed result
+            return {
+              success: false,
+              sessionId: request.sessionId,
+              request: request.naturalLanguage,
+              interpretation: interpretation.summary,
+              fileChanges: [],
+              validationResults: {
+                syntax: false,
+                lsp: false,
+                safety: false,
+                warnings: validationResult.errors.map(e => e.message),
+              },
+              estimatedImpact: 'Failed validation',
+              error: `Validation failed after ${attemptNumber} attempts. Task escalated.`
+            };
+          }
+
+          // Retry with adjusted strategy
+          console.log(`[VibeCoding] Retrying with adjusted strategy: ${retryResult.strategy.strategyChanges.join(', ')}`);
+          return await this.generateCode({
+            ...request,
+            naturalLanguage: retryResult.strategy.modifiedPrompt
+          }, attemptNumber + 1);
+        } else {
+          // Escalate after 3 failures
+          console.log('[VibeCoding] 🚨 Max retries exhausted, escalating...');
+          await escalationService.escalate({
+            sessionId: request.sessionId,
+            originalRequest: request.naturalLanguage,
+            attempts: attemptNumber,
+            validationResults: [validationResult],
+            strategies: []
+          });
+
+          return {
+            success: false,
+            sessionId: request.sessionId,
+            request: request.naturalLanguage,
+            interpretation: interpretation.summary,
+            fileChanges: [],
+            validationResults: {
+              syntax: false,
+              lsp: false,
+              safety: false,
+              warnings: validationResult.errors.map(e => e.message),
+            },
+            estimatedImpact: 'Failed validation',
+            error: `Validation failed after ${attemptNumber} attempts. Task escalated.`
+          };
+        }
       }
 
-      // Step 5: Create result
+      // PHASE C STEP 4: Validation passed - collect evidence and record success
+      console.log('[VibeCoding] ✅ Validation passed!');
+      
+      const evidence = await evidenceCollector.collect(
+        request.sessionId,
+        validationResult,
+        fileChanges.map(fc => fc.filePath)
+      );
+
+      // Publish code:validated event
+      const validatedEvent = agentEventBus.createEvent(
+        'code:validated',
+        'VibeCodingService',
+        {
+          sessionId: request.sessionId,
+          validationResult,
+          evidence,
+        } as any
+      );
+      await agentEventBus.publish(validatedEvent);
+
+      // PHASE C STEP 5: Record successful pattern
+      if (attemptNumber > 1) {
+        // Record successful retry
+        await autoRetryService.recordSuccessfulRetry(
+          request.sessionId,
+          attemptNumber,
+          {
+            modifiedPrompt: enhancedRequest,
+            strategyChanges: ['Pattern learning applied', 'Validation passed'],
+            patternsApplied: patterns.map(p => p.pattern.id.toString()),
+            confidence: validationResult.score
+          }
+        );
+      } else {
+        // Record regular success pattern
+        await LearningRetentionService.recordSuccessPattern({
+          agentId: 'VibeCodingAgent',
+          task: request.naturalLanguage,
+          solution: JSON.stringify(fileChanges.map(fc => ({ file: fc.filePath, action: fc.action }))),
+          validationScore: validationResult.score,
+          patternsUsed: patterns.map(p => p.pattern.id.toString())
+        });
+      }
+
+      // Step 5: Create result with evidence
       const result: VibeCodeResult = {
         success: true,
         sessionId: request.sessionId,
         request: request.naturalLanguage,
         interpretation: interpretation.summary,
         fileChanges,
-        validationResults,
+        validationResults: {
+          syntax: true,
+          lsp: true,
+          safety: true,
+          warnings: validationResult.errors.filter(e => e.severity === 'warning').map(e => e.message),
+        },
         estimatedImpact: this.estimateImpact(fileChanges),
       };
 
-      // Cache result for preview/apply
+      // Cache result
       this.sessionCache.set(request.sessionId, result);
 
-      console.log(`[VibeCoding] 🎉 Code generation complete for session ${request.sessionId}`);
+      console.log(`[VibeCoding] 🎉 Code generation complete (attempt ${attemptNumber}) - Evidence collected, pattern recorded`);
       return result;
     } catch (error: any) {
       console.error('[VibeCoding] ❌ Error generating code:', error);

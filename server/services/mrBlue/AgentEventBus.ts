@@ -37,7 +37,15 @@ export type AgentEventType =
   | 'task:failed'
   | 'agent:ready'
   | 'workflow:started'
-  | 'workflow:completed';
+  | 'workflow:completed'
+  | 'code:validated'
+  | 'retry:attempted'
+  | 'retry:succeeded'
+  | 'retry:exhausted'
+  | 'task:escalated'
+  | 'escalation:resolved'
+  | 'evidence:collected'
+  | 'evidence:uploaded';
 
 export interface BaseEvent {
   id: string;
