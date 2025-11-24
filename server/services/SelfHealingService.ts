@@ -223,7 +223,7 @@ export class SelfHealingService {
 
     let fixType = 'add_testid';
     let suggestedFix = '';
-    let confidence = 0.85;
+    let confidence = 85; // 🔥 MB.MD v9.4 Task 6: Confidence is 0-100, not 0-1
 
     if (log.check_type === 'missing_testid') {
       const errorData = JSON.parse(log.error_message);

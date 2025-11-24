@@ -190,7 +190,7 @@ export function useErrorAutoAnalysis(
             `I'll investigate this ${error.errorType} error and propose a solution. ` +
             `Error: "${error.errorMessage.substring(0, 100)}..." ` +
             `This error has occurred ${error.frequency} time(s).`,
-          confidence: parseFloat(error.fixConfidence || '0.65'),
+          confidence: parseFloat(error.fixConfidence || '65'), // 🔥 MB.MD v9.4 Task 6: Confidence 0-100, not 0-1
           filesAffected: ['Will be determined during fix'],
           estimatedImpact: 'Low - Targeted fix for specific error',
           timestamp: new Date()
