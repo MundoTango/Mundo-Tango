@@ -1,10 +1,16 @@
 # MB.MD - Mundo Blue Methodology Directive
 
-**Version:** 9.3 HIERARCHICAL EXECUTION + BACKEND AGENT SYSTEM  
+**Version:** 9.4 VISUAL EDITOR PRODUCTION FIXES  
 **Created:** October 30, 2025  
-**Last Updated:** November 23, 2025  
+**Last Updated:** November 24, 2025  
 **Purpose:** Build platform to reverse negative impacts of social media and change the world  
 **Project:** Mundo Tango - The Anti-Facebook (927 features, 20-week strategy)
+
+**New in v9.4 (VISUAL EDITOR PRODUCTION FIXES):**
+- 🐛 **CRITICAL ROUTING FIX**: Enhanced vibe coding detection to include "container", "transparent", "this/that" keywords
+- 🔇 **TTS SILENT FALLBACK**: Never show error toasts for TTS failures - gracefully skip when voices not loaded
+- 🎯 **VERIFIED FIX**: "make this container background transparent" now routes to CODE GENERATION (not chat)
+- ✅ **PRODUCTION READY**: Visual Editor Mr. Blue now properly applies UI changes instead of just saying it did
 
 **New in v9.3 (HIERARCHICAL EXECUTION ENFORCEMENT):**
 - 🏗️ **HIERARCHICAL EXECUTION**: Replit AI (strategic) → Mr. Blue (tactical) → 1,218 agents (atomic) - NO SKIPPING LEVELS
