@@ -40,6 +40,7 @@ export interface VoiceCommandContext {
   // Prompts
   setPrompt?: (text: string) => void;
   handleSubmit?: () => void;
+  sendToChat?: (message: string) => void; // 🔥 MB.MD v9.4: Fallback to chat instead of "I'm not sure"
   
   // Voice features
   toggleContinuousMode?: () => void;
@@ -739,8 +740,17 @@ export class VoiceCommandProcessor {
       return true;
     }
 
-    // No match found - speak error
+    // 🔥 MB.MD v9.4: No command matched → Fall back to regular chat instead of error
     console.log('[VoiceCommand] No command matched for:', input);
+    
+    // If sendToChat is available, treat this as regular conversation instead of command
+    if (this.context.sendToChat) {
+      console.log('[VoiceCommand] ✅ Falling back to chat:', input);
+      this.context.sendToChat(input);
+      return true; // Successfully handled by chat
+    }
+    
+    // Fallback: speak error only if chat is not available
     speakUnrecognizedCommand();
     return false;
   }

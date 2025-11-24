@@ -606,7 +606,16 @@ Let's get started! What would you like to change?`,
       },
       handleSaveChanges,
       setPrompt,
-      handleSubmit
+      handleSubmit,
+      // 🔥 MB.MD v9.4: Fall back to chat instead of "I'm not sure what you mean"
+      sendToChat: async (message: string) => {
+        console.log('[VoiceCommandProcessor] ✅ Sending to chat:', message);
+        setPrompt(message);
+        // Wait a tick for state to update
+        setTimeout(() => {
+          handleSubmit();
+        }, 100);
+      }
     });
   }, [currentTask, handleSaveChanges, setViewMode, handleUndo, approveMutation, stopListening, setPrompt, handleSubmit]);
 
@@ -627,7 +636,15 @@ Let's get started! What would you like to change?`,
         },
         handleSaveChanges,
         setPrompt,
-        handleSubmit
+        handleSubmit,
+        // 🔥 MB.MD v9.4: Fall back to chat
+        sendToChat: async (message: string) => {
+          console.log('[VoiceCommandProcessor] ✅ Sending to chat:', message);
+          setPrompt(message);
+          setTimeout(() => {
+            handleSubmit();
+          }, 100);
+        }
       });
     }
   }, [setViewMode, currentTask, stopListening, handleSaveChanges, handleUndo, approveMutation, setPrompt, handleSubmit]);
