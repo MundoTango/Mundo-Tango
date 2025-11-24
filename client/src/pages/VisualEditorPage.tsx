@@ -241,9 +241,16 @@ Let's get started! What would you like to change?`,
         throw new Error('No active conversation - please wait for conversation to initialize');
       }
       
+      // ✅ MB.MD QA FIX #2: Validate message content before saving (prevents empty prompts bug)
+      if (!content || !content.trim()) {
+        console.error('[VisualEditor] 🚨 BLOCKED: Attempted to save empty message');
+        throw new Error('Cannot save empty message');
+      }
+      
       console.log('[VisualEditor] 💾 Saving message:', { 
         conversationId: currentConversationId, 
         role, 
+        content: content.substring(0, 50) + (content.length > 50 ? '...' : ''),
         contentLength: content.length 
       });
       
@@ -380,7 +387,7 @@ Let's get started! What would you like to change?`,
     }
   }, [streamMessages, selectedElement]);
   
-  // ✅ FIX: Handle chat responses from streaming
+  // ✅ MB.MD QA FIX #1: Handle chat responses from streaming (NO SAVE - handleStreamingChat saves it)
   useEffect(() => {
     const chatResponseMsg = streamMessages.find(m => 
       m.type === 'chat_response' || m.type === 'completion'
@@ -403,17 +410,15 @@ Let's get started! What would you like to change?`,
         { role: 'assistant', content: responseText }
       ]);
       
-      // Save assistant message to database
-      if (currentConversationId) {
-        saveMessageMutation.mutate({ role: 'assistant', content: responseText });
-      }
+      // ✅ MB.MD QA FIX #1: REMOVED duplicate save (handleStreamingChat already saves messages)
+      // This was causing 5x greeting repetition bug
       
       // Voice response with natural voice
       if (ttsSupported) {
         speak(responseText);
       }
     }
-  }, [streamMessages, conversationHistory, currentConversationId, saveMessageMutation, ttsSupported, speak]);
+  }, [streamMessages, conversationHistory, ttsSupported, speak]);
 
   // Save Changes Mutation (MB.MD v9.4 P0 Task 3) - MUST BE BEFORE useEffects
   const saveChangesMutation = useMutation({
@@ -1442,7 +1447,18 @@ Let's get started! What would you like to change?`,
   // ✅ STREAMING HANDLER WITH CONTEXT BUILDER - MB.MD v9.2
   const handleStreamingChat = useCallback(async (message: string) => {
     try {
-      const userMessage = message;
+      // ✅ MB.MD QA FIX #2: Validate message before processing (prevents empty prompts bug)
+      if (!message || !message.trim()) {
+        console.error('[VisualEditor] ❌ Cannot send empty message');
+        toast({
+          title: '⚠️ Empty Message',
+          description: 'Please enter a message before sending.',
+          variant: 'destructive'
+        });
+        return;
+      }
+      
+      const userMessage = message.trim();
       
       // Check if user is approving error fix
       if (awaitingApproval && activeProposal) {
