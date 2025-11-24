@@ -283,7 +283,7 @@ Let's get started! What would you like to change?`,
   }>({
     queryKey: ['/api/mrblue/save-backend/status', currentConversationId],
     enabled: !!currentConversationId,
-    refetchInterval: 5000, // Poll every 5 seconds
+    refetchInterval: 30000, // Poll every 30 seconds (reduced from 5s to avoid 429 rate limits)
   });
 
   // MB.MD v9.3: Handle backend save
