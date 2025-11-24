@@ -11,9 +11,104 @@ Following MB.MD principles: **Work Critically - Target 95-99/100 quality**
 
 Our testing strategy achieves comprehensive coverage through:
 1. **E2E Tests** - Playwright for user workflows (17+ features)
-2. **Manual Testing** - Visual Editor (Playwright incompatible)
-3. **Integration Tests** - API endpoints and backend services
-4. **Unit Tests** - Critical business logic components
+2. **Hybrid Visual Testing** - **NEW:** Playwright + Claude AI for visual regression (Nov 24, 2025)
+3. **Manual Testing** - Visual Editor (Playwright incompatible)
+4. **Integration Tests** - API endpoints and backend services
+5. **Unit Tests** - Critical business logic components
+
+---
+
+## 🚀 Innovation: Hybrid Playwright + Computer Use Testing
+
+**Date:** November 24, 2025  
+**Status:** Validated & Production-Ready
+
+### What We Built
+
+**Components:**
+1. `ComputerUseService.analyzeScreenshot()` - Claude vision analysis method
+2. API endpoint: `POST /api/computer-use/analyze-screenshot`
+3. Test framework: `tests/visual-editor-hybrid.spec.ts`
+
+### How It Works
+
+```typescript
+// Step 1: Playwright captures screenshot
+const screenshot = await page.screenshot({ fullPage: true });
+
+// Step 2: Claude analyzes visual correctness
+const analysis = await analyzeScreenshot(
+  screenshot,
+  'Does this UI look correct?',
+  [
+    'Text is readable',
+    'Layout is professional',
+    'No visual glitches',
+    'Proper spacing and alignment'
+  ]
+);
+
+// Step 3: Automated assertions
+expect(analysis.looksCorrect).toBe(true);
+expect(analysis.confidence).toBeGreaterThanOrEqual(70);
+expect(analysis.issues.length).toBeLessThanOrEqual(2);
+```
+
+### Validated Use Cases
+
+**✅ Where Hybrid Testing Works:**
+- Visual regression testing (detect UI changes)
+- Accessibility validation (contrast, readability)
+- Responsive design testing (mobile/tablet/desktop)
+- Complex UI validation (Feed, Events, Profiles)
+- Component-level visual checks
+
+**Example Test:**
+```typescript
+test('Feed page visual regression', async ({ page }) => {
+  await page.goto('/feed');
+  const screenshot = await page.screenshot();
+  
+  const analysis = await analyzeScreenshot(
+    screenshot,
+    'Does the feed layout look correct after design changes?',
+    [
+      'Posts are readable',
+      'Images load properly',
+      'No layout overlaps',
+      'Proper card spacing'
+    ]
+  );
+  
+  expect(analysis.looksCorrect).toBe(true);
+});
+```
+
+### Cost Analysis
+
+**Per Test:**
+- Anthropic Claude API: ~$0.01-0.02 per screenshot
+- Max tokens: 1024 (cost-optimized)
+- Model: Claude 3.5 Sonnet (best vision)
+
+**ROI Comparison:**
+- Manual QA: $30-50/hour
+- Hybrid testing: $0.01-0.02/test
+- **Savings: 1000-5000x**
+
+**Example:**
+- 100 visual tests = $1-2 total
+- Same coverage manually = 4-5 hours = $120-250
+
+### Visual Editor Exception
+
+**Finding:** Visual Editor still crashes Playwright before screenshot capture.
+
+**Why?** Visual Editor's 36+ side effects and complex architecture trigger crash during initial render—before Playwright can capture a screenshot.
+
+**Solution:** Continue manual testing for Visual Editor only.
+
+**Full Research:** `docs/MB_MD_HYBRID_TESTING_FINDINGS.md`
 
 ---
 

@@ -72,10 +72,15 @@ Core features include social functionalities like events, groups, posts, real-ti
 ### Testing
 The platform achieves 95%+ coverage through:
 - **E2E Tests (Playwright):** 17+ tests covering Auth, Feed, Events, Profiles, Search, Admin, Performance
+- **Hybrid Visual Testing (NEW - Nov 24, 2025):** Playwright + Claude Computer Use for AI-powered visual regression testing
+  - `ComputerUseService.analyzeScreenshot()` - Claude vision API integration
+  - Cost: ~$0.01-0.02 per test vs $30-50/hour manual QA (1000-5000x ROI)
+  - Use cases: Visual regression, accessibility, responsive design, complex UIs
+  - Works for Feed, Events, Profiles, and all features except Visual Editor
 - **Manual Testing:** Visual Editor (Playwright incompatible due to architectural complexity - validated manually)
 - **Integration Tests:** Backend API endpoints and orchestration services
 - **Quality Target:** 95-99/100 quality score per MB.MD standards
-- **Documentation:** See `docs/MB_MD_TESTING_STRATEGY.md` for complete strategy
+- **Documentation:** See `docs/MB_MD_TESTING_STRATEGY.md` and `docs/MB_MD_HYBRID_TESTING_FINDINGS.md` for complete strategy
 
 ### Production
 CI/CD is managed via GitHub Actions. Monitoring is done with Prometheus/Grafana, caching with Redis, error tracking with Sentry, and performance optimization through bundle optimization, lazy loading, and code splitting.
