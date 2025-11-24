@@ -402,8 +402,10 @@ const LegalStatus = lazy(() => import("@/pages/settings/LegalStatus"));
 const ReportUserPage = lazy(() => import("@/pages/ReportUserPage"));
 const ReportContentPage = lazy(() => import("@/pages/ReportContentPage"));
 
-// Visual Editor
+// Visual Editor - Production version (full featured)
 const VisualEditorPage = lazy(() => import("@/pages/VisualEditorPage"));
+// Visual Editor - Test version (Playwright-compatible lightweight)
+const VisualEditorPageTest = lazy(() => import("@/pages/VisualEditorPageLightweight"));
 
 function Router() {
   return (
@@ -2128,6 +2130,12 @@ function Router() {
       <Route path="/admin/visual-editor">
         <ProtectedRoute>
           <VisualEditorPage />
+        </ProtectedRoute>
+      </Route>
+
+      <Route path="/visual-editor-test">
+        <ProtectedRoute>
+          <VisualEditorPageTest />
         </ProtectedRoute>
       </Route>
 

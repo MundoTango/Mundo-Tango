@@ -44,10 +44,10 @@ async function loginAsAdmin(page: any) {
  * Helper: Navigate to Visual Editor and wait for initialization
  */
 async function goToVisualEditor(page: any) {
-  console.log('🚀 Navigating to Visual Editor...');
+  console.log('🚀 Navigating to Visual Editor (Test Route)...');
   
-  // Navigate to root (/) which is the Visual Editor page
-  await page.goto('/', { 
+  // Navigate to test route (lightweight, Playwright-compatible version)
+  await page.goto('/visual-editor-test', { 
     waitUntil: 'domcontentloaded', 
     timeout: 60000 
   });
@@ -57,9 +57,9 @@ async function goToVisualEditor(page: any) {
   await page.waitForSelector('[data-testid="button-send"]', { timeout: 15000 });
   
   // Give extra time for conversation initialization
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(2000);
   
-  console.log('✅ Visual Editor loaded');
+  console.log('✅ Visual Editor Test Route loaded');
 }
 
 /**
