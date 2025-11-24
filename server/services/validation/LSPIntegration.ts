@@ -79,7 +79,7 @@ export class LSPIntegration {
   /**
    * Categorize error by severity
    */
-  private categor izeError(diagnostic: any): 'error' | 'warning' | 'info' {
+  private categorizeError(diagnostic: any): 'error' | 'warning' | 'info' {
     if (diagnostic.severity === 1) return 'error';
     if (diagnostic.severity === 2) return 'warning';
     return 'info';

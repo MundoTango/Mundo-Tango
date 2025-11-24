@@ -6901,6 +6901,71 @@ export const customerJourneyTests = pgTable("customer_journey_tests", {
 }));
 
 // ============================================================================
+// PHASE C AUTONOMOUS FRAMEWORK TABLES
+// ============================================================================
+
+/**
+ * Escalations Table - Track tasks escalated to Replit AI
+ * Phase C: When auto-fix fails after 3 attempts
+ */
+export const escalations = pgTable("escalations", {
+  id: serial("id").primaryKey(),
+  sessionId: varchar("session_id", { length: 100 }).notNull(),
+  reason: varchar("reason", { length: 50 }).notNull(), // CLARIFICATION_NEEDED, MAX_RETRIES_EXCEEDED, etc.
+  originalRequest: text("original_request").notNull(),
+  attempts: integer("attempts").notNull().default(3),
+  errorHistory: jsonb("error_history").notNull().default([]), // Array of error messages
+  strategiesTried: jsonb("strategies_tried").notNull().default([]), // Array of strategies
+  aiRecommendation: text("ai_recommendation"), // What Replit AI should do
+  status: varchar("status", { length: 50 }).default("pending"), // pending, resolved, in_progress
+  resolution: text("resolution"), // How it was resolved
+  resolvedAt: timestamp("resolved_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  sessionIdx: index("escalations_session_idx").on(table.sessionId),
+  reasonIdx: index("escalations_reason_idx").on(table.reason),
+  statusIdx: index("escalations_status_idx").on(table.status),
+  createdAtIdx: index("escalations_created_at_idx").on(table.createdAt),
+}));
+
+export const insertEscalationSchema = createInsertSchema(escalations)
+  .omit({ id: true, createdAt: true });
+export type InsertEscalation = z.infer<typeof insertEscalationSchema>;
+export type SelectEscalation = typeof escalations.$inferSelect;
+
+/**
+ * Evidence Packages Table - Validation evidence collection
+ * Phase C: Screenshots, test results, LSP errors, console logs
+ */
+export const evidencePackages = pgTable("evidence_packages", {
+  id: serial("id").primaryKey(),
+  sessionId: varchar("session_id", { length: 100 }).notNull(),
+  filesChanged: text("files_changed").array().default([]),
+  screenshotBefore: text("screenshot_before"), // Cloudinary URL
+  screenshotAfter: text("screenshot_after"), // Cloudinary URL
+  testsPassed: integer("tests_passed").default(0),
+  testsFailed: integer("tests_failed").default(0),
+  testDuration: varchar("test_duration", { length: 50 }),
+  testResults: jsonb("test_results"), // Detailed test results
+  consoleLogs: text("console_logs"),
+  lspErrors: jsonb("lsp_errors").default([]), // Array of LSP errors
+  lspWarnings: jsonb("lsp_warnings").default([]), // Array of LSP warnings
+  confidence: real("confidence").default(0.0), // 0-1 score
+  validationPassed: boolean("validation_passed").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  sessionIdx: index("evidence_packages_session_idx").on(table.sessionId),
+  validationIdx: index("evidence_packages_validation_idx").on(table.validationPassed),
+  confidenceIdx: index("evidence_packages_confidence_idx").on(table.confidence),
+  createdAtIdx: index("evidence_packages_created_at_idx").on(table.createdAt),
+}));
+
+export const insertEvidencePackageSchema = createInsertSchema(evidencePackages)
+  .omit({ id: true, createdAt: true });
+export type InsertEvidencePackage = z.infer<typeof insertEvidencePackageSchema>;
+export type SelectEvidencePackage = typeof evidencePackages.$inferSelect;
+
+// ============================================================================
 // AGENT SME TRAINING SYSTEM (MB.MD V9.0 - NOVEMBER 18, 2025)
 // Comprehensive agent learning system where agents become Subject Matter Experts
 // by learning ALL documentation, code, and domain expertise before implementation

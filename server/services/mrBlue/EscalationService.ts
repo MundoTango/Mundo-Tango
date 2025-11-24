@@ -13,7 +13,7 @@ import { db } from '../../db';
 import { agentEventBus } from './AgentEventBus';
 import type { ValidationResult } from '../validation/ValidationService';
 
-export interface EscalationReason =
+export type EscalationReason =
   | 'CLARIFICATION_NEEDED'
   | 'INFRASTRUCTURE_ISSUE'
   | 'COMPLEXITY_EXCEEDED'
