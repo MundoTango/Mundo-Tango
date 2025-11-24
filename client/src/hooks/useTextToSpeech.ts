@@ -70,8 +70,14 @@ export function useTextToSpeech(): UseTextToSpeechReturn {
     onStart?: () => void,
     onEnd?: () => void
   ) => {
-    if (!isSupported || !selectedVoice) {
-      console.warn('Text-to-speech not available');
+    if (!isSupported) {
+      console.warn('Text-to-speech not supported');
+      return;
+    }
+
+    // ✅ FIX: Don't fail if no voice selected - use default
+    if (!selectedVoice && voices.length === 0) {
+      console.warn('No voices available yet');
       return;
     }
 
@@ -79,7 +85,12 @@ export function useTextToSpeech(): UseTextToSpeechReturn {
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.voice = selectedVoice;
+    
+    // ✅ FIX: Use selectedVoice if available, otherwise let browser use default
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+    }
+    
     utterance.rate = 1.0;
     utterance.pitch = 1.0;
     utterance.volume = 1.0;
@@ -97,11 +108,15 @@ export function useTextToSpeech(): UseTextToSpeechReturn {
     utterance.onerror = (event) => {
       console.error('TTS error:', event);
       setIsSpeaking(false);
-      toast({
-        variant: 'destructive',
-        title: 'Speech Error',
-        description: 'Failed to speak the message.'
-      });
+      
+      // ✅ FIX: Only show error toast for critical errors, not voice-not-found
+      if (event.error !== 'not-allowed' && event.error !== 'canceled') {
+        toast({
+          variant: 'destructive',
+          title: 'Speech Error',
+          description: `Failed to speak the message (${event.error}).`
+        });
+      }
     };
 
     utteranceRef.current = utterance;
