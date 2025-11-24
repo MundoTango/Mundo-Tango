@@ -3344,6 +3344,141 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // FIX BATCH B - PAGE 3: User settings endpoints for UserSettingsPage
+  
+  // GET /api/users/me/settings - Fetch current user's settings
+  app.get("/api/users/me/settings", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const [user] = await db
+        .select({
+          emailNotifications: users.isActive, // Placeholder - add proper notification fields
+          pushNotifications: users.isActive, // Placeholder
+          smsNotifications: users.isActive, // Placeholder
+          profileVisibility: sql<string>`COALESCE((${users.privacySettings}->>'profileVisibility')::text, 'public')`,
+          showEmail: sql<boolean>`COALESCE((${users.privacySettings}->>'showEmail')::boolean, false)`,
+          showPhone: sql<boolean>`COALESCE((${users.privacySettings}->>'showPhone')::boolean, false)`,
+          language: sql<string>`COALESCE(${users.languages}[1], 'en')`, // Get first language from array
+          timezone: sql<string>`'UTC'`, // Placeholder - field doesn't exist yet
+          twoFactorEnabled: users.twoFactorEnabled,
+        })
+        .from(users)
+        .where(eq(users.id, req.user!.id));
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json(user);
+    } catch (error) {
+      console.error('Failed to fetch user settings:', error);
+      res.status(500).json({ message: "Failed to fetch user settings" });
+    }
+  });
+
+  // PATCH /api/users/me/settings - Update current user's settings
+  app.patch("/api/users/me/settings", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const {
+        emailNotifications,
+        pushNotifications,
+        smsNotifications,
+        profileVisibility,
+        showEmail,
+        showPhone,
+        language,
+        timezone,
+      } = req.body;
+
+      // Update privacySettings jsonb field
+      const privacySettings: any = {};
+      if (profileVisibility !== undefined) privacySettings.profileVisibility = profileVisibility;
+      if (showEmail !== undefined) privacySettings.showEmail = showEmail;
+      if (showPhone !== undefined) privacySettings.showPhone = showPhone;
+
+      const updateData: any = { updatedAt: new Date() };
+      
+      // Update language array if provided
+      if (language !== undefined) {
+        updateData.languages = [language]; // Store as single-element array
+      }
+      
+      // Update privacy settings if any provided
+      if (Object.keys(privacySettings).length > 0) {
+        updateData.privacySettings = sql`COALESCE(${users.privacySettings}, '{}'::jsonb) || ${JSON.stringify(privacySettings)}::jsonb`;
+      }
+
+      const [updatedUser] = await db
+        .update(users)
+        .set(updateData)
+        .where(eq(users.id, req.user!.id))
+        .returning();
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json({ message: "Settings updated successfully", user: updatedUser });
+    } catch (error) {
+      console.error('Failed to update user settings:', error);
+      res.status(500).json({ message: "Failed to update settings" });
+    }
+  });
+
+  // PATCH /api/users/me/password - Change current user's password
+  app.patch("/api/users/me/password", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { currentPassword, newPassword, confirmPassword } = req.body;
+
+      // Validation
+      if (!currentPassword || !newPassword || !confirmPassword) {
+        return res.status(400).json({ message: "All password fields are required" });
+      }
+
+      if (newPassword !== confirmPassword) {
+        return res.status(400).json({ message: "New passwords do not match" });
+      }
+
+      if (newPassword.length < 8) {
+        return res.status(400).json({ message: "New password must be at least 8 characters" });
+      }
+
+      // Get current user with password
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, req.user!.id));
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Verify current password
+      const bcrypt = require('bcrypt');
+      const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+      
+      if (!isValidPassword) {
+        return res.status(401).json({ message: "Current password is incorrect" });
+      }
+
+      // Hash new password
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      // Update password
+      await db
+        .update(users)
+        .set({ 
+          password: hashedPassword,
+          updatedAt: new Date()
+        })
+        .where(eq(users.id, req.user!.id));
+
+      res.json({ message: "Password changed successfully" });
+    } catch (error) {
+      console.error('Failed to change password:', error);
+      res.status(500).json({ message: "Failed to change password" });
+    }
+  });
+
   // User stats endpoint - for Dashboard
   app.get("/api/users/:id/stats", async (req: Request, res: Response) => {
     try {
