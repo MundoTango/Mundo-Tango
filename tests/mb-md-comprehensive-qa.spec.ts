@@ -46,7 +46,8 @@ async function loginAsAdmin(page: any) {
 async function goToVisualEditor(page: any) {
   console.log('🚀 Navigating to Visual Editor...');
   
-  await page.goto('/admin/visual-editor', { 
+  // Navigate to root (/) which is the Visual Editor page
+  await page.goto('/', { 
     waitUntil: 'domcontentloaded', 
     timeout: 60000 
   });
