@@ -66,7 +66,9 @@ export function useEvent(id: string | number) {
     queryFn: async () => {
       const res = await fetch(`/api/events/${id}`);
       if (!res.ok) throw new Error('Failed to fetch event');
-      return await res.json();
+      const data = await res.json();
+      // API returns {event: {...}, organizer: {...}} - extract the event object
+      return data.event || data;
     },
     enabled: !!id,
   });

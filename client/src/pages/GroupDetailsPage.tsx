@@ -104,12 +104,12 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-xl font-serif font-bold mb-3 truncate">{event.title}</h3>
+                      <h3 className="text-xl font-serif font-bold mb-3 truncate" dangerouslySetInnerHTML={{ __html: event.title || "Untitled Event" }} />
                       <div className="space-y-2 text-sm text-muted-foreground">
-                        {event.date && (
+                        {(event.startDate || event.date) && (
                           <div className="flex items-center gap-2">
                             <Calendar className="h-4 w-4 flex-shrink-0" />
-                            {new Date(event.date).toLocaleDateString(undefined, { 
+                            {new Date(event.startDate || event.date).toLocaleDateString(undefined, { 
                               weekday: 'short', 
                               month: 'short', 
                               day: 'numeric',
@@ -118,17 +118,16 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
                             {event.time && ` at ${event.time}`}
                           </div>
                         )}
-                        {event.location && (
+                        {(event.location || event.city) && (
                           <div className="flex items-center gap-2">
                             <MapPin className="h-4 w-4 flex-shrink-0" />
-                            <span className="truncate">{event.location}</span>
+                            <span className="truncate">{event.location || event.city}</span>
                           </div>
                         )}
-                        {event.attendeeCount !== undefined && event.attendeeCount > 0 && (
-                          <div className="flex items-center gap-2">
-                            <Users className="h-4 w-4 flex-shrink-0" />
-                            {event.attendeeCount} attending
-                          </div>
+                        {event.eventType && (
+                          <Badge variant="secondary" className="text-xs">
+                            {event.eventType}
+                          </Badge>
                         )}
                       </div>
                     </div>

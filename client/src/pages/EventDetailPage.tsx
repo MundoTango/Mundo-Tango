@@ -14,12 +14,27 @@ export default function EventDetailPage() {
   const { id } = useParams();
   const { toast } = useToast();
 
-  const { data: eventData, isLoading } = useQuery<any>({
+  const { data: eventData, isLoading, error } = useQuery<any>({
     queryKey: ["/api/events", id],
+    queryFn: async () => {
+      const res = await fetch(`/api/events/${id}`, { credentials: "include" });
+      if (!res.ok) {
+        if (res.status === 404) return null;
+        throw new Error("Failed to fetch event");
+      }
+      return res.json();
+    },
+    enabled: !!id,
   });
 
   const { data: attendees } = useQuery<any[]>({
     queryKey: ["/api/events", id, "attendees"],
+    queryFn: async () => {
+      const res = await fetch(`/api/events/${id}/attendees`, { credentials: "include" });
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled: !!id,
   });
 
   const rsvpMutation = useMutation({
