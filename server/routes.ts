@@ -3801,6 +3801,126 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Public profile endpoint - for UserProfilePublicPage
+  app.get("/api/users/:userId/profile", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      // Get user basic info
+      const user = await storage.getUserById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Get stats
+      const [postsCount, friendsCount, eventsAttended] = await Promise.all([
+        db.select({ count: sql<number>`count(*)::int` })
+          .from(posts)
+          .where(eq(posts.userId, userId))
+          .then(rows => rows[0]?.count || 0),
+        
+        db.select({ count: sql<number>`count(*)::int` })
+          .from(friendships)
+          .where(
+            and(
+              or(eq(friendships.userId, userId), eq(friendships.friendId, userId)),
+              eq(friendships.status, 'accepted')
+            )
+          )
+          .then(rows => rows[0]?.count || 0),
+        
+        db.select({ count: sql<number>`count(*)::int` })
+          .from(eventRsvps)
+          .where(and(eq(eventRsvps.userId, userId), eq(eventRsvps.status, 'going')))
+          .then(rows => rows[0]?.count || 0),
+      ]);
+      
+      res.json({
+        id: user.id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        avatarUrl: user.profileImage,
+        bio: user.bio,
+        city: user.city,
+        country: user.country,
+        role: user.role,
+        danceLevel: user.yearsOfDancing,
+        joinedAt: user.createdAt,
+        stats: {
+          posts: postsCount,
+          friends: friendsCount,
+          eventsAttended,
+          points: 0, // TODO: implement points system
+        }
+      });
+    } catch (error) {
+      console.error('Failed to fetch user profile:', error);
+      res.status(500).json({ message: "Failed to fetch user profile" });
+    }
+  });
+
+  // User's posts - for UserProfilePublicPage
+  app.get("/api/users/:userId/posts", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      const userPosts = await db
+        .select({
+          id: posts.id,
+          content: posts.content,
+          imageUrl: posts.imageUrl,
+          videoUrl: posts.videoUrl,
+          createdAt: posts.createdAt,
+          likes: posts.likes,
+          comments: posts.comments,
+        })
+        .from(posts)
+        .where(and(
+          eq(posts.userId, userId),
+          eq(posts.type, 'post') // Exclude stories
+        ))
+        .orderBy(desc(posts.createdAt))
+        .limit(10);
+      
+      res.json(userPosts);
+    } catch (error) {
+      console.error('Failed to fetch user posts:', error);
+      res.status(500).json({ message: "Failed to fetch user posts" });
+    }
+  });
+
+  // User's events - for UserProfilePublicPage
+  app.get("/api/users/:userId/events", async (req: Request, res: Response) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      const userEvents = await db
+        .select({
+          id: events.id,
+          title: events.title,
+          startDate: events.startDate,
+          location: events.location,
+          imageUrl: events.imageUrl,
+        })
+        .from(events)
+        .innerJoin(eventRsvps, eq(events.id, eventRsvps.eventId))
+        .where(
+          and(
+            eq(eventRsvps.userId, userId),
+            eq(eventRsvps.status, 'going')
+          )
+        )
+        .orderBy(desc(events.startDate))
+        .limit(6);
+      
+      res.json(userEvents);
+    } catch (error) {
+      console.error('Failed to fetch user events:', error);
+      res.status(500).json({ message: "Failed to fetch user events" });
+    }
+  });
+
   // Upcoming events endpoint - for Dashboard
   app.get("/api/users/:id/upcoming-events", async (req: Request, res: Response) => {
     try {
@@ -4258,6 +4378,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get messages in a conversation (alias for MessagesDetailPage compatibility)
+  app.get("/api/messages/:conversationId", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const chatRoomId = parseInt(req.params.conversationId);
+      const { limit = "50", offset = "0" } = req.query;
+      
+      const messages = await storage.getChatRoomMessages(
+        chatRoomId,
+        parseInt(limit as string),
+        parseInt(offset as string)
+      );
+      
+      res.json(messages);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch messages" });
+    }
+  });
+
   app.get("/api/messages/conversations/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const chatRoomId = parseInt(req.params.id);
@@ -4272,6 +4410,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(messages);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch messages" });
+    }
+  });
+
+  // Send message (alias for MessagesDetailPage compatibility)
+  app.post("/api/messages/:conversationId", authenticateToken, validateRequest(insertChatMessageSchema.omit({ chatRoomId: true, userId: true })), async (req: AuthRequest, res: Response) => {
+    try {
+      const chatRoomId = parseInt(req.params.conversationId);
+      const message = await storage.sendMessage({
+        ...req.body,
+        chatRoomId,
+        userId: req.user!.id
+      });
+      res.status(201).json(message);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to send message" });
     }
   });
 
@@ -6883,6 +7036,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("[Teacher Profile] Delete error:", error);
       res.status(500).json({ message: "Failed to delete teacher profile" });
+    }
+  });
+
+  // Get teacher profile by ID - for TeacherProfilePage
+  app.get("/api/teachers/:teacherId", async (req: Request, res: Response) => {
+    try {
+      const teacherId = parseInt(req.params.teacherId);
+      
+      // Get teacher profile with user data
+      const teacherProfile = await db
+        .select({
+          id: teacherProfiles.id,
+          userId: teacherProfiles.userId,
+          bio: teacherProfiles.bio,
+          specialties: teacherProfiles.specialties,
+          yearsExperience: teacherProfiles.yearsExperience,
+          hourlyRate: teacherProfiles.hourlyRate,
+          availability: teacherProfiles.availability,
+          isActive: teacherProfiles.isActive,
+          averageRating: teacherProfiles.averageRating,
+          reviewCount: teacherProfiles.reviewCount,
+          totalStudents: teacherProfiles.totalStudents,
+          certifications: teacherProfiles.certifications,
+          user: {
+            name: users.name,
+            profileImage: users.profileImage,
+            city: users.city,
+            country: users.country,
+          }
+        })
+        .from(teacherProfiles)
+        .leftJoin(users, eq(teacherProfiles.userId, users.id))
+        .where(eq(teacherProfiles.userId, teacherId))
+        .limit(1);
+      
+      if (!teacherProfile[0]) {
+        return res.status(404).json({ message: "Teacher not found" });
+      }
+      
+      const profile = teacherProfile[0];
+      
+      // Format response to match TeacherProfilePage expectations
+      res.json({
+        id: profile.userId,
+        name: profile.user.name,
+        profileImage: profile.user.profileImage,
+        bio: profile.bio || '',
+        city: profile.user.city || '',
+        country: profile.user.country || '',
+        specialties: profile.specialties || [],
+        yearsExperience: profile.yearsExperience || 0,
+        rating: profile.averageRating || 0,
+        reviewCount: profile.reviewCount || 0,
+        studentCount: profile.totalStudents || 0,
+        achievements: profile.certifications || [],
+        availability: profile.availability || 'Available',
+      });
+    } catch (error) {
+      console.error("[Teacher Profile] Get error:", error);
+      res.status(500).json({ message: "Failed to fetch teacher profile" });
     }
   });
 
