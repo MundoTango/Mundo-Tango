@@ -77,6 +77,11 @@ export const ROUTES: Record<string, RouteConfig> = {
   mrBlue: { path: "/mr-blue", label: "Mr Blue AI", parent: "/", requiresAuth: true, category: "ai" },
   mrBlueHistory: { path: "/mr-blue/history", label: "History", parent: "/mr-blue", requiresAuth: true, category: "ai" },
 
+  // ===== H2AC (Human-to-Agent Communication) =====
+  h2ac: { path: "/h2ac-dashboard", label: "H2AC Dashboard", parent: "/", requiresAuth: true, category: "ai" },
+  h2acAgents: { path: "/h2ac-dashboard/agents", label: "My Agents", parent: "/h2ac-dashboard", requiresAuth: true, category: "ai" },
+  h2acWork: { path: "/h2ac-dashboard/work", label: "My Work", parent: "/h2ac-dashboard", requiresAuth: true, category: "ai" },
+
   // ===== ADMIN =====
   admin: { path: "/admin", label: "Admin", parent: "/", requiresAuth: true, category: "admin" },
   adminUsers: { path: "/admin/users", label: "Users", parent: "/admin", requiresAuth: true, category: "admin" },

@@ -151,10 +151,10 @@ export default function TalentMatchPage() {
 
       toast({
         title: "Profile created!",
-        description: "Starting AI interview...",
+        description: "Starting AI interview. After completion, visit H2AC Dashboard for your agent assignments.",
       });
 
-      setLocation(`/mr-blue-chat?session=${session.id}&volunteer=${volunteer.id}`);
+      setLocation(`/mr-blue-chat?session=${session.id}&volunteer=${volunteer.id}&returnTo=/h2ac-dashboard`);
 
     } catch (error: any) {
       toast({
@@ -433,6 +433,69 @@ export default function TalentMatchPage() {
                     <p className="text-sm text-center text-muted-foreground mt-4">
                       You'll be redirected to chat with Mr Blue AI for a personalized interview
                     </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* H2AC Integration Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="mt-12"
+            >
+              <Card className="bg-gradient-to-r from-blue-500/10 via-accent/5 to-blue-500/10 border-blue-500/20">
+                <CardContent className="py-8 px-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="h-12 w-12 rounded-full bg-blue-500/20 flex items-center justify-center">
+                      <Brain className="h-6 w-6 text-blue-500" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-serif font-bold">What Happens Next?</h3>
+                      <p className="text-muted-foreground">Your journey to H2AC Dashboard</p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-3 gap-6 mt-6">
+                    <div className="flex items-start gap-3">
+                      <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-sm font-bold text-primary">1</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-1">AI Interview</h4>
+                        <p className="text-sm text-muted-foreground">Mr Blue AI conducts a personalized interview to understand your skills</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3">
+                      <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-sm font-bold text-primary">2</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-1">Agent Assignment</h4>
+                        <p className="text-sm text-muted-foreground">Specialized AI agents are assigned to match you with opportunities</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3">
+                      <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                        <span className="text-sm font-bold text-primary">3</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold mb-1">H2AC Dashboard</h4>
+                        <p className="text-sm text-muted-foreground">View your agents, matched opportunities, and communicate with AI</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 pt-6 border-t border-blue-500/20 text-center">
+                    <Link href="/h2ac-dashboard">
+                      <a className="text-blue-500 hover:text-blue-600 transition-colors inline-flex items-center gap-2 font-medium" data-testid="link-h2ac-preview">
+                        Preview H2AC Dashboard
+                        <ArrowRight className="h-4 w-4" />
+                      </a>
+                    </Link>
                   </div>
                 </CardContent>
               </Card>
