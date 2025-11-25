@@ -251,6 +251,8 @@ import {
   userPrivacySettings,
   insertDataExportRequestSchema,
   insertUserPrivacySettingsSchema,
+  venues,
+  housingListings,
 } from "@shared/schema";
 import { 
   esaAgents,
@@ -6086,74 +6088,187 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // PHASE H: COMMUNITY MAP, TRAVEL PLANNER, CONTACT FORM (10 endpoints)
   // ============================================================================
 
-  // 1. GET /api/community/locations - Get all community locations with stats
-  app.get("/api/community/locations", authenticateToken, async (req: AuthRequest, res: Response) => {
+  // 1. GET /api/community/locations - Get all community locations with stats (PUBLIC)
+  app.get("/api/community/locations", async (req: Request, res: Response) => {
     try {
-      const locations = await db.select({
-        id: users.id,
+      // Get member counts by city
+      const membersByCity = await db.select({
         city: users.city,
         country: users.country,
+        latitude: sql<string>`AVG(${users.latitude})`.as('latitude'),
+        longitude: sql<string>`AVG(${users.longitude})`.as('longitude'),
         memberCount: sql<number>`count(distinct ${users.id})::int`,
-        activeEvents: sql<number>`count(distinct ${events.id})::int`,
-        venues: sql<number>`0`,
-        isActive: sql<boolean>`true`,
       })
       .from(users)
-      .leftJoin(events, eq(events.userId, users.id))
       .where(and(
         isNotNull(users.city),
         isNotNull(users.country),
         eq(users.isActive, true)
       ))
-      .groupBy(users.city, users.country, users.id);
+      .groupBy(users.city, users.country);
 
-      const groupedLocations = locations.reduce((acc: any[], loc) => {
-        const key = `${loc.city}-${loc.country}`;
-        const existing = acc.find(l => `${l.city}-${l.country}` === key);
-        if (existing) {
-          existing.memberCount += 1;
-          existing.activeEvents += loc.activeEvents;
-        } else {
-          acc.push({
-            id: loc.id,
-            city: loc.city,
-            country: loc.country,
-            coordinates: { lat: 0, lng: 0 },
-            memberCount: 1,
-            activeEvents: loc.activeEvents,
-            venues: 0,
-            isActive: true
-          });
+      // Get event counts by city
+      const eventsByCity = await db.select({
+        city: events.city,
+        country: events.country,
+        eventCount: sql<number>`count(*)::int`,
+      })
+      .from(events)
+      .where(and(
+        isNotNull(events.city),
+        eq(events.status, 'published')
+      ))
+      .groupBy(events.city, events.country);
+
+      // Get venue counts by city
+      const venuesByCity = await db.select({
+        city: venues.city,
+        country: venues.country,
+        venueCount: sql<number>`count(*)::int`,
+      })
+      .from(venues)
+      .where(isNotNull(venues.city))
+      .groupBy(venues.city, venues.country);
+
+      // Get housing counts by city
+      const housingByCity = await db.select({
+        city: housingListings.city,
+        country: housingListings.country,
+        housingCount: sql<number>`count(*)::int`,
+      })
+      .from(housingListings)
+      .where(and(
+        isNotNull(housingListings.city),
+        eq(housingListings.status, 'active')
+      ))
+      .groupBy(housingListings.city, housingListings.country);
+
+      // City coordinates lookup for common cities
+      const cityCoords: Record<string, { lat: number; lng: number }> = {
+        'Buenos Aires-Argentina': { lat: -34.6037, lng: -58.3816 },
+        'Paris-France': { lat: 48.8566, lng: 2.3522 },
+        'New York-United States': { lat: 40.7128, lng: -74.0060 },
+        'Tokyo-Japan': { lat: 35.6762, lng: 139.6503 },
+        'Berlin-Germany': { lat: 52.5200, lng: 13.4050 },
+        'London-United Kingdom': { lat: 51.5074, lng: -0.1278 },
+        'Rome-Italy': { lat: 41.9028, lng: 12.4964 },
+        'Shanghai-China': { lat: 31.2304, lng: 121.4737 },
+        'Dubai-United Arab Emirates': { lat: 25.2048, lng: 55.2708 },
+        'Dubai-UAE': { lat: 25.2048, lng: 55.2708 },
+        'São Paulo-Brazil': { lat: -23.5505, lng: -46.6333 },
+        'San Francisco-United States': { lat: 37.7749, lng: -122.4194 },
+        'Seoul-South Korea': { lat: 37.5665, lng: 126.9780 },
+        'Toronto-Canada': { lat: 43.6532, lng: -79.3832 },
+        'Melbourne-Australia': { lat: -37.8136, lng: 144.9631 },
+        'Rosario-Argentina': { lat: -32.9468, lng: -60.6393 },
+        'Istanbul-Turkey': { lat: 41.0082, lng: 28.9784 },
+        'Milan-Italy': { lat: 45.4642, lng: 9.1900 },
+        'Barcelona-Spain': { lat: 41.3874, lng: 2.1686 },
+        'Madrid-Spain': { lat: 40.4168, lng: -3.7038 },
+        'Montevideo-Uruguay': { lat: -34.9011, lng: -56.1645 },
+        'New York-USA': { lat: 40.7128, lng: -74.0060 },
+        'Los Angeles-United States': { lat: 34.0522, lng: -118.2437 },
+        'Chicago-United States': { lat: 41.8781, lng: -87.6298 },
+        'Sydney-Australia': { lat: -33.8688, lng: 151.2093 },
+        'Amsterdam-Netherlands': { lat: 52.3676, lng: 4.9041 },
+        'Vienna-Austria': { lat: 48.2082, lng: 16.3738 },
+        'Prague-Czech Republic': { lat: 50.0755, lng: 14.4378 },
+        'Lisbon-Portugal': { lat: 38.7223, lng: -9.1393 },
+        'Athens-Greece': { lat: 37.9838, lng: 23.7275 },
+      };
+
+      // Merge all data into locations
+      const locationMap = new Map<string, any>();
+
+      membersByCity.forEach((m) => {
+        const key = `${m.city}-${m.country}`;
+        const coords = cityCoords[key] || { 
+          lat: parseFloat(m.latitude as string) || 0, 
+          lng: parseFloat(m.longitude as string) || 0 
+        };
+        locationMap.set(key, {
+          id: locationMap.size + 1,
+          city: m.city,
+          country: m.country,
+          coordinates: coords,
+          memberCount: m.memberCount || 0,
+          activeEvents: 0,
+          venues: 0,
+          housing: 0,
+          recommendations: 0,
+          isActive: true
+        });
+      });
+
+      eventsByCity.forEach((e) => {
+        const key = `${e.city}-${e.country}`;
+        if (locationMap.has(key)) {
+          locationMap.get(key).activeEvents = e.eventCount;
         }
-        return acc;
-      }, []);
+      });
 
-      res.json(groupedLocations);
+      venuesByCity.forEach((v) => {
+        const key = `${v.city}-${v.country}`;
+        if (locationMap.has(key)) {
+          locationMap.get(key).venues = v.venueCount;
+          locationMap.get(key).recommendations = v.venueCount;
+        }
+      });
+
+      housingByCity.forEach((h) => {
+        const key = `${h.city}-${h.country}`;
+        if (locationMap.has(key)) {
+          locationMap.get(key).housing = h.housingCount;
+        }
+      });
+
+      const locations = Array.from(locationMap.values());
+      res.json(locations);
     } catch (error) {
       console.error("Get community locations error:", error);
       res.status(500).json({ message: "Failed to fetch community locations" });
     }
   });
 
-  // 2. GET /api/community/stats - Get global community statistics
-  app.get("/api/community/stats", authenticateToken, async (req: AuthRequest, res: Response) => {
+  // 2. GET /api/community/stats - Get global community statistics (PUBLIC)
+  app.get("/api/community/stats", async (req: Request, res: Response) => {
     try {
-      const stats = await db.select({
+      // Get user stats
+      const userStats = await db.select({
         totalMembers: sql<number>`count(distinct ${users.id})::int`,
         countries: sql<number>`count(distinct ${users.country})::int`,
         cities: sql<number>`count(distinct ${users.city})::int`,
-        activeEvents: sql<number>`count(distinct ${events.id})::int`,
       })
       .from(users)
-      .leftJoin(events, eq(events.userId, users.id))
       .where(eq(users.isActive, true));
 
+      // Get event count
+      const eventStats = await db.select({
+        activeEvents: sql<number>`count(*)::int`,
+      })
+      .from(events)
+      .where(eq(events.status, 'published'));
+
+      // Get venue count
+      const venueStats = await db.select({
+        totalVenues: sql<number>`count(*)::int`,
+      })
+      .from(venues);
+
+      // Get housing count
+      const housingStats = await db.select({
+        totalHousing: sql<number>`count(*)::int`,
+      })
+      .from(housingListings)
+      .where(eq(housingListings.status, 'active'));
+
       res.json({
-        totalCities: stats[0]?.cities || 0,
-        countries: stats[0]?.countries || 0,
-        totalMembers: stats[0]?.totalMembers || 0,
-        activeEvents: stats[0]?.activeEvents || 0,
-        totalVenues: 0
+        totalCities: userStats[0]?.cities || 0,
+        countries: userStats[0]?.countries || 0,
+        totalMembers: userStats[0]?.totalMembers || 0,
+        activeEvents: eventStats[0]?.activeEvents || 0,
+        totalVenues: venueStats[0]?.totalVenues || 0,
+        totalHousing: housingStats[0]?.totalHousing || 0
       });
     } catch (error) {
       console.error("Get community stats error:", error);

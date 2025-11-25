@@ -110,8 +110,16 @@ The platform achieves 95%+ coverage through:
   - Venues API: 8 venues
   - Groups API: 11 groups with creator data
   - Subscriptions API: 10 pricing tiers with Stripe integration
+  - **Community Map API: 18 locations, 8 venues, 2 housing listings (FIXED Nov 25)**
 - ✅ **The Plan Tracking Active** - 11 active sessions, 50-page validation tour working
 - ✅ **Friendships Seeded** - 44 friend relationships across test users
+
+**Community Map API Fixes (Nov 25, 2025):**
+- ✅ **P0-11:** Removed auth requirement from public `/api/community/locations` and `/api/community/stats` endpoints
+- ✅ **P0-12:** Fixed venue counts - was hardcoded to 0, now queries venues table (8 venues)
+- ✅ **P0-13:** Fixed housing counts - was using non-existent `isActive` column, now uses `status = 'active'` (2 listings)
+- ✅ **P0-14:** Fixed coordinates - was hardcoded to `{lat: 0, lng: 0}`, now uses city lookup table (30+ cities)
+- ✅ **P0-15:** Added missing schema imports (`venues`, `housingListings`) to routes.ts
 
 **Final Validation Checklist:**
 - ✅ **Code Cleanup:** Removed deprecated VisualEditorPageLightweight.tsx and /visual-editor-test route
