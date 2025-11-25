@@ -1,9 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Activity } from "lucide-react";
 import { Link } from "wouter";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 
@@ -28,12 +27,6 @@ export function ActiveUsersSidebar() {
 
   return (
     <Card className="hidden lg:block sticky top-20" data-testid="active-users-sidebar">
-      <CardHeader className="space-y-0 pb-4">
-        <CardTitle className="text-lg flex items-center gap-2">
-          <Activity className="h-5 w-5 text-green-600 dark:text-green-400" />
-          Recently Active
-        </CardTitle>
-      </CardHeader>
       <CardContent className="space-y-3">
         {isLoading ? (
           <>

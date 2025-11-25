@@ -43,58 +43,7 @@ export function FeedHeroWelcome() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
-          className="space-y-6"
-        >
-          <div className="flex items-center gap-3">
-            <motion.div
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-            >
-              <Sparkles className="w-8 h-8 text-white" />
-            </motion.div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white" data-testid="heading-welcome">
-              {greeting}, {firstName}!
-            </h1>
-          </div>
-
-          <p className="text-xl md:text-2xl text-white/90 max-w-2xl">
-            Welcome back to your tango community
-          </p>
-
-          {/* Quick Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            className="grid grid-cols-3 gap-4 md:gap-6 mt-8 max-w-3xl"
-          >
-            <StatCard
-              icon={<Heart className="w-5 h-5" />}
-              value={stats?.postsToday || 0}
-              label="Posts Today"
-              delay={0.6}
-            />
-            <StatCard
-              icon={<Users className="w-5 h-5" />}
-              value={stats?.activeUsers || 0}
-              label="Active Now"
-              delay={0.7}
-            />
-            <StatCard
-              icon={<Calendar className="w-5 h-5" />}
-              value={stats?.upcomingEvents || 0}
-              label="Events This Week"
-              delay={0.8}
-            />
-          </motion.div>
-        </motion.div>
-      </div>
+      
     </motion.div>
   );
 }
