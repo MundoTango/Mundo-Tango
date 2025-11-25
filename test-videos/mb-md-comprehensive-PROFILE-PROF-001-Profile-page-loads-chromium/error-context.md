@@ -1,0 +1,285 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]: 📋
+        - 'heading "The Plan: Platform Validation" [level=3] [ref=e8]'
+      - generic [ref=e9]:
+        - generic [ref=e10]: 0 / 50 pages tested (0%)
+        - button [ref=e11] [cursor=pointer]:
+          - img
+    - progressbar [ref=e12]
+    - generic [ref=e14]:
+      - generic [ref=e15]: "Now Testing: Dashboard / Home Feed"
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - generic [ref=e18]: ○
+          - generic [ref=e19]: Feed loads with posts
+        - generic [ref=e20]:
+          - generic [ref=e21]: ○
+          - generic [ref=e22]: Post creation works
+        - generic [ref=e23]:
+          - generic [ref=e24]: ○
+          - generic [ref=e25]: Notifications visible
+        - generic [ref=e26]:
+          - generic [ref=e27]: ○
+          - generic [ref=e28]: Navigation responsive
+  - generic [ref=e29]:
+    - banner [ref=e30]:
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - button [ref=e33] [cursor=pointer]:
+            - img
+          - link "MT Mundo Tango" [ref=e34] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e35]:
+              - generic [ref=e37]: MT
+              - generic [ref=e38]: Mundo Tango
+        - generic [ref=e40]:
+          - img [ref=e41]
+          - textbox "Search..." [ref=e44]
+        - generic [ref=e45]:
+          - combobox [ref=e46] [cursor=pointer]:
+            - img [ref=e47]
+            - img [ref=e50]
+          - button [ref=e52] [cursor=pointer]:
+            - img
+          - link [ref=e53] [cursor=pointer]:
+            - /url: /favorites
+            - button [ref=e54]:
+              - img
+          - link [ref=e55] [cursor=pointer]:
+            - /url: /messages
+            - button [ref=e56]:
+              - img
+          - link [ref=e57] [cursor=pointer]:
+            - /url: /notifications
+            - button [ref=e58]:
+              - img
+          - button "S" [ref=e59] [cursor=pointer]:
+            - generic [ref=e61]: S
+            - img
+    - generic [ref=e62]:
+      - complementary [ref=e63]:
+        - generic [ref=e64]:
+          - link "S Super Admin (Level 3) @admin" [ref=e65] [cursor=pointer]:
+            - /url: /profile/admin
+            - generic [ref=e67]:
+              - generic [ref=e68]: S
+              - generic [ref=e69]:
+                - generic [ref=e70]: Super Admin (Level 3)
+                - generic [ref=e71]: "@admin"
+          - generic [ref=e72]:
+            - generic [ref=e73] [cursor=pointer]:
+              - img [ref=e75]
+              - generic [ref=e77]: Memories
+            - generic [ref=e78] [cursor=pointer]:
+              - img [ref=e80]
+              - generic [ref=e84]: Tango Community
+            - generic [ref=e85] [cursor=pointer]:
+              - img [ref=e87]
+              - generic [ref=e92]: Groups
+            - generic [ref=e93] [cursor=pointer]:
+              - img [ref=e95]
+              - generic [ref=e97]: Events
+            - generic [ref=e98] [cursor=pointer]:
+              - img [ref=e100]
+              - generic [ref=e102]: Messages
+            - generic [ref=e103] [cursor=pointer]:
+              - img [ref=e105]
+              - generic [ref=e109]: Friends
+          - generic [ref=e110]:
+            - generic [ref=e111]: Discover
+            - generic [ref=e112] [cursor=pointer]:
+              - img [ref=e114]
+              - generic [ref=e116]: Stories
+            - generic [ref=e117] [cursor=pointer]:
+              - img [ref=e119]
+              - generic [ref=e123]: Media Gallery
+            - generic [ref=e124] [cursor=pointer]:
+              - img [ref=e126]
+              - generic [ref=e128]: Saved Posts
+          - generic [ref=e129]:
+            - generic [ref=e130]: Professional
+            - generic [ref=e131] [cursor=pointer]:
+              - img [ref=e133]
+              - generic [ref=e136]: Teachers
+            - generic [ref=e137] [cursor=pointer]:
+              - img [ref=e139]
+              - generic [ref=e143]: Venues
+            - generic [ref=e144] [cursor=pointer]:
+              - img [ref=e146]
+              - generic [ref=e152]: Workshops
+            - generic [ref=e153] [cursor=pointer]:
+              - img [ref=e155]
+              - generic [ref=e159]: Venue Recommendations
+          - generic [ref=e160]:
+            - generic [ref=e161]: Marketplace
+            - generic [ref=e162] [cursor=pointer]:
+              - img [ref=e164]
+              - generic [ref=e167]: Marketplace
+            - generic [ref=e168] [cursor=pointer]:
+              - img [ref=e170]
+              - generic [ref=e173]: Housing
+            - generic [ref=e174] [cursor=pointer]:
+              - img [ref=e176]
+              - generic [ref=e182]: Live Streams
+          - generic [ref=e183]:
+            - generic [ref=e184]: Resources
+            - generic [ref=e185] [cursor=pointer]:
+              - img [ref=e187]
+              - generic [ref=e191]: Music Library
+            - generic [ref=e192] [cursor=pointer]:
+              - img [ref=e194]
+              - generic [ref=e196]: Blog
+            - generic [ref=e197] [cursor=pointer]:
+              - img [ref=e199]
+              - generic [ref=e201]: Reviews
+            - generic [ref=e202] [cursor=pointer]:
+              - img [ref=e204]
+              - generic [ref=e210]: Leaderboard
+          - generic [ref=e211]:
+            - generic [ref=e212]: Account
+            - generic [ref=e213] [cursor=pointer]:
+              - img [ref=e215]
+              - generic [ref=e217]: Subscriptions
+            - generic [ref=e218] [cursor=pointer]:
+              - img [ref=e220]
+              - generic [ref=e222]: Travel Planner
+            - generic [ref=e223] [cursor=pointer]:
+              - img [ref=e225]
+              - generic [ref=e227]: Contact
+            - generic [ref=e228] [cursor=pointer]:
+              - img [ref=e230]
+              - generic [ref=e233]: Role Invitations
+            - generic [ref=e234] [cursor=pointer]:
+              - img [ref=e236]
+              - generic [ref=e238]: Recommendations
+          - generic [ref=e239]:
+            - generic [ref=e240]: Global Statistics
+            - generic [ref=e241]:
+              - button "Global Dancers 158" [ref=e242] [cursor=pointer]:
+                - img [ref=e244]
+                - generic [ref=e246]: Global Dancers
+                - generic [ref=e247]: "158"
+              - button "Active Events 273" [ref=e248] [cursor=pointer]:
+                - img [ref=e250]
+                - generic [ref=e252]: Active Events
+                - generic [ref=e253]: "273"
+              - button "Communities 8" [ref=e254] [cursor=pointer]:
+                - img [ref=e256]
+                - generic [ref=e260]: Communities
+                - generic [ref=e261]: "8"
+              - button "Your City 0" [ref=e262] [cursor=pointer]:
+                - img [ref=e264]
+                - generic [ref=e267]: Your City
+                - generic [ref=e268]: "0"
+        - generic [ref=e270]:
+          - generic [ref=e271]: Mundo Tango
+          - generic [ref=e272]: Global Community
+      - main [ref=e273]:
+        - generic [ref=e274]:
+          - img "Super Admin (Level 3)'s profile" [ref=e275]
+          - link "Edit Profile" [ref=e278] [cursor=pointer]:
+            - /url: /profile/edit
+            - img
+            - text: Edit Profile
+          - generic [ref=e280]:
+            - heading "Super Admin (Level 3)" [level=1] [ref=e282]
+            - paragraph [ref=e283]: "@admin"
+            - paragraph [ref=e284]: Admin edit
+            - text: "0"
+            - generic [ref=e285]:
+              - generic [ref=e286]:
+                - img [ref=e287]
+                - generic [ref=e289]: Upcoming Travel
+              - generic [ref=e290]:
+                - generic [ref=e291]:
+                  - img [ref=e292]
+                  - generic [ref=e294]: Milan
+                  - generic [ref=e295]: (Feb 10-Feb 17)
+                - generic [ref=e296]:
+                  - img [ref=e297]
+                  - generic [ref=e299]: Paris
+                  - generic [ref=e300]: (Jan 11-Jan 18)
+                - button "+1 more trips →" [ref=e301] [cursor=pointer]
+        - generic [ref=e304]:
+          - button "Posts" [ref=e306] [cursor=pointer]:
+            - img
+            - generic [ref=e307]: Posts
+          - button "Travel" [ref=e310] [cursor=pointer]:
+            - img
+            - generic [ref=e311]: Travel
+          - button "Events" [ref=e313] [cursor=pointer]:
+            - img
+            - generic [ref=e314]: Events
+          - button "Friends" [ref=e316] [cursor=pointer]:
+            - img
+            - generic [ref=e317]: Friends
+          - button "Photos" [ref=e319] [cursor=pointer]:
+            - img
+            - generic [ref=e320]: Photos
+          - button "About" [ref=e322] [cursor=pointer]:
+            - img
+            - generic [ref=e323]: About
+        - generic [ref=e325]:
+          - heading "Your Posts" [level=2] [ref=e326]
+          - generic [ref=e327]:
+            - generic [ref=e330]:
+              - generic [ref=e331]:
+                - generic [ref=e333]: S
+                - generic [ref=e334]:
+                  - generic [ref=e335]: Super Admin (Level 3)
+                  - generic [ref=e336]: Share a memory...
+              - generic [ref=e338]: What's on your mind? Try @mentioning someone or adding a recommendation...
+              - generic [ref=e339]:
+                - generic [ref=e340]:
+                  - button "Hidden Gems - Share your favorite places" [ref=e342] [cursor=pointer]:
+                    - img
+                  - button "Add Tags - Categorize your memory" [ref=e344] [cursor=pointer]:
+                    - img
+                  - button "Upload Media - Share photos & videos" [ref=e346] [cursor=pointer]:
+                    - img
+                  - generic [ref=e347]:
+                    - button "AI Enhance - Improve your content" [disabled]:
+                      - img
+                  - button "Visibility - public" [ref=e349] [cursor=pointer]:
+                    - img
+                - generic [ref=e350]:
+                  - button "Share Memory" [disabled]:
+                    - img
+                    - text: Share Memory
+            - paragraph [ref=e354]: You haven't posted anything yet. Share your tango journey!
+    - generic [ref=e356]:
+      - generic [ref=e357]:
+        - generic [ref=e358]:
+          - generic [ref=e359]: 📋
+          - 'heading "The Plan: Platform Validation" [level=3] [ref=e360]'
+        - generic [ref=e361]:
+          - generic [ref=e362]: 0 / 50 pages tested (0%)
+          - button [ref=e363] [cursor=pointer]:
+            - img
+      - progressbar [ref=e364]
+      - generic [ref=e366]:
+        - generic [ref=e367]: "Now Testing: Dashboard / Home Feed"
+        - generic [ref=e368]:
+          - generic [ref=e369]:
+            - generic [ref=e370]: ○
+            - generic [ref=e371]: Feed loads with posts
+          - generic [ref=e372]:
+            - generic [ref=e373]: ○
+            - generic [ref=e374]: Post creation works
+          - generic [ref=e375]:
+            - generic [ref=e376]: ○
+            - generic [ref=e377]: Notifications visible
+          - generic [ref=e378]:
+            - generic [ref=e379]: ○
+            - generic [ref=e380]: Navigation responsive
+  - button [ref=e381] [cursor=pointer]:
+    - img
+```
