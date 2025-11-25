@@ -70,7 +70,9 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
         endpoint = `/api/posts/mentions`;
       }
 
-      const response = await fetch(`${endpoint}?limit=20&offset=${pageParam}`);
+      const response = await fetch(`${endpoint}?limit=20&offset=${pageParam}`, {
+        credentials: 'include',
+      });
       if (!response.ok) throw new Error('Failed to fetch feed');
       
       const result = await response.json();

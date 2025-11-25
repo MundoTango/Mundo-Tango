@@ -39,7 +39,6 @@ import { FeedTabs } from "@/components/feed/FeedTabs";
 import { InfiniteScrollFeed } from "@/components/feed/InfiniteScrollFeed";
 import { NewPostsBanner } from "@/components/feed/NewPostsBanner";
 import { TrendingPosts } from "@/components/feed/TrendingPosts";
-import { ActiveUsersSidebar } from "@/components/feed/ActiveUsersSidebar";
 import { RecommendedPosts } from "@/components/feed/RecommendedPosts";
 import { Link } from "wouter";
 import { FeedAd } from "@/components/ads/FeedAd";
@@ -438,15 +437,10 @@ export default function FeedPage() {
         </div>
       </div>
 
-      {/* 3-Column Grid Layout */}
+      {/* 2-Column Grid Layout */}
       <div className="grid grid-cols-12 gap-6 px-6 py-12 max-w-7xl mx-auto">
-        {/* Left Sidebar - Recently Active Users (Feature 17) */}
-        <aside className="hidden lg:block lg:col-span-3 space-y-6">
-          <ActiveUsersSidebar />
-        </aside>
-
         {/* Main Feed Column */}
-        <main className="col-span-12 lg:col-span-6 space-y-6">
+        <main className="col-span-12 lg:col-span-9 space-y-6">
           {/* Hero Welcome Section */}
           <FeedHeroWelcome />
           
