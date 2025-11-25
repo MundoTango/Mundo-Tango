@@ -513,11 +513,10 @@ function Router() {
       </Route>
 
       <Route path="/memories">
-        <ProtectedRoute>
-          <AppLayout>
-            <MemoriesPage />
-          </AppLayout>
-        </ProtectedRoute>
+        {() => {
+          window.location.href = '/profile?tab=memories';
+          return null;
+        }}
       </Route>
 
       <Route path="/memory-stats">

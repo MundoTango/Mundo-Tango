@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useRoute, Link } from "wouter";
+import { useState, useEffect } from "react";
+import { useRoute, Link, useSearch } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -37,6 +37,7 @@ import ProfileTabContentCreator from "@/components/profile/ProfileTabContentCrea
 import ProfileTabLearningResource from "@/components/profile/ProfileTabLearningResource";
 import ProfileTabTaxiDancer from "@/components/profile/ProfileTabTaxiDancer";
 import ProfileTabOrganizer from "@/components/profile/ProfileTabOrganizer";
+import ProfileTabMemories from "@/components/profile/ProfileTabMemories";
 import DashboardCustomerToggle from "@/components/profile/DashboardCustomerToggle";
 
 interface User {
@@ -79,10 +80,20 @@ interface Post {
 
 export default function ProfilePage() {
   const [, params] = useRoute("/profile/:id");
+  const searchString = useSearch();
   const { user: currentUser } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<string>('feed');
   const [viewMode, setViewMode] = useState<'dashboard' | 'customer'>('dashboard');
+  
+  // Read tab from URL query params (e.g., /profile?tab=memories)
+  useEffect(() => {
+    const urlParams = new URLSearchParams(searchString);
+    const tabParam = urlParams.get('tab');
+    if (tabParam) {
+      setActiveTab(tabParam);
+    }
+  }, [searchString]);
   
   // Support both numeric ID and username - use username/ID from URL or current user's ID
   const profileIdentifier = params?.id || currentUser?.id?.toString();
@@ -465,7 +476,7 @@ export default function ProfilePage() {
       {/* Tab Content */}
       <div className="max-w-5xl mx-auto px-6 py-12">
         {/* Dashboard/Customer Toggle for Role Tabs */}
-        {activeTab !== 'feed' && activeTab !== 'travel' && activeTab !== 'events' && 
+        {activeTab !== 'feed' && activeTab !== 'memories' && activeTab !== 'travel' && activeTab !== 'events' && 
          activeTab !== 'friends' && activeTab !== 'photos' && activeTab !== 'about' && (
           <DashboardCustomerToggle isOwnProfile={isOwnProfile} onViewChange={setViewMode} />
         )}
@@ -481,6 +492,17 @@ export default function ProfilePage() {
               {isOwnProfile ? 'Your Posts' : 'Posts'}
             </h2>
             <ProfileTabFeed posts={posts} isLoading={postsLoading} isOwnProfile={isOwnProfile} />
+          </motion.div>
+        )}
+
+        {/* Memories Tab */}
+        {activeTab === 'memories' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <ProfileTabMemories isOwnProfile={isOwnProfile} profileId={user.id} />
           </motion.div>
         )}
 
