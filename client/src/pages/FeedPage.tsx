@@ -31,7 +31,6 @@ import { UpcomingEventsSidebar } from "@/components/feed/UpcomingEventsSidebar";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 import { PostItem } from "@/components/feed/PostItem";
 import { EditPostDialog } from "@/components/modals/EditPostDialog";
-import { FeedHeroWelcome } from "@/components/feed/FeedHeroWelcome";
 import { StoriesCarousel } from "@/components/feed/StoriesCarousel";
 import { FeedFilters } from "@/components/feed/FeedFilters";
 import { FeedTabs } from "@/components/feed/FeedTabs";
@@ -438,9 +437,6 @@ export default function FeedPage() {
       <div className="grid grid-cols-12 gap-6 px-6 py-12 max-w-7xl mx-auto">
         {/* Main Feed Column */}
         <main className="col-span-12 lg:col-span-9 space-y-6">
-          {/* Hero Welcome Section */}
-          <FeedHeroWelcome />
-
           {/* Instagram-style Stories Carousel */}
           <StoriesCarousel />
 

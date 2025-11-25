@@ -6,6 +6,7 @@
  * - API endpoints and their schemas
  * - Database tables and column names
  * - Common failure modes and how to fix them
+ * - Orchestrates feature agents for testing
  * 
  * Created via Q&A Session with Replit AI mentoring Mr. Blue
  */
@@ -13,6 +14,11 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { BasePageAgent, ElementLocation } from './BasePageAgent';
+import { BaseFeatureAgent, QAExchange } from './BaseFeatureAgent';
+import { InfiniteScrollFeatureAgent } from './features/InfiniteScrollFeatureAgent';
+import { PostCreatorFeatureAgent } from './features/PostCreatorFeatureAgent';
+import { PostReactionsFeatureAgent } from './features/PostReactionsFeatureAgent';
+import { StoriesCarouselFeatureAgent } from './features/StoriesCarouselFeatureAgent';
 
 // PRD-style knowledge of what Feed page SHOULD be
 export interface FeedPagePRD {
@@ -23,8 +29,18 @@ export interface FeedPagePRD {
   expectedBehaviors: string[];
 }
 
+export interface AgentQASession {
+  sessionId: string;
+  startTime: string;
+  exchanges: QAExchange[];
+  participants: string[];
+  summary: string;
+}
+
 export class FeedPageAgent extends BasePageAgent {
   private prd: FeedPagePRD;
+  private featureAgents: Map<string, BaseFeatureAgent>;
+  private qaHistory: AgentQASession[] = [];
 
   constructor() {
     super(
@@ -49,9 +65,152 @@ export class FeedPageAgent extends BasePageAgent {
       ]
     );
 
+    // Initialize feature agents
+    this.featureAgents = new Map();
+    this.initializeFeatureAgents();
+
     // Initialize PRD knowledge - what Feed page SHOULD be
     this.prd = this.initializePRD();
     this.initializeKnowledge();
+  }
+
+  /**
+   * Initialize feature agents subordinate to this page
+   */
+  private initializeFeatureAgents() {
+    const infiniteScrollAgent = new InfiniteScrollFeatureAgent();
+    const postCreatorAgent = new PostCreatorFeatureAgent();
+    const postReactionsAgent = new PostReactionsFeatureAgent();
+    const storiesCarouselAgent = new StoriesCarouselFeatureAgent();
+
+    this.featureAgents.set(infiniteScrollAgent.getFeatureId(), infiniteScrollAgent);
+    this.featureAgents.set(postCreatorAgent.getFeatureId(), postCreatorAgent);
+    this.featureAgents.set(postReactionsAgent.getFeatureId(), postReactionsAgent);
+    this.featureAgents.set(storiesCarouselAgent.getFeatureId(), storiesCarouselAgent);
+
+    console.log(`[Feed Page Agent] Initialized ${this.featureAgents.size} feature agents`);
+  }
+
+  /**
+   * Get all feature agents
+   */
+  getFeatureAgents(): BaseFeatureAgent[] {
+    return Array.from(this.featureAgents.values());
+  }
+
+  /**
+   * Get specific feature agent
+   */
+  getFeatureAgent(featureId: string): BaseFeatureAgent | undefined {
+    return this.featureAgents.get(featureId);
+  }
+
+  /**
+   * Conduct Q&A research session with all feature agents
+   * Mr. Blue uses this to understand the page holistically
+   */
+  async conductQASession(questions: string[]): Promise<AgentQASession> {
+    const sessionId = `qa-${Date.now()}`;
+    const exchanges: QAExchange[] = [];
+    const participants: string[] = [this.name];
+
+    // Ask each feature agent
+    for (const agent of this.featureAgents.values()) {
+      participants.push(agent.getFeatureName());
+      
+      for (const question of questions) {
+        const answer = agent.answerQuestion(question);
+        exchanges.push({
+          question: `[${agent.getFeatureName()}] ${question}`,
+          answer: answer.answer,
+          confidence: answer.confidence,
+          source: answer.source,
+        });
+      }
+    }
+
+    // Generate summary
+    const summary = this.generateSessionSummary(exchanges);
+
+    const session: AgentQASession = {
+      sessionId,
+      startTime: new Date().toISOString(),
+      exchanges,
+      participants,
+      summary,
+    };
+
+    this.qaHistory.push(session);
+    return session;
+  }
+
+  /**
+   * Generate summary of Q&A session
+   */
+  private generateSessionSummary(exchanges: QAExchange[]): string {
+    const highConfidence = exchanges.filter(e => e.confidence >= 0.9);
+    const lowConfidence = exchanges.filter(e => e.confidence < 0.7);
+    
+    return `Q&A Session Complete: ${exchanges.length} exchanges, ${highConfidence.length} high confidence answers, ${lowConfidence.length} need more research`;
+  }
+
+  /**
+   * Orchestrate all feature agents to generate comprehensive test plan
+   */
+  generateComprehensiveTestPlan(): string {
+    const plans: string[] = [];
+    
+    plans.push(`# Feed Page Comprehensive Test Plan`);
+    plans.push(`Generated: ${new Date().toISOString()}`);
+    plans.push(`Page Agent: ${this.name}`);
+    plans.push(`Feature Agents: ${this.featureAgents.size}`);
+    plans.push('\n---\n');
+
+    for (const agent of this.featureAgents.values()) {
+      plans.push(`## ${agent.getFeatureName()}`);
+      plans.push(agent.generatePlaywrightTestPlan());
+      plans.push('\n---\n');
+    }
+
+    return plans.join('\n');
+  }
+
+  /**
+   * Get all testable behaviors from all feature agents
+   */
+  getAllTestableBehaviors(): { featureId: string; featureName: string; behaviors: any[] }[] {
+    const results: { featureId: string; featureName: string; behaviors: any[] }[] = [];
+
+    for (const agent of this.featureAgents.values()) {
+      results.push({
+        featureId: agent.getFeatureId(),
+        featureName: agent.getFeatureName(),
+        behaviors: agent.getTestPlan(),
+      });
+    }
+
+    return results;
+  }
+
+  /**
+   * Get health status of all feature agents
+   */
+  getFeatureHealthStatus(): {
+    pageAgent: string;
+    totalFeatures: number;
+    totalTests: number;
+    totalKnownIssues: number;
+    features: any[];
+  } {
+    const features = Array.from(this.featureAgents.values()).map(a => a.getHealthStatus());
+    
+    return {
+      pageAgent: this.name,
+      totalFeatures: this.featureAgents.size,
+      totalTests: features.reduce((sum, f) => sum + f.testableCount, 0),
+      totalKnownIssues: features.reduce((sum, f) => sum + f.knownIssueCount, 0),
+      features,
+    };
   }
 
   /**
@@ -63,7 +222,6 @@ export class FeedPageAgent extends BasePageAgent {
       expectedComponents: [
         'FeedPage - Main container with tabs (Following/Discover)',
         'InfiniteScrollFeed - Paginated feed with infinite scroll',
-        'RecommendedPosts - Discovery algorithm for new content',
         'PostCreator - Create new posts with media, mentions, location',
         'PostItem - Individual post with reactions, comments, shares',
         'PostReactions - Reaction picker (love, fire, tango, etc.)',
@@ -91,14 +249,13 @@ export class FeedPageAgent extends BasePageAgent {
         { table: 'posts', column: 'content', description: 'text content of post' },
         { table: 'posts', column: 'visibility', description: 'public | friends | private' },
         { table: 'posts', column: 'postType', description: 'memory | post | story' },
+        { table: 'posts', column: 'shares', description: 'integer share count - use this instead of postShares table subquery' },
         { table: 'reactions', column: 'id', description: 'serial primary key' },
         { table: 'reactions', column: 'postId', description: 'references posts.id' },
         { table: 'reactions', column: 'userId', description: 'references users.id' },
         { table: 'reactions', column: 'reactionType', description: 'love | passion | fire | tango | celebrate | brilliant - NOTE: NOT "type", it is "reactionType"' },
         { table: 'postComments', column: 'id', description: 'serial primary key' },
         { table: 'postComments', column: 'postId', description: 'references posts.id' },
-        { table: 'postShares', column: 'id', description: 'serial primary key' },
-        { table: 'postShares', column: 'postId', description: 'references posts.id' },
         { table: 'follows', column: 'followerId', description: 'user who is following' },
         { table: 'follows', column: 'followingId', description: 'user being followed' },
         { table: 'friendships', column: 'userId', description: 'one side of friendship' },
@@ -111,6 +268,11 @@ export class FeedPageAgent extends BasePageAgent {
         {
           pattern: 'reactions.type',
           fix: 'Use reactions.reactionType - the column is named "reactionType" not "type"',
+          severity: 'critical',
+        },
+        {
+          pattern: 'postShares table subquery',
+          fix: 'Use posts.shares column directly instead of SELECT COUNT from postShares - the count is stored inline',
           severity: 'critical',
         },
         {
@@ -127,16 +289,6 @@ export class FeedPageAgent extends BasePageAgent {
           pattern: 'Authorization header missing',
           fix: 'Add Authorization: Bearer ${token} header for authenticated endpoints',
           severity: 'high',
-        },
-        {
-          pattern: 'JWT token expired',
-          fix: 'Token expires after 15 minutes - implement refresh token flow or extend expiry',
-          severity: 'medium',
-        },
-        {
-          pattern: 'WebSocket code 1006',
-          fix: 'Abnormal closure - check server WebSocket handler and CORS settings',
-          severity: 'medium',
         },
       ],
 
@@ -242,16 +394,16 @@ export class FeedPageAgent extends BasePageAgent {
       suggestions.push('Replace "reactions.type" with "reactions.reactionType"');
     }
 
+    // Check for postShares subquery (should use posts.shares)
+    if (query.includes('postShares') && query.includes('COUNT')) {
+      issues.push('Using postShares table subquery - use posts.shares column instead');
+      suggestions.push('Replace COUNT from postShares with posts.shares column');
+    }
+
     // Check for AND = (missing column)
     if (/AND\s+=/.test(query)) {
       issues.push('SQL syntax error: missing column reference before = operator');
       suggestions.push('Add column name between AND and = (e.g., AND reactions.reactionType = )');
-    }
-
-    // Check for common column name mismatches
-    if (query.includes('reaction_type') && !query.includes('"reaction_type"')) {
-      issues.push('Column might be camelCase in Drizzle ORM');
-      suggestions.push('Drizzle uses reactionType (camelCase), raw SQL uses reaction_type (snake_case)');
     }
 
     return {
@@ -287,6 +439,7 @@ export class FeedPageAgent extends BasePageAgent {
     knownElements: number;
     schemaKnowledge: number;
     commonBugsTracked: number;
+    featureAgents: number;
     lastChecked: string;
     issues: string[];
   }> {
@@ -307,6 +460,7 @@ export class FeedPageAgent extends BasePageAgent {
       knownElements: this.elementKnowledge.size,
       schemaKnowledge: this.prd.schemaKnowledge.length,
       commonBugsTracked: this.prd.commonBugs.length,
+      featureAgents: this.featureAgents.size,
       lastChecked: new Date().toISOString(),
       issues,
     };
