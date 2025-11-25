@@ -50,6 +50,16 @@ export function useEvents(filters?: EventFilters) {
         params.append('eventType', filters.category);
       }
       
+      // Default to upcoming events unless specifically asking for past or all
+      if (filters?.dateFilter === 'past') {
+        // Past events - don't add upcoming filter
+      } else if (filters?.dateFilter === 'all') {
+        // All events - don't add upcoming filter  
+      } else {
+        // Default: show upcoming events first (startDate >= now)
+        params.append('upcoming', 'true');
+      }
+      
       const queryString = params.toString();
       const url = `/api/events${queryString ? `?${queryString}` : ''}`;
       const res = await fetch(url);

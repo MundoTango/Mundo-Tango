@@ -3,7 +3,7 @@ import { useEvent, useRSVPEvent } from "@/hooks/useEvents";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User } from "lucide-react";
+import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User, Ticket, Music, Tag, ExternalLink, Clock } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "wouter";
 import { safeDateFormat } from "@/lib/safeDateFormat";
@@ -286,6 +286,71 @@ export default function EventDetailsPage() {
                   </motion.div>
                 )}
 
+                {/* Additional Event Info Row */}
+                {(event.musicStyle || event.level || event.dressCode || event.djName) && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.65 }}
+                    className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 pt-6 border-t"
+                  >
+                    {event.musicStyle && (
+                      <div className="flex items-center gap-3">
+                        <Music className="h-5 w-5 text-muted-foreground" />
+                        <div>
+                          <p className="text-sm text-muted-foreground">Music Style</p>
+                          <p className="font-medium">{event.musicStyle}</p>
+                        </div>
+                      </div>
+                    )}
+                    {event.level && (
+                      <div className="flex items-center gap-3">
+                        <Users className="h-5 w-5 text-muted-foreground" />
+                        <div>
+                          <p className="text-sm text-muted-foreground">Level</p>
+                          <p className="font-medium capitalize">{event.level}</p>
+                        </div>
+                      </div>
+                    )}
+                    {event.dressCode && (
+                      <div className="flex items-center gap-3">
+                        <Tag className="h-5 w-5 text-muted-foreground" />
+                        <div>
+                          <p className="text-sm text-muted-foreground">Dress Code</p>
+                          <p className="font-medium">{event.dressCode}</p>
+                        </div>
+                      </div>
+                    )}
+                    {event.djName && (
+                      <div className="flex items-center gap-3">
+                        <Music className="h-5 w-5 text-muted-foreground" />
+                        <div>
+                          <p className="text-sm text-muted-foreground">DJ / Music</p>
+                          <p className="font-medium">{event.djName}</p>
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+
+                {/* Tags */}
+                {event.tags && event.tags.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.68 }}
+                    className="pt-6 border-t"
+                  >
+                    <div className="flex flex-wrap gap-2">
+                      {event.tags.map((tag: string, index: number) => (
+                        <Badge key={index} variant="secondary" className="text-sm">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+
                 {event.description && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -296,27 +361,69 @@ export default function EventDetailsPage() {
                     <h3 className="text-2xl font-serif font-bold mb-6">About This Event</h3>
                     <div 
                       className="text-lg text-muted-foreground whitespace-pre-wrap leading-relaxed prose prose-lg dark:prose-invert max-w-none"
-                      dangerouslySetInnerHTML={{ __html: event.description.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&') }}
+                      dangerouslySetInnerHTML={{ __html: event.description.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&#8211;/g, '–').replace(/&#038;/g, '&').replace(/&#8217;/g, "'") }}
                     />
                   </motion.div>
                 )}
                 
-                {event.sourceUrl && (
+                {/* Links Section */}
+                {(event.websiteUrl || event.ticketUrl || event.ticketLink || event.facebookUrl || event.instagramUrl) && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.75 }}
                     className="pt-6 border-t"
                   >
-                    <a 
-                      href={event.sourceUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-primary hover:underline"
-                    >
-                      <Globe className="h-4 w-4" />
-                      View Original Event Source
-                    </a>
+                    <h4 className="text-lg font-semibold mb-4">Links & Tickets</h4>
+                    <div className="flex flex-wrap gap-4">
+                      {(event.ticketUrl || event.ticketLink) && (
+                        <a 
+                          href={event.ticketUrl || event.ticketLink} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          data-testid="link-tickets"
+                        >
+                          <Button variant="default" className="gap-2">
+                            <Ticket className="h-4 w-4" />
+                            Get Tickets
+                          </Button>
+                        </a>
+                      )}
+                      {event.websiteUrl && (
+                        <a 
+                          href={event.websiteUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-primary hover:underline"
+                          data-testid="link-source"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                          View Original Source
+                        </a>
+                      )}
+                      {event.facebookUrl && (
+                        <a 
+                          href={event.facebookUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          <Globe className="h-4 w-4" />
+                          Facebook Event
+                        </a>
+                      )}
+                      {event.instagramUrl && (
+                        <a 
+                          href={event.instagramUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          <Globe className="h-4 w-4" />
+                          Instagram
+                        </a>
+                      )}
+                    </div>
                   </motion.div>
                 )}
               </CardContent>

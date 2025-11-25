@@ -110,50 +110,111 @@ function parsePrice(priceStr: string | null): number | null {
 }
 
 /**
- * Intelligent Event Type Detection
+ * Comprehensive Event Type Detection
+ * Per PRD: milonga, workshop, class, festival, marathon, practica, online, social, performance, competition
  * Analyzes title and description to determine the correct event type
- * Per PRD: milonga, workshop, festival, online, social, practica
  */
 function detectEventType(title: string, description: string | null): string {
   const titleLower = title.toLowerCase();
   const descLower = (description || '').toLowerCase();
   const combined = `${titleLower} ${descLower}`;
   
-  // Festival detection (highest priority - multi-day events)
-  if (/festival|marathon|encuentro|circuit|tango\s*week/i.test(combined)) {
+  // ============================================================
+  // FESTIVAL / MARATHON / ENCUENTRO (Multi-day special events)
+  // ============================================================
+  if (/festival|tango\s*week|tango\s*weekend/i.test(combined)) {
     return 'festival';
   }
+  if (/marathon|maratón|marath[oó]n/i.test(combined)) {
+    return 'marathon';
+  }
+  if (/encuentro|encounter/i.test(combined)) {
+    return 'festival'; // Encuentros are festival-type
+  }
+  if (/circuit|circuito/i.test(combined)) {
+    return 'festival';
+  }
+
+  // ============================================================
+  // COMPETITION (Contests, Championships)
+  // ============================================================
+  if (/competition|championship|contest|campeonato|mundial|concurso/i.test(combined)) {
+    return 'competition';
+  }
+
+  // ============================================================
+  // PERFORMANCE / SHOW (Stage performances, demos)
+  // ============================================================
+  if (/show\b|shows\b|performance|perform|exhibition|exhibición|gala|concert|concierto/i.test(combined)) {
+    return 'performance';
+  }
+  if (/demo\b|demonstration|showcase/i.test(combined)) {
+    return 'performance';
+  }
+
+  // ============================================================
+  // CLASS / WORKSHOP (Teaching events - differentiate by format)
+  // ============================================================
+  // CLASS: Regular recurring lessons with levels
+  if (/\bclass\b|\bclasses\b|\blesson\b|\blessons\b/i.test(titleLower)) {
+    return 'class';
+  }
+  if (/level\s*\d|level\s*(one|two|three|1|2|3|i|ii|iii)/i.test(titleLower)) {
+    return 'class';
+  }
+  if (/\bbeginner\b|\bintermediate\b|\badvanced\b|\bfundamentals\b/i.test(titleLower)) {
+    return 'class';
+  }
   
-  // Workshop/Class detection (teaching events)
-  if (/class|classes|lesson|lessons|level\s*\d|level\s*(one|two|three|1|2|3)/i.test(titleLower)) {
+  // WORKSHOP: Special one-time teaching events
+  if (/workshop|masterclass|master\s*class|intensive|bootcamp|course|seminar|clinic/i.test(titleLower)) {
     return 'workshop';
   }
-  if (/beginner|intermediate|advanced|fundamentals|technique/i.test(titleLower)) {
+  if (/choreography|footwork|musicality|embrace|navigation|technique|tango\s*lab/i.test(titleLower)) {
     return 'workshop';
   }
-  if (/workshop|masterclass|intensive|bootcamp|course/i.test(titleLower)) {
+  if (/stage\s*tango|escenario|vals|milonga\s*traspie/i.test(titleLower)) {
     return 'workshop';
   }
-  if (/choreography|footwork|musicality|embrace|navigation/i.test(titleLower)) {
-    return 'workshop';
-  }
-  
-  // Practica detection (practice sessions)
-  if (/practica|practice|pract-ilonga|practilonga/i.test(titleLower)) {
+
+  // ============================================================
+  // PRACTICA (Practice sessions)
+  // ============================================================
+  if (/practica|práctica|practice|pract-ilonga|practilonga/i.test(titleLower)) {
     return 'practica';
   }
-  
-  // Online detection
-  if (/online|virtual|zoom|webinar|livestream|live\s*stream/i.test(combined)) {
+
+  // ============================================================
+  // ONLINE / VIRTUAL
+  // ============================================================
+  if (/online|virtual|zoom|webinar|livestream|live\s*stream|streaming/i.test(combined)) {
     return 'online';
   }
-  
-  // Competition detection (treat as festival/special event)
-  if (/competition|championship|contest|campeonato/i.test(combined)) {
-    return 'festival';
+
+  // ============================================================
+  // SOCIAL (Non-dance social gatherings)
+  // ============================================================
+  if (/social\s*event|dinner|lunch|brunch|picnic|meetup|meet-up|gathering|party\b(?!.*milonga)/i.test(combined)) {
+    return 'social';
   }
-  
-  // Default to milonga for actual social dance events
+
+  // ============================================================
+  // MILONGA (Default - actual social dance events)
+  // ============================================================
+  // If title explicitly contains "milonga", it's a milonga
+  if (/milonga/i.test(titleLower)) {
+    return 'milonga';
+  }
+
+  // Other dance event indicators that are milongas
+  if (/baile|dance\s*night|tango\s*night|friday|saturday|sunday|monday|tuesday|wednesday|thursday/i.test(titleLower)) {
+    // Check it's not a class on that day
+    if (!/class|lesson|workshop|course/i.test(titleLower)) {
+      return 'milonga';
+    }
+  }
+
+  // Default: milonga (social dance events)
   return 'milonga';
 }
 
