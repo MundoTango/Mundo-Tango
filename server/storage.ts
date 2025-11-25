@@ -1812,7 +1812,7 @@ export class DbStorage implements IStorage {
     }
     
     if (params.type) {
-      whereConditions.push(eq(posts.type, params.type));
+      whereConditions.push(eq(posts.postType, params.type));
     }
     
     if (whereConditions.length > 0) {

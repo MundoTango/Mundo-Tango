@@ -5202,31 +5202,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ============================================================================
 
   // 1. MEMORIES API (GET, POST)
-  // Uses media table for personal memories
+  // UNIFIED: Now uses posts table with postType='memory' filter
+  // User Decision: Unify Memories and Feed to single posts table
   app.get("/api/memories", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const { limit = "20", offset = "0", filter = "all" } = req.query;
       const userId = req.user!.id;
       
-      let params: any = {
-        type: filter === "all" ? undefined : filter === "photos" ? "image" : filter,
+      // Get memories from posts table (postType = 'memory')
+      const memories = await storage.getPosts({
+        userId,
+        type: 'memory',
         limit: parseInt(limit as string),
-        offset: parseInt(offset as string)
-      };
+        offset: parseInt(offset as string),
+        currentUserId: userId
+      });
       
-      const memories = await storage.getUserMedia(userId, params);
-      res.json({ memories, total: memories.length });
+      // Transform posts to Memory format for backward compatibility
+      const formattedMemories = memories.map(post => ({
+        id: post.id,
+        userId: post.userId,
+        title: post.content?.slice(0, 50) || 'Memory',
+        description: post.content || '',
+        type: post.imageUrl ? 'photo' : post.videoUrl ? 'video' : 'milestone',
+        imageUrl: post.imageUrl,
+        videoUrl: post.videoUrl,
+        date: post.createdAt,
+        location: post.location,
+        tags: post.hashtags || [],
+        user: post.user
+      }));
+      
+      res.json(formattedMemories);
     } catch (error) {
       console.error("Get memories error:", error);
       res.status(500).json({ message: "Failed to fetch memories" });
     }
   });
 
+  // MEMORIES STATS - Returns statistics about user's memories
+  app.get("/api/memories/stats", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user!.id;
+      
+      // Get all memory-type posts for this user
+      const allMemories = await storage.getPosts({
+        userId,
+        type: 'memory',
+        limit: 1000,
+        offset: 0,
+        currentUserId: userId
+      });
+      
+      // Calculate stats
+      const thisYear = new Date().getFullYear();
+      const thisYearMemories = allMemories.filter(m => 
+        new Date(m.createdAt).getFullYear() === thisYear
+      );
+      
+      res.json({
+        totalMemories: allMemories.length,
+        eventsAttended: allMemories.filter(m => m.location).length,
+        milestones: allMemories.filter(m => !m.imageUrl && !m.videoUrl).length,
+        thisYear: thisYearMemories.length
+      });
+    } catch (error) {
+      console.error("Get memories stats error:", error);
+      res.status(500).json({ message: "Failed to fetch memories stats" });
+    }
+  });
+
   app.post("/api/memories", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
-      const memory = await storage.createMedia({
-        ...req.body,
-        userId: req.user!.id
+      // Create memory as a post with postType='memory'
+      const memory = await storage.createPost({
+        userId: req.user!.id,
+        content: req.body.description || req.body.title || '',
+        imageUrl: req.body.imageUrl,
+        videoUrl: req.body.videoUrl,
+        location: req.body.location,
+        postType: 'memory',
+        visibility: req.body.visibility || 'public',
+        hashtags: req.body.tags || []
       });
       res.status(201).json(memory);
     } catch (error) {
