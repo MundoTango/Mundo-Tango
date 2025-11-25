@@ -531,6 +531,18 @@ export const events = pgTable("events", {
   viewCount: integer("view_count").default(0),
   shareCount: integer("share_count").default(0),
   
+  // Source Tracking (for scraped events)
+  sourceName: varchar("source_name", { length: 255 }),
+  sourceUrl: text("source_url"),
+  externalSourceId: varchar("external_source_id", { length: 255 }),
+  scrapedEventId: integer("scraped_event_id"),
+  
+  // Participant Text (extracted from scraping, for matching)
+  organizerText: text("organizer_text"),
+  djText: text("dj_text"),
+  teacherText: text("teacher_text"),
+  performerText: text("performer_text"),
+  
   // Timestamps
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
