@@ -78,6 +78,8 @@ import selfHealingRoutes from "./routes/self-healing-routes";
 import agentHealthRoutes from "./routes/agent-health-routes";
 import predictiveContextRoutes from "./routes/predictive-context-routes";
 import aiEnhanceRoutes from "./routes/ai-enhance";
+import { DataCompletenessValidator } from "./services/validation/DataCompletenessValidator";
+import { ComponentPRDRegistry } from "./services/validation/ComponentPRDRegistry";
 import userSearchRoutes from "./routes/user-search";
 import locationRoutes from "./routes/locations";
 import { registerAIArbitrageRoutes } from "./routes/ai-arbitrage-routes";
@@ -5176,6 +5178,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(stats);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch admin stats" });
+    }
+  });
+
+  // =========================================================
+  // MB.MD PRD COVERAGE API
+  // Reports on component/page PRD coverage and smart defaults
+  // =========================================================
+  app.get("/api/prd/coverage", async (req: Request, res: Response) => {
+    try {
+      const report = DataCompletenessValidator.generatePRDCoverageReport();
+      res.json({
+        success: true,
+        mbmd_version: "9.2",
+        timestamp: new Date().toISOString(),
+        ...report
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: "Failed to generate PRD coverage report" });
+    }
+  });
+
+  app.get("/api/prd/page/:pageId", async (req: Request, res: Response) => {
+    try {
+      const { pageId } = req.params;
+      const pagePRD = ComponentPRDRegistry.getPagePRD(pageId);
+      if (!pagePRD) {
+        return res.status(404).json({ success: false, message: `Page PRD not found: ${pageId}` });
+      }
+      const components = ComponentPRDRegistry.getPageComponents(pageId);
+      res.json({
+        success: true,
+        page: pagePRD,
+        components: components,
+        componentCount: components.length
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: "Failed to get page PRD" });
+    }
+  });
+
+  app.get("/api/prd/component/:componentId", async (req: Request, res: Response) => {
+    try {
+      const { componentId } = req.params;
+      const componentPRD = ComponentPRDRegistry.getComponentPRD(componentId);
+      if (!componentPRD) {
+        return res.status(404).json({ success: false, message: `Component PRD not found: ${componentId}` });
+      }
+      res.json({
+        success: true,
+        component: componentPRD,
+        requiredFields: ComponentPRDRegistry.getRequiredFields(componentId),
+        fieldsWithDefaults: ComponentPRDRegistry.getFieldsWithDefaults(componentId)
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: "Failed to get component PRD" });
+    }
+  });
+
+  app.post("/api/prd/validate", async (req: Request, res: Response) => {
+    try {
+      const { componentId, data } = req.body;
+      if (!componentId || !data) {
+        return res.status(400).json({ success: false, message: "componentId and data required" });
+      }
+      const result = await DataCompletenessValidator.validateComponent(componentId, data);
+      res.json({
+        success: true,
+        validation: result
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: "Validation failed" });
     }
   });
 
