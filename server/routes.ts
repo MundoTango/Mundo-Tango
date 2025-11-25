@@ -4109,6 +4109,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get received friend requests (requests sent TO current user)
+  app.get("/api/friends/requests/received", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const requests = await storage.getFriendRequests(req.user!.id);
+      res.json(requests);
+    } catch (error) {
+      console.error('Failed to fetch received friend requests:', error);
+      res.status(500).json({ message: "Failed to fetch friend requests" });
+    }
+  });
+
+  // Get sent friend requests (requests sent BY current user)
+  app.get("/api/friends/requests/sent", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const sentRequests = await db
+        .select({
+          id: friendRequests.id,
+          senderId: friendRequests.senderId,
+          receiverId: friendRequests.receiverId,
+          status: friendRequests.status,
+          createdAt: friendRequests.createdAt,
+          receiver: {
+            id: users.id,
+            name: users.name,
+            username: users.username,
+            profileImage: users.profileImage,
+          },
+        })
+        .from(friendRequests)
+        .leftJoin(users, eq(friendRequests.receiverId, users.id))
+        .where(
+          and(
+            eq(friendRequests.senderId, req.user!.id),
+            eq(friendRequests.status, 'pending')
+          )
+        )
+        .orderBy(desc(friendRequests.createdAt));
+      
+      res.json(sentRequests);
+    } catch (error) {
+      console.error('Failed to fetch sent friend requests:', error);
+      res.status(500).json({ message: "Failed to fetch sent friend requests" });
+    }
+  });
+
   app.get("/api/friends/suggestions", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
       const suggestions = await storage.getFriendSuggestions(req.user!.id);
@@ -4165,6 +4210,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ message: "Failed to reject friend request" });
+    }
+  });
+
+  // Alias for reject (frontend expects this)
+  app.post("/api/friends/decline/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const requestId = parseInt(req.params.id);
+      await storage.declineFriendRequest(requestId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Failed to decline friend request:', error);
+      res.status(500).json({ message: "Failed to decline friend request" });
+    }
+  });
+
+  // Cancel sent friend request
+  app.delete("/api/friends/request/:id", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const requestId = parseInt(req.params.id);
+      await storage.declineFriendRequest(requestId);
+      res.status(204).send();
+    } catch (error) {
+      console.error('Failed to cancel friend request:', error);
+      res.status(500).json({ message: "Failed to cancel friend request" });
     }
   });
 

@@ -147,11 +147,25 @@ export default function FriendsPage() {
                         <AvatarFallback>{friend.name[0]}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <Link href={`/profile/${friend.username}`}>
-                          <h3 className="font-semibold hover:underline">{friend.name}</h3>
-                        </Link>
+                        <div className="flex items-center gap-2 mb-1">
+                          <Link href={`/profile/${friend.username}`}>
+                            <h3 className="font-semibold hover:underline">{friend.name}</h3>
+                          </Link>
+                          {friend.connectionDegree !== undefined && friend.connectionDegree !== null && (
+                            <Badge variant="secondary" className="text-xs" data-testid={`badge-degree-${friend.id}`}>
+                              {friend.connectionDegree === 1 ? '1st' : friend.connectionDegree === 2 ? '2nd' : '3rd'}
+                            </Badge>
+                          )}
+                        </div>
                         <p className="text-sm text-muted-foreground">@{friend.username}</p>
-                        {user && <MutualFriends userId={friend.id} currentUserId={user.id} />}
+                        <div className="flex items-center gap-3 mt-2">
+                          {user && <MutualFriends userId={friend.id} currentUserId={user.id} />}
+                          {friend.closenessScore !== undefined && friend.closenessScore !== null && (
+                            <Badge variant="outline" className="text-xs" data-testid={`badge-closeness-${friend.id}`}>
+                              Closeness: {friend.closenessScore}
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                       <Button variant="outline" size="sm" data-testid={`button-message-${friend.id}`}>
                         Message
