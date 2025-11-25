@@ -35,14 +35,7 @@ export function PostReactions({ postId, initialReactions = {}, userReaction }: P
 
   const reactMutation = useMutation({
     mutationFn: async (reactionType: string) => {
-      const response = await fetch(`/api/posts/${postId}/react`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-        body: JSON.stringify({ reactionType }),
-      });
+      const response = await apiRequest("POST", `/api/posts/${postId}/react`, { reactionType });
       return await response.json();
     },
     onSuccess: (data: any, reactionType) => {
@@ -62,12 +55,7 @@ export function PostReactions({ postId, initialReactions = {}, userReaction }: P
 
   const removeReactionMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch(`/api/posts/${postId}/react`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
+      const response = await apiRequest("DELETE", `/api/posts/${postId}/react`);
       return await response.json();
     },
     onSuccess: (data: any) => {

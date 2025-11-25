@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { SimpleMentionsInput, type MentionEntity } from "@/components/input/SimpleMentionsInput";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 import { 
@@ -173,16 +174,10 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
     setShowAiPanel(true);
 
     try {
-      const response = await fetch('/api/ai/enhance-content', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-        body: JSON.stringify({ content, context: context.type }),
+      const response = await apiRequest('POST', '/api/ai/enhance-content', { 
+        content, 
+        context: context.type 
       });
-
-      if (!response.ok) throw new Error('Enhancement failed');
 
       const data = await response.json();
       setEnhancedContent(data.enhancedContent);
@@ -246,21 +241,16 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
         if (coordinates) postData.coordinates = coordinates;
       }
 
-      // Send as JSON (media upload will be handled separately later)
-      const response = await fetch('/api/posts', {
-        method: editMode ? 'PATCH' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-        body: JSON.stringify(postData),
-      });
+      // Send as JSON using apiRequest (auto token refresh)
+      const response = await apiRequest(
+        editMode ? 'PATCH' : 'POST',
+        '/api/posts',
+        postData
+      );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Post creation failed:', errorData);
-        throw new Error('Post failed');
-      }
+      // apiRequest throws on error, so if we get here it succeeded
+      // Invalidate posts cache to refresh feed
+      queryClient.invalidateQueries({ queryKey: ["/api/posts"] });
 
       toast({
         title: "🎉 Memory shared!",

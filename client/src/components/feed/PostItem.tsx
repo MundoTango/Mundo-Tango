@@ -14,6 +14,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { CommentsSection } from "./CommentsSection";
 import { renderMentionPills } from "@/utils/renderMentionPills";
 import { motion } from "framer-motion";
+import { RoleIcon } from "@/components/RoleIcon";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { getRoleLabel } from "@/lib/tangoRoles";
 
 export interface PostItemData {
   id: number;
@@ -33,6 +36,7 @@ export interface PostItemData {
     username: string;
     profileImage?: string | null;
     friendshipStatus?: 'accepted' | 'pending' | 'none' | null;
+    tangoRoles?: string[] | null;
   };
 }
 
@@ -101,11 +105,31 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
             </Avatar>
             
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-semibold text-sm">{post.user?.name || "Unknown"}</span>
                 <span className="text-xs text-muted-foreground">
                   @{post.user?.username || "unknown"}
                 </span>
+                {/* Tango Role Icons */}
+                {post.user?.tangoRoles && post.user.tangoRoles.length > 0 && (
+                  <div className="flex items-center gap-1" data-testid={`user-roles-${post.userId}`}>
+                    {post.user.tangoRoles.slice(0, 3).map((role) => (
+                      <Tooltip key={role}>
+                        <TooltipTrigger asChild>
+                          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary/10 text-primary">
+                            <RoleIcon role={role} size={12} />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="text-xs">
+                          {getRoleLabel(role)}
+                        </TooltipContent>
+                      </Tooltip>
+                    ))}
+                    {post.user.tangoRoles.length > 3 && (
+                      <span className="text-xs text-muted-foreground">+{post.user.tangoRoles.length - 3}</span>
+                    )}
+                  </div>
+                )}
               </div>
               <p className="text-xs text-muted-foreground">
                 {safeDateDistance(post.createdAt, { addSuffix: true })}

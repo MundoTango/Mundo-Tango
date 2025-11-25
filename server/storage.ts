@@ -1753,6 +1753,7 @@ export class DbStorage implements IStorage {
           name: users.name,
           username: users.username,
           profileImage: users.profileImage,
+          tangoRoles: users.tangoRoles,
           friendshipStatus: sql<'accepted' | 'pending' | 'none' | null>`
             CASE 
               WHEN ${friendships.id} IS NOT NULL AND ${friendships.status} = 'active' THEN 'accepted'
