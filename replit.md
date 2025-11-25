@@ -76,3 +76,27 @@ Before running Playwright tests, configure these **test mode** secrets in Replit
 - DECLINE: `4000000000000002`
 - INSUFFICIENT: `4000000000009995`
 - REQUIRES_3DS: `4000002500003155`
+
+## Recent Changes (Nov 25, 2025)
+
+### Database Schema Sync
+Added 8 missing columns to events table for scraping support:
+- `source_name` - Source website name (e.g., "tangoclub.melbourne")
+- `source_url` - Original event URL
+- `external_source_id` - ID from source system
+- `scraped_event_id` - Link to scraped_events table
+- `organizer_text`, `dj_text`, `teacher_text`, `performer_text` - Raw participant data
+
+### API Endpoints Added
+- `GET /api/groups/:id/events` - Returns paginated events for a group (was missing, caused frontend to show 0 events)
+
+### Critical Learnings
+1. **Schema-Database Sync**: Always verify columns exist in database before querying. Use `ALTER TABLE ADD COLUMN IF NOT EXISTS` for safe migrations.
+2. **Route Wrapping**: All pages must have AppLayout wrapper with sidebar/topbar. Pattern: `<Route path="/page"><AppLayout><PageComponent /></AppLayout></Route>`
+3. **API Validation**: Test API endpoints with curl before marking work complete.
+
+### Current Data Status
+- **260 events** in database across multiple cities
+- **156 events** linked to Melbourne group (ID 21)
+- **66 participants** extracted (11 organizers, 25 DJs, 27 teachers, 3 performers)
+- **31 scraped profiles** created
