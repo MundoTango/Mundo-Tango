@@ -1,5 +1,5 @@
 import { db } from "@shared/db";
-import { posts, users, reactions, postComments, postShares, follows, friendships } from "@shared/schema";
+import { posts, users, reactions, postComments, follows, friendships } from "@shared/schema";
 import { eq, and, or, desc, sql, gte, inArray, not } from "drizzle-orm";
 import OpenAI from "openai";
 
@@ -89,10 +89,7 @@ export class FeedAlgorithmService {
             SELECT COUNT(*)::int FROM ${postComments}
             WHERE ${postComments.postId} = ${posts.id}
           )`,
-          sharesCount: sql<number>`(
-            SELECT COUNT(*)::int FROM ${postShares}
-            WHERE ${postShares.postId} = ${posts.id}
-          )`,
+          sharesCount: posts.shares,
         })
         .from(posts)
         .innerJoin(users, eq(posts.userId, users.id))
@@ -222,10 +219,7 @@ export class FeedAlgorithmService {
             SELECT COUNT(*)::int FROM ${postComments}
             WHERE ${postComments.postId} = ${posts.id}
           )`,
-          sharesCount: sql<number>`(
-            SELECT COUNT(*)::int FROM ${postShares}
-            WHERE ${postShares.postId} = ${posts.id}
-          )`,
+          sharesCount: posts.shares,
         })
         .from(posts)
         .innerJoin(users, eq(posts.userId, users.id))
@@ -281,10 +275,7 @@ export class FeedAlgorithmService {
             SELECT COUNT(*)::int FROM ${postComments}
             WHERE ${postComments.postId} = ${posts.id}
           )`,
-          sharesCount: sql<number>`(
-            SELECT COUNT(*)::int FROM ${postShares}
-            WHERE ${postShares.postId} = ${posts.id}
-          )`,
+          sharesCount: posts.shares,
         })
         .from(posts)
         .innerJoin(users, eq(posts.userId, users.id))

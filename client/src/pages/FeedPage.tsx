@@ -37,7 +37,6 @@ import { FeedFilters } from "@/components/feed/FeedFilters";
 import { FeedTabs } from "@/components/feed/FeedTabs";
 import { InfiniteScrollFeed } from "@/components/feed/InfiniteScrollFeed";
 import { NewPostsBanner } from "@/components/feed/NewPostsBanner";
-import { RecommendedPosts } from "@/components/feed/RecommendedPosts";
 import { Link } from "wouter";
 import { FeedAd } from "@/components/ads/FeedAd";
 
@@ -476,9 +475,6 @@ export default function FeedPage() {
             filter={filter}
             onRefresh={refreshKey > 0 ? () => {} : undefined}
           />
-
-          {/* AI-Powered Recommendations (Feature 18) */}
-          {user && <RecommendedPosts />}
         </main>
 
         {/* Right Sidebar - Upcoming Events */}
