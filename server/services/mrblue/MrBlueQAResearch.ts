@@ -6,8 +6,8 @@
  */
 
 import { agentRegistry } from './AgentRegistry';
-import { FeedPageAgent } from './agents/FeedPageAgent';
 import { BaseFeatureAgent, QAExchange } from './agents/BaseFeatureAgent';
+import { BasePageAgent } from './agents/BasePageAgent';
 
 export interface ResearchSession {
   sessionId: string;
@@ -22,11 +22,22 @@ export interface ResearchSession {
 
 export interface ResearchFinding {
   source: string;
+  pageId: string;
   question: string;
   answer: string;
   confidence: number;
   actionable: boolean;
   relatedIssues?: string[];
+}
+
+interface PageAgentWithFeatures extends BasePageAgent {
+  getFeatureAgents(): BaseFeatureAgent[];
+  getFeatureHealthStatus?(): { totalFeatures: number; totalTests: number; totalKnownIssues: number };
+  generateComprehensiveTestPlan?(): string;
+}
+
+function hasFeatureAgents(agent: BasePageAgent): agent is PageAgentWithFeatures {
+  return 'getFeatureAgents' in agent && typeof (agent as any).getFeatureAgents === 'function';
 }
 
 export class MrBlueQAResearch {
@@ -47,11 +58,11 @@ export class MrBlueQAResearch {
 
     console.log(`[Mr. Blue Q&A] Starting research session: ${topic}`);
 
-    // Query page agents
+    // Query all page agents
     const allAgents = agentRegistry.getAllAgents();
     
     for (const agent of allAgents) {
-      if (agent instanceof FeedPageAgent) {
+      if (hasFeatureAgents(agent)) {
         // Query the page agent's feature agents
         const featureAgents = agent.getFeatureAgents();
         
@@ -61,6 +72,7 @@ export class MrBlueQAResearch {
             
             findings.push({
               source: featureAgent.getFeatureName(),
+              pageId: agent.getId(),
               question,
               answer: exchange.answer,
               confidence: exchange.confidence,
@@ -70,11 +82,13 @@ export class MrBlueQAResearch {
         }
 
         // Get feature health status for additional insights
-        const healthStatus = agent.getFeatureHealthStatus();
-        if (healthStatus.totalKnownIssues > 0) {
-          recommendations.push(`${healthStatus.totalKnownIssues} known issues tracked across ${healthStatus.totalFeatures} features`);
+        if (agent.getFeatureHealthStatus) {
+          const healthStatus = agent.getFeatureHealthStatus();
+          if (healthStatus.totalKnownIssues > 0) {
+            recommendations.push(`[${agent.getName()}] ${healthStatus.totalKnownIssues} known issues tracked across ${healthStatus.totalFeatures} features`);
+          }
+          recommendations.push(`[${agent.getName()}] ${healthStatus.totalTests} testable behaviors ready for Playwright testing`);
         }
-        recommendations.push(`${healthStatus.totalTests} testable behaviors ready for Playwright testing`);
       }
     }
 
@@ -164,7 +178,7 @@ export class MrBlueQAResearch {
     const allAgents = agentRegistry.getAllAgents();
     
     for (const agent of allAgents) {
-      if (agent instanceof FeedPageAgent) {
+      if (hasFeatureAgents(agent)) {
         const features = agent.getFeatureAgents().map(fa => {
           const behaviors = fa.getTestPlan();
           const criticalCount = behaviors.filter(b => b.priority === 'critical').length;
@@ -194,11 +208,73 @@ export class MrBlueQAResearch {
   async generatePageTestPlan(pageId: string): Promise<string> {
     const agent = agentRegistry.getAgent(pageId);
     
-    if (agent instanceof FeedPageAgent) {
+    if (agent && hasFeatureAgents(agent) && agent.generateComprehensiveTestPlan) {
       return agent.generateComprehensiveTestPlan();
     }
 
+    // Generate generic test plan from feature agents
+    if (agent && hasFeatureAgents(agent)) {
+      const featureAgents = agent.getFeatureAgents();
+      let testPlan = `# Test Plan for ${agent.getName()}\n\n`;
+      
+      for (const fa of featureAgents) {
+        const behaviors = fa.getTestPlan();
+        testPlan += `## ${fa.getFeatureName()}\n\n`;
+        
+        for (const behavior of behaviors) {
+          testPlan += `### ${behavior.id}: ${behavior.description}\n`;
+          testPlan += `**Priority:** ${behavior.priority}\n`;
+          testPlan += `**Expected:** ${behavior.expectedOutcome}\n\n`;
+          testPlan += `**Steps:**\n`;
+          for (const step of behavior.steps) {
+            testPlan += `- [${step.action}] ${step.description}\n`;
+          }
+          testPlan += '\n';
+        }
+      }
+      
+      return testPlan;
+    }
+
     return `No test plan available for page: ${pageId}`;
+  }
+
+  /**
+   * Get features for a specific page
+   */
+  async getPageFeatures(pageId: string): Promise<{
+    pageId: string;
+    pageName: string;
+    features: Array<{
+      featureId: string;
+      featureName: string;
+      description: string;
+      testCount: number;
+      knownIssues: number;
+    }>;
+  } | null> {
+    const agent = agentRegistry.getAgent(pageId);
+    
+    if (!agent || !hasFeatureAgents(agent)) {
+      return null;
+    }
+
+    const features = agent.getFeatureAgents().map(fa => {
+      const prd = fa.getPRD();
+      return {
+        featureId: fa.getFeatureId(),
+        featureName: fa.getFeatureName(),
+        description: prd.description,
+        testCount: prd.expectedBehaviors.length,
+        knownIssues: prd.knownIssues.length,
+      };
+    });
+
+    return {
+      pageId: agent.getId(),
+      pageName: agent.getName(),
+      features,
+    };
   }
 
   /**
@@ -206,20 +282,21 @@ export class MrBlueQAResearch {
    */
   async askQuestion(question: string): Promise<{
     question: string;
-    answers: { source: string; answer: string; confidence: number }[];
-    bestAnswer: { source: string; answer: string; confidence: number } | null;
+    answers: { source: string; pageId: string; answer: string; confidence: number }[];
+    bestAnswer: { source: string; pageId: string; answer: string; confidence: number } | null;
   }> {
-    const answers: { source: string; answer: string; confidence: number }[] = [];
+    const answers: { source: string; pageId: string; answer: string; confidence: number }[] = [];
     
     const allAgents = agentRegistry.getAllAgents();
     
     for (const agent of allAgents) {
-      if (agent instanceof FeedPageAgent) {
+      if (hasFeatureAgents(agent)) {
         // Query feature agents
         for (const featureAgent of agent.getFeatureAgents()) {
           const exchange = featureAgent.answerQuestion(question);
           answers.push({
             source: featureAgent.getFeatureName(),
+            pageId: agent.getId(),
             answer: exchange.answer,
             confidence: exchange.confidence,
           });
@@ -255,19 +332,50 @@ export class MrBlueQAResearch {
     totalKnownIssues: number;
     healthStatus: 'healthy' | 'degraded' | 'unhealthy';
     lastResearchSession: string | null;
+    pageAgentDetails: Array<{
+      id: string;
+      name: string;
+      featureCount: number;
+      testCount: number;
+      issueCount: number;
+    }>;
   }> {
     let totalFeatures = 0;
     let totalTests = 0;
     let totalIssues = 0;
+    const pageAgentDetails: Array<{
+      id: string;
+      name: string;
+      featureCount: number;
+      testCount: number;
+      issueCount: number;
+    }> = [];
 
     const allAgents = agentRegistry.getAllAgents();
     
     for (const agent of allAgents) {
-      if (agent instanceof FeedPageAgent) {
-        const health = agent.getFeatureHealthStatus();
-        totalFeatures += health.totalFeatures;
-        totalTests += health.totalTests;
-        totalIssues += health.totalKnownIssues;
+      if (hasFeatureAgents(agent)) {
+        const featureAgents = agent.getFeatureAgents();
+        let pageTests = 0;
+        let pageIssues = 0;
+        
+        for (const fa of featureAgents) {
+          const prd = fa.getPRD();
+          pageTests += prd.expectedBehaviors.length;
+          pageIssues += prd.knownIssues.length;
+        }
+        
+        totalFeatures += featureAgents.length;
+        totalTests += pageTests;
+        totalIssues += pageIssues;
+        
+        pageAgentDetails.push({
+          id: agent.getId(),
+          name: agent.getName(),
+          featureCount: featureAgents.length,
+          testCount: pageTests,
+          issueCount: pageIssues,
+        });
       }
     }
 
@@ -276,10 +384,11 @@ export class MrBlueQAResearch {
       totalFeatureAgents: totalFeatures,
       totalTestCases: totalTests,
       totalKnownIssues: totalIssues,
-      healthStatus: totalIssues > 5 ? 'degraded' : 'healthy',
+      healthStatus: totalIssues > 20 ? 'degraded' : 'healthy',
       lastResearchSession: this.sessions.length > 0 
         ? this.sessions[this.sessions.length - 1].startTime 
         : null,
+      pageAgentDetails,
     };
   }
 }
