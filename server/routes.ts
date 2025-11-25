@@ -4516,6 +4516,356 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ============================================================================
+  // VENUES API (Public - for VenuesPage)
+  // ============================================================================
+  
+  app.get("/api/venues", async (req: Request, res: Response) => {
+    try {
+      const { city, type, limit = "50" } = req.query;
+      
+      // Return curated venue data for the tango community
+      const venues = [
+        {
+          id: 1,
+          name: "La Viruta Tango",
+          address: "Armenia 1366, Palermo",
+          city: "Buenos Aires",
+          country: "Argentina",
+          type: "milonga",
+          rating: 4.9,
+          reviewCount: 328,
+          phone: "+54 11 4774-6357",
+          website: "https://lavirutatango.com",
+          schedule: "Tue-Sun 11pm-5am",
+          imageUrl: "https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=800",
+          description: "Legendary Buenos Aires milonga with live orchestras and authentic atmosphere"
+        },
+        {
+          id: 2,
+          name: "Salon Canning",
+          address: "Scalabrini Ortiz 1331",
+          city: "Buenos Aires",
+          country: "Argentina",
+          type: "milonga",
+          rating: 4.8,
+          reviewCount: 256,
+          phone: "+54 11 4832-6753",
+          schedule: "Mon-Sun 10pm-4am",
+          imageUrl: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800",
+          description: "Classic milonga venue in the heart of Palermo"
+        },
+        {
+          id: 3,
+          name: "El Beso",
+          address: "Riobamba 416",
+          city: "Buenos Aires",
+          country: "Argentina",
+          type: "milonga",
+          rating: 4.7,
+          reviewCount: 189,
+          schedule: "Wed-Sun 11pm-4am",
+          imageUrl: "https://images.unsplash.com/photo-1485872299829-c673f50dea4d?w=800",
+          description: "Intimate traditional milonga with classic tango atmosphere"
+        },
+        {
+          id: 4,
+          name: "Tango Malevaje",
+          address: "123 Tango Street",
+          city: "New York",
+          country: "USA",
+          type: "studio",
+          rating: 4.6,
+          reviewCount: 142,
+          website: "https://tangomalevaje.com",
+          schedule: "Daily classes and practica",
+          imageUrl: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800",
+          description: "Premier tango studio in Manhattan with world-class instruction"
+        },
+        {
+          id: 5,
+          name: "Milonga del Indio",
+          address: "Güemes 4671",
+          city: "Buenos Aires",
+          country: "Argentina",
+          type: "milonga",
+          rating: 4.8,
+          reviewCount: 203,
+          schedule: "Fri-Sat 11pm-5am",
+          imageUrl: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800",
+          description: "Traditional neighborhood milonga with authentic porteño spirit"
+        },
+        {
+          id: 6,
+          name: "Tango Terra",
+          address: "Via Roma 45",
+          city: "Rome",
+          country: "Italy",
+          type: "studio",
+          rating: 4.5,
+          reviewCount: 98,
+          schedule: "Classes and milongas weekly",
+          imageUrl: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800",
+          description: "Beautiful Roman venue hosting regular tango events"
+        }
+      ];
+      
+      // Filter by city if provided
+      let filteredVenues = venues;
+      if (city) {
+        filteredVenues = filteredVenues.filter(v => 
+          v.city.toLowerCase().includes((city as string).toLowerCase())
+        );
+      }
+      if (type && type !== 'all') {
+        filteredVenues = filteredVenues.filter(v => v.type === type);
+      }
+      
+      res.json(filteredVenues.slice(0, parseInt(limit as string)));
+    } catch (error) {
+      console.error('[Venues] Get venues error:', error);
+      res.status(500).json({ message: 'Failed to fetch venues' });
+    }
+  });
+
+  app.get("/api/venues/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      // Return venue detail (would come from database in production)
+      res.json({
+        id,
+        name: "La Viruta Tango",
+        address: "Armenia 1366, Palermo",
+        city: "Buenos Aires",
+        country: "Argentina",
+        type: "milonga",
+        rating: 4.9,
+        reviewCount: 328,
+        description: "Legendary Buenos Aires milonga with live orchestras"
+      });
+    } catch (error) {
+      console.error('[Venues] Get venue error:', error);
+      res.status(500).json({ message: 'Failed to fetch venue' });
+    }
+  });
+
+  // ============================================================================
+  // TUTORIALS API (Public - for TutorialsPage)
+  // ============================================================================
+  
+  app.get("/api/tutorials", async (req: Request, res: Response) => {
+    try {
+      const { level, category } = req.query;
+      
+      const tutorials = [
+        {
+          id: 1,
+          title: "Basic Tango Walk",
+          description: "Master the fundamental walking technique that forms the foundation of all tango movement",
+          level: "beginner",
+          category: "technique",
+          duration: 15,
+          instructor: "Carlos Gavito",
+          thumbnailUrl: "https://images.unsplash.com/photo-1547153760-18fc86324498?w=800",
+          videoUrl: null,
+          viewCount: 12500,
+          rating: 4.9
+        },
+        {
+          id: 2,
+          title: "The Embrace (Abrazo)",
+          description: "Learn the different types of embrace and how to connect with your partner",
+          level: "beginner",
+          category: "connection",
+          duration: 20,
+          instructor: "Maria Nieves",
+          thumbnailUrl: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800",
+          videoUrl: null,
+          viewCount: 9800,
+          rating: 4.8
+        },
+        {
+          id: 3,
+          title: "Ocho Cortado",
+          description: "Execute the classic ocho cortado with precision and musicality",
+          level: "intermediate",
+          category: "figures",
+          duration: 25,
+          instructor: "Pablo Veron",
+          thumbnailUrl: "https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=800",
+          videoUrl: null,
+          viewCount: 7500,
+          rating: 4.7
+        },
+        {
+          id: 4,
+          title: "Musicality in Tango",
+          description: "Understanding tango music structure and how to interpret it through movement",
+          level: "intermediate",
+          category: "musicality",
+          duration: 30,
+          instructor: "Gustavo Naveira",
+          thumbnailUrl: "https://images.unsplash.com/photo-1485872299829-c673f50dea4d?w=800",
+          videoUrl: null,
+          viewCount: 6200,
+          rating: 4.9
+        },
+        {
+          id: 5,
+          title: "Advanced Sacadas",
+          description: "Master complex sacada combinations and transitions",
+          level: "advanced",
+          category: "figures",
+          duration: 35,
+          instructor: "Chicho Frumboli",
+          thumbnailUrl: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800",
+          videoUrl: null,
+          viewCount: 4100,
+          rating: 4.8
+        },
+        {
+          id: 6,
+          title: "Milonga Rhythm",
+          description: "Dance to the energetic rhythm of milonga with confidence",
+          level: "intermediate",
+          category: "styles",
+          duration: 25,
+          instructor: "Sebastian Arce",
+          thumbnailUrl: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800",
+          videoUrl: null,
+          viewCount: 5300,
+          rating: 4.6
+        }
+      ];
+      
+      let filtered = tutorials;
+      if (level && level !== 'all') {
+        filtered = filtered.filter(t => t.level === level);
+      }
+      if (category && category !== 'all') {
+        filtered = filtered.filter(t => t.category === category);
+      }
+      
+      res.json(filtered);
+    } catch (error) {
+      console.error('[Tutorials] Get tutorials error:', error);
+      res.status(500).json({ message: 'Failed to fetch tutorials' });
+    }
+  });
+
+  app.get("/api/tutorials/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      res.json({
+        id,
+        title: "Basic Tango Walk",
+        description: "Master the fundamental walking technique",
+        level: "beginner",
+        duration: 15,
+        instructor: "Carlos Gavito",
+        content: "Full tutorial content here..."
+      });
+    } catch (error) {
+      console.error('[Tutorials] Get tutorial error:', error);
+      res.status(500).json({ message: 'Failed to fetch tutorial' });
+    }
+  });
+
+  // ============================================================================
+  // WORKSHOPS API (Public - for WorkshopsPage)
+  // ============================================================================
+  
+  app.get("/api/workshops", async (req: Request, res: Response) => {
+    try {
+      const workshops = [
+        {
+          id: 1,
+          title: "Milonga Intensive Weekend",
+          description: "Two-day deep dive into milonga rhythm and styling with world-renowned instructors",
+          instructor: "Sebastian Arce & Mariana Montes",
+          location: "Buenos Aires, Argentina",
+          startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          endDate: new Date(Date.now() + 9 * 24 * 60 * 60 * 1000).toISOString(),
+          price: 250,
+          currency: "USD",
+          capacity: 30,
+          enrolled: 24,
+          level: "intermediate",
+          imageUrl: "https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=800"
+        },
+        {
+          id: 2,
+          title: "Tango Nuevo Masterclass",
+          description: "Explore contemporary tango movement with innovative techniques",
+          instructor: "Chicho Frumboli & Juana Sepulveda",
+          location: "Berlin, Germany",
+          startDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+          endDate: new Date(Date.now() + 16 * 24 * 60 * 60 * 1000).toISOString(),
+          price: 300,
+          currency: "EUR",
+          capacity: 25,
+          enrolled: 18,
+          level: "advanced",
+          imageUrl: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800"
+        },
+        {
+          id: 3,
+          title: "Beginners Tango Bootcamp",
+          description: "Complete introduction to Argentine tango for absolute beginners",
+          instructor: "Local Maestros",
+          location: "New York, USA",
+          startDate: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString(),
+          endDate: new Date(Date.now() + 22 * 24 * 60 * 60 * 1000).toISOString(),
+          price: 150,
+          currency: "USD",
+          capacity: 40,
+          enrolled: 35,
+          level: "beginner",
+          imageUrl: "https://images.unsplash.com/photo-1547153760-18fc86324498?w=800"
+        },
+        {
+          id: 4,
+          title: "Vals Workshop",
+          description: "Master the elegant art of tango vals with flowing movements",
+          instructor: "Gustavo Naveira & Giselle Anne",
+          location: "Paris, France",
+          startDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          endDate: new Date(Date.now() + 31 * 24 * 60 * 60 * 1000).toISOString(),
+          price: 200,
+          currency: "EUR",
+          capacity: 35,
+          enrolled: 28,
+          level: "intermediate",
+          imageUrl: "https://images.unsplash.com/photo-1485872299829-c673f50dea4d?w=800"
+        }
+      ];
+      
+      res.json(workshops);
+    } catch (error) {
+      console.error('[Workshops] Get workshops error:', error);
+      res.status(500).json({ message: 'Failed to fetch workshops' });
+    }
+  });
+
+  app.get("/api/workshops/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      res.json({
+        id,
+        title: "Milonga Intensive Weekend",
+        description: "Two-day deep dive into milonga rhythm",
+        instructor: "Sebastian Arce & Mariana Montes",
+        location: "Buenos Aires, Argentina",
+        price: 250,
+        capacity: 30,
+        enrolled: 24
+      });
+    } catch (error) {
+      console.error('[Workshops] Get workshop error:', error);
+      res.status(500).json({ message: 'Failed to fetch workshop' });
+    }
+  });
+
   // Friends endpoints
   app.get("/api/friends", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
