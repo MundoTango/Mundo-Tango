@@ -556,18 +556,26 @@ export default function GroupDetailsPage() {
               <TabsContent value="about">
                 <Card className="overflow-hidden">
                   <CardHeader className="border-b">
-                    <CardTitle className="text-2xl font-serif">About {group.name}</CardTitle>
+                    <div className="flex items-center justify-between gap-2">
+                      <CardTitle className="text-2xl font-serif">About {group.name}</CardTitle>
+                      {group.verified && (
+                        <Badge variant="secondary" className="gap-1" data-testid="badge-verified">
+                          <Check className="h-3 w-3" />
+                          Verified Community
+                        </Badge>
+                      )}
+                    </div>
                   </CardHeader>
                   <CardContent className="p-8 space-y-8">
                     {/* Location Info */}
                     {(group.city || group.country) && (
-                      <div className="flex items-start gap-4">
+                      <div className="flex items-start gap-4" data-testid="section-location">
                         <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                           <MapPin className="h-6 w-6 text-primary" />
                         </div>
                         <div>
                           <h3 className="text-lg font-semibold mb-1">Location</h3>
-                          <p className="text-muted-foreground text-lg">
+                          <p className="text-muted-foreground text-lg" data-testid="text-location">
                             {group.city}{group.country && `, ${group.country}`}
                             {group.region && <span className="text-sm ml-2">({group.region})</span>}
                           </p>
@@ -576,7 +584,7 @@ export default function GroupDetailsPage() {
                     )}
                     
                     {/* Group Type */}
-                    <div className="flex items-start gap-4">
+                    <div className="flex items-start gap-4" data-testid="section-type">
                       <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                         {group.emoji ? (
                           <span className="text-2xl">{group.emoji}</span>
@@ -586,17 +594,45 @@ export default function GroupDetailsPage() {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold mb-1">Community Type</h3>
-                        <p className="text-muted-foreground text-lg capitalize">{group.type} Community</p>
+                        <p className="text-muted-foreground text-lg capitalize" data-testid="text-type">{group.type} Community</p>
                       </div>
                     </div>
                     
+                    {/* Source URL if available */}
+                    {group.sourceUrl && (
+                      <div className="flex items-start gap-4" data-testid="section-source">
+                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Building2 className="h-6 w-6 text-primary" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold mb-1">Original Source</h3>
+                          <a 
+                            href={group.sourceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline text-lg"
+                            data-testid="link-source"
+                          >
+                            {(() => {
+                              try {
+                                return new URL(group.sourceUrl).hostname.replace('www.', '');
+                              } catch {
+                                return 'View Source';
+                              }
+                            })()}
+                          </a>
+                        </div>
+                      </div>
+                    )}
+                    
                     {/* Description */}
                     {group.description && (
-                      <div className="pt-6 border-t">
+                      <div className="pt-6 border-t" data-testid="section-description">
                         <h3 className="text-xl font-serif font-semibold mb-4">About This Community</h3>
                         <div 
                           className="text-lg text-muted-foreground whitespace-pre-wrap leading-relaxed prose prose-lg dark:prose-invert max-w-none"
                           dangerouslySetInnerHTML={{ __html: group.description }}
+                          data-testid="text-description"
                         />
                       </div>
                     )}

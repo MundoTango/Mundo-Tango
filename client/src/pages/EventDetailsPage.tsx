@@ -351,6 +351,91 @@ export default function EventDetailsPage() {
                   </motion.div>
                 )}
 
+                {/* Participants Section - DJs, Teachers, Performers */}
+                {(event.organizerText || event.djText || event.teacherText || event.performerText) && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.69 }}
+                    className="pt-6 border-t"
+                  >
+                    <h3 className="text-xl font-semibold mb-4" data-testid="text-participants-header">Featured Artists & Staff</h3>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      {event.djText && (
+                        <div className="flex items-start gap-3" data-testid="section-djs">
+                          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <Music className="h-5 w-5 text-primary" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground mb-1">DJ / Music</p>
+                            <p className="font-medium" data-testid="text-dj-names">{event.djText}</p>
+                          </div>
+                        </div>
+                      )}
+                      {event.teacherText && (
+                        <div className="flex items-start gap-3" data-testid="section-teachers">
+                          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <Users className="h-5 w-5 text-primary" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground mb-1">Teachers</p>
+                            <p className="font-medium" data-testid="text-teacher-names">{event.teacherText}</p>
+                          </div>
+                        </div>
+                      )}
+                      {event.performerText && (
+                        <div className="flex items-start gap-3" data-testid="section-performers">
+                          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <User className="h-5 w-5 text-primary" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground mb-1">Performers</p>
+                            <p className="font-medium" data-testid="text-performer-names">{event.performerText}</p>
+                          </div>
+                        </div>
+                      )}
+                      {event.organizerText && !event.organizer && (
+                        <div className="flex items-start gap-3" data-testid="section-organizer-text">
+                          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <User className="h-5 w-5 text-primary" />
+                          </div>
+                          <div>
+                            <p className="text-sm text-muted-foreground mb-1">Organized by</p>
+                            <p className="font-medium" data-testid="text-organizer-text">{event.organizerText}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Source URLs Section */}
+                {event.sourceUrls && event.sourceUrls.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.695 }}
+                    className="pt-6 border-t"
+                  >
+                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Sources</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {event.sourceUrls.map((url: string, index: number) => (
+                        <a
+                          key={index}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
+                          data-testid={`link-source-${index}`}
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          {new URL(url).hostname.replace('www.', '')}
+                        </a>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+
                 {event.description && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
