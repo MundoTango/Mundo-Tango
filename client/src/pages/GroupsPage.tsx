@@ -72,6 +72,35 @@ export default function GroupsPage() {
     }));
   }, [groups]);
 
+  // Apply filters and search FIRST (so cityGroups/professionalGroups can use it)
+  const filteredGroups = useMemo(() => {
+    let result = enrichedGroups.filter(group => {
+      const matchesSearch = !searchQuery || 
+        group.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        group.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        group.city?.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesFilters =
+        (group.memberCount || 0) >= filters.minMembers &&
+        group.healthScore >= filters.minHealthScore;
+
+      return matchesSearch && matchesFilters;
+    });
+
+    // Sort
+    if (filters.sortBy === 'featured') {
+      result.sort((a, b) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0));
+    } else if (filters.sortBy === 'members') {
+      result.sort((a, b) => (b.memberCount || 0) - (a.memberCount || 0));
+    } else if (filters.sortBy === 'health') {
+      result.sort((a, b) => b.healthScore - a.healthScore);
+    } else if (filters.sortBy === 'nearby') {
+      result.sort((a, b) => a.distance - b.distance);
+    }
+
+    return result;
+  }, [enrichedGroups, searchQuery, filters]);
+
   // Separate City and Professional groups (from filtered results so search works)
   const cityGroups = useMemo(() => {
     return filteredGroups.filter(g => g.type === "city");
@@ -128,34 +157,6 @@ export default function GroupsPage() {
       .sort((a, b) => b.members - a.members)
       .slice(0, 5);
   }, [enrichedGroups]);
-
-  // Apply filters
-  const filteredGroups = useMemo(() => {
-    let result = enrichedGroups.filter(group => {
-      const matchesSearch = !searchQuery || 
-        group.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        group.description?.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      const matchesFilters =
-        (group.memberCount || 0) >= filters.minMembers &&
-        group.healthScore >= filters.minHealthScore;
-
-      return matchesSearch && matchesFilters;
-    });
-
-    // Sort
-    if (filters.sortBy === 'featured') {
-      result.sort((a, b) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0));
-    } else if (filters.sortBy === 'members') {
-      result.sort((a, b) => (b.memberCount || 0) - (a.memberCount || 0));
-    } else if (filters.sortBy === 'health') {
-      result.sort((a, b) => b.healthScore - a.healthScore);
-    } else if (filters.sortBy === 'nearby') {
-      result.sort((a, b) => a.distance - b.distance);
-    }
-
-    return result;
-  }, [enrichedGroups, searchQuery, filters]);
 
   // Render City Group Card with editorial design
   const renderCityCard = (group: SelectGroup & { healthScore: number; distance: number }) => (
