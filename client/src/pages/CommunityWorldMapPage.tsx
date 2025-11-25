@@ -40,10 +40,10 @@ interface CommunityLocation {
   coordinates: { lat: number; lng: number };
   memberCount: number;
   activeEvents: number;
-  venues: number;
-  housing: number;
   recommendations: number;
+  housing: number;
   isActive: boolean;
+  groupId?: number;
 }
 
 interface MapLayer {
@@ -64,7 +64,7 @@ export default function CommunityWorldMapPage() {
   const [layers, setLayers] = useState<MapLayer[]>([
     { id: 'events', label: 'Events', enabled: true, icon: Calendar },
     { id: 'housing', label: 'Housing', enabled: true, icon: Home },
-    { id: 'recommendations', label: 'Venues', enabled: true, icon: Building2 },
+    { id: 'recommendations', label: 'Recommendations', enabled: true, icon: Building2 },
   ]);
 
   // Advanced filters
@@ -87,11 +87,13 @@ export default function CommunityWorldMapPage() {
     totalMembers: number;
     activeEvents: number;
     totalVenues: number;
+    totalRecommendations: number;
+    totalHousing: number;
   }>({
     queryKey: ["/api/community/stats"],
   });
 
-  // Buenos Aires flagship city data
+  // Buenos Aires flagship city data (fallback)
   const buenosAires: CommunityLocation = {
     id: 1,
     city: "Buenos Aires",
@@ -99,13 +101,13 @@ export default function CommunityWorldMapPage() {
     coordinates: { lat: -34.6037, lng: -58.3816 },
     memberCount: 3542,
     activeEvents: 127,
-    venues: 43,
+    recommendations: 43,
     housing: 18,
-    recommendations: 62,
-    isActive: true
+    isActive: true,
+    groupId: 1
   };
 
-  // Mock locations with Buenos Aires + others
+  // Mock locations with Buenos Aires + others (fallback only)
   const mockLocations: CommunityLocation[] = [
     buenosAires,
     {
@@ -115,10 +117,10 @@ export default function CommunityWorldMapPage() {
       coordinates: { lat: 48.8566, lng: 2.3522 },
       memberCount: 1842,
       activeEvents: 56,
-      venues: 28,
+      recommendations: 28,
       housing: 12,
-      recommendations: 34,
-      isActive: true
+      isActive: true,
+      groupId: 2
     },
     {
       id: 3,
@@ -127,10 +129,10 @@ export default function CommunityWorldMapPage() {
       coordinates: { lat: 40.7128, lng: -74.0060 },
       memberCount: 2314,
       activeEvents: 73,
-      venues: 31,
+      recommendations: 31,
       housing: 15,
-      recommendations: 41,
-      isActive: true
+      isActive: true,
+      groupId: 3
     },
     {
       id: 4,
@@ -139,10 +141,10 @@ export default function CommunityWorldMapPage() {
       coordinates: { lat: 35.6762, lng: 139.6503 },
       memberCount: 1523,
       activeEvents: 42,
-      venues: 19,
+      recommendations: 19,
       housing: 8,
-      recommendations: 27,
-      isActive: true
+      isActive: true,
+      groupId: 4
     },
     {
       id: 5,
@@ -151,10 +153,10 @@ export default function CommunityWorldMapPage() {
       coordinates: { lat: 52.5200, lng: 13.4050 },
       memberCount: 1687,
       activeEvents: 51,
-      venues: 24,
+      recommendations: 24,
       housing: 11,
-      recommendations: 29,
-      isActive: true
+      isActive: true,
+      groupId: 5
     }
   ];
 
@@ -249,7 +251,7 @@ export default function CommunityWorldMapPage() {
           </div>
 
             {/* Global Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               <Card className="hover-elevate">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Cities</CardTitle>
@@ -291,14 +293,27 @@ export default function CommunityWorldMapPage() {
 
               <Card className="hover-elevate">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Venues</CardTitle>
+                  <CardTitle className="text-sm font-medium">Recommendations</CardTitle>
                   <Building2 className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold" data-testid="text-total-venues">
-                    {stats?.totalVenues || allLocations.reduce((sum, loc) => sum + loc.venues, 0)}
+                  <div className="text-2xl font-bold" data-testid="text-total-recommendations">
+                    {stats?.totalRecommendations || allLocations.reduce((sum, loc) => sum + loc.recommendations, 0)}
                   </div>
                   <p className="text-xs text-muted-foreground">Milongas & studios</p>
+                </CardContent>
+              </Card>
+
+              <Card className="hover-elevate">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Housing</CardTitle>
+                  <Home className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold" data-testid="text-total-housing">
+                    {stats?.totalHousing || allLocations.reduce((sum, loc) => sum + loc.housing, 0)}
+                  </div>
+                  <p className="text-xs text-muted-foreground">Available listings</p>
                 </CardContent>
               </Card>
             </div>
@@ -456,7 +471,7 @@ export default function CommunityWorldMapPage() {
                             </div>
                             <div className="text-xs text-muted-foreground space-y-1">
                               <div>{location.country}</div>
-                              <div className="flex items-center gap-3">
+                              <div className="flex flex-wrap items-center gap-2">
                                 <span className="flex items-center gap-1">
                                   <Users className="h-3 w-3" />
                                   {location.memberCount}
@@ -464,6 +479,14 @@ export default function CommunityWorldMapPage() {
                                 <span className="flex items-center gap-1">
                                   <Calendar className="h-3 w-3" />
                                   {location.activeEvents}
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <Home className="h-3 w-3" />
+                                  {location.housing}
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <Building2 className="h-3 w-3" />
+                                  {location.recommendations}
                                 </span>
                               </div>
                             </div>
@@ -500,7 +523,7 @@ export default function CommunityWorldMapPage() {
                     <div className="p-4 bg-muted/50 rounded-lg">
                       <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
                         <Users className="h-4 w-4" />
-                        Members
+                        People
                       </div>
                       <div className="text-2xl font-bold" data-testid={`text-city-members-${selectedCity.id}`}>
                         {selectedCity.memberCount.toLocaleString()}
@@ -511,17 +534,8 @@ export default function CommunityWorldMapPage() {
                         <Calendar className="h-4 w-4" />
                         Events
                       </div>
-                      <div className="text-2xl font-bold">
+                      <div className="text-2xl font-bold" data-testid={`text-city-events-${selectedCity.id}`}>
                         {selectedCity.activeEvents}
-                      </div>
-                    </div>
-                    <div className="p-4 bg-muted/50 rounded-lg">
-                      <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                        <Building2 className="h-4 w-4" />
-                        Venues
-                      </div>
-                      <div className="text-2xl font-bold">
-                        {selectedCity.venues}
                       </div>
                     </div>
                     <div className="p-4 bg-muted/50 rounded-lg">
@@ -529,14 +543,32 @@ export default function CommunityWorldMapPage() {
                         <Home className="h-4 w-4" />
                         Housing
                       </div>
-                      <div className="text-2xl font-bold">
+                      <div className="text-2xl font-bold" data-testid={`text-city-housing-${selectedCity.id}`}>
                         {selectedCity.housing}
+                      </div>
+                    </div>
+                    <div className="p-4 bg-muted/50 rounded-lg">
+                      <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
+                        <Building2 className="h-4 w-4" />
+                        Recommendations
+                      </div>
+                      <div className="text-2xl font-bold" data-testid={`text-city-recommendations-${selectedCity.id}`}>
+                        {selectedCity.recommendations}
                       </div>
                     </div>
                   </div>
                   <div className="flex gap-3">
-                    <Button className="flex-1" data-testid="button-view-community">
-                      View Community
+                    <Button 
+                      className="flex-1" 
+                      onClick={() => {
+                        if (selectedCity.groupId) {
+                          window.location.href = `/groups/${selectedCity.groupId}`;
+                        }
+                      }}
+                      data-testid="button-view-city-group"
+                    >
+                      <Users className="mr-2 h-4 w-4" />
+                      View City Group
                     </Button>
                     <Button variant="outline" className="flex-1" data-testid="button-join-community">
                       Join Community

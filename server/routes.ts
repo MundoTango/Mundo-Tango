@@ -6268,6 +6268,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         totalMembers: userStats[0]?.totalMembers || 0,
         activeEvents: eventStats[0]?.activeEvents || 0,
         totalVenues: venueStats[0]?.totalVenues || 0,
+        totalRecommendations: venueStats[0]?.totalVenues || 0,
         totalHousing: housingStats[0]?.totalHousing || 0
       });
     } catch (error) {

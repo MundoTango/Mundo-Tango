@@ -10,10 +10,10 @@ interface CommunityLocation {
   coordinates: { lat: number; lng: number };
   memberCount: number;
   activeEvents: number;
-  venues: number;
-  housing: number;
   recommendations: number;
+  housing: number;
   isActive: boolean;
+  groupId?: number;
 }
 
 interface MapLayer {
@@ -140,7 +140,7 @@ export function CommunityMapWithLayers({
                 </div>
                 <div className="flex items-center gap-2">
                   <Building2 className="h-4 w-4" />
-                  <span>{location.venues} venues</span>
+                  <span>{location.recommendations} recommendations</span>
                 </div>
               </div>
             </div>
