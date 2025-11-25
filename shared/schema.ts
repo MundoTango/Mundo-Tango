@@ -15,6 +15,7 @@ import {
   numeric,
   primaryKey,
   pgEnum,
+  date,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -2646,6 +2647,208 @@ export type SelectFacebookPost = typeof facebookPosts.$inferSelect;
 export const insertFacebookFriendSchema = createInsertSchema(facebookFriends).omit({ id: true, importedAt: true });
 export type InsertFacebookFriend = z.infer<typeof insertFacebookFriendSchema>;
 export type SelectFacebookFriend = typeof facebookFriends.$inferSelect;
+
+// ============================================================================
+// COMPLETE FACEBOOK DATA IMPORT (MB.MD - Import EVERYTHING)
+// ============================================================================
+
+// Facebook Events (events user attended, interested, or hosted)
+export const facebookEvents = pgTable("facebook_events", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  fbEventId: varchar("fb_event_id").notNull().unique(),
+  name: text("name").notNull(),
+  description: text("description"),
+  startTime: timestamp("start_time"),
+  endTime: timestamp("end_time"),
+  location: text("location"),
+  venue: text("venue"),
+  address: text("address"),
+  city: varchar("city", { length: 100 }),
+  country: varchar("country", { length: 100 }),
+  coverPhotoUrl: text("cover_photo_url"),
+  hostName: text("host_name"),
+  hostFbId: varchar("host_fb_id"),
+  rsvpStatus: varchar("rsvp_status", { length: 20 }), // going, interested, maybe, declined
+  eventType: varchar("event_type", { length: 50 }), // milonga, practica, workshop, festival
+  importedAt: timestamp("imported_at").defaultNow().notNull(),
+  matchedEventId: integer("matched_event_id").references(() => events.id),
+}, (table) => ({
+  userIdx: index("facebook_events_user_idx").on(table.userId),
+  fbEventIdIdx: index("facebook_events_fb_id_idx").on(table.fbEventId),
+  startTimeIdx: index("facebook_events_start_idx").on(table.startTime),
+  matchedIdx: index("facebook_events_matched_idx").on(table.matchedEventId),
+}));
+
+// Facebook Photos (all photos and albums)
+export const facebookPhotos = pgTable("facebook_photos", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  fbPhotoId: varchar("fb_photo_id").notNull().unique(),
+  albumName: varchar("album_name", { length: 255 }),
+  albumFbId: varchar("album_fb_id"),
+  photoUrl: text("photo_url").notNull(),
+  thumbnailUrl: text("thumbnail_url"),
+  caption: text("caption"),
+  location: text("location"),
+  takenAt: timestamp("taken_at"),
+  likes: integer("likes").default(0),
+  comments: integer("comments").default(0),
+  taggedUsers: jsonb("tagged_users"),
+  importedAt: timestamp("imported_at").defaultNow().notNull(),
+  importedToMT: boolean("imported_to_mt").default(false),
+  mtMediaId: integer("mt_media_id").references(() => media.id),
+}, (table) => ({
+  userIdx: index("facebook_photos_user_idx").on(table.userId),
+  albumIdx: index("facebook_photos_album_idx").on(table.albumFbId),
+  importedIdx: index("facebook_photos_imported_idx").on(table.importedToMT),
+}));
+
+// Facebook Groups (groups user is member of)
+export const facebookGroups = pgTable("facebook_groups", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  fbGroupId: varchar("fb_group_id").notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  memberCount: integer("member_count"),
+  privacy: varchar("privacy", { length: 20 }),
+  coverPhotoUrl: text("cover_photo_url"),
+  userRole: varchar("user_role", { length: 20 }),
+  joinedAt: timestamp("joined_at"),
+  isTangoRelated: boolean("is_tango_related").default(false),
+  importedAt: timestamp("imported_at").defaultNow().notNull(),
+  matchedGroupId: integer("matched_group_id").references(() => groups.id),
+}, (table) => ({
+  userIdx: index("facebook_groups_user_idx").on(table.userId),
+  fbGroupIdIdx: index("facebook_groups_fb_id_idx").on(table.fbGroupId),
+  tangoIdx: index("facebook_groups_tango_idx").on(table.isTangoRelated),
+  matchedIdx: index("facebook_groups_matched_idx").on(table.matchedGroupId),
+}));
+
+// Facebook Pages (pages user liked/follows)
+export const facebookPages = pgTable("facebook_pages", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  fbPageId: varchar("fb_page_id").notNull(),
+  name: text("name").notNull(),
+  category: varchar("category", { length: 100 }),
+  description: text("description"),
+  website: text("website"),
+  followerCount: integer("follower_count"),
+  profilePhotoUrl: text("profile_photo_url"),
+  coverPhotoUrl: text("cover_photo_url"),
+  isTangoRelated: boolean("is_tango_related").default(false),
+  importedAt: timestamp("imported_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("facebook_pages_user_idx").on(table.userId),
+  fbPageIdIdx: index("facebook_pages_fb_id_idx").on(table.fbPageId),
+  tangoIdx: index("facebook_pages_tango_idx").on(table.isTangoRelated),
+}));
+
+// Facebook Check-Ins (location history)
+export const facebookCheckIns = pgTable("facebook_checkins", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  fbCheckInId: varchar("fb_checkin_id").notNull().unique(),
+  placeName: text("place_name").notNull(),
+  placeCategory: varchar("place_category", { length: 100 }),
+  address: text("address"),
+  city: varchar("city", { length: 100 }),
+  country: varchar("country", { length: 100 }),
+  latitude: text("latitude"),
+  longitude: text("longitude"),
+  checkedInAt: timestamp("checked_in_at"),
+  message: text("message"),
+  withUsers: jsonb("with_users"),
+  isTangoVenue: boolean("is_tango_venue").default(false),
+  importedAt: timestamp("imported_at").defaultNow().notNull(),
+  matchedVenueId: integer("matched_venue_id").references(() => venues.id),
+}, (table) => ({
+  userIdx: index("facebook_checkins_user_idx").on(table.userId),
+  cityIdx: index("facebook_checkins_city_idx").on(table.city),
+  venueIdx: index("facebook_checkins_venue_idx").on(table.matchedVenueId),
+  tangoIdx: index("facebook_checkins_tango_idx").on(table.isTangoVenue),
+}));
+
+// Facebook Profile (complete profile data)
+export const facebookProfiles = pgTable("facebook_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
+  fbUserId: varchar("fb_user_id").notNull().unique(),
+  name: text("name").notNull(),
+  firstName: varchar("first_name", { length: 100 }),
+  lastName: varchar("last_name", { length: 100 }),
+  email: varchar("email", { length: 255 }),
+  birthday: date("birthday"),
+  gender: varchar("gender", { length: 20 }),
+  bio: text("bio"),
+  hometown: text("hometown"),
+  currentCity: text("current_city"),
+  relationshipStatus: varchar("relationship_status", { length: 50 }),
+  work: jsonb("work"),
+  education: jsonb("education"),
+  languages: text("languages").array(),
+  profilePhotoUrl: text("profile_photo_url"),
+  coverPhotoUrl: text("cover_photo_url"),
+  website: text("website"),
+  friendCount: integer("friend_count"),
+  followerCount: integer("follower_count"),
+  importedAt: timestamp("imported_at").defaultNow().notNull(),
+  lastSyncedAt: timestamp("last_synced_at"),
+}, (table) => ({
+  userIdx: index("facebook_profiles_user_idx").on(table.userId),
+  fbUserIdIdx: index("facebook_profiles_fb_user_id_idx").on(table.fbUserId),
+}));
+
+// Facebook Videos (saved/uploaded videos)
+export const facebookVideos = pgTable("facebook_videos", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  fbVideoId: varchar("fb_video_id").notNull().unique(),
+  title: text("title"),
+  description: text("description"),
+  videoUrl: text("video_url"),
+  thumbnailUrl: text("thumbnail_url"),
+  duration: integer("duration"),
+  views: integer("views").default(0),
+  likes: integer("likes").default(0),
+  uploadedAt: timestamp("uploaded_at"),
+  isTangoRelated: boolean("is_tango_related").default(false),
+  importedAt: timestamp("imported_at").defaultNow().notNull(),
+}, (table) => ({
+  userIdx: index("facebook_videos_user_idx").on(table.userId),
+  tangoIdx: index("facebook_videos_tango_idx").on(table.isTangoRelated),
+}));
+
+// Zod Schemas for Complete FB Import
+export const insertFacebookEventSchema = createInsertSchema(facebookEvents).omit({ id: true, importedAt: true });
+export type InsertFacebookEvent = z.infer<typeof insertFacebookEventSchema>;
+export type SelectFacebookEvent = typeof facebookEvents.$inferSelect;
+
+export const insertFacebookPhotoSchema = createInsertSchema(facebookPhotos).omit({ id: true, importedAt: true });
+export type InsertFacebookPhoto = z.infer<typeof insertFacebookPhotoSchema>;
+export type SelectFacebookPhoto = typeof facebookPhotos.$inferSelect;
+
+export const insertFacebookGroupSchema = createInsertSchema(facebookGroups).omit({ id: true, importedAt: true });
+export type InsertFacebookGroup = z.infer<typeof insertFacebookGroupSchema>;
+export type SelectFacebookGroup = typeof facebookGroups.$inferSelect;
+
+export const insertFacebookPageSchema = createInsertSchema(facebookPages).omit({ id: true, importedAt: true });
+export type InsertFacebookPage = z.infer<typeof insertFacebookPageSchema>;
+export type SelectFacebookPage = typeof facebookPages.$inferSelect;
+
+export const insertFacebookCheckInSchema = createInsertSchema(facebookCheckIns).omit({ id: true, importedAt: true });
+export type InsertFacebookCheckIn = z.infer<typeof insertFacebookCheckInSchema>;
+export type SelectFacebookCheckIn = typeof facebookCheckIns.$inferSelect;
+
+export const insertFacebookProfileSchema = createInsertSchema(facebookProfiles).omit({ id: true, importedAt: true, lastSyncedAt: true });
+export type InsertFacebookProfile = z.infer<typeof insertFacebookProfileSchema>;
+export type SelectFacebookProfile = typeof facebookProfiles.$inferSelect;
+
+export const insertFacebookVideoSchema = createInsertSchema(facebookVideos).omit({ id: true, importedAt: true });
+export type InsertFacebookVideo = z.infer<typeof insertFacebookVideoSchema>;
+export type SelectFacebookVideo = typeof facebookVideos.$inferSelect;
 
 // Life CEO System
 export const insertLifeCeoDomainSchema = createInsertSchema(lifeCeoDomains).omit({ id: true, createdAt: true });
