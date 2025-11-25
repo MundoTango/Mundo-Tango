@@ -27,6 +27,38 @@ const CURATED_CITYSCAPES: Record<string, CityscapeImage> = {
     photographerName: 'Andrés Medina',
     photographerUrl: 'https://unsplash.com/@andresmedina'
   },
+  'Melbourne': {
+    url: 'https://images.unsplash.com/photo-1514395462725-fb4566210144',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1514395462725-fb4566210144?w=400',
+    source: 'curated',
+    credit: 'Photo by Weyne Yew on Unsplash',
+    photographerName: 'Weyne Yew',
+    photographerUrl: 'https://unsplash.com/@weyne'
+  },
+  'Athens': {
+    url: 'https://images.unsplash.com/photo-1555993539-1732b0258235',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1555993539-1732b0258235?w=400',
+    source: 'curated',
+    credit: 'Photo by Constantinos Kollias on Unsplash',
+    photographerName: 'Constantinos Kollias',
+    photographerUrl: 'https://unsplash.com/@kostas22'
+  },
+  'São Paulo': {
+    url: 'https://images.unsplash.com/photo-1543059080-f9b1272213d5',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1543059080-f9b1272213d5?w=400',
+    source: 'curated',
+    credit: 'Photo by Joao Tzanno on Unsplash',
+    photographerName: 'Joao Tzanno',
+    photographerUrl: 'https://unsplash.com/@joaotzanno'
+  },
+  'Toronto': {
+    url: 'https://images.unsplash.com/photo-1517090504586-fde19ea6066f',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1517090504586-fde19ea6066f?w=400',
+    source: 'curated',
+    credit: 'Photo by Scott Webb on Unsplash',
+    photographerName: 'Scott Webb',
+    photographerUrl: 'https://unsplash.com/@scottwebb'
+  },
   'Paris': {
     url: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34',
     thumbnailUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400',

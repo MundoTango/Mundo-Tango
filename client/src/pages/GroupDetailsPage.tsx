@@ -1,4 +1,4 @@
-import { useRoute } from "wouter";
+import { useRoute, Link } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Users, MapPin, Settings as SettingsIcon, Calendar, Home, Building2, Heart, Check, ChevronRight } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import type { SelectGroup } from "@shared/schema";
+import type { SelectGroup, SelectEvent } from "@shared/schema";
 import { SEO } from "@/components/SEO";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { GroupPostFeed } from "@/components/groups/GroupPostFeed";
@@ -17,6 +17,144 @@ import { GroupMembersList } from "@/components/groups/GroupMembersList";
 import { GroupInviteSystem } from "@/components/groups/GroupInviteSystem";
 import { GroupSettingsPanel } from "@/components/groups/GroupSettingsPanel";
 import { motion } from "framer-motion";
+
+function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: string | null }) {
+  const { data: events, isLoading } = useQuery<SelectEvent[]>({
+    queryKey: ["/api/events", "group", groupId],
+    queryFn: async () => {
+      const res = await fetch(`/api/events?groupId=${groupId}`, { credentials: "include" });
+      if (!res.ok) return [];
+      const data = await res.json();
+      return data.events || data || [];
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <Card className="overflow-hidden">
+        <CardHeader className="border-b">
+          <CardTitle className="text-2xl font-serif flex items-center gap-2">
+            <Calendar className="h-6 w-6 text-primary" />
+            Group Events
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-8 space-y-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex items-start gap-6 p-6 border rounded-xl">
+              <Skeleton className="w-16 h-16 rounded-xl" />
+              <div className="flex-1 space-y-3">
+                <Skeleton className="h-6 w-2/3" />
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-4 w-1/4" />
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const eventList = events || [];
+
+  return (
+    <Card className="overflow-hidden">
+      <CardHeader className="border-b">
+        <CardTitle className="text-2xl font-serif flex items-center gap-2">
+          <Calendar className="h-6 w-6 text-primary" />
+          Group Events
+        </CardTitle>
+        <CardDescription>
+          {eventList.length > 0 
+            ? `${eventList.length} upcoming events in ${groupCity || "this city"}`
+            : `No events scheduled yet in ${groupCity || "this city"}`
+          }
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="p-8 space-y-6">
+        {eventList.length === 0 ? (
+          <div className="text-center py-12 text-muted-foreground">
+            <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p className="text-lg">No events scheduled yet</p>
+            <p className="text-sm">Check back soon for upcoming tango events!</p>
+          </div>
+        ) : (
+          eventList.slice(0, 10).map((event, index) => {
+            const imageUrl = Array.isArray(event.imageUrl) 
+              ? event.imageUrl[0] 
+              : event.imageUrl;
+            
+            return (
+              <motion.div
+                key={event.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+              >
+                <Link href={`/events/${event.id}`}>
+                  <a className="flex items-start gap-6 p-6 border rounded-xl hover-elevate cursor-pointer" data-testid={`event-${event.id}`}>
+                    {imageUrl ? (
+                      <img 
+                        src={imageUrl} 
+                        alt={event.title} 
+                        className="w-16 h-16 rounded-xl object-cover flex-shrink-0"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Calendar className="h-8 w-8 text-primary" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-xl font-serif font-bold mb-3 truncate">{event.title}</h3>
+                      <div className="space-y-2 text-sm text-muted-foreground">
+                        {event.date && (
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 flex-shrink-0" />
+                            {new Date(event.date).toLocaleDateString(undefined, { 
+                              weekday: 'short', 
+                              month: 'short', 
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                            {event.time && ` at ${event.time}`}
+                          </div>
+                        )}
+                        {event.location && (
+                          <div className="flex items-center gap-2">
+                            <MapPin className="h-4 w-4 flex-shrink-0" />
+                            <span className="truncate">{event.location}</span>
+                          </div>
+                        )}
+                        {event.attendeeCount !== undefined && event.attendeeCount > 0 && (
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4 flex-shrink-0" />
+                            {event.attendeeCount} attending
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <Button size="sm" data-testid={`button-view-event-${event.id}`}>
+                      View
+                    </Button>
+                  </a>
+                </Link>
+              </motion.div>
+            );
+          })
+        )}
+        
+        {eventList.length > 10 && (
+          <div className="text-center pt-4">
+            <Link href={`/events?city=${groupCity}`}>
+              <Button variant="outline" data-testid="button-view-all-events">
+                View All {eventList.length} Events
+              </Button>
+            </Link>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function GroupDetailsPage() {
   const [, params] = useRoute("/groups/:id");
@@ -259,57 +397,7 @@ export default function GroupDetailsPage() {
               </TabsContent>
 
               <TabsContent value="events">
-                <Card className="overflow-hidden">
-                  <CardHeader className="border-b">
-                    <CardTitle className="text-2xl font-serif flex items-center gap-2">
-                      <Calendar className="h-6 w-6 text-primary" />
-                      Group Events
-                    </CardTitle>
-                    <CardDescription>
-                      Upcoming events organized by this group
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-8 space-y-6">
-                    {[
-                      { id: 1, title: "Weekly Milonga", date: "2024-11-15", attendees: 45, location: group.city || "Local venue" },
-                      { id: 2, title: "Tango Workshop", date: "2024-11-18", attendees: 28, location: group.city || "Dance studio" },
-                      { id: 3, title: "Group Practice", date: "2024-11-22", attendees: 32, location: group.city || "Community center" }
-                    ].map((event, index) => (
-                      <motion.div
-                        key={event.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="flex items-start gap-6 p-6 border rounded-xl hover-elevate"
-                        data-testid={`event-${event.id}`}
-                      >
-                        <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Calendar className="h-8 w-8 text-primary" />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="text-xl font-serif font-bold mb-3">{event.title}</h3>
-                          <div className="space-y-2 text-sm text-muted-foreground">
-                            <div className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4" />
-                              {new Date(event.date).toLocaleDateString()}
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <MapPin className="h-4 w-4" />
-                              {event.location}
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Users className="h-4 w-4" />
-                              {event.attendees} attending
-                            </div>
-                          </div>
-                        </div>
-                        <Button data-testid={`button-rsvp-${event.id}`}>
-                          RSVP
-                        </Button>
-                      </motion.div>
-                    ))}
-                  </CardContent>
-                </Card>
+                <GroupEventsTab groupId={group.id} groupCity={group.city} />
               </TabsContent>
 
               <TabsContent value="housing">

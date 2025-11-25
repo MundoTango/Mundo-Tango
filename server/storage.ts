@@ -2909,7 +2909,7 @@ export class DbStorage implements IStorage {
     return result[0] as any;
   }
 
-  async getEvents(params: { city?: string; eventType?: string; startDate?: Date; endDate?: Date; search?: string; limit?: number; offset?: number }): Promise<SelectEvent[]> {
+  async getEvents(params: { city?: string; eventType?: string; startDate?: Date; endDate?: Date; search?: string; groupId?: number; limit?: number; offset?: number }): Promise<SelectEvent[]> {
     console.log('[STORAGE.getEvents] params=', JSON.stringify(params));
     let conditions = [];
     
@@ -2927,6 +2927,10 @@ export class DbStorage implements IStorage {
     
     if (params.endDate) {
       conditions.push(lte(events.startDate, params.endDate));
+    }
+    
+    if (params.groupId) {
+      conditions.push(eq(events.groupId, params.groupId));
     }
     
     if (params.search) {

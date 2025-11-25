@@ -4115,6 +4115,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         search, 
         eventType, 
         city, 
+        groupId,
         limit = "50", 
         offset = "0" 
       } = req.query;
@@ -4123,6 +4124,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         search: search as string | undefined,
         eventType: eventType as string | undefined,
         city: city as string | undefined,
+        groupId: groupId ? parseInt(groupId as string) : undefined,
         limit: parseInt(limit as string),
         offset: parseInt(offset as string),
       });
