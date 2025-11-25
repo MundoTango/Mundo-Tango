@@ -27,8 +27,8 @@ router.get("/markers", async (req: Request, res: Response) => {
           profileImage: users.profileImage,
           city: users.city,
           country: users.country,
-          latitude: sql<string>`users.city::text`.as('latitude'),
-          longitude: sql<string>`users.country::text`.as('longitude'),
+          latitude: users.latitude,
+          longitude: users.longitude,
           tangoRoles: users.tangoRoles,
           leaderLevel: users.leaderLevel,
           followerLevel: users.followerLevel,
@@ -36,8 +36,8 @@ router.get("/markers", async (req: Request, res: Response) => {
         })
         .from(users)
         .where(and(
-          isNotNull(users.city),
-          isNotNull(users.country),
+          isNotNull(users.latitude),
+          isNotNull(users.longitude),
           eq(users.isActive, true),
           city ? eq(users.city, city as string) : sql`1=1`,
           country ? eq(users.country, country as string) : sql`1=1`
