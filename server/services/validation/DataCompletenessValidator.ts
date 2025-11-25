@@ -42,9 +42,13 @@ export interface DataIssue {
 
 /**
  * Smart Default Strategies
- * Defines how to auto-populate missing data
+ * MB.MD Q&A Session Output - Comprehensive Smart Defaults for ALL Tables
+ * Defines how to auto-populate missing data across all page PRDs
  */
 const SMART_DEFAULTS: Record<string, Record<string, (record: any) => any>> = {
+  // =========================================================
+  // CORE SOCIAL TABLES
+  // =========================================================
   events: {
     organizer_id: (event) => event.createdBy || event.user_id || null,
     price: () => 0,
@@ -63,6 +67,85 @@ const SMART_DEFAULTS: Record<string, Record<string, (record: any) => any>> = {
     followers_count: () => 0,
     following_count: () => 0,
     bio: (user) => `Welcome to ${user.name || 'my'}'s tango journey!`
+  },
+  
+  // =========================================================
+  // PROFESSIONAL/TEACHER TABLES
+  // =========================================================
+  teacher_profiles: {
+    specialty: () => 'Tango Instructor',
+    years_experience: () => 0,
+    hourly_rate: () => null,
+    rating: () => 0,
+    bio: (teacher) => `Passionate tango instructor with a love for sharing the dance.`
+  },
+  
+  // =========================================================
+  // VENUE TABLES
+  // =========================================================
+  venues: {
+    rating: () => 0,
+    capacity: () => null,
+    venue_type: () => 'dance_studio',
+    description: (venue) => `A great place to dance tango at ${venue.name || 'this venue'}.`
+  },
+  
+  // =========================================================
+  // GROUP TABLES
+  // =========================================================
+  groups: {
+    member_count: () => 0,
+    privacy: () => 'public',
+    description: (group) => `Welcome to the ${group.name || 'tango'} community group!`
+  },
+  
+  // =========================================================
+  // MARKETPLACE TABLES
+  // =========================================================
+  marketplace_products: {
+    rating: () => 0,
+    in_stock: () => true,
+    views: () => 0
+  },
+  
+  // =========================================================
+  // NOTIFICATION TABLES
+  // =========================================================
+  notifications: {
+    is_read: () => false
+  },
+  
+  // =========================================================
+  // MESSAGING TABLES
+  // =========================================================
+  conversations: {
+    unread_count: () => 0
+  },
+  
+  // =========================================================
+  // TUTORIAL TABLES
+  // =========================================================
+  tutorials: {
+    level: () => 'beginner',
+    views: () => 0,
+    likes: () => 0
+  },
+  
+  // =========================================================
+  // TRAVEL TABLES
+  // =========================================================
+  travel_plans: {
+    status: () => 'planning',
+    events_count: () => 0
+  },
+  
+  // =========================================================
+  // CROWDFUNDING TABLES
+  // =========================================================
+  crowdfunding_campaigns: {
+    current_amount: () => 0,
+    backer_count: () => 0,
+    status: () => 'active'
   }
 };
 
@@ -426,5 +509,117 @@ export class DataCompletenessValidator {
       overallScore,
       componentResults
     };
+  }
+
+  /**
+   * MB.MD Q&A Session - System-Wide PRD Coverage Report
+   * Generates comprehensive report of all page PRD coverage
+   */
+  static generatePRDCoverageReport(): {
+    totalPages: number;
+    totalComponents: number;
+    pagesWithPRDs: string[];
+    componentsWithPRDs: string[];
+    coverage: {
+      pages: number;
+      components: number;
+    };
+    smartDefaultCoverage: {
+      tables: string[];
+      totalFields: number;
+    };
+  } {
+    const allPageIds = ComponentPRDRegistry.getAllPageIds();
+    const allComponentIds = ComponentPRDRegistry.getAllComponentIds();
+    
+    const smartDefaultTables = Object.keys(SMART_DEFAULTS);
+    const totalSmartDefaultFields = Object.values(SMART_DEFAULTS)
+      .reduce((sum, tableDefaults) => sum + Object.keys(tableDefaults).length, 0);
+
+    return {
+      totalPages: allPageIds.length,
+      totalComponents: allComponentIds.length,
+      pagesWithPRDs: allPageIds,
+      componentsWithPRDs: allComponentIds,
+      coverage: {
+        pages: allPageIds.length,
+        components: allComponentIds.length
+      },
+      smartDefaultCoverage: {
+        tables: smartDefaultTables,
+        totalFields: totalSmartDefaultFields
+      }
+    };
+  }
+
+  /**
+   * Get smart default value for a table field
+   */
+  static getSmartDefault(table: string, field: string, record: any = {}): any {
+    const tableDefaults = SMART_DEFAULTS[table];
+    if (!tableDefaults || !tableDefaults[field]) {
+      return undefined;
+    }
+    return tableDefaults[field](record);
+  }
+
+  /**
+   * Check if table has smart defaults configured
+   */
+  static hasSmartDefaults(table: string): boolean {
+    return !!SMART_DEFAULTS[table];
+  }
+
+  /**
+   * Get all fields with smart defaults for a table
+   */
+  static getTableSmartDefaults(table: string): string[] {
+    const tableDefaults = SMART_DEFAULTS[table];
+    return tableDefaults ? Object.keys(tableDefaults) : [];
+  }
+
+  /**
+   * Apply smart defaults to a record
+   * Returns the record with defaults applied for missing fields
+   */
+  static applySmartDefaults(table: string, record: Record<string, any>): Record<string, any> {
+    const tableDefaults = SMART_DEFAULTS[table];
+    if (!tableDefaults) return record;
+
+    const updatedRecord = { ...record };
+    
+    for (const [field, defaultFn] of Object.entries(tableDefaults)) {
+      if (updatedRecord[field] === null || updatedRecord[field] === undefined) {
+        updatedRecord[field] = defaultFn(record);
+      }
+    }
+
+    return updatedRecord;
+  }
+
+  /**
+   * Log PRD validation summary to console
+   * Useful for agent learning and debugging
+   */
+  static logPRDSummary(): void {
+    const report = this.generatePRDCoverageReport();
+    
+    console.log('\n' + '='.repeat(60));
+    console.log('📋 MB.MD PRD COVERAGE REPORT');
+    console.log('='.repeat(60));
+    console.log(`📄 Total Pages with PRDs: ${report.totalPages}`);
+    console.log(`🧩 Total Components with PRDs: ${report.totalComponents}`);
+    console.log(`🔧 Tables with Smart Defaults: ${report.smartDefaultCoverage.tables.length}`);
+    console.log(`📊 Total Smart Default Fields: ${report.smartDefaultCoverage.totalFields}`);
+    console.log('\n📄 Pages:');
+    report.pagesWithPRDs.forEach(p => console.log(`   • ${p}`));
+    console.log('\n🧩 Components:');
+    report.componentsWithPRDs.forEach(c => console.log(`   • ${c}`));
+    console.log('\n🔧 Smart Default Tables:');
+    report.smartDefaultCoverage.tables.forEach(t => {
+      const fields = this.getTableSmartDefaults(t);
+      console.log(`   • ${t}: ${fields.join(', ')}`);
+    });
+    console.log('='.repeat(60) + '\n');
   }
 }
