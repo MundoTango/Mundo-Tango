@@ -37,7 +37,6 @@ import { FeedFilters } from "@/components/feed/FeedFilters";
 import { FeedTabs } from "@/components/feed/FeedTabs";
 import { InfiniteScrollFeed } from "@/components/feed/InfiniteScrollFeed";
 import { NewPostsBanner } from "@/components/feed/NewPostsBanner";
-import { TrendingPosts } from "@/components/feed/TrendingPosts";
 import { RecommendedPosts } from "@/components/feed/RecommendedPosts";
 import { Link } from "wouter";
 import { FeedAd } from "@/components/ads/FeedAd";
@@ -482,9 +481,8 @@ export default function FeedPage() {
           {user && <RecommendedPosts />}
         </main>
 
-        {/* Right Sidebar - Trending Posts (Feature 16) */}
+        {/* Right Sidebar - Upcoming Events */}
         <aside className="hidden lg:block lg:col-span-3 space-y-6">
-          <TrendingPosts />
           <UpcomingEventsSidebar />
         </aside>
       </div>

@@ -239,7 +239,8 @@ router.post("/analyze-error", async (req: Request, res: Response) => {
         // - >95%: Auto-apply immediately (no manual intervention)
         // - 80-95%: Stage for approval
         // - <80%: Manual review required
-        if (autoFixEngine && suggestion.confidence > 0.80) {
+        // ✅ MB.MD v9.5 Fix: Changed > to >= so 0.80 exactly triggers
+        if (autoFixEngine && suggestion.confidence >= 0.80) {
           console.log(`[Error Analysis API] 🤖 Step 7: AUTONOMOUS fix triggered for error ${errorPattern.id} (confidence: ${Math.round(suggestion.confidence * 100)}%)...`);
           
           try {

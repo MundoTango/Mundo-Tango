@@ -25,8 +25,15 @@ export function RecommendedPosts() {
   const { data: posts, isLoading } = useQuery<RecommendedPost[]>({
     queryKey: ['recommended-posts'],
     queryFn: async () => {
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch('/api/feed/recommended?limit=6', {
         credentials: 'include',
+        headers,
       });
       if (!response.ok) throw new Error('Failed to fetch recommended posts');
       return response.json();
