@@ -17,12 +17,21 @@ export function EventCard({ event, onRSVP, userRSVPStatus }: EventCardProps) {
   const getEventTypeBadge = (type: string) => {
     const badges: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
       milonga: { label: "Milonga", variant: "default" },
-      practica: { label: "Práctica", variant: "secondary" },
+      practica: { label: "Practica", variant: "secondary" },
+      class: { label: "Class", variant: "outline" },
       workshop: { label: "Workshop", variant: "outline" },
       festival: { label: "Festival", variant: "destructive" },
+      marathon: { label: "Marathon", variant: "destructive" },
+      encuentro: { label: "Encuentro", variant: "default" },
+      performance: { label: "Performance", variant: "secondary" },
+      show: { label: "Show", variant: "secondary" },
+      social: { label: "Social", variant: "default" },
+      competition: { label: "Competition", variant: "destructive" },
+      online: { label: "Online", variant: "outline" },
+      concert: { label: "Concert", variant: "secondary" },
       private: { label: "Private", variant: "secondary" },
     };
-    return badges[type] || { label: type, variant: "outline" as const };
+    return badges[type] || { label: type ? type.charAt(0).toUpperCase() + type.slice(1) : "Event", variant: "outline" as const };
   };
   
   const badge = getEventTypeBadge(event.eventType);

@@ -56,9 +56,17 @@ export interface EventFilterValues {
 const EVENT_TYPES = [
   { value: "milonga", label: "Milonga" },
   { value: "practica", label: "Practica" },
+  { value: "class", label: "Class" },
   { value: "workshop", label: "Workshop" },
   { value: "festival", label: "Festival" },
+  { value: "marathon", label: "Marathon" },
+  { value: "encuentro", label: "Encuentro" },
   { value: "performance", label: "Performance" },
+  { value: "show", label: "Show" },
+  { value: "social", label: "Social" },
+  { value: "competition", label: "Competition" },
+  { value: "online", label: "Online" },
+  { value: "concert", label: "Concert" },
 ];
 
 const DANCE_STYLES = [

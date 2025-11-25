@@ -18,37 +18,64 @@ import { GroupMembersList } from "@/components/groups/GroupMembersList";
 import { GroupInviteSystem } from "@/components/groups/GroupInviteSystem";
 import { GroupSettingsPanel } from "@/components/groups/GroupSettingsPanel";
 import { motion } from "framer-motion";
+import { useRSVPEvent, useMyRSVPs } from "@/hooks/useEvents";
+import { useAuth } from "@/contexts/AuthContext";
 
 function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: string | null }) {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const rsvpMutation = useRSVPEvent();
+  const { data: myRsvps } = useMyRSVPs();
+  
   const { data: events, isLoading } = useQuery<SelectEvent[]>({
     queryKey: ["/api/events", "group", groupId, groupCity],
     queryFn: async () => {
-      // First try to fetch by groupId
-      let res = await fetch(`/api/events?groupId=${groupId}&limit=50`, { credentials: "include" });
-      if (!res.ok) return [];
-      let data = await res.json();
-      let eventList = data.events || data || [];
-      
-      // Extract event objects from wrapped responses {event: {...}, organizer: {...}}
-      if (eventList.length > 0 && eventList[0]?.event) {
-        eventList = eventList.map((item: any) => item.event || item);
+      // First try to fetch by groupId using the new endpoint
+      let res = await fetch(`/api/groups/${groupId}/events?limit=50`, { credentials: "include" });
+      if (res.ok) {
+        const data = await res.json();
+        let eventList = data.events || data || [];
+        if (eventList.length > 0 && eventList[0]?.event) {
+          eventList = eventList.map((item: any) => item.event || item);
+        }
+        if (eventList.length > 0) return eventList;
       }
       
-      // If no events found by groupId and we have a city, try fetching by city
-      if (eventList.length === 0 && groupCity) {
-        res = await fetch(`/api/events?city=${encodeURIComponent(groupCity)}&limit=50`, { credentials: "include" });
+      // Fallback: try fetching by city
+      if (groupCity) {
+        res = await fetch(`/api/events?city=${encodeURIComponent(groupCity)}&limit=50&upcoming=true`, { credentials: "include" });
         if (res.ok) {
-          data = await res.json();
-          eventList = data.events || data || [];
+          const data = await res.json();
+          let eventList = data.events || data || [];
           if (eventList.length > 0 && eventList[0]?.event) {
             eventList = eventList.map((item: any) => item.event || item);
           }
+          return eventList;
         }
       }
       
-      return eventList;
+      return [];
     },
   });
+  
+  const handleRSVP = async (eventId: number, currentStatus?: string) => {
+    if (!user) {
+      toast({
+        title: "Login required",
+        description: "Please log in to RSVP for events",
+        variant: "destructive",
+      });
+      return;
+    }
+    const newStatus = currentStatus === "going" ? "not_going" : "going";
+    await rsvpMutation.mutateAsync({ eventId, status: newStatus });
+  };
+  
+  const getUserRsvpStatus = (eventId: number) => {
+    if (!myRsvps) return undefined;
+    const rsvp = myRsvps.find((r: any) => r.eventId === eventId);
+    return rsvp?.status;
+  };
 
   if (isLoading) {
     return (
@@ -103,6 +130,8 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
             const imageUrl = Array.isArray(event.imageUrl) 
               ? event.imageUrl[0] 
               : event.imageUrl;
+            const rsvpStatus = getUserRsvpStatus(event.id);
+            const isGoing = rsvpStatus === "going";
             
             return (
               <motion.div
@@ -111,52 +140,70 @@ function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: s
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <Link href={`/events/${event.id}`}>
-                  <a className="flex items-start gap-6 p-6 border rounded-xl hover-elevate cursor-pointer" data-testid={`event-${event.id}`}>
+                <div className="flex items-start gap-6 p-6 border rounded-xl hover-elevate" data-testid={`event-${event.id}`}>
+                  <Link href={`/events/${event.id}`}>
                     {imageUrl ? (
                       <img 
                         src={imageUrl} 
                         alt={event.title} 
-                        className="w-16 h-16 rounded-xl object-cover flex-shrink-0"
+                        className="w-16 h-16 rounded-xl object-cover flex-shrink-0 cursor-pointer"
                       />
                     ) : (
-                      <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 cursor-pointer">
                         <Calendar className="h-8 w-8 text-primary" />
                       </div>
                     )}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-xl font-serif font-bold mb-3 truncate" dangerouslySetInnerHTML={{ __html: event.title || "Untitled Event" }} />
-                      <div className="space-y-2 text-sm text-muted-foreground">
-                        {(event.startDate || event.date) && (
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4 flex-shrink-0" />
-                            {new Date(event.startDate || event.date).toLocaleDateString(undefined, { 
-                              weekday: 'short', 
-                              month: 'short', 
-                              day: 'numeric',
-                              year: 'numeric'
-                            })}
-                            {event.time && ` at ${event.time}`}
-                          </div>
-                        )}
-                        {(event.location || event.city) && (
-                          <div className="flex items-center gap-2">
-                            <MapPin className="h-4 w-4 flex-shrink-0" />
-                            <span className="truncate">{event.location || event.city}</span>
-                          </div>
-                        )}
-                        {event.eventType && (
-                          <Badge variant="secondary" className="text-xs">
-                            {event.eventType}
-                          </Badge>
-                        )}
-                      </div>
+                  </Link>
+                  <div className="flex-1 min-w-0">
+                    <Link href={`/events/${event.id}`}>
+                      <h3 className="text-xl font-serif font-bold mb-3 truncate cursor-pointer hover:text-primary" dangerouslySetInnerHTML={{ __html: event.title || "Untitled Event" }} />
+                    </Link>
+                    <div className="space-y-2 text-sm text-muted-foreground">
+                      {(event.startDate || event.date) && (
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 flex-shrink-0" />
+                          {new Date(event.startDate || event.date).toLocaleDateString(undefined, { 
+                            weekday: 'short', 
+                            month: 'short', 
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                          {event.time && ` at ${event.time}`}
+                        </div>
+                      )}
+                      {(event.location || event.city) && (
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4 flex-shrink-0" />
+                          <span className="truncate">{event.location || event.city}</span>
+                        </div>
+                      )}
+                      {event.eventType && (
+                        <Badge variant="secondary" className="text-xs">
+                          {event.eventType.charAt(0).toUpperCase() + event.eventType.slice(1)}
+                        </Badge>
+                      )}
                     </div>
-                    <Button size="sm" data-testid={`button-view-event-${event.id}`}>
-                      View
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Button 
+                      size="sm" 
+                      variant={isGoing ? "outline" : "default"}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleRSVP(event.id, rsvpStatus);
+                      }}
+                      disabled={rsvpMutation.isPending}
+                      data-testid={`button-rsvp-event-${event.id}`}
+                    >
+                      {rsvpMutation.isPending ? "..." : isGoing ? "Going" : "RSVP"}
                     </Button>
-                  </a>
-                </Link>
+                    <Link href={`/events/${event.id}`}>
+                      <Button size="sm" variant="ghost" data-testid={`button-view-event-${event.id}`}>
+                        Details
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
               </motion.div>
             );
           })

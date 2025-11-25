@@ -409,29 +409,50 @@ export default function EventDetailsPage() {
                   </motion.div>
                 )}
 
-                {/* Source URLs Section */}
-                {event.sourceUrls && event.sourceUrls.length > 0 && (
+                {/* Source Info Section */}
+                {(event.sourceName || event.sourceUrl || (event.sourceUrls && event.sourceUrls.length > 0)) && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.695 }}
                     className="pt-6 border-t"
                   >
-                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Sources</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {event.sourceUrls.map((url: string, index: number) => (
+                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Event Source</h4>
+                    <div className="flex flex-wrap gap-3">
+                      {event.sourceUrl && (
                         <a
-                          key={index}
-                          href={url}
+                          href={event.sourceUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
-                          data-testid={`link-source-${index}`}
+                          className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                          data-testid="link-source-url"
                         >
-                          <ExternalLink className="h-3 w-3" />
-                          {new URL(url).hostname.replace('www.', '')}
+                          <ExternalLink className="h-4 w-4" />
+                          {event.sourceName || new URL(event.sourceUrl).hostname.replace('www.', '')}
                         </a>
-                      ))}
+                      )}
+                      {!event.sourceUrl && event.sourceName && (
+                        <span className="text-sm text-muted-foreground" data-testid="text-source-name">
+                          Source: {event.sourceName}
+                        </span>
+                      )}
+                      {event.sourceUrls && event.sourceUrls.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {event.sourceUrls.map((url: string, index: number) => (
+                            <a
+                              key={index}
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
+                              data-testid={`link-source-${index}`}
+                            >
+                              <ExternalLink className="h-3 w-3" />
+                              {new URL(url).hostname.replace('www.', '')}
+                            </a>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 )}
