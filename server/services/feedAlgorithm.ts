@@ -83,7 +83,7 @@ export class FeedAlgorithmService {
           likesCount: sql<number>`(
             SELECT COUNT(*)::int FROM ${reactions}
             WHERE ${reactions.postId} = ${posts.id}
-            AND ${reactions.type} = 'like'
+            AND ${reactions.reactionType} = 'like'
           )`,
           commentsCount: sql<number>`(
             SELECT COUNT(*)::int FROM ${postComments}
@@ -216,7 +216,7 @@ export class FeedAlgorithmService {
           likesCount: sql<number>`(
             SELECT COUNT(*)::int FROM ${reactions}
             WHERE ${reactions.postId} = ${posts.id}
-            AND ${reactions.type} = 'like'
+            AND ${reactions.reactionType} = 'like'
           )`,
           commentsCount: sql<number>`(
             SELECT COUNT(*)::int FROM ${postComments}
@@ -275,7 +275,7 @@ export class FeedAlgorithmService {
           likesCount: sql<number>`(
             SELECT COUNT(*)::int FROM ${reactions}
             WHERE ${reactions.postId} = ${posts.id}
-            AND ${reactions.type} = 'like'
+            AND ${reactions.reactionType} = 'like'
           )`,
           commentsCount: sql<number>`(
             SELECT COUNT(*)::int FROM ${postComments}
@@ -510,7 +510,7 @@ export class FeedAlgorithmService {
           likesCount: sql<number>`(
             SELECT COUNT(*)::int FROM ${reactions}
             WHERE ${reactions.postId} = ${posts.id}
-            AND ${reactions.type} = 'like'
+            AND ${reactions.reactionType} = 'like'
           )`,
           commentsCount: sql<number>`(
             SELECT COUNT(*)::int FROM ${postComments}
