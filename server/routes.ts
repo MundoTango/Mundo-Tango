@@ -120,6 +120,7 @@ import nutritionRoutes from "./routes/nutrition-routes";
 import eventRoutes from "./routes/event-routes";
 import eventRolesRoutes from "./routes/event-roles-routes";
 import groupRoutes from "./routes/group-routes";
+import { cityGroupDataIngestionService } from "./services/city-group-data-ingestion";
 import mapRoutes from "./routes/map-routes";
 import crowdfundingRoutes from "./routes/crowdfunding-routes";
 import recommendationRoutes from "./routes/recommendation-routes";
@@ -5929,6 +5930,97 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Decline group invite error:", error);
       res.status(500).json({ message: "Failed to decline invite" });
+    }
+  });
+
+  // ============================================================================
+  // CITY GROUP DATA ENRICHMENT (MB.MD Protocol)
+  // ============================================================================
+
+  // Enrich a single city group from scraped data
+  app.post("/api/city-groups/:id/enrich", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const groupId = parseInt(req.params.id);
+      const result = await cityGroupDataIngestionService.enrichCityGroup(groupId);
+      res.json({
+        success: true,
+        ...result,
+      });
+    } catch (error) {
+      console.error("[CityGroupEnrich] Error:", error);
+      res.status(500).json({ 
+        message: "Failed to enrich city group",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  });
+
+  // Batch enrich all city groups
+  app.post("/api/city-groups/enrich-all", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const result = await cityGroupDataIngestionService.enrichAllCityGroups();
+      res.json({
+        success: true,
+        ...result,
+      });
+    } catch (error) {
+      console.error("[CityGroupEnrichAll] Error:", error);
+      res.status(500).json({ 
+        message: "Failed to enrich city groups",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  });
+
+  // Assign cityscape cover photo to a city group
+  app.post("/api/city-groups/:id/assign-cityscape", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const groupId = parseInt(req.params.id);
+      const cityName = req.body.cityName;
+      
+      if (!cityName) {
+        return res.status(400).json({ message: "cityName is required" });
+      }
+
+      const result = await cityGroupDataIngestionService.assignCityscapeCoverPhoto(cityName);
+      
+      if (result) {
+        res.json({
+          success: true,
+          coverPhoto: result,
+        });
+      } else {
+        res.status(404).json({ 
+          message: "No cityscape found for this city",
+        });
+      }
+    } catch (error) {
+      console.error("[CityGroupCityscape] Error:", error);
+      res.status(500).json({ 
+        message: "Failed to assign cityscape",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  });
+
+  // Hook: Trigger enrichment when city group is created
+  app.post("/api/city-groups/:id/on-created", async (req: Request, res: Response) => {
+    try {
+      const groupId = parseInt(req.params.id);
+      const cityName = req.body.cityName;
+      
+      if (!cityName) {
+        return res.status(400).json({ message: "cityName is required" });
+      }
+
+      await cityGroupDataIngestionService.onCityGroupCreated(groupId, cityName);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("[CityGroupCreated] Error:", error);
+      res.status(500).json({ 
+        message: "Failed to process new city group",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
     }
   });
 
