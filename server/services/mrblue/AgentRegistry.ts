@@ -8,6 +8,14 @@
 import { BasePageAgent } from './agents/BasePageAgent';
 import { LandingPageAgent } from './agents/LandingPageAgent';
 import { FeedPageAgent } from './agents/FeedPageAgent';
+import { ProfilePageAgent } from './agents/ProfilePageAgent';
+import { EventsPageAgent } from './agents/EventsPageAgent';
+import { MessagesPageAgent } from './agents/MessagesPageAgent';
+import { AdminPageAgent } from './agents/AdminPageAgent';
+import { HousingPageAgent } from './agents/HousingPageAgent';
+import { GroupsPageAgent } from './agents/GroupsPageAgent';
+import { FinancialPageAgent } from './agents/FinancialPageAgent';
+import { MrBluePageAgent } from './agents/MrBluePageAgent';
 
 export class AgentRegistry {
   private agents: Map<string, BasePageAgent>;
@@ -31,27 +39,40 @@ export class AgentRegistry {
   /**
    * Initialize all agents
    * 
-   * MB.MD: This will eventually register all 1,218 agents
-   * For now, we start with the landing page agent as proof of concept
+   * MB.MD: Comprehensive agent ecosystem with 10 page agents
+   * Each page agent manages multiple feature agents
    */
   private initializeAgents() {
-    console.log('[AgentRegistry] 🚀 Initializing agent ecosystem...');
+    console.log('[AgentRegistry] 🚀 Initializing comprehensive agent ecosystem...');
 
-    // Phase 1: Core Page Agents with PRD Knowledge
-    const landingPageAgent = new LandingPageAgent();
-    this.registerAgent(landingPageAgent);
+    // Core Page Agents with PRD Knowledge and Feature Agents
+    const pageAgents = [
+      new LandingPageAgent(),      // Landing/Home page
+      new FeedPageAgent(),         // Feed/Memories - 4 feature agents
+      new ProfilePageAgent(),      // Profile pages - 4 feature agents
+      new EventsPageAgent(),       // Events system - 4 feature agents
+      new MessagesPageAgent(),     // Messaging - 4 feature agents
+      new AdminPageAgent(),        // Admin dashboard - 4 feature agents
+      new HousingPageAgent(),      // Housing/Accommodation - 3 feature agents
+      new GroupsPageAgent(),       // Groups/Communities - 3 feature agents
+      new FinancialPageAgent(),    // Financial/Payments - 3 feature agents
+      new MrBluePageAgent(),       // Mr. Blue AI - 4 feature agents
+    ];
 
-    // Phase 2: Feed Page Agent (with full PRD knowledge - knows schema, APIs, common bugs)
-    const feedPageAgent = new FeedPageAgent();
-    this.registerAgent(feedPageAgent);
+    // Register all page agents
+    for (const agent of pageAgents) {
+      this.registerAgent(agent);
+    }
 
-    // TODO: Phase 3: Add more page agents with PRD knowledge
-    // - ProfilePageAgent (client/src/pages/Profile.tsx)
-    // - EventsPageAgent (client/src/pages/events/*.tsx)
-    // - MessagesPageAgent (client/src/pages/Messages.tsx)
-    // ... etc for all 1,218 agents
+    // Log feature agent count
+    let totalFeatureAgents = 0;
+    for (const agent of pageAgents) {
+      if ('getFeatureAgents' in agent && typeof agent.getFeatureAgents === 'function') {
+        totalFeatureAgents += (agent as any).getFeatureAgents().length;
+      }
+    }
 
-    console.log(`[AgentRegistry] ✅ Registered ${this.agents.size} agents`);
+    console.log(`[AgentRegistry] ✅ Registered ${this.agents.size} page agents with ${totalFeatureAgents} feature agents`);
   }
 
   /**
@@ -59,7 +80,7 @@ export class AgentRegistry {
    */
   registerAgent(agent: BasePageAgent) {
     this.agents.set(agent.getId(), agent);
-    console.log(`[AgentRegistry] Registered: ${agent.getName()} (${agent.getDomain().join(', ')})`);
+    console.log(`[AgentRegistry] Registered: ${agent.getName()}`);
   }
 
   /**
@@ -96,20 +117,55 @@ export class AgentRegistry {
   }
 
   /**
-   * Get registry stats
+   * Get comprehensive registry stats
    */
   getStats(): {
-    totalAgents: number;
-    agentList: Array<{ id: string; name: string; domain: string[] }>;
+    totalPageAgents: number;
+    totalFeatureAgents: number;
+    agentList: Array<{ id: string; name: string; domain: string[]; featureCount: number }>;
   } {
-    return {
-      totalAgents: this.agents.size,
-      agentList: Array.from(this.agents.values()).map(agent => ({
+    let totalFeatureAgents = 0;
+    const agentList = Array.from(this.agents.values()).map(agent => {
+      let featureCount = 0;
+      if ('getFeatureAgents' in agent && typeof agent.getFeatureAgents === 'function') {
+        featureCount = (agent as any).getFeatureAgents().length;
+        totalFeatureAgents += featureCount;
+      }
+      return {
         id: agent.getId(),
         name: agent.getName(),
         domain: agent.getDomain(),
-      })),
+        featureCount,
+      };
+    });
+
+    return {
+      totalPageAgents: this.agents.size,
+      totalFeatureAgents,
+      agentList,
     };
+  }
+
+  /**
+   * Get all feature agents across all page agents
+   */
+  getAllFeatureAgents(): Array<{ pageId: string; featureId: string; featureName: string }> {
+    const features: Array<{ pageId: string; featureId: string; featureName: string }> = [];
+    
+    for (const agent of this.agents.values()) {
+      if ('getFeatureAgents' in agent && typeof agent.getFeatureAgents === 'function') {
+        const featureAgents = (agent as any).getFeatureAgents();
+        for (const fa of featureAgents) {
+          features.push({
+            pageId: agent.getId(),
+            featureId: fa.getFeatureId(),
+            featureName: fa.getFeatureName(),
+          });
+        }
+      }
+    }
+    
+    return features;
   }
 }
 
