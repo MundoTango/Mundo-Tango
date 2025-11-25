@@ -436,6 +436,33 @@ router.get("/my-rsvps", authenticateToken, async (req: AuthRequest, res: Respons
   }
 });
 
+// GET /api/events/upcoming - Get upcoming events (MUST be before /:id route!)
+router.get("/upcoming", async (req: Request, res: Response) => {
+  try {
+    const now = new Date();
+    const upcomingEvents = await db
+      .select({
+        event: events,
+        organizer: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage
+        }
+      })
+      .from(events)
+      .leftJoin(users, eq(events.userId, users.id))
+      .where(gte(events.startDate, now))
+      .orderBy(events.startDate)
+      .limit(10);
+
+    res.json(upcomingEvents);
+  } catch (error) {
+    console.error("[Events] Error fetching upcoming events:", error);
+    res.status(500).json({ message: "Failed to fetch upcoming events" });
+  }
+});
+
 // GET /api/events/:id - Get event details
 router.get("/:id", async (req: Request, res: Response) => {
   try {

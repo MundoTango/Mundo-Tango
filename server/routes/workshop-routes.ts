@@ -6,6 +6,66 @@ import { authenticateToken, AuthRequest } from "../middleware/auth";
 
 const router = Router();
 
+// Sample workshop data for when database is empty
+const sampleWorkshops = [
+  {
+    id: 1,
+    title: "Tango Fundamentals Workshop",
+    description: "Master the essential techniques of Argentine tango in this comprehensive beginner workshop",
+    instructor: "Carlos & Maria Garcia",
+    image: "https://images.unsplash.com/photo-1547153760-18fc86324498?w=800",
+    date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    location: "Buenos Aires Dance Studio",
+    duration: 180,
+    price: "45.00",
+    capacity: 30,
+    level: "beginner",
+    topics: ["Walking", "Embrace", "Musicality basics"]
+  },
+  {
+    id: 2,
+    title: "Advanced Giros & Sacadas",
+    description: "Take your tango to the next level with complex turning patterns and leg interplay",
+    instructor: "Miguel Angel Zotto",
+    image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800",
+    date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+    location: "Manhattan Tango Center",
+    duration: 240,
+    price: "75.00",
+    capacity: 20,
+    level: "advanced",
+    topics: ["Complex giros", "Sacadas", "Musical phrasing"]
+  },
+  {
+    id: 3,
+    title: "Milonga Rhythms Intensive",
+    description: "Explore the playful and energetic world of milonga with authentic Buenos Aires style",
+    instructor: "Sebastian Arce",
+    image: "https://images.unsplash.com/photo-1485872299829-c673f50dea4d?w=800",
+    date: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString(),
+    location: "Paris Tango Academy",
+    duration: 150,
+    price: "55.00",
+    capacity: 25,
+    level: "intermediate",
+    topics: ["Traspie", "Milonga lisa", "Syncopation"]
+  },
+  {
+    id: 4,
+    title: "Vals Elegance",
+    description: "Learn the graceful and flowing movements of Argentine vals",
+    instructor: "Horacio Godoy",
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800",
+    date: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000).toISOString(),
+    location: "Berlin Tango Salon",
+    duration: 120,
+    price: "40.00",
+    capacity: 24,
+    level: "intermediate",
+    topics: ["Vals rhythm", "Continuous movement", "Partner connection"]
+  }
+];
+
 // GET /api/workshops - List workshops with search/filter
 router.get("/", async (req, res: Response) => {
   try {
@@ -32,6 +92,18 @@ router.get("/", async (req, res: Response) => {
     }
 
     const result = await query;
+
+    // Return sample data if database is empty
+    if (result.length === 0) {
+      let filteredSamples = sampleWorkshops;
+      if (search && typeof search === "string") {
+        filteredSamples = filteredSamples.filter(w => 
+          w.title.toLowerCase().includes(search.toLowerCase()) ||
+          w.description.toLowerCase().includes(search.toLowerCase())
+        );
+      }
+      return res.json(filteredSamples);
+    }
 
     res.json(result);
   } catch (error) {

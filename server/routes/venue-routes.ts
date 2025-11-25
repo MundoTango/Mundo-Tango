@@ -6,6 +6,79 @@ import { authenticateToken, AuthRequest } from "../middleware/auth";
 
 const router = Router();
 
+// Sample venue data for when database is empty
+const sampleVenues = [
+  {
+    id: 1,
+    name: "La Viruta Tango",
+    address: "Armenia 1366, Palermo",
+    city: "Buenos Aires",
+    country: "Argentina",
+    venueType: "milonga",
+    rating: "4.9",
+    reviewCount: 328,
+    phone: "+54 11 4774-6357",
+    website: "https://lavirutatango.com",
+    hours: "Tue-Sun 11pm-5am",
+    image: "https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=800",
+    description: "Legendary Buenos Aires milonga with live orchestras and authentic atmosphere"
+  },
+  {
+    id: 2,
+    name: "Salon Canning",
+    address: "Scalabrini Ortiz 1331",
+    city: "Buenos Aires",
+    country: "Argentina",
+    venueType: "milonga",
+    rating: "4.8",
+    reviewCount: 256,
+    phone: "+54 11 4832-6753",
+    hours: "Mon-Sun 10pm-4am",
+    image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800",
+    description: "Classic milonga venue in the heart of Palermo"
+  },
+  {
+    id: 3,
+    name: "El Beso",
+    address: "Riobamba 416",
+    city: "Buenos Aires",
+    country: "Argentina",
+    venueType: "milonga",
+    rating: "4.7",
+    reviewCount: 189,
+    hours: "Wed-Sun 11pm-4am",
+    image: "https://images.unsplash.com/photo-1485872299829-c673f50dea4d?w=800",
+    description: "Intimate traditional milonga with classic tango atmosphere"
+  },
+  {
+    id: 4,
+    name: "Tango Malevaje",
+    address: "123 Tango Street",
+    city: "New York",
+    country: "USA",
+    venueType: "studio",
+    rating: "4.6",
+    reviewCount: 142,
+    website: "https://tangomalevaje.com",
+    hours: "Daily classes and practica",
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800",
+    description: "Premier tango studio in Manhattan with world-class instruction"
+  },
+  {
+    id: 5,
+    name: "Milonga del Indio",
+    address: "Güemes 4671",
+    city: "Buenos Aires",
+    country: "Argentina",
+    venueType: "milonga",
+    rating: "4.8",
+    reviewCount: 203,
+    hours: "Fri-Sat 11pm-5am",
+    image: "https://images.unsplash.com/photo-1547153760-18fc86324498?w=800",
+    description: "Traditional milonga with great floor and authentic atmosphere"
+  }
+];
+
 // GET /api/venues - List venues with search/filter
 router.get("/", async (req, res: Response) => {
   try {
@@ -40,6 +113,24 @@ router.get("/", async (req, res: Response) => {
     }
 
     const result = await query;
+
+    // Return sample data if database is empty
+    if (result.length === 0) {
+      let filteredSamples = sampleVenues;
+      if (city && typeof city === "string") {
+        filteredSamples = filteredSamples.filter(v => v.city.toLowerCase().includes(city.toLowerCase()));
+      }
+      if (country && typeof country === "string") {
+        filteredSamples = filteredSamples.filter(v => v.country.toLowerCase().includes(country.toLowerCase()));
+      }
+      if (search && typeof search === "string") {
+        filteredSamples = filteredSamples.filter(v => 
+          v.name.toLowerCase().includes(search.toLowerCase()) ||
+          v.description.toLowerCase().includes(search.toLowerCase())
+        );
+      }
+      return res.json(filteredSamples);
+    }
 
     res.json(result);
   } catch (error) {
