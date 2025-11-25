@@ -72,14 +72,14 @@ export default function GroupsPage() {
     }));
   }, [groups]);
 
-  // Separate City and Professional groups
+  // Separate City and Professional groups (from filtered results so search works)
   const cityGroups = useMemo(() => {
-    return enrichedGroups.filter(g => g.type === "city");
-  }, [enrichedGroups]);
+    return filteredGroups.filter(g => g.type === "city");
+  }, [filteredGroups]);
 
   const professionalGroups = useMemo(() => {
-    return enrichedGroups.filter(g => g.type === "professional");
-  }, [enrichedGroups]);
+    return filteredGroups.filter(g => g.type === "professional");
+  }, [filteredGroups]);
 
   // My Groups - actual groups user has joined from database
   const myGroups = useMemo(() => {
