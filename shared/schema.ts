@@ -626,49 +626,6 @@ export const eventRsvps = pgTable("event_rsvps", {
   rsvpedAtIdx: index("event_rsvps_rsvped_at_idx").on(table.rsvpedAt),
 }));
 
-// ============================================================================
-// EVENT PARTICIPANTS (Organizers, DJs, Teachers, Performers)
-// Tracks all participants/roles for an event - supports profile claiming
-// ============================================================================
-
-export const eventParticipants = pgTable("event_participants", {
-  id: serial("id").primaryKey(),
-  eventId: integer("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
-  userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
-  scrapedProfileId: integer("scraped_profile_id"),
-  
-  // Role: organizer, co_organizer, dj, teacher, performer, photographer, host, other
-  role: varchar("role", { length: 50 }).notNull(),
-  
-  // Display name (from scraping or user profile)
-  displayName: varchar("display_name", { length: 255 }).notNull(),
-  
-  // Confirmation status
-  isConfirmed: boolean("is_confirmed").default(false),
-  confirmedAt: timestamp("confirmed_at"),
-  
-  // Primary participant (main organizer/teacher)
-  isPrimary: boolean("is_primary").default(false),
-  
-  // Additional info
-  bio: text("bio"),
-  photoUrl: text("photo_url"),
-  socialLinks: jsonb("social_links"),
-  
-  // Who added this participant
-  addedBy: integer("added_by").references(() => users.id),
-  notes: text("notes"),
-  
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-}, (table) => ({
-  eventIdx: index("event_participants_event_idx").on(table.eventId),
-  userIdx: index("event_participants_user_idx").on(table.userId),
-  roleIdx: index("event_participants_role_idx").on(table.role),
-  scrapedProfileIdx: index("event_participants_scraped_profile_idx").on(table.scrapedProfileId),
-  uniqueParticipant: uniqueIndex("unique_event_participant").on(table.eventId, table.userId, table.role),
-}));
-
 export const eventPhotos = pgTable("event_photos", {
   id: serial("id").primaryKey(),
   eventId: integer("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),

@@ -32,12 +32,17 @@ export const participantStatusEnum = pgEnum('participant_status', [
 ]);
 
 // Event participants table with roles
+// Supports both verified users AND scraped/unclaimed profiles
 export const eventParticipants = pgTable("event_participants", {
   id: serial("id").primaryKey(),
   eventId: integer("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId: integer("user_id").references(() => users.id, { onDelete: "set null" }), // Nullable for scraped entries
   role: eventRoleEnum("role").notNull(),
   status: participantStatusEnum("status").default("confirmed").notNull(),
+  
+  // Scraped/Unclaimed profile support
+  scrapedProfileId: integer("scraped_profile_id"), // Links to scraped_profiles for unclaimed
+  displayName: varchar("display_name", { length: 255 }), // Name from scraping before user claim
   
   // Permissions (role-based)
   canEditEvent: boolean("can_edit_event").default(false),

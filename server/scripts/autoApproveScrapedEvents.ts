@@ -12,7 +12,8 @@
  */
 
 import { db } from '@shared/db';
-import { scrapedEvents, events, groups, eventScrapingSources, eventParticipants, scrapedProfiles } from '@shared/schema';
+import { scrapedEvents, events, groups, eventScrapingSources, scrapedProfiles } from '@shared/schema';
+import { eventParticipants } from '@shared/eventRolesSchemas';
 import { eq, sql, and, ilike } from 'drizzle-orm';
 import { getCityscapeImage } from '../algorithms/cityCityscape';
 import { extractParticipants, createScrapedProfile, type ExtractedParticipant } from '../services/participant-extraction';
@@ -242,6 +243,10 @@ async function createEventParticipants(
 ): Promise<number> {
   let created = 0;
   
+  // Valid roles in the enum
+  const validRoles = ['organizer', 'co_organizer', 'dj', 'teacher', 'performer', 'photographer', 'volunteer', 'host', 'sponsor', 'attendee'] as const;
+  type ValidRole = typeof validRoles[number];
+  
   for (const participant of participants) {
     try {
       // Create or get scraped profile
@@ -255,38 +260,45 @@ async function createEventParticipants(
         );
       }
       
-      // Map role to event participant role
-      const roleMap: Record<string, string> = {
+      // Map role to valid event role enum value
+      const roleMap: Record<string, ValidRole> = {
         'organizer': 'organizer',
         'co_organizer': 'co_organizer',
         'dj': 'dj',
         'teacher': 'teacher',
         'performer': 'performer',
         'photographer': 'photographer',
-        'host': 'host'
+        'host': 'host',
+        'assistant_teacher': 'teacher',
+        'special_guest': 'performer',
+        'volunteer': 'volunteer'
       };
       
-      const eventRole = roleMap[participant.role] || 'other';
+      const eventRole: ValidRole = roleMap[participant.role] || 'attendee';
       
-      // Check if participant already exists for this event
-      const existing = await db.query.eventParticipants.findFirst({
-        where: and(
-          eq(eventParticipants.eventId, eventId),
-          ilike(eventParticipants.displayName, participant.name)
+      // Check if participant already exists for this event by name
+      const existing = await db
+        .select()
+        .from(eventParticipants)
+        .where(
+          and(
+            eq(eventParticipants.eventId, eventId),
+            ilike(eventParticipants.displayName, participant.name)
+          )
         )
-      });
+        .limit(1);
       
-      if (!existing) {
+      if (existing.length === 0) {
         await db.insert(eventParticipants).values({
           eventId,
           userId: participant.matchedUserId || null,
           scrapedProfileId: profileId || null,
           role: eventRole,
           displayName: participant.name,
-          isConfirmed: false,
-          isPrimary: participant.role === 'organizer',
-          addedBy: 1, // System
-          notes: participant.sourceText
+          status: 'confirmed',
+          notes: participant.sourceText,
+          isPubliclyListed: true,
+          displayOrder: participant.role === 'organizer' ? 0 : 10
         });
         created++;
       }
