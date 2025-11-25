@@ -780,6 +780,14 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/city-groups">
+        <ProtectedRoute>
+          <AppLayout>
+            <CityGroupsPage />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/groups/professional">
         <ProtectedRoute>
           <AppLayout>

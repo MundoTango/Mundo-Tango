@@ -42,7 +42,7 @@ export default function CityGroupsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background" data-testid="city-groups-page">
       <div className="container mx-auto p-4 space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
@@ -171,6 +171,6 @@ export default function CityGroupsPage() {
           </Card>
         )}
       </div>
-    </div>
+    </main>
   );
 }
