@@ -7,6 +7,7 @@
 
 import { BasePageAgent } from './agents/BasePageAgent';
 import { LandingPageAgent } from './agents/LandingPageAgent';
+import { FeedPageAgent } from './agents/FeedPageAgent';
 
 export class AgentRegistry {
   private agents: Map<string, BasePageAgent>;
@@ -36,15 +37,18 @@ export class AgentRegistry {
   private initializeAgents() {
     console.log('[AgentRegistry] 🚀 Initializing agent ecosystem...');
 
-    // Phase 1: Landing Page Agent (proof of concept)
+    // Phase 1: Core Page Agents with PRD Knowledge
     const landingPageAgent = new LandingPageAgent();
     this.registerAgent(landingPageAgent);
 
-    // TODO: Phase 2: Add more page agents
-    // - HomePageAgent (client/src/pages/Home.tsx)
-    // - FeedPageAgent (client/src/pages/Feed.tsx)
+    // Phase 2: Feed Page Agent (with full PRD knowledge - knows schema, APIs, common bugs)
+    const feedPageAgent = new FeedPageAgent();
+    this.registerAgent(feedPageAgent);
+
+    // TODO: Phase 3: Add more page agents with PRD knowledge
     // - ProfilePageAgent (client/src/pages/Profile.tsx)
     // - EventsPageAgent (client/src/pages/events/*.tsx)
+    // - MessagesPageAgent (client/src/pages/Messages.tsx)
     // ... etc for all 1,218 agents
 
     console.log(`[AgentRegistry] ✅ Registered ${this.agents.size} agents`);
