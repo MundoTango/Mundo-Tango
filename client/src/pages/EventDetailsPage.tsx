@@ -88,7 +88,7 @@ export default function EventDetailsPage() {
           <motion.div 
             className="absolute inset-0 bg-cover bg-center" 
             style={{
-              backgroundImage: `url('https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop')`
+              backgroundImage: `url('${event.imageUrl || event.coverImage || 'https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop'}')`
             }}
             initial={{ scale: 1.1 }}
             animate={{ scale: 1 }}
@@ -110,19 +110,22 @@ export default function EventDetailsPage() {
                 </Badge>
               )}
               
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6">
-                {event.title}
-              </h1>
+              <h1 
+                className="text-4xl md:text-5xl lg:text-6xl font-serif text-white font-bold leading-tight mb-6"
+                dangerouslySetInnerHTML={{ __html: event.title || "Event" }}
+              />
               
               <div className="flex flex-wrap items-center justify-center gap-6 text-white/90 mb-8">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5" />
-                  <span>{event.date && safeDateFormat(event.date, "MMM dd, yyyy")}</span>
-                </div>
-                {event.location && (
+                {(event.startDate || event.date) && (
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5" />
+                    <span>{safeDateFormat(event.startDate || event.date, "EEEE, MMMM d, yyyy")}</span>
+                  </div>
+                )}
+                {(event.location || event.venue || event.city) && (
                   <div className="flex items-center gap-2">
                     <MapPin className="h-5 w-5" />
-                    <span>{event.location}</span>
+                    <span>{event.location || event.venue || event.city}</span>
                   </div>
                 )}
               </div>
@@ -180,14 +183,14 @@ export default function EventDetailsPage() {
                     <div>
                       <p className="text-lg font-semibold mb-2">Date & Time</p>
                       <p className="text-base text-muted-foreground leading-relaxed">
-                        {event.date && safeDateFormat(event.date, "PPPP")}
+                        {(event.startDate || event.date) && safeDateFormat(event.startDate || event.date, "PPPP")}
                         {event.startTime && <> at {event.startTime}</>}
                         {event.endTime && <> - {event.endTime}</>}
                       </p>
                     </div>
                   </motion.div>
 
-                  {event.location && (
+                  {(event.location || event.venue || event.city) && (
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -199,7 +202,12 @@ export default function EventDetailsPage() {
                       </div>
                       <div>
                         <p className="text-lg font-semibold mb-2">Location</p>
-                        <p className="text-base text-muted-foreground leading-relaxed">{event.location}</p>
+                        <p className="text-base text-muted-foreground leading-relaxed">
+                          {event.venue && <span className="font-medium">{event.venue}</span>}
+                          {event.venue && event.location && <br />}
+                          {event.location}
+                          {event.city && <><br />{event.city}{event.country && `, ${event.country}`}</>}
+                        </p>
                       </div>
                     </motion.div>
                   )}
@@ -286,9 +294,29 @@ export default function EventDetailsPage() {
                     className="pt-8 border-t"
                   >
                     <h3 className="text-2xl font-serif font-bold mb-6">About This Event</h3>
-                    <p className="text-lg text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                      {event.description}
-                    </p>
+                    <div 
+                      className="text-lg text-muted-foreground whitespace-pre-wrap leading-relaxed prose prose-lg dark:prose-invert max-w-none"
+                      dangerouslySetInnerHTML={{ __html: event.description.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&') }}
+                    />
+                  </motion.div>
+                )}
+                
+                {event.sourceUrl && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.75 }}
+                    className="pt-6 border-t"
+                  >
+                    <a 
+                      href={event.sourceUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-primary hover:underline"
+                    >
+                      <Globe className="h-4 w-4" />
+                      View Original Event Source
+                    </a>
                   </motion.div>
                 )}
               </CardContent>

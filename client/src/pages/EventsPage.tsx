@@ -109,9 +109,11 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
             )}
           </div>
           <div className="absolute bottom-4 left-4 right-4 text-white">
-            <h3 className="text-2xl font-serif font-bold line-clamp-2 mb-2" data-testid={`text-event-title-${eventData.id}`}>
-              {eventData.title}
-            </h3>
+            <h3 
+              className="text-2xl font-serif font-bold line-clamp-2 mb-2" 
+              data-testid={`text-event-title-${eventData.id}`}
+              dangerouslySetInnerHTML={{ __html: eventData.title || "Untitled Event" }}
+            />
           </div>
         </div>
 
@@ -120,8 +122,9 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
             <CalendarIcon className="h-4 w-4 flex-shrink-0 text-primary" />
             <span data-testid={`text-event-date-${eventData.id}`}>
               {(() => {
-                const dateStr = formatEventDateTime(eventData.date);
-                const timeStr = formatEventTime(eventData.date);
+                const dateToUse = eventData.startDate || eventData.start_date || eventData.date;
+                const dateStr = formatEventDateTime(dateToUse);
+                const timeStr = eventData.startTime || formatEventTime(dateToUse);
                 const isDateValid = dateStr !== "Date TBD";
                 const isTimeValid = timeStr !== "Time TBD";
                 
@@ -136,11 +139,11 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
             </span>
           </div>
 
-          {(eventData.location || eventData.venue) && (
+          {(eventData.location || eventData.venue || eventData.city) && (
             <div className="flex items-center gap-2 text-sm">
               <MapPin className="h-4 w-4 flex-shrink-0 text-primary" />
               <span className="line-clamp-1" data-testid={`text-event-location-${eventData.id}`}>
-                {eventData.location || eventData.venue}
+                {eventData.venue || eventData.location || eventData.city}
               </span>
             </div>
           )}
@@ -272,13 +275,17 @@ export default function EventsPage() {
   // Convert events to calendar format
   const calendarEvents = useMemo(() => {
     if (!events) return [];
-    return events.map((event: any) => ({
-      id: event.id,
-      title: event.title,
-      start: new Date(event.date || Date.now()),
-      end: new Date((new Date(event.date || Date.now())).getTime() + 2 * 60 * 60 * 1000), // default 2hr duration
-      resource: event,
-    }));
+    return events.map((event: any) => {
+      const eventData = event.event || event;
+      const dateToUse = eventData.startDate || eventData.start_date || eventData.date || Date.now();
+      return {
+        id: eventData.id,
+        title: eventData.title,
+        start: new Date(dateToUse),
+        end: new Date((new Date(dateToUse)).getTime() + 2 * 60 * 60 * 1000),
+        resource: eventData,
+      };
+    });
   }, [events]);
 
   // Mock geocoding for map view (in production, use real geocoding)
@@ -615,9 +622,9 @@ export default function EventsPage() {
                           <Marker key={event.id} position={[event.lat, event.lng]}>
                             <Popup>
                               <div className="p-2">
-                                <h3 className="font-semibold mb-1">{event.title}</h3>
+                                <h3 className="font-semibold mb-1" dangerouslySetInnerHTML={{ __html: event.title || "Event" }} />
                                 <p className="text-sm text-muted-foreground mb-2">
-                                  {safeDateFormat(event.date, "MMM dd, yyyy 'at' h:mm a")}
+                                  {safeDateFormat(event.startDate || event.date, "MMM dd, yyyy 'at' h:mm a")}
                                 </p>
                                 <Link href={`/events/${event.id}`}>
                                   <Button size="sm" className="w-full">View Details</Button>

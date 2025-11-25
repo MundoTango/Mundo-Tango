@@ -20,12 +20,32 @@ import { motion } from "framer-motion";
 
 function GroupEventsTab({ groupId, groupCity }: { groupId: number; groupCity?: string | null }) {
   const { data: events, isLoading } = useQuery<SelectEvent[]>({
-    queryKey: ["/api/events", "group", groupId],
+    queryKey: ["/api/events", "group", groupId, groupCity],
     queryFn: async () => {
-      const res = await fetch(`/api/events?groupId=${groupId}`, { credentials: "include" });
+      // First try to fetch by groupId
+      let res = await fetch(`/api/events?groupId=${groupId}&limit=50`, { credentials: "include" });
       if (!res.ok) return [];
-      const data = await res.json();
-      return data.events || data || [];
+      let data = await res.json();
+      let eventList = data.events || data || [];
+      
+      // Extract event objects from wrapped responses {event: {...}, organizer: {...}}
+      if (eventList.length > 0 && eventList[0]?.event) {
+        eventList = eventList.map((item: any) => item.event || item);
+      }
+      
+      // If no events found by groupId and we have a city, try fetching by city
+      if (eventList.length === 0 && groupCity) {
+        res = await fetch(`/api/events?city=${encodeURIComponent(groupCity)}&limit=50`, { credentials: "include" });
+        if (res.ok) {
+          data = await res.json();
+          eventList = data.events || data || [];
+          if (eventList.length > 0 && eventList[0]?.event) {
+            eventList = eventList.map((item: any) => item.event || item);
+          }
+        }
+      }
+      
+      return eventList;
     },
   });
 
@@ -535,25 +555,111 @@ export default function GroupDetailsPage() {
               <TabsContent value="about">
                 <Card className="overflow-hidden">
                   <CardHeader className="border-b">
-                    <CardTitle className="text-2xl font-serif">About this group</CardTitle>
+                    <CardTitle className="text-2xl font-serif">About {group.name}</CardTitle>
                   </CardHeader>
-                  <CardContent className="p-8 space-y-6">
-                    <div>
-                      <h3 className="text-lg font-semibold mb-2">Group Type</h3>
-                      <p className="text-muted-foreground capitalize">{group.type}</p>
-                    </div>
-                    {group.emoji && (
-                      <div>
-                        <h3 className="text-lg font-semibold mb-2">Emoji</h3>
-                        <p className="text-3xl">{group.emoji}</p>
+                  <CardContent className="p-8 space-y-8">
+                    {/* Location Info */}
+                    {(group.city || group.country) && (
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <MapPin className="h-6 w-6 text-primary" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold mb-1">Location</h3>
+                          <p className="text-muted-foreground text-lg">
+                            {group.city}{group.country && `, ${group.country}`}
+                            {group.region && <span className="text-sm ml-2">({group.region})</span>}
+                          </p>
+                        </div>
                       </div>
                     )}
-                    {group.description && (
+                    
+                    {/* Group Type */}
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        {group.emoji ? (
+                          <span className="text-2xl">{group.emoji}</span>
+                        ) : (
+                          <Users className="h-6 w-6 text-primary" />
+                        )}
+                      </div>
                       <div>
-                        <h3 className="text-lg font-semibold mb-2">Description</h3>
-                        <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                          {group.description}
-                        </p>
+                        <h3 className="text-lg font-semibold mb-1">Community Type</h3>
+                        <p className="text-muted-foreground text-lg capitalize">{group.type} Community</p>
+                      </div>
+                    </div>
+                    
+                    {/* Description */}
+                    {group.description && (
+                      <div className="pt-6 border-t">
+                        <h3 className="text-xl font-serif font-semibold mb-4">About This Community</h3>
+                        <div 
+                          className="text-lg text-muted-foreground whitespace-pre-wrap leading-relaxed prose prose-lg dark:prose-invert max-w-none"
+                          dangerouslySetInnerHTML={{ __html: group.description }}
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Long Description */}
+                    {group.longDescription && group.longDescription !== group.description && (
+                      <div className="pt-6 border-t">
+                        <h3 className="text-xl font-serif font-semibold mb-4">More Information</h3>
+                        <div 
+                          className="text-lg text-muted-foreground whitespace-pre-wrap leading-relaxed prose prose-lg dark:prose-invert max-w-none"
+                          dangerouslySetInnerHTML={{ __html: group.longDescription }}
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Community Stats */}
+                    <div className="pt-6 border-t grid grid-cols-2 md:grid-cols-4 gap-6">
+                      <div className="text-center p-4 rounded-xl bg-muted/50">
+                        <div className="text-3xl font-bold text-primary">{group.memberCount || 0}</div>
+                        <div className="text-sm text-muted-foreground">Members</div>
+                      </div>
+                      <div className="text-center p-4 rounded-xl bg-muted/50">
+                        <div className="text-3xl font-bold text-primary">{group.eventCount || 0}</div>
+                        <div className="text-sm text-muted-foreground">Events</div>
+                      </div>
+                      <div className="text-center p-4 rounded-xl bg-muted/50">
+                        <div className="text-3xl font-bold text-primary">{group.postCount || 0}</div>
+                        <div className="text-sm text-muted-foreground">Posts</div>
+                      </div>
+                      <div className="text-center p-4 rounded-xl bg-muted/50">
+                        <div className="text-3xl font-bold text-primary">{group.verified ? "Yes" : "No"}</div>
+                        <div className="text-sm text-muted-foreground">Verified</div>
+                      </div>
+                    </div>
+                    
+                    {/* Tags */}
+                    {group.tags && group.tags.length > 0 && (
+                      <div className="pt-6 border-t">
+                        <h3 className="text-lg font-semibold mb-3">Tags</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {group.tags.map((tag: string, i: number) => (
+                            <Badge key={i} variant="secondary" className="text-sm px-3 py-1">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Rules */}
+                    {group.rules && (
+                      <div className="pt-6 border-t">
+                        <h3 className="text-xl font-serif font-semibold mb-4">Community Rules</h3>
+                        <div 
+                          className="text-muted-foreground whitespace-pre-wrap leading-relaxed prose dark:prose-invert max-w-none"
+                          dangerouslySetInnerHTML={{ __html: group.rules }}
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Created Date */}
+                    {group.createdAt && (
+                      <div className="pt-6 border-t text-center text-sm text-muted-foreground">
+                        Community established {safeDateFormat(group.createdAt, "MMMM yyyy")}
                       </div>
                     )}
                   </CardContent>
