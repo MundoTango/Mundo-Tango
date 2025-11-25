@@ -109,6 +109,54 @@ function parsePrice(priceStr: string | null): number | null {
   return match ? parseFloat(match[0]) : null;
 }
 
+/**
+ * Intelligent Event Type Detection
+ * Analyzes title and description to determine the correct event type
+ * Per PRD: milonga, workshop, festival, online, social, practica
+ */
+function detectEventType(title: string, description: string | null): string {
+  const titleLower = title.toLowerCase();
+  const descLower = (description || '').toLowerCase();
+  const combined = `${titleLower} ${descLower}`;
+  
+  // Festival detection (highest priority - multi-day events)
+  if (/festival|marathon|encuentro|circuit|tango\s*week/i.test(combined)) {
+    return 'festival';
+  }
+  
+  // Workshop/Class detection (teaching events)
+  if (/class|classes|lesson|lessons|level\s*\d|level\s*(one|two|three|1|2|3)/i.test(titleLower)) {
+    return 'workshop';
+  }
+  if (/beginner|intermediate|advanced|fundamentals|technique/i.test(titleLower)) {
+    return 'workshop';
+  }
+  if (/workshop|masterclass|intensive|bootcamp|course/i.test(titleLower)) {
+    return 'workshop';
+  }
+  if (/choreography|footwork|musicality|embrace|navigation/i.test(titleLower)) {
+    return 'workshop';
+  }
+  
+  // Practica detection (practice sessions)
+  if (/practica|practice|pract-ilonga|practilonga/i.test(titleLower)) {
+    return 'practica';
+  }
+  
+  // Online detection
+  if (/online|virtual|zoom|webinar|livestream|live\s*stream/i.test(combined)) {
+    return 'online';
+  }
+  
+  // Competition detection (treat as festival/special event)
+  if (/competition|championship|contest|campeonato/i.test(combined)) {
+    return 'festival';
+  }
+  
+  // Default to milonga for actual social dance events
+  return 'milonga';
+}
+
 // Convert scraped event to real event
 async function convertToEvent(scraped: ScrapedEvent, cityGroupId: number): Promise<void> {
   const city = extractCity(scraped.location);
@@ -129,7 +177,10 @@ async function convertToEvent(scraped: ScrapedEvent, cityGroupId: number): Promi
     return;
   }
   
-  // Create the real event
+  // Detect event type intelligently from title/description
+  const eventType = detectEventType(scraped.title, scraped.description);
+  
+  // Create the real event with ALL scraped fields
   await db.insert(events).values({
     title: scraped.title,
     description: scraped.description || `${scraped.title} - Tango event in ${city}`,
@@ -139,12 +190,14 @@ async function convertToEvent(scraped: ScrapedEvent, cityGroupId: number): Promi
     address: scraped.address,
     city: city,
     userId: 1, // System user - organizers added but not as admins
-    eventType: 'milonga',
+    eventType: eventType, // INTELLIGENT DETECTION - not hardcoded!
     status: 'published',
     isPublic: true,
     price: parsePrice(scraped.price),
     imageUrl: scraped.imageUrl,
     groupId: cityGroupId,
+    websiteUrl: scraped.sourceUrl, // Store original source URL
+    ticketUrl: scraped.sourceUrl, // Link to original for tickets
   });
   
   // Mark scraped event as approved
