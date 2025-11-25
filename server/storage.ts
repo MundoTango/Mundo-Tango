@@ -2858,13 +2858,55 @@ export class DbStorage implements IStorage {
   }
 
   async createEvent(event: InsertEvent): Promise<SelectEvent> {
-    const result = await db.insert(events).values(event).returning();
+    // User Decision: Auto-assign organizer to creator if not specified
+    const eventData = { ...event };
+    if (!eventData.organizerId && eventData.userId) {
+      eventData.organizerId = eventData.userId;
+      console.log(`[STORAGE] Auto-assigned organizer_id=${eventData.userId} to event`);
+    }
+    
+    const result = await db.insert(events).values(eventData).returning();
     return result[0];
   }
 
   async getEventById(id: number): Promise<SelectEvent | undefined> {
-    const result = await db.select().from(events).where(eq(events.id, id)).limit(1);
-    return result[0];
+    // Include organizer information with the event
+    const result = await db
+      .select({
+        id: events.id,
+        title: events.title,
+        description: events.description,
+        location: events.location,
+        city: events.city,
+        country: events.country,
+        venue: events.venue,
+        startDate: events.startDate,
+        endDate: events.endDate,
+        startTime: events.startTime,
+        endTime: events.endTime,
+        price: events.price,
+        currency: events.currency,
+        eventType: events.eventType,
+        imageUrl: events.imageUrl,
+        status: events.status,
+        capacity: events.capacity,
+        userId: events.userId,
+        organizerId: events.organizerId,
+        createdAt: events.createdAt,
+        updatedAt: events.updatedAt,
+        organizer: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage,
+        }
+      })
+      .from(events)
+      .leftJoin(users, eq(events.organizerId, users.id))
+      .where(eq(events.id, id))
+      .limit(1);
+    
+    return result[0] as any;
   }
 
   async getEvents(params: { city?: string; eventType?: string; startDate?: Date; endDate?: Date; search?: string; limit?: number; offset?: number }): Promise<SelectEvent[]> {
