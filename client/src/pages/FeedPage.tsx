@@ -28,7 +28,6 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { PostCreator } from "@/components/universal/PostCreator";
 import { SmartPostFeed } from "@/components/feed/SmartPostFeed";
 import { UpcomingEventsSidebar } from "@/components/feed/UpcomingEventsSidebar";
-import { ConnectionStatusBadge } from "@/components/feed/ConnectionStatusBadge";
 import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker";
 import { PostItem } from "@/components/feed/PostItem";
 import { EditPostDialog } from "@/components/modals/EditPostDialog";
@@ -443,11 +442,6 @@ export default function FeedPage() {
         <main className="col-span-12 lg:col-span-9 space-y-6">
           {/* Hero Welcome Section */}
           <FeedHeroWelcome />
-          
-          {/* Connection Status Badge */}
-          <div className="flex justify-end">
-            <ConnectionStatusBadge />
-          </div>
 
           {/* Instagram-style Stories Carousel */}
           <StoriesCarousel />
