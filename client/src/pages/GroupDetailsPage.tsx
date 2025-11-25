@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Users, MapPin, Settings as SettingsIcon, Calendar, Home, Building2, Heart, Check, ChevronRight } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { safeDateFormat } from "@/lib/safeDateFormat";
 import type { SelectGroup, SelectEvent } from "@shared/schema";
 import { SEO } from "@/components/SEO";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
