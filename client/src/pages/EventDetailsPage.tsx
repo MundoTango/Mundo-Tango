@@ -3,7 +3,9 @@ import { useEvent, useRSVPEvent } from "@/hooks/useEvents";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight } from "lucide-react";
+import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link } from "wouter";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { useToast } from "@/hooks/use-toast";
 import { SEO } from "@/components/SEO";
@@ -205,6 +207,25 @@ export default function EventDetailsPage() {
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="flex items-start gap-4"
+                  >
+                    <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <DollarSign className="h-7 w-7 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-lg font-semibold mb-2" data-testid="text-price-label">Price</p>
+                      <p className="text-base text-muted-foreground leading-relaxed" data-testid="text-event-price">
+                        {event.price && event.price > 0 
+                          ? `${event.currency || '$'}${event.price}` 
+                          : 'Free'}
+                      </p>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 }}
                     className="flex items-start gap-4"
                   >
@@ -217,6 +238,45 @@ export default function EventDetailsPage() {
                     </div>
                   </motion.div>
                 </div>
+
+                {event.organizer && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.65 }}
+                    className="pt-6 border-t"
+                  >
+                    <h3 className="text-xl font-semibold mb-4" data-testid="text-organizer-header">Event Organizer</h3>
+                    <Link 
+                      href={`/profile/${event.organizer.username || event.organizer.id}`}
+                      data-testid="link-organizer-profile"
+                    >
+                      <div className="flex items-center gap-4 p-4 rounded-xl hover-elevate transition-colors cursor-pointer">
+                        <Avatar className="h-14 w-14 border-2 border-primary/20">
+                          <AvatarImage 
+                            src={event.organizer.profileImage} 
+                            alt={event.organizer.name || 'Organizer'} 
+                            data-testid="img-organizer-avatar"
+                          />
+                          <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                            {(event.organizer.name || 'O').charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-lg font-semibold truncate" data-testid="text-organizer-name">
+                            {event.organizer.name || 'Unknown Organizer'}
+                          </p>
+                          {event.organizer.username && (
+                            <p className="text-sm text-muted-foreground" data-testid="text-organizer-username">
+                              @{event.organizer.username}
+                            </p>
+                          )}
+                        </div>
+                        <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                    </Link>
+                  </motion.div>
+                )}
 
                 {event.description && (
                   <motion.div
