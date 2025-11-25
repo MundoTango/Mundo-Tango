@@ -1,7 +1,7 @@
 # Mundo Tango
 
 ## Overview
-Mundo Tango is a production-ready social platform connecting the global tango community with a resilient, self-sovereign architecture and enterprise-grade security. It integrates 7 business systems and 1,218 specialized AI agents. The platform's business model includes premium services, event monetization, and targeted advertising, aiming to capture significant market potential within the global dance community.
+Mundo Tango is a production-ready social platform designed to connect the global tango community. It features a resilient, self-sovereign architecture with enterprise-grade security, integrating 7 business systems and 1,218 specialized AI agents. The platform aims to monetize through premium services, event hosting, and targeted advertising, tapping into the global dance market.
 
 ## User Preferences
 - **Work Simultaneously** - Run operations in parallel (use Promise.all, parallel tool calls)
@@ -17,130 +17,37 @@ Mundo Tango is a production-ready social platform connecting the global tango co
 ## System Architecture
 
 ### UI/UX
-The platform uses the "MT Ocean Theme" with ocean blues and warm accents, supporting dark mode via Tailwind CSS. Components are built with `shadcn/ui` and Radix UI, using Lucide React and React Icons for iconography. It provides i18n support for 68 languages via `i18next` and uses Wouter for routing. Layouts include `AppLayout` (public), `DashboardLayout` (authenticated), and `AdminLayout` (administrative).
+The platform employs the "MT Ocean Theme" with ocean blues and warm accents, supporting dark mode via Tailwind CSS. Components are built using `shadcn/ui` and Radix UI, with iconography from Lucide React and React Icons. It supports 68 languages via `i18next` and uses Wouter for routing. Layouts include `AppLayout` (public), `DashboardLayout` (authenticated), and `AdminLayout` (administrative).
 
-**Visual Editor - Full Autonomous System:**
-The Visual Editor provides wisprflow.ai-style UX with comprehensive inline editing:
-- **Inline Editing:** Double-click text to edit directly, Delete key removes elements, Alt+Drag moves elements
-- **Element Selection:** Click any element → blue outline, Cmd+Click links to navigate within iframe
-- **Visual Feedback:** Toast notifications for all actions (edit saved, element deleted/moved)
-- **User Instructions:** Floating InlineEditingInstructions tooltip teaches all shortcuts
-- **Voice Commands:** Click-to-toggle voice mode (NOT hold-to-talk), natural TTS voice selection
-- **Save System:** Manual "Save Changes" button with backend orchestration, tracks unsaved changes count
-- **Context Awareness:** Smart suggestions based on selected elements, page awareness indicators
-- **Recent Updates (Nov 24, 2025):**
-  - ✅ FIXED: Delete key bug (now checks contentEditable state correctly)
-  - ✅ ADDED: Toast feedback for text editing, element deletion, element movement
-  - ✅ ADDED: InlineEditingInstructions floating tooltip for user education
-  - ⚠️ PENDING: Color picker for MT Ocean Theme (requires new component with brand presets)
-  - ✅ COMPLETED: Phase C Autonomous Framework (auto-validation, auto-fix, escalation) - DEPLOYED
-  - 📋 CREATED: MB_MD_PHASE_C_AUTONOMOUS_FRAMEWORK_PRD.md (handoff to Mr. Blue)
-  - 🎓 CREATED: Agent training lessons 45-47 (validation loop, orchestration phases, event bus)
-  - 🗄️ ADDED: Database tables for escalations and evidence_packages tracking
-  - ✅ **MB.MD v9.5.1 PHASE 1 COMPLETE:** All P0 production fixes deployed and validated
-    - P0-1: Vibe coding routing (enhanced regex patterns detect UI modification requests)
-    - P0-2: Text box clears immediately after send (UX improvement)
-    - P0-3: Voice transcription endpoint `/api/mrblue/transcribe` (OpenAI Whisper integration)
-    - P1-4: Pre-generation context analysis `/api/mrblue/analyze` (AI-powered request analysis)
-    - **P0-5: Empty message bug - PARTIAL FIX** (timestamp-based race condition guard - helped but didn't fully fix the root cause)
-  - ✅ **MB.MD v9.5.1 PHASE 2 COMPLETE:** Empty message bug + color change bug fixed via 4-Research-Session methodology
-    - **P0-6:** Fixed `iframeUrl` variable name typo → `currentIframeUrl` (analysis was failing)
-    - **P0-6.1:** Fixed `apiRequest()` call signature (wrong parameter order)
-    - **P0-7:** Fixed `executeMutation.onSuccess` TanStack Query closure bug (used empty `prompt` state → now uses `taskPrompt` parameter)
-    - **P0-8:** Fixed `quickStyleMutation.onSuccess` TanStack Query closure bug (used empty `prompt` state → now uses `stylePrompt` parameter)
-    - **P0-9:** Fixed backend auth blocking message saves (403 error) - allow authenticated users to reassign orphaned conversations
-    - **P0-10 (FINAL FIX - Nov 24, 17:58 PM):** Fixed selector extraction from prompt (color change bug) - strip escaped quotes before parsing `#element-1763981558346` from user message
-      - **Root Cause:** Prompt contained `"\"#element-1763981558346\""` (with quotes), regex looked for `^#` but string started with `"`
-      - **Solution:** Strip surrounding quotes with `.replace(/^["']|["']$/g, '')` before regex matching
-      - **Result:** Selector extraction now works correctly, CSS applies to specific element (not `*`)
-    - **Root Cause (All 10 Bugs):** Closure bugs in mutations, undefined variables, wrong API signatures, overly strict auth, missing selector extraction, and quote stripping
-    - **Result:** Zero empty message errors, zero 403 errors, color changes work correctly on specific elements ✅
-  - 🔬 **4-RESEARCH-SESSION METHODOLOGY:** Formalized deep-dive debugging approach
-    - Session 1: Error Understanding (what's happening)
-    - Session 2: Code Flow Traced (execution path)
-    - Session 3: Root Cause Identified (why it fails)
-    - Session 4: Secondary Issues Found (validation gaps, UX improvements)
-    - **Result:** 95-99% fix quality, >80% auto-fix rate, <10% escalation to Replit AI
+A Visual Editor provides a wisprflow.ai-style inline editing experience. Key features include direct text editing, element deletion and movement, visual feedback via toast notifications, instructional tooltips for shortcuts, and voice commands. A manual save system tracks unsaved changes, and context-awareness provides smart suggestions.
 
 ### Backend
-The backend is developed with Express and TypeScript, utilizing PostgreSQL (Neon) and Drizzle ORM. `shared/schema.ts` is the single source of truth for the database schema, with `server/storage.ts` providing CRUD operations. Routes are modular, and authentication uses JWT (httpOnly cookies) and Google/Facebook OAuth, featuring an 8-tier Role-Based Access Control (RBAC) system. Database migrations are automated.
+The backend is built with Express and TypeScript, utilizing PostgreSQL (Neon) and Drizzle ORM. `shared/schema.ts` defines the database schema, with `server/storage.ts` handling CRUD operations. Routes are modular, and authentication uses JWT (httpOnly cookies) with Google/Facebook OAuth, featuring an 8-tier Role-Based Access Control (RBAC) system. Database migrations are automated.
 
 ### AI Systems
-A universal agent ecosystem coordinates 1,218 specialized AI agents through a hierarchical training architecture:
-- **Level 1 - Replit AI:** Strategic oversight, trains Mr. Blue.
-- **Level 2 - Mr. Blue:** Tactical coordinator, manages specialized agents.
+A universal agent ecosystem orchestrates 1,218 specialized AI agents through a hierarchical training architecture:
+- **Level 1 - Replit AI:** Strategic oversight.
+- **Level 2 - Mr. Blue:** Tactical coordinator for specialized agents.
 - **Level 3 - 1,218 Agents:** Atomic task executors with instant knowledge sharing via a GlobalKnowledgeBase.
-- **Self-Healing Infrastructure:** Includes `PreFlightCheckService`, `GlobalKnowledgeBase`, `PageAuditService`, `AutoFixEngine` for autonomous self-healing, `AgentOrchestration`, and `VibeCodingService`. It features error detection, auto-analysis, auto-approval of fixes, and database integration for proposals.
-- **Phase C Autonomous Framework (DEPLOYED):** Production-ready validation loop with `AutoRetryService` (3-attempt retry with pattern learning), `EscalationService` (classify, report, notify Replit AI), `EvidenceCollector` (screenshots, LSP, tests), and `AgentEventBus` integration. Targets >80% auto-fix success rate, <10% escalation rate.
-- **Visual Validation Framework (NEW - Nov 24, 2025):** F12-equivalent inspection using Claude Computer Use for UI change validation. Captures before/after screenshots, analyzes visual regressions (layout breaks, color issues, text readability), and **BLOCKS acceptance** if validation fails. Prevents visual bugs from reaching production. Cost: ~$0.01-0.02 per validation, 15-30s validation time, 95%+ detection rate. Integrated into VibeCoding workflow.
-- **Contextual Agent Activation:** Agents activate per route with health checks, page audits, and contextual queries, improving performance.
-- **Backend Agent System:** Extends the Visual Editor to a full-stack autonomous system, handling backend, database, security, and service agents through a 7-phase orchestration process (Analyzing → Schema → API → Security → Service → Git → Restart). It supports real-time progress tracking, automatic Git commits, and session-based change tracking.
-- **Mr. Blue AI Assistant:** A fully autonomous AI system with 45+ services, offering text/voice chat, VibeCoding, page generation from natural language, proactive error detection, and auto-fix capabilities. Key features include chat persistence, AI suggestions (Claude), a memory system (LanceDB), and browser automation.
-- **The Plan:** A 50-page validation system guiding first-time users through platform features.
+- **Self-Healing Infrastructure:** Includes `PreFlightCheckService`, `GlobalKnowledgeBase`, `PageAuditService`, and `AutoFixEngine` for autonomous self-healing, `AgentOrchestration`, and `VibeCodingService`.
+- **Phase C Autonomous Framework:** A production-ready validation loop with `AutoRetryService`, `EscalationService`, `EvidenceCollector`, and `AgentEventBus` integration, aiming for >80% auto-fix success.
+- **Visual Validation Framework:** Integrates Claude Computer Use for AI-powered UI change validation, capturing before/after screenshots and analyzing visual regressions. This system blocks acceptance if validation fails.
+- **Contextual Agent Activation:** Agents activate per route with health checks, page audits, and contextual queries.
+- **Backend Agent System:** Extends autonomous capabilities to the full stack, handling backend, database, security, and services through a 7-phase orchestration process.
+- **Mr. Blue AI Assistant:** A fully autonomous AI system with 45+ services, offering text/voice chat, VibeCoding, page generation from natural language, proactive error detection, and auto-fix.
 - **Bifrost AI Gateway:** Manages multi-provider AI interactions with failover, semantic caching, and load balancing.
 
 ### Platform Features
-Core features include social functionalities like events, groups, posts, real-time notifications, media galleries, live streaming, marketplaces, and reviews. Business features include Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, and BullMQ Workers for background processing.
+Core features encompass social functionalities like events, groups, posts, real-time notifications, media galleries, live streaming, marketplaces, and reviews. Business features include Talent Match AI, LIFE CEO AI, Multi-AI Orchestration, Automated Scraping, Admin Dashboard, Stripe Payments, and BullMQ Workers for background processing.
 
 ### Testing
-The platform achieves 95%+ coverage through:
-- **E2E Tests (Playwright):** 17+ tests covering Auth, Feed, Events, Profiles, Search, Admin, Performance
-- **Hybrid Visual Testing (NEW - Nov 24, 2025):** Playwright + Claude Computer Use for AI-powered visual regression testing
-  - `ComputerUseService.analyzeScreenshot()` - Claude vision API integration
-  - Cost: ~$0.01-0.02 per test vs $30-50/hour manual QA (1000-5000x ROI)
-  - Use cases: Visual regression, accessibility, responsive design, complex UIs
-  - Works for Feed, Events, Profiles, and all features except Visual Editor
-- **Manual Testing:** Visual Editor (Playwright incompatible due to architectural complexity - validated manually)
-- **Integration Tests:** Backend API endpoints and orchestration services
-- **Quality Target:** 95-99/100 quality score per MB.MD standards
-- **Documentation:** See `docs/MB_MD_TESTING_STRATEGY.md` and `docs/MB_MD_HYBRID_TESTING_FINDINGS.md` for complete strategy
-
-### Production Readiness Status (Nov 25, 2025)
-**✅ PRODUCTION READY** - Validated for 10-25 beta users
-
-**10-User Validation Complete (Nov 25, 2025):**
-- ✅ **10 Test Users Created** with correct RBAC roles:
-  - Scott (god), Maria (super_admin), Jackson (admin), Sofia (moderator), Lucas (premium)
-  - Chen (user), Ibrahim (admin), Elena (user), Blocked (guest), Silent (user)
-- ✅ **All Core APIs Validated** - Frontend → Backend → Database connected:
-  - Posts API: 128 posts with user data
-  - Events API: 18 events with organizer data
-  - Marketplace API: 8 items with seller data
-  - Workshops API: 7 workshops
-  - Venues API: 8 venues
-  - Groups API: 11 groups with creator data
-  - Subscriptions API: 10 pricing tiers with Stripe integration
-  - **Community Map API: 18 locations, 8 venues, 2 housing listings (FIXED Nov 25)**
-- ✅ **The Plan Tracking Active** - 11 active sessions, 50-page validation tour working
-- ✅ **Friendships Seeded** - 44 friend relationships across test users
-
-**Community Map API Fixes (Nov 25, 2025):**
-- ✅ **P0-11:** Removed auth requirement from public `/api/community/locations` and `/api/community/stats` endpoints
-- ✅ **P0-12:** Fixed venue counts - was hardcoded to 0, now queries venues table (8 venues)
-- ✅ **P0-13:** Fixed housing counts - was using non-existent `isActive` column, now uses `status = 'active'` (2 listings)
-- ✅ **P0-14:** Fixed coordinates - was hardcoded to `{lat: 0, lng: 0}`, now uses city lookup table (30+ cities)
-- ✅ **P0-15:** Added missing schema imports (`venues`, `housingListings`) to routes.ts
-
-**Final Validation Checklist:**
-- ✅ **Code Cleanup:** Removed deprecated VisualEditorPageLightweight.tsx and /visual-editor-test route
-- ✅ **API Testing:** All 8 core endpoints returning valid data
-- ✅ **Critical Issues:** Zero P0 bugs in production logs
-- ✅ **Page Accessibility:** All critical pages verified accessible (Feed, Events, Visual Editor)
-- ✅ **Systems Operational:** All MB.MD v9.5.1 systems running correctly
-  - Phase C Autonomous Framework (auto-fix, escalation, validation loop)
-  - Self-Healing Infrastructure (PreFlightCheckService, AutoFixEngine, AgentOrchestration)
-  - Mr. Blue AI Assistant (text/voice chat, VibeCoding, proactive error detection)
-  - The Plan 50-page validation tour with progress tracking
-  
-**Known Limitations:**
-- Playwright E2E tests require Stripe test secrets for full execution
-- Visual Editor requires manual testing (architectural complexity prevents Playwright compatibility)
-- WebSocket notification connections experiencing intermittent disconnects (non-blocking)
-
-**Beta Launch Readiness:** System ready for 10-25 beta users with comprehensive autonomous AI support and full data connectivity validated.
+The platform aims for 95%+ coverage, utilizing:
+- **E2E Tests (Playwright):** Covering authentication, feed, events, profiles, search, admin, and performance.
+- **Hybrid Visual Testing:** Combines Playwright with Claude Computer Use for AI-powered visual regression testing, analyzing screenshots for visual regressions, accessibility, and responsive design.
+- **Integration Tests:** For backend API endpoints and orchestration services.
 
 ### Production
-CI/CD is managed via GitHub Actions. Monitoring is done with Prometheus/Grafana, caching with Redis, error tracking with Sentry, and performance optimization through bundle optimization, lazy loading, and code splitting.
+CI/CD is managed via GitHub Actions. Monitoring is handled with Prometheus/Grafana, caching with Redis, error tracking with Sentry, and performance optimization through bundle optimization, lazy loading, and code splitting.
 
 ## External Dependencies
 - **Infrastructure:** PostgreSQL, Redis, Cloudinary
