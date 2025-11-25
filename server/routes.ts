@@ -3759,6 +3759,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // List all events with filters (CRITICAL - Page 11 EventsPage depends on this!)
+  app.get("/api/events", async (req: Request, res: Response) => {
+    try {
+      const { 
+        search, 
+        eventType, 
+        city, 
+        limit = "50", 
+        offset = "0" 
+      } = req.query;
+
+      const events = await storage.getEvents({
+        search: search as string | undefined,
+        eventType: eventType as string | undefined,
+        city: city as string | undefined,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string),
+      });
+
+      res.json({ events });
+    } catch (error) {
+      console.error("Get events error:", error);
+      res.status(500).json({ message: "Failed to fetch events" });
+    }
+  });
+
   app.get("/api/events/:id", async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id);
@@ -3888,6 +3914,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching groups:", error);
       res.status(500).json({ message: "Failed to fetch groups" });
+    }
+  });
+
+  // Get user's groups (groups the user is a member of) - Page 13 GroupsPage
+  app.get("/api/groups/my-groups", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const userGroups = await db
+        .select({
+          id: groups.id,
+          name: groups.name,
+          description: groups.description,
+          city: groups.city,
+          type: groups.type,
+          imageUrl: groups.imageUrl,
+          memberCount: sql<number>`count(${groupMembers.id})::int`,
+        })
+        .from(groupMembers)
+        .leftJoin(groups, eq(groupMembers.groupId, groups.id))
+        .where(eq(groupMembers.userId, req.user!.id))
+        .groupBy(groups.id, groups.name, groups.description, groups.city, groups.type, groups.imageUrl);
+
+      res.json(userGroups);
+    } catch (error) {
+      console.error('Failed to fetch user groups:', error);
+      res.status(500).json({ message: "Failed to fetch user groups" });
     }
   });
 
