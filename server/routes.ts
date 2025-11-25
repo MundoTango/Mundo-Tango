@@ -7039,6 +7039,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // List all teachers - for TeachersPage
+  app.get("/api/teachers", async (req: Request, res: Response) => {
+    try {
+      // Get all active teacher profiles with user data
+      const teachersList = await db
+        .select({
+          id: teacherProfiles.id,
+          userId: teacherProfiles.userId,
+          bio: teacherProfiles.bio,
+          specialties: teacherProfiles.specialties,
+          yearsOfExperience: teacherProfiles.yearsExperience,
+          hourlyRate: teacherProfiles.hourlyRate,
+          availability: teacherProfiles.availability,
+          isActive: teacherProfiles.isActive,
+          isAvailable: teacherProfiles.isActive,
+          rating: teacherProfiles.averageRating,
+          reviewCount: teacherProfiles.reviewCount,
+          totalStudents: teacherProfiles.totalStudents,
+          certifications: teacherProfiles.certifications,
+          user: {
+            id: users.id,
+            name: users.name,
+            profileImage: users.profileImage,
+            city: users.city,
+            country: users.country,
+          }
+        })
+        .from(teacherProfiles)
+        .leftJoin(users, eq(teacherProfiles.userId, users.id))
+        .where(eq(teacherProfiles.isActive, true))
+        .orderBy(desc(teacherProfiles.averageRating));
+      
+      res.json(teachersList);
+    } catch (error) {
+      console.error("[Teachers] List error:", error);
+      res.status(500).json({ message: "Failed to fetch teachers list" });
+    }
+  });
+
   // Get teacher profile by ID - for TeacherProfilePage
   app.get("/api/teachers/:teacherId", async (req: Request, res: Response) => {
     try {
@@ -7943,6 +7982,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ============================================================================
   // PART_3: CREATOR MARKETPLACE API ROUTES (AGENTS #158-160)
   // ============================================================================
+
+  // Marketplace Items (public alias for MarketplacePage)
+  app.get("/api/marketplace/items", async (req: Request, res: Response) => {
+    try {
+      const category = req.query.category as string | undefined;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
+      const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
+      const products = await storage.getMarketplaceProducts({ category, limit, offset });
+      
+      // Transform to match frontend expectations (items format)
+      const items = products.map((p: any) => ({
+        id: p.id,
+        title: p.name || p.title,
+        description: p.description,
+        price: p.price,
+        category: p.category,
+        imageUrl: p.imageUrl,
+        status: p.status || 'available',
+        sellerId: p.creatorUserId,
+        createdAt: p.createdAt,
+      }));
+      
+      res.json(items);
+    } catch (error) {
+      console.error('[Marketplace] Get items error:', error);
+      res.status(500).json({ message: 'Failed to fetch marketplace items' });
+    }
+  });
 
   // Marketplace Products
   app.get("/api/marketplace/products", authenticateToken, async (req: AuthRequest, res: Response) => {
