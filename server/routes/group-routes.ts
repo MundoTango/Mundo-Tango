@@ -7,6 +7,8 @@ import {
   groupCategories,
   groupCategoryAssignments,
   users,
+  events,
+  eventRsvps,
   insertGroupSchema,
   insertGroupPostSchema
 } from "@shared/schema";
@@ -232,6 +234,58 @@ router.get("/:id", async (req: Request, res: Response) => {
   } catch (error) {
     console.error("[Groups] Error fetching group:", error);
     res.status(500).json({ message: "Failed to fetch group" });
+  }
+});
+
+// GET /api/groups/:id/events - Get events for a group
+router.get("/:id/events", async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { limit = "20", offset = "0" } = req.query;
+
+    // Get events linked to this group
+    const groupEvents = await db
+      .select({
+        event: events,
+        organizer: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage,
+          isVerified: users.isVerified
+        },
+        attendeeCount: sql<number>`(
+          SELECT COUNT(*)::int 
+          FROM ${eventRsvps} 
+          WHERE ${eventRsvps.eventId} = ${events.id}
+          AND ${eventRsvps.status} = 'going'
+        )`.as('attendee_count')
+      })
+      .from(events)
+      .leftJoin(users, eq(events.userId, users.id))
+      .where(eq(events.groupId, parseInt(id)))
+      .orderBy(desc(events.startDate))
+      .limit(parseInt(limit as string))
+      .offset(parseInt(offset as string));
+
+    // Get total count
+    const [{ total }] = await db
+      .select({ total: count() })
+      .from(events)
+      .where(eq(events.groupId, parseInt(id)));
+
+    res.json({
+      events: groupEvents,
+      pagination: {
+        page: Math.floor(parseInt(offset as string) / parseInt(limit as string)) + 1,
+        limit: parseInt(limit as string),
+        total,
+        totalPages: Math.ceil(total / parseInt(limit as string))
+      }
+    });
+  } catch (error) {
+    console.error("[Groups] Error fetching group events:", error);
+    res.status(500).json({ message: "Failed to fetch group events" });
   }
 });
 
