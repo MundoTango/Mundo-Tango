@@ -9,9 +9,21 @@
 import { Router, Request, Response } from 'express';
 import { mrBlueQAResearch } from '../services/mrblue/MrBlueQAResearch';
 import { agentRegistry } from '../services/mrblue/AgentRegistry';
-import { FeedPageAgent } from '../services/mrblue/agents/FeedPageAgent';
+import { agentTestOrchestrator } from '../services/mrblue/AgentTestOrchestrator';
+import { BasePageAgent } from '../services/mrblue/agents/BasePageAgent';
+import { BaseFeatureAgent } from '../services/mrblue/agents/BaseFeatureAgent';
 
 const router = Router();
+
+interface PageAgentWithFeatures extends BasePageAgent {
+  getFeatureAgents(): BaseFeatureAgent[];
+  getFeatureHealthStatus?(): { totalFeatures: number; totalTests: number; totalKnownIssues: number };
+  conductQASession?(questions: string[]): Promise<any>;
+}
+
+function hasFeatureAgents(agent: BasePageAgent): agent is PageAgentWithFeatures {
+  return 'getFeatureAgents' in agent && typeof (agent as any).getFeatureAgents === 'function';
+}
 
 /**
  * GET /api/mrblue/qa/ecosystem-health
@@ -26,6 +38,91 @@ router.get('/ecosystem-health', async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.error('[Mr. Blue Q&A] Ecosystem health error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * POST /api/mrblue/qa/run-all-tests
+ * Task all agents to self-test and be critical of their work
+ */
+router.post('/run-all-tests', async (req: Request, res: Response) => {
+  try {
+    console.log('[Mr. Blue Q&A] 🚀 Tasking all agents to run tests...');
+    const report = await agentTestOrchestrator.taskAllAgentsToTest();
+    res.json({
+      success: true,
+      data: report,
+    });
+  } catch (error: any) {
+    console.error('[Mr. Blue Q&A] Run all tests error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * GET /api/mrblue/qa/last-test-report
+ * Get the last test orchestration report
+ */
+router.get('/last-test-report', async (req: Request, res: Response) => {
+  try {
+    const report = agentTestOrchestrator.getLastReport();
+    res.json({
+      success: true,
+      data: report,
+    });
+  } catch (error: any) {
+    console.error('[Mr. Blue Q&A] Last test report error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * GET /api/mrblue/qa/generate-playwright/:pageId/:featureId
+ * Generate Playwright test code for a specific feature
+ */
+router.get('/generate-playwright/:pageId/:featureId', async (req: Request, res: Response) => {
+  try {
+    const { pageId, featureId } = req.params;
+    const agent = agentRegistry.getAgent(pageId);
+    
+    if (!agent || !hasFeatureAgents(agent)) {
+      return res.status(404).json({
+        success: false,
+        error: `Page agent not found or has no features: ${pageId}`,
+      });
+    }
+
+    const featureAgent = agent.getFeatureAgents().find(fa => fa.getFeatureId() === featureId);
+    
+    if (!featureAgent) {
+      return res.status(404).json({
+        success: false,
+        error: `Feature agent not found: ${featureId}`,
+      });
+    }
+
+    const testCode = agentTestOrchestrator.generatePlaywrightTestCode(featureAgent, pageId);
+    res.json({
+      success: true,
+      data: {
+        pageId,
+        featureId,
+        testCode,
+        filePath: `tests/e2e/${pageId}/${featureId}.spec.ts`,
+      },
+    });
+  } catch (error: any) {
+    console.error('[Mr. Blue Q&A] Generate Playwright error:', error);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -162,44 +259,19 @@ router.get('/research-history', async (req: Request, res: Response) => {
 router.get('/page/:pageId/features', async (req: Request, res: Response) => {
   try {
     const { pageId } = req.params;
-    const agent = agentRegistry.getAgent(pageId);
+    const pageData = await mrBlueQAResearch.getPageFeatures(pageId);
     
-    if (!agent) {
+    if (!pageData) {
       return res.status(404).json({
         success: false,
-        error: `Page agent not found: ${pageId}`,
+        error: `Page agent not found or has no features: ${pageId}`,
       });
     }
 
-    if (agent instanceof FeedPageAgent) {
-      const features = agent.getFeatureAgents().map(fa => ({
-        featureId: fa.getFeatureId(),
-        featureName: fa.getFeatureName(),
-        prd: fa.getPRD(),
-        health: fa.getHealthStatus(),
-      }));
-
-      res.json({
-        success: true,
-        data: {
-          pageId,
-          pageName: agent.getName(),
-          featureCount: features.length,
-          features,
-        },
-      });
-    } else {
-      res.json({
-        success: true,
-        data: {
-          pageId,
-          pageName: agent.getName(),
-          featureCount: 0,
-          features: [],
-          note: 'This page agent does not have feature agents yet',
-        },
-      });
-    }
+    res.json({
+      success: true,
+      data: pageData,
+    });
   } catch (error: any) {
     console.error('[Mr. Blue Q&A] Page features error:', error);
     res.status(500).json({
@@ -234,16 +306,26 @@ router.post('/page/:pageId/qa-session', async (req: Request, res: Response) => {
       });
     }
 
-    if (agent instanceof FeedPageAgent) {
+    if (hasFeatureAgents(agent) && agent.conductQASession) {
       const session = await agent.conductQASession(questions);
       res.json({
         success: true,
         data: session,
       });
     } else {
-      res.status(400).json({
-        success: false,
-        error: 'This page agent does not support Q&A sessions',
+      // Fallback: conduct Q&A via the research service
+      const results = [];
+      for (const question of questions) {
+        const result = await mrBlueQAResearch.askQuestion(question);
+        results.push(result);
+      }
+      res.json({
+        success: true,
+        data: {
+          pageId,
+          questions: questions.length,
+          results,
+        },
       });
     }
   } catch (error: any) {
@@ -271,10 +353,10 @@ router.get('/page/:pageId/health', async (req: Request, res: Response) => {
       });
     }
 
-    if (agent instanceof FeedPageAgent) {
-      const pageHealth = await agent.getHealthReport();
+    const pageHealth = await agent.getHealthReport();
+    
+    if (hasFeatureAgents(agent) && agent.getFeatureHealthStatus) {
       const featureHealth = agent.getFeatureHealthStatus();
-
       res.json({
         success: true,
         data: {
@@ -283,7 +365,6 @@ router.get('/page/:pageId/health', async (req: Request, res: Response) => {
         },
       });
     } else {
-      const pageHealth = await agent.getHealthReport();
       res.json({
         success: true,
         data: {
