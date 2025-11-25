@@ -3095,6 +3095,213 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get user's saved posts - Page 16 SavedPostsPage
+  app.get("/api/saved-posts", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const savedPosts = await db
+        .select({
+          id: posts.id,
+          content: posts.content,
+          userId: posts.userId,
+          createdAt: posts.createdAt,
+          likes: posts.likes,
+          comments: posts.comments,
+          author: {
+            id: users.id,
+            name: users.name,
+            username: users.username,
+            profileImage: users.profileImage,
+          },
+        })
+        .from(savedPosts)
+        .leftJoin(posts, eq(savedPosts.postId, posts.id))
+        .leftJoin(users, eq(posts.userId, users.id))
+        .where(eq(savedPosts.userId, req.user!.id))
+        .orderBy(desc(savedPosts.createdAt));
+      
+      res.json(savedPosts);
+    } catch (error) {
+      console.error("Get saved posts error:", error);
+      res.status(500).json({ message: "Failed to fetch saved posts" });
+    }
+  });
+
+  // ============================================================================
+  // STORIES ENDPOINTS - Page 15 StoriesPage
+  // ============================================================================
+  
+  // Get stories feed from friends (24-hour stories)
+  app.get("/api/stories/feed", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      // Get friend IDs
+      const friendIds = await db
+        .select({ friendId: friendships.friendId })
+        .from(friendships)
+        .where(eq(friendships.userId, req.user!.id));
+      
+      const friendIdList = friendIds.map(f => f.friendId);
+      
+      // Get active stories (not expired) from friends
+      const stories = await db
+        .select({
+          id: posts.id,
+          content: posts.content,
+          imageUrl: posts.imageUrl,
+          videoUrl: posts.videoUrl,
+          userId: posts.userId,
+          createdAt: posts.createdAt,
+          expiresAt: posts.expiresAt,
+          viewCount: sql<number>`count(distinct ${storyViews.id})::int`,
+        })
+        .from(posts)
+        .leftJoin(storyViews, eq(posts.id, storyViews.storyId))
+        .where(
+          and(
+            eq(posts.type, 'story'),
+            sql`${posts.expiresAt} > NOW()`,
+            sql`${posts.userId} = ANY(${friendIdList})`
+          )
+        )
+        .groupBy(posts.id)
+        .orderBy(desc(posts.createdAt));
+      
+      // Group stories by user
+      const storyGroups: any = {};
+      for (const story of stories) {
+        const user = await storage.getUserById(story.userId);
+        if (!user) continue;
+        
+        if (!storyGroups[story.userId]) {
+          storyGroups[story.userId] = {
+            user: {
+              id: user.id,
+              name: user.name,
+              username: user.username,
+              profileImage: user.profileImage,
+            },
+            stories: [],
+            hasUnviewed: false,
+          };
+        }
+        
+        // Check if user has viewed this story
+        const viewed = await db
+          .select()
+          .from(storyViews)
+          .where(
+            and(
+              eq(storyViews.storyId, story.id),
+              eq(storyViews.viewerId, req.user!.id)
+            )
+          )
+          .limit(1);
+        
+        const hasViewed = viewed.length > 0;
+        if (!hasViewed) storyGroups[story.userId].hasUnviewed = true;
+        
+        storyGroups[story.userId].stories.push({
+          ...story,
+          hasViewed,
+        });
+      }
+      
+      res.json(Object.values(storyGroups));
+    } catch (error) {
+      console.error("Get stories feed error:", error);
+      res.status(500).json({ message: "Failed to fetch stories feed" });
+    }
+  });
+  
+  // Get user's own stories
+  app.get("/api/stories/my", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const myStories = await db
+        .select({
+          id: posts.id,
+          content: posts.content,
+          imageUrl: posts.imageUrl,
+          videoUrl: posts.videoUrl,
+          createdAt: posts.createdAt,
+          expiresAt: posts.expiresAt,
+          viewCount: sql<number>`count(distinct ${storyViews.id})::int`,
+        })
+        .from(posts)
+        .leftJoin(storyViews, eq(posts.id, storyViews.storyId))
+        .where(
+          and(
+            eq(posts.type, 'story'),
+            eq(posts.userId, req.user!.id),
+            sql`${posts.expiresAt} > NOW()`
+          )
+        )
+        .groupBy(posts.id)
+        .orderBy(desc(posts.createdAt));
+      
+      res.json(myStories);
+    } catch (error) {
+      console.error("Get my stories error:", error);
+      res.status(500).json({ message: "Failed to fetch your stories" });
+    }
+  });
+  
+  // Create a story (24-hour expiration)
+  app.post("/api/stories", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const { content, imageUrl, videoUrl } = req.body;
+      
+      if (!imageUrl && !videoUrl) {
+        return res.status(400).json({ message: "Image or video is required" });
+      }
+      
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+      
+      const newStory = await db.insert(posts).values({
+        content: content || '',
+        imageUrl,
+        videoUrl,
+        userId: req.user!.id,
+        type: 'story',
+        expiresAt,
+      }).returning();
+      
+      res.status(201).json(newStory[0]);
+    } catch (error) {
+      console.error("Create story error:", error);
+      res.status(500).json({ message: "Failed to create story" });
+    }
+  });
+  
+  // Record story view
+  app.post("/api/stories/:id/view", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const storyId = parseInt(req.params.id);
+      
+      // Check if already viewed
+      const existing = await db
+        .select()
+        .from(storyViews)
+        .where(
+          and(
+            eq(storyViews.storyId, storyId),
+            eq(storyViews.viewerId, req.user!.id)
+          )
+        )
+        .limit(1);
+      
+      if (existing.length === 0) {
+        await db.insert(storyViews).values({
+          storyId,
+          viewerId: req.user!.id,
+        });
+      }
+      
+      res.json({ viewed: true });
+    } catch (error) {
+      console.error("Record story view error:", error);
+      res.status(500).json({ message: "Failed to record view" });
+    }
+  });
+
   // COMMENT LIKES
   app.post("/api/comments/:id/like", authenticateToken, async (req: AuthRequest, res: Response) => {
     try {
@@ -3756,6 +3963,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Get user RSVPs error:", error);
       res.status(500).json({ message: "Failed to fetch user RSVPs" });
+    }
+  });
+
+  // Get events created by the user - Page 17 MyEventsPage
+  app.get("/api/events/my-events", authenticateToken, async (req: AuthRequest, res: Response) => {
+    try {
+      const myEvents = await db
+        .select()
+        .from(events)
+        .where(eq(events.userId, req.user!.id))
+        .orderBy(desc(events.date));
+      res.json(myEvents);
+    } catch (error) {
+      console.error("Get my events error:", error);
+      res.status(500).json({ message: "Failed to fetch your events" });
     }
   });
 
