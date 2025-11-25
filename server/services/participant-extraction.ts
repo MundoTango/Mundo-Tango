@@ -151,45 +151,61 @@ function extractMetadata(text: string): { musicStyle?: string; dressCode?: strin
 }
 
 async function matchUserProfile(name: string): Promise<{ userId?: number; profileId?: number; confidence: number }> {
-  const nameLower = name.toLowerCase();
-  const nameParts = nameLower.split(/\s+/);
+  const nameLower = name.toLowerCase().trim();
   
-  const matchingUsers = await db.query.users.findMany({
-    where: or(
-      ilike(users.displayName, `%${nameLower}%`),
-      ilike(users.firstName, `%${nameParts[0] || ''}%`),
-      ilike(users.lastName, `%${nameParts[nameParts.length - 1] || ''}%`)
-    ),
-    limit: 5
-  });
-  
-  for (const user of matchingUsers) {
-    const fullName = `${user.firstName || ''} ${user.lastName || ''}`.toLowerCase().trim();
-    const displayName = (user.displayName || '').toLowerCase();
-    
-    if (fullName === nameLower || displayName === nameLower) {
-      return { userId: user.id, confidence: 0.95 };
-    }
-    
-    if (fullName.includes(nameLower) || nameLower.includes(fullName)) {
-      return { userId: user.id, confidence: 0.75 };
-    }
+  // Skip very short or invalid names
+  if (nameLower.length < 3 || nameLower.includes('&nbsp')) {
+    return { confidence: 0 };
   }
   
-  const matchingProfiles = await db.query.scrapedProfiles.findMany({
-    where: ilike(scrapedProfiles.name, `%${nameLower}%`),
-    limit: 5
-  });
+  const nameParts = nameLower.split(/\s+/).filter(p => p.length > 1);
+  if (nameParts.length === 0) {
+    return { confidence: 0 };
+  }
   
-  for (const profile of matchingProfiles) {
-    const profileName = (profile.name || '').toLowerCase();
-    if (profileName === nameLower) {
-      return { 
-        profileId: profile.id, 
-        userId: profile.claimedBy || undefined,
-        confidence: 0.85 
-      };
+  try {
+    // Search by name, first_name, last_name
+    const matchingUsers = await db.query.users.findMany({
+      where: or(
+        ilike(users.name, `%${nameLower}%`),
+        ilike(users.firstName, `%${nameParts[0]}%`),
+        nameParts.length > 1 ? ilike(users.lastName, `%${nameParts[nameParts.length - 1]}%`) : undefined
+      ),
+      limit: 5
+    });
+    
+    for (const user of matchingUsers) {
+      const fullName = `${user.firstName || ''} ${user.lastName || ''}`.toLowerCase().trim();
+      const userName = (user.name || '').toLowerCase();
+      
+      if (fullName === nameLower || userName === nameLower) {
+        return { userId: user.id, confidence: 0.95 };
+      }
+      
+      if (fullName.includes(nameLower) || nameLower.includes(fullName)) {
+        return { userId: user.id, confidence: 0.75 };
+      }
     }
+    
+    // Check scraped profiles
+    const matchingProfiles = await db.query.scrapedProfiles.findMany({
+      where: ilike(scrapedProfiles.name, `%${nameLower}%`),
+      limit: 5
+    });
+    
+    for (const profile of matchingProfiles) {
+      const profileName = (profile.name || '').toLowerCase();
+      if (profileName === nameLower) {
+        return { 
+          profileId: profile.id, 
+          userId: profile.claimedBy || undefined,
+          confidence: 0.85 
+        };
+      }
+    }
+  } catch (error) {
+    // Skip on query errors (malformed names, etc.)
+    console.error(`[MB.MD] Error matching user profile for "${name}":`, error);
   }
   
   return { confidence: 0 };

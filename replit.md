@@ -57,3 +57,22 @@ CI/CD is managed via GitHub Actions. Monitoring is handled with Prometheus/Grafa
 - **Payments:** Stripe
 - **UI Libraries:** shadcn/ui, Radix UI, Framer Motion
 - **Other:** Sentry, Playwright, BullMQ
+
+## Testing Requirements
+
+### Stripe Testing Secrets (Required for E2E Tests)
+Before running Playwright tests, configure these **test mode** secrets in Replit Secrets:
+
+| Secret Name | Prefix | Purpose |
+|-------------|--------|---------|
+| `STRIPE_SECRET_KEY` | `sk_test_` | Backend API calls in test mode |
+| `VITE_STRIPE_PUBLIC_KEY` | `pk_test_` | Frontend Stripe.js in test mode |
+| `STRIPE_WEBHOOK_SECRET` | `whsec_` | Webhook signature verification |
+
+**Where to Get:** Stripe Dashboard → Developers → API keys (Test mode ON)
+
+**Test Card Numbers** (in `tests/helpers/stripe.ts`):
+- SUCCESS: `4242424242424242`
+- DECLINE: `4000000000000002`
+- INSUFFICIENT: `4000000000009995`
+- REQUIRES_3DS: `4000002500003155`

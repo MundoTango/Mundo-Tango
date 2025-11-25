@@ -138,6 +138,34 @@ POST https://mundotango.life/api/auth/register
 - Event ticket sales
 - Marketplace transactions
 
+---
+
+### ⚠️ TESTING ENVIRONMENT SECRETS (Required for E2E Tests)
+
+Before running Playwright tests, configure these **test mode** secrets in Replit Secrets:
+
+| Secret Name | Prefix | Purpose |
+|-------------|--------|---------|
+| `STRIPE_SECRET_KEY` | `sk_test_` | Backend API calls in test mode |
+| `VITE_STRIPE_PUBLIC_KEY` | `pk_test_` | Frontend Stripe.js in test mode |
+| `STRIPE_WEBHOOK_SECRET` | `whsec_` | Webhook signature verification |
+
+**Where to Get Test Keys:**
+1. Log in to [Stripe Dashboard](https://dashboard.stripe.com)
+2. Toggle **Test mode** ON (top-left switch)
+3. Navigate to **Developers** → **API keys**
+4. Copy the test keys (NOT production keys)
+
+**Test Card Numbers** (located in `tests/helpers/stripe.ts`):
+```
+SUCCESS:           4242424242424242
+DECLINE:           4000000000000002
+INSUFFICIENT:      4000000000009995
+REQUIRES_3DS:      4000002500003155
+```
+
+---
+
 ### Step-by-Step Setup
 
 #### Step 1: Verify Stripe Account (0 min)

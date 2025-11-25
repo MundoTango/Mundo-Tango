@@ -33,6 +33,21 @@
 
 ---
 
+## Testing Prerequisites
+
+### Stripe Test Secrets (Required for E2E Tests)
+Configure these **test mode** secrets in Replit Secrets before running Playwright tests:
+
+| Secret | Prefix | Get From |
+|--------|--------|----------|
+| `STRIPE_SECRET_KEY` | `sk_test_` | Stripe Dashboard → Developers → API keys |
+| `VITE_STRIPE_PUBLIC_KEY` | `pk_test_` | Stripe Dashboard → Developers → API keys |
+| `STRIPE_WEBHOOK_SECRET` | `whsec_` | Stripe Dashboard → Webhooks → Signing secret |
+
+Test card numbers are in `tests/helpers/stripe.ts`.
+
+---
+
 ## Overview
 
 Mundo Tango is a comprehensive social platform designed to connect the global tango community, including dancers, teachers, organizers, and enthusiasts. The platform fosters tango culture through authentic connections, event discovery, and AI-powered personal assistance.
