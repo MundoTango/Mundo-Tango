@@ -736,12 +736,6 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
-      <Route path="/groups/:groupId">
-        <ProtectedRoute>
-          <GroupDetailsPage />
-        </ProtectedRoute>
-      </Route>
-
       <Route path="/groups/:id">
         <ProtectedRoute>
           <AppLayout>
