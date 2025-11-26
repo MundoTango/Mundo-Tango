@@ -243,6 +243,25 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
           </div>
         )}
       </div>
+
+      {/* Edit post dialog */}
+      <Dialog open={!!editingPost} onOpenChange={(open) => !open && setEditingPost(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" data-testid="dialog-edit-post-creator">
+          <DialogHeader>
+            <DialogTitle>Edit Post</DialogTitle>
+          </DialogHeader>
+          {editingPost && (
+            <PostCreator
+              editMode={true}
+              existingPost={editingPost}
+              onPostCreated={() => {
+                setEditingPost(null);
+                queryClient.invalidateQueries({ queryKey: ['infinite-feed'] });
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
