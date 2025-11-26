@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -5,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Heart, 
   Calendar, 
@@ -15,7 +18,9 @@ import {
   Star,
   TrendingUp,
   Plus,
-  Sparkles
+  Sparkles,
+  Search,
+  Filter
 } from "lucide-react";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
@@ -49,7 +54,12 @@ const memoryTypeColors = {
   achievement: 'bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800',
 };
 
+const MEMORY_TYPES = ["all", "milestone", "event", "photo", "achievement"] as const;
+
 export default function MemoriesPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+  
   const { data: memories = [], isLoading } = useQuery<Memory[]>({
     queryKey: ["/api/memories"],
   });
@@ -62,6 +72,20 @@ export default function MemoriesPage() {
   }>({
     queryKey: ["/api/memories/stats"],
   });
+
+  // Filter memories based on search and type
+  const filteredMemories = useMemo(() => {
+    return memories.filter((memory) => {
+      const matchesSearch = searchQuery === "" || 
+        memory.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        memory.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        memory.location?.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesType = typeFilter === "all" || memory.type === typeFilter;
+      
+      return matchesSearch && matchesType;
+    });
+  }, [memories, searchQuery, typeFilter]);
 
   return (
     <SelfHealingErrorBoundary pageName="Memories" fallbackRoute="/feed">
@@ -159,6 +183,38 @@ export default function MemoriesPage() {
                 </Button>
               </motion.div>
 
+              {/* Filter Controls */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.25 }}
+                className="flex flex-col sm:flex-row gap-4"
+              >
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search memories..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                    data-testid="input-search-memories"
+                  />
+                </div>
+                <Select value={typeFilter} onValueChange={setTypeFilter}>
+                  <SelectTrigger className="w-full sm:w-[180px]" data-testid="filter-memory-type">
+                    <Filter className="h-4 w-4 mr-2" />
+                    <SelectValue placeholder="Filter by type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all" data-testid="filter-type-all">All Types</SelectItem>
+                    <SelectItem value="milestone" data-testid="filter-type-milestone">Milestones</SelectItem>
+                    <SelectItem value="event" data-testid="filter-type-event">Events</SelectItem>
+                    <SelectItem value="photo" data-testid="filter-type-photo">Photos</SelectItem>
+                    <SelectItem value="achievement" data-testid="filter-type-achievement">Achievements</SelectItem>
+                  </SelectContent>
+                </Select>
+              </motion.div>
+
               {/* Quick Stats */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -238,9 +294,9 @@ export default function MemoriesPage() {
                         </Card>
                       ))}
                     </div>
-                  ) : memories.length > 0 ? (
+                  ) : filteredMemories.length > 0 ? (
                     <div className="space-y-6">
-                      {memories.map((memory, index) => {
+                      {filteredMemories.map((memory, index) => {
                         const Icon = memoryTypeIcons[memory.type];
                         return (
                           <motion.div
@@ -319,14 +375,29 @@ export default function MemoriesPage() {
                     <Card>
                       <CardContent className="py-16 text-center">
                         <Camera className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
-                        <h3 className="text-xl font-semibold font-serif mb-2">No memories yet</h3>
+                        <h3 className="text-xl font-semibold font-serif mb-2">
+                          {searchQuery || typeFilter !== "all" ? "No memories found" : "No memories yet"}
+                        </h3>
                         <p className="text-muted-foreground mb-6">
-                          Start documenting your tango journey by adding your first memory
+                          {searchQuery || typeFilter !== "all" 
+                            ? "Try adjusting your search or filter criteria"
+                            : "Start documenting your tango journey by adding your first memory"
+                          }
                         </p>
-                        <Button data-testid="button-add-first-memory">
-                          <Plus className="h-4 w-4 mr-2" />
-                          Add Your First Memory
-                        </Button>
+                        {searchQuery || typeFilter !== "all" ? (
+                          <Button 
+                            variant="outline"
+                            onClick={() => { setSearchQuery(""); setTypeFilter("all"); }}
+                            data-testid="button-clear-filters"
+                          >
+                            Clear Filters
+                          </Button>
+                        ) : (
+                          <Button data-testid="button-add-first-memory">
+                            <Plus className="h-4 w-4 mr-2" />
+                            Add Your First Memory
+                          </Button>
+                        )}
                       </CardContent>
                     </Card>
                   )}

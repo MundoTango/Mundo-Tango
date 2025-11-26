@@ -36,6 +36,11 @@ export const ROUTES: Record<string, RouteConfig> = {
   messages: { path: "/messages", label: "Messages", parent: "/", requiresAuth: true, category: "social" },
   bookmarks: { path: "/bookmarks", label: "Bookmarks", parent: "/", requiresAuth: true, category: "social" },
 
+  // ===== MEMORIES =====
+  memories: { path: "/memories", label: "Memories", parent: "/", requiresAuth: true, category: "memories" },
+  memoryStats: { path: "/memory-stats", label: "Memory Stats", parent: "/memories", requiresAuth: true, category: "memories" },
+  memoryDetail: { path: "/memories/:id", label: "Memory Details", parent: "/memories", requiresAuth: true, category: "memories" },
+
   // ===== PROFILE =====
   profile: { path: "/profile", label: "Profile", parent: "/", requiresAuth: true, category: "profile" },
   profileUser: { path: "/profile/:username", label: "User Profile", parent: "/profile", requiresAuth: true, category: "profile" },
