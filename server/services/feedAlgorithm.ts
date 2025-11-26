@@ -195,13 +195,9 @@ export class FeedAlgorithmService {
 
       const friendIds = friendsData.map(f => f.friendId);
       const followingIds = followingData.map(f => f.followingId);
-      const connectedUserIds = [...new Set([...friendIds, ...followingIds])];
+      const connectedUserIds = [...new Set([...friendIds, ...followingIds, userId])]; // INCLUDE OWN USER ID
 
-      if (connectedUserIds.length === 0) {
-        return { posts: [], nextOffset: null, hasMore: false };
-      }
-
-      // Get posts from connected users with user's current reaction
+      // Get posts from connected users + own posts with user's current reaction
       const followingPosts = await db
         .select({
           post: posts,
