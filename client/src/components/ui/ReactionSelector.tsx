@@ -135,6 +135,7 @@ export const ReactionSelector = ({
     <div className={`relative ${className}`} ref={containerRef}>
       {/* Main Like/React Button */}
       <button
+        type="button"
         className="group flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all hover-elevate bg-black/5 dark:bg-white/10"
         style={{
           ...(currentReaction && {
@@ -200,6 +201,7 @@ export const ReactionSelector = ({
                 const IconComponent = reaction.icon;
                 return (
                   <button
+                    type="button"
                     key={reaction.id}
                     onClick={() => handleReactionClick(reaction.id)}
                     className="group relative flex flex-col items-center gap-1 p-2 rounded-lg transition-all hover-elevate"
