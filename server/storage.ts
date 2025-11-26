@@ -1903,9 +1903,20 @@ export class DbStorage implements IStorage {
 
   async savePost(postId: number, userId: number): Promise<void> {
     try {
-      await db.insert(savedPosts).values({ postId, userId });
+      // Check if already saved
+      const existing = await db
+        .select()
+        .from(savedPosts)
+        .where(and(eq(savedPosts.postId, postId), eq(savedPosts.userId, userId)))
+        .limit(1);
+      
+      // Only insert if not already saved
+      if (existing.length === 0) {
+        await db.insert(savedPosts).values({ postId, userId });
+      }
     } catch (error) {
-      // Ignore duplicate saves
+      console.error('Save post error:', error);
+      // Ignore all errors - operation is idempotent
     }
   }
 

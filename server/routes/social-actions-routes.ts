@@ -142,7 +142,7 @@ router.post('/posts/:id/save', authenticateToken, handleErrors(async (req: AuthR
     return res.status(404).json({ error: 'Post not found' });
   }
 
-  // Check if already saved
+  // Check if already saved - if so, just return success (idempotent)
   const existing = await db.query.savedPosts.findFirst({
     where: and(
       eq(savedPosts.userId, userId),
@@ -151,7 +151,7 @@ router.post('/posts/:id/save', authenticateToken, handleErrors(async (req: AuthR
   });
 
   if (existing) {
-    return res.status(400).json({ error: 'Post already saved' });
+    return res.status(201).json(existing);
   }
 
   const [saved] = await db.insert(savedPosts).values({
