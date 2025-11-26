@@ -26,6 +26,7 @@ interface Post {
     name: string;
     username: string;
     profileImage?: string | null;
+    tangoRoles?: string[];
   };
   likes: number;
   comments: number;
