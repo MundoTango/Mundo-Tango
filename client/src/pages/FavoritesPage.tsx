@@ -20,52 +20,41 @@ import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary"
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
 
-interface Favorite {
+interface SavedPostItem {
   id: number;
-  itemId: number;
-  itemType: 'event' | 'person' | 'venue' | 'content';
-  createdAt: string;
-  item: {
+  savedAt: string;
+  post: {
     id: number;
-    title?: string;
-    name?: string;
-    description?: string;
+    content: string;
     imageUrl?: string | null;
-    metadata?: {
-      location?: string;
-      date?: string;
-      followers?: number;
+    createdAt: string;
+    author: {
+      id: number;
+      name: string;
+      username: string;
+      profileImage?: string | null;
     };
   };
 }
 
 const categoryIcons = {
-  event: Calendar,
-  person: Users,
-  venue: MapPin,
-  content: Heart,
+  post: Heart,
 };
 
 const categoryColors = {
-  event: 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400',
-  person: 'bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400',
-  venue: 'bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400',
-  content: 'bg-pink-50 dark:bg-pink-950/30 text-pink-600 dark:text-pink-400',
+  post: 'bg-pink-50 dark:bg-pink-950/30 text-pink-600 dark:text-pink-400',
 };
 
 export default function FavoritesPage() {
-  const { data, isLoading } = useQuery<{ favorites: Favorite[]; total: number }>({
-    queryKey: ["/api/favorites"],
+  const { data, isLoading } = useQuery<SavedPostItem[]>({
+    queryKey: ["/api/posts/saved"],
   });
 
-  const favorites = (data?.favorites || []).filter(f => f && f.item);
-  const total = data?.total || 0;
+  const favorites = (data || []).filter(f => f && f.post);
+  const total = favorites.length;
 
   const favoritesByType = {
-    event: favorites.filter(f => f.itemType === 'event'),
-    person: favorites.filter(f => f.itemType === 'person'),
-    venue: favorites.filter(f => f.itemType === 'venue'),
-    content: favorites.filter(f => f.itemType === 'content'),
+    post: favorites,
   };
 
   const fadeInUp = {
@@ -75,9 +64,12 @@ export default function FavoritesPage() {
     transition: { duration: 0.6 }
   };
 
-  const FavoriteCard = ({ favorite }: { favorite: Favorite }) => {
-    const Icon = categoryIcons[favorite.itemType];
-    const title = favorite.item.title || favorite.item.name || 'Untitled';
+  const { unsaveMutation } = useUnsavePost();
+  
+  const FavoriteCard = ({ favorite }: { favorite: SavedPostItem }) => {
+    const handleRemove = async () => {
+      await unsaveMutation.mutateAsync({ postId: favorite.post.id });
+    };
 
     return (
       <Card 
@@ -85,11 +77,11 @@ export default function FavoritesPage() {
         data-testid={`favorite-${favorite.id}`}
       >
         <div className="flex flex-col md:flex-row">
-          {favorite.item.imageUrl && (
+          {favorite.post.imageUrl && (
             <div className="md:w-1/3 relative aspect-[16/9] md:aspect-auto overflow-hidden">
               <motion.img
-                src={favorite.item.imageUrl}
-                alt={title}
+                src={favorite.post.imageUrl}
+                alt="Saved post"
                 className="absolute inset-0 w-full h-full object-cover"
                 data-testid={`img-favorite-${favorite.id}`}
                 whileHover={{ scale: 1.05 }}
@@ -102,26 +94,25 @@ export default function FavoritesPage() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <Badge className={categoryColors[favorite.itemType]}>
-                      <Icon className="h-3 w-3 mr-1" />
-                      {favorite.itemType}
+                    <Badge className={categoryColors['post']}>
+                      <Heart className="h-3 w-3 mr-1" />
+                      post
                     </Badge>
                     <span className="text-sm text-muted-foreground">
-                      Saved {safeDateDistance(favorite.createdAt, { addSuffix: true })}
+                      Saved {safeDateDistance(favorite.savedAt, { addSuffix: true })}
                     </span>
                   </div>
                   <CardTitle className="line-clamp-2 font-serif" data-testid={`text-favorite-title-${favorite.id}`}>
-                    {title}
+                    {favorite.post.author.name}
                   </CardTitle>
-                  {favorite.item.description && (
-                    <CardDescription className="line-clamp-2 mt-2">
-                      {favorite.item.description}
-                    </CardDescription>
-                  )}
+                  <CardDescription className="line-clamp-3 mt-2">
+                    {favorite.post.content}
+                  </CardDescription>
                 </div>
                 <Button 
                   variant="ghost" 
                   size="icon"
+                  onClick={handleRemove}
                   data-testid={`button-remove-${favorite.id}`}
                 >
                   <X className="h-4 w-4" />
@@ -129,33 +120,19 @@ export default function FavoritesPage() {
               </div>
             </CardHeader>
             <CardContent>
-              {favorite.item.metadata && (
-                <div className="flex flex-wrap gap-3 text-sm text-muted-foreground mb-4">
-                  {favorite.item.metadata.location && (
-                    <div className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {favorite.item.metadata.location}
-                    </div>
-                  )}
-                  {favorite.item.metadata.date && (
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      {favorite.item.metadata.date}
-                    </div>
-                  )}
-                  {favorite.item.metadata.followers && (
-                    <div className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
-                      {favorite.item.metadata.followers}
-                    </div>
-                  )}
-                </div>
-              )}
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+                <Avatar className="h-6 w-6">
+                  <AvatarImage src={favorite.post.author.profileImage || ""} />
+                  <AvatarFallback>{favorite.post.author.name?.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <span>@{favorite.post.author.username}</span>
+              </div>
               <Button 
                 className="w-full"
+                variant="outline"
                 data-testid={`button-view-${favorite.id}`}
               >
-                View Details
+                View Post
               </Button>
             </CardContent>
           </div>
