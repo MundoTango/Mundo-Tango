@@ -22,6 +22,8 @@ import {
   Trash2,
   ChevronDown,
   Download,
+  ArrowRight,
+  Trash,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -90,6 +92,20 @@ function UnifiedTopBar({
   });
 
   const notificationCount = notificationData?.count || 0;
+
+  // Fetch recent notifications (most recent 10)
+  const { data: recentNotifications = [] } = useQuery<any[]>({
+    queryKey: ['/api/notifications/recent'],
+    queryFn: async () => {
+      const response = await fetch('/api/notifications?limit=10&offset=0', {
+        credentials: 'include',
+      });
+      if (!response.ok) return [];
+      return response.json();
+    },
+    refetchInterval: 15000,
+    enabled: !!user,
+  });
 
   // Fetch message count - uses default queryFn which includes auth headers
   const { data: messageData } = useQuery<{ count: number }>({
@@ -368,29 +384,80 @@ function UnifiedTopBar({
             </Button>
           </Link>
 
-          {/* Notifications - MT Ocean Badge */}
-          <Link href="/notifications">
-            <Button variant="ghost" size="icon" className="relative transition-all duration-200" data-testid="button-notifications">
-              {notificationCount > 0 ? (
-                <PulseIcon pulseColor="rgba(64, 224, 208, 0.6)">
-                  <Bell className="h-5 w-5 transition-colors duration-200" style={{ color: '#40E0D0' }} />
-                </PulseIcon>
+          {/* Notifications Dropdown - MT Ocean Badge */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="relative transition-all duration-200" data-testid="button-notifications">
+                {notificationCount > 0 ? (
+                  <PulseIcon pulseColor="rgba(64, 224, 208, 0.6)">
+                    <Bell className="h-5 w-5 transition-colors duration-200" style={{ color: '#40E0D0' }} />
+                  </PulseIcon>
+                ) : (
+                  <Bell className="h-5 w-5 transition-colors duration-200" />
+                )}
+                {notificationCount > 0 && (
+                  <span 
+                    className="absolute -top-1 -right-1 h-5 w-5 text-white text-xs font-semibold rounded-full flex items-center justify-center shadow-lg"
+                    style={{
+                      background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)',
+                      boxShadow: '0 2px 8px rgba(64, 224, 208, 0.4)',
+                    }}
+                  >
+                    {notificationCount > 9 ? '9+' : notificationCount}
+                  </span>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            
+            <DropdownMenuContent align="end" className="w-96 max-h-96 overflow-y-auto">
+              {recentNotifications.length > 0 ? (
+                <>
+                  <div className="px-4 py-2 font-semibold text-sm border-b">
+                    Recent Alerts
+                  </div>
+                  {recentNotifications.map((notif, idx) => (
+                    <DropdownMenuItem
+                      key={notif.id || idx}
+                      onClick={() => notif.link && setLocation(notif.link)}
+                      className="cursor-pointer flex items-start gap-2 px-4 py-3 border-b last:border-0"
+                      data-testid={`notification-item-${idx}`}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{notif.title}</p>
+                        <p className="text-xs text-muted-foreground truncate">{notif.message}</p>
+                        {notif.createdAt && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {new Date(notif.createdAt).toLocaleDateString()}
+                          </p>
+                        )}
+                      </div>
+                      {!notif.read && (
+                        <div 
+                          className="flex-shrink-0 w-2 h-2 rounded-full"
+                          style={{ background: '#40E0D0' }}
+                        />
+                      )}
+                    </DropdownMenuItem>
+                  ))}
+                  
+                  <DropdownMenuSeparator />
+                  
+                  <DropdownMenuItem 
+                    onClick={() => setLocation('/notifications')}
+                    className="cursor-pointer justify-between"
+                    data-testid="menu-item-see-all-notifications"
+                  >
+                    <span>See All Notifications</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </DropdownMenuItem>
+                </>
               ) : (
-                <Bell className="h-5 w-5 transition-colors duration-200" />
+                <div className="px-4 py-8 text-center text-sm text-muted-foreground">
+                  No notifications yet
+                </div>
               )}
-              {notificationCount > 0 && (
-                <span 
-                  className="absolute -top-1 -right-1 h-5 w-5 text-white text-xs font-semibold rounded-full flex items-center justify-center shadow-lg"
-                  style={{
-                    background: 'linear-gradient(135deg, #40E0D0 0%, #1E90FF 100%)',
-                    boxShadow: '0 2px 8px rgba(64, 224, 208, 0.4)',
-                  }}
-                >
-                  {notificationCount > 9 ? '9+' : notificationCount}
-                </span>
-              )}
-            </Button>
-          </Link>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
 
           {/* User Profile Dropdown */}
