@@ -116,8 +116,15 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
         endpoint = `/api/posts/mentions`;
       }
 
+      const token = localStorage.getItem('accessToken');
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch(`${endpoint}?limit=20&offset=${pageParam}`, {
         credentials: 'include',
+        headers,
       });
       
       if (!response.ok) {
