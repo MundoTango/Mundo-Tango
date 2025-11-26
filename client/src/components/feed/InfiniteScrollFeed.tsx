@@ -1,9 +1,12 @@
 import { useEffect } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
+import { useNavigate } from "wouter";
 import { PostItem } from "./PostItem";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 type FeedType = "following" | "discover" | "personalized";
 type FilterType = "all" | "friends" | "public" | "saved" | "my-posts" | "mentions";
@@ -41,10 +44,38 @@ interface FeedResponse {
 }
 
 export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScrollFeedProps) {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const { ref, inView } = useInView({
     threshold: 0,
     rootMargin: "100px",
   });
+
+  const handleEdit = (postId: number) => {
+    toast({
+      title: "Feature Coming Soon",
+      description: "Post editing will be available soon",
+    });
+  };
+
+  const handleDelete = async (postId: number) => {
+    if (!confirm("Are you sure you want to delete this post?")) return;
+    
+    try {
+      await apiRequest('DELETE', `/api/posts/${postId}`);
+      queryClient.invalidateQueries({ queryKey: ['infinite-feed'] });
+      toast({
+        title: "Post deleted",
+        description: "Your post has been removed",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Could not delete post",
+        variant: "destructive",
+      });
+    }
+  };
 
   const {
     data,
@@ -178,7 +209,12 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
   return (
     <div className="space-y-6" data-testid="infinite-scroll-feed">
       {allPosts.map((post) => (
-        <PostItem key={post.id} post={post} />
+        <PostItem 
+          key={post.id} 
+          post={post} 
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
       ))}
 
       {/* Infinite scroll trigger */}
