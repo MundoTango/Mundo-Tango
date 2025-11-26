@@ -500,22 +500,23 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
           console.log('[PostCreator] Processing video:', firstVideo.name, `${videoSizeMB.toFixed(1)}MB`);
           setUploadProgress(35);
           
-          // Warn for large videos (50MB+ may take a while)
-          if (videoSizeMB > 150) {
+          // Hard limit at 50MB - larger files can crash the browser
+          // (50MB file → ~67MB base64 → 134MB in memory during JSON.stringify)
+          if (videoSizeMB > 50) {
             toast({
               title: "Video too large",
-              description: "Please use a video under 150MB for best results.",
+              description: `Your video is ${videoSizeMB.toFixed(0)}MB. Please use a video under 50MB, or compress it first.`,
               variant: "destructive",
             });
             setIsUploading(false);
             return;
           }
           
-          // Show warning for large videos
-          if (videoSizeMB > 50) {
+          // Show warning for moderate videos
+          if (videoSizeMB > 20) {
             toast({
-              title: "Large video detected",
-              description: `${videoSizeMB.toFixed(0)}MB video - upload may take a minute...`,
+              title: "Processing video",
+              description: `${videoSizeMB.toFixed(0)}MB video - this may take 15-30 seconds...`,
             });
           }
           
@@ -549,6 +550,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       
       console.log('[PostCreator] Final post data keys:', Object.keys(postData));
       console.log('[PostCreator] imageUrl included:', !!postData.imageUrl);
+      console.log('[PostCreator] videoUrl included:', !!postData.videoUrl);
       
       // Add story metadata if story mode is active
       if (isStory) {
@@ -566,12 +568,52 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
         if (coordinates) postData.coordinates = coordinates;
       }
 
-      // Send as JSON using apiRequest (auto token refresh)
-      const response = await apiRequest(
-        editMode ? 'PATCH' : 'POST',
-        '/api/posts',
-        postData
-      );
+      // Estimate payload size (rough estimate without full stringify to save memory)
+      let estimatedSizeMB = 0;
+      if (postData.videoUrl) {
+        estimatedSizeMB += postData.videoUrl.length / (1024 * 1024);
+      }
+      if (postData.imageUrl) {
+        estimatedSizeMB += postData.imageUrl.length / (1024 * 1024);
+      }
+      console.log('[PostCreator] Estimated media size:', `${estimatedSizeMB.toFixed(1)}MB`);
+      
+      // Block uploads that are too large for browser to handle
+      // 67MB base64 = 50MB video, which should be our max
+      if (estimatedSizeMB > 70) {
+        console.error('[PostCreator] Payload too large for browser:', estimatedSizeMB);
+        toast({
+          title: "File too large",
+          description: "Media must be under 50MB. Please compress your file.",
+          variant: "destructive",
+        });
+        setIsUploading(false);
+        return;
+      }
+      
+      if (estimatedSizeMB > 30) {
+        toast({
+          title: "Uploading",
+          description: `${estimatedSizeMB.toFixed(0)}MB upload - please wait...`,
+        });
+      }
+
+      setUploadProgress(85);
+      console.log('[PostCreator] Sending POST request to /api/posts...');
+      
+      try {
+        // Send as JSON using apiRequest (auto token refresh)
+        const response = await apiRequest(
+          editMode ? 'PATCH' : 'POST',
+          '/api/posts',
+          postData
+        );
+        
+        console.log('[PostCreator] POST request succeeded!');
+      } catch (fetchError: any) {
+        console.error('[PostCreator] Fetch error:', fetchError);
+        throw fetchError;
+      }
 
       // apiRequest throws on error, so if we get here it succeeded
       // Invalidate posts cache to refresh feed
@@ -614,10 +656,27 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
 
       if (onPostCreated) onPostCreated();
 
-    } catch (error) {
+    } catch (error: any) {
+      console.error('[PostCreator] POST FAILED:', error);
+      console.error('[PostCreator] Error name:', error?.name);
+      console.error('[PostCreator] Error message:', error?.message);
+      console.error('[PostCreator] Error status:', error?.status);
+      
+      // Provide more helpful error messages
+      let errorMessage = "Could not create post. Try again.";
+      if (error?.message?.includes('413') || error?.message?.includes('PayloadTooLarge')) {
+        errorMessage = "File too large for server. Try a smaller video.";
+      } else if (error?.message?.includes('401')) {
+        errorMessage = "Session expired. Please log in again.";
+      } else if (error?.message?.includes('timeout') || error?.name === 'AbortError') {
+        errorMessage = "Upload timed out. Try a smaller file.";
+      } else if (error?.message) {
+        errorMessage = error.message.substring(0, 100);
+      }
+      
       toast({
         title: "Post failed",
-        description: "Could not create post. Try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

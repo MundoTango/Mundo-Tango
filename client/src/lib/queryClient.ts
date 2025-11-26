@@ -41,6 +41,8 @@ export async function apiRequest(
   data?: unknown | undefined,
   isRetry: boolean = false
 ): Promise<Response> {
+  console.log(`[apiRequest] ${method} ${url} starting...`);
+  
   const token = localStorage.getItem('accessToken');
   const csrfToken = getCsrfToken();
   const headers: Record<string, string> = {};
@@ -51,6 +53,8 @@ export async function apiRequest(
   
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
+  } else {
+    console.warn('[apiRequest] No access token found!');
   }
   
   // Include CSRF token for mutating requests
@@ -58,12 +62,28 @@ export async function apiRequest(
     headers["x-xsrf-token"] = csrfToken;
   }
   
+  // Log payload size for debugging large uploads
+  let body: string | undefined;
+  if (data) {
+    console.log('[apiRequest] Stringifying payload...');
+    const startTime = performance.now();
+    body = JSON.stringify(data);
+    const stringifyTime = performance.now() - startTime;
+    console.log(`[apiRequest] Payload size: ${(body.length / 1024 / 1024).toFixed(1)}MB, stringify took ${stringifyTime.toFixed(0)}ms`);
+  }
+  
+  console.log('[apiRequest] Sending fetch request...');
+  const fetchStart = performance.now();
+  
   const res = await fetch(url, {
     method,
     headers,
-    body: data ? JSON.stringify(data) : undefined,
+    body,
     credentials: "include",
   });
+  
+  const fetchTime = performance.now() - fetchStart;
+  console.log(`[apiRequest] Response: ${res.status} in ${fetchTime.toFixed(0)}ms`);
 
   // ✅ AGENT #4 FIX: Auto-refresh expired tokens
   if (res.status === 401 && !isRetry) {
