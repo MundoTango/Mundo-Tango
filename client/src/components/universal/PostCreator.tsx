@@ -168,7 +168,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
     });
   };
 
-  // Media upload handler with compression and loading states (sync onChange wrapper)
+  // Media upload handler - show previews immediately, compress in background
   const handleMediaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
@@ -194,60 +194,70 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       return;
     }
 
-    // Show loading indicator for media processing
-    toast({
-      title: "Processing media...",
-      description: `Compressing ${files.length} file(s)`,
-      duration: Infinity,
-    });
+    console.log('[PostCreator] Media selected:', files.length, 'files');
 
-    // Queue async processing without blocking onChange
-    (async () => {
-      try {
-        // Process all files with compression
-        const processedPreviews = await Promise.all(
-          files.map(async (file) => {
-            if (file.type.startsWith('image/')) {
-              try {
-                return await compressImage(file);
-              } catch (err) {
-                console.error('Compression failed, using original:', err);
-                return new Promise<string>((resolve) => {
-                  const reader = new FileReader();
-                  reader.onload = () => resolve(reader.result as string);
-                  reader.readAsDataURL(file);
-                });
+    // Show previews IMMEDIATELY (uncompressed)
+    const immediatePreviewPromises = files.map(file => 
+      new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => resolve(''); // Fallback empty string
+        reader.readAsDataURL(file);
+      })
+    );
+
+    Promise.all(immediatePreviewPromises).then((immediatePreviews) => {
+      console.log('[PostCreator] Immediate previews loaded:', immediatePreviews.length);
+      
+      // Update state immediately so user sees thumbnails
+      setMediaFiles((prev) => [...prev, ...files]);
+      setMediaPreviews((prev) => [...prev, ...immediatePreviews]);
+      
+      toast({
+        title: "Media added!",
+        description: `${files.length} file(s) added. Compressing for upload...`,
+      });
+
+      // Then compress in background for upload
+      (async () => {
+        try {
+          const compressedPreviews = await Promise.all(
+            files.map(async (file, idx) => {
+              if (file.type.startsWith('image/')) {
+                try {
+                  return await compressImage(file);
+                } catch (err) {
+                  console.error('Compression failed for file', idx);
+                  return immediatePreviews[idx]; // Keep original if compression fails
+                }
               }
-            } else if (file.type.startsWith('video/')) {
-              // For videos, just read as data URL (no compression)
-              return new Promise<string>((resolve) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result as string);
-                reader.readAsDataURL(file);
-              });
-            }
-            return '';
-          })
-        );
+              return immediatePreviews[idx]; // Keep original for non-images
+            })
+          );
 
-        // Update state with all media at once
-        setMediaFiles((prev) => [...prev, ...files]);
-        setMediaPreviews((prev) => [...prev, ...processedPreviews]);
-        
-        // Dismiss loading toast
-        toast({
-          title: "Media ready!",
-          description: `${files.length} file(s) compressed and ready to post`,
-        });
-      } catch (error) {
-        console.error('Media processing error:', error);
-        toast({
-          title: "Media processing failed",
-          description: "Could not process files. Please try again.",
-          variant: "destructive",
-        });
-      }
-    })();
+          // Replace previews with compressed versions
+          setMediaPreviews((prev) => {
+            const result = [...prev];
+            const startIdx = result.length - files.length;
+            compressedPreviews.forEach((compressed, i) => {
+              result[startIdx + i] = compressed;
+            });
+            return result;
+          });
+
+          console.log('[PostCreator] Compression complete');
+        } catch (error) {
+          console.error('Media compression error:', error);
+        }
+      })();
+    }).catch((error) => {
+      console.error('Media preview error:', error);
+      toast({
+        title: "Media preview failed",
+        description: "Could not load media previews",
+        variant: "destructive",
+      });
+    });
   };
 
   const removeMedia = (index: number) => {
