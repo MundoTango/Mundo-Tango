@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
-import { useNavigate } from "wouter";
 import { PostItem } from "./PostItem";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
@@ -44,7 +43,6 @@ interface FeedResponse {
 }
 
 export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScrollFeedProps) {
-  const navigate = useNavigate();
   const { toast } = useToast();
   const { ref, inView } = useInView({
     threshold: 0,
