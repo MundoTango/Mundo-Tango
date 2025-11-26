@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Share2, Bookmark, BookmarkCheck, Users } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { MessageCircle, Share2, Bookmark, BookmarkCheck, Users, Plane, Pizza, Drama, Mountain, Moon, Leaf, Palette, Music, Dumbbell, Camera as PhotoIcon, HeartHandshake, UserPlus, Briefcase, Target, PartyPopper } from "lucide-react";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import { Link } from "wouter";
 import { ReactionSelector } from "@/components/ui/ReactionSelector";
@@ -18,6 +19,24 @@ import { RoleIcon } from "@/components/RoleIcon";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { getRoleLabel } from "@/lib/tangoRoles";
 
+const MEMORY_TAGS = [
+  { id: "travel", label: "Travel", icon: Plane, gradient: "from-cyan-500 to-blue-500" },
+  { id: "food", label: "Food", icon: Pizza, gradient: "from-orange-500 to-red-500" },
+  { id: "culture", label: "Culture", icon: Drama, gradient: "from-purple-500 to-pink-500" },
+  { id: "adventure", label: "Adventure", icon: Mountain, gradient: "from-green-500 to-teal-500" },
+  { id: "nightlife", label: "Nightlife", icon: Moon, gradient: "from-indigo-500 to-purple-500" },
+  { id: "nature", label: "Nature", icon: Leaf, gradient: "from-emerald-500 to-green-500" },
+  { id: "art", label: "Art", icon: Palette, gradient: "from-pink-500 to-rose-500" },
+  { id: "music", label: "Music", icon: Music, gradient: "from-violet-500 to-purple-500" },
+  { id: "sports", label: "Sports", icon: Dumbbell, gradient: "from-blue-500 to-cyan-500" },
+  { id: "photography", label: "Photography", icon: PhotoIcon, gradient: "from-gray-500 to-slate-500" },
+  { id: "family", label: "Family", icon: HeartHandshake, gradient: "from-rose-500 to-pink-500" },
+  { id: "friends", label: "Friends", icon: UserPlus, gradient: "from-yellow-500 to-orange-500" },
+  { id: "work", label: "Work", icon: Briefcase, gradient: "from-slate-500 to-gray-500" },
+  { id: "milestone", label: "Milestone", icon: Target, gradient: "from-red-500 to-orange-500" },
+  { id: "celebration", label: "Celebration", icon: PartyPopper, gradient: "from-fuchsia-500 to-pink-500" },
+];
+
 export interface PostItemData {
   id: number;
   userId: number;
@@ -30,6 +49,7 @@ export interface PostItemData {
   isSaved?: boolean;
   currentReaction?: string | null;
   reactions?: Record<string, number>;
+  tags?: string[] | null;
   user?: {
     id: number;
     name: string;
@@ -154,6 +174,27 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
             {renderMentionPills(post.content)}
           </div>
         </div>
+
+        {/* Tags */}
+        {post.tags && post.tags.length > 0 && (
+          <div className="px-4 pb-3 flex flex-wrap gap-2">
+            {post.tags.map(tagId => {
+              const tag = MEMORY_TAGS.find(t => t.id === tagId);
+              if (!tag) return null;
+              const IconComponent = tag.icon;
+              return (
+                <Badge
+                  key={tagId}
+                  className={`bg-gradient-to-r ${tag.gradient} text-white border-0 flex items-center gap-1`}
+                  data-testid={`tag-badge-${tagId}`}
+                >
+                  <IconComponent className="w-3 h-3" />
+                  <span className="text-xs">{tag.label}</span>
+                </Badge>
+              );
+            })}
+          </div>
+        )}
 
         {/* Image */}
         {post.imageUrl && (
