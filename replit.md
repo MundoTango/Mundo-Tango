@@ -115,6 +115,34 @@ npx playwright show-report test-results/html-report
 
 ## Recent Changes (Nov 26, 2025 - Session 2)
 
+### Facebook/Instagram-Style Video Compression - COMPLETE ✅
+
+**Architecture:**
+- Server-side FFmpeg transcoding (like Facebook/Instagram)
+- No client-side size limits - accept ANY video size
+- Progressive encoding with H.264 codec for universal browser compatibility
+- Automatic thumbnail generation from video frame
+
+**Backend Implementation:**
+- `server/services/videoCompression.ts` - FFmpeg-based compression service
+  - H.264 video codec, AAC audio codec
+  - 1080p max resolution, 5Mbps target bitrate
+  - Fast-start enabled for progressive playback
+  - Returns base64 data URL for database storage
+- `server/routes/video-upload-routes.ts` - Multipart upload endpoint
+  - `/api/upload/video/compress` - POST endpoint with FormData
+  - Multer handles chunked uploads (500MB temp limit)
+  - Returns compressed video + thumbnail as base64
+
+**Frontend Implementation:**
+- `PostCreator.tsx` now uses FormData upload instead of client-side base64
+- Progress tracking during server compression
+- Toast notifications show compression ratio (e.g., "50MB → 8MB, 84% smaller")
+
+**Dependencies:**
+- FFmpeg v6.1.1 (system dependency via Nix)
+- fluent-ffmpeg (Node.js wrapper)
+
 ### Google Maps-Style Hidden Gems Recommendation System - COMPLETE ✅
 
 **Database Schema:**
