@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import { PostItem } from "./PostItem";
@@ -6,6 +6,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { PostCreator } from "@/components/universal/PostCreator";
 
 type FeedType = "following" | "discover" | "personalized";
 type FilterType = "all" | "friends" | "public" | "saved" | "my-posts" | "mentions";
@@ -44,16 +46,18 @@ interface FeedResponse {
 
 export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScrollFeedProps) {
   const { toast } = useToast();
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
   const { ref, inView } = useInView({
     threshold: 0,
     rootMargin: "100px",
   });
 
   const handleEdit = (postId: number) => {
-    toast({
-      title: "Feature Coming Soon",
-      description: "Post editing will be available soon",
-    });
+    const allPosts = data?.pages.flatMap(page => page.posts) || [];
+    const postToEdit = allPosts.find(p => p.id === postId);
+    if (postToEdit) {
+      setEditingPost(postToEdit);
+    }
   };
 
   const handleDelete = async (postId: number) => {
