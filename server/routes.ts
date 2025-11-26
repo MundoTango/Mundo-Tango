@@ -23,6 +23,7 @@ import { createAnalyticsRoutes } from "./routes/analytics-routes";
 import { createBookmarkRoutes } from "./routes/bookmark-routes";
 import avatarRoutes from "./routes/avatarRoutes";
 import videoRoutes from "./routes/videoRoutes";
+import videoUploadRoutes from "./routes/video-upload-routes";
 import mrblueVideoRoutes from "./routes/mrblue-video-routes";
 import mrBlueRoutes from "./routes/mrBlue";
 import mrBlueStreamRoutes from "./routes/mrblue-stream";
@@ -596,6 +597,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api", createBookmarkRoutes(storage));
   app.use("/api/avatar", avatarRoutes);
   app.use("/api/videos", videoRoutes);
+  app.use("/api/upload/video", videoUploadRoutes);
   app.use("/api/mrblue", mrblueVideoRoutes);
   app.use("/api/mrblue", mrBlueStreamRoutes); // Streaming SSE endpoint
   app.use("/api/mrblue", mrBlueRoutes);
