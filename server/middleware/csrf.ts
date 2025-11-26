@@ -61,6 +61,16 @@ export function verifyCsrfToken(req: Request, res: Response, next: NextFunction)
     return next();
   }
   
+  // Skip CSRF for file upload endpoints (use JWT auth, multipart is CSRF-resistant)
+  const uploadEndpoints = [
+    "/api/upload/video",  // Video compression uploads
+    "/api/upload/image",  // Image uploads
+    "/api/posts"  // Post creation with media
+  ];
+  if (uploadEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
   // Skip CSRF for The Plan endpoints (Scott's first-time login tour)
   const thePlanEndpoints = [
     "/api/the-plan/"
@@ -153,6 +163,16 @@ export function verifyDoubleSubmitCookie(req: Request, res: Response, next: Next
     "/api/mrblue/save-backend"  // ✅ MB.MD v9.3: Backend agent system (Save button)
   ];
   if (publicMrBlueEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
+    return next();
+  }
+  
+  // Skip CSRF for file upload endpoints (use JWT auth, multipart is CSRF-resistant)
+  const uploadEndpoints = [
+    "/api/upload/video",  // Video compression uploads
+    "/api/upload/image",  // Image uploads
+    "/api/posts"  // Post creation with media
+  ];
+  if (uploadEndpoints.some(endpoint => req.originalUrl.startsWith(endpoint))) {
     return next();
   }
   
