@@ -126,9 +126,52 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
     instagram?: 'pending' | 'success' | 'error';
   }>({});
 
-  // Media upload handler
+  // Compress image using canvas (like Facebook/Instagram)
+  const compressImage = (file: File, maxWidth: number = 1024, maxHeight: number = 1024, quality: number = 0.8): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          // Calculate new dimensions maintaining aspect ratio
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            reject(new Error('Could not get canvas context'));
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = () => reject(new Error('Could not load image'));
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = () => reject(new Error('Could not read file'));
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Media upload handler with compression and loading states (sync onChange wrapper)
   const handleMediaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
     
     // Validate total files (max 30)
     if (mediaFiles.length + files.length > 30) {
@@ -151,20 +194,60 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       return;
     }
 
-    // Create previews
-    const newPreviews: string[] = [];
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        newPreviews.push(reader.result as string);
-        if (newPreviews.length === files.length) {
-          setMediaPreviews([...mediaPreviews, ...newPreviews]);
-        }
-      };
-      reader.readAsDataURL(file);
+    // Show loading indicator for media processing
+    toast({
+      title: "Processing media...",
+      description: `Compressing ${files.length} file(s)`,
+      duration: Infinity,
     });
 
-    setMediaFiles([...mediaFiles, ...files]);
+    // Queue async processing without blocking onChange
+    (async () => {
+      try {
+        // Process all files with compression
+        const processedPreviews = await Promise.all(
+          files.map(async (file) => {
+            if (file.type.startsWith('image/')) {
+              try {
+                return await compressImage(file);
+              } catch (err) {
+                console.error('Compression failed, using original:', err);
+                return new Promise<string>((resolve) => {
+                  const reader = new FileReader();
+                  reader.onload = () => resolve(reader.result as string);
+                  reader.readAsDataURL(file);
+                });
+              }
+            } else if (file.type.startsWith('video/')) {
+              // For videos, just read as data URL (no compression)
+              return new Promise<string>((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result as string);
+                reader.readAsDataURL(file);
+              });
+            }
+            return '';
+          })
+        );
+
+        // Update state with all media at once
+        setMediaFiles((prev) => [...prev, ...files]);
+        setMediaPreviews((prev) => [...prev, ...processedPreviews]);
+        
+        // Dismiss loading toast
+        toast({
+          title: "Media ready!",
+          description: `${files.length} file(s) compressed and ready to post`,
+        });
+      } catch (error) {
+        console.error('Media processing error:', error);
+        toast({
+          title: "Media processing failed",
+          description: "Could not process files. Please try again.",
+          variant: "destructive",
+        });
+      }
+    })();
   };
 
   const removeMedia = (index: number) => {
