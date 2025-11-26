@@ -2504,6 +2504,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const post = await storage.createPost(postData);
 
+      // Handle Hidden Gems (Place Recommendations)
+      if (req.body.isRecommendation && req.body.location && req.body.coordinates) {
+        try {
+          const { lat, lng } = req.body.coordinates;
+          await storage.createOrUpdatePlaceRecommendation(
+            req.user!.id,
+            req.body.location,
+            req.body.postType || 'venue',
+            lat,
+            lng,
+            post.id,
+            {
+              description: req.body.content,
+              address: req.body.location,
+              priceRange: req.body.richContent?.priceRange,
+            }
+          );
+          console.log(`[Hidden Gems] ✅ Created/updated place recommendation for "${req.body.location}"`);
+        } catch (error) {
+          console.error(`[Hidden Gems] Failed to create place recommendation:`, error);
+        }
+      }
+
       // NEW: Handle canonical mention format @user:user_123:maria
       const mentionIds = req.body.mentions || [];
       const mentionedGroups: Array<{ id: number; type: string }> = [];
@@ -9641,6 +9664,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('[Privacy] Mark alert as read error:', error);
       res.status(500).json({ message: 'Failed to mark alert as read' });
+    }
+  });
+
+  // ==================== PLACE RECOMMENDATIONS (Hidden Gems - Google Maps Style) ====================
+
+  // Get place recommendations by location (radius search)
+  app.get("/api/recommendations/by-location", async (req: Request, res: Response) => {
+    try {
+      const lat = parseFloat(req.query.lat as string);
+      const lng = parseFloat(req.query.lng as string);
+      const radiusKm = parseInt(req.query.radius as string) || 5;
+
+      if (isNaN(lat) || isNaN(lng)) {
+        return res.status(400).json({ message: "Invalid latitude or longitude" });
+      }
+
+      const recommendations = await storage.getPlaceRecommendationsByLocation(lat, lng, radiusKm);
+      res.json(recommendations);
+    } catch (error) {
+      console.error('[Recommendations] Get by location error:', error);
+      res.status(500).json({ message: "Failed to fetch place recommendations" });
+    }
+  });
+
+  // Get place recommendations by category
+  app.get("/api/recommendations/by-category/:category", async (req: Request, res: Response) => {
+    try {
+      const { category } = req.params;
+      const limit = parseInt(req.query.limit as string) || 50;
+      const offset = parseInt(req.query.offset as string) || 0;
+
+      const recommendations = await storage.getPlaceRecommendationsByCategory(category, limit, offset);
+      res.json(recommendations);
+    } catch (error) {
+      console.error('[Recommendations] Get by category error:', error);
+      res.status(500).json({ message: "Failed to fetch place recommendations" });
+    }
+  });
+
+  // Get a specific place recommendation
+  app.get("/api/recommendations/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid recommendation ID" });
+      }
+
+      const recommendation = await storage.getPlaceRecommendationById(id);
+      if (!recommendation) {
+        return res.status(404).json({ message: "Recommendation not found" });
+      }
+
+      res.json(recommendation);
+    } catch (error) {
+      console.error('[Recommendations] Get by ID error:', error);
+      res.status(500).json({ message: "Failed to fetch place recommendation" });
     }
   });
 
