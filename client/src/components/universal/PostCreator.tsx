@@ -519,18 +519,31 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
             const formData = new FormData();
             formData.append('video', firstVideo);
             
-            const token = localStorage.getItem('authToken');
+            // Use correct localStorage key (accessToken, not authToken)
+            const token = localStorage.getItem('accessToken');
+            console.log('[PostCreator] Auth token present:', !!token);
+            
+            if (!token) {
+              throw new Error('Please log in again to upload videos');
+            }
+            
             const response = await fetch('/api/upload/video/compress', {
               method: 'POST',
-              headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+              headers: { 'Authorization': `Bearer ${token}` },
               body: formData
             });
             
             setUploadProgress(60);
             
             if (!response.ok) {
+              // Handle authentication errors specially
+              if (response.status === 401) {
+                // Try to refresh token
+                localStorage.removeItem('accessToken');
+                throw new Error('Session expired. Please refresh the page and log in again.');
+              }
               const errorData = await response.json().catch(() => ({ error: 'Upload failed' }));
-              throw new Error(errorData.error || `Server error: ${response.status}`);
+              throw new Error(errorData.error || errorData.message || `Server error: ${response.status}`);
             }
             
             const result = await response.json();
