@@ -5,6 +5,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -16,6 +21,8 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import type { SelectGroupMember } from "@shared/schema";
+import { RoleIcon } from "@/components/RoleIcon";
+import { getRoleByValue } from "@/lib/tangoRoles";
 
 interface GroupMembersListProps {
   groupId: number;
@@ -26,7 +33,7 @@ interface GroupMembersListProps {
 export function GroupMembersList({ groupId, canModerate = false, currentUserId }: GroupMembersListProps) {
   const { toast } = useToast();
 
-  const { data: members, isLoading } = useQuery<Array<SelectGroupMember & { user?: { name: string; username: string; avatarUrl?: string } }>>({
+  const { data: members, isLoading } = useQuery<Array<SelectGroupMember & { user?: { name: string; username: string; avatarUrl?: string; tangoRoles?: string[] } }>>({
     queryKey: ["/api/groups", groupId, "members"],
     queryFn: async () => {
       const res = await fetch(`/api/groups/${groupId}/members`, { credentials: "include" });
@@ -152,9 +159,35 @@ export function GroupMembersList({ groupId, canModerate = false, currentUserId }
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate" data-testid={`member-name-${member.userId}`}>
-                    {member.user?.name || `User #${member.userId}`}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium truncate" data-testid={`member-name-${member.userId}`}>
+                      {member.user?.name || `User #${member.userId}`}
+                    </p>
+                    {member.user?.tangoRoles && member.user.tangoRoles.length > 0 && (
+                      <div className="flex items-center gap-1" data-testid={`member-tango-roles-${member.userId}`}>
+                        {member.user.tangoRoles.slice(0, 3).map((role, i) => {
+                          const roleData = getRoleByValue(role);
+                          return (
+                            <Tooltip key={i}>
+                              <TooltipTrigger asChild>
+                                <span className="text-primary">
+                                  <RoleIcon role={role} size={14} className="text-primary" />
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent side="top">
+                                <p>{roleData?.label || role}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          );
+                        })}
+                        {member.user.tangoRoles.length > 3 && (
+                          <Badge variant="secondary" className="text-xs px-1.5 py-0">
+                            +{member.user.tangoRoles.length - 3}
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+                  </div>
                   <p className="text-sm text-muted-foreground truncate">
                     @{member.user?.username || `user${member.userId}`} · Joined{" "}
                     {member.joinedAt && safeDateDistance(member.joinedAt, { addSuffix: true })}
