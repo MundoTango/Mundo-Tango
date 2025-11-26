@@ -494,55 +494,66 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
           }
         }
         
-        // Handle video
+        // Handle video - use server-side compression for ANY size
         if (firstVideo) {
           const videoSizeMB = firstVideo.size / (1024 * 1024);
           console.log('[PostCreator] Processing video:', firstVideo.name, `${videoSizeMB.toFixed(1)}MB`);
           setUploadProgress(35);
           
-          // Hard limit at 100MB - larger files can crash the browser
-          // (100MB file → ~134MB base64 → 268MB in memory during JSON.stringify)
-          if (videoSizeMB > 100) {
+          // Show processing message for larger videos
+          if (videoSizeMB > 50) {
             toast({
-              title: "Video too large",
-              description: `Your video is ${videoSizeMB.toFixed(0)}MB. Please use a video under 100MB, or compress it first.`,
-              variant: "destructive",
-            });
-            setIsUploading(false);
-            return;
-          }
-          
-          // Show warning for moderate videos
-          if (videoSizeMB > 30) {
-            toast({
-              title: "Processing video",
-              description: `${videoSizeMB.toFixed(0)}MB video - this may take 30-60 seconds...`,
+              title: "Compressing video",
+              description: `${videoSizeMB.toFixed(0)}MB video - server compression may take 1-2 minutes...`,
             });
           } else if (videoSizeMB > 20) {
             toast({
-              title: "Processing video",
-              description: `${videoSizeMB.toFixed(0)}MB video - this may take 15-30 seconds...`,
+              title: "Compressing video",
+              description: `${videoSizeMB.toFixed(0)}MB video - compressing for optimal playback...`,
             });
           }
           
           try {
-            // Generate thumbnail first
-            console.log('[PostCreator] Generating video thumbnail...');
-            const thumbnail = await generateVideoThumbnail(firstVideo);
-            postData.videoThumbnail = thumbnail;
-            setUploadProgress(50);
+            // Upload to server for compression (like Facebook/Instagram)
+            console.log('[PostCreator] Uploading video for server-side compression...');
+            const formData = new FormData();
+            formData.append('video', firstVideo);
             
-            // Convert video to base64
-            console.log('[PostCreator] Converting video to base64...');
-            const videoBase64 = await fileToBase64(firstVideo);
-            console.log('[PostCreator] Video base64 complete:', `${(videoBase64.length / 1024 / 1024).toFixed(1)}MB`);
-            postData.videoUrl = videoBase64;
+            const token = localStorage.getItem('authToken');
+            const response = await fetch('/api/upload/video/compress', {
+              method: 'POST',
+              headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+              body: formData
+            });
+            
+            setUploadProgress(60);
+            
+            if (!response.ok) {
+              const errorData = await response.json().catch(() => ({ error: 'Upload failed' }));
+              throw new Error(errorData.error || `Server error: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log('[PostCreator] Video compressed:', {
+              original: `${(result.originalSize / 1024 / 1024).toFixed(1)}MB`,
+              compressed: `${(result.compressedSize / 1024 / 1024).toFixed(1)}MB`,
+              reduction: `${((1 - result.compressedSize / result.originalSize) * 100).toFixed(0)}%`,
+              time: `${result.processingTime}s`
+            });
+            
+            postData.videoUrl = result.videoUrl;
+            postData.videoThumbnail = result.thumbnail;
             setUploadProgress(70);
-          } catch (err) {
+            
+            toast({
+              title: "Video compressed",
+              description: `${videoSizeMB.toFixed(0)}MB → ${(result.compressedSize / 1024 / 1024).toFixed(1)}MB (${((1 - result.compressedSize / result.originalSize) * 100).toFixed(0)}% smaller)`,
+            });
+          } catch (err: any) {
             console.error('[PostCreator] Video processing failed:', err);
             toast({
               title: "Video processing failed",
-              description: "Could not process video. Try a smaller file.",
+              description: err.message || "Could not process video. Please try again.",
               variant: "destructive",
             });
             setIsUploading(false);
@@ -573,7 +584,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
         if (coordinates) postData.coordinates = coordinates;
       }
 
-      // Estimate payload size (rough estimate without full stringify to save memory)
+      // Log payload size for debugging (video is already compressed by server)
       let estimatedSizeMB = 0;
       if (postData.videoUrl) {
         estimatedSizeMB += postData.videoUrl.length / (1024 * 1024);
@@ -581,27 +592,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       if (postData.imageUrl) {
         estimatedSizeMB += postData.imageUrl.length / (1024 * 1024);
       }
-      console.log('[PostCreator] Estimated media size:', `${estimatedSizeMB.toFixed(1)}MB`);
-      
-      // Block uploads that are too large for browser to handle
-      // 134MB base64 = 100MB video, which should be our max
-      if (estimatedSizeMB > 140) {
-        console.error('[PostCreator] Payload too large for browser:', estimatedSizeMB);
-        toast({
-          title: "File too large",
-          description: "Media must be under 100MB. Please compress your file.",
-          variant: "destructive",
-        });
-        setIsUploading(false);
-        return;
-      }
-      
-      if (estimatedSizeMB > 30) {
-        toast({
-          title: "Uploading",
-          description: `${estimatedSizeMB.toFixed(0)}MB upload - please wait...`,
-        });
-      }
+      console.log('[PostCreator] Post payload size:', `${estimatedSizeMB.toFixed(1)}MB`);
 
       setUploadProgress(85);
       console.log('[PostCreator] Sending POST request to /api/posts...');

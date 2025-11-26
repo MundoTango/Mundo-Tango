@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 import { videoCompressionService } from '../services/videoCompression';
-import { requireAuth } from '../middleware/auth';
+import { authenticateToken, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
@@ -38,7 +38,7 @@ const upload = multer({
   }
 });
 
-router.post('/compress', requireAuth, upload.single('video'), async (req: Request, res: Response) => {
+router.post('/compress', authenticateToken, upload.single('video'), async (req: AuthRequest, res: Response) => {
   const startTime = Date.now();
   
   if (!req.file) {
@@ -101,7 +101,7 @@ router.post('/compress', requireAuth, upload.single('video'), async (req: Reques
   }
 });
 
-router.post('/upload', requireAuth, upload.single('video'), async (req: Request, res: Response) => {
+router.post('/upload', authenticateToken, upload.single('video'), async (req: AuthRequest, res: Response) => {
   if (!req.file) {
     return res.status(400).json({ success: false, error: 'No video file provided' });
   }
