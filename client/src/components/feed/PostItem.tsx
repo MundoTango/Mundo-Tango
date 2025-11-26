@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -73,6 +73,44 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
   const [showComments, setShowComments] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [videoBlobUrl, setVideoBlobUrl] = useState<string | null>(null);
+
+  // Convert base64 video to Blob URL for better mobile playback
+  // iOS Safari has issues with large inline base64 data URIs
+  useEffect(() => {
+    if (post.videoUrl && post.videoUrl.startsWith('data:video')) {
+      try {
+        console.log(`[Video ${post.id}] Converting base64 to blob URL...`);
+        // Parse the data URI
+        const [header, base64Data] = post.videoUrl.split(',');
+        const mimeMatch = header.match(/data:([^;]+)/);
+        const mimeType = mimeMatch ? mimeMatch[1] : 'video/mp4';
+        
+        // Convert base64 to binary
+        const binaryString = atob(base64Data);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        
+        // Create blob and URL
+        const blob = new Blob([bytes], { type: mimeType });
+        const blobUrl = URL.createObjectURL(blob);
+        console.log(`[Video ${post.id}] Blob URL created: ${blobUrl.substring(0, 50)}...`);
+        setVideoBlobUrl(blobUrl);
+        
+        // Cleanup on unmount
+        return () => {
+          URL.revokeObjectURL(blobUrl);
+        };
+      } catch (err) {
+        console.error(`[Video ${post.id}] Failed to convert to blob:`, err);
+      }
+    } else if (post.videoUrl) {
+      // Non-base64 video URL, use directly
+      setVideoBlobUrl(post.videoUrl);
+    }
+  }, [post.videoUrl, post.id]);
 
   const reactMutation = useReactToPost();
   const shareMutation = useSharePost();
@@ -215,19 +253,20 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
         )}
 
         {/* Video */}
-        {post.videoUrl && (
+        {post.videoUrl && videoBlobUrl && (
           <div className="px-4 pb-3">
             <div className="relative aspect-video overflow-hidden rounded-lg bg-black">
               <video 
-                src={post.videoUrl}
+                src={videoBlobUrl}
                 poster={post.videoThumbnail || undefined}
                 controls
                 preload="auto"
                 playsInline
                 className="w-full h-full object-contain"
                 data-testid={`post-video-${post.id}`}
-                onLoadStart={() => console.log(`[Video ${post.id}] Load started, videoUrl length: ${post.videoUrl?.length}`)}
+                onLoadStart={() => console.log(`[Video ${post.id}] Load started (blob URL)`)}
                 onLoadedData={() => console.log(`[Video ${post.id}] Data loaded successfully`)}
+                onCanPlay={() => console.log(`[Video ${post.id}] Can play`)}
                 onError={(e) => console.error(`[Video ${post.id}] Error:`, e)}
               >
                 Your browser does not support the video tag.

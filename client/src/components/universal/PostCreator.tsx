@@ -500,12 +500,12 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
           console.log('[PostCreator] Processing video:', firstVideo.name, `${videoSizeMB.toFixed(1)}MB`);
           setUploadProgress(35);
           
-          // Hard limit at 50MB - larger files can crash the browser
-          // (50MB file → ~67MB base64 → 134MB in memory during JSON.stringify)
-          if (videoSizeMB > 50) {
+          // Hard limit at 100MB - larger files can crash the browser
+          // (100MB file → ~134MB base64 → 268MB in memory during JSON.stringify)
+          if (videoSizeMB > 100) {
             toast({
               title: "Video too large",
-              description: `Your video is ${videoSizeMB.toFixed(0)}MB. Please use a video under 50MB, or compress it first.`,
+              description: `Your video is ${videoSizeMB.toFixed(0)}MB. Please use a video under 100MB, or compress it first.`,
               variant: "destructive",
             });
             setIsUploading(false);
@@ -513,7 +513,12 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
           }
           
           // Show warning for moderate videos
-          if (videoSizeMB > 20) {
+          if (videoSizeMB > 30) {
+            toast({
+              title: "Processing video",
+              description: `${videoSizeMB.toFixed(0)}MB video - this may take 30-60 seconds...`,
+            });
+          } else if (videoSizeMB > 20) {
             toast({
               title: "Processing video",
               description: `${videoSizeMB.toFixed(0)}MB video - this may take 15-30 seconds...`,
@@ -579,12 +584,12 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       console.log('[PostCreator] Estimated media size:', `${estimatedSizeMB.toFixed(1)}MB`);
       
       // Block uploads that are too large for browser to handle
-      // 67MB base64 = 50MB video, which should be our max
-      if (estimatedSizeMB > 70) {
+      // 134MB base64 = 100MB video, which should be our max
+      if (estimatedSizeMB > 140) {
         console.error('[PostCreator] Payload too large for browser:', estimatedSizeMB);
         toast({
           title: "File too large",
-          description: "Media must be under 50MB. Please compress your file.",
+          description: "Media must be under 100MB. Please compress your file.",
           variant: "destructive",
         });
         setIsUploading(false);
