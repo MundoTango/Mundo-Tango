@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, Database, Download, ChevronLeft, SlidersHorizontal } from "lucide-react";
+import { Calendar as CalendarIcon, MapPin, Search, Users, Plus, Map as MapIconLucide, List, ChevronRight, Database, Download, ChevronLeft, SlidersHorizontal, Check } from "lucide-react";
 import { safeDateFormat } from "@/lib/safeDateFormat";
 import { SEO } from "@/components/SEO";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -29,6 +29,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { BannerAd } from "@/components/ads/BannerAd";
 import { EventFilters, type EventFilterValues } from "@/components/events/EventFilters";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const localizer = momentLocalizer(moment);
 
