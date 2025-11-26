@@ -274,6 +274,32 @@ router.post("/sync", authenticateToken, async (req: AuthRequest, res: Response) 
 });
 
 /**
+ * GET /api/messages/unread-count
+ * Get count of unread messages for the authenticated user
+ */
+router.get("/unread-count", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.userId!;
+    const userIdStr = String(userId);
+    
+    // Count messages where user is NOT in the readBy array
+    const result = await db.select({
+      count: sql<number>`count(*)::int`
+    })
+    .from(chatMessages)
+    .where(
+      sql`(${chatMessages.readBy} IS NULL OR NOT (${userIdStr} = ANY(${chatMessages.readBy})))`
+    );
+    
+    res.json({ count: result[0]?.count || 0 });
+  } catch (error) {
+    console.error("Get unread message count error:", error);
+    // Return 0 instead of error to prevent UI spam
+    res.json({ count: 0 });
+  }
+});
+
+/**
  * GET /api/messages/unified
  * Get unified inbox - all messages across all channels (MT internal + external)
  */
