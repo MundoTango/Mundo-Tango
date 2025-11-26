@@ -332,6 +332,30 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
     }
   };
 
+  // Helper to convert File to base64 with compression
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      // For images, try to compress first
+      if (file.type.startsWith('image/')) {
+        compressImage(file)
+          .then(resolve)
+          .catch(() => {
+            // If compression fails, read raw file
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+      } else {
+        // For non-images, just read as base64
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      }
+    });
+  };
+
   // Post submission
   const handleSubmit = async () => {
     if (!content.trim() && mediaFiles.length === 0) {
@@ -349,24 +373,38 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
     try {
       const finalContent = showEnhancement && enhancedContent ? enhancedContent : content;
       console.log('[PostCreator] Submitting post with content:', finalContent);
-      console.log('[PostCreator] Mentions:', mentions);
+      console.log('[PostCreator] Media files:', mediaFiles.length);
       
       // Build post data object
       const postData: any = {
-        content: finalContent, // Canonical format with @user:user_123:maria
+        content: finalContent,
         visibility,
         tags: selectedTags,
-        mentions: mentionIds, // Array of IDs: ["user_123", "event_456", "group_789"]
+        mentions: mentionIds,
       };
       
-      // Add media (first image only - store as base64 in imageUrl field)
-      if (mediaPreviews.length > 0) {
-        // Find first image
-        const firstImageIndex = mediaFiles.findIndex(f => f.type.startsWith('image'));
-        if (firstImageIndex !== -1) {
-          const base64Data = mediaPreviews[firstImageIndex];
-          console.log('[PostCreator] Adding media - image size:', base64Data.length, 'bytes');
-          postData.imageUrl = base64Data;
+      // Convert first image to base64 on submit (not during preview)
+      if (mediaFiles.length > 0) {
+        const firstImage = mediaFiles.find(f => f.type.startsWith('image'));
+        if (firstImage) {
+          console.log('[PostCreator] Converting image to base64:', firstImage.name, firstImage.size, 'bytes');
+          setUploadProgress(10);
+          
+          try {
+            const base64Data = await fileToBase64(firstImage);
+            console.log('[PostCreator] Base64 conversion complete:', base64Data.length, 'chars');
+            postData.imageUrl = base64Data;
+            setUploadProgress(50);
+          } catch (err) {
+            console.error('[PostCreator] Base64 conversion failed:', err);
+            toast({
+              title: "Image processing failed",
+              description: "Could not process image. Try a smaller file.",
+              variant: "destructive",
+            });
+            setIsUploading(false);
+            return;
+          }
         }
       }
       
