@@ -42,7 +42,7 @@ export function MrBlueFloatingButton() {
       {/* Floating Button - Always visible */}
       <Button
         size="icon"
-        className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover-elevate active-elevate-2 text-primary-foreground border border-primary-border fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-50 transition-all duration-200 bg-primary hover:bg-primary/90 ml-[1380px] mr-[1380px] mt-[-40px] mb-[-40px]"
+        className="!fixed !bottom-6 !right-6 h-14 w-14 rounded-full shadow-lg !z-50 transition-all duration-200 bg-primary hover:bg-primary/90"
         onClick={() => setIsOpen(!isOpen)}
         data-testid="button-mr-blue-open"
       >
