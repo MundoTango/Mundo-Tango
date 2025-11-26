@@ -24,6 +24,7 @@ import { createBookmarkRoutes } from "./routes/bookmark-routes";
 import avatarRoutes from "./routes/avatarRoutes";
 import videoRoutes from "./routes/videoRoutes";
 import videoUploadRoutes from "./routes/video-upload-routes";
+import { objectStorageService } from "./objectStorage";
 import mrblueVideoRoutes from "./routes/mrblue-video-routes";
 import mrBlueRoutes from "./routes/mrBlue";
 import mrBlueStreamRoutes from "./routes/mrblue-stream";
@@ -598,6 +599,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api/avatar", avatarRoutes);
   app.use("/api/videos", videoRoutes);
   app.use("/api/upload/video", videoUploadRoutes);
+  
+  // Object Storage: Serve public objects (videos, images)
+  // Blueprint: javascript_object_storage
+  app.get("/public-objects/:filePath(*)", async (req, res) => {
+    try {
+      const filePath = req.params.filePath;
+      const bucketName = objectStorageService.getBucketName();
+      const objectPath = `/${bucketName}/public/${filePath}`;
+      await objectStorageService.downloadToResponse(objectPath, res);
+    } catch (error: any) {
+      console.error("[ObjectStorage] Public object serve error:", error.message);
+      res.status(404).json({ error: "File not found" });
+    }
+  });
   app.use("/api/mrblue", mrblueVideoRoutes);
   app.use("/api/mrblue", mrBlueStreamRoutes); // Streaming SSE endpoint
   app.use("/api/mrblue", mrBlueRoutes);
