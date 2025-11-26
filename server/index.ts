@@ -96,12 +96,12 @@ declare module 'http' {
   }
 }
 app.use(express.json({
-  limit: '50mb', // Support large base64 media uploads (images/videos as data URLs)
+  limit: '200mb', // Support large base64 media uploads (videos can be 50MB file → ~67MB base64)
   verify: (req, _res, buf) => {
     req.rawBody = buf;
   }
 }));
-app.use(express.urlencoded({ extended: false, limit: '50mb' }));
+app.use(express.urlencoded({ extended: false, limit: '200mb' }));
 app.use(cookieParser());
 
 // CSRF Protection - set token for GET requests

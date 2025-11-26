@@ -500,15 +500,23 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
           console.log('[PostCreator] Processing video:', firstVideo.name, `${videoSizeMB.toFixed(1)}MB`);
           setUploadProgress(35);
           
-          // Limit video size (100MB max for base64 - practical browser limit)
-          if (videoSizeMB > 100) {
+          // Warn for large videos (50MB+ may take a while)
+          if (videoSizeMB > 150) {
             toast({
               title: "Video too large",
-              description: "Please use a video under 100MB. Tip: Compress with your phone's share options.",
+              description: "Please use a video under 150MB for best results.",
               variant: "destructive",
             });
             setIsUploading(false);
             return;
+          }
+          
+          // Show warning for large videos
+          if (videoSizeMB > 50) {
+            toast({
+              title: "Large video detected",
+              description: `${videoSizeMB.toFixed(0)}MB video - upload may take a minute...`,
+            });
           }
           
           try {
