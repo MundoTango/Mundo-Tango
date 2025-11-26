@@ -2689,16 +2689,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/posts", async (req: Request & { userId?: number; user?: any }, res: Response) => {
     try {
-      const { userId, limit = "20", offset = "0", type = "post" } = req.query;
+      const { userId, limit = "20", offset = "0", type } = req.query;
       const currentUserId = req.user?.id; // From auth middleware if authenticated (optional for public route)
       
-      // Filter by type (default to 'post' to exclude stories from regular feed)
+      // Filter by type only if explicitly specified (no default - show all post types)
       const posts = await storage.getPosts({
         userId: userId ? parseInt(userId as string) : undefined,
         limit: parseInt(limit as string),
         offset: parseInt(offset as string),
         currentUserId: currentUserId,
-        type: type as string
+        type: type ? type as string : undefined
       });
       
       // Enrich posts with group type information for proper color rendering
