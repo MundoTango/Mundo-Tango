@@ -135,12 +135,12 @@ export const ReactionSelector = ({
     <div className={`relative ${className}`} ref={containerRef}>
       {/* Main Like/React Button */}
       <button
-        className="group flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all hover-elevate"
+        className="group flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all hover-elevate bg-black/5 dark:bg-white/10"
         style={{
-          background: currentReaction 
-            ? `linear-gradient(135deg, ${getCurrentReactionColor()}15, ${getCurrentReactionColor()}25)`
-            : 'transparent',
-          color: currentReaction ? getCurrentReactionColor() : 'var(--muted-foreground)',
+          ...(currentReaction && {
+            background: `linear-gradient(135deg, ${getCurrentReactionColor()}15, ${getCurrentReactionColor()}25)`,
+          }),
+          color: currentReaction ? getCurrentReactionColor() : 'inherit',
         }}
         onClick={() => currentReaction ? onReact('') : onReact('love')}
         onMouseEnter={handleMouseEnter}
@@ -153,12 +153,19 @@ export const ReactionSelector = ({
             <IconComponent 
               className="w-5 h-5 transition-transform group-hover:scale-110" 
               fill="currentColor"
+              strokeWidth={2}
             />
           ) : (
-            <Heart className="w-5 h-5 transition-transform group-hover:scale-110" />
+            <Heart 
+              className="w-5 h-5 transition-transform group-hover:scale-110" 
+              strokeWidth={2}
+            />
           );
         })() : (
-          <Heart className="w-5 h-5 transition-transform group-hover:scale-110" />
+          <Heart 
+            className="w-5 h-5 transition-transform group-hover:scale-110" 
+            strokeWidth={2}
+          />
         )}
         {getTotalReactions() > 0 && (
           <span className="text-sm font-medium" data-testid={`text-reaction-count-${postId}`}>
