@@ -46,6 +46,7 @@ L.Icon.Default.mergeOptions({
 function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   const { user } = useAuth();
   const rsvpMutation = useRSVPEvent();
+  const { toast } = useToast();
   
   // Extract event data from API response (could be nested as event.event)
   const eventData = event.event || event;
@@ -56,13 +57,21 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
   });
 
   const userRsvp = eventRsvps?.find((r) => String(r.user_id) === String(user?.id));
-  const isRsvped = userRsvp?.status === "going";
+  const rsvpStatus = userRsvp?.status;
+  const isRsvped = rsvpStatus === "going";
   const isFull = eventData.maxAttendees && attendeeCount >= eventData.maxAttendees;
 
-  const handleRSVP = async () => {
-    if (!user) return;
-    const newStatus = isRsvped ? "not_going" : "going";
-    await rsvpMutation.mutateAsync({ eventId: eventData.id, status: newStatus });
+  const handleRSVP = async (status: 'going' | 'maybe' | 'interested' | 'not_going') => {
+    if (!user) {
+      toast({ title: "Please log in", description: "You must be logged in to RSVP", variant: "destructive" });
+      return;
+    }
+    try {
+      await rsvpMutation.mutateAsync({ eventId: eventData.id, status });
+      toast({ title: "RSVP updated", description: `You marked this event as ${status}` });
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to update RSVP", variant: "destructive" });
+    }
   };
 
   const formatEventDateTime = (dateString: string): string => {
