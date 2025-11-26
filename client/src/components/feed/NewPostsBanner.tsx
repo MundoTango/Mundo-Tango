@@ -13,43 +13,63 @@ export function NewPostsBanner({ onLoadNewPosts }: NewPostsBannerProps) {
 
   useEffect(() => {
     // WebSocket connection for real-time post notifications
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}`;
-    
-    try {
-      const ws = new WebSocket(wsUrl);
-      
-      ws.onopen = () => {
-        console.log('[NewPostsBanner] WebSocket connected');
-      };
-
-      ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          if (data.type === 'new_post') {
-            setNewPostsCount(prev => prev + 1);
-          }
-        } catch (error) {
-          console.error('[NewPostsBanner] Error parsing WebSocket message:', error);
-        }
-      };
-
-      ws.onerror = (error) => {
-        console.error('[NewPostsBanner] WebSocket error:', error);
-      };
-
-      ws.onclose = () => {
-        console.log('[NewPostsBanner] WebSocket disconnected');
-      };
-
-      return () => {
-        if (ws.readyState === WebSocket.OPEN) {
-          ws.close();
-        }
-      };
-    } catch (error) {
-      console.error('[NewPostsBanner] Failed to create WebSocket:', error);
+    // Skip WebSocket in development with HMR issues - use polling instead
+    if (!window.location.host || window.location.host.includes('undefined')) {
+      console.warn('[NewPostsBanner] Skipping WebSocket due to invalid host');
+      return;
     }
+
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/ws/notifications`;
+    
+    let ws: WebSocket | null = null;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 3;
+
+    const setupWebSocket = () => {
+      try {
+        ws = new WebSocket(wsUrl);
+        reconnectAttempts = 0;
+        
+        ws.onopen = () => {
+          console.log('[NewPostsBanner] WebSocket connected');
+        };
+
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'new_post') {
+              setNewPostsCount(prev => prev + 1);
+            }
+          } catch (error) {
+            console.error('[NewPostsBanner] Error parsing WebSocket message:', error);
+          }
+        };
+
+        ws.onerror = (error) => {
+          console.error('[NewPostsBanner] WebSocket error:', error);
+        };
+
+        ws.onclose = () => {
+          console.log('[NewPostsBanner] WebSocket disconnected');
+          // Attempt reconnection
+          if (reconnectAttempts < maxReconnectAttempts) {
+            reconnectAttempts++;
+            setTimeout(setupWebSocket, 3000);
+          }
+        };
+      } catch (error) {
+        console.error('[NewPostsBanner] Failed to create WebSocket:', error);
+      }
+    };
+
+    setupWebSocket();
+
+    return () => {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
+    };
   }, []);
 
   const handleClick = () => {
