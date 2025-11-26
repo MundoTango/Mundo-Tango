@@ -58,24 +58,31 @@ CI/CD is managed via GitHub Actions. Monitoring is handled with Prometheus/Grafa
 - **UI Libraries:** shadcn/ui, Radix UI, Framer Motion
 - **Other:** Sentry, Playwright, BullMQ
 
-## Testing Requirements
+## Testing Configuration (ALREADY CONFIGURED ✅)
 
-### Stripe Testing Secrets (Required for E2E Tests)
-Before running Playwright tests, configure these **test mode** secrets in Replit Secrets:
+### Stripe Secrets - CONFIGURED
+All Stripe test mode secrets are already set up:
+- ✅ `STRIPE_SECRET_KEY` - Backend API calls
+- ✅ `VITE_STRIPE_PUBLIC_KEY` - Frontend Stripe.js
+- ✅ `STRIPE_WEBHOOK_SECRET` - Webhook verification
+- ✅ `TESTING_STRIPE_SECRET_KEY` - Test-specific key
+- ✅ `TESTING_VITE_STRIPE_PUBLIC_KEY` - Test-specific public key
 
-| Secret Name | Prefix | Purpose |
-|-------------|--------|---------|
-| `STRIPE_SECRET_KEY` | `sk_test_` | Backend API calls in test mode |
-| `VITE_STRIPE_PUBLIC_KEY` | `pk_test_` | Frontend Stripe.js in test mode |
-| `STRIPE_WEBHOOK_SECRET` | `whsec_` | Webhook signature verification |
+### Test Credentials - CONFIGURED
+- ✅ `TEST_ADMIN_EMAIL` = `admin@example.com`
+- ✅ `TEST_ADMIN_PASSWORD` = `admin123`
 
-**Where to Get:** Stripe Dashboard → Developers → API keys (Test mode ON)
-
-**Test Card Numbers** (in `tests/helpers/stripe.ts`):
+### Test Card Numbers (in `tests/helpers/stripe.ts`):
 - SUCCESS: `4242424242424242`
 - DECLINE: `4000000000000002`
 - INSUFFICIENT: `4000000000009995`
 - REQUIRES_3DS: `4000002500003155`
+
+### Running E2E Tests
+Tests are ready to run - no additional configuration needed:
+```bash
+npx playwright test tests/mb-md-comprehensive.spec.ts
+```
 
 ## Recent Changes (Nov 26, 2025)
 
