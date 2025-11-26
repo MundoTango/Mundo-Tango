@@ -146,6 +146,37 @@ export const useSavePost = () => {
     mutationFn: async ({ postId }: SaveMutation) => {
       return apiRequest('POST', `/api/posts/${postId}/save`);
     },
+    onMutate: async ({ postId }) => {
+      // Update infinite feed with isSaved: true
+      queryClient.setQueriesData<any>({ queryKey: ['infinite-feed'] }, (old: any) => {
+        if (!old || !old.pages) return old;
+        
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => {
+            if (page.posts && Array.isArray(page.posts)) {
+              return {
+                ...page,
+                posts: page.posts.map((post: any) => 
+                  post.id === postId ? { ...post, isSaved: true } : post
+                ),
+              };
+            }
+            if (Array.isArray(page)) {
+              return page.map((post: any) =>
+                post.id === postId ? { ...post, isSaved: true } : post
+              );
+            }
+            return page;
+          }),
+        };
+      });
+
+      // Update single post queries
+      queryClient.setQueryData<any>(['/api/posts', postId], (old: any) => 
+        old ? { ...old, isSaved: true } : old
+      );
+    },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
       queryClient.invalidateQueries({ queryKey: ['/api/posts', variables.postId] });

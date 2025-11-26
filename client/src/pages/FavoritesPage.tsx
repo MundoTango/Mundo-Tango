@@ -58,7 +58,7 @@ export default function FavoritesPage() {
     queryKey: ["/api/favorites"],
   });
 
-  const favorites = data?.favorites || [];
+  const favorites = (data?.favorites || []).filter(f => f && f.item);
   const total = data?.total || 0;
 
   const favoritesByType = {
