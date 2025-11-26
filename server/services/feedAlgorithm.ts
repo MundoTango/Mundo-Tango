@@ -201,7 +201,7 @@ export class FeedAlgorithmService {
         return { posts: [], nextOffset: null, hasMore: false };
       }
 
-      // Get posts from connected users
+      // Get posts from connected users with user's current reaction
       const followingPosts = await db
         .select({
           post: posts,
@@ -215,13 +215,18 @@ export class FeedAlgorithmService {
           likesCount: sql<number>`(
             SELECT COUNT(*)::int FROM ${reactions}
             WHERE ${reactions.postId} = ${posts.id}
-            AND ${reactions.reactionType} = 'like'
           )`,
           commentsCount: sql<number>`(
             SELECT COUNT(*)::int FROM ${postComments}
             WHERE ${postComments.postId} = ${posts.id}
           )`,
           sharesCount: posts.shares,
+          currentReaction: sql<string | null>`(
+            SELECT ${reactions.reactionType} FROM ${reactions}
+            WHERE ${reactions.postId} = ${posts.id}
+            AND ${reactions.userId} = ${userId}
+            LIMIT 1
+          )`,
         })
         .from(posts)
         .innerJoin(users, eq(posts.userId, users.id))
@@ -230,12 +235,13 @@ export class FeedAlgorithmService {
         .limit(limit)
         .offset(offset);
 
-      const formattedPosts = followingPosts.map(({ post, user: postUser, likesCount, commentsCount, sharesCount }) => ({
+      const formattedPosts = followingPosts.map(({ post, user: postUser, likesCount, commentsCount, sharesCount, currentReaction }) => ({
         ...post,
         user: postUser,
         likes: likesCount,
         comments: commentsCount,
         shares: sharesCount,
+        currentReaction: currentReaction || null,
       }));
 
       return {

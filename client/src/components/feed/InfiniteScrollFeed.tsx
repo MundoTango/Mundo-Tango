@@ -31,6 +31,7 @@ interface Post {
   likes: number;
   comments: number;
   shares: number;
+  currentReaction?: string | null;
 }
 
 interface FeedResponse {
