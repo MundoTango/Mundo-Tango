@@ -86,6 +86,32 @@ npx playwright test tests/mb-md-comprehensive.spec.ts
 
 ## Recent Changes (Nov 26, 2025)
 
+### Phase 3 Complete - Groups and Events Enhancements
+Comprehensive updates to GroupDetailsPage and event systems:
+
+**GroupDetailsPage Updates:**
+- Removed Invites tab (reduced from 8 to 7 columns in tab grid)
+- Transformed "About" tab into "City Guide" with Compass icon
+- City Guide includes: city overview, venues, teachers/DJs/organizers, weekly schedule
+- Added PostCreator integration to GroupPostFeed with cross-posting capability
+- Added tango role icons (RoleIcon component) to GroupMembersList with tooltips
+- Shows up to 3 roles with +N badge for additional roles
+
+**API Updates:**
+- `GET /api/groups/:id/members` now includes `tangoRoles` field
+- Fixed GroupMembersList to correctly map API response format `{ membership, user }`
+
+**PostCreator Cross-Posting:**
+- FB/IG toggle switches in PostCreator component
+- Context-aware with groupId/groupName for cross-posts
+- Uses react-icons/si for SiFacebook and SiInstagram icons
+
+**Event System:**
+- Event series schema with `event_series` table
+- Smart filtering API with date ranges, event types
+- CartoDB Dark Matter standardized for all maps
+- EventDetailsPage: attendees sidebar, full address, Get Directions, Last Updated
+
 ### MB.MD Test Suite - 97.3% PASSING (36/37 tests)
 Comprehensive E2E test suite (`tests/mb-md-comprehensive.spec.ts`) validated:
 
