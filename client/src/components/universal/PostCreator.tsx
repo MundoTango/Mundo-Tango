@@ -168,7 +168,8 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
     });
   };
 
-  // Media upload handler - show previews immediately, compress in background
+  // Media upload handler - use URL.createObjectURL for INSTANT previews
+  // Base64 conversion happens only on submit (like Facebook/Instagram)
   const handleMediaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []);
     if (selectedFiles.length === 0) return;
@@ -183,104 +184,45 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       return;
     }
 
-    // Validate file sizes (max 500MB each)
-    const invalidFiles = selectedFiles.filter(file => file.size > 500 * 1024 * 1024);
+    // Validate file sizes (max 50MB each for reasonable uploads)
+    const invalidFiles = selectedFiles.filter(file => file.size > 50 * 1024 * 1024);
     if (invalidFiles.length > 0) {
       toast({
         title: "File too large",
-        description: "Each file must be smaller than 500MB",
+        description: "Each file must be smaller than 50MB",
         variant: "destructive",
       });
       return;
     }
 
-    console.log('[PostCreator] Starting media upload for', selectedFiles.length, 'files');
+    console.log('[PostCreator] Adding', selectedFiles.length, 'files');
     
-    // Add files immediately to state
-    setMediaFiles((prev) => [...prev, ...selectedFiles]);
+    // Create blob URLs for INSTANT preview (synchronous, no async needed)
+    const blobUrls = selectedFiles.map(file => URL.createObjectURL(file));
+    console.log('[PostCreator] Created blob URLs:', blobUrls.length);
     
-    // Read all previews with proper Promise handling
-    const previewPromises = selectedFiles.map((file, fileIdx) => {
-      return new Promise<string>((resolve) => {
-        try {
-          const reader = new FileReader();
-          
-          reader.onload = (event) => {
-            const result = event.target?.result as string;
-            console.log(`[PostCreator] Preview ${fileIdx} loaded:`, result.length, 'bytes');
-            resolve(result);
-          };
-          
-          reader.onerror = (error) => {
-            console.error(`[PostCreator] Preview ${fileIdx} error:`, error);
-            resolve(''); // Return empty on error
-          };
-          
-          reader.readAsDataURL(file);
-        } catch (error) {
-          console.error(`[PostCreator] FileReader error for file ${fileIdx}:`, error);
-          resolve('');
+    // Update state SYNCHRONOUSLY - this guarantees re-render
+    setMediaFiles(prev => [...prev, ...selectedFiles]);
+    setMediaPreviews(prev => [...prev, ...blobUrls]);
+    
+    console.log('[PostCreator] State updated with', selectedFiles.length, 'files');
+    
+    toast({
+      title: "Media added!",
+      description: `${selectedFiles.length} file(s) ready`,
+    });
+  };
+  
+  // Cleanup blob URLs on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      mediaPreviews.forEach(url => {
+        if (url.startsWith('blob:')) {
+          URL.revokeObjectURL(url);
         }
       });
-    });
-    
-    // Wait for all previews to load, then update state
-    Promise.all(previewPromises)
-      .then((loadedPreviews) => {
-        console.log('[PostCreator] All previews loaded:', loadedPreviews.length);
-        
-        // Update previews state
-        setMediaPreviews((prev) => [...prev, ...loadedPreviews]);
-        
-        toast({
-          title: "Media added!",
-          description: `${selectedFiles.length} file(s) ready. Compressing for upload...`,
-        });
-
-        // Compress images in background
-        (async () => {
-          try {
-            const compressed = await Promise.all(
-              selectedFiles.map(async (file, idx) => {
-                if (file.type.startsWith('image/')) {
-                  try {
-                    const result = await compressImage(file);
-                    console.log(`[PostCreator] Image ${idx} compressed:`, result.length, 'bytes');
-                    return result;
-                  } catch (err) {
-                    console.warn(`[PostCreator] Compression failed for image ${idx}:`, err);
-                    return loadedPreviews[idx];
-                  }
-                }
-                return loadedPreviews[idx];
-              })
-            );
-
-            // Update with compressed versions
-            setMediaPreviews((prev) => {
-              const updated = [...prev];
-              const startIdx = Math.max(0, updated.length - selectedFiles.length);
-              compressed.forEach((preview, i) => {
-                updated[startIdx + i] = preview;
-              });
-              return updated;
-            });
-            
-            console.log('[PostCreator] Compression complete');
-          } catch (error) {
-            console.error('[PostCreator] Compression error:', error);
-          }
-        })();
-      })
-      .catch((error) => {
-        console.error('[PostCreator] Preview loading failed:', error);
-        toast({
-          title: "Media preview failed",
-          description: "Could not load media. Please try again.",
-          variant: "destructive",
-        });
-      });
-  };
+    };
+  }, []);
 
   const removeMedia = (index: number) => {
     setMediaFiles(mediaFiles.filter((_, i) => i !== index));
