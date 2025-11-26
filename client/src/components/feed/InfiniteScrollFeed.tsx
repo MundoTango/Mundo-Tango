@@ -23,6 +23,8 @@ interface Post {
   userId: number;
   content: string;
   imageUrl?: string | null;
+  videoUrl?: string | null;
+  videoThumbnail?: string | null;
   visibility: string;
   createdAt: string;
   user: {

@@ -222,9 +222,13 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
                 src={post.videoUrl}
                 poster={post.videoThumbnail || undefined}
                 controls
-                preload="metadata"
+                preload="auto"
+                playsInline
                 className="w-full h-full object-contain"
                 data-testid={`post-video-${post.id}`}
+                onLoadStart={() => console.log(`[Video ${post.id}] Load started, videoUrl length: ${post.videoUrl?.length}`)}
+                onLoadedData={() => console.log(`[Video ${post.id}] Data loaded successfully`)}
+                onError={(e) => console.error(`[Video ${post.id}] Error:`, e)}
               >
                 Your browser does not support the video tag.
               </video>
