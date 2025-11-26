@@ -224,124 +224,82 @@ function UnifiedTopBar({
         </div>
 
         {/* Center Section - Global Search */}
-        <div className="flex-1 max-w-2xl mx-4 hidden md:block relative" ref={searchRef}>
-          <div 
-            className="relative rounded-full overflow-visible border shadow-sm"
-            style={{
-              background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.18) 0%, rgba(30, 144, 255, 0.15) 100%)',
-              backdropFilter: 'blur(16px)',
-              borderColor: 'rgba(64, 224, 208, 0.4)',
-            }}
-          >
-            {/* Search icon */}
-            <Search 
-              className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 pointer-events-none" 
-              style={{ color: '#64748B' }}
-            />
-            
-            {/* Search input */}
+        <div className="flex-1 max-w-2xl mx-4 hidden md:block" ref={searchRef}>
+          <div className="relative">
             <input
               type="text"
               value={searchQuery}
               onChange={handleSearchChange}
-              onClick={() => setShowSearchResults(true)}
               onFocus={() => setShowSearchResults(true)}
-              placeholder={t('navigation.search')}
-              className="w-full pl-12 pr-4 py-2.5 bg-transparent text-sm focus:outline-none rounded-full pointer-events-auto relative z-10"
-              style={{ color: '#1E40AF' }}
+              placeholder="Search posts, events, people, groups..."
+              className="w-full px-4 py-2.5 pl-10 text-sm rounded-full border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400 dark:focus:ring-cyan-500"
               data-testid="input-search"
               autoComplete="off"
             />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500 pointer-events-none" />
           </div>
           
-          {/* Search results dropdown - MT Ocean Glassmorphic */}
+          {/* Search results dropdown */}
           {showSearchResults && searchQuery.trim().length > 2 && (
-            <div 
-              className="absolute w-full max-w-2xl mt-2 rounded-xl overflow-hidden border border-white/10"
-              style={{
-                background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.15) 0%, rgba(30, 144, 255, 0.12) 100%)',
-                backdropFilter: 'blur(24px)',
-                boxShadow: '0 8px 32px rgba(64, 224, 208, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-              }}
-            >
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg overflow-hidden z-50">
               {searchLoading ? (
-                <div className="p-8 text-center" style={{ color: '#40E0D0' }}>
-                  {t('search.searching')}
-                </div>
-              ) : searchResults?.data ? (
-                <div className="grid grid-cols-4 gap-4 p-4">
-                  {/* Posts */}
-                  <div>
-                    <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">
-                      {t('search.posts')}
-                    </h3>
-                    <div className="space-y-2">
-                      {searchResults.data.posts?.slice(0, 5).map((post: any) => (
-                        <Link key={post.id} href={`/post/${post.id}`}>
-                          <div className="text-sm p-2 rounded cursor-pointer transition-all duration-200 hover-elevate" style={{ color: 'var(--foreground)' }}>
-                            {post.content?.substring(0, 50)}...
-                          </div>
-                        </Link>
-                      ))}
+                <div className="p-4 text-center text-sm text-slate-500">Searching...</div>
+              ) : searchResults?.data && (searchResults.data.posts?.length > 0 || searchResults.data.events?.length > 0 || searchResults.data.users?.length > 0 || searchResults.data.groups?.length > 0) ? (
+                <div className="max-h-96 overflow-y-auto">
+                  {searchResults.data.posts?.length > 0 && (
+                    <div className="border-b border-slate-200 dark:border-slate-700 p-3">
+                      <h4 className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">Posts</h4>
+                      <div className="space-y-1">
+                        {searchResults.data.posts.slice(0, 3).map((post: any) => (
+                          <Link key={post.id} href={`/post/${post.id}`}>
+                            <div className="text-sm p-2 rounded cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800">{post.content?.substring(0, 40)}...</div>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-
-                  {/* Events */}
-                  <div>
-                    <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">
-                      {t('search.events')}
-                    </h3>
-                    <div className="space-y-2">
-                      {searchResults.data.events?.slice(0, 5).map((event: any) => (
-                        <Link key={event.id} href={`/events/${event.id}`}>
-                          <div className="text-sm p-2 rounded cursor-pointer transition-all duration-200 hover-elevate" style={{ color: 'var(--foreground)' }}>
-                            {event.title}
-                          </div>
-                        </Link>
-                      ))}
+                  )}
+                  {searchResults.data.events?.length > 0 && (
+                    <div className="border-b border-slate-200 dark:border-slate-700 p-3">
+                      <h4 className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">Events</h4>
+                      <div className="space-y-1">
+                        {searchResults.data.events.slice(0, 3).map((event: any) => (
+                          <Link key={event.id} href={`/events/${event.id}`}>
+                            <div className="text-sm p-2 rounded cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800">{event.title}</div>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-
-                  {/* People */}
-                  <div>
-                    <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">
-                      People
-                    </h3>
-                    <div className="space-y-2">
-                      {searchResults.data.users?.slice(0, 5).map((user: any) => (
-                        <Link key={user.id} href={`/profile/${user.username}`}>
-                          <div className="flex items-center gap-2 text-sm p-2 rounded cursor-pointer transition-all duration-200 hover-elevate" style={{ color: 'var(--foreground)' }}>
-                            <Avatar className="h-6 w-6">
-                              <AvatarImage src={user.profileImage} />
-                              <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <span>{user.name}</span>
-                          </div>
-                        </Link>
-                      ))}
+                  )}
+                  {searchResults.data.users?.length > 0 && (
+                    <div className="border-b border-slate-200 dark:border-slate-700 p-3">
+                      <h4 className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">People</h4>
+                      <div className="space-y-1">
+                        {searchResults.data.users.slice(0, 3).map((user: any) => (
+                          <Link key={user.id} href={`/profile/${user.username}`}>
+                            <div className="flex items-center gap-2 text-sm p-2 rounded cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800">
+                              <Avatar className="h-5 w-5"><AvatarImage src={user.profileImage} /><AvatarFallback>{user.name?.charAt(0)}</AvatarFallback></Avatar>
+                              <span>{user.name}</span>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-
-                  {/* Groups */}
-                  <div>
-                    <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">
-                      {t('search.groups')}
-                    </h3>
-                    <div className="space-y-2">
-                      {searchResults.data.groups?.slice(0, 5).map((group: any) => (
-                        <Link key={group.id} href={`/groups/${group.slug}`}>
-                          <div className="text-sm p-2 rounded cursor-pointer transition-all duration-200 hover-elevate" style={{ color: 'var(--foreground)' }}>
-                            {group.name}
-                          </div>
-                        </Link>
-                      ))}
+                  )}
+                  {searchResults.data.groups?.length > 0 && (
+                    <div className="p-3">
+                      <h4 className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">Groups</h4>
+                      <div className="space-y-1">
+                        {searchResults.data.groups.slice(0, 3).map((group: any) => (
+                          <Link key={group.id} href={`/groups/${group.slug}`}>
+                            <div className="text-sm p-2 rounded cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800">{group.name}</div>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ) : (
-                <div className="p-8 text-center" style={{ color: 'var(--muted-foreground)' }}>
-                  No results found
-                </div>
+                <div className="p-4 text-center text-sm text-slate-500">No results found</div>
               )}
             </div>
           )}
