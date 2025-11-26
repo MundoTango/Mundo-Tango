@@ -25,7 +25,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { BannerAd } from "@/components/ads/BannerAd";
 import { EventFilters, type EventFilterValues } from "@/components/events/EventFilters";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -68,6 +68,8 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
     }
     try {
       await rsvpMutation.mutateAsync({ eventId: eventData.id, status });
+      // Invalidate the RSVP cache to force a refetch
+      queryClient.invalidateQueries({ queryKey: ["rsvps", eventData.id] });
       toast({ title: "RSVP updated", description: `You marked this event as ${status}` });
     } catch (error) {
       toast({ title: "Error", description: "Failed to update RSVP", variant: "destructive" });
