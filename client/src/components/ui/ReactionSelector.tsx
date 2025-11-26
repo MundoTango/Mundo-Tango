@@ -127,7 +127,12 @@ export const ReactionSelector = ({
   };
 
   return (
-    <div className={`relative ${className}`} ref={containerRef}>
+    <div 
+      className={`relative ${className}`} 
+      ref={containerRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       {/* Main Like/React Button */}
       <button
         type="button"
@@ -139,8 +144,6 @@ export const ReactionSelector = ({
           color: currentReaction ? getCurrentReactionColor() : 'inherit',
         }}
         onClick={() => currentReaction ? onReact('') : onReact('love')}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
         data-testid={`button-react-${postId}`}
       >
         {currentReaction ? (() => {
@@ -179,8 +182,6 @@ export const ReactionSelector = ({
             exit={{ opacity: 0, scale: 0.9, y: 10 }}
             transition={{ duration: 0.2 }}
             className="absolute bottom-full left-0 mb-2 z-50"
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={handleMouseLeave}
             style={{
               background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.95), rgba(30, 144, 255, 0.95))',
               backdropFilter: 'blur(12px)',
