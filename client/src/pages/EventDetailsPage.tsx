@@ -1,9 +1,10 @@
 import { useRoute } from "wouter";
 import { useEvent, useRSVPEvent } from "@/hooks/useEvents";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User, Ticket, Music, Tag, ExternalLink, Clock } from "lucide-react";
+import { Calendar, MapPin, DollarSign, Globe, Users, Check, ChevronRight, User, Ticket, Music, Tag, ExternalLink, Clock, Navigation } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "wouter";
 import { safeDateFormat } from "@/lib/safeDateFormat";
@@ -13,6 +14,7 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function EventDetailsPage() {
   const [, params] = useRoute("/events/:id");
@@ -20,6 +22,26 @@ export default function EventDetailsPage() {
   const { data: event, isLoading } = useEvent(eventId);
   const rsvpEvent = useRSVPEvent();
   const { toast } = useToast();
+
+  const { data: attendees = [] } = useQuery<any[]>({
+    queryKey: ["/api/events", eventId, "attendees"],
+    enabled: eventId > 0,
+  });
+
+  const buildFullAddress = () => {
+    const parts = [];
+    if (event?.venue) parts.push(event.venue);
+    if (event?.address) parts.push(event.address);
+    if (event?.city) parts.push(event.city);
+    if (event?.country) parts.push(event.country);
+    return parts.join(", ");
+  };
+
+  const getDirectionsUrl = () => {
+    const address = buildFullAddress();
+    if (!address) return null;
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+  };
 
   const handleRsvp = async (status: "going" | "maybe" | "not_going") => {
     try {
@@ -190,7 +212,7 @@ export default function EventDetailsPage() {
                     </div>
                   </motion.div>
 
-                  {(event.location || event.venue || event.city) && (
+                  {(event.location || event.venue || event.city || event.address) && (
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -200,14 +222,27 @@ export default function EventDetailsPage() {
                       <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                         <MapPin className="h-7 w-7 text-primary" />
                       </div>
-                      <div>
+                      <div className="flex-1">
                         <p className="text-lg font-semibold mb-2">Location</p>
-                        <p className="text-base text-muted-foreground leading-relaxed">
+                        <p className="text-base text-muted-foreground leading-relaxed mb-3" data-testid="text-event-address">
                           {event.venue && <span className="font-medium">{event.venue}</span>}
-                          {event.venue && event.location && <br />}
-                          {event.location}
+                          {event.venue && (event.address || event.location) && <br />}
+                          {event.address || event.location}
                           {event.city && <><br />{event.city}{event.country && `, ${event.country}`}</>}
                         </p>
+                        {getDirectionsUrl() && (
+                          <a 
+                            href={getDirectionsUrl()!}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-testid="link-get-directions"
+                          >
+                            <Button variant="outline" size="sm" className="gap-2">
+                              <Navigation className="h-4 w-4" />
+                              Get Directions
+                            </Button>
+                          </a>
+                        )}
                       </div>
                     </motion.div>
                   )}
@@ -242,10 +277,50 @@ export default function EventDetailsPage() {
                     </div>
                     <div>
                       <p className="text-lg font-semibold mb-2">Attendees</p>
-                      <p className="text-base text-muted-foreground leading-relaxed">Join the community</p>
+                      <p className="text-base text-muted-foreground leading-relaxed" data-testid="text-attendee-count">
+                        {attendees.length > 0 
+                          ? `${attendees.length} ${attendees.length === 1 ? 'person' : 'people'} attending`
+                          : 'Be the first to RSVP!'}
+                      </p>
                     </div>
                   </motion.div>
                 </div>
+
+                {/* Attendees List Sidebar */}
+                {attendees.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.62 }}
+                    className="pt-6 border-t"
+                  >
+                    <h3 className="text-xl font-semibold mb-4" data-testid="text-attendees-header">Who's Going</h3>
+                    <ScrollArea className="h-48 rounded-lg border p-4">
+                      <div className="space-y-3">
+                        {attendees.map((attendee: any) => (
+                          <Link 
+                            key={attendee.id}
+                            href={`/profile/${attendee.username || attendee.userId}`}
+                            data-testid={`link-attendee-${attendee.userId}`}
+                          >
+                            <div className="flex items-center gap-3 p-2 rounded-lg hover-elevate cursor-pointer">
+                              <Avatar className="h-10 w-10 border">
+                                <AvatarImage src={attendee.profileImage} alt={attendee.name || 'Attendee'} />
+                                <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                                  {(attendee.name || 'U').charAt(0).toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium truncate">{attendee.name || 'Anonymous'}</p>
+                                <p className="text-xs text-muted-foreground capitalize">{attendee.status || 'going'}</p>
+                              </div>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  </motion.div>
+                )}
 
                 {event.organizer && (
                   <motion.div
@@ -409,48 +484,63 @@ export default function EventDetailsPage() {
                   </motion.div>
                 )}
 
-                {/* Source Info Section */}
-                {(event.sourceName || event.sourceUrl || (event.sourceUrls && event.sourceUrls.length > 0)) && (
+                {/* Source Info + Last Updated Section */}
+                {(event.sourceName || event.sourceUrl || (event.sourceUrls && event.sourceUrls.length > 0) || event.updatedAt) && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.695 }}
                     className="pt-6 border-t"
                   >
-                    <h4 className="text-sm font-medium text-muted-foreground mb-2">Event Source</h4>
-                    <div className="flex flex-wrap gap-3">
-                      {event.sourceUrl && (
-                        <a
-                          href={event.sourceUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
-                          data-testid="link-source-url"
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          {event.sourceName || new URL(event.sourceUrl).hostname.replace('www.', '')}
-                        </a>
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                      {(event.sourceName || event.sourceUrl || (event.sourceUrls && event.sourceUrls.length > 0)) && (
+                        <div>
+                          <h4 className="text-sm font-medium text-muted-foreground mb-2">Event Source</h4>
+                          <div className="flex flex-wrap gap-3">
+                            {event.sourceUrl && (
+                              <a
+                                href={event.sourceUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                                data-testid="link-source-url"
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                                {event.sourceName || new URL(event.sourceUrl).hostname.replace('www.', '')}
+                              </a>
+                            )}
+                            {!event.sourceUrl && event.sourceName && (
+                              <span className="text-sm text-muted-foreground" data-testid="text-source-name">
+                                Source: {event.sourceName}
+                              </span>
+                            )}
+                            {event.sourceUrls && event.sourceUrls.length > 0 && (
+                              <div className="flex flex-wrap gap-2">
+                                {event.sourceUrls.map((url: string, index: number) => (
+                                  <a
+                                    key={index}
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
+                                    data-testid={`link-source-${index}`}
+                                  >
+                                    <ExternalLink className="h-3 w-3" />
+                                    {new URL(url).hostname.replace('www.', '')}
+                                  </a>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       )}
-                      {!event.sourceUrl && event.sourceName && (
-                        <span className="text-sm text-muted-foreground" data-testid="text-source-name">
-                          Source: {event.sourceName}
-                        </span>
-                      )}
-                      {event.sourceUrls && event.sourceUrls.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                          {event.sourceUrls.map((url: string, index: number) => (
-                            <a
-                              key={index}
-                              href={url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
-                              data-testid={`link-source-${index}`}
-                            >
-                              <ExternalLink className="h-3 w-3" />
-                              {new URL(url).hostname.replace('www.', '')}
-                            </a>
-                          ))}
+                      {event.updatedAt && (
+                        <div className="text-right">
+                          <h4 className="text-sm font-medium text-muted-foreground mb-1">Last Updated</h4>
+                          <p className="text-xs text-muted-foreground flex items-center gap-1 justify-end" data-testid="text-last-updated">
+                            <Clock className="h-3 w-3" />
+                            {safeDateFormat(event.updatedAt, "MMM d, yyyy 'at' h:mm a")}
+                          </p>
                         </div>
                       )}
                     </div>
