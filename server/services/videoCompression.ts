@@ -1,7 +1,6 @@
 import ffmpeg from 'fluent-ffmpeg';
 import path from 'path';
 import fs from 'fs';
-import os from 'os';
 
 export interface VideoCompressionResult {
   success: boolean;
@@ -27,7 +26,8 @@ class VideoCompressionService {
   private tempDir: string;
 
   constructor() {
-    this.tempDir = path.join(os.tmpdir(), 'mundo-tango-videos');
+    // Use workspace directory to avoid /tmp quota issues on Replit
+    this.tempDir = path.join(process.cwd(), '.uploads', 'videos', 'processing');
     if (!fs.existsSync(this.tempDir)) {
       fs.mkdirSync(this.tempDir, { recursive: true });
     }

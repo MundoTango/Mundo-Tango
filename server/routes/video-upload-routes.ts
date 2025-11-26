@@ -2,14 +2,14 @@ import { Router, Request, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import os from 'os';
 import { videoCompressionService } from '../services/videoCompression';
 import { objectStorageService } from '../objectStorage';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
-const uploadDir = path.join(os.tmpdir(), 'mundo-tango-uploads');
+// Use workspace directory to avoid /tmp quota issues on Replit
+const uploadDir = path.join(process.cwd(), '.uploads', 'videos');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
