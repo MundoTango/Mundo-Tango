@@ -79,6 +79,7 @@ export class FeedAlgorithmService {
             name: users.name,
             username: users.username,
             profileImage: users.profileImage,
+            tangoRoles: users.tangoRoles,
           },
           likesCount: sql<number>`(
             SELECT COUNT(*)::int FROM ${reactions}
@@ -209,6 +210,7 @@ export class FeedAlgorithmService {
             name: users.name,
             username: users.username,
             profileImage: users.profileImage,
+            tangoRoles: users.tangoRoles,
           },
           likesCount: sql<number>`(
             SELECT COUNT(*)::int FROM ${reactions}
@@ -265,6 +267,7 @@ export class FeedAlgorithmService {
             name: users.name,
             username: users.username,
             profileImage: users.profileImage,
+            tangoRoles: users.tangoRoles,
           },
           likesCount: sql<number>`(
             SELECT COUNT(*)::int FROM ${reactions}
@@ -343,6 +346,7 @@ export class FeedAlgorithmService {
             name: users.name,
             username: users.username,
             profileImage: users.profileImage,
+            tangoRoles: users.tangoRoles,
           },
         })
         .from(posts)
@@ -497,6 +501,7 @@ export class FeedAlgorithmService {
             name: users.name,
             username: users.username,
             profileImage: users.profileImage,
+            tangoRoles: users.tangoRoles,
           },
           likesCount: sql<number>`(
             SELECT COUNT(*)::int FROM ${reactions}
