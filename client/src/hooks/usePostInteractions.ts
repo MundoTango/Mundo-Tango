@@ -27,7 +27,7 @@ export interface CommentLikeMutation {
   commentId: number;
 }
 
-// REACTIONS (13 types: love, passion, fire, tango, celebrate, brilliant, support, hug, sad, cry, thinking, shock, angry)
+// REACTIONS (13 types: love, passion, romance, joy, wow, celebration, tango_dancer, tango_leader, music, elegance, support, inspiration, sad)
 export const useReactToPost = () => {
   const { toast } = useToast();
   
@@ -36,50 +36,67 @@ export const useReactToPost = () => {
       return apiRequest('POST', `/api/posts/${postId}/react`, { reactionType });
     },
     onMutate: async ({ postId, reactionType }) => {
-      // Cancel outgoing refetches
+      // Cancel outgoing refetches for both query types
       await queryClient.cancelQueries({ queryKey: ['/api/posts'] });
+      await queryClient.cancelQueries({ queryKey: ['infinite-feed'] });
       
-      // Snapshot previous value
-      const previousData = queryClient.getQueryData(['/api/posts']);
+      // Snapshot previous values
+      const previousPostsData = queryClient.getQueryData(['/api/posts']);
       
-      // Optimistically update the cache
-      queryClient.setQueryData<any>(['/api/posts'], (old: any) => {
-        if (!old) return old;
-        
-        if (old.pages) {
-          // Handle infinite query structure
+      // Helper function to update a post
+      const updatePost = (post: any) => {
+        if (post.id === postId) {
+          const likesChange = reactionType === '' ? -1 : (post.currentReaction ? 0 : 1);
           return {
-            ...old,
-            pages: old.pages.map((page: any[]) =>
-              page.map((post: any) => {
-                if (post.id === postId) {
-                  // If removing reaction (empty string), decrement likes
-                  // If adding/changing reaction, keep or increment likes
-                  const likesChange = reactionType === '' ? -1 : 
-                                      (post.currentReaction ? 0 : 1);
-                  
-                  return {
-                    ...post,
-                    likes: Math.max(0, (post.likes || 0) + likesChange),
-                    currentReaction: reactionType === '' ? undefined : reactionType,
-                  };
-                }
-                return post;
-              })
-            ),
+            ...post,
+            likes: Math.max(0, (post.likes || 0) + likesChange),
+            currentReaction: reactionType === '' ? undefined : reactionType,
           };
         }
-        
+        return post;
+      };
+      
+      // Update regular posts cache
+      queryClient.setQueryData<any>(['/api/posts'], (old: any) => {
+        if (!old) return old;
+        if (Array.isArray(old)) {
+          return old.map(updatePost);
+        }
         return old;
       });
       
-      return { previousData };
+      // Update infinite feed cache (handles ['infinite-feed', feedType, filter])
+      queryClient.setQueriesData<any>({ queryKey: ['infinite-feed'] }, (old: any) => {
+        if (!old || !old.pages) return old;
+        
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => {
+            // Handle FeedResponse structure: { posts: Post[], nextOffset, hasMore }
+            if (page.posts && Array.isArray(page.posts)) {
+              return {
+                ...page,
+                posts: page.posts.map(updatePost),
+              };
+            }
+            // Handle simple array structure
+            if (Array.isArray(page)) {
+              return page.map(updatePost);
+            }
+            return page;
+          }),
+        };
+      });
+      
+      return { previousPostsData };
     },
     onError: (error, variables, context) => {
       // Rollback on error
-      if (context?.previousData) {
-        queryClient.setQueryData(['/api/posts'], context.previousData);
+      if (context?.previousPostsData) {
+        queryClient.setQueryData(['/api/posts'], context.previousPostsData);
       }
+      // Refetch to get correct state
+      queryClient.invalidateQueries({ queryKey: ['infinite-feed'] });
       toast({
         title: "Reaction failed",
         description: "Could not react to post",
@@ -90,6 +107,7 @@ export const useReactToPost = () => {
       // Refetch to ensure consistency
       queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
       queryClient.invalidateQueries({ queryKey: ['/api/posts', variables.postId] });
+      queryClient.invalidateQueries({ queryKey: ['infinite-feed'] });
     },
   });
 };
