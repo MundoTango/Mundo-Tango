@@ -170,11 +170,11 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
 
   // Media upload handler - show previews immediately, compress in background
   const handleMediaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
+    const selectedFiles = Array.from(e.target.files || []);
+    if (selectedFiles.length === 0) return;
     
     // Validate total files (max 30)
-    if (mediaFiles.length + files.length > 30) {
+    if (mediaFiles.length + selectedFiles.length > 30) {
       toast({
         title: "Too many files",
         description: "Maximum 30 files allowed per post",
@@ -183,8 +183,8 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       return;
     }
 
-    // Validate each file (max 500MB)
-    const invalidFiles = files.filter(file => file.size > 500 * 1024 * 1024);
+    // Validate file sizes (max 500MB each)
+    const invalidFiles = selectedFiles.filter(file => file.size > 500 * 1024 * 1024);
     if (invalidFiles.length > 0) {
       toast({
         title: "File too large",
@@ -194,70 +194,92 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       return;
     }
 
-    console.log('[PostCreator] Media selected:', files.length, 'files');
-
-    // Show previews IMMEDIATELY (uncompressed)
-    const immediatePreviewPromises = files.map(file => 
-      new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = () => resolve(''); // Fallback empty string
-        reader.readAsDataURL(file);
-      })
-    );
-
-    Promise.all(immediatePreviewPromises).then((immediatePreviews) => {
-      console.log('[PostCreator] Immediate previews loaded:', immediatePreviews.length);
-      
-      // Update state immediately so user sees thumbnails
-      setMediaFiles((prev) => [...prev, ...files]);
-      setMediaPreviews((prev) => [...prev, ...immediatePreviews]);
-      
-      toast({
-        title: "Media added!",
-        description: `${files.length} file(s) added. Compressing for upload...`,
-      });
-
-      // Then compress in background for upload
-      (async () => {
+    console.log('[PostCreator] Starting media upload for', selectedFiles.length, 'files');
+    
+    // Add files immediately to state
+    setMediaFiles((prev) => [...prev, ...selectedFiles]);
+    
+    // Read all previews with proper Promise handling
+    const previewPromises = selectedFiles.map((file, fileIdx) => {
+      return new Promise<string>((resolve) => {
         try {
-          const compressedPreviews = await Promise.all(
-            files.map(async (file, idx) => {
-              if (file.type.startsWith('image/')) {
-                try {
-                  return await compressImage(file);
-                } catch (err) {
-                  console.error('Compression failed for file', idx);
-                  return immediatePreviews[idx]; // Keep original if compression fails
-                }
-              }
-              return immediatePreviews[idx]; // Keep original for non-images
-            })
-          );
-
-          // Replace previews with compressed versions
-          setMediaPreviews((prev) => {
-            const result = [...prev];
-            const startIdx = result.length - files.length;
-            compressedPreviews.forEach((compressed, i) => {
-              result[startIdx + i] = compressed;
-            });
-            return result;
-          });
-
-          console.log('[PostCreator] Compression complete');
+          const reader = new FileReader();
+          
+          reader.onload = (event) => {
+            const result = event.target?.result as string;
+            console.log(`[PostCreator] Preview ${fileIdx} loaded:`, result.length, 'bytes');
+            resolve(result);
+          };
+          
+          reader.onerror = (error) => {
+            console.error(`[PostCreator] Preview ${fileIdx} error:`, error);
+            resolve(''); // Return empty on error
+          };
+          
+          reader.readAsDataURL(file);
         } catch (error) {
-          console.error('Media compression error:', error);
+          console.error(`[PostCreator] FileReader error for file ${fileIdx}:`, error);
+          resolve('');
         }
-      })();
-    }).catch((error) => {
-      console.error('Media preview error:', error);
-      toast({
-        title: "Media preview failed",
-        description: "Could not load media previews",
-        variant: "destructive",
       });
     });
+    
+    // Wait for all previews to load, then update state
+    Promise.all(previewPromises)
+      .then((loadedPreviews) => {
+        console.log('[PostCreator] All previews loaded:', loadedPreviews.length);
+        
+        // Update previews state
+        setMediaPreviews((prev) => [...prev, ...loadedPreviews]);
+        
+        toast({
+          title: "Media added!",
+          description: `${selectedFiles.length} file(s) ready. Compressing for upload...`,
+        });
+
+        // Compress images in background
+        (async () => {
+          try {
+            const compressed = await Promise.all(
+              selectedFiles.map(async (file, idx) => {
+                if (file.type.startsWith('image/')) {
+                  try {
+                    const result = await compressImage(file);
+                    console.log(`[PostCreator] Image ${idx} compressed:`, result.length, 'bytes');
+                    return result;
+                  } catch (err) {
+                    console.warn(`[PostCreator] Compression failed for image ${idx}:`, err);
+                    return loadedPreviews[idx];
+                  }
+                }
+                return loadedPreviews[idx];
+              })
+            );
+
+            // Update with compressed versions
+            setMediaPreviews((prev) => {
+              const updated = [...prev];
+              const startIdx = Math.max(0, updated.length - selectedFiles.length);
+              compressed.forEach((preview, i) => {
+                updated[startIdx + i] = preview;
+              });
+              return updated;
+            });
+            
+            console.log('[PostCreator] Compression complete');
+          } catch (error) {
+            console.error('[PostCreator] Compression error:', error);
+          }
+        })();
+      })
+      .catch((error) => {
+        console.error('[PostCreator] Preview loading failed:', error);
+        toast({
+          title: "Media preview failed",
+          description: "Could not load media. Please try again.",
+          variant: "destructive",
+        });
+      });
   };
 
   const removeMedia = (index: number) => {
@@ -543,31 +565,45 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
 
       {/* Media Previews Grid */}
       {mediaPreviews.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mb-4">
+        <motion.div 
+          key={`media-grid-${mediaPreviews.length}`}
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mb-4"
+          data-testid="media-preview-grid"
+        >
           {mediaPreviews.map((preview, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="relative group rounded-lg overflow-hidden aspect-square"
-            >
-              {mediaFiles[index].type.startsWith('image') ? (
-                <img src={preview} alt="" className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                  <VideoIcon className="w-12 h-12 text-gray-400" />
-                </div>
-              )}
-              <button
-                onClick={() => removeMedia(index)}
-                className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                data-testid={`button-remove-media-${index}`}
+            preview && (
+              <motion.div
+                key={`${index}-${preview.substring(0, 20)}`}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.05 }}
+                className="relative group rounded-lg overflow-hidden aspect-square bg-gray-100 dark:bg-gray-900"
               >
-                <X className="w-4 h-4" />
-              </button>
-            </motion.div>
+                {mediaFiles[index] && mediaFiles[index].type.startsWith('image') ? (
+                  <img 
+                    src={preview} 
+                    alt="Preview" 
+                    className="w-full h-full object-cover"
+                    data-testid={`media-preview-${index}`}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <VideoIcon className="w-12 h-12 text-gray-400" />
+                  </div>
+                )}
+                <button
+                  onClick={() => removeMedia(index)}
+                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                  data-testid={`button-remove-media-${index}`}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </motion.div>
+            )
           ))}
-        </div>
+        </motion.div>
       )}
 
       {/* Tags Panel */}
