@@ -1710,7 +1710,7 @@ export type SelectGroupCategory = typeof groupCategories.$inferSelect;
 
 // Posts
 export const insertPostSchema = createInsertSchema(posts, {
-  content: z.string().min(1),
+  content: z.string().min(0), // Allow empty content when posting media only
 }).omit({ 
   id: true, 
   createdAt: true, 

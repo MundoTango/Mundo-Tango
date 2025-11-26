@@ -126,8 +126,9 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
     instagram?: 'pending' | 'success' | 'error';
   }>({});
 
-  // Compress image using canvas (like Facebook/Instagram)
-  const compressImage = (file: File, maxWidth: number = 1024, maxHeight: number = 1024, quality: number = 0.8): Promise<string> => {
+  // Smart compression: automatically adjusts quality/size based on file size
+  // Targets ~500KB-1MB output for fast uploads and display
+  const compressImage = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -137,16 +138,45 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
           let width = img.width;
           let height = img.height;
           
+          // Auto-adjust compression based on file size
+          const fileSizeMB = file.size / (1024 * 1024);
+          let maxDimension: number;
+          let quality: number;
+          
+          if (fileSizeMB > 20) {
+            // Very large files (>20MB): aggressive compression
+            maxDimension = 800;
+            quality = 0.6;
+          } else if (fileSizeMB > 10) {
+            // Large files (10-20MB): moderate-high compression
+            maxDimension = 1024;
+            quality = 0.65;
+          } else if (fileSizeMB > 5) {
+            // Medium files (5-10MB): moderate compression
+            maxDimension = 1280;
+            quality = 0.7;
+          } else if (fileSizeMB > 2) {
+            // Smaller files (2-5MB): light compression
+            maxDimension = 1600;
+            quality = 0.75;
+          } else {
+            // Small files (<2MB): minimal compression
+            maxDimension = 1920;
+            quality = 0.8;
+          }
+          
+          console.log(`[PostCreator] Compressing ${fileSizeMB.toFixed(1)}MB image: ${maxDimension}px, quality ${quality}`);
+          
           // Calculate new dimensions maintaining aspect ratio
           if (width > height) {
-            if (width > maxWidth) {
-              height = Math.round((height * maxWidth) / width);
-              width = maxWidth;
+            if (width > maxDimension) {
+              height = Math.round((height * maxDimension) / width);
+              width = maxDimension;
             }
           } else {
-            if (height > maxHeight) {
-              width = Math.round((width * maxHeight) / height);
-              height = maxHeight;
+            if (height > maxDimension) {
+              width = Math.round((width * maxDimension) / height);
+              height = maxDimension;
             }
           }
           
@@ -158,7 +188,13 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
             return;
           }
           ctx.drawImage(img, 0, 0, width, height);
-          resolve(canvas.toDataURL('image/jpeg', quality));
+          
+          // Convert to JPEG for better compression
+          const result = canvas.toDataURL('image/jpeg', quality);
+          const resultSizeKB = Math.round(result.length * 0.75 / 1024);
+          console.log(`[PostCreator] Compressed to ${resultSizeKB}KB (${width}x${height})`);
+          
+          resolve(result);
         };
         img.onerror = () => reject(new Error('Could not load image'));
         img.src = e.target?.result as string;
@@ -184,16 +220,8 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       return;
     }
 
-    // Validate file sizes (max 50MB each for reasonable uploads)
-    const invalidFiles = selectedFiles.filter(file => file.size > 50 * 1024 * 1024);
-    if (invalidFiles.length > 0) {
-      toast({
-        title: "File too large",
-        description: "Each file must be smaller than 50MB",
-        variant: "destructive",
-      });
-      return;
-    }
+    // No file size limit - compression handles any size
+    // Large files will be auto-compressed to ~1MB during upload
 
     console.log('[PostCreator] Adding', selectedFiles.length, 'files');
     
