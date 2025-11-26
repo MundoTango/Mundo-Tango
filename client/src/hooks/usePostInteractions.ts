@@ -150,6 +150,17 @@ export const useSavePost = () => {
       queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
       queryClient.invalidateQueries({ queryKey: ['/api/posts', variables.postId] });
       queryClient.invalidateQueries({ queryKey: ['/api/posts/saved'] });
+      toast({
+        title: "Post saved",
+        description: "Added to your saved posts",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Save failed",
+        description: "Could not save post",
+        variant: "destructive",
+      });
     },
   });
 };
@@ -165,6 +176,17 @@ export const useUnsavePost = () => {
       queryClient.invalidateQueries({ queryKey: ['/api/posts'] });
       queryClient.invalidateQueries({ queryKey: ['/api/posts', variables.postId] });
       queryClient.invalidateQueries({ queryKey: ['/api/posts/saved'] });
+      toast({
+        title: "Post unsaved",
+        description: "Removed from your saved posts",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Unsave failed",
+        description: "Could not unsave post",
+        variant: "destructive",
+      });
     },
   });
 };
