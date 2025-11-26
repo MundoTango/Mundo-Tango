@@ -79,10 +79,39 @@ All Stripe test mode secrets are already set up:
 - REQUIRES_3DS: `4000002500003155`
 
 ### Running E2E Tests
-Tests are ready to run - no additional configuration needed:
+
+**Playwright Configuration (`playwright.config.ts`):**
+- Stripe keys auto-injected via `env` block (lines 62-66)
+- Falls back: `TESTING_STRIPE_SECRET_KEY` → `STRIPE_SECRET_KEY`
+- Falls back: `TESTING_VITE_STRIPE_PUBLIC_KEY` → `VITE_STRIPE_PUBLIC_KEY`
+- Uses system Chromium (NixOS compatible) with GPU disabled
+- Dev server auto-starts at `localhost:5000`
+
+**Run Commands:**
 ```bash
+# Full comprehensive test suite (recommended)
 npx playwright test tests/mb-md-comprehensive.spec.ts
+
+# Stripe billing tests
+npx playwright test tests/wave5-stripe-billing.spec.ts
+
+# All tests (slow)
+npx playwright test
+
+# Specific test file
+npx playwright test tests/e2e/critical/payments-stripe.spec.ts
+
+# With UI mode (interactive)
+npx playwright test --ui
+
+# Show report after tests
+npx playwright show-report test-results/html-report
 ```
+
+**Test Data:**
+- Login: `admin@example.com` / `admin123`
+- Melbourne Group ID: 21 (156 events)
+- Stripe test cards work automatically (no extra config needed)
 
 ## Recent Changes (Nov 26, 2025)
 
