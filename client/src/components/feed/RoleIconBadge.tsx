@@ -5,10 +5,13 @@ import {
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-const ROLE_ICONS = {
+const ROLE_ICONS: Record<string, { icon: any; label: string; color: string }> = {
   "dancer-leader": { icon: Footprints, label: "Dancer (Leader)", color: "text-blue-500" },
+  "leader": { icon: Footprints, label: "Dancer (Leader)", color: "text-blue-500" },
   "dancer-follower": { icon: UserCircle2, label: "Dancer (Follower)", color: "text-pink-500" },
+  "follower": { icon: UserCircle2, label: "Dancer (Follower)", color: "text-pink-500" },
   "teacher": { icon: GraduationCap, label: "Teacher", color: "text-purple-500" },
+  "instructor": { icon: GraduationCap, label: "Instructor", color: "text-purple-500" },
   "dj": { icon: Radio, label: "DJ", color: "text-orange-500" },
   "performer": { icon: Star, label: "Performer", color: "text-amber-500" },
   "organizer": { icon: Calendar, label: "Organizer", color: "text-cyan-500" },
@@ -23,9 +26,18 @@ const ROLE_ICONS = {
   "clothing-designer": { icon: Shirt, label: "Designer", color: "text-fuchsia-500" },
   "community-builder": { icon: Globe, label: "Community Builder", color: "text-emerald-500" },
   "musician": { icon: Music2, label: "Musician", color: "text-blue-600" },
+  "composer": { icon: Music2, label: "Composer", color: "text-blue-600" },
   "fan": { icon: Eye, label: "Fan", color: "text-gray-500" },
+  "dancer": { icon: Footprints, label: "Dancer", color: "text-blue-400" },
+  "student": { icon: BookOpen, label: "Student", color: "text-indigo-400" },
+  "choreographer": { icon: Star, label: "Choreographer", color: "text-amber-600" },
+  "traveler": { icon: Globe, label: "Traveler", color: "text-emerald-500" },
   "other": { icon: Heart, label: "Tango Enthusiast", color: "text-pink-600" },
-} as const;
+};
+
+function normalizeRoleId(roleId: string): string {
+  return roleId.toLowerCase().replace(/[\s_]+/g, '-');
+}
 
 interface RoleIconBadgeProps {
   roles: string[];
@@ -52,7 +64,8 @@ export function RoleIconBadge({ roles, size = "md", className = "" }: RoleIconBa
     <TooltipProvider>
       <div className={`flex items-center gap-1.5 ${className}`}>
         {visibleRoles.map((roleId) => {
-          const role = ROLE_ICONS[roleId as keyof typeof ROLE_ICONS];
+          const normalizedId = normalizeRoleId(roleId);
+          const role = ROLE_ICONS[normalizedId];
           if (!role) return null;
           
           const Icon = role.icon;
@@ -85,7 +98,8 @@ export function RoleIconBadge({ roles, size = "md", className = "" }: RoleIconBa
               <p className="font-medium mb-2">All Roles:</p>
               <ul className="space-y-1 text-sm">
                 {roles.map((roleId) => {
-                  const role = ROLE_ICONS[roleId as keyof typeof ROLE_ICONS];
+                  const normalizedId = normalizeRoleId(roleId);
+                  const role = ROLE_ICONS[normalizedId];
                   return role ? (
                     <li key={roleId} className="flex items-center gap-2">
                       <role.icon className="w-3 h-3" />

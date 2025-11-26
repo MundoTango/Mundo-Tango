@@ -202,9 +202,15 @@ export const TANGO_ROLES: readonly TangoRole[] = [
   }
 ] as const;
 
+// Helper function to normalize role values for matching
+function normalizeRoleValue(value: string): string {
+  return value.toLowerCase().replace(/[\s_]+/g, '-');
+}
+
 // Helper functions
 export function getRoleByValue(value: string): TangoRole | undefined {
-  return TANGO_ROLES.find(role => role.value === value);
+  const normalized = normalizeRoleValue(value);
+  return TANGO_ROLES.find(role => normalizeRoleValue(role.value) === normalized);
 }
 
 export function getBusinessRoles(): readonly TangoRole[] {
