@@ -77,7 +77,29 @@ Before running Playwright tests, configure these **test mode** secrets in Replit
 - INSUFFICIENT: `4000000000009995`
 - REQUIRES_3DS: `4000002500003155`
 
-## Recent Changes (Nov 25, 2025)
+## Recent Changes (Nov 26, 2025)
+
+### MB.MD Test Suite - Validated
+Comprehensive E2E test suite (`tests/mb-md-comprehensive.spec.ts`) now passing:
+- **MEM-001:** Memories landing page loads - PASS
+- **PROF-001:** Profile page loads - PASS (7 tabs)
+- **CITY-001:** Groups landing page loads - PASS
+- **EVT-001:** Events landing page loads - PASS (124 events)
+- **NAV-001:** Sidebar navigation works - PASS (13 links)
+
+### Test Infrastructure Fixes
+- Rate limiter increased to 200 req/min (30 was blocking tests)
+- Login helper uses Enter key submission (more reliable)
+- Welcome screen handler added ("Skip to Dashboard")
+- Changed from `networkidle` to `domcontentloaded` wait strategy
+
+### Database Status
+- **260 events** in database
+- **156 events** linked to Melbourne group
+- **66 participants** (11 organizers, 25 DJs, 27 teachers, 3 performers)
+- Test user: `admin@example.com` / `admin123` (ID 106, super_admin)
+
+## Previous Changes (Nov 25, 2025)
 
 ### Database Schema Sync
 Added 8 missing columns to events table for scraping support:
