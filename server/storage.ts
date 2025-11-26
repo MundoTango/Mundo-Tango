@@ -74,6 +74,7 @@ import {
   errorPatterns,
   userPreferences,
   planSessions,
+  placeRecommendations,
   type SelectUser,
   type InsertUser,
   type SelectRefreshToken,
@@ -126,6 +127,8 @@ import {
   type InsertMemory,
   type SelectRecommendation,
   type InsertRecommendation,
+  type SelectPlaceRecommendation,
+  type InsertPlaceRecommendation,
   type SelectRoleInvitation,
   type InsertRoleInvitation,
   type SelectFavorite,
@@ -7801,6 +7804,118 @@ export class DbStorage implements IStorage {
       })
       .returning();
     return created;
+  }
+
+  // ==================== PLACE RECOMMENDATIONS (Hidden Gems) ====================
+
+  async createOrUpdatePlaceRecommendation(
+    userId: number,
+    placeName: string,
+    category: string,
+    latitude: number,
+    longitude: number,
+    postId?: number,
+    data?: Partial<InsertPlaceRecommendation>
+  ): Promise<SelectPlaceRecommendation> {
+    // Check if place already exists by coordinates + category
+    const existing = await db
+      .select()
+      .from(placeRecommendations)
+      .where(
+        and(
+          eq(placeRecommendations.latitude, latitude.toString()),
+          eq(placeRecommendations.longitude, longitude.toString()),
+          eq(placeRecommendations.category, category)
+        )
+      )
+      .limit(1);
+
+    if (existing.length > 0) {
+      const place = existing[0];
+      const userIds = (place.userIds || []) as string[];
+      const userIdStr = userId.toString();
+      
+      // Add user to userIds if not already there
+      if (!userIds.includes(userIdStr)) {
+        userIds.push(userIdStr);
+      }
+
+      const [updated] = await db
+        .update(placeRecommendations)
+        .set({
+          recommendationCount: (place.recommendationCount || 1) + 1,
+          userIds: userIds,
+          updatedAt: new Date(),
+          ...data,
+        })
+        .where(eq(placeRecommendations.id, place.id))
+        .returning();
+      return updated;
+    }
+
+    // Create new place recommendation
+    const [created] = await db
+      .insert(placeRecommendations)
+      .values({
+        userId,
+        placeName,
+        category,
+        latitude: latitude.toString(),
+        longitude: longitude.toString(),
+        postId,
+        userIds: [userId.toString()],
+        recommendationCount: 1,
+        ...data,
+      })
+      .returning();
+    return created;
+  }
+
+  async getPlaceRecommendationsByCategory(
+    category: string,
+    limit: number = 50,
+    offset: number = 0
+  ): Promise<SelectPlaceRecommendation[]> {
+    const results = await db
+      .select()
+      .from(placeRecommendations)
+      .where(eq(placeRecommendations.category, category))
+      .orderBy(desc(placeRecommendations.recommendationCount))
+      .limit(limit)
+      .offset(offset);
+    return results;
+  }
+
+  async getPlaceRecommendationsByLocation(
+    latitude: number,
+    longitude: number,
+    radiusKm: number = 5
+  ): Promise<SelectPlaceRecommendation[]> {
+    // Using simple distance calculation (0.01 degree ≈ 1.1 km)
+    const latRadius = radiusKm / 111;
+    const lonRadius = radiusKm / (111 * Math.cos(latitude * Math.PI / 180));
+
+    const results = await db
+      .select()
+      .from(placeRecommendations)
+      .where(
+        and(
+          gte(placeRecommendations.latitude, (latitude - latRadius).toString()),
+          lte(placeRecommendations.latitude, (latitude + latRadius).toString()),
+          gte(placeRecommendations.longitude, (longitude - lonRadius).toString()),
+          lte(placeRecommendations.longitude, (longitude + lonRadius).toString())
+        )
+      )
+      .orderBy(desc(placeRecommendations.recommendationCount));
+    return results;
+  }
+
+  async getPlaceRecommendationById(id: number): Promise<SelectPlaceRecommendation | undefined> {
+    const [result] = await db
+      .select()
+      .from(placeRecommendations)
+      .where(eq(placeRecommendations.id, id));
+    return result;
   }
 }
 
