@@ -2914,7 +2914,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const postId = parseInt(req.params.id);
       const { reactionType } = req.body;
       
-      if (!reactionType) {
+      if (reactionType === undefined || reactionType === null) {
         return res.status(400).json({ message: "Reaction type is required" });
       }
 

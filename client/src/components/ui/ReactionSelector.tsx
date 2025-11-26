@@ -112,11 +112,10 @@ export const ReactionSelector = ({
 
   const handleMouseEnter = () => {
     setIsHovering(true);
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
     hoverTimeoutRef.current = setTimeout(() => {
-      if (isHovering) {
-        setShowReactions(true);
-      }
-    }, 500);
+      setShowReactions(true);
+    }, 200);
   };
 
   const handleMouseLeave = () => {
@@ -124,11 +123,7 @@ export const ReactionSelector = ({
     if (hoverTimeoutRef.current) {
       clearTimeout(hoverTimeoutRef.current);
     }
-    setTimeout(() => {
-      if (!isHovering) {
-        setShowReactions(false);
-      }
-    }, 300);
+    setShowReactions(false);
   };
 
   return (
