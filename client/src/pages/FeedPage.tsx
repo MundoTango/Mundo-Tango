@@ -32,7 +32,6 @@ import { UnifiedLocationPicker } from "@/components/input/UnifiedLocationPicker"
 import { PostItem } from "@/components/feed/PostItem";
 import { EditPostDialog } from "@/components/modals/EditPostDialog";
 import { StoriesCarousel } from "@/components/feed/StoriesCarousel";
-import { FeedFilters } from "@/components/feed/FeedFilters";
 import { FeedTabs } from "@/components/feed/FeedTabs";
 import { InfiniteScrollFeed } from "@/components/feed/InfiniteScrollFeed";
 import { NewPostsBanner } from "@/components/feed/NewPostsBanner";
@@ -442,9 +441,6 @@ export default function FeedPage() {
 
           {/* Feed Tabs - Following vs Discover (Feature 13) */}
           <FeedTabs value={feedType} onChange={setFeedType} />
-
-          {/* Feed Filters (Feature 12) */}
-          <FeedFilters value={filter} onChange={setFilter} />
 
           {/* New Posts Banner (Feature 15) */}
           <NewPostsBanner onLoadNewPosts={() => setRefreshKey(prev => prev + 1)} />
