@@ -234,7 +234,7 @@ function UnifiedTopBar({
         </div>
 
         {/* Right Section - Actions & Profile */}
-        <div className="flex items-center gap-1 md:gap-2">
+        <div className="flex items-center gap-1 md:gap-2 ml-auto">
           {/* Search - Mobile Only */}
           <Link href="/search" className="md:hidden">
             <Button variant="ghost" size="icon" data-testid="button-search-mobile">
@@ -242,8 +242,10 @@ function UnifiedTopBar({
             </Button>
           </Link>
 
-          {/* Language Selector */}
-          <LanguageSelectorButton />
+          {/* Language Selector - Desktop Only */}
+          <div className="hidden md:block">
+            <LanguageSelectorButton />
+          </div>
 
           {/* Theme Toggle */}
           <Button
@@ -255,8 +257,8 @@ function UnifiedTopBar({
             {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </Button>
 
-          {/* Favorites */}
-          <Link href="/favorites">
+          {/* Favorites - Desktop Only */}
+          <Link href="/favorites" className="hidden md:block">
             <Button variant="ghost" size="icon" data-testid="button-favorites">
               <Heart className="h-5 w-5" />
             </Button>
@@ -305,7 +307,7 @@ function UnifiedTopBar({
               </Button>
             </DropdownMenuTrigger>
             
-            <DropdownMenuContent align="end" className="w-96 max-h-96 overflow-y-auto">
+            <DropdownMenuContent align="end" className="w-96 max-h-96 overflow-y-auto md:w-96 sm:w-80">
               {recentNotifications.length > 0 ? (
                 <>
                   <div className="px-4 py-2 font-semibold text-sm border-b">
@@ -372,7 +374,7 @@ function UnifiedTopBar({
           {/* User Profile Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center gap-2" data-testid="button-user-menu">
+              <Button variant="ghost" className="flex items-center gap-1 md:gap-2" data-testid="button-user-menu">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={profile?.profileImage || user?.profileImage || undefined} />
                   <AvatarFallback className="bg-avatar-light dark:bg-avatar-dark">
