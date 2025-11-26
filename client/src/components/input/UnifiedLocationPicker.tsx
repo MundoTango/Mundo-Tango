@@ -143,9 +143,9 @@ export function UnifiedLocationPicker({
             <Card
               className="p-2 max-h-80 overflow-y-auto"
               style={{
-                background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.08), rgba(30, 144, 255, 0.05))',
+                background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.25), rgba(30, 144, 255, 0.2))',
                 backdropFilter: 'blur(12px)',
-                borderColor: 'rgba(64, 224, 208, 0.3)',
+                borderColor: 'rgba(64, 224, 208, 0.6)',
               }}
               data-testid="location-results-dropdown"
             >
