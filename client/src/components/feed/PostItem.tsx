@@ -42,6 +42,8 @@ export interface PostItemData {
   userId: number;
   content: string;
   imageUrl?: string | null;
+  videoUrl?: string | null;
+  videoThumbnail?: string | null;
   visibility: string;
   likes: number;
   comments: number;
@@ -208,6 +210,24 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
                 transition={{ duration: 0.6 }}
                 data-testid={`post-image-${post.id}`}
               />
+            </div>
+          </div>
+        )}
+
+        {/* Video */}
+        {post.videoUrl && (
+          <div className="px-4 pb-3">
+            <div className="relative aspect-video overflow-hidden rounded-lg bg-black">
+              <video 
+                src={post.videoUrl}
+                poster={post.videoThumbnail || undefined}
+                controls
+                preload="metadata"
+                className="w-full h-full object-contain"
+                data-testid={`post-video-${post.id}`}
+              >
+                Your browser does not support the video tag.
+              </video>
             </div>
           </div>
         )}

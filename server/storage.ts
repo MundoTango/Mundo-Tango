@@ -1717,7 +1717,17 @@ export class DbStorage implements IStorage {
   }
 
   async createPost(post: InsertPost): Promise<SelectPost> {
+    console.log('[Storage.createPost] Input keys:', Object.keys(post));
+    console.log('[Storage.createPost] videoUrl present:', !!post.videoUrl);
+    console.log('[Storage.createPost] videoUrl length:', post.videoUrl?.length || 0);
+    console.log('[Storage.createPost] imageUrl present:', !!post.imageUrl);
+    
     const result = await db.insert(posts).values(post).returning();
+    
+    console.log('[Storage.createPost] Result ID:', result[0]?.id);
+    console.log('[Storage.createPost] Result videoUrl present:', !!result[0]?.videoUrl);
+    console.log('[Storage.createPost] Result imageUrl present:', !!result[0]?.imageUrl);
+    
     return result[0];
   }
 

@@ -2491,11 +2491,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/posts", authenticateToken, validateRequest(createPostBodySchema), async (req: AuthRequest, res: Response) => {
     try {
+      // DEBUG: Log incoming media fields
+      console.log('[POST /api/posts] Received fields:', Object.keys(req.body));
+      console.log('[POST /api/posts] videoUrl present:', !!req.body.videoUrl);
+      console.log('[POST /api/posts] videoUrl length:', req.body.videoUrl?.length || 0);
+      console.log('[POST /api/posts] videoThumbnail present:', !!req.body.videoThumbnail);
+      console.log('[POST /api/posts] imageUrl present:', !!req.body.imageUrl);
+      
       const postData: any = {
         ...req.body,
         userId: req.user!.id,
         type: req.body.type || 'post'
       };
+      
+      // DEBUG: Verify spread worked
+      console.log('[POST /api/posts] postData.videoUrl present:', !!postData.videoUrl);
       
       // If story, set 24-hour expiration
       if (postData.type === 'story') {
@@ -2503,6 +2513,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const post = await storage.createPost(postData);
+      
+      // DEBUG: Verify stored result
+      console.log('[POST /api/posts] Created post ID:', post.id);
+      console.log('[POST /api/posts] post.videoUrl saved:', !!post.videoUrl);
 
       // Handle Hidden Gems (Place Recommendations)
       if (req.body.isRecommendation && req.body.location && req.body.coordinates) {
