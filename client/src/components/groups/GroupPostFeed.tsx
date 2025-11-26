@@ -1,11 +1,7 @@
 import { useState, memo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -21,33 +17,17 @@ import { useToast } from "@/hooks/use-toast";
 import { safeDateDistance } from "@/lib/safeDateFormat";
 import type { SelectGroupPost } from "@shared/schema";
 import { renderMentionPills } from "@/utils/renderMentionPills";
-const postFormSchema = z.object({
-  content: z.string().min(1, "Post content is required"),
-  title: z.string().optional(),
-  postType: z.string().default("discussion"),
-  mediaUrls: z.array(z.string()).optional(),
-  mediaType: z.string().optional(),
-});
-
-type PostFormData = z.infer<typeof postFormSchema>;
+import { PostCreator } from "@/components/universal/PostCreator";
 
 interface GroupPostFeedProps {
   groupId: number;
+  groupName?: string;
   canPost?: boolean;
   canModerate?: boolean;
 }
 
-function GroupPostFeedComponent({ groupId, canPost = false, canModerate = false }: GroupPostFeedProps) {
+function GroupPostFeedComponent({ groupId, groupName = "Group", canPost = false, canModerate = false }: GroupPostFeedProps) {
   const { toast } = useToast();
-  const [isCreating, setIsCreating] = useState(false);
-
-  const form = useForm<PostFormData>({
-    resolver: zodResolver(postFormSchema),
-    defaultValues: {
-      content: "",
-      postType: "discussion",
-    },
-  });
 
   const { data: posts, isLoading } = useQuery<SelectGroupPost[]>({
     queryKey: ["/api/groups", groupId, "posts"],
@@ -58,28 +38,9 @@ function GroupPostFeedComponent({ groupId, canPost = false, canModerate = false 
     },
   });
 
-  const createPost = useMutation({
-    mutationFn: async (data: PostFormData) => {
-      const res = await apiRequest("POST", `/api/groups/${groupId}/posts`, data);
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/groups", groupId, "posts"] });
-      toast({
-        title: "Post created",
-        description: "Your post has been published to the group.",
-      });
-      form.reset();
-      setIsCreating(false);
-    },
-    onError: (error: Error) => {
-      toast({
-        variant: "destructive",
-        title: "Failed to create post",
-        description: error.message,
-      });
-    },
-  });
+  const handlePostCreated = () => {
+    queryClient.invalidateQueries({ queryKey: ["/api/groups", groupId, "posts"] });
+  };
 
   const deletePost = useMutation({
     mutationFn: async (postId: number) => {
@@ -145,54 +106,18 @@ function GroupPostFeedComponent({ groupId, canPost = false, canModerate = false 
 
   return (
     <div className="space-y-4">
-      {/* Create Post */}
+      {/* Create Post with PostCreator - includes FB/IG cross-posting */}
       {canPost && (
-        <Card>
-          <CardContent className="pt-6">
-            {!isCreating ? (
-              <Button
-                variant="outline"
-                className="w-full justify-start text-muted-foreground"
-                onClick={() => setIsCreating(true)}
-                data-testid="button-start-create-post"
-              >
-                Share something with the group...
-              </Button>
-            ) : (
-              <form onSubmit={form.handleSubmit((data) => createPost.mutate(data))} className="space-y-3">
-                <Textarea
-                  placeholder="What's on your mind?"
-                  {...form.register("content")}
-                  rows={4}
-                  data-testid="input-post-content"
-                />
-                {form.formState.errors.content && (
-                  <p className="text-sm text-destructive">{form.formState.errors.content.message}</p>
-                )}
-                <div className="flex justify-end gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setIsCreating(false);
-                      form.reset();
-                    }}
-                    data-testid="button-cancel-post"
-                  >
-                    Cancel
-                  </Button>
-                  <Button 
-                    type="submit" 
-                    disabled={createPost.isPending}
-                    data-testid="button-submit-post"
-                  >
-                    {createPost.isPending ? "Posting..." : "Post"}
-                  </Button>
-                </div>
-              </form>
-            )}
-          </CardContent>
-        </Card>
+        <PostCreator 
+          onPostCreated={handlePostCreated}
+          context={{ 
+            type: 'group', 
+            id: String(groupId),
+            name: groupName 
+          }}
+          className="mb-2"
+          data-testid="group-post-creator"
+        />
       )}
 
       {/* Posts Feed */}

@@ -458,7 +458,8 @@ export default function GroupDetailsPage() {
               
               <TabsContent value="discussion">
                 <GroupPostFeed 
-                  groupId={group.id} 
+                  groupId={group.id}
+                  groupName={group.name}
                   canPost={membershipData?.isMember || false}
                   canModerate={membershipData?.isMember || false}
                 />
