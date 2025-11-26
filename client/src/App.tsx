@@ -407,7 +407,15 @@ const VisualEditorPage = lazy(() => import("@/pages/VisualEditorPage"));
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={VisualEditorPage} />
+      <Route path="/">
+        <ProtectedRoute>
+          <AppLayout>
+            <Suspense fallback={<LoadingFallback />}>
+              <MemoriesPage />
+            </Suspense>
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
       <Route path="/landing" component={LandingPage} />
       <Route path="/dashboard">
         <ProtectedRoute>
