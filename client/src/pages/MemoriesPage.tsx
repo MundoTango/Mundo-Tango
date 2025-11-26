@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -41,27 +42,43 @@ interface Memory {
 }
 
 const memoryTypeIcons = {
-  milestone: Award,
-  event: Calendar,
   photo: Camera,
-  achievement: Star,
+  memory: Star,
 };
 
 const memoryTypeColors = {
-  milestone: 'bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800',
-  event: 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800',
   photo: 'bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800',
-  achievement: 'bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800',
+  memory: 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800',
 };
 
-const MEMORY_TYPES = ["all", "milestone", "event", "photo", "achievement"] as const;
+const MEMORY_TYPES = ["all", "photo", "memory"] as const;
 
 export default function MemoriesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
+  const { user } = useAuth();
   
   const { data: memories = [], isLoading } = useQuery<Memory[]>({
-    queryKey: ["/api/memories"],
+    queryKey: ["/api/posts", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const response = await fetch(`/api/posts?userId=${user.id}`);
+      if (!response.ok) return [];
+      const posts = await response.json();
+      // Transform posts to memory format
+      return posts.map((post: any) => ({
+        id: post.id,
+        userId: post.userId,
+        title: post.content.split('\n')[0].substring(0, 100),
+        description: post.content,
+        type: post.imageUrl ? 'photo' : 'memory',
+        imageUrl: post.imageUrl,
+        date: post.createdAt,
+        location: (post as any).location,
+        tags: [],
+      }));
+    },
+    enabled: !!user?.id,
   });
 
   const { data: stats } = useQuery<{
@@ -70,7 +87,22 @@ export default function MemoriesPage() {
     milestones: number;
     thisYear: number;
   }>({
-    queryKey: ["/api/memories/stats"],
+    queryKey: ["/api/posts", "stats", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return { totalMemories: 0, eventsAttended: 0, milestones: 0, thisYear: 0 };
+      const response = await fetch(`/api/posts?userId=${user.id}`);
+      if (!response.ok) return { totalMemories: 0, eventsAttended: 0, milestones: 0, thisYear: 0 };
+      const posts = await response.json();
+      const now = new Date();
+      const thisYear = posts.filter((p: any) => new Date(p.createdAt).getFullYear() === now.getFullYear()).length;
+      return {
+        totalMemories: posts.length,
+        eventsAttended: 0,
+        milestones: posts.length,
+        thisYear,
+      };
+    },
+    enabled: !!user?.id,
   });
 
   // Filter memories based on search and type
