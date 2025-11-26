@@ -389,6 +389,57 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
     });
   };
 
+  // Generate video thumbnail from first frame
+  const generateVideoThumbnail = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.muted = true;
+      video.playsInline = true;
+      
+      video.onloadeddata = () => {
+        // Seek to 1 second for better thumbnail (avoid black frames)
+        video.currentTime = Math.min(1, video.duration / 2);
+      };
+      
+      video.onseeked = () => {
+        const canvas = document.createElement('canvas');
+        const maxDim = 640; // Thumbnail size
+        let width = video.videoWidth;
+        let height = video.videoHeight;
+        
+        if (width > height && width > maxDim) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else if (height > maxDim) {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Could not get canvas context'));
+          return;
+        }
+        ctx.drawImage(video, 0, 0, width, height);
+        const thumbnail = canvas.toDataURL('image/jpeg', 0.7);
+        
+        // Cleanup
+        URL.revokeObjectURL(video.src);
+        resolve(thumbnail);
+      };
+      
+      video.onerror = () => {
+        URL.revokeObjectURL(video.src);
+        reject(new Error('Could not load video'));
+      };
+      
+      video.src = URL.createObjectURL(file);
+    });
+  };
+
   // Post submission
   const handleSubmit = async () => {
     if (!content.trim() && mediaFiles.length === 0) {
@@ -416,9 +467,12 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
         mentions: mentionIds,
       };
       
-      // Convert first image to base64 on submit (not during preview)
+      // Convert media to base64 on submit (not during preview)
       if (mediaFiles.length > 0) {
         const firstImage = mediaFiles.find(f => f.type.startsWith('image'));
+        const firstVideo = mediaFiles.find(f => f.type.startsWith('video'));
+        
+        // Handle image
         if (firstImage) {
           console.log('[PostCreator] Converting image to base64:', firstImage.name, firstImage.size, 'bytes');
           setUploadProgress(10);
@@ -427,7 +481,7 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
             const base64Data = await fileToBase64(firstImage);
             console.log('[PostCreator] Base64 conversion complete:', base64Data.length, 'chars');
             postData.imageUrl = base64Data;
-            setUploadProgress(50);
+            setUploadProgress(30);
           } catch (err) {
             console.error('[PostCreator] Base64 conversion failed:', err);
             toast({
@@ -439,6 +493,50 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
             return;
           }
         }
+        
+        // Handle video
+        if (firstVideo) {
+          const videoSizeMB = firstVideo.size / (1024 * 1024);
+          console.log('[PostCreator] Processing video:', firstVideo.name, `${videoSizeMB.toFixed(1)}MB`);
+          setUploadProgress(35);
+          
+          // Limit video size (100MB max for base64 - practical browser limit)
+          if (videoSizeMB > 100) {
+            toast({
+              title: "Video too large",
+              description: "Please use a video under 100MB. Tip: Compress with your phone's share options.",
+              variant: "destructive",
+            });
+            setIsUploading(false);
+            return;
+          }
+          
+          try {
+            // Generate thumbnail first
+            console.log('[PostCreator] Generating video thumbnail...');
+            const thumbnail = await generateVideoThumbnail(firstVideo);
+            postData.videoThumbnail = thumbnail;
+            setUploadProgress(50);
+            
+            // Convert video to base64
+            console.log('[PostCreator] Converting video to base64...');
+            const videoBase64 = await fileToBase64(firstVideo);
+            console.log('[PostCreator] Video base64 complete:', `${(videoBase64.length / 1024 / 1024).toFixed(1)}MB`);
+            postData.videoUrl = videoBase64;
+            setUploadProgress(70);
+          } catch (err) {
+            console.error('[PostCreator] Video processing failed:', err);
+            toast({
+              title: "Video processing failed",
+              description: "Could not process video. Try a smaller file.",
+              variant: "destructive",
+            });
+            setIsUploading(false);
+            return;
+          }
+        }
+        
+        setUploadProgress(80);
       }
       
       console.log('[PostCreator] Final post data keys:', Object.keys(postData));
@@ -607,6 +705,15 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
                     alt="Preview" 
                     className="w-full h-full object-cover"
                     data-testid={`media-preview-${index}`}
+                  />
+                ) : mediaFiles[index] && mediaFiles[index].type.startsWith('video') ? (
+                  <video 
+                    src={preview}
+                    className="w-full h-full object-cover"
+                    controls
+                    muted
+                    playsInline
+                    data-testid={`video-preview-${index}`}
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
