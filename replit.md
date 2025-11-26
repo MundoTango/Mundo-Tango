@@ -113,63 +113,42 @@ npx playwright show-report test-results/html-report
 - Melbourne Group ID: 21 (156 events)
 - Stripe test cards work automatically (no extra config needed)
 
-## Recent Changes (Nov 26, 2025)
+## Recent Changes (Nov 26, 2025 - Session 2)
 
-### Phase 3 Complete - Groups and Events Enhancements
-Comprehensive updates to GroupDetailsPage and event systems:
+### Google Maps-Style Hidden Gems Recommendation System - COMPLETE ✅
 
-**GroupDetailsPage Updates:**
-- Removed Invites tab (reduced from 8 to 7 columns in tab grid)
-- Transformed "About" tab into "City Guide" with Compass icon
-- City Guide includes: city overview, venues, teachers/DJs/organizers, weekly schedule
-- Added PostCreator integration to GroupPostFeed with cross-posting capability
-- Added tango role icons (RoleIcon component) to GroupMembersList with tooltips
-- Shows up to 3 roles with +N badge for additional roles
+**Database Schema:**
+- Added `placeRecommendations` table with:
+  - Automatic deduplication by `(latitude, longitude, category)` using unique constraint
+  - `recommendationCount` to track aggregate votes
+  - `userIds` array to track which users recommended each place
+  - Indexes on category, coordinates, and recommendation count for fast lookups
 
-**API Updates:**
-- `GET /api/groups/:id/members` now includes `tangoRoles` field
-- Fixed GroupMembersList to correctly map API response format `{ membership, user }`
+**Backend Storage Layer:**
+- `createOrUpdatePlaceRecommendation()` - Auto-aggregates recommendations for same location
+- `getPlaceRecommendationsByCategory()` - Browse recommendations by type
+- `getPlaceRecommendationsByLocation()` - Radius-based search (Google Maps style)
+- `getPlaceRecommendationById()` - Get specific recommendation details
 
-**PostCreator Cross-Posting:**
-- FB/IG toggle switches in PostCreator component
-- Context-aware with groupId/groupName for cross-posts
-- Uses react-icons/si for SiFacebook and SiInstagram icons
+**API Endpoints:**
+- `POST /api/posts` now automatically creates/updates place recommendations when `isRecommendation: true`
+- `GET /api/recommendations/by-location?lat=X&lng=Y&radius=5` - Find nearby places
+- `GET /api/recommendations/by-category/:category?limit=50` - Browse by type
+- `GET /api/recommendations/:id` - Get recommendation details
 
-**Event System:**
-- Event series schema with `event_series` table
-- Smart filtering API with date ranges, event types
-- CartoDB Dark Matter standardized for all maps
-- EventDetailsPage: attendees sidebar, full address, Get Directions, Last Updated
+**Frontend Components:**
+- `RecommendationsMap.tsx` - Leaflet map with clustered markers showing recommendation counts
+- `RecommendationsList.tsx` - Card-based list view with expandable details
+- Both components show user count, address, price range, and link to Google Maps
 
-### MB.MD Test Suite - 97.3% PASSING (36/37 tests)
-Comprehensive E2E test suite (`tests/mb-md-comprehensive.spec.ts`) validated:
+**Tags Fix:**
+- Fixed PostCreator tags not being retained
+- Added `tags: posts.tags` to the `getPosts()` SELECT query in `server/storage.ts`
+- Tags now properly persist and display on posts
 
-| Suite | Tests | Status |
-|-------|-------|--------|
-| MEMORIES | 4/4 | 100% ✅ |
-| PROFILE | 5/6 | 83% ✅ |
-| CITY GROUPS | 7/7 | 100% ✅ |
-| PRO GROUPS | 5/5 | 100% ✅ |
-| EVENTS | 12/12 | 100% ✅ |
-| NAVIGATION | 3/3 | 100% ✅ |
-
-### Rate Limiter - Disabled in Development
-Fixed test blocking by disabling ALL rate limiters in development mode:
-- `server/middlewares/rateLimiter.ts` - Skip in dev
-- `server/middleware/rateLimiter.ts` - All 8 rate limiters skip in dev
-- `server/middleware/security.ts` - API, auth, AI, upload limiters skip in dev
-
-### Test Infrastructure Improvements
-- Login helper uses Enter key submission (more reliable)
-- Removed Scott Welcome Screen blocking element
-- Changed from `networkidle` to `domcontentloaded` wait strategy
-- Simplified test assertions to count elements (faster, more reliable)
-
-### Database Status
-- **260 events** in database
-- **156 events** linked to Melbourne group
-- **66 participants** (11 organizers, 25 DJs, 27 teachers, 3 performers)
-- Test user: `admin@example.com` / `admin123` (ID 106, super_admin)
+**Known Issues:**
+- Vite HMR WebSocket error (`wss://localhost:undefined`) - Development-only, doesn't affect functionality
+- This is a Replit infrastructure/Vite config limitation, not our code
 
 ## Previous Changes (Nov 25, 2025)
 
