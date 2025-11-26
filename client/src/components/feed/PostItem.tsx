@@ -120,7 +120,7 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
                             <RoleIcon role={role} size={12} />
                           </span>
                         </TooltipTrigger>
-                        <TooltipContent side="top" className="text-xs">
+                        <TooltipContent side="right" className="text-xs" sideOffset={8}>
                           {getRoleLabel(role)}
                         </TooltipContent>
                       </Tooltip>
