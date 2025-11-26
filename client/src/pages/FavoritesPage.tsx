@@ -19,6 +19,8 @@ import { PageLayout } from "@/components/PageLayout";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { motion } from "framer-motion";
 import { SEO } from "@/components/SEO";
+import { useUnsavePost } from "@/hooks/usePostInteractions";
+import { useToast } from "@/hooks/use-toast";
 
 interface SavedPostItem {
   id: number;
