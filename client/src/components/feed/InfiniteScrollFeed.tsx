@@ -105,19 +105,7 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
         endpoint = `/api/posts/mentions`;
       }
 
-      const token = localStorage.getItem('accessToken');
-      const headers: Record<string, string> = {};
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-      
-      const response = await fetch(`${endpoint}?limit=20&offset=${pageParam}`, {
-        credentials: 'include',
-        headers,
-      });
-      if (!response.ok) throw new Error('Failed to fetch feed');
-      
-      const result = await response.json();
+      const result = await apiRequest('GET', `${endpoint}?limit=20&offset=${pageParam}`);
       
       // Handle different response formats
       if (Array.isArray(result)) {
