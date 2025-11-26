@@ -4,7 +4,6 @@ import UnifiedTopBar from "./navigation/UnifiedTopBar";
 import TourGuide from "./mrBlue/TourGuide";
 import { useQuery } from "@tanstack/react-query";
 import { SelfHealingStatus } from "@/components/SelfHealingStatus";
-import { ThePlanProgressBar } from "@/components/ThePlanProgressBar";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -49,7 +48,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       )}
       
       <SelfHealingStatus />
-      <ThePlanProgressBar />
     </div>
   );
 }

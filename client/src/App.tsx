@@ -16,7 +16,6 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { MrBlueWidget } from "./components/MrBlueWidget";
 import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
 import { LoadingFallback } from "./components/LoadingFallback";
-import { ThePlanProgressBar } from "./components/ThePlanProgressBar";
 import { initErrorDetection, cleanupErrorDetection } from "./lib/proactiveErrorDetection";
 import { initHttpInterceptor, cleanupHttpInterceptor } from "./lib/httpInterceptor";
 import { initComponentHealthMonitor, cleanupComponentHealthMonitor } from "./lib/componentHealthMonitor";
@@ -2221,7 +2220,6 @@ function AppContent() {
   return (
     <>
       <Toaster />
-      <ThePlanProgressBar />
       <Suspense fallback={<LoadingFallback />}>
         <Router />
       </Suspense>
