@@ -2,6 +2,8 @@ import rateLimit from "express-rate-limit";
 import { Request, Response, NextFunction } from "express";
 import { AuthRequest } from "./auth";
 
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
 // Helper to properly handle IPv6 addresses
 function getKeyFromIP(req: Request): string {
   // Use req.ip which is already normalized by Express
@@ -13,18 +15,11 @@ function getKeyFromIP(req: Request): string {
 // Global rate limiter for all routes
 export const globalRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10000, // 10000 requests per window (high limit for development/testing)
+  max: isDevelopment ? 100000 : 500, // Effectively disabled in dev
   message: "Too many requests from this IP, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req: Request) => {
-    // Skip rate limiting for Vite dev server assets and websockets
-    const isDevelopment = process.env.NODE_ENV !== 'production';
-    const isAssetRequest = req.path.startsWith('/@') || req.path.startsWith('/src/') || req.path.startsWith('/node_modules/');
-    const isWebSocket = req.headers.upgrade === 'websocket';
-    const isHealthCheck = req.path.startsWith('/api/health');
-    return isDevelopment && (isAssetRequest || isWebSocket) || isHealthCheck;
-  },
+  skip: () => isDevelopment, // Completely skip in development
   handler: (req: Request, res: Response) => {
     res.status(429).json({
       error: "Too many requests",
@@ -37,9 +32,10 @@ export const globalRateLimiter = rateLimit({
 // Strict rate limiter for authentication endpoints
 export const authRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'production' ? 10 : 1000, // 10 attempts in production, 1000 in dev
+  max: isDevelopment ? 100000 : 10, // Disabled in dev
   message: "Too many login attempts, please try again later.",
   skipSuccessfulRequests: true,
+  skip: () => isDevelopment, // Completely skip in development
   handler: (req: Request, res: Response) => {
     res.status(429).json({
       error: "Too many authentication attempts",
@@ -52,46 +48,45 @@ export const authRateLimiter = rateLimit({
 // API rate limiter for general API endpoints
 export const apiRateLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: process.env.NODE_ENV === 'production' ? 30 : 1000, // 30 in production, 1000 in dev/test
+  max: isDevelopment ? 100000 : 30, // Disabled in dev
   message: "API rate limit exceeded",
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req: Request) => {
-    // Skip rate limiting for localhost in development/test
-    const isDevelopment = process.env.NODE_ENV !== 'production';
-    const isLocalhost = req.ip === '127.0.0.1' || req.ip === '::1' || req.ip?.includes('::ffff:127.0.0.1');
-    return isDevelopment && isLocalhost;
-  },
+  skip: () => isDevelopment, // Completely skip in development
 });
 
 // Upload rate limiter for file uploads
 export const uploadRateLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 20, // 20 uploads per hour
+  max: isDevelopment ? 100000 : 20,
   message: "Upload rate limit exceeded",
   skipSuccessfulRequests: false,
+  skip: () => isDevelopment,
 });
 
 // Admin action rate limiter
 export const adminRateLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 50, // 50 admin actions per minute
+  max: isDevelopment ? 100000 : 50,
   message: "Admin action rate limit exceeded",
+  skip: () => isDevelopment,
 });
 
 // Payment/checkout rate limiter
 export const paymentRateLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 10, // 10 payment attempts per hour
+  max: isDevelopment ? 100000 : 10,
   message: "Payment rate limit exceeded",
   skipSuccessfulRequests: true,
+  skip: () => isDevelopment,
 });
 
 // Search rate limiter
 export const searchRateLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 20, // 20 searches per minute
+  max: isDevelopment ? 100000 : 20,
   message: "Search rate limit exceeded",
+  skip: () => isDevelopment,
 });
 
 // ============================================================================
@@ -109,6 +104,9 @@ export const searchRateLimiter = rateLimit({
 export const tieredRateLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: async (req: Request) => {
+    // Skip entirely in development
+    if (isDevelopment) return 100000;
+    
     const authReq = req as AuthRequest;
     
     // If user is authenticated, check their subscription tier
@@ -138,10 +136,7 @@ export const tieredRateLimiter = rateLimit({
     // Use user ID if authenticated, otherwise use IP (properly normalized for IPv6)
     return authReq.user?.id?.toString() || getKeyFromIP(req);
   },
-  skip: (req: Request) => {
-    // Skip health checks
-    return req.path.startsWith('/api/health');
-  },
+  skip: () => isDevelopment, // Completely skip in development
   handler: (req: Request, res: Response) => {
     const authReq = req as AuthRequest;
     const tier = authReq.user?.subscriptionTier || 'free';

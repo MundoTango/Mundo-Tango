@@ -10,49 +10,47 @@ import rateLimit from 'express-rate-limit';
 // RATE LIMITING
 // ============================================================================
 
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
 // General API rate limiter - INCREASED FOR BETA (Nov 22, 2025 - QuickFixAgent)
-// Rationale: The Plan Progress Bar polls /api/the-plan/progress every 2s
-// Combined with user navigation + error monitoring = ~400 req/15min normal usage
 export const apiRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 500, // INCREASED from 100 to 500 for beta testing
+  max: isDevelopment ? 100000 : 500, // Disabled in dev
   message: 'Too many requests, please try again later',
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => {
-    // Skip rate limiting for health checks AND The Plan polling
-    return req.path === '/health' 
-        || req.path === '/api/health'
-        || req.path === '/api/the-plan/progress'; // Skip polling endpoint
-  },
+  skip: () => isDevelopment, // Completely skip in development
 });
 
 // Strict rate limiter for authentication endpoints
 export const authRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 5 login attempts per windowMs
+  max: isDevelopment ? 100000 : 5, // Disabled in dev
   message: 'Too many authentication attempts, please try again later',
   standardHeaders: true,
   legacyHeaders: false,
-  skipSuccessfulRequests: true, // Don't count successful logins
+  skipSuccessfulRequests: true,
+  skip: () => isDevelopment, // Completely skip in development
 });
 
-// AI endpoint rate limiter (more expensive operations)
+// AI endpoint rate limiter
 export const aiRateLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
-  max: 10, // 10 AI requests per minute
+  max: isDevelopment ? 100000 : 10,
   message: 'AI request limit reached, please wait before trying again',
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => isDevelopment,
 });
 
 // File upload rate limiter
 export const uploadRateLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 20, // 20 uploads per hour
+  max: isDevelopment ? 100000 : 20,
   message: 'Upload limit reached, please try again later',
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => isDevelopment,
 });
 
 // ============================================================================

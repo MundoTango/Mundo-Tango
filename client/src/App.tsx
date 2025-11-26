@@ -16,7 +16,6 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { MrBlueWidget } from "./components/MrBlueWidget";
 import { MrBlueFloatingButton } from "./components/mrBlue/MrBlueFloatingButton";
 import { LoadingFallback } from "./components/LoadingFallback";
-import { ScottWelcomeScreen } from "./components/mrBlue/ScottWelcomeScreen";
 import { ThePlanProgressBar } from "./components/ThePlanProgressBar";
 import { initErrorDetection, cleanupErrorDetection } from "./lib/proactiveErrorDetection";
 import { initHttpInterceptor, cleanupHttpInterceptor } from "./lib/httpInterceptor";
@@ -2168,20 +2167,7 @@ function Router() {
 // This fixes "No QueryClient set" error - hooks must be inside provider
 function AppContent() {
   const [isVisualEditorOpen, setIsVisualEditorOpen] = useState(false);
-  const [showWelcomeScreen, setShowWelcomeScreen] = useState(false);
   const [location] = useLocation();
-
-  // MB.MD FIX: Use React Query to check The Plan progress (auto-updates when cache invalidated)
-  // This fixes race condition where raw fetch was getting stale data
-  const publicRoutes = ['/', '/login', '/register', '/auth/google', '/auth/facebook', '/reset-password', '/forgot-password'];
-  const isPublicRoute = publicRoutes.some(route => location === route || location.startsWith('/auth/'));
-  
-  const { data: thePlanProgress } = useQuery<{ active: boolean }>({
-    queryKey: ['/api/the-plan/progress'],
-    enabled: !isPublicRoute, // Only fetch on authenticated routes
-    staleTime: 0, // Always get fresh data after cache invalidation
-    retry: false, // Don't retry on 401
-  });
 
   // Initialize Proactive Error Detection + HTTP Interceptor + Component Health Monitor + Navigation Interceptor
   useEffect(() => {
@@ -2232,28 +2218,9 @@ function AppContent() {
 
   const isOnVisualEditorPage = location === '/admin/visual-editor';
 
-  // MB.MD FIX: React to React Query cache updates instead of using raw fetch
-  // This fixes the race condition - when ScottWelcomeScreen invalidates the cache,
-  // the query auto-refetches and this useEffect sees the updated data immediately
-  useEffect(() => {
-    if (isPublicRoute) {
-      setShowWelcomeScreen(false);
-      return;
-    }
-    
-    // Show welcome screen if user is logged in and hasn't started The Plan
-    // thePlanProgress?.active will be false when no plan session exists
-    if (thePlanProgress?.active === false) {
-      setShowWelcomeScreen(true);
-    } else if (thePlanProgress?.active === true) {
-      setShowWelcomeScreen(false);
-    }
-  }, [thePlanProgress, isPublicRoute]);
-
   return (
     <>
       <Toaster />
-      {showWelcomeScreen && <ScottWelcomeScreen />}
       <ThePlanProgressBar />
       <Suspense fallback={<LoadingFallback />}>
         <Router />
