@@ -223,7 +223,7 @@ function UnifiedTopBar({
           </Link>
         </div>
 
-        {/* Center Section - Global Search */}
+        {/* Center Section - Global Search (Desktop) */}
         <div className="flex-1 max-w-2xl mx-4 hidden md:flex items-center justify-center">
           <Link href="/search">
             <Button variant="outline" size="sm" className="w-64 justify-start text-muted-foreground" data-testid="button-search-open">
@@ -234,7 +234,14 @@ function UnifiedTopBar({
         </div>
 
         {/* Right Section - Actions & Profile */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 md:gap-2">
+          {/* Search - Mobile Only */}
+          <Link href="/search" className="md:hidden">
+            <Button variant="ghost" size="icon" data-testid="button-search-mobile">
+              <Search className="h-5 w-5" />
+            </Button>
+          </Link>
+
           {/* Language Selector */}
           <LanguageSelectorButton />
 
