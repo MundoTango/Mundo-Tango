@@ -53,7 +53,18 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
   });
 
   const handleEdit = (postId: number) => {
-    const allPosts = data?.pages.flatMap(page => page.posts) || [];
+    // Safely flatten all posts from pages - handle undefined/null
+  let allPosts: any[] = [];
+  try {
+    if (data?.pages && Array.isArray(data.pages)) {
+      allPosts = data.pages.flatMap((page) => {
+        if (!page || !page.posts) return [];
+        return Array.isArray(page.posts) ? page.posts : [];
+      }).filter((post) => post && post.id);
+    }
+  } catch (e) {
+    console.error('[InfiniteScrollFeed] Error flattening posts:', e);
+  }
     const postToEdit = allPosts.find(p => p.id === postId);
     if (postToEdit) {
       setEditingPost(postToEdit);
@@ -105,7 +116,18 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
         endpoint = `/api/posts/mentions`;
       }
 
-      const result = await apiRequest('GET', `${endpoint}?limit=20&offset=${pageParam}`);
+      const response = await fetch(`${endpoint}?limit=20&offset=${pageParam}`, {
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Unauthorized - please refresh the page');
+        }
+        throw new Error(`HTTP ${response.status}: Failed to fetch feed`);
+      }
+      
+      const result = await response.json();
       
       // Handle different response formats
       if (Array.isArray(result)) {
@@ -180,7 +202,18 @@ export function InfiniteScrollFeed({ feedType, filter, onRefresh }: InfiniteScro
     );
   }
 
-  const allPosts = data?.pages.flatMap(page => page.posts) || [];
+  // Safely flatten all posts from pages - handle undefined/null
+  let allPosts: any[] = [];
+  try {
+    if (data?.pages && Array.isArray(data.pages)) {
+      allPosts = data.pages.flatMap((page) => {
+        if (!page || !page.posts) return [];
+        return Array.isArray(page.posts) ? page.posts : [];
+      }).filter((post) => post && post.id);
+    }
+  } catch (e) {
+    console.error('[InfiniteScrollFeed] Error flattening posts:', e);
+  }
 
   // Empty state
   if (allPosts.length === 0) {
