@@ -302,16 +302,19 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
         mentions: mentionIds, // Array of IDs: ["user_123", "event_456", "group_789"]
       };
       
-      // Add media (first image only for now, can be extended to mediaEmbeds)
+      // Add media (first image only - store as base64 in imageUrl field)
       if (mediaPreviews.length > 0) {
         // Find first image
         const firstImageIndex = mediaFiles.findIndex(f => f.type.startsWith('image'));
         if (firstImageIndex !== -1) {
-          postData.imageUrl = mediaPreviews[firstImageIndex];
+          const base64Data = mediaPreviews[firstImageIndex];
+          console.log('[PostCreator] Adding media - image size:', base64Data.length, 'bytes');
+          postData.imageUrl = base64Data;
         }
-        // Send all media URLs for potential future use
-        postData.mediaEmbeds = mediaPreviews;
       }
+      
+      console.log('[PostCreator] Final post data keys:', Object.keys(postData));
+      console.log('[PostCreator] imageUrl included:', !!postData.imageUrl);
       
       // Add story metadata if story mode is active
       if (isStory) {
