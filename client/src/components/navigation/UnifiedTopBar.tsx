@@ -224,9 +224,9 @@ function UnifiedTopBar({
         </div>
 
         {/* Center Section - Global Search */}
-        <div className="flex-1 max-w-2xl mx-4 hidden md:block" ref={searchRef}>
+        <div className="flex-1 max-w-2xl mx-4 hidden md:block relative" ref={searchRef}>
           <div 
-            className="relative rounded-full overflow-hidden border shadow-sm"
+            className="relative rounded-full overflow-visible border shadow-sm"
             style={{
               background: 'linear-gradient(135deg, rgba(64, 224, 208, 0.18) 0%, rgba(30, 144, 255, 0.15) 100%)',
               backdropFilter: 'blur(16px)',
@@ -235,7 +235,7 @@ function UnifiedTopBar({
           >
             {/* Search icon */}
             <Search 
-              className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5" 
+              className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 pointer-events-none" 
               style={{ color: '#64748B' }}
             />
             
@@ -244,10 +244,13 @@ function UnifiedTopBar({
               type="text"
               value={searchQuery}
               onChange={handleSearchChange}
+              onClick={() => setShowSearchResults(true)}
+              onFocus={() => setShowSearchResults(true)}
               placeholder={t('navigation.search')}
-              className="w-full pl-12 pr-4 py-2.5 bg-transparent text-sm focus:outline-none rounded-full"
+              className="w-full pl-12 pr-4 py-2.5 bg-transparent text-sm focus:outline-none rounded-full pointer-events-auto relative z-10"
               style={{ color: '#1E40AF' }}
               data-testid="input-search"
+              autoComplete="off"
             />
           </div>
           
