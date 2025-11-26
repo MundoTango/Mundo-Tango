@@ -452,9 +452,22 @@ function UnifiedTopBar({
                   </DropdownMenuItem>
                 </>
               ) : (
-                <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-                  No notifications yet
-                </div>
+                <>
+                  <div className="px-4 py-8 text-center text-sm text-muted-foreground">
+                    No notifications yet
+                  </div>
+                  
+                  <DropdownMenuSeparator />
+                  
+                  <DropdownMenuItem 
+                    onClick={() => setLocation('/notifications')}
+                    className="cursor-pointer justify-between"
+                    data-testid="menu-item-see-all-notifications-empty"
+                  >
+                    <span>See All Notifications</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </DropdownMenuItem>
+                </>
               )}
             </DropdownMenuContent>
           </DropdownMenu>
