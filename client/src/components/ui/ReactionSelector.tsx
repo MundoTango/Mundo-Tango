@@ -26,28 +26,12 @@ export interface Reaction {
 }
 
 export const REACTION_TYPES: Reaction[] = [
-  // Love & Passion (3 types)
   { id: 'love', icon: Heart, label: 'Love', color: '#EF4444', category: 'love' },
   { id: 'passion', icon: Flame, label: 'Passion', color: '#F97316', category: 'love' },
-  { id: 'romance', icon: Flower2, label: 'Romance', color: '#EC4899', category: 'love' },
-  
-  // Joy & Celebration (3 types)
-  { id: 'joy', icon: Smile, label: 'Joy', color: '#EAB308', category: 'joy' },
+  { id: 'joy', icon: Smile, label: 'Joy', color: '#FBBF24', category: 'joy' },
   { id: 'wow', icon: Eye, label: 'Wow', color: '#3B82F6', category: 'joy' },
-  { id: 'celebration', icon: PartyPopper, label: 'Celebration', color: '#A855F7', category: 'joy' },
-  
-  // Tango-Specific (4 types)
-  { id: 'tango_dancer', icon: User, label: 'Beautiful Dancing', color: '#DB2777', category: 'tango' },
-  { id: 'tango_leader', icon: Users, label: 'Strong Lead', color: '#2563EB', category: 'tango' },
-  { id: 'music', icon: Music, label: 'Great Music', color: '#6366F1', category: 'tango' },
-  { id: 'elegance', icon: Sparkles, label: 'Elegance', color: '#F59E0B', category: 'tango' },
-  
-  // Support & Encouragement (2 types)
-  { id: 'support', icon: HandMetal, label: 'Applause', color: '#10B981', category: 'support' },
-  { id: 'inspiration', icon: Lightbulb, label: 'Inspiring', color: '#06B6D4', category: 'support' },
-  
-  // Sadness (1 type)
-  { id: 'sad', icon: Frown, label: 'Sad', color: '#6B7280', category: 'sad' }
+  { id: 'music', icon: Music, label: 'Music', color: '#A855F7', category: 'tango' },
+  { id: 'inspiration', icon: Lightbulb, label: 'Inspiration', color: '#10B981', category: 'support' },
 ];
 
 interface ReactionSelectorProps {
@@ -226,9 +210,6 @@ export const ReactionSelector = ({
                       fill={currentReaction === reaction.id ? reaction.color : 'none'}
                       strokeWidth={2}
                     />
-                    <span className="text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                      {reaction.label}
-                    </span>
                     {reactions[reaction.id] && reactions[reaction.id] > 0 && (
                       <span className="absolute -top-1 -right-1 bg-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
                         style={{ color: reaction.color }}
