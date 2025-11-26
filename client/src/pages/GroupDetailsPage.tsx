@@ -15,7 +15,6 @@ import { SEO } from "@/components/SEO";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
 import { GroupPostFeed } from "@/components/groups/GroupPostFeed";
 import { GroupMembersList } from "@/components/groups/GroupMembersList";
-import { GroupInviteSystem } from "@/components/groups/GroupInviteSystem";
 import { GroupSettingsPanel } from "@/components/groups/GroupSettingsPanel";
 import { motion } from "framer-motion";
 import { useRSVPEvent, useMyRSVPs } from "@/hooks/useEvents";
@@ -430,7 +429,7 @@ export default function GroupDetailsPage() {
 
             {/* Tabs */}
             <Tabs defaultValue="discussion">
-              <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 gap-1 mb-8">
+              <TabsList className="grid w-full grid-cols-4 lg:grid-cols-7 gap-1 mb-8">
                 <TabsTrigger value="discussion">Discussion</TabsTrigger>
                 <TabsTrigger value="events">
                   <Calendar className="h-4 w-4 lg:mr-2" />
@@ -445,7 +444,6 @@ export default function GroupDetailsPage() {
                   <span className="hidden lg:inline">Hub</span>
                 </TabsTrigger>
                 <TabsTrigger value="members">Members</TabsTrigger>
-                <TabsTrigger value="invites">Invites</TabsTrigger>
                 <TabsTrigger value="about">About</TabsTrigger>
                 {membershipData?.isMember && (
                   <TabsTrigger value="settings">
@@ -590,13 +588,6 @@ export default function GroupDetailsPage() {
                 <GroupMembersList 
                   groupId={group.id}
                   canModerate={membershipData?.isMember || false}
-                />
-              </TabsContent>
-
-              <TabsContent value="invites">
-                <GroupInviteSystem 
-                  groupId={group.id}
-                  canInvite={membershipData?.isMember || false}
                 />
               </TabsContent>
 
