@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, Fragment } from "react";
+import { useState, useRef, useEffect, useCallback, Fragment, useMemo } from "react";
 import { usePosts, useCreatePost, useToggleLike, useComments, useCreateComment, useUpdateComment, useDeleteComment } from "@/hooks/usePosts";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
@@ -68,6 +68,16 @@ const TANGO_TAGS = [
   { name: "Fashion", Icon: Sparkles, color: "bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-800" },
 ];
 
+const TANGO_QUOTES = [
+  { quote: "Tango is a feeling danced out", author: "Jorge Luis Borges" },
+  { quote: "Tango is passion, tango is love, tango is life", author: "Carlos Gardel" },
+  { quote: "In tango, two hearts beat as one", author: "Traditional" },
+  { quote: "Dance as if nobody's watching, love as if you've never been hurt", author: "Mark Twain" },
+  { quote: "The tango is the dance of freedom", author: "Argentine Proverb" },
+  { quote: "Tango is the vertical expression of a horizontal desire", author: "Jorge Luis Borges" },
+  { quote: "Music is life, and tango is the beat of the soul", author: "Traditional" },
+];
+
 const RECOMMENDATION_CATEGORIES = [
   { id: "venue", label: "Venue", Icon: Home, color: "text-primary" },
   { id: "teacher", label: "Teacher", Icon: GraduationCap, color: "text-purple-600 dark:text-purple-400" },
@@ -82,6 +92,7 @@ export default function FeedPage() {
   const [feedType, setFeedType] = useState<"following" | "discover">("following");
   const [filter, setFilter] = useState<"all" | "friends" | "public" | "saved" | "my-posts" | "mentions">("all");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
   
   const [content, setContent] = useState("");
   const [visibility, setVisibility] = useState<"public" | "friends" | "private">("public");
@@ -142,6 +153,14 @@ export default function FeedPage() {
   const { toast } = useToast();
 
   const allPosts = data?.pages.flat() || [];
+
+  // Cycle through tango quotes every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentQuoteIndex((prev) => (prev + 1) % TANGO_QUOTES.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -402,8 +421,8 @@ export default function FeedPage() {
         description="Connect with the global tango community. Share memories, discover events, and engage with fellow dancers from around the world."
       />
       
-      {/* Editorial Hero Section - 16:9 */}
-      <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden">
+      {/* Editorial Hero Section - Quote Carousel */}
+      <div className="relative h-[25vh] md:h-[30vh] w-full overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{
           backgroundImage: `url('https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=1600&auto=format&fit=crop')`
         }}>
@@ -412,21 +431,17 @@ export default function FeedPage() {
         
         <div className="relative z-10 flex flex-col items-center justify-center h-full px-8 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            key={currentQuoteIndex}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <Badge variant="outline" className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm">
-              <Heart className="w-3 h-3 mr-1.5" />
-              Community Feed
-            </Badge>
-            
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-white font-bold leading-tight mb-6" data-testid="text-page-title">
-              Share Your Tango Journey
-            </h1>
-            
-            <p className="text-xl text-white/80 max-w-2xl mx-auto">
-              Connect, inspire, and celebrate moments with dancers around the world
+            <p className="text-2xl md:text-3xl lg:text-4xl font-serif text-white font-bold leading-tight mb-2 italic" data-testid="text-page-quote">
+              "{TANGO_QUOTES[currentQuoteIndex].quote}"
+            </p>
+            <p className="text-sm md:text-base text-white/70">
+              — {TANGO_QUOTES[currentQuoteIndex].author}
             </p>
           </motion.div>
         </div>
