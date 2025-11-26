@@ -138,7 +138,7 @@ export default function AutonomousMode() {
         description: `Working on your request...`,
       });
     },
-    onError: (error: any) {
+    onError: (error: any) => {
       toast({
         title: 'Failed to Start',
         description: error.message,

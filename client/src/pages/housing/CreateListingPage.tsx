@@ -358,7 +358,8 @@ export default function CreateListingPage() {
                             placeholder="WiFi, Kitchen, Parking (comma separated)"
                             data-testid="input-amenities"
                             {...field}
-                          </FormControl>
+                          />
+                        </FormControl>
                         <FormDescription>
                           Enter amenities separated by commas
                         </FormDescription>
