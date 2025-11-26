@@ -224,85 +224,13 @@ function UnifiedTopBar({
         </div>
 
         {/* Center Section - Global Search */}
-        <div className="flex-1 max-w-2xl mx-4 hidden md:block" ref={searchRef}>
-          <div className="relative">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchChange}
-              onFocus={() => setShowSearchResults(true)}
-              placeholder="Search posts, events, people, groups..."
-              className="w-full px-4 py-2.5 pl-10 text-sm rounded-full border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-400 dark:focus:ring-cyan-500"
-              data-testid="input-search"
-              autoComplete="off"
-            />
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500 pointer-events-none" />
-          </div>
-          
-          {/* Search results dropdown */}
-          {showSearchResults && searchQuery.trim().length > 2 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg overflow-hidden z-50">
-              {searchLoading ? (
-                <div className="p-4 text-center text-sm text-slate-500">Searching...</div>
-              ) : searchResults?.data && (searchResults.data.posts?.length > 0 || searchResults.data.events?.length > 0 || searchResults.data.users?.length > 0 || searchResults.data.groups?.length > 0) ? (
-                <div className="max-h-96 overflow-y-auto">
-                  {searchResults.data.posts?.length > 0 && (
-                    <div className="border-b border-slate-200 dark:border-slate-700 p-3">
-                      <h4 className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">Posts</h4>
-                      <div className="space-y-1">
-                        {searchResults.data.posts.slice(0, 3).map((post: any) => (
-                          <Link key={post.id} href={`/post/${post.id}`}>
-                            <div className="text-sm p-2 rounded cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800">{post.content?.substring(0, 40)}...</div>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {searchResults.data.events?.length > 0 && (
-                    <div className="border-b border-slate-200 dark:border-slate-700 p-3">
-                      <h4 className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">Events</h4>
-                      <div className="space-y-1">
-                        {searchResults.data.events.slice(0, 3).map((event: any) => (
-                          <Link key={event.id} href={`/events/${event.id}`}>
-                            <div className="text-sm p-2 rounded cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800">{event.title}</div>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {searchResults.data.users?.length > 0 && (
-                    <div className="border-b border-slate-200 dark:border-slate-700 p-3">
-                      <h4 className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">People</h4>
-                      <div className="space-y-1">
-                        {searchResults.data.users.slice(0, 3).map((user: any) => (
-                          <Link key={user.id} href={`/profile/${user.username}`}>
-                            <div className="flex items-center gap-2 text-sm p-2 rounded cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800">
-                              <Avatar className="h-5 w-5"><AvatarImage src={user.profileImage} /><AvatarFallback>{user.name?.charAt(0)}</AvatarFallback></Avatar>
-                              <span>{user.name}</span>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {searchResults.data.groups?.length > 0 && (
-                    <div className="p-3">
-                      <h4 className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">Groups</h4>
-                      <div className="space-y-1">
-                        {searchResults.data.groups.slice(0, 3).map((group: any) => (
-                          <Link key={group.id} href={`/groups/${group.slug}`}>
-                            <div className="text-sm p-2 rounded cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800">{group.name}</div>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="p-4 text-center text-sm text-slate-500">No results found</div>
-              )}
-            </div>
-          )}
+        <div className="flex-1 max-w-2xl mx-4 hidden md:flex items-center justify-center">
+          <Link href="/search">
+            <Button variant="outline" size="sm" className="w-64 justify-start text-muted-foreground" data-testid="button-search-open">
+              <Search className="h-4 w-4 mr-2" />
+              <span>Search posts, events, people, groups...</span>
+            </Button>
+          </Link>
         </div>
 
         {/* Right Section - Actions & Profile */}
