@@ -539,7 +539,8 @@ router.get("/:id/members", async (req: Request, res: Response) => {
           username: users.username,
           profileImage: users.profileImage,
           city: users.city,
-          country: users.country
+          country: users.country,
+          tangoRoles: users.tangoRoles
         }
       })
       .from(groupMembers)

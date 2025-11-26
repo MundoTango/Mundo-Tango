@@ -33,7 +33,18 @@ interface GroupMembersListProps {
 export function GroupMembersList({ groupId, canModerate = false, currentUserId }: GroupMembersListProps) {
   const { toast } = useToast();
 
-  const { data: members, isLoading } = useQuery<Array<SelectGroupMember & { user?: { name: string; username: string; avatarUrl?: string; tangoRoles?: string[] } }>>({
+  interface MemberData {
+    membership: SelectGroupMember;
+    user: {
+      id: number;
+      name: string;
+      username: string;
+      profileImage?: string | null;
+      tangoRoles?: string[] | null;
+    } | null;
+  }
+  
+  const { data: rawMembers, isLoading } = useQuery<MemberData[]>({
     queryKey: ["/api/groups", groupId, "members"],
     queryFn: async () => {
       const res = await fetch(`/api/groups/${groupId}/members`, { credentials: "include" });
@@ -41,6 +52,16 @@ export function GroupMembersList({ groupId, canModerate = false, currentUserId }
       return res.json();
     },
   });
+  
+  const members = rawMembers?.map(item => ({
+    ...item.membership,
+    user: item.user ? {
+      name: item.user.name,
+      username: item.user.username,
+      avatarUrl: item.user.profileImage,
+      tangoRoles: item.user.tangoRoles
+    } : undefined
+  }));
 
   const updateMemberRole = useMutation({
     mutationFn: async ({ userId, role }: { userId: number; role: string }) => {
