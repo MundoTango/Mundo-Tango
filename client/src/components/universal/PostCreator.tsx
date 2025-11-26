@@ -225,6 +225,11 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
   }, []);
 
   const removeMedia = (index: number) => {
+    // Cleanup blob URL to prevent memory leak
+    const urlToRemove = mediaPreviews[index];
+    if (urlToRemove && urlToRemove.startsWith('blob:')) {
+      URL.revokeObjectURL(urlToRemove);
+    }
     setMediaFiles(mediaFiles.filter((_, i) => i !== index));
     setMediaPreviews(mediaPreviews.filter((_, i) => i !== index));
   };
@@ -443,6 +448,13 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
         description: "Your memory has been posted",
       });
 
+      // Cleanup blob URLs before resetting
+      mediaPreviews.forEach(url => {
+        if (url && url.startsWith('blob:')) {
+          URL.revokeObjectURL(url);
+        }
+      });
+      
       // Reset form
       setContent("");
       setMentions([]);
