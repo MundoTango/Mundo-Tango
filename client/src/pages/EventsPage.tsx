@@ -168,16 +168,65 @@ function EventCard({ event, index = 0 }: { event: any; index?: number }) {
         </CardContent>
 
         <CardFooter className="flex gap-2 pt-0 px-6 pb-6">
-          <Button
-            variant={isRsvped ? "outline" : "default"}
-            className="flex-1 gap-2"
-            onClick={handleRSVP}
-            disabled={!user || rsvpMutation.isPending}
-            data-testid={`button-rsvp-${eventData.id}`}
-          >
-            <Users className="h-4 w-4" />
-            {rsvpMutation.isPending ? "Loading..." : isRsvped ? "Cancel RSVP" : "RSVP"}
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant={rsvpStatus ? "outline" : "default"}
+                className="flex-1 gap-2"
+                disabled={!user || rsvpMutation.isPending}
+                data-testid={`button-rsvp-${eventData.id}`}
+              >
+                {rsvpStatus === 'going' && <Check className="h-4 w-4 text-green-500" />}
+                {rsvpStatus === 'maybe' && <Users className="h-4 w-4 text-yellow-500" />}
+                {rsvpStatus === 'interested' && <Users className="h-4 w-4 text-blue-500" />}
+                {!rsvpStatus && <Users className="h-4 w-4" />}
+                {rsvpMutation.isPending ? "Updating..." : 
+                  rsvpStatus === 'going' ? "Going" :
+                  rsvpStatus === 'maybe' ? "Maybe" :
+                  rsvpStatus === 'interested' ? "Interested" : "RSVP"}
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              <DropdownMenuItem 
+                onClick={() => handleRSVP('going')}
+                className="gap-2"
+                data-testid={`rsvp-going-${eventData.id}`}
+              >
+                <Check className="h-4 w-4 text-green-500" />
+                Going
+                {rsvpStatus === 'going' && <Check className="h-4 w-4 ml-auto" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => handleRSVP('maybe')}
+                className="gap-2"
+                data-testid={`rsvp-maybe-${eventData.id}`}
+              >
+                <Users className="h-4 w-4 text-yellow-500" />
+                Maybe
+                {rsvpStatus === 'maybe' && <Check className="h-4 w-4 ml-auto" />}
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => handleRSVP('interested')}
+                className="gap-2"
+                data-testid={`rsvp-interested-${eventData.id}`}
+              >
+                <Users className="h-4 w-4 text-blue-500" />
+                Interested
+                {rsvpStatus === 'interested' && <Check className="h-4 w-4 ml-auto" />}
+              </DropdownMenuItem>
+              {rsvpStatus && (
+                <DropdownMenuItem 
+                  onClick={() => handleRSVP('not_going')}
+                  className="gap-2 text-muted-foreground"
+                  data-testid={`rsvp-cancel-${eventData.id}`}
+                >
+                  <Users className="h-4 w-4" />
+                  Not Going
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <Link href={`/events/${eventData.id}`}>
             <Button variant="outline" className="gap-2" data-testid={`button-view-event-${eventData.id}`}>
