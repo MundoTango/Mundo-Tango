@@ -1039,6 +1039,40 @@ export const postDrafts = pgTable("post_drafts", {
 }));
 
 // ============================================================================
+// PLACE RECOMMENDATIONS (Hidden Gems - Google Maps Style)
+// ============================================================================
+
+export const placeRecommendations = pgTable("place_recommendations", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  postId: integer("post_id").references(() => posts.id, { onDelete: "cascade" }),
+  placeName: text("place_name").notNull(),
+  category: varchar("category").notNull(), // 'venue', 'teacher', 'restaurant', 'shop', 'accommodation', 'service'
+  description: text("description"),
+  latitude: numeric("latitude", { precision: 10, scale: 8 }).notNull(),
+  longitude: numeric("longitude", { precision: 11, scale: 8 }).notNull(),
+  address: text("address"),
+  priceRange: varchar("price_range"), // '$', '$$', '$$$', '$$$$'
+  recommendationCount: integer("recommendation_count").default(1),
+  userIds: text("user_ids").array().default(sql`ARRAY[]::text[]`), // Track who recommended
+  averageRating: numeric("average_rating", { precision: 3, scale: 1 }).default("0"),
+  totalRatings: integer("total_ratings").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  userIdx: index("place_recommendations_user_idx").on(table.userId),
+  categoryIdx: index("place_recommendations_category_idx").on(table.category),
+  coordsIdx: index("place_recommendations_coords_idx").on(table.latitude, table.longitude),
+  countIdx: index("place_recommendations_count_idx").on(table.recommendationCount),
+  uniquePlace: unique().on(table.latitude, table.longitude, table.category),
+}));
+
+export const insertPlaceRecommendationSchema = createInsertSchema(placeRecommendations)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertPlaceRecommendation = z.infer<typeof insertPlaceRecommendationSchema>;
+export type SelectPlaceRecommendation = typeof placeRecommendations.$inferSelect;
+
+// ============================================================================
 // MESSAGING
 // ============================================================================
 
