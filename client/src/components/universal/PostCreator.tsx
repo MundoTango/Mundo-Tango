@@ -19,9 +19,12 @@ import {
   Plane, Pizza, Drama, Mountain, Moon, Leaf, Palette,
   Music, Dumbbell, Camera as PhotoIcon, HeartHandshake,
   UserPlus, Briefcase, Target, PartyPopper,
-  UtensilsCrossed, Coffee, Hotel, User, Wine, Clock
+  UtensilsCrossed, Coffee, Hotel, User, Wine, Clock,
+  Share2, ExternalLink, CheckCircle, AlertCircle
 } from "lucide-react";
+import { SiFacebook, SiInstagram } from "react-icons/si";
 import { motion, AnimatePresence } from "framer-motion";
+import { Switch } from "@/components/ui/switch";
 
 // 15 predefined tags with Lucide icons
 const MEMORY_TAGS = [
@@ -113,6 +116,16 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
   const [enhancedContent, setEnhancedContent] = useState("");
   const [showEnhancement, setShowEnhancement] = useState(false);
 
+  // Cross-posting state
+  const [showCrossPost, setShowCrossPost] = useState(false);
+  const [crossPostFacebook, setCrossPostFacebook] = useState(false);
+  const [crossPostInstagram, setCrossPostInstagram] = useState(false);
+  const [isCrossPosting, setIsCrossPosting] = useState(false);
+  const [crossPostStatus, setCrossPostStatus] = useState<{
+    facebook?: 'pending' | 'success' | 'error';
+    instagram?: 'pending' | 'success' | 'error';
+  }>({});
+
   // Media upload handler
   const handleMediaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -198,6 +211,70 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
     }
   };
 
+  // Cross-post handler - triggers Computer Use automation
+  const handleCrossPost = async (postId: number, content: string) => {
+    if (!crossPostFacebook && !crossPostInstagram) return;
+    
+    setIsCrossPosting(true);
+    const newStatus: typeof crossPostStatus = {};
+    
+    try {
+      if (crossPostFacebook) {
+        newStatus.facebook = 'pending';
+        setCrossPostStatus({ ...newStatus });
+        
+        try {
+          await apiRequest('POST', '/api/social/cross-post', {
+            postId,
+            content,
+            platform: 'facebook',
+            mediaUrls: mediaPreviews.filter(p => !p.startsWith('data:video')),
+          });
+          newStatus.facebook = 'success';
+        } catch (err) {
+          newStatus.facebook = 'error';
+        }
+        setCrossPostStatus({ ...newStatus });
+      }
+      
+      if (crossPostInstagram) {
+        newStatus.instagram = 'pending';
+        setCrossPostStatus({ ...newStatus });
+        
+        try {
+          await apiRequest('POST', '/api/social/cross-post', {
+            postId,
+            content,
+            platform: 'instagram',
+            mediaUrls: mediaPreviews.filter(p => !p.startsWith('data:video')),
+          });
+          newStatus.instagram = 'success';
+        } catch (err) {
+          newStatus.instagram = 'error';
+        }
+        setCrossPostStatus({ ...newStatus });
+      }
+      
+      const hasSuccess = newStatus.facebook === 'success' || newStatus.instagram === 'success';
+      const hasError = newStatus.facebook === 'error' || newStatus.instagram === 'error';
+      
+      if (hasSuccess && !hasError) {
+        toast({
+          title: "Cross-posted successfully!",
+          description: "Your memory is now shared on social media",
+        });
+      } else if (hasError) {
+        toast({
+          title: "Partial cross-post",
+          description: "Some platforms couldn't be reached. We'll retry automatically.",
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setIsCrossPosting(false);
+    }
+  };
+
   // Post submission
   const handleSubmit = async () => {
     if (!content.trim() && mediaFiles.length === 0) {
@@ -274,6 +351,10 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       setShowVisibility(false);
       setShowEnhancement(false);
       setEnhancedContent("");
+      setShowCrossPost(false);
+      setCrossPostFacebook(false);
+      setCrossPostInstagram(false);
+      setCrossPostStatus({});
       setInputKey(prev => prev + 1); // Force SimpleMentionsInput to reset
 
       if (onPostCreated) onPostCreated();
@@ -605,6 +686,98 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
         )}
       </AnimatePresence>
 
+      {/* Cross-Post Panel */}
+      <AnimatePresence>
+        {showCrossPost && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mb-4 p-4 rounded-xl border"
+            style={{
+              background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1))',
+              backdropFilter: 'blur(8px)',
+              borderColor: 'rgba(59, 130, 246, 0.3)',
+            }}
+          >
+            <h3 className="text-lg font-serif font-bold mb-3 flex items-center gap-2">
+              <Share2 className="w-4 h-4 text-blue-500" />
+              Cross-Post to Social Media
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Share this memory automatically to your connected social media accounts using AI automation.
+            </p>
+            
+            <div className="space-y-4">
+              {/* Facebook Toggle */}
+              <div className="flex items-center justify-between p-3 rounded-lg bg-white/50 dark:bg-black/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#1877F2] flex items-center justify-center">
+                    <SiFacebook className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Facebook</p>
+                    <p className="text-xs text-muted-foreground">Share to your Facebook profile</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {crossPostStatus.facebook === 'pending' && (
+                    <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+                  )}
+                  {crossPostStatus.facebook === 'success' && (
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                  )}
+                  {crossPostStatus.facebook === 'error' && (
+                    <AlertCircle className="w-4 h-4 text-red-500" />
+                  )}
+                  <Switch
+                    checked={crossPostFacebook}
+                    onCheckedChange={setCrossPostFacebook}
+                    data-testid="switch-crosspost-facebook"
+                  />
+                </div>
+              </div>
+              
+              {/* Instagram Toggle */}
+              <div className="flex items-center justify-between p-3 rounded-lg bg-white/50 dark:bg-black/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#FCB045] flex items-center justify-center">
+                    <SiInstagram className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Instagram</p>
+                    <p className="text-xs text-muted-foreground">Share to your Instagram feed</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {crossPostStatus.instagram === 'pending' && (
+                    <Loader2 className="w-4 h-4 animate-spin text-pink-500" />
+                  )}
+                  {crossPostStatus.instagram === 'success' && (
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                  )}
+                  {crossPostStatus.instagram === 'error' && (
+                    <AlertCircle className="w-4 h-4 text-red-500" />
+                  )}
+                  <Switch
+                    checked={crossPostInstagram}
+                    onCheckedChange={setCrossPostInstagram}
+                    data-testid="switch-crosspost-instagram"
+                  />
+                </div>
+              </div>
+              
+              {(crossPostFacebook || crossPostInstagram) && (
+                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  <ExternalLink className="w-3 h-3" />
+                  Cross-posting will open in a side panel after sharing your memory
+                </p>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* 6 Animated Icon Buttons */}
       <div className="flex items-center justify-between pt-4 border-t" style={{ borderColor: 'rgba(64, 224, 208, 0.2)' }}>
         <div className="flex items-center gap-2">
@@ -767,6 +940,31 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
               </Button>
             </motion.div>
           )}
+
+          {/* 6. Cross-Post Toggle */}
+          <motion.div
+            custom={6}
+            initial="hidden"
+            animate="visible"
+            variants={iconButtonVariants}
+          >
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              onClick={() => setShowCrossPost(!showCrossPost)}
+              className={`relative group ${showCrossPost || crossPostFacebook || crossPostInstagram ? 'bg-gradient-to-br from-blue-500 to-purple-500 text-white' : ''}`}
+              data-testid="button-toggle-crosspost"
+              title="Cross-post to Facebook & Instagram"
+            >
+              <Share2 className="w-5 h-5 transition-transform group-hover:scale-110" />
+              {(crossPostFacebook || crossPostInstagram) && (
+                <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  {(crossPostFacebook ? 1 : 0) + (crossPostInstagram ? 1 : 0)}
+                </span>
+              )}
+            </Button>
+          </motion.div>
         </div>
 
         {/* 6. Share Memory (Large Button) */}
