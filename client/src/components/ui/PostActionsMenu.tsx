@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MoreVertical, Edit, Trash2, Bookmark, Flag, UserX, BookmarkCheck } from "lucide-react";
+import { MoreVertical, Edit, Trash2, Flag, UserX } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,10 +22,8 @@ import {
 interface PostActionsMenuProps {
   postId: number;
   isAuthor: boolean;
-  isSaved: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
-  onSave?: () => void;
   onReport?: () => void;
   onBlock?: () => void;
 }
@@ -33,10 +31,8 @@ interface PostActionsMenuProps {
 export const PostActionsMenu = ({
   postId,
   isAuthor,
-  isSaved,
   onEdit,
   onDelete,
-  onSave,
   onReport,
   onBlock,
 }: PostActionsMenuProps) => {
@@ -94,26 +90,6 @@ export const PostActionsMenu = ({
               <DropdownMenuSeparator />
             </>
           ) : null}
-          
-          {onSave && (
-            <DropdownMenuItem
-              onClick={onSave}
-              className="hover-elevate cursor-pointer"
-              data-testid={`menu-save-${postId}`}
-            >
-              {isSaved ? (
-                <>
-                  <BookmarkCheck className="w-4 h-4 mr-2" style={{ color: '#40E0D0' }} />
-                  Saved
-                </>
-              ) : (
-                <>
-                  <Bookmark className="w-4 h-4 mr-2" />
-                  Save Post
-                </>
-              )}
-            </DropdownMenuItem>
-          )}
 
           {!isAuthor && (
             <>
