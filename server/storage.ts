@@ -1722,8 +1722,34 @@ export class DbStorage implements IStorage {
   }
 
   async getPostById(id: number): Promise<SelectPost | undefined> {
-    const result = await db.select().from(posts).where(eq(posts.id, id)).limit(1);
-    return result[0];
+    const result = await db
+      .select({
+        id: posts.id,
+        userId: posts.userId,
+        content: posts.content,
+        richContent: posts.richContent,
+        plainText: posts.plainText,
+        imageUrl: posts.imageUrl,
+        videoUrl: posts.videoUrl,
+        mediaEmbeds: posts.mediaEmbeds,
+        mentions: posts.mentions,
+        hashtags: posts.hashtags,
+        tags: posts.tags,
+        location: posts.location,
+        visibility: posts.visibility,
+        postType: posts.postType,
+        likes: posts.likes,
+        comments: posts.comments,
+        shares: posts.shares,
+        createdAt: posts.createdAt,
+        updatedAt: posts.updatedAt,
+        expiresAt: posts.expiresAt,
+        type: posts.type,
+      })
+      .from(posts)
+      .where(eq(posts.id, id))
+      .limit(1);
+    return result[0] as SelectPost | undefined;
   }
 
   async getPosts(params: { userId?: number; limit?: number; offset?: number; currentUserId?: number; type?: string }): Promise<SelectPost[]> {
