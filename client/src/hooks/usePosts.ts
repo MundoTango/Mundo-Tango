@@ -29,6 +29,7 @@ type Post = {
     username: string;
     email: string;
     profileImage?: string | null;
+    tangoRoles?: string[] | null;
   };
 };
 
