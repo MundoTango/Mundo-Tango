@@ -411,7 +411,7 @@ function Router() {
         <ProtectedRoute>
           <AppLayout>
             <Suspense fallback={<LoadingFallback />}>
-              <MemoriesPage />
+              <FeedPage />
             </Suspense>
           </AppLayout>
         </ProtectedRoute>
