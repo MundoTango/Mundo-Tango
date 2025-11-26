@@ -406,6 +406,41 @@ export const reportedProfiles = pgTable("reported_profiles", {
 }));
 
 // ============================================================================
+// EVENT SERIES (for grouping recurring events)
+// ============================================================================
+
+export const eventSeries = pgTable("event_series", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  recurrencePattern: varchar("recurrence_pattern", { length: 50 }),
+  parentEventId: integer("parent_event_id"),
+  groupId: integer("group_id").references(() => groups.id),
+  organizerId: integer("organizer_id").references(() => users.id),
+  venue: varchar("venue", { length: 255 }),
+  city: varchar("city", { length: 255 }),
+  country: varchar("country", { length: 255 }),
+  dayOfWeek: integer("day_of_week"),
+  startTime: varchar("start_time", { length: 10 }),
+  endTime: varchar("end_time", { length: 10 }),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  nameIdx: index("event_series_name_idx").on(table.name),
+  groupIdx: index("event_series_group_idx").on(table.groupId),
+  cityIdx: index("event_series_city_idx").on(table.city),
+}));
+
+export const insertEventSeriesSchema = createInsertSchema(eventSeries).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertEventSeries = z.infer<typeof insertEventSeriesSchema>;
+export type EventSeries = typeof eventSeries.$inferSelect;
+
+// ============================================================================
 // EVENTS (matching existing schema + extensions)
 // ============================================================================
 
@@ -542,6 +577,9 @@ export const events = pgTable("events", {
   djText: text("dj_text"),
   teacherText: text("teacher_text"),
   performerText: text("performer_text"),
+  
+  // Event Series (for grouping recurring events)
+  seriesId: integer("series_id").references(() => eventSeries.id),
   
   // Timestamps
   createdAt: timestamp("created_at").defaultNow(),

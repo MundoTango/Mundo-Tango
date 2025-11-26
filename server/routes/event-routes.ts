@@ -200,6 +200,123 @@ router.get("/", optionalAuth, async (req: AuthRequest, res: Response) => {
 });
 
 // ============================================================================
+// SMART EVENT FILTERING (for personalized feeds)
+// ============================================================================
+
+// GET /api/events/smart - Smart filtering based on user's city + followed groups + RSVP'd events
+router.get("/smart", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const { limit = "20", offset = "0" } = req.query;
+
+    // Get user's home city
+    const [userData] = await db
+      .select({ city: users.city, country: users.country })
+      .from(users)
+      .where(eq(users.id, userId));
+
+    // Get cities from groups user has joined
+    const joinedGroups = await db
+      .select({ 
+        city: sql<string>`${sql.raw('groups')}.city`,
+        country: sql<string>`${sql.raw('groups')}.country`
+      })
+      .from(sql.raw('group_members'))
+      .innerJoin(sql.raw('groups'), sql`${sql.raw('group_members')}.group_id = ${sql.raw('groups')}.id`)
+      .where(sql`${sql.raw('group_members')}.user_id = ${userId} AND ${sql.raw('group_members')}.status = 'active'`);
+
+    // Get event IDs user has RSVP'd to
+    const rsvpEvents = await db
+      .select({ eventId: eventRsvps.eventId })
+      .from(eventRsvps)
+      .where(and(
+        eq(eventRsvps.userId, userId),
+        or(eq(eventRsvps.status, 'going'), eq(eventRsvps.status, 'interested'))
+      ));
+
+    const rsvpEventIds = rsvpEvents.map(r => r.eventId);
+
+    // Build city conditions
+    const cityConditions: any[] = [];
+    
+    // Add user's home city
+    if (userData?.city) {
+      cityConditions.push(eq(events.city, userData.city));
+    }
+
+    // Add cities from joined groups
+    for (const group of joinedGroups) {
+      if (group.city) {
+        cityConditions.push(eq(events.city, group.city));
+      }
+    }
+
+    // Build main query conditions
+    const mainConditions = [
+      eq(events.status, "published"),
+      gte(events.startDate, new Date())
+    ];
+
+    // Add RSVP'd events OR city-based events
+    if (rsvpEventIds.length > 0 || cityConditions.length > 0) {
+      const combinedConditions: any[] = [];
+      
+      if (rsvpEventIds.length > 0) {
+        combinedConditions.push(inArray(events.id, rsvpEventIds));
+      }
+      
+      if (cityConditions.length > 0) {
+        combinedConditions.push(or(...cityConditions));
+      }
+
+      if (combinedConditions.length > 0) {
+        mainConditions.push(or(...combinedConditions)!);
+      }
+    }
+
+    const results = await db
+      .select({
+        event: events,
+        organizer: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          profileImage: users.profileImage
+        },
+        _count: sql<number>`(
+          SELECT COUNT(*)::int 
+          FROM ${eventRsvps} 
+          WHERE ${eventRsvps.eventId} = ${events.id}
+          AND ${eventRsvps.status} = 'going'
+        )`.as('attendee_count'),
+        isRsvpd: sql<boolean>`EXISTS(
+          SELECT 1 FROM ${eventRsvps} 
+          WHERE ${eventRsvps.eventId} = ${events.id} 
+          AND ${eventRsvps.userId} = ${userId}
+        )`.as('is_rsvpd')
+      })
+      .from(events)
+      .leftJoin(users, eq(events.userId, users.id))
+      .where(and(...mainConditions))
+      .orderBy(asc(events.startDate))
+      .limit(parseInt(limit as string))
+      .offset(parseInt(offset as string));
+
+    res.json({
+      events: results,
+      filters: {
+        userCity: userData?.city,
+        joinedCities: joinedGroups.map(g => g.city).filter(Boolean),
+        rsvpEventCount: rsvpEventIds.length
+      }
+    });
+  } catch (error) {
+    console.error("[Events] Error fetching smart events:", error);
+    res.status(500).json({ message: "Failed to fetch personalized events" });
+  }
+});
+
+// ============================================================================
 // EVENT ANALYTICS (must be before /:id routes)
 // ============================================================================
 
