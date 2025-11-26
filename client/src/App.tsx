@@ -2231,7 +2231,6 @@ function AppContent() {
       <Suspense fallback={<LoadingFallback />}>
         <Router />
       </Suspense>
-      <MrBlueFloatingButton />
       {isVisualEditorOpen && (
         <Suspense fallback={<LoadingFallback />}>
           <VisualEditorSplitPane 
@@ -2254,6 +2253,7 @@ function App() {
               <MrBlueProvider>
                 <TooltipProvider>
                   <AppContent />
+                  <MrBlueFloatingButton />
                 </TooltipProvider>
               </MrBlueProvider>
             </PredictiveContextProvider>
