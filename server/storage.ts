@@ -1741,6 +1741,7 @@ export class DbStorage implements IStorage {
         mediaEmbeds: posts.mediaEmbeds,
         mentions: posts.mentions,
         hashtags: posts.hashtags,
+        tags: posts.tags,
         location: posts.location,
         visibility: posts.visibility,
         postType: posts.postType,
