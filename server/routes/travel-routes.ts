@@ -343,6 +343,7 @@ router.patch("/plans/:planId/items/:itemId", authenticateToken, async (req: Auth
   try {
     const userId = req.user!.id;
     const { planId, itemId } = req.params;
+    console.log("[Travel PATCH] Request body:", req.body);
     const { type, title, description, date, location, cost, bookingUrl, isBooked, transportType, departureTime, arrivalTime, departureLocation, arrivalLocation } = req.body;
 
     // Verify ownership
@@ -364,7 +365,7 @@ router.patch("/plans/:planId/items/:itemId", authenticateToken, async (req: Auth
     if (description !== undefined) updateData.description = description;
     if (date !== undefined) updateData.date = date;
     if (location !== undefined) updateData.location = location;
-    if (cost !== undefined) updateData.cost = cost;
+    if (cost !== undefined) updateData.cost = typeof cost === 'string' ? parseFloat(cost) : cost;
     if (bookingUrl !== undefined) updateData.bookingUrl = bookingUrl;
     if (isBooked !== undefined) updateData.isBooked = isBooked;
     if (transportType !== undefined) updateData.transportType = transportType;
@@ -373,6 +374,7 @@ router.patch("/plans/:planId/items/:itemId", authenticateToken, async (req: Auth
     if (departureLocation !== undefined) updateData.departureLocation = departureLocation;
     if (arrivalLocation !== undefined) updateData.arrivalLocation = arrivalLocation;
 
+    console.log("[Travel PATCH] Update data:", updateData);
     const result = await db.update(travelPlanItems)
       .set(updateData)
       .where(and(
@@ -387,8 +389,8 @@ router.patch("/plans/:planId/items/:itemId", authenticateToken, async (req: Auth
 
     res.json(result[0]);
   } catch (error) {
-    console.error("Error updating item:", error);
-    res.status(500).json({ message: "Failed to update item" });
+    console.error("[Travel PATCH] Error updating item:", error);
+    res.status(500).json({ message: "Failed to update item", error: String(error) });
   }
 });
 
