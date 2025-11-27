@@ -62,16 +62,13 @@ const tripPlannerSchema = z.object({
   tripName: z.string().min(1, "Trip name is required"),
   city: z.string().min(1, "City is required"),
   country: z.string().optional(),
-  startDate: z.date({ required_error: "Start date is required" }),
-  endDate: z.date({ required_error: "End date is required" }),
+  startDate: z.date().optional(),
+  endDate: z.date().optional(),
   cities: z.array(z.object({
     city: z.string(),
     country: z.string().optional(),
     coordinates: z.object({ lat: z.number(), lng: z.number() }).optional(),
   })).optional(),
-}).refine((data) => data.endDate >= data.startDate, {
-  message: "End date must be after start date",
-  path: ["endDate"],
 });
 
 const itineraryItemSchema = z.object({
@@ -149,6 +146,8 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  const [pickerKey, setPickerKey] = useState(0);
+  
   const addCity = (location: string, coordinates: { lat: number; lng: number }) => {
     const cityCountry = location.split(',').slice(0, 2).map(s => s.trim()).join(', ');
     const parts = cityCountry.split(',');
@@ -157,6 +156,8 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
     
     if (!selectedCities.find(c => c.city.toLowerCase() === city.toLowerCase())) {
       setSelectedCities([...selectedCities, { city, country, coordinates, startDate: undefined, endDate: undefined }]);
+      // Clear the location picker field by resetting its key
+      setPickerKey(prev => prev + 1);
     }
   };
 
@@ -171,7 +172,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
 
   const form = useForm<TripPlannerForm>({
     resolver: zodResolver(tripPlannerSchema),
-    defaultValues: { city: "", country: "", notes: "", cities: [] },
+    defaultValues: { tripName: "", city: "", country: "", cities: [] },
   });
 
   const itemForm = useForm<ItineraryItemForm>({
@@ -202,6 +203,8 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       toast({ title: "Trip created!", description: `Your trip to ${trip.city} has been created.` });
       setShowCreateForm(false);
       form.reset();
+      setSelectedCities([]);
+      setPickerKey(0);
     },
     onError: () => {
       toast({ title: "Failed to create trip", description: "Please try again.", variant: "destructive" });
@@ -325,6 +328,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                     <div className="space-y-2">
                       <FormLabel className="text-base font-semibold">Cities *</FormLabel>
                       <UnifiedLocationPicker 
+                        key={pickerKey}
                         onChange={addCity}
                         placeholder="Search any city (e.g., Buenos Aires, Tokyo, Paris)..."
                         data-testid="location-picker-travel"
@@ -391,8 +395,8 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                     </div>
 
                     <div className="flex gap-3">
-                      <Button type="button" variant="outline" onClick={() => { setShowCreateForm(false); form.reset(); }} className="flex-1">Cancel</Button>
-                      <Button type="submit" className="flex-1" disabled={createTripMutation.isPending} data-testid="button-create-trip-submit">
+                      <Button type="button" variant="outline" onClick={() => { setShowCreateForm(false); form.reset(); setSelectedCities([]); setPickerKey(0); }} className="flex-1">Cancel</Button>
+                      <Button type="submit" className="flex-1" disabled={createTripMutation.isPending || selectedCities.length === 0} data-testid="button-create-trip-submit">
                         <Plane className="h-4 w-4 mr-2" />{createTripMutation.isPending ? "Creating..." : "Create Trip"}
                       </Button>
                     </div>
