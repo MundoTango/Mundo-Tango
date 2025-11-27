@@ -305,6 +305,11 @@ export default function ProfilePage() {
   // Fetch face photos for this user
   const { data: facePhotos = [] } = useQuery<{ id: number; url: string; order: number }[]>({
     queryKey: ['/api/profile/photos', user?.id],
+    queryFn: async () => {
+      const res = await fetch(`/api/profile/photos/${user?.id}`);
+      if (!res.ok) return [];
+      return res.json();
+    },
     enabled: !!user?.id,
   });
 
