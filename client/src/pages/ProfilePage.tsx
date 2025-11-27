@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award } from "lucide-react";
+import { MapPin, Settings, UserPlus, UserMinus, UserCheck, Plane, Calendar, CheckCircle, Instagram, Facebook, Twitter, Linkedin, Youtube, Globe, Award, Plus, Camera } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { SEO } from "@/components/SEO";
 import { SelfHealingErrorBoundary } from "@/components/SelfHealingErrorBoundary";
@@ -481,17 +481,105 @@ export default function ProfilePage() {
           <DashboardCustomerToggle isOwnProfile={isOwnProfile} onViewChange={setViewMode} />
         )}
 
-        {/* Feed Tab */}
+        {/* Feed Tab - Two Column Layout */}
         {activeTab === 'feed' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
+            className="grid grid-cols-1 lg:grid-cols-3 gap-8"
           >
-            <h2 className="text-3xl md:text-4xl font-serif font-bold mb-8" data-testid="text-posts-title">
-              {isOwnProfile ? 'Your Posts' : 'Posts'}
-            </h2>
-            <ProfileTabFeed posts={posts} isLoading={postsLoading} isOwnProfile={isOwnProfile} />
+            {/* Left Column - Feed */}
+            <div className="lg:col-span-2">
+              <h2 className="text-3xl md:text-4xl font-serif font-bold mb-8" data-testid="text-posts-title">
+                {isOwnProfile ? 'Your Posts' : 'Posts'}
+              </h2>
+              <ProfileTabFeed posts={posts} isLoading={postsLoading} isOwnProfile={isOwnProfile} />
+            </div>
+
+            {/* Right Column - Sidebar */}
+            <div className="space-y-6">
+              {/* Upcoming Travel Section */}
+              {upcomingTravel && upcomingTravel.length > 0 && (
+                <Card className="sticky top-24" data-testid="card-upcoming-travel-sidebar">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-2">
+                      <Plane className="w-5 h-5 text-primary" />
+                      <h3 className="font-semibold text-lg">Upcoming Travel</h3>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {upcomingTravel.map((trip: any, index: number) => (
+                        <div 
+                          key={trip.id || index} 
+                          className="p-3 bg-muted rounded-lg border border-border/50 hover-elevate"
+                          data-testid={`trip-card-${index}`}
+                        >
+                          <div className="flex items-start gap-2">
+                            <Calendar className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p className="font-medium text-sm">{trip.city}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {new Date(trip.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(trip.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {upcomingTravel.length > 3 && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => setActiveTab('travel')}
+                          data-testid="button-view-all-travel"
+                        >
+                          View All Trips
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Face Photos Section - Encourage Users to Upload */}
+              <Card data-testid="card-face-photos">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-2">
+                    <Camera className="w-5 h-5 text-primary" />
+                    <h3 className="font-semibold text-lg">Face Photos</h3>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Add face photos to your profile - people dance better when they know you!
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-3 gap-2 mb-4">
+                    {[0, 1, 2, 3, 4, 5].map((index) => (
+                      <div
+                        key={index}
+                        className="aspect-square bg-muted rounded-lg border-2 border-dashed border-border/50 flex items-center justify-center hover:bg-muted/60 hover-elevate cursor-pointer transition-colors"
+                        data-testid={`photo-slot-${index}`}
+                      >
+                        <Plus className="w-5 h-5 text-muted-foreground" />
+                      </div>
+                    ))}
+                  </div>
+                  {isOwnProfile && (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="w-full"
+                      onClick={() => setActiveTab('photos')}
+                      data-testid="button-upload-photos"
+                    >
+                      Upload Photos
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </motion.div>
         )}
 
