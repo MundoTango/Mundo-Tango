@@ -308,14 +308,36 @@ export default function ProfilePage() {
           )}
         </div>
         
-        {/* Glassmorphic User Info Card - Bottom Overlay */}
+        {/* Profile Photo Circle - Above Info Card */}
+        <div className="absolute bottom-56 right-6 z-10">
+          <div className="relative">
+            <Avatar className="w-32 h-32 border-4 border-white/30 shadow-lg">
+              <AvatarImage src={user.profileImage || undefined} alt={user.name} />
+              <AvatarFallback className="bg-primary/80 text-white text-xl font-bold">
+                {user.name.split(' ').map(n => n[0]).join('')}
+              </AvatarFallback>
+            </Avatar>
+            {isOwnProfile && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button size="icon" variant="outline" className="absolute bottom-0 right-0 rounded-full text-white border-white/30 bg-black/20 backdrop-blur-sm hover:bg-black/30" data-testid="button-change-profile-photo">
+                    <Camera className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Change Profile Photo</TooltipContent>
+              </Tooltip>
+            )}
+          </div>
+        </div>
+
+        {/* Glassmorphic User Info Card - Bottom Right Overlay */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="absolute bottom-0 left-0 right-0 p-6 flex justify-center"
+          className="absolute bottom-0 right-0 p-6"
         >
-          <div className="backdrop-blur-md bg-white/10 dark:bg-black/20 border border-white/20 rounded-t-2xl p-6 shadow-2xl max-w-2xl w-full">
+          <div className="backdrop-blur-md bg-white/10 dark:bg-black/20 border border-white/20 rounded-t-2xl p-6 shadow-2xl max-w-xl w-full">
             {/* Name & Verification */}
             <div className="flex items-center gap-3 mb-2">
               <h1 className="text-3xl font-bold text-white drop-shadow-lg" data-testid="text-username">
