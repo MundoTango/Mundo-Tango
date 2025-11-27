@@ -494,6 +494,77 @@ router.get("/events-by-city", async (req: AuthRequest, res: Response) => {
   }
 });
 
+// GET /api/travel/housing-by-city - Get MT Host housing listings in a city during travel dates
+router.get("/housing-by-city", async (req: AuthRequest, res: Response) => {
+  try {
+    const { city, startDate, endDate, maxGuests } = req.query;
+
+    if (!city) {
+      return res.status(400).json({ message: "City parameter is required" });
+    }
+
+    const cityName = city as string;
+    const guests = maxGuests ? parseInt(maxGuests as string) : 1;
+
+    // Query active housing listings in the city
+    const listings = await db.select({
+      id: housingListings.id,
+      hostId: housingListings.hostId,
+      title: housingListings.title,
+      description: housingListings.description,
+      propertyType: housingListings.propertyType,
+      bedrooms: housingListings.bedrooms,
+      bathrooms: housingListings.bathrooms,
+      maxGuests: housingListings.maxGuests,
+      pricePerNight: housingListings.pricePerNight,
+      currency: housingListings.currency,
+      address: housingListings.address,
+      city: housingListings.city,
+      country: housingListings.country,
+      amenities: housingListings.amenities,
+      images: housingListings.images,
+      coverPhotoUrl: housingListings.coverPhotoUrl,
+      hostName: users.name,
+      hostProfileImage: users.profileImage,
+    })
+    .from(housingListings)
+    .leftJoin(users, eq(housingListings.hostId, users.id))
+    .where(and(
+      ilike(housingListings.city, `%${cityName}%`),
+      eq(housingListings.status, "active"),
+      gte(housingListings.maxGuests, guests)
+    ))
+    .orderBy(housingListings.pricePerNight)
+    .limit(20);
+
+    // Calculate total cost for trip duration if dates provided
+    const listingsWithTotalCost = listings.map(listing => {
+      let nights = 1;
+      let totalCost = listing.pricePerNight;
+      
+      if (startDate && endDate) {
+        const start = new Date(startDate as string);
+        const end = new Date(endDate as string);
+        nights = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+        if (nights < 1) nights = 1;
+        totalCost = listing.pricePerNight * nights;
+      }
+      
+      return {
+        ...listing,
+        nights,
+        totalCost,
+        isMTHost: true, // Flag to identify as Mundo Tango host
+      };
+    });
+
+    res.json(listingsWithTotalCost);
+  } catch (error) {
+    console.error("Error fetching housing by city:", error);
+    res.status(500).json({ message: "Failed to fetch housing listings" });
+  }
+});
+
 // POST /api/travel/scrape-accommodation - Scrape accommodation details from URL
 router.post("/scrape-accommodation", async (req: AuthRequest, res: Response) => {
   try {
