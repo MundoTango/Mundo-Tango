@@ -40,6 +40,7 @@ export function UnifiedLocationPicker({
   const [results, setResults] = useState<LocationResult[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<string>(value);
   const searchRef = useRef<HTMLDivElement>(null);
+  const clientCacheRef = useRef<Map<string, LocationResult[]>>(new Map());
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -53,7 +54,7 @@ export function UnifiedLocationPicker({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Search locations using server-side proxy (prevents CSP issues)
+  // Search locations with client-side cache for instant repeated searches
   useEffect(() => {
     if (searchQuery.trim().length < 3) {
       setResults([]);
@@ -61,6 +62,16 @@ export function UnifiedLocationPicker({
     }
 
     const searchLocations = async () => {
+      const queryKey = searchQuery.toLowerCase().trim();
+      
+      // Check client-side cache first - instant results for repeated searches
+      const cached = clientCacheRef.current.get(queryKey);
+      if (cached) {
+        setResults(cached);
+        setShowResults(true);
+        return;
+      }
+
       setIsSearching(true);
       try {
         const response = await fetch(
@@ -69,6 +80,13 @@ export function UnifiedLocationPicker({
 
         if (response.ok) {
           const data = await response.json();
+          // Store in client cache for instant future lookups
+          clientCacheRef.current.set(queryKey, data);
+          // Limit cache size to 50 queries
+          if (clientCacheRef.current.size > 50) {
+            const firstKey = clientCacheRef.current.keys().next().value;
+            if (firstKey) clientCacheRef.current.delete(firstKey);
+          }
           setResults(data);
           setShowResults(true);
         }
@@ -79,8 +97,8 @@ export function UnifiedLocationPicker({
       }
     };
 
-    // MB.MD: Aggressive debounce - 100ms for instant feedback
-    const debounce = setTimeout(searchLocations, 100);
+    // MB.MD: Aggressive debounce - 50ms + client cache for instant feedback
+    const debounce = setTimeout(searchLocations, 50);
     return () => clearTimeout(debounce);
   }, [searchQuery]);
 
