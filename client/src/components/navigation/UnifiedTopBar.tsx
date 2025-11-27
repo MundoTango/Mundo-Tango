@@ -14,16 +14,11 @@ import {
   Sun,
   User,
   Settings,
-  CreditCard,
   Shield,
   HelpCircle,
-  FileText,
   LogOut,
-  Trash2,
   ChevronDown,
-  Download,
   ArrowRight,
-  Trash,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -414,26 +409,6 @@ function UnifiedTopBar({
                 {t('navigation.settings')}
               </DropdownMenuItem>
               
-              <DropdownMenuItem onClick={() => setLocation('/settings/security')} data-testid="menu-item-security">
-                <Shield className="mr-3 h-4 w-4" />
-                Security
-              </DropdownMenuItem>
-              
-              <DropdownMenuItem onClick={() => setLocation('/settings/privacy-data')} data-testid="menu-item-privacy-data">
-                <FileText className="mr-3 h-4 w-4" />
-                Privacy & Data
-              </DropdownMenuItem>
-              
-              <DropdownMenuItem onClick={() => setLocation('/settings/data-export')} data-testid="menu-item-data-export">
-                <Download className="mr-3 h-4 w-4" />
-                Data Export
-              </DropdownMenuItem>
-              
-              <DropdownMenuItem onClick={() => setLocation('/settings/billing')} data-testid="menu-item-billing">
-                <CreditCard className="mr-3 h-4 w-4" />
-                {t('navigation.billing')}
-              </DropdownMenuItem>
-              
               {hasAdminAccess && (
                 <>
                   <DropdownMenuSeparator />
@@ -446,25 +421,15 @@ function UnifiedTopBar({
               
               <DropdownMenuSeparator />
               
-              {/* Help & Legal */}
+              {/* Help & Support */}
               <DropdownMenuItem onClick={() => setLocation('/help')} data-testid="menu-item-help">
                 <HelpCircle className="mr-3 h-4 w-4" />
                 Help & Support
               </DropdownMenuItem>
               
-              <DropdownMenuItem onClick={() => setLocation('/privacy')} data-testid="menu-item-privacy">
-                <FileText className="mr-3 h-4 w-4" />
-                Privacy Policy
-              </DropdownMenuItem>
-              
-              <DropdownMenuItem onClick={() => setLocation('/terms')} data-testid="menu-item-terms">
-                <FileText className="mr-3 h-4 w-4" />
-                Terms & Conditions
-              </DropdownMenuItem>
-              
               <DropdownMenuSeparator />
               
-              {/* Danger Zone */}
+              {/* Logout */}
               <DropdownMenuItem 
                 onClick={handleLogout}
                 className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
@@ -472,15 +437,6 @@ function UnifiedTopBar({
               >
                 <LogOut className="mr-3 h-4 w-4" />
                 {t('navigation.logout')}
-              </DropdownMenuItem>
-              
-              <DropdownMenuItem 
-                onClick={() => setLocation('/settings/delete-account')}
-                className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                data-testid="menu-item-delete-account"
-              >
-                <Trash2 className="mr-3 h-4 w-4" />
-                Delete Account
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
