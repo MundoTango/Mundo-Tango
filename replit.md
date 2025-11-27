@@ -178,6 +178,40 @@ npx playwright show-report test-results/html-report
 - Vite HMR WebSocket error (`wss://localhost:undefined`) - Development-only, doesn't affect functionality
 - This is a Replit infrastructure/Vite config limitation, not our code
 
+## Recent Changes (Nov 27, 2025)
+
+### Sidebar Architecture Refactoring - COMPLETE ✅
+
+**Issue Fixed:**
+- Duplicate `<aside>` elements causing positioning conflicts
+- AppLayout wrapped Sidebar in an `<aside>`, while Sidebar rendered its own fixed `<aside>`
+- No state persistence - sidebar reset on page refresh
+
+**Architecture (Fixed):**
+- **AppLayout.tsx** - Manages sidebar state with cookie persistence
+  - `isMobile` state detects screen width < 1024px
+  - Cookie persistence: `sidebar_state` cookie (7-day expiry)
+  - Removed duplicate aside wrapper - Sidebar renders its own
+  - Main content adjusts with `lg:ml-64` margin when sidebar is open on desktop
+
+- **Sidebar.tsx** - Self-contained fixed sidebar
+  - Accepts `isOpen`, `setIsOpen`, `isMobile` props from AppLayout
+  - Fixed positioning at `top-16 left-0` (below topbar)
+  - Uses `translate-x-0` / `-translate-x-full` for show/hide animation
+  - Mobile overlay only shows when `isMobile && isOpen`
+  - No longer auto-closes on resize (controlled by AppLayout)
+
+**Cookie Persistence:**
+```javascript
+// Sidebar state persists across refreshes
+document.cookie = "sidebar_state=true; path=/; max-age=604800";
+```
+
+**Important Files:**
+- `client/src/components/AppLayout.tsx` - Main layout wrapper with sidebar state management
+- `client/src/components/Sidebar.tsx` - Fixed sidebar with mobile/desktop responsive behavior
+- `client/src/components/navigation/UnifiedTopBar.tsx` - Topbar with hamburger menu toggle
+
 ## Previous Changes (Nov 25, 2025)
 
 ### Database Schema Sync
