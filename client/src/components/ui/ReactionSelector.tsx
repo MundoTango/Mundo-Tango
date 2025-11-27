@@ -184,6 +184,7 @@ export const ReactionSelector = ({
               padding: '12px',
               boxShadow: '0 8px 32px rgba(64, 224, 208, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
               border: '1px solid rgba(255, 255, 255, 0.3)',
+              pointerEvents: 'auto',
             }}
             data-testid={`popup-reactions-${postId}`}
           >
