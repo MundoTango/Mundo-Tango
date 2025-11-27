@@ -598,19 +598,21 @@ export function PostCreator({ onPostCreated, context = { type: 'feed' }, editMod
       console.log('[PostCreator] Post payload size:', `${estimatedSizeMB.toFixed(1)}MB`);
 
       setUploadProgress(85);
-      console.log('[PostCreator] Sending POST request to /api/posts...');
+      const method = editMode ? 'PATCH' : 'POST';
+      const endpoint = editMode ? `/api/posts/${existingPost?.id}` : '/api/posts';
+      console.log(`[PostCreator] Sending ${method} request to ${endpoint}...`);
       
       try {
         // Send as JSON using apiRequest (auto token refresh)
         const response = await apiRequest(
-          editMode ? 'PATCH' : 'POST',
-          '/api/posts',
+          method,
+          endpoint,
           postData
         );
         
-        console.log('[PostCreator] POST request succeeded!');
+        console.log(`[PostCreator] ${method} request succeeded!`);
       } catch (fetchError: any) {
-        console.error('[PostCreator] Fetch error:', fetchError);
+        console.error(`[PostCreator] Fetch error:`, fetchError);
         throw fetchError;
       }
 

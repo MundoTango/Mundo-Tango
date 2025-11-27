@@ -2936,7 +2936,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       await storage.deletePost(id);
-      res.status(204).send();
+      res.json({ message: "Post deleted successfully", postId: id });
     } catch (error) {
       res.status(500).json({ message: "Failed to delete post" });
     }
