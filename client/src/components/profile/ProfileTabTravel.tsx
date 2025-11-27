@@ -190,6 +190,9 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
   const [eventSearchQuery, setEventSearchQuery] = useState('');
   const [selectedEvent, setSelectedEvent] = useState<CityEvent | null>(null);
   
+  // Edit item state
+  const [editingItem, setEditingItem] = useState<{ tripId: number; item: TravelPlanItem; itemType: 'accommodation' | 'transport' | 'event' } | null>(null);
+  
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -286,6 +289,54 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
       toast({ title: "Trip deleted" });
     },
   });
+
+  // Update item mutation
+  const updateItemMutation = useMutation({
+    mutationFn: async ({ tripId, itemId, data }: { tripId: number; itemId: number; data: ItineraryItemForm }) => {
+      const res = await apiRequest("PATCH", `/api/travel/plans/${tripId}/items/${itemId}`, data);
+      return await res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans"] });
+      toast({ title: "Item updated!" });
+      setEditingItem(null);
+      itemForm.reset();
+    },
+    onError: () => {
+      toast({ title: "Failed to update item", description: "Please try again.", variant: "destructive" });
+    },
+  });
+
+  // Delete item mutation
+  const deleteItemMutation = useMutation({
+    mutationFn: async ({ tripId, itemId }: { tripId: number; itemId: number }) => {
+      await apiRequest("DELETE", `/api/travel/plans/${tripId}/items/${itemId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/travel/plans"] });
+      toast({ title: "Item deleted" });
+    },
+    onError: () => {
+      toast({ title: "Failed to delete item", description: "Please try again.", variant: "destructive" });
+    },
+  });
+
+  // Open edit dialog with item data pre-filled
+  const openEditDialog = (tripId: number, item: TravelPlanItem, itemType: 'accommodation' | 'transport' | 'event') => {
+    itemForm.reset({
+      title: item.title,
+      type: item.type,
+      description: item.description || '',
+      date: item.date ? new Date(item.date).toISOString().slice(0, 16) : '',
+      location: item.location || '',
+      cost: item.cost || 0,
+      bookingUrl: item.bookingUrl || '',
+    });
+    if (item.transportType) {
+      setSelectedTransportType(item.transportType);
+    }
+    setEditingItem({ tripId, item, itemType });
+  };
 
   // Query for city events when dialog opens
   const { data: cityEvents, isLoading: eventsLoading } = useQuery({
@@ -647,7 +698,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                               </CardHeader>
                               <CardContent className="space-y-3">
                                 {accommodationItems.length > 0 ? accommodationItems.map((item, idx) => (
-                                  <div key={item.id || idx} className="p-3 rounded-lg border bg-card hover-elevate" data-testid={`accommodation-item-${idx}`}>
+                                  <div key={item.id || idx} className="p-3 rounded-lg border bg-card hover-elevate group" data-testid={`accommodation-item-${idx}`}>
                                     <div className="flex items-start justify-between gap-3">
                                       <div className="flex-1">
                                         <h5 className="font-medium">{item.title}</h5>
@@ -658,10 +709,20 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                           {item.nights && <span>{item.nights} nights</span>}
                                         </div>
                                       </div>
-                                      <div className="text-right">
+                                      <div className="text-right flex flex-col items-end gap-1">
                                         {item.cost && <p className="font-bold text-primary">${Number(item.cost).toFixed(0)}</p>}
                                         {item.costPerNight && <p className="text-xs text-muted-foreground">${item.costPerNight}/night</p>}
-                                        {item.isBooked && <Badge variant="outline" className="mt-1 bg-green-500/10 text-green-600 text-xs"><Check className="h-3 w-3 mr-1" />Booked</Badge>}
+                                        {item.isBooked && <Badge variant="outline" className="bg-green-500/10 text-green-600 text-xs"><Check className="h-3 w-3 mr-1" />Booked</Badge>}
+                                        {isOwnProfile && (
+                                          <div className="flex gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEditDialog(trip.id, item, 'accommodation')} data-testid={`button-edit-accommodation-${idx}`}>
+                                              <Edit className="h-3 w-3" />
+                                            </Button>
+                                            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => deleteItemMutation.mutate({ tripId: trip.id, itemId: item.id })} data-testid={`button-delete-accommodation-${idx}`}>
+                                              <Trash2 className="h-3 w-3" />
+                                            </Button>
+                                          </div>
+                                        )}
                                       </div>
                                     </div>
                                   </div>
@@ -695,7 +756,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                     item.transportType === 'car' ? <Car className="h-4 w-4" /> :
                                     <Plane className="h-4 w-4" />;
                                   return (
-                                    <div key={item.id || idx} className="p-3 rounded-lg border bg-card hover-elevate" data-testid={`transport-item-${idx}`}>
+                                    <div key={item.id || idx} className="p-3 rounded-lg border bg-card hover-elevate group" data-testid={`transport-item-${idx}`}>
                                       <div className="flex items-start justify-between gap-3">
                                         <div className="flex-1">
                                           <div className="flex items-center gap-2">
@@ -724,9 +785,19 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                             <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1"><CalendarIcon className="h-3 w-3" />{new Date(item.date).toLocaleDateString()}</p>
                                           )}
                                         </div>
-                                        <div className="text-right">
+                                        <div className="text-right flex flex-col items-end gap-1">
                                           {item.cost && <p className="font-bold text-primary">${Number(item.cost).toFixed(0)}</p>}
-                                          {item.isBooked && <Badge variant="outline" className="mt-1 bg-green-500/10 text-green-600 text-xs"><Check className="h-3 w-3 mr-1" />Booked</Badge>}
+                                          {item.isBooked && <Badge variant="outline" className="bg-green-500/10 text-green-600 text-xs"><Check className="h-3 w-3 mr-1" />Booked</Badge>}
+                                          {isOwnProfile && (
+                                            <div className="flex gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEditDialog(trip.id, item, 'transport')} data-testid={`button-edit-transport-${idx}`}>
+                                                <Edit className="h-3 w-3" />
+                                              </Button>
+                                              <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => deleteItemMutation.mutate({ tripId: trip.id, itemId: item.id })} data-testid={`button-delete-transport-${idx}`}>
+                                                <Trash2 className="h-3 w-3" />
+                                              </Button>
+                                            </div>
+                                          )}
                                         </div>
                                       </div>
                                     </div>
@@ -755,7 +826,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                               </CardHeader>
                               <CardContent className="space-y-3">
                                 {eventItems.length > 0 ? eventItems.map((item, idx) => (
-                                  <div key={item.id || idx} className="p-3 rounded-lg border bg-card hover-elevate" data-testid={`event-item-${idx}`}>
+                                  <div key={item.id || idx} className="p-3 rounded-lg border bg-card hover-elevate group" data-testid={`event-item-${idx}`}>
                                     <div className="flex items-start justify-between gap-3">
                                       <div className="flex-1">
                                         <div className="flex items-center gap-2">
@@ -765,9 +836,19 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                         {item.location && <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1"><MapPin className="h-3 w-3" />{item.location}</p>}
                                         {item.date && <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1"><Clock className="h-3 w-3" />{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>}
                                       </div>
-                                      <div className="text-right">
+                                      <div className="text-right flex flex-col items-end gap-1">
                                         {item.cost && <p className="font-bold text-primary">${Number(item.cost).toFixed(0)}</p>}
-                                        {item.isBooked && <Badge variant="outline" className="mt-1 bg-green-500/10 text-green-600 text-xs"><Check className="h-3 w-3 mr-1" />Attending</Badge>}
+                                        {item.isBooked && <Badge variant="outline" className="bg-green-500/10 text-green-600 text-xs"><Check className="h-3 w-3 mr-1" />Attending</Badge>}
+                                        {isOwnProfile && (
+                                          <div className="flex gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => openEditDialog(trip.id, item, 'event')} data-testid={`button-edit-event-${idx}`}>
+                                              <Edit className="h-3 w-3" />
+                                            </Button>
+                                            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={() => deleteItemMutation.mutate({ tripId: trip.id, itemId: item.id })} data-testid={`button-delete-event-${idx}`}>
+                                              <Trash2 className="h-3 w-3" />
+                                            </Button>
+                                          </div>
+                                        )}
                                       </div>
                                     </div>
                                   </div>
@@ -1207,6 +1288,86 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
               </div>
             </TabsContent>
           </Tabs>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Item Dialog */}
+      <Dialog open={!!editingItem} onOpenChange={(open) => { if (!open) { setEditingItem(null); itemForm.reset(); } }}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Edit className="h-5 w-5 text-primary" />
+              Edit {editingItem?.itemType === 'accommodation' ? 'Accommodation' : editingItem?.itemType === 'transport' ? 'Transport' : 'Event'}
+            </DialogTitle>
+          </DialogHeader>
+          <Form {...itemForm}>
+            <form onSubmit={itemForm.handleSubmit((data) => { 
+              if (editingItem) { 
+                updateItemMutation.mutate({ 
+                  tripId: editingItem.tripId, 
+                  itemId: editingItem.item.id, 
+                  data 
+                }); 
+              } 
+            })} className="space-y-4">
+              
+              <FormField control={itemForm.control} name="title" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{editingItem?.itemType === 'accommodation' ? 'Property Name' : editingItem?.itemType === 'transport' ? 'Provider/Details' : 'Event Name'} *</FormLabel>
+                  <FormControl><Input {...field} data-testid="input-edit-title" /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              
+              <FormField control={itemForm.control} name="location" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{editingItem?.itemType === 'accommodation' ? 'Full Address' : editingItem?.itemType === 'transport' ? 'Route (From → To)' : 'Venue/Location'}</FormLabel>
+                  <FormControl><Input {...field} data-testid="input-edit-location" /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField control={itemForm.control} name="date" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{editingItem?.itemType === 'accommodation' ? 'Check-in Date' : editingItem?.itemType === 'transport' ? 'Departure' : 'Date/Time'}</FormLabel>
+                    <FormControl><Input type="datetime-local" {...field} data-testid="input-edit-date" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={itemForm.control} name="cost" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cost (USD)</FormLabel>
+                    <FormControl><Input type="number" {...field} onChange={(e) => field.onChange(e.target.valueAsNumber)} data-testid="input-edit-cost" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+              </div>
+
+              <FormField control={itemForm.control} name="description" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Notes</FormLabel>
+                  <FormControl><Textarea {...field} rows={2} data-testid="input-edit-notes" /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+
+              <FormField control={itemForm.control} name="bookingUrl" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Booking URL</FormLabel>
+                  <FormControl><Input placeholder="https://..." {...field} data-testid="input-edit-booking-url" /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+
+              <div className="flex gap-2 pt-2">
+                <Button type="button" variant="outline" onClick={() => { setEditingItem(null); itemForm.reset(); }} className="flex-1" data-testid="button-cancel-edit">Cancel</Button>
+                <Button type="submit" className="flex-1" disabled={updateItemMutation.isPending} data-testid="button-submit-edit">
+                  {updateItemMutation.isPending ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </div>

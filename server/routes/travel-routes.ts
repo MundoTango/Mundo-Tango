@@ -338,6 +338,92 @@ router.delete("/plans/:planId/destinations/:itemId", authenticateToken, async (r
   }
 });
 
+// PATCH /api/travel/plans/:planId/items/:itemId - Update item (auth required)
+router.patch("/plans/:planId/items/:itemId", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const { planId, itemId } = req.params;
+    const { type, title, description, date, location, cost, bookingUrl, isBooked, transportType, departureTime, arrivalTime, departureLocation, arrivalLocation } = req.body;
+
+    // Verify ownership
+    const plan = await db.select()
+      .from(travelPlans)
+      .where(and(
+        eq(travelPlans.id, parseInt(planId)),
+        eq(travelPlans.userId, userId)
+      ))
+      .limit(1);
+
+    if (plan.length === 0) {
+      return res.status(404).json({ message: "Travel plan not found or not authorized" });
+    }
+
+    const updateData: any = {};
+    if (type !== undefined) updateData.type = type;
+    if (title !== undefined) updateData.title = title;
+    if (description !== undefined) updateData.description = description;
+    if (date !== undefined) updateData.date = date;
+    if (location !== undefined) updateData.location = location;
+    if (cost !== undefined) updateData.cost = cost;
+    if (bookingUrl !== undefined) updateData.bookingUrl = bookingUrl;
+    if (isBooked !== undefined) updateData.isBooked = isBooked;
+    if (transportType !== undefined) updateData.transportType = transportType;
+    if (departureTime !== undefined) updateData.departureTime = departureTime;
+    if (arrivalTime !== undefined) updateData.arrivalTime = arrivalTime;
+    if (departureLocation !== undefined) updateData.departureLocation = departureLocation;
+    if (arrivalLocation !== undefined) updateData.arrivalLocation = arrivalLocation;
+
+    const result = await db.update(travelPlanItems)
+      .set(updateData)
+      .where(and(
+        eq(travelPlanItems.id, parseInt(itemId)),
+        eq(travelPlanItems.travelPlanId, parseInt(planId))
+      ))
+      .returning();
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Item not found" });
+    }
+
+    res.json(result[0]);
+  } catch (error) {
+    console.error("Error updating item:", error);
+    res.status(500).json({ message: "Failed to update item" });
+  }
+});
+
+// DELETE /api/travel/plans/:planId/items/:itemId - Delete item (auth required)
+router.delete("/plans/:planId/items/:itemId", authenticateToken, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const { planId, itemId } = req.params;
+
+    // Verify ownership
+    const plan = await db.select()
+      .from(travelPlans)
+      .where(and(
+        eq(travelPlans.id, parseInt(planId)),
+        eq(travelPlans.userId, userId)
+      ))
+      .limit(1);
+
+    if (plan.length === 0) {
+      return res.status(404).json({ message: "Travel plan not found or not authorized" });
+    }
+
+    await db.delete(travelPlanItems)
+      .where(and(
+        eq(travelPlanItems.id, parseInt(itemId)),
+        eq(travelPlanItems.travelPlanId, parseInt(planId))
+      ));
+
+    res.json({ message: "Item deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting item:", error);
+    res.status(500).json({ message: "Failed to delete item" });
+  }
+});
+
 // GET /api/travel/events-by-city - Get events in a city within date range
 router.get("/events-by-city", async (req: AuthRequest, res: Response) => {
   try {
