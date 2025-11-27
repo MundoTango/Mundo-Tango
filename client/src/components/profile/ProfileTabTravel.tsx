@@ -622,12 +622,12 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
-                          <FormItem>
-                            <FormLabel>Budget (USD)</FormLabel>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">Budget (USD)</label>
                             <Input type="number" placeholder={trip.budget || "5000"} defaultValue={trip.budget || ""} disabled className="opacity-50" />
-                          </FormItem>
-                          <FormItem>
-                            <FormLabel>Travel Style</FormLabel>
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">Travel Style</label>
                             <Select defaultValue={trip.travelStyle || ""} disabled>
                               <SelectTrigger className="opacity-50"><SelectValue placeholder="Select style" /></SelectTrigger>
                               <SelectContent>
@@ -637,12 +637,12 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
                                 <SelectItem value="adventure">Adventure</SelectItem>
                               </SelectContent>
                             </Select>
-                          </FormItem>
+                          </div>
                         </div>
-                        <FormItem>
-                          <FormLabel>Notes</FormLabel>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-foreground">Notes</label>
                           <Textarea placeholder="Trip notes..." defaultValue={trip.notes || ""} disabled rows={2} className="opacity-50" />
-                        </FormItem>
+                        </div>
                         <p className="text-xs text-muted-foreground">Advanced editing coming soon</p>
                         <div className="flex gap-2">
                           <Button variant="outline" size="sm" onClick={() => setEditingTripId(null)} className="flex-1">Done</Button>
