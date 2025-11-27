@@ -59,16 +59,10 @@ interface ProfileTabTravelProps {
 }
 
 const tripPlannerSchema = z.object({
-  tripName: z.string().min(1, "Trip name is required"),
   city: z.string().min(1, "City is required"),
   country: z.string().optional(),
   startDate: z.date().optional(),
   endDate: z.date().optional(),
-  cities: z.array(z.object({
-    city: z.string(),
-    country: z.string().optional(),
-    coordinates: z.object({ lat: z.number(), lng: z.number() }).optional(),
-  })).optional(),
 });
 
 const itineraryItemSchema = z.object({
@@ -172,7 +166,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
 
   const form = useForm<TripPlannerForm>({
     resolver: zodResolver(tripPlannerSchema),
-    defaultValues: { tripName: "", city: "", country: "", cities: [] },
+    defaultValues: { city: "", country: "" },
   });
 
   const itemForm = useForm<ItineraryItemForm>({
@@ -190,24 +184,31 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
   });
 
   const createTripMutation = useMutation({
-    mutationFn: async (data: TripPlannerForm) => {
-      const res = await apiRequest("POST", "/api/travel/plans", {
-        ...data,
-        startDate: data.startDate.toISOString(),
-        endDate: data.endDate.toISOString(),
-      });
-      return await res.json();
+    mutationFn: async () => {
+      // Create a separate trip for each selected city
+      const trips = await Promise.all(
+        selectedCities.map(city => 
+          apiRequest("POST", "/api/travel/plans", {
+            city: city.city,
+            country: city.country,
+            startDate: city.startDate ? city.startDate.toISOString() : new Date().toISOString(),
+            endDate: city.endDate ? city.endDate.toISOString() : new Date().toISOString(),
+            coordinates: city.coordinates,
+          }).then(res => res.json())
+        )
+      );
+      return trips;
     },
-    onSuccess: (trip: any) => {
+    onSuccess: (trips: any[]) => {
       queryClient.invalidateQueries({ queryKey: ["/api/travel/plans"] });
-      toast({ title: "Trip created!", description: `Your trip to ${trip.city} has been created.` });
+      toast({ title: "Trips created!", description: `${trips.length} city trip${trips.length > 1 ? 's' : ''} created successfully.` });
       setShowCreateForm(false);
       form.reset();
       setSelectedCities([]);
       setPickerKey(0);
     },
     onError: () => {
-      toast({ title: "Failed to create trip", description: "Please try again.", variant: "destructive" });
+      toast({ title: "Failed to create trips", description: "Please try again.", variant: "destructive" });
     },
   });
 
@@ -318,12 +319,7 @@ export default function ProfileTabTravel({ profileId, isOwnProfile = false }: Pr
               </CardHeader>
               <CardContent>
                 <Form {...form}>
-                  <form onSubmit={form.handleSubmit((data) => createTripMutation.mutate({...data, cities: selectedCities}))} className="space-y-6">
-                    {/* Trip Name */}
-                    <FormField control={form.control} name="tripName" render={({ field }) => (
-                      <FormItem><FormLabel>Trip Name *</FormLabel><FormControl><Input placeholder="Buenos Aires 2025" {...field} data-testid="input-trip-name" /></FormControl><FormMessage /></FormItem>
-                    )} />
-                    
+                  <form onSubmit={form.handleSubmit(() => createTripMutation.mutate())} className="space-y-6">
                     {/* City Autocomplete with Live Map Data */}
                     <div className="space-y-2">
                       <FormLabel className="text-base font-semibold">Cities *</FormLabel>
