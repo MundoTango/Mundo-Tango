@@ -87,7 +87,9 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<string>('feed');
   const [viewMode, setViewMode] = useState<'dashboard' | 'customer'>('dashboard');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const coverPhotoInputRef = useRef<HTMLInputElement>(null);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
 
   // Upload profile photo mutation (send compressed base64)
   const uploadPhotoMutation = useMutation({
@@ -112,6 +114,32 @@ export default function ProfilePage() {
     onError: () => {
       toast({ title: "Error", description: "Failed to upload photo", variant: "destructive" });
       setUploadingPhoto(false);
+    }
+  });
+
+  // Upload cover photo mutation (send compressed base64) - PRD/media-handling.md
+  const uploadCoverMutation = useMutation({
+    mutationFn: async (base64Data: string) => {
+      const res = await fetch('/api/profile/cover', {
+        method: 'POST',
+        body: JSON.stringify({ coverData: base64Data }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+        }
+      });
+      
+      if (!res.ok) throw new Error('Failed to upload cover');
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Cover photo updated!" });
+      queryClient.invalidateQueries({ queryKey: ["user", profileIdentifier] });
+      setUploadingCover(false);
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to upload cover photo", variant: "destructive" });
+      setUploadingCover(false);
     }
   });
 
@@ -193,6 +221,25 @@ export default function ProfilePage() {
     
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
+    }
+  };
+
+  const handleCoverPhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setUploadingCover(true);
+    
+    try {
+      const compressedBase64 = await compressImage(file);
+      uploadCoverMutation.mutate(compressedBase64);
+    } catch (err) {
+      toast({ title: "Error", description: "Failed to process image", variant: "destructive" });
+      setUploadingCover(false);
+    }
+    
+    if (coverPhotoInputRef.current) {
+      coverPhotoInputRef.current.value = '';
     }
   };
   
