@@ -41,6 +41,7 @@ interface ReactionSelectorProps {
   totalCount?: number;
   onReact: (reactionId: string) => void;
   className?: string;
+  isLoading?: boolean;
 }
 
 export const ReactionSelector = ({
@@ -49,7 +50,8 @@ export const ReactionSelector = ({
   reactions = {},
   totalCount,
   onReact,
-  className = ''
+  className = '',
+  isLoading = false
 }: ReactionSelectorProps) => {
   const [showReactions, setShowReactions] = useState(false);
   const [isHovering, setIsHovering] = useState(false);

@@ -119,6 +119,8 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
 
   const isAuthor = user?.id === post.userId;
   const isSaved = post.isSaved || false;
+  const isSaveLoading = saveMutation.isPending || unsaveMutation.isPending;
+  const isReactLoading = reactMutation.isPending;
 
   const handleReaction = async (reactionId: string) => {
     await reactMutation.mutateAsync({ postId: post.id, reactionType: reactionId });
@@ -327,9 +329,12 @@ export const PostItem = ({ post, onEdit, onDelete }: PostItemProps) => {
             size="sm"
             className="hover-elevate ml-auto"
             onClick={handleSave}
+            disabled={isSaveLoading}
             data-testid={`button-save-${post.id}`}
           >
-            {isSaved ? (
+            {isSaveLoading ? (
+              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            ) : isSaved ? (
               <BookmarkCheck className="w-4 h-4" style={{ color: '#40E0D0' }} />
             ) : (
               <Bookmark className="w-4 h-4" />
