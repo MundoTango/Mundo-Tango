@@ -1,31 +1,39 @@
-import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Heart } from "lucide-react";
+import { PostItem } from "@/components/feed/PostItem";
+import { motion } from "framer-motion";
+import { Camera } from "lucide-react";
 import { PostCreator } from "@/components/universal/PostCreator";
-import { LazyVideo } from "@/components/LazyVideo";
-
-interface Post {
-  id: number;
-  content: string;
-  imageUrl?: string;
-  videoUrl?: string;
-  visibility: string;
-  createdAt: string;
-  likes: number;
-  userName: string;
-  userProfileImage?: string;
-}
 
 interface ProfileTabFeedProps {
-  posts: Post[];
-  isLoading: boolean;
+  userId?: number;
   isOwnProfile: boolean;
 }
 
-export default function ProfileTabFeed({ posts, isLoading, isOwnProfile }: ProfileTabFeedProps) {
+export default function ProfileTabFeed({ userId, isOwnProfile }: ProfileTabFeedProps) {
+  const [editingPost, setEditingPost] = useState<number | null>(null);
+
+  const { data: posts = [], isLoading } = useQuery({
+    queryKey: ["user-posts", userId],
+    queryFn: async () => {
+      if (!userId) return [];
+      const res = await fetch(`/api/posts?userId=${userId}&limit=50`);
+      if (!res.ok) throw new Error("Failed to load posts");
+      return res.json();
+    },
+    enabled: !!userId,
+  });
+
+  const handleEdit = (postId: number) => {
+    setEditingPost(postId);
+  };
+
+  const handleDelete = (postId: number) => {
+    // Handled by PostItem component
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -57,6 +65,7 @@ export default function ProfileTabFeed({ posts, isLoading, isOwnProfile }: Profi
         >
           <Card className="overflow-hidden" data-testid="card-no-posts">
             <CardContent className="py-16 text-center">
+              <Camera className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
               <p className="text-lg text-muted-foreground">
                 {isOwnProfile 
                   ? "You haven't posted anything yet. Share your tango journey!" 
@@ -67,73 +76,21 @@ export default function ProfileTabFeed({ posts, isLoading, isOwnProfile }: Profi
         </motion.div>
       )}
 
-      {/* Posts List */}
-      {posts.map((post, index) => (
+      {/* Posts List - Using PostItem component for full functionality */}
+      {posts.map((post: any, index: number) => (
         <motion.div
           key={post.id}
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6, delay: index * 0.1 }}
+          data-testid={`post-item-${post.id}`}
         >
-          <Card className="overflow-hidden hover-elevate" data-testid={`card-post-${post.id}`}>
-            {(post.imageUrl || post.videoUrl) && (
-              <div className="relative aspect-[16/9] overflow-hidden">
-                {post.imageUrl && (
-                  <motion.img 
-                    src={post.imageUrl} 
-                    alt="Post image" 
-                    className="w-full h-full object-cover"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.6 }}
-                    data-testid={`img-post-${post.id}`}
-                  />
-                )}
-                
-                {post.videoUrl && (
-                  <LazyVideo
-                    src={post.videoUrl} 
-                    controls 
-                    className="w-full h-full object-cover"
-                    data-testid={`video-post-${post.id}`}
-                    showSkeleton={true}
-                  />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-              </div>
-            )}
-            
-            <CardHeader className="p-6">
-              <div className="flex items-center gap-3">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src={post.userProfileImage || undefined} />
-                  <AvatarFallback>
-                    {post.userName?.charAt(0).toUpperCase() || 'U'}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-semibold text-base">{post.userName}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(post.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-            </CardHeader>
-            
-            <CardContent className="px-6 pb-6 space-y-4">
-              <p className="text-base leading-relaxed whitespace-pre-wrap" data-testid={`text-post-content-${post.id}`}>
-                {post.content}
-              </p>
-              
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <Heart className="h-4 w-4" />
-                  <span>{post.likes || 0} likes</span>
-                </div>
-                <Badge variant="secondary" className="capitalize">{post.visibility}</Badge>
-              </div>
-            </CardContent>
-          </Card>
+          <PostItem 
+            post={post}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
         </motion.div>
       ))}
     </div>
