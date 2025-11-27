@@ -474,4 +474,42 @@ router.post('/background', authenticateToken, upload.single('file'), async (req:
   }
 });
 
+/**
+ * POST /api/profile/photo
+ * Update user's profile photo
+ */
+router.post('/photo', authenticateToken, upload.single('file'), async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.userId) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file provided' });
+    }
+
+    // Validate it's an image
+    if (!req.file.mimetype.startsWith('image/')) {
+      return res.status(400).json({ message: 'Profile photo must be an image' });
+    }
+
+    // Upload to Cloudinary or convert to base64
+    const uploadResult = await uploadToCloudinary(req.file, `profiles/${req.userId}/avatar`);
+
+    // Update user's profile image
+    await db.update(users)
+      .set({ profileImage: uploadResult.url })
+      .where(eq(users.id, req.userId));
+
+    res.json({ 
+      message: 'Profile photo updated successfully',
+      url: uploadResult.url,
+      profileImage: uploadResult.url
+    });
+  } catch (error) {
+    console.error('[ProfileMedia] Profile photo upload error:', error);
+    res.status(500).json({ message: 'Failed to upload profile photo' });
+  }
+});
+
 export default router;
